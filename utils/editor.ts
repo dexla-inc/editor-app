@@ -1,3 +1,4 @@
+import { emptyEditorTree } from "@/stores/editor";
 import {
   CollisionDetection,
   ClientRect,
@@ -34,10 +35,7 @@ export const getEditorTreeFromInitialPageStructure = (tree: {
 }) => {
   const editorTree: EditorTree = {
     root: {
-      id: "root",
-      name: "Container",
-      description: "Root Container",
-      columns: 12,
+      ...emptyEditorTree.root,
       children: tree.rows.map((row: Row) => {
         return {
           id: nanoid(),
