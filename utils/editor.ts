@@ -1,9 +1,6 @@
 import { emptyEditorTree } from "@/stores/editor";
-import {
-  CollisionDetection,
-  ClientRect,
-  CollisionDescriptor,
-} from "@dnd-kit/core";
+import { ClientRect, CollisionDescriptor, Active } from "@dnd-kit/core";
+import { DroppableContainer, RectMap } from "@dnd-kit/core/dist/store";
 import { Coordinates } from "@dnd-kit/utilities";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
@@ -28,6 +25,7 @@ export type EditorTree = {
 export type DropTarget = {
   id: string;
   edge: Edge;
+  rect: ClientRect;
 };
 
 export const getEditorTreeFromInitialPageStructure = (tree: {
@@ -57,7 +55,10 @@ export const getEditorTreeFromInitialPageStructure = (tree: {
   return editorTree;
 };
 
-export const findComponentById = (treeRoot: Component, id: string) => {
+export const findComponentById = (
+  treeRoot: Component,
+  id: string
+): Component | null => {
   let found: Component | null = null;
 
   crawl(
@@ -71,7 +72,24 @@ export const findComponentById = (treeRoot: Component, id: string) => {
     { order: "bfs" }
   );
 
-  return found as any;
+  return found;
+};
+
+export const checkIfIsChild = (treeRoot: Component, childId: string) => {
+  let isChild = false;
+
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === childId) {
+        isChild = true;
+        context.break();
+      }
+    },
+    { order: "bfs" }
+  );
+
+  return isChild;
 };
 
 export const removeComponent = (treeRoot: Component, id: string) => {
@@ -215,11 +233,21 @@ export const getClosestEdge = (
   return { edge: closestKey, value: all[closestKey as Edge] };
 };
 
-export const closestEdge: CollisionDetection = ({
-  collisionRect,
-  droppableRects,
-  droppableContainers,
-}) => {
+export const closestEdge = (
+  {
+    active,
+    collisionRect,
+    droppableRects,
+    droppableContainers,
+  }: {
+    active: Active;
+    collisionRect: ClientRect;
+    droppableRects: RectMap;
+    droppableContainers: DroppableContainer[];
+    pointerCoordinates: Coordinates | null;
+  },
+  editorTree: EditorTree
+) => {
   const centerRect = centerOfRectangle(
     collisionRect,
     collisionRect.left,
@@ -227,12 +255,17 @@ export const closestEdge: CollisionDetection = ({
   );
 
   const collisions: CollisionDescriptor[] = [];
+  const activeComponent = findComponentById(
+    editorTree.root,
+    active.id as string
+  );
 
   for (const droppableContainer of droppableContainers) {
     const { id } = droppableContainer;
     const rect = droppableRects.get(id);
+    const isChild = checkIfIsChild(activeComponent!, id as string);
 
-    if (rect) {
+    if (rect && !isChild) {
       const leftDist = distanceBetween(leftOfRectangle(rect), centerRect);
       const rigthDist = distanceBetween(rightOfRectangle(rect), centerRect);
       const topDist = distanceBetween(topOfRectangle(rect), centerRect);
@@ -247,7 +280,7 @@ export const closestEdge: CollisionDetection = ({
 
       collisions.push({
         id,
-        data: { droppableContainer, value, edge },
+        data: { droppableContainer, value, edge, rect },
       });
     }
   }

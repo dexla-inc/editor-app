@@ -9,7 +9,12 @@ import {
   getEditorTreeFromInitialPageStructure,
   removeComponent,
 } from "@/utils/editor";
-import { DndContext, DragEndEvent, DragMoveEvent } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragEndEvent,
+  DragMoveEvent,
+  MeasuringStrategy,
+} from "@dnd-kit/core";
 import { Box, Container, Grid } from "@mantine/core";
 import { useHotkeys } from "@mantine/hooks";
 import { useEffect } from "react";
@@ -104,6 +109,11 @@ const tree = {
 export const Editor = () => {
   const dropTarget = useEditorStore((state) => state.dropTarget);
   const setDropTarget = useEditorStore((state) => state.setDropTarget);
+  const clearDropTarget = useEditorStore((state) => state.clearDropTarget);
+  const setSelectedComponentId = useEditorStore(
+    (state) => state.setSelectedComponentId
+  );
+  const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const { undo, redo } = useTemporalStore((state) => state);
@@ -120,31 +130,42 @@ export const Editor = () => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active } = event;
 
+    setSelectedComponentId(active.id as string);
+
     if (
       !dropTarget ||
       dropTarget.id === "root" ||
       dropTarget.id === active.id
     ) {
+      clearDropTarget();
+      clearSelection();
       return;
     }
 
     const copy = { ...editorTree };
     const toAdd = findComponentById(copy.root, active.id as string);
     removeComponent(copy.root, active.id as string);
-    addComponent(copy.root, toAdd as Component, dropTarget);
+    addComponent(copy.root, toAdd as unknown as Component, dropTarget);
 
     setEditorTree(copy);
-    setDropTarget(null);
+    clearDropTarget();
+    clearSelection();
   };
 
   const handleDragMove = (event: DragMoveEvent) => {
     const id = event.collisions?.[0]?.id;
-    const edge = event.collisions?.[0]?.data?.edge;
+    const data = event.collisions?.[0]?.data;
     const target = {
       id: id as string,
-      edge,
+      edge: data?.edge,
+      rect: data?.rect,
     };
     setDropTarget(target);
+  };
+
+  const handleDragCancel = () => {
+    clearDropTarget();
+    clearSelection();
   };
 
   const renderTree = (component: Component) => {
@@ -155,7 +176,7 @@ export const Editor = () => {
           id={component.id}
           grow
           columns={12}
-          bg="gray.1"
+          bg="gray.0"
           m={0}
           gutter={0}
         >
@@ -171,7 +192,7 @@ export const Editor = () => {
             id={component.id!}
             grow
             columns={12}
-            bg="gray.1"
+            bg="white"
             m={0}
             gutter={0}
           >
@@ -183,7 +204,7 @@ export const Editor = () => {
 
     return (
       <Grid.Col key={component.id!} span={component.columns}>
-        <Box bg="gray.3" mih={150} sx={{ textAlign: "center" }}>
+        <Box bg="white" mih={150} sx={{ textAlign: "center" }}>
           {component.name}
         </Box>
       </Grid.Col>
@@ -192,11 +213,21 @@ export const Editor = () => {
 
   return (
     <DndContext
+      collisionDetection={(args) => {
+        return closestEdge(args, editorTree);
+      }}
       onDragEnd={handleDragEnd}
-      collisionDetection={closestEdge}
       onDragMove={handleDragMove}
+      onDragCancel={handleDragCancel}
+      measuring={{
+        droppable: {
+          strategy: MeasuringStrategy.Always,
+        },
+      }}
     >
-      <Container my="xl">{renderTree(editorTree.root)}</Container>
+      <Container my="xl" pos="relative">
+        {renderTree(editorTree.root)}
+      </Container>
     </DndContext>
   );
 };

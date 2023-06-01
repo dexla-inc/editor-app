@@ -15,9 +15,13 @@ export const emptyEditorTree = {
 
 export interface EditorState {
   tree: EditorTree;
-  dropTarget?: DropTarget | null;
+  dropTarget?: DropTarget;
+  selectedComponentId?: string;
   setTree: (tree: EditorTree) => void;
-  setDropTarget: (dropTarget: DropTarget | null) => void;
+  setDropTarget: (dropTarget: DropTarget) => void;
+  clearDropTarget: () => void;
+  setSelectedComponentId: (selectedComponentId: string) => void;
+  clearSelection: () => void;
 }
 
 // creates a store with undo/redo capability
@@ -27,6 +31,10 @@ export const useEditorStore = create<EditorState>()(
       tree: emptyEditorTree,
       setTree: (tree) => set({ tree }),
       setDropTarget: (dropTarget) => set({ dropTarget }),
+      clearDropTarget: () => set({ dropTarget: undefined }),
+      setSelectedComponentId: (selectedComponentId) =>
+        set({ selectedComponentId }),
+      clearSelection: () => set({ selectedComponentId: undefined }),
     }),
     {
       partialize: (state) => {
