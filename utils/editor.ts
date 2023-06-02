@@ -126,37 +126,59 @@ export const moveComponentToDifferentParent = (
           componentToAdd.columns = Math.floor(
             componentToAdd.columns / ((node.children || [])?.length + 1)
           );
+
           node.children?.forEach((child) => {
             child.columns = Math.floor(
               child.columns / ((node.children || [])?.length + 1)
             );
           });
-          node.children = [componentToAdd, ...(node.children || [])];
+
+          const dropIndex = node.children?.findIndex(
+            (c) => c.id === dropTarget.id
+          );
+          node.children?.splice(
+            Math.max((dropIndex || 0) - 1, 0),
+            0,
+            componentToAdd
+          );
         } else if (dropTarget.edge === "right") {
           componentToAdd.columns = Math.floor(
             componentToAdd.columns / ((node.children || [])?.length + 1)
           );
+
           node.children?.forEach((child) => {
             child.columns = Math.floor(
               child.columns / ((node.children || [])?.length + 1)
             );
           });
-          node.children = [...(node.children || []), componentToAdd];
-        } else if (dropTarget.edge === "top") {
-          node.children = [componentToAdd, ...(node.children || [])];
-        } else if (dropTarget.edge === "bottom") {
-          node.children = [...(node.children || []), componentToAdd];
-        }
-        const items = node.children?.map((c) => c.id) as string[];
-        const oldIndex = items.indexOf(id);
-        const newIndex = items.indexOf(dropTarget.id);
 
-        const newPositions = arrayMove(items, oldIndex, newIndex);
-        node.children = node.children?.sort((a, b) => {
-          const aIndex = newPositions.indexOf(a.id as string);
-          const bIndex = newPositions.indexOf(b.id as string);
-          return aIndex - bIndex;
-        });
+          const dropIndex = node.children?.findIndex(
+            (c) => c.id === dropTarget.id
+          );
+          node.children?.splice(
+            Math.min((dropIndex || 0) + 1, node.children.length),
+            0,
+            componentToAdd
+          );
+        } else if (dropTarget.edge === "top") {
+          const dropIndex = node.children?.findIndex(
+            (c) => c.id === dropTarget.id
+          );
+          node.children?.splice(
+            Math.max((dropIndex || 0) - 1, 0),
+            0,
+            componentToAdd
+          );
+        } else if (dropTarget.edge === "bottom") {
+          const dropIndex = node.children?.findIndex(
+            (c) => c.id === dropTarget.id
+          );
+          node.children?.splice(
+            Math.min((dropIndex || 0) + 1, node.children.length),
+            0,
+            componentToAdd
+          );
+        }
 
         context.break();
       }
@@ -168,7 +190,7 @@ export const moveComponentToDifferentParent = (
 export const moveComponent = (
   treeRoot: Component,
   id: string,
-  targetId: string
+  dropTarget: DropTarget
 ) => {
   crawl(
     treeRoot,
@@ -177,7 +199,16 @@ export const moveComponent = (
         const parent = context.parent;
         const items = parent?.children?.map((c) => c.id) as string[];
         const oldIndex = items.indexOf(id);
-        const newIndex = items.indexOf(targetId);
+        let newIndex = items.indexOf(dropTarget.id);
+
+        if (dropTarget.edge === "left" || dropTarget.edge === "top") {
+          newIndex = Math.max(newIndex - 1, 0);
+        } else if (
+          dropTarget.edge === "right" ||
+          dropTarget.edge === "bottom"
+        ) {
+          newIndex = Math.min(newIndex + 1, items.length);
+        }
 
         const newPositions = arrayMove(items, oldIndex, newIndex);
         parent!.children = parent?.children?.sort((a, b) => {

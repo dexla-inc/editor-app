@@ -164,7 +164,7 @@ export const Editor = () => {
         );
       } else {
         // reorder
-        moveComponent(copy.root, active.id as string, dropTarget.id as string);
+        moveComponent(copy.root, active.id as string, dropTarget);
       }
     } else {
       const toAdd = findComponentById(copy.root, active.id as string);

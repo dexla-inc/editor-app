@@ -28,12 +28,12 @@ export const DroppableDraggable = ({
 
   const borders = isOver
     ? {
-        borderTop: dropTarget?.edge === "top" ? "2px solid blue" : undefined,
+        borderTop: dropTarget?.edge === "top" ? `2px solid blue` : undefined,
         borderBottom:
-          dropTarget?.edge === "bottom" ? "2px solid blue" : undefined,
-        borderLeft: dropTarget?.edge === "left" ? "2px solid blue" : undefined,
+          dropTarget?.edge === "bottom" ? `2px solid blue` : undefined,
+        borderLeft: dropTarget?.edge === "left" ? `2px solid blue` : undefined,
         borderRight:
-          dropTarget?.edge === "right" ? "2px solid blue" : undefined,
+          dropTarget?.edge === "right" ? `2px solid blue` : undefined,
       }
     : {};
 
@@ -46,7 +46,7 @@ export const DroppableDraggable = ({
     <Grid.Col
       span={props.span}
       pos="relative"
-      sx={{ zIndex: isDragging ? 9999 : undefined }}
+      sx={{ zIndex: isDragging ? 9999 : undefined, boxSizing: "content-box" }}
       {...props}
     >
       <Box

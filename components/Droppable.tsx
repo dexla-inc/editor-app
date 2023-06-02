@@ -29,7 +29,12 @@ export const Droppable = ({
     : {};
 
   return (
-    <Grid ref={setNodeRef} w="100%" {...props} style={borders}>
+    <Grid
+      ref={setNodeRef}
+      w="100%"
+      {...props}
+      style={{ ...borders, boxSizing: "content-box" }}
+    >
       {children}
     </Grid>
   );
