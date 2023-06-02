@@ -7,6 +7,7 @@ import {
   addComponent,
   closestEdge,
   findComponentById,
+  getComponentIndex,
   getEditorTreeFromInitialPageStructure,
   removeComponent,
 } from "@/utils/editor";
@@ -17,9 +18,10 @@ import {
   DragStartEvent,
   MeasuringStrategy,
 } from "@dnd-kit/core";
-import { Container, Grid, Paper } from "@mantine/core";
+import { Container, Paper } from "@mantine/core";
 import { useHotkeys } from "@mantine/hooks";
 import { useEffect } from "react";
+import { Draggable } from "./Draggable";
 
 const tree = {
   rows: [
@@ -170,6 +172,8 @@ export const Editor = () => {
   };
 
   const renderTree = (component: Component) => {
+    const index = getComponentIndex(editorTree.root, component.id!);
+
     if (component.id === "root") {
       return (
         <Paper shadow="xs">
@@ -192,7 +196,7 @@ export const Editor = () => {
       return (
         <DroppableDraggable
           {...component}
-          key={component.id!}
+          key={`${component.id!}-${index}`}
           id={component.id!}
           grow
           columns={12}
@@ -208,9 +212,13 @@ export const Editor = () => {
     const componentToRender = componentMapper[component.name];
 
     return (
-      <Grid.Col key={component.id!} span={component.columns}>
+      <Draggable
+        id={component.id!}
+        key={`${component.id!}-${index}`}
+        span={component.columns}
+      >
         {componentToRender.Component(component)}
-      </Grid.Col>
+      </Draggable>
     );
   };
 

@@ -1,9 +1,6 @@
 import { AppBar } from "@/components/mapper/AppBar";
-import { BarChart } from "@/components/mapper/BarChart";
 import { Breadcrumb } from "@/components/mapper/Breadcrumb";
-import { LineChart } from "@/components/mapper/LineChart";
 import { NotImplement } from "@/components/mapper/NotImplemented";
-import { PieChart } from "@/components/mapper/PieChart";
 import { ProgressCard } from "@/components/mapper/ProgressCard";
 import { TaskList } from "@/components/mapper/TaskList";
 import { Box } from "@mantine/core";
@@ -49,7 +46,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: any) => <NotImplement {...props} />,
   },
   BarChart: {
-    Component: (props: any) => <BarChart {...props} />,
+    Component: (props: any) => <NotImplement {...props} />,
   },
   StackedBarChart: {
     Component: (props: any) => <NotImplement {...props} />,
@@ -64,10 +61,10 @@ export const componentMapper: ComponentMapper = {
     Component: (props: any) => <NotImplement {...props} />,
   },
   LineChart: {
-    Component: (props: any) => <LineChart {...props} />,
+    Component: (props: any) => <NotImplement {...props} />,
   },
   PieChart: {
-    Component: (props: any) => <PieChart {...props} />,
+    Component: (props: any) => <NotImplement {...props} />,
   },
   AreaChart: {
     Component: (props: any) => <NotImplement {...props} />,

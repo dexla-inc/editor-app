@@ -1,26 +1,36 @@
 import React, { PropsWithChildren } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { Box, BoxProps } from "@mantine/core";
+import { ColProps, Grid } from "@mantine/core";
 
 type Props = {
   id: string;
-} & BoxProps;
+} & ColProps;
 
-export const Draggable = (props: PropsWithChildren<Props>) => {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: props.id,
-  });
+export const Draggable = ({
+  id,
+  children,
+  ...props
+}: PropsWithChildren<Props>) => {
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: id,
+    });
 
-  const style = transform
-    ? {
-        transform: CSS.Translate.toString(transform),
-      }
-    : undefined;
+  const style = {
+    transform: CSS.Translate.toString(transform),
+  };
 
   return (
-    <Box ref={setNodeRef} style={style} {...listeners} {...attributes}>
-      {props.children}
-    </Box>
+    <Grid.Col
+      ref={setNodeRef}
+      pos="relative"
+      style={{ ...style, zIndex: isDragging ? 9999 : undefined }}
+      {...listeners}
+      {...attributes}
+      {...props}
+    >
+      {children}
+    </Grid.Col>
   );
 };

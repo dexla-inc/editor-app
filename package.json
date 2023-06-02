@@ -29,7 +29,6 @@
     "next": "13.4.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "recharts": "^2.6.2",
     "tree-crawl": "^1.2.1",
     "typescript": "5.0.4",
     "zundo": "^2.0.0-beta.18",
