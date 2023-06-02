@@ -75,6 +75,23 @@ export const findComponentById = (
   return found;
 };
 
+export const getComponentIndex = (treeRoot: Component, id: string): number => {
+  let index: number = 0;
+
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === id) {
+        index = context.index;
+        context.break();
+      }
+    },
+    { order: "bfs" }
+  );
+
+  return index;
+};
+
 export const checkIfIsChild = (treeRoot: Component, childId: string) => {
   let isChild = false;
 

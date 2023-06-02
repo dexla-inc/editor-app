@@ -3,6 +3,7 @@ import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { GridProps, Grid } from "@mantine/core";
 import { useEditorStore } from "@/stores/editor";
+import { getComponentIndex } from "@/utils/editor";
 
 type Props = {
   id: string;
@@ -13,7 +14,7 @@ export const DroppableDraggable = ({
   children,
   ...props
 }: PropsWithChildren<Props>) => {
-  const dropTeditorTree = useEditorStore((state) => state.tree);
+  const editorTree = useEditorStore((state) => state.tree);
   const dropTarget = useEditorStore((state) => state.dropTarget);
 
   const {
@@ -43,19 +44,26 @@ export const DroppableDraggable = ({
     ...borders,
   };
 
+  const index = getComponentIndex(editorTree.root, id);
+
   return (
-    <Grid
-      ref={(ref) => {
-        setDraggableRef(ref);
-        setDroppableRef(ref);
-      }}
-      w="100%"
-      {...listeners}
-      {...attributes}
-      {...props}
-      style={style}
+    <Grid.Col
+      span={props.columns}
+      sx={{ zIndex: isDragging ? 9999 : 1000 - index }}
     >
-      {children}
-    </Grid>
+      <Grid
+        ref={(ref) => {
+          setDraggableRef(ref);
+          setDroppableRef(ref);
+        }}
+        w="100%"
+        {...listeners}
+        {...attributes}
+        {...props}
+        style={style}
+      >
+        {children}
+      </Grid>
+    </Grid.Col>
   );
 };

@@ -1,6 +1,7 @@
 import { Droppable } from "@/components/Droppable";
 import { DroppableDraggable } from "@/components/DroppableDraggable";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
+import { componentMapper } from "@/utils/componentMapper";
 import {
   Component,
   addComponent,
@@ -13,9 +14,10 @@ import {
   DndContext,
   DragEndEvent,
   DragMoveEvent,
+  DragStartEvent,
   MeasuringStrategy,
 } from "@dnd-kit/core";
-import { Box, Container, Grid } from "@mantine/core";
+import { Container, Grid, Paper } from "@mantine/core";
 import { useHotkeys } from "@mantine/hooks";
 import { useEffect } from "react";
 
@@ -130,13 +132,7 @@ export const Editor = () => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active } = event;
 
-    setSelectedComponentId(active.id as string);
-
-    if (
-      !dropTarget ||
-      dropTarget.id === "root" ||
-      dropTarget.id === active.id
-    ) {
+    if (!dropTarget || dropTarget.id === active.id) {
       clearDropTarget();
       clearSelection();
       return;
@@ -163,6 +159,11 @@ export const Editor = () => {
     setDropTarget(target);
   };
 
+  const handleDragStart = (event: DragStartEvent) => {
+    const id = event.active.id;
+    setSelectedComponentId(id as string);
+  };
+
   const handleDragCancel = () => {
     clearDropTarget();
     clearSelection();
@@ -171,42 +172,44 @@ export const Editor = () => {
   const renderTree = (component: Component) => {
     if (component.id === "root") {
       return (
-        <Droppable
-          key={component.id}
-          id={component.id}
-          grow
-          columns={12}
-          bg="gray.0"
-          m={0}
-          gutter={0}
-        >
-          {component.children?.map(renderTree)}
-        </Droppable>
+        <Paper shadow="xs">
+          <Droppable
+            key={component.id}
+            id={component.id}
+            grow
+            columns={12}
+            bg="gray.0"
+            m={0}
+            gutter={0}
+          >
+            {component.children?.map((child) => renderTree(child))}
+          </Droppable>
+        </Paper>
       );
     }
 
     if (component.name === "Container") {
       return (
-        <Grid.Col key={component.id!} span={component.columns}>
-          <DroppableDraggable
-            id={component.id!}
-            grow
-            columns={12}
-            bg="white"
-            m={0}
-            gutter={0}
-          >
-            {component.children?.map(renderTree)}
-          </DroppableDraggable>
-        </Grid.Col>
+        <DroppableDraggable
+          {...component}
+          key={component.id!}
+          id={component.id!}
+          grow
+          columns={12}
+          bg="white"
+          m={0}
+          gutter={0}
+        >
+          {component.children?.map((child) => renderTree(child))}
+        </DroppableDraggable>
       );
     }
 
+    const componentToRender = componentMapper[component.name];
+
     return (
       <Grid.Col key={component.id!} span={component.columns}>
-        <Box bg="white" mih={150} sx={{ textAlign: "center" }}>
-          {component.name}
-        </Box>
+        {componentToRender.Component(component)}
       </Grid.Col>
     );
   };
@@ -216,6 +219,7 @@ export const Editor = () => {
       collisionDetection={(args) => {
         return closestEdge(args, editorTree);
       }}
+      onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragMove={handleDragMove}
       onDragCancel={handleDragCancel}
