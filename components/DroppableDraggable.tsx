@@ -1,12 +1,12 @@
 import React, { PropsWithChildren } from "react";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { GridProps, Grid } from "@mantine/core";
+import { Grid, Box, ColProps } from "@mantine/core";
 import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   id: string;
-} & GridProps;
+} & ColProps;
 
 export const DroppableDraggable = ({
   id,
@@ -44,11 +44,12 @@ export const DroppableDraggable = ({
 
   return (
     <Grid.Col
-      span={props.columns}
+      span={props.span}
       pos="relative"
       sx={{ zIndex: isDragging ? 9999 : undefined }}
+      {...props}
     >
-      <Grid
+      <Box
         ref={(ref) => {
           setDraggableRef(ref);
           setDroppableRef(ref);
@@ -56,11 +57,10 @@ export const DroppableDraggable = ({
         w="100%"
         {...listeners}
         {...attributes}
-        {...props}
         style={style}
       >
         {children}
-      </Grid>
+      </Box>
     </Grid.Col>
   );
 };
