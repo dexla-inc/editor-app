@@ -21,7 +21,8 @@ import {
   DragStartEvent,
   MeasuringStrategy,
 } from "@dnd-kit/core";
-import { Container, Grid, Paper } from "@mantine/core";
+import { Container, Paper } from "@mantine/core";
+import { useClickOutside } from "@mantine/hooks";
 import { useEffect } from "react";
 
 const tree = {
@@ -122,8 +123,12 @@ export const Editor = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
 
+  const ref = useClickOutside(clearSelection);
+
   useEffect(() => {
-    setEditorTree(getEditorTreeFromInitialPageStructure(tree));
+    const fullTree = getEditorTreeFromInitialPageStructure(tree);
+    console.log(fullTree);
+    setEditorTree(fullTree);
   }, [setEditorTree]);
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -200,55 +205,40 @@ export const Editor = () => {
     if (component.id === "root") {
       return (
         <Paper shadow="xs">
-          <Droppable
-            key={component.id}
-            id={component.id}
-            grow
-            columns={12}
-            bg="gray.0"
-            m={0}
-            gutter={0}
-          >
+          <Droppable key={component.id} id={component.id} bg="gray.0" m={0}>
             {component.children?.map((child) => renderTree(child))}
           </Droppable>
         </Paper>
       );
     }
 
-    if (component.name === "Container") {
+    const componentToRender = componentMapper[component.name];
+
+    if (component.name === "Container" || !componentToRender) {
       return (
         <DroppableDraggable
           key={component.id!}
           id={component.id!}
-          span={component.columns}
           component={component}
         >
-          <Grid grow columns={12} m={0} gutter={0}>
-            {component.children?.map((child) => renderTree(child))}
-          </Grid>
+          {component.children?.map((child) => renderTree(child))}
         </DroppableDraggable>
       );
     }
-
-    const componentToRender = componentMapper[component.name];
 
     return (
       <DroppableDraggable
         id={component.id!}
         key={component.id!}
-        span={component.columns}
         component={component}
       >
-        {componentToRender.Component(component)}
+        {componentToRender?.Component({ component, renderTree })}
       </DroppableDraggable>
     );
   };
 
   return (
     <DndContext
-      collisionDetection={(args) => {
-        return closestEdge(args, editorTree);
-      }}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragMove={handleDragMove}
@@ -258,8 +248,11 @@ export const Editor = () => {
           strategy: MeasuringStrategy.Always,
         },
       }}
+      collisionDetection={(args) => {
+        return closestEdge(args, editorTree);
+      }}
     >
-      <Container mb="xl" mt={100} pos="relative">
+      <Container ref={ref} mb="xl" mt={100} pos="relative">
         {renderTree(editorTree.root)}
       </Container>
     </DndContext>

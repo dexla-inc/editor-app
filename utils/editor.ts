@@ -4,6 +4,7 @@ import { DroppableContainer, RectMap } from "@dnd-kit/core/dist/store";
 import { Coordinates } from "@dnd-kit/utilities";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
+import { structureMapper } from "@/utils/componentMapper";
 
 export type Component = {
   id?: string;
@@ -11,6 +12,7 @@ export type Component = {
   name: string;
   description: string;
   children?: Component[];
+  props?: { [key: string]: any };
 };
 
 export type Row = {
@@ -52,11 +54,8 @@ export const getEditorTreeFromInitialPageStructure = (tree: {
           columns: 12,
           description: "Container",
           children: row.components.map((c) => {
-            return {
-              ...c,
-              id: nanoid(),
-              children: [],
-            };
+            const component = structureMapper[c.name];
+            return component.structure(c);
           }),
         };
       }),

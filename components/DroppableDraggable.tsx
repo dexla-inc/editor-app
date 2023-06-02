@@ -2,9 +2,8 @@ import React, { PropsWithChildren } from "react";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import {
-  Grid,
   Box,
-  ColProps,
+  BoxProps,
   Text,
   useMantineTheme,
   Group,
@@ -17,7 +16,7 @@ import { IconGripHorizontal } from "@tabler/icons-react";
 type Props = {
   id: string;
   component: Component;
-} & ColProps;
+} & BoxProps;
 
 export const DroppableDraggable = ({
   id,
@@ -68,12 +67,15 @@ export const DroppableDraggable = ({
   };
 
   return (
-    <Grid.Col
-      span={props.span}
+    <Box
+      {...props}
       pos="relative"
       sx={{ zIndex: isDragging ? 9999 : undefined }}
-      {...props}
+      w={`${
+        component.columns === 0 ? "auto" : `${(component.columns * 100) / 12}%`
+      }`}
       onClick={(e) => {
+        e.preventDefault();
         e.stopPropagation();
         setSelectedComponentId(id);
       }}
@@ -85,7 +87,18 @@ export const DroppableDraggable = ({
         }}
         w="100%"
         h="100%"
-        style={style}
+        pos="relative"
+        sx={{
+          zIndex: isDragging ? 9999 : undefined,
+          display: "flex",
+
+          ...style,
+        }}
+        {...props}
+        onClick={(e) => {
+          e.stopPropagation();
+          setSelectedComponentId(id);
+        }}
       >
         {children}
       </Box>
@@ -101,7 +114,7 @@ export const DroppableDraggable = ({
           borderTopRightRadius: theme.radius.sm,
         }}
       >
-        <Group py={4} px={8} position="center">
+        <Group py={4} px={8} noWrap>
           <Text color="white" size="xs">
             {component.name}
           </Text>
@@ -114,6 +127,6 @@ export const DroppableDraggable = ({
           </UnstyledButton>
         </Group>
       </Box>
-    </Grid.Col>
+    </Box>
   );
 };

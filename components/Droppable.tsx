@@ -1,11 +1,11 @@
 import React, { PropsWithChildren } from "react";
 import { useDroppable } from "@dnd-kit/core";
-import { GridProps, Grid } from "@mantine/core";
+import { BoxProps, Box } from "@mantine/core";
 import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   id: string;
-} & GridProps;
+} & BoxProps;
 
 export const Droppable = ({
   id,
@@ -29,13 +29,13 @@ export const Droppable = ({
     : {};
 
   return (
-    <Grid
+    <Box
       ref={setNodeRef}
       w="100%"
       {...props}
       style={{ ...borders, boxSizing: "content-box" }}
     >
       {children}
-    </Grid>
+    </Box>
   );
 };
