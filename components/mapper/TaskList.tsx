@@ -26,7 +26,7 @@ const items = [
 
 export const TaskList = () => {
   return (
-    <Card withBorder w="100%" h="100%">
+    <Card radius={0} w="100%" h="100%">
       <Center>
         <List
           spacing="xs"

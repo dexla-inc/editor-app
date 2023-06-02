@@ -1,7 +1,6 @@
 import { emptyEditorTree } from "@/stores/editor";
 import { ClientRect, CollisionDescriptor, Active } from "@dnd-kit/core";
 import { DroppableContainer, RectMap } from "@dnd-kit/core/dist/store";
-import { arrayMove } from "@dnd-kit/sortable";
 import { Coordinates } from "@dnd-kit/utilities";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
@@ -28,6 +27,17 @@ export type DropTarget = {
   edge: Edge;
   rect: ClientRect;
 };
+
+export function arrayMove<T>(array: T[], from: number, to: number): T[] {
+  const newArray = array.slice();
+  newArray.splice(
+    to < 0 ? newArray.length + to : to,
+    0,
+    newArray.splice(from, 1)[0]
+  );
+
+  return newArray;
+}
 
 export const getEditorTreeFromInitialPageStructure = (tree: {
   rows: Row[];

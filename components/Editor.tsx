@@ -131,7 +131,6 @@ export const Editor = () => {
 
     if (!dropTarget || dropTarget.id === active.id) {
       clearDropTarget();
-      clearSelection();
       return;
     }
 
@@ -174,7 +173,6 @@ export const Editor = () => {
 
     setEditorTree(copy);
     clearDropTarget();
-    clearSelection();
   };
 
   const handleDragMove = (event: DragMoveEvent) => {
@@ -220,10 +218,10 @@ export const Editor = () => {
     if (component.name === "Container") {
       return (
         <DroppableDraggable
-          {...component}
           key={component.id!}
           id={component.id!}
           span={component.columns}
+          component={component}
         >
           <Grid grow columns={12} m={0} gutter={0}>
             {component.children?.map((child) => renderTree(child))}
@@ -239,6 +237,7 @@ export const Editor = () => {
         id={component.id!}
         key={component.id!}
         span={component.columns}
+        component={component}
       >
         {componentToRender.Component(component)}
       </DroppableDraggable>
@@ -260,7 +259,7 @@ export const Editor = () => {
         },
       }}
     >
-      <Container my="xl" pos="relative">
+      <Container mb="xl" mt={100} pos="relative">
         {renderTree(editorTree.root)}
       </Container>
     </DndContext>
