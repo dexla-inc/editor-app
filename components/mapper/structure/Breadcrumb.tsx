@@ -1,19 +1,49 @@
-import { Breadcrumbs, Text } from "@mantine/core";
+import { Component } from "@/utils/editor";
+import { nanoid } from "nanoid";
 
-export const Breadcrumb = () => {
-  const items = [
-    { title: "Home" },
-    { title: "Settings" },
-    { title: "About" },
-  ].map((item, index) => (
-    <Text size="sm" key={index}>
-      {item.title}
-    </Text>
-  ));
-
-  return (
-    <Breadcrumbs w="100%" py="xl" px="md">
-      {items}
-    </Breadcrumbs>
-  );
-};
+export const jsonStructure = (props?: any): Component => ({
+  id: nanoid(),
+  name: "Breadcrumb",
+  description: "Breadcrumb",
+  columns: props.comluns || 12,
+  props: {
+    w: "100%",
+    py: "xl",
+    px: "md",
+  },
+  children: [
+    {
+      id: nanoid(),
+      name: "Text",
+      columns: 0,
+      description: "Breadcrumb Item",
+      children: [],
+      props: {
+        children: "Home",
+        size: "sm",
+      },
+    },
+    {
+      id: nanoid(),
+      name: "Text",
+      columns: 0,
+      description: "Breadcrumb Item",
+      children: [],
+      props: {
+        children: "Settings",
+        size: "xs",
+      },
+    },
+    {
+      id: nanoid(),
+      name: "Text",
+      columns: 0,
+      description: "Breadcrumb Item",
+      children: [],
+      props: {
+        children: "About",
+        size: "xs",
+      },
+    },
+  ],
+});

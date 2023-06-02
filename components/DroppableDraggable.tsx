@@ -91,7 +91,6 @@ export const DroppableDraggable = ({
         sx={{
           zIndex: isDragging ? 9999 : undefined,
           display: "flex",
-
           ...style,
         }}
         {...props}

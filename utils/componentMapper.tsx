@@ -7,6 +7,8 @@ import { Text } from "@/components/mapper/Text";
 import { Group } from "@/components/mapper/Group";
 import { Flex } from "@/components/mapper/Flex";
 import { Stack } from "@/components/mapper/Stack";
+import { Breadcrumb } from "@/components/mapper/Breadcrumb";
+import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
 
 export type StructureDefinition = {
   structure: (props: any) => Component;
@@ -18,7 +20,7 @@ export type StructureMapper = {
 
 export const structureMapper: StructureMapper = {
   Breadcrumb: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
+    structure: (props: any) => Breadcrumbs.jsonStructure(props),
   },
   AppBar: { structure: (props: any) => AppBar.jsonStructure(props) },
   Accordion: {
@@ -121,6 +123,16 @@ export const componentMapper: ComponentMapper = {
   Box: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Box component={props.component} renderTree={props.renderTree} />
+    ),
+  },
+  Breadcrumb: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Breadcrumb
+        component={props.component}
+        renderTree={props.renderTree}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+      />
     ),
   },
   Flex: {
