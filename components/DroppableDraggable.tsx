@@ -55,6 +55,7 @@ export const DroppableDraggable = ({
           setDroppableRef(ref);
         }}
         w="100%"
+        h="100%"
         {...listeners}
         {...attributes}
         style={style}

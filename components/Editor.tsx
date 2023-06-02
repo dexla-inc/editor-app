@@ -1,14 +1,18 @@
 import { Droppable } from "@/components/Droppable";
 import { DroppableDraggable } from "@/components/DroppableDraggable";
-import { useEditorStore, useTemporalStore } from "@/stores/editor";
+import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
 import {
   Component,
   addComponent,
   closestEdge,
   findComponentById,
+  getComponentParent,
   getEditorTreeFromInitialPageStructure,
+  moveComponent,
+  moveComponentToDifferentParent,
   removeComponent,
+  removeComponentFromParent,
 } from "@/utils/editor";
 import {
   DndContext,
@@ -18,7 +22,6 @@ import {
   MeasuringStrategy,
 } from "@dnd-kit/core";
 import { Container, Grid, Paper } from "@mantine/core";
-import { useHotkeys } from "@mantine/hooks";
 import { useEffect } from "react";
 
 const tree = {
@@ -118,12 +121,6 @@ export const Editor = () => {
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
-  const { undo, redo } = useTemporalStore((state) => state);
-
-  useHotkeys([
-    ["mod+Z", () => undo()],
-    ["mod+shift+Z", () => redo()],
-  ]);
 
   useEffect(() => {
     setEditorTree(getEditorTreeFromInitialPageStructure(tree));
@@ -139,9 +136,41 @@ export const Editor = () => {
     }
 
     const copy = { ...editorTree };
-    const toAdd = findComponentById(copy.root, active.id as string);
-    removeComponent(copy.root, active.id as string);
-    addComponent(copy.root, toAdd as unknown as Component, dropTarget);
+
+    const activeComponent = findComponentById(
+      copy.root,
+      dropTarget.id as string
+    );
+
+    if (activeComponent?.name !== "Container") {
+      const activeParent = getComponentParent(copy.root, active.id as string);
+      const targetParent = getComponentParent(
+        copy.root,
+        dropTarget.id as string
+      );
+
+      if (activeParent?.id !== targetParent?.id) {
+        // move to a new parent
+        moveComponentToDifferentParent(
+          copy.root,
+          active.id as string,
+          dropTarget,
+          targetParent!.id as string
+        );
+        removeComponentFromParent(
+          copy.root,
+          active.id as string,
+          activeParent!.id as string
+        );
+      } else {
+        // reorder
+        moveComponent(copy.root, active.id as string, dropTarget.id as string);
+      }
+    } else {
+      const toAdd = findComponentById(copy.root, active.id as string);
+      removeComponent(copy.root, active.id as string);
+      addComponent(copy.root, toAdd as unknown as Component, dropTarget);
+    }
 
     setEditorTree(copy);
     clearDropTarget();
@@ -196,7 +225,7 @@ export const Editor = () => {
           id={component.id!}
           span={component.columns}
         >
-          <Grid grow columns={12} bg="white" m={0} gutter={0}>
+          <Grid grow columns={12} m={0} gutter={0}>
             {component.children?.map((child) => renderTree(child))}
           </Grid>
         </DroppableDraggable>

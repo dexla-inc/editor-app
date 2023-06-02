@@ -1,6 +1,7 @@
 import { emptyEditorTree } from "@/stores/editor";
 import { ClientRect, CollisionDescriptor, Active } from "@dnd-kit/core";
 import { DroppableContainer, RectMap } from "@dnd-kit/core/dist/store";
+import { arrayMove } from "@dnd-kit/sortable";
 import { Coordinates } from "@dnd-kit/utilities";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
@@ -107,6 +108,126 @@ export const checkIfIsChild = (treeRoot: Component, childId: string) => {
   );
 
   return isChild;
+};
+
+export const moveComponentToDifferentParent = (
+  treeRoot: Component,
+  id: string,
+  dropTarget: DropTarget,
+  newParentId: string
+) => {
+  const componentToAdd = findComponentById(treeRoot, id) as Component;
+
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === newParentId) {
+        if (dropTarget.edge === "left") {
+          componentToAdd.columns = Math.floor(
+            componentToAdd.columns / ((node.children || [])?.length + 1)
+          );
+          node.children?.forEach((child) => {
+            child.columns = Math.floor(
+              child.columns / ((node.children || [])?.length + 1)
+            );
+          });
+          node.children = [componentToAdd, ...(node.children || [])];
+        } else if (dropTarget.edge === "right") {
+          componentToAdd.columns = Math.floor(
+            componentToAdd.columns / ((node.children || [])?.length + 1)
+          );
+          node.children?.forEach((child) => {
+            child.columns = Math.floor(
+              child.columns / ((node.children || [])?.length + 1)
+            );
+          });
+          node.children = [...(node.children || []), componentToAdd];
+        } else if (dropTarget.edge === "top") {
+          node.children = [componentToAdd, ...(node.children || [])];
+        } else if (dropTarget.edge === "bottom") {
+          node.children = [...(node.children || []), componentToAdd];
+        }
+        const items = node.children?.map((c) => c.id) as string[];
+        const oldIndex = items.indexOf(id);
+        const newIndex = items.indexOf(dropTarget.id);
+
+        const newPositions = arrayMove(items, oldIndex, newIndex);
+        node.children = node.children?.sort((a, b) => {
+          const aIndex = newPositions.indexOf(a.id as string);
+          const bIndex = newPositions.indexOf(b.id as string);
+          return aIndex - bIndex;
+        });
+
+        context.break();
+      }
+    },
+    { order: "bfs" }
+  );
+};
+
+export const moveComponent = (
+  treeRoot: Component,
+  id: string,
+  targetId: string
+) => {
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === id) {
+        const parent = context.parent;
+        const items = parent?.children?.map((c) => c.id) as string[];
+        const oldIndex = items.indexOf(id);
+        const newIndex = items.indexOf(targetId);
+
+        const newPositions = arrayMove(items, oldIndex, newIndex);
+        parent!.children = parent?.children?.sort((a, b) => {
+          const aIndex = newPositions.indexOf(a.id as string);
+          const bIndex = newPositions.indexOf(b.id as string);
+          return aIndex - bIndex;
+        });
+
+        context.break();
+      }
+    },
+    { order: "bfs" }
+  );
+};
+
+export const getComponentParent = (
+  treeRoot: Component,
+  id: string
+): Component | null => {
+  let parent: Component | null = null;
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === id) {
+        parent = context.parent;
+        context.break();
+      }
+    },
+    { order: "bfs" }
+  );
+
+  return parent;
+};
+
+export const removeComponentFromParent = (
+  treeRoot: Component,
+  id: string,
+  parentId: string
+) => {
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === id && context.parent?.id === parentId) {
+        context.parent?.children?.splice(context.index, 1);
+        context.remove();
+        context.break();
+      }
+    },
+    { order: "bfs" }
+  );
 };
 
 export const removeComponent = (treeRoot: Component, id: string) => {
