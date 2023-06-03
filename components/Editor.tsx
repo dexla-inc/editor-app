@@ -26,7 +26,6 @@ import { Container, Paper } from "@mantine/core";
 import { useClickOutside } from "@mantine/hooks";
 import { useEffect } from "react";
 import { Shell } from "@/components/AppShell";
-import { PageHeader } from "@/components/PageHeader";
 
 const tree = {
   rows: [
@@ -261,11 +260,10 @@ export const Editor = () => {
       }}
     >
       <Shell>
-        <PageHeader />
         <Container
           ref={ref}
           mb="xl"
-          mt={HEADER_HEIGHT * 2}
+          mt={HEADER_HEIGHT}
           pos="relative"
           size="xl"
         >
