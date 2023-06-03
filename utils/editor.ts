@@ -426,11 +426,10 @@ export const closestEdge = (
   },
   editorTree: EditorTree
 ) => {
-  const centerRect = centerOfRectangle(
-    collisionRect,
-    collisionRect.left,
-    collisionRect.top
-  );
+  const activeRect = {
+    x: collisionRect.left,
+    y: collisionRect.top,
+  };
 
   const collisions: CollisionDescriptor[] = [];
   const activeComponent = findComponentById(
@@ -444,10 +443,10 @@ export const closestEdge = (
     const isChild = checkIfIsChild(activeComponent!, id as string);
 
     if (rect && !isChild) {
-      const leftDist = distanceBetween(leftOfRectangle(rect), centerRect);
-      const rigthDist = distanceBetween(rightOfRectangle(rect), centerRect);
-      const topDist = distanceBetween(topOfRectangle(rect), centerRect);
-      const bottomDist = distanceBetween(bottomOfRectangle(rect), centerRect);
+      const leftDist = distanceBetween(leftOfRectangle(rect), activeRect);
+      const rigthDist = distanceBetween(rightOfRectangle(rect), activeRect);
+      const topDist = distanceBetween(topOfRectangle(rect), activeRect);
+      const bottomDist = distanceBetween(bottomOfRectangle(rect), activeRect);
 
       const { edge, value } = getClosestEdge(
         leftDist,

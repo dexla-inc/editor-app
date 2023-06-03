@@ -2,6 +2,7 @@ import { Droppable } from "@/components/Droppable";
 import { DroppableDraggable } from "@/components/DroppableDraggable";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
+import { HEADER_HEIGHT } from "@/utils/config";
 import {
   Component,
   addComponent,
@@ -252,7 +253,7 @@ export const Editor = () => {
         return closestEdge(args, editorTree);
       }}
     >
-      <Container ref={ref} mb="xl" mt={100} pos="relative">
+      <Container ref={ref} mb="xl" mt={HEADER_HEIGHT * 2} pos="relative">
         {renderTree(editorTree.root)}
       </Container>
     </DndContext>

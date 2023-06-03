@@ -12,6 +12,7 @@ import {
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { IconGripHorizontal } from "@tabler/icons-react";
+import { DROP_INDICATOR_WIDTH } from "@/utils/config";
 
 type Props = {
   id: string;
@@ -48,12 +49,23 @@ export const DroppableDraggable = ({
 
   const borders = isOver
     ? {
-        borderTop: dropTarget?.edge === "top" ? `2px solid blue` : undefined,
+        border: `1px solid blue`,
+        borderTop:
+          dropTarget?.edge === "top"
+            ? `${DROP_INDICATOR_WIDTH}px solid blue`
+            : undefined,
         borderBottom:
-          dropTarget?.edge === "bottom" ? `2px solid blue` : undefined,
-        borderLeft: dropTarget?.edge === "left" ? `2px solid blue` : undefined,
+          dropTarget?.edge === "bottom"
+            ? `${DROP_INDICATOR_WIDTH}px solid blue`
+            : undefined,
+        borderLeft:
+          dropTarget?.edge === "left"
+            ? `${DROP_INDICATOR_WIDTH}px solid blue`
+            : undefined,
         borderRight:
-          dropTarget?.edge === "right" ? `2px solid blue` : undefined,
+          dropTarget?.edge === "right"
+            ? `${DROP_INDICATOR_WIDTH}px solid blue`
+            : undefined,
       }
     : isSlected
     ? {
