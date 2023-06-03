@@ -1,17 +1,24 @@
 import {
   AppShell,
   Box,
+  Card,
+  Group,
   Navbar,
   SegmentedControl,
   Stack,
+  Text,
   useMantineTheme,
 } from "@mantine/core";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
+import { DraggableComponent } from "@/components/DraggableComponent";
 
 export const Shell = ({ children }: PropsWithChildren) => {
   const theme = useMantineTheme();
+  const [activeTab, setActiveTab] = useState<"components" | "layers">(
+    "components"
+  );
 
   return (
     <AppShell
@@ -45,15 +52,28 @@ export const Shell = ({ children }: PropsWithChildren) => {
             >
               <Logo />
             </Box>
-            <Stack>
+            <Stack p="lg">
               <SegmentedControl
-                m="lg"
                 size="xs"
+                value={activeTab}
+                onChange={(value) => setActiveTab(value as any)}
                 data={[
                   { label: "Components", value: "components" },
                   { label: "Layers", value: "layers" },
                 ]}
               />
+              {activeTab === "components" && (
+                <Stack>
+                  <DraggableComponent id="Text">
+                    <Text size="xs">Text</Text>
+                  </DraggableComponent>
+                </Stack>
+              )}
+              {activeTab === "layers" && (
+                <Stack>
+                  <Text size="xs">Layers</Text>
+                </Stack>
+              )}
             </Stack>
           </Navbar.Section>
         </Navbar>

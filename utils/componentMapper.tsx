@@ -1,6 +1,7 @@
 import { Component } from "@/utils/editor";
-import * as AppBar from "@/components/mapper/structure/AppBar";
+import * as AppBarStructure from "@/components/mapper/structure/AppBar";
 import * as NotImplemented from "@/components/mapper/structure/NotImplemented";
+import * as TextStructure from "@/components/mapper/structure/Text";
 import { Box } from "@/components/mapper/Box";
 import { Avatar } from "@/components/mapper/Avatar";
 import { Text } from "@/components/mapper/Text";
@@ -19,10 +20,11 @@ export type StructureMapper = {
 };
 
 export const structureMapper: StructureMapper = {
+  // AI generated structures
   Breadcrumb: {
     structure: (props: any) => Breadcrumbs.jsonStructure(props),
   },
-  AppBar: { structure: (props: any) => AppBar.jsonStructure(props) },
+  AppBar: { structure: (props: any) => AppBarStructure.jsonStructure(props) },
   Accordion: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
   },
@@ -103,6 +105,10 @@ export const structureMapper: StructureMapper = {
   },
   ImageCardList: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
+  },
+  // Primitives you can add to the canvas
+  Text: {
+    structure: (props: any) => TextStructure.jsonStructure(props),
   },
 };
 

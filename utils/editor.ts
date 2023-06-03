@@ -86,23 +86,6 @@ export const getComponentById = (
   return found;
 };
 
-export const getComponentIndex = (treeRoot: Component, id: string): number => {
-  let index: number = 0;
-
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (node.id === id) {
-        index = context.index;
-        context.break();
-      }
-    },
-    { order: "bfs" }
-  );
-
-  return index;
-};
-
 export const checkIfIsChild = (treeRoot: Component, childId: string) => {
   let isChild = false;
 
@@ -387,7 +370,9 @@ export const closestEdge = (
   for (const droppableContainer of droppableContainers) {
     const { id } = droppableContainer;
     const rect = droppableRects.get(id);
-    const isChild = checkIfIsChild(activeComponent!, id as string);
+    const isChild = activeComponent
+      ? checkIfIsChild(activeComponent!, id as string)
+      : false;
 
     if (rect && !isChild) {
       const leftDist = distanceBetween(leftOfRectangle(rect), activeRect);

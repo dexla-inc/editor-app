@@ -49,7 +49,7 @@ export const DroppableDraggable = ({
   const { setNodeRef: setDroppableRef } = useDroppable({ id });
 
   const isOver = dropTarget?.id === id && !isDragging;
-  const isSlected = selectedComponentId === id;
+  const isSelected = selectedComponentId === id;
 
   const borders = isOver
     ? {
@@ -71,7 +71,7 @@ export const DroppableDraggable = ({
             ? `${DROP_INDICATOR_WIDTH}px solid blue`
             : undefined,
       }
-    : isSlected
+    : isSelected
     ? {
         border: `1px solid blue`,
       }
@@ -119,7 +119,7 @@ export const DroppableDraggable = ({
         top={-36}
         sx={{
           zIndex: 99999,
-          display: isSlected && !isDragging ? "block" : "none",
+          display: isSelected && !isDragging ? "block" : "none",
           background: "blue",
           borderTopLeftRadius: theme.radius.sm,
           borderTopRightRadius: theme.radius.sm,

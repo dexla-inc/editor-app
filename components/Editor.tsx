@@ -1,7 +1,7 @@
 import { Droppable } from "@/components/Droppable";
 import { DroppableDraggable } from "@/components/DroppableDraggable";
 import { useEditorStore } from "@/stores/editor";
-import { componentMapper } from "@/utils/componentMapper";
+import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import { HEADER_HEIGHT } from "@/utils/config";
 import {
   Component,
@@ -143,12 +143,15 @@ export const Editor = () => {
 
     const copy = { ...editorTree };
 
-    const activeComponent = getComponentById(
-      copy.root,
-      dropTarget.id as string
-    );
+    const dropComponent = getComponentById(copy.root, dropTarget.id as string);
+    const activeComponent = getComponentById(copy.root, active.id as string);
 
-    if (activeComponent?.name !== "Container") {
+    if (!activeComponent) {
+      const component = structureMapper[active.id];
+      const structure = component.structure({});
+      addComponent(copy.root, structure as unknown as Component, dropTarget);
+      setSelectedComponentId(structure.id as string);
+    } else if (dropComponent?.name !== "Container") {
       const activeParent = getComponentParent(copy.root, active.id as string);
       const targetParent = getComponentParent(
         copy.root,
@@ -173,9 +176,12 @@ export const Editor = () => {
         moveComponent(copy.root, active.id as string, dropTarget);
       }
     } else {
-      const toAdd = getComponentById(copy.root, active.id as string);
       removeComponent(copy.root, active.id as string);
-      addComponent(copy.root, toAdd as unknown as Component, dropTarget);
+      addComponent(
+        copy.root,
+        activeComponent as unknown as Component,
+        dropTarget
+      );
     }
 
     setEditorTree(copy);
@@ -242,8 +248,8 @@ export const Editor = () => {
   return (
     <DndContext
       onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
       onDragMove={handleDragMove}
+      onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
       measuring={{
         droppable: {
