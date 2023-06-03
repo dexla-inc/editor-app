@@ -139,8 +139,6 @@ export const Editor = () => {
     }
 
     const copy = { ...editorTree };
-
-    const dropComponent = getComponentById(copy.root, dropTarget.id as string);
     const activeComponent = getComponentById(copy.root, active.id as string);
 
     if (!activeComponent) {
@@ -148,7 +146,7 @@ export const Editor = () => {
       const structure = component.structure({});
       addComponent(copy.root, structure as unknown as Component, dropTarget);
       setSelectedComponentId(structure.id as string);
-    } else if (dropComponent?.name !== "Container") {
+    } else if (dropTarget?.id !== "root") {
       const activeParent = getComponentParent(copy.root, active.id as string);
       const targetParent = getComponentParent(
         copy.root,

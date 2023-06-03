@@ -1,11 +1,11 @@
-import { NavbarSection } from "@/components/NavbarSection";
+import { SidebarSection } from "@/components/SidebarSection";
 import { Text } from "@mantine/core";
 import {
   IconFileInvoice,
   IconLayoutDashboard,
   IconStack2,
 } from "@tabler/icons-react";
-import { EditorNvbarComponentsSection } from "@/components/EditorNavbarComponentsSction";
+import { EditorNvbarComponentsSection } from "@/components/EditorNavbarComponentsSection";
 
 const sections = [
   {
@@ -38,9 +38,9 @@ const sectionMapper: SectionsMapper = {
 
 export const EditorNavbarSections = () => {
   const sectionsToRender = sections.map((item) => (
-    <NavbarSection {...item} key={item.label}>
+    <SidebarSection {...item} key={item.label}>
       {sectionMapper[item.id as string](item)}
-    </NavbarSection>
+    </SidebarSection>
   ));
 
   return <>{sectionsToRender}</>;

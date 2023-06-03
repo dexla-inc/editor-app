@@ -11,7 +11,8 @@ import {
 import { PropsWithChildren } from "react";
 import { Logo } from "@/components/Logo";
 import { HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
-import { EditorNavbarSections } from "./EditorNavbarSections";
+import { EditorNavbarSections } from "@/components/EditorNavbarSections";
+import { EditorAsideSections } from "@/components/EditorAsideSections";
 
 export const Shell = ({ children }: PropsWithChildren) => {
   const theme = useMantineTheme();
@@ -35,12 +36,7 @@ export const Shell = ({ children }: PropsWithChildren) => {
           }}
         >
           <Navbar.Section grow component={ScrollArea}>
-            <Box
-              sx={{
-                paddingTop: theme.spacing.xl,
-                paddingBottom: theme.spacing.xl,
-              }}
-            >
+            <Box py="sm">
               <EditorNavbarSections />
             </Box>
           </Navbar.Section>
@@ -59,7 +55,11 @@ export const Shell = ({ children }: PropsWithChildren) => {
             height: `calc(100% - ${HEADER_HEIGHT}px)`,
           }}
         >
-          Aside
+          <Aside.Section grow component={ScrollArea}>
+            <Box py="sm">
+              <EditorAsideSections />
+            </Box>
+          </Aside.Section>
         </Aside>
       }
     >

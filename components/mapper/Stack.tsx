@@ -10,7 +10,7 @@ export const Stack = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;
 
   return (
-    <MantineStack {...props} {...componentProps}>
+    <MantineStack className="some-stack" {...props} {...componentProps}>
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))
         : children}

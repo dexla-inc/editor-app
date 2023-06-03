@@ -11,19 +11,19 @@ import {
 import { IconChevronDown } from "@tabler/icons-react";
 import { PropsWithChildren, useState } from "react";
 
-interface NavbarSectionProps {
+interface SidebarSectionProps {
   icon: React.FC<any>;
   label: string;
   initiallyOpened?: boolean;
   links?: { label: string; link: string }[];
 }
 
-export function NavbarSection({
+export function SidebarSection({
   icon: Icon,
   label,
   initiallyOpened,
   children,
-}: PropsWithChildren<NavbarSectionProps>) {
+}: PropsWithChildren<SidebarSectionProps>) {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(initiallyOpened || false);
 

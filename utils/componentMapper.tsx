@@ -2,14 +2,15 @@ import { Component } from "@/utils/editor";
 import * as AppBarStructure from "@/components/mapper/structure/AppBar";
 import * as NotImplemented from "@/components/mapper/structure/NotImplemented";
 import * as TextStructure from "@/components/mapper/structure/Text";
+import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
 import { Box } from "@/components/mapper/Box";
 import { Avatar } from "@/components/mapper/Avatar";
 import { Text } from "@/components/mapper/Text";
 import { Group } from "@/components/mapper/Group";
 import { Flex } from "@/components/mapper/Flex";
+import { Container } from "@/components/mapper/Container";
 import { Stack } from "@/components/mapper/Stack";
 import { Breadcrumb } from "@/components/mapper/Breadcrumb";
-import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
 
 export type StructureDefinition = {
   structure: (props: any) => Component;
@@ -112,8 +113,11 @@ export const structureMapper: StructureMapper = {
   },
 };
 
+export type Modifiers = "spacing" | "text";
+
 export type ComponentDefinition = {
   Component: any;
+  modifiers: Modifiers[];
 };
 
 export type ComponentMapper = {
@@ -125,11 +129,13 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Avatar component={props.component} renderTree={props.renderTree} />
     ),
+    modifiers: ["spacing"],
   },
   Box: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Box component={props.component} renderTree={props.renderTree} />
     ),
+    modifiers: ["spacing"],
   },
   Breadcrumb: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -140,25 +146,36 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
+    modifiers: ["spacing"],
   },
   Flex: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Flex component={props.component} renderTree={props.renderTree} />
     ),
+    modifiers: ["spacing"],
+  },
+  Container: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Container component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing"],
   },
   Group: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Group component={props.component} renderTree={props.renderTree} />
     ),
+    modifiers: ["spacing"],
   },
   Stack: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Stack component={props.component} renderTree={props.renderTree} />
     ),
+    modifiers: ["spacing"],
   },
   Text: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Text component={props.component} renderTree={props.renderTree} />
     ),
+    modifiers: ["spacing", "text"],
   },
 };
