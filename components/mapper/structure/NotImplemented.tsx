@@ -8,39 +8,49 @@ export const jsonStructure = (props?: any): Component => {
 
   return {
     id: nanoid(),
-    name: "Stack",
-    description: "NotImplement Stack",
+    name: "Container",
+    description: "NotImplement Container",
     props: {
       w: columnsToWidth,
-      align: "center",
-      justify: "center",
-      spacing: 2,
-      py: "lg",
-      ...(props.props || {}),
     },
     children: [
       {
         id: nanoid(),
-        name: "Text",
-        description: "NotImplement Component Name",
-        children: [],
+        name: "Stack",
+        description: "NotImplement Stack",
         props: {
-          children: props.name,
-          size: "sm",
-          w: "auto",
+          w: "100%",
+          align: "center",
+          justify: "center",
+          spacing: 2,
+          py: "lg",
+          ...(props.props || {}),
         },
-      },
-      {
-        id: nanoid(),
-        name: "Text",
-        description: "NotImplement Text",
-        children: [],
-        props: {
-          children: "Not implemented yet",
-          size: "xs",
-          color: "dimmed",
-          w: "auto",
-        },
+        children: [
+          {
+            id: nanoid(),
+            name: "Text",
+            description: "NotImplement Component Name",
+            children: [],
+            props: {
+              children: props.name,
+              size: "sm",
+              w: "auto",
+            },
+          },
+          {
+            id: nanoid(),
+            name: "Text",
+            description: "NotImplement Text",
+            children: [],
+            props: {
+              children: "Not implemented yet",
+              size: "xs",
+              color: "dimmed",
+              w: "auto",
+            },
+          },
+        ],
       },
     ],
   };
