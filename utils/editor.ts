@@ -8,7 +8,6 @@ import { structureMapper } from "@/utils/componentMapper";
 
 export type Component = {
   id?: string;
-  columns: number;
   name: string;
   description: string;
   children?: Component[];
@@ -51,8 +50,10 @@ export const getEditorTreeFromInitialPageStructure = (tree: {
         return {
           id: nanoid(),
           name: "Container",
-          columns: 12,
           description: "Container",
+          props: {
+            w: "100%",
+          },
           children: row.components.map((c) => {
             const component = structureMapper[c.name];
             return component.structure(c);
@@ -131,17 +132,7 @@ export const moveComponentToDifferentParent = (
     treeRoot,
     (node, context) => {
       if (node.id === newParentId) {
-        if (dropTarget.edge === "left") {
-          componentToAdd.columns = Math.floor(
-            componentToAdd.columns / ((node.children || [])?.length + 1)
-          );
-
-          node.children?.forEach((child) => {
-            child.columns = Math.floor(
-              child.columns / ((node.children || [])?.length + 1)
-            );
-          });
-
+        if (dropTarget.edge === "left" || dropTarget.edge === "top") {
           const dropIndex = node.children?.findIndex(
             (c) => c.id === dropTarget.id
           );
@@ -150,35 +141,10 @@ export const moveComponentToDifferentParent = (
             0,
             componentToAdd
           );
-        } else if (dropTarget.edge === "right") {
-          componentToAdd.columns = Math.floor(
-            componentToAdd.columns / ((node.children || [])?.length + 1)
-          );
-
-          node.children?.forEach((child) => {
-            child.columns = Math.floor(
-              child.columns / ((node.children || [])?.length + 1)
-            );
-          });
-
-          const dropIndex = node.children?.findIndex(
-            (c) => c.id === dropTarget.id
-          );
-          node.children?.splice(
-            Math.min((dropIndex || 0) + 1, node.children.length),
-            0,
-            componentToAdd
-          );
-        } else if (dropTarget.edge === "top") {
-          const dropIndex = node.children?.findIndex(
-            (c) => c.id === dropTarget.id
-          );
-          node.children?.splice(
-            Math.max((dropIndex || 0) - 1, 0),
-            0,
-            componentToAdd
-          );
-        } else if (dropTarget.edge === "bottom") {
+        } else if (
+          dropTarget.edge === "right" ||
+          dropTarget.edge === "bottom"
+        ) {
           const dropIndex = node.children?.findIndex(
             (c) => c.id === dropTarget.id
           );
@@ -293,35 +259,16 @@ export const addComponent = (
     treeRoot,
     (node, context) => {
       if (node.id === dropTarget.id) {
-        if (dropTarget.edge === "left") {
-          componentToAdd.columns = Math.floor(
-            componentToAdd.columns / ((node.children || [])?.length + 1)
-          );
-          node.children?.forEach((child) => {
-            child.columns = Math.floor(
-              child.columns / ((node.children || [])?.length + 1)
-            );
-          });
+        if (dropTarget.edge === "left" || dropTarget.edge === "top") {
           node.children = [componentToAdd, ...(node.children || [])];
-          context.break();
-        } else if (dropTarget.edge === "right") {
-          componentToAdd.columns = Math.floor(
-            componentToAdd.columns / ((node.children || [])?.length + 1)
-          );
-          node.children?.forEach((child) => {
-            child.columns = Math.floor(
-              child.columns / ((node.children || [])?.length + 1)
-            );
-          });
+        } else if (
+          dropTarget.edge === "right" ||
+          dropTarget.edge === "bottom"
+        ) {
           node.children = [...(node.children || []), componentToAdd];
-          context.break();
-        } else if (dropTarget.edge === "top") {
-          node.children = [componentToAdd, ...(node.children || [])];
-          context.break();
-        } else if (dropTarget.edge === "bottom") {
-          node.children = [...(node.children || []), componentToAdd];
-          context.break();
         }
+
+        context.break();
       }
     },
     { order: "bfs" }

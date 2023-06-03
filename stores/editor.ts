@@ -8,7 +8,9 @@ export const emptyEditorTree = {
     id: "root",
     name: "Container",
     description: "Root Container",
-    columns: 12,
+    props: {
+      w: "100%",
+    },
     children: [],
   },
 };

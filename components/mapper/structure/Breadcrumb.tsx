@@ -1,49 +1,55 @@
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
-export const jsonStructure = (props?: any): Component => ({
-  id: nanoid(),
-  name: "Breadcrumb",
-  description: "Breadcrumb",
-  columns: props.comluns || 12,
-  props: {
-    w: "100%",
-    py: "xl",
-    px: "md",
-  },
-  children: [
-    {
-      id: nanoid(),
-      name: "Text",
-      columns: 0,
-      description: "Breadcrumb Item",
-      children: [],
-      props: {
-        children: "Home",
-        size: "sm",
-      },
+export const jsonStructure = (props?: any): Component => {
+  const columnsToWidth = `${
+    props.columns ? `${(props.columns * 100) / 12}%` : "auto"
+  }`;
+
+  return {
+    id: nanoid(),
+    name: "Breadcrumb",
+    description: "Breadcrumb",
+    props: {
+      w: columnsToWidth,
+      py: "xl",
+      px: "md",
+      ...(props.props || {}),
     },
-    {
-      id: nanoid(),
-      name: "Text",
-      columns: 0,
-      description: "Breadcrumb Item",
-      children: [],
-      props: {
-        children: "Settings",
-        size: "xs",
+    children: [
+      {
+        id: nanoid(),
+        name: "Text",
+        description: "Breadcrumb Item",
+        children: [],
+        props: {
+          children: "Home",
+          size: "sm",
+          w: "auto",
+        },
       },
-    },
-    {
-      id: nanoid(),
-      name: "Text",
-      columns: 0,
-      description: "Breadcrumb Item",
-      children: [],
-      props: {
-        children: "About",
-        size: "xs",
+      {
+        id: nanoid(),
+        name: "Text",
+        description: "Breadcrumb Item",
+        children: [],
+        props: {
+          children: "Settings",
+          size: "xs",
+          w: "auto",
+        },
       },
-    },
-  ],
-});
+      {
+        id: nanoid(),
+        name: "Text",
+        description: "Breadcrumb Item",
+        children: [],
+        props: {
+          children: "About",
+          size: "xs",
+          w: "auto",
+        },
+      },
+    ],
+  };
+};

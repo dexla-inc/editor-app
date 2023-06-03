@@ -1,41 +1,47 @@
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
-export const jsonStructure = (props?: any): Component => ({
-  id: nanoid(),
-  name: "Stack",
-  columns: props.columns || 12,
-  description: "NotImplement Stack",
-  props: {
-    w: "100%",
-    align: "center",
-    justify: "center",
-    spacing: 2,
-    py: "lg",
-  },
-  children: [
-    {
-      id: nanoid(),
-      name: "Text",
-      columns: 0,
-      description: "NotImplement Component Name",
-      children: [],
-      props: {
-        children: props.name,
-        size: "sm",
-      },
+export const jsonStructure = (props?: any): Component => {
+  const columnsToWidth = `${
+    props.columns ? `${(props.columns * 100) / 12}%` : "auto"
+  }`;
+
+  return {
+    id: nanoid(),
+    name: "Stack",
+    description: "NotImplement Stack",
+    props: {
+      w: columnsToWidth,
+      align: "center",
+      justify: "center",
+      spacing: 2,
+      py: "lg",
+      ...(props.props || {}),
     },
-    {
-      id: nanoid(),
-      name: "Text",
-      columns: 0,
-      description: "NotImplement Text",
-      children: [],
-      props: {
-        children: "Not implemented yet",
-        size: "xs",
-        color: "dimmed",
+    children: [
+      {
+        id: nanoid(),
+        name: "Text",
+        description: "NotImplement Component Name",
+        children: [],
+        props: {
+          children: props.name,
+          size: "sm",
+          w: "auto",
+        },
       },
-    },
-  ],
-});
+      {
+        id: nanoid(),
+        name: "Text",
+        description: "NotImplement Text",
+        children: [],
+        props: {
+          children: "Not implemented yet",
+          size: "xs",
+          color: "dimmed",
+          w: "auto",
+        },
+      },
+    ],
+  };
+};

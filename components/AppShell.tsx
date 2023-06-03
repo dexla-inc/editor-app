@@ -48,6 +48,7 @@ export const Shell = ({ children }: PropsWithChildren) => {
             <Stack>
               <SegmentedControl
                 m="lg"
+                size="xs"
                 data={[
                   { label: "Components", value: "components" },
                   { label: "Layers", value: "layers" },
