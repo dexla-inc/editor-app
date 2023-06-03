@@ -23,7 +23,6 @@ import {
   MeasuringStrategy,
 } from "@dnd-kit/core";
 import { Box, Container, Paper, useMantineTheme } from "@mantine/core";
-import { useClickOutside } from "@mantine/hooks";
 import { useEffect } from "react";
 import { Shell } from "@/components/AppShell";
 
@@ -125,8 +124,6 @@ export const Editor = () => {
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
-
-  const ref = useClickOutside(clearSelection);
 
   useEffect(() => {
     const fullTree = getEditorTreeFromInitialPageStructure(tree);
@@ -262,6 +259,7 @@ export const Editor = () => {
     >
       <Shell>
         <Box
+          onClick={clearSelection}
           h={`calc(var(--vh, 100vh) - ${HEADER_HEIGHT}px)`}
           py={40}
           sx={{
@@ -271,7 +269,7 @@ export const Editor = () => {
             backgroundPosition: "0 0, 50px 50px",
           }}
         >
-          <Container ref={ref} pos="relative" size="xl">
+          <Container pos="relative" size="xl">
             {renderTree(editorTree.root)}
           </Container>
         </Box>
