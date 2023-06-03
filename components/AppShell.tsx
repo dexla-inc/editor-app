@@ -1,22 +1,20 @@
 import {
   AppShell,
   Aside,
-  Group,
   Header,
   Navbar,
-  SegmentedControl,
-  Stack,
-  Text,
+  ScrollArea,
+  useMantineTheme,
+  Group,
+  Box,
 } from "@mantine/core";
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren } from "react";
 import { Logo } from "@/components/Logo";
 import { HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
-import { DraggableComponent } from "@/components/DraggableComponent";
+import { EditorNavbarSections } from "./EditorNavbarSections";
 
 export const Shell = ({ children }: PropsWithChildren) => {
-  const [activeTab, setActiveTab] = useState<"components" | "layers">(
-    "components"
-  );
+  const theme = useMantineTheme();
 
   return (
     <AppShell
@@ -36,36 +34,15 @@ export const Shell = ({ children }: PropsWithChildren) => {
             height: `calc(100% - ${HEADER_HEIGHT}px)`,
           }}
         >
-          <Navbar.Section
-            sx={{
-              minHeight: "100%",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Stack p="lg">
-              <SegmentedControl
-                size="xs"
-                value={activeTab}
-                onChange={(value) => setActiveTab(value as any)}
-                data={[
-                  { label: "Components", value: "components" },
-                  { label: "Layers", value: "layers" },
-                ]}
-              />
-              {activeTab === "components" && (
-                <Stack>
-                  <DraggableComponent id="Text">
-                    <Text size="xs">Text</Text>
-                  </DraggableComponent>
-                </Stack>
-              )}
-              {activeTab === "layers" && (
-                <Stack>
-                  <Text size="xs">Layers</Text>
-                </Stack>
-              )}
-            </Stack>
+          <Navbar.Section grow component={ScrollArea}>
+            <Box
+              sx={{
+                paddingTop: theme.spacing.xl,
+                paddingBottom: theme.spacing.xl,
+              }}
+            >
+              <EditorNavbarSections />
+            </Box>
           </Navbar.Section>
         </Navbar>
       }

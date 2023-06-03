@@ -39,7 +39,7 @@ export const jsonStructure = (props?: any): Component => {
         description: "Avatar",
         children: [],
         props: {
-          color: "blue",
+          color: "teal",
           radius: "xl",
           w: "auto",
         },

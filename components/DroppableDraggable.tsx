@@ -53,27 +53,27 @@ export const DroppableDraggable = ({
 
   const borders = isOver
     ? {
-        border: `1px solid blue`,
+        border: `1px solid ${theme.colors.teal[6]}`,
         borderTop:
           dropTarget?.edge === "top"
-            ? `${DROP_INDICATOR_WIDTH}px solid blue`
+            ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
             : undefined,
         borderBottom:
           dropTarget?.edge === "bottom"
-            ? `${DROP_INDICATOR_WIDTH}px solid blue`
+            ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
             : undefined,
         borderLeft:
           dropTarget?.edge === "left"
-            ? `${DROP_INDICATOR_WIDTH}px solid blue`
+            ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
             : undefined,
         borderRight:
           dropTarget?.edge === "right"
-            ? `${DROP_INDICATOR_WIDTH}px solid blue`
+            ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
             : undefined,
       }
     : isSelected
     ? {
-        border: `1px solid blue`,
+        border: `1px solid ${theme.colors.teal[6]}`,
       }
     : {};
 
@@ -120,7 +120,7 @@ export const DroppableDraggable = ({
         sx={{
           zIndex: 99999,
           display: isSelected && !isDragging ? "block" : "none",
-          background: "blue",
+          background: theme.colors.teal[6],
           borderTopLeftRadius: theme.radius.sm,
           borderTopRightRadius: theme.radius.sm,
         }}

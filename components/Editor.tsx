@@ -22,7 +22,7 @@ import {
   DragStartEvent,
   MeasuringStrategy,
 } from "@dnd-kit/core";
-import { Container, Paper } from "@mantine/core";
+import { Box, Container, Paper, useMantineTheme } from "@mantine/core";
 import { useClickOutside } from "@mantine/hooks";
 import { useEffect } from "react";
 import { Shell } from "@/components/AppShell";
@@ -115,6 +115,7 @@ const tree = {
 };
 
 export const Editor = () => {
+  const theme = useMantineTheme();
   const dropTarget = useEditorStore((state) => state.dropTarget);
   const setDropTarget = useEditorStore((state) => state.setDropTarget);
   const clearDropTarget = useEditorStore((state) => state.clearDropTarget);
@@ -260,15 +261,20 @@ export const Editor = () => {
       }}
     >
       <Shell>
-        <Container
-          ref={ref}
-          mb="xl"
-          mt={HEADER_HEIGHT}
-          pos="relative"
-          size="xl"
+        <Box
+          h={`calc(var(--vh, 100vh) - ${HEADER_HEIGHT}px)`}
+          py={40}
+          sx={{
+            background: theme.colors.gray[1],
+            backgroundImage: `radial-gradient(${theme.colors.gray[4]} 1px, transparent 1px), radial-gradient( ${theme.colors.gray[4]} 1px, transparent 1px)`,
+            backgroundSize: "20px 20px",
+            backgroundPosition: "0 0, 50px 50px",
+          }}
         >
-          {renderTree(editorTree.root)}
-        </Container>
+          <Container ref={ref} pos="relative" size="xl">
+            {renderTree(editorTree.root)}
+          </Container>
+        </Box>
       </Shell>
     </DndContext>
   );
