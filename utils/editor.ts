@@ -66,7 +66,7 @@ export const getEditorTreeFromInitialPageStructure = (tree: {
   return editorTree;
 };
 
-export const findComponentById = (
+export const getComponentById = (
   treeRoot: Component,
   id: string
 ): Component | null => {
@@ -126,7 +126,7 @@ export const moveComponentToDifferentParent = (
   dropTarget: DropTarget,
   newParentId: string
 ) => {
-  const componentToAdd = findComponentById(treeRoot, id) as Component;
+  const componentToAdd = getComponentById(treeRoot, id) as Component;
 
   crawl(
     treeRoot,
@@ -379,7 +379,7 @@ export const closestEdge = (
   };
 
   const collisions: CollisionDescriptor[] = [];
-  const activeComponent = findComponentById(
+  const activeComponent = getComponentById(
     editorTree.root,
     active.id as string
   );

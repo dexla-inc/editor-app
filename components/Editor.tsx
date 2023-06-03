@@ -7,7 +7,7 @@ import {
   Component,
   addComponent,
   closestEdge,
-  findComponentById,
+  getComponentById,
   getComponentParent,
   getEditorTreeFromInitialPageStructure,
   moveComponent,
@@ -25,6 +25,8 @@ import {
 import { Container, Paper } from "@mantine/core";
 import { useClickOutside } from "@mantine/hooks";
 import { useEffect } from "react";
+import { Shell } from "@/components/AppShell";
+import { PageHeader } from "@/components/PageHeader";
 
 const tree = {
   rows: [
@@ -141,7 +143,7 @@ export const Editor = () => {
 
     const copy = { ...editorTree };
 
-    const activeComponent = findComponentById(
+    const activeComponent = getComponentById(
       copy.root,
       dropTarget.id as string
     );
@@ -171,7 +173,7 @@ export const Editor = () => {
         moveComponent(copy.root, active.id as string, dropTarget);
       }
     } else {
-      const toAdd = findComponentById(copy.root, active.id as string);
+      const toAdd = getComponentById(copy.root, active.id as string);
       removeComponent(copy.root, active.id as string);
       addComponent(copy.root, toAdd as unknown as Component, dropTarget);
     }
@@ -252,15 +254,18 @@ export const Editor = () => {
         return closestEdge(args, editorTree);
       }}
     >
-      <Container
-        ref={ref}
-        mb="xl"
-        mt={HEADER_HEIGHT * 2}
-        pos="relative"
-        size="xl"
-      >
-        {renderTree(editorTree.root)}
-      </Container>
+      <Shell>
+        <PageHeader />
+        <Container
+          ref={ref}
+          mb="xl"
+          mt={HEADER_HEIGHT * 2}
+          pos="relative"
+          size="xl"
+        >
+          {renderTree(editorTree.root)}
+        </Container>
+      </Shell>
     </DndContext>
   );
 };
