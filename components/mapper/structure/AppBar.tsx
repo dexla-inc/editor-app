@@ -4,48 +4,40 @@ import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => ({
   id: nanoid(),
-  name: "Container",
+  name: "Group",
+  description: "AppBar Wrapper Group",
   columns: props.columns || 12,
-  description: "AppBar Root",
+  props: {
+    position: "apart",
+    w: "100%",
+    style: {
+      borderBottom: `1px solid ${theme.colors.gray[3]}`,
+    },
+    py: "sm",
+    px: "lg",
+  },
   children: [
     {
       id: nanoid(),
-      name: "Group",
-      description: "AppBar Wrapper Group",
-      columns: 12,
+      name: "Text",
+      columns: 0,
+      description: "App Name",
+      children: [],
       props: {
-        position: "apart",
-        w: "100%",
-        style: {
-          borderBottom: `1px solid ${theme.colors.gray[3]}`,
-        },
-        py: "sm",
-        px: "lg",
+        children: "My Company",
+        size: "xs",
       },
-      children: [
-        {
-          id: nanoid(),
-          name: "Text",
-          columns: 0,
-          description: "App Name",
-          children: [],
-          props: {
-            children: "My Company",
-            size: "xs",
-          },
-        },
-        {
-          id: nanoid(),
-          name: "Avatar",
-          columns: 0,
-          description: "Avatar",
-          children: [],
-          props: {
-            color: "blue",
-            radius: "xl",
-          },
-        },
-      ],
+    },
+    {
+      id: nanoid(),
+      name: "Avatar",
+      columns: 0,
+      description: "Avatar",
+      children: [],
+      props: {
+        color: "blue",
+        radius: "xl",
+      },
     },
   ],
 });

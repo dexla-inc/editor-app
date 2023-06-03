@@ -8,11 +8,12 @@ import {
   useMantineTheme,
   Group,
   UnstyledButton,
+  ActionIcon,
 } from "@mantine/core";
 import { useEditorStore } from "@/stores/editor";
-import { Component } from "@/utils/editor";
-import { IconGripHorizontal } from "@tabler/icons-react";
-import { DROP_INDICATOR_WIDTH } from "@/utils/config";
+import { Component, getComponentParent } from "@/utils/editor";
+import { IconArrowUp, IconGripVertical } from "@tabler/icons-react";
+import { DROP_INDICATOR_WIDTH, ICON_SIZE } from "@/utils/config";
 
 type Props = {
   id: string;
@@ -26,6 +27,7 @@ export const DroppableDraggable = ({
   ...props
 }: PropsWithChildren<Props>) => {
   const theme = useMantineTheme();
+  const editorTree = useEditorStore((state) => state.tree);
   const dropTarget = useEditorStore((state) => state.dropTarget);
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId
@@ -33,6 +35,8 @@ export const DroppableDraggable = ({
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
+
+  const parent = getComponentParent(editorTree.root, id);
 
   const {
     attributes,
@@ -78,6 +82,8 @@ export const DroppableDraggable = ({
     ...borders,
   };
 
+  const haveNonRootParent = parent && parent.id !== "root";
+
   return (
     <Box
       {...props}
@@ -106,17 +112,13 @@ export const DroppableDraggable = ({
           ...style,
         }}
         {...props}
-        onClick={(e) => {
-          e.stopPropagation();
-          setSelectedComponentId(id);
-        }}
       >
         {children}
       </Box>
       <Box
         pos="absolute"
-        h={30}
-        top={-30}
+        h={36}
+        top={-36}
         sx={{
           zIndex: 99999,
           display: isSlected && !isDragging ? "block" : "none",
@@ -125,17 +127,33 @@ export const DroppableDraggable = ({
           borderTopRightRadius: theme.radius.sm,
         }}
       >
-        <Group py={4} px={8} noWrap>
-          <Text color="white" size="xs">
-            {component.name}
-          </Text>
+        <Group py={4} px={8} h={36} noWrap spacing="xs" align="center">
           <UnstyledButton
-            sx={{ cursor: "grab" }}
+            sx={{ cursor: "grab", alignItems: "center", display: "flex" }}
             {...listeners}
             {...attributes}
           >
-            <IconGripHorizontal color="white" strokeWidth={1.5} />
+            <IconGripVertical
+              size={ICON_SIZE}
+              color="white"
+              strokeWidth={1.5}
+            />
           </UnstyledButton>
+          <Text color="white" size="xs" pr={haveNonRootParent ? 0 : "xs"}>
+            {component.name}
+          </Text>
+          {haveNonRootParent && (
+            <ActionIcon
+              variant="transparent"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setSelectedComponentId(parent.id as string);
+              }}
+            >
+              <IconArrowUp size={ICON_SIZE} color="white" strokeWidth={1.5} />
+            </ActionIcon>
+          )}
         </Group>
       </Box>
     </Box>

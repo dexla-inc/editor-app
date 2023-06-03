@@ -1,4 +1,11 @@
-import { AppShell, Box, Navbar, useMantineTheme } from "@mantine/core";
+import {
+  AppShell,
+  Box,
+  Navbar,
+  SegmentedControl,
+  Stack,
+  useMantineTheme,
+} from "@mantine/core";
 import { PropsWithChildren } from "react";
 import { Logo } from "@/components/Logo";
 import { HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
@@ -25,7 +32,6 @@ export const Shell = ({ children }: PropsWithChildren) => {
               minHeight: "100%",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
             }}
           >
             <Box
@@ -39,6 +45,15 @@ export const Shell = ({ children }: PropsWithChildren) => {
             >
               <Logo />
             </Box>
+            <Stack>
+              <SegmentedControl
+                m="lg"
+                data={[
+                  { label: "Components", value: "components" },
+                  { label: "Layers", value: "layers" },
+                ]}
+              />
+            </Stack>
           </Navbar.Section>
         </Navbar>
       }

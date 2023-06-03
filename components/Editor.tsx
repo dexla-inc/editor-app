@@ -128,7 +128,6 @@ export const Editor = () => {
 
   useEffect(() => {
     const fullTree = getEditorTreeFromInitialPageStructure(tree);
-    console.log(fullTree);
     setEditorTree(fullTree);
   }, [setEditorTree]);
 
@@ -215,7 +214,7 @@ export const Editor = () => {
 
     const componentToRender = componentMapper[component.name];
 
-    if (component.name === "Container" || !componentToRender) {
+    if (!componentToRender) {
       return (
         <DroppableDraggable
           key={component.id!}
@@ -253,7 +252,13 @@ export const Editor = () => {
         return closestEdge(args, editorTree);
       }}
     >
-      <Container ref={ref} mb="xl" mt={HEADER_HEIGHT * 2} pos="relative">
+      <Container
+        ref={ref}
+        mb="xl"
+        mt={HEADER_HEIGHT * 2}
+        pos="relative"
+        size="xl"
+      >
         {renderTree(editorTree.root)}
       </Container>
     </DndContext>
