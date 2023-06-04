@@ -4,7 +4,6 @@ import {
   Header,
   Navbar,
   ScrollArea,
-  useMantineTheme,
   Group,
   Box,
 } from "@mantine/core";
@@ -15,8 +14,6 @@ import { EditorNavbarSections } from "@/components/EditorNavbarSections";
 import { EditorAsideSections } from "@/components/EditorAsideSections";
 
 export const Shell = ({ children }: PropsWithChildren) => {
-  const theme = useMantineTheme();
-
   return (
     <AppShell
       fixed

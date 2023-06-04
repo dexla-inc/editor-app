@@ -29,7 +29,7 @@ export const theme: MantineTheme = {
   // @ts-ignore
   breakpoints: { xs: 500, sm: 1100, md: 1150, lg: 1200, xl: 1400 },
   black: "#222",
-  primaryColor: "dark",
+  primaryColor: "teal",
 };
 
 const setVh = (vh: number) => {
