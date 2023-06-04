@@ -147,7 +147,7 @@ export const Modifier = () => {
               width: "100%",
               "> polygon": {
                 fill: theme.colors.teal[0],
-                stroke: theme.colors.teal[6],
+                stroke: theme.colors.teal[2],
                 strokeLinejoin: "round",
                 strokeWidth: 0.5,
               },
@@ -170,7 +170,7 @@ export const Modifier = () => {
               height={50}
               style={{
                 fill: "none",
-                stroke: theme.colors.teal[6],
+                stroke: theme.colors.teal[3],
                 strokeWidth: 1,
               }}
             />
@@ -181,7 +181,7 @@ export const Modifier = () => {
               height={15}
               style={{
                 fill: "white",
-                stroke: theme.colors.teal[6],
+                stroke: theme.colors.teal[3],
                 strokeWidth: 1,
               }}
             />

@@ -1,7 +1,14 @@
 import { get } from "@/utils/api";
 
+export type PageResponse = {
+  id: string;
+  title: string;
+  pageState?: string;
+  [key: string]: any;
+};
+
 type PageListResponse = {
-  results: string[];
+  results: PageResponse[];
 };
 
 export const getPagesStream = async (projectId: string) => {

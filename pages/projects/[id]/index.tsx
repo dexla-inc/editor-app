@@ -1,8 +1,7 @@
-import { getPagesStream } from "@/requests/projects/queries";
+import { getPageList, getPagesStream } from "@/requests/projects/queries";
 import {
   Button,
   Container,
-  Global,
   Group,
   List,
   Stack,
@@ -18,6 +17,9 @@ import { IconCircleCheck, IconSparkles } from "@tabler/icons-react";
 import { ICON_SIZE } from "@/utils/config";
 import { TypingAnimation } from "@/components/TypingAnimation";
 import { useAppStore } from "@/stores/app";
+import { useRouter } from "next/router";
+import { PageParams, createPages } from "@/requests/projects/mutations";
+import slugify from "slugify";
 
 export const getServerSideProps = async ({
   query,
@@ -34,6 +36,7 @@ type Props = {
 };
 
 export default function Project({ id }: Props) {
+  const router = useRouter();
   const isLoading = useAppStore((state) => state.isLoading);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
@@ -60,7 +63,6 @@ export default function Project({ id }: Props) {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
       const chunkValue = decoder.decode(value);
-      console.log(chunkValue);
       setStream((state) => {
         try {
           return `${state}${chunkValue}`;
@@ -77,11 +79,32 @@ export default function Project({ id }: Props) {
     });
   };
 
+  const goToEditor = async () => {
+    startLoading({
+      id: "page-generation",
+      title: "Generating Pages",
+      message: "Wait while AI generates your pages",
+    });
+    await createPages(
+      pages.map((page, index) => {
+        return {
+          title: page,
+          slug: slugify(page),
+          isHome: index === 0,
+          authenticatedOnly: false,
+        } as PageParams;
+      }) as PageParams[],
+      id
+    );
+    const pageList = await getPageList(id);
+    const homepage = pageList.results.find((page) => page.isHome);
+    router.push(`/projects/${id}/editor/${homepage?.id}`);
+  };
+
   useEffect(() => {
     if (stream) {
       try {
         const json = TOML.parse(stream);
-        console.log(json);
         setPages(Object.values(json) as string[]);
       } catch (error) {
         // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
@@ -94,13 +117,6 @@ export default function Project({ id }: Props) {
 
   return (
     <Shell>
-      <Global
-        styles={{
-          body: {
-            background: "white",
-          },
-        }}
-      />
       <Container size="xs" py={60}>
         <Stack spacing="xl">
           <Title order={2}>Project Pages</Title>
@@ -142,9 +158,7 @@ export default function Project({ id }: Props) {
             </Button>
             <Button
               leftIcon={<IconSparkles size={ICON_SIZE} />}
-              onClick={() => {
-                console.log("page structure");
-              }}
+              onClick={goToEditor}
               disabled={!hasPageNames}
             >
               Generate page structure

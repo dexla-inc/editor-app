@@ -77,7 +77,7 @@ export default function App(props: AppProps) {
                 lineHeight: theme.lineHeight,
                 maxHeight: "var(--vh, 100vh)",
                 minHeight: "var(--vh, auto)",
-                background: theme.colors.gray[1],
+                background: "white",
               },
 
               html: {

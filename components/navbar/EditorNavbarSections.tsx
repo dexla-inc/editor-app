@@ -5,7 +5,8 @@ import {
   IconLayoutDashboard,
   IconStack2,
 } from "@tabler/icons-react";
-import { EditorNvbarComponentsSection } from "@/components/EditorNavbarComponentsSection";
+import { EditorNavbarComponentsSection } from "@/components/navbar/EditorNavbarComponentsSection";
+import { EditorNavbarPagesSection } from "@/components/navbar/EditorNavbarPagesSection";
 
 const sections = [
   {
@@ -31,9 +32,9 @@ type SectionsMapper = {
 };
 
 const sectionMapper: SectionsMapper = {
-  pages: (props: any) => <Text size="xs">{props.label}</Text>,
+  pages: (props: any) => <EditorNavbarPagesSection {...props} />,
   layers: (props: any) => <Text size="xs">{props.label}</Text>,
-  components: (props: any) => <EditorNvbarComponentsSection {...props} />,
+  components: (props: any) => <EditorNavbarComponentsSection {...props} />,
 };
 
 export const EditorNavbarSections = () => {

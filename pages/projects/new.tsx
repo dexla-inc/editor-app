@@ -1,18 +1,7 @@
 import { Shell } from "@/components/AppShell";
-import {
-  ProjectParams,
-  ProjectResponse,
-  createProject,
-} from "@/requests/projects/mutations";
+import { ProjectParams, createProject } from "@/requests/projects/mutations";
 import { useAppStore } from "@/stores/app";
-import {
-  Button,
-  Container,
-  Global,
-  Group,
-  Stack,
-  TextInput,
-} from "@mantine/core";
+import { Button, Container, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 
@@ -46,13 +35,6 @@ export default function New() {
 
   return (
     <Shell>
-      <Global
-        styles={{
-          body: {
-            background: "white",
-          },
-        }}
-      />
       <Container size="xs" py={60}>
         <form onSubmit={form.onSubmit(onSubmit)}>
           <Stack>

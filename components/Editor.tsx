@@ -26,6 +26,7 @@ import {
   Aside,
   Box,
   Container,
+  Global,
   Navbar,
   Paper,
   ScrollArea,
@@ -34,7 +35,7 @@ import {
 import { useEffect } from "react";
 import { Shell } from "@/components/AppShell";
 import { EditorAsideSections } from "@/components/EditorAsideSections";
-import { EditorNavbarSections } from "@/components/EditorNavbarSections";
+import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 
 const tree = {
   rows: [
@@ -218,7 +219,7 @@ export const Editor = () => {
     if (component.id === "root") {
       return (
         <Paper shadow="xs">
-          <Droppable key={component.id} id={component.id} bg="gray.0" m={0}>
+          <Droppable key={component.id} id={component.id} bg="white" m={0}>
             {component.children?.map((child) => renderTree(child))}
           </Droppable>
         </Paper>
@@ -295,16 +296,20 @@ export const Editor = () => {
           </Aside>
         }
       >
+        <Global
+          styles={{
+            body: {
+              background: theme.colors.gray[1],
+              backgroundImage: `radial-gradient(${theme.colors.gray[4]} 1px, transparent 1px), radial-gradient( ${theme.colors.gray[4]} 1px, transparent 1px)`,
+              backgroundSize: "20px 20px",
+              backgroundPosition: "0 0, 50px 50px",
+            },
+          }}
+        />
         <Box
           onClick={clearSelection}
           h={`calc(var(--vh, 100vh) - ${HEADER_HEIGHT}px)`}
           py={40}
-          sx={{
-            background: theme.colors.gray[1],
-            backgroundImage: `radial-gradient(${theme.colors.gray[4]} 1px, transparent 1px), radial-gradient( ${theme.colors.gray[4]} 1px, transparent 1px)`,
-            backgroundSize: "20px 20px",
-            backgroundPosition: "0 0, 50px 50px",
-          }}
         >
           <Container pos="relative" size="xl">
             {renderTree(editorTree.root)}

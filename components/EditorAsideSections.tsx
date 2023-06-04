@@ -39,7 +39,7 @@ export const EditorAsideSections = () => {
   );
   const mappedComponent = componentMapper[selectComponent?.name as string];
 
-  const sections = mappedComponent.modifiers.map((id) => {
+  const sections = mappedComponent?.modifiers?.map((id) => {
     const modifier = sectionMapper[id as string];
 
     return {
@@ -51,7 +51,7 @@ export const EditorAsideSections = () => {
     };
   });
 
-  const sectionsToRender = sections.map(({ Component, ...item }) => (
+  const sectionsToRender = sections?.map(({ Component, ...item }) => (
     <SidebarSection {...item} key={item.label}>
       <Component />
     </SidebarSection>
