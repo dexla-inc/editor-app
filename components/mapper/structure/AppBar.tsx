@@ -1,6 +1,7 @@
 import { theme } from "@/pages/_app";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
+import { px } from "@mantine/core";
 
 export const jsonStructure = (props?: any): Component => {
   const columnsToWidth = `${
@@ -16,9 +17,11 @@ export const jsonStructure = (props?: any): Component => {
       w: columnsToWidth,
       style: {
         borderBottom: `1px solid ${theme.colors.gray[3]}`,
+        paddingTop: px(theme.spacing.sm),
+        paddingBottom: px(theme.spacing.sm),
+        paddingLeft: px(theme.spacing.lg),
+        paddingRight: px(theme.spacing.lg),
       },
-      py: "sm",
-      px: "lg",
       ...(props.props || {}),
     },
     children: [

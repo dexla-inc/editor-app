@@ -1,4 +1,6 @@
+import { theme } from "@/pages/_app";
 import { Component } from "@/utils/editor";
+import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -12,8 +14,12 @@ export const jsonStructure = (props?: any): Component => {
     description: "Breadcrumb",
     props: {
       w: columnsToWidth,
-      py: "xl",
-      px: "md",
+      style: {
+        paddingTop: px(theme.spacing.xl),
+        paddingBottom: px(theme.spacing.xl),
+        paddingLeft: px(theme.spacing.md),
+        paddingRight: px(theme.spacing.md),
+      },
       ...(props.props || {}),
     },
     children: [

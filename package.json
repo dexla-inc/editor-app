@@ -14,6 +14,7 @@
     "@emotion/react": "^11.11.0",
     "@emotion/server": "^11.11.0",
     "@mantine/core": "^6.0.13",
+    "@mantine/form": "^6.0.13",
     "@mantine/hooks": "^6.0.13",
     "@mantine/next": "^6.0.13",
     "@mantine/notifications": "^6.0.13",
@@ -23,6 +24,7 @@
     "@types/react-dom": "18.2.4",
     "eslint": "8.41.0",
     "eslint-config-next": "13.4.4",
+    "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
     "nanoid": "^4.0.2",
     "next": "13.4.4",
@@ -34,6 +36,7 @@
     "zustand": "^4.3.8"
   },
   "devDependencies": {
+    "@types/lodash.debounce": "^4.0.7",
     "@types/lodash.throttle": "^4.1.7"
   }
 }

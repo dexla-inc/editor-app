@@ -86,6 +86,30 @@ export const getComponentById = (
   return found;
 };
 
+export const updateTreeComponent = (
+  treeRoot: Component,
+  id: string,
+  props: any
+) => {
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === id) {
+        node.props = {
+          ...node.props,
+          ...props,
+          style: {
+            ...(node.props?.style || {}),
+            ...(props.style || {}),
+          },
+        };
+        context.break();
+      }
+    },
+    { order: "bfs" }
+  );
+};
+
 export const checkIfIsChild = (treeRoot: Component, childId: string) => {
   let isChild = false;
 

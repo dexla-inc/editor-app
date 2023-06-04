@@ -1,4 +1,4 @@
-import { DropTarget, EditorTree } from "@/utils/editor";
+import { DropTarget, EditorTree, updateTreeComponent } from "@/utils/editor";
 import { create, useStore } from "zustand";
 import { TemporalState, temporal } from "zundo";
 import throttle from "lodash.throttle";
@@ -20,6 +20,7 @@ export interface EditorState {
   dropTarget?: DropTarget;
   selectedComponentId?: string;
   setTree: (tree: EditorTree) => void;
+  updateTreeComponent: (componentId: string, props: any) => void;
   setDropTarget: (dropTarget: DropTarget) => void;
   clearDropTarget: () => void;
   setSelectedComponentId: (selectedComponentId: string) => void;
@@ -32,6 +33,17 @@ export const useEditorStore = create<EditorState>()(
     (set) => ({
       tree: emptyEditorTree,
       setTree: (tree) => set({ tree }),
+      updateTreeComponent: (componentId, props) => {
+        set((state) => {
+          const copy = { ...state.tree };
+          updateTreeComponent(copy.root, componentId, props);
+
+          return {
+            ...state,
+            tree: copy,
+          };
+        });
+      },
       setDropTarget: (dropTarget) => set({ dropTarget }),
       clearDropTarget: () => set({ dropTarget: undefined }),
       setSelectedComponentId: (selectedComponentId) =>

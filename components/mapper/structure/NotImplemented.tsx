@@ -1,4 +1,6 @@
+import { theme } from "@/pages/_app";
 import { Component } from "@/utils/editor";
+import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -23,7 +25,10 @@ export const jsonStructure = (props?: any): Component => {
           align: "center",
           justify: "center",
           spacing: 2,
-          py: "lg",
+          style: {
+            paddingTop: px(theme.spacing.lg),
+            paddingBottom: px(theme.spacing.lg),
+          },
           ...(props.props || {}),
         },
         children: [
