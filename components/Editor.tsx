@@ -2,7 +2,7 @@ import { Droppable } from "@/components/Droppable";
 import { DroppableDraggable } from "@/components/DroppableDraggable";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper, structureMapper } from "@/utils/componentMapper";
-import { HEADER_HEIGHT } from "@/utils/config";
+import { HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
 import {
   Component,
   addComponent,
@@ -22,9 +22,19 @@ import {
   DragStartEvent,
   MeasuringStrategy,
 } from "@dnd-kit/core";
-import { Box, Container, Paper, useMantineTheme } from "@mantine/core";
+import {
+  Aside,
+  Box,
+  Container,
+  Navbar,
+  Paper,
+  ScrollArea,
+  useMantineTheme,
+} from "@mantine/core";
 import { useEffect } from "react";
 import { Shell } from "@/components/AppShell";
+import { EditorAsideSections } from "@/components/EditorAsideSections";
+import { EditorNavbarSections } from "@/components/EditorNavbarSections";
 
 const tree = {
   rows: [
@@ -255,7 +265,36 @@ export const Editor = () => {
         return closestEdge(args, editorTree);
       }}
     >
-      <Shell>
+      <Shell
+        navbar={
+          <Navbar
+            width={{ base: NAVBAR_WIDTH }}
+            sx={{
+              height: `calc(100% - ${HEADER_HEIGHT}px)`,
+            }}
+          >
+            <Navbar.Section grow component={ScrollArea}>
+              <Box py="sm">
+                <EditorNavbarSections />
+              </Box>
+            </Navbar.Section>
+          </Navbar>
+        }
+        aside={
+          <Aside
+            width={{ base: NAVBAR_WIDTH }}
+            sx={{
+              height: `calc(100% - ${HEADER_HEIGHT}px)`,
+            }}
+          >
+            <Aside.Section grow component={ScrollArea}>
+              <Box py="sm">
+                <EditorAsideSections />
+              </Box>
+            </Aside.Section>
+          </Aside>
+        }
+      >
         <Box
           onClick={clearSelection}
           h={`calc(var(--vh, 100vh) - ${HEADER_HEIGHT}px)`}

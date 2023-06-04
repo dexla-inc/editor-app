@@ -6,14 +6,12 @@ import {
   ScrollArea,
   Group,
   Box,
+  AppShellProps,
 } from "@mantine/core";
-import { PropsWithChildren } from "react";
 import { Logo } from "@/components/Logo";
-import { HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
-import { EditorNavbarSections } from "@/components/EditorNavbarSections";
-import { EditorAsideSections } from "@/components/EditorAsideSections";
+import { HEADER_HEIGHT } from "@/utils/config";
 
-export const Shell = ({ children }: PropsWithChildren) => {
+export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   return (
     <AppShell
       fixed
@@ -25,40 +23,14 @@ export const Shell = ({ children }: PropsWithChildren) => {
           </Group>
         </Header>
       }
-      navbar={
-        <Navbar
-          width={{ base: NAVBAR_WIDTH }}
-          sx={{
-            height: `calc(100% - ${HEADER_HEIGHT}px)`,
-          }}
-        >
-          <Navbar.Section grow component={ScrollArea}>
-            <Box py="sm">
-              <EditorNavbarSections />
-            </Box>
-          </Navbar.Section>
-        </Navbar>
-      }
+      navbar={navbar}
+      aside={aside}
       styles={{
         main: {
           minHeight: "var(--vh, 100vh)",
           paddingLeft: "var(--mantine-navbar-width, 0px)",
         },
       }}
-      aside={
-        <Aside
-          width={{ base: NAVBAR_WIDTH }}
-          sx={{
-            height: `calc(100% - ${HEADER_HEIGHT}px)`,
-          }}
-        >
-          <Aside.Section grow component={ScrollArea}>
-            <Box py="sm">
-              <EditorAsideSections />
-            </Box>
-          </Aside.Section>
-        </Aside>
-      }
     >
       {children}
     </AppShell>

@@ -15,7 +15,7 @@ export const emptyEditorTree = {
   },
 };
 
-export interface EditorState {
+export type EditorState = {
   tree: EditorTree;
   dropTarget?: DropTarget;
   selectedComponentId?: string;
@@ -25,7 +25,7 @@ export interface EditorState {
   clearDropTarget: () => void;
   setSelectedComponentId: (selectedComponentId: string) => void;
   clearSelection: () => void;
-}
+};
 
 // creates a store with undo/redo capability
 export const useEditorStore = create<EditorState>()(

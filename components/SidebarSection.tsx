@@ -11,12 +11,12 @@ import {
 import { IconChevronDown } from "@tabler/icons-react";
 import { PropsWithChildren, useState } from "react";
 
-interface SidebarSectionProps {
+type SidebarSectionProps = {
   icon: React.FC<any>;
   label: string;
   initiallyOpened?: boolean;
   links?: { label: string; link: string }[];
-}
+};
 
 export function SidebarSection({
   icon: Icon,
