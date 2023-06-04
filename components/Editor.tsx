@@ -5,11 +5,12 @@ import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import { HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
 import {
   Component,
+  Row,
   addComponent,
   closestEdge,
   getComponentById,
   getComponentParent,
-  getEditorTreeFromInitialPageStructure,
+  getEditorTreeFromPageStructure,
   moveComponent,
   moveComponentToDifferentParent,
   removeComponent,
@@ -27,104 +28,29 @@ import {
   Box,
   Container,
   Global,
+  Loader,
   Navbar,
   Paper,
   ScrollArea,
+  Stack,
+  Text,
   useMantineTheme,
 } from "@mantine/core";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Shell } from "@/components/AppShell";
 import { EditorAsideSections } from "@/components/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
+import { getPage, getPageStream } from "@/requests/projects/queries";
+import { decodeSchema } from "@/utils/compression";
+import TOML from "@iarna/toml";
+import { useAppStore } from "@/stores/app";
 
-const tree = {
-  rows: [
-    {
-      row: 1,
-      components: [
-        {
-          columns: 12,
-          name: "AppBar",
-          description: "Top navigation bar for the web page",
-        },
-      ],
-    },
-    {
-      row: 2,
-      components: [
-        {
-          columns: 12,
-          name: "Breadcrumb",
-          description:
-            "Displays user's current location within the application",
-        },
-      ],
-    },
-    {
-      row: 3,
-      components: [
-        {
-          columns: 6,
-          name: "ProgressCard",
-          description: "Shows the patient's progress and goals",
-        },
-        {
-          columns: 6,
-          name: "PieChart",
-          description: "Visual representation of vital stats distribution",
-        },
-      ],
-    },
-    {
-      row: 4,
-      components: [
-        {
-          columns: 8,
-          name: "LineChart",
-          description: "Displays continuous vital stats over time",
-        },
-        {
-          columns: 4,
-          name: "TaskList",
-          description:
-            "List of tasks assigned to the patient or healthcare provider",
-        },
-      ],
-    },
-    {
-      row: 5,
-      components: [
-        {
-          columns: 8,
-          name: "Table",
-          description: "Detailed view of patient's vitals",
-        },
-        {
-          columns: 4,
-          name: "ProfileList",
-          description: "List of related healthcare professionals",
-        },
-      ],
-    },
-    {
-      row: 6,
-      components: [
-        {
-          columns: 6,
-          name: "Carousel",
-          description: "Rotating display of educational content",
-        },
-        {
-          columns: 6,
-          name: "ImageCardList",
-          description: "Visual cards about specific medical devices used",
-        },
-      ],
-    },
-  ],
+type Props = {
+  projectId: string;
+  pageId: string;
 };
 
-export const Editor = () => {
+export const Editor = ({ projectId, pageId }: Props) => {
   const theme = useMantineTheme();
   const dropTarget = useEditorStore((state) => state.dropTarget);
   const setDropTarget = useEditorStore((state) => state.setDropTarget);
@@ -135,11 +61,74 @@ export const Editor = () => {
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
+  const startLoading = useAppStore((state) => state.startLoading);
+  const stopLoading = useAppStore((state) => state.stopLoading);
+  const isLoading = useAppStore((state) => state.isLoading);
+  const isStreaming = useRef<boolean>(false);
+  const [stream, setStream] = useState<string>("");
 
   useEffect(() => {
-    const fullTree = getEditorTreeFromInitialPageStructure(tree);
-    setEditorTree(fullTree);
-  }, [setEditorTree]);
+    const getPageData = async () => {
+      startLoading({
+        id: "page-generation",
+        title: "Generating Page",
+        message: "AI is generating your page",
+      });
+
+      const page = await getPage(projectId, pageId);
+      if (page.pageState) {
+        const decodedSchema = decodeSchema(page.pageState);
+        setEditorTree(JSON.parse(decodedSchema));
+      } else {
+        const data = await getPageStream(projectId, page.title);
+
+        if (!data) {
+          return;
+        }
+
+        const reader = data.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+
+        while (!done) {
+          const { value, done: doneReading } = await reader.read();
+          done = doneReading;
+          const chunkValue = decoder.decode(value);
+          setStream((state) => {
+            try {
+              return `${state}${chunkValue}`;
+            } catch (error) {
+              return state;
+            }
+          });
+        }
+
+        stopLoading({
+          id: "page-generation",
+          title: "Page Generated",
+          message: "Here's your page. We hope you like it",
+        });
+      }
+    };
+
+    if (projectId && pageId && !isStreaming.current) {
+      (isStreaming as any).current = true;
+      getPageData();
+    }
+  }, [projectId, pageId, setEditorTree, startLoading, stopLoading]);
+
+  useEffect(() => {
+    if (stream) {
+      try {
+        const json = TOML.parse(stream);
+        const tree = getEditorTreeFromPageStructure(json as { rows: Row[] });
+        setEditorTree(tree);
+      } catch (error) {
+        // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
+        // console.log({ error });
+      }
+    }
+  }, [setEditorTree, stream]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active } = event;
@@ -312,6 +301,26 @@ export const Editor = () => {
           py={40}
         >
           <Container pos="relative" size="xl">
+            {isLoading && !stream && (
+              <Paper
+                shadow="xs"
+                bg="white"
+                sx={{
+                  width: "100%",
+                  minHeight: "400px",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  display: "flex",
+                }}
+              >
+                <Stack align="center">
+                  <Text color="teal.6" size="sm" weight="bold">
+                    Loading your page
+                  </Text>
+                  <Loader />
+                </Stack>
+              </Paper>
+            )}
             {renderTree(editorTree.root)}
           </Container>
         </Box>

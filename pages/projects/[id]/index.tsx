@@ -80,11 +80,6 @@ export default function Project({ id }: Props) {
   };
 
   const goToEditor = async () => {
-    startLoading({
-      id: "page-generation",
-      title: "Generating Pages",
-      message: "Wait while AI generates your pages",
-    });
     await createPages(
       pages.map((page, index) => {
         return {

@@ -1,5 +1,14 @@
-import { Editor } from "@/components/Editor";
+import { Loader } from "@mantine/core";
+
+export const getServerSideProps = async () => {
+  return {
+    redirect: {
+      destination: "/projects/new",
+      permanent: false,
+    },
+  };
+};
 
 export default function Home() {
-  return <Editor />;
+  return <Loader />;
 }

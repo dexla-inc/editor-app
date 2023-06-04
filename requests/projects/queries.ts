@@ -29,3 +29,22 @@ export const getPageList = async (projectId: string) => {
 
   return response;
 };
+
+export const getPage = async (projectId: string, pageId: string) => {
+  const response = (await get<PageResponse>(
+    `/projects/${projectId}/pages/${pageId}`,
+    {}
+  )) as PageResponse;
+
+  return response;
+};
+
+export const getPageStream = async (projectId: string, pageName: string) => {
+  const response = (await get<ReadableStream<Uint8Array>>(
+    `/projects/${projectId}/automations/${encodeURIComponent(pageName)}/stream`,
+    {},
+    true
+  )) as ReadableStream<Uint8Array>;
+
+  return response;
+};

@@ -18,6 +18,5 @@ type Props = {
 };
 
 export default function PageEditor({ id, page }: Props) {
-  console.log({ page, id });
-  return <Editor />;
+  return <Editor pageId={page} projectId={id} />;
 }

@@ -40,9 +40,7 @@ export function arrayMove<T>(array: T[], from: number, to: number): T[] {
   return newArray;
 }
 
-export const getEditorTreeFromInitialPageStructure = (tree: {
-  rows: Row[];
-}) => {
+export const getEditorTreeFromPageStructure = (tree: { rows: Row[] }) => {
   const editorTree: EditorTree = {
     root: {
       ...emptyEditorTree.root,
