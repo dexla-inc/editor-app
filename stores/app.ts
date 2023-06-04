@@ -9,6 +9,7 @@ type AppState = {
   isLoading: boolean;
   startLoading: (state: NotificationProps) => void;
   stopLoading: (state: NotificationProps) => void;
+  setIsLoading: (isLoading: boolean) => void;
 };
 
 export const useAppStore = create<AppState>((set) => ({
@@ -35,4 +36,5 @@ export const useAppStore = create<AppState>((set) => ({
 
     set({ isLoading: false });
   },
+  setIsLoading: (isLoading) => set({ isLoading }),
 }));

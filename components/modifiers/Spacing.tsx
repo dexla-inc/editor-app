@@ -100,6 +100,7 @@ export const Modifier = () => {
         paddingRight,
       });
     }
+    // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
 

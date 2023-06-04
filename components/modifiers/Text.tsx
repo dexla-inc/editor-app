@@ -1,6 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
-import { Box, Stack, Text, TextInput } from "@mantine/core";
+import { Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTextSize } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
@@ -38,14 +38,20 @@ export const Modifier = () => {
         value: children,
       });
     }
+    // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
 
   return (
     <form>
       <Stack>
-        <TextInput
+        <Textarea
+          autosize
           label="Value"
+          size="xs"
+          labelProps={{
+            size: "xs",
+          }}
           {...form.getInputProps("value")}
           onChange={(e) => {
             form.setFieldValue("value", e.target.value);

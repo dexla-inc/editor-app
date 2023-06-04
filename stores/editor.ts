@@ -2,6 +2,8 @@ import { DropTarget, EditorTree, updateTreeComponent } from "@/utils/editor";
 import { create, useStore } from "zustand";
 import { TemporalState, temporal } from "zundo";
 import throttle from "lodash.throttle";
+import { updatePageState } from "@/requests/projects/mutations";
+import { encodeSchema } from "@/utils/compression";
 
 export const emptyEditorTree = {
   root: {
@@ -17,9 +19,13 @@ export const emptyEditorTree = {
 
 export type EditorState = {
   tree: EditorTree;
+  currentProjectId?: string;
+  currentPageId?: string;
   dropTarget?: DropTarget;
   selectedComponentId?: string;
   setTree: (tree: EditorTree) => void;
+  setCurrentProjectId: (currentProjectId: string) => void;
+  setCurrentPageId: (currentPageId: string) => void;
   updateTreeComponent: (componentId: string, props: any) => void;
   setDropTarget: (dropTarget: DropTarget) => void;
   clearDropTarget: () => void;
@@ -32,18 +38,33 @@ export const useEditorStore = create<EditorState>()(
   temporal(
     (set) => ({
       tree: emptyEditorTree,
-      setTree: (tree) => set({ tree }),
+      setTree: (tree) => {
+        set((state) => {
+          updatePageState(
+            encodeSchema(JSON.stringify(tree)),
+            state.currentProjectId ?? "",
+            state.currentPageId ?? ""
+          );
+          return { tree };
+        });
+      },
       updateTreeComponent: (componentId, props) => {
         set((state) => {
           const copy = { ...state.tree };
           updateTreeComponent(copy.root, componentId, props);
+          updatePageState(
+            encodeSchema(JSON.stringify(copy)),
+            state.currentProjectId ?? "",
+            state.currentPageId ?? ""
+          );
 
           return {
-            ...state,
             tree: copy,
           };
         });
       },
+      setCurrentProjectId: (currentProjectId) => set({ currentProjectId }),
+      setCurrentPageId: (currentPageId) => set({ currentPageId }),
       setDropTarget: (dropTarget) => set({ dropTarget }),
       clearDropTarget: () => set({ dropTarget: undefined }),
       setSelectedComponentId: (selectedComponentId) =>

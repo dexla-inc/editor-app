@@ -1,4 +1,4 @@
-import { post } from "@/utils/api";
+import { post, put } from "@/utils/api";
 
 export type ProjectParams = {
   description: string;
@@ -37,6 +37,21 @@ export const createPages = async (params: PageParams[], projectId: string) => {
     `/projects/${projectId}/pages/many`,
     params
   )) as PagesResponse;
+
+  return response;
+};
+
+export const updatePageState = async (
+  pageState: PageParams["pageState"],
+  projectId: string,
+  pageId: string
+) => {
+  const response = (await put<any>(
+    `/projects/${projectId}/pages/${pageId}/page-state`,
+    {
+      pageState,
+    }
+  )) as any;
 
   return response;
 };

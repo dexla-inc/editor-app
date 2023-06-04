@@ -21,7 +21,7 @@ async function doFetch<Type>({
       response = await fetch(`${baseURL}${url}`, {
         method,
         headers: {
-          "Content-Type": "application/json",
+          ...(isStream ? {} : { "Content-Type": "application/json" }),
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
           ...headers,
         },
@@ -63,14 +63,14 @@ export async function get<Type>(
   });
 }
 
-export async function patch<Type>(
+export async function put<Type>(
   url: FetchType["url"],
   body: FetchType["body"],
   isStream?: boolean
 ): Promise<Type | ReadableStream<Uint8Array> | null> {
   return doFetch<Type | ReadableStream<Uint8Array> | null>({
     url,
-    method: "PATCH",
+    method: "PUT",
     body,
     isStream,
   });

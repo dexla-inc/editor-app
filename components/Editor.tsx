@@ -64,22 +64,25 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const isLoading = useAppStore((state) => state.isLoading);
+  const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isStreaming = useRef<boolean>(false);
   const [stream, setStream] = useState<string>("");
 
   useEffect(() => {
     const getPageData = async () => {
-      startLoading({
-        id: "page-generation",
-        title: "Generating Page",
-        message: "AI is generating your page",
-      });
-
+      setIsLoading(true);
       const page = await getPage(projectId, pageId);
       if (page.pageState) {
         const decodedSchema = decodeSchema(page.pageState);
         setEditorTree(JSON.parse(decodedSchema));
+        setIsLoading(false);
       } else {
+        startLoading({
+          id: "page-generation",
+          title: "Generating Page",
+          message: "AI is generating your page",
+        });
+
         const data = await getPageStream(projectId, page.title);
 
         if (!data) {
@@ -115,7 +118,14 @@ export const Editor = ({ projectId, pageId }: Props) => {
       (isStreaming as any).current = true;
       getPageData();
     }
-  }, [projectId, pageId, setEditorTree, startLoading, stopLoading]);
+  }, [
+    projectId,
+    pageId,
+    setEditorTree,
+    startLoading,
+    stopLoading,
+    setIsLoading,
+  ]);
 
   useEffect(() => {
     if (stream) {
@@ -315,7 +325,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
               >
                 <Stack align="center">
                   <Text color="teal.6" size="sm" weight="bold">
-                    Loading your page
+                    Loading the page
                   </Text>
                   <Loader />
                 </Stack>

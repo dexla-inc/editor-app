@@ -1,5 +1,7 @@
 import { Editor } from "@/components/Editor";
+import { useEditorStore } from "@/stores/editor";
 import { GetServerSidePropsContext } from "next";
+import { useEffect } from "react";
 
 export const getServerSideProps = async ({
   query,
@@ -18,5 +20,17 @@ type Props = {
 };
 
 export default function PageEditor({ id, page }: Props) {
+  const setCurrentProjectId = useEditorStore(
+    (state) => state.setCurrentProjectId
+  );
+  const setCurrentPageId = useEditorStore((state) => state.setCurrentPageId);
+
+  useEffect(() => {
+    if (id && page) {
+      setCurrentProjectId(id);
+      setCurrentPageId(page);
+    }
+  }, [id, page, setCurrentPageId, setCurrentProjectId]);
+
   return <Editor pageId={page} projectId={id} />;
 }
