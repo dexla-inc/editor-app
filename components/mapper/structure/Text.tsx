@@ -11,13 +11,14 @@ export const jsonStructure = (props?: any): Component => {
     children: [],
     props: {
       children: "New text",
-      w: "auto",
       style: {
         fontSize: `${px(theme.fontSizes.sm)}px`,
         fontWeight: "normal",
         lineHeight: "110%",
         letterSpacing: "0px",
         color: theme.colors.dark[6],
+        width: "auto",
+        heigh: "auto",
       },
     },
   };

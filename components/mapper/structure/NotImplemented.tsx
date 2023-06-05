@@ -13,7 +13,9 @@ export const jsonStructure = (props?: any): Component => {
     name: "Container",
     description: "NotImplement Container",
     props: {
-      w: columnsToWidth,
+      style: {
+        width: columnsToWidth,
+      },
     },
     children: [
       {
@@ -21,13 +23,14 @@ export const jsonStructure = (props?: any): Component => {
         name: "Stack",
         description: "NotImplement Stack",
         props: {
-          w: "100%",
           align: "center",
           justify: "center",
           spacing: 2,
           style: {
             paddingTop: px(theme.spacing.lg),
             paddingBottom: px(theme.spacing.lg),
+            width: "100%",
+            height: "auto",
           },
           ...(props.props || {}),
         },
@@ -39,13 +42,14 @@ export const jsonStructure = (props?: any): Component => {
             children: [],
             props: {
               children: props.name,
-              w: "auto",
               style: {
                 fontSize: `${px(theme.fontSizes.sm)}px`,
                 fontWeight: "normal",
                 lineHeight: "110%",
                 letterSpacing: "0px",
                 color: theme.colors.dark[6],
+                width: "auto",
+                height: "auto",
               },
             },
           },
@@ -56,13 +60,14 @@ export const jsonStructure = (props?: any): Component => {
             children: [],
             props: {
               children: "Not implemented yet",
-              w: "auto",
               style: {
                 fontSize: `${px(theme.fontSizes.xs)}px`,
                 fontWeight: "normal",
                 lineHeight: "110%",
                 letterSpacing: "0px",
                 color: theme.colors.gray[5],
+                width: "auto",
+                height: "auto",
               },
             },
           },

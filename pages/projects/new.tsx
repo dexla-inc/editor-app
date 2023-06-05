@@ -24,7 +24,6 @@ export default function New() {
       message: "Wait while your project is being created",
     });
     const project = await createProject(values);
-    console.log({ project });
     stopLoading({
       id: "creating-project",
       title: "Project Created",

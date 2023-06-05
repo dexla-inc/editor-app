@@ -4,6 +4,7 @@ import { Box, Center, Text } from "@mantine/core";
 import { componentMapper } from "@/utils/componentMapper";
 import { getComponentById } from "@/utils/editor";
 import * as SpacingModifier from "@/components/modifiers/Spacing";
+import * as SizeModifier from "@/components/modifiers/Size";
 import * as TextModifier from "@/components/modifiers/Text";
 
 type SectionsMapper = {
@@ -12,6 +13,7 @@ type SectionsMapper = {
 
 const sectionMapper: SectionsMapper = {
   spacing: SpacingModifier,
+  size: SizeModifier,
   text: TextModifier,
 };
 

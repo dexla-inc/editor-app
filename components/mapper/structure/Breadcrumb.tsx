@@ -13,12 +13,13 @@ export const jsonStructure = (props?: any): Component => {
     name: "Breadcrumb",
     description: "Breadcrumb",
     props: {
-      w: columnsToWidth,
       style: {
         paddingTop: px(theme.spacing.xl),
         paddingBottom: px(theme.spacing.xl),
         paddingLeft: px(theme.spacing.md),
         paddingRight: px(theme.spacing.md),
+        width: columnsToWidth,
+        height: "auto",
       },
       ...(props.props || {}),
     },
@@ -30,13 +31,14 @@ export const jsonStructure = (props?: any): Component => {
         children: [],
         props: {
           children: "Home",
-          w: "auto",
           style: {
             fontSize: `${px(theme.fontSizes.sm)}px`,
             fontWeight: "normal",
             lineHeight: "110%",
             letterSpacing: "0px",
             color: theme.colors.dark[6],
+            width: "auto",
+            height: "auto",
           },
         },
       },
@@ -47,13 +49,14 @@ export const jsonStructure = (props?: any): Component => {
         children: [],
         props: {
           children: "Settings",
-          w: "auto",
           style: {
             fontSize: `${px(theme.fontSizes.sm)}px`,
             fontWeight: "normal",
             lineHeight: "110%",
             letterSpacing: "0px",
             color: theme.colors.dark[6],
+            width: "auto",
+            height: "auto",
           },
         },
       },
@@ -64,13 +67,14 @@ export const jsonStructure = (props?: any): Component => {
         children: [],
         props: {
           children: "About",
-          w: "auto",
           style: {
             fontSize: `${px(theme.fontSizes.xs)}px`,
             fontWeight: "normal",
             lineHeight: "110%",
             letterSpacing: "0px",
             color: theme.colors.dark[6],
+            width: "auto",
+            height: "auto",
           },
         },
       },

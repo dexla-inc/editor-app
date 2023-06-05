@@ -14,13 +14,14 @@ export const jsonStructure = (props?: any): Component => {
     description: "AppBar Wrapper Group",
     props: {
       position: "apart",
-      w: columnsToWidth,
       style: {
         borderBottom: `1px solid ${theme.colors.gray[3]}`,
         paddingTop: px(theme.spacing.sm),
         paddingBottom: px(theme.spacing.sm),
         paddingLeft: px(theme.spacing.lg),
         paddingRight: px(theme.spacing.lg),
+        width: columnsToWidth,
+        height: "auto",
       },
       ...(props.props || {}),
     },
@@ -39,6 +40,8 @@ export const jsonStructure = (props?: any): Component => {
             lineHeight: "110%",
             letterSpacing: "0px",
             color: theme.colors.dark[6],
+            width: "auto",
+            height: "auto",
           },
         },
       },
@@ -50,7 +53,10 @@ export const jsonStructure = (props?: any): Component => {
         props: {
           color: "teal",
           radius: "xl",
-          w: "auto",
+          style: {
+            width: "auto",
+            height: "auto",
+          },
         },
       },
     ],
