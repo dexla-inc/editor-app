@@ -21,7 +21,7 @@ async function doFetch<Type>({
       response = await fetch(`${baseURL}${url}`, {
         method,
         headers: {
-          ...(isStream ? {} : { "Content-Type": "application/json" }),
+          "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
           ...headers,
         },

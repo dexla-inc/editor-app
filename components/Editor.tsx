@@ -20,6 +20,7 @@ import {
   DndContext,
   DragEndEvent,
   DragMoveEvent,
+  DragOverlay,
   DragStartEvent,
   MeasuringStrategy,
 } from "@dnd-kit/core";
@@ -44,6 +45,7 @@ import { getPage, getPageStream } from "@/requests/projects/queries";
 import { decodeSchema } from "@/utils/compression";
 import TOML from "@iarna/toml";
 import { useAppStore } from "@/stores/app";
+import { DraggableComponent } from "@/components/DraggableComponent";
 
 type Props = {
   projectId: string;
@@ -67,6 +69,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isStreaming = useRef<boolean>(false);
   const [stream, setStream] = useState<string>("");
+  const [isAddingComponent, setIsAddingComponent] = useState<boolean>(false);
 
   useEffect(() => {
     const getPageData = async () => {
@@ -191,6 +194,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
     setEditorTree(copy);
     clearDropTarget();
+    setIsAddingComponent(false);
   };
 
   const handleDragMove = (event: DragMoveEvent) => {
@@ -207,11 +211,18 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const handleDragStart = (event: DragStartEvent) => {
     const id = event.active.id;
     setSelectedComponentId(id as string);
+    const active = getComponentById(editorTree.root, id as string);
+    if (!active) {
+      setIsAddingComponent(true);
+    } else {
+      setIsAddingComponent(false);
+    }
   };
 
   const handleDragCancel = () => {
     clearDropTarget();
     clearSelection();
+    setIsAddingComponent(false);
   };
 
   const renderTree = (component: Component) => {
@@ -266,6 +277,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
       }}
     >
       <Shell
+        pos="relative"
         navbar={
           <Navbar
             width={{ base: NAVBAR_WIDTH }}
@@ -302,11 +314,11 @@ export const Editor = ({ projectId, pageId }: Props) => {
               backgroundImage: `radial-gradient(${theme.colors.gray[4]} 1px, transparent 1px), radial-gradient( ${theme.colors.gray[4]} 1px, transparent 1px)`,
               backgroundSize: "20px 20px",
               backgroundPosition: "0 0, 50px 50px",
-              zIndex: 0,
             },
           }}
         />
         <Box
+          pos="relative"
           onClick={clearSelection}
           h={`calc(var(--vh, 100vh) - ${HEADER_HEIGHT}px)`}
           py={40}
@@ -336,6 +348,14 @@ export const Editor = ({ projectId, pageId }: Props) => {
           </Container>
         </Box>
       </Shell>
+      <DragOverlay>
+        {isAddingComponent && (
+          // TODO: Make this work with components that aren't Text
+          <DraggableComponent id="Text">
+            <Text size="xs">Text</Text>
+          </DraggableComponent>
+        )}
+      </DragOverlay>
     </DndContext>
   );
 };
