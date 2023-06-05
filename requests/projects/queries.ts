@@ -13,7 +13,7 @@ type PageListResponse = {
 
 export const getPagesStream = async (projectId: string) => {
   const response = (await get<ReadableStream<Uint8Array>>(
-    `/projects/${projectId}/automations/pages/stream`,
+    `/projects/${projectId}/automations/pages/stream-revision`,
     {},
     true
   )) as ReadableStream<Uint8Array>;
@@ -41,7 +41,9 @@ export const getPage = async (projectId: string, pageId: string) => {
 
 export const getPageStream = async (projectId: string, pageName: string) => {
   const response = (await get<ReadableStream<Uint8Array>>(
-    `/projects/${projectId}/automations/${encodeURIComponent(pageName)}/stream`,
+    `/projects/${projectId}/automations/${encodeURIComponent(
+      pageName
+    )}/stream-revision`,
     {},
     true
   )) as ReadableStream<Uint8Array>;
