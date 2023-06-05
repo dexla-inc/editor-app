@@ -19,7 +19,7 @@ export const Modifier = () => {
     (state) => state.updateTreeComponent
   );
 
-  const debouncedTreeUpdate = debounce(updateTreeComponent, 400);
+  const debouncedTreeUpdate = debounce(updateTreeComponent, 200);
 
   const selectedComponent = getComponentById(
     editorTree.root,
@@ -67,30 +67,66 @@ export const Modifier = () => {
           }}
         />
         <Group noWrap>
-          <UnitInput label="Size" {...form.getInputProps("fontSize")} />
+          <UnitInput
+            label="Size"
+            {...form.getInputProps("fontSize")}
+            onChange={(value) => {
+              form.setFieldValue("fontSize", value as string);
+              debouncedTreeUpdate(selectedComponentId as string, {
+                style: { fontSize: value },
+              });
+            }}
+          />
           <Select
             label="Weight"
             size="xs"
             data={[
-              { label: "Thin", value: "thin" },
               { label: "Normal", value: "normal" },
               { label: "Bold", value: "bold" },
             ]}
             {...form.getInputProps("fontWeight")}
+            onChange={(value) => {
+              form.setFieldValue("fontWeight", value as string);
+              debouncedTreeUpdate(selectedComponentId as string, {
+                style: { fontWeight: value },
+              });
+            }}
           />
         </Group>
         <Group noWrap>
           <UnitInput
             label="Line Height"
             {...form.getInputProps("lineHeight")}
+            onChange={(value) => {
+              form.setFieldValue("lineHeight", value as string);
+              debouncedTreeUpdate(selectedComponentId as string, {
+                style: { lineHeight: value },
+              });
+            }}
           />
           <UnitInput
             label="Letter Spacing"
             disabledUnits={["%"]}
             {...form.getInputProps("letterSpacing")}
+            onChange={(value) => {
+              form.setFieldValue("letterSpacing", value as string);
+              debouncedTreeUpdate(selectedComponentId as string, {
+                style: { letterSpacing: value },
+              });
+            }}
           />
         </Group>
-        <ColorInput size="xs" label="Color" {...form.getInputProps("color")} />
+        <ColorInput
+          size="xs"
+          label="Color"
+          {...form.getInputProps("color")}
+          onChange={(value) => {
+            form.setFieldValue("color", value as string);
+            debouncedTreeUpdate(selectedComponentId as string, {
+              style: { color: value },
+            });
+          }}
+        />
       </Stack>
     </form>
   );

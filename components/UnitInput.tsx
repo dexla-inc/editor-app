@@ -1,3 +1,4 @@
+import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
 import {
   NumberInput,
   NumberInputProps,
@@ -28,31 +29,38 @@ export const UnitInput = ({
   ...props
 }: Props & NumberInputProps) => {
   const theme = useMantineTheme();
-  const [_, splitValue, splitUnit] = (fetchedValue &&
-    (fetchedValue as string).split(/(\d+)/)) || ["", ""];
-  const [unit, setUnit] = useState<Unit>((splitUnit as Unit) || "px");
+
+  const [splitValue, splitUnit] = splitValueAndUnit(fetchedValue) ?? [0, "px"];
+
   const [value, setValue] = useState<number>();
+  const [unit, setUnit] = useState<Unit>();
 
   useEffect(() => {
     if (onChange) {
       onChange(`${value}${unit}`);
     }
+    // Disable as we don't want to force an useCallback on every onChange being passed down
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unit, value]);
+  }, [value, unit]);
 
   return (
     <NumberInput
       size="xs"
       hideControls
-      value={value ? value : splitValue ? parseInt(splitValue, 10) : undefined}
-      onChange={setValue as any}
+      defaultValue={splitValue}
+      value={value ?? splitValue ?? undefined}
+      onChange={(val: number) => {
+        setValue(val);
+        setUnit((unit ?? splitUnit) as Unit);
+      }}
       {...props}
       rightSection={
         <Select
           size="xs"
           variant="filled"
-          value={unit}
-          onChange={(val: "px" | "rem" | "%") => setUnit(val)}
+          defaultValue={splitUnit}
+          value={unit ?? splitUnit}
+          onChange={setUnit as any}
           data={options.filter(
             (o) => !disabledUnits?.includes(o.value as Unit)
           )}

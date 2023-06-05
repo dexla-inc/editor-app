@@ -8,8 +8,6 @@ export const jsonStructure = (props?: any): Component => {
     props.columns ? `${(props.columns * 100) / 12}%` : "auto"
   }`;
 
-  const style = props?.props?.style ?? {};
-
   return {
     id: nanoid(),
     name: "Container",
@@ -41,13 +39,13 @@ export const jsonStructure = (props?: any): Component => {
             children: [],
             props: {
               children: props.name,
+              w: "auto",
               style: {
-                fontSize: theme.fontSizes.sm,
+                fontSize: `${px(theme.fontSizes.sm)}px`,
                 fontWeight: "normal",
                 lineHeight: "110%",
                 letterSpacing: "0px",
                 color: theme.colors.dark[6],
-                ...(style ?? {}),
               },
             },
           },
@@ -58,13 +56,13 @@ export const jsonStructure = (props?: any): Component => {
             children: [],
             props: {
               children: "Not implemented yet",
+              w: "auto",
               style: {
-                fontSize: theme.fontSizes.xs,
+                fontSize: `${px(theme.fontSizes.xs)}px`,
                 fontWeight: "normal",
                 lineHeight: "110%",
                 letterSpacing: "0px",
-                color: theme.colors.gray[4],
-                ...(style ?? {}),
+                color: theme.colors.gray[5],
               },
             },
           },
