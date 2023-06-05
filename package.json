@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "lint-staged",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.0.8",
@@ -41,6 +42,9 @@
   },
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.7",
-    "@types/lodash.throttle": "^4.1.7"
+    "@types/lodash.throttle": "^4.1.7",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.2.2",
+    "prettier": "^2.8.8"
   }
 }
