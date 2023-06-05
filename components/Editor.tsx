@@ -46,6 +46,7 @@ import { decodeSchema } from "@/utils/compression";
 import TOML from "@iarna/toml";
 import { useAppStore } from "@/stores/app";
 import { DraggableComponent } from "@/components/DraggableComponent";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 type Props = {
   projectId: string;
@@ -70,6 +71,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const isStreaming = useRef<boolean>(false);
   const [stream, setStream] = useState<string>("");
   const [isAddingComponent, setIsAddingComponent] = useState<boolean>(false);
+  const [canvasRef] = useAutoAnimate();
 
   useEffect(() => {
     const getPageData = async () => {
@@ -228,8 +230,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const renderTree = (component: Component) => {
     if (component.id === "root") {
       return (
-        <Paper shadow="xs">
-          <Droppable key={component.id} id={component.id} bg="white" m={0}>
+        <Paper shadow="xs" ref={canvasRef}>
+          <Droppable id={component.id} bg="white" m={0}>
             {component.children?.map((child) => renderTree(child))}
           </Droppable>
         </Paper>
@@ -240,22 +242,14 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
     if (!componentToRender) {
       return (
-        <DroppableDraggable
-          key={component.id!}
-          id={component.id!}
-          component={component}
-        >
+        <DroppableDraggable id={component.id!} component={component}>
           {component.children?.map((child) => renderTree(child))}
         </DroppableDraggable>
       );
     }
 
     return (
-      <DroppableDraggable
-        id={component.id!}
-        key={component.id!}
-        component={component}
-      >
+      <DroppableDraggable id={component.id!} component={component}>
         {componentToRender?.Component({ component, renderTree })}
       </DroppableDraggable>
     );

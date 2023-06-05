@@ -130,7 +130,7 @@ export default function Project({ id }: Props) {
               {pages.map((page) => {
                 return (
                   <List.Item key={page}>
-                    <TypingAnimation text={page} />
+                    <TypingAnimation onlyWhileLoading={false} text={page} />
                   </List.Item>
                 );
               })}
