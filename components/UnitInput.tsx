@@ -42,7 +42,11 @@ export const UnitInput = ({
   const [unit, setUnit] = useState<Unit>();
 
   useEffect(() => {
-    if (onChange) {
+    if (
+      onChange &&
+      typeof value !== "undefined" &&
+      typeof unit !== "undefined"
+    ) {
       onChange(unit === "auto" ? "auto" : `${value}${unit}`);
     }
     // Disable as we don't want to force an useCallback on every onChange being passed down

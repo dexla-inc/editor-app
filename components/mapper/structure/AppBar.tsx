@@ -33,7 +33,6 @@ export const jsonStructure = (props?: any): Component => {
         children: [],
         props: {
           children: "My Company",
-          w: "auto",
           style: {
             fontSize: `${px(theme.fontSizes.sm)}px`,
             fontWeight: "normal",
@@ -53,10 +52,6 @@ export const jsonStructure = (props?: any): Component => {
         props: {
           color: "teal",
           radius: "xl",
-          style: {
-            width: "auto",
-            height: "auto",
-          },
         },
       },
     ],

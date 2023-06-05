@@ -38,16 +38,16 @@ export const Modifier = () => {
   });
 
   useEffect(() => {
-    if (selectedComponent) {
+    if (selectedComponentId) {
       const { style = {} } = componentProps;
       form.setValues(style);
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  }, [selectedComponentId]);
 
   return (
-    <form>
+    <form key={selectedComponentId}>
       <Stack>
         <Group noWrap>
           <UnitInput

@@ -89,9 +89,11 @@ export const DroppableDraggable = ({
   return (
     <Box
       {...props}
-      w={component.props?.w || component.props?.styles?.width || "100%"}
       pos="relative"
-      sx={{ zIndex: isDragging ? 9999 : undefined }}
+      sx={{
+        zIndex: isDragging ? 9999 : undefined,
+        width: component.props?.style?.width ?? "auto",
+      }}
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();

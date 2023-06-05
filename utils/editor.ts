@@ -50,7 +50,9 @@ export const getEditorTreeFromPageStructure = (tree: { rows: Row[] }) => {
           name: "Container",
           description: "Container",
           props: {
-            w: "100%",
+            style: {
+              width: "100%",
+            },
           },
           children: row.components.map((c) => {
             const component = structureMapper[c.name];

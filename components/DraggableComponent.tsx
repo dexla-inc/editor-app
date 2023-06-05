@@ -23,8 +23,14 @@ export const DraggableComponent = ({
   };
 
   return (
-    <Box ref={setNodeRef} w="100%" {...props} style={styles}>
-      <Card w="100%" withBorder>
+    <Box
+      pos="relative"
+      ref={setNodeRef}
+      w="100%"
+      {...props}
+      style={{ ...styles }}
+    >
+      <Card w="100%" withBorder pos="relative">
         <Group>
           <UnstyledButton
             sx={{ cursor: "grab", alignItems: "center", display: "flex" }}

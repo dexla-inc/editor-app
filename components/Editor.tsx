@@ -302,6 +302,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
               backgroundImage: `radial-gradient(${theme.colors.gray[4]} 1px, transparent 1px), radial-gradient( ${theme.colors.gray[4]} 1px, transparent 1px)`,
               backgroundSize: "20px 20px",
               backgroundPosition: "0 0, 50px 50px",
+              zIndex: 0,
             },
           }}
         />

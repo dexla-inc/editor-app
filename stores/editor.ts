@@ -11,7 +11,9 @@ export const emptyEditorTree = {
     name: "Container",
     description: "Root Container",
     props: {
-      w: "100%",
+      style: {
+        width: "100%",
+      },
     },
     children: [],
   },
