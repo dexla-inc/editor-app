@@ -342,7 +342,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
         </Box>
       </Shell>
       <DragOverlay>
-        {componentToAdd && componentMapper[componentToAdd]?.Draggable()}
+        {componentToAdd && structureMapper[componentToAdd]?.Draggable()}
       </DragOverlay>
     </DndContext>
   );

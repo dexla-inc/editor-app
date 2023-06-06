@@ -6,19 +6,16 @@ import { nanoid } from "nanoid";
 export const jsonStructure = (props?: any): Component => {
   return {
     id: nanoid(),
-    name: "Text",
-    description: "Text",
-    children: [],
+    name: "Group",
+    description: "Group",
     props: {
-      children: "New text",
       style: {
-        fontSize: `${px(theme.fontSizes.sm)}px`,
-        fontWeight: "normal",
-        lineHeight: "110%",
-        letterSpacing: "0px",
-        color: theme.colors.dark[6],
-        width: "auto",
-        heigh: "auto",
+        paddingTop: px(theme.spacing.sm),
+        paddingBottom: px(theme.spacing.sm),
+        paddingLeft: px(theme.spacing.lg),
+        paddingRight: px(theme.spacing.lg),
+        width: "100%",
+        height: "auto",
       },
       ...(props.props || {}),
     },

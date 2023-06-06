@@ -2,6 +2,9 @@ import { Component } from "@/utils/editor";
 import * as AppBarStructure from "@/components/mapper/structure/AppBar";
 import * as NotImplemented from "@/components/mapper/structure/NotImplemented";
 import * as TextStructure from "@/components/mapper/structure/Text";
+import * as AvatarStructure from "@/components/mapper/structure/Avatar";
+import * as GroupStructure from "@/components/mapper/structure/Group";
+import * as StackStructure from "@/components/mapper/structure/Stack";
 import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
 import { Box } from "@/components/mapper/Box";
 import { Avatar } from "@/components/mapper/Avatar";
@@ -11,11 +14,16 @@ import { Flex } from "@/components/mapper/Flex";
 import { Container } from "@/components/mapper/Container";
 import { Stack } from "@/components/mapper/Stack";
 import { Breadcrumb } from "@/components/mapper/Breadcrumb";
-import { DraggableComponent } from "@/components/DraggableComponent";
 import { DraggableText } from "@/components/mapper/draggable/Text";
+import { DraggableAvatar } from "@/components/mapper/draggable/Avatar";
+import { DraggableBreadcrumb } from "@/components/mapper/draggable/Breadcrumb";
+import { DraggableGroup } from "@/components/mapper/draggable/Group";
+import { DraggableAppBar } from "@/components/mapper/draggable/AppBar";
+import { DraggableStack } from "@/components/mapper/draggable/Stack";
 
 export type StructureDefinition = {
   structure: (props: any) => Component;
+  Draggable?: any;
 };
 
 export type StructureMapper = {
@@ -26,8 +34,12 @@ export const structureMapper: StructureMapper = {
   // AI generated structures
   Breadcrumb: {
     structure: (props: any) => Breadcrumbs.jsonStructure(props),
+    Draggable: () => <DraggableBreadcrumb />,
   },
-  AppBar: { structure: (props: any) => AppBarStructure.jsonStructure(props) },
+  AppBar: {
+    structure: (props: any) => AppBarStructure.jsonStructure(props),
+    Draggable: () => <DraggableAppBar />,
+  },
   Accordion: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
   },
@@ -112,6 +124,19 @@ export const structureMapper: StructureMapper = {
   // Primitives you can add to the canvas
   Text: {
     structure: (props: any) => TextStructure.jsonStructure(props),
+    Draggable: () => <DraggableText />,
+  },
+  Avatar: {
+    structure: (props: any) => AvatarStructure.jsonStructure(props),
+    Draggable: () => <DraggableAvatar />,
+  },
+  Group: {
+    structure: (props: any) => GroupStructure.jsonStructure(props),
+    Draggable: () => <DraggableGroup />,
+  },
+  Stack: {
+    structure: (props: any) => StackStructure.jsonStructure(props),
+    Draggable: () => <DraggableStack />,
   },
 };
 
@@ -120,7 +145,6 @@ export type Modifiers = "spacing" | "size" | "text";
 export type ComponentDefinition = {
   Component: any;
   modifiers: Modifiers[];
-  Draggable?: any;
 };
 
 export type ComponentMapper = {
@@ -180,6 +204,5 @@ export const componentMapper: ComponentMapper = {
       <Text component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "text"],
-    Draggable: () => <DraggableText />,
   },
 };

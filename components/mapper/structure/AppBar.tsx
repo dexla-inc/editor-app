@@ -32,7 +32,7 @@ export const jsonStructure = (props?: any): Component => {
         description: "App Name",
         children: [],
         props: {
-          children: "My Company",
+          children: "App Name",
           style: {
             fontSize: `${px(theme.fontSizes.sm)}px`,
             fontWeight: "normal",
