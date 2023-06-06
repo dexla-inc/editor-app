@@ -45,7 +45,6 @@ import { getPage, getPageStream } from "@/requests/projects/queries";
 import { decodeSchema } from "@/utils/compression";
 import TOML from "@iarna/toml";
 import { useAppStore } from "@/stores/app";
-import { DraggableComponent } from "@/components/DraggableComponent";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 type Props = {
@@ -70,7 +69,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isStreaming = useRef<boolean>(false);
   const [stream, setStream] = useState<string>("");
-  const [isAddingComponent, setIsAddingComponent] = useState<boolean>(false);
+  const [componentToAdd, setComponentToAdd] = useState<string>("");
   const [canvasRef] = useAutoAnimate();
 
   useEffect(() => {
@@ -196,7 +195,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
     setEditorTree(copy);
     clearDropTarget();
-    setIsAddingComponent(false);
+    setComponentToAdd("");
   };
 
   const handleDragMove = (event: DragMoveEvent) => {
@@ -215,16 +214,16 @@ export const Editor = ({ projectId, pageId }: Props) => {
     setSelectedComponentId(id as string);
     const active = getComponentById(editorTree.root, id as string);
     if (!active) {
-      setIsAddingComponent(true);
+      setComponentToAdd(id as string);
     } else {
-      setIsAddingComponent(false);
+      setComponentToAdd("");
     }
   };
 
   const handleDragCancel = () => {
     clearDropTarget();
     clearSelection();
-    setIsAddingComponent(false);
+    setComponentToAdd("");
   };
 
   const renderTree = (component: Component) => {
@@ -343,12 +342,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
         </Box>
       </Shell>
       <DragOverlay>
-        {isAddingComponent && (
-          // TODO: Make this work with components that aren't Text
-          <DraggableComponent id="Text">
-            <Text size="xs">Text</Text>
-          </DraggableComponent>
-        )}
+        {componentToAdd && componentMapper[componentToAdd]?.Draggable()}
       </DragOverlay>
     </DndContext>
   );

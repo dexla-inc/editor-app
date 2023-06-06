@@ -1,12 +1,18 @@
-import { Stack, Text } from "@mantine/core";
-import { DraggableComponent } from "@/components/DraggableComponent";
+import { Stack } from "@mantine/core";
+import { componentMapper } from "@/utils/componentMapper";
 
 export const EditorNavbarComponentsSection = () => {
+  const components = Object.keys(componentMapper).reduce((draggables, key) => {
+    const draggable = componentMapper[key]?.Draggable;
+
+    return draggable ? draggables.concat(draggable) : draggables;
+  }, []);
+
   return (
     <Stack>
-      <DraggableComponent id="Text">
-        <Text size="xs">Text</Text>
-      </DraggableComponent>
+      {components.map((draggableComponent: any) => {
+        return draggableComponent();
+      })}
     </Stack>
   );
 };

@@ -11,6 +11,8 @@ import { Flex } from "@/components/mapper/Flex";
 import { Container } from "@/components/mapper/Container";
 import { Stack } from "@/components/mapper/Stack";
 import { Breadcrumb } from "@/components/mapper/Breadcrumb";
+import { DraggableComponent } from "@/components/DraggableComponent";
+import { DraggableText } from "@/components/mapper/draggable/Text";
 
 export type StructureDefinition = {
   structure: (props: any) => Component;
@@ -118,6 +120,7 @@ export type Modifiers = "spacing" | "size" | "text";
 export type ComponentDefinition = {
   Component: any;
   modifiers: Modifiers[];
+  Draggable?: any;
 };
 
 export type ComponentMapper = {
@@ -177,5 +180,6 @@ export const componentMapper: ComponentMapper = {
       <Text component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "text"],
+    Draggable: () => <DraggableText />,
   },
 };
