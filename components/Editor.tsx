@@ -303,7 +303,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
         <Global
           styles={{
             body: {
-              background: theme.colors.gray[1],
+              background: theme.colors.gray[0],
               backgroundImage: `radial-gradient(${theme.colors.gray[4]} 1px, transparent 1px), radial-gradient( ${theme.colors.gray[4]} 1px, transparent 1px)`,
               backgroundSize: "20px 20px",
               backgroundPosition: "0 0, 50px 50px",
