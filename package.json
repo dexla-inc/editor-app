@@ -45,6 +45,7 @@
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.7",
     "@types/lodash.throttle": "^4.1.7",
+    "@vitest/coverage-c8": "^0.31.4",
     "husky": "^8.0.0",
     "lint-staged": "^13.2.2",
     "prettier": "^2.8.8",
