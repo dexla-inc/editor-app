@@ -27,7 +27,6 @@ import {
 import {
   Aside,
   Box,
-  Container,
   Global,
   Loader,
   Navbar,
@@ -314,31 +313,29 @@ export const Editor = ({ projectId, pageId }: Props) => {
           pos="relative"
           onClick={clearSelection}
           h={`calc(var(--vh, 100vh) - ${HEADER_HEIGHT}px)`}
-          py={40}
+          p={40}
         >
-          <Container pos="relative" size="xl">
-            {isLoading && !stream && (
-              <Paper
-                shadow="xs"
-                bg="white"
-                sx={{
-                  width: "100%",
-                  minHeight: "400px",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  display: "flex",
-                }}
-              >
-                <Stack align="center">
-                  <Text color="teal.6" size="sm" weight="bold">
-                    Loading the page
-                  </Text>
-                  <Loader />
-                </Stack>
-              </Paper>
-            )}
-            {renderTree(editorTree.root)}
-          </Container>
+          {isLoading && !stream && editorTree.root.children?.length === 0 && (
+            <Paper
+              shadow="xs"
+              bg="white"
+              sx={{
+                width: "100%",
+                minHeight: "400px",
+                justifyContent: "center",
+                alignItems: "center",
+                display: "flex",
+              }}
+            >
+              <Stack align="center">
+                <Text color="teal.6" size="sm" weight="bold">
+                  Loading the page
+                </Text>
+                <Loader />
+              </Stack>
+            </Paper>
+          )}
+          {renderTree(editorTree.root)}
         </Box>
       </Shell>
       <DragOverlay>

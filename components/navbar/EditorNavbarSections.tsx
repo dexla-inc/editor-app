@@ -1,5 +1,4 @@
 import { SidebarSection } from "@/components/SidebarSection";
-import { Text } from "@mantine/core";
 import {
   IconFileInvoice,
   IconLayoutDashboard,
@@ -7,6 +6,7 @@ import {
 } from "@tabler/icons-react";
 import { EditorNavbarComponentsSection } from "@/components/navbar/EditorNavbarComponentsSection";
 import { EditorNavbarPagesSection } from "@/components/navbar/EditorNavbarPagesSection";
+import { EditorNavbarLayersSection } from "@/components/navbar/EditorNavbarLayersSection";
 
 const sections = [
   {
@@ -16,7 +16,7 @@ const sections = [
   },
   {
     id: "layers",
-    label: "Layers",
+    label: "Page Structure",
     icon: IconStack2,
   },
   {
@@ -33,7 +33,7 @@ type SectionsMapper = {
 
 const sectionMapper: SectionsMapper = {
   pages: (props: any) => <EditorNavbarPagesSection {...props} />,
-  layers: (props: any) => <Text size="xs">{props.label}</Text>,
+  layers: (props: any) => <EditorNavbarLayersSection {...props} />,
   components: (props: any) => <EditorNavbarComponentsSection {...props} />,
 };
 
