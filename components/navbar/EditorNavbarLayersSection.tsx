@@ -63,11 +63,13 @@ const ListItem = ({ component, children }: ListItemProps) => {
       >
         <Group position="apart" noWrap>
           <Group spacing={4} noWrap>
-            <UnstyledButton
-              sx={{ cursor: "grab", alignItems: "center", display: "flex" }}
-            >
-              <IconGripVertical size={ICON_SIZE} strokeWidth={1.5} />
-            </UnstyledButton>
+            {component.id !== "root" && (
+              <UnstyledButton
+                sx={{ cursor: "grab", alignItems: "center", display: "flex" }}
+              >
+                <IconGripVertical size={ICON_SIZE} strokeWidth={1.5} />
+              </UnstyledButton>
+            )}
             {(component.children ?? [])?.length > 0 && (
               <ActionIcon
                 onClick={(e) => {
