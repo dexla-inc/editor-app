@@ -26,6 +26,7 @@ export type EditorState = {
   dropTarget?: DropTarget;
   selectedComponentId?: string;
   setTree: (tree: EditorTree) => void;
+  resetTree: () => void;
   setCurrentProjectId: (currentProjectId: string) => void;
   setCurrentPageId: (currentPageId: string) => void;
   updateTreeComponent: (componentId: string, props: any) => void;
@@ -49,6 +50,9 @@ export const useEditorStore = create<EditorState>()(
           );
           return { tree };
         });
+      },
+      resetTree: () => {
+        set({ tree: emptyEditorTree });
       },
       updateTreeComponent: (componentId, props) => {
         set((state) => {

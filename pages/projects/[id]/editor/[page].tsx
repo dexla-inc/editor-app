@@ -32,5 +32,5 @@ export default function PageEditor({ id, page }: Props) {
     }
   }, [id, page, setCurrentPageId, setCurrentProjectId]);
 
-  return <Editor pageId={page} projectId={id} />;
+  return <Editor key={page} pageId={page} projectId={id} />;
 }
