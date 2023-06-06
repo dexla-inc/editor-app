@@ -1,15 +1,6 @@
-import {
-  AppShell,
-  Aside,
-  Header,
-  Navbar,
-  ScrollArea,
-  Group,
-  Box,
-  AppShellProps,
-} from "@mantine/core";
 import { Logo } from "@/components/Logo";
 import { HEADER_HEIGHT } from "@/utils/config";
+import { AppShell, AppShellProps, Group, Header } from "@mantine/core";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   return (
@@ -18,7 +9,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
       padding={0}
       header={
         <Header height={HEADER_HEIGHT}>
-          <Group h={HEADER_HEIGHT} p="lg">
+          <Group h={HEADER_HEIGHT} pl="lg">
             <Logo />
           </Group>
         </Header>
