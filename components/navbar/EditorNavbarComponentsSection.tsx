@@ -36,19 +36,21 @@ export const EditorNavbarComponentsSection = () => {
   });
 
   return (
-    <Stack>
+    <Stack spacing="xl">
       <TextInput
         onChange={(e) => setQuery(e.target.value)}
         value={query}
         placeholder="Search"
         icon={<IconSearch size={ICON_SIZE} />}
       />
-      {(query
-        ? sortedComponents.filter((sc) => new RegExp(query, "i").test(sc.id))
-        : sortedComponents
-      ).map(({ id, draggable: Draggable }: DraggableComponentData) => {
-        return <Draggable key={id} />;
-      })}
+      <Stack spacing="xs">
+        {(query
+          ? sortedComponents.filter((sc) => new RegExp(query, "i").test(sc.id))
+          : sortedComponents
+        ).map(({ id, draggable: Draggable }: DraggableComponentData) => {
+          return <Draggable key={id} />;
+        })}
+      </Stack>
     </Stack>
   );
 };

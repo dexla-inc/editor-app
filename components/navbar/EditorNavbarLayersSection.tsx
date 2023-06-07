@@ -188,6 +188,10 @@ export const EditorNavbarLayersSection = () => {
   const [isSorting, setIsSorting] = useState<boolean>(false);
 
   const renderList = (component: Component) => {
+    if (!component) {
+      return null;
+    }
+
     return (
       <ListItemWrapper key={component.id} component={component}>
         {component.children?.map((child) => {

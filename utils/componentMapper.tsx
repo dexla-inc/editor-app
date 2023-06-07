@@ -5,6 +5,11 @@ import * as TextStructure from "@/components/mapper/structure/Text";
 import * as AvatarStructure from "@/components/mapper/structure/Avatar";
 import * as GroupStructure from "@/components/mapper/structure/Group";
 import * as StackStructure from "@/components/mapper/structure/Stack";
+import * as ContainerStructure from "@/components/mapper/structure/Container";
+import * as SelectStructure from "@/components/mapper/structure/Select";
+import * as InputStructure from "@/components/mapper/structure/Input";
+import * as ButtonStructure from "@/components/mapper/structure/Button";
+import * as LinkStructure from "@/components/mapper/structure/Link";
 import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
 import { Box } from "@/components/mapper/Box";
 import { Avatar } from "@/components/mapper/Avatar";
@@ -14,12 +19,11 @@ import { Flex } from "@/components/mapper/Flex";
 import { Container } from "@/components/mapper/Container";
 import { Stack } from "@/components/mapper/Stack";
 import { Breadcrumb } from "@/components/mapper/Breadcrumb";
-import { DraggableText } from "@/components/mapper/draggable/Text";
-import { DraggableAvatar } from "@/components/mapper/draggable/Avatar";
-import { DraggableBreadcrumb } from "@/components/mapper/draggable/Breadcrumb";
-import { DraggableGroup } from "@/components/mapper/draggable/Group";
-import { DraggableAppBar } from "@/components/mapper/draggable/AppBar";
-import { DraggableStack } from "@/components/mapper/draggable/Stack";
+import { DraggableComponent } from "@/components/DraggableComponent";
+import { Select } from "@/components/mapper/Select";
+import { Input } from "@/components/mapper/Input";
+import { Button } from "@/components/mapper/Button";
+import { Link } from "@/components/mapper/Link";
 
 export type StructureDefinition = {
   structure: (props: any) => Component;
@@ -34,11 +38,11 @@ export const structureMapper: StructureMapper = {
   // AI generated structures
   Breadcrumb: {
     structure: (props: any) => Breadcrumbs.jsonStructure(props),
-    Draggable: () => <DraggableBreadcrumb />,
+    Draggable: () => <DraggableComponent id="Breadcrumb" />,
   },
   AppBar: {
     structure: (props: any) => AppBarStructure.jsonStructure(props),
-    Draggable: () => <DraggableAppBar />,
+    Draggable: () => <DraggableComponent id="AppBar" />,
   },
   Accordion: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -124,19 +128,39 @@ export const structureMapper: StructureMapper = {
   // Primitives you can add to the canvas
   Text: {
     structure: (props: any) => TextStructure.jsonStructure(props),
-    Draggable: () => <DraggableText />,
+    Draggable: () => <DraggableComponent id="Text" />,
   },
   Avatar: {
     structure: (props: any) => AvatarStructure.jsonStructure(props),
-    Draggable: () => <DraggableAvatar />,
+    Draggable: () => <DraggableComponent id="Avatar" />,
   },
   Group: {
     structure: (props: any) => GroupStructure.jsonStructure(props),
-    Draggable: () => <DraggableGroup />,
+    Draggable: () => <DraggableComponent id="Group" />,
   },
   Stack: {
     structure: (props: any) => StackStructure.jsonStructure(props),
-    Draggable: () => <DraggableStack />,
+    Draggable: () => <DraggableComponent id="Stack" />,
+  },
+  Container: {
+    structure: (props: any) => ContainerStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Container" />,
+  },
+  Select: {
+    structure: (props: any) => SelectStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Select" />,
+  },
+  Input: {
+    structure: (props: any) => InputStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Input" />,
+  },
+  Button: {
+    structure: (props: any) => ButtonStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Button" />,
+  },
+  Link: {
+    structure: (props: any) => LinkStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Link" />,
   },
 };
 
@@ -199,10 +223,48 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: ["spacing", "size"],
   },
+  Select: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Select
+        component={props.component}
+        renderTree={props.renderTree}
+        data={[]}
+        onClick={(e) => {
+          e.preventDefault();
+        }}
+      />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  Input: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Input component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size"],
+  },
   Text: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Text component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "text"],
+  },
+  Link: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Link component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  Button: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Button
+        component={props.component}
+        renderTree={props.renderTree}
+        // @ts-ignore
+        onClick={(e) => {
+          e.preventDefault();
+        }}
+      />
+    ),
+    modifiers: ["spacing", "size"],
   },
 };
