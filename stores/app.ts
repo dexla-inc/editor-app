@@ -1,6 +1,6 @@
 import {
-  showNotification,
   NotificationProps,
+  showNotification,
   updateNotification,
 } from "@mantine/notifications";
 import { create } from "zustand";
