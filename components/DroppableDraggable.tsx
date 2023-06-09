@@ -12,24 +12,28 @@ import {
 } from "@mantine/core";
 import { useEditorStore } from "@/stores/editor";
 import { Component, getComponentParent } from "@/utils/editor";
-import { IconArrowUp, IconGripVertical } from "@tabler/icons-react";
+import {
+  IconArrowUp,
+  IconGripVertical,
+  IconNewSection,
+} from "@tabler/icons-react";
 import { DROP_INDICATOR_WIDTH, ICON_SIZE } from "@/utils/config";
 
 type Props = {
   id: string;
   component: Component;
+  customComponentModal: any;
 } & BoxProps;
 
 export const DroppableDraggable = ({
   id,
   children,
   component,
+  customComponentModal,
   ...props
 }: PropsWithChildren<Props>) => {
   const theme = useMantineTheme();
   const editorTree = useEditorStore((state) => state.tree);
-  const setTree = useEditorStore((state) => state.setTree);
-  const clearSelection = useEditorStore((state) => state.clearSelection);
   const dropTarget = useEditorStore((state) => state.dropTarget);
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId
@@ -122,7 +126,7 @@ export const DroppableDraggable = ({
         h={36}
         top={-36}
         sx={{
-          zIndex: 99999,
+          zIndex: 90,
           display: isSelected && !isDragging ? "block" : "none",
           background: theme.colors.teal[6],
           borderTopLeftRadius: theme.radius.sm,
@@ -156,6 +160,16 @@ export const DroppableDraggable = ({
               <IconArrowUp size={ICON_SIZE} color="white" strokeWidth={1.5} />
             </ActionIcon>
           )}
+          <ActionIcon
+            variant="transparent"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              customComponentModal.open();
+            }}
+          >
+            <IconNewSection size={ICON_SIZE} color="white" strokeWidth={1.5} />
+          </ActionIcon>
         </Group>
       </Box>
     </Box>

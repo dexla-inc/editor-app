@@ -41,6 +41,17 @@ export function arrayMove<T>(array: T[], from: number, to: number): T[] {
   return newArray;
 }
 
+export const replaceIdsDeeply = (treeRoot: Component) => {
+  crawl(
+    treeRoot,
+    (node) => {
+      node.id = nanoid();
+      node.children?.forEach((c) => replaceIdsDeeply(c));
+    },
+    { order: "bfs" }
+  );
+};
+
 export const getEditorTreeFromPageStructure = (tree: { rows: Row[] }) => {
   const editorTree: EditorTree = {
     root: {

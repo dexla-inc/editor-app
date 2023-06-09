@@ -1,4 +1,4 @@
-import { post, put } from "@/utils/api";
+import { del, post, put } from "@/utils/api";
 
 export type ProjectParams = {
   description: string;
@@ -51,6 +51,56 @@ export const updatePageState = async (
     {
       pageState,
     }
+  )) as any;
+
+  return response;
+};
+
+export type CustomComponentParams = {
+  type: string;
+  name: string;
+  scope: string;
+  content: string;
+  description: string;
+};
+
+export type CustomComponentResponse = {
+  id: string;
+  type: string;
+  name: string;
+  scope: string;
+  content: string;
+  description: string;
+};
+
+export const createCustomComponent = async ({
+  values,
+  projectId,
+}: {
+  values: CustomComponentParams;
+  projectId: string;
+}) => {
+  const { name, ...params } = values;
+  const response = (await post<CustomComponentResponse>(
+    `/projects/${projectId}/components`,
+    {
+      ...params,
+      description: name,
+    }
+  )) as CustomComponentResponse;
+
+  return response;
+};
+
+export const deleteCustomComponent = async ({
+  projectId,
+  id,
+}: {
+  projectId: string;
+  id: string;
+}) => {
+  const response = (await del<any>(
+    `/projects/${projectId}/components/${id}`
   )) as any;
 
   return response;

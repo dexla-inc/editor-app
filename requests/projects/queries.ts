@@ -11,6 +11,19 @@ type PageListResponse = {
   results: PageResponse[];
 };
 
+export type CustomComponentResponse = {
+  id: string;
+  type: string;
+  name: string;
+  scope: string;
+  content: string;
+  description: string;
+};
+
+type CustomComponentListResponse = {
+  results: CustomComponentResponse[];
+};
+
 export const getPagesStream = async (projectId: string) => {
   const response = (await get<ReadableStream<Uint8Array>>(
     `/projects/${projectId}/automations/pages/stream-revision`,
@@ -47,6 +60,15 @@ export const getPageStream = async (projectId: string, pageName: string) => {
     {},
     true
   )) as ReadableStream<Uint8Array>;
+
+  return response;
+};
+
+export const getComponentList = async (projectId: string) => {
+  const response = (await get<CustomComponentListResponse>(
+    `/projects/${projectId}/components`,
+    {}
+  )) as CustomComponentListResponse;
 
   return response;
 };

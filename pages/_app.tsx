@@ -1,6 +1,6 @@
 import { AppProps } from "next/app";
 import Head from "next/head";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useViewportSize } from "@mantine/hooks";
 import {
   Global,
@@ -11,6 +11,11 @@ import {
 import { Notifications } from "@mantine/notifications";
 import { cache } from "@/utils/emotionCache";
 import { Inter } from "next/font/google";
+import {
+  Hydrate,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -41,6 +46,17 @@ export default function App(props: AppProps) {
 
   const { Component, pageProps } = props;
 
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            refetchOnWindowFocus: false,
+          },
+        },
+      })
+  );
+
   useEffect(() => {
     setVh(height);
   }, [height]);
@@ -57,36 +73,40 @@ export default function App(props: AppProps) {
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       </Head>
       <main className={inter.variable}>
-        <MantineProvider
-          withGlobalStyles
-          withNormalizeCSS
-          theme={theme}
-          emotionCache={cache}
-        >
-          <Notifications />
-          <Global
-            styles={{
-              "*, *::before, *::after": {
-                boxSizing: "border-box",
-              },
+        <QueryClientProvider client={queryClient}>
+          <Hydrate state={pageProps.dehydratedState}>
+            <MantineProvider
+              withGlobalStyles
+              withNormalizeCSS
+              theme={theme}
+              emotionCache={cache}
+            >
+              <Notifications />
+              <Global
+                styles={{
+                  "*, *::before, *::after": {
+                    boxSizing: "border-box",
+                  },
 
-              body: {
-                margin: 0,
-                padding: 0,
-                ...theme.fn.fontStyles(),
-                lineHeight: theme.lineHeight,
-                maxHeight: "var(--vh, 100vh)",
-                minHeight: "var(--vh, auto)",
-                background: "white",
-              },
+                  body: {
+                    margin: 0,
+                    padding: 0,
+                    ...theme.fn.fontStyles(),
+                    lineHeight: theme.lineHeight,
+                    maxHeight: "var(--vh, 100vh)",
+                    minHeight: "var(--vh, auto)",
+                    background: "white",
+                  },
 
-              html: {
-                maxHeight: "-webkit-fill-available",
-              },
-            }}
-          />
-          <Component {...pageProps} />
-        </MantineProvider>
+                  html: {
+                    maxHeight: "-webkit-fill-available",
+                  },
+                }}
+              />
+              <Component {...pageProps} />
+            </MantineProvider>
+          </Hydrate>
+        </QueryClientProvider>
       </main>
     </>
   );

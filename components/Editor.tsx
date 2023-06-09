@@ -45,7 +45,8 @@ import { decodeSchema } from "@/utils/compression";
 import TOML from "@iarna/toml";
 import { useAppStore } from "@/stores/app";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { useHotkeys } from "@mantine/hooks";
+import { useDisclosure, useHotkeys } from "@mantine/hooks";
+import { CustomComponentModal } from "./CustomComponentModal";
 
 type Props = {
   projectId: string;
@@ -74,6 +75,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const [stream, setStream] = useState<string>("");
   const [componentToAdd, setComponentToAdd] = useState<string>("");
   const [canvasRef] = useAutoAnimate();
+  const [isCustomComponentModalOpen, customComponentModal] =
+    useDisclosure(false);
 
   useHotkeys([
     [
@@ -171,11 +174,13 @@ export const Editor = ({ projectId, pageId }: Props) => {
     const copy = { ...editorTree };
     const activeComponent = getComponentById(copy.root, active.id as string);
 
-    if (!activeComponent) {
-      const component = structureMapper[active.id];
-      const structure = component.structure({});
-      addComponent(copy.root, structure as unknown as Component, dropTarget);
-      setSelectedComponentId(structure.id as string);
+    if (!activeComponent && (active.data.current as any).id) {
+      addComponent(
+        copy.root,
+        active.data.current as unknown as Component,
+        dropTarget
+      );
+      setSelectedComponentId((active.data.current as any).id as string);
     } else if (dropTarget?.id !== "root") {
       const activeParent = getComponentParent(copy.root, active.id as string);
       const targetParent = getComponentParent(
@@ -257,14 +262,22 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
     if (!componentToRender) {
       return (
-        <DroppableDraggable id={component.id!} component={component}>
+        <DroppableDraggable
+          id={component.id!}
+          component={component}
+          customComponentModal={customComponentModal}
+        >
           {component.children?.map((child) => renderTree(child))}
         </DroppableDraggable>
       );
     }
 
     return (
-      <DroppableDraggable id={component.id!} component={component}>
+      <DroppableDraggable
+        id={component.id!}
+        component={component}
+        customComponentModal={customComponentModal}
+      >
         {componentToRender?.Component({ component, renderTree })}
       </DroppableDraggable>
     );
@@ -354,6 +367,10 @@ export const Editor = ({ projectId, pageId }: Props) => {
           )}
           {renderTree(editorTree.root)}
         </Box>
+        <CustomComponentModal
+          customComponentModal={customComponentModal}
+          isCustomComponentModalOpen={isCustomComponentModalOpen}
+        />
       </Shell>
       <DragOverlay>
         {componentToAdd && structureMapper[componentToAdd]?.Draggable()}
