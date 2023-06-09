@@ -383,10 +383,11 @@ export const closestEdge = (
   },
   editorTree: EditorTree
 ) => {
-  const activeRect = {
-    x: collisionRect.left,
-    y: collisionRect.top,
-  };
+  const activeRect = centerOfRectangle(
+    collisionRect,
+    collisionRect.left,
+    collisionRect.top
+  );
 
   const collisions: CollisionDescriptor[] = [];
   const activeComponent = getComponentById(
