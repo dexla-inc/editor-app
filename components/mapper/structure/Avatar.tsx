@@ -12,5 +12,6 @@ export const jsonStructure = (props?: any): Component => {
       radius: "xl",
       ...(props.props || {}),
     },
+    blockDroppingChildrenInside: true,
   };
 };

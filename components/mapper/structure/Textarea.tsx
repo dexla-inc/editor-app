@@ -4,16 +4,15 @@ import { nanoid } from "nanoid";
 export const jsonStructure = (props?: any): Component => {
   return {
     id: nanoid(),
-    name: "Input",
-    description: "Input",
+    name: "Textarea",
+    description: "Textarea",
     props: {
-      placeholder: "Input",
+      placeholder: "Textarea",
       style: {
         width: "100%",
         height: "auto",
       },
       ...(props.props || {}),
     },
-    blockDroppingChildrenInside: true,
   };
 };

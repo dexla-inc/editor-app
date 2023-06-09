@@ -11,8 +11,8 @@ import {
   ActionIcon,
 } from "@mantine/core";
 import { useEditorStore } from "@/stores/editor";
-import { Component, getComponentParent, removeComponent } from "@/utils/editor";
-import { IconArrowUp, IconGripVertical, IconTrash } from "@tabler/icons-react";
+import { Component, getComponentParent } from "@/utils/editor";
+import { IconArrowUp, IconGripVertical } from "@tabler/icons-react";
 import { DROP_INDICATOR_WIDTH, ICON_SIZE } from "@/utils/config";
 
 type Props = {
@@ -156,19 +156,6 @@ export const DroppableDraggable = ({
               <IconArrowUp size={ICON_SIZE} color="white" strokeWidth={1.5} />
             </ActionIcon>
           )}
-          <ActionIcon
-            variant="transparent"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              clearSelection();
-              const copy = { ...editorTree };
-              removeComponent(copy.root, component.id as string);
-              setTree(copy);
-            }}
-          >
-            <IconTrash size={ICON_SIZE} color="white" strokeWidth={1.5} />
-          </ActionIcon>
         </Group>
       </Box>
     </Box>

@@ -3,8 +3,7 @@ import * as AppBarStructure from "@/components/mapper/structure/AppBar";
 import * as NotImplemented from "@/components/mapper/structure/NotImplemented";
 import * as TextStructure from "@/components/mapper/structure/Text";
 import * as AvatarStructure from "@/components/mapper/structure/Avatar";
-import * as GroupStructure from "@/components/mapper/structure/Group";
-import * as StackStructure from "@/components/mapper/structure/Stack";
+import * as TextareaStructure from "@/components/mapper/structure/Textarea";
 import * as ContainerStructure from "@/components/mapper/structure/Container";
 import * as SelectStructure from "@/components/mapper/structure/Select";
 import * as InputStructure from "@/components/mapper/structure/Input";
@@ -24,6 +23,7 @@ import { Select } from "@/components/mapper/Select";
 import { Input } from "@/components/mapper/Input";
 import { Button } from "@/components/mapper/Button";
 import { Link } from "@/components/mapper/Link";
+import { Textarea } from "@/components/mapper/Textarea";
 
 export type StructureDefinition = {
   structure: (props: any) => Component;
@@ -146,6 +146,10 @@ export const structureMapper: StructureMapper = {
     structure: (props: any) => InputStructure.jsonStructure(props),
     Draggable: () => <DraggableComponent id="Input" />,
   },
+  Textarea: {
+    structure: (props: any) => TextareaStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Textarea" />,
+  },
   Button: {
     structure: (props: any) => ButtonStructure.jsonStructure(props),
     Draggable: () => <DraggableComponent id="Button" />,
@@ -239,6 +243,12 @@ export const componentMapper: ComponentMapper = {
       <Text component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "text"],
+  },
+  Textarea: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Textarea component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size"],
   },
   Link: {
     Component: (props: { component: Component; renderTree: any }) => (
