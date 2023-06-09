@@ -220,7 +220,7 @@ export const componentMapper: ComponentMapper = {
       <Select
         component={props.component}
         renderTree={props.renderTree}
-        data={[]}
+        data={["Option 1", "Option 2"]}
         onClick={(e) => {
           e.preventDefault();
         }}

@@ -12,6 +12,7 @@ export type Component = {
   description: string;
   children?: Component[];
   props?: { [key: string]: any };
+  blockDroppingChildrenInside?: boolean;
 };
 
 export type Row = {
@@ -393,7 +394,13 @@ export const closestEdge = (
     active.id as string
   );
 
-  for (const droppableContainer of droppableContainers) {
+  const filtered = droppableContainers.filter((dc) => {
+    const c = getComponentById(editorTree.root, dc.id as string);
+
+    return !c?.blockDroppingChildrenInside;
+  });
+
+  for (const droppableContainer of filtered) {
     const { id } = droppableContainer;
     const rect = droppableRects.get(id);
     const isChild = activeComponent

@@ -59,12 +59,13 @@ export const UnitInput = ({
     <Select
       size="xs"
       variant="filled"
-      defaultValue={splitUnit}
       value={unit ?? splitUnit}
       onChange={(val: Unit) => {
         setUnit(val);
         if (value === "auto") {
           setValue(0);
+        } else {
+          setValue(value ?? splitValue);
         }
       }}
       data={options.filter((o) => !disabledUnits?.includes(o.value as Unit))}
@@ -114,7 +115,6 @@ export const UnitInput = ({
     <NumberInput
       size="xs"
       hideControls
-      defaultValue={splitValue}
       value={(value ?? splitValue) as number}
       onChange={(val: any) => {
         setValue(val);
