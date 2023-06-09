@@ -134,14 +134,6 @@ export const structureMapper: StructureMapper = {
     structure: (props: any) => AvatarStructure.jsonStructure(props),
     Draggable: () => <DraggableComponent id="Avatar" />,
   },
-  Group: {
-    structure: (props: any) => GroupStructure.jsonStructure(props),
-    Draggable: () => <DraggableComponent id="Group" />,
-  },
-  Stack: {
-    structure: (props: any) => StackStructure.jsonStructure(props),
-    Draggable: () => <DraggableComponent id="Stack" />,
-  },
   Container: {
     structure: (props: any) => ContainerStructure.jsonStructure(props),
     Draggable: () => <DraggableComponent id="Container" />,

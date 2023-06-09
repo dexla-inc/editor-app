@@ -179,7 +179,7 @@ export const moveComponent = (
     (node, context) => {
       if (node.id === id) {
         const parent = context.parent;
-        const items = parent?.children?.map((c) => c.id) as string[];
+        const items = (parent?.children?.map((c) => c.id) ?? []) as string[];
         const oldIndex = items.indexOf(id);
         let newIndex = items.indexOf(dropTarget.id);
 
@@ -192,12 +192,14 @@ export const moveComponent = (
           newIndex = Math.min(newIndex + 1, items.length);
         }
 
-        const newPositions = arrayMove(items, oldIndex, newIndex);
-        parent!.children = parent?.children?.sort((a, b) => {
-          const aIndex = newPositions.indexOf(a.id as string);
-          const bIndex = newPositions.indexOf(b.id as string);
-          return aIndex - bIndex;
-        });
+        if (oldIndex !== newIndex) {
+          const newPositions = arrayMove(items, oldIndex, newIndex);
+          parent!.children = parent?.children?.sort((a, b) => {
+            const aIndex = newPositions.indexOf(a.id as string);
+            const bIndex = newPositions.indexOf(b.id as string);
+            return aIndex - bIndex;
+          });
+        }
 
         context.break();
       }

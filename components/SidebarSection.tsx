@@ -59,7 +59,7 @@ export function SidebarSection({
               stroke={1.5}
               style={{
                 transition: "transform 200ms ease",
-                transform: opened ? `rotate(-180deg)` : "none",
+                transform: opened ? `none` : "rotate(-90deg)",
               }}
             />
           )}

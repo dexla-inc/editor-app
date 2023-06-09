@@ -1,16 +1,7 @@
 import React, { PropsWithChildren } from "react";
 import { useDraggable } from "@dnd-kit/core";
-import {
-  BoxProps,
-  Box,
-  Card,
-  Group,
-  UnstyledButton,
-  useMantineTheme,
-} from "@mantine/core";
+import { BoxProps, Box, Card, useMantineTheme } from "@mantine/core";
 import { CSS } from "@dnd-kit/utilities";
-import { IconGripVertical } from "@tabler/icons-react";
-import { ICON_SIZE } from "@/utils/config";
 
 type Props = {
   id: string;
@@ -28,6 +19,7 @@ export const Draggable = ({
   const styles = {
     transform: CSS.Translate.toString(transform),
     ...style,
+    cursor: "move",
   };
 
   return (
@@ -37,6 +29,8 @@ export const Draggable = ({
       w="100%"
       {...props}
       style={{ ...styles }}
+      {...listeners}
+      {...attributes}
     >
       <Card
         w="100%"
@@ -48,16 +42,7 @@ export const Draggable = ({
           },
         }}
       >
-        <Group>
-          <UnstyledButton
-            sx={{ cursor: "grab", alignItems: "center", display: "flex" }}
-            {...listeners}
-            {...attributes}
-          >
-            <IconGripVertical size={ICON_SIZE} strokeWidth={1.5} />
-          </UnstyledButton>
-          {children}
-        </Group>
+        {children}
       </Card>
     </Box>
   );

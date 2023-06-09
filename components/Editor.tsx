@@ -45,6 +45,7 @@ import { decodeSchema } from "@/utils/compression";
 import TOML from "@iarna/toml";
 import { useAppStore } from "@/stores/app";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { useHotkeys } from "@mantine/hooks";
 
 type Props = {
   projectId: string;
@@ -56,6 +57,9 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const dropTarget = useEditorStore((state) => state.dropTarget);
   const setDropTarget = useEditorStore((state) => state.setDropTarget);
   const clearDropTarget = useEditorStore((state) => state.clearDropTarget);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId
+  );
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId
   );
@@ -70,6 +74,19 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const [stream, setStream] = useState<string>("");
   const [componentToAdd, setComponentToAdd] = useState<string>("");
   const [canvasRef] = useAutoAnimate();
+
+  useHotkeys([
+    [
+      "backspace",
+      () => {
+        if (selectedComponentId && selectedComponentId !== "root") {
+          const copy = { ...editorTree };
+          removeComponent(copy.root, selectedComponentId as string);
+          setEditorTree(copy);
+        }
+      },
+    ],
+  ]);
 
   useEffect(() => {
     const getPageData = async () => {

@@ -28,34 +28,26 @@ import {
   Group,
   List,
   Text,
-  UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import {
-  IconChevronDown,
-  IconGripVertical,
-  IconTrash,
-} from "@tabler/icons-react";
+import { IconChevronDown } from "@tabler/icons-react";
 import { SortableTreeItem } from "@/components/SortableTreeItem";
 import { useState } from "react";
 
 type ListItemProps = {
   component: Component;
-  handlerProps?: any;
+  draggableProps?: any;
 } & CardProps;
 
-const ListItem = ({ component, handlerProps, children }: ListItemProps) => {
+const ListItem = ({ component, draggableProps, children }: ListItemProps) => {
   const theme = useMantineTheme();
-  const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId
   );
-  const setEditorTree = useEditorStore((state) => state.setTree);
-  const clearSelection = useEditorStore((state) => state.clearSelection);
   const [opened, { toggle }] = useDisclosure(false);
 
   const handleSelection = (e: React.MouseEvent<HTMLElement>, id: string) => {
@@ -67,72 +59,59 @@ const ListItem = ({ component, handlerProps, children }: ListItemProps) => {
     }
   };
 
+  const canExpand = (component.children ?? [])?.length > 0;
+
   return (
     <>
       <Card
-        withBorder
-        radius="xs"
-        p="xs"
+        p={0}
         w="100%"
         style={{
-          cursor: "pointer",
-          borderColor:
+          cursor: "move",
+          border:
             selectedComponentId === component.id
-              ? theme.colors.teal[6]
+              ? `1px solid ${theme.colors.teal[6]}`
               : undefined,
         }}
-        onClick={(e) => handleSelection(e, component.id as string)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleSelection(e, component.id as string);
+        }}
       >
         <Group position="apart" noWrap>
-          <Group spacing={4} noWrap>
-            {component.id !== "root" && (
-              <UnstyledButton
-                sx={{ cursor: "grab", alignItems: "center", display: "flex" }}
-                {...handlerProps}
-              >
-                <IconGripVertical size={ICON_SIZE} strokeWidth={1.5} />
-              </UnstyledButton>
-            )}
-            {(component.children ?? [])?.length > 0 && (
-              <ActionIcon
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  toggle();
-                }}
-              >
-                <IconChevronDown
-                  size={ICON_SIZE}
-                  style={{
-                    transition: "transform 200ms ease",
-                    transform: opened ? `rotate(-180deg)` : "none",
-                  }}
-                />
-              </ActionIcon>
-            )}
-            <Text size="xs" lineClamp={1} sx={{ cursor: "pointer" }}>
-              {component.id === "root" ? "Root" : component.name}
-            </Text>
-          </Group>
-
-          {component.id !== "root" && (
+          <Group spacing={4} noWrap w="100%">
             <ActionIcon
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                const copy = { ...editorTree };
-
-                if (component.id === selectedComponentId) {
-                  clearSelection();
-                }
-
-                removeComponent(editorTree.root, component.id as string);
-                setEditorTree(copy);
+                toggle();
+              }}
+              sx={{
+                visibility: canExpand ? "visible" : "hidden",
+                pointerEvents: canExpand ? "all" : "none",
+                width: canExpand ? "auto" : 0,
+                minWidth: canExpand ? "auto" : 0,
+                cursor: "pointer",
               }}
             >
-              <IconTrash size={ICON_SIZE} strokeWidth={1.5} />
+              <IconChevronDown
+                size={ICON_SIZE}
+                style={{
+                  transition: "transform 200ms ease",
+                  transform: opened ? `none` : "rotate(-90deg)",
+                }}
+              />
             </ActionIcon>
-          )}
+            <Text
+              size="xs"
+              lineClamp={1}
+              sx={{ cursor: "move", width: "100%" }}
+              {...draggableProps}
+            >
+              {component.id === "root" ? "Body" : component.name}
+            </Text>
+          </Group>
         </Group>
       </Card>
       <Collapse in={opened}>{children}</Collapse>
@@ -150,7 +129,7 @@ const ListItemWrapper = ({ component, children }: ListItemProps) => {
       <List.Item key={component.id} w="100%">
         <ListItem
           component={component}
-          handlerProps={{ ...attributes, ...listeners }}
+          draggableProps={{ ...attributes, ...listeners }}
         >
           {(component.children ?? [])?.length > 0 && (
             <List
@@ -219,7 +198,7 @@ export const EditorNavbarLayersSection = () => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active } = event;
 
-    if (!dropTarget || dropTarget.id === active.id) {
+    if (!dropTarget || dropTarget.id === active.id || !active) {
       clearDropTarget();
       return;
     }

@@ -131,7 +131,7 @@ export const DroppableDraggable = ({
       >
         <Group py={4} px={8} h={36} noWrap spacing="xs" align="center">
           <UnstyledButton
-            sx={{ cursor: "grab", alignItems: "center", display: "flex" }}
+            sx={{ cursor: "move", alignItems: "center", display: "flex" }}
             {...listeners}
             {...attributes}
           >
