@@ -9,6 +9,11 @@ import * as SelectStructure from "@/components/mapper/structure/Select";
 import * as InputStructure from "@/components/mapper/structure/Input";
 import * as ButtonStructure from "@/components/mapper/structure/Button";
 import * as LinkStructure from "@/components/mapper/structure/Link";
+import * as BarChartStructure from "@/components/mapper/structure/charts/BarChart";
+import * as LineChartStructure from "@/components/mapper/structure/charts/LineChart";
+import * as PieChartStructure from "@/components/mapper/structure/charts/PieChart";
+import * as AreaChartStructure from "@/components/mapper/structure/charts/AreaChart";
+import * as RadarChartStructure from "@/components/mapper/structure/charts/RadarChart";
 import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
 import { Box } from "@/components/mapper/Box";
 import { Avatar } from "@/components/mapper/Avatar";
@@ -24,6 +29,11 @@ import { Input } from "@/components/mapper/Input";
 import { Button } from "@/components/mapper/Button";
 import { Link } from "@/components/mapper/Link";
 import { Textarea } from "@/components/mapper/Textarea";
+import { BarChart } from "@/components/mapper/charts/BarChart";
+import { LineChart } from "@/components/mapper/charts/LineChart";
+import { PieChart } from "@/components/mapper/charts/PieChart";
+import { AreaChart } from "@/components/mapper/charts/AreaChart";
+import { RadarChart } from "@/components/mapper/charts/RadarChart";
 
 export type StructureDefinition = {
   structure: (props: any) => Component;
@@ -72,7 +82,8 @@ export const structureMapper: StructureMapper = {
     structure: (props: any) => NotImplemented.jsonStructure(props),
   },
   BarChart: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
+    structure: (props: any) => BarChartStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="BarChart" />,
   },
   StackedBarChart: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -87,13 +98,16 @@ export const structureMapper: StructureMapper = {
     structure: (props: any) => NotImplemented.jsonStructure(props),
   },
   LineChart: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
+    structure: (props: any) => LineChartStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="LineChart" />,
   },
   PieChart: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
+    structure: (props: any) => PieChartStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="PieChart" />,
   },
   AreaChart: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
+    structure: (props: any) => AreaChartStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="AreaChart" />,
   },
   ComposedChart: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -105,7 +119,8 @@ export const structureMapper: StructureMapper = {
     structure: (props: any) => NotImplemented.jsonStructure(props),
   },
   RadarChart: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
+    structure: (props: any) => RadarChartStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="RadarChart" />,
   },
   Newsfeed: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -253,6 +268,36 @@ export const componentMapper: ComponentMapper = {
   Link: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Link component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  BarChart: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <BarChart component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  LineChart: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <LineChart component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  PieChart: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <PieChart component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  AreaChart: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <AreaChart component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  RadarChart: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <RadarChart component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size"],
   },

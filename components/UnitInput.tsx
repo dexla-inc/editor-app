@@ -1,6 +1,5 @@
 import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
 import {
-  Input,
   NumberInput,
   NumberInputProps,
   Select,
@@ -33,10 +32,9 @@ export const UnitInput = ({
 }: Props & NumberInputProps) => {
   const theme = useMantineTheme();
 
-  const [splitValue, splitUnit] = splitValueAndUnit(fetchedValue) ?? [
-    0,
-    "auto",
-  ];
+  const [splitValue, splitUnit] = splitValueAndUnit(
+    fetchedValue.toString()
+  ) ?? [0, "auto"];
 
   const [value, setValue] = useState<number | "auto">();
   const [unit, setUnit] = useState<Unit>();
