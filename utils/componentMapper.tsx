@@ -14,6 +14,8 @@ import * as LineChartStructure from "@/components/mapper/structure/charts/LineCh
 import * as PieChartStructure from "@/components/mapper/structure/charts/PieChart";
 import * as AreaChartStructure from "@/components/mapper/structure/charts/AreaChart";
 import * as RadarChartStructure from "@/components/mapper/structure/charts/RadarChart";
+import * as IconStructure from "@/components/mapper/structure/Icon";
+import * as NavbarStructure from "@/components/mapper/structure/Navbar";
 import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
 import { Box } from "@/components/mapper/Box";
 import { Avatar } from "@/components/mapper/Avatar";
@@ -29,6 +31,8 @@ import { Input } from "@/components/mapper/Input";
 import { Button } from "@/components/mapper/Button";
 import { Link } from "@/components/mapper/Link";
 import { Textarea } from "@/components/mapper/Textarea";
+import { Icon } from "@/components/mapper/Icon";
+import { Navbar } from "@/components/mapper/Navbar";
 import { BarChart } from "@/components/mapper/charts/BarChart";
 import { LineChart } from "@/components/mapper/charts/LineChart";
 import { PieChart } from "@/components/mapper/charts/PieChart";
@@ -173,6 +177,14 @@ export const structureMapper: StructureMapper = {
     structure: (props: any) => LinkStructure.jsonStructure(props),
     Draggable: () => <DraggableComponent id="Link" />,
   },
+  Icon: {
+    structure: (props: any) => IconStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Icon" />,
+  },
+  Navbar: {
+    structure: (props: any) => NavbarStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Navbar" />,
+  },
 };
 
 export type Modifiers = "spacing" | "size" | "text";
@@ -268,6 +280,23 @@ export const componentMapper: ComponentMapper = {
   Link: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Link component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  Icon: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Icon component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  Navbar: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Navbar
+        component={props.component}
+        renderTree={props.renderTree}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+      />
     ),
     modifiers: ["spacing", "size"],
   },
