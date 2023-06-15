@@ -342,7 +342,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
         <Box
           pos="relative"
           onClick={clearSelection}
-          h={`calc(var(--vh, 100vh) - ${HEADER_HEIGHT}px)`}
+          style={{ minHeight: `calc(var(--vh, 100vh) - ${HEADER_HEIGHT}px)` }}
           p={40}
         >
           {isLoading && !stream && editorTree.root.children?.length === 0 && (
