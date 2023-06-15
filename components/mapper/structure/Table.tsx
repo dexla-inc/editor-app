@@ -19,6 +19,7 @@ export const jsonStructure = (props?: any): Component => {
         { position: 58, mass: 140.12, symbol: "Ce", name: "Cerium" },
       ],
       style: {
+        width: "100%",
         marginTop: 20,
         marginBottom: 20,
         marginLeft: 20,
