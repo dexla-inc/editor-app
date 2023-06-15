@@ -16,6 +16,7 @@ import * as AreaChartStructure from "@/components/mapper/structure/charts/AreaCh
 import * as RadarChartStructure from "@/components/mapper/structure/charts/RadarChart";
 import * as IconStructure from "@/components/mapper/structure/Icon";
 import * as NavbarStructure from "@/components/mapper/structure/Navbar";
+import * as TableStructure from "@/components/mapper/structure/Table";
 import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
 import { Box } from "@/components/mapper/Box";
 import { Avatar } from "@/components/mapper/Avatar";
@@ -33,6 +34,7 @@ import { Link } from "@/components/mapper/Link";
 import { Textarea } from "@/components/mapper/Textarea";
 import { Icon } from "@/components/mapper/Icon";
 import { Navbar } from "@/components/mapper/Navbar";
+import { Table } from "@/components/mapper/Table";
 import { BarChart } from "@/components/mapper/charts/BarChart";
 import { LineChart } from "@/components/mapper/charts/LineChart";
 import { PieChart } from "@/components/mapper/charts/PieChart";
@@ -68,7 +70,8 @@ export const structureMapper: StructureMapper = {
     structure: (props: any) => NotImplemented.jsonStructure(props),
   },
   Table: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
+    structure: (props: any) => TableStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Table" />,
   },
   StepperForm: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -286,6 +289,12 @@ export const componentMapper: ComponentMapper = {
   Icon: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Icon component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  Table: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Table component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size"],
   },
