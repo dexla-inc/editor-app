@@ -73,7 +73,11 @@ export default function App(props: AppProps) {
       <RequiredAuthProvider
         authUrl={process.env.NEXT_PUBLIC_AUTH_URL as string}
         displayWhileLoading={<LoadingOverlay visible overlayBlur={2} />}
-        displayIfLoggedOut={<RedirectToLogin />}
+        displayIfLoggedOut={
+          <RedirectToLogin
+            postLoginRedirectUrl={process.env.NEXT_PUBLIC_AUTH_URL as string}
+          />
+        }
       >
         <Head>
           <title>Editor</title>
