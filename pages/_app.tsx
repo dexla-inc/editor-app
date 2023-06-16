@@ -1,21 +1,23 @@
-import { AppProps } from "next/app";
-import Head from "next/head";
-import { useEffect, useState } from "react";
-import { useViewportSize } from "@mantine/hooks";
+import { cache } from "@/utils/emotionCache";
 import {
-  Global,
-  MantineProvider,
   DEFAULT_THEME,
+  Global,
+  LoadingOverlay,
+  MantineProvider,
   MantineTheme,
 } from "@mantine/core";
+import { useViewportSize } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
-import { cache } from "@/utils/emotionCache";
-import { Inter } from "next/font/google";
+import { RedirectToLogin, RequiredAuthProvider } from "@propelauth/react";
 import {
   Hydrate,
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import { AppProps } from "next/app";
+import { Inter } from "next/font/google";
+import Head from "next/head";
+import { useEffect, useState } from "react";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -62,25 +64,29 @@ export default function App(props: AppProps) {
   }, [height]);
 
   return (
-    <>
-      <Head>
-        <title>Editor</title>
-        <meta name="description" content="Dexla Editor" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1"
-        />
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-      </Head>
-      <main className={inter.variable}>
-        <QueryClientProvider client={queryClient}>
-          <Hydrate state={pageProps.dehydratedState}>
-            <MantineProvider
-              withGlobalStyles
-              withNormalizeCSS
-              theme={theme}
-              emotionCache={cache}
-            >
+    <MantineProvider
+      withGlobalStyles
+      withNormalizeCSS
+      theme={theme}
+      emotionCache={cache}
+    >
+      <RequiredAuthProvider
+        authUrl={process.env.NEXT_PUBLIC_AUTH_URL as string}
+        displayWhileLoading={<LoadingOverlay visible overlayBlur={2} />}
+        displayIfLoggedOut={<RedirectToLogin />}
+      >
+        <Head>
+          <title>Editor</title>
+          <meta name="description" content="Dexla Editor" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1"
+          />
+          <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        </Head>
+        <main className={inter.variable}>
+          <QueryClientProvider client={queryClient}>
+            <Hydrate state={pageProps.dehydratedState}>
               <Notifications />
               <Global
                 styles={{
@@ -104,10 +110,10 @@ export default function App(props: AppProps) {
                 }}
               />
               <Component {...pageProps} />
-            </MantineProvider>
-          </Hydrate>
-        </QueryClientProvider>
-      </main>
-    </>
+            </Hydrate>
+          </QueryClientProvider>
+        </main>
+      </RequiredAuthProvider>
+    </MantineProvider>
   );
 }
