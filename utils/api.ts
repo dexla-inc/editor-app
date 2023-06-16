@@ -1,3 +1,10 @@
+import { createClient } from "@propelauth/javascript";
+
+const authClient = createClient({
+  authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
+  enableBackgroundTokenRefresh: true,
+});
+
 type FetchType = {
   url: string;
   method?: string;
@@ -18,13 +25,15 @@ async function doFetch<Type>({
   return new Promise(async (resolve, reject) => {
     let response = null;
     try {
+      const authInfo = await authClient.getAuthenticationInfoOrNull();
+
       response = await fetch(`${baseURL}${url}`, {
         method,
         headers: {
           ...(isStream
             ? { "Content-Type": "application/octet-stream" }
             : { "Content-Type": "application/json" }),
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
+          Authorization: `Bearer ${authInfo?.accessToken}`,
           ...headers,
         },
         ...(body ? { body: JSON.stringify(body) } : {}),
