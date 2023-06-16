@@ -75,7 +75,9 @@ export default function App(props: AppProps) {
         displayWhileLoading={<LoadingOverlay visible overlayBlur={2} />}
         displayIfLoggedOut={
           <RedirectToLogin
-            postLoginRedirectUrl={process.env.NEXT_PUBLIC_AUTH_URL as string}
+            postLoginRedirectUrl={
+              process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL as string
+            }
           />
         }
       >
