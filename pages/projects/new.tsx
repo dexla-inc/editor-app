@@ -1,94 +1,105 @@
 import { Shell } from "@/components/AppShell";
-import { ProjectParams, createProject } from "@/requests/projects/mutations";
 import { useAppStore } from "@/stores/app";
-import {
-  Button,
-  Container,
-  Divider,
-  Flex,
-  Group,
-  Radio,
-  Stack,
-  Stepper,
-  TextInput,
-  Title,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useRouter } from "next/router";
-import { MouseEventHandler } from "react";
+import { Container, Flex, Stack, Stepper, Title } from "@mantine/core";
+import { useState } from "react";
+import GenerateAppStep from "./generateAppStep";
+import IntegrationsStep from "./integrationsStep";
+import PagesStep from "./pagesStep";
+import ProjectStep from "./projectStep";
+import { LoadingStore, StepperAction, StepperState } from "./projectTypes";
 
 export default function New() {
-  const router = useRouter();
   const isLoading = useAppStore((state) => state.isLoading);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
-
-  const onSubmit = async (values: ProjectParams) => {
-    startLoading({
-      id: "creating-project",
-      title: "Creating Project",
-      message: "Wait while your project is being created",
-    });
-    const project = await createProject(values);
-    stopLoading({
-      id: "creating-project",
-      title: "Project Created",
-      message: "The project was created successfully",
-    });
-    router.push(`/projects/${project.id}`);
-  };
+  const [activeStep, setActiveStep] = useState(0);
 
   return (
     <Shell>
       <Container py={60}>
-        <Heading></Heading>
-        <StepperContainer></StepperContainer>
-        {/* <form onSubmit={form.onSubmit(onSubmit)}>
-          <Stack>
-            <TextInput
-              label="Project Description"
-              description="Describe what the project is about to help AI create tailored pages for you"
-              required
-              withAsterisk={false}
-              {...form.getInputProps("description")}
-            />
-            <Group position="left">
-              <Button type="submit" loading={isLoading} disabled={isLoading}>
-                Create Project
-              </Button>
-            </Group>
-          </Stack>
-        </form> */}
+        <Stack spacing="xl">
+          <Heading activeStep={activeStep}></Heading>
+          <StepperContainer
+            isLoading={isLoading}
+            startLoading={startLoading}
+            stopLoading={stopLoading}
+            activeStep={activeStep}
+            setActiveStep={setActiveStep}
+          ></StepperContainer>
+        </Stack>
       </Container>
     </Shell>
   );
 }
 
-interface StepInformation {
-  name: string;
-  description: string;
-}
+const stepperDetails: StepperDetailsType = {
+  0: {
+    title: "Ready to create something Buck-tacular?",
+  },
+  1: {
+    title: "Here are your pages. It’s Buck-athon time!",
+  },
+  2: {
+    title:
+      "The integration station! Let’s connect your data sources like a maestro!",
+  },
+  3: {
+    title: "Ready to be blown away? Because there’s a Buck-storm coming...",
+  },
+};
 
-function Heading(stepInformation: StepInformation) {
+type StepperDetailsType = {
+  [key: number]: { title: string };
+};
+
+function Heading({ activeStep }: { activeStep: number }) {
+  const details = stepperDetails[activeStep];
+
   return (
     <Stack>
-      <Title order={2}>{stepInformation.description}</Title>
+      <Title order={2}>{details.title}</Title>
     </Stack>
   );
 }
 
-function StepperContainer() {
+function StepperContainer({
+  startLoading,
+  stopLoading,
+  isLoading,
+  activeStep,
+  setActiveStep,
+}: LoadingStore & {
+  activeStep: number;
+  setActiveStep: React.Dispatch<React.SetStateAction<number>>;
+}) {
+  const nextStep = () =>
+    setActiveStep((current) => (current < 3 ? current + 1 : current));
+  const prevStep = () =>
+    setActiveStep((current) => (current > 0 ? current - 1 : current));
+
   return (
     <Flex>
-      <ProjectStepper />
-      <StepperContent />
+      <ProjectStepper activeStep={activeStep} setActiveStep={setActiveStep} />
+      <StepperContent
+        nextStep={nextStep}
+        prevStep={prevStep}
+        activeStep={activeStep}
+        isLoading={isLoading}
+        startLoading={startLoading}
+        stopLoading={stopLoading}
+      />
     </Flex>
   );
 }
 
-function ProjectStepper(active: number, setActive: (index: number) => void) {
+function ProjectStepper({ activeStep, setActiveStep }: StepperAction) {
   return (
-    <Stepper active={active} onStepClick={setActive} orientation="vertical">
+    <Stepper
+      active={activeStep}
+      onStepClick={setActiveStep}
+      orientation="vertical"
+      px="xl"
+    >
       <Stepper.Step label="Project" description="Describe your project" />
       <Stepper.Step label="Pages" description="Generate your page names" />
       <Stepper.Step
@@ -100,136 +111,29 @@ function ProjectStepper(active: number, setActive: (index: number) => void) {
   );
 }
 
-function StepperContent() {
+function StepperContent({
+  nextStep,
+  prevStep,
+  activeStep,
+  startLoading,
+  stopLoading,
+  isLoading,
+}: StepperState & LoadingStore & StepperAction) {
   return (
     <Container size="sm">
-      <ProjectStep></ProjectStep>
-      <Divider></Divider>
-      <ButtonFooter></ButtonFooter>
+      <Stack>
+        {activeStep == 0 && (
+          <ProjectStep
+            nextStep={nextStep}
+            isLoading={isLoading}
+            startLoading={startLoading}
+            stopLoading={stopLoading}
+          ></ProjectStep>
+        )}
+        {activeStep == 1 && <PagesStep></PagesStep>}
+        {activeStep == 2 && <IntegrationsStep></IntegrationsStep>}
+        {activeStep == 3 && <GenerateAppStep></GenerateAppStep>}
+      </Stack>
     </Container>
   );
 }
-
-function ProjectStep() {
-  const form = useForm({
-    initialValues: {
-      description: "",
-      type: "INNOVATION" as ProjectTypes,
-      websiteUrl: "",
-      industry: "",
-    },
-  });
-
-  const onSubmit = async (values: ProjectParams) => {};
-  var a = Object.values(projectInfo);
-  return (
-    <Stack>
-      <TextInput
-        label="Website URL"
-        description="Enter the URL of your website to fetch your brand"
-        required
-        withAsterisk={false}
-        disabled={true}
-        {...form.getInputProps("websiteUrl")}
-      />
-      <Radio.Group
-        {...form.getInputProps("type")}
-        label="What are you building?"
-        description="Choose what you want to build"
-      >
-        <Group mt="xs" spacing="xl" py="md">
-          {Object.entries(projectInfo).map(
-            ([value, { title, placeholder, example }]) => (
-              <Radio
-                key={value}
-                value={value}
-                label={title}
-                description={example}
-                sx={{ maxWidth: 200 }}
-              />
-            )
-          )}
-        </Group>
-      </Radio.Group>
-      <TextInput
-        label="Description"
-        description="Describe what the project is about to help AI create tailored pages for you"
-        required
-        withAsterisk={false}
-        {...form.getInputProps("description")}
-      />
-      {form.values.type === "SIMILAR" && (
-        <Flex direction="column">
-          <TextInput
-            label="Similar Company Name *"
-            placeholder="e.g. ABC Company"
-            {...form.getInputProps("similarCompany")}
-          />
-        </Flex>
-      )}
-      <TextInput
-        label="What industry are you in? *"
-        placeholder={projectInfo[form.values.type].label}
-        {...form.getInputProps("industry")}
-        sx={{
-          width: "650px",
-        }}
-      />
-    </Stack>
-  );
-}
-
-function ButtonFooter(
-  nextStep: MouseEventHandler,
-  prevStep: MouseEventHandler
-) {
-  return (
-    <Flex>
-      <Button onClick={prevStep} variant="outline">
-        Back
-      </Button>
-      <Button onClick={nextStep}>Next</Button>
-      <Button>Generate app</Button>
-    </Flex>
-  );
-}
-
-type ProjectInfo<
-  TLabel extends string = string,
-  TPlaceholder extends string = string,
-  TExample extends string = string,
-  TTitle extends string = string
-> = {
-  label: TLabel;
-  placeholder: TPlaceholder;
-  example: TExample;
-  title: TTitle;
-};
-
-type ProjectTypes = "INNOVATION" | "SIMILAR" | "INTERNAL";
-
-type ProjectTypeMap = Record<ProjectTypes, ProjectInfo>;
-
-const projectInfo: ProjectTypeMap = {
-  INNOVATION: {
-    label: "What do you do? *",
-    placeholder:
-      "Your one-line e.g. A platform to manage small business financial data",
-    example: "e.g. A platform to manage small business financial data",
-    title: "Unique Product",
-  },
-  SIMILAR: {
-    label: "Why are you different? *",
-    placeholder:
-      "Your differentiation e.g. A niche version for sustainable stays",
-    example: "e.g AirBnb but a niche version for sustainable stays",
-    title: "Similar To Another Company",
-  },
-  INTERNAL: {
-    label: "What do you want to build? *",
-    placeholder:
-      "Your ideal solution e.g. A health and well-being platform for employees",
-    example: "e.g. A health and well being platform for employees",
-    title: "Internal Tool",
-  },
-};
