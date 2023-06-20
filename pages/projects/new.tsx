@@ -30,10 +30,6 @@ const stepperDetails: StepperDetailsType = {
     title: "Here are your pages. It’s Buck-athon time!",
   },
   2: {
-    title:
-      "The integration station! Let’s connect your data sources like a maestro!",
-  },
-  3: {
     title: "Ready to be blown away? Because there’s a Buck-storm coming...",
   },
 };

@@ -3,7 +3,7 @@ import { Button } from "@mantine/core";
 interface NextButtonProps {
   onClick: any;
   isLoading: boolean;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 export default function NextButton({

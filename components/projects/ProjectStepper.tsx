@@ -13,10 +13,10 @@ export default function ProjectStepper({
     >
       <Stepper.Step label="Project" description="Describe your project" />
       <Stepper.Step label="Pages" description="Generate your page names" />
-      <Stepper.Step
+      {/* <Stepper.Step
         label="Integrations"
         description="Add third-party plugins"
-      />
+      /> */}
       <Stepper.Step label="Generate" description="Get ready to see your app" />
     </Stepper>
   );
