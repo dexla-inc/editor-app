@@ -115,8 +115,6 @@ export default function PagesStep({
       message: "Your pages were added to your project successfully",
     });
 
-    console.log(createdPages.homePageId);
-
     router.push(`/projects/${projectId}/editor/${createdPages.homePageId}`);
   };
 
