@@ -1,4 +1,3 @@
-import GenerateAppStep from "@/components/projects/GenerateAppStep";
 import PagesStep from "@/components/projects/PagesStep";
 import ProjectStep from "@/components/projects/ProjectStep";
 import { useAppStore } from "@/stores/app";
@@ -43,8 +42,6 @@ export default function StepperContent({
           projectId={projectId}
         ></PagesStep>
       )}
-      {/* {activeStep == 2 && <IntegrationsStep></IntegrationsStep>} */}
-      {activeStep == 2 && <GenerateAppStep></GenerateAppStep>}
     </Stack>
   );
 }

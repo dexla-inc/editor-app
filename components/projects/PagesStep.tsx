@@ -4,9 +4,10 @@ import NextButton from "@/components/projects/NextButton";
 import { PageParams, createPages } from "@/requests/projects/mutations";
 import { getPagesStream } from "@/requests/projects/queries";
 import { ICON_SIZE } from "@/utils/config";
-import { LoadingStore, StepperClickEvents } from "@/utils/projectTypes";
+import { LoadingStore } from "@/utils/projectTypes";
 import TOML from "@iarna/toml";
 import {
+  ActionIcon,
   Button,
   Flex,
   Group,
@@ -15,8 +16,14 @@ import {
   TextInput,
   ThemeIcon,
 } from "@mantine/core";
-import { IconCircleCheck, IconPlus, IconSparkles } from "@tabler/icons-react";
+import {
+  IconCircleCheck,
+  IconPlus,
+  IconSparkles,
+  IconTrash,
+} from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import slugify from "slugify";
 
@@ -37,17 +44,21 @@ export default function PagesStep({
   startLoading,
   stopLoading,
   projectId,
-}: StepperClickEvents & LoadingStore & { projectId: string }) {
+}: LoadingStore & { prevStep: () => void } & { nextStep: () => void } & {
+  projectId: string;
+}) {
   const [pages, setPages] = useState<string[]>([]);
+  const router = useRouter();
 
   const getPages = async (count: number) => {
+    const plural = count === 1 ? "" : "s";
     startLoading({
       id: "pages-stream",
-      title: "Generating the Page Names",
-      message: "Wait while AI generates the names of your pages",
+      title: `Generating Page Name${plural}`,
+      message: `Wait while AI generates the name${plural} of your page${plural}`,
     });
 
-    const data = await getPagesStream(projectId, count);
+    const data = await getPagesStream(projectId, count, pages.join());
 
     if (!data) {
       return;
@@ -79,8 +90,14 @@ export default function PagesStep({
     });
   };
 
-  const postPages = async (projectId: string) => {
-    await createPages(
+  const goToEditor = async (projectId: string) => {
+    startLoading({
+      id: "creating-pages",
+      title: "Creating Pages",
+      message: "Wait while your pages are being created",
+    });
+
+    const createdPages = await createPages(
       pages.map((page, index) => {
         return {
           title: page,
@@ -91,7 +108,20 @@ export default function PagesStep({
       }) as PageParams[],
       projectId
     );
-    nextStep();
+
+    stopLoading({
+      id: "creating-pages",
+      title: "Pages Created",
+      message: "Your pages were added to your project successfully",
+    });
+
+    console.log(createdPages.homePageId);
+
+    router.push(`/projects/${projectId}/editor/${createdPages.homePageId}`);
+  };
+
+  const deletePage = (pageToRemove: string) => {
+    setPages((pages) => pages.filter((page) => page !== pageToRemove));
   };
 
   const hasPageNames = pages.length > 0;
@@ -114,10 +144,19 @@ export default function PagesStep({
               </ThemeIcon>
             }
           >
-            {pages.map((page) => {
+            {pages.map((page, index) => {
               return (
                 <List.Item key={page}>
-                  <TextInput value={page} sx={{ width: "400px" }} />
+                  <Flex align="center" gap="md">
+                    <TextInput defaultValue={page} sx={{ width: "400px" }} />
+                    <ActionIcon
+                      onClick={() => deletePage(page)}
+                      variant="filled"
+                      color="red"
+                    >
+                      <IconTrash size={ICON_SIZE} />
+                    </ActionIcon>
+                  </Flex>
                 </List.Item>
               );
             })}
@@ -146,6 +185,7 @@ export default function PagesStep({
             variant="light"
             leftIcon={<IconPlus size={ICON_SIZE} />}
             onClick={() => getPages(1)}
+            loading={isLoading}
           >
             Generate new page
           </Button>
@@ -155,7 +195,7 @@ export default function PagesStep({
         <BackButton onClick={prevStep as () => void}></BackButton>
 
         <NextButton
-          onClick={() => postPages(projectId)}
+          onClick={() => goToEditor(projectId)}
           isLoading={isLoading}
           disabled={!hasPageNames}
         ></NextButton>

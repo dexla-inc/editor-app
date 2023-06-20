@@ -24,9 +24,13 @@ type CustomComponentListResponse = {
   results: CustomComponentResponse[];
 };
 
-export const getPagesStream = async (projectId: string, count: number) => {
+export const getPagesStream = async (
+  projectId: string,
+  count: number,
+  excludedCsv: string
+) => {
   const response = (await get<ReadableStream<Uint8Array>>(
-    `/projects/${projectId}/automations/pages/stream-revision?count=${count}`,
+    `/projects/${projectId}/automations/pages/stream-revision?count=${count}&excluded=${excludedCsv}`,
     {},
     true
   )) as ReadableStream<Uint8Array>;

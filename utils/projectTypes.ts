@@ -22,6 +22,10 @@ export type LoadingStore = {
 
 export type ProjectTypes = "INNOVATION" | "SIMILAR" | "INTERNAL";
 
+export function isProjectType(type: string): type is ProjectTypes {
+  return ["INNOVATION", "SIMILAR", "INTERNAL"].includes(type);
+}
+
 export type ProjectTypeMap = Record<ProjectTypes, ProjectInfo>;
 
 export type ProjectInfo<
