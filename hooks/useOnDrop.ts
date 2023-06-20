@@ -1,5 +1,4 @@
 import { useEditorStore } from "@/stores/editor";
-import { structureMapper } from "@/utils/componentMapper";
 import {
   DropTarget,
   getComponentById,
