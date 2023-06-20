@@ -26,8 +26,8 @@ type CustomComponentListResponse = {
 
 export const getPagesStream = async (
   projectId: string,
-  count: number,
-  excludedCsv: string
+  count: number = 5,
+  excludedCsv?: string
 ) => {
   const response = (await get<ReadableStream<Uint8Array>>(
     `/projects/${projectId}/automations/pages/stream-revision?count=${count}&excluded=${excludedCsv}`,
