@@ -1,0 +1,78 @@
+import { useEditorStore } from "@/stores/editor";
+import { structureMapper } from "@/utils/componentMapper";
+import {
+  DropTarget,
+  getComponentById,
+  addComponent,
+  getComponentParent,
+  moveComponentToDifferentParent,
+  removeComponentFromParent,
+  moveComponent,
+  removeComponent,
+  Component,
+} from "@/utils/editor";
+import { useCallback } from "react";
+
+const getDroppedId = (_id: string) => {
+  const id = _id.startsWith("layer")
+    ? _id.split("layer-")[1]
+    : _id.startsWith("add")
+    ? _id.split("add-")[1]
+    : _id;
+  return id;
+};
+
+export const useOnDrop = () => {
+  const editorTree = useEditorStore((state) => state.tree);
+  const setEditorTree = useEditorStore((state) => state.setTree);
+  const componentToAdd = useEditorStore((state) => state.componentToAdd);
+  const setSelectedComponentId = useEditorStore(
+    (state) => state.setSelectedComponentId
+  );
+
+  const onDrop = useCallback(
+    (_droppedId: string, dropTarget: DropTarget) => {
+      const droppedId = getDroppedId(_droppedId);
+      const copy = { ...editorTree };
+      const activeComponent = getComponentById(copy.root, droppedId);
+
+      if (droppedId && componentToAdd) {
+        addComponent(copy.root, componentToAdd, dropTarget);
+        setSelectedComponentId(droppedId as string);
+      } else if (dropTarget.id !== "root") {
+        const activeParent = getComponentParent(copy.root, droppedId);
+        const targetParent = getComponentParent(copy.root, dropTarget.id);
+
+        if (activeParent?.id !== targetParent?.id) {
+          // move to a new parent
+          moveComponentToDifferentParent(
+            copy.root,
+            droppedId,
+            dropTarget,
+            targetParent!.id as string
+          );
+          removeComponentFromParent(
+            copy.root,
+            droppedId,
+            activeParent!.id as string
+          );
+        } else {
+          // reorder
+          moveComponent(copy.root, droppedId, dropTarget);
+        }
+      } else {
+        removeComponent(copy.root, droppedId);
+        addComponent(
+          copy.root,
+          activeComponent as unknown as Component,
+          dropTarget
+        );
+      }
+
+      setEditorTree(copy);
+    },
+    [componentToAdd, editorTree, setEditorTree, setSelectedComponentId]
+  );
+
+  return onDrop;
+};

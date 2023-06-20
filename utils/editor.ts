@@ -1,7 +1,4 @@
 import { emptyEditorTree } from "@/stores/editor";
-import { ClientRect, CollisionDescriptor, Active } from "@dnd-kit/core";
-import { DroppableContainer, RectMap } from "@dnd-kit/core/dist/store";
-import { Coordinates } from "@dnd-kit/utilities";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
 import { structureMapper } from "@/utils/componentMapper";
@@ -27,7 +24,6 @@ export type EditorTree = {
 export type DropTarget = {
   id: string;
   edge: Edge;
-  rect: ClientRect;
 };
 
 export function arrayMove<T>(array: T[], from: number, to: number): T[] {
@@ -296,72 +292,77 @@ export const addComponent = (
   );
 };
 
+export type ComponentRect = {
+  width: number;
+  height: number;
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
+  x: number;
+  y: number;
+};
+
 export function leftOfRectangle(
-  rect: ClientRect,
+  rect: DOMRect,
   left = rect.left,
   top = rect.top
-): Coordinates {
-  return {
-    x: left,
-    y: top + rect.height * 0.5,
-  };
+): DOMRect {
+  const newRect = rect.toJSON();
+  newRect.x = left;
+  newRect.y = top + newRect.height * 0.5;
+  return new DOMRect(newRect.x, newRect.y, newRect.width, newRect.height);
 }
 
 export function rightOfRectangle(
-  rect: ClientRect,
+  rect: DOMRect,
   right = rect.right,
   top = rect.top
-): Coordinates {
-  return {
-    x: right,
-    y: top + rect.height * 0.5,
-  };
+): DOMRect {
+  const newRect = rect.toJSON();
+  newRect.x = right;
+  newRect.y = top + newRect.height * 0.5;
+  return new DOMRect(newRect.x, newRect.y, newRect.width, newRect.height);
 }
 
 export function topOfRectangle(
-  rect: ClientRect,
+  rect: DOMRect,
   left = rect.left,
   top = rect.top
-): Coordinates {
-  return {
-    x: left + rect.width * 0.5,
-    y: top,
-  };
+): DOMRect {
+  const newRect = rect.toJSON();
+  newRect.x = left + newRect.width * 0.5;
+  newRect.y = top;
+  return new DOMRect(newRect.x, newRect.y, newRect.width, newRect.height);
 }
 
 export function bottomOfRectangle(
-  rect: ClientRect,
+  rect: DOMRect,
   left = rect.left,
   bottom = rect.bottom
-): Coordinates {
-  return {
-    x: left + rect.width * 0.5,
-    y: bottom,
-  };
+): DOMRect {
+  const newRect = rect.toJSON();
+  newRect.x = left + newRect.width * 0.5;
+  newRect.y = bottom;
+  return new DOMRect(newRect.x, newRect.y, newRect.width, newRect.height);
 }
 
 export function centerOfRectangle(
-  rect: ClientRect,
+  rect: DOMRect,
   left = rect.left,
   top = rect.top
-): Coordinates {
-  return {
-    x: left + rect.width * 0.5,
-    y: top + rect.height * 0.5,
-  };
+): DOMRect {
+  const newRect = rect.toJSON();
+  newRect.x = left + newRect.width * 0.5;
+  newRect.y = top + newRect.height * 0.5;
+
+  return new DOMRect(newRect.x, newRect.y, newRect.width, newRect.height);
 }
 
 export type Edge = "left" | "right" | "top" | "bottom";
 
-export function distanceBetween(p1: Coordinates, p2: Coordinates) {
+export function distanceBetween(p1: DOMRect, p2: DOMRect) {
   return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
-}
-
-export function sortCollisionsAsc(
-  { data: { value: a } }: CollisionDescriptor,
-  { data: { value: b } }: CollisionDescriptor
-) {
-  return a - b;
 }
 
 export const getClosestEdge = (
@@ -377,67 +378,4 @@ export const getClosestEdge = (
   });
 
   return { edge: closestKey, value: all[closestKey as Edge] };
-};
-
-export const closestEdge = (
-  {
-    active,
-    collisionRect,
-    droppableRects,
-    droppableContainers,
-  }: {
-    active: Active;
-    collisionRect: ClientRect;
-    droppableRects: RectMap;
-    droppableContainers: DroppableContainer[];
-    pointerCoordinates: Coordinates | null;
-  },
-  editorTree: EditorTree
-) => {
-  const activeRect = centerOfRectangle(
-    collisionRect,
-    collisionRect.left,
-    collisionRect.top
-  );
-
-  const collisions: CollisionDescriptor[] = [];
-  const activeComponent = getComponentById(
-    editorTree.root,
-    active.id as string
-  );
-
-  const filtered = droppableContainers.filter((dc) => {
-    const c = getComponentById(editorTree.root, dc.id as string);
-
-    return !c?.blockDroppingChildrenInside;
-  });
-
-  for (const droppableContainer of filtered) {
-    const { id } = droppableContainer;
-    const rect = droppableRects.get(id);
-    const isChild = activeComponent
-      ? checkIfIsChild(activeComponent!, id as string)
-      : false;
-
-    if (rect && !isChild) {
-      const leftDist = distanceBetween(leftOfRectangle(rect), activeRect);
-      const rigthDist = distanceBetween(rightOfRectangle(rect), activeRect);
-      const topDist = distanceBetween(topOfRectangle(rect), activeRect);
-      const bottomDist = distanceBetween(bottomOfRectangle(rect), activeRect);
-
-      const { edge, value } = getClosestEdge(
-        leftDist,
-        rigthDist,
-        topDist,
-        bottomDist
-      );
-
-      collisions.push({
-        id,
-        data: { droppableContainer, value, edge, rect },
-      });
-    }
-  }
-
-  return collisions.sort(sortCollisionsAsc);
 };

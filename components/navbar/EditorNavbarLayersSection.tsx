@@ -1,25 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
-import {
-  Component,
-  addComponent,
-  closestEdge,
-  getComponentById,
-  getComponentParent,
-  moveComponent,
-  moveComponentToDifferentParent,
-  removeComponent,
-  removeComponentFromParent,
-} from "@/utils/editor";
-import {
-  DndContext,
-  DragEndEvent,
-  DragMoveEvent,
-  DragOverlay,
-  DragStartEvent,
-  MeasuringStrategy,
-  useDraggable,
-} from "@dnd-kit/core";
+import { Component } from "@/utils/editor";
 import {
   ActionIcon,
   Card,
@@ -33,14 +14,14 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
 import { SortableTreeItem } from "@/components/SortableTreeItem";
-import { useState } from "react";
+import { useDraggable } from "@/hooks/useDraggable";
+import { useOnDragStart } from "@/hooks/useOnDragStart";
 
 type ListItemProps = {
   component: Component;
-  draggableProps?: any;
 } & CardProps;
 
-const ListItem = ({ component, draggableProps, children }: ListItemProps) => {
+const ListItem = ({ component, children }: ListItemProps) => {
   const theme = useMantineTheme();
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
@@ -49,6 +30,13 @@ const ListItem = ({ component, draggableProps, children }: ListItemProps) => {
     (state) => state.setSelectedComponentId
   );
   const [opened, { toggle }] = useDisclosure(false);
+
+  const onDragStart = useOnDragStart();
+
+  const draggable = useDraggable({
+    id: `layer-${component.id}`,
+    onDragStart,
+  });
 
   const handleSelection = (e: React.MouseEvent<HTMLElement>, id: string) => {
     e.preventDefault();
@@ -104,10 +92,11 @@ const ListItem = ({ component, draggableProps, children }: ListItemProps) => {
               />
             </ActionIcon>
             <Text
+              id={`layer-${component.id}`}
               size="xs"
               lineClamp={1}
               sx={{ cursor: "move", width: "100%" }}
-              {...draggableProps}
+              {...draggable}
             >
               {component.id === "root" ? "Body" : component.name}
             </Text>
@@ -120,17 +109,10 @@ const ListItem = ({ component, draggableProps, children }: ListItemProps) => {
 };
 
 const ListItemWrapper = ({ component, children }: ListItemProps) => {
-  const { attributes, listeners, ...draggableProps } = useDraggable({
-    id: component.id as string,
-  });
-
   return (
-    <SortableTreeItem component={component} draggableProps={draggableProps}>
+    <SortableTreeItem component={component}>
       <List.Item key={component.id} w="100%">
-        <ListItem
-          component={component}
-          draggableProps={{ ...attributes, ...listeners }}
-        >
+        <ListItem component={component}>
           {(component.children ?? [])?.length > 0 && (
             <List
               size="xs"
@@ -153,18 +135,6 @@ const ListItemWrapper = ({ component, children }: ListItemProps) => {
 
 export const EditorNavbarLayersSection = () => {
   const editorTree = useEditorStore((state) => state.tree);
-  const dropTarget = useEditorStore((state) => state.dropTarget);
-  const setDropTarget = useEditorStore((state) => state.setDropTarget);
-  const clearDropTarget = useEditorStore((state) => state.clearDropTarget);
-  const clearSelection = useEditorStore((state) => state.clearSelection);
-  const setEditorTree = useEditorStore((state) => state.setTree);
-  const setSelectedComponentId = useEditorStore(
-    (state) => state.setSelectedComponentId
-  );
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-  const [isSorting, setIsSorting] = useState<boolean>(false);
 
   const renderList = (component: Component) => {
     if (!component) {
@@ -184,123 +154,17 @@ export const EditorNavbarLayersSection = () => {
     );
   };
 
-  const getAllChildren = (component: Component): Component[] => {
-    let children: Component[] = [];
-
-    for (const child of component.children ?? []) {
-      children.push(child);
-      children = children.concat(getAllChildren(child));
-    }
-
-    return children;
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active } = event;
-
-    if (!dropTarget || dropTarget.id === active.id || !active) {
-      clearDropTarget();
-      return;
-    }
-
-    const copy = { ...editorTree };
-    const activeComponent = getComponentById(copy.root, active.id as string);
-
-    if (dropTarget?.id !== "root") {
-      const activeParent = getComponentParent(copy.root, active.id as string);
-      const targetParent = getComponentParent(
-        copy.root,
-        dropTarget.id as string
-      );
-
-      if (activeParent?.id !== targetParent?.id) {
-        // move to a new parent
-        moveComponentToDifferentParent(
-          copy.root,
-          active.id as string,
-          dropTarget,
-          targetParent!.id as string
-        );
-        removeComponentFromParent(
-          copy.root,
-          active.id as string,
-          activeParent!.id as string
-        );
-      } else {
-        // reorder
-        moveComponent(copy.root, active.id as string, dropTarget);
-      }
-    } else {
-      removeComponent(copy.root, active.id as string);
-      addComponent(
-        copy.root,
-        activeComponent as unknown as Component,
-        dropTarget
-      );
-    }
-
-    setEditorTree(copy);
-    clearDropTarget();
-  };
-
-  const handleDragStart = (event: DragStartEvent) => {
-    const id = event.active.id;
-    setSelectedComponentId(id as string);
-    setIsSorting(true);
-  };
-
-  const handleDragMove = (event: DragMoveEvent) => {
-    const id = event.collisions?.[0]?.id;
-    const data = event.collisions?.[0]?.data;
-    const target = {
-      id: id as string,
-      edge: data?.edge,
-      rect: data?.rect,
-    };
-    setDropTarget(target);
-  };
-
-  const handleDragCancel = () => {
-    clearDropTarget();
-    clearSelection();
-  };
-
   return (
-    <DndContext
-      onDragStart={handleDragStart}
-      onDragMove={handleDragMove}
-      onDragEnd={handleDragEnd}
-      onDragCancel={handleDragCancel}
-      measuring={{
-        droppable: {
-          strategy: MeasuringStrategy.Always,
+    <List
+      size="xs"
+      listStyleType="none"
+      styles={{
+        itemWrapper: {
+          width: "100%",
         },
       }}
-      collisionDetection={(args) => {
-        return closestEdge(args, editorTree);
-      }}
     >
-      <List
-        size="xs"
-        listStyleType="none"
-        styles={{
-          itemWrapper: {
-            width: "100%",
-          },
-        }}
-      >
-        {renderList(editorTree.root)}
-        <DragOverlay>
-          {selectedComponentId &&
-            isSorting &&
-            renderList(
-              getComponentById(
-                editorTree.root as Component,
-                selectedComponentId as string
-              ) as Component
-            )}
-        </DragOverlay>
-      </List>
-    </DndContext>
+      {renderList(editorTree.root)}
+    </List>
   );
 };
