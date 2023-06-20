@@ -1,20 +1,14 @@
 import { ProjectParams, createProject } from "@/requests/projects/mutations";
 import {
-  Button,
-  Divider,
-  Flex,
-  Group,
-  Radio,
-  Stack,
-  TextInput,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import {
   LoadingStore,
   ProjectTypeMap,
   ProjectTypes,
-  StepperState,
-} from "./projectTypes";
+  StepperClickEvents,
+} from "@/utils/projectTypes";
+import { Divider, Flex, Group, Radio, Stack, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { InformationAlert } from "../Alerts";
+import NextButton from "./NextButton";
 
 const projectInfo: ProjectTypeMap = {
   INNOVATION: {
@@ -48,11 +42,11 @@ export default function ProjectStep({
   isLoading,
   startLoading,
   stopLoading,
-}: StepperState & LoadingStore) {
+}: StepperClickEvents & LoadingStore) {
   const form = useForm({
     initialValues: {
       description: "",
-      type: "INNOVATION" as ProjectTypes,
+      type: null as ProjectTypes | null,
       websiteUrl: "",
       industry: "",
     },
@@ -74,39 +68,48 @@ export default function ProjectStep({
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack>
+      <Stack spacing="xl">
+        <InformationAlert
+          title="Let's get started!"
+          text="Unlock the magic of AI! Answer a few questions and we'll tailor a unique experience just for you!"
+        />
         <TextInput
           label="Website URL"
           description="Enter the URL of your website to fetch your brand"
-          required
           withAsterisk={false}
           disabled={true}
+          placeholder="disabled until we implement theme"
           {...form.getInputProps("websiteUrl")}
         />
         <Radio.Group
           {...form.getInputProps("type")}
           label="What are you building?"
           description="Choose what you want to build"
+          required
         >
-          <Group mt="xs" spacing="xl">
+          <Group mt="xs" spacing="xl" py="sm">
             {Object.entries(projectInfo).map(([value, { title, example }]) => (
               <Radio
                 key={value}
                 value={value}
                 label={title}
                 description={example}
-                sx={{ maxWidth: 200 }}
+                sx={{ maxWidth: 220 }}
               />
             ))}
           </Group>
         </Radio.Group>
-        <TextInput
-          label={projectInfo[form.values.type].label}
-          description={projectInfo[form.values.type].placeholder}
-          required
-          withAsterisk={false}
-          {...form.getInputProps("description")}
-        />
+        {form.values.type && (
+          <TextInput
+            label={form.values.type && projectInfo[form.values.type].label}
+            description={
+              form.values.type && projectInfo[form.values.type].placeholder
+            }
+            required
+            withAsterisk={false}
+            {...form.getInputProps("description")}
+          />
+        )}
         {form.values.type === "SIMILAR" && (
           <Flex direction="column">
             <TextInput
@@ -116,24 +119,22 @@ export default function ProjectStep({
             />
           </Flex>
         )}
-        <TextInput
-          label="What industry are you in? *"
-          description={projectInfo[form.values.type].industryPlaceholder}
-          {...form.getInputProps("industry")}
-          sx={{
-            width: "650px",
-          }}
-        />
+        {form.values.type && (
+          <TextInput
+            label="What industry are you in? *"
+            description={
+              form.values.type &&
+              projectInfo[form.values.type].industryPlaceholder
+            }
+            {...form.getInputProps("industry")}
+            sx={{
+              width: "650px",
+            }}
+          />
+        )}
         <Divider></Divider>
         <Group position="right">
-          <Button
-            onClick={nextStep}
-            type="submit"
-            loading={isLoading}
-            disabled={isLoading}
-          >
-            Next
-          </Button>
+          <NextButton nextStep={nextStep} isLoading={isLoading}></NextButton>
         </Group>
       </Stack>
     </form>

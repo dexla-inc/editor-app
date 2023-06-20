@@ -1,13 +1,17 @@
 import { NotificationProps } from "@mantine/notifications";
 
-export type StepperState = {
+export type StepperClickEvents = {
   nextStep: () => void;
   prevStep?: () => void;
 };
 
-export type StepperAction = {
+export type StepperState = {
   activeStep: number;
-  setActiveStep?: (value: number) => void;
+  setActiveStep: React.Dispatch<React.SetStateAction<number>>;
+};
+
+export type StepperDetailsType = {
+  [key: number]: { title: string };
 };
 
 export type LoadingStore = {
@@ -32,4 +36,14 @@ export type ProjectInfo<
   example: TExample;
   title: TTitle;
   industryPlaceholder: TIndustryPlaceholder;
+};
+
+export type PageStreamState = {
+  pageStream: string;
+  setPageStream: React.Dispatch<React.SetStateAction<string>>;
+};
+
+export type PagesState = {
+  pages: string[];
+  setPages: React.Dispatch<React.SetStateAction<string[]>>;
 };
