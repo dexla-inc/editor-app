@@ -5,7 +5,7 @@ import {
   LoadingStore,
   ProjectTypeMap,
   ProjectTypes,
-  StepperClickEvents,
+  isProjectType,
 } from "@/utils/projectTypes";
 import { Divider, Flex, Group, Radio, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -43,31 +43,59 @@ export default function ProjectStep({
   startLoading,
   stopLoading,
   setProjectId,
-}: StepperClickEvents & LoadingStore & { setProjectId: (id: string) => void }) {
+}: { nextStep: () => void } & LoadingStore & {
+    setProjectId: (id: string) => void;
+  }) {
   const form = useForm({
     initialValues: {
       description: "",
-      type: null as ProjectTypes | null,
+      region: "",
+      type: "" as ProjectTypes,
       websiteUrl: "",
       industry: "",
+      friendlyName: "",
+      similarCompany: undefined,
+    },
+    validate: {
+      description: (value) =>
+        value === ""
+          ? "You must provide a description"
+          : value.length > 250
+          ? "Description too long"
+          : null,
+      type: (value) =>
+        !isProjectType(value) ? "You must choose a project type" : null,
     },
   });
 
   const onSubmit = async (values: ProjectParams) => {
-    startLoading({
-      id: "creating-project",
-      title: "Creating Project",
-      message: "Wait while your project is being created",
-    });
-    const project = await createProject(values);
+    try {
+      startLoading({
+        id: "creating-project",
+        title: "Creating Project",
+        message: "Wait while your project is being created",
+      });
 
-    setProjectId(project.id);
+      form.validate();
 
-    stopLoading({
-      id: "creating-project",
-      title: "Project Created",
-      message: "The project was created successfully",
-    });
+      const project = await createProject(values);
+
+      setProjectId(project.id);
+
+      stopLoading({
+        id: "creating-project",
+        title: "Project Created",
+        message: "The project was created successfully",
+      });
+
+      nextStep();
+    } catch (error) {
+      stopLoading({
+        id: "failed-creating-project",
+        title: "Project Failed",
+        message: "Validation failed",
+      });
+    }
   };
 
   return (
@@ -131,14 +159,11 @@ export default function ProjectStep({
               projectInfo[form.values.type].industryPlaceholder
             }
             {...form.getInputProps("industry")}
-            sx={{
-              width: "650px",
-            }}
           />
         )}
         <Divider></Divider>
         <Group position="right">
-          <NextButton onClick={nextStep} isLoading={isLoading}></NextButton>
+          <NextButton isLoading={isLoading} isSubmit></NextButton>
         </Group>
       </Stack>
     </form>
