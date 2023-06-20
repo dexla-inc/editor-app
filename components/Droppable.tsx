@@ -1,8 +1,9 @@
 import React, { PropsWithChildren } from "react";
-import { useDroppable } from "@dnd-kit/core";
 import { BoxProps, Box, useMantineTheme } from "@mantine/core";
-import { useEditorStore } from "@/stores/editor";
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
+import { useDroppable } from "@/hooks/useDroppable";
+import { useEditorStore } from "@/stores/editor";
+import { useOnDrop } from "@/hooks/useOnDrop";
 
 type Props = {
   id: string;
@@ -14,35 +15,43 @@ export const Droppable = ({
   ...props
 }: PropsWithChildren<Props>) => {
   const theme = useMantineTheme();
-  const dropTarget = useEditorStore((state) => state.dropTarget);
-  const { setNodeRef } = useDroppable({ id });
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId
+  );
 
-  const isOver = dropTarget?.id === id;
+  const onDrop = useOnDrop();
+
+  const { isOver, edge, ...droppable } = useDroppable({
+    id,
+    activeId: selectedComponentId,
+    onDrop,
+  });
+
+  const baseBorder = `1px solid ${theme.colors.teal[6]}`;
 
   const borders = isOver
     ? {
-        border: `1px solid ${theme.colors.teal[6]}`,
         borderTop:
-          dropTarget?.edge === "top"
+          edge === "top"
             ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
-            : undefined,
+            : baseBorder,
         borderBottom:
-          dropTarget?.edge === "bottom"
+          edge === "bottom"
             ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
-            : undefined,
+            : baseBorder,
         borderLeft:
-          dropTarget?.edge === "left"
+          edge === "left"
             ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
-            : undefined,
+            : baseBorder,
         borderRight:
-          dropTarget?.edge === "right"
+          edge === "right"
             ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
-            : undefined,
+            : baseBorder,
       }
     : {};
 
   return (
-    <Box ref={setNodeRef} w="100%" {...props} style={{ ...borders }}>
+    <Box id={id} w="100%" {...props} style={{ ...borders }} {...droppable}>
       {children}
     </Box>
   );

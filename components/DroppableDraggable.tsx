@@ -1,6 +1,4 @@
 import React, { PropsWithChildren } from "react";
-import { useDraggable, useDroppable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
 import {
   Box,
   BoxProps,
@@ -18,6 +16,10 @@ import {
   IconNewSection,
 } from "@tabler/icons-react";
 import { DROP_INDICATOR_WIDTH, ICON_SIZE } from "@/utils/config";
+import { useDraggable } from "@/hooks/useDraggable";
+import { useDroppable } from "@/hooks/useDroppable";
+import { useOnDrop } from "@/hooks/useOnDrop";
+import { useOnDragStart } from "@/hooks/useOnDragStart";
 
 type Props = {
   id: string;
@@ -34,7 +36,6 @@ export const DroppableDraggable = ({
 }: PropsWithChildren<Props>) => {
   const theme = useMantineTheme();
   const editorTree = useEditorStore((state) => state.tree);
-  const dropTarget = useEditorStore((state) => state.dropTarget);
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId
   );
@@ -44,58 +45,51 @@ export const DroppableDraggable = ({
 
   const parent = getComponentParent(editorTree.root, id);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef: setDraggableRef,
-    transform,
-    isDragging,
-  } = useDraggable({ id });
+  const onDragStart = useOnDragStart();
+  const onDrop = useOnDrop();
 
-  const { setNodeRef: setDroppableRef } = useDroppable({ id });
+  const draggable = useDraggable({ id, onDragStart });
+  const { isOver, edge, ...droppable } = useDroppable({
+    id,
+    activeId: selectedComponentId,
+    onDrop,
+  });
 
-  const isOver = dropTarget?.id === id && !isDragging;
   const isSelected = selectedComponentId === id;
+
+  const baseBorder = `1px solid ${theme.colors.teal[6]}`;
 
   const borders = isOver
     ? {
-        border: `1px solid ${theme.colors.teal[6]}`,
         borderTop:
-          dropTarget?.edge === "top"
+          edge === "top"
             ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
-            : undefined,
+            : baseBorder,
         borderBottom:
-          dropTarget?.edge === "bottom"
+          edge === "bottom"
             ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
-            : undefined,
+            : baseBorder,
         borderLeft:
-          dropTarget?.edge === "left"
+          edge === "left"
             ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
-            : undefined,
+            : baseBorder,
         borderRight:
-          dropTarget?.edge === "right"
+          edge === "right"
             ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
-            : undefined,
+            : baseBorder,
       }
     : isSelected
-    ? {
-        border: `1px solid ${theme.colors.teal[6]}`,
-      }
+    ? { border: baseBorder }
     : {};
-
-  const style = {
-    transform: CSS.Translate.toString(transform),
-    ...borders,
-  };
 
   const haveNonRootParent = parent && parent.id !== "root";
 
   return (
     <Box
+      id={id}
       {...props}
       pos="relative"
       sx={{
-        zIndex: isDragging ? 9999 : undefined,
         width: component.props?.style?.width ?? "auto",
       }}
       onClick={(e) => {
@@ -105,18 +99,14 @@ export const DroppableDraggable = ({
       }}
     >
       <Box
-        ref={(ref) => {
-          setDraggableRef(ref);
-          setDroppableRef(ref);
-        }}
         w="100%"
         h="100%"
         pos="relative"
         sx={{
-          zIndex: isDragging ? 9999 : undefined,
           display: "flex",
-          ...style,
+          ...borders,
         }}
+        {...droppable}
         {...props}
       >
         {children}
@@ -127,7 +117,7 @@ export const DroppableDraggable = ({
         top={-36}
         sx={{
           zIndex: 90,
-          display: isSelected && !isDragging ? "block" : "none",
+          display: isSelected ? "block" : "none",
           background: theme.colors.teal[6],
           borderTopLeftRadius: theme.radius.sm,
           borderTopRightRadius: theme.radius.sm,
@@ -136,8 +126,7 @@ export const DroppableDraggable = ({
         <Group py={4} px={8} h={36} noWrap spacing="xs" align="center">
           <UnstyledButton
             sx={{ cursor: "move", alignItems: "center", display: "flex" }}
-            {...listeners}
-            {...attributes}
+            {...draggable}
           >
             <IconGripVertical
               size={ICON_SIZE}

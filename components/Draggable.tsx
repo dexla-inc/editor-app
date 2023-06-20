@@ -1,5 +1,4 @@
-import React, { PropsWithChildren } from "react";
-import { useDraggable } from "@dnd-kit/core";
+import React, { PropsWithChildren, useCallback } from "react";
 import {
   BoxProps,
   Box,
@@ -8,13 +7,14 @@ import {
   ActionIcon,
   Group,
 } from "@mantine/core";
-import { CSS } from "@dnd-kit/utilities";
 import { ICON_SIZE } from "@/utils/config";
 import { IconX } from "@tabler/icons-react";
 import { deleteCustomComponent } from "@/requests/projects/mutations";
 import { showNotification } from "@mantine/notifications";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/router";
+import { useDraggable } from "@/hooks/useDraggable";
+import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   id: string;
@@ -32,13 +32,23 @@ export const Draggable = ({
 }: PropsWithChildren<Props>) => {
   const router = useRouter();
   const theme = useMantineTheme();
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id,
-    data,
+
+  const setComponentToAdd = useEditorStore((state) => state.setComponentToAdd);
+  const setSelectedComponentId = useEditorStore(
+    (state) => state.setSelectedComponentId
+  );
+
+  const onDragStart = useCallback(() => {
+    setSelectedComponentId(id);
+    setComponentToAdd(data);
+  }, [data, id, setComponentToAdd, setSelectedComponentId]);
+
+  const draggable = useDraggable({
+    id: `add-${id}`,
+    onDragStart,
   });
 
   const styles = {
-    transform: CSS.Translate.toString(transform),
     ...style,
     cursor: "move",
   };
@@ -65,8 +75,8 @@ export const Draggable = ({
 
   return (
     <Box
+      id={`add-${id}`}
       pos="relative"
-      ref={setNodeRef}
       w="100%"
       {...props}
       style={{ ...styles }}
@@ -82,7 +92,7 @@ export const Draggable = ({
         }}
       >
         <Group position="apart" noWrap>
-          <Box {...listeners} {...attributes} w="100%">
+          <Box {...draggable} w="100%">
             {children}
           </Box>
           {isDeletable && (
@@ -93,7 +103,7 @@ export const Draggable = ({
                 e.stopPropagation();
                 mutate({
                   projectId: router.query.id as string,
-                  id: data?.id,
+                  id,
                 });
               }}
             >

@@ -1,4 +1,4 @@
-import { DropTarget, EditorTree, updateTreeComponent } from "@/utils/editor";
+import { Component, EditorTree, updateTreeComponent } from "@/utils/editor";
 import { create, useStore } from "zustand";
 import { TemporalState, temporal } from "zundo";
 import throttle from "lodash.throttle";
@@ -23,15 +23,14 @@ export type EditorState = {
   tree: EditorTree;
   currentProjectId?: string;
   currentPageId?: string;
-  dropTarget?: DropTarget;
   selectedComponentId?: string;
+  componentToAdd?: Component;
   setTree: (tree: EditorTree) => void;
   resetTree: () => void;
   setCurrentProjectId: (currentProjectId: string) => void;
   setCurrentPageId: (currentPageId: string) => void;
+  setComponentToAdd: (componentToAdd: Component) => void;
   updateTreeComponent: (componentId: string, props: any) => void;
-  setDropTarget: (dropTarget: DropTarget) => void;
-  clearDropTarget: () => void;
   setSelectedComponentId: (selectedComponentId: string) => void;
   clearSelection: () => void;
 };
@@ -71,8 +70,7 @@ export const useEditorStore = create<EditorState>()(
       },
       setCurrentProjectId: (currentProjectId) => set({ currentProjectId }),
       setCurrentPageId: (currentPageId) => set({ currentPageId }),
-      setDropTarget: (dropTarget) => set({ dropTarget }),
-      clearDropTarget: () => set({ dropTarget: undefined }),
+      setComponentToAdd: (componentToAdd) => set({ componentToAdd }),
       setSelectedComponentId: (selectedComponentId) =>
         set({ selectedComponentId }),
       clearSelection: () => set({ selectedComponentId: undefined }),

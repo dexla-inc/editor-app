@@ -1,29 +1,14 @@
 import { Droppable } from "@/components/Droppable";
 import { DroppableDraggable } from "@/components/DroppableDraggable";
 import { useEditorStore } from "@/stores/editor";
-import { componentMapper, structureMapper } from "@/utils/componentMapper";
+import { componentMapper } from "@/utils/componentMapper";
 import { HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
 import {
-  Component,
   Row,
-  addComponent,
-  closestEdge,
-  getComponentById,
-  getComponentParent,
+  Component,
   getEditorTreeFromPageStructure,
-  moveComponent,
-  moveComponentToDifferentParent,
   removeComponent,
-  removeComponentFromParent,
 } from "@/utils/editor";
-import {
-  DndContext,
-  DragEndEvent,
-  DragMoveEvent,
-  DragOverlay,
-  DragStartEvent,
-  MeasuringStrategy,
-} from "@dnd-kit/core";
 import {
   Aside,
   Box,
@@ -55,14 +40,8 @@ type Props = {
 
 export const Editor = ({ projectId, pageId }: Props) => {
   const theme = useMantineTheme();
-  const dropTarget = useEditorStore((state) => state.dropTarget);
-  const setDropTarget = useEditorStore((state) => state.setDropTarget);
-  const clearDropTarget = useEditorStore((state) => state.clearDropTarget);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
-  );
-  const setSelectedComponentId = useEditorStore(
-    (state) => state.setSelectedComponentId
   );
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
@@ -73,7 +52,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isStreaming = useRef<boolean>(false);
   const [stream, setStream] = useState<string>("");
-  const [componentToAdd, setComponentToAdd] = useState<string>("");
   const [canvasRef] = useAutoAnimate();
   const [isCustomComponentModalOpen, customComponentModal] =
     useDisclosure(false);
@@ -163,98 +141,14 @@ export const Editor = ({ projectId, pageId }: Props) => {
     }
   }, [setEditorTree, stream]);
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active } = event;
-
-    if (!dropTarget || dropTarget.id === active.id) {
-      clearDropTarget();
-      return;
-    }
-
-    const copy = { ...editorTree };
-    const activeComponent = getComponentById(copy.root, active.id as string);
-
-    if (!activeComponent && (active.data.current as any).id) {
-      addComponent(
-        copy.root,
-        active.data.current as unknown as Component,
-        dropTarget
-      );
-      setSelectedComponentId((active.data.current as any).id as string);
-    } else if (dropTarget?.id !== "root") {
-      const activeParent = getComponentParent(copy.root, active.id as string);
-      const targetParent = getComponentParent(
-        copy.root,
-        dropTarget.id as string
-      );
-
-      if (activeParent?.id !== targetParent?.id) {
-        // move to a new parent
-        moveComponentToDifferentParent(
-          copy.root,
-          active.id as string,
-          dropTarget,
-          targetParent!.id as string
-        );
-        removeComponentFromParent(
-          copy.root,
-          active.id as string,
-          activeParent!.id as string
-        );
-      } else {
-        // reorder
-        moveComponent(copy.root, active.id as string, dropTarget);
-      }
-    } else {
-      removeComponent(copy.root, active.id as string);
-      addComponent(
-        copy.root,
-        activeComponent as unknown as Component,
-        dropTarget
-      );
-    }
-
-    setEditorTree(copy);
-    clearDropTarget();
-    setComponentToAdd("");
-  };
-
-  const handleDragMove = (event: DragMoveEvent) => {
-    const id = event.collisions?.[0]?.id;
-    const data = event.collisions?.[0]?.data;
-    const target = {
-      id: id as string,
-      edge: data?.edge,
-      rect: data?.rect,
-    };
-    setDropTarget(target);
-  };
-
-  const handleDragStart = (event: DragStartEvent) => {
-    const id = event.active.id;
-    setSelectedComponentId(id as string);
-    const active = getComponentById(editorTree.root, id as string);
-    if (!active) {
-      setComponentToAdd(id as string);
-    } else {
-      setComponentToAdd("");
-    }
-  };
-
-  const handleDragCancel = () => {
-    clearDropTarget();
-    clearSelection();
-    setComponentToAdd("");
-  };
-
   const renderTree = (component: Component) => {
     if (component.id === "root") {
       return (
-        <Paper shadow="xs" ref={canvasRef}>
-          <Droppable id={component.id} bg="white" m={0}>
+        <Droppable id={component.id} bg="transparent" m={0} p="xs">
+          <Paper shadow="xs" ref={canvasRef}>
             {component.children?.map((child) => renderTree(child))}
-          </Droppable>
-        </Paper>
+          </Paper>
+        </Droppable>
       );
     }
 
@@ -284,20 +178,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   };
 
   return (
-    <DndContext
-      onDragStart={handleDragStart}
-      onDragMove={handleDragMove}
-      onDragEnd={handleDragEnd}
-      onDragCancel={handleDragCancel}
-      measuring={{
-        droppable: {
-          strategy: MeasuringStrategy.Always,
-        },
-      }}
-      collisionDetection={(args) => {
-        return closestEdge(args, editorTree);
-      }}
-    >
+    <>
       <Shell
         pos="relative"
         navbar={
@@ -372,9 +253,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
           isCustomComponentModalOpen={isCustomComponentModalOpen}
         />
       </Shell>
-      <DragOverlay>
-        {componentToAdd && structureMapper[componentToAdd]?.Draggable()}
-      </DragOverlay>
-    </DndContext>
+    </>
   );
 };
