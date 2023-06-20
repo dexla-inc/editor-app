@@ -1,3 +1,6 @@
+import { InformationAlert } from "@/components/Alerts";
+import BackButton from "@/components/projects/BackButton";
+import NextButton from "@/components/projects/NextButton";
 import { PageParams, createPages } from "@/requests/projects/mutations";
 import { getPagesStream } from "@/requests/projects/queries";
 import { ICON_SIZE } from "@/utils/config";
@@ -16,9 +19,6 @@ import { IconCircleCheck, IconPlus, IconSparkles } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
 import { useState } from "react";
 import slugify from "slugify";
-import { InformationAlert } from "../Alerts";
-import BackButton from "./BackButton";
-import NextButton from "./NextButton";
 
 export const getServerSideProps = async ({
   query,

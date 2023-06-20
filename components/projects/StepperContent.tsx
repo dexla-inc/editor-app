@@ -1,11 +1,11 @@
 import GenerateAppStep from "@/components/projects/GenerateAppStep";
-import IntegrationsStep from "@/components/projects/IntegrationsStep";
 import PagesStep from "@/components/projects/PagesStep";
 import ProjectStep from "@/components/projects/ProjectStep";
 import { useAppStore } from "@/stores/app";
 
 import { StepperState } from "@/utils/projectTypes";
 import { Stack } from "@mantine/core";
+import { useState } from "react";
 
 export default function StepperContent({
   activeStep,
@@ -20,6 +20,8 @@ export default function StepperContent({
   const prevStep = () =>
     setActiveStep((current) => (current > 0 ? current - 1 : current));
 
+  const [projectId, setProjectId] = useState("");
+
   return (
     <Stack sx={{ width: "100%" }}>
       {activeStep == 0 && (
@@ -28,6 +30,7 @@ export default function StepperContent({
           isLoading={isLoading}
           startLoading={startLoading}
           stopLoading={stopLoading}
+          setProjectId={setProjectId}
         ></ProjectStep>
       )}
       {activeStep == 1 && (
@@ -37,11 +40,11 @@ export default function StepperContent({
           isLoading={isLoading}
           startLoading={startLoading}
           stopLoading={stopLoading}
-          projectId="918cb31e37594928ac11515fe9f392f4"
+          projectId={projectId}
         ></PagesStep>
       )}
-      {activeStep == 2 && <IntegrationsStep></IntegrationsStep>}
-      {activeStep == 3 && <GenerateAppStep></GenerateAppStep>}
+      {/* {activeStep == 2 && <IntegrationsStep></IntegrationsStep>} */}
+      {activeStep == 2 && <GenerateAppStep></GenerateAppStep>}
     </Stack>
   );
 }

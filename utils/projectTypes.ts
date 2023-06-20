@@ -1,7 +1,7 @@
 import { NotificationProps } from "@mantine/notifications";
 
 export type StepperClickEvents = {
-  nextStep: () => void;
+  nextStep?: () => void;
   prevStep?: () => void;
 };
 

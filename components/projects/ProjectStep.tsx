@@ -1,3 +1,5 @@
+import { InformationAlert } from "@/components/Alerts";
+import NextButton from "@/components/projects/NextButton";
 import { ProjectParams, createProject } from "@/requests/projects/mutations";
 import {
   LoadingStore,
@@ -7,8 +9,6 @@ import {
 } from "@/utils/projectTypes";
 import { Divider, Flex, Group, Radio, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { InformationAlert } from "../Alerts";
-import NextButton from "./NextButton";
 
 const projectInfo: ProjectTypeMap = {
   INNOVATION: {
@@ -42,7 +42,8 @@ export default function ProjectStep({
   isLoading,
   startLoading,
   stopLoading,
-}: StepperClickEvents & LoadingStore) {
+  setProjectId,
+}: StepperClickEvents & LoadingStore & { setProjectId: (id: string) => void }) {
   const form = useForm({
     initialValues: {
       description: "",
@@ -59,6 +60,9 @@ export default function ProjectStep({
       message: "Wait while your project is being created",
     });
     const project = await createProject(values);
+
+    setProjectId(project.id);
+
     stopLoading({
       id: "creating-project",
       title: "Project Created",
@@ -134,7 +138,7 @@ export default function ProjectStep({
         )}
         <Divider></Divider>
         <Group position="right">
-          <NextButton nextStep={nextStep} isLoading={isLoading}></NextButton>
+          <NextButton onClick={nextStep} isLoading={isLoading}></NextButton>
         </Group>
       </Stack>
     </form>
