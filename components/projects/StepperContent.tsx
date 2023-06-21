@@ -1,7 +1,7 @@
+import BrandingStep from "@/components/projects/BrandingStep";
 import PagesStep from "@/components/projects/PagesStep";
 import ProjectStep from "@/components/projects/ProjectStep";
 import { useAppStore } from "@/stores/app";
-
 import { StepperState } from "@/utils/projectTypes";
 import { Stack } from "@mantine/core";
 import { useState } from "react";
@@ -33,9 +33,18 @@ export default function StepperContent({
         ></ProjectStep>
       )}
       {activeStep == 1 && (
-        <PagesStep
+        <BrandingStep
           prevStep={prevStep}
           nextStep={nextStep}
+          isLoading={isLoading}
+          startLoading={startLoading}
+          stopLoading={stopLoading}
+          projectId={projectId}
+        ></BrandingStep>
+      )}
+      {activeStep == 2 && (
+        <PagesStep
+          prevStep={prevStep}
           isLoading={isLoading}
           startLoading={startLoading}
           stopLoading={stopLoading}

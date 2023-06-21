@@ -4,14 +4,16 @@ import NextButton from "@/components/projects/NextButton";
 import { PageParams, createPages } from "@/requests/projects/mutations";
 import { getPagesStream } from "@/requests/projects/queries";
 import { ICON_SIZE } from "@/utils/config";
-import { LoadingStore } from "@/utils/projectTypes";
+import { PagesStepProps } from "@/utils/projectTypes";
 import TOML from "@iarna/toml";
 import {
   ActionIcon,
   Button,
+  Divider,
   Flex,
   Group,
   List,
+  LoadingOverlay,
   Stack,
   TextInput,
   ThemeIcon,
@@ -39,16 +41,14 @@ export const getServerSideProps = async ({
 
 export default function PagesStep({
   prevStep,
-  nextStep,
   isLoading,
   startLoading,
   stopLoading,
   projectId,
-}: LoadingStore & { prevStep: () => void } & { nextStep: () => void } & {
-  projectId: string;
-}) {
+}: PagesStepProps) {
   const [pages, setPages] = useState<string[]>([]);
   const router = useRouter();
+  const [formComplete, setFormComplete] = useState(false);
 
   const getPages = async (count: number) => {
     const plural = count === 1 ? "" : "s";
@@ -109,13 +109,15 @@ export default function PagesStep({
       projectId
     );
 
+    router.push(`/projects/${projectId}/editor/${createdPages.homePageId}`);
+
     stopLoading({
       id: "creating-pages",
       title: "Pages Created",
       message: "Your pages were added to your project successfully",
     });
 
-    router.push(`/projects/${projectId}/editor/${createdPages.homePageId}`);
+    setFormComplete(true);
   };
 
   const deletePage = (pageToRemove: string) => {
@@ -189,8 +191,9 @@ export default function PagesStep({
           </Button>
         )}
       </Flex>
+      <Divider></Divider>
       <Group position="apart">
-        <BackButton onClick={prevStep as () => void}></BackButton>
+        <BackButton onClick={prevStep}></BackButton>
 
         <NextButton
           onClick={() => goToEditor(projectId)}
@@ -198,6 +201,7 @@ export default function PagesStep({
           disabled={!hasPageNames}
         ></NextButton>
       </Group>
+      <LoadingOverlay visible={formComplete} overlayBlur={1} />
     </Stack>
   );
 }
