@@ -14,7 +14,7 @@ import { useState } from "react";
 
 export interface ShellProps extends AppShellProps {
   navbarType?: "editor" | "dashboard";
-  user: User | null | undefined;
+  user?: User | null | undefined;
 }
 
 export const Shell = ({
