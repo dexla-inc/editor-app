@@ -6,7 +6,6 @@ export type ProjectParams = {
   friendlyName: string;
   region?: string;
   type: ProjectTypes;
-  websiteUrl?: string;
   industry?: string;
   similarCompany?: string;
 };

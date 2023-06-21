@@ -1,8 +1,11 @@
 import { NotificationProps } from "@mantine/notifications";
 
-export type StepperClickEvents = {
-  nextStep?: () => void;
-  prevStep?: () => void;
+type NextStepperClickEvent = {
+  nextStep: () => void;
+};
+
+type PreviousStepperClickEvent = {
+  prevStep: () => void;
 };
 
 export type StepperState = {
@@ -14,16 +17,38 @@ export type StepperDetailsType = {
   [key: number]: { title: string };
 };
 
-export type LoadingStore = {
+type LoadingStore = {
   isLoading: boolean;
   startLoading: (state: NotificationProps) => void;
   stopLoading: (state: NotificationProps) => void;
 };
 
+export interface ProjectStepProps extends LoadingStore, NextStepperClickEvent {
+  setProjectId: (id: string) => void;
+}
+
+export interface PagesStepProps
+  extends LoadingStore,
+    PreviousStepperClickEvent {
+  projectId: string;
+}
+
+export interface BrandingStepProps
+  extends LoadingStore,
+    NextStepperClickEvent,
+    PreviousStepperClickEvent {
+  projectId: string;
+}
+
 export type ProjectTypes = "INNOVATION" | "SIMILAR" | "INTERNAL";
 
 export function isProjectType(type: string): type is ProjectTypes {
   return ["INNOVATION", "SIMILAR", "INTERNAL"].includes(type);
+}
+
+// Could probably move this to a more general location
+export function isWebsite(value: string): boolean {
+  return /^https?:\/\/.+/i.test(value);
 }
 
 export type ProjectTypeMap = Record<ProjectTypes, ProjectInfo>;

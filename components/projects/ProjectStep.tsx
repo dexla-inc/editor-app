@@ -2,7 +2,7 @@ import { InformationAlert } from "@/components/Alerts";
 import NextButton from "@/components/projects/NextButton";
 import { ProjectParams, createProject } from "@/requests/projects/mutations";
 import {
-  LoadingStore,
+  ProjectStepProps,
   ProjectTypeMap,
   ProjectTypes,
   isProjectType,
@@ -43,15 +43,12 @@ export default function ProjectStep({
   startLoading,
   stopLoading,
   setProjectId,
-}: { nextStep: () => void } & LoadingStore & {
-    setProjectId: (id: string) => void;
-  }) {
+}: ProjectStepProps) {
   const form = useForm({
     initialValues: {
       description: "",
       region: "",
       type: "" as ProjectTypes,
-      websiteUrl: "",
       industry: "",
       friendlyName: "",
       similarCompany: undefined,
@@ -91,7 +88,7 @@ export default function ProjectStep({
       nextStep();
     } catch (error) {
       stopLoading({
-        id: "failed-creating-project",
+        id: "creating-project",
         title: "Project Failed",
         message: "Validation failed",
       });
@@ -105,21 +102,13 @@ export default function ProjectStep({
           title="Let's get started!"
           text="Unlock the magic of AI! Answer a few questions and we'll tailor a unique experience just for you!"
         />
-        <TextInput
-          label="Website URL"
-          description="Enter the URL of your website to fetch your brand"
-          withAsterisk={false}
-          disabled={true}
-          placeholder="disabled until we implement theme"
-          {...form.getInputProps("websiteUrl")}
-        />
         <Radio.Group
           {...form.getInputProps("type")}
           label="What are you building?"
           description="Choose what you want to build"
           required
         >
-          <Group mt="xs" spacing="xl" py="sm">
+          <Group mt="xs" spacing="xl" py="sm" position="apart">
             {Object.entries(projectInfo).map(([value, { title, example }]) => (
               <Radio
                 key={value}

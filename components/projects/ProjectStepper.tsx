@@ -9,9 +9,11 @@ export default function ProjectStepper({
     <Stepper
       active={activeStep}
       onStepClick={setActiveStep}
-      orientation="vertical"
+      allowNextStepsSelect={false}
+      py="lg"
     >
-      <Stepper.Step label="Project" description="Describe your project" />
+      <Stepper.Step label="Project" description="Define your project scope" />
+      <Stepper.Step label="Branding" description="Personalise your app" />
       <Stepper.Step label="Pages" description="Generate your page names" />
     </Stepper>
   );
