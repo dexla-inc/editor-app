@@ -1,14 +1,12 @@
-import { Loader } from "@mantine/core";
+const HomePage = () => null;
+
+export default HomePage;
 
 export const getServerSideProps = async () => {
   return {
     redirect: {
-      destination: "/projects/new",
+      destination: "/projects",
       permanent: false,
     },
   };
 };
-
-export default function Home() {
-  return <Loader />;
-}
