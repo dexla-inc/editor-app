@@ -14,10 +14,12 @@ export const useDroppable = ({
   id,
   activeId,
   onDrop,
+  currentWindow,
 }: {
   id: string;
   onDrop: (droppedId: string, dropTarget: DropTarget) => void;
   activeId?: string;
+  currentWindow?: Window;
 }) => {
   const [isOver, setIsOver] = useState<boolean>(false);
   const [edge, setEdge] = useState<Edge>();
@@ -46,8 +48,9 @@ export const useDroppable = ({
       if (activeId && activeId !== id) {
         const mouseX = event.clientX;
         const mouseY = event.clientY;
-        const rect = document.getElementById(id)?.getBoundingClientRect()!;
-        let activeRect = document
+        const w = currentWindow ?? window;
+        const rect = w.document.getElementById(id)?.getBoundingClientRect()!;
+        let activeRect = w.document
           .getElementById(activeId)
           ?.getBoundingClientRect()!;
 
@@ -80,7 +83,7 @@ export const useDroppable = ({
         setEdge(edge as Edge);
       }
     },
-    [id, activeId]
+    [id, activeId, currentWindow]
   );
 
   const handleDragEnter = useCallback(
@@ -94,6 +97,8 @@ export const useDroppable = ({
     [activeId, id]
   );
 
+  // TODO: Handle isOver differently to have better ux as currently
+  // it remove the drop target even if hovering over a non droppable children
   const handleDragLeave = useCallback((event: any) => {
     event.preventDefault();
     event.stopPropagation();

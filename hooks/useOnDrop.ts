@@ -12,7 +12,7 @@ import {
 } from "@/utils/editor";
 import { useCallback } from "react";
 
-const getDroppedId = (_id: string) => {
+const parseId = (_id: string) => {
   const id = _id.startsWith("layer")
     ? _id.split("layer-")[1]
     : _id.startsWith("add")
@@ -31,7 +31,8 @@ export const useOnDrop = () => {
 
   const onDrop = useCallback(
     (_droppedId: string, dropTarget: DropTarget) => {
-      const droppedId = getDroppedId(_droppedId);
+      const droppedId = parseId(_droppedId);
+      dropTarget.id = parseId(dropTarget.id);
       const copy = { ...editorTree };
       const activeComponent = getComponentById(copy.root, droppedId);
 

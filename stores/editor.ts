@@ -25,6 +25,8 @@ export type EditorState = {
   currentPageId?: string;
   selectedComponentId?: string;
   componentToAdd?: Component;
+  iframeWindow?: any;
+  setIframeWindow: (iframeWindow: Window) => void;
   setTree: (tree: EditorTree) => void;
   resetTree: () => void;
   setCurrentProjectId: (currentProjectId: string) => void;
@@ -40,6 +42,7 @@ export const useEditorStore = create<EditorState>()(
   temporal(
     (set) => ({
       tree: emptyEditorTree,
+      setIframeWindow: (iframeWindow) => set({ iframeWindow }),
       setTree: (tree) => {
         set((state) => {
           updatePageState(

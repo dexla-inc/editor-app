@@ -15,6 +15,7 @@ export const Droppable = ({
   ...props
 }: PropsWithChildren<Props>) => {
   const theme = useMantineTheme();
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
@@ -25,6 +26,7 @@ export const Droppable = ({
     id,
     activeId: selectedComponentId,
     onDrop,
+    currentWindow: id === "root" ? iframeWindow : undefined,
   });
 
   const baseBorder = `1px solid ${theme.colors.teal[6]}`;
@@ -51,7 +53,13 @@ export const Droppable = ({
     : {};
 
   return (
-    <Box id={id} w="100%" {...props} style={{ ...borders }} {...droppable}>
+    <Box
+      id={id}
+      w="calc(100% - 4px)"
+      {...props}
+      style={{ ...borders }}
+      {...droppable}
+    >
       {children}
     </Box>
   );

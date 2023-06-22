@@ -30,8 +30,9 @@ import { decodeSchema } from "@/utils/compression";
 import TOML from "@iarna/toml";
 import { useAppStore } from "@/stores/app";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { useDisclosure, useHotkeys } from "@mantine/hooks";
-import { CustomComponentModal } from "./CustomComponentModal";
+import { getHotkeyHandler, useDisclosure, useHotkeys } from "@mantine/hooks";
+import { CustomComponentModal } from "@/components/CustomComponentModal";
+import { IFrame } from "@/components/IFrame";
 
 type Props = {
   projectId: string;
@@ -43,6 +44,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
@@ -141,10 +143,35 @@ export const Editor = ({ projectId, pageId }: Props) => {
     }
   }, [setEditorTree, stream]);
 
+  // add event listners to iframe
+  useEffect(() => {
+    const hotKeysHandler = getHotkeyHandler([
+      [
+        "backspace",
+        () => {
+          if (selectedComponentId && selectedComponentId !== "root") {
+            const copy = { ...editorTree };
+            removeComponent(copy.root, selectedComponentId as string);
+            setEditorTree(copy);
+          }
+        },
+      ],
+    ]);
+
+    iframeWindow?.document.body.addEventListener("keydown", hotKeysHandler);
+
+    return () => {
+      iframeWindow?.document.body.removeEventListener(
+        "keydown",
+        hotKeysHandler
+      );
+    };
+  }, [editorTree, iframeWindow, selectedComponentId, setEditorTree]);
+
   const renderTree = (component: Component) => {
     if (component.id === "root") {
       return (
-        <Droppable id={component.id} bg="transparent" m={0} p="xs">
+        <Droppable id={component.id} bg="transparent" m={0} p={2}>
           <Paper shadow="xs" ref={canvasRef}>
             {component.children?.map((child) => renderTree(child))}
           </Paper>
@@ -220,13 +247,13 @@ export const Editor = ({ projectId, pageId }: Props) => {
             },
           }}
         />
-        <Box
-          pos="relative"
-          onClick={clearSelection}
-          style={{ minHeight: `calc(var(--vh, 100vh) - ${HEADER_HEIGHT}px)` }}
-          p={40}
-        >
-          {isLoading && !stream && editorTree.root.children?.length === 0 && (
+        {isLoading && !stream && editorTree.root.children?.length === 0 && (
+          <Box
+            pos="relative"
+            onClick={clearSelection}
+            style={{ minHeight: `calc(var(--vh, 100vh) - ${HEADER_HEIGHT}px)` }}
+            p={40}
+          >
             <Paper
               shadow="xs"
               bg="white"
@@ -245,9 +272,23 @@ export const Editor = ({ projectId, pageId }: Props) => {
                 <Loader />
               </Stack>
             </Paper>
-          )}
-          {renderTree(editorTree.root)}
-        </Box>
+          </Box>
+        )}
+        {(editorTree.root.children ?? [])?.length > 0 && (
+          <Box
+            pos="relative"
+            onClick={clearSelection}
+            style={{
+              minHeight: `calc(var(--vh, 100vh) - ${HEADER_HEIGHT}px)`,
+              overflow: "visible",
+            }}
+            p={0}
+          >
+            <IFrame onClick={clearSelection}>
+              {renderTree(editorTree.root)}
+            </IFrame>
+          </Box>
+        )}
         <CustomComponentModal
           customComponentModal={customComponentModal}
           isCustomComponentModalOpen={isCustomComponentModalOpen}

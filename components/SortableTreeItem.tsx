@@ -23,7 +23,7 @@ export const SortableTreeItem = ({
   const onDrop = useOnDrop();
 
   const { isOver, edge, ...droppable } = useDroppable({
-    id: component.id as string,
+    id: `layer-${component.id}`,
     activeId: selectedComponentId,
     onDrop,
   });

@@ -36,6 +36,7 @@ export const DroppableDraggable = ({
 }: PropsWithChildren<Props>) => {
   const theme = useMantineTheme();
   const editorTree = useEditorStore((state) => state.tree);
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId
   );
@@ -48,11 +49,16 @@ export const DroppableDraggable = ({
   const onDragStart = useOnDragStart();
   const onDrop = useOnDrop();
 
-  const draggable = useDraggable({ id, onDragStart });
+  const draggable = useDraggable({
+    id,
+    onDragStart,
+    currentWindow: iframeWindow,
+  });
   const { isOver, edge, ...droppable } = useDroppable({
     id,
     activeId: selectedComponentId,
     onDrop,
+    currentWindow: iframeWindow,
   });
 
   const isSelected = selectedComponentId === id;
@@ -100,7 +106,7 @@ export const DroppableDraggable = ({
     >
       <Box
         w="100%"
-        h="100%"
+        h="auto"
         pos="relative"
         sx={{
           display: "flex",
