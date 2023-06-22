@@ -112,3 +112,9 @@ export const deleteCustomComponent = async ({
 
   return response;
 };
+
+export const deleteProject = async (id: string) => {
+  const response = (await del<any>(`/projects/${id}`)) as any;
+
+  return response;
+};

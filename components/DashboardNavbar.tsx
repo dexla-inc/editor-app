@@ -1,8 +1,7 @@
 import NavigationAvatarFooter from "@/components/NavigationAvatarFooter";
-import { HEADER_HEIGHT, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
+import { HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
 import { Box, Menu, Navbar, ScrollArea } from "@mantine/core";
 import { User, useLogoutFunction } from "@propelauth/react";
-import { IconLogout, IconSettings } from "@tabler/icons-react";
 
 type DashboardNavbarProps = {
   isLoading?: boolean;
@@ -31,22 +30,6 @@ export default function DashboardNavbar({
           <Menu.Target>
             <NavigationAvatarFooter user={user} />
           </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Label>Account</Menu.Label>
-            <Menu.Item icon={<IconSettings size={ICON_SIZE} />} disabled>
-              Settings
-            </Menu.Item>
-            <Menu.Item
-              icon={<IconLogout size={ICON_SIZE} />}
-              color="red"
-              onClick={() => {
-                setIsLoading(true);
-                logout(true);
-              }}
-            >
-              Logout
-            </Menu.Item>
-          </Menu.Dropdown>
         </Menu>
       </Navbar.Section>
     </Navbar>

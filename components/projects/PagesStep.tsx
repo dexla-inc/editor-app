@@ -50,7 +50,7 @@ export default function PagesStep({
   const router = useRouter();
   const [formComplete, setFormComplete] = useState(false);
 
-  const getPages = async (count: number) => {
+  const getPageStream = async (count: number) => {
     const plural = count === 1 ? "" : "s";
     startLoading({
       id: "pages-stream",
@@ -174,7 +174,7 @@ export default function PagesStep({
           <Button
             variant="light"
             leftIcon={<IconSparkles size={ICON_SIZE} />}
-            onClick={() => getPages(5)}
+            onClick={() => getPageStream(5)}
             loading={isLoading}
             disabled={isLoading || hasPageNames}
           >
@@ -184,7 +184,7 @@ export default function PagesStep({
           <Button
             variant="light"
             leftIcon={<IconPlus size={ICON_SIZE} />}
-            onClick={() => getPages(1)}
+            onClick={() => getPageStream(1)}
             loading={isLoading}
           >
             Generate new page
