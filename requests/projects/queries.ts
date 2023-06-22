@@ -5,6 +5,9 @@ export type PageResponse = {
   id: string;
   title: string;
   pageState?: string;
+  isHome: boolean;
+  authenticatedOnly: boolean;
+  authenticatedUserRole: string;
   [key: string]: any;
 };
 

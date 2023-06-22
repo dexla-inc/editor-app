@@ -43,7 +43,7 @@ export default function Project({ id }: Props) {
   const [stream, setStream] = useState<string>("");
   const [pages, setPages] = useState<string[]>([]);
 
-  const getPages = async () => {
+  const getPageStream = async () => {
     startLoading({
       id: "pages-stream",
       title: "Generating the Page Names",
@@ -145,7 +145,7 @@ export default function Project({ id }: Props) {
           <Group>
             <Button
               leftIcon={<IconSparkles size={ICON_SIZE} />}
-              onClick={getPages}
+              onClick={getPageStream}
               loading={isLoading}
               disabled={isLoading || hasPageNames}
             >

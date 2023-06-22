@@ -24,6 +24,7 @@ export const Shell = ({
   navbarType,
   user,
 }: ShellProps) => {
+  // This state needs to move to the parent component
   const [isLoading, setIsLoading] = useState(false);
 
   return (
