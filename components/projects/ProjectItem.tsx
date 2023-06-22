@@ -41,16 +41,15 @@ export function ProjectItem({
   onDeleteProject,
 }: ProjectItemProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [pageId, setPageId] = useState("");
   const [pages, setPages] = useState<PageResponse[]>([]);
   const [pagesLoading, setPagesLoading] = useState(false);
 
   const goToEditorHomePage = async () => {
-    await getPages();
+    const pages = await getPageList(project.id);
+    setPages(pages.results);
 
-    const homePage = pages.find((page) => page.isHomePage);
-    setPageId(homePage?.id || pages[0].id);
-
+    const homePage = pages.results.find((page) => page.isHome);
+    const pageId = homePage?.id || pages.results[0].id;
     goToEditor(project.id, pageId);
   };
 
