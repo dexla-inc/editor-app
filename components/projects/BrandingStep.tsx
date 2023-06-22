@@ -1,5 +1,5 @@
 import { InformationAlert } from "@/components/Alerts";
-import { getTheme } from "@/requests/projects/queries";
+import { getTheme } from "@/requests/themes/queries";
 import { ICON_SIZE } from "@/utils/config";
 import { BrandingStepProps } from "@/utils/projectTypes";
 import {
