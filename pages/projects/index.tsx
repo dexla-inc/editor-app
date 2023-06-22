@@ -79,13 +79,15 @@ export default function Projects() {
               ></IconTitleDescriptionButton>
             </Anchor>
           </Flex>
-          <TextInput
-            placeholder="Search a project"
-            icon={<IconSearch size={ICON_SIZE} />}
-            onChange={(event) => {
-              debouncedSearch(event.currentTarget.value);
-            }}
-          />
+          {projects && projects.length > 0 && (
+            <TextInput
+              placeholder="Search a project"
+              icon={<IconSearch size={ICON_SIZE} />}
+              onChange={(event) => {
+                debouncedSearch(event.currentTarget.value);
+              }}
+            />
+          )}
           <Grid>
             {projects.map((project) => {
               return (
