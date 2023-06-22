@@ -25,13 +25,12 @@ const sections = [
     id: "components",
     label: "Components",
     icon: IconLayoutDashboard,
-    // initiallyOpened: true,
+    initiallyOpened: true,
   },
   {
     id: "theme",
     label: "Theme",
     icon: IconBrush,
-    initiallyOpened: true,
   },
 ];
 
