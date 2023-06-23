@@ -13,7 +13,6 @@ import {
   Flex,
   Group,
   List,
-  LoadingOverlay,
   Stack,
   TextInput,
   ThemeIcon,
@@ -111,12 +110,6 @@ export default function PagesStep({
 
     router.push(`/projects/${projectId}/editor/${createdPages.homePageId}`);
 
-    stopLoading({
-      id: "creating-pages",
-      title: "Pages Created",
-      message: "Your pages were added to your project successfully",
-    });
-
     setFormComplete(true);
   };
 
@@ -201,7 +194,6 @@ export default function PagesStep({
           disabled={!hasPageNames}
         ></NextButton>
       </Group>
-      <LoadingOverlay visible={formComplete} overlayBlur={1} />
     </Stack>
   );
 }
