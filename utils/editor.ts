@@ -141,7 +141,9 @@ export const moveComponentToDifferentParent = (
   dropTarget: DropTarget,
   newParentId: string
 ) => {
-  const componentToAdd = getComponentById(treeRoot, id) as Component;
+  const _componentToAdd = getComponentById(treeRoot, id) as Component;
+  const componentToAdd = { ..._componentToAdd };
+  replaceIdsDeeply(componentToAdd);
 
   crawl(
     treeRoot,
@@ -271,18 +273,21 @@ export const addComponent = (
   treeRoot: Component,
   componentToAdd: Component,
   dropTarget: DropTarget
-) => {
+): string => {
+  const copy = { ...componentToAdd };
+  replaceIdsDeeply(copy);
+
   crawl(
     treeRoot,
     (node, context) => {
       if (node.id === dropTarget.id) {
         if (dropTarget.edge === "left" || dropTarget.edge === "top") {
-          node.children = [componentToAdd, ...(node.children || [])];
+          node.children = [copy, ...(node.children || [])];
         } else if (
           dropTarget.edge === "right" ||
           dropTarget.edge === "bottom"
         ) {
-          node.children = [...(node.children || []), componentToAdd];
+          node.children = [...(node.children || []), copy];
         }
 
         context.break();
@@ -290,6 +295,8 @@ export const addComponent = (
     },
     { order: "bfs" }
   );
+
+  return copy.id as string;
 };
 
 export type ComponentRect = {

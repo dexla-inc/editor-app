@@ -16,17 +16,21 @@ export const SortableTreeItem = ({
   ...props
 }: PropsWithChildren<Props>) => {
   const theme = useMantineTheme();
+  const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
 
   const onDrop = useOnDrop();
+  const id = `layer-${component.id}`;
 
-  const { isOver, edge, ...droppable } = useDroppable({
-    id: `layer-${component.id}`,
+  const { edge, ...droppable } = useDroppable({
+    id,
     activeId: selectedComponentId,
     onDrop,
   });
+
+  const isOver = currentTargetId === id;
 
   const borders = isOver
     ? {

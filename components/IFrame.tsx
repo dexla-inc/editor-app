@@ -29,7 +29,6 @@ type Props = {
 export const IFrame = ({ children, ...props }: Props) => {
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
-  const tree = useEditorStore((state) => state.tree);
   const isLoading = useAppStore((state) => state.isLoading);
   const [height, setHeight] = useState<number>();
   const selectedComponentId = useEditorStore(
@@ -61,7 +60,6 @@ export const IFrame = ({ children, ...props }: Props) => {
     }
 
     let currentCanvasHeight = w?.document?.body?.scrollHeight || 0;
-
     // If the element is >= the value that we'd get by
     // having an element with 100vh, we will get into an infinite state update
     // if we tried to update the canvas height to the element's height.
@@ -86,17 +84,20 @@ export const IFrame = ({ children, ...props }: Props) => {
     }
 
     setHeight(currentCanvasHeight);
-  }, [currentElementHeight, mountNode, prevElementHeight, w]);
-
-  useEffect(() => {
-    syncIframeHeight();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    w,
     selectedComponentId,
     currentElementHeight,
-    syncIframeHeight,
+    mountNode,
+    prevElementHeight,
     isLoading,
-    tree.root.children?.length,
   ]);
+
+  useEffect(() => {
+    // TODO: Fix this as we are currently having to delay calculation to wait for the content to be rendered first
+    setTimeout(syncIframeHeight, 500);
+  }, [syncIframeHeight]);
 
   return (
     <Box
@@ -106,7 +107,7 @@ export const IFrame = ({ children, ...props }: Props) => {
         overflow: "visible",
         border: "none",
         width: "100%",
-        height,
+        height: (height ?? 0) + 40,
       }}
       {...props}
     >

@@ -37,6 +37,7 @@ export const DroppableDraggable = ({
   const theme = useMantineTheme();
   const editorTree = useEditorStore((state) => state.tree);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
+  const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId
   );
@@ -54,7 +55,7 @@ export const DroppableDraggable = ({
     onDragStart,
     currentWindow: iframeWindow,
   });
-  const { isOver, edge, ...droppable } = useDroppable({
+  const { edge, ...droppable } = useDroppable({
     id,
     activeId: selectedComponentId,
     onDrop,
@@ -64,6 +65,7 @@ export const DroppableDraggable = ({
   const isSelected = selectedComponentId === id;
 
   const baseBorder = `1px solid ${theme.colors.teal[6]}`;
+  const isOver = currentTargetId === id;
 
   const borders = isOver
     ? {

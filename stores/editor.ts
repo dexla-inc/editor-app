@@ -25,13 +25,15 @@ export type EditorState = {
   currentPageId?: string;
   selectedComponentId?: string;
   componentToAdd?: Component;
-  iframeWindow?: any;
+  iframeWindow?: Window;
+  currentTargetId?: string;
   setIframeWindow: (iframeWindow: Window) => void;
+  setCurrentTargetId: (currentTargetId?: string) => void;
   setTree: (tree: EditorTree) => void;
   resetTree: () => void;
   setCurrentProjectId: (currentProjectId: string) => void;
   setCurrentPageId: (currentPageId: string) => void;
-  setComponentToAdd: (componentToAdd: Component) => void;
+  setComponentToAdd: (componentToAdd?: Component) => void;
   updateTreeComponent: (componentId: string, props: any) => void;
   setSelectedComponentId: (selectedComponentId: string) => void;
   clearSelection: () => void;
@@ -43,6 +45,7 @@ export const useEditorStore = create<EditorState>()(
     (set) => ({
       tree: emptyEditorTree,
       setIframeWindow: (iframeWindow) => set({ iframeWindow }),
+      setCurrentTargetId: (currentTargetId) => set({ currentTargetId }),
       setTree: (tree) => {
         set((state) => {
           updatePageState(

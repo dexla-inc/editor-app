@@ -1,3 +1,4 @@
+import { useEditorStore } from "@/stores/editor";
 import {
   Edge,
   leftOfRectangle,
@@ -21,7 +22,9 @@ export const useDroppable = ({
   activeId?: string;
   currentWindow?: Window;
 }) => {
-  const [isOver, setIsOver] = useState<boolean>(false);
+  const setCurrentTargetId = useEditorStore(
+    (state) => state.setCurrentTargetId
+  );
   const [edge, setEdge] = useState<Edge>();
 
   const handleDrop = useCallback(
@@ -35,9 +38,9 @@ export const useDroppable = ({
         } as DropTarget;
         onDrop?.(activeId!, dropTarget);
       }
-      setIsOver(false);
+      setCurrentTargetId(undefined);
     },
-    [activeId, id, edge, onDrop]
+    [activeId, id, setCurrentTargetId, edge, onDrop]
   );
 
   const handleDragOver = useCallback(
@@ -91,10 +94,10 @@ export const useDroppable = ({
       event.preventDefault();
       event.stopPropagation();
       if (activeId !== id) {
-        setIsOver(true);
+        setCurrentTargetId(id);
       }
     },
-    [activeId, id]
+    [activeId, id, setCurrentTargetId]
   );
 
   // TODO: Handle isOver differently to have better ux as currently
@@ -102,11 +105,9 @@ export const useDroppable = ({
   const handleDragLeave = useCallback((event: any) => {
     event.preventDefault();
     event.stopPropagation();
-    setIsOver(false);
   }, []);
 
   return {
-    isOver,
     edge,
     onDrop: handleDrop,
     onDragOver: handleDragOver,
