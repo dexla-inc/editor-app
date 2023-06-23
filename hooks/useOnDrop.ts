@@ -12,7 +12,7 @@ import {
 } from "@/utils/editor";
 import { useCallback } from "react";
 
-const getDroppedId = (_id: string) => {
+const parseId = (_id: string) => {
   const id = _id.startsWith("layer")
     ? _id.split("layer-")[1]
     : _id.startsWith("add")
@@ -25,19 +25,26 @@ export const useOnDrop = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const componentToAdd = useEditorStore((state) => state.componentToAdd);
+  const setComponentToAdd = useEditorStore((state) => state.setComponentToAdd);
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId
   );
 
   const onDrop = useCallback(
     (_droppedId: string, dropTarget: DropTarget) => {
-      const droppedId = getDroppedId(_droppedId);
+      const droppedId = parseId(_droppedId);
+      dropTarget.id = parseId(dropTarget.id);
       const copy = { ...editorTree };
       const activeComponent = getComponentById(copy.root, droppedId);
 
       if (droppedId && componentToAdd) {
-        addComponent(copy.root, componentToAdd, dropTarget);
-        setSelectedComponentId(droppedId as string);
+        const newSelectedId = addComponent(
+          copy.root,
+          componentToAdd,
+          dropTarget
+        );
+        setSelectedComponentId(newSelectedId);
+        setComponentToAdd(undefined);
       } else if (dropTarget.id !== "root") {
         const activeParent = getComponentParent(copy.root, droppedId);
         const targetParent = getComponentParent(copy.root, dropTarget.id);
@@ -61,16 +68,24 @@ export const useOnDrop = () => {
         }
       } else {
         removeComponent(copy.root, droppedId);
-        addComponent(
+        const newSelectedId = addComponent(
           copy.root,
           activeComponent as unknown as Component,
           dropTarget
         );
+
+        setSelectedComponentId(newSelectedId);
       }
 
       setEditorTree(copy);
     },
-    [componentToAdd, editorTree, setEditorTree, setSelectedComponentId]
+    [
+      componentToAdd,
+      editorTree,
+      setComponentToAdd,
+      setEditorTree,
+      setSelectedComponentId,
+    ]
   );
 
   return onDrop;

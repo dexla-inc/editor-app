@@ -5,7 +5,7 @@ import { px } from "@mantine/core";
 
 export const jsonStructure = (props?: any): Component => {
   const columnsToWidth = `${
-    props.columns ? `${(props.columns * 100) / 12}%` : "auto"
+    props.columns ? `${(props.columns * 100) / 12}%` : "100%"
   }`;
 
   return {

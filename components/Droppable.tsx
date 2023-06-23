@@ -15,19 +15,23 @@ export const Droppable = ({
   ...props
 }: PropsWithChildren<Props>) => {
   const theme = useMantineTheme();
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
+  const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
 
   const onDrop = useOnDrop();
 
-  const { isOver, edge, ...droppable } = useDroppable({
+  const { edge, ...droppable } = useDroppable({
     id,
     activeId: selectedComponentId,
     onDrop,
+    currentWindow: id === "root" ? iframeWindow : undefined,
   });
 
   const baseBorder = `1px solid ${theme.colors.teal[6]}`;
+  const isOver = currentTargetId === id;
 
   const borders = isOver
     ? {
@@ -51,7 +55,13 @@ export const Droppable = ({
     : {};
 
   return (
-    <Box id={id} w="100%" {...props} style={{ ...borders }} {...droppable}>
+    <Box
+      id={id}
+      w="calc(100% - 4px)"
+      {...props}
+      style={{ ...borders }}
+      {...droppable}
+    >
       {children}
     </Box>
   );
