@@ -12,10 +12,12 @@ import {
   Stack,
   Text,
   TextInput,
+  useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { ColorSelector } from "../ColorSelector";
 
 const fontTags = [
   { label: "H1", value: "H1" },
@@ -45,6 +47,7 @@ export const EditorNavbarThemesSection = () => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const [currentFontTag, setCurrentFontTag] = useState<string>("H1");
+  const mantineTheme = useMantineTheme();
 
   const fonts = [
     "Arial",
@@ -90,14 +93,20 @@ export const EditorNavbarThemesSection = () => {
 
       form.validate();
 
-      const theme = await saveTheme(values, projectId);
-      console.log(values);
+      console.log("values: " + JSON.stringify(values));
+
+      const theme = await saveTheme({ params: values, projectId: projectId });
+
+      console.log("theme: " + values);
+
+      console.log(theme);
       stopLoading({
         id: "saving-theme",
         title: "Theme Saved",
         message: "The theme was saved successfully",
       });
     } catch (error) {
+      console.log(error);
       stopLoading({
         id: "saving-theme",
         title: "Saving Theme Failed",
@@ -120,23 +129,40 @@ export const EditorNavbarThemesSection = () => {
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack>
         <Stack spacing="xs">
-          {/* {initialValues?.colors &&
-            initialValues?.colors.map(({ name, hex, isDefault }, index) => (
+          {form.values?.colors &&
+            form.values?.colors.map(({ friendlyName, hex, name }, index) => (
               <ColorSelector
                 key={`color-${name}`}
-                isDefault={isDefault}
-                name={name}
+                friendlyName={friendlyName}
                 hex={hex}
-                onChange={(value) => {
-                  form.setFieldValue(`colors.${index}`, { ...value });
+                isDefault={form.values.colors[index].isDefault}
+                mantineTheme={mantineTheme}
+                onValueChange={(value) => {
+                  form.setFieldValue(
+                    `colors.${index}.friendlyName`,
+                    value.friendlyName
+                  );
+                  form.setFieldValue(`colors.${index}.hex`, value.hex);
+                  if (!form.values.colors[index].isDefault) {
+                    form.setFieldValue(
+                      `colors.${index}.name`,
+                      value.friendlyName
+                    );
+                  }
+                }}
+                deleteColor={() => {
+                  if (!form.values.colors[index].isDefault) {
+                    form.removeListItem("colors", index);
+                  }
                 }}
               />
-            ))} 
+            ))}
           <Button
             type="button"
             fullWidth
             onClick={() =>
               form.insertListItem("colors", {
+                friendlyName: "",
                 name: "",
                 hex: "",
                 isDefault: false,
@@ -145,7 +171,6 @@ export const EditorNavbarThemesSection = () => {
           >
             Add Colour
           </Button>
-          */}
         </Stack>
         <Stack spacing="xs">
           <SegmentedControl
@@ -179,7 +204,6 @@ export const EditorNavbarThemesSection = () => {
                 setFontValue("fontWeight", value);
               }}
             />
-
             <UnitInput
               label="Size"
               defaultValue={currentFont?.fontSize}
