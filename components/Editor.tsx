@@ -171,7 +171,13 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const renderTree = (component: Component) => {
     if (component.id === "root") {
       return (
-        <Droppable id={component.id} bg="transparent" m={0} p={2}>
+        <Droppable
+          key={component.id}
+          id={component.id}
+          bg="transparent"
+          m={0}
+          p={2}
+        >
           <Paper shadow="xs" ref={canvasRef}>
             {component.children?.map((child) => renderTree(child))}
           </Paper>
@@ -184,6 +190,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
     if (!componentToRender) {
       return (
         <DroppableDraggable
+          key={component.id}
           id={component.id!}
           component={component}
           customComponentModal={customComponentModal}
@@ -195,6 +202,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
     return (
       <DroppableDraggable
+        key={component.id}
         id={component.id!}
         component={component}
         customComponentModal={customComponentModal}

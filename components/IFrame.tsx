@@ -19,7 +19,7 @@ export const theme: MantineTheme = {
     ...DEFAULT_THEME.headings,
     fontFamily: "Arial, sans-serif",
   },
-  primaryColor: "green",
+  primaryColor: "teal",
 };
 
 type Props = {

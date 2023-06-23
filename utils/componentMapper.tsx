@@ -17,6 +17,14 @@ import * as RadarChartStructure from "@/components/mapper/structure/charts/Radar
 import * as IconStructure from "@/components/mapper/structure/Icon";
 import * as NavbarStructure from "@/components/mapper/structure/Navbar";
 import * as TableStructure from "@/components/mapper/structure/Table";
+import * as CheckboxStructure from "@/components/mapper/structure/Checkbox";
+import * as SwitchStructure from "@/components/mapper/structure/Switch";
+import * as RadioStructure from "@/components/mapper/structure/Radio";
+import * as RatingStructure from "@/components/mapper/structure/Rating";
+import * as DateInputStructure from "@/components/mapper/structure/DateInput";
+import * as ImageStructure from "@/components/mapper/structure/Image";
+import * as PaginationStructure from "@/components/mapper/structure/Pagination";
+import * as AlertStructure from "@/components/mapper/structure/Alert";
 import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
 import { Box } from "@/components/mapper/Box";
 import { Avatar } from "@/components/mapper/Avatar";
@@ -35,6 +43,14 @@ import { Textarea } from "@/components/mapper/Textarea";
 import { Icon } from "@/components/mapper/Icon";
 import { Navbar } from "@/components/mapper/Navbar";
 import { Table } from "@/components/mapper/Table";
+import { Checkbox } from "@/components/mapper/Checkbox";
+import { Switch } from "@/components/mapper/Switch";
+import { Radio } from "@/components/mapper/Radio";
+import { Rating } from "@/components/mapper/Rating";
+import { DateInput } from "@/components/mapper/DateInput";
+import { Image } from "@/components/mapper/Image";
+import { Alert } from "@/components/mapper/Alert";
+import { Pagination } from "@/components/mapper/Pagination";
 import { BarChart } from "@/components/mapper/charts/BarChart";
 import { LineChart } from "@/components/mapper/charts/LineChart";
 import { PieChart } from "@/components/mapper/charts/PieChart";
@@ -168,6 +184,10 @@ export const structureMapper: StructureMapper = {
     structure: (props: any) => InputStructure.jsonStructure(props),
     Draggable: () => <DraggableComponent id="Input" />,
   },
+  DateInput: {
+    structure: (props: any) => DateInputStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="DateInput" />,
+  },
   Textarea: {
     structure: (props: any) => TextareaStructure.jsonStructure(props),
     Draggable: () => <DraggableComponent id="Textarea" />,
@@ -187,6 +207,34 @@ export const structureMapper: StructureMapper = {
   Navbar: {
     structure: (props: any) => NavbarStructure.jsonStructure(props),
     Draggable: () => <DraggableComponent id="Navbar" />,
+  },
+  Checkbox: {
+    structure: (props: any) => CheckboxStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Checkbox" />,
+  },
+  Switch: {
+    structure: (props: any) => SwitchStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Switch" />,
+  },
+  Radio: {
+    structure: (props: any) => RadioStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Radio" />,
+  },
+  Rating: {
+    structure: (props: any) => RatingStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Rating" />,
+  },
+  Image: {
+    structure: (props: any) => ImageStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Image" />,
+  },
+  Pagination: {
+    structure: (props: any) => PaginationStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Pagination" />,
+  },
+  Alert: {
+    structure: (props: any) => AlertStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Alert" />,
   },
 };
 
@@ -268,6 +316,18 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: ["spacing", "size"],
   },
+  DateInput: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <DateInput
+        component={props.component}
+        renderTree={props.renderTree}
+        onClick={(e) => {
+          e.preventDefault();
+        }}
+      />
+    ),
+    modifiers: ["spacing", "size"],
+  },
   Text: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Text component={props.component} renderTree={props.renderTree} />
@@ -295,6 +355,82 @@ export const componentMapper: ComponentMapper = {
   Table: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Table component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  Checkbox: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Checkbox
+        component={props.component}
+        renderTree={props.renderTree}
+        onClick={(e) => {
+          e.preventDefault();
+        }}
+      />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  Switch: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Switch
+        component={props.component}
+        renderTree={props.renderTree}
+        onClick={(e) => {
+          e.preventDefault();
+        }}
+      />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  Radio: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Radio
+        component={props.component}
+        renderTree={props.renderTree}
+        onClick={(e) => {
+          e.preventDefault();
+        }}
+      />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  Rating: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Rating
+        component={props.component}
+        renderTree={props.renderTree}
+        onClick={(e) => {
+          e.preventDefault();
+        }}
+      />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  Image: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      // eslint-disable-next-line jsx-a11y/alt-text
+      <Image component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  Pagination: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Pagination
+        component={props.component}
+        renderTree={props.renderTree}
+        total={10}
+      />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  Alert: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Alert
+        component={props.component}
+        renderTree={props.renderTree}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+      />
     ),
     modifiers: ["spacing", "size"],
   },
