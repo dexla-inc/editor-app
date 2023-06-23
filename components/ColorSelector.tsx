@@ -43,7 +43,6 @@ export const ColorSelector = ({
     if (onValueChange) {
       onValueChange({ friendlyName, hex });
     }
-    console.log("useEffect 1");
   }, [friendlyName, hex]);
 
   return (
