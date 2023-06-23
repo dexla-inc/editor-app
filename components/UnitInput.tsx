@@ -29,7 +29,7 @@ export const UnitInput = ({
   onChange,
   disabledUnits,
   ...props
-}: Props & NumberInputProps) => {
+}: Props & Omit<NumberInputProps, "onChange">) => {
   const theme = useMantineTheme();
 
   const [splitValue, splitUnit] = splitValueAndUnit(

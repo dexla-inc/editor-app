@@ -1,4 +1,10 @@
+import { Shell } from "@/components/AppShell";
+import { TypingAnimation } from "@/components/TypingAnimation";
+import { PageParams, createPages } from "@/requests/projects/mutations";
 import { getPageList, getPagesStream } from "@/requests/projects/queries";
+import { useAppStore } from "@/stores/app";
+import { ICON_SIZE } from "@/utils/config";
+import TOML from "@iarna/toml";
 import {
   Button,
   Container,
@@ -9,16 +15,10 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { GetServerSidePropsContext } from "next";
-import { useEffect, useState } from "react";
-import TOML from "@iarna/toml";
-import { Shell } from "@/components/AppShell";
 import { IconCircleCheck, IconSparkles } from "@tabler/icons-react";
-import { ICON_SIZE } from "@/utils/config";
-import { TypingAnimation } from "@/components/TypingAnimation";
-import { useAppStore } from "@/stores/app";
+import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
-import { PageParams, createPages } from "@/requests/projects/mutations";
+import { useEffect, useState } from "react";
 import slugify from "slugify";
 
 export const getServerSideProps = async ({
@@ -43,7 +43,7 @@ export default function Project({ id }: Props) {
   const [stream, setStream] = useState<string>("");
   const [pages, setPages] = useState<string[]>([]);
 
-  const getPages = async () => {
+  const getPageStream = async () => {
     startLoading({
       id: "pages-stream",
       title: "Generating the Page Names",
@@ -145,7 +145,7 @@ export default function Project({ id }: Props) {
           <Group>
             <Button
               leftIcon={<IconSparkles size={ICON_SIZE} />}
-              onClick={getPages}
+              onClick={getPageStream}
               loading={isLoading}
               disabled={isLoading || hasPageNames}
             >

@@ -1,7 +1,13 @@
 import { del, post, put } from "@/utils/api";
+import { ProjectTypes } from "@/utils/projectTypes";
 
 export type ProjectParams = {
   description: string;
+  friendlyName: string;
+  region?: string;
+  type: ProjectTypes;
+  industry?: string;
+  similarCompany?: string;
 };
 
 export type ProjectResponse = {
@@ -29,6 +35,7 @@ export type PageParams = {
 
 export type PagesResponse = {
   trackingId: string;
+  homePageId: string;
   [key: string]: any;
 };
 
@@ -102,6 +109,12 @@ export const deleteCustomComponent = async ({
   const response = (await del<any>(
     `/projects/${projectId}/components/${id}`
   )) as any;
+
+  return response;
+};
+
+export const deleteProject = async (id: string) => {
+  const response = (await del<any>(`/projects/${id}`)) as any;
 
   return response;
 };

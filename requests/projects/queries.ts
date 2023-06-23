@@ -1,14 +1,38 @@
 import { get } from "@/utils/api";
+import { ProjectTypes } from "@/utils/projectTypes";
 
 export type PageResponse = {
   id: string;
   title: string;
   pageState?: string;
+  isHome: boolean;
+  authenticatedOnly: boolean;
+  authenticatedUserRole: string;
   [key: string]: any;
 };
 
 type PageListResponse = {
   results: PageResponse[];
+};
+
+type RegionTypes = "FranceCentral" | "UsCentral" | "UkSouth";
+
+export type ProjectResponse = {
+  id: string;
+  name: string;
+  friendlyName: string;
+  region: {
+    type: RegionTypes;
+    name: string;
+  };
+  type: ProjectTypes;
+  industry: string;
+  description: string;
+  similarCompany: string;
+};
+
+type ProjectListResponse = {
+  results: ProjectResponse[];
 };
 
 export type CustomComponentResponse = {
@@ -24,9 +48,26 @@ type CustomComponentListResponse = {
   results: CustomComponentResponse[];
 };
 
-export const getPagesStream = async (projectId: string) => {
+export const getProjects = async (
+  search: string = "",
+  offset: number = 0,
+  limit: number = 10
+) => {
+  const response = (await get<ProjectListResponse>(
+    `/projects?search=${search}&offset=${offset}&limit=${limit}`,
+    {}
+  )) as ProjectListResponse;
+
+  return response;
+};
+
+export const getPagesStream = async (
+  projectId: string,
+  count: number = 5,
+  excludedCsv?: string
+) => {
   const response = (await get<ReadableStream<Uint8Array>>(
-    `/projects/${projectId}/automations/pages/stream-revision`,
+    `/projects/${projectId}/automations/pages/stream-revision?count=${count}&excluded=${excludedCsv}`,
     {},
     true
   )) as ReadableStream<Uint8Array>;

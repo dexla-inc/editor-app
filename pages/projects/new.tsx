@@ -1,57 +1,45 @@
 import { Shell } from "@/components/AppShell";
-import { ProjectParams, createProject } from "@/requests/projects/mutations";
-import { useAppStore } from "@/stores/app";
-import { Button, Container, Group, Stack, TextInput } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useRouter } from "next/router";
+import StepperContainer from "@/components/projects/StepperContainer";
+import { StepperDetailsType } from "@/utils/projectTypes";
+import { Container, Stack, Title } from "@mantine/core";
+import { useState } from "react";
 
 export default function New() {
-  const router = useRouter();
-  const isLoading = useAppStore((state) => state.isLoading);
-  const startLoading = useAppStore((state) => state.startLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
-
-  const form = useForm({
-    initialValues: {
-      description: "",
-    },
-  });
-
-  const onSubmit = async (values: ProjectParams) => {
-    startLoading({
-      id: "creating-project",
-      title: "Creating Project",
-      message: "Wait while your project is being created",
-    });
-    const project = await createProject(values);
-    stopLoading({
-      id: "creating-project",
-      title: "Project Created",
-      message: "The project was created successfully",
-    });
-    router.push(`/projects/${project.id}`);
-  };
+  const [activeStep, setActiveStep] = useState(0);
 
   return (
     <Shell>
-      <Container size="xs" py={60}>
-        <form onSubmit={form.onSubmit(onSubmit)}>
-          <Stack>
-            <TextInput
-              label="Project Description"
-              description="Describe what the project is about to help AI create tailored pages for you"
-              required
-              withAsterisk={false}
-              {...form.getInputProps("description")}
-            />
-            <Group position="left">
-              <Button type="submit" loading={isLoading} disabled={isLoading}>
-                Create Project
-              </Button>
-            </Group>
-          </Stack>
-        </form>
+      <Container py={60}>
+        <Stack spacing="xl">
+          <Heading activeStep={activeStep}></Heading>
+          <StepperContainer
+            activeStep={activeStep}
+            setActiveStep={setActiveStep}
+          ></StepperContainer>
+        </Stack>
       </Container>
     </Shell>
+  );
+}
+
+const stepperDetails: StepperDetailsType = {
+  0: {
+    title: "Ready to create something Buck-tacular?",
+  },
+  1: {
+    title: "Here are your pages. It’s Buck-athon time!",
+  },
+  2: {
+    title: "Ready to be blown away? Because there’s a Buck-storm coming...",
+  },
+};
+
+function Heading({ activeStep }: { activeStep: number }) {
+  const details = stepperDetails[activeStep];
+
+  return (
+    <Stack>
+      <Title order={2}>{details.title}</Title>
+    </Stack>
   );
 }
