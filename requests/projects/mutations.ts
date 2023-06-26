@@ -24,6 +24,18 @@ export const createProject = async (params: ProjectParams) => {
   return response;
 };
 
+export const updateProject = async (
+  id: string,
+  params: { friendlyName: string }
+) => {
+  const response = (await put<ProjectResponse>(
+    `/projects/${id}`,
+    params
+  )) as ProjectResponse;
+
+  return response;
+};
+
 export type PageParams = {
   title: string;
   slug: string;

@@ -4,10 +4,12 @@ import { EditorNavbarLayersSection } from "@/components/navbar/EditorNavbarLayer
 import { EditorNavbarPagesSection } from "@/components/navbar/EditorNavbarPagesSection";
 import {
   IconBrush,
+  IconDatabase,
   IconFileInvoice,
   IconLayoutDashboard,
   IconStack2,
 } from "@tabler/icons-react";
+import { EditorNavbarDataSourcesSection } from "./EditorNavbarDataSourcesSection";
 import { EditorNavbarThemesSection } from "./EditorNavbarThemesSection";
 
 const sections = [
@@ -25,12 +27,17 @@ const sections = [
     id: "components",
     label: "Components",
     icon: IconLayoutDashboard,
-    initiallyOpened: true,
   },
   {
     id: "theme",
     label: "Theme",
     icon: IconBrush,
+  },
+  {
+    id: "datasources",
+    label: "Data Sources",
+    icon: IconDatabase,
+    initiallyOpened: true,
   },
 ];
 
@@ -43,6 +50,7 @@ const sectionMapper: SectionsMapper = {
   layers: (props: any) => <EditorNavbarLayersSection {...props} />,
   components: (props: any) => <EditorNavbarComponentsSection {...props} />,
   theme: (props: any) => <EditorNavbarThemesSection {...props} />,
+  datasources: (props: any) => <EditorNavbarDataSourcesSection {...props} />,
 };
 
 export const EditorNavbarSections = () => {

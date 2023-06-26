@@ -61,6 +61,15 @@ export const getProjects = async (
   return response;
 };
 
+export const getProject = async (projectId: string) => {
+  const response = (await get<ProjectResponse>(
+    `/projects/${projectId}`,
+    {}
+  )) as ProjectResponse;
+
+  return response;
+};
+
 export const getPagesStream = async (
   projectId: string,
   count: number = 5,

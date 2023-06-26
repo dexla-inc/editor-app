@@ -4,23 +4,30 @@ import {
   ProjectResponse,
   getPageList,
 } from "@/requests/projects/queries";
+import { useAppStore } from "@/stores/app";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
   Box,
   Col,
+  Collapse,
   Flex,
   MantineTheme,
   Menu,
+  NavLink,
   Skeleton,
   Text,
   UnstyledButton,
 } from "@mantine/core";
 import {
+  IconChevronDown,
+  IconChevronRight,
   IconDots,
   IconFileAnalytics,
   IconHome,
+  IconSettings,
   IconTrash,
 } from "@tabler/icons-react";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 type ProjectItemProps = {
@@ -43,6 +50,7 @@ export function ProjectItem({
   const [isHovered, setIsHovered] = useState(false);
   const [pages, setPages] = useState<PageResponse[]>([]);
   const [pagesLoading, setPagesLoading] = useState(false);
+  const [opened, setOpened] = useState(false);
 
   const goToEditorHomePage = async () => {
     const pages = await getPageList(project.id);
@@ -56,6 +64,19 @@ export function ProjectItem({
   const getPages = async () => {
     const pages = await getPageList(project.id);
     setPages(pages.results);
+  };
+
+  const router = useRouter();
+  const startLoading = useAppStore((state) => state.startLoading);
+
+  const goToSettings = async (projectId: string) => {
+    startLoading({
+      id: "go-to-settings",
+      title: "Loading Settings",
+      message: "Wait while we load the settings for your project",
+    });
+
+    router.push(`/projects/${projectId}/settings`);
   };
 
   const deleteProjectFn = async () => {
@@ -117,26 +138,47 @@ export function ProjectItem({
               </UnstyledButton>
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Label>Pages</Menu.Label>
-              {pages.map((page) => {
-                return (
-                  <Skeleton key={page.id} visible={pagesLoading}>
-                    <Menu.Item
-                      icon={
-                        page.isHome ? (
-                          <IconHome size={ICON_SIZE} />
-                        ) : (
-                          <IconFileAnalytics size={ICON_SIZE} />
-                        )
-                      }
-                      onClick={() => goToEditor(project.id, page.id)}
-                    >
-                      {page.title}
-                    </Menu.Item>
-                  </Skeleton>
-                );
-              })}
               <Menu.Label>Project</Menu.Label>
+              <NavLink
+                label="Pages"
+                icon={<IconFileAnalytics size={ICON_SIZE} />}
+                rightSection={
+                  opened ? (
+                    <IconChevronDown size={ICON_SIZE} />
+                  ) : (
+                    <IconChevronRight size={ICON_SIZE} />
+                  )
+                }
+                onClick={() => setOpened((isOpen) => !isOpen)}
+              />
+              <Collapse in={opened}>
+                {pages.map((page) => {
+                  return (
+                    <Skeleton key={page.id} visible={pagesLoading}>
+                      <Box ml={10}>
+                        <Menu.Item
+                          icon={
+                            page.isHome ? (
+                              <IconHome size={ICON_SIZE} />
+                            ) : (
+                              <IconFileAnalytics size={ICON_SIZE} />
+                            )
+                          }
+                          onClick={() => goToEditor(project.id, page.id)}
+                        >
+                          {page.title}
+                        </Menu.Item>
+                      </Box>
+                    </Skeleton>
+                  );
+                })}
+              </Collapse>
+              <Menu.Item
+                icon={<IconSettings size={ICON_SIZE} />}
+                onClick={() => goToSettings(project.id)}
+              >
+                Settings
+              </Menu.Item>
               <Menu.Item
                 icon={<IconTrash size={ICON_SIZE} />}
                 color="red"

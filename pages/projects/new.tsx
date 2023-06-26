@@ -11,7 +11,7 @@ export default function New() {
     <Shell>
       <Container py={60}>
         <Stack spacing="xl">
-          <Heading activeStep={activeStep}></Heading>
+          <StepperHeading activeStep={activeStep}></StepperHeading>
           <StepperContainer
             activeStep={activeStep}
             setActiveStep={setActiveStep}
@@ -34,7 +34,7 @@ const stepperDetails: StepperDetailsType = {
   },
 };
 
-function Heading({ activeStep }: { activeStep: number }) {
+function StepperHeading({ activeStep }: { activeStep: number }) {
   const details = stepperDetails[activeStep];
 
   return (

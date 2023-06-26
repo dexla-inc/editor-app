@@ -1,3 +1,4 @@
+import { ColorSelector } from "@/components/ColorSelector";
 import { UnitInput } from "@/components/UnitInput";
 import { saveTheme } from "@/requests/themes/mutations";
 import { getTheme } from "@/requests/themes/queries";
@@ -17,7 +18,6 @@ import {
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { ColorSelector } from "../ColorSelector";
 
 const fontTags = [
   { label: "H1", value: "H1" },
@@ -127,7 +127,7 @@ export const EditorNavbarThemesSection = () => {
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack>
+      <>
         <Stack spacing="xs">
           {form.values?.colors &&
             form.values?.colors.map(({ friendlyName, hex, name }, index) => (
@@ -287,7 +287,7 @@ export const EditorNavbarThemesSection = () => {
         <Button type="submit" size="sm" fullWidth my="xl">
           Save
         </Button>
-      </Stack>
+      </>
     </form>
   );
 };
