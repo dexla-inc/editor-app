@@ -1,6 +1,8 @@
 import DashboardNavbar from "@/components/DashboardNavbar";
 import { Logo } from "@/components/Logo";
+
 import { HEADER_HEIGHT } from "@/utils/config";
+import { NavbarTypes } from "@/utils/dashboardTypes";
 import {
   Anchor,
   AppShell,
@@ -10,10 +12,11 @@ import {
   LoadingOverlay,
 } from "@mantine/core";
 import { User } from "@propelauth/react";
+
 import { useState } from "react";
 
 export interface ShellProps extends AppShellProps {
-  navbarType?: "editor" | "dashboard";
+  navbarType?: NavbarTypes;
   user?: User | null | undefined;
 }
 
@@ -41,8 +44,12 @@ export const Shell = ({
         </Header>
       }
       navbar={
-        navbarType === "dashboard" ? (
-          <DashboardNavbar setIsLoading={setIsLoading} user={user} />
+        navbarType === "company" || navbarType === "project" ? (
+          <DashboardNavbar
+            setIsLoading={setIsLoading}
+            user={user}
+            navbarType={navbarType}
+          />
         ) : (
           navbar
         )

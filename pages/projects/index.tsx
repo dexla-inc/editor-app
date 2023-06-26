@@ -60,7 +60,7 @@ export default function Projects() {
   };
 
   return (
-    <Shell navbarType="dashboard" user={user}>
+    <Shell navbarType="company" user={user}>
       <Container py="xl" size="lg">
         <Stack spacing="xl">
           <Title>Welcome back, {user?.firstName}</Title>

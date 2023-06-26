@@ -63,7 +63,7 @@ export const ColorSelector = ({
         </Popover.Dropdown>
         <TextInput
           sx={{ width: "100%" }}
-          value={friendlyName}
+          defaultValue={friendlyName}
           onChange={(event) => debouncedFriendlyName(event.target.value)}
           rightSection={
             !isDefault && (
