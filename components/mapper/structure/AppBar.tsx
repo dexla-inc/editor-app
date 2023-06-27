@@ -10,10 +10,9 @@ export const jsonStructure = (props?: any): Component => {
 
   return {
     id: nanoid(),
-    name: "Group",
-    description: "AppBar Wrapper Group",
+    name: "Container",
+    description: "AppBar Container",
     props: {
-      position: "apart",
       style: {
         borderBottom: `1px solid ${theme.colors.gray[3]}`,
         paddingTop: px(theme.spacing.sm),
@@ -22,6 +21,9 @@ export const jsonStructure = (props?: any): Component => {
         paddingRight: px(theme.spacing.lg),
         width: columnsToWidth,
         height: "auto",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItem: "center",
       },
       ...(props.props || {}),
     },

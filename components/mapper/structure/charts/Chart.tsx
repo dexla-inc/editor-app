@@ -13,10 +13,6 @@ export const jsonStructure = (props?: any): Component => {
       style: {
         height: "350px",
         width: "100%",
-        marginTop: 20,
-        marginBottom: 20,
-        marginLeft: 20,
-        marginRight: 20,
       },
       series: [
         {

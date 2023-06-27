@@ -29,10 +29,8 @@ import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
 import { Box } from "@/components/mapper/Box";
 import { Avatar } from "@/components/mapper/Avatar";
 import { Text } from "@/components/mapper/Text";
-import { Group } from "@/components/mapper/Group";
 import { Flex } from "@/components/mapper/Flex";
 import { Container } from "@/components/mapper/Container";
-import { Stack } from "@/components/mapper/Stack";
 import { Breadcrumb } from "@/components/mapper/Breadcrumb";
 import { DraggableComponent } from "@/components/DraggableComponent";
 import { Select } from "@/components/mapper/Select";
@@ -282,18 +280,6 @@ export const componentMapper: ComponentMapper = {
   Container: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Container component={props.component} renderTree={props.renderTree} />
-    ),
-    modifiers: ["spacing", "size"],
-  },
-  Group: {
-    Component: (props: { component: Component; renderTree: any }) => (
-      <Group component={props.component} renderTree={props.renderTree} />
-    ),
-    modifiers: ["spacing", "size"],
-  },
-  Stack: {
-    Component: (props: { component: Component; renderTree: any }) => (
-      <Stack component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size"],
   },

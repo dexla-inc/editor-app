@@ -15,22 +15,27 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       style: {
         width: columnsToWidth,
+        marginTop: px(theme.spacing.xl),
+        marginBottom: px(theme.spacing.xl),
+        marginLeft: px(theme.spacing.xl),
+        marginRight: px(theme.spacing.xl),
       },
     },
     children: [
       {
         id: nanoid(),
-        name: "Stack",
-        description: "NotImplement Stack",
+        name: "Container",
+        description: "NotImplement Stack Container",
         props: {
-          align: "center",
-          justify: "center",
-          spacing: 2,
           style: {
             paddingTop: px(theme.spacing.lg),
             paddingBottom: px(theme.spacing.lg),
             width: "100%",
             height: "auto",
+            display: "flex",
+            jistifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
           },
           ...(props.props || {}),
         },

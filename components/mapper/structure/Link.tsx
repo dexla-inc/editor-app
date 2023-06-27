@@ -6,34 +6,52 @@ import { nanoid } from "nanoid";
 export const jsonStructure = (props?: any): Component => {
   return {
     id: nanoid(),
-    name: "Link",
-    description: "Link",
+    name: "Container",
+    description: "Link Container",
     props: {
       style: {
-        width: "auto",
+        marginTop: px(theme.spacing.xl),
+        marginBottom: px(theme.spacing.xl),
+        marginLeft: px(theme.spacing.xl),
+        marginRight: px(theme.spacing.xl),
+        width: "100%",
         height: "auto",
+        minHeight: "100px",
       },
-      ...(props.props || {}),
     },
     children: [
       {
         id: nanoid(),
-        name: "Text",
-        description: "Link Text",
-        children: [],
+        name: "Link",
+        description: "Link",
         props: {
-          children: "New Link",
           style: {
-            fontSize: `${px(theme.fontSizes.sm)}px`,
-            fontWeight: "normal",
-            lineHeight: "110%",
-            letterSpacing: "0px",
             width: "auto",
-            heigh: "auto",
-            color: theme.colors[theme.primaryColor][6],
+            height: "auto",
           },
           ...(props.props || {}),
         },
+        children: [
+          {
+            id: nanoid(),
+            name: "Text",
+            description: "Link Text",
+            children: [],
+            props: {
+              children: "New Link",
+              style: {
+                fontSize: `${px(theme.fontSizes.sm)}px`,
+                fontWeight: "normal",
+                lineHeight: "110%",
+                letterSpacing: "0px",
+                width: "auto",
+                heigh: "auto",
+                color: theme.colors[theme.primaryColor][6],
+              },
+              ...(props.props || {}),
+            },
+          },
+        ],
       },
     ],
   };

@@ -96,7 +96,7 @@ export const IFrame = ({ children, ...props }: Props) => {
 
   useEffect(() => {
     // TODO: Fix this as we are currently having to delay calculation to wait for the content to be rendered first
-    setTimeout(syncIframeHeight, 500);
+    setTimeout(syncIframeHeight, 800);
   }, [syncIframeHeight]);
 
   return (

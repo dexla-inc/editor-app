@@ -1,23 +1,39 @@
+import { theme } from "@/pages/_app";
 import { Component } from "@/utils/editor";
+import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   return {
     id: nanoid(),
-    name: "Pagination",
-    description: "Pagination",
+    name: "Container",
+    description: "Pagination Container",
     props: {
-      total: 10,
       style: {
+        marginTop: px(theme.spacing.xl),
+        marginBottom: px(theme.spacing.xl),
+        marginLeft: px(theme.spacing.xl),
+        marginRight: px(theme.spacing.xl),
         width: "100%",
         height: "auto",
-        marginTop: 20,
-        marginBottom: 20,
-        marginLeft: 20,
-        marginRight: 20,
+        minHeight: "100px",
       },
-      ...(props.props || {}),
     },
-    blockDroppingChildrenInside: true,
+    children: [
+      {
+        id: nanoid(),
+        name: "Pagination",
+        description: "Pagination",
+        props: {
+          total: 10,
+          style: {
+            width: "100%",
+            height: "auto",
+          },
+          ...(props.props || {}),
+        },
+        blockDroppingChildrenInside: true,
+      },
+    ],
   };
 };

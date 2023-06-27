@@ -43,7 +43,7 @@ export const Text = ({ renderTree, component, ...props }: Props) => {
       {component.children && component.children.length > 0 ? (
         component.children?.map((child) => renderTree(child))
       ) : (
-        <TypingAnimation text={children as string} />
+        <TypingAnimation text={children as string} onlyWhileLoading />
       )}
     </MantineText>
   );

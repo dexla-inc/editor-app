@@ -6,38 +6,52 @@ import { nanoid } from "nanoid";
 export const jsonStructure = (props?: any): Component => {
   return {
     id: nanoid(),
-    name: "Button",
-    description: "Button",
+    name: "Container",
+    description: "Button Container",
     props: {
       style: {
-        width: "auto",
+        marginTop: px(theme.spacing.xl),
+        marginBottom: px(theme.spacing.xl),
+        marginLeft: px(theme.spacing.xl),
+        marginRight: px(theme.spacing.xl),
+        width: "100%",
         height: "auto",
-        paddingTop: px(theme.spacing.sm),
-        paddingBottom: px(theme.spacing.sm),
-        paddingLeft: px(theme.spacing.lg),
-        paddingRight: px(theme.spacing.lg),
+        minHeight: "100px",
       },
-      ...(props.props || {}),
     },
     children: [
       {
         id: nanoid(),
-        name: "Text",
-        description: "Button Text",
-        children: [],
+        name: "Button",
+        description: "Button",
         props: {
-          children: "New Button",
           style: {
-            fontSize: `${px(theme.fontSizes.sm)}px`,
-            fontWeight: "normal",
-            lineHeight: "110%",
-            letterSpacing: "0px",
-            color: "white",
             width: "auto",
-            heigh: "auto",
+            height: "auto",
           },
           ...(props.props || {}),
         },
+        children: [
+          {
+            id: nanoid(),
+            name: "Text",
+            description: "Button Text",
+            children: [],
+            props: {
+              children: "New Button",
+              style: {
+                fontSize: `${px(theme.fontSizes.sm)}px`,
+                fontWeight: "normal",
+                lineHeight: "110%",
+                letterSpacing: "0px",
+                color: "white",
+                width: "auto",
+                heigh: "auto",
+              },
+              ...(props.props || {}),
+            },
+          },
+        ],
       },
     ],
   };
