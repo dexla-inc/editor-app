@@ -20,6 +20,7 @@ export const jsonStructure = (props?: any): Component => {
         paddingRight: px(theme.spacing.md),
         width: columnsToWidth,
         height: "auto",
+        backgroundColor: "white",
       },
       ...(props.props || {}),
     },

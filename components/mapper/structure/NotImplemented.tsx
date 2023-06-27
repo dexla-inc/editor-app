@@ -19,6 +19,7 @@ export const jsonStructure = (props?: any): Component => {
         marginBottom: px(theme.spacing.xl),
         marginLeft: px(theme.spacing.xl),
         marginRight: px(theme.spacing.xl),
+        backgroundColor: "white",
       },
     },
     children: [

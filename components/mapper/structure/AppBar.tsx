@@ -24,6 +24,7 @@ export const jsonStructure = (props?: any): Component => {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        backgroundColor: "white",
       },
       ...(props.props || {}),
     },

@@ -143,7 +143,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
     }
   }, [setEditorTree, stream]);
 
-  // add event listners to iframe
+  // add event listeners to iframe
   useEffect(() => {
     const hotKeysHandler = getHotkeyHandler([
       [
@@ -171,14 +171,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const renderTree = (component: Component) => {
     if (component.id === "root") {
       return (
-        <Droppable
-          key={component.id}
-          id={component.id}
-          bg="transparent"
-          m={0}
-          p={2}
-        >
-          <Paper shadow="xs" ref={canvasRef}>
+        <Droppable key={component.id} id={component.id} m={0} p={2}>
+          <Paper shadow="xs" ref={canvasRef} bg="gray.0">
             {component.children?.map((child) => renderTree(child))}
           </Paper>
         </Droppable>

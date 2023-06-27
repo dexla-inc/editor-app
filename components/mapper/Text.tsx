@@ -2,7 +2,6 @@ import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
 import { useRef, useState } from "react";
-import { TypingAnimation } from "../TypingAnimation";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -40,11 +39,9 @@ export const Text = ({ renderTree, component, ...props }: Props) => {
       {...componentProps}
       suppressContentEditableWarning
     >
-      {component.children && component.children.length > 0 ? (
-        component.children?.map((child) => renderTree(child))
-      ) : (
-        <TypingAnimation text={children as string} onlyWhileLoading />
-      )}
+      {component.children && component.children.length > 0
+        ? component.children?.map((child) => renderTree(child))
+        : children}
     </MantineText>
   );
 };
