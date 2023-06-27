@@ -23,7 +23,7 @@ export const jsonStructure = (props?: any): Component => {
         height: "auto",
         display: "flex",
         justifyContent: "space-between",
-        alignItem: "center",
+        alignItems: "center",
       },
       ...(props.props || {}),
     },

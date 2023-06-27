@@ -1,5 +1,6 @@
 import { createCustomComponent } from "@/requests/projects/mutations";
 import { useEditorStore } from "@/stores/editor";
+import { structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
 import { Component, getComponentById, replaceIdsDeeply } from "@/utils/editor";
@@ -54,6 +55,7 @@ export const CustomComponentModal = ({
     initialValues: {
       name: "",
       scope: "project",
+      type: "",
     },
   });
 
@@ -71,7 +73,7 @@ export const CustomComponentModal = ({
       values: {
         ...values,
         content: encodeSchema(JSON.stringify(copy)) as string,
-        type: copy?.name,
+        type: values.scope === "global" ? values.type : copy?.name,
       },
       projectId: router.query.id as string,
     });
@@ -107,6 +109,16 @@ export const CustomComponentModal = ({
               {...customComponentForm.getInputProps("scope")}
             />
           </Group>
+          {customComponentForm.values.scope === "global" && (
+            <Select
+              withinPortal
+              label="Type"
+              data={Object.keys(structureMapper)}
+              searchable
+              dropdownPosition="bottom"
+              {...customComponentForm.getInputProps("type")}
+            />
+          )}
           <Button leftIcon={<IconNewSection size={ICON_SIZE} />} type="submit">
             Save New Component
           </Button>

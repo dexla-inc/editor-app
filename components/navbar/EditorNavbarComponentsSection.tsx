@@ -55,10 +55,27 @@ export const EditorNavbarComponentsSection = () => {
 
     return 0;
   };
-  const sortedComponents = components.sort(sort);
 
   const customComponents =
     componentList.data?.results.filter((c) => c.scope !== "GLOBAL") ?? [];
+
+  const globalComponents = (
+    componentList.data?.results.filter((c) => c.scope === "GLOBAL") ?? []
+  ).reduce((draggables, component): DraggableComponentData[] => {
+    const draggable = (props: any) => (
+      <DraggableComponent
+        key={component.id}
+        id={component.id}
+        text={component.description}
+        data={JSON.parse(decodeSchema(component.content))}
+        {...props}
+      />
+    );
+
+    return draggables.concat({ draggable, id: component.description });
+  }, [] as DraggableComponentData[]);
+
+  const sortedComponents = [...components, ...globalComponents].sort(sort);
 
   return (
     <Stack spacing="xl">
@@ -109,15 +126,18 @@ export const EditorNavbarComponentsSection = () => {
                 new RegExp(query, "i").test(sc.id)
               )
             : customComponents
-          ).map(({ content, type }: CustomComponentResponse) => {
-            return (
-              <DraggableComponent
-                key={type}
-                id={type}
-                data={JSON.parse(decodeSchema(content))}
-              />
-            );
-          })}
+          ).map(
+            ({ id, content, description, type }: CustomComponentResponse) => {
+              return (
+                <DraggableComponent
+                  key={type}
+                  id={id}
+                  text={description}
+                  data={JSON.parse(decodeSchema(content))}
+                />
+              );
+            }
+          )}
         </Stack>
       )}
     </Stack>

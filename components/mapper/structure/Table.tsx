@@ -38,10 +38,6 @@ export const jsonStructure = (props?: any): Component => {
           ],
           style: {
             width: "100%",
-            marginTop: 20,
-            marginBottom: 20,
-            marginLeft: 20,
-            marginRight: 20,
           },
           ...(props.props || {}),
         },

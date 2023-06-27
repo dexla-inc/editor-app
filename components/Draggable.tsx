@@ -10,7 +10,6 @@ import {
 import { ICON_SIZE } from "@/utils/config";
 import { IconX } from "@tabler/icons-react";
 import { deleteCustomComponent } from "@/requests/projects/mutations";
-import { showNotification } from "@mantine/notifications";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useDraggable } from "@/hooks/useDraggable";
@@ -59,17 +58,9 @@ export const Draggable = ({
     onSettled(_, err) {
       if (err) {
         console.log(err);
-        showNotification({
-          title: "Oops",
-          message:
-            "Something went wrong while trying to delete the custom component.",
-          autoClose: true,
-          color: "red",
-          withBorder: true,
-        });
-      } else {
-        queryClient.invalidateQueries(["components"]);
       }
+
+      queryClient.invalidateQueries(["components"]);
     },
   });
 

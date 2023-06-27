@@ -5,10 +5,11 @@ import { useEffect, useState } from "react";
 
 type Props = {
   id: string;
+  text?: string;
   data?: any;
 };
 
-export const DraggableComponent = ({ id, data }: Props) => {
+export const DraggableComponent = ({ id, text, data }: Props) => {
   const [draggableData, setDraggableData] = useState<any>(data);
 
   useEffect(() => {
@@ -22,7 +23,7 @@ export const DraggableComponent = ({ id, data }: Props) => {
 
   return (
     <Draggable id={id} data={draggableData} isDeletable={!!data}>
-      <Text size="xs">{id}</Text>
+      <Text size="xs">{text ?? id}</Text>
     </Draggable>
   );
 };
