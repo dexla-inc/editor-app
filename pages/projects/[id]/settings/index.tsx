@@ -69,10 +69,10 @@ export default function Settings() {
 
   return (
     <Shell navbarType="project" user={user}>
-      <Container py="xl" size="lg">
+      <Container py="xl">
         <form onSubmit={form.onSubmit(onSubmit)}>
           <Stack spacing="xl">
-            <Title order={2}>General Settings</Title>
+            <Title>General Settings</Title>
             <TextInput
               label="Project Name"
               required

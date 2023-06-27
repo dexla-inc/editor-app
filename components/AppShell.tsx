@@ -4,7 +4,6 @@ import { Logo } from "@/components/Logo";
 import { HEADER_HEIGHT } from "@/utils/config";
 import { NavbarTypes } from "@/utils/dashboardTypes";
 import {
-  Anchor,
   AppShell,
   AppShellProps,
   Group,
@@ -12,6 +11,7 @@ import {
   LoadingOverlay,
 } from "@mantine/core";
 import { User } from "@propelauth/react";
+import Link from "next/link";
 
 import { useState } from "react";
 
@@ -37,9 +37,9 @@ export const Shell = ({
       header={
         <Header height={HEADER_HEIGHT}>
           <Group h={HEADER_HEIGHT} pl="lg">
-            <Anchor href="/">
+            <Link href="/">
               <Logo />
-            </Anchor>
+            </Link>
           </Group>
         </Header>
       }

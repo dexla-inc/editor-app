@@ -70,9 +70,9 @@ export default function DashboardNavbar({
                   }
                   variant="subtle"
                   icon={<IconDatabase size={ICON_SIZE} />}
-                  active={
-                    router.pathname === "/projects/[id]/settings/datasources"
-                  }
+                  active={router.pathname.startsWith(
+                    "/projects/[id]/settings/datasources"
+                  )}
                   py={12}
                 />
               </NavLink>

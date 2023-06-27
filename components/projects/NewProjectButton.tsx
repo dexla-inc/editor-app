@@ -1,4 +1,10 @@
-import { Group, Text, UnstyledButton, useMantineTheme } from "@mantine/core";
+import {
+  Box,
+  Group,
+  Text,
+  UnstyledButton,
+  useMantineTheme,
+} from "@mantine/core";
 
 type IconTitleDescriptionButtonProps = {
   icon: JSX.Element;
@@ -31,12 +37,16 @@ export default function IconTitleDescriptionButton({
     >
       <Group>
         {icon}
-        <div>
+        <Box
+          sx={{
+            maxWidth: 250,
+          }}
+        >
           <Text>{title}</Text>
           <Text size="xs" color="dimmed">
             {description}
           </Text>
-        </div>
+        </Box>
       </Group>
     </UnstyledButton>
   );

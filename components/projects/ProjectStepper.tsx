@@ -1,4 +1,4 @@
-import { StepperState } from "@/utils/projectTypes";
+import { StepperState } from "@/utils/dashboardTypes";
 import { Stepper } from "@mantine/core";
 
 export default function ProjectStepper({
