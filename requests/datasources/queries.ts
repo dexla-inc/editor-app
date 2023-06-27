@@ -1,13 +1,13 @@
 import {
   DataSourceResponse,
-  DataSourcesParams,
+  DataSourcesListParams,
 } from "@/requests/datasources/types";
 import { PagedResponse } from "@/requests/types";
 import { get } from "@/utils/api";
 
 export const getDataSources = async (
   projectId: string,
-  { type, search, offset, limit }: DataSourcesParams
+  { type, search, offset, limit }: DataSourcesListParams
 ) => {
   let url = `/projects/${projectId}/datasources`;
 

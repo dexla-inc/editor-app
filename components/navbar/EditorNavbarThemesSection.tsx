@@ -93,11 +93,7 @@ export const EditorNavbarThemesSection = () => {
 
       form.validate();
 
-      console.log("values: " + JSON.stringify(values));
-
       const theme = await saveTheme({ params: values, projectId: projectId });
-
-      console.log("theme: " + values);
 
       console.log(theme);
       stopLoading({
