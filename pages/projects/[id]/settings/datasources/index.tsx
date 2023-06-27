@@ -1,68 +1,95 @@
 import { Shell } from "@/components/AppShell";
-import { updateProject } from "@/requests/projects/mutations";
+import { DataSourceItem } from "@/components/datasources/DataSourceItem";
+import IconTitleDescriptionButton from "@/components/projects/NewProjectButton";
+import { getDataSources } from "@/requests/datasources/queries";
+import { DataSourceResponse } from "@/requests/datasources/types";
+import { PagedResponse } from "@/requests/types";
 import { useAppStore } from "@/stores/app";
-import { Button, Container, Flex, Stack, Title } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
+import {
+  Container,
+  Flex,
+  Grid,
+  Stack,
+  TextInput,
+  Title,
+  useMantineTheme,
+} from "@mantine/core";
 import { useAuthInfo } from "@propelauth/react";
+import { IconSearch, IconSparkles } from "@tabler/icons-react";
+import debounce from "lodash.debounce";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-export default function Settings() {
+export default function DataSources() {
+  const [pagedDataSource, setPagedDataSource] =
+    useState<PagedResponse<DataSourceResponse>>();
+  const [search, setSearch] = useState<string>();
+  const debouncedSearch = debounce((query) => setSearch(query), 400);
+  const theme = useMantineTheme();
   const authInfo = useAuthInfo();
   const { user } = authInfo || {};
+  const { isLoading, setIsLoading, startLoading, stopLoading } = useAppStore();
   const router = useRouter();
-  const startLoading = useAppStore((state) => state.startLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const projectId = router.query.id as string;
 
-  const form = useForm({
-    initialValues: {
-      friendlyName: "",
-    },
-    validate: {
-      friendlyName: (value) =>
-        value.length > 50 ? "Description too long" : null,
-    },
-  });
+  const fetch = useCallback(async () => {
+    const result = await getDataSources(projectId, { search });
+    setPagedDataSource(result);
+  }, [projectId, search]);
 
-  const onSubmit = async (values: { friendlyName: string }) => {
-    try {
-      startLoading({
-        id: "updating",
-        title: "Updating Settings",
-        message: "Wait while your data source setting are being updated",
-      });
-      setIsLoading(true);
-
-      form.validate();
-
-      await updateProject(projectId, values);
-
-      stopLoading({
-        id: "updating",
-        title: "Project Updated",
-        message: "The data source setting were updated successfully",
-      });
-      setIsLoading(false);
-    } catch (error) {}
-  };
+  useEffect(() => {
+    fetch();
+  }, [fetch]);
 
   return (
     <Shell navbarType="project" user={user}>
-      <Container py="xl" size="lg">
-        <form onSubmit={form.onSubmit(onSubmit)}>
-          <Stack spacing="xl">
-            <Title order={2}>Data Source Settings</Title>
+      <Container py="xl">
+        <Stack spacing="xl">
+          <Title>Data Source Settings</Title>
 
-            <Flex>
-              <Button type="submit" loading={isLoading} disabled={isLoading}>
-                Save
-              </Button>
-            </Flex>
-          </Stack>
-        </form>
+          <Flex>
+            <Link
+              href="/projects/[id]/settings/datasources/new"
+              as={`/projects/${projectId}/settings/datasources/new`}
+            >
+              <IconTitleDescriptionButton
+                icon={
+                  <IconSparkles
+                    size={LARGE_ICON_SIZE}
+                    color={theme.colors.teal[5]}
+                  />
+                }
+                title="Create new data source"
+                description="Create as many data sources as you like. We only support APIs for now but GraphQL and Airtable are coming soon!"
+              ></IconTitleDescriptionButton>
+            </Link>
+          </Flex>
+          {pagedDataSource && (
+            <TextInput
+              placeholder="Search a data source"
+              icon={<IconSearch size={ICON_SIZE} />}
+              onChange={(event) => {
+                debouncedSearch(event.currentTarget.value);
+              }}
+            />
+          )}
+          <Grid>
+            {pagedDataSource &&
+              pagedDataSource.results.map((datasource) => {
+                return (
+                  <DataSourceItem
+                    key={datasource.id}
+                    datasource={datasource}
+                    theme={theme}
+                    isLoading={isLoading}
+                    onDelete={() => true}
+                  />
+                );
+              })}
+          </Grid>
+        </Stack>
       </Container>
     </Shell>
   );

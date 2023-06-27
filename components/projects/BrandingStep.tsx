@@ -1,6 +1,7 @@
 import { InformationAlert } from "@/components/Alerts";
 import { getTheme } from "@/requests/themes/queries";
 import { ICON_SIZE } from "@/utils/config";
+import { isWebsite } from "@/utils/dashboardTypes";
 import { BrandingStepProps } from "@/utils/projectTypes";
 import {
   Anchor,
@@ -27,10 +28,6 @@ export default function BrandingStep({
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [websiteUrlError, setWebsiteUrlError] = useState("");
 
-  function isWebsite(value: string): boolean {
-    return /^https?:\/\/.+/i.test(value);
-  }
-
   const fetchTheme = async () => {
     if (!isWebsite(websiteUrl)) {
       setWebsiteUrlError("Must be a valid website URL");
@@ -44,7 +41,7 @@ export default function BrandingStep({
         message: "Wait while we get your brand",
       });
 
-      const theme = await getTheme(projectId, websiteUrl);
+      await getTheme(projectId, websiteUrl);
 
       stopLoading({
         id: "creating-theme",

@@ -1,5 +1,6 @@
 import { Shell } from "@/components/AppShell";
-import StepperContainer from "@/components/projects/StepperContainer";
+import ProjectStepper from "@/components/projects/ProjectStepper";
+import StepperContent from "@/components/projects/StepperContent";
 import { StepperDetailsType } from "@/utils/projectTypes";
 import { Container, Stack, Title } from "@mantine/core";
 import { useState } from "react";
@@ -12,10 +13,14 @@ export default function New() {
       <Container py={60}>
         <Stack spacing="xl">
           <StepperHeading activeStep={activeStep}></StepperHeading>
-          <StepperContainer
+          <ProjectStepper
             activeStep={activeStep}
             setActiveStep={setActiveStep}
-          ></StepperContainer>
+          />
+          <StepperContent
+            activeStep={activeStep}
+            setActiveStep={setActiveStep}
+          />
         </Stack>
       </Container>
     </Shell>

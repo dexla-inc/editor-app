@@ -1,11 +1,18 @@
 import { Button } from "@mantine/core";
 
-interface NextButtonProps {
-  onClick?: any;
+type SubmitButtonProps = {
+  isSubmit: true;
+  onClick?: never;
   isLoading: boolean;
   disabled?: boolean;
-  isSubmit?: boolean;
-}
+};
+type RegularButtonProps = {
+  isSubmit?: false;
+  onClick?: () => void;
+  isLoading: boolean;
+  disabled?: boolean;
+};
+type NextButtonProps = SubmitButtonProps | RegularButtonProps;
 
 export default function NextButton({
   onClick,

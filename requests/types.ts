@@ -5,8 +5,8 @@ export type PageParams = {
 };
 
 export interface PagedResponse<T> {
-  results?: Array<T>;
-  paging?: PagingModel;
+  results: Array<T>;
+  paging: PagingModel;
   trackingId: string;
 }
 

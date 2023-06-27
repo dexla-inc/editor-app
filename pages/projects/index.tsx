@@ -6,7 +6,6 @@ import { ProjectResponse, getProjects } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
-  Anchor,
   Container,
   Flex,
   Grid,
@@ -18,6 +17,7 @@ import {
 import { useAuthInfo } from "@propelauth/react";
 import { IconSearch, IconSparkles } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 
@@ -41,19 +41,16 @@ export default function Projects() {
     router.push(`/projects/${projectId}/editor/${pageId}`);
   };
 
-  const listProjects = useCallback(async () => {
-    setIsLoading(true);
-    const pageList = await getProjects(search);
-    setProjects(pageList.results);
-    setIsLoading(false);
+  const fetchProjects = useCallback(async () => {
+    const result = await getProjects(search);
+    setProjects(result.results);
   }, [search]);
 
   useEffect(() => {
-    listProjects();
-  }, [listProjects]);
+    fetchProjects();
+  }, [fetchProjects]);
 
   const handleDeleteProject = (id: string) => {
-    // Remove the deleted project from the projects array
     setProjects((prevProjects) =>
       prevProjects.filter((project) => project.id !== id)
     );
@@ -66,7 +63,7 @@ export default function Projects() {
           <Title>Welcome back, {user?.firstName}</Title>
 
           <Flex>
-            <Anchor href="/projects/new">
+            <Link href="/projects/new">
               <IconTitleDescriptionButton
                 icon={
                   <IconSparkles
@@ -77,9 +74,9 @@ export default function Projects() {
                 title="Create new project"
                 description="Type what you want to build and customise"
               ></IconTitleDescriptionButton>
-            </Anchor>
+            </Link>
           </Flex>
-          {projects && projects.length > 0 && (
+          {projects && (
             <TextInput
               placeholder="Search a project"
               icon={<IconSearch size={ICON_SIZE} />}

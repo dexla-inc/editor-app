@@ -1,6 +1,5 @@
+import { DataSourceTypes } from "@/requests/datasources/types";
 import { Stack } from "@mantine/core";
-
-type DataSourceTypes = "API" | "AIRTABLE" | "GRAPH_QL";
 
 type PaneHeadingProps = {
   text: string;
