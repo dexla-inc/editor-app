@@ -280,17 +280,33 @@ export const addComponent = (
   crawl(
     treeRoot,
     (node, context) => {
-      if (node.id === dropTarget.id) {
-        if (dropTarget.edge === "left" || dropTarget.edge === "top") {
+      if (copy.props?.fixedPosition && node.id === "root") {
+        if (
+          copy.props?.fixedPosition === "left" ||
+          copy.props?.fixedPosition === "top"
+        ) {
           node.children = [copy, ...(node.children || [])];
         } else if (
-          dropTarget.edge === "right" ||
-          dropTarget.edge === "bottom"
+          copy.props?.fixedPosition === "right" ||
+          copy.props?.fixedPosition === "bottom"
         ) {
           node.children = [...(node.children || []), copy];
         }
 
         context.break();
+      } else {
+        if (node.id === dropTarget.id) {
+          if (dropTarget.edge === "left" || dropTarget.edge === "top") {
+            node.children = [copy, ...(node.children || [])];
+          } else if (
+            dropTarget.edge === "right" ||
+            dropTarget.edge === "bottom"
+          ) {
+            node.children = [...(node.children || []), copy];
+          }
+
+          context.break();
+        }
       }
     },
     { order: "bfs" }

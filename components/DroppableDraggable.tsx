@@ -132,16 +132,18 @@ export const DroppableDraggable = ({
         }}
       >
         <Group py={4} px={8} h={36} noWrap spacing="xs" align="center">
-          <UnstyledButton
-            sx={{ cursor: "move", alignItems: "center", display: "flex" }}
-            {...draggable}
-          >
-            <IconGripVertical
-              size={ICON_SIZE}
-              color="white"
-              strokeWidth={1.5}
-            />
-          </UnstyledButton>
+          {!component.props?.fixedPosition && (
+            <UnstyledButton
+              sx={{ cursor: "move", alignItems: "center", display: "flex" }}
+              {...draggable}
+            >
+              <IconGripVertical
+                size={ICON_SIZE}
+                color="white"
+                strokeWidth={1.5}
+              />
+            </UnstyledButton>
+          )}
           <Text color="white" size="xs" pr={haveNonRootParent ? 0 : "xs"}>
             {component.name}
           </Text>

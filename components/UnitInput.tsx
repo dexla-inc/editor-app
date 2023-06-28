@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 
-type Unit = "px" | "rem" | "%" | "auto";
+type Unit = "px" | "rem" | "%" | "vh" | "vw" | "auto";
 
 type Props = {
   value?: string;
@@ -21,6 +21,8 @@ const options: SelectItem[] = [
   { value: "px", label: "PX" },
   { value: "rem", label: "REM" },
   { value: "%", label: "%" },
+  { value: "vh", label: "VH" },
+  { value: "vw", label: "VW" },
   { value: "auto", label: "auto" },
 ];
 

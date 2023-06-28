@@ -6,47 +6,68 @@ import { nanoid } from "nanoid";
 export const jsonStructure = (props?: any): Component => {
   return {
     id: nanoid(),
-    name: "Navbar",
-    description: "Navbar",
+    name: "TabsList",
+    description: "Tabs List",
     props: {
       style: {
-        width: "300px",
-        height: "100vh",
-        backgroundColor: "white",
+        width: "auto",
+        height: "auto",
       },
       ...(props.props || {}),
-      fixedPosition: "left",
     },
     children: [
       {
         id: nanoid(),
-        name: "Container",
-        description: "Navbar Item",
+        name: "Tab",
+        description: "Tab",
         props: {
+          value: "first",
           style: {
-            width: "100%",
+            width: "auto",
             height: "auto",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
           },
         },
         children: [
           {
             id: nanoid(),
-            name: "Icon",
-            description: "Navbar Item Icon",
-            props: {},
+            name: "Text",
+            description: "Tab Text",
             children: [],
+            props: {
+              children: "First Tab",
+              style: {
+                fontSize: `${px(theme.fontSizes.sm)}px`,
+                fontWeight: "normal",
+                lineHeight: "110%",
+                letterSpacing: "0px",
+                color: theme.colors.dark[6],
+                width: "auto",
+                heigh: "auto",
+              },
+            },
             blockDroppingChildrenInside: true,
           },
+        ],
+      },
+      {
+        id: nanoid(),
+        name: "Tab",
+        description: "Tab",
+        props: {
+          value: "second",
+          style: {
+            width: "auto",
+            height: "auto",
+          },
+        },
+        children: [
           {
             id: nanoid(),
             name: "Text",
-            description: "Navbar Item Text",
+            description: "Tab Text",
             children: [],
             props: {
-              children: "New Link",
+              children: "Second Tab",
               style: {
                 fontSize: `${px(theme.fontSizes.sm)}px`,
                 fontWeight: "normal",

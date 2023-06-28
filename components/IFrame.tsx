@@ -51,6 +51,8 @@ export const IFrame = ({ children, ...props }: Props) => {
   const prevElementHeight = usePrevious(currentElementHeight);
   const previousEditorTree = usePreviousDeep(editorTree);
   const isDifferentEditorTree = !isEqual(editorTree, previousEditorTree);
+  const currentCanvasHeight = w?.document?.body?.scrollHeight || 0;
+  const prevCanvasHeight = usePrevious(currentCanvasHeight);
 
   useEffect(() => {
     const w = contentRef?.contentWindow;
@@ -64,40 +66,30 @@ export const IFrame = ({ children, ...props }: Props) => {
       return;
     }
 
-    let currentCanvasHeight = w?.document?.body?.scrollHeight || 0;
-    // If the element is >= the value that we'd get by
-    // having an element with 100vh, we will get into an infinite state update
-    // if we tried to update the canvas height to the element's height.
-    // Therefore we calculate the value of 100vh and check for it. If the element's height
-    // is 100vh, we don't update.
-    const suspectedVhValue = Math.max(
-      w?.document?.documentElement?.clientHeight || 0,
-      w?.innerHeight || 0
-    );
-
-    // TODO: If we have an element which is e.g. 110vh (anything
-    // greater than 100vh) then we add an artificial minimum since otherwise we'll
-    // get into an infinite state update. I'm not sure if there's a way to correctly
-    // handle this? Maybe we could look at the component tree and figure out which
-    // element has the vh?
-    if (
-      currentElementHeight > suspectedVhValue &&
-      // Don't add a minimum if we're initially figuring out the element's height
-      prevElementHeight !== 0
+    if (prevCanvasHeight && currentElementHeight > prevCanvasHeight) {
+      setHeight(prevCanvasHeight);
+    } else if (
+      currentCanvasHeight &&
+      prevCanvasHeight !== currentCanvasHeight
     ) {
-      currentCanvasHeight = Math.min(currentCanvasHeight, 10_000);
+      setHeight(
+        Math.min(
+          currentCanvasHeight,
+          currentCanvasHeight + currentElementHeight - (prevElementHeight || 0)
+        )
+      );
     }
-
-    setHeight(currentCanvasHeight);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     w,
+    isDifferentEditorTree,
     selectedComponentId,
     currentElementHeight,
-    mountNode,
     prevElementHeight,
+    currentCanvasHeight,
+    prevCanvasHeight,
+    mountNode,
     isLoading,
-    isDifferentEditorTree,
   ]);
 
   useEffect(() => {

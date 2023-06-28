@@ -25,6 +25,15 @@ import * as DateInputStructure from "@/components/mapper/structure/DateInput";
 import * as ImageStructure from "@/components/mapper/structure/Image";
 import * as PaginationStructure from "@/components/mapper/structure/Pagination";
 import * as AlertStructure from "@/components/mapper/structure/Alert";
+import * as FilePondStructure from "@/components/mapper/structure/FilePond";
+import * as TabsStructure from "@/components/mapper/structure/Tabs";
+import * as TabsListStructure from "@/components/mapper/structure/TabsList";
+import * as TabsPanelStructure from "@/components/mapper/structure/TabsPanel";
+import * as TabStructure from "@/components/mapper/structure/Tab";
+import * as AccordionStructure from "@/components/mapper/structure/Accordion";
+import * as AccordionItemStructure from "@/components/mapper/structure/AccordionItem";
+import * as AccordionControlStructure from "@/components/mapper/structure/AccordionControl";
+import * as AccordionPanelStructure from "@/components/mapper/structure/AccordionPanel";
 import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
 import { Box } from "@/components/mapper/Box";
 import { Avatar } from "@/components/mapper/Avatar";
@@ -48,12 +57,22 @@ import { Rating } from "@/components/mapper/Rating";
 import { DateInput } from "@/components/mapper/DateInput";
 import { Image } from "@/components/mapper/Image";
 import { Alert } from "@/components/mapper/Alert";
+import { FilePond } from "@/components/mapper/FilePond";
+import { Tabs } from "@/components/mapper/Tabs";
+import { TabsList } from "@/components/mapper/TabsList";
+import { TabsPanel } from "@/components/mapper/TabsPanel";
+import { Tab } from "@/components/mapper/Tab";
+import { Accordion } from "@/components/mapper/Accordion";
+import { AccordionItem } from "@/components/mapper/AccordionItem";
+import { AccordionControl } from "@/components/mapper/AccordionControl";
+import { AccordionPanel } from "@/components/mapper/AccordionPanel";
 import { Pagination } from "@/components/mapper/Pagination";
 import { BarChart } from "@/components/mapper/charts/BarChart";
 import { LineChart } from "@/components/mapper/charts/LineChart";
 import { PieChart } from "@/components/mapper/charts/PieChart";
 import { AreaChart } from "@/components/mapper/charts/AreaChart";
 import { RadarChart } from "@/components/mapper/charts/RadarChart";
+import { FileWithPath } from "file-selector";
 
 export type StructureDefinition = {
   structure: (props: any) => Component;
@@ -73,9 +92,6 @@ export const structureMapper: StructureMapper = {
   AppBar: {
     structure: (props: any) => AppBarStructure.jsonStructure(props),
     Draggable: () => <DraggableComponent id="AppBar" />,
-  },
-  Accordion: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
   },
   Carousel: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -147,7 +163,8 @@ export const structureMapper: StructureMapper = {
     structure: (props: any) => NotImplemented.jsonStructure(props),
   },
   FilePond: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
+    structure: (props: any) => FilePondStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="FilePond" />,
   },
   CardList: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -233,6 +250,38 @@ export const structureMapper: StructureMapper = {
   Alert: {
     structure: (props: any) => AlertStructure.jsonStructure(props),
     Draggable: () => <DraggableComponent id="Alert" />,
+  },
+  Tabs: {
+    structure: (props: any) => TabsStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Tabs" />,
+  },
+  TabsList: {
+    structure: (props: any) => TabsListStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="TabsList" />,
+  },
+  TabsPanel: {
+    structure: (props: any) => TabsPanelStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="TabsPanel" />,
+  },
+  Tab: {
+    structure: (props: any) => TabStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Tab" />,
+  },
+  Accordion: {
+    structure: (props: any) => AccordionStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="Accordion" />,
+  },
+  AccordionItem: {
+    structure: (props: any) => AccordionItemStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="AccordionItem" />,
+  },
+  AccordionControl: {
+    structure: (props: any) => AccordionControlStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="AccordionControl" />,
+  },
+  AccordionPanel: {
+    structure: (props: any) => AccordionPanelStructure.jsonStructure(props),
+    Draggable: () => <DraggableComponent id="AccordionPanel" />,
   },
 };
 
@@ -344,6 +393,21 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: ["spacing", "size"],
   },
+  FilePond: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <FilePond
+        component={props.component}
+        renderTree={props.renderTree}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+        onDrop={(files: FileWithPath[]): void => {
+          console.log("Function not implemented.");
+        }}
+        activateOnClick={false}
+      />
+    ),
+    modifiers: ["spacing", "size"],
+  },
   Checkbox: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Checkbox
@@ -412,6 +476,99 @@ export const componentMapper: ComponentMapper = {
   Alert: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Alert
+        component={props.component}
+        renderTree={props.renderTree}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+      />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  Tabs: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Tabs
+        component={props.component}
+        renderTree={props.renderTree}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+      />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  TabsList: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <TabsList
+        component={props.component}
+        renderTree={props.renderTree}
+        defaultValue="first"
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+      />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  TabsPanel: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <TabsPanel
+        component={props.component}
+        renderTree={props.renderTree}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+        value="first"
+      />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  Tab: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Tab
+        component={props.component}
+        renderTree={props.renderTree}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+        value="first"
+      />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  Accordion: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Accordion
+        component={props.component}
+        renderTree={props.renderTree}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+        defaultValue="first"
+      />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  AccordionItem: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <AccordionItem
+        component={props.component}
+        renderTree={props.renderTree}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+        value="first"
+      />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  AccordionControl: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <AccordionControl
+        component={props.component}
+        renderTree={props.renderTree}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+      />
+    ),
+    modifiers: ["spacing", "size"],
+  },
+  AccordionPanel: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <AccordionPanel
         component={props.component}
         renderTree={props.renderTree}
         // eslint-disable-next-line react/no-children-prop

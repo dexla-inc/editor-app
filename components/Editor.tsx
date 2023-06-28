@@ -63,8 +63,9 @@ export const Editor = ({ projectId, pageId }: Props) => {
       const copy = { ...editorTree };
       removeComponent(copy.root, selectedComponentId as string);
       setEditorTree(copy);
+      clearSelection();
     }
-  }, [editorTree, selectedComponentId, setEditorTree]);
+  }, [clearSelection, editorTree, selectedComponentId, setEditorTree]);
 
   useHotkeys([
     ["backspace", deleteComponent],
