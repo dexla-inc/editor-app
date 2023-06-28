@@ -1,28 +1,34 @@
+import AuthenticationStep from "@/components/datasources/AuthenticationStep";
 import BasicDetailsStep from "@/components/datasources/BasicDetailsStep";
 import SwaggerStep from "@/components/datasources/SwaggerStep";
-import { DataSourceResponse } from "@/requests/datasources/types";
+import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
-import { StepperState } from "@/utils/dashboardTypes";
+import {
+  NextStepperClickEvent,
+  PreviousStepperClickEvent,
+  StepperState,
+} from "@/utils/dashboardTypes";
 import { Stack } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+interface StepperContentProps
+  extends StepperState,
+    NextStepperClickEvent,
+    PreviousStepperClickEvent {}
 
 export default function StepperContent({
   activeStep,
   setActiveStep,
-}: StepperState) {
+  prevStep,
+  nextStep,
+}: StepperContentProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const [dataSource, setDataSource] = useState<DataSourceResponse>();
-
-  const nextStep = () =>
-    setActiveStep((current) => (current < 3 ? current + 1 : current));
-  const prevStep = () =>
-    setActiveStep((current) => (current > 0 ? current - 1 : current));
-
-  useEffect(() => {
-    console.log(dataSource);
-  }, [dataSource]);
+  const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
+    undefined
+  );
 
   return (
     <Stack sx={{ width: "100%" }}>
@@ -32,7 +38,9 @@ export default function StepperContent({
           isLoading={isLoading}
           startLoading={startLoading}
           stopLoading={stopLoading}
+          dataSource={dataSource}
           setDataSource={setDataSource}
+          setEndpoints={setEndpoints}
         ></SwaggerStep>
       )}
       {activeStep == 1 && (
@@ -45,6 +53,18 @@ export default function StepperContent({
           dataSource={dataSource}
           setDataSource={setDataSource}
         ></BasicDetailsStep>
+      )}
+      {activeStep == 2 && (
+        <AuthenticationStep
+          prevStep={prevStep}
+          nextStep={nextStep}
+          isLoading={isLoading}
+          startLoading={startLoading}
+          stopLoading={stopLoading}
+          dataSource={dataSource}
+          setDataSource={setDataSource}
+          endpoints={endpoints}
+        ></AuthenticationStep>
       )}
     </Stack>
   );

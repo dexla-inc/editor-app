@@ -43,6 +43,19 @@ export default function DataSources() {
     fetch();
   }, [fetch]);
 
+  const handleDelete = (id: string) => {
+    setPagedDataSource((pagedDataSource) => {
+      if (!pagedDataSource) {
+        return undefined;
+      }
+
+      return {
+        ...pagedDataSource,
+        results: pagedDataSource.results.filter((r) => r.id !== id),
+      } as PagedResponse<DataSourceResponse>;
+    });
+  };
+
   return (
     <Shell navbarType="project" user={user}>
       <Container py="xl">
@@ -84,7 +97,7 @@ export default function DataSources() {
                     datasource={datasource}
                     theme={theme}
                     isLoading={isLoading}
-                    onDelete={() => true}
+                    onDelete={handleDelete}
                   />
                 );
               })}

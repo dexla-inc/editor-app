@@ -2,37 +2,44 @@ import { InformationAlert } from "@/components/Alerts";
 import NextButton from "@/components/projects/NextButton";
 import { createDataSource } from "@/requests/datasources/mutations";
 import {
-  DataSourceResponse,
+  Endpoint,
   SwaggerDataSourceParams,
 } from "@/requests/datasources/types";
 import {
-  LoadingStore,
-  NextStepperClickEvent,
+  DataSourceStepperWithoutPreviousProps,
   isSwaggerFile,
   isWebsite,
 } from "@/utils/dashboardTypes";
-import { Anchor, Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
+import {
+  Anchor,
+  Divider,
+  Flex,
+  Group,
+  Loader,
+  Stack,
+  TextInput,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
-
-export interface SwaggerStepProps extends LoadingStore, NextStepperClickEvent {
-  setDataSource: (dataSource: DataSourceResponse) => void;
-}
 
 export default function SwaggerStep({
   nextStep,
   isLoading,
   startLoading,
   stopLoading,
+  dataSource,
   setDataSource,
-}: SwaggerStepProps) {
+  setEndpoints,
+}: DataSourceStepperWithoutPreviousProps & {
+  setEndpoints: (endpoints: Endpoint[]) => void;
+}) {
   const router = useRouter();
 
   const projectId = router.query.id as string;
 
   const form = useForm<SwaggerDataSourceParams>({
     initialValues: {
-      swaggerUrl: "",
+      swaggerUrl: dataSource?.swaggerUrl || "",
     },
     validate: {
       swaggerUrl: (value) => {
@@ -49,18 +56,31 @@ export default function SwaggerStep({
 
   const onSubmit = async (values: SwaggerDataSourceParams) => {
     try {
+      if (dataSource?.id && dataSource?.swaggerUrl === values.swaggerUrl) {
+        nextStep();
+        return;
+      }
+
       startLoading({
         id: "creating",
         title: "Creating Data Source",
-        message: "Wait while your data source is being saved",
+        message:
+          "Wait while we generate your API endpoints from your API specification",
       });
 
       form.validate();
 
       const result = await createDataSource(projectId, "API", values);
+
+      if (!result) {
+        throw new Error("Failed to create data source");
+      }
+
       setDataSource(result);
+      setEndpoints(result.changedEndpoints || []);
 
       nextStep();
+
       stopLoading({
         id: "creating",
         title: "Data Source Saved",
@@ -83,6 +103,7 @@ export default function SwaggerStep({
           description="Enter the URL of your Open API Swagger definition in JSON or YAML format so we can fetch your API endpoints, e.g. https://petstore.swagger.io/v2/swagger.json."
           placeholder="https://petstore.swagger.io/v2/swagger.json"
           {...form.getInputProps("swaggerUrl")}
+          rightSection={isLoading && <Loader size="xs" />}
         />
         <Divider></Divider>
         <Group position="right">

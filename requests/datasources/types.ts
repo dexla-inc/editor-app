@@ -1,9 +1,14 @@
-import { PageParams } from "@/requests/types";
+import { MethodTypes, PageParams } from "@/requests/types";
 
 export type DataSourceTypes = "API" | "AIRTABLE" | "GRAPH_QL";
 
 export interface DataSourcesListParams extends PageParams {
   type?: string;
+}
+
+export interface DataSourceEndpointsListParams extends PageParams {
+  authOnly?: boolean;
+  methodType?: MethodTypes;
 }
 
 export type CreatedResponse = {
@@ -24,10 +29,12 @@ export interface DataSourceResponse {
   id: string;
   name: string;
   authenticationScheme: string;
-  isTested: boolean;
-  environment: Environment;
+  environment: string;
+  baseUrl: string;
+  swaggerUrl: string;
   updated: number;
   type: DataSourceTypes;
+  isTested: boolean;
   changedEndpoints?: Endpoint[];
   deletedEndpoints?: Endpoint[];
 }
@@ -35,6 +42,7 @@ export interface DataSourceResponse {
 export type EnvironmentTypes = "None" | "Staging" | "Production";
 
 export type Endpoint = {
+  id: string;
   relativeUrl: string;
   methodType: string;
   description: string | null;
@@ -76,10 +84,4 @@ type ExampleResponse = {
   name: string;
   type: string;
   description: string | null;
-};
-
-type Environment = {
-  type: string;
-  baseUrl: string;
-  swaggerUrl: string;
 };

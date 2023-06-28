@@ -1,17 +1,20 @@
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
+import { deleteDataSource } from "@/requests/datasources/mutations";
 import { DataSourceResponse } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
+import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
   Box,
   Col,
   Flex,
   Group,
   MantineTheme,
+  Menu,
   Text,
   UnstyledButton,
 } from "@mantine/core";
+import { IconDots, IconTrash } from "@tabler/icons-react";
 import { useRouter } from "next/router";
-import { useState } from "react";
 
 type DataSourceItemProps = {
   datasource: DataSourceResponse;
@@ -26,7 +29,6 @@ export function DataSourceItem({
   isLoading,
   onDelete,
 }: DataSourceItemProps) {
-  const [pagesLoading, setPagesLoading] = useState(false);
   const router = useRouter();
   const startLoading = useAppStore((state) => state.startLoading);
   const projectId = router.query.id as string;
@@ -41,6 +43,11 @@ export function DataSourceItem({
     router.push(
       `/projects/${projectId}/settings/datasources/${datasource.id}}`
     );
+  };
+
+  const deleteFn = async () => {
+    await deleteDataSource(projectId, datasource.id);
+    onDelete(datasource.id);
   };
 
   return (
@@ -66,7 +73,10 @@ export function DataSourceItem({
           {" "}
           <Text>{datasource.name}</Text>
           <Text size="xs" color="dimmed">
-            {datasource.environment.baseUrl}
+            {datasource.baseUrl}
+          </Text>
+          <Text size="xs" color="dimmed">
+            {new Date(datasource.updated).toLocaleString()}
           </Text>
         </UnstyledButton>
         <Flex
@@ -84,18 +94,31 @@ export function DataSourceItem({
               </Text>
               <Text>{datasource.type}</Text>
             </Flex>
-            <Flex
-              direction="column"
-              justify="space-between"
-              sx={{ height: "100%" }}
-            >
-              <Text size="xs" color="dimmed" align="right">
-                Last Fetched
-              </Text>
-              <Text size="xs">
-                {new Date(datasource.updated).toLocaleString()}
-              </Text>
-            </Flex>
+            <Menu width={250} withArrow offset={20}>
+              <Menu.Target>
+                <UnstyledButton
+                  sx={{
+                    borderRadius: theme.radius.sm,
+                    ...buttonHoverStyles(theme),
+                  }}
+                >
+                  <IconDots
+                    size={LARGE_ICON_SIZE}
+                    color={theme.colors.teal[5]}
+                  />
+                </UnstyledButton>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Label>Data Source</Menu.Label>
+                <Menu.Item
+                  icon={<IconTrash size={ICON_SIZE} />}
+                  color="red"
+                  onClick={deleteFn}
+                >
+                  Delete
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
           </Group>
         </Flex>
       </Box>

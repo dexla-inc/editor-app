@@ -1,3 +1,4 @@
+import { DataSourceResponse } from "@/requests/datasources/types";
 import { NotificationProps } from "@mantine/notifications";
 
 export type NavbarTypes = "editor" | "company" | "project";
@@ -44,3 +45,24 @@ export function isWebsite(value: string): boolean {
 export function isSwaggerFile(url: string) {
   return url.endsWith(".json") || url.endsWith(".yaml");
 }
+
+type DataSourceSettingsProps = {
+  dataSource: DataSourceResponse | undefined;
+  setDataSource: (dataSource: DataSourceResponse) => void;
+};
+
+export interface DataSourceStepperProps
+  extends DataSourceSettingsProps,
+    LoadingStore,
+    NextStepperClickEvent,
+    PreviousStepperClickEvent {}
+
+export interface DataSourceStepperWithoutPreviousProps
+  extends DataSourceSettingsProps,
+    LoadingStore,
+    NextStepperClickEvent {}
+
+export interface DataSourceStepperWithoutNextProps
+  extends DataSourceSettingsProps,
+    LoadingStore,
+    PreviousStepperClickEvent {}
