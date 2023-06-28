@@ -16,8 +16,7 @@ export const jsonStructure = (props?: any): Component => {
         marginRight: px(theme.spacing.xl),
         width: "100%",
         height: "auto",
-        minHeight: "100px",
-        backgroundColor: "white",
+        minHeight: "auto",
       },
     },
     children: [
@@ -29,6 +28,10 @@ export const jsonStructure = (props?: any): Component => {
           style: {
             width: "auto",
             height: "auto",
+            paddingTop: px(theme.spacing.sm),
+            paddingBottom: px(theme.spacing.sm),
+            paddingLeft: px(theme.spacing.lg),
+            paddingRight: px(theme.spacing.lg),
           },
           ...(props.props || {}),
         },

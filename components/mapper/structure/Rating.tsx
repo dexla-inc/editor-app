@@ -16,7 +16,7 @@ export const jsonStructure = (props?: any): Component => {
         marginRight: px(theme.spacing.xl),
         width: "100%",
         height: "auto",
-        minHeight: "100px",
+        minHeight: "auto",
         backgroundColor: "white",
       },
     },

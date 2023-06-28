@@ -1,3 +1,4 @@
+import { usePreviousDeep } from "@/hooks/usePreviousDeep";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import createCache from "@emotion/cache";
@@ -9,6 +10,7 @@ import {
   MantineTheme,
 } from "@mantine/core";
 import { usePrevious } from "@mantine/hooks";
+import isEqual from "lodash.isequal";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -29,6 +31,7 @@ type Props = {
 export const IFrame = ({ children, ...props }: Props) => {
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
+  const editorTree = useEditorStore((state) => state.tree);
   const isLoading = useAppStore((state) => state.isLoading);
   const [height, setHeight] = useState<number>();
   const selectedComponentId = useEditorStore(
@@ -46,6 +49,8 @@ export const IFrame = ({ children, ...props }: Props) => {
   const currentElementHeight =
     w?.document.getElementById(selectedComponentId!)?.scrollHeight ?? 0;
   const prevElementHeight = usePrevious(currentElementHeight);
+  const previousEditorTree = usePreviousDeep(editorTree);
+  const isDifferentEditorTree = !isEqual(editorTree, previousEditorTree);
 
   useEffect(() => {
     const w = contentRef?.contentWindow;
@@ -92,11 +97,12 @@ export const IFrame = ({ children, ...props }: Props) => {
     mountNode,
     prevElementHeight,
     isLoading,
+    isDifferentEditorTree,
   ]);
 
   useEffect(() => {
     // TODO: Fix this as we are currently having to delay calculation to wait for the content to be rendered first
-    setTimeout(syncIframeHeight, 800);
+    setTimeout(syncIframeHeight, 100);
   }, [syncIframeHeight]);
 
   return (
