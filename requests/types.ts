@@ -15,3 +15,5 @@ interface PagingModel {
   recordsPerPage: number;
   page: number;
 }
+
+export type MethodTypes = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";

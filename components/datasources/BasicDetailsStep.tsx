@@ -1,5 +1,5 @@
 import NextButton from "@/components/projects/NextButton";
-import { createDataSource } from "@/requests/datasources/mutations";
+import { updateDataSource } from "@/requests/datasources/mutations";
 import {
   DataSourceResponse,
   SwaggerDataSourceParams,
@@ -37,7 +37,11 @@ export default function BasicDetailsStep({
 
   const form = useForm<SwaggerDataSourceParams>({
     initialValues: {
-      swaggerUrl: "",
+      name: dataSource?.name || "",
+      baseUrl: dataSource?.baseUrl || "",
+      environment: dataSource?.environment || "",
+      authenticationScheme: dataSource?.authenticationScheme || "",
+      swaggerUrl: dataSource?.swaggerUrl || "",
     },
     validate: {
       baseUrl: (value) => {
@@ -60,11 +64,25 @@ export default function BasicDetailsStep({
 
       form.validate();
 
-      // Needs changing to update
-      const result = await createDataSource(projectId, "API", values);
+      if (!dataSource?.id) {
+        throw new Error("Can't find data source");
+      }
+
+      const result = await updateDataSource(
+        projectId,
+        dataSource.id,
+        false,
+        values
+      );
+
+      if (!result) {
+        throw new Error("Failed to update data source");
+      }
+
       setDataSource(result);
 
       nextStep();
+
       stopLoading({
         id: "creating",
         title: "Data Source Saved",
@@ -82,26 +100,35 @@ export default function BasicDetailsStep({
           label="Name"
           description="The name of your API."
           placeholder="Internal API"
-          defaultValue={dataSource?.name}
           {...form.getInputProps("name")}
         />
         <TextInput
           label="Base URL"
           description="The URL of of your API."
           placeholder="https://api.example.com"
-          defaultValue={dataSource?.environment.baseUrl}
           {...form.getInputProps("baseUrl")}
         />
         <Select
           label="Environment"
           description="The environment of your API."
           placeholder="Select environment"
-          defaultValue={dataSource?.environment.type}
           data={[
             { value: "Staging", label: "Staging" },
             { value: "Production", label: "Production" },
           ]}
           {...form.getInputProps("environment")}
+        />
+        <Select
+          label="Authentication Scheme"
+          description="The scheme used to authenticate endpoints"
+          placeholder="Select an authentication scheme"
+          data={[
+            { value: "NONE", label: "None" },
+            { value: "BEARER", label: "Bearer" },
+            { value: "BASIC", label: "Basic" },
+            { value: "API_KEY", label: "API Key" },
+          ]}
+          {...form.getInputProps("authenticationScheme")}
         />
         <Divider></Divider>
         <Group position="apart">

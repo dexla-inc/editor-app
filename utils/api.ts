@@ -1,3 +1,4 @@
+import { PatchParams } from "@/requests/types";
 import { createClient } from "@propelauth/javascript";
 
 const authClient = createClient({
@@ -107,6 +108,19 @@ export async function del<Type>(
   return doFetch<Type | ReadableStream<Uint8Array> | null>({
     url,
     method: "DELETE",
+    isStream,
+  });
+}
+
+export async function patch<Type>(
+  url: FetchType["url"],
+  body: PatchParams[],
+  isStream?: boolean
+): Promise<Type | ReadableStream<Uint8Array> | null> {
+  return doFetch<Type | ReadableStream<Uint8Array> | null>({
+    url,
+    method: "PATCH",
+    body,
     isStream,
   });
 }
