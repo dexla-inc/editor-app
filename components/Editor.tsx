@@ -21,7 +21,7 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Shell } from "@/components/AppShell";
 import { EditorAsideSections } from "@/components/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
@@ -58,17 +58,17 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const [isCustomComponentModalOpen, customComponentModal] =
     useDisclosure(false);
 
+  const deleteComponent = useCallback(() => {
+    if (selectedComponentId && selectedComponentId !== "root") {
+      const copy = { ...editorTree };
+      removeComponent(copy.root, selectedComponentId as string);
+      setEditorTree(copy);
+    }
+  }, [editorTree, selectedComponentId, setEditorTree]);
+
   useHotkeys([
-    [
-      "backspace",
-      () => {
-        if (selectedComponentId && selectedComponentId !== "root") {
-          const copy = { ...editorTree };
-          removeComponent(copy.root, selectedComponentId as string);
-          setEditorTree(copy);
-        }
-      },
-    ],
+    ["backspace", deleteComponent],
+    ["delete", deleteComponent],
   ]);
 
   useEffect(() => {
@@ -146,16 +146,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
   // add event listeners to iframe
   useEffect(() => {
     const hotKeysHandler = getHotkeyHandler([
-      [
-        "backspace",
-        () => {
-          if (selectedComponentId && selectedComponentId !== "root") {
-            const copy = { ...editorTree };
-            removeComponent(copy.root, selectedComponentId as string);
-            setEditorTree(copy);
-          }
-        },
-      ],
+      ["backspace", deleteComponent],
+      ["delete", deleteComponent],
     ]);
 
     iframeWindow?.document.body.addEventListener("keydown", hotKeysHandler);
@@ -166,7 +158,13 @@ export const Editor = ({ projectId, pageId }: Props) => {
         hotKeysHandler
       );
     };
-  }, [editorTree, iframeWindow, selectedComponentId, setEditorTree]);
+  }, [
+    deleteComponent,
+    editorTree,
+    iframeWindow,
+    selectedComponentId,
+    setEditorTree,
+  ]);
 
   const renderTree = (component: Component) => {
     if (component.id === "root") {
