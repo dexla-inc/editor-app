@@ -16,10 +16,6 @@ export type CreatedResponse = {
   trackingId: string;
 };
 
-export interface SwaggerDataSourceParams
-  extends DataSourceParams,
-    SwaggerParams {}
-
 export type SwaggerParams = { swaggerUrl: string };
 
 export type DataSourceParams = {
@@ -27,6 +23,7 @@ export type DataSourceParams = {
   authenticationScheme?: string;
   environment?: string;
   baseUrl?: string;
+  swaggerUrl?: string;
 };
 
 export interface DataSourceResponse {

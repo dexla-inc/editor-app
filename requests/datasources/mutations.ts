@@ -1,9 +1,7 @@
 import {
-  CreatedResponse,
   DataSourceParams,
   DataSourceResponse,
   DataSourceTypes,
-  SwaggerDataSourceParams,
 } from "@/requests/datasources/types";
 import { del, patch, post, put } from "@/utils/api";
 import { PatchParams } from "../types";
@@ -11,24 +9,12 @@ import { PatchParams } from "../types";
 export async function createDataSource(
   projectId: string,
   type: DataSourceTypes,
-  params: SwaggerDataSourceParams
-): Promise<DataSourceResponse>;
-
-export async function createDataSource(
-  projectId: string,
-  type: DataSourceTypes,
   params: DataSourceParams
-): Promise<CreatedResponse>;
-
-export async function createDataSource(
-  projectId: string,
-  type: DataSourceTypes,
-  params: DataSourceParams | SwaggerDataSourceParams
-): Promise<DataSourceResponse | CreatedResponse> {
-  const response = (await post<DataSourceResponse | CreatedResponse>(
+): Promise<DataSourceResponse> {
+  const response = (await post<DataSourceResponse>(
     `/projects/${projectId}/datasources/${type}`,
     params
-  )) as DataSourceResponse | CreatedResponse;
+  )) as DataSourceResponse;
 
   return response;
 }
@@ -37,7 +23,7 @@ export async function updateDataSource(
   projectId: string,
   id: string,
   reFetch: boolean,
-  params: DataSourceParams | SwaggerDataSourceParams
+  params: DataSourceParams
 ): Promise<DataSourceResponse> {
   const response = (await put<DataSourceResponse>(
     `/projects/${projectId}/datasources/${id}` +

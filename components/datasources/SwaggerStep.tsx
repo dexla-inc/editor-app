@@ -1,27 +1,16 @@
 import { InformationAlert } from "@/components/Alerts";
+import {
+  SwaggerURLInput,
+  validateSwaggerUrl,
+} from "@/components/datasources/SwaggerURLInput";
 import NextButton from "@/components/projects/NextButton";
 import { createDataSource } from "@/requests/datasources/mutations";
-import {
-  DataSourceResponse,
-  Endpoint,
-  SwaggerDataSourceParams,
-  SwaggerParams,
-} from "@/requests/datasources/types";
+import { DataSourceParams, Endpoint } from "@/requests/datasources/types";
 import {
   DataSourceStepperWithoutPreviousProps,
   areValuesEqual,
-  isSwaggerFile,
-  isWebsite,
 } from "@/utils/dashboardTypes";
-import {
-  Anchor,
-  Divider,
-  Flex,
-  Group,
-  Loader,
-  Stack,
-  TextInput,
-} from "@mantine/core";
+import { Anchor, Divider, Flex, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 
@@ -41,38 +30,20 @@ export default function SwaggerStep({
 
   const projectId = router.query.id as string;
 
-  const form = useForm<SwaggerDataSourceParams>({
+  const form = useForm<DataSourceParams>({
     initialValues: {
       swaggerUrl: dataSource?.swaggerUrl || "",
     },
     validate: {
-      swaggerUrl: (value) => {
-        return !value
-          ? "Swagger URL is required"
-          : !isWebsite(value)
-          ? "Swagger URL must be valid and preferably start with https://"
-          : !isSwaggerFile(value)
-          ? "Swagger URL must end with .json or .yaml"
-          : null;
-      },
+      swaggerUrl: (value) => validateSwaggerUrl(value),
     },
   });
 
-  const onSubmit = async (values: SwaggerDataSourceParams) => {
+  const onSubmit = async (values: DataSourceParams) => {
     try {
-      const pickedValues: Pick<SwaggerDataSourceParams, "swaggerUrl"> = {
-        swaggerUrl: values.swaggerUrl,
-      };
-      const pickedDataSource: Pick<DataSourceResponse, "swaggerUrl"> = {
-        swaggerUrl: dataSource?.swaggerUrl as string,
-      };
-
       if (
         dataSource?.id &&
-        areValuesEqual<Pick<SwaggerParams, "swaggerUrl">>(
-          pickedValues,
-          pickedDataSource
-        )
+        areValuesEqual<DataSourceParams>(values, dataSource)
       ) {
         nextStep();
         return;
@@ -119,14 +90,8 @@ export default function SwaggerStep({
           title="Let's get started!"
           text="Instead of manually adding your API endpoints, you can import via swagger to save you time. When you add new API endpoints you will just need to refetch. We can show you how to do this later."
         />
-        <TextInput
-          label="Swagger URL"
-          description="Enter the URL of your Open API Swagger definition in JSON or YAML format so we can fetch your API endpoints, e.g. https://petstore.swagger.io/v2/swagger.json."
-          placeholder="https://petstore.swagger.io/v2/swagger.json"
-          {...form.getInputProps("swaggerUrl")}
-          rightSection={isLoading && <Loader size="xs" />}
-          disabled={isLoading}
-        />
+
+        <SwaggerURLInput isLoading={isLoading} form={form} />
         <Divider></Divider>
         <Group position="right">
           <Flex gap="lg" align="end">

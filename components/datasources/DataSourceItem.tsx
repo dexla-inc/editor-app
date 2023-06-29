@@ -40,9 +40,7 @@ export function DataSourceItem({
       message: "Wait while we load the details for this data source",
     });
 
-    router.push(
-      `/projects/${projectId}/settings/datasources/${datasource.id}}`
-    );
+    router.push(`/projects/${projectId}/settings/datasources/${datasource.id}`);
   };
 
   const deleteFn = async () => {

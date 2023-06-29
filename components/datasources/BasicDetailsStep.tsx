@@ -9,12 +9,16 @@ import {
   NextStepperClickEvent,
   PreviousStepperClickEvent,
   areValuesEqual,
-  isWebsite,
 } from "@/utils/dashboardTypes";
-import { Divider, Group, Select, Stack, TextInput } from "@mantine/core";
+import { Divider, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 import BackButton from "../projects/BackButton";
+import {
+  BasicDetailsInputs,
+  validateBaseUrl,
+  validateName,
+} from "./BasicDetailsInputs";
 
 export interface BasicDetailsStepProps
   extends LoadingStore,
@@ -44,17 +48,13 @@ export default function BasicDetailsStep({
       authenticationScheme: dataSource?.authenticationScheme || "",
     },
     validate: {
-      baseUrl: (value) => {
-        return !value
-          ? "Base URL is required"
-          : !isWebsite(value)
-          ? "Base URL must be valid and preferably start with https://"
-          : null;
-      },
+      baseUrl: (value) => validateBaseUrl(value),
+      name: (value) => validateName(value),
     },
   });
 
   const onSubmit = async (values: DataSourceParams) => {
+    console.log("authValues:" + JSON.stringify(values));
     try {
       if (areValuesEqual<DataSourceParams>(values, dataSource)) {
         nextStep();
@@ -97,40 +97,7 @@ export default function BasicDetailsStep({
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack>
-        <TextInput
-          label="Name"
-          description="The name of your API."
-          placeholder="Internal API"
-          {...form.getInputProps("name")}
-        />
-        <TextInput
-          label="Base URL"
-          description="The URL of of your API."
-          placeholder="https://api.example.com"
-          {...form.getInputProps("baseUrl")}
-        />
-        <Select
-          label="Environment"
-          description="The environment of your API."
-          placeholder="Select environment"
-          data={[
-            { value: "Staging", label: "Staging" },
-            { value: "Production", label: "Production" },
-          ]}
-          {...form.getInputProps("environment")}
-        />
-        <Select
-          label="Authentication Scheme"
-          description="The scheme used to authenticate endpoints"
-          placeholder="Select an authentication scheme"
-          data={[
-            { value: "NONE", label: "None" },
-            { value: "BEARER", label: "Bearer" },
-            { value: "BASIC", label: "Basic" },
-            { value: "API_KEY", label: "API Key" },
-          ]}
-          {...form.getInputProps("authenticationScheme")}
-        />
+        <BasicDetailsInputs form={form} />
         <Divider></Divider>
         <Group position="apart">
           <BackButton onClick={prevStep}></BackButton>

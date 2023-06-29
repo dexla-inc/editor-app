@@ -81,3 +81,24 @@ export function areValuesEqual<T extends {}>(obj1: T, obj2: T): boolean {
 export function keysOf<T extends {}>(obj: T): Array<keyof T> {
   return Object.keys(obj) as Array<keyof T>;
 }
+
+type QueryParams = {
+  [key: string]: string | number | boolean | undefined;
+};
+
+export function buildQueryString(paramsObj: QueryParams): string {
+  const params = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(paramsObj)) {
+    if (value !== undefined) {
+      params.append(key, value.toString());
+    }
+  }
+
+  let queryString = "";
+  if (params.toString()) {
+    queryString += `?${params.toString()}`;
+  }
+
+  return queryString;
+}

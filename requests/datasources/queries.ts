@@ -1,9 +1,12 @@
 import {
+  DataSourceEndpointsListParams,
   DataSourceResponse,
   DataSourcesListParams,
+  Endpoint,
 } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { get } from "@/utils/api";
+import { buildQueryString } from "@/utils/dashboardTypes";
 
 export const getDataSources = async (
   projectId: string,
@@ -11,14 +14,7 @@ export const getDataSources = async (
 ) => {
   let url = `/projects/${projectId}/datasources`;
 
-  const params = new URLSearchParams();
-
-  if (type) params.append("type", type);
-  if (search) params.append("search", search);
-  if (offset) params.append("offset", offset.toString());
-  if (limit) params.append("limit", limit.toString());
-
-  if (type || search || offset || limit) url += `?${params.toString()}`;
+  url += buildQueryString({ type, search, offset, limit });
 
   const response = (await get<PagingResponse<DataSourceResponse>>(
     url,
@@ -30,23 +26,29 @@ export const getDataSources = async (
 
 export const getDataSourceEndpoints = async (
   projectId: string,
-  { type, search, offset, limit }: DataSourcesListParams
+  type: string,
+  id: string,
+  { authOnly, methodType, search, offset, limit }: DataSourceEndpointsListParams
 ) => {
-  let url = `/projects/${projectId}/datasources`;
+  let url = `/projects/${projectId}/datasources/${type}/${id}/endpoints`;
 
-  const params = new URLSearchParams();
+  url += buildQueryString({ authOnly, methodType, search, offset, limit });
 
-  if (type) params.append("type", type);
-  if (search) params.append("search", search);
-  if (offset) params.append("offset", offset.toString());
-  if (limit) params.append("limit", limit.toString());
-
-  if (type || search || offset || limit) url += `?${params.toString()}`;
-
-  const response = (await get<PagingResponse<DataSourceResponse>>(
+  const response = (await get<PagingResponse<Endpoint>>(
     url,
     {}
-  )) as PagingResponse<DataSourceResponse>;
+  )) as PagingResponse<Endpoint>;
+
+  return response;
+};
+
+export const getDataSource = async (projectId: string, id: string) => {
+  let url = `/projects/${projectId}/datasources/${id}`;
+
+  const response = (await get<DataSourceResponse>(
+    url,
+    {}
+  )) as DataSourceResponse;
 
   return response;
 };

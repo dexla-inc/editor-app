@@ -14,9 +14,10 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
+import { Dispatch, SetStateAction } from "react";
 import BackButton from "../projects/BackButton";
 
-type AuthenticationStepParams = {
+export type AuthenticationStepParams = {
   loginEndpointId?: string | undefined;
   refreshEndpointId?: string | undefined;
   userEndpointId?: string | undefined;
@@ -27,10 +28,7 @@ type AuthenticationStepParams = {
 interface AuthenticationStepProps extends DataSourceStepperProps {
   endpoints: Array<Endpoint> | undefined;
   loginEndpointId: string | null;
-  setLoginEndpointId: (loginEndpointId: string | null) => void;
-  setLoginEndpointLabel: (loginEndpointLabel: string | null) => void;
-  setRefreshEndpointLabel: (refreshEndpointLabel: string | null) => void;
-  setUserEndpointLabel: (userEndpointLabel: string | null) => void;
+  setLoginEndpointId: Dispatch<SetStateAction<string | null>>;
   refreshEndpointId: string | null;
   setRefreshEndpointId: (refreshEndpointId: string | null) => void;
   userEndpointId: string | null;
@@ -39,6 +37,9 @@ interface AuthenticationStepProps extends DataSourceStepperProps {
   setAccessToken: (accessToken: string | null) => void;
   refreshToken: string | null;
   setRefreshToken: (refreshToken: string | null) => void;
+  setLoginEndpointLabel: (loginEndpointLabel: string | null) => void;
+  setRefreshEndpointLabel: (refreshEndpointLabel: string | null) => void;
+  setUserEndpointLabel: (userEndpointLabel: string | null) => void;
 }
 
 export default function AuthenticationStep({
@@ -74,19 +75,18 @@ export default function AuthenticationStep({
       accessToken: undefined,
       refreshToken: undefined,
     },
-    validate: {
-      // set accessToken and refreshToken to required if loginEndpointId and refreshTokenEndpointId are set
-      accessToken: (value, values) => {
-        return values.loginEndpointId && values.refreshEndpointId && !value
-          ? "Access token property is required"
-          : null;
-      },
-      refreshToken: (value, values) => {
-        return values.loginEndpointId && values.refreshEndpointId && !value
-          ? "Refresh token property is required"
-          : null;
-      },
-    },
+    //validate: {
+    // accessToken: (value, values) => {
+    //   return values.loginEndpointId && values.refreshEndpointId && !value
+    //     ? "Access token property is required"
+    //     : null;
+    // },
+    // refreshToken: (value, values) => {
+    //   return values.loginEndpointId && values.refreshEndpointId && !value
+    //     ? "Refresh token property is required"
+    //     : null;
+    // },
+    // },
   });
 
   const postEndpoints = [
@@ -208,12 +208,13 @@ export default function AuthenticationStep({
     }
   };
 
-  const setLoginEndpoint = (value: string | null) => {
+  const setLoginEndpoint = (value: string) => {
+    console.log("value setLoginEndpoint:" + value);
     setLoginEndpointId(value);
     const selectedOption = postEndpoints.find(
       (option) => option.value === value
     )?.label;
-    console.log(selectedOption);
+    console.log("selectedOption:" + selectedOption);
     setLoginEndpointLabel(selectedOption as string);
   };
 
@@ -222,7 +223,7 @@ export default function AuthenticationStep({
     const selectedOption = postEndpoints.find(
       (option) => option.value === value
     )?.label;
-    console.log(selectedOption);
+
     setRefreshEndpointLabel(selectedOption as string);
   };
 
@@ -231,7 +232,7 @@ export default function AuthenticationStep({
     const selectedOption = getEndpoints.find(
       (option) => option.value === value
     )?.label;
-    console.log(value);
+
     setUserEndpointLabel(selectedOption as string);
   };
 
@@ -242,28 +243,38 @@ export default function AuthenticationStep({
           label="Login Endpoint (POST)"
           description="The endpoint used to login to your API"
           placeholder="/v1/login"
-          data={postEndpoints}
           searchable
-          value={loginEndpointId}
-          onChange={(value) => setLoginEndpoint(value)}
+          nothingFound="No options"
+          onChange={(value) => {
+            setLoginEndpoint(value ?? "");
+            form.getInputProps("loginEndpointId").onChange(value);
+          }}
+          defaultValue={loginEndpointId}
+          data={postEndpoints}
         />
         <Select
           label="Refresh Endpoint (POST)"
           description="The endpoint used to refresh your API token"
           placeholder="/v1/login/refresh"
-          data={postEndpoints}
           searchable
-          value={refreshEndpointId}
-          onChange={(value) => setRefreshEndpoint(value)}
+          onChange={(value) => {
+            setRefreshEndpoint(value ?? "");
+            form.getInputProps("refreshEndpointId").onChange(value);
+          }}
+          defaultValue={refreshEndpointId}
+          data={postEndpoints}
         />
         <Select
           label="User endpoint (GET)"
           description="The endpoint used to user information"
           placeholder="/v1/user"
-          data={getEndpoints}
           searchable
-          value={userEndpointId}
-          onChange={(value) => setUserEndpoint(value)}
+          onChange={(value) => {
+            setUserEndpoint(value ?? "");
+            form.getInputProps("userEndpointId").onChange(value);
+          }}
+          defaultValue={userEndpointId}
+          data={getEndpoints}
         />
         <TextInput
           label="Access token property"
