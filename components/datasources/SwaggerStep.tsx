@@ -2,11 +2,14 @@ import { InformationAlert } from "@/components/Alerts";
 import NextButton from "@/components/projects/NextButton";
 import { createDataSource } from "@/requests/datasources/mutations";
 import {
+  DataSourceResponse,
   Endpoint,
   SwaggerDataSourceParams,
+  SwaggerParams,
 } from "@/requests/datasources/types";
 import {
   DataSourceStepperWithoutPreviousProps,
+  areValuesEqual,
   isSwaggerFile,
   isWebsite,
 } from "@/utils/dashboardTypes";
@@ -25,6 +28,7 @@ import { useRouter } from "next/router";
 export default function SwaggerStep({
   nextStep,
   isLoading,
+  setIsLoading,
   startLoading,
   stopLoading,
   dataSource,
@@ -56,7 +60,20 @@ export default function SwaggerStep({
 
   const onSubmit = async (values: SwaggerDataSourceParams) => {
     try {
-      if (dataSource?.id && dataSource?.swaggerUrl === values.swaggerUrl) {
+      const pickedValues: Pick<SwaggerDataSourceParams, "swaggerUrl"> = {
+        swaggerUrl: values.swaggerUrl,
+      };
+      const pickedDataSource: Pick<DataSourceResponse, "swaggerUrl"> = {
+        swaggerUrl: dataSource?.swaggerUrl as string,
+      };
+
+      if (
+        dataSource?.id &&
+        areValuesEqual<Pick<SwaggerParams, "swaggerUrl">>(
+          pickedValues,
+          pickedDataSource
+        )
+      ) {
         nextStep();
         return;
       }
@@ -67,6 +84,8 @@ export default function SwaggerStep({
         message:
           "Wait while we generate your API endpoints from your API specification",
       });
+
+      setIsLoading && setIsLoading(true);
 
       form.validate();
 
@@ -86,6 +105,8 @@ export default function SwaggerStep({
         title: "Data Source Saved",
         message: "The data source was saved successfully",
       });
+
+      setIsLoading && setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -104,11 +125,14 @@ export default function SwaggerStep({
           placeholder="https://petstore.swagger.io/v2/swagger.json"
           {...form.getInputProps("swaggerUrl")}
           rightSection={isLoading && <Loader size="xs" />}
+          disabled={isLoading}
         />
         <Divider></Divider>
         <Group position="right">
           <Flex gap="lg" align="end">
-            <Anchor onClick={nextStep}>Continue without Swagger</Anchor>
+            {!isLoading && (
+              <Anchor onClick={nextStep}>Continue without Swagger</Anchor>
+            )}
             <NextButton
               isLoading={isLoading}
               disabled={isLoading}

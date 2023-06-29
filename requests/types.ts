@@ -1,10 +1,10 @@
-export type PageParams = {
+export type PagingParams = {
   search?: string;
   offset?: number;
   limit?: number;
 };
 
-export interface PagedResponse<T> {
+export interface PagingResponse<T> {
   results: Array<T>;
   paging: PagingModel;
   trackingId: string;

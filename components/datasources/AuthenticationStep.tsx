@@ -24,6 +24,23 @@ type AuthenticationStepParams = {
   refreshToken?: string | undefined;
 };
 
+interface AuthenticationStepProps extends DataSourceStepperProps {
+  endpoints: Array<Endpoint> | undefined;
+  loginEndpointId: string | null;
+  setLoginEndpointId: (loginEndpointId: string | null) => void;
+  setLoginEndpointLabel: (loginEndpointLabel: string | null) => void;
+  setRefreshEndpointLabel: (refreshEndpointLabel: string | null) => void;
+  setUserEndpointLabel: (userEndpointLabel: string | null) => void;
+  refreshEndpointId: string | null;
+  setRefreshEndpointId: (refreshEndpointId: string | null) => void;
+  userEndpointId: string | null;
+  setUserEndpointId: (userEndpointId: string | null) => void;
+  accessToken: string | null;
+  setAccessToken: (accessToken: string | null) => void;
+  refreshToken: string | null;
+  setRefreshToken: (refreshToken: string | null) => void;
+}
+
 export default function AuthenticationStep({
   prevStep,
   nextStep,
@@ -32,7 +49,20 @@ export default function AuthenticationStep({
   stopLoading,
   dataSource,
   endpoints,
-}: DataSourceStepperProps & { endpoints: Array<Endpoint> | undefined }) {
+  loginEndpointId,
+  setLoginEndpointId,
+  setLoginEndpointLabel,
+  setRefreshEndpointLabel,
+  setUserEndpointLabel,
+  refreshEndpointId,
+  setRefreshEndpointId,
+  userEndpointId,
+  setUserEndpointId,
+  accessToken,
+  setAccessToken,
+  refreshToken,
+  setRefreshToken,
+}: AuthenticationStepProps) {
   const router = useRouter();
   const projectId = router.query.id as string;
 
@@ -60,15 +90,19 @@ export default function AuthenticationStep({
   });
 
   const postEndpoints = [
-    ...(endpoints
-      ?.filter((c) => c.methodType === "POST")
-      .map((c) => ({ value: c.id, label: c.relativeUrl })) || []),
+    ...(
+      endpoints
+        ?.filter((c) => c.methodType === "POST")
+        .map((c) => ({ value: c.id, label: c.relativeUrl })) || []
+    ).sort((a, b) => a.label.localeCompare(b.label)),
   ];
 
   const getEndpoints = [
-    ...(endpoints
-      ?.filter((c) => c.methodType === "GET")
-      .map((c) => ({ value: c.id, label: c.relativeUrl })) || []),
+    ...(
+      endpoints
+        ?.filter((c) => c.methodType === "GET")
+        .map((c) => ({ value: c.id, label: c.relativeUrl })) || []
+    ).sort((a, b) => a.label.localeCompare(b.label)),
   ];
 
   const onSubmit = async (values: AuthenticationStepParams) => {
@@ -98,10 +132,7 @@ export default function AuthenticationStep({
         refreshToken,
       } = values;
 
-      console.log(values);
-
       if (loginEndpointId !== undefined && accessToken !== undefined) {
-        console.log("patching login endpoint");
         const loginPatchParams: PatchParams[] = [
           {
             op: "replace",
@@ -177,6 +208,33 @@ export default function AuthenticationStep({
     }
   };
 
+  const setLoginEndpoint = (value: string | null) => {
+    setLoginEndpointId(value);
+    const selectedOption = postEndpoints.find(
+      (option) => option.value === value
+    )?.label;
+    console.log(selectedOption);
+    setLoginEndpointLabel(selectedOption as string);
+  };
+
+  const setRefreshEndpoint = (value: string | null) => {
+    setRefreshEndpointId(value);
+    const selectedOption = postEndpoints.find(
+      (option) => option.value === value
+    )?.label;
+    console.log(selectedOption);
+    setRefreshEndpointLabel(selectedOption as string);
+  };
+
+  const setUserEndpoint = (value: string | null) => {
+    setUserEndpointId(value);
+    const selectedOption = getEndpoints.find(
+      (option) => option.value === value
+    )?.label;
+    console.log(value);
+    setUserEndpointLabel(selectedOption as string);
+  };
+
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack>
@@ -186,7 +244,8 @@ export default function AuthenticationStep({
           placeholder="/v1/login"
           data={postEndpoints}
           searchable
-          {...form.getInputProps("loginEndpointId")}
+          value={loginEndpointId}
+          onChange={(value) => setLoginEndpoint(value)}
         />
         <Select
           label="Refresh Endpoint (POST)"
@@ -194,7 +253,8 @@ export default function AuthenticationStep({
           placeholder="/v1/login/refresh"
           data={postEndpoints}
           searchable
-          {...form.getInputProps("refreshEndpointId")}
+          value={refreshEndpointId}
+          onChange={(value) => setRefreshEndpoint(value)}
         />
         <Select
           label="User endpoint (GET)"
@@ -202,19 +262,22 @@ export default function AuthenticationStep({
           placeholder="/v1/user"
           data={getEndpoints}
           searchable
-          {...form.getInputProps("userEndpointId")}
+          value={userEndpointId}
+          onChange={(value) => setUserEndpoint(value)}
         />
         <TextInput
           label="Access token property"
           description="The property name of the access token in the response"
           placeholder="access"
-          {...form.getInputProps("accessToken")}
+          value={accessToken || ""}
+          onChange={(event) => setAccessToken(event.currentTarget.value)}
         />
         <TextInput
           label="Refresh token property"
           description="The property name of the refresh token in the response"
           placeholder="refresh"
-          {...form.getInputProps("refreshToken")}
+          value={refreshToken || ""}
+          onChange={(event) => setRefreshToken(event.currentTarget.value)}
         />
         <Divider></Divider>
         <Group position="apart">

@@ -1,7 +1,8 @@
 import { Shell } from "@/components/AppShell";
 import { TypingAnimation } from "@/components/TypingAnimation";
-import { PageParams, createPages } from "@/requests/projects/mutations";
-import { getPageList, getPagesStream } from "@/requests/projects/queries";
+import { createPages } from "@/requests/pages/mutations";
+import { getPageList, getPagesStream } from "@/requests/pages/queries";
+import { PageBody } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
 import { ICON_SIZE } from "@/utils/config";
 import TOML from "@iarna/toml";
@@ -87,8 +88,8 @@ export default function Project({ id }: Props) {
           slug: slugify(page),
           isHome: index === 0,
           authenticatedOnly: false,
-        } as PageParams;
-      }) as PageParams[],
+        } as PageBody;
+      }) as PageBody[],
       id
     );
     const pageList = await getPageList(id);

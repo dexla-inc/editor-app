@@ -4,7 +4,7 @@ import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourc
 import PaneHeading from "@/components/navbar/PaneHeading";
 import { getDataSources } from "@/requests/datasources/queries";
 import { DataSourceResponse } from "@/requests/datasources/types";
-import { PagedResponse } from "@/requests/types";
+import { PagingResponse } from "@/requests/types";
 import { useAppStore } from "@/stores/app";
 import { Stack } from "@mantine/core";
 import { useRouter } from "next/router";
@@ -17,7 +17,7 @@ export const EditorNavbarDataSourcesSection = () => {
   const router = useRouter();
   const projectId = router.query.id as string;
   const [dataSources, setDataSources] =
-    useState<PagedResponse<DataSourceResponse>>();
+    useState<PagingResponse<DataSourceResponse>>();
 
   useEffect(() => {
     const fetchDataSources = async () => {

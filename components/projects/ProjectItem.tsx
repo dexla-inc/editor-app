@@ -1,9 +1,7 @@
+import { getPageList } from "@/requests/pages/queries";
+import { PageResponse } from "@/requests/pages/types";
 import { deleteProject } from "@/requests/projects/mutations";
-import {
-  PageResponse,
-  ProjectResponse,
-  getPageList,
-} from "@/requests/projects/queries";
+import { ProjectResponse } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import {

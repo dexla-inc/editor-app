@@ -1,9 +1,9 @@
-import { Component, EditorTree, updateTreeComponent } from "@/utils/editor";
-import { create, useStore } from "zustand";
-import { TemporalState, temporal } from "zundo";
-import throttle from "lodash.throttle";
-import { updatePageState } from "@/requests/projects/mutations";
+import { updatePageState } from "@/requests/pages/mutations";
 import { encodeSchema } from "@/utils/compression";
+import { Component, EditorTree, updateTreeComponent } from "@/utils/editor";
+import throttle from "lodash.throttle";
+import { TemporalState, temporal } from "zundo";
+import { create, useStore } from "zustand";
 
 export const emptyEditorTree = {
   root: {

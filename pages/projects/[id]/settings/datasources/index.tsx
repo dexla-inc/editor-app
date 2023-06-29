@@ -3,7 +3,7 @@ import { DataSourceItem } from "@/components/datasources/DataSourceItem";
 import IconTitleDescriptionButton from "@/components/projects/NewProjectButton";
 import { getDataSources } from "@/requests/datasources/queries";
 import { DataSourceResponse } from "@/requests/datasources/types";
-import { PagedResponse } from "@/requests/types";
+import { PagingResponse } from "@/requests/types";
 import { useAppStore } from "@/stores/app";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
@@ -24,7 +24,7 @@ import { useCallback, useEffect, useState } from "react";
 
 export default function DataSources() {
   const [pagedDataSource, setPagedDataSource] =
-    useState<PagedResponse<DataSourceResponse>>();
+    useState<PagingResponse<DataSourceResponse>>();
   const [search, setSearch] = useState<string>();
   const debouncedSearch = debounce((query) => setSearch(query), 400);
   const theme = useMantineTheme();
@@ -52,7 +52,7 @@ export default function DataSources() {
       return {
         ...pagedDataSource,
         results: pagedDataSource.results.filter((r) => r.id !== id),
-      } as PagedResponse<DataSourceResponse>;
+      } as PagingResponse<DataSourceResponse>;
     });
   };
 

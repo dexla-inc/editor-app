@@ -1,4 +1,5 @@
-import { PageResponse, getPageList } from "@/requests/projects/queries";
+import { getPageList } from "@/requests/pages/queries";
+import { PageResponse } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
 import { Center, Loader, Stack, Text, useMantineTheme } from "@mantine/core";
 import Link from "next/link";

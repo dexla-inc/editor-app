@@ -1,12 +1,12 @@
-import { MethodTypes, PageParams } from "@/requests/types";
+import { MethodTypes, PagingParams } from "@/requests/types";
 
 export type DataSourceTypes = "API" | "AIRTABLE" | "GRAPH_QL";
 
-export interface DataSourcesListParams extends PageParams {
+export interface DataSourcesListParams extends PagingParams {
   type?: string;
 }
 
-export interface DataSourceEndpointsListParams extends PageParams {
+export interface DataSourceEndpointsListParams extends PagingParams {
   authOnly?: boolean;
   methodType?: MethodTypes;
 }
@@ -16,7 +16,11 @@ export type CreatedResponse = {
   trackingId: string;
 };
 
-export type SwaggerDataSourceParams = DataSourceParams & { swaggerUrl: string };
+export interface SwaggerDataSourceParams
+  extends DataSourceParams,
+    SwaggerParams {}
+
+export type SwaggerParams = { swaggerUrl: string };
 
 export type DataSourceParams = {
   name?: string;

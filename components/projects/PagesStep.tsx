@@ -1,8 +1,9 @@
 import { InformationAlert } from "@/components/Alerts";
 import BackButton from "@/components/projects/BackButton";
 import NextButton from "@/components/projects/NextButton";
-import { PageParams, createPages } from "@/requests/projects/mutations";
-import { getPagesStream } from "@/requests/projects/queries";
+import { createPages } from "@/requests/pages/mutations";
+import { getPagesStream } from "@/requests/pages/queries";
+import { PageBody } from "@/requests/pages/types";
 import { ICON_SIZE } from "@/utils/config";
 import { PagesStepProps } from "@/utils/projectTypes";
 import TOML from "@iarna/toml";
@@ -103,8 +104,8 @@ export default function PagesStep({
           slug: slugify(page),
           isHome: index === 0,
           authenticatedOnly: false,
-        } as PageParams;
-      }) as PageParams[],
+        } as PageBody;
+      }) as PageBody[],
       projectId
     );
 

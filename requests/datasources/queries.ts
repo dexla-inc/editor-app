@@ -2,7 +2,7 @@ import {
   DataSourceResponse,
   DataSourcesListParams,
 } from "@/requests/datasources/types";
-import { PagedResponse } from "@/requests/types";
+import { PagingResponse } from "@/requests/types";
 import { get } from "@/utils/api";
 
 export const getDataSources = async (
@@ -20,10 +20,10 @@ export const getDataSources = async (
 
   if (type || search || offset || limit) url += `?${params.toString()}`;
 
-  const response = (await get<PagedResponse<DataSourceResponse>>(
+  const response = (await get<PagingResponse<DataSourceResponse>>(
     url,
     {}
-  )) as PagedResponse<DataSourceResponse>;
+  )) as PagingResponse<DataSourceResponse>;
 
   return response;
 };
@@ -43,10 +43,10 @@ export const getDataSourceEndpoints = async (
 
   if (type || search || offset || limit) url += `?${params.toString()}`;
 
-  const response = (await get<PagedResponse<DataSourceResponse>>(
+  const response = (await get<PagingResponse<DataSourceResponse>>(
     url,
     {}
-  )) as PagedResponse<DataSourceResponse>;
+  )) as PagingResponse<DataSourceResponse>;
 
   return response;
 };

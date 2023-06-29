@@ -1,13 +1,14 @@
 import NextButton from "@/components/projects/NextButton";
 import { updateDataSource } from "@/requests/datasources/mutations";
 import {
+  DataSourceParams,
   DataSourceResponse,
-  SwaggerDataSourceParams,
 } from "@/requests/datasources/types";
 import {
   LoadingStore,
   NextStepperClickEvent,
   PreviousStepperClickEvent,
+  areValuesEqual,
   isWebsite,
 } from "@/utils/dashboardTypes";
 import { Divider, Group, Select, Stack, TextInput } from "@mantine/core";
@@ -19,7 +20,7 @@ export interface BasicDetailsStepProps
   extends LoadingStore,
     NextStepperClickEvent,
     PreviousStepperClickEvent {
-  dataSource: DataSourceResponse | undefined;
+  dataSource: DataSourceResponse;
   setDataSource: (dataSource: DataSourceResponse) => void;
 }
 
@@ -35,13 +36,12 @@ export default function BasicDetailsStep({
   const router = useRouter();
   const projectId = router.query.id as string;
 
-  const form = useForm<SwaggerDataSourceParams>({
+  const form = useForm<DataSourceParams>({
     initialValues: {
       name: dataSource?.name || "",
       baseUrl: dataSource?.baseUrl || "",
       environment: dataSource?.environment || "",
       authenticationScheme: dataSource?.authenticationScheme || "",
-      swaggerUrl: dataSource?.swaggerUrl || "",
     },
     validate: {
       baseUrl: (value) => {
@@ -54,8 +54,13 @@ export default function BasicDetailsStep({
     },
   });
 
-  const onSubmit = async (values: SwaggerDataSourceParams) => {
+  const onSubmit = async (values: DataSourceParams) => {
     try {
+      if (areValuesEqual<DataSourceParams>(values, dataSource)) {
+        nextStep();
+        return;
+      }
+
       startLoading({
         id: "creating",
         title: "Updating Data Source",
@@ -68,16 +73,12 @@ export default function BasicDetailsStep({
         throw new Error("Can't find data source");
       }
 
-      const result = await updateDataSource(
-        projectId,
-        dataSource.id,
-        false,
-        values
-      );
+      await updateDataSource(projectId, dataSource.id, false, values);
 
-      if (!result) {
-        throw new Error("Failed to update data source");
-      }
+      const result: DataSourceResponse = {
+        ...dataSource,
+        ...values,
+      };
 
       setDataSource(result);
 

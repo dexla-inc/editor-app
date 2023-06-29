@@ -20,6 +20,7 @@ export type PreviousStepperClickEvent = {
 
 export type LoadingStore = {
   isLoading: boolean;
+  setIsLoading?: (isLoading: boolean) => void;
   startLoading: (state: NotificationProps) => void;
   stopLoading: (state: NotificationProps) => void;
 };
@@ -66,3 +67,17 @@ export interface DataSourceStepperWithoutNextProps
   extends DataSourceSettingsProps,
     LoadingStore,
     PreviousStepperClickEvent {}
+
+export function areValuesEqual<T extends {}>(obj1: T, obj2: T): boolean {
+  const properties = keysOf<T>(obj1);
+  for (let prop of properties) {
+    if (obj1[prop] !== obj2?.[prop]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function keysOf<T extends {}>(obj: T): Array<keyof T> {
+  return Object.keys(obj) as Array<keyof T>;
+}

@@ -1,14 +1,24 @@
+import { Shell } from "@/components/AppShell";
+import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { Droppable } from "@/components/Droppable";
 import { DroppableDraggable } from "@/components/DroppableDraggable";
+import { EditorAsideSections } from "@/components/EditorAsideSections";
+import { IFrame } from "@/components/IFrame";
+import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
+import { getPage, getPageStream } from "@/requests/pages/queries";
+import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
+import { decodeSchema } from "@/utils/compression";
 import { HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
 import {
-  Row,
   Component,
+  Row,
   getEditorTreeFromPageStructure,
   removeComponent,
 } from "@/utils/editor";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
+import TOML from "@iarna/toml";
 import {
   Aside,
   Box,
@@ -21,18 +31,8 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Shell } from "@/components/AppShell";
-import { EditorAsideSections } from "@/components/EditorAsideSections";
-import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
-import { getPage, getPageStream } from "@/requests/projects/queries";
-import { decodeSchema } from "@/utils/compression";
-import TOML from "@iarna/toml";
-import { useAppStore } from "@/stores/app";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { getHotkeyHandler, useDisclosure, useHotkeys } from "@mantine/hooks";
-import { CustomComponentModal } from "@/components/CustomComponentModal";
-import { IFrame } from "@/components/IFrame";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type Props = {
   projectId: string;
