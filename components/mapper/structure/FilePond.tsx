@@ -1,9 +1,11 @@
-import { theme } from "@/pages/_app";
+import { defaultTheme } from "@/components/IFrame";
 import { Component } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
+  const theme = props.theme ?? defaultTheme;
+
   return {
     id: nanoid(),
     name: "Container",
@@ -66,6 +68,7 @@ export const jsonStructure = (props?: any): Component => {
                 description: "FilePond Title",
                 props: {
                   children: "FilePond",
+                  color: `${theme.colors.Black ? "Black" : "dark"}`,
                   style: {
                     marginTop: px(theme.spacing.xs),
                     marginBottom: "2px",
@@ -73,7 +76,6 @@ export const jsonStructure = (props?: any): Component => {
                     fontWeight: "normal",
                     lineHeight: "110%",
                     letterSpacing: "0px",
-                    color: theme.colors.dark[6],
                     width: "auto",
                     height: "auto",
                   },

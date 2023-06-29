@@ -1,9 +1,11 @@
-import { theme } from "@/pages/_app";
+import { defaultTheme } from "@/components/IFrame";
 import { Component } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
+  const theme = props.theme ?? defaultTheme;
+
   return {
     id: nanoid(),
     name: "Container",

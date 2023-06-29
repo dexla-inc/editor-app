@@ -1,9 +1,11 @@
-import { theme } from "@/pages/_app";
+import { defaultTheme } from "@/components/IFrame";
 import { Component } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
+  const theme = props.theme ?? defaultTheme;
+
   return {
     id: nanoid(),
     name: "Container",
@@ -40,6 +42,7 @@ export const jsonStructure = (props?: any): Component => {
             children: [],
             props: {
               children: "New Link",
+              color: "Primary",
               style: {
                 fontSize: `${px(theme.fontSizes.sm)}px`,
                 fontWeight: "normal",
@@ -47,7 +50,6 @@ export const jsonStructure = (props?: any): Component => {
                 letterSpacing: "0px",
                 width: "auto",
                 heigh: "auto",
-                color: theme.colors[theme.primaryColor][6],
               },
               ...(props.props || {}),
             },

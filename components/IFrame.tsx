@@ -1,4 +1,5 @@
 import { usePreviousDeep } from "@/hooks/usePreviousDeep";
+import { getTheme } from "@/requests/themes/queries";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import createCache from "@emotion/cache";
@@ -10,11 +11,13 @@ import {
   MantineTheme,
 } from "@mantine/core";
 import { usePrevious } from "@mantine/hooks";
+import { useQuery } from "@tanstack/react-query";
 import isEqual from "lodash.isequal";
+import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
-export const theme: MantineTheme = {
+export const defaultTheme: MantineTheme = {
   ...DEFAULT_THEME,
   fontFamily: "Arial, sans-serif",
   headings: {
@@ -29,6 +32,7 @@ type Props = {
 } & BoxProps;
 
 export const IFrame = ({ children, ...props }: Props) => {
+  const router = useRouter();
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
   const editorTree = useEditorStore((state) => state.tree);
@@ -37,6 +41,45 @@ export const IFrame = ({ children, ...props }: Props) => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
+
+  const theme = useEditorStore((state) => state.theme);
+  const setTheme = useEditorStore((state) => state.setTheme);
+
+  const userTheme = useQuery({
+    queryKey: ["theme"],
+    queryFn: () => getTheme(router.query.id as string),
+    enabled: !!router.query.id,
+  });
+
+  useEffect(() => {
+    if (userTheme.isFetched) {
+      setTheme({
+        ...theme,
+        colors: {
+          ...theme.colors,
+          ...userTheme.data?.colors.reduce((userColors, color) => {
+            return {
+              ...userColors,
+              [color.name]: [
+                theme.fn.lighten(color.hex, 0.9),
+                theme.fn.lighten(color.hex, 0.8),
+                theme.fn.lighten(color.hex, 0.7),
+                theme.fn.lighten(color.hex, 0.6),
+                theme.fn.lighten(color.hex, 0.5),
+                theme.fn.lighten(color.hex, 0.4),
+                color.hex,
+                theme.fn.darken(color.hex, 0.6),
+                theme.fn.darken(color.hex, 0.7),
+                theme.fn.darken(color.hex, 0.8),
+              ],
+            };
+          }, {}),
+        },
+        primaryColor: "Primary",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userTheme.isFetched, userTheme.data?.colors, setTheme]);
 
   const w = contentRef?.contentWindow;
   const mountNode = w?.document.body;

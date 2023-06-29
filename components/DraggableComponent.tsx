@@ -1,6 +1,7 @@
 import { Draggable } from "@/components/Draggable";
+import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
-import { Text } from "@mantine/core";
+import { Text, useMantineTheme } from "@mantine/core";
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -10,16 +11,17 @@ type Props = {
 };
 
 export const DraggableComponent = ({ id, text, data }: Props) => {
+  const theme = useEditorStore((state) => state.theme);
   const [draggableData, setDraggableData] = useState<any>(data);
 
   useEffect(() => {
     if (!data) {
       const component = structureMapper[id];
-      setDraggableData(component.structure({}));
+      setDraggableData(component.structure({ theme }));
     } else {
       setDraggableData(data);
     }
-  }, [data, id]);
+  }, [data, id, theme]);
 
   return (
     <Draggable id={id} data={draggableData} isDeletable={!!data}>

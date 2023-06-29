@@ -2,6 +2,7 @@ import { emptyEditorTree } from "@/stores/editor";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
 import { structureMapper } from "@/utils/componentMapper";
+import { MantineTheme } from "@mantine/core";
 
 export type Component = {
   id?: string;
@@ -48,7 +49,10 @@ export const replaceIdsDeeply = (treeRoot: Component) => {
   );
 };
 
-export const getEditorTreeFromPageStructure = (tree: { rows: Row[] }) => {
+export const getEditorTreeFromPageStructure = (
+  tree: { rows: Row[] },
+  theme: MantineTheme
+) => {
   const editorTree: EditorTree = {
     root: {
       ...emptyEditorTree.root,
@@ -64,7 +68,7 @@ export const getEditorTreeFromPageStructure = (tree: { rows: Row[] }) => {
           },
           children: row.components.map((c) => {
             const component = structureMapper[c.name];
-            return component.structure(c);
+            return component.structure({ ...c, theme });
           }),
         };
       }),

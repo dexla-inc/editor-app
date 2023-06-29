@@ -1,10 +1,11 @@
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 import * as ChartStructure from "@/components/mapper/structure/charts/Chart";
-import { theme } from "@/pages/_app";
+import { defaultTheme } from "@/components/IFrame";
 import { px } from "@mantine/core";
 
 export const jsonStructure = (props?: any): Component => {
+  const theme = props.theme ?? defaultTheme;
   const chartProps = ChartStructure.jsonStructure(props).props;
 
   return {

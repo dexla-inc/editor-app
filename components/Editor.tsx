@@ -48,6 +48,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
+  const editorTheme = useEditorStore((state) => state.theme);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const isLoading = useAppStore((state) => state.isLoading);
@@ -135,14 +136,17 @@ export const Editor = ({ projectId, pageId }: Props) => {
     if (stream) {
       try {
         const json = TOML.parse(stream);
-        const tree = getEditorTreeFromPageStructure(json as { rows: Row[] });
+        const tree = getEditorTreeFromPageStructure(
+          json as { rows: Row[] },
+          editorTheme
+        );
         setEditorTree(tree);
       } catch (error) {
         // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
         // console.log({ error });
       }
     }
-  }, [setEditorTree, stream]);
+  }, [editorTheme, setEditorTree, stream]);
 
   // add event listeners to iframe
   useEffect(() => {

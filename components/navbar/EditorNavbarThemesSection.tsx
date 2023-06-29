@@ -16,6 +16,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -43,11 +44,29 @@ const fontWeights = [
 
 export const EditorNavbarThemesSection = () => {
   const router = useRouter();
-  const isLoading = useAppStore((state) => state.isLoading);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const [currentFontTag, setCurrentFontTag] = useState<string>("H1");
   const mantineTheme = useMantineTheme();
+  const queryClient = useQueryClient();
+
+  const projectId = router.query.id as string;
+
+  const userTheme = useQuery({
+    queryKey: ["theme"],
+    queryFn: () => getTheme(projectId),
+    enabled: !!projectId,
+  });
+
+  const { mutate } = useMutation(saveTheme, {
+    onSettled(_, err) {
+      if (err) {
+        console.log(err);
+      }
+
+      queryClient.invalidateQueries(["theme"]);
+    },
+  });
 
   const fonts = [
     "Arial",
@@ -58,8 +77,6 @@ export const EditorNavbarThemesSection = () => {
     "Raleway",
     "Times New Roman",
   ];
-
-  const projectId = router.query.id as string;
 
   const form = useForm<ThemeMutationParams>({
     initialValues: {
@@ -75,13 +92,11 @@ export const EditorNavbarThemesSection = () => {
   });
 
   useEffect(() => {
-    const fetchTheme = async () => {
-      const theme = await getTheme(projectId);
-      form.setValues(theme);
-    };
-
-    fetchTheme();
-  }, [projectId]);
+    if (userTheme.isFetched) {
+      form.setValues(userTheme.data as ThemeMutationParams);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userTheme.isFetched]);
 
   const onSubmit = async (values: ThemeMutationParams) => {
     try {
@@ -93,9 +108,8 @@ export const EditorNavbarThemesSection = () => {
 
       form.validate();
 
-      const theme = await saveTheme({ params: values, projectId: projectId });
+      await mutate({ params: values, projectId: projectId });
 
-      console.log(theme);
       stopLoading({
         id: "saving-theme",
         title: "Theme Saved",

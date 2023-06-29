@@ -1,6 +1,8 @@
+import { defaultTheme } from "@/components/IFrame";
 import { updatePageState } from "@/requests/pages/mutations";
 import { encodeSchema } from "@/utils/compression";
 import { Component, EditorTree, updateTreeComponent } from "@/utils/editor";
+import { MantineTheme } from "@mantine/core";
 import throttle from "lodash.throttle";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
@@ -27,6 +29,8 @@ export type EditorState = {
   componentToAdd?: Component;
   iframeWindow?: Window;
   currentTargetId?: string;
+  theme: MantineTheme;
+  setTheme: (theme: MantineTheme) => void;
   setIframeWindow: (iframeWindow: Window) => void;
   setCurrentTargetId: (currentTargetId?: string) => void;
   setTree: (tree: EditorTree) => void;
@@ -44,6 +48,8 @@ export const useEditorStore = create<EditorState>()(
   temporal(
     (set) => ({
       tree: emptyEditorTree,
+      theme: defaultTheme,
+      setTheme: (theme) => set({ theme }),
       setIframeWindow: (iframeWindow) => set({ iframeWindow }),
       setCurrentTargetId: (currentTargetId) => set({ currentTargetId }),
       setTree: (tree) => {

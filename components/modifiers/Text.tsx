@@ -1,6 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
-import { ColorInput, Group, Select, Stack, Textarea } from "@mantine/core";
+import { Group, Select, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTextSize } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
@@ -35,7 +35,6 @@ export const Modifier = () => {
       fontWeight: "",
       lineHeight: "",
       letterSpacing: "",
-      color: "",
     },
   });
 
@@ -116,17 +115,6 @@ export const Modifier = () => {
             }}
           />
         </Group>
-        <ColorInput
-          size="xs"
-          label="Color"
-          {...form.getInputProps("color")}
-          onChange={(value) => {
-            form.setFieldValue("color", value as string);
-            debouncedTreeUpdate(selectedComponentId as string, {
-              style: { color: value },
-            });
-          }}
-        />
       </Stack>
     </form>
   );

@@ -1,9 +1,10 @@
-import { theme } from "@/pages/_app";
+import { defaultTheme } from "@/components/IFrame";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 import { px } from "@mantine/core";
 
 export const jsonStructure = (props?: any): Component => {
+  const theme = props.theme ?? defaultTheme;
   const columnsToWidth = `${
     props.columns ? `${(props.columns * 100) / 12}%` : "100%"
   }`;
@@ -36,12 +37,12 @@ export const jsonStructure = (props?: any): Component => {
         children: [],
         props: {
           children: "App Name",
+          color: `${theme.colors.Black ? "Black" : "dark"}`,
           style: {
             fontSize: `${px(theme.fontSizes.sm)}px`,
             fontWeight: "normal",
             lineHeight: "110%",
             letterSpacing: "0px",
-            color: theme.colors.dark[6],
             width: "auto",
             height: "auto",
           },
@@ -53,7 +54,7 @@ export const jsonStructure = (props?: any): Component => {
         description: "Avatar",
         children: [],
         props: {
-          color: "teal",
+          color: "Primary",
           radius: "xl",
         },
       },
