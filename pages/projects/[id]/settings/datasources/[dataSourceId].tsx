@@ -11,6 +11,7 @@ import {
   validateBaseUrl,
   validateName,
 } from "@/components/datasources/BasicDetailsInputs";
+import EndpointsButton from "@/components/datasources/GoToEndpointsButton";
 import {
   SwaggerURLInput,
   validateSwaggerUrl,
@@ -29,11 +30,11 @@ import {
 import { useAppStore } from "@/stores/app";
 import { ICON_SIZE } from "@/utils/config";
 import {
-  Box,
   Button,
   Container,
   Divider,
   Flex,
+  Group,
   Select,
   Stack,
   TextInput,
@@ -264,8 +265,9 @@ export default function Settings() {
           <Stack>
             <Title>Data Source Details</Title>
             <Title order={3}>API Information</Title>
-            <Box>
-              {swaggerUrl && (
+
+            {swaggerUrl && (
+              <Group position="apart">
                 <Button
                   onClick={refetchSwagger}
                   variant="light"
@@ -273,13 +275,21 @@ export default function Settings() {
                 >
                   Refetch Swagger
                 </Button>
-              )}
-            </Box>
+                <EndpointsButton
+                  projectId={projectId}
+                  startLoading={startLoading}
+                  stopLoading={stopLoading}
+                  isLoading={isLoading}
+                ></EndpointsButton>
+              </Group>
+            )}
             {swaggerRefetched && (
-              <SuccessAlert
-                title="Successfully Updated"
-                text="Your API has been successfully. The editor will now show your updated API and API endpoints."
-              ></SuccessAlert>
+              <>
+                <SuccessAlert
+                  title="Successfully Updated"
+                  text="Your API has been successfully. The editor will now show your updated API and API endpoints."
+                ></SuccessAlert>
+              </>
             )}
             <SwaggerURLInput
               isLoading={isLoading}
