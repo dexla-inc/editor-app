@@ -42,6 +42,7 @@ export default function AuthenticationStep({
   prevStep,
   nextStep,
   isLoading,
+  setIsLoading,
   startLoading,
   stopLoading,
   dataSource,
@@ -102,6 +103,8 @@ export default function AuthenticationStep({
         message: "Wait while your data source is being saved",
       });
 
+      setIsLoading && setIsLoading(true);
+
       const {
         loginEndpointId,
         refreshEndpointId,
@@ -152,6 +155,7 @@ export default function AuthenticationStep({
         title: "Data Source Saved",
         message: "The data source was saved successfully",
       });
+      setIsLoading && setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -250,9 +254,11 @@ export default function AuthenticationStep({
         <Group position="apart">
           <BackButton onClick={prevStep}></BackButton>
           <Flex gap="lg" align="end">
-            <Anchor onClick={nextStep}>
-              Skip, I use an external auth provider
-            </Anchor>
+            {!isLoading && (
+              <Anchor onClick={nextStep}>
+                Skip, I use an external auth provider
+              </Anchor>
+            )}
             <NextButton
               isLoading={isLoading}
               disabled={isLoading}

@@ -1,11 +1,10 @@
 import { getPageList } from "@/requests/pages/queries";
-import { ICON_SIZE } from "@/utils/config";
 import { DataSourceStepperWithoutNextProps } from "@/utils/dashboardTypes";
-import { Button, Col, Divider, Grid, Group, Stack, Text } from "@mantine/core";
-import { IconArrowUpRight } from "@tabler/icons-react";
+import { Col, Divider, Grid, Group, Stack, Text } from "@mantine/core";
 import { useRouter } from "next/router";
 import { InformationAlert, WarningAlert } from "../Alerts";
 import BackButton from "../projects/BackButton";
+import EndpointsButton from "./GoToEndpointsButton";
 
 interface AuthenticationStepParams extends DataSourceStepperWithoutNextProps {
   accessToken?: string | null;
@@ -123,14 +122,12 @@ export default function EndpointsStep({
         <Divider></Divider>
         <Group position="apart">
           <BackButton onClick={prevStep}></BackButton>
-          <Button
-            onClick={() => goToEditor(projectId)}
-            loading={isLoading}
-            disabled={isLoading}
-            rightIcon={<IconArrowUpRight size={ICON_SIZE} />}
-          >
-            View Endpoints
-          </Button>
+          <EndpointsButton
+            projectId={projectId}
+            startLoading={startLoading}
+            stopLoading={stopLoading}
+            isLoading={isLoading}
+          ></EndpointsButton>
         </Group>
       </Stack>
     </Stack>

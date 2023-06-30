@@ -79,6 +79,7 @@ export default function StepperContent({
           prevStep={prevStep}
           nextStep={nextStep}
           isLoading={isLoading}
+          setIsLoading={setIsLoading}
           startLoading={startLoading}
           stopLoading={stopLoading}
           dataSource={dataSource}
