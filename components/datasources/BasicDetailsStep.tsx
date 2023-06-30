@@ -13,6 +13,7 @@ import {
 import { Divider, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import BackButton from "../projects/BackButton";
 import {
   BasicDetailsInputs,
@@ -39,6 +40,9 @@ export default function BasicDetailsStep({
 }: BasicDetailsStepProps) {
   const router = useRouter();
   const projectId = router.query.id as string;
+  const [authenticationScheme, setAuthenticationScheme] = useState<string>(
+    dataSource?.authenticationScheme
+  );
 
   const form = useForm<DataSourceParams>({
     initialValues: {
@@ -54,7 +58,6 @@ export default function BasicDetailsStep({
   });
 
   const onSubmit = async (values: DataSourceParams) => {
-    console.log("authValues:" + JSON.stringify(values));
     try {
       if (areValuesEqual<DataSourceParams>(values, dataSource)) {
         nextStep();
@@ -97,7 +100,11 @@ export default function BasicDetailsStep({
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack>
-        <BasicDetailsInputs form={form} />
+        <BasicDetailsInputs
+          form={form}
+          authenticationScheme={authenticationScheme}
+          setAuthenticationScheme={setAuthenticationScheme}
+        />
         <Divider></Divider>
         <Group position="apart">
           <BackButton onClick={prevStep}></BackButton>

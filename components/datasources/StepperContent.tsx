@@ -9,7 +9,7 @@ import {
   StepperState,
 } from "@/utils/dashboardTypes";
 import { Stack } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SwaggerStep from "./SwaggerStep";
 
 interface StepperContentProps
@@ -49,13 +49,8 @@ export default function StepperContent({
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    console.log("loginEndpointLabel: " + loginEndpointLabel);
-  }, [loginEndpointLabel]);
-
   return (
     <Stack sx={{ width: "100%" }}>
-      {/* {activeStep == 0 && <TempStep></TempStep>} */}
       {activeStep == 0 && (
         <SwaggerStep
           nextStep={nextStep}

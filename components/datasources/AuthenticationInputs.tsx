@@ -1,82 +1,80 @@
-// import NextButton from "@/components/projects/NextButton";
-// import { patchDataSource } from "@/requests/datasources/mutations";
-// import { Endpoint } from "@/requests/datasources/types";
-// import { PatchParams } from "@/requests/types";
-// import { DataSourceStepperProps } from "@/utils/dashboardTypes";
-// import {
-//   Anchor,
-//   Divider,
-//   Flex,
-//   Group,
-//   Select,
-//   Stack,
-//   TextInput,
-// } from "@mantine/core";
-// import { UseFormReturnType, useForm } from "@mantine/form";
-// import { useRouter } from "next/router";
-// import { Dispatch, SetStateAction } from "react";
-// import BackButton from "../projects/BackButton";
-// import { AuthenticationStepParams } from "./AuthenticationStep";
+import { patchDataSource } from "@/requests/datasources/mutations";
+import { Endpoint } from "@/requests/datasources/types";
 
-// export const BasicDetailsInputs = ({
-//     form,
-//   }: {
-//     form: UseFormReturnType<AuthenticationStepParams>;
-//   }) => {
-//     return (
-// <>
-// <Select
-//           label="Login Endpoint (POST)"
-//           description="The endpoint used to login to your API"
-//           placeholder="/v1/login"
-//           searchable
-//           nothingFound="No options"
-//           onChange={(value) => {
-//             setLoginEndpoint(value ?? "");
-//             form.getInputProps("loginEndpointId").onChange(value);
-//           }}
-//           defaultValue={loginEndpointId}
-//           data={postEndpoints}
-//         />
-//         <Select
-//           label="Refresh Endpoint (POST)"
-//           description="The endpoint used to refresh your API token"
-//           placeholder="/v1/login/refresh"
-//           searchable
-//           onChange={(value) => {
-//             setRefreshEndpoint(value ?? "");
-//             form.getInputProps("refreshEndpointId").onChange(value);
-//           }}
-//           defaultValue={refreshEndpointId}
-//           data={postEndpoints}
-//         />
-//         <Select
-//           label="User endpoint (GET)"
-//           description="The endpoint used to user information"
-//           placeholder="/v1/user"
-//           searchable
-//           onChange={(value) => {
-//             setUserEndpoint(value ?? "");
-//             form.getInputProps("userEndpointId").onChange(value);
-//           }}
-//           defaultValue={userEndpointId}
-//           data={getEndpoints}
-//         />
-//         <TextInput
-//           label="Access token property"
-//           description="The property name of the access token in the response"
-//           placeholder="access"
-//           value={accessToken || ""}
-//           onChange={(event) => setAccessToken(event.currentTarget.value)}
-//         />
-//         <TextInput
-//           label="Refresh token property"
-//           description="The property name of the refresh token in the response"
-//           placeholder="refresh"
-//           value={refreshToken || ""}
-//           onChange={(event) => setRefreshToken(event.currentTarget.value)}
-//         />
-//         </>
+export function filterAndMapEndpoints(
+  endpoints: Array<Endpoint> | undefined,
+  methodType: string
+) {
+  if (!endpoints) {
+    return [];
+  }
+  return endpoints
+    .filter((endpoint) => endpoint.methodType === methodType)
+    .map((endpoint) => ({ value: endpoint.id, label: endpoint.relativeUrl }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+}
 
-// );
-// };
+export function validateTokenProperty(
+  name: string,
+  value: string | undefined,
+  relatedId: string | undefined
+) {
+  return relatedId && !value ? `${name} token property is required` : null;
+}
+
+export async function patchDataSourceWithParams(
+  projectId: string,
+  type: string,
+  dataSourceId: string,
+  endpointId: string,
+  token: string | null,
+  endpointType: string
+) {
+  const patchParams = [
+    {
+      op: "replace",
+      path: "/authentication/endpointType",
+      value: endpointType,
+    },
+  ];
+
+  if (token) {
+    patchParams.push({
+      op: "replace",
+      path: "/authentication/tokenKey",
+      value: token,
+    });
+  }
+
+  await patchDataSource(projectId, type, dataSourceId, endpointId, patchParams);
+}
+
+type EndpointSetter = (value: string | null) => void;
+
+export const setEndpoint = (
+  setEndpointId: EndpointSetter,
+  endpoints: { value: string; label: string }[],
+  value: string | null,
+  setEndpointLabel?: EndpointSetter
+) => {
+  setEndpointId(value);
+  const selectedOption = endpoints.find(
+    (option) => option.value === value
+  )?.label;
+  setEndpointLabel && setEndpointLabel(selectedOption as string);
+};
+
+export const getAuthEndpoint = (
+  endpointType: string,
+  endpoints: Endpoint[] | undefined
+) => {
+  return endpoints?.find((d) => d.authentication.endpointType === endpointType);
+};
+
+export type AuthenticationStepParams = {
+  loginEndpointId?: string | undefined;
+  refreshEndpointId?: string | undefined;
+  userEndpointId?: string | undefined;
+  accessToken?: string | undefined;
+  refreshToken?: string | undefined;
+};
