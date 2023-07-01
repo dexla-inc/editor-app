@@ -4,7 +4,7 @@ import { Col, Divider, Grid, Group, Stack, Text } from "@mantine/core";
 import { useRouter } from "next/router";
 import { InformationAlert, WarningAlert } from "../Alerts";
 import BackButton from "../projects/BackButton";
-import EndpointsButton from "./GoToEndpointsButton";
+import EndpointsButton from "./EndpointsButton";
 
 interface AuthenticationStepParams extends DataSourceStepperWithoutNextProps {
   accessToken?: string | null;

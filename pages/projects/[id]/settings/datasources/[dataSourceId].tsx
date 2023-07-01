@@ -11,11 +11,13 @@ import {
   validateBaseUrl,
   validateName,
 } from "@/components/datasources/BasicDetailsInputs";
-import EndpointsButton from "@/components/datasources/GoToEndpointsButton";
+import EndpointsButton from "@/components/datasources/EndpointsButton";
+import SearchableSelectComponent from "@/components/datasources/SelectComponent";
 import {
   SwaggerURLInput,
   validateSwaggerUrl,
 } from "@/components/datasources/SwaggerURLInput";
+import TextInputComponent from "@/components/datasources/TextInputComponent";
 import { updateDataSource } from "@/requests/datasources/mutations";
 import {
   getDataSource,
@@ -35,9 +37,7 @@ import {
   Divider,
   Flex,
   Group,
-  Select,
   Stack,
-  TextInput,
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -66,6 +66,15 @@ export default function Settings() {
   const [authenticationScheme, setAuthenticationScheme] = useState<string>("");
   const [swaggerUrl, setSwaggerUrl] = useState<string>("");
   const [swaggerRefetched, setSwaggerRefetched] = useState<boolean>(false);
+  const [loginEndpointId, setLoginEndpointId] = useState<string | undefined>(
+    undefined
+  );
+  const [refreshEndpointId, setRefreshEndpointId] = useState<
+    string | undefined
+  >(undefined);
+  const [userEndpointId, setUserEndpointId] = useState<string | undefined>(
+    undefined
+  );
 
   const postEndpoints = filterAndMapEndpoints(endpoints, "POST");
   const getEndpoints = filterAndMapEndpoints(endpoints, "GET");
@@ -94,17 +103,17 @@ export default function Settings() {
       const refreshEndpoint = getAuthEndpoint("REFRESH", result.results);
       const userEndpoint = getAuthEndpoint("USER", result.results);
 
-      apiAuthForm.setFieldValue("loginEndpointId", loginEndpoint?.id);
+      setLoginEndpointId(loginEndpoint?.id);
+      setRefreshEndpointId(refreshEndpoint?.id);
+      setUserEndpointId(userEndpoint?.id);
       apiAuthForm.setFieldValue(
         "accessToken",
         loginEndpoint?.authentication.tokenKey
       );
-      apiAuthForm.setFieldValue("refreshEndpointId", refreshEndpoint?.id);
       apiAuthForm.setFieldValue(
         "refreshToken",
         refreshEndpoint?.authentication.tokenKey
       );
-      apiAuthForm.setFieldValue("userEndpointId", userEndpoint?.id);
 
       setEndpoints(result.results);
     };
@@ -311,44 +320,51 @@ export default function Settings() {
           <form onSubmit={apiAuthForm.onSubmit(onApiAuthSubmit)}>
             <Stack py="xl">
               <Title order={3}>Bearer Token Configuration</Title>
-              <Select
+              <SearchableSelectComponent
                 label="Login Endpoint (POST)"
                 description="The endpoint used to login to your API"
                 placeholder="/v1/login"
-                searchable
-                nothingFound="No options"
+                form={apiAuthForm}
+                propertyName="loginEndpointId"
                 data={postEndpoints}
-                {...apiAuthForm.getInputProps("loginEndpointId")}
+                value={loginEndpointId}
+                setProperty={(value) => setLoginEndpointId(value ?? "")}
               />
-              <Select
+              <SearchableSelectComponent
                 label="Refresh Endpoint (POST)"
                 description="The endpoint used to refresh your API token"
                 placeholder="/v1/login/refresh"
-                searchable
-                nothingFound="No options"
-                {...apiAuthForm.getInputProps("refreshEndpointId")}
+                form={apiAuthForm}
+                propertyName="refreshEndpointId"
                 data={postEndpoints}
+                value={refreshEndpointId}
+                setProperty={(value) => setRefreshEndpointId(value ?? "")}
               />
-              <Select
-                label="User endpoint (GET)"
+              <SearchableSelectComponent
+                label="User Endpoint (GET)"
                 description="The endpoint used to user information"
                 placeholder="/v1/user"
-                searchable
-                nothingFound="No options"
-                {...apiAuthForm.getInputProps("userEndpointId")}
+                form={apiAuthForm}
+                propertyName="userEndpointId"
                 data={getEndpoints}
+                value={userEndpointId}
+                setProperty={(value) => setUserEndpointId(value ?? "")}
               />
-              <TextInput
+              <TextInputComponent
                 label="Access token property"
                 description="The property name of the access token in the response"
                 placeholder="access"
-                {...apiAuthForm.getInputProps("accessToken")}
+                form={apiAuthForm}
+                propertyName="accessToken"
+                required={!!loginEndpointId}
               />
-              <TextInput
+              <TextInputComponent
                 label="Refresh token property"
                 description="The property name of the refresh token in the response"
                 placeholder="refresh"
-                {...apiAuthForm.getInputProps("refreshToken")}
+                form={apiAuthForm}
+                propertyName="refreshToken"
+                required={!!refreshEndpointId}
               />
               <Flex>
                 <Button type="submit">Save</Button>

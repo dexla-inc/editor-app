@@ -10,9 +10,23 @@ export function filterAndMapEndpoints(
   }
   return endpoints
     .filter((endpoint) => endpoint.methodType === methodType)
-    .map((endpoint) => ({ value: endpoint.id, label: endpoint.relativeUrl }))
+    .map((endpoint) => ({
+      value: endpoint.id,
+      label: endpoint.relativeUrl,
+      exampleresponse: endpoint.exampleResponse,
+    }))
     .sort((a, b) => a.label.localeCompare(b.label));
 }
+
+// export function mapEndpointExampleResponse(endpoint: Endpoint | undefined) {
+//   return endpoint?.exampleResponse
+//     .map((e) => ({
+//       value: e.name,
+//       label: e.name,
+//       type: e.type,
+//     }))
+//     .sort((a, b) => a.label.localeCompare(b.label));
+// }
 
 export function validateTokenProperty(
   name: string,
@@ -53,15 +67,12 @@ type EndpointSetter = (value: string | null) => void;
 
 export const setEndpoint = (
   setEndpointId: EndpointSetter,
-  endpoints: { value: string; label: string }[],
+  endpoint: { value: string; label: string } | undefined,
   value: string | null,
   setEndpointLabel?: EndpointSetter
 ) => {
   setEndpointId(value);
-  const selectedOption = endpoints.find(
-    (option) => option.value === value
-  )?.label;
-  setEndpointLabel && setEndpointLabel(selectedOption as string);
+  setEndpointLabel && setEndpointLabel(endpoint?.label as string);
 };
 
 export const getAuthEndpoint = (

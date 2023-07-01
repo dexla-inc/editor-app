@@ -42,7 +42,7 @@ export const EditorNavbarDataSourcesSection = () => {
         {dataSources?.results && dataSources.results.length > 0 && (
           <WarningAlert
             isHtml={true}
-            text='<p>It is recommended you change your swagger file and re-import in <a href="#">Datasource settings</a> instead of changing your API here.'
+            text='<p>It is recommended you change your swagger file and re-import in <a href="${onClick}">Datasource settings</a> instead of changing your API here.'
           ></WarningAlert>
         )}
         {dataSources?.results && dataSources.results.length ? (
