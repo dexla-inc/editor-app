@@ -6,6 +6,8 @@ import { getComponentById } from "@/utils/editor";
 import * as SpacingModifier from "@/components/modifiers/Spacing";
 import * as SizeModifier from "@/components/modifiers/Size";
 import * as TextModifier from "@/components/modifiers/Text";
+import * as BorderModifier from "@/components/modifiers/Border";
+import * as LayoutModifier from "@/components/modifiers/Layout";
 
 type SectionsMapper = {
   [key: string]: any;
@@ -15,6 +17,8 @@ const sectionMapper: SectionsMapper = {
   spacing: SpacingModifier,
   size: SizeModifier,
   text: TextModifier,
+  border: BorderModifier,
+  layout: LayoutModifier,
 };
 
 export const EditorAsideSections = () => {
@@ -48,7 +52,7 @@ export const EditorAsideSections = () => {
       id: id,
       label: modifier.label,
       icon: modifier.icon,
-      initiallyOpened: true,
+      initiallyOpened: id === "spacing",
       Component: modifier.Modifier,
     };
   });

@@ -1,25 +1,21 @@
 import { useEditorStore } from "@/stores/editor";
-import { ASIDE_WIDTH } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
-import {
-  Box,
-  Center,
-  Group,
-  NumberInput,
-  NumberInputProps,
-  Stack,
-  Text,
-  useMantineTheme,
-} from "@mantine/core";
+import { Group, SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconBoxMargin } from "@tabler/icons-react";
+import {
+  IconBorderSides,
+  IconBoxModel2,
+  IconSquare,
+} from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
+import { UnitInput } from "@/components/UnitInput";
 
-export const icon = IconBoxMargin;
+export const icon = IconBoxModel2;
 export const label = "Spacing";
 
-const ValueInput = (props: NumberInputProps) => {
+export const Modifier = () => {
+  const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
@@ -27,225 +23,250 @@ const ValueInput = (props: NumberInputProps) => {
     (state) => state.updateTreeComponent
   );
 
-  const debouncedTreeUpdate = debounce(updateTreeComponent, 400);
+  const debouncedTreeUpdate = debounce(updateTreeComponent, 200);
 
-  return (
-    <NumberInput
-      styles={{
-        input: {
-          textAlign: "center",
-          fontSize: 10,
-        },
-      }}
-      variant="unstyled"
-      radius={0}
-      hideControls
-      size="xs"
-      maw={50}
-      {...props}
-      onChange={(value) => {
-        props.onChange?.(value);
-        debouncedTreeUpdate(selectedComponentId as string, {
-          style: { [props.name!]: value },
-        });
-      }}
-    />
-  );
-};
-
-export const Modifier = () => {
-  const theme = useMantineTheme();
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-  const editorTree = useEditorStore((state) => state.tree);
   const selectedComponent = getComponentById(
     editorTree.root,
     selectedComponentId as string
   );
 
+  const componentProps = selectedComponent?.props || {};
+
   const form = useForm({
     initialValues: {
-      marginTop: 0,
-      marginBottom: 0,
-      marginLeft: 0,
-      marginRight: 0,
-      paddingTop: 0,
-      paddingBottom: 0,
-      paddingLeft: 0,
-      paddingRight: 0,
+      showPadding: "padding-sides",
+      padding: "0px",
+      paddingTop: "0px",
+      paddingBottom: "0px",
+      paddingLeft: "0px",
+      paddingRight: "0px",
+
+      showMargin: "margin-sides",
+      margin: "0px",
+      marginTop: "0px",
+      marginBottom: "0px",
+      marginLeft: "0px",
+      marginRight: "0px",
     },
   });
 
   useEffect(() => {
-    if (selectedComponent) {
-      const {
-        marginTop = 0,
-        marginBottom = 0,
-        marginLeft = 0,
-        marginRight = 0,
-        paddingTop = 0,
-        paddingBottom = 0,
-        paddingLeft = 0,
-        paddingRight = 0,
-      } = selectedComponent.props?.style || {};
+    if (selectedComponentId) {
+      const { style = {} } = componentProps;
       form.setValues({
-        marginTop,
-        marginBottom,
-        marginLeft,
-        marginRight,
-        paddingTop,
-        paddingBottom,
-        paddingLeft,
-        paddingRight,
+        padding: style.padding ?? "0px",
+        paddingTop: style.paddingTop ?? "0px",
+        paddingBottom: style.paddingBottom ?? "0px",
+        paddingLeft: style.paddingLeft ?? "0px",
+        paddingRight: style.paddingRight ?? "0px",
+
+        margin: style.margin ?? "0px",
+        marginTop: style.marginTop ?? "0px",
+        marginBottom: style.marginBottom ?? "0px",
+        marginLeft: style.marginLeft ?? "0px",
+        marginRight: style.marginRight ?? "0px",
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  }, [selectedComponentId]);
 
   return (
-    <form>
-      <Box w="100%" pos="relative">
-        <Text
-          pos="absolute"
-          top={14}
-          left={30}
-          size={10}
-          color="teal.6"
-          weight="bold"
-          sx={{ zIndex: 10 }}
-        >
-          Margin
-        </Text>
-        <Text
-          pos="absolute"
-          top={69}
-          left={82}
-          size={10}
-          color="teal.6"
-          weight="bold"
-          sx={{ zIndex: 10 }}
-        >
-          Padding
-        </Text>
-        <Box
-          top={0}
-          left={0}
-          pos="absolute"
-          sx={{
-            height: ASIDE_WIDTH - 32,
-            width: ASIDE_WIDTH - 32,
-            overflow: "hidden",
-            zIndex: 0,
-          }}
-        >
-          <Box
-            component="svg"
-            viewBox="0 0 100 100"
-            sx={{
-              height: "100%",
-              width: "100%",
-              "> polygon": {
-                fill: theme.colors.teal[0],
-                stroke: theme.colors.teal[2],
-                strokeLinejoin: "round",
-                strokeWidth: 0.5,
-              },
-            }}
-          >
-            <polygon points="5,5 50,50 95,5" />
-            <polygon
-              points="5,5 50,50 5,95"
-              style={{ fill: theme.colors.teal[1] }}
+    <form key={selectedComponentId}>
+      <Stack>
+        <Stack spacing={4}>
+          <Text size="0.75rem" weight={500}>
+            Padding
+          </Text>
+          <Group noWrap>
+            <SegmentedControl
+              fullWidth
+              size="sm"
+              w="50%"
+              data={[
+                { label: <IconSquare size={14} />, value: "padding-all" },
+                {
+                  label: <IconBorderSides size={14} />,
+                  value: "padding-sides",
+                },
+              ]}
+              styles={{
+                label: {
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                },
+              }}
+              {...form.getInputProps("showPadding")}
             />
-            <polygon points="5,95 50,50 95,95" />
-            <polygon
-              points="95,5 50,50 95,95"
-              style={{ fill: theme.colors.teal[1] }}
-            />
-            <rect
-              x="25"
-              y="25"
-              width={50}
-              height={50}
-              style={{
-                fill: "none",
-                stroke: theme.colors.teal[3],
-                strokeWidth: 1,
+            <UnitInput
+              {...form.getInputProps("padding")}
+              onChange={(value) => {
+                form.setValues({
+                  padding: value,
+                  paddingTop: value,
+                  paddingBottom: value,
+                  paddingLeft: value,
+                  paddingRight: value,
+                });
+                debouncedTreeUpdate(selectedComponentId as string, {
+                  style: {
+                    paddingTop: value,
+                    paddingBottom: value,
+                    paddingLeft: value,
+                    paddingRight: value,
+                  },
+                });
               }}
             />
-            <rect
-              x="42.5"
-              y="42.5"
-              width={15}
-              height={15}
-              style={{
-                fill: "white",
-                stroke: theme.colors.teal[3],
-                strokeWidth: 1,
+          </Group>
+          {form.values.showPadding === "padding-sides" && (
+            <>
+              <Group noWrap>
+                <UnitInput
+                  label="Top"
+                  {...form.getInputProps("paddingTop")}
+                  onChange={(value) => {
+                    form.setFieldValue("paddingTop", value as string);
+                    debouncedTreeUpdate(selectedComponentId as string, {
+                      style: { paddingTop: value },
+                    });
+                  }}
+                />
+                <UnitInput
+                  label="Bottom"
+                  {...form.getInputProps("paddingBottom")}
+                  onChange={(value) => {
+                    form.setFieldValue("paddingBottom", value as string);
+                    debouncedTreeUpdate(selectedComponentId as string, {
+                      style: { paddingBottom: value },
+                    });
+                  }}
+                />
+              </Group>
+              <Group noWrap>
+                <UnitInput
+                  label="Left"
+                  {...form.getInputProps("paddingLeft")}
+                  onChange={(value) => {
+                    form.setFieldValue("paddingLeft", value as string);
+                    debouncedTreeUpdate(selectedComponentId as string, {
+                      style: { paddingLeft: value },
+                    });
+                  }}
+                />
+                <UnitInput
+                  label="Right"
+                  {...form.getInputProps("paddingRight")}
+                  onChange={(value) => {
+                    form.setFieldValue("paddingRight", value as string);
+                    debouncedTreeUpdate(selectedComponentId as string, {
+                      style: { paddingRight: value },
+                    });
+                  }}
+                />
+              </Group>
+            </>
+          )}
+        </Stack>
+        <Stack spacing={4}>
+          <Text size="0.75rem" weight={500}>
+            Margin
+          </Text>
+          <Group noWrap>
+            <SegmentedControl
+              fullWidth
+              size="sm"
+              w="50%"
+              data={[
+                { label: <IconSquare size={14} />, value: "margin-all" },
+                {
+                  label: <IconBorderSides size={14} />,
+                  value: "margin-sides",
+                },
+              ]}
+              styles={{
+                label: {
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                },
+              }}
+              {...form.getInputProps("showMargin")}
+            />
+            <UnitInput
+              {...form.getInputProps("margin")}
+              onChange={(value) => {
+                form.setValues({
+                  margin: value,
+                  marginTop: value,
+                  marginBottom: value,
+                  marginLeft: value,
+                  marginRight: value,
+                });
+                debouncedTreeUpdate(selectedComponentId as string, {
+                  style: {
+                    marginTop: value,
+                    marginBottom: value,
+                    marginLeft: value,
+                    marginRight: value,
+                  },
+                });
               }}
             />
-          </Box>
-        </Box>
-        <Center>
-          <Box h={ASIDE_WIDTH - 32} w={ASIDE_WIDTH - 32} pt={29}>
-            <Center>
-              <ValueInput
-                name="marginTop"
-                {...form.getInputProps("marginTop")}
-              />
-            </Center>
-            <Group w="100%" position="apart" noWrap spacing={0} px="md">
-              <ValueInput
-                name="marginLeft"
-                {...form.getInputProps("marginLeft")}
-              />
-              <Box w={160} h={150}>
-                <Stack
-                  h="100%"
-                  spacing={4}
-                  sx={{ justifyContent: "center" }}
-                  p={2}
-                >
-                  <Center>
-                    <ValueInput
-                      name="paddingTop"
-                      {...form.getInputProps("paddingTop")}
-                    />
-                  </Center>
-                  <Group w="100%" position="apart">
-                    <ValueInput
-                      name="paddingLeft"
-                      {...form.getInputProps("paddingLeft")}
-                    />
-                    <ValueInput
-                      name="paddingRight"
-                      {...form.getInputProps("paddingRight")}
-                    />
-                  </Group>
-                  <Center>
-                    <ValueInput
-                      name="paddingBottom"
-                      {...form.getInputProps("paddingBottom")}
-                    />
-                  </Center>
-                </Stack>
-              </Box>
-              <ValueInput
-                name="marginRight"
-                {...form.getInputProps("marginRight")}
-              />
-            </Group>
-            <Center>
-              <ValueInput
-                name="marginBottom"
-                {...form.getInputProps("marginBottom")}
-              />
-            </Center>
-          </Box>
-        </Center>
-      </Box>
+          </Group>
+          {form.values.showMargin === "margin-sides" && (
+            <>
+              <Group noWrap>
+                <UnitInput
+                  label="Top"
+                  {...form.getInputProps("marginTop")}
+                  onChange={(value) => {
+                    form.setFieldValue("marginTop", value as string);
+                    debouncedTreeUpdate(selectedComponentId as string, {
+                      style: { marginTop: value },
+                    });
+                  }}
+                />
+                <UnitInput
+                  label="Bottom"
+                  {...form.getInputProps("marginBottom")}
+                  onChange={(value) => {
+                    form.setFieldValue("marginBottom", value as string);
+                    debouncedTreeUpdate(selectedComponentId as string, {
+                      style: { marginBottom: value },
+                    });
+                  }}
+                />
+              </Group>
+              <Group noWrap>
+                <UnitInput
+                  label="Left"
+                  {...form.getInputProps("marginLeft")}
+                  onChange={(value) => {
+                    form.setFieldValue("marginLeft", value as string);
+                    debouncedTreeUpdate(selectedComponentId as string, {
+                      style: { marginLeft: value },
+                    });
+                  }}
+                />
+                <UnitInput
+                  label="Right"
+                  {...form.getInputProps("marginRight")}
+                  onChange={(value) => {
+                    form.setFieldValue("marginRight", value as string);
+                    debouncedTreeUpdate(selectedComponentId as string, {
+                      style: { marginRight: value },
+                    });
+                  }}
+                />
+              </Group>
+            </>
+          )}
+        </Stack>
+      </Stack>
     </form>
   );
 };

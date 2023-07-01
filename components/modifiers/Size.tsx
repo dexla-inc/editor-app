@@ -34,6 +34,8 @@ export const Modifier = () => {
       height: "",
       minWidth: "",
       minHeight: "",
+      maxWidth: "",
+      maxHeight: "",
     },
   });
 
@@ -89,6 +91,28 @@ export const Modifier = () => {
               form.setFieldValue("minHeight", value as string);
               debouncedTreeUpdate(selectedComponentId as string, {
                 style: { minHeight: value },
+              });
+            }}
+          />
+        </Group>
+        <Group noWrap>
+          <UnitInput
+            label="Max Width"
+            {...form.getInputProps("maxWidth")}
+            onChange={(value) => {
+              form.setFieldValue("maxWidth", value as string);
+              debouncedTreeUpdate(selectedComponentId as string, {
+                style: { maxWidth: value },
+              });
+            }}
+          />
+          <UnitInput
+            label="Max Height"
+            {...form.getInputProps("maxHeight")}
+            onChange={(value) => {
+              form.setFieldValue("maxHeight", value as string);
+              debouncedTreeUpdate(selectedComponentId as string, {
+                style: { maxHeight: value },
               });
             }}
           />
