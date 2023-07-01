@@ -5,20 +5,15 @@ import {
   setEndpoint,
   validateTokenProperty,
 } from "@/components/datasources/AuthenticationInputs";
+import SearchableSelectComponent from "@/components/datasources/SelectComponent";
+import TextInputComponent from "@/components/datasources/TextInputComponent";
 import NextButton from "@/components/projects/NextButton";
-import { Endpoint } from "@/requests/datasources/types";
+import { Endpoint, ExampleResponse } from "@/requests/datasources/types";
 import { DataSourceStepperProps } from "@/utils/dashboardTypes";
-import {
-  Anchor,
-  Divider,
-  Flex,
-  Group,
-  Select,
-  Stack,
-  TextInput,
-} from "@mantine/core";
+import { Anchor, Divider, Flex, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import BackButton from "../projects/BackButton";
 
 interface AuthenticationStepProps extends DataSourceStepperProps {
@@ -63,6 +58,13 @@ export default function AuthenticationStep({
 }: AuthenticationStepProps) {
   const router = useRouter();
   const projectId = router.query.id as string;
+  const [exampleResponse, setExampleResponse] = useState<
+    ExampleResponse[] | undefined
+  >(undefined);
+
+  useEffect(() => {
+    console.log("exampleResponse:" + JSON.stringify(exampleResponse));
+  }, [exampleResponse]);
 
   const form = useForm<AuthenticationStepParams>({
     validateInputOnBlur: true,
@@ -162,25 +164,42 @@ export default function AuthenticationStep({
   };
 
   const setLoginEndpoint = (value: string) => {
+    const selectedEndpoint = postEndpoints.find(
+      (option) => option.value === value
+    );
+
     setEndpoint(
       setLoginEndpointId,
-      postEndpoints,
+      selectedEndpoint,
       value,
       setLoginEndpointLabel
     );
+
+    //setExampleResponse(selectedEndpoint?.exampleresponse);
   };
 
   const setRefreshEndpoint = (value: string | null) => {
+    const selectedEndpoint = postEndpoints.find(
+      (option) => option.value === value
+    );
     setEndpoint(
       setRefreshEndpointId,
-      postEndpoints,
+      selectedEndpoint,
       value,
       setRefreshEndpointLabel
     );
   };
 
   const setUserEndpoint = (value: string | null) => {
-    setEndpoint(setUserEndpointId, getEndpoints, value, setUserEndpointLabel);
+    const selectedEndpoint = getEndpoints.find(
+      (option) => option.value === value
+    );
+    setEndpoint(
+      setUserEndpointId,
+      selectedEndpoint,
+      value,
+      setUserEndpointLabel
+    );
   };
 
   return (
@@ -189,66 +208,103 @@ export default function AuthenticationStep({
       onError={(error) => console.log(error)}
     >
       <Stack>
-        <Select
-          label="Login Endpoint (POST)"
-          description="The endpoint used to login to your API"
-          placeholder="/v1/login"
-          searchable
-          nothingFound="No options"
-          onChange={(value) => {
-            setLoginEndpoint(value ?? "");
-            form.getInputProps("loginEndpointId").onChange(value);
-          }}
-          defaultValue={loginEndpointId}
-          data={postEndpoints}
-        />
-        <Select
-          label="Refresh Endpoint (POST)"
-          description="The endpoint used to refresh your API token"
-          placeholder="/v1/login/refresh"
-          searchable
-          onChange={(value) => {
-            setRefreshEndpoint(value ?? "");
-            form.getInputProps("refreshEndpointId").onChange(value);
-          }}
-          defaultValue={refreshEndpointId}
-          data={postEndpoints}
-        />
-        <Select
-          label="User endpoint (GET)"
-          description="The endpoint used to user information"
-          placeholder="/v1/user"
-          searchable
-          onChange={(value) => {
-            setUserEndpoint(value ?? "");
-            form.getInputProps("userEndpointId").onChange(value);
-          }}
-          defaultValue={userEndpointId}
-          data={getEndpoints}
-        />
-        <TextInput
+        {dataSource?.swaggerUrl ? (
+          <>
+            <SearchableSelectComponent
+              label="Login Endpoint (POST)"
+              description="The endpoint used to login to your API"
+              placeholder="/v1/login"
+              value={loginEndpointId}
+              form={form}
+              propertyName="loginEndpointId"
+              data={postEndpoints}
+              setProperty={(value) => setLoginEndpoint(value ?? "")}
+            />
+            <SearchableSelectComponent
+              label="Refresh Endpoint (POST)"
+              description="The endpoint used to refresh your API token"
+              placeholder="/v1/login/refresh"
+              value={refreshEndpointId}
+              form={form}
+              propertyName="refreshEndpointId"
+              data={postEndpoints}
+              setProperty={(value) => setRefreshEndpoint(value ?? "")}
+            />
+            <SearchableSelectComponent
+              label="User Endpoint (GET)"
+              description="The endpoint used to user information"
+              placeholder="/v1/user"
+              value={userEndpointId}
+              form={form}
+              propertyName="userEndpointId"
+              data={getEndpoints}
+              setProperty={(value) => setUserEndpoint(value ?? "")}
+            />
+          </>
+        ) : (
+          <>
+            <TextInputComponent
+              label="Login Endpoint (POST)"
+              description="The endpoint used to login to your API"
+              placeholder="/v1/login"
+              value={loginEndpointId}
+              form={form}
+              propertyName="loginEndpointId"
+              setProperty={(value) => setLoginEndpoint(value ?? "")}
+            />
+            <TextInputComponent
+              label="Refresh Endpoint (POST)"
+              description="The endpoint used to refresh your API token"
+              placeholder="/v1/login/refresh"
+              value={refreshEndpointId}
+              form={form}
+              propertyName="refreshEndpointId"
+              setProperty={(value) => setRefreshEndpoint(value ?? "")}
+            />
+
+            <TextInputComponent
+              label="User Endpoint (GET)"
+              description="The endpoint used to user information"
+              placeholder="/v1/user"
+              value={userEndpointId}
+              form={form}
+              propertyName="userEndpointId"
+              setProperty={(value) => setUserEndpoint(value ?? "")}
+            />
+          </>
+        )}
+        {/* {dataSource?.swaggerUrl && loginEndpointId ? (
+          <SearchableSelectComponent
+            label="Access token property"
+            description="The property name of the access token in the response"
+            placeholder="access"
+            value={accessToken}
+            form={form}
+            propertyName="accessToken"
+            data={exampleResponse ?? []}
+            setProperty={setAccessToken}
+          />
+        ) : ( */}
+        <TextInputComponent
           label="Access token property"
           description="The property name of the access token in the response"
           placeholder="access"
-          value={accessToken || ""}
-          onChange={(event) => {
-            setAccessToken(event.currentTarget.value);
-            form
-              .getInputProps("accessToken")
-              .onChange(event.currentTarget.value);
-          }}
+          form={form}
+          propertyName="accessToken"
+          value={accessToken}
+          setProperty={setAccessToken}
+          required={!!loginEndpointId}
         />
-        <TextInput
+        {/* )} */}
+        <TextInputComponent
           label="Refresh token property"
           description="The property name of the refresh token in the response"
           placeholder="refresh"
-          value={refreshToken || ""}
-          onChange={(event) => {
-            setRefreshToken(event.currentTarget.value);
-            form
-              .getInputProps("refreshToken")
-              .onChange(event.currentTarget.value);
-          }}
+          form={form}
+          propertyName="refreshToken"
+          value={refreshToken}
+          setProperty={setRefreshToken}
+          required={!!refreshEndpointId}
         />
         <Divider></Divider>
         <Group position="apart">

@@ -85,7 +85,7 @@ type RequestBody = {
   description: string | null;
 };
 
-type ExampleResponse = {
+export type ExampleResponse = {
   value: any | null;
   children: ExampleResponse[];
   name: string;
