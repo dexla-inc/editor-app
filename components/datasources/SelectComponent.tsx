@@ -11,6 +11,7 @@ interface SearchableSelectComponentProps<TForm> {
   data: ReadonlyArray<string | any>;
   value?: any;
   setProperty?: (value: string | null) => void;
+  nothingFoundText?: string;
 }
 
 export default function SearchableSelectComponent<TForm>({
@@ -22,6 +23,7 @@ export default function SearchableSelectComponent<TForm>({
   propertyName,
   data,
   setProperty,
+  nothingFoundText,
 }: SearchableSelectComponentProps<TForm>) {
   const { value: formValue, ...inputProps } = form.getInputProps(propertyName);
 
@@ -31,7 +33,7 @@ export default function SearchableSelectComponent<TForm>({
       description={description}
       placeholder={placeholder}
       searchable
-      nothingFound="No options"
+      nothingFound={nothingFoundText ?? "No options"}
       data={data}
       {...(setProperty
         ? {
