@@ -28,7 +28,13 @@ export const getDataSourceEndpoints = async (
   projectId: string,
   type: string,
   id: string,
-  { authOnly, methodType, search, offset, limit }: DataSourceEndpointsListParams
+  {
+    authOnly,
+    methodType,
+    search,
+    offset,
+    limit,
+  }: DataSourceEndpointsListParams = {}
 ) => {
   let url = `/projects/${projectId}/datasources/${type}/${id}/endpoints`;
 
@@ -44,6 +50,23 @@ export const getDataSourceEndpoints = async (
 
 export const getDataSource = async (projectId: string, id: string) => {
   let url = `/projects/${projectId}/datasources/${id}`;
+
+  const response = (await get<DataSourceResponse>(
+    url,
+    {}
+  )) as DataSourceResponse;
+
+  return response;
+};
+
+export const getSwagger = async (
+  projectId: string,
+  id: string,
+  swaggerUrl: string
+) => {
+  let url = `/projects/${projectId}/datasources/${id}/swagger`;
+
+  url += buildQueryString({ swaggerUrl });
 
   const response = (await get<DataSourceResponse>(
     url,

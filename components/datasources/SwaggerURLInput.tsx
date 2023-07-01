@@ -14,20 +14,38 @@ export function validateSwaggerUrl(value: string | undefined) {
     return null;
   }
 }
+type SwaggerURLInputProps = {
+  isLoading: boolean;
+} & (
+  | {
+      form: UseFormReturnType<DataSourceParams>;
+      swaggerUrl?: never;
+      setSwaggerUrl?: never;
+    }
+  | {
+      form?: never;
+      swaggerUrl: string;
+      setSwaggerUrl: (swaggerUrl: string) => void;
+    }
+);
 
 export const SwaggerURLInput = ({
   isLoading,
   form,
-}: {
-  isLoading: boolean;
-  form: UseFormReturnType<DataSourceParams>;
-}) => {
+  swaggerUrl,
+  setSwaggerUrl,
+}: SwaggerURLInputProps) => {
   return (
     <TextInput
       label="Swagger URL"
       description="Enter the URL of your Open API Swagger definition in JSON or YAML format so we can fetch your API endpoints, e.g. https://petstore.swagger.io/v2/swagger.json."
       placeholder="https://petstore.swagger.io/v2/swagger.json"
-      {...form.getInputProps("swaggerUrl")}
+      {...(form
+        ? form.getInputProps("swaggerUrl")
+        : {
+            value: swaggerUrl,
+            onChange: (e) => setSwaggerUrl(e.target.value),
+          })}
       rightSection={isLoading && <Loader size="xs" />}
       disabled={isLoading}
     />

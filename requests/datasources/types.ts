@@ -54,6 +54,12 @@ export type Endpoint = {
   parameters: Parameter[];
   requestBody: RequestBody[];
   exampleResponse: ExampleResponse[];
+  authentication: AuthenticationEndpoint;
+};
+
+type AuthenticationEndpoint = {
+  endpointType: string;
+  tokenKey: string;
 };
 
 type Header = {

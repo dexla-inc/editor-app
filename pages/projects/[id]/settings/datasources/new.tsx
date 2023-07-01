@@ -4,7 +4,7 @@ import StepperContent from "@/components/datasources/StepperContent";
 import { StepperStepProps } from "@/utils/dashboardTypes";
 import { Container, Stack, Title } from "@mantine/core";
 import { useAuthInfo } from "@propelauth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Settings() {
   const authInfo = useAuthInfo();
@@ -16,10 +16,6 @@ export default function Settings() {
     setActiveStep((current) => (current < 3 ? current + 1 : current));
   const prevStep = () =>
     setActiveStep((current) => (current > 0 ? current - 1 : current));
-
-  useEffect(() => {
-    console.log("activeStep change: " + activeStep);
-  }, [activeStep]);
 
   const stepLabels: StepperStepProps[] = [
     {

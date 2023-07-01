@@ -1,7 +1,12 @@
+import {
+  AuthenticationStepParams,
+  filterAndMapEndpoints,
+  patchDataSourceWithParams,
+  setEndpoint,
+  validateTokenProperty,
+} from "@/components/datasources/AuthenticationInputs";
 import NextButton from "@/components/projects/NextButton";
-import { patchDataSource } from "@/requests/datasources/mutations";
 import { Endpoint } from "@/requests/datasources/types";
-import { PatchParams } from "@/requests/types";
 import { DataSourceStepperProps } from "@/utils/dashboardTypes";
 import {
   Anchor,
@@ -14,21 +19,12 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
-import { Dispatch, SetStateAction } from "react";
 import BackButton from "../projects/BackButton";
-
-export type AuthenticationStepParams = {
-  loginEndpointId?: string | undefined;
-  refreshEndpointId?: string | undefined;
-  userEndpointId?: string | undefined;
-  accessToken?: string | undefined;
-  refreshToken?: string | undefined;
-};
 
 interface AuthenticationStepProps extends DataSourceStepperProps {
   endpoints: Array<Endpoint> | undefined;
   loginEndpointId: string | null;
-  setLoginEndpointId: Dispatch<SetStateAction<string | null>>;
+  setLoginEndpointId: (loginEndpointId: string | null) => void;
   refreshEndpointId: string | null;
   setRefreshEndpointId: (refreshEndpointId: string | null) => void;
   userEndpointId: string | null;
@@ -46,6 +42,7 @@ export default function AuthenticationStep({
   prevStep,
   nextStep,
   isLoading,
+  setIsLoading,
   startLoading,
   stopLoading,
   dataSource,
@@ -68,6 +65,7 @@ export default function AuthenticationStep({
   const projectId = router.query.id as string;
 
   const form = useForm<AuthenticationStepParams>({
+    validateInputOnBlur: true,
     initialValues: {
       loginEndpointId: undefined,
       refreshEndpointId: undefined,
@@ -75,42 +73,23 @@ export default function AuthenticationStep({
       accessToken: undefined,
       refreshToken: undefined,
     },
-    //validate: {
-    // accessToken: (value, values) => {
-    //   return values.loginEndpointId && values.refreshEndpointId && !value
-    //     ? "Access token property is required"
-    //     : null;
-    // },
-    // refreshToken: (value, values) => {
-    //   return values.loginEndpointId && values.refreshEndpointId && !value
-    //     ? "Refresh token property is required"
-    //     : null;
-    // },
-    // },
+    validate: {
+      accessToken: (value, values) =>
+        validateTokenProperty("Access", value, values.loginEndpointId),
+      refreshToken: (value, values) =>
+        validateTokenProperty("Refresh", value, values.refreshEndpointId),
+    },
   });
 
-  const postEndpoints = [
-    ...(
-      endpoints
-        ?.filter((c) => c.methodType === "POST")
-        .map((c) => ({ value: c.id, label: c.relativeUrl })) || []
-    ).sort((a, b) => a.label.localeCompare(b.label)),
-  ];
-
-  const getEndpoints = [
-    ...(
-      endpoints
-        ?.filter((c) => c.methodType === "GET")
-        .map((c) => ({ value: c.id, label: c.relativeUrl })) || []
-    ).sort((a, b) => a.label.localeCompare(b.label)),
-  ];
+  const postEndpoints = filterAndMapEndpoints(endpoints, "POST");
+  const getEndpoints = filterAndMapEndpoints(endpoints, "GET");
 
   const onSubmit = async (values: AuthenticationStepParams) => {
     try {
       form.validate();
 
       if (Object.keys(form.errors).length > 0) {
-        console.log(form.errors);
+        console.log("Errors: " + form.errors);
         return;
       }
 
@@ -119,10 +98,12 @@ export default function AuthenticationStep({
       }
 
       startLoading({
-        id: "creating",
+        id: "updating",
         title: "Updating Data Source",
         message: "Wait while your data source is being saved",
       });
+
+      setIsLoading && setIsLoading(true);
 
       const {
         loginEndpointId,
@@ -132,112 +113,81 @@ export default function AuthenticationStep({
         refreshToken,
       } = values;
 
+      console.log("authsteploginEndpointId: " + loginEndpointId);
+      console.log("authstepaccessToken: " + accessToken);
       if (loginEndpointId !== undefined && accessToken !== undefined) {
-        const loginPatchParams: PatchParams[] = [
-          {
-            op: "replace",
-            path: "/authentication/endpointType",
-            value: "ACCESS",
-          },
-          {
-            op: "replace",
-            path: "/authentication/tokenKey",
-            value: accessToken,
-          },
-        ];
-
-        await patchDataSource(
+        await patchDataSourceWithParams(
           projectId,
           dataSource.type,
           dataSource.id,
           loginEndpointId,
-          loginPatchParams
+          accessToken,
+          "ACCESS"
         );
       }
 
       if (refreshEndpointId !== undefined && refreshToken !== undefined) {
-        const refreshPatchParams: PatchParams[] = [
-          {
-            op: "replace",
-            path: "/authentication/endpointType",
-            value: "REFRESH",
-          },
-          {
-            op: "replace",
-            path: "/authentication/tokenKey",
-            value: refreshToken,
-          },
-        ];
-
-        await patchDataSource(
+        await patchDataSourceWithParams(
           projectId,
           dataSource.type,
           dataSource.id,
           refreshEndpointId,
-          refreshPatchParams
+          refreshToken,
+          "REFRESH"
         );
       }
 
       if (userEndpointId) {
-        const getUserPatchParams: PatchParams[] = [
-          {
-            op: "replace",
-            path: "/authentication/endpointType",
-            value: "USER",
-          },
-        ];
-
-        await patchDataSource(
+        await patchDataSourceWithParams(
           projectId,
           dataSource.type,
           dataSource.id,
           userEndpointId,
-          getUserPatchParams
+          null,
+          "USER"
         );
       }
 
       nextStep();
 
       stopLoading({
-        id: "creating",
+        id: "updating",
         title: "Data Source Saved",
         message: "The data source was saved successfully",
       });
+      setIsLoading && setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
   };
 
   const setLoginEndpoint = (value: string) => {
-    console.log("value setLoginEndpoint:" + value);
-    setLoginEndpointId(value);
-    const selectedOption = postEndpoints.find(
-      (option) => option.value === value
-    )?.label;
-    console.log("selectedOption:" + selectedOption);
-    setLoginEndpointLabel(selectedOption as string);
+    setEndpoint(
+      setLoginEndpointId,
+      postEndpoints,
+      value,
+      setLoginEndpointLabel
+    );
   };
 
   const setRefreshEndpoint = (value: string | null) => {
-    setRefreshEndpointId(value);
-    const selectedOption = postEndpoints.find(
-      (option) => option.value === value
-    )?.label;
-
-    setRefreshEndpointLabel(selectedOption as string);
+    setEndpoint(
+      setRefreshEndpointId,
+      postEndpoints,
+      value,
+      setRefreshEndpointLabel
+    );
   };
 
   const setUserEndpoint = (value: string | null) => {
-    setUserEndpointId(value);
-    const selectedOption = getEndpoints.find(
-      (option) => option.value === value
-    )?.label;
-
-    setUserEndpointLabel(selectedOption as string);
+    setEndpoint(setUserEndpointId, getEndpoints, value, setUserEndpointLabel);
   };
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
+    <form
+      onSubmit={form.onSubmit(onSubmit)}
+      onError={(error) => console.log(error)}
+    >
       <Stack>
         <Select
           label="Login Endpoint (POST)"
@@ -281,22 +231,34 @@ export default function AuthenticationStep({
           description="The property name of the access token in the response"
           placeholder="access"
           value={accessToken || ""}
-          onChange={(event) => setAccessToken(event.currentTarget.value)}
+          onChange={(event) => {
+            setAccessToken(event.currentTarget.value);
+            form
+              .getInputProps("accessToken")
+              .onChange(event.currentTarget.value);
+          }}
         />
         <TextInput
           label="Refresh token property"
           description="The property name of the refresh token in the response"
           placeholder="refresh"
           value={refreshToken || ""}
-          onChange={(event) => setRefreshToken(event.currentTarget.value)}
+          onChange={(event) => {
+            setRefreshToken(event.currentTarget.value);
+            form
+              .getInputProps("refreshToken")
+              .onChange(event.currentTarget.value);
+          }}
         />
         <Divider></Divider>
         <Group position="apart">
           <BackButton onClick={prevStep}></BackButton>
           <Flex gap="lg" align="end">
-            <Anchor onClick={nextStep}>
-              Skip, I use an external auth provider
-            </Anchor>
+            {!isLoading && (
+              <Anchor onClick={nextStep}>
+                Skip, I use an external auth provider
+              </Anchor>
+            )}
             <NextButton
               isLoading={isLoading}
               disabled={isLoading}

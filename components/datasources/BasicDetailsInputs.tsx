@@ -25,13 +25,17 @@ export function validateName(value: string | undefined) {
 
 export const BasicDetailsInputs = ({
   form,
+  authenticationScheme,
+  setAuthenticationScheme,
 }: {
   form: UseFormReturnType<DataSourceParams>;
+  authenticationScheme?: string;
+  setAuthenticationScheme?: (value: string) => void;
 }) => {
   return (
     <>
       <TextInput
-        label="Name"
+        label="API Description"
         description="The name of your API."
         placeholder="Internal API"
         {...form.getInputProps("name")}
@@ -56,13 +60,17 @@ export const BasicDetailsInputs = ({
         label="Authentication Scheme"
         description="The scheme used to authenticate endpoints"
         placeholder="Select an authentication scheme"
+        value={authenticationScheme}
+        onChange={(value) => {
+          setAuthenticationScheme && setAuthenticationScheme(value as string);
+          form.getInputProps("authenticationScheme");
+        }}
         data={[
           { value: "NONE", label: "None" },
           { value: "BEARER", label: "Bearer" },
           { value: "BASIC", label: "Basic" },
           { value: "API_KEY", label: "API Key" },
         ]}
-        {...form.getInputProps("authenticationScheme")}
       />
     </>
   );
