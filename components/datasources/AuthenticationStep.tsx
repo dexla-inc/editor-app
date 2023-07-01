@@ -1,6 +1,8 @@
 import {
   AuthenticationStepParams,
+  ExampleResponseDropdown,
   filterAndMapEndpoints,
+  mapEndpointExampleResponse,
   patchDataSourceWithParams,
   setEndpoint,
   validateTokenProperty,
@@ -8,12 +10,11 @@ import {
 import SearchableSelectComponent from "@/components/datasources/SelectComponent";
 import TextInputComponent from "@/components/datasources/TextInputComponent";
 import NextButton from "@/components/projects/NextButton";
-import { Endpoint, ExampleResponse } from "@/requests/datasources/types";
+import { Endpoint } from "@/requests/datasources/types";
 import { DataSourceStepperProps } from "@/utils/dashboardTypes";
 import { Anchor, Divider, Flex, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import BackButton from "../projects/BackButton";
 
 interface AuthenticationStepProps extends DataSourceStepperProps {
@@ -31,6 +32,10 @@ interface AuthenticationStepProps extends DataSourceStepperProps {
   setLoginEndpointLabel: (loginEndpointLabel: string | null) => void;
   setRefreshEndpointLabel: (refreshEndpointLabel: string | null) => void;
   setUserEndpointLabel: (userEndpointLabel: string | null) => void;
+  exampleResponse: ExampleResponseDropdown[] | undefined;
+  setExampleResponse: (
+    exampleResponse: ExampleResponseDropdown[] | undefined
+  ) => void;
 }
 
 export default function AuthenticationStep({
@@ -55,16 +60,11 @@ export default function AuthenticationStep({
   setAccessToken,
   refreshToken,
   setRefreshToken,
+  setExampleResponse,
+  exampleResponse,
 }: AuthenticationStepProps) {
   const router = useRouter();
   const projectId = router.query.id as string;
-  const [exampleResponse, setExampleResponse] = useState<
-    ExampleResponse[] | undefined
-  >(undefined);
-
-  useEffect(() => {
-    console.log("exampleResponse:" + JSON.stringify(exampleResponse));
-  }, [exampleResponse]);
 
   const form = useForm<AuthenticationStepParams>({
     validateInputOnBlur: true,
@@ -115,8 +115,6 @@ export default function AuthenticationStep({
         refreshToken,
       } = values;
 
-      console.log("authsteploginEndpointId: " + loginEndpointId);
-      console.log("authstepaccessToken: " + accessToken);
       if (loginEndpointId !== undefined && accessToken !== undefined) {
         await patchDataSourceWithParams(
           projectId,
@@ -168,14 +166,17 @@ export default function AuthenticationStep({
       (option) => option.value === value
     );
 
+    const result = mapEndpointExampleResponse(
+      selectedEndpoint?.exampleresponse
+    );
+    setExampleResponse(result);
+
     setEndpoint(
       setLoginEndpointId,
       selectedEndpoint,
       value,
       setLoginEndpointLabel
     );
-
-    //setExampleResponse(selectedEndpoint?.exampleresponse);
   };
 
   const setRefreshEndpoint = (value: string | null) => {
@@ -273,7 +274,7 @@ export default function AuthenticationStep({
             />
           </>
         )}
-        {/* {dataSource?.swaggerUrl && loginEndpointId ? (
+        {dataSource?.swaggerUrl && loginEndpointId ? (
           <SearchableSelectComponent
             label="Access token property"
             description="The property name of the access token in the response"
@@ -283,29 +284,44 @@ export default function AuthenticationStep({
             propertyName="accessToken"
             data={exampleResponse ?? []}
             setProperty={setAccessToken}
+            nothingFoundText="Not found. Update your swagger to include the response property"
           />
-        ) : ( */}
-        <TextInputComponent
-          label="Access token property"
-          description="The property name of the access token in the response"
-          placeholder="access"
-          form={form}
-          propertyName="accessToken"
-          value={accessToken}
-          setProperty={setAccessToken}
-          required={!!loginEndpointId}
-        />
-        {/* )} */}
-        <TextInputComponent
-          label="Refresh token property"
-          description="The property name of the refresh token in the response"
-          placeholder="refresh"
-          form={form}
-          propertyName="refreshToken"
-          value={refreshToken}
-          setProperty={setRefreshToken}
-          required={!!refreshEndpointId}
-        />
+        ) : (
+          <TextInputComponent
+            label="Access token property"
+            description="The property name of the access token in the response"
+            placeholder="access"
+            form={form}
+            propertyName="accessToken"
+            value={accessToken}
+            setProperty={setAccessToken}
+            required={!!loginEndpointId}
+          />
+        )}
+        {dataSource?.swaggerUrl && refreshEndpointId ? (
+          <SearchableSelectComponent
+            label="Refresh token property"
+            description="The property name of the refresh token in the response"
+            placeholder="refresh"
+            value={refreshToken}
+            form={form}
+            propertyName="refreshToken"
+            data={exampleResponse ?? []}
+            setProperty={setRefreshToken}
+            nothingFoundText="Not found. Update your swagger to include the response property"
+          />
+        ) : (
+          <TextInputComponent
+            label="Refresh token property"
+            description="The property name of the refresh token in the response"
+            placeholder="refresh"
+            form={form}
+            propertyName="refreshToken"
+            value={refreshToken}
+            setProperty={setRefreshToken}
+            required={!!refreshEndpointId}
+          />
+        )}
         <Divider></Divider>
         <Group position="apart">
           <BackButton onClick={prevStep}></BackButton>
