@@ -2,7 +2,6 @@ import { getPageList } from "@/requests/pages/queries";
 import { PageResponse } from "@/requests/pages/types";
 import { deleteProject } from "@/requests/projects/mutations";
 import { ProjectResponse } from "@/requests/projects/queries";
-import { useAppStore } from "@/stores/app";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
   Box,
@@ -25,14 +24,13 @@ import {
   IconSettings,
   IconTrash,
 } from "@tabler/icons-react";
-import { useRouter } from "next/router";
+import Link from "next/link";
 import { useState } from "react";
 
 type ProjectItemProps = {
   project: ProjectResponse;
   theme: MantineTheme;
   buttonHoverStyles: any;
-  isLoading: boolean;
   goToEditor: (projectId: string, pageId: string) => Promise<void>;
   onDeleteProject: (id: string) => void;
 };
@@ -41,7 +39,6 @@ export function ProjectItem({
   project,
   theme,
   buttonHoverStyles,
-  isLoading,
   goToEditor,
   onDeleteProject,
 }: ProjectItemProps) {
@@ -62,19 +59,6 @@ export function ProjectItem({
   const getPages = async () => {
     const pages = await getPageList(project.id);
     setPages(pages.results);
-  };
-
-  const router = useRouter();
-  const startLoading = useAppStore((state) => state.startLoading);
-
-  const goToSettings = async (projectId: string) => {
-    startLoading({
-      id: "go-to-settings",
-      title: "Loading Settings",
-      message: "Wait while we load the settings for your project",
-    });
-
-    router.push(`/projects/${projectId}/settings`);
   };
 
   const deleteProjectFn = async () => {
@@ -173,7 +157,8 @@ export function ProjectItem({
               </Collapse>
               <Menu.Item
                 icon={<IconSettings size={ICON_SIZE} />}
-                onClick={() => goToSettings(project.id)}
+                component={Link}
+                href={`/projects/${project.id}/settings`}
               >
                 Settings
               </Menu.Item>

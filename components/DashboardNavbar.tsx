@@ -1,5 +1,4 @@
 import NavigationAvatarFooter from "@/components/NavigationAvatarFooter";
-import { useAppStore } from "@/stores/app";
 import { HEADER_HEIGHT, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
 import { NavbarTypes } from "@/utils/dashboardTypes";
 import { Box, Button, Menu, NavLink, Navbar, ScrollArea } from "@mantine/core";
@@ -10,6 +9,7 @@ import {
   IconLogout,
   IconSettings,
 } from "@tabler/icons-react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 type DashboardNavbarProps = {
@@ -25,7 +25,6 @@ export default function DashboardNavbar({
   navbarType,
 }: DashboardNavbarProps) {
   const logout = useLogoutFunction();
-  const startLoading = useAppStore((state) => state.startLoading);
   const router = useRouter();
   const projectId = router.query.id as string;
 
@@ -41,14 +40,14 @@ export default function DashboardNavbar({
           {navbarType === "project" && (
             <>
               <Button
-                onClick={() => router.push(`/projects`)}
-                variant="default"
-                m="sm"
+                component={Link}
+                href="/projects"
+                variant="subtle"
                 leftIcon={<IconArrowLeft size={ICON_SIZE} stroke={1.5} />}
+                sx={{ margin: 10 }}
               >
                 Back
               </Button>
-
               <NavLink
                 label="Settings"
                 childrenOffset={10}
@@ -57,7 +56,8 @@ export default function DashboardNavbar({
               >
                 <NavLink
                   label="General"
-                  onClick={() => router.push(`/projects/${projectId}/settings`)}
+                  component={Link}
+                  href={`/projects/${projectId}/settings`}
                   icon={<IconSettings size={ICON_SIZE} />}
                   variant="subtle"
                   active={router.pathname === "/projects/[id]/settings"}
@@ -65,9 +65,8 @@ export default function DashboardNavbar({
                 />
                 <NavLink
                   label="Data Sources"
-                  onClick={() =>
-                    router.push(`/projects/${projectId}/settings/datasources`)
-                  }
+                  component={Link}
+                  href={`/projects/${projectId}/settings/datasources`}
                   variant="subtle"
                   icon={<IconDatabase size={ICON_SIZE} />}
                   active={router.pathname.startsWith(

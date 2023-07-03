@@ -52,7 +52,6 @@ export function validateTokenProperty(
 
 export async function patchDataSourceWithParams(
   projectId: string,
-  type: string,
   dataSourceId: string,
   endpointId: string,
   token: string | null,
@@ -74,7 +73,7 @@ export async function patchDataSourceWithParams(
     });
   }
 
-  await patchDataSource(projectId, type, dataSourceId, endpointId, patchParams);
+  await patchDataSource(projectId, dataSourceId, endpointId, patchParams);
 }
 
 type EndpointSetter = (value: string | null) => void;
@@ -118,137 +117,3 @@ export const setExampleResponseObject = (
   const result = mapEndpointExampleResponse(selectedEndpoint?.exampleresponse);
   setExampleResponse(result);
 };
-
-// export type AuthenticationInputProps = {
-//   form: UseFormReturnType<AuthenticationStepParams>;
-//   authenticationScheme?: string;
-//   setAuthenticationScheme?: (value: string) => void;
-//   loginEndpointId: string | null;
-//   setLoginEndpointId: (loginEndpointId: string | null) => void;
-// };
-
-// export const AuthenticationInputs = ({
-//   form,
-//   authenticationScheme,
-//   setAuthenticationScheme,
-//   loginEndpointId,
-//   setLoginEndpointId,
-// }: AuthenticationInputProps) => {
-//   return (
-//     <>
-//       {dataSource?.swaggerUrl ? (
-//         <>
-//           <SearchableSelectComponent
-//             label="Login Endpoint (POST)"
-//             description="The endpoint used to login to your API"
-//             placeholder="/v1/login"
-//             value={loginEndpointId}
-//             form={form}
-//             propertyName="loginEndpointId"
-//             data={postEndpoints}
-//             setProperty={(value) => setLoginEndpoint(value ?? "")}
-//           />
-//           <SearchableSelectComponent
-//             label="Refresh Endpoint (POST)"
-//             description="The endpoint used to refresh your API token"
-//             placeholder="/v1/login/refresh"
-//             value={refreshEndpointId}
-//             form={form}
-//             propertyName="refreshEndpointId"
-//             data={postEndpoints}
-//             setProperty={(value) => setRefreshEndpoint(value ?? "")}
-//           />
-//           <SearchableSelectComponent
-//             label="User Endpoint (GET)"
-//             description="The endpoint used to user information"
-//             placeholder="/v1/user"
-//             value={userEndpointId}
-//             form={form}
-//             propertyName="userEndpointId"
-//             data={getEndpoints}
-//             setProperty={(value) => setUserEndpoint(value ?? "")}
-//           />
-//         </>
-//       ) : (
-//         <>
-//           <TextInputComponent
-//             label="Login Endpoint (POST)"
-//             description="The endpoint used to login to your API"
-//             placeholder="/v1/login"
-//             value={loginEndpointId}
-//             form={form}
-//             propertyName="loginEndpointId"
-//             setProperty={(value) => setLoginEndpoint(value ?? "")}
-//           />
-//           <TextInputComponent
-//             label="Refresh Endpoint (POST)"
-//             description="The endpoint used to refresh your API token"
-//             placeholder="/v1/login/refresh"
-//             value={refreshEndpointId}
-//             form={form}
-//             propertyName="refreshEndpointId"
-//             setProperty={(value) => setRefreshEndpoint(value ?? "")}
-//           />
-
-//           <TextInputComponent
-//             label="User Endpoint (GET)"
-//             description="The endpoint used to user information"
-//             placeholder="/v1/user"
-//             value={userEndpointId}
-//             form={form}
-//             propertyName="userEndpointId"
-//             setProperty={(value) => setUserEndpoint(value ?? "")}
-//           />
-//         </>
-//       )}
-//       {dataSource?.swaggerUrl && loginEndpointId ? (
-//         <SearchableSelectComponent
-//           label="Access token property"
-//           description="The property name of the access token in the response"
-//           placeholder="access"
-//           value={accessToken}
-//           form={form}
-//           propertyName="accessToken"
-//           data={exampleResponse ?? []}
-//           setProperty={setAccessToken}
-//           nothingFoundText="Not found. Update your swagger to include the response property"
-//         />
-//       ) : (
-//         <TextInputComponent
-//           label="Access token property"
-//           description="The property name of the access token in the response"
-//           placeholder="access"
-//           form={form}
-//           propertyName="accessToken"
-//           value={accessToken}
-//           setProperty={setAccessToken}
-//           required={!!loginEndpointId}
-//         />
-//       )}
-//       {dataSource?.swaggerUrl && refreshEndpointId ? (
-//         <SearchableSelectComponent
-//           label="Refresh token property"
-//           description="The property name of the refresh token in the response"
-//           placeholder="refresh"
-//           value={refreshToken}
-//           form={form}
-//           propertyName="refreshToken"
-//           data={exampleResponse ?? []}
-//           setProperty={setRefreshToken}
-//           nothingFoundText="Not found. Update your swagger to include the response property"
-//         />
-//       ) : (
-//         <TextInputComponent
-//           label="Refresh token property"
-//           description="The property name of the refresh token in the response"
-//           placeholder="refresh"
-//           form={form}
-//           propertyName="refreshToken"
-//           value={refreshToken}
-//           setProperty={setRefreshToken}
-//           required={!!refreshEndpointId}
-//         />
-//       )}
-//     </>
-//   );
-// };

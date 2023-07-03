@@ -93,7 +93,6 @@ export default function Projects() {
                   project={project}
                   theme={theme}
                   buttonHoverStyles={buttonHoverStyles}
-                  isLoading={isLoading}
                   goToEditor={goToEditor}
                   onDeleteProject={handleDeleteProject}
                 />

@@ -45,7 +45,7 @@ export type EnvironmentTypes = "None" | "Staging" | "Production";
 export type Endpoint = {
   id: string;
   relativeUrl: string;
-  methodType: string;
+  methodType: MethodTypes;
   description: string | null;
   mediaType: string;
   withCredentials: boolean | null;

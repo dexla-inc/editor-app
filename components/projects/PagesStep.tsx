@@ -1,6 +1,6 @@
 import { InformationAlert } from "@/components/Alerts";
-import BackButton from "@/components/projects/BackButton";
-import NextButton from "@/components/projects/NextButton";
+import BackButton from "@/components/BackButton";
+import NextButton from "@/components/NextButton";
 import { createPages } from "@/requests/pages/mutations";
 import { getPagesStream } from "@/requests/pages/queries";
 import { PageBody } from "@/requests/pages/types";

@@ -2,7 +2,7 @@ import {
   LoadingStore,
   NextStepperClickEvent,
   PreviousStepperClickEvent,
-} from "./dashboardTypes";
+} from "@/utils/dashboardTypes";
 
 export type StepperDetailsType = {
   [key: number]: { title: string };

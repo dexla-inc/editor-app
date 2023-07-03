@@ -96,7 +96,6 @@ export default function DataSources() {
                     key={datasource.id}
                     datasource={datasource}
                     theme={theme}
-                    isLoading={isLoading}
                     onDelete={handleDelete}
                   />
                 );

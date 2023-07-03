@@ -1,6 +1,6 @@
 import { InformationAlert } from "@/components/Alerts";
-import { NavigationButton } from "@/components/NavigationButton";
-import { Stack } from "@mantine/core";
+import { Button, Stack } from "@mantine/core";
+import Link from "next/link";
 
 type EmptyDatasourcesPlaceholderProps = {
   projectId: string;
@@ -12,11 +12,12 @@ export default function DataSourcesContainer({
   return (
     <Stack>
       <InformationAlert text="You have no data sources yet. Set up a new data source to get started." />
-      <NavigationButton
-        basePath="/projects/[id]/settings/datasources/new"
-        replacements={{ id: projectId }}
-        text="Set up"
-      ></NavigationButton>
+      <Button
+        component={Link}
+        href={`/projects/${projectId}/settings/datasources/new`}
+      >
+        Set up
+      </Button>
     </Stack>
   );
 }

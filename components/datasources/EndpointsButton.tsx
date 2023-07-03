@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 
 interface EndpointsButtonProps extends LoadingStore {
   projectId: string;
+  text?: string | undefined;
 }
 
 export default function EndpointsButton({
@@ -14,6 +15,7 @@ export default function EndpointsButton({
   startLoading,
   stopLoading,
   projectId,
+  text,
 }: EndpointsButtonProps) {
   const router = useRouter();
 
@@ -47,7 +49,7 @@ export default function EndpointsButton({
       disabled={isLoading}
       rightIcon={<IconArrowUpRight size={ICON_SIZE} />}
     >
-      View Endpoints
+      {text ? text : "View Endpoints"}
     </Button>
   );
 }
