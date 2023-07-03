@@ -1,10 +1,11 @@
+import { InformationAlert, WarningAlert } from "@/components/Alerts";
+import BackButton from "@/components/BackButton";
+import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
+import EndpointsButton from "@/components/datasources/EndpointsButton";
 import { getPageList } from "@/requests/pages/queries";
 import { DataSourceStepperWithoutNextProps } from "@/utils/dashboardTypes";
 import { Col, Divider, Grid, Group, Stack, Text } from "@mantine/core";
 import { useRouter } from "next/router";
-import { InformationAlert, WarningAlert } from "../Alerts";
-import BackButton from "../projects/BackButton";
-import EndpointsButton from "./EndpointsButton";
 
 interface AuthenticationStepParams extends DataSourceStepperWithoutNextProps {
   accessToken?: string | null;
@@ -48,11 +49,14 @@ export default function EndpointsStep({
         title="Set Up Complete"
         text="You have setup your API Data Source settings correctly and they are ready to use. You can view your API endpoints within the editor."
       />
-      <WarningAlert
-        title="CORS Action Required"
-        isHtml={true}
-        text="<p>Please add <b>*.dexla.ai</b> to your allowed hosts to prevent CORS issues with your API when building your project within the editor<p>"
-      />
+      <WarningAlert title="CORS Action Required" isHtml>
+        <Text>
+          Please add&nbsp;
+          <span style={{ fontWeight: 700 }}>*.dexla.ai&nbsp;</span>
+          to your allowed hosts to prevent CORS issues with your API when
+          building your project within the editor
+        </Text>
+      </WarningAlert>
       <Stack>
         <Grid gutter="md">
           <Col span={4} fw={700}>
@@ -127,6 +131,26 @@ export default function EndpointsStep({
             startLoading={startLoading}
             stopLoading={stopLoading}
             isLoading={isLoading}
+          ></EndpointsButton>
+        </Group>
+        {dataSource?.changedEndpoints?.map((endpoint) => {
+          return (
+            <DataSourceEndpoint
+              key={endpoint.id}
+              projectId={projectId}
+              endpoint={endpoint}
+              location="datasource"
+            ></DataSourceEndpoint>
+          );
+        })}
+        <Group position="apart">
+          <BackButton onClick={prevStep}></BackButton>
+          <EndpointsButton
+            projectId={projectId}
+            startLoading={startLoading}
+            stopLoading={stopLoading}
+            isLoading={isLoading}
+            text="Go to Editor"
           ></EndpointsButton>
         </Group>
       </Stack>

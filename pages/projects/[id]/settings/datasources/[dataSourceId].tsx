@@ -13,6 +13,7 @@ import {
   validateBaseUrl,
   validateName,
 } from "@/components/datasources/BasicDetailsInputs";
+import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
 import EndpointsButton from "@/components/datasources/EndpointsButton";
 import SearchableSelectComponent from "@/components/datasources/SelectComponent";
 import {
@@ -98,11 +99,7 @@ export default function Settings() {
 
   useEffect(() => {
     const fetch = async () => {
-      const result = await getDataSourceEndpoints(
-        projectId,
-        "API",
-        dataSourceId
-      );
+      const result = await getDataSourceEndpoints(projectId, dataSourceId);
 
       const loginEndpoint = getAuthEndpoint("ACCESS", result.results);
       const refreshEndpoint = getAuthEndpoint("REFRESH", result.results);
@@ -207,7 +204,6 @@ export default function Settings() {
 
       await patchDataSourceWithParams(
         projectId,
-        dataSource.type,
         dataSource.id,
         loginEndpointId as string,
         accessToken as string,
@@ -216,7 +212,6 @@ export default function Settings() {
 
       await patchDataSourceWithParams(
         projectId,
-        dataSource.type,
         dataSource.id,
         refreshEndpointId as string,
         refreshToken as string,
@@ -226,7 +221,6 @@ export default function Settings() {
       if (userEndpointId) {
         await patchDataSourceWithParams(
           projectId,
-          dataSource.type,
           dataSource.id,
           userEndpointId,
           null,
@@ -259,6 +253,8 @@ export default function Settings() {
       const result = await getSwagger(projectId, dataSourceId, swaggerUrl);
 
       console.log(result);
+
+      setDataSource(result);
 
       apiForm.setValues(result);
 
@@ -307,6 +303,7 @@ export default function Settings() {
                   startLoading={startLoading}
                   stopLoading={stopLoading}
                   isLoading={isLoading}
+                  text="Go To Editor"
                 ></EndpointsButton>
               </Group>
             )}
@@ -444,6 +441,35 @@ export default function Settings() {
                 <Button type="submit">Save</Button>
               </Flex>
               <Divider></Divider>
+              <Stack>
+                {dataSource?.changedEndpoints && (
+                  <Title order={6}>Changed Endpoints</Title>
+                )}
+
+                {dataSource?.changedEndpoints?.map((endpoint) => {
+                  return (
+                    <DataSourceEndpoint
+                      key={endpoint.id}
+                      projectId={projectId}
+                      endpoint={endpoint}
+                      location="datasource"
+                    ></DataSourceEndpoint>
+                  );
+                })}
+                {dataSource?.deletedEndpoints && (
+                  <Title order={6}>Deleted Endpoints</Title>
+                )}
+                {dataSource?.deletedEndpoints?.map((endpoint) => {
+                  return (
+                    <DataSourceEndpoint
+                      key={endpoint.id}
+                      projectId={projectId}
+                      endpoint={endpoint}
+                      location="datasource"
+                    ></DataSourceEndpoint>
+                  );
+                })}
+              </Stack>
             </Stack>
           </form>
         )}

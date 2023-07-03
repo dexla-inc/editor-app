@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 import {
   AuthenticationStepParams,
   ExampleResponseDropdown,
@@ -9,13 +10,12 @@ import {
 } from "@/components/datasources/AuthenticationInputs";
 import SearchableSelectComponent from "@/components/datasources/SelectComponent";
 import TextInputComponent from "@/components/datasources/TextInputComponent";
-import NextButton from "@/components/projects/NextButton";
+import NextButton from "@/components/NextButton";
 import { Endpoint } from "@/requests/datasources/types";
 import { DataSourceStepperProps } from "@/utils/dashboardTypes";
 import { Anchor, Divider, Flex, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
-import BackButton from "../projects/BackButton";
 
 interface AuthenticationStepProps extends DataSourceStepperProps {
   endpoints: Array<Endpoint> | undefined;
@@ -118,7 +118,6 @@ export default function AuthenticationStep({
       if (loginEndpointId !== undefined && accessToken !== undefined) {
         await patchDataSourceWithParams(
           projectId,
-          dataSource.type,
           dataSource.id,
           loginEndpointId,
           accessToken,
@@ -129,7 +128,6 @@ export default function AuthenticationStep({
       if (refreshEndpointId !== undefined && refreshToken !== undefined) {
         await patchDataSourceWithParams(
           projectId,
-          dataSource.type,
           dataSource.id,
           refreshEndpointId,
           refreshToken,
@@ -140,7 +138,6 @@ export default function AuthenticationStep({
       if (userEndpointId) {
         await patchDataSourceWithParams(
           projectId,
-          dataSource.type,
           dataSource.id,
           userEndpointId,
           null,

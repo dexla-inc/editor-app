@@ -1,7 +1,9 @@
 import { SidebarSection } from "@/components/SidebarSection";
 import { EditorNavbarComponentsSection } from "@/components/navbar/EditorNavbarComponentsSection";
+import { EditorNavbarDataSourcesSection } from "@/components/navbar/EditorNavbarDataSourcesSection";
 import { EditorNavbarLayersSection } from "@/components/navbar/EditorNavbarLayersSection";
 import { EditorNavbarPagesSection } from "@/components/navbar/EditorNavbarPagesSection";
+import { EditorNavbarThemesSection } from "@/components/navbar/EditorNavbarThemesSection";
 import {
   IconBrush,
   IconDatabase,
@@ -9,8 +11,6 @@ import {
   IconLayoutDashboard,
   IconStack2,
 } from "@tabler/icons-react";
-import { EditorNavbarDataSourcesSection } from "./EditorNavbarDataSourcesSection";
-import { EditorNavbarThemesSection } from "./EditorNavbarThemesSection";
 
 const sections = [
   {

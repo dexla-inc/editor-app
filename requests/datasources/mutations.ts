@@ -3,8 +3,8 @@ import {
   DataSourceResponse,
   DataSourceTypes,
 } from "@/requests/datasources/types";
+import { PatchParams } from "@/requests/types";
 import { del, patch, post, put } from "@/utils/api";
-import { PatchParams } from "../types";
 
 export async function createDataSource(
   projectId: string,
@@ -36,13 +36,12 @@ export async function updateDataSource(
 
 export async function patchDataSource(
   projectId: string,
-  type: string,
   apiId: string,
   id: string,
   params: PatchParams[]
 ): Promise<DataSourceResponse> {
   const response = (await patch<DataSourceResponse>(
-    `/projects/${projectId}/datasources/${type}/${apiId}/endpoints/${id}`,
+    `/projects/${projectId}/datasources/${apiId}/endpoints/${id}`,
     params
   )) as DataSourceResponse;
 

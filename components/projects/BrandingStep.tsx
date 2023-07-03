@@ -1,4 +1,6 @@
 import { InformationAlert } from "@/components/Alerts";
+import BackButton from "@/components/BackButton";
+import NextButton from "@/components/NextButton";
 import { getTheme } from "@/requests/themes/queries";
 import { ICON_SIZE } from "@/utils/config";
 import { isWebsite } from "@/utils/dashboardTypes";
@@ -14,8 +16,6 @@ import {
 } from "@mantine/core";
 import { IconBrush } from "@tabler/icons-react";
 import { useState } from "react";
-import BackButton from "./BackButton";
-import NextButton from "./NextButton";
 
 export default function BrandingStep({
   prevStep,

@@ -1,5 +1,5 @@
 import { InformationAlert } from "@/components/Alerts";
-import NextButton from "@/components/projects/NextButton";
+import NextButton from "@/components/NextButton";
 import { ProjectParams, createProject } from "@/requests/projects/mutations";
 import {
   ProjectStepProps,
