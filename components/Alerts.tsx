@@ -19,76 +19,113 @@ interface BaseAlertProps extends AlertProps {
 
 export interface AlertProps {
   title?: string;
-  text: string;
+  text?: string;
   size?: MantineSize;
   isHtml?: boolean;
+  children?: React.ReactNode;
 }
 
-function BaseAlert({ icon, title, text, color, isHtml }: BaseAlertProps) {
+function BaseAlert({
+  icon,
+  title,
+  color,
+  isHtml,
+  children,
+  text,
+}: BaseAlertProps) {
   return (
     <Alert icon={icon} title={title} color={color}>
-      {!isHtml ? (
-        text
-      ) : (
+      {isHtml ? (
         <TypographyStylesProvider>
-          <div
-            dangerouslySetInnerHTML={{ __html: text }}
-            style={{ fontSize: "14px" }}
-          />
+          <div style={{ fontSize: "14px" }}>{children}</div>
         </TypographyStylesProvider>
+      ) : (
+        text
       )}
     </Alert>
   );
 }
 
-export function InformationAlert({ title, text, size, isHtml }: AlertProps) {
+export function InformationAlert({
+  title,
+  text,
+  size,
+  isHtml,
+  children,
+}: AlertProps) {
   return (
     <BaseAlert
       icon={<IconInfoCircle size={LARGE_ICON_SIZE} />}
+      color="indigo"
       title={title}
       text={text}
-      color="indigo"
       size={size}
       isHtml={isHtml}
-    />
+    >
+      {children}
+    </BaseAlert>
   );
 }
 
-export function WarningAlert({ title, text, size, isHtml }: AlertProps) {
+export function WarningAlert({
+  title,
+  text,
+  size,
+  isHtml,
+  children,
+}: AlertProps) {
   return (
     <BaseAlert
       icon={<IconAlertTriangle size={LARGE_ICON_SIZE} />}
-      title={title}
-      text={text}
       color="yellow"
+      title={title}
       size={size}
       isHtml={isHtml}
-    />
+      text={text}
+    >
+      {children}
+    </BaseAlert>
   );
 }
 
-export function ErrorAlert({ title, text, size, isHtml }: AlertProps) {
+export function ErrorAlert({
+  title,
+  text,
+  size,
+  isHtml,
+  children,
+}: AlertProps) {
   return (
     <BaseAlert
       icon={<IconExclamationMark size={LARGE_ICON_SIZE} />}
-      title={title}
-      text={text}
       color="red"
+      title={title}
       size={size}
       isHtml={isHtml}
-    />
+      text={text}
+    >
+      {children}
+    </BaseAlert>
   );
 }
 
-export function SuccessAlert({ title, text, size, isHtml }: AlertProps) {
+export function SuccessAlert({
+  title,
+  text,
+  size,
+  isHtml,
+  children,
+}: AlertProps) {
   return (
     <BaseAlert
       icon={<IconCheck size={LARGE_ICON_SIZE} />}
-      title={title}
-      text={text}
       color="green"
+      title={title}
       size={size}
       isHtml={isHtml}
-    />
+      text={text}
+    >
+      {children}
+    </BaseAlert>
   );
 }

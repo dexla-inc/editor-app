@@ -6,7 +6,8 @@ import { getDataSources } from "@/requests/datasources/queries";
 import { DataSourceResponse } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { useAppStore } from "@/stores/app";
-import { Stack } from "@mantine/core";
+import { Stack, Text } from "@mantine/core";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -40,10 +41,18 @@ export const EditorNavbarDataSourcesSection = () => {
       ></PaneHeading>
       <Stack>
         {dataSources?.results && dataSources.results.length > 0 && (
-          <WarningAlert
-            isHtml={true}
-            text='<p>It is recommended you change your swagger file and re-import in <a href="${onClick}">Datasource settings</a> instead of changing your API here.'
-          ></WarningAlert>
+          <WarningAlert isHtml>
+            <Text>
+              It is recommended you change your swagger file and re-import in
+              <Link
+                href="/projects/[id]/settings/datasources"
+                as={`/projects/${projectId}/settings/datasources`}
+              >
+                Datasource settings&nbsp;
+              </Link>
+              instead of changing your API here.
+            </Text>
+          </WarningAlert>
         )}
         {dataSources?.results && dataSources.results.length ? (
           dataSources.results.map((dataSource) => {
