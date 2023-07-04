@@ -49,7 +49,7 @@ export default function EndpointsButton({
       disabled={isLoading}
       rightIcon={<IconArrowUpRight size={ICON_SIZE} />}
     >
-      {text ? text : "View Endpoints"}
+      Go to editor
     </Button>
   );
 }

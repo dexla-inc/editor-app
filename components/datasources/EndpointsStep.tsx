@@ -4,7 +4,7 @@ import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint"
 import EndpointsButton from "@/components/datasources/EndpointsButton";
 import { getPageList } from "@/requests/pages/queries";
 import { DataSourceStepperWithoutNextProps } from "@/utils/dashboardTypes";
-import { Col, Divider, Grid, Group, Stack, Text } from "@mantine/core";
+import { Col, Divider, Grid, Group, Stack, Text, Title } from "@mantine/core";
 import { useRouter } from "next/router";
 
 interface AuthenticationStepParams extends DataSourceStepperWithoutNextProps {
@@ -133,6 +133,9 @@ export default function EndpointsStep({
             isLoading={isLoading}
           ></EndpointsButton>
         </Group>
+        <Title order={4} pt="lg">
+          API Endpoints
+        </Title>
         {dataSource?.changedEndpoints?.map((endpoint) => {
           return (
             <DataSourceEndpoint

@@ -40,6 +40,18 @@ export interface DataSourceResponse {
   deletedEndpoints?: Endpoint[];
 }
 
+export interface ErrorResponse extends Error {
+  message: string;
+  trackingId: string;
+  errors: ErrorDetail[];
+}
+
+type ErrorDetail = {
+  field: string;
+  message: string;
+  code: string;
+};
+
 export type EnvironmentTypes = "None" | "Staging" | "Production";
 
 export type Endpoint = {

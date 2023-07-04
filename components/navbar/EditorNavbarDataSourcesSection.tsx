@@ -39,16 +39,15 @@ export const EditorNavbarDataSourcesSection = () => {
         {dataSources?.results && dataSources.results.length > 0 && (
           <WarningAlert isHtml>
             <Text>
-              It is recommended you change your swagger file and re-import
-              in&nbsp;
+              It is recommended you change configuration in your swagger file
+              and refetch the latest changes in&nbsp;
               <Link
                 href="/projects/[id]/settings/datasources"
                 as={`/projects/${projectId}/settings/datasources`}
               >
                 Datasource settings
               </Link>
-              &nbsp;instead of changing your APIs here. This section is for
-              mapping values.
+              .
             </Text>
           </WarningAlert>
         )}
