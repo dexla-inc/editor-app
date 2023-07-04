@@ -6,11 +6,13 @@ import { IconTextSize } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
 import { UnitInput } from "@/components/UnitInput";
+import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 
 export const icon = IconTextSize;
 export const label = "Text";
 
 export const Modifier = () => {
+  const theme = useEditorStore((state) => state.theme);
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
@@ -35,6 +37,7 @@ export const Modifier = () => {
       fontWeight: "",
       lineHeight: "",
       letterSpacing: "",
+      color: "Black.6",
     },
   });
 
@@ -115,6 +118,20 @@ export const Modifier = () => {
             }}
           />
         </Group>
+        <ThemeColorSelector
+          label="Color"
+          {...form.getInputProps("color")}
+          onChange={(_value: string) => {
+            const [color, index] = _value.split(".");
+            // @ts-ignore
+            const value = theme.colors[color][index];
+            form.setFieldValue("color", _value);
+
+            debouncedTreeUpdate(selectedComponentId as string, {
+              color: value,
+            });
+          }}
+        />
       </Stack>
     </form>
   );

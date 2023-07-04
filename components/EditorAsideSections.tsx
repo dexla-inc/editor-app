@@ -8,6 +8,7 @@ import * as SizeModifier from "@/components/modifiers/Size";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as BorderModifier from "@/components/modifiers/Border";
 import * as LayoutModifier from "@/components/modifiers/Layout";
+import * as BackgroundModifier from "@/components/modifiers/Background";
 
 type SectionsMapper = {
   [key: string]: any;
@@ -19,6 +20,7 @@ const sectionMapper: SectionsMapper = {
   text: TextModifier,
   border: BorderModifier,
   layout: LayoutModifier,
+  background: BackgroundModifier,
 };
 
 export const EditorAsideSections = () => {

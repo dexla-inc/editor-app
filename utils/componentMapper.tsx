@@ -285,7 +285,13 @@ export const structureMapper: StructureMapper = {
   },
 };
 
-export type Modifiers = "spacing" | "size" | "text" | "border" | "layout";
+export type Modifiers =
+  | "spacing"
+  | "size"
+  | "text"
+  | "border"
+  | "layout"
+  | "background";
 
 export type ComponentDefinition = {
   Component: any;
@@ -330,7 +336,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Container component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["layout", "spacing", "size", "border", "background"],
   },
   Select: {
     Component: (props: { component: Component; renderTree: any }) => (

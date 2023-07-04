@@ -15,7 +15,9 @@ export const jsonStructure = (props?: any): Component => {
     description: "AppBar Container",
     props: {
       style: {
-        borderBottom: `1px solid ${theme.colors.gray[3]}`,
+        borderBottomWidth: `1px`,
+        borderBottomStyle: `solid`,
+        borderBottomColor: theme.colors.gray[3],
         paddingTop: px(theme.spacing.sm),
         paddingBottom: px(theme.spacing.sm),
         paddingLeft: px(theme.spacing.lg),
