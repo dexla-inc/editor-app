@@ -30,7 +30,7 @@ export const useAppStore = create<AppState>((set) => ({
       withBorder: true,
       id: state.id ?? "",
       autoClose: 4000,
-      color: "teal",
+      color: state.isError ? "red" : "teal",
       ...state,
     });
 

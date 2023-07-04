@@ -43,7 +43,7 @@ export function DataSourceItem({
           border: "1px solid " + theme.colors.gray[2],
         }}
       >
-        <Box p="md">
+        <Box p="md" sx={{ ...buttonHoverStyles(theme) }}>
           <UnstyledButton
             sx={{
               borderTopRightRadius: theme.radius.sm,
@@ -53,7 +53,6 @@ export function DataSourceItem({
                 theme.colorScheme === "dark"
                   ? theme.colors.dark[0]
                   : theme.black,
-              ...buttonHoverStyles(theme),
             }}
             component={Link}
             href={`/projects/${projectId}/settings/datasources/${datasource.id}`}

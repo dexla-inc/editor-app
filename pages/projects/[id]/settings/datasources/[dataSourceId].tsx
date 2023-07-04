@@ -445,7 +445,9 @@ export default function Settings() {
                 {dataSource?.changedEndpoints && (
                   <Title order={6}>Changed Endpoints</Title>
                 )}
-
+                <Title order={4} pt="lg">
+                  API Endpoints
+                </Title>
                 {dataSource?.changedEndpoints?.map((endpoint) => {
                   return (
                     <DataSourceEndpoint

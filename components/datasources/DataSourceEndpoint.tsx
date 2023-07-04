@@ -1,8 +1,9 @@
 import { Endpoint } from "@/requests/datasources/types";
 import { ICON_SIZE } from "@/utils/config";
-import { Flex, Group, Text, UnstyledButton } from "@mantine/core";
+import { Box, Flex, Group, Text, UnstyledButton } from "@mantine/core";
 import { IconChevronDown, IconChevronRight } from "@tabler/icons-react";
 import { useState } from "react";
+import { DataSourceEndpointDetail } from "./DataSourceEndpointDetail";
 
 const colors = {
   GET: {
@@ -44,47 +45,49 @@ export const DataSourceEndpoint = ({
   };
 
   return (
-    <UnstyledButton onClick={open}>
-      <Group
-        position="apart"
-        sx={{
-          border: colors[endpoint.methodType].color + " 1px solid",
-          background: colors[endpoint.methodType].background,
-          borderRadius: "4px",
-        }}
-        mx={0}
-        p="6px"
-      >
-        <Flex gap="xs" align="center">
-          <Text
-            size="xs"
-            color="white"
-            sx={{
-              background: colors[endpoint.methodType].color,
-              borderRadius: "4px",
-              textAlign: "center",
-              minWidth: "65px",
-            }}
-            p="2px 8px"
-          >
-            {endpoint.methodType}
-          </Text>
-          <Text
-            size="xs"
-            truncate
-            sx={{ maxWidth: location === "editor" ? "145px" : "auto" }}
-          >
-            {endpoint.relativeUrl}
-          </Text>
-          {location === "datasource" && <Flex>{endpoint.description}</Flex>}
-        </Flex>
-        {opened ? (
-          <IconChevronDown size={ICON_SIZE} />
-        ) : (
-          <IconChevronRight size={ICON_SIZE} />
-        )}
-      </Group>
-      {opened && <Group>Open</Group>}
-    </UnstyledButton>
+    <Box>
+      <UnstyledButton onClick={open} sx={{ width: "100%" }}>
+        <Group
+          position="apart"
+          sx={{
+            border: colors[endpoint.methodType].color + " 1px solid",
+            background: colors[endpoint.methodType].background,
+            borderRadius: "4px",
+          }}
+          mx={0}
+          p="6px"
+        >
+          <Flex gap="xs" align="center">
+            <Text
+              size="xs"
+              color="white"
+              sx={{
+                background: colors[endpoint.methodType].color,
+                borderRadius: "4px",
+                textAlign: "center",
+                minWidth: "65px",
+              }}
+              p="2px 8px"
+            >
+              {endpoint.methodType}
+            </Text>
+            <Text
+              size="xs"
+              truncate
+              sx={{ maxWidth: location === "editor" ? "145px" : "auto" }}
+            >
+              {endpoint.relativeUrl}
+            </Text>
+            {location === "datasource" && <Flex>{endpoint.description}</Flex>}
+          </Flex>
+          {opened ? (
+            <IconChevronDown size={ICON_SIZE} />
+          ) : (
+            <IconChevronRight size={ICON_SIZE} />
+          )}
+        </Group>
+      </UnstyledButton>
+      {opened && <DataSourceEndpointDetail endpoint={endpoint} />}
+    </Box>
   );
 };

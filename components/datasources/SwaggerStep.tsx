@@ -78,7 +78,14 @@ export default function SwaggerStep({
       });
 
       setIsLoading && setIsLoading(false);
-    } catch (error) {
+    } catch (error: any) {
+      stopLoading({
+        id: "creating",
+        title: "Error",
+        message: error,
+        isError: true,
+      });
+      setIsLoading && setIsLoading(false);
       console.log(error);
     }
   };
