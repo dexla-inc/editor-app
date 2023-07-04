@@ -14,6 +14,7 @@ import { User } from "@propelauth/react";
 import Link from "next/link";
 
 import { SavingDisplay } from "@/components/SavingDisplay";
+import { useEditorStore } from "@/stores/editor";
 import { useState } from "react";
 
 export interface ShellProps extends AppShellProps {
@@ -30,6 +31,7 @@ export const Shell = ({
 }: ShellProps) => {
   // This state needs to move to the parent component
   const [isLoading, setIsLoading] = useState(false);
+  const isSaving = useEditorStore((state) => state.isSaving);
 
   return (
     <AppShell
@@ -41,7 +43,7 @@ export const Shell = ({
             <Link href="/">
               <Logo />
             </Link>
-            {navbarType === "editor" && <SavingDisplay isSaving={false} />}
+            {navbarType === "editor" && <SavingDisplay isSaving={isSaving} />}
           </Group>
         </Header>
       }

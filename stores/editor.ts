@@ -30,6 +30,7 @@ export type EditorState = {
   iframeWindow?: Window;
   currentTargetId?: string;
   theme: MantineTheme;
+  isSaving: boolean;
   setTheme: (theme: MantineTheme) => void;
   setIframeWindow: (iframeWindow: Window) => void;
   setCurrentTargetId: (currentTargetId?: string) => void;
@@ -41,6 +42,7 @@ export type EditorState = {
   updateTreeComponent: (componentId: string, props: any) => void;
   setSelectedComponentId: (selectedComponentId: string) => void;
   clearSelection: () => void;
+  setIsSaving: (isSaving: boolean) => void;
 };
 
 // creates a store with undo/redo capability
@@ -52,12 +54,14 @@ export const useEditorStore = create<EditorState>()(
       setTheme: (theme) => set({ theme }),
       setIframeWindow: (iframeWindow) => set({ iframeWindow }),
       setCurrentTargetId: (currentTargetId) => set({ currentTargetId }),
+      isSaving: false,
       setTree: (tree) => {
         set((state) => {
           updatePageState(
             encodeSchema(JSON.stringify(tree)),
             state.currentProjectId ?? "",
-            state.currentPageId ?? ""
+            state.currentPageId ?? "",
+            state.setIsSaving
           );
           return { tree };
         });
@@ -72,7 +76,8 @@ export const useEditorStore = create<EditorState>()(
           updatePageState(
             encodeSchema(JSON.stringify(copy)),
             state.currentProjectId ?? "",
-            state.currentPageId ?? ""
+            state.currentPageId ?? "",
+            state.setIsSaving
           );
 
           return {
@@ -86,6 +91,7 @@ export const useEditorStore = create<EditorState>()(
       setSelectedComponentId: (selectedComponentId) =>
         set({ selectedComponentId }),
       clearSelection: () => set({ selectedComponentId: undefined }),
+      setIsSaving: (isSaving) => set({ isSaving }),
     }),
     {
       partialize: (state) => {
