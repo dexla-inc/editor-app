@@ -1,7 +1,6 @@
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
 import { deleteDataSource } from "@/requests/datasources/mutations";
 import { DataSourceResponse } from "@/requests/datasources/types";
-import { useAppStore } from "@/stores/app";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
   Box,
@@ -14,34 +13,22 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { IconDots, IconTrash } from "@tabler/icons-react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 type DataSourceItemProps = {
   datasource: DataSourceResponse;
   theme: MantineTheme;
-  isLoading: boolean;
   onDelete: (id: string) => void;
 };
 
 export function DataSourceItem({
   datasource,
   theme,
-  isLoading,
   onDelete,
 }: DataSourceItemProps) {
   const router = useRouter();
-  const startLoading = useAppStore((state) => state.startLoading);
   const projectId = router.query.id as string;
-
-  const goToDetails = async () => {
-    startLoading({
-      id: "navigate",
-      title: "Loading",
-      message: "Wait while we load the details for this data source",
-    });
-
-    router.push(`/projects/${projectId}/settings/datasources/${datasource.id}`);
-  };
 
   const deleteFn = async () => {
     await deleteDataSource(projectId, datasource.id);
@@ -56,27 +43,30 @@ export function DataSourceItem({
           border: "1px solid " + theme.colors.gray[2],
         }}
       >
-        <UnstyledButton
-          p="md"
-          sx={{
-            borderTopRightRadius: theme.radius.sm,
-            borderTopLeftRadius: theme.radius.sm,
-            width: "100%",
-            color:
-              theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
-            ...buttonHoverStyles(theme),
-          }}
-          onClick={goToDetails}
-        >
-          {" "}
-          <Text>{datasource.name}</Text>
-          <Text size="xs" color="dimmed">
-            {datasource.baseUrl}
-          </Text>
-          <Text size="xs" color="dimmed">
-            {new Date(datasource.updated).toLocaleString()}
-          </Text>
-        </UnstyledButton>
+        <Box p="md">
+          <UnstyledButton
+            sx={{
+              borderTopRightRadius: theme.radius.sm,
+              borderTopLeftRadius: theme.radius.sm,
+              width: "100%",
+              color:
+                theme.colorScheme === "dark"
+                  ? theme.colors.dark[0]
+                  : theme.black,
+              ...buttonHoverStyles(theme),
+            }}
+            component={Link}
+            href={`/projects/${projectId}/settings/datasources/${datasource.id}`}
+          >
+            <Text>{datasource.name}</Text>
+            <Text size="xs" color="dimmed">
+              {datasource.baseUrl}
+            </Text>
+            <Text size="xs" color="dimmed">
+              {new Date(datasource.updated).toLocaleString()}
+            </Text>
+          </UnstyledButton>
+        </Box>
         <Flex
           py="xs"
           px="md"

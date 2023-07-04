@@ -1,25 +1,25 @@
-import NextButton from "@/components/projects/NextButton";
+import BackButton from "@/components/BackButton";
+import {
+  BasicDetailsInputs,
+  validateBaseUrl,
+  validateName,
+} from "@/components/datasources/BasicDetailsInputs";
+import NextButton from "@/components/NextButton";
 import { updateDataSource } from "@/requests/datasources/mutations";
 import {
   DataSourceParams,
   DataSourceResponse,
 } from "@/requests/datasources/types";
 import {
+  areValuesEqual,
   LoadingStore,
   NextStepperClickEvent,
   PreviousStepperClickEvent,
-  areValuesEqual,
 } from "@/utils/dashboardTypes";
 import { Divider, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import BackButton from "../projects/BackButton";
-import {
-  BasicDetailsInputs,
-  validateBaseUrl,
-  validateName,
-} from "./BasicDetailsInputs";
 
 export interface BasicDetailsStepProps
   extends LoadingStore,

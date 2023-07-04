@@ -102,3 +102,27 @@ export function buildQueryString(paramsObj: QueryParams): string {
 
   return queryString;
 }
+
+export type ExtractRouteParams<TPath extends string> = {
+  [K in Split<TPath, "/">[number] as K extends `[${infer P}]`
+    ? P
+    : never]: string;
+};
+
+export type Split<S extends string, D extends string> = string extends S
+  ? string[]
+  : S extends ""
+  ? []
+  : S extends `${infer T}${D}${infer U}`
+  ? [T, ...Split<U, D>]
+  : [S];
+
+export function replaceBrackets(
+  basePath: string,
+  replacements: Record<string, string> | undefined
+): string {
+  const safeReplacements = replacements || {};
+  return basePath.replace(/\[([^\]]+)\]/g, (_, placeholder) => {
+    return safeReplacements[placeholder];
+  });
+}

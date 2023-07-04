@@ -26,7 +26,6 @@ export const getDataSources = async (
 
 export const getDataSourceEndpoints = async (
   projectId: string,
-  type: string,
   id: string,
   {
     authOnly,
@@ -36,7 +35,7 @@ export const getDataSourceEndpoints = async (
     limit,
   }: DataSourceEndpointsListParams = {}
 ) => {
-  let url = `/projects/${projectId}/datasources/${type}/${id}/endpoints`;
+  let url = `/projects/${projectId}/datasources/${id}/endpoints`;
 
   url += buildQueryString({ authOnly, methodType, search, offset, limit });
 

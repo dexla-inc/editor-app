@@ -3,12 +3,12 @@ import {
   SwaggerURLInput,
   validateSwaggerUrl,
 } from "@/components/datasources/SwaggerURLInput";
-import NextButton from "@/components/projects/NextButton";
+import NextButton from "@/components/NextButton";
 import { createDataSource } from "@/requests/datasources/mutations";
 import { DataSourceParams, Endpoint } from "@/requests/datasources/types";
 import {
-  DataSourceStepperWithoutPreviousProps,
   areValuesEqual,
+  DataSourceStepperWithoutPreviousProps,
 } from "@/utils/dashboardTypes";
 import { Anchor, Divider, Flex, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";

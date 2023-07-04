@@ -1,6 +1,8 @@
+import { ExampleResponseDropdown } from "@/components/datasources/AuthenticationInputs";
 import AuthenticationStep from "@/components/datasources/AuthenticationStep";
 import BasicDetailsStep from "@/components/datasources/BasicDetailsStep";
 import EndpointsStep from "@/components/datasources/EndpointsStep";
+import SwaggerStep from "@/components/datasources/SwaggerStep";
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
 import {
@@ -10,7 +12,6 @@ import {
 } from "@/utils/dashboardTypes";
 import { Stack } from "@mantine/core";
 import { useState } from "react";
-import SwaggerStep from "./SwaggerStep";
 
 interface StepperContentProps
   extends StepperState,
@@ -48,6 +49,9 @@ export default function StepperContent({
   const [userEndpointId, setUserEndpointId] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [exampleResponse, setExampleResponse] = useState<
+    ExampleResponseDropdown[] | undefined
+  >(undefined);
 
   return (
     <Stack sx={{ width: "100%" }}>
@@ -98,6 +102,8 @@ export default function StepperContent({
           setAccessToken={setAccessToken}
           refreshToken={refreshToken}
           setRefreshToken={setRefreshToken}
+          exampleResponse={exampleResponse}
+          setExampleResponse={setExampleResponse}
         ></AuthenticationStep>
       )}
       {activeStep == 3 && (

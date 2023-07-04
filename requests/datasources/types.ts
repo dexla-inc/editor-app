@@ -45,7 +45,7 @@ export type EnvironmentTypes = "None" | "Staging" | "Production";
 export type Endpoint = {
   id: string;
   relativeUrl: string;
-  methodType: string;
+  methodType: MethodTypes;
   description: string | null;
   mediaType: string;
   withCredentials: boolean | null;
@@ -85,7 +85,7 @@ type RequestBody = {
   description: string | null;
 };
 
-type ExampleResponse = {
+export type ExampleResponse = {
   value: any | null;
   children: ExampleResponse[];
   name: string;

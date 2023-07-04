@@ -1,16 +1,44 @@
 import { patchDataSource } from "@/requests/datasources/mutations";
-import { Endpoint } from "@/requests/datasources/types";
+import { Endpoint, ExampleResponse } from "@/requests/datasources/types";
+
+type EndpointDropdown = {
+  value: string;
+  label: string;
+  exampleresponse?: ExampleResponse[];
+}[];
 
 export function filterAndMapEndpoints(
   endpoints: Array<Endpoint> | undefined,
   methodType: string
-) {
+): EndpointDropdown {
   if (!endpoints) {
     return [];
   }
   return endpoints
     .filter((endpoint) => endpoint.methodType === methodType)
-    .map((endpoint) => ({ value: endpoint.id, label: endpoint.relativeUrl }))
+    .map((endpoint) => ({
+      value: endpoint.id,
+      label: endpoint.relativeUrl,
+      exampleresponse: endpoint.exampleResponse,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+}
+
+export type ExampleResponseDropdown = {
+  value: string;
+  label: string;
+  type: string;
+};
+
+export function mapEndpointExampleResponse(
+  exampleResponse: ExampleResponse[] | undefined
+): ExampleResponseDropdown[] | undefined {
+  return exampleResponse
+    ?.map((e) => ({
+      value: e.name,
+      label: e.name,
+      type: e.type,
+    }))
     .sort((a, b) => a.label.localeCompare(b.label));
 }
 
@@ -24,7 +52,6 @@ export function validateTokenProperty(
 
 export async function patchDataSourceWithParams(
   projectId: string,
-  type: string,
   dataSourceId: string,
   endpointId: string,
   token: string | null,
@@ -46,22 +73,19 @@ export async function patchDataSourceWithParams(
     });
   }
 
-  await patchDataSource(projectId, type, dataSourceId, endpointId, patchParams);
+  await patchDataSource(projectId, dataSourceId, endpointId, patchParams);
 }
 
 type EndpointSetter = (value: string | null) => void;
 
 export const setEndpoint = (
   setEndpointId: EndpointSetter,
-  endpoints: { value: string; label: string }[],
+  endpoint: { value: string; label: string } | undefined,
   value: string | null,
   setEndpointLabel?: EndpointSetter
 ) => {
   setEndpointId(value);
-  const selectedOption = endpoints.find(
-    (option) => option.value === value
-  )?.label;
-  setEndpointLabel && setEndpointLabel(selectedOption as string);
+  setEndpointLabel && setEndpointLabel(endpoint?.label as string);
 };
 
 export const getAuthEndpoint = (
@@ -77,4 +101,19 @@ export type AuthenticationStepParams = {
   userEndpointId?: string | undefined;
   accessToken?: string | undefined;
   refreshToken?: string | undefined;
+};
+
+export const setExampleResponseObject = (
+  postEndpoints: EndpointDropdown,
+  setExampleResponse: (
+    exampleResponse: ExampleResponseDropdown[] | undefined
+  ) => void,
+  value: string | undefined
+) => {
+  const selectedEndpoint = postEndpoints.find(
+    (option) => option.value === value
+  );
+
+  const result = mapEndpointExampleResponse(selectedEndpoint?.exampleresponse);
+  setExampleResponse(result);
 };
