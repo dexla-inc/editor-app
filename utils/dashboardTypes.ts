@@ -1,5 +1,5 @@
 import { DataSourceResponse } from "@/requests/datasources/types";
-import { NotificationProps } from "@mantine/notifications";
+import { DexlaNotificationProps } from "@/stores/app";
 
 export type NavbarTypes = "editor" | "company" | "project";
 
@@ -21,8 +21,8 @@ export type PreviousStepperClickEvent = {
 export type LoadingStore = {
   isLoading: boolean;
   setIsLoading?: (isLoading: boolean) => void;
-  startLoading: (state: NotificationProps) => void;
-  stopLoading: (state: NotificationProps) => void;
+  startLoading: (state: DexlaNotificationProps) => void;
+  stopLoading: (state: DexlaNotificationProps) => void;
 };
 
 export type StepperStepProps = {

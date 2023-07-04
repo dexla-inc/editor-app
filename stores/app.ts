@@ -5,10 +5,14 @@ import {
 } from "@mantine/notifications";
 import { create } from "zustand";
 
+export type DexlaNotificationProps = NotificationProps & {
+  isError?: boolean;
+};
+
 type AppState = {
   isLoading: boolean;
-  startLoading: (state: NotificationProps) => void;
-  stopLoading: (state: NotificationProps) => void;
+  startLoading: (state: DexlaNotificationProps) => void;
+  stopLoading: (state: DexlaNotificationProps) => void;
   setIsLoading: (isLoading: boolean) => void;
 };
 
