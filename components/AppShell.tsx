@@ -13,6 +13,7 @@ import {
 import { User } from "@propelauth/react";
 import Link from "next/link";
 
+import { SavingDisplay } from "@/components/SavingDisplay";
 import { useState } from "react";
 
 export interface ShellProps extends AppShellProps {
@@ -24,7 +25,7 @@ export const Shell = ({
   children,
   navbar,
   aside,
-  navbarType,
+  navbarType = "editor",
   user,
 }: ShellProps) => {
   // This state needs to move to the parent component
@@ -36,10 +37,11 @@ export const Shell = ({
       padding={0}
       header={
         <Header height={HEADER_HEIGHT}>
-          <Group h={HEADER_HEIGHT} pl="lg">
+          <Group h={HEADER_HEIGHT} px="lg" position="apart">
             <Link href="/">
               <Logo />
             </Link>
+            {navbarType === "editor" && <SavingDisplay isSaving={false} />}
           </Group>
         </Header>
       }
