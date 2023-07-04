@@ -1,17 +1,17 @@
+import { UnitInput } from "@/components/UnitInput";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
 import { Group, SegmentedControl, Stack, Text, Tooltip } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
+  IconAlignBoxBottomCenter,
   IconAlignBoxCenterMiddle,
   IconAlignBoxLeftMiddle,
   IconAlignBoxRightMiddle,
-  IconAlignBoxCenterStretch,
   IconLayout2,
 } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
-import { UnitInput } from "@/components/UnitInput";
 
 export const icon = IconLayout2;
 export const label = "Layout";
@@ -136,7 +136,7 @@ export const Modifier = () => {
               {
                 label: (
                   <Tooltip label="Stretch" withinPortal>
-                    <IconAlignBoxCenterStretch size={14} />
+                    <IconAlignBoxBottomCenter size={14} />
                   </Tooltip>
                 ),
                 value: "stretch",
@@ -191,7 +191,7 @@ export const Modifier = () => {
               {
                 label: (
                   <Tooltip label="Space Between" withinPortal>
-                    <IconAlignBoxCenterStretch size={14} />
+                    <IconAlignBoxBottomCenter size={14} />
                   </Tooltip>
                 ),
                 value: "space-between",
