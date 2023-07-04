@@ -13,14 +13,16 @@ export const createPages = async (params: PageBody[], projectId: string) => {
 export const updatePageState = async (
   pageState: PageBody["pageState"],
   projectId: string,
-  pageId: string
+  pageId: string,
+  setIsSaving: (isSaving: boolean) => void
 ) => {
+  setIsSaving(true);
   const response = (await put<any>(
     `/projects/${projectId}/pages/${pageId}/page-state`,
     {
       pageState,
     }
   )) as any;
-
+  setIsSaving(false);
   return response;
 };
