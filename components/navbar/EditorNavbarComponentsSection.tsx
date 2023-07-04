@@ -1,24 +1,29 @@
+import { DraggableComponent } from "@/components/DraggableComponent";
+import { CustomComponentResponse } from "@/requests/projects/mutations";
+import { getComponentList } from "@/requests/projects/queries";
+import {
+  ComponentCategoryType,
+  structureMapper,
+} from "@/utils/componentMapper";
+import { decodeSchema } from "@/utils/compression";
+import { ICON_SIZE } from "@/utils/config";
 import {
   Center,
+  Grid,
   SegmentedControl,
   Stack,
   Text,
   TextInput,
 } from "@mantine/core";
-import { structureMapper } from "@/utils/componentMapper";
 import { IconSearch } from "@tabler/icons-react";
-import { ICON_SIZE } from "@/utils/config";
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getComponentList } from "@/requests/projects/queries";
 import { useRouter } from "next/router";
-import { CustomComponentResponse } from "@/requests/projects/mutations";
-import { DraggableComponent } from "@/components/DraggableComponent";
-import { decodeSchema } from "@/utils/compression";
+import { useState } from "react";
 
 type DraggableComponentData = {
   id: string;
   draggable: any;
+  category?: ComponentCategoryType;
 };
 
 export const EditorNavbarComponentsSection = () => {
@@ -100,16 +105,18 @@ export const EditorNavbarComponentsSection = () => {
         icon={<IconSearch size={ICON_SIZE} />}
       />
       {componentTypeToShow === "default" && (
-        <Stack spacing="xs">
+        <Grid gutter="xs">
           {(query
             ? sortedComponents.filter((sc) =>
                 new RegExp(query, "i").test(sc.id)
               )
             : sortedComponents
-          ).map(({ id, draggable: Draggable }: DraggableComponentData) => {
-            return <Draggable key={id} />;
-          })}
-        </Stack>
+          ).map(({ id, draggable: Draggable }: DraggableComponentData) => (
+            <Grid.Col span={6} key={id}>
+              <Draggable />
+            </Grid.Col>
+          ))}
+        </Grid>
       )}
       {componentTypeToShow === "custom" && (
         <Stack spacing="xs">

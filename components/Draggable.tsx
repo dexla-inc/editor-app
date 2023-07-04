@@ -1,19 +1,19 @@
-import React, { PropsWithChildren, useCallback } from "react";
-import {
-  BoxProps,
-  Box,
-  Card,
-  useMantineTheme,
-  ActionIcon,
-  Group,
-} from "@mantine/core";
-import { ICON_SIZE } from "@/utils/config";
-import { IconX } from "@tabler/icons-react";
-import { deleteCustomComponent } from "@/requests/projects/mutations";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/router";
 import { useDraggable } from "@/hooks/useDraggable";
+import { deleteCustomComponent } from "@/requests/projects/mutations";
 import { useEditorStore } from "@/stores/editor";
+import { ICON_SIZE } from "@/utils/config";
+import {
+  ActionIcon,
+  Box,
+  BoxProps,
+  Card,
+  Group,
+  useMantineTheme,
+} from "@mantine/core";
+import { IconX } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/router";
+import { PropsWithChildren, useCallback } from "react";
 
 type Props = {
   id: string;
@@ -82,7 +82,7 @@ export const Draggable = ({
           },
         }}
       >
-        <Group position="apart" noWrap>
+        <Group position="apart" noWrap sx={{ textAlign: "center" }}>
           <Box {...draggable} w="100%">
             {children}
           </Box>
