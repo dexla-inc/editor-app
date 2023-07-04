@@ -27,6 +27,7 @@ const sections = [
     id: "components",
     label: "Components",
     icon: IconLayoutDashboard,
+    initiallyOpened: true,
   },
   {
     id: "theme",
@@ -37,7 +38,6 @@ const sections = [
     id: "datasources",
     label: "Data Sources",
     icon: IconDatabase,
-    initiallyOpened: true,
   },
 ];
 

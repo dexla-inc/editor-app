@@ -14,6 +14,7 @@ import {
   Stack,
   Text,
   TextInput,
+  Title,
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
@@ -38,13 +39,21 @@ export const EditorNavbarComponentsSection = () => {
     enabled: !!router.query.id,
   });
 
-  const components = Object.keys(structureMapper).reduce(
-    (draggables, key): DraggableComponentData[] => {
+  const componentsGroupedByCategory = Object.keys(structureMapper).reduce(
+    (groups, key) => {
       const draggable = structureMapper[key]?.Draggable;
+      const category = structureMapper[key]?.category;
 
-      return draggable ? draggables.concat({ draggable, id: key }) : draggables;
+      if (draggable) {
+        if (!groups[category]) {
+          groups[category] = [];
+        }
+        groups[category].push({ draggable, id: key });
+      }
+
+      return groups;
     },
-    [] as DraggableComponentData[]
+    {} as Record<string, DraggableComponentData[]>
   );
 
   const sort = (a: DraggableComponentData, b: DraggableComponentData) => {
@@ -80,8 +89,6 @@ export const EditorNavbarComponentsSection = () => {
     return draggables.concat({ draggable, id: component.description });
   }, [] as DraggableComponentData[]);
 
-  const sortedComponents = [...components, ...globalComponents].sort(sort);
-
   return (
     <Stack spacing="xl">
       <SegmentedControl
@@ -106,18 +113,27 @@ export const EditorNavbarComponentsSection = () => {
       />
       {componentTypeToShow === "default" && (
         <Grid gutter="xs">
-          {(query
-            ? sortedComponents.filter((sc) =>
-                new RegExp(query, "i").test(sc.id)
-              )
-            : sortedComponents
-          ).map(({ id, draggable: Draggable }: DraggableComponentData) => (
-            <Grid.Col span={6} key={id}>
-              <Draggable />
-            </Grid.Col>
-          ))}
+          {Object.entries(componentsGroupedByCategory).map(
+            ([category, components]) => (
+              <>
+                <Grid.Col span={12}>
+                  <Title order={6}>{category}</Title>
+                </Grid.Col>
+                {components
+                  .filter(({ id }) =>
+                    query ? new RegExp(query, "i").test(id) : true
+                  )
+                  .map(({ id, draggable: Draggable }) => (
+                    <Grid.Col span={6} key={id}>
+                      <Draggable />
+                    </Grid.Col>
+                  ))}
+              </>
+            )
+          )}
         </Grid>
       )}
+
       {componentTypeToShow === "custom" && (
         <Stack spacing="xs">
           {customComponents?.length === 0 && (

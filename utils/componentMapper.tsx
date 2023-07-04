@@ -73,7 +73,6 @@ import * as RadarChartStructure from "@/components/mapper/structure/charts/Radar
 import { Component } from "@/utils/editor";
 import {
   IconBrandChrome,
-  IconBrandGithub,
   IconCalendar,
   IconCards,
   IconChartAreaLine,
@@ -81,7 +80,9 @@ import {
   IconChartLine,
   IconChartPie,
   IconChartRadar,
-  IconCheck,
+  IconCheckbox,
+  IconClick,
+  IconContainer,
   IconCursorText,
   IconExclamationMark,
   IconFile,
@@ -89,22 +90,22 @@ import {
   IconJewishStar,
   IconLayersDifference,
   IconLayoutBottombarCollapse,
-  IconLayoutGrid,
   IconLayoutKanban,
   IconLayoutNavbar,
+  IconLayoutSidebar,
   IconLink,
   IconListCheck,
   IconNavigation,
   IconPageBreak,
   IconPhoto,
   IconPhotoSearch,
-  IconPlayerPlay,
-  IconRadio,
+  IconPictureInPicture,
+  IconPlaystationCircle,
   IconRowInsertBottom,
   IconRowInsertTop,
   IconSelect,
-  IconSwitchHorizontal,
   IconTable,
+  IconToggleLeft,
   IconUser,
   IconUsers,
 } from "@tabler/icons-react";
@@ -133,6 +134,307 @@ export type StructureMapper = {
 
 export const structureMapper: StructureMapper = {
   // AI generated structures
+
+  Container: {
+    structure: (props: any) => ContainerStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Container"
+        icon={<IconContainer size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Layout",
+  },
+
+  Input: {
+    structure: (props: any) => InputStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Input"
+        icon={<IconFileText size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+  },
+  Select: {
+    structure: (props: any) => SelectStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Select"
+        icon={<IconSelect size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+  },
+
+  Button: {
+    structure: (props: any) => ButtonStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Button"
+        icon={<IconClick size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+  },
+  Link: {
+    structure: (props: any) => LinkStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Link"
+        icon={<IconLink size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+  },
+
+  Radio: {
+    structure: (props: any) => RadioStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Radio"
+        icon={<IconPlaystationCircle size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+  },
+  Checkbox: {
+    structure: (props: any) => CheckboxStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Checkbox"
+        icon={<IconCheckbox size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+  },
+
+  Form: {
+    structure: (props: any) => NotImplemented.jsonStructure(props),
+    category: "Input",
+  },
+  StepperForm: {
+    structure: (props: any) => NotImplemented.jsonStructure(props),
+    category: "Input",
+  },
+  DateInput: {
+    structure: (props: any) => DateInputStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="DateInput"
+        icon={<IconCalendar size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+  },
+  Textarea: {
+    structure: (props: any) => TextareaStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Textarea"
+        icon={<IconPictureInPicture size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+  },
+  Switch: {
+    structure: (props: any) => SwitchStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Switch"
+        icon={<IconToggleLeft size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+  },
+  Rating: {
+    structure: (props: any) => RatingStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Rating"
+        icon={<IconJewishStar size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+  },
+  FilePond: {
+    structure: (props: any) => FilePondStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="FilePond"
+        icon={<IconFile size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+  },
+  Text: {
+    structure: (props: any) => TextStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Text"
+        icon={<IconCursorText size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Typography",
+  },
+  Table: {
+    structure: (props: any) => TableStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Table"
+        icon={<IconTable size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+  },
+  Icon: {
+    structure: (props: any) => IconStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Icon"
+        icon={<IconBrandChrome size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+  },
+  Image: {
+    structure: (props: any) => ImageStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Image"
+        icon={<IconPhoto size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+  },
+  CodeSnippet: {
+    structure: (props: any) => NotImplemented.jsonStructure(props),
+    category: "Data Display",
+  },
+  Newsfeed: {
+    structure: (props: any) => NotImplemented.jsonStructure(props),
+    category: "Data Display",
+  },
+  CardList: {
+    structure: (props: any) => NotImplemented.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="CardList"
+        icon={<IconCards size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+  },
+  TaskList: {
+    structure: (props: any) => NotImplemented.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="TaskList"
+        icon={<IconListCheck size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+  },
+  ProfileList: {
+    structure: (props: any) => NotImplemented.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="ProfileList"
+        icon={<IconUsers size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+  },
+  Avatar: {
+    structure: (props: any) => AvatarStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Avatar"
+        icon={<IconUser size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+  },
+  TabsList: {
+    structure: (props: any) => TabsListStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="TabsList"
+        icon={<IconLayersDifference size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+  },
+  TabsPanel: {
+    structure: (props: any) => TabsPanelStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="TabsPanel"
+        icon={<IconLayersDifference size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+  },
+  Accordion: {
+    structure: (props: any) => AccordionStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Accordion"
+        icon={<IconLayoutBottombarCollapse size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+  },
+  AccordionItem: {
+    structure: (props: any) => AccordionItemStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="AccordionItem"
+        icon={<IconLayoutBottombarCollapse size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+  },
+  AccordionControl: {
+    structure: (props: any) => AccordionControlStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="AccordionControl"
+        icon={<IconRowInsertTop size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+  },
+  Navbar: {
+    structure: (props: any) => NavbarStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Navbar"
+        icon={<IconLayoutSidebar size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Navigation",
+  },
+  Pagination: {
+    structure: (props: any) => PaginationStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Pagination"
+        icon={<IconPageBreak size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Navigation",
+  },
+  AccordionPanel: {
+    structure: (props: any) => AccordionPanelStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="AccordionPanel"
+        icon={<IconRowInsertBottom size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+  },
   Breadcrumb: {
     structure: (props: any) => Breadcrumbs.jsonStructure(props),
     Draggable: () => (
@@ -156,28 +458,6 @@ export const structureMapper: StructureMapper = {
   Carousel: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
     category: "Navigation",
-  },
-  Form: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
-    category: "Input",
-  },
-  Table: {
-    structure: (props: any) => TableStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Table"
-        icon={<IconTable size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-  },
-  StepperForm: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
-    category: "Input",
-  },
-  CodeSnippet: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
-    category: "Data Display",
   },
   ProgressCard: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -269,50 +549,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Chart",
   },
-  Newsfeed: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
-    category: "Data Display",
-  },
-  FilePond: {
-    structure: (props: any) => FilePondStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="FilePond"
-        icon={<IconFile size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-  },
-  CardList: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="CardList"
-        icon={<IconCards size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-  },
-  TaskList: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="TaskList"
-        icon={<IconListCheck size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-  },
-  ProfileList: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="ProfileList"
-        icon={<IconUsers size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-  },
+
   ImageCardList: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
     Draggable: () => (
@@ -323,176 +560,7 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Card",
   },
-  Text: {
-    structure: (props: any) => TextStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Text"
-        icon={<IconCursorText size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Typography",
-  },
-  Avatar: {
-    structure: (props: any) => AvatarStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Avatar"
-        icon={<IconUser size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-  },
-  Container: {
-    structure: (props: any) => ContainerStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Container"
-        icon={<IconLayoutGrid size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Layout",
-  },
-  Select: {
-    structure: (props: any) => SelectStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Select"
-        icon={<IconSelect size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-  },
-  Input: {
-    structure: (props: any) => InputStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Input"
-        icon={<IconFileText size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-  },
-  DateInput: {
-    structure: (props: any) => DateInputStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="DateInput"
-        icon={<IconCalendar size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-  },
-  Textarea: {
-    structure: (props: any) => TextareaStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Textarea"
-        icon={<IconFileText size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-  },
-  Button: {
-    structure: (props: any) => ButtonStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Button"
-        icon={<IconPlayerPlay size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-  },
-  Link: {
-    structure: (props: any) => LinkStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Link"
-        icon={<IconLink size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-  },
-  Icon: {
-    structure: (props: any) => IconStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Icon"
-        icon={<IconBrandChrome size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-  },
-  Navbar: {
-    structure: (props: any) => NavbarStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Navbar"
-        icon={<IconBrandGithub size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Navigation",
-  },
-  Checkbox: {
-    structure: (props: any) => CheckboxStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Checkbox"
-        icon={<IconCheck size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-  },
-  Switch: {
-    structure: (props: any) => SwitchStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Switch"
-        icon={<IconSwitchHorizontal size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-  },
-  Radio: {
-    structure: (props: any) => RadioStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Radio"
-        icon={<IconRadio size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-  },
-  Rating: {
-    structure: (props: any) => RatingStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Rating"
-        icon={<IconJewishStar size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-  },
-  Image: {
-    structure: (props: any) => ImageStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Image"
-        icon={<IconPhoto size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-  },
-  Pagination: {
-    structure: (props: any) => PaginationStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Pagination"
-        icon={<IconPageBreak size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Navigation",
-  },
+
   Alert: {
     structure: (props: any) => AlertStructure.jsonStructure(props),
     Draggable: () => (
@@ -512,66 +580,6 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Navigation",
-  },
-  TabsList: {
-    structure: (props: any) => TabsListStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="TabsList"
-        icon={<IconLayersDifference size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-  },
-  TabsPanel: {
-    structure: (props: any) => TabsPanelStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="TabsPanel"
-        icon={<IconLayersDifference size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-  },
-  Accordion: {
-    structure: (props: any) => AccordionStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Accordion"
-        icon={<IconLayoutBottombarCollapse size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-  },
-  AccordionItem: {
-    structure: (props: any) => AccordionItemStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="AccordionItem"
-        icon={<IconLayoutBottombarCollapse size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-  },
-  AccordionControl: {
-    structure: (props: any) => AccordionControlStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="AccordionControl"
-        icon={<IconRowInsertTop size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-  },
-  AccordionPanel: {
-    structure: (props: any) => AccordionPanelStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="AccordionPanel"
-        icon={<IconRowInsertBottom size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
   },
 };
 
