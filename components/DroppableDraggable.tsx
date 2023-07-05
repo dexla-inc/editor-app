@@ -20,6 +20,7 @@ import { useDraggable } from "@/hooks/useDraggable";
 import { useDroppable } from "@/hooks/useDroppable";
 import { useOnDrop } from "@/hooks/useOnDrop";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
+import { useHover } from "@mantine/hooks";
 
 type Props = {
   id: string;
@@ -34,6 +35,7 @@ export const DroppableDraggable = ({
   customComponentModal,
   ...props
 }: PropsWithChildren<Props>) => {
+  const { hovered, ref } = useHover();
   const theme = useMantineTheme();
   const editorTree = useEditorStore((state) => state.tree);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
@@ -65,7 +67,7 @@ export const DroppableDraggable = ({
   const isSelected = selectedComponentId === id;
 
   const baseBorder = `1px solid ${theme.colors.teal[6]}`;
-  const isOver = currentTargetId === id;
+  const isOver = currentTargetId === id || hovered;
 
   const borders = isOver
     ? {
@@ -94,6 +96,7 @@ export const DroppableDraggable = ({
 
   return (
     <Box
+      ref={ref}
       id={id}
       {...props}
       pos="relative"
