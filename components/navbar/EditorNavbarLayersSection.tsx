@@ -49,11 +49,10 @@ const ListItem = ({ component, children, level }: ListItemProps) => {
     }
   };
 
-  console.log("component:" + JSON.stringify(component));
   const icon = structureMapper[component.name as string]?.icon;
 
   const canExpand = (component.children ?? [])?.length > 0;
-  const paddingLeft = canExpand ? `${level * 8}px` : `${level * 23}px`;
+  const paddingLeft = canExpand ? `${level * 20}px` : `${level * 35}px`;
 
   return (
     <>
@@ -162,7 +161,7 @@ export const EditorNavbarLayersSection = () => {
       return null;
     }
 
-    level = level + 1;
+    level = component.id !== "root" ? level + 1 : level;
 
     return (
       <ListItemWrapper key={component.id} component={component} level={level}>
