@@ -31,6 +31,7 @@ export type EditorState = {
   currentTargetId?: string;
   theme: MantineTheme;
   isSaving: boolean;
+  isPreviewMode: boolean;
   setTheme: (theme: MantineTheme) => void;
   setIframeWindow: (iframeWindow: Window) => void;
   setCurrentTargetId: (currentTargetId?: string) => void;
@@ -43,6 +44,7 @@ export type EditorState = {
   setSelectedComponentId: (selectedComponentId: string) => void;
   clearSelection: () => void;
   setIsSaving: (isSaving: boolean) => void;
+  togglePreviewMode: (value: boolean) => void;
 };
 
 // creates a store with undo/redo capability
@@ -92,6 +94,8 @@ export const useEditorStore = create<EditorState>()(
         set({ selectedComponentId }),
       clearSelection: () => set({ selectedComponentId: undefined }),
       setIsSaving: (isSaving) => set({ isSaving }),
+      isPreviewMode: false,
+      togglePreviewMode: (value) => set({ isPreviewMode: value }),
     }),
     {
       partialize: (state) => {

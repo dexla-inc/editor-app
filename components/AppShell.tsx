@@ -6,6 +6,7 @@ import { NavbarTypes } from "@/utils/dashboardTypes";
 import {
   AppShell,
   AppShellProps,
+  Flex,
   Group,
   Header,
   LoadingOverlay,
@@ -13,6 +14,7 @@ import {
 import { User } from "@propelauth/react";
 import Link from "next/link";
 
+import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { SavingDisplay } from "@/components/SavingDisplay";
 import { useEditorStore } from "@/stores/editor";
 import { useState } from "react";
@@ -32,6 +34,8 @@ export const Shell = ({
   // This state needs to move to the parent component
   const [isLoading, setIsLoading] = useState(false);
   const isSaving = useEditorStore((state) => state.isSaving);
+  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const togglePreviewMode = useEditorStore((state) => state.togglePreviewMode);
 
   return (
     <AppShell
@@ -43,7 +47,15 @@ export const Shell = ({
             <Link href="/">
               <Logo />
             </Link>
-            {navbarType === "editor" && <SavingDisplay isSaving={isSaving} />}
+            {navbarType === "editor" && (
+              <Flex gap="md">
+                <SavingDisplay isSaving={isSaving} />{" "}
+                <EditorPreviewModeToggle
+                  isPreviewMode={isPreviewMode}
+                  togglePreviewMode={togglePreviewMode}
+                />
+              </Flex>
+            )}
           </Group>
         </Header>
       }
