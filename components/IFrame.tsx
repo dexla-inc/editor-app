@@ -89,6 +89,10 @@ export const IFrame = ({ children, ...props }: Props) => {
     "margin: 0; overflow: visible; margin: 40px;"
   );
 
+  const styleTag = document.createElement("style");
+  styleTag.textContent = `* { box-sizing: border-box; }`;
+  insertionTarget?.appendChild(styleTag);
+
   const currentElementHeight =
     w?.document.getElementById(selectedComponentId!)?.scrollHeight ?? 0;
   const prevElementHeight = usePrevious(currentElementHeight);
@@ -109,18 +113,13 @@ export const IFrame = ({ children, ...props }: Props) => {
       return;
     }
 
-    if (prevCanvasHeight && currentElementHeight > prevCanvasHeight) {
+    if (prevCanvasHeight && currentElementHeight >= prevCanvasHeight) {
       setHeight(prevCanvasHeight);
     } else if (
       currentCanvasHeight &&
       prevCanvasHeight !== currentCanvasHeight
     ) {
-      setHeight(
-        Math.min(
-          currentCanvasHeight,
-          currentCanvasHeight + currentElementHeight - (prevElementHeight || 0)
-        )
-      );
+      setHeight(currentCanvasHeight);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -137,7 +136,7 @@ export const IFrame = ({ children, ...props }: Props) => {
 
   useEffect(() => {
     // TODO: Fix this as we are currently having to delay calculation to wait for the content to be rendered first
-    setTimeout(syncIframeHeight, 100);
+    setTimeout(syncIframeHeight, 1000);
   }, [syncIframeHeight]);
 
   return (
@@ -148,7 +147,7 @@ export const IFrame = ({ children, ...props }: Props) => {
         overflow: "visible",
         border: "none",
         width: "100%",
-        height: (height ?? 0) + 40,
+        height: height ?? 0,
       }}
       {...props}
     >

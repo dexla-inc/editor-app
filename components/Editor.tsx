@@ -175,7 +175,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
     if (component.id === "root") {
       return (
         <Droppable key={component.id} id={component.id} m={0} p={2}>
-          <Paper shadow="xs" ref={canvasRef} bg="gray.0">
+          <Paper shadow="xs" ref={canvasRef} bg="gray.0" display="flex">
             {component.children?.map((child) => renderTree(child))}
           </Paper>
         </Droppable>

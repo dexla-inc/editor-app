@@ -56,22 +56,36 @@ export const getEditorTreeFromPageStructure = (
   const editorTree: EditorTree = {
     root: {
       ...emptyEditorTree.root,
-      children: tree.rows.map((row: Row) => {
-        return {
-          id: nanoid(),
+      children: [
+        {
+          id: "content-wrapper",
           name: "Container",
           description: "Container",
           props: {
             style: {
-              width: "100%",
+              width: "calc(100% - 300px)",
+              display: "flex",
+              flexDirection: "column",
             },
           },
-          children: row.components.map((c) => {
-            const component = structureMapper[c.name];
-            return component.structure({ ...c, theme });
+          children: tree.rows.map((row: Row) => {
+            return {
+              id: nanoid(),
+              name: "Container",
+              description: "Container",
+              props: {
+                style: {
+                  width: "100%",
+                },
+              },
+              children: row.components.map((c) => {
+                const component = structureMapper[c.name];
+                return component.structure({ ...c, theme });
+              }),
+            };
           }),
-        };
-      }),
+        },
+      ],
     },
   };
 
