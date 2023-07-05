@@ -89,6 +89,8 @@ export const EditorNavbarComponentsSection = () => {
     return draggables.concat({ draggable, id: component.description });
   }, [] as DraggableComponentData[]);
 
+  const sortedComponents = [...globalComponents].sort(sort);
+
   return (
     <Stack spacing="xl">
       <SegmentedControl
