@@ -110,7 +110,7 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 import { FileWithPath } from "file-selector";
-import { LARGE_ICON_SIZE } from "./config";
+import { ICON_SIZE, LARGE_ICON_SIZE } from "./config";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -126,6 +126,7 @@ export type StructureDefinition = {
   structure: (props: any) => Component;
   Draggable?: any;
   category: ComponentCategoryType;
+  icon?: JSX.Element;
 };
 
 export type StructureMapper = {
@@ -144,6 +145,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Layout",
+    icon: <IconContainer size={ICON_SIZE} />,
   },
 
   Input: {
@@ -155,6 +157,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Input",
+    icon: <IconFileText size={ICON_SIZE} />,
   },
   Select: {
     structure: (props: any) => SelectStructure.jsonStructure(props),
@@ -165,6 +168,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Input",
+    icon: <IconSelect size={ICON_SIZE} />,
   },
 
   Button: {
@@ -176,6 +180,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Input",
+    icon: <IconClick size={ICON_SIZE} />,
   },
   Link: {
     structure: (props: any) => LinkStructure.jsonStructure(props),
@@ -186,6 +191,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Input",
+    icon: <IconLink size={ICON_SIZE} />,
   },
 
   Radio: {
@@ -197,6 +203,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Input",
+    icon: <IconPlaystationCircle size={ICON_SIZE} />,
   },
   Checkbox: {
     structure: (props: any) => CheckboxStructure.jsonStructure(props),
@@ -207,6 +214,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Input",
+    icon: <IconCheckbox size={ICON_SIZE} />,
   },
 
   Form: {
@@ -226,6 +234,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Input",
+    icon: <IconCalendar size={ICON_SIZE} />,
   },
   Textarea: {
     structure: (props: any) => TextareaStructure.jsonStructure(props),
@@ -236,6 +245,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Input",
+    icon: <IconPictureInPicture size={ICON_SIZE} />,
   },
   Switch: {
     structure: (props: any) => SwitchStructure.jsonStructure(props),
@@ -246,6 +256,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Input",
+    icon: <IconToggleLeft size={ICON_SIZE} />,
   },
   Rating: {
     structure: (props: any) => RatingStructure.jsonStructure(props),
@@ -256,6 +267,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Input",
+    icon: <IconJewishStar size={ICON_SIZE} />,
   },
   FilePond: {
     structure: (props: any) => FilePondStructure.jsonStructure(props),
@@ -266,6 +278,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Input",
+    icon: <IconFile size={ICON_SIZE} />,
   },
   Text: {
     structure: (props: any) => TextStructure.jsonStructure(props),
@@ -276,6 +289,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Typography",
+    icon: <IconCursorText size={ICON_SIZE} />,
   },
   Table: {
     structure: (props: any) => TableStructure.jsonStructure(props),
@@ -286,6 +300,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Data Display",
+    icon: <IconTable size={ICON_SIZE} />,
   },
   Icon: {
     structure: (props: any) => IconStructure.jsonStructure(props),
@@ -296,6 +311,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Data Display",
+    icon: <IconBrandChrome size={ICON_SIZE} />,
   },
   Image: {
     structure: (props: any) => ImageStructure.jsonStructure(props),
@@ -306,6 +322,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Data Display",
+    icon: <IconPhoto size={ICON_SIZE} />,
   },
   CodeSnippet: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -324,6 +341,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Data Display",
+    icon: <IconCards size={ICON_SIZE} />,
   },
   TaskList: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -334,6 +352,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Data Display",
+    icon: <IconListCheck size={ICON_SIZE} />,
   },
   ProfileList: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -344,6 +363,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Data Display",
+    icon: <IconUsers size={ICON_SIZE} />,
   },
   Avatar: {
     structure: (props: any) => AvatarStructure.jsonStructure(props),
@@ -354,6 +374,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Data Display",
+    icon: <IconUser size={ICON_SIZE} />,
   },
   TabsList: {
     structure: (props: any) => TabsListStructure.jsonStructure(props),
@@ -364,6 +385,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Data Display",
+    icon: <IconLayersDifference size={ICON_SIZE} />,
   },
   TabsPanel: {
     structure: (props: any) => TabsPanelStructure.jsonStructure(props),
@@ -374,6 +396,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Data Display",
+    icon: <IconLayersDifference size={ICON_SIZE} />,
   },
   Accordion: {
     structure: (props: any) => AccordionStructure.jsonStructure(props),
@@ -384,6 +407,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Data Display",
+    icon: <IconLayoutBottombarCollapse size={ICON_SIZE} />,
   },
   AccordionItem: {
     structure: (props: any) => AccordionItemStructure.jsonStructure(props),
@@ -394,6 +418,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Data Display",
+    icon: <IconLayoutBottombarCollapse size={ICON_SIZE} />,
   },
   AccordionControl: {
     structure: (props: any) => AccordionControlStructure.jsonStructure(props),
@@ -404,6 +429,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Data Display",
+    icon: <IconRowInsertTop size={ICON_SIZE} />,
   },
   Navbar: {
     structure: (props: any) => NavbarStructure.jsonStructure(props),
@@ -414,6 +440,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Navigation",
+    icon: <IconLayoutSidebar size={ICON_SIZE} />,
   },
   Pagination: {
     structure: (props: any) => PaginationStructure.jsonStructure(props),
@@ -424,6 +451,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Navigation",
+    icon: <IconPageBreak size={ICON_SIZE} />,
   },
   AccordionPanel: {
     structure: (props: any) => AccordionPanelStructure.jsonStructure(props),
@@ -434,6 +462,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Data Display",
+    icon: <IconRowInsertBottom size={ICON_SIZE} />,
   },
   Breadcrumb: {
     structure: (props: any) => Breadcrumbs.jsonStructure(props),
@@ -444,6 +473,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Navigation",
+    icon: <IconNavigation size={ICON_SIZE} />,
   },
   AppBar: {
     structure: (props: any) => AppBarStructure.jsonStructure(props),
@@ -454,6 +484,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Navigation",
+    icon: <IconLayoutNavbar size={ICON_SIZE} />,
   },
   Carousel: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -480,6 +511,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Chart",
+    icon: <IconChartBar size={ICON_SIZE} />,
   },
   StackedBarChart: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -506,6 +538,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Chart",
+    icon: <IconChartLine size={ICON_SIZE} />,
   },
   PieChart: {
     structure: (props: any) => PieChartStructure.jsonStructure(props),
@@ -516,6 +549,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Chart",
+    icon: <IconChartPie size={ICON_SIZE} />,
   },
   AreaChart: {
     structure: (props: any) => AreaChartStructure.jsonStructure(props),
@@ -526,6 +560,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Chart",
+    icon: <IconChartAreaLine size={ICON_SIZE} />,
   },
   ComposedChart: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -548,6 +583,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Chart",
+    icon: <IconChartRadar size={ICON_SIZE} />,
   },
 
   ImageCardList: {
@@ -559,6 +595,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Card",
+    icon: <IconPhotoSearch size={ICON_SIZE} />,
   },
 
   Alert: {
@@ -570,6 +607,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Feedback",
+    icon: <IconExclamationMark size={ICON_SIZE} />,
   },
   Tabs: {
     structure: (props: any) => TabsStructure.jsonStructure(props),
@@ -580,6 +618,7 @@ export const structureMapper: StructureMapper = {
       />
     ),
     category: "Navigation",
+    icon: <IconLayoutKanban size={ICON_SIZE} />,
   },
 };
 
