@@ -1,6 +1,9 @@
+import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { UnitInput } from "@/components/UnitInput";
+import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
-import { Group, SegmentedControl, Stack, Text, Tooltip } from "@mantine/core";
+import { Group, SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconBorderBottom,
@@ -16,10 +19,8 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
-import { useEffect } from "react";
-import { UnitInput } from "@/components/UnitInput";
 import startCase from "lodash.startcase";
-import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { useEffect } from "react";
 
 export const icon = IconBorderStyle;
 export const label = "Border";
@@ -106,41 +107,46 @@ export const Modifier = () => {
           data={[
             {
               label: (
-                <Tooltip label="All" withinPortal>
-                  <IconSquare size={14} />
-                </Tooltip>
+                <StylingPaneItemIcon
+                  label="All"
+                  icon={<IconSquare size={14} />}
+                />
               ),
               value: "all",
             },
             {
               label: (
-                <Tooltip label="Left" withinPortal>
-                  <IconBorderLeft size={14} />
-                </Tooltip>
+                <StylingPaneItemIcon
+                  label="Left"
+                  icon={<IconBorderLeft size={14} />}
+                />
               ),
               value: "left",
             },
             {
               label: (
-                <Tooltip label="Top" withinPortal>
-                  <IconBorderTop size={14} />
-                </Tooltip>
+                <StylingPaneItemIcon
+                  label="Top"
+                  icon={<IconBorderTop size={14} />}
+                />
               ),
               value: "top",
             },
             {
               label: (
-                <Tooltip label="Right" withinPortal>
-                  <IconBorderRight size={14} />
-                </Tooltip>
+                <StylingPaneItemIcon
+                  label="Right"
+                  icon={<IconBorderRight size={14} />}
+                />
               ),
               value: "right",
             },
             {
               label: (
-                <Tooltip label="Bottom" withinPortal>
-                  <IconBorderBottom size={14} />
-                </Tooltip>
+                <StylingPaneItemIcon
+                  label="Bottom"
+                  icon={<IconBorderBottom size={14} />}
+                />
               ),
               value: "bottom",
             },
@@ -178,33 +184,37 @@ export const Modifier = () => {
             data={[
               {
                 label: (
-                  <Tooltip label="None" withinPortal>
-                    <IconX size={14} />
-                  </Tooltip>
+                  <StylingPaneItemIcon
+                    label="None"
+                    icon={<IconX size={14} />}
+                  />
                 ),
                 value: "none",
               },
               {
                 label: (
-                  <Tooltip label="Solid" withinPortal>
-                    <IconMinus size={14} />
-                  </Tooltip>
+                  <StylingPaneItemIcon
+                    label="Solid"
+                    icon={<IconMinus size={14} />}
+                  />
                 ),
                 value: "solid",
               },
               {
                 label: (
-                  <Tooltip label="Dashed" withinPortal>
-                    <IconLineDashed size={14} />
-                  </Tooltip>
+                  <StylingPaneItemIcon
+                    label="Dashed"
+                    icon={<IconLineDashed size={14} />}
+                  />
                 ),
                 value: "dashed",
               },
               {
                 label: (
-                  <Tooltip label="Dotted" withinPortal>
-                    <IconLineDotted size={14} />
-                  </Tooltip>
+                  <StylingPaneItemIcon
+                    label="Dotted"
+                    icon={<IconLineDotted size={14} />}
+                  />
                 ),
                 value: "dotted",
               },
@@ -325,9 +335,22 @@ export const Modifier = () => {
               size="sm"
               w="50%"
               data={[
-                { label: <IconSquare size={14} />, value: "radius-all" },
                 {
-                  label: <IconBorderCorners size={14} />,
+                  label: (
+                    <StylingPaneItemIcon
+                      label="All"
+                      icon={<IconSquare size={14} />}
+                    />
+                  ),
+                  value: "radius-all",
+                },
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Sides"
+                      icon={<IconBorderCorners size={14} />}
+                    />
+                  ),
                   value: "radius-sides",
                 },
               ]}

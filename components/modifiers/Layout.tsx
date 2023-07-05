@@ -1,7 +1,8 @@
 import { UnitInput } from "@/components/UnitInput";
+import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
-import { Group, SegmentedControl, Stack, Text, Tooltip } from "@mantine/core";
+import { Group, SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconAlignBoxBottomCenter,
@@ -111,33 +112,37 @@ export const Modifier = () => {
             data={[
               {
                 label: (
-                  <Tooltip label="Start" withinPortal>
-                    <IconAlignBoxLeftMiddle size={14} />
-                  </Tooltip>
+                  <StylingPaneItemIcon
+                    label="Start"
+                    icon={<IconAlignBoxLeftMiddle size={14} />}
+                  />
                 ),
                 value: "flex-start",
               },
               {
                 label: (
-                  <Tooltip label="Center" withinPortal>
-                    <IconAlignBoxCenterMiddle size={14} />
-                  </Tooltip>
+                  <StylingPaneItemIcon
+                    label="Center"
+                    icon={<IconAlignBoxCenterMiddle size={14} />}
+                  />
                 ),
                 value: "center",
               },
               {
                 label: (
-                  <Tooltip label="End" withinPortal>
-                    <IconAlignBoxRightMiddle size={14} />
-                  </Tooltip>
+                  <StylingPaneItemIcon
+                    label="End"
+                    icon={<IconAlignBoxRightMiddle size={14} />}
+                  />
                 ),
                 value: "flex-end",
               },
               {
                 label: (
-                  <Tooltip label="Stretch" withinPortal>
-                    <IconAlignBoxBottomCenter size={14} />
-                  </Tooltip>
+                  <StylingPaneItemIcon
+                    label="Stretch"
+                    icon={<IconAlignBoxBottomCenter size={14} />}
+                  />
                 ),
                 value: "stretch",
               },
@@ -166,41 +171,46 @@ export const Modifier = () => {
             data={[
               {
                 label: (
-                  <Tooltip label="Start" withinPortal>
-                    <IconAlignBoxLeftMiddle size={14} />
-                  </Tooltip>
+                  <StylingPaneItemIcon
+                    label="Start"
+                    icon={<IconAlignBoxLeftMiddle size={14} />}
+                  />
                 ),
                 value: "flex-start",
               },
               {
                 label: (
-                  <Tooltip label="Center" withinPortal>
-                    <IconAlignBoxCenterMiddle size={14} />
-                  </Tooltip>
+                  <StylingPaneItemIcon
+                    label="Center"
+                    icon={<IconAlignBoxCenterMiddle size={14} />}
+                  />
                 ),
                 value: "center",
               },
               {
                 label: (
-                  <Tooltip label="End" withinPortal>
-                    <IconAlignBoxRightMiddle size={14} />
-                  </Tooltip>
+                  <StylingPaneItemIcon
+                    label="End"
+                    icon={<IconAlignBoxRightMiddle size={14} />}
+                  />
                 ),
                 value: "flex-end",
               },
               {
                 label: (
-                  <Tooltip label="Space Between" withinPortal>
-                    <IconAlignBoxBottomCenter size={14} />
-                  </Tooltip>
+                  <StylingPaneItemIcon
+                    label="Space Between"
+                    icon={<IconAlignBoxBottomCenter size={14} />}
+                  />
                 ),
                 value: "space-between",
               },
               {
                 label: (
-                  <Tooltip label="Space Around" withinPortal>
-                    <IconAlignBoxCenterMiddle size={14} />
-                  </Tooltip>
+                  <StylingPaneItemIcon
+                    label="Space Around"
+                    icon={<IconAlignBoxCenterMiddle size={14} />}
+                  />
                 ),
                 value: "space-around",
               },

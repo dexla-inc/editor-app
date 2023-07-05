@@ -1,3 +1,5 @@
+import { UnitInput } from "@/components/UnitInput";
+import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
 import { Group, SegmentedControl, Stack, Text } from "@mantine/core";
@@ -9,7 +11,6 @@ import {
 } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
-import { UnitInput } from "@/components/UnitInput";
 
 export const icon = IconBoxModel2;
 export const label = "Spacing";
@@ -180,9 +181,22 @@ export const Modifier = () => {
               size="sm"
               w="50%"
               data={[
-                { label: <IconSquare size={14} />, value: "margin-all" },
                 {
-                  label: <IconBorderSides size={14} />,
+                  label: (
+                    <StylingPaneItemIcon
+                      label="All"
+                      icon={<IconSquare size={14} />}
+                    />
+                  ),
+                  value: "margin-all",
+                },
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Sides"
+                      icon={<IconBorderSides size={14} />}
+                    />
+                  ),
                   value: "margin-sides",
                 },
               ]}

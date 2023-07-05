@@ -86,7 +86,7 @@ export const IFrame = ({ children, ...props }: Props) => {
   const insertionTarget = w?.document.head;
   mountNode?.setAttribute(
     "style",
-    "margin: 0; overflow: visible; margin: 40px;"
+    "margin: 0; overflow: visible; margin: 10px;"
   );
 
   const currentElementHeight =
