@@ -63,9 +63,10 @@ export const getEditorTreeFromPageStructure = (
           description: "Container",
           props: {
             style: {
-              width: "calc(100% - 300px)",
+              width: "100%",
               display: "flex",
               flexDirection: "column",
+              boxSizing: "broder-box",
             },
           },
           children: tree.rows.map((row: Row) => {
@@ -273,11 +274,28 @@ export const removeComponentFromParent = (
   );
 };
 
+export const resetContentWrapperWidth = (treeRoot: Component) => {
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === "content-wrapper") {
+        // @ts-ignore
+        node.props.style.width = "100%";
+        context.break();
+      }
+    },
+    { order: "bfs" }
+  );
+};
+
 export const removeComponent = (treeRoot: Component, id: string) => {
   crawl(
     treeRoot,
     (node, context) => {
       if (node.id === id) {
+        if (node.props?.fixedPosition) {
+          resetContentWrapperWidth(treeRoot);
+        }
         context.parent?.children?.splice(context.index, 1);
         context.remove();
         context.break();
@@ -299,6 +317,9 @@ export const addComponent = (
     treeRoot,
     (node, context) => {
       if (copy.props?.fixedPosition && node.id === "root") {
+        // @ts-ignore
+        node.children[0].props.style.width = `calc(100% - ${copy.props.style.width})`;
+
         if (
           copy.props?.fixedPosition === "left" ||
           copy.props?.fixedPosition === "top"

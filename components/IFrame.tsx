@@ -1,7 +1,6 @@
-import { usePreviousDeep } from "@/hooks/usePreviousDeep";
 import { getTheme } from "@/requests/themes/queries";
-import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
+import { HEADER_HEIGHT } from "@/utils/config";
 import createCache from "@emotion/cache";
 import {
   Box,
@@ -10,11 +9,9 @@ import {
   MantineProvider,
   MantineTheme,
 } from "@mantine/core";
-import { usePrevious } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
-import isEqual from "lodash.isequal";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 export const defaultTheme: MantineTheme = {
@@ -35,12 +32,6 @@ export const IFrame = ({ children, ...props }: Props) => {
   const router = useRouter();
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
-  const editorTree = useEditorStore((state) => state.tree);
-  const isLoading = useAppStore((state) => state.isLoading);
-  const [height, setHeight] = useState<number>();
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
 
   const theme = useEditorStore((state) => state.theme);
   const setTheme = useEditorStore((state) => state.setTheme);
@@ -93,51 +84,12 @@ export const IFrame = ({ children, ...props }: Props) => {
   styleTag.textContent = `* { box-sizing: border-box; }`;
   insertionTarget?.appendChild(styleTag);
 
-  const currentElementHeight =
-    w?.document.getElementById(selectedComponentId!)?.scrollHeight ?? 0;
-  const prevElementHeight = usePrevious(currentElementHeight);
-  const previousEditorTree = usePreviousDeep(editorTree);
-  const isDifferentEditorTree = !isEqual(editorTree, previousEditorTree);
-  const currentCanvasHeight = w?.document?.body?.scrollHeight || 0;
-  const prevCanvasHeight = usePrevious(currentCanvasHeight);
-
   useEffect(() => {
     const w = contentRef?.contentWindow;
     if (w) {
       setIframeWindow(w);
     }
   }, [contentRef, setIframeWindow]);
-
-  const syncIframeHeight = useCallback(() => {
-    if (!w || !mountNode) {
-      return;
-    }
-
-    if (prevCanvasHeight && currentElementHeight >= prevCanvasHeight) {
-      setHeight(prevCanvasHeight);
-    } else if (
-      currentCanvasHeight &&
-      prevCanvasHeight !== currentCanvasHeight
-    ) {
-      setHeight(currentCanvasHeight);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    w,
-    isDifferentEditorTree,
-    selectedComponentId,
-    currentElementHeight,
-    prevElementHeight,
-    currentCanvasHeight,
-    prevCanvasHeight,
-    mountNode,
-    isLoading,
-  ]);
-
-  useEffect(() => {
-    // TODO: Fix this as we are currently having to delay calculation to wait for the content to be rendered first
-    setTimeout(syncIframeHeight, 1000);
-  }, [syncIframeHeight]);
 
   return (
     <Box
@@ -147,7 +99,7 @@ export const IFrame = ({ children, ...props }: Props) => {
         overflow: "visible",
         border: "none",
         width: "100%",
-        height: height ?? 0,
+        height: `calc(100vh - ${HEADER_HEIGHT}px)`,
       }}
       {...props}
     >

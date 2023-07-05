@@ -92,6 +92,7 @@ export const DroppableDraggable = ({
     ? { border: baseBorder }
     : {};
 
+  const isContentWrapper = id === "content-wrapper";
   const haveNonRootParent = parent && parent.id !== "root";
 
   return (
@@ -122,58 +123,64 @@ export const DroppableDraggable = ({
       >
         {children}
       </Box>
-      <Box
-        pos="absolute"
-        h={36}
-        top={-36}
-        sx={{
-          zIndex: 90,
-          display: isSelected ? "block" : "none",
-          background: theme.colors.teal[6],
-          borderTopLeftRadius: theme.radius.sm,
-          borderTopRightRadius: theme.radius.sm,
-        }}
-      >
-        <Group py={4} px={8} h={36} noWrap spacing="xs" align="center">
-          {!component.props?.fixedPosition && (
-            <UnstyledButton
-              sx={{ cursor: "move", alignItems: "center", display: "flex" }}
-              {...draggable}
-            >
-              <IconGripVertical
-                size={ICON_SIZE}
-                color="white"
-                strokeWidth={1.5}
-              />
-            </UnstyledButton>
-          )}
-          <Text color="white" size="xs" pr={haveNonRootParent ? 0 : "xs"}>
-            {component.name}
-          </Text>
-          {haveNonRootParent && (
+      {!isContentWrapper && (
+        <Box
+          pos="absolute"
+          h={36}
+          top={-36}
+          sx={{
+            zIndex: 90,
+            display: isSelected ? "block" : "none",
+            background: theme.colors.teal[6],
+            borderTopLeftRadius: theme.radius.sm,
+            borderTopRightRadius: theme.radius.sm,
+          }}
+        >
+          <Group py={4} px={8} h={36} noWrap spacing="xs" align="center">
+            {!component.props?.fixedPosition && (
+              <UnstyledButton
+                sx={{ cursor: "move", alignItems: "center", display: "flex" }}
+                {...draggable}
+              >
+                <IconGripVertical
+                  size={ICON_SIZE}
+                  color="white"
+                  strokeWidth={1.5}
+                />
+              </UnstyledButton>
+            )}
+            <Text color="white" size="xs" pr={haveNonRootParent ? 0 : "xs"}>
+              {component.name}
+            </Text>
+            {haveNonRootParent && (
+              <ActionIcon
+                variant="transparent"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setSelectedComponentId(parent.id as string);
+                }}
+              >
+                <IconArrowUp size={ICON_SIZE} color="white" strokeWidth={1.5} />
+              </ActionIcon>
+            )}
             <ActionIcon
               variant="transparent"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                setSelectedComponentId(parent.id as string);
+                customComponentModal.open();
               }}
             >
-              <IconArrowUp size={ICON_SIZE} color="white" strokeWidth={1.5} />
+              <IconNewSection
+                size={ICON_SIZE}
+                color="white"
+                strokeWidth={1.5}
+              />
             </ActionIcon>
-          )}
-          <ActionIcon
-            variant="transparent"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              customComponentModal.open();
-            }}
-          >
-            <IconNewSection size={ICON_SIZE} color="white" strokeWidth={1.5} />
-          </ActionIcon>
-        </Group>
-      </Box>
+          </Group>
+        </Box>
+      )}
     </Box>
   );
 };
