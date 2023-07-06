@@ -156,6 +156,30 @@ export const checkIfIsChild = (treeRoot: Component, childId: string) => {
   return isChild;
 };
 
+export const checkIfIsAncestor = (
+  treeRoot: Component,
+  childId: string,
+  possibleAncestorId: string
+) => {
+  let possiblAncestorDepth = null;
+  let childDepth = 0;
+
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === possibleAncestorId) {
+        possiblAncestorDepth = context.depth;
+      } else if (node.id === childId) {
+        childDepth = context.depth;
+        context.break();
+      }
+    },
+    { order: "bfs" }
+  );
+
+  return possiblAncestorDepth && possiblAncestorDepth < childDepth;
+};
+
 export const moveComponentToDifferentParent = (
   treeRoot: Component,
   id: string,

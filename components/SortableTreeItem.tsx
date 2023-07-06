@@ -34,6 +34,7 @@ export const SortableTreeItem = ({
 
   const borders = isOver
     ? {
+        border: `1px solid ${theme.colors.teal[6]}`,
         borderTop:
           edge === "top" || edge === "left"
             ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
@@ -51,9 +52,7 @@ export const SortableTreeItem = ({
       w="100%"
       h="100%"
       pos="relative"
-      sx={{
-        ...borders,
-      }}
+      sx={borders}
       {...props}
     >
       {children}

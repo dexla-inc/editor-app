@@ -3,7 +3,7 @@ import { useDraggable } from "@/hooks/useDraggable";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
-import { Component } from "@/utils/editor";
+import { Component, checkIfIsAncestor } from "@/utils/editor";
 import {
   ActionIcon,
   Card,
@@ -14,8 +14,9 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
+import { useEffect } from "react";
 
 type ListItemProps = {
   component: Component;
@@ -23,13 +24,16 @@ type ListItemProps = {
 
 const ListItem = ({ component, children }: ListItemProps) => {
   const theme = useMantineTheme();
+  const { ref, hovered } = useHover();
+  const editorTree = useEditorStore((state) => state.tree);
+  const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId
   );
-  const [opened, { toggle }] = useDisclosure(false);
+  const [opened, { toggle, open }] = useDisclosure(false);
 
   const onDragStart = useOnDragStart();
 
@@ -38,22 +42,42 @@ const ListItem = ({ component, children }: ListItemProps) => {
     onDragStart,
   });
 
-  const handleSelection = (e: React.MouseEvent<HTMLElement>, id: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-
+  const handleSelection = (id: string) => {
     if (id !== "root") {
       setSelectedComponentId(id as string);
     }
   };
 
   const canExpand = (component.children ?? [])?.length > 0;
+  const isCurrentTarget = currentTargetId === `layer-${component.id}`;
+  const isAncestorOfSelectedComponent =
+    component.id && selectedComponentId
+      ? checkIfIsAncestor(editorTree.root, selectedComponentId, component.id)
+      : false;
+
+  useEffect(() => {
+    if (
+      component.id === selectedComponentId ||
+      isAncestorOfSelectedComponent ||
+      isCurrentTarget
+    ) {
+      open();
+    }
+  }, [
+    selectedComponentId,
+    open,
+    component.id,
+    isAncestorOfSelectedComponent,
+    isCurrentTarget,
+  ]);
 
   return (
     <>
       <Card
+        ref={ref}
         p={0}
         w="100%"
+        bg={hovered ? "gray.1" : undefined}
         style={{
           cursor: "move",
           border:
@@ -64,7 +88,7 @@ const ListItem = ({ component, children }: ListItemProps) => {
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          handleSelection(e, component.id as string);
+          handleSelection(component.id as string);
         }}
       >
         <Group position="apart" noWrap>
@@ -103,7 +127,12 @@ const ListItem = ({ component, children }: ListItemProps) => {
           </Group>
         </Group>
       </Card>
-      <Collapse in={opened}>{children}</Collapse>
+      <Collapse
+        key={`${component.id}-${opened}`}
+        in={component.id === "root" || opened}
+      >
+        {children}
+      </Collapse>
     </>
   );
 };
