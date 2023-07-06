@@ -4,29 +4,30 @@ import {
   PageResponse,
 } from "@/requests/pages/types";
 import { baseURL, get, getAuthToken } from "@/utils/api";
+import { buildQueryString } from "@/utils/dashboardTypes";
 import {
   EventSourceMessage,
   fetchEventSource,
 } from "@microsoft/fetch-event-source";
 
 export const getPageList = async (projectId: string, params?: PageParams) => {
-  let queryParams = "";
+  // let queryParams = "";
 
-  if (params) {
-    const urlParams = new URLSearchParams();
-    if (params.isHome) {
-      urlParams.append("isHome", String(params.isHome));
-    }
-    if (params.slug) {
-      urlParams.append("slug", encodeURIComponent(params.slug));
-    }
-    queryParams = `?${urlParams.toString()}`;
-  }
+  // if (params) {
+  //   const urlParams = new URLSearchParams();
+  //   if (params.isHome) {
+  //     urlParams.append("isHome", String(params.isHome));
+  //   }
+  //   if (params.slug) {
+  //     urlParams.append("slug", encodeURIComponent(params.slug));
+  //   }
+  //   queryParams = `?${urlParams.toString()}`;
+  // }
 
-  const response = (await get<PageListResponse>(
-    `/projects/${projectId}/pages/${queryParams}`,
-    {}
-  )) as PageListResponse;
+  let url = `/projects/${projectId}/pages`;
+  url += buildQueryString({ ...params });
+
+  const response = (await get<PageListResponse>(url, {})) as PageListResponse;
 
   return response;
 };

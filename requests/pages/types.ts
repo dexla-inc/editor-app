@@ -25,6 +25,7 @@ export type PagesResponse = {
 };
 
 export interface PageParams extends PagingParams {
+  search?: string;
   isHome?: boolean;
   slug?: string;
 }
