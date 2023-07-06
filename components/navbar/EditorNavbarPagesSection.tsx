@@ -1,23 +1,23 @@
 import { getPageList } from "@/requests/pages/queries";
-import { PageResponse } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
 import { Center, Loader, Stack, Text, useMantineTheme } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 
 export const EditorNavbarPagesSection = () => {
   const theme = useMantineTheme();
   const router = useRouter();
   const id = router.query.id as string;
   const currentPage = router.query.page as string;
-  const [pages, setPages] = useState<PageResponse[]>([]);
   const resetTree = useEditorStore((state) => state.resetTree);
+  const pages = useEditorStore((state) => state.pages);
+  const setPages = useEditorStore((state) => state.setPages);
 
   const getPages = useCallback(async () => {
     const pageList = await getPageList(id);
     setPages(pageList.results);
-  }, [id]);
+  }, [id, setPages]);
 
   useEffect(() => {
     getPages();

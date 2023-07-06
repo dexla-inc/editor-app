@@ -1,5 +1,6 @@
 import { defaultTheme } from "@/components/IFrame";
 import { updatePageState } from "@/requests/pages/mutations";
+import { PageResponse } from "@/requests/pages/types";
 import { encodeSchema } from "@/utils/compression";
 import { Component, EditorTree, updateTreeComponent } from "@/utils/editor";
 import { MantineTheme } from "@mantine/core";
@@ -32,6 +33,8 @@ export type EditorState = {
   theme: MantineTheme;
   isSaving: boolean;
   isPreviewMode: boolean;
+  pages: PageResponse[];
+  setPages: (pages: PageResponse[]) => void;
   setTheme: (theme: MantineTheme) => void;
   setIframeWindow: (iframeWindow: Window) => void;
   setCurrentTargetId: (currentTargetId?: string) => void;
@@ -53,6 +56,8 @@ export const useEditorStore = create<EditorState>()(
     (set) => ({
       tree: emptyEditorTree,
       theme: defaultTheme,
+      pages: [],
+      setPages: (pages) => set({ pages }),
       setTheme: (theme) => set({ theme }),
       setIframeWindow: (iframeWindow) => set({ iframeWindow }),
       setCurrentTargetId: (currentTargetId) => set({ currentTargetId }),

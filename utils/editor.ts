@@ -3,6 +3,7 @@ import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
 import { structureMapper } from "@/utils/componentMapper";
 import { MantineTheme } from "@mantine/core";
+import { PageResponse } from "@/requests/pages/types";
 
 export type Component = {
   id?: string;
@@ -51,27 +52,43 @@ export const replaceIdsDeeply = (treeRoot: Component) => {
 
 export const getEditorTreeFromPageStructure = (
   tree: { rows: Row[] },
-  theme: MantineTheme
+  theme: MantineTheme,
+  pages: PageResponse[]
 ) => {
   const editorTree: EditorTree = {
     root: {
       ...emptyEditorTree.root,
-      children: tree.rows.map((row: Row) => {
-        return {
-          id: nanoid(),
+      children: [
+        {
+          id: "content-wrapper",
           name: "Container",
           description: "Container",
           props: {
             style: {
               width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              boxSizing: "broder-box",
             },
           },
-          children: row.components.map((c) => {
-            const component = structureMapper[c.name];
-            return component.structure({ ...c, theme });
+          children: tree.rows.map((row: Row) => {
+            return {
+              id: nanoid(),
+              name: "Container",
+              description: "Container",
+              props: {
+                style: {
+                  width: "100%",
+                },
+              },
+              children: row.components.map((c) => {
+                const component = structureMapper[c.name];
+                return component.structure({ ...c, theme, pages });
+              }),
+            };
           }),
-        };
-      }),
+        },
+      ],
     },
   };
 
@@ -259,11 +276,28 @@ export const removeComponentFromParent = (
   );
 };
 
+export const resetContentWrapperWidth = (treeRoot: Component) => {
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === "content-wrapper") {
+        // @ts-ignore
+        node.props.style.width = "100%";
+        context.break();
+      }
+    },
+    { order: "bfs" }
+  );
+};
+
 export const removeComponent = (treeRoot: Component, id: string) => {
   crawl(
     treeRoot,
     (node, context) => {
       if (node.id === id) {
+        if (node.props?.fixedPosition) {
+          resetContentWrapperWidth(treeRoot);
+        }
         context.parent?.children?.splice(context.index, 1);
         context.remove();
         context.break();
@@ -285,6 +319,9 @@ export const addComponent = (
     treeRoot,
     (node, context) => {
       if (copy.props?.fixedPosition && node.id === "root") {
+        // @ts-ignore
+        node.children[0].props.style.width = `calc(100% - ${copy.props.style.width})`;
+
         if (
           copy.props?.fixedPosition === "left" ||
           copy.props?.fixedPosition === "top"

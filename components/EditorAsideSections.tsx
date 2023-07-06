@@ -29,7 +29,9 @@ export const EditorAsideSections = () => {
     (state) => state.selectedComponentId
   );
 
-  if (!selectedComponentId) {
+  const isContentWrapperSelected = selectedComponentId === "content-wrapper";
+
+  if (!selectedComponentId || isContentWrapperSelected) {
     return (
       <Box py="xl">
         <Center>

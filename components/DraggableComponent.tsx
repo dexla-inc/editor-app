@@ -12,16 +12,18 @@ type Props = {
 };
 
 export const DraggableComponent = ({ id, text, data, icon }: Props) => {
+  const pages = useEditorStore((state) => state.pages);
   const theme = useEditorStore((state) => state.theme);
   const [draggableData, setDraggableData] = useState<any>(data);
+
   useEffect(() => {
     if (!data) {
       const component = structureMapper[id];
-      setDraggableData(component.structure({ theme }));
+      setDraggableData(component.structure({ theme, pages }));
     } else {
       setDraggableData(data);
     }
-  }, [data, id, theme]);
+  }, [data, id, pages, theme]);
 
   return (
     <Draggable id={id} data={draggableData} isDeletable={!!data} sx={{}}>

@@ -17,7 +17,9 @@ export const jsonStructure = (props?: any): Component => {
       style: {
         borderBottomWidth: `1px`,
         borderBottomStyle: `solid`,
-        borderBottomColor: theme.colors.gray[3],
+        borderBottomColor: theme.colors.Border
+          ? theme.colors.Border[6]
+          : theme.colors.gray[3],
         paddingTop: px(theme.spacing.sm),
         paddingBottom: px(theme.spacing.sm),
         paddingLeft: px(theme.spacing.lg),
