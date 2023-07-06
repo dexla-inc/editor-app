@@ -11,19 +11,6 @@ import {
 } from "@microsoft/fetch-event-source";
 
 export const getPageList = async (projectId: string, params?: PageParams) => {
-  // let queryParams = "";
-
-  // if (params) {
-  //   const urlParams = new URLSearchParams();
-  //   if (params.isHome) {
-  //     urlParams.append("isHome", String(params.isHome));
-  //   }
-  //   if (params.slug) {
-  //     urlParams.append("slug", encodeURIComponent(params.slug));
-  //   }
-  //   queryParams = `?${urlParams.toString()}`;
-  // }
-
   let url = `/projects/${projectId}/pages`;
   url += buildQueryString({ ...params });
 

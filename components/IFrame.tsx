@@ -75,10 +75,7 @@ export const IFrame = ({ children, ...props }: Props) => {
   const w = contentRef?.contentWindow;
   const mountNode = w?.document.body;
   const insertionTarget = w?.document.head;
-  mountNode?.setAttribute(
-    "style",
-    "margin: 0; overflow: visible; margin: 10px;"
-  );
+  mountNode?.setAttribute("style", "overflow: visible; margin: 40px 10px");
 
   const styleTag = document.createElement("style");
   styleTag.textContent = `* { box-sizing: border-box; }`;
