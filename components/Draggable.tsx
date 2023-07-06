@@ -1,5 +1,5 @@
 import { useDraggable } from "@/hooks/useDraggable";
-import { deleteCustomComponent } from "@/requests/projects/mutations";
+import { deleteCustomComponent } from "@/requests/components/mutations";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import {
