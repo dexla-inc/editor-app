@@ -1,6 +1,6 @@
 import { DraggableComponent } from "@/components/DraggableComponent";
-import { CustomComponentResponse } from "@/requests/projects/mutations";
-import { getComponentList } from "@/requests/projects/queries";
+import { CustomComponentResponse } from "@/requests/components/mutations";
+import { getComponentList } from "@/requests/components/queries";
 import {
   ComponentCategoryType,
   structureMapper,
@@ -116,22 +116,29 @@ export const EditorNavbarComponentsSection = () => {
       {componentTypeToShow === "default" && (
         <Grid gutter="xs">
           {Object.entries(componentsGroupedByCategory).map(
-            ([category, components]) => (
-              <>
-                <Grid.Col span={12}>
-                  <Title order={6}>{category}</Title>
-                </Grid.Col>
-                {components
-                  .filter(({ id }) =>
-                    query ? new RegExp(query, "i").test(id) : true
-                  )
-                  .map(({ id, draggable: Draggable }) => (
+            ([category, components]) => {
+              // Filter the components based on the query before rendering
+              const filteredComponents = components.filter(({ id }) =>
+                query ? new RegExp(query, "i").test(id) : true
+              );
+
+              if (filteredComponents.length === 0) {
+                return null; // If no components after filtering, don't render this category
+              }
+
+              return (
+                <>
+                  <Grid.Col span={12}>
+                    <Title order={6}>{category}</Title>
+                  </Grid.Col>
+                  {filteredComponents.map(({ id, draggable: Draggable }) => (
                     <Grid.Col span={6} key={id}>
                       <Draggable />
                     </Grid.Col>
                   ))}
-              </>
-            )
+                </>
+              );
+            }
           )}
         </Grid>
       )}

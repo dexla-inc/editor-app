@@ -23,11 +23,11 @@ import { useOnDrop } from "@/hooks/useOnDrop";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useHover } from "@mantine/hooks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { updateComponent } from "@/requests/projects/mutations";
+import { updateComponent } from "@/requests/components/mutations";
 import { showNotification } from "@mantine/notifications";
 import { useRouter } from "next/router";
 import { encodeSchema } from "@/utils/compression";
-import { getComponentList } from "@/requests/projects/queries";
+import { getComponentList } from "@/requests/components/queries";
 
 type Props = {
   id: string;

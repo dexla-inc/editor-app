@@ -40,6 +40,7 @@ const projectInfo: ProjectTypeMap = {
 export default function ProjectStep({
   nextStep,
   isLoading,
+  setIsLoading,
   startLoading,
   stopLoading,
   setProjectId,
@@ -67,6 +68,7 @@ export default function ProjectStep({
 
   const onSubmit = async (values: ProjectParams) => {
     try {
+      setIsLoading && setIsLoading(true);
       startLoading({
         id: "creating-project",
         title: "Creating Project",
@@ -84,7 +86,7 @@ export default function ProjectStep({
         title: "Project Created",
         message: "The project was created successfully",
       });
-
+      setIsLoading && setIsLoading(false);
       nextStep();
     } catch (error) {
       stopLoading({
@@ -92,6 +94,7 @@ export default function ProjectStep({
         title: "Project Failed",
         message: "Validation failed",
       });
+      setIsLoading && setIsLoading(false);
     }
   };
 

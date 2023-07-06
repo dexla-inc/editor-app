@@ -16,6 +16,11 @@ type FetchType = {
 
 export const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
+export async function getAuthToken() {
+  const authInfo = await authClient.getAuthenticationInfoOrNull();
+  return authInfo?.accessToken;
+}
+
 async function doFetch<Type>({
   url,
   method,

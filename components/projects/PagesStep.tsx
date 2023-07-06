@@ -2,7 +2,7 @@ import { InformationAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
 import NextButton from "@/components/NextButton";
 import { createPages } from "@/requests/pages/mutations";
-import { getPagesStream } from "@/requests/pages/queries";
+import { getPagesEventSource } from "@/requests/pages/queries";
 import { PageBody } from "@/requests/pages/types";
 import { ICON_SIZE } from "@/utils/config";
 import { PagesStepProps } from "@/utils/projectTypes";
@@ -18,6 +18,7 @@ import {
   TextInput,
   ThemeIcon,
 } from "@mantine/core";
+import { EventSourceMessage } from "@microsoft/fetch-event-source";
 import {
   IconCircleCheck,
   IconPlus,
@@ -50,7 +51,7 @@ export default function PagesStep({
   const router = useRouter();
   const [formComplete, setFormComplete] = useState(false);
 
-  const getPageStream = async (count: number) => {
+  const stream = async (count: number) => {
     const plural = count === 1 ? "" : "s";
     startLoading({
       id: "pages-stream",
@@ -58,36 +59,43 @@ export default function PagesStep({
       message: `Wait while AI generates the name${plural} of your page${plural}`,
     });
 
-    const data = await getPagesStream(projectId, count, pages.join());
-
-    if (!data) {
-      return;
-    }
-
-    const reader = data.getReader();
-    const decoder = new TextDecoder();
-    let done = false;
-
-    while (!done) {
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
-      const chunkValue = decoder.decode(value);
-
+    const onMessage = (event: EventSourceMessage) => {
       try {
-        const json = TOML.parse(chunkValue);
+        const json = TOML.parse(event.data);
         const newPages = Object.values(json) as string[];
         setPages((oldPages) => [...oldPages, ...newPages]);
+        stopLoading({
+          id: "pages-stream",
+          title: "Names Generated",
+          message: "Here's your pages names. We hope you like it",
+        });
       } catch (error) {
         // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
         console.error(error);
       }
-    }
+    };
 
-    stopLoading({
-      id: "pages-stream",
-      title: "Names Generated",
-      message: "Here's your pages names. We hope you like it",
-    });
+    const onError = (err: any) => {
+      stopLoading({
+        id: "pages-stream",
+        title: "There was a problem",
+        message: err,
+        isError: true,
+      });
+    };
+
+    const onOpen = async (response: Response) => {
+      // handle open
+    };
+
+    getPagesEventSource(
+      projectId,
+      count,
+      pages.join(),
+      onMessage,
+      onError,
+      onOpen
+    );
   };
 
   const goToEditor = async (projectId: string) => {
@@ -168,7 +176,7 @@ export default function PagesStep({
           <Button
             variant="light"
             leftIcon={<IconSparkles size={ICON_SIZE} />}
-            onClick={() => getPageStream(5)}
+            onClick={() => stream(5)}
             loading={isLoading}
             disabled={isLoading || hasPageNames}
           >
@@ -178,7 +186,7 @@ export default function PagesStep({
           <Button
             variant="light"
             leftIcon={<IconPlus size={ICON_SIZE} />}
-            onClick={() => getPageStream(1)}
+            onClick={() => stream(1)}
             loading={isLoading}
           >
             Generate new page

@@ -3,7 +3,11 @@ import {
   PageParams,
   PageResponse,
 } from "@/requests/pages/types";
-import { get } from "@/utils/api";
+import { baseURL, get, getAuthToken } from "@/utils/api";
+import {
+  EventSourceMessage,
+  fetchEventSource,
+} from "@microsoft/fetch-event-source";
 
 export const getPageList = async (projectId: string, params?: PageParams) => {
   let queryParams = "";
@@ -36,28 +40,51 @@ export const getPage = async (projectId: string, pageId: string) => {
   return response;
 };
 
-export const getPagesStream = async (
+export const getPagesEventSource = async (
   projectId: string,
   count: number = 5,
-  excludedCsv?: string
+  excludedCsv?: string,
+  onmessage?: (ev: EventSourceMessage) => void,
+  onerror?: (err: any) => number | null | undefined | void,
+  onopen?: (response: Response) => Promise<void>
 ) => {
-  const response = (await get<ReadableStream<Uint8Array>>(
-    `/projects/${projectId}/automations/pages/stream-revision?count=${count}&excluded=${excludedCsv}`,
-    {},
-    true
-  )) as ReadableStream<Uint8Array>;
+  const token = await getAuthToken();
+  const url = `${baseURL}/projects/${projectId}/automations/pages/stream?count=${count}&excluded=${excludedCsv}`;
 
-  return response;
+  await fetchEventSource(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "text/event-stream",
+      Authorization: "Bearer " + token,
+    },
+    onerror: onerror,
+    onmessage: onmessage,
+    onopen: onopen,
+  });
 };
 
-export const getPageStream = async (projectId: string, pageName: string) => {
-  const response = (await get<ReadableStream<Uint8Array>>(
-    `/projects/${projectId}/automations/${encodeURIComponent(
-      pageName
-    )}/stream-revision`,
-    {},
-    true
-  )) as ReadableStream<Uint8Array>;
+export const getPageEventSource = async (
+  projectId: string,
+  pageName: string,
+  onmessage?: (ev: EventSourceMessage) => void,
+  onerror?: (err: any) => number | null | undefined | void,
+  onopen?: (response: Response) => Promise<void>,
+  onclose?: () => void
+) => {
+  const token = await getAuthToken();
+  const url = `${baseURL}/projects/${projectId}/automations/${encodeURIComponent(
+    pageName
+  )}/stream`;
 
-  return response;
+  await fetchEventSource(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "text/event-stream",
+      Authorization: "Bearer " + token,
+    },
+    onerror: onerror,
+    onmessage: onmessage,
+    onopen: onopen,
+    onclose: onclose,
+  });
 };
