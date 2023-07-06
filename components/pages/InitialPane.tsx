@@ -77,7 +77,11 @@ export default function InitialPane({
                 },
               }}
             >
+<<<<<<< HEAD
               <Flex gap="xs">
+=======
+              <Flex>
+>>>>>>> cbdf9da (CU-867863x7y WIP - Build out page settings)
                 {page.isHome ? (
                   <IconHome size={ICON_SIZE} />
                 ) : (
