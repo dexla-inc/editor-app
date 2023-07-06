@@ -21,19 +21,6 @@ type ProjectListResponse = {
   results: ProjectResponse[];
 };
 
-export type CustomComponentResponse = {
-  id: string;
-  type: string;
-  name: string;
-  scope: string;
-  content: string;
-  description: string;
-};
-
-type CustomComponentListResponse = {
-  results: CustomComponentResponse[];
-};
-
 export const getProjects = async (
   search: string = "",
   offset: number = 0,
@@ -52,15 +39,6 @@ export const getProject = async (projectId: string) => {
     `/projects/${projectId}`,
     {}
   )) as ProjectResponse;
-
-  return response;
-};
-
-export const getComponentList = async (projectId: string) => {
-  const response = (await get<CustomComponentListResponse>(
-    `/projects/${projectId}/components`,
-    {}
-  )) as CustomComponentListResponse;
 
   return response;
 };

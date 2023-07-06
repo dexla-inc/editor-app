@@ -1,10 +1,10 @@
-import { createCustomComponent } from "@/requests/projects/mutations";
+import { createCustomComponent } from "@/requests/components/mutations";
 import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
 import { Component, getComponentById, replaceIdsDeeply } from "@/utils/editor";
-import { Modal, Stack, Group, TextInput, Select, Button } from "@mantine/core";
+import { Button, Group, Modal, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import { IconNewSection } from "@tabler/icons-react";
