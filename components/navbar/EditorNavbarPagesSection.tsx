@@ -1,68 +1,44 @@
 import { getPageList } from "@/requests/pages/queries";
-import { useEditorStore } from "@/stores/editor";
-import { Center, Loader, Stack, Text, useMantineTheme } from "@mantine/core";
-import Link from "next/link";
+import { PageResponse } from "@/requests/pages/types";
+import { Stack } from "@mantine/core";
+import debounce from "lodash.debounce";
 import { useRouter } from "next/router";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import InitialPane from "../pages/InitialPane";
+import PageDetailPane from "../pages/PageDetailPane";
 
 export const EditorNavbarPagesSection = () => {
-  const theme = useMantineTheme();
   const router = useRouter();
-  const id = router.query.id as string;
+  const projectId = router.query.id as string;
   const currentPage = router.query.page as string;
-  const resetTree = useEditorStore((state) => state.resetTree);
-  const pages = useEditorStore((state) => state.pages);
-  const setPages = useEditorStore((state) => state.setPages);
+  const [showDetail, setShowDetail] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>("");
+  const debouncedSearch = debounce((query) => setSearch(query), 200);
 
+  const [pages, setPages] = useState<PageResponse[]>([]);
   const getPages = useCallback(async () => {
-    const pageList = await getPageList(id);
+    const pageList = await getPageList(projectId, { search });
     setPages(pageList.results);
-  }, [id, setPages]);
+  }, [projectId, search]);
 
   useEffect(() => {
     getPages();
-  }, [id, getPages]);
-
-  if (pages.length === 0) {
-    return (
-      <Center>
-        <Loader />
-      </Center>
-    );
-  }
+  }, [projectId, getPages]);
 
   return (
-    <Stack spacing={0}>
-      {pages.map((page) => {
-        return (
-          <Text
-            key={page.id}
-            size="xs"
-            component={Link}
-            href={`/projects/${id}/editor/${page.id}`}
-            p="xs"
-            sx={{
-              borderRadius: theme.radius.md,
-              textDecoration: "none",
-              fontWeight: currentPage === page.id ? 500 : "normal",
-              color:
-                currentPage === page.id ? theme.black : theme.colors.gray[7],
-              backgroundColor:
-                currentPage === page.id ? theme.colors.gray[0] : undefined,
-
-              "&:hover": {
-                backgroundColor: theme.colors.gray[0],
-                color: theme.black,
-              },
-            }}
-            onClick={() => {
-              resetTree();
-            }}
-          >
-            {page.title}
-          </Text>
-        );
-      })}
+    <Stack spacing="xs">
+      {!showDetail ? (
+        <InitialPane
+          setShowDetail={setShowDetail}
+          pages={pages}
+          currentPage={currentPage}
+          projectId={projectId}
+          debouncedSearch={debouncedSearch}
+          search={search}
+        />
+      ) : (
+        <PageDetailPane setShowDetail={setShowDetail} />
+      )}
     </Stack>
   );
 };
