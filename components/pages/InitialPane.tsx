@@ -77,7 +77,7 @@ export default function InitialPane({
                 },
               }}
             >
-              <Flex>
+              <Flex gap="xs">
                 {page.isHome ? (
                   <IconHome size={ICON_SIZE} />
                 ) : (
