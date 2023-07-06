@@ -1,5 +1,14 @@
-import { PageBody, PagesResponse } from "@/requests/pages/types";
+import { PageBody, PageResponse, PagesResponse } from "@/requests/pages/types";
 import { post, put } from "@/utils/api";
+
+export const createPage = async (params: PageBody, projectId: string) => {
+  const response = (await post<PageResponse>(
+    `/projects/${projectId}/pages`,
+    params
+  )) as PageResponse;
+
+  return response;
+};
 
 export const createPages = async (params: PageBody[], projectId: string) => {
   const response = (await post<PagesResponse>(
