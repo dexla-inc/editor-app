@@ -1,10 +1,12 @@
 import { defaultTheme } from "@/components/IFrame";
+import { PageResponse } from "@/requests/pages/types";
 import { Component } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
+  const pages = props.pages ?? [];
 
   return {
     id: nanoid(),
@@ -15,12 +17,21 @@ export const jsonStructure = (props?: any): Component => {
         width: "300px",
         height: "100vh",
         backgroundColor: "white",
+        paddingTop: "10px",
+        paddingRight: "10px",
+        paddingBotom: "10px",
+        paddingLeft: "10px",
+        borderRightWidth: "1px",
+        borderRightStyle: "solid",
+        borderRightColor: theme.colors.Border
+          ? theme.colors.Border[6]
+          : theme.colors.gray[3],
       },
       ...(props.props || {}),
       fixedPosition: "left",
     },
-    children: [
-      {
+    children: pages.map((page: PageResponse) => {
+      return {
         id: nanoid(),
         name: "Container",
         description: "Navbar Item",
@@ -29,8 +40,11 @@ export const jsonStructure = (props?: any): Component => {
             width: "100%",
             height: "auto",
             display: "flex",
-            justifyContent: "space-between",
             alignItems: "center",
+            paddingTop: "10px",
+            paddingRight: "10px",
+            paddingBotom: "10px",
+            paddingLeft: "10px",
           },
         },
         children: [
@@ -48,7 +62,7 @@ export const jsonStructure = (props?: any): Component => {
             description: "Navbar Item Text",
             children: [],
             props: {
-              children: "New Link",
+              children: page.title,
               color: `${theme.colors.Black ? "Black" : "dark"}`,
               style: {
                 fontSize: `${px(theme.fontSizes.sm)}px`,
@@ -57,12 +71,13 @@ export const jsonStructure = (props?: any): Component => {
                 letterSpacing: "0px",
                 width: "auto",
                 heigh: "auto",
+                marginLeft: "10px",
               },
             },
             blockDroppingChildrenInside: true,
           },
         ],
-      },
-    ],
+      };
+    }),
   };
 };

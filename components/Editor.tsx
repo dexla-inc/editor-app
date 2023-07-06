@@ -49,6 +49,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const editorTheme = useEditorStore((state) => state.theme);
+  const pages = useEditorStore((state) => state.pages);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const isLoading = useAppStore((state) => state.isLoading);
@@ -138,7 +139,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
         const json = TOML.parse(stream);
         const tree = getEditorTreeFromPageStructure(
           json as { rows: Row[] },
-          editorTheme
+          editorTheme,
+          pages
         );
         setEditorTree(tree);
       } catch (error) {
@@ -146,7 +148,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
         // console.log({ error });
       }
     }
-  }, [editorTheme, setEditorTree, stream]);
+  }, [editorTheme, setEditorTree, stream, pages]);
 
   // add event listeners to iframe
   useEffect(() => {
