@@ -1,4 +1,4 @@
-import { post, put } from "@/utils/api";
+import { del, post, put } from "@/utils/api";
 import { ProjectTypes } from "@/utils/projectTypes";
 
 export type ProjectParams = {
@@ -32,6 +32,12 @@ export const updateProject = async (
     `/projects/${id}`,
     params
   )) as ProjectResponse;
+
+  return response;
+};
+
+export const deleteProject = async (id: string) => {
+  const response = (await del<any>(`/projects/${id}`)) as any;
 
   return response;
 };
