@@ -5,7 +5,7 @@ import { DroppableDraggable } from "@/components/DroppableDraggable";
 import { EditorAsideSections } from "@/components/EditorAsideSections";
 import { IFrame } from "@/components/IFrame";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
-import { getPage, getPageStream } from "@/requests/pages/queries";
+import { getPage, getPageEventSource } from "@/requests/pages/queries";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
@@ -32,6 +32,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { getHotkeyHandler, useDisclosure, useHotkeys } from "@mantine/hooks";
+import { EventSourceMessage } from "@microsoft/fetch-event-source";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type Props = {
@@ -88,34 +89,52 @@ export const Editor = ({ projectId, pageId }: Props) => {
           message: "AI is generating your page",
         });
 
-        const data = await getPageStream(projectId, page.title);
+        const onMessage = (event: EventSourceMessage) => {
+          try {
+            setStream((state) => {
+              console.log("state: " + state);
+              try {
+                return `${state}
+                ${event.data}`;
+              } catch (error) {
+                return state;
+              }
+            });
+          } catch (error) {
+            // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
+            console.error(error);
+          }
+        };
 
-        if (!data) {
-          return;
-        }
-
-        const reader = data.getReader();
-        const decoder = new TextDecoder();
-        let done = false;
-
-        while (!done) {
-          const { value, done: doneReading } = await reader.read();
-          done = doneReading;
-          const chunkValue = decoder.decode(value);
-          setStream((state) => {
-            try {
-              return `${state}${chunkValue}`;
-            } catch (error) {
-              return state;
-            }
+        const onError = (err: any) => {
+          stopLoading({
+            id: "page-generation",
+            title: "There was a problem",
+            message: err,
+            isError: true,
           });
-        }
+        };
 
-        stopLoading({
-          id: "page-generation",
-          title: "Page Generated",
-          message: "Here's your page. We hope you like it",
-        });
+        const onOpen = async (response: Response) => {
+          // handle open
+        };
+
+        const onClose = async () => {
+          stopLoading({
+            id: "page-generation",
+            title: "Page Generated",
+            message: "Here's your page. We hope you like it",
+          });
+        };
+
+        getPageEventSource(
+          projectId,
+          page.title,
+          onMessage,
+          onError,
+          onOpen,
+          onClose
+        );
       }
     };
 
@@ -140,6 +159,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
           json as { rows: Row[] },
           editorTheme
         );
+
         setEditorTree(tree);
       } catch (error) {
         // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through

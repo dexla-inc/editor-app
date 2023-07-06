@@ -90,7 +90,7 @@ export const EditorNavbarComponentsSection = () => {
   }, [] as DraggableComponentData[]);
 
   const sortedComponents = [...globalComponents].sort(sort);
-  console.log("components:" + JSON.stringify(componentsGroupedByCategory));
+
   return (
     <Stack spacing="xl">
       <SegmentedControl

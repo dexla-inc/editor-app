@@ -11,7 +11,7 @@ export default function StepperContent({
   activeStep,
   setActiveStep,
 }: StepperState) {
-  const isLoading = useAppStore((state) => state.isLoading);
+  const [isLoading, setIsLoading] = useState(false);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
 
@@ -28,6 +28,7 @@ export default function StepperContent({
         <ProjectStep
           nextStep={nextStep}
           isLoading={isLoading}
+          setIsLoading={setIsLoading}
           startLoading={startLoading}
           stopLoading={stopLoading}
           setProjectId={setProjectId}
