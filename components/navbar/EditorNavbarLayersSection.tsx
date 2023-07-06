@@ -2,7 +2,6 @@ import { SortableTreeItem } from "@/components/SortableTreeItem";
 import { useDraggable } from "@/hooks/useDraggable";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useEditorStore } from "@/stores/editor";
-import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 import {
@@ -20,10 +19,9 @@ import { IconChevronDown } from "@tabler/icons-react";
 
 type ListItemProps = {
   component: Component;
-  level: number;
 } & CardProps;
 
-const ListItem = ({ component, children, level }: ListItemProps) => {
+const ListItem = ({ component, children }: ListItemProps) => {
   const theme = useMantineTheme();
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
@@ -31,7 +29,7 @@ const ListItem = ({ component, children, level }: ListItemProps) => {
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId
   );
-  const [opened, { toggle }] = useDisclosure(component.id === "root");
+  const [opened, { toggle }] = useDisclosure(false);
 
   const onDragStart = useOnDragStart();
 
@@ -49,10 +47,7 @@ const ListItem = ({ component, children, level }: ListItemProps) => {
     }
   };
 
-  const icon = structureMapper[component.name as string]?.icon;
-
   const canExpand = (component.children ?? [])?.length > 0;
-  const paddingLeft = canExpand ? `${level * 20}px` : `${level * 35}px`;
 
   return (
     <>
@@ -72,23 +67,8 @@ const ListItem = ({ component, children, level }: ListItemProps) => {
           handleSelection(e, component.id as string);
         }}
       >
-        <Group
-          position="apart"
-          noWrap
-          sx={{
-            backgroundColor:
-              selectedComponentId === component.id
-                ? theme.colors.gray[1]
-                : undefined,
-            "&:hover": {
-              backgroundColor:
-                theme.colorScheme === "dark"
-                  ? theme.colors.dark[6]
-                  : theme.colors.gray[1],
-            },
-          }}
-        >
-          <Group spacing={4} noWrap w="100%" pl={paddingLeft}>
+        <Group position="apart" noWrap>
+          <Group spacing={4} noWrap w="100%">
             <ActionIcon
               onClick={(e) => {
                 e.preventDefault();
@@ -111,7 +91,6 @@ const ListItem = ({ component, children, level }: ListItemProps) => {
                 }}
               />
             </ActionIcon>
-            {component.id !== "root" && icon}
             <Text
               id={`layer-${component.id}`}
               size="xs"
@@ -129,14 +108,15 @@ const ListItem = ({ component, children, level }: ListItemProps) => {
   );
 };
 
-const ListItemWrapper = ({ component, children, level }: ListItemProps) => {
+const ListItemWrapper = ({ component, children }: ListItemProps) => {
   return (
     <SortableTreeItem component={component}>
       <List.Item key={component.id} w="100%">
-        <ListItem component={component} level={level}>
+        <ListItem component={component}>
           {(component.children ?? [])?.length > 0 && (
             <List
               size="xs"
+              withPadding
               listStyleType="none"
               styles={{
                 itemWrapper: {
@@ -156,21 +136,17 @@ const ListItemWrapper = ({ component, children, level }: ListItemProps) => {
 export const EditorNavbarLayersSection = () => {
   const editorTree = useEditorStore((state) => state.tree);
 
-  const renderList = (component: Component, level: number) => {
+  const renderList = (component: Component) => {
     if (!component) {
       return null;
     }
 
-    level = component.id !== "root" ? level + 1 : level;
-
     return (
-      <ListItemWrapper key={component.id} component={component} level={level}>
+      <ListItemWrapper key={component.id} component={component}>
         {component.children?.map((child) => {
           return (
-            <ListItemWrapper key={child.id} component={child} level={level}>
-              <ListItem component={child} level={level}>
-                {child.children?.map((child) => renderList(child, level))}
-              </ListItem>
+            <ListItemWrapper key={child.id} component={child}>
+              {child.children?.map(renderList)}
             </ListItemWrapper>
           );
         })}
@@ -188,7 +164,7 @@ export const EditorNavbarLayersSection = () => {
         },
       }}
     >
-      {renderList(editorTree.root, 0)}
+      {renderList(editorTree.root)}
     </List>
   );
 };
