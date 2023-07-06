@@ -14,6 +14,9 @@ import { HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
 import {
   Component,
   Row,
+  addComponent,
+  getComponentById,
+  getComponentParent,
   getEditorTreeFromPageStructure,
   removeComponent,
 } from "@/utils/editor";
@@ -56,7 +59,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const isLoading = useAppStore((state) => state.isLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isStreaming = useRef<boolean>(false);
-  const [stream, setStream] = useState<string>("");
+  const [stream, setStream] = useState<string>();
+  const [copiedComponentId, setCopiedComponentId] = useState<string>();
   const [canvasRef] = useAutoAnimate();
   const [isCustomComponentModalOpen, customComponentModal] =
     useDisclosure(false);
@@ -70,9 +74,30 @@ export const Editor = ({ projectId, pageId }: Props) => {
     }
   }, [clearSelection, editorTree, selectedComponentId, setEditorTree]);
 
+  const copySelectedCompnent = useCallback(() => {
+    setCopiedComponentId(selectedComponentId);
+  }, [setCopiedComponentId, selectedComponentId]);
+
+  const pasteCopiedComponent = useCallback(() => {
+    if (copiedComponentId) {
+      const isSelectedId = selectedComponentId === copiedComponentId;
+      const copy = { ...editorTree };
+      addComponent(copy.root, getComponentById(copy.root, copiedComponentId)!, {
+        id: isSelectedId
+          ? (getComponentParent(copy.root, copiedComponentId)!.id as string)
+          : (getComponentById(copy.root, selectedComponentId as string)!
+              .id as string),
+        edge: "right",
+      });
+      setEditorTree(copy);
+    }
+  }, [copiedComponentId, editorTree, selectedComponentId, setEditorTree]);
+
   useHotkeys([
     ["backspace", deleteComponent],
     ["delete", deleteComponent],
+    ["mod+C", copySelectedCompnent],
+    ["mod+V", pasteCopiedComponent],
   ]);
 
   useEffect(() => {
@@ -175,6 +200,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
     const hotKeysHandler = getHotkeyHandler([
       ["backspace", deleteComponent],
       ["delete", deleteComponent],
+      ["mod+C", copySelectedCompnent],
+      ["mod+V", pasteCopiedComponent],
     ]);
 
     iframeWindow?.document.body.addEventListener("keydown", hotKeysHandler);
@@ -186,9 +213,11 @@ export const Editor = ({ projectId, pageId }: Props) => {
       );
     };
   }, [
+    copySelectedCompnent,
     deleteComponent,
     editorTree,
     iframeWindow,
+    pasteCopiedComponent,
     selectedComponentId,
     setEditorTree,
   ]);
