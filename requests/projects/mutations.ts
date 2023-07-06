@@ -37,6 +37,7 @@ export const updateProject = async (
 };
 
 export type CustomComponentParams = {
+  id?: string;
   type: string;
   name: string;
   scope: string;
@@ -82,6 +83,22 @@ export const deleteCustomComponent = async ({
   const response = (await del<any>(
     `/projects/${projectId}/components/${id}`
   )) as any;
+
+  return response;
+};
+
+export const updateComponent = async ({
+  values,
+  projectId,
+}: {
+  values: CustomComponentParams;
+  projectId: string;
+}) => {
+  const { id, name, ...params } = values;
+  const response = (await put<CustomComponentResponse>(
+    `/projects/${projectId}/components/${id}`,
+    params
+  )) as CustomComponentResponse;
 
   return response;
 };

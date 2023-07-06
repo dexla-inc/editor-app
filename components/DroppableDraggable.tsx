@@ -12,6 +12,7 @@ import { useEditorStore } from "@/stores/editor";
 import { Component, getComponentParent } from "@/utils/editor";
 import {
   IconArrowUp,
+  IconDeviceFloppy,
   IconGripVertical,
   IconNewSection,
 } from "@tabler/icons-react";
@@ -21,6 +22,12 @@ import { useDroppable } from "@/hooks/useDroppable";
 import { useOnDrop } from "@/hooks/useOnDrop";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useHover } from "@mantine/hooks";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { updateComponent } from "@/requests/projects/mutations";
+import { showNotification } from "@mantine/notifications";
+import { useRouter } from "next/router";
+import { encodeSchema } from "@/utils/compression";
+import { getComponentList } from "@/requests/projects/queries";
 
 type Props = {
   id: string;
@@ -36,6 +43,7 @@ export const DroppableDraggable = ({
   ...props
 }: PropsWithChildren<Props>) => {
   const { hovered, ref } = useHover();
+  const router = useRouter();
   const theme = useMantineTheme();
   const editorTree = useEditorStore((state) => state.tree);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
@@ -46,6 +54,35 @@ export const DroppableDraggable = ({
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
+  const queryClient = useQueryClient();
+  const componentList = useQuery({
+    queryKey: ["components"],
+    queryFn: () => getComponentList(router.query.id as string),
+    enabled: !!router.query.id,
+  });
+
+  const updateComponentMutation = useMutation(updateComponent, {
+    onSettled(_, err) {
+      if (err) {
+        console.log(err);
+        showNotification({
+          title: "Oops",
+          message: "Something went wrong while trying to update the component.",
+          autoClose: true,
+          color: "red",
+          withBorder: true,
+        });
+      } else {
+        showNotification({
+          title: "Component Saved",
+          message: "Your Component was saved successfully.",
+          autoClose: true,
+          withBorder: true,
+        });
+        queryClient.invalidateQueries(["components"]);
+      }
+    },
+  });
 
   const parent = getComponentParent(editorTree.root, id);
 
@@ -173,6 +210,33 @@ export const DroppableDraggable = ({
               }}
             >
               <IconNewSection
+                size={ICON_SIZE}
+                color="white"
+                strokeWidth={1.5}
+              />
+            </ActionIcon>
+            <ActionIcon
+              variant="transparent"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                /* updateComponentMutation.mutate({
+                  projectId: router.query.id as string,
+                  values: {
+                    id: component.id,
+                    content: encodeSchema(JSON.stringify(component)) as string,
+                    description: component.description,
+                    type: component.name,
+                    name: component.name,
+                    scope:
+                      componentList.data?.results.find(
+                        (c) => c.id === component.id
+                      )?.scope ?? "GLOBAL",
+                  },
+                }); */
+              }}
+            >
+              <IconDeviceFloppy
                 size={ICON_SIZE}
                 color="white"
                 strokeWidth={1.5}
