@@ -22,6 +22,7 @@ const sections = [
     id: "layers",
     label: "Page Structure",
     icon: IconStack2,
+    initiallyOpened: true,
   },
   {
     id: "components",
