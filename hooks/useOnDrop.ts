@@ -10,6 +10,7 @@ import {
   removeComponent,
   Component,
 } from "@/utils/editor";
+import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
 
 const parseId = (_id: string) => {
@@ -34,7 +35,7 @@ export const useOnDrop = () => {
     (_droppedId: string, dropTarget: DropTarget) => {
       const droppedId = parseId(_droppedId);
       dropTarget.id = parseId(dropTarget.id);
-      const copy = { ...editorTree };
+      const copy = cloneDeep(editorTree);
       const activeComponent = getComponentById(copy.root, droppedId);
 
       if (droppedId && componentToAdd) {

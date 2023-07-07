@@ -4,7 +4,8 @@ import { PageResponse } from "@/requests/pages/types";
 import { encodeSchema } from "@/utils/compression";
 import { Component, EditorTree, updateTreeComponent } from "@/utils/editor";
 import { MantineTheme } from "@mantine/core";
-import throttle from "lodash.throttle";
+import cloneDeep from "lodash.clonedeep";
+import isEqual from "lodash.isequal";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
 
@@ -78,7 +79,7 @@ export const useEditorStore = create<EditorState>()(
       },
       updateTreeComponent: (componentId, props) => {
         set((state) => {
-          const copy = { ...state.tree };
+          const copy = cloneDeep(state.tree);
           updateTreeComponent(copy.root, componentId, props);
           updatePageState(
             encodeSchema(JSON.stringify(copy)),
@@ -108,15 +109,13 @@ export const useEditorStore = create<EditorState>()(
         return { tree };
       },
       limit: 500,
-      handleSet: (handleSet) =>
-        throttle<typeof handleSet>((state: EditorState) => {
-          handleSet(state);
-        }, 1000),
+      equality(currentState, pastState) {
+        return isEqual(currentState.tree, pastState.tree);
+      },
     }
   )
 );
 
 export const useTemporalStore = <T>(
-  selector: (state: TemporalState<Partial<EditorState>>) => T,
-  equality?: (a: T, b: T) => boolean
-) => useStore(useEditorStore.temporal, selector, equality);
+  selector: (state: TemporalState<Partial<EditorState>>) => T
+) => useStore(useEditorStore.temporal, selector);

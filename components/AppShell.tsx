@@ -1,11 +1,12 @@
 import DashboardNavbar from "@/components/DashboardNavbar";
 import { Logo } from "@/components/Logo";
 
-import { HEADER_HEIGHT } from "@/utils/config";
+import { HEADER_HEIGHT, ICON_SIZE } from "@/utils/config";
 import { NavbarTypes } from "@/utils/dashboardTypes";
 import {
   AppShell,
   AppShellProps,
+  Button,
   Flex,
   Group,
   Header,
@@ -16,8 +17,9 @@ import Link from "next/link";
 
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { SavingDisplay } from "@/components/SavingDisplay";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { useState } from "react";
+import { IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
 
 export interface ShellProps extends AppShellProps {
   navbarType?: NavbarTypes;
@@ -36,6 +38,9 @@ export const Shell = ({
   const isSaving = useEditorStore((state) => state.isSaving);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const togglePreviewMode = useEditorStore((state) => state.togglePreviewMode);
+  const { undo, redo, pastStates, futureStates } = useTemporalStore(
+    (state) => state
+  );
 
   return (
     <AppShell
@@ -49,6 +54,24 @@ export const Shell = ({
             </Link>
             {navbarType === "editor" && (
               <Flex gap="md">
+                <Button.Group>
+                  <Button
+                    leftIcon={<IconArrowBackUp size={ICON_SIZE} />}
+                    variant="default"
+                    onClick={() => undo()}
+                    disabled={pastStates.length < 2}
+                  >
+                    Undo
+                  </Button>
+                  <Button
+                    leftIcon={<IconArrowForwardUp size={ICON_SIZE} />}
+                    variant="default"
+                    onClick={() => redo()}
+                    disabled={futureStates.length === 0}
+                  >
+                    Redo
+                  </Button>
+                </Button.Group>
                 <SavingDisplay isSaving={isSaving} />{" "}
                 <EditorPreviewModeToggle
                   isPreviewMode={isPreviewMode}

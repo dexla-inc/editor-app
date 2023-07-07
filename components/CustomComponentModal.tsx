@@ -9,6 +9,7 @@ import { useForm } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import { IconNewSection } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import cloneDeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 
 type Props = {
@@ -66,7 +67,7 @@ export const CustomComponentModal = ({
       selectedComponentId as string
     );
 
-    const copy = { ...component } as Component;
+    const copy = cloneDeep(component) as Component;
     replaceIdsDeeply(copy);
 
     mutate({

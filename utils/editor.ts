@@ -4,6 +4,7 @@ import crawl from "tree-crawl";
 import { structureMapper } from "@/utils/componentMapper";
 import { MantineTheme } from "@mantine/core";
 import { PageResponse } from "@/requests/pages/types";
+import cloneDeep from "lodash.clonedeep";
 
 export type Component = {
   id?: string;
@@ -44,7 +45,6 @@ export const replaceIdsDeeply = (treeRoot: Component) => {
     treeRoot,
     (node) => {
       node.id = nanoid();
-      node.children?.forEach((c) => replaceIdsDeeply(c));
     },
     { order: "bfs" }
   );
@@ -187,7 +187,7 @@ export const moveComponentToDifferentParent = (
   newParentId: string
 ) => {
   const _componentToAdd = getComponentById(treeRoot, id) as Component;
-  const componentToAdd = { ..._componentToAdd };
+  const componentToAdd = cloneDeep(_componentToAdd);
   replaceIdsDeeply(componentToAdd);
 
   crawl(
@@ -336,7 +336,7 @@ export const addComponent = (
   componentToAdd: Component,
   dropTarget: DropTarget
 ): string => {
-  const copy = { ...componentToAdd };
+  const copy = cloneDeep(componentToAdd);
   replaceIdsDeeply(copy);
 
   crawl(

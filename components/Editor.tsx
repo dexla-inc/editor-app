@@ -7,7 +7,7 @@ import { IFrame } from "@/components/IFrame";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { getPage, getPageEventSource } from "@/requests/pages/queries";
 import { useAppStore } from "@/stores/app";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
 import { HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
@@ -36,6 +36,7 @@ import {
 } from "@mantine/core";
 import { getHotkeyHandler, useDisclosure, useHotkeys } from "@mantine/hooks";
 import { EventSourceMessage } from "@microsoft/fetch-event-source";
+import cloneDeep from "lodash.clonedeep";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type Props = {
@@ -45,6 +46,7 @@ type Props = {
 
 export const Editor = ({ projectId, pageId }: Props) => {
   const theme = useMantineTheme();
+  const { undo, redo } = useTemporalStore((state) => state);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
@@ -67,7 +69,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
   const deleteComponent = useCallback(() => {
     if (selectedComponentId && selectedComponentId !== "root") {
-      const copy = { ...editorTree };
+      const copy = cloneDeep(editorTree);
       removeComponent(copy.root, selectedComponentId as string);
       setEditorTree(copy);
       clearSelection();
@@ -81,7 +83,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const pasteCopiedComponent = useCallback(() => {
     if (copiedComponentId) {
       const isSelectedId = selectedComponentId === copiedComponentId;
-      const copy = { ...editorTree };
+      const copy = cloneDeep(editorTree);
       addComponent(copy.root, getComponentById(copy.root, copiedComponentId)!, {
         id: isSelectedId
           ? (getComponentParent(copy.root, copiedComponentId)!.id as string)
@@ -98,6 +100,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
     ["delete", deleteComponent],
     ["mod+C", copySelectedCompnent],
     ["mod+V", pasteCopiedComponent],
+    ["mod+Z", () => undo()],
+    ["mod+shift+Z", () => redo()],
   ]);
 
   useEffect(() => {
@@ -202,6 +206,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
       ["delete", deleteComponent],
       ["mod+C", copySelectedCompnent],
       ["mod+V", pasteCopiedComponent],
+      ["mod+Z", () => undo()],
+      ["mod+shift+Z", () => redo()],
     ]);
 
     iframeWindow?.document.body.addEventListener("keydown", hotKeysHandler);
@@ -218,8 +224,10 @@ export const Editor = ({ projectId, pageId }: Props) => {
     editorTree,
     iframeWindow,
     pasteCopiedComponent,
+    redo,
     selectedComponentId,
     setEditorTree,
+    undo,
   ]);
 
   const renderTree = (component: Component) => {
