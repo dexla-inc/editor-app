@@ -102,6 +102,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
     ["mod+V", pasteCopiedComponent],
     ["mod+Z", () => undo()],
     ["mod+shift+Z", () => redo()],
+    ["mod+Y", () => redo()],
   ]);
 
   useEffect(() => {
@@ -208,6 +209,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
       ["mod+V", pasteCopiedComponent],
       ["mod+Z", () => undo()],
       ["mod+shift+Z", () => redo()],
+      ["mod+Y", () => redo()],
     ]);
 
     iframeWindow?.document.body.addEventListener("keydown", hotKeysHandler);
