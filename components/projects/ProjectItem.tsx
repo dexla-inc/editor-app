@@ -44,7 +44,7 @@ export function ProjectItem({
 }: ProjectItemProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [pages, setPages] = useState<PageResponse[]>([]);
-  const [pagesLoading, setPagesLoading] = useState(false);
+  const [pagesLoading] = useState(false);
   const [opened, setOpened] = useState(false);
 
   const goToEditorHomePage = async () => {

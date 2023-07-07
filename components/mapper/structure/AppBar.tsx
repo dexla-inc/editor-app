@@ -61,6 +61,7 @@ export const jsonStructure = (props?: any): Component => {
           color: "Primary",
           radius: "xl",
         },
+        blockDroppingChildrenInside: true,
       },
     ],
   };
