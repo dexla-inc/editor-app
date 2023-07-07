@@ -7,7 +7,7 @@ import {
   ProjectTypes,
   isProjectType,
 } from "@/utils/projectTypes";
-import { Divider, Flex, Group, Radio, Stack, TextInput } from "@mantine/core";
+import { Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 const projectInfo: ProjectTypeMap = {
@@ -105,7 +105,7 @@ export default function ProjectStep({
           title="Let's get started!"
           text="Unlock the magic of AI! Answer a few questions and we'll tailor a unique experience just for you!"
         />
-        <Radio.Group
+        {/* <Radio.Group
           {...form.getInputProps("type")}
           label="What are you building?"
           description="Choose what you want to build"
@@ -122,18 +122,18 @@ export default function ProjectStep({
               />
             ))}
           </Group>
-        </Radio.Group>
-        {form.values.type && (
-          <TextInput
-            label={form.values.type && projectInfo[form.values.type].label}
-            description={
-              form.values.type && projectInfo[form.values.type].placeholder
-            }
-            required
-            withAsterisk={false}
-            {...form.getInputProps("description")}
-          />
-        )}
+        </Radio.Group> */}
+
+        <TextInput
+          label={form.values.type && projectInfo[form.values.type].label}
+          description={
+            form.values.type && projectInfo[form.values.type].placeholder
+          }
+          required
+          withAsterisk={false}
+          {...form.getInputProps("description")}
+        />
+
         {form.values.type === "SIMILAR" && (
           <Flex direction="column">
             <TextInput
@@ -143,16 +143,16 @@ export default function ProjectStep({
             />
           </Flex>
         )}
-        {form.values.type && (
-          <TextInput
-            label="What industry are you in? *"
-            description={
-              form.values.type &&
-              projectInfo[form.values.type].industryPlaceholder
-            }
-            {...form.getInputProps("industry")}
-          />
-        )}
+
+        <TextInput
+          label="What industry are you in? *"
+          description={
+            form.values.type &&
+            projectInfo[form.values.type].industryPlaceholder
+          }
+          {...form.getInputProps("industry")}
+        />
+
         <Divider></Divider>
         <Group position="right">
           <NextButton isLoading={isLoading} isSubmit></NextButton>
