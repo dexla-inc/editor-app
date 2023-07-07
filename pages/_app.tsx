@@ -6,7 +6,6 @@ import {
   MantineProvider,
   MantineTheme,
 } from "@mantine/core";
-import { useViewportSize } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
 import { RedirectToLogin, RequiredAuthProvider } from "@propelauth/react";
 import {
@@ -39,13 +38,7 @@ export const theme: MantineTheme = {
   primaryColor: "teal",
 };
 
-const setVh = (vh: number) => {
-  document.documentElement.style.setProperty("--vh", vh + "px");
-};
-
 export default function App(props: AppProps) {
-  const { height } = useViewportSize();
-
   const { Component, pageProps } = props;
 
   const [queryClient] = useState(
@@ -58,10 +51,6 @@ export default function App(props: AppProps) {
         },
       })
   );
-
-  useEffect(() => {
-    setVh(height);
-  }, [height]);
 
   return (
     <MantineProvider
@@ -105,8 +94,8 @@ export default function App(props: AppProps) {
                     padding: 0,
                     ...theme.fn.fontStyles(),
                     lineHeight: theme.lineHeight,
-                    maxHeight: "var(--vh, 100vh)",
-                    minHeight: "var(--vh, auto)",
+                    maxHeight: "100vh",
+                    minHeight: "100vh",
                     background: "white",
                   },
 

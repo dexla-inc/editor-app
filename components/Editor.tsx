@@ -315,7 +315,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
           <Box
             pos="relative"
             onClick={clearSelection}
-            style={{ minHeight: `calc(var(--vh, 100vh) - ${HEADER_HEIGHT}px)` }}
+            style={{ minHeight: `calc(100vh - ${HEADER_HEIGHT}px)` }}
             p={40}
           >
             <Paper
@@ -343,7 +343,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
             pos="relative"
             onClick={clearSelection}
             style={{
-              minHeight: `calc(var(--vh, 100vh) - ${HEADER_HEIGHT}px)`,
+              minHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
               overflow: "visible",
             }}
             p={0}

@@ -96,7 +96,7 @@ export const Shell = ({
       aside={aside}
       styles={{
         main: {
-          minHeight: "var(--vh, 100vh)",
+          minHeight: "100vh",
           paddingLeft: "var(--mantine-navbar-width, 0px)",
         },
       }}
