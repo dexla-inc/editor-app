@@ -376,6 +376,10 @@ export const structureMapper: StructureMapper = {
     category: "Data Display",
     icon: <IconUser size={ICON_SIZE} />,
   },
+  List: {
+    structure: (props: any) => NotImplemented.jsonStructure(props),
+    category: "Data Display",
+  },
   TabsList: {
     structure: (props: any) => TabsListStructure.jsonStructure(props),
     Draggable: () => (
@@ -489,6 +493,11 @@ export const structureMapper: StructureMapper = {
   Carousel: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
     category: "Navigation",
+  },
+
+  Card: {
+    structure: (props: any) => NotImplemented.jsonStructure(props),
+    category: "Card",
   },
   ProgressCard: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
