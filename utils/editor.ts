@@ -10,6 +10,7 @@ export type Component = {
   id?: string;
   name: string;
   description: string;
+  title?: string;
   children?: Component[];
   props?: { [key: string]: any };
   blockDroppingChildrenInside?: boolean;
