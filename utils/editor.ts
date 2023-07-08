@@ -13,7 +13,7 @@ export type Component = {
   children?: Component[];
   props?: { [key: string]: any };
   blockDroppingChildrenInside?: boolean;
-  data: ComponentData[];
+  data?: ComponentData[];
 };
 
 export type ComponentData = {
