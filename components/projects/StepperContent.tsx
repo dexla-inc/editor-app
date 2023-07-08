@@ -20,8 +20,6 @@ export default function StepperContent({
   const prevStep = () =>
     setActiveStep((current) => (current > 0 ? current - 1 : current));
 
-  const [description, setDescription] = useState("");
-  const [industry, setIndustry] = useState("");
   const [projectId, setProjectId] = useState("");
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [pages, setPages] = useState<string[]>([]);
@@ -36,10 +34,6 @@ export default function StepperContent({
           startLoading={startLoading}
           stopLoading={stopLoading}
           setProjectId={setProjectId}
-          description={description}
-          setDescription={setDescription}
-          industry={industry}
-          setIndustry={setIndustry}
         ></ProjectStep>
       )}
       {activeStep == 1 && (
