@@ -1,12 +1,6 @@
-import { LoadingStore, NextStepperClickEvent } from "@/utils/dashboardTypes";
-
 export type StepperDetailsType = {
   [key: number]: { title: string };
 };
-
-export interface ProjectStepProps extends LoadingStore, NextStepperClickEvent {
-  setProjectId: (id: string) => void;
-}
 
 export type ProjectTypes = "INNOVATION" | "SIMILAR" | "INTERNAL";
 

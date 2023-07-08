@@ -1,9 +1,14 @@
 import { InformationAlert } from "@/components/Alerts";
 import NextButton from "@/components/NextButton";
 import { ProjectParams, createProject } from "@/requests/projects/mutations";
-import { ProjectStepProps, ProjectTypes } from "@/utils/projectTypes";
+import { LoadingStore, NextStepperClickEvent } from "@/utils/dashboardTypes";
+import { ProjectTypes } from "@/utils/projectTypes";
 import { Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
+
+interface ProjectStepProps extends LoadingStore, NextStepperClickEvent {
+  setProjectId: (id: string) => void;
+}
 
 export default function ProjectStep({
   nextStep,
@@ -28,6 +33,8 @@ export default function ProjectStep({
           ? "You must provide a description"
           : value.length > 250
           ? "Description too long"
+          : value.length < 15
+          ? "Description too short"
           : null,
     },
   });
