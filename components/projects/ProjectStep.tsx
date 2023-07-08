@@ -1,41 +1,9 @@
 import { InformationAlert } from "@/components/Alerts";
 import NextButton from "@/components/NextButton";
 import { ProjectParams, createProject } from "@/requests/projects/mutations";
-import {
-  ProjectStepProps,
-  ProjectTypeMap,
-  ProjectTypes,
-  isProjectType,
-} from "@/utils/projectTypes";
+import { ProjectStepProps, ProjectTypes } from "@/utils/projectTypes";
 import { Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-
-const projectInfo: ProjectTypeMap = {
-  INNOVATION: {
-    label: "What do you do? *",
-    placeholder:
-      "Your one-liner e.g. A platform to manage small business financial data",
-    example: "e.g. A platform to manage small business financial data",
-    title: "Unique Product",
-    industryPlaceholder: "e.g. Financial Services",
-  },
-  SIMILAR: {
-    label: "Why are you different? *",
-    placeholder:
-      "Your differentiation e.g. A niche version for sustainable stays",
-    example: "e.g Vercel but for backend developers",
-    title: "Similar To Another Company",
-    industryPlaceholder: "e.g. Software Development",
-  },
-  INTERNAL: {
-    label: "What do you want to build? *",
-    placeholder:
-      "Your ideal solution e.g. A health and well-being platform for employees",
-    example: "e.g. A health and well being platform for employees",
-    title: "Internal Tool",
-    industryPlaceholder: "e.g. Health and Wellbeing",
-  },
-};
 
 export default function ProjectStep({
   nextStep,
@@ -61,8 +29,6 @@ export default function ProjectStep({
           : value.length > 250
           ? "Description too long"
           : null,
-      type: (value) =>
-        !isProjectType(value) ? "You must choose a project type" : null,
     },
   });
 
@@ -105,30 +71,9 @@ export default function ProjectStep({
           title="Let's get started!"
           text="Unlock the magic of AI! Answer a few questions and we'll tailor a unique experience just for you!"
         />
-        {/* <Radio.Group
-          {...form.getInputProps("type")}
-          label="What are you building?"
-          description="Choose what you want to build"
-          required
-        >
-          <Group mt="xs" spacing="xl" py="sm" position="apart">
-            {Object.entries(projectInfo).map(([value, { title, example }]) => (
-              <Radio
-                key={value}
-                value={value}
-                label={title}
-                description={example}
-                sx={{ maxWidth: 220 }}
-              />
-            ))}
-          </Group>
-        </Radio.Group> */}
-
         <TextInput
-          label={form.values.type && projectInfo[form.values.type].label}
-          description={
-            form.values.type && projectInfo[form.values.type].placeholder
-          }
+          label="What do you do? *"
+          description="Your one-liner e.g. A platform to manage small business financial data"
           required
           withAsterisk={false}
           {...form.getInputProps("description")}
@@ -146,10 +91,7 @@ export default function ProjectStep({
 
         <TextInput
           label="What industry are you in? *"
-          description={
-            form.values.type &&
-            projectInfo[form.values.type].industryPlaceholder
-          }
+          description="e.g. Financial Services"
           {...form.getInputProps("industry")}
         />
 

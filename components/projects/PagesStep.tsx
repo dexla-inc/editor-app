@@ -5,7 +5,10 @@ import { createPages } from "@/requests/pages/mutations";
 import { getPagesEventSource } from "@/requests/pages/queries";
 import { PageBody } from "@/requests/pages/types";
 import { ICON_SIZE } from "@/utils/config";
-import { PagesStepProps } from "@/utils/projectTypes";
+import {
+  LoadingStore,
+  PreviousStepperClickEvent,
+} from "@/utils/dashboardTypes";
 import TOML from "@iarna/toml";
 import {
   ActionIcon,
@@ -27,7 +30,7 @@ import {
 } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import slugify from "slugify";
 
 export const getServerSideProps = async ({
@@ -40,19 +43,30 @@ export const getServerSideProps = async ({
   };
 };
 
+export interface PagesStepProps
+  extends LoadingStore,
+    PreviousStepperClickEvent {
+  projectId: string;
+  pages: string[];
+  setPages: (value: SetStateAction<string[]>) => void;
+}
+
 export default function PagesStep({
   prevStep,
   isLoading,
+  setIsLoading,
   startLoading,
   stopLoading,
   projectId,
+  pages,
+  setPages,
 }: PagesStepProps) {
-  const [pages, setPages] = useState<string[]>([]);
   const router = useRouter();
   const [formComplete, setFormComplete] = useState(false);
 
   const stream = async (count: number) => {
     const plural = count === 1 ? "" : "s";
+    setIsLoading && setIsLoading(true);
     startLoading({
       id: "pages-stream",
       title: `Generating Page Name${plural}`,
@@ -69,6 +83,7 @@ export default function PagesStep({
           title: "Names Generated",
           message: "Here's your pages names. We hope you like it",
         });
+        setIsLoading && setIsLoading(false);
       } catch (error) {
         // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
         console.error(error);
@@ -82,6 +97,7 @@ export default function PagesStep({
         message: err,
         isError: true,
       });
+      setIsLoading && setIsLoading(false);
     };
 
     const onOpen = async (response: Response) => {

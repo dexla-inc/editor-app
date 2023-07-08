@@ -21,6 +21,8 @@ export default function StepperContent({
     setActiveStep((current) => (current > 0 ? current - 1 : current));
 
   const [projectId, setProjectId] = useState("");
+  const [websiteUrl, setWebsiteUrl] = useState("");
+  const [pages, setPages] = useState<string[]>([]);
 
   return (
     <Stack sx={{ width: "100%" }}>
@@ -39,18 +41,24 @@ export default function StepperContent({
           prevStep={prevStep}
           nextStep={nextStep}
           isLoading={isLoading}
+          setIsLoading={setIsLoading}
           startLoading={startLoading}
           stopLoading={stopLoading}
           projectId={projectId}
+          websiteUrl={websiteUrl}
+          setWebsiteUrl={setWebsiteUrl}
         ></BrandingStep>
       )}
       {activeStep == 2 && (
         <PagesStep
           prevStep={prevStep}
           isLoading={isLoading}
+          setIsLoading={setIsLoading}
           startLoading={startLoading}
           stopLoading={stopLoading}
           projectId={projectId}
+          pages={pages}
+          setPages={setPages}
         ></PagesStep>
       )}
     </Stack>

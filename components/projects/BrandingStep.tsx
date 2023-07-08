@@ -3,8 +3,12 @@ import BackButton from "@/components/BackButton";
 import NextButton from "@/components/NextButton";
 import { getTheme } from "@/requests/themes/queries";
 import { ICON_SIZE } from "@/utils/config";
-import { isWebsite } from "@/utils/dashboardTypes";
-import { BrandingStepProps } from "@/utils/projectTypes";
+import {
+  LoadingStore,
+  NextStepperClickEvent,
+  PreviousStepperClickEvent,
+  isWebsite,
+} from "@/utils/dashboardTypes";
 import {
   Anchor,
   Button,
@@ -15,17 +19,28 @@ import {
   TextInput,
 } from "@mantine/core";
 import { IconBrush } from "@tabler/icons-react";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
+
+export interface BrandingStepProps
+  extends LoadingStore,
+    NextStepperClickEvent,
+    PreviousStepperClickEvent {
+  projectId: string;
+  websiteUrl: string;
+  setWebsiteUrl: (value: SetStateAction<string>) => void;
+}
 
 export default function BrandingStep({
   prevStep,
   nextStep,
   isLoading,
+  setIsLoading,
   startLoading,
   stopLoading,
   projectId,
+  websiteUrl,
+  setWebsiteUrl,
 }: BrandingStepProps) {
-  const [websiteUrl, setWebsiteUrl] = useState("");
   const [websiteUrlError, setWebsiteUrlError] = useState("");
 
   const fetchTheme = async () => {
@@ -35,6 +50,7 @@ export default function BrandingStep({
     }
 
     try {
+      setIsLoading && setIsLoading(true);
       startLoading({
         id: "creating-theme",
         title: "Fetching Your Brand",
@@ -54,6 +70,8 @@ export default function BrandingStep({
         title: "Project Failed",
         message: "Validation failed",
       });
+    } finally {
+      setIsLoading && setIsLoading(false);
     }
   };
 
@@ -67,6 +85,7 @@ export default function BrandingStep({
         label="Website URL"
         description="Enter the URL of your website so we can fetch your brand"
         error={websiteUrlError} // Show error message if it exists
+        value={websiteUrl}
         onChange={(event) => {
           setWebsiteUrl(event.currentTarget.value);
           if (!isWebsite(event.currentTarget.value)) {
