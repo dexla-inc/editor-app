@@ -123,6 +123,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
         const onMessage = (event: EventSourceMessage) => {
           try {
             setStream((state) => {
+              console.log(state);
               try {
                 if (state === undefined) {
                   return event.data;

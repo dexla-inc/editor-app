@@ -1,10 +1,10 @@
+import { PageResponse } from "@/requests/pages/types";
 import { emptyEditorTree } from "@/stores/editor";
-import { nanoid } from "nanoid";
-import crawl from "tree-crawl";
 import { structureMapper } from "@/utils/componentMapper";
 import { MantineTheme } from "@mantine/core";
-import { PageResponse } from "@/requests/pages/types";
 import cloneDeep from "lodash.clonedeep";
+import { nanoid } from "nanoid";
+import crawl from "tree-crawl";
 
 export type Component = {
   id?: string;
@@ -13,6 +13,12 @@ export type Component = {
   children?: Component[];
   props?: { [key: string]: any };
   blockDroppingChildrenInside?: boolean;
+  data: ComponentData[];
+};
+
+export type ComponentData = {
+  type: string;
+  value: string;
 };
 
 export type Row = {
