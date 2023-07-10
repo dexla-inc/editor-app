@@ -20,6 +20,7 @@ import { GenerateAIButton } from "@/components/GenerateAIButton";
 import { SavingDisplay } from "@/components/SavingDisplay";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 export interface ShellProps extends AppShellProps {
@@ -42,6 +43,8 @@ export const Shell = ({
   const { undo, redo, pastStates, futureStates } = useTemporalStore(
     (state) => state
   );
+  const router = useRouter();
+  const projectId = router.query.id as string;
 
   return (
     <AppShell
@@ -56,7 +59,7 @@ export const Shell = ({
 
             {navbarType === "editor" && (
               <Flex gap="md">
-                <GenerateAIButton />
+                <GenerateAIButton projectId={projectId} />
                 <Button.Group>
                   <Button
                     leftIcon={<IconArrowBackUp size={ICON_SIZE} />}
