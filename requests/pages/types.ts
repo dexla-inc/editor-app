@@ -29,3 +29,5 @@ export interface PageParams extends PagingParams {
   isHome?: boolean;
   slug?: string;
 }
+
+export type StreamTypes = "PAGE" | "COMPONENT" | "LAYOUT";

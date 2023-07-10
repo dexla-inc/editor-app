@@ -2,7 +2,6 @@ import { PageResponse } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import {
-  ActionIcon,
   Button,
   Flex,
   Group,
@@ -12,12 +11,7 @@ import {
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
-import {
-  IconFileAnalytics,
-  IconHome,
-  IconPlus,
-  IconSettings,
-} from "@tabler/icons-react";
+import { IconFileAnalytics, IconHome, IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -57,32 +51,34 @@ export default function InitialPane({
       <Stack spacing={0}>
         {pages.map((page) => {
           return (
-            <Group
+            <UnstyledButton
               key={page.id}
-              p="xs"
-              spacing="sm"
-              position="apart"
-              align="center"
-              sx={{
-                borderRadius: theme.radius.md,
-                textDecoration: "none",
-                fontWeight: currentPage === page.id ? 500 : "normal",
-                color:
-                  currentPage === page.id ? theme.black : theme.colors.gray[7],
-                backgroundColor:
-                  currentPage === page.id ? theme.colors.gray[0] : undefined,
-
-                "&:hover": {
-                  backgroundColor: theme.colors.gray[0],
-                  color: theme.black,
-                },
+              component={Link}
+              href={`/projects/${projectId}/editor/${page.id}`}
+              onClick={() => {
+                resetTree();
               }}
             >
-              <UnstyledButton
-                component={Link}
-                href={`/projects/${projectId}/editor/${page.id}`}
-                onClick={() => {
-                  resetTree();
+              <Group
+                p="xs"
+                spacing="sm"
+                position="apart"
+                align="center"
+                sx={{
+                  borderRadius: theme.radius.md,
+                  textDecoration: "none",
+                  fontWeight: currentPage === page.id ? 500 : "normal",
+                  color:
+                    currentPage === page.id
+                      ? theme.black
+                      : theme.colors.gray[7],
+                  backgroundColor:
+                    currentPage === page.id ? theme.colors.gray[0] : undefined,
+
+                  "&:hover": {
+                    backgroundColor: theme.colors.gray[0],
+                    color: theme.black,
+                  },
                 }}
               >
                 <Flex gap="xs">
@@ -93,11 +89,8 @@ export default function InitialPane({
                   )}
                   <Text size="xs">{page.title}</Text>
                 </Flex>
-              </UnstyledButton>
-              <ActionIcon variant="transparent">
-                <IconSettings size={ICON_SIZE} />
-              </ActionIcon>
-            </Group>
+              </Group>
+            </UnstyledButton>
           );
         })}
       </Stack>

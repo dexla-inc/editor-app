@@ -27,7 +27,6 @@ export default function EndpointsButton({
     });
 
     const result = await getPageList(projectId, { isHome: true });
-    console.log(result);
 
     if (result.results.length === 0) {
       stopLoading({

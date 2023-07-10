@@ -1,9 +1,17 @@
 import { getPageEventSource } from "@/requests/pages/queries";
+import { StreamTypes } from "@/requests/pages/types";
 import { ICON_SIZE } from "@/utils/config";
-import { ActionIcon, Button, Modal, Stack, Textarea } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Group,
+  Modal,
+  Radio,
+  Stack,
+  Textarea,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { EventSourceMessage } from "@microsoft/fetch-event-source";
-
 import { IconSparkles } from "@tabler/icons-react";
 import { useState } from "react";
 
@@ -23,6 +31,7 @@ export const GenerateAIButton = ({
 // stopLoading,
 GenerateAIButtonProps) => {
   const [openedAIModal, { open, close }] = useDisclosure(false);
+  const [type, setType] = useState<StreamTypes>("LAYOUT");
   const [description, setDescription] = useState("");
 
   const generate = () => {
@@ -80,6 +89,7 @@ GenerateAIButtonProps) => {
       onError,
       onOpen,
       onClose,
+      type,
       description
     );
   };
@@ -96,24 +106,49 @@ GenerateAIButtonProps) => {
         <IconSparkles size={ICON_SIZE} />
       </ActionIcon>
       <Modal
-        size="lg"
+        size="xl"
         opened={openedAIModal}
         onClose={close}
         title="Generate AI Content"
       >
         <Stack>
+          <Radio.Group
+            value={type}
+            onChange={setType}
+            label="What do you want to generate?"
+            description="Select the type of content you want to generate"
+          >
+            <Group mt="xs" spacing="xl" py="sm">
+              <Radio
+                value="LAYOUT"
+                label="Layout"
+                description="Change the entire page"
+              />
+              <Radio
+                value="COMPONENT"
+                label="Component"
+                description="Add / change one component"
+              />
+              <Radio value="DESIGN" label="Design" description="Change theme" />
+              <Radio
+                value="DATA"
+                label="Data"
+                description="Connect components to data"
+              />
+            </Group>
+          </Radio.Group>
           <Textarea
             label="Description"
-            description="Describe what you want to generate or change with the page"
+            description="Describe what you want to generate or change"
             placeholder="Delete breadcrumbs, change the title from Dashboard to Metrics Dashboard, move the form to the right and add an image to the left"
-            withAsterisk
+            required
             value={description}
             onChange={(event) => setDescription(event.currentTarget.value)}
           />
           <Button
             leftIcon={<IconSparkles size={ICON_SIZE} />}
             onClick={generate}
-            disabled
+            disabled={description === ""}
           >
             Generate
           </Button>

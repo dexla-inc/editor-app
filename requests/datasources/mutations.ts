@@ -25,7 +25,6 @@ export async function updateDataSource(
   reFetch: boolean,
   params: DataSourceParams
 ): Promise<DataSourceResponse> {
-  console.log("refetch:" + reFetch);
   const response = (await put<DataSourceResponse>(
     `/projects/${projectId}/datasources/${id}?reFetch=${reFetch}`,
     params

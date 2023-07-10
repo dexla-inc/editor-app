@@ -2,6 +2,7 @@ import {
   PageListResponse,
   PageParams,
   PageResponse,
+  StreamTypes,
 } from "@/requests/pages/types";
 import { baseURL, get, getAuthToken } from "@/utils/api";
 import { buildQueryString } from "@/utils/dashboardTypes";
@@ -58,14 +59,15 @@ export const getPageEventSource = async (
   onerror?: (err: any) => number | null | undefined | void,
   onopen?: (response: Response) => Promise<void>,
   onclose?: () => void,
-  tweakLayout?: string | undefined
+  type?: StreamTypes | undefined,
+  description?: string | undefined
 ) => {
   const token = await getAuthToken();
   const encodedPagename = encodeURIComponent(pageName);
   let url = `${baseURL}/projects/${projectId}/automations/${encodedPagename}/stream`;
 
-  if (tweakLayout) {
-    url += buildQueryString({ tweakLayout });
+  if (description) {
+    url += buildQueryString({ description });
   }
 
   await fetchEventSource(url, {

@@ -168,7 +168,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
           onMessage,
           onError,
           onOpen,
-          onClose
+          onClose,
+          "LAYOUT"
         );
       }
     };

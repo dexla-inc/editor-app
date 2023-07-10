@@ -175,7 +175,6 @@ export default function Settings() {
   });
 
   const onApiAuthSubmit = async (values: AuthenticationStepParams) => {
-    console.log("values: " + JSON.stringify(values));
     try {
       apiAuthForm.validate();
 

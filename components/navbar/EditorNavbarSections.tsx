@@ -28,7 +28,6 @@ const sections = [
     id: "components",
     label: "Components",
     icon: IconLayoutDashboard,
-    initiallyOpened: true,
   },
   {
     id: "theme",

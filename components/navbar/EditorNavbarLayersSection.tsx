@@ -74,7 +74,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   ]);
 
   const icon = structureMapper[component.name as string]?.icon;
-  console.log("icon:" + JSON.stringify(component.name));
+
   return (
     <>
       <Card

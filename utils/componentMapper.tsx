@@ -73,6 +73,7 @@ import * as RadarChartStructure from "@/components/mapper/structure/charts/Radar
 import { Component } from "@/utils/editor";
 import {
   IconBrandChrome,
+  IconBread,
   IconCalendar,
   IconCards,
   IconChartAreaLine,
@@ -95,7 +96,6 @@ import {
   IconLayoutSidebar,
   IconLink,
   IconListCheck,
-  IconNavigation,
   IconPageBreak,
   IconPhoto,
   IconPhotoSearch,
@@ -473,11 +473,11 @@ export const structureMapper: StructureMapper = {
     Draggable: () => (
       <DraggableComponent
         id="Breadcrumb"
-        icon={<IconNavigation size={LARGE_ICON_SIZE} />}
+        icon={<IconBread size={LARGE_ICON_SIZE} />}
       />
     ),
     category: "Navigation",
-    icon: <IconNavigation size={ICON_SIZE} />,
+    icon: <IconBread size={ICON_SIZE} />,
   },
   AppBar: {
     structure: (props: any) => AppBarStructure.jsonStructure(props),
