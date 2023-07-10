@@ -115,6 +115,7 @@ export default function PagesStep({
   };
 
   const goToEditor = async (projectId: string) => {
+    setIsLoading && setIsLoading(true);
     startLoading({
       id: "creating-pages",
       title: "Creating Pages",

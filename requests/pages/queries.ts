@@ -57,12 +57,16 @@ export const getPageEventSource = async (
   onmessage?: (ev: EventSourceMessage) => void,
   onerror?: (err: any) => number | null | undefined | void,
   onopen?: (response: Response) => Promise<void>,
-  onclose?: () => void
+  onclose?: () => void,
+  tweakLayout?: string | undefined
 ) => {
   const token = await getAuthToken();
-  const url = `${baseURL}/projects/${projectId}/automations/${encodeURIComponent(
-    pageName
-  )}/stream`;
+  const encodedPagename = encodeURIComponent(pageName);
+  let url = `${baseURL}/projects/${projectId}/automations/${encodedPagename}/stream`;
+
+  if (tweakLayout) {
+    url += buildQueryString({ tweakLayout });
+  }
 
   await fetchEventSource(url, {
     method: "GET",

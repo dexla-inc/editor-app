@@ -14,10 +14,10 @@ export type Component = {
   children?: Component[];
   props?: { [key: string]: any };
   blockDroppingChildrenInside?: boolean;
-  data?: ComponentData[];
+  elements?: Element[];
 };
 
-export type ComponentData = {
+export type Element = {
   type: string;
   value: string;
 };

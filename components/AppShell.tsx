@@ -16,10 +16,11 @@ import { User } from "@propelauth/react";
 import Link from "next/link";
 
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
+import { GenerateAIButton } from "@/components/GenerateAIButton";
 import { SavingDisplay } from "@/components/SavingDisplay";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
-import { useState } from "react";
 import { IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
+import { useState } from "react";
 
 export interface ShellProps extends AppShellProps {
   navbarType?: NavbarTypes;
@@ -52,8 +53,10 @@ export const Shell = ({
             <Link href="/">
               <Logo />
             </Link>
+
             {navbarType === "editor" && (
               <Flex gap="md">
+                <GenerateAIButton />
                 <Button.Group>
                   <Button
                     leftIcon={<IconArrowBackUp size={ICON_SIZE} />}

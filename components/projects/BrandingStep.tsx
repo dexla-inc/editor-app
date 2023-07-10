@@ -2,23 +2,13 @@ import { InformationAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
 import NextButton from "@/components/NextButton";
 import { getTheme } from "@/requests/themes/queries";
-import { ICON_SIZE } from "@/utils/config";
 import {
   LoadingStore,
   NextStepperClickEvent,
   PreviousStepperClickEvent,
   isWebsite,
 } from "@/utils/dashboardTypes";
-import {
-  Anchor,
-  Button,
-  Divider,
-  Flex,
-  Group,
-  Stack,
-  TextInput,
-} from "@mantine/core";
-import { IconBrush } from "@tabler/icons-react";
+import { Anchor, Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
 import { SetStateAction, useState } from "react";
 
 export interface BrandingStepProps
@@ -64,6 +54,7 @@ export default function BrandingStep({
         title: "Project Created",
         message: "Your brand was fetched successfully",
       });
+      nextStep();
     } catch (error) {
       stopLoading({
         id: "creating-theme",
@@ -84,19 +75,20 @@ export default function BrandingStep({
       <TextInput
         label="Website URL"
         description="Enter the URL of your website so we can fetch your brand"
-        error={websiteUrlError} // Show error message if it exists
+        placeholder="https://www.dexla.ai"
+        error={websiteUrlError}
         value={websiteUrl}
         onChange={(event) => {
           setWebsiteUrl(event.currentTarget.value);
           if (!isWebsite(event.currentTarget.value)) {
             setWebsiteUrlError("Must be a valid website URL");
           } else {
-            setWebsiteUrlError(""); // Clear error message when valid URL is entered
+            setWebsiteUrlError("");
           }
         }}
         withAsterisk={false}
       />
-      <Flex>
+      {/* <Flex>
         <Button
           variant="light"
           leftIcon={<IconBrush size={ICON_SIZE} />}
@@ -106,14 +98,14 @@ export default function BrandingStep({
         >
           Fetch Brand
         </Button>
-      </Flex>
+      </Flex> */}
       <Divider></Divider>
       <Group position="apart">
         <BackButton onClick={prevStep}></BackButton>
         <Flex gap="lg" align="end">
           <Anchor onClick={nextStep}>I don’t have a website, skip</Anchor>
           <NextButton
-            onClick={nextStep}
+            onClick={fetchTheme}
             isLoading={isLoading}
             disabled={isLoading}
           ></NextButton>

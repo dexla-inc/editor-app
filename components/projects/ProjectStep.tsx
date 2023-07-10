@@ -80,7 +80,7 @@ export default function ProjectStep({
         />
         <TextInput
           label="What do you do? *"
-          description="Your one-liner e.g. A platform to manage small business financial data"
+          description="Your one-liner e.g. A universal API that connects all systems that small business customers use with a single integration."
           required
           withAsterisk={false}
           {...form.getInputProps("description")}
@@ -98,7 +98,7 @@ export default function ProjectStep({
 
         <TextInput
           label="What industry are you in? *"
-          description="e.g. Financial Services"
+          description="e.g. FinTech"
           {...form.getInputProps("industry")}
         />
 

@@ -9,6 +9,7 @@ import {
   Stack,
   Text,
   TextInput,
+  UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
 import {
@@ -77,23 +78,22 @@ export default function InitialPane({
                 },
               }}
             >
-              <Flex gap="xs">
-                {page.isHome ? (
-                  <IconHome size={ICON_SIZE} />
-                ) : (
-                  <IconFileAnalytics size={ICON_SIZE} />
-                )}
-                <Text
-                  size="xs"
-                  component={Link}
-                  href={`/projects/${projectId}/editor/${page.id}`}
-                  onClick={() => {
-                    resetTree();
-                  }}
-                >
-                  {page.title}
-                </Text>
-              </Flex>
+              <UnstyledButton
+                component={Link}
+                href={`/projects/${projectId}/editor/${page.id}`}
+                onClick={() => {
+                  resetTree();
+                }}
+              >
+                <Flex gap="xs">
+                  {page.isHome ? (
+                    <IconHome size={ICON_SIZE} />
+                  ) : (
+                    <IconFileAnalytics size={ICON_SIZE} />
+                  )}
+                  <Text size="xs">{page.title}</Text>
+                </Flex>
+              </UnstyledButton>
               <ActionIcon variant="transparent">
                 <IconSettings size={ICON_SIZE} />
               </ActionIcon>

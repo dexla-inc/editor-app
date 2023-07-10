@@ -2,6 +2,7 @@ import { SortableTreeItem } from "@/components/SortableTreeItem";
 import { useDraggable } from "@/hooks/useDraggable";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useEditorStore } from "@/stores/editor";
+import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import { Component, checkIfIsAncestor } from "@/utils/editor";
 import {
@@ -20,9 +21,10 @@ import { useEffect } from "react";
 
 type ListItemProps = {
   component: Component;
+  level?: number;
 } & CardProps;
 
-const ListItem = ({ component, children }: ListItemProps) => {
+const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   const theme = useMantineTheme();
   const { ref, hovered } = useHover();
   const editorTree = useEditorStore((state) => state.tree);
@@ -71,11 +73,13 @@ const ListItem = ({ component, children }: ListItemProps) => {
     isCurrentTarget,
   ]);
 
+  const icon = structureMapper[component.name as string]?.icon;
+  console.log("icon:" + JSON.stringify(component.name));
   return (
     <>
       <Card
         ref={ref}
-        p={0}
+        p={`0 ${15 * level}px`}
         w="100%"
         bg={hovered ? "gray.1" : undefined}
         style={{
@@ -115,6 +119,7 @@ const ListItem = ({ component, children }: ListItemProps) => {
                 }}
               />
             </ActionIcon>
+            {component.id !== "root" && icon}
             <Text
               id={`layer-${component.id}`}
               size="xs"
@@ -137,15 +142,14 @@ const ListItem = ({ component, children }: ListItemProps) => {
   );
 };
 
-const ListItemWrapper = ({ component, children }: ListItemProps) => {
+const ListItemWrapper = ({ component, children, level }: ListItemProps) => {
   return (
     <SortableTreeItem component={component}>
       <List.Item key={component.id} w="100%">
-        <ListItem component={component}>
+        <ListItem component={component} level={level}>
           {(component.children ?? [])?.length > 0 && (
             <List
               size="xs"
-              withPadding
               listStyleType="none"
               styles={{
                 itemWrapper: {
@@ -165,19 +169,15 @@ const ListItemWrapper = ({ component, children }: ListItemProps) => {
 export const EditorNavbarLayersSection = () => {
   const editorTree = useEditorStore((state) => state.tree);
 
-  const renderList = (component: Component) => {
+  const renderList = (component: Component, level: number = 0) => {
     if (!component) {
       return null;
     }
 
     return (
-      <ListItemWrapper key={component.id} component={component}>
+      <ListItemWrapper key={component.id} component={component} level={level}>
         {component.children?.map((child) => {
-          return (
-            <ListItemWrapper key={child.id} component={child}>
-              {child.children?.map(renderList)}
-            </ListItemWrapper>
-          );
+          return renderList(child, level + 1);
         })}
       </ListItemWrapper>
     );
