@@ -62,7 +62,6 @@ export const EditorNavbarSections = () => {
       {...item}
       key={item.label}
       onClick={() => setActiveTab(item.id)}
-      isActive={item.id === activeTab}
     >
       {sectionMapper[item.id as string]({
         ...item,
