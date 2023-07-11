@@ -3,28 +3,26 @@ import { DataSourceListItem } from "@/components/datasources/DataSourceListItem"
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import PaneHeading from "@/components/navbar/PaneHeading";
 import { getDataSources } from "@/requests/datasources/queries";
-import { DataSourceResponse } from "@/requests/datasources/types";
-import { PagingResponse } from "@/requests/types";
 import { Stack, Text } from "@mantine/core";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 
-export const EditorNavbarDataSourcesSection = () => {
+type EditorNavbarDataSourcesSectionProps = {
+  isActive: boolean;
+};
+
+export const EditorNavbarDataSourcesSection = ({
+  isActive,
+}: EditorNavbarDataSourcesSectionProps) => {
   const router = useRouter();
   const projectId = router.query.id as string;
-  const [dataSources, setDataSources] =
-    useState<PagingResponse<DataSourceResponse>>();
 
-  useEffect(() => {
-    const fetchDataSources = async () => {
-      const fetchedDatasources = await getDataSources(projectId, {});
-
-      setDataSources(fetchedDatasources);
-    };
-
-    fetchDataSources();
-  }, [projectId]);
+  const dataSources = useQuery({
+    queryKey: ["datasources"],
+    queryFn: () => getDataSources(projectId, {}),
+    enabled: !!projectId && isActive,
+  });
 
   return (
     <>
@@ -36,7 +34,7 @@ export const EditorNavbarDataSourcesSection = () => {
         onClose={() => true}
       ></PaneHeading>
       <Stack>
-        {dataSources?.results && dataSources.results.length > 0 && (
+        {dataSources?.data?.results && dataSources.data.results.length > 0 && (
           <WarningAlert isHtml>
             <Text>
               It is recommended you change configuration in your swagger file
@@ -51,8 +49,8 @@ export const EditorNavbarDataSourcesSection = () => {
             </Text>
           </WarningAlert>
         )}
-        {dataSources?.results && dataSources.results.length > 0 ? (
-          dataSources.results.map((dataSource) => {
+        {dataSources?.data?.results && dataSources.data.results.length > 0 ? (
+          dataSources.data.results.map((dataSource) => {
             return (
               <DataSourceListItem
                 key={dataSource.id}

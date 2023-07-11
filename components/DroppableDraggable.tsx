@@ -184,20 +184,6 @@ export const DroppableDraggable = ({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                /* updateComponentMutation.mutate({
-                  projectId: router.query.id as string,
-                  values: {
-                    id: component.id,
-                    content: encodeSchema(JSON.stringify(component)) as string,
-                    description: component.description,
-                    type: component.name,
-                    name: component.name,
-                    scope:
-                      componentList.data?.results.find(
-                        (c) => c.id === component.id
-                      )?.scope ?? "GLOBAL",
-                  },
-                }); */
               }}
             >
               <IconDeviceFloppy
