@@ -1,33 +1,27 @@
-import React, { PropsWithChildren } from "react";
+import { useDraggable } from "@/hooks/useDraggable";
+import { useDroppable } from "@/hooks/useDroppable";
+import { useOnDragStart } from "@/hooks/useOnDragStart";
+import { useOnDrop } from "@/hooks/useOnDrop";
+import { useEditorStore } from "@/stores/editor";
+import { DROP_INDICATOR_WIDTH, ICON_SIZE } from "@/utils/config";
+import { Component, getComponentParent } from "@/utils/editor";
 import {
+  ActionIcon,
   Box,
   BoxProps,
-  Text,
-  useMantineTheme,
   Group,
+  Text,
   UnstyledButton,
-  ActionIcon,
+  useMantineTheme,
 } from "@mantine/core";
-import { useEditorStore } from "@/stores/editor";
-import { Component, getComponentParent } from "@/utils/editor";
+import { useHover } from "@mantine/hooks";
 import {
   IconArrowUp,
   IconDeviceFloppy,
   IconGripVertical,
   IconNewSection,
 } from "@tabler/icons-react";
-import { DROP_INDICATOR_WIDTH, ICON_SIZE } from "@/utils/config";
-import { useDraggable } from "@/hooks/useDraggable";
-import { useDroppable } from "@/hooks/useDroppable";
-import { useOnDrop } from "@/hooks/useOnDrop";
-import { useOnDragStart } from "@/hooks/useOnDragStart";
-import { useHover } from "@mantine/hooks";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { updateComponent } from "@/requests/components/mutations";
-import { showNotification } from "@mantine/notifications";
-import { useRouter } from "next/router";
-import { encodeSchema } from "@/utils/compression";
-import { getComponentList } from "@/requests/components/queries";
+import { PropsWithChildren } from "react";
 
 type Props = {
   id: string;
@@ -43,7 +37,6 @@ export const DroppableDraggable = ({
   ...props
 }: PropsWithChildren<Props>) => {
   const { hovered, ref } = useHover();
-  const router = useRouter();
   const theme = useMantineTheme();
   const editorTree = useEditorStore((state) => state.tree);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
@@ -54,35 +47,6 @@ export const DroppableDraggable = ({
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
-  const queryClient = useQueryClient();
-  const componentList = useQuery({
-    queryKey: ["components"],
-    queryFn: () => getComponentList(router.query.id as string),
-    enabled: !!router.query.id,
-  });
-
-  const updateComponentMutation = useMutation(updateComponent, {
-    onSettled(_, err) {
-      if (err) {
-        console.log(err);
-        showNotification({
-          title: "Oops",
-          message: "Something went wrong while trying to update the component.",
-          autoClose: true,
-          color: "red",
-          withBorder: true,
-        });
-      } else {
-        showNotification({
-          title: "Component Saved",
-          message: "Your Component was saved successfully.",
-          autoClose: true,
-          withBorder: true,
-        });
-        queryClient.invalidateQueries(["components"]);
-      }
-    },
-  });
 
   const parent = getComponentParent(editorTree.root, id);
 
