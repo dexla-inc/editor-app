@@ -42,7 +42,13 @@ const fontWeights = [
   "900",
 ];
 
-export const EditorNavbarThemesSection = () => {
+type EditorNavbarThemesSectionProps = {
+  isActive: boolean;
+};
+
+export const EditorNavbarThemesSection = ({
+  isActive,
+}: EditorNavbarThemesSectionProps) => {
   const router = useRouter();
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
@@ -55,7 +61,7 @@ export const EditorNavbarThemesSection = () => {
   const userTheme = useQuery({
     queryKey: ["theme"],
     queryFn: () => getTheme(projectId),
-    enabled: !!projectId,
+    enabled: !!projectId && isActive,
   });
 
   const { mutate } = useMutation(saveTheme, {
