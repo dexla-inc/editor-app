@@ -111,7 +111,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
       const page = await getPage(projectId, pageId);
       if (page.pageState) {
         const decodedSchema = decodeSchema(page.pageState);
-        setEditorTree(JSON.parse(decodedSchema));
+        setEditorTree(JSON.parse(decodedSchema), true);
         setIsLoading(false);
       } else {
         startLoading({
