@@ -53,6 +53,7 @@ export const jsonStructure = (props?: any): Component => {
               },
               ...(props.props || {}),
             },
+            blockDroppingChildrenInside: true,
           },
         ],
       },

@@ -16,11 +16,6 @@ export type Component = {
   blockDroppingChildrenInside?: boolean;
 };
 
-export type Element = {
-  type: string;
-  value: string;
-};
-
 export type Row = {
   columns: number;
   components: Component[];
@@ -56,6 +51,30 @@ export const replaceIdsDeeply = (treeRoot: Component) => {
   );
 };
 
+const traverseComponents = (
+  components: Component[],
+  theme: MantineTheme,
+  pages: PageResponse[]
+): Component[] => {
+  return components.map((component) => {
+    const structureDefinition = structureMapper[component.name];
+    const newComponent = structureDefinition.structure({
+      ...component,
+      theme,
+      pages,
+    });
+    if (component.children) {
+      newComponent.children = traverseComponents(
+        component.children,
+        theme,
+        pages
+      );
+    }
+
+    return newComponent;
+  });
+};
+
 export const getEditorTreeFromPageStructure = (
   tree: { rows: Row[] },
   theme: MantineTheme,
@@ -87,10 +106,7 @@ export const getEditorTreeFromPageStructure = (
                   width: "100%",
                 },
               },
-              children: row.components.map((c) => {
-                const component = structureMapper[c.name];
-                return component.structure({ ...c, theme, pages });
-              }),
+              children: traverseComponents(row.components, theme, pages),
             };
           }),
         },

@@ -7,6 +7,7 @@ import { px } from "@mantine/core";
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
   const chartProps = ChartStructure.jsonStructure(props).props;
+  const { options, ...rest } = props.props || {};
 
   return {
     id: nanoid(),
@@ -23,7 +24,6 @@ export const jsonStructure = (props?: any): Component => {
         minHeight: "100px",
         backgroundColor: "white",
       },
-      ...(props.props || {}),
     },
     children: [
       {
@@ -49,7 +49,9 @@ export const jsonStructure = (props?: any): Component => {
                 "Sep",
               ],
             },
+            ...(options || {}),
           },
+          ...(rest || {}),
         },
         blockDroppingChildrenInside: true,
       },

@@ -123,7 +123,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
         const onMessage = (event: EventSourceMessage) => {
           try {
             setStream((state) => {
-              console.log(state);
               try {
                 if (state === undefined) {
                   return event.data;
@@ -191,7 +190,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
     if (stream) {
       try {
         const json = TOML.parse(stream);
-        //console.log("json:" + JSON.stringify(json));
         const tree = getEditorTreeFromPageStructure(
           json as { rows: Row[] },
           editorTheme,

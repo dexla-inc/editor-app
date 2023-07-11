@@ -44,6 +44,7 @@ export const jsonStructure = (props?: any): Component => {
             height: "auto",
           },
         },
+        blockDroppingChildrenInside: true,
       },
       {
         id: nanoid(),
@@ -62,6 +63,7 @@ export const jsonStructure = (props?: any): Component => {
             height: "auto",
           },
         },
+        blockDroppingChildrenInside: true,
       },
       {
         id: nanoid(),
@@ -80,6 +82,7 @@ export const jsonStructure = (props?: any): Component => {
             height: "auto",
           },
         },
+        blockDroppingChildrenInside: true,
       },
     ],
   };
