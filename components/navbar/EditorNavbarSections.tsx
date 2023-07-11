@@ -11,6 +11,7 @@ import {
   IconLayoutDashboard,
   IconStack2,
 } from "@tabler/icons-react";
+import { useState } from "react";
 
 const sections = [
   {
@@ -54,9 +55,19 @@ const sectionMapper: SectionsMapper = {
 };
 
 export const EditorNavbarSections = () => {
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+
   const sectionsToRender = sections.map((item) => (
-    <SidebarSection {...item} key={item.label}>
-      {sectionMapper[item.id as string](item)}
+    <SidebarSection
+      {...item}
+      key={item.label}
+      onClick={() => setActiveTab(item.id)}
+      isActive={item.id === activeTab}
+    >
+      {sectionMapper[item.id as string]({
+        ...item,
+        isActive: item.id === activeTab,
+      })}
     </SidebarSection>
   ));
 

@@ -1,36 +1,47 @@
 import { ICON_SIZE } from "@/utils/config";
 import {
-  useMantineTheme,
-  UnstyledButton,
-  Group,
   Box,
+  Collapse,
+  Group,
   Text,
   ThemeIcon,
-  Collapse,
+  UnstyledButton,
+  useMantineTheme,
 } from "@mantine/core";
 import { IconChevronDown } from "@tabler/icons-react";
 import { PropsWithChildren, useState } from "react";
 
 type SidebarSectionProps = {
+  id: string;
   icon: React.FC<any>;
   label: string;
   initiallyOpened?: boolean;
   links?: { label: string; link: string }[];
+  onClick: (id: string) => void;
+  isActive: boolean;
 };
 
 export function SidebarSection({
+  id,
   icon: Icon,
   label,
   initiallyOpened,
   children,
+  onClick,
+  isActive,
 }: PropsWithChildren<SidebarSectionProps>) {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(initiallyOpened || false);
 
+  const handleSectionClick = () => {
+    setOpened((o) => !o);
+    onClick(id);
+  };
+
   return (
     <>
       <UnstyledButton
-        onClick={() => setOpened((o) => !o)}
+        onClick={handleSectionClick}
         sx={{
           fontWeight: 500,
           display: "block",
