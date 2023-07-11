@@ -17,8 +17,7 @@ type SidebarSectionProps = {
   label: string;
   initiallyOpened?: boolean;
   links?: { label: string; link: string }[];
-  onClick: (id: string) => void;
-  isActive: boolean;
+  onClick?: (id: string) => void;
 };
 
 export function SidebarSection({
@@ -28,14 +27,13 @@ export function SidebarSection({
   initiallyOpened,
   children,
   onClick,
-  isActive,
 }: PropsWithChildren<SidebarSectionProps>) {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(initiallyOpened || false);
 
   const handleSectionClick = () => {
     setOpened((o) => !o);
-    onClick(id);
+    onClick && onClick(id);
   };
 
   return (
