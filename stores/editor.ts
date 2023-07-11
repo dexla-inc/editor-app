@@ -39,7 +39,7 @@ export type EditorState = {
   setTheme: (theme: MantineTheme) => void;
   setIframeWindow: (iframeWindow: Window) => void;
   setCurrentTargetId: (currentTargetId?: string) => void;
-  setTree: (tree: EditorTree) => void;
+  setTree: (tree: EditorTree, onLoad?: boolean) => void;
   resetTree: () => void;
   setCurrentProjectId: (currentProjectId: string) => void;
   setCurrentPageId: (currentPageId: string) => void;
@@ -63,14 +63,15 @@ export const useEditorStore = create<EditorState>()(
       setIframeWindow: (iframeWindow) => set({ iframeWindow }),
       setCurrentTargetId: (currentTargetId) => set({ currentTargetId }),
       isSaving: false,
-      setTree: (tree) => {
+      setTree: (tree, onLoad) => {
         set((state) => {
-          updatePageState(
-            encodeSchema(JSON.stringify(tree)),
-            state.currentProjectId ?? "",
-            state.currentPageId ?? "",
-            state.setIsSaving
-          );
+          !onLoad &&
+            updatePageState(
+              encodeSchema(JSON.stringify(tree)),
+              state.currentProjectId ?? "",
+              state.currentPageId ?? "",
+              state.setIsSaving
+            );
           return { tree };
         });
       },
