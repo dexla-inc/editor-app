@@ -114,7 +114,7 @@ GenerateAIButtonProps) => {
         <Stack>
           <Radio.Group
             value={type}
-            onChange={setType}
+            onChange={(value) => setType(value as StreamTypes)}
             label="What do you want to generate?"
             description="Select the type of content you want to generate"
           >

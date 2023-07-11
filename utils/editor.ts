@@ -14,7 +14,6 @@ export type Component = {
   children?: Component[];
   props?: { [key: string]: any };
   blockDroppingChildrenInside?: boolean;
-  elements?: Element[];
 };
 
 export type Element = {
@@ -23,7 +22,7 @@ export type Element = {
 };
 
 export type Row = {
-  row: number;
+  columns: number;
   components: Component[];
 };
 

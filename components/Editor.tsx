@@ -191,6 +191,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
     if (stream) {
       try {
         const json = TOML.parse(stream);
+        //console.log("json:" + JSON.stringify(json));
         const tree = getEditorTreeFromPageStructure(
           json as { rows: Row[] },
           editorTheme,
