@@ -36,7 +36,7 @@ export const EditorNavbarComponentsSection = () => {
   const componentList = useQuery({
     queryKey: ["components"],
     queryFn: () => getComponentList(router.query.id as string),
-    enabled: !!router.query.id,
+    enabled: !!router.query.id && componentTypeToShow === "custom",
   });
 
   const componentsGroupedByCategory = Object.keys(structureMapper).reduce(
