@@ -30,6 +30,7 @@ import { TabsList } from "@/components/mapper/TabsList";
 import { TabsPanel } from "@/components/mapper/TabsPanel";
 import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";
+import { Title } from "@/components/mapper/Title";
 import { AreaChart } from "@/components/mapper/charts/AreaChart";
 import { BarChart } from "@/components/mapper/charts/BarChart";
 import { LineChart } from "@/components/mapper/charts/LineChart";
@@ -65,6 +66,7 @@ import * as TabsListStructure from "@/components/mapper/structure/TabsList";
 import * as TabsPanelStructure from "@/components/mapper/structure/TabsPanel";
 import * as TextStructure from "@/components/mapper/structure/Text";
 import * as TextareaStructure from "@/components/mapper/structure/Textarea";
+import * as TitleStructure from "@/components/mapper/structure/Title";
 import * as AreaChartStructure from "@/components/mapper/structure/charts/AreaChart";
 import * as BarChartStructure from "@/components/mapper/structure/charts/BarChart";
 import * as LineChartStructure from "@/components/mapper/structure/charts/LineChart";
@@ -88,6 +90,7 @@ import {
   IconExclamationMark,
   IconFile,
   IconFileText,
+  IconHeading,
   IconJewishStar,
   IconLayersDifference,
   IconLayoutBottombarCollapse,
@@ -290,6 +293,17 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Typography",
     icon: <IconCursorText size={ICON_SIZE} />,
+  },
+  Title: {
+    structure: (props: any) => TitleStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Title"
+        icon={<IconHeading size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Typography",
+    icon: <IconHeading size={ICON_SIZE} />,
   },
   Table: {
     structure: (props: any) => TableStructure.jsonStructure(props),
@@ -718,6 +732,12 @@ export const componentMapper: ComponentMapper = {
   Text: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Text component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size", "text"],
+  },
+  Title: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Title component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "text"],
   },
