@@ -7,6 +7,7 @@ import { useForm } from "@mantine/form";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import slugify from "slugify";
 
 type PageDetailPaneProps = {
   setShowDetail: (id: boolean) => void;
@@ -22,6 +23,7 @@ export default function PageDetailPane({
   const stopLoading = useAppStore((state) => state.stopLoading);
   const router = useRouter();
   const projectId = router.query.id as string;
+  const [slug, setSlug] = useState("");
 
   const form = useForm<PageBody>({
     initialValues: {
@@ -93,11 +95,27 @@ export default function PageDetailPane({
               label="Page Title"
               placeholder="Dashboard Analysis"
               {...form.getInputProps("title")}
+              onChange={(event) => {
+                form.getInputProps("title").onChange(event);
+                const newSlug = slugify(event.currentTarget.value, {
+                  lower: true,
+                });
+                setSlug(newSlug);
+                form.setFieldValue("slug", newSlug);
+                form.setTouched({ slug: false });
+              }}
             />
             <TextInput
               label="Slug"
               placeholder="dashboard-analysis"
               {...form.getInputProps("slug")}
+              value={slug}
+              onChange={(event) => {
+                const newSlug = event.target.value;
+                setSlug(newSlug);
+                form.setFieldValue("slug", newSlug);
+                form.setTouched({ slug: true });
+              }}
             />
             <Button type="submit" loading={isLoading}>
               {page ? "Save" : "Create"}

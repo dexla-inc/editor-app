@@ -42,7 +42,7 @@ export const jsonStructure = (props?: any): Component => {
                 lineHeight: "110%",
                 letterSpacing: "0px",
                 width: "auto",
-                heigh: "auto",
+                height: "auto",
               },
               ...(props.props || {}),
             },

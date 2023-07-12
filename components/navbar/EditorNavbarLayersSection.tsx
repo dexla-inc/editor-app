@@ -4,7 +4,7 @@ import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
-import { Component, checkIfIsAncestor } from "@/utils/editor";
+import { Component, checkIfIsDirectAncestor } from "@/utils/editor";
 import {
   ActionIcon,
   Card,
@@ -54,7 +54,11 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   const isCurrentTarget = currentTargetId === `layer-${component.id}`;
   const isAncestorOfSelectedComponent =
     component.id && selectedComponentId
-      ? checkIfIsAncestor(editorTree.root, selectedComponentId, component.id)
+      ? checkIfIsDirectAncestor(
+          editorTree.root,
+          selectedComponentId,
+          component.id
+        )
       : false;
 
   useEffect(() => {
