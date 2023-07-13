@@ -1,4 +1,4 @@
-import { createPage } from "@/requests/pages/mutations";
+import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
 import { PageBody, PageResponse } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
 import { ICON_SIZE } from "@/utils/config";
@@ -6,17 +6,19 @@ import { Button, Flex, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import slugify from "slugify";
 
 type PageDetailPaneProps = {
-  setShowDetail: (id: boolean) => void;
-  page?: PageResponse;
+  page?: PageResponse | null | undefined;
+  setPage: (page?: PageResponse | null | undefined) => void;
+  getPages: () => void;
 };
 
 export default function PageDetailPane({
-  setShowDetail,
   page,
+  setPage,
+  getPages,
 }: PageDetailPaneProps) {
   const [isLoading, setIsLoading] = useState(false);
   const startLoading = useAppStore((state) => state.startLoading);
@@ -48,6 +50,40 @@ export default function PageDetailPane({
     },
   });
 
+  useEffect(() => {
+    if (page) {
+      form.setFieldValue("title", page.title);
+      form.setFieldValue("slug", page.slug.toLowerCase());
+      setSlug(page.slug);
+    }
+  }, [page]);
+
+  const deleteFn = async () => {
+    try {
+      setIsLoading(true);
+
+      startLoading({
+        id: "deleting",
+        title: "Deleting Page",
+        message: "Wait while your page is being deleted",
+      });
+
+      await deletePage(projectId, page?.id as string);
+      getPages();
+      setIsLoading(false);
+
+      stopLoading({
+        id: "deleting",
+        title: "Page Deleted",
+        message: "Your page has been deleted",
+      });
+
+      setPage(undefined);
+    } catch (error) {
+      setIsLoading(false);
+    }
+  };
+
   const onSubmit = async (values: PageBody) => {
     try {
       setIsLoading(true);
@@ -60,8 +96,11 @@ export default function PageDetailPane({
 
       form.validate();
 
-      const result = await createPage(values, projectId);
+      const result = page
+        ? await updatePage(values, projectId, page.id)
+        : await createPage(values, projectId);
 
+      getPages();
       stopLoading({
         id: "mutating",
         title: "Page Saved",
@@ -84,7 +123,7 @@ export default function PageDetailPane({
       <Flex>
         <form onSubmit={form.onSubmit(onSubmit)} style={{ width: "100%" }}>
           <Button
-            onClick={() => setShowDetail(false)}
+            onClick={() => setPage(undefined)}
             variant="subtle"
             leftIcon={<IconArrowLeft size={ICON_SIZE} />}
           >
@@ -100,9 +139,9 @@ export default function PageDetailPane({
                 const newSlug = slugify(event.currentTarget.value, {
                   lower: true,
                 });
-                setSlug(newSlug);
-                form.setFieldValue("slug", newSlug);
-                form.setTouched({ slug: false });
+                page?.id ?? setSlug(newSlug);
+                page?.id ?? form.setFieldValue("slug", newSlug);
+                page?.id ?? form.setTouched({ slug: false });
               }}
             />
             <TextInput
@@ -112,13 +151,18 @@ export default function PageDetailPane({
               value={slug}
               onChange={(event) => {
                 const newSlug = event.target.value;
-                setSlug(newSlug);
-                form.setFieldValue("slug", newSlug);
-                form.setTouched({ slug: true });
+                if (page?.id) {
+                  setSlug(newSlug);
+                  form.setFieldValue("slug", newSlug);
+                  form.setTouched({ slug: true });
+                }
               }}
             />
             <Button type="submit" loading={isLoading}>
               {page ? "Save" : "Create"}
+            </Button>
+            <Button loading={isLoading} onClick={deleteFn} color="red">
+              Delete
             </Button>
           </Stack>
         </form>

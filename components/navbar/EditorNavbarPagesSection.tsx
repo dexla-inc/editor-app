@@ -1,4 +1,5 @@
 import { getPageList } from "@/requests/pages/queries";
+import { PageResponse } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
 import { Stack } from "@mantine/core";
 import debounce from "lodash.debounce";
@@ -11,7 +12,7 @@ export const EditorNavbarPagesSection = () => {
   const router = useRouter();
   const projectId = router.query.id as string;
   const currentPage = router.query.page as string;
-  const [showDetail, setShowDetail] = useState<boolean>(false);
+  const [page, setPage] = useState<PageResponse | undefined | null>();
   const [search, setSearch] = useState<string>("");
   const debouncedSearch = debounce((query) => setSearch(query), 200);
   const pages = useEditorStore((state) => state.pages);
@@ -28,17 +29,16 @@ export const EditorNavbarPagesSection = () => {
 
   return (
     <Stack spacing="xs">
-      {!showDetail ? (
+      {page === undefined ? (
         <InitialPane
-          setShowDetail={setShowDetail}
+          setPage={setPage}
           pages={pages}
           currentPage={currentPage}
-          projectId={projectId}
           debouncedSearch={debouncedSearch}
           search={search}
         />
       ) : (
-        <PageDetailPane setShowDetail={setShowDetail} />
+        <PageDetailPane page={page} setPage={setPage} getPages={getPages} />
       )}
     </Stack>
   );

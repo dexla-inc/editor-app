@@ -8,9 +8,9 @@ import {
   AppShellProps,
   Button,
   Flex,
-  Group,
   Header,
   LoadingOverlay,
+  Select,
 } from "@mantine/core";
 import { User } from "@propelauth/react";
 import Link from "next/link";
@@ -18,8 +18,11 @@ import Link from "next/link";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { GenerateAIButton } from "@/components/GenerateAIButton";
 import { SavingDisplay } from "@/components/SavingDisplay";
+import { getPageList } from "@/requests/pages/queries";
+import { PageListResponse } from "@/requests/pages/types";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -45,6 +48,24 @@ export const Shell = ({
   );
   const router = useRouter();
   const projectId = router.query.id as string;
+  const currentPageId = router.query.page as string;
+
+  console.log("currentPageId: " + currentPageId);
+
+  const pageResponse = useQuery<PageListResponse, Error>({
+    queryKey: ["pages"],
+    queryFn: () => getPageList(projectId),
+  });
+
+  const pages =
+    (pageResponse.data?.results?.map((r) => ({
+      value: r.id,
+      label: r.title,
+    })) as ReadonlyArray<any>) || [];
+
+  const goToEditor = (pageId: string) => {
+    router.push(`/projects/${projectId}/editor/${pageId}`);
+  };
 
   return (
     <AppShell
@@ -52,40 +73,56 @@ export const Shell = ({
       padding={0}
       header={
         <Header height={HEADER_HEIGHT}>
-          <Group h={HEADER_HEIGHT} px="lg" position="apart">
-            <Link href="/">
-              <Logo />
-            </Link>
-
+          <Flex h={HEADER_HEIGHT} px="lg" align="center">
+            <Flex sx={{ width: "33%" }}>
+              <Link href="/">
+                <Logo />
+              </Link>
+            </Flex>
             {navbarType === "editor" && (
-              <Flex gap="md">
-                <GenerateAIButton projectId={projectId} />
-                <Button.Group>
-                  <Button
-                    leftIcon={<IconArrowBackUp size={ICON_SIZE} />}
-                    variant="default"
-                    onClick={() => undo()}
-                    disabled={pastStates.length < 2}
-                  >
-                    Undo
-                  </Button>
-                  <Button
-                    leftIcon={<IconArrowForwardUp size={ICON_SIZE} />}
-                    variant="default"
-                    onClick={() => redo()}
-                    disabled={futureStates.length === 0}
-                  >
-                    Redo
-                  </Button>
-                </Button.Group>
-                <SavingDisplay isSaving={isSaving} />{" "}
-                <EditorPreviewModeToggle
-                  isPreviewMode={isPreviewMode}
-                  togglePreviewMode={togglePreviewMode}
+              <>
+                <Select
+                  label="Page"
+                  value={currentPageId}
+                  onChange={(value) => goToEditor(value as string)}
+                  data={pages}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "10px",
+                    width: "33.33%",
+                  }}
                 />
-              </Flex>
+                <Flex gap="md" sx={{ width: "33.33%" }} justify="end">
+                  <GenerateAIButton projectId={projectId} />
+                  <Button.Group>
+                    <Button
+                      leftIcon={<IconArrowBackUp size={ICON_SIZE} />}
+                      variant="default"
+                      onClick={() => undo()}
+                      disabled={pastStates.length < 2}
+                    >
+                      Undo
+                    </Button>
+                    <Button
+                      leftIcon={<IconArrowForwardUp size={ICON_SIZE} />}
+                      variant="default"
+                      onClick={() => redo()}
+                      disabled={futureStates.length === 0}
+                    >
+                      Redo
+                    </Button>
+                  </Button.Group>
+                  <SavingDisplay isSaving={isSaving} />{" "}
+                  <EditorPreviewModeToggle
+                    isPreviewMode={isPreviewMode}
+                    togglePreviewMode={togglePreviewMode}
+                  />
+                </Flex>
+              </>
             )}
-          </Group>
+          </Flex>
         </Header>
       }
       navbar={

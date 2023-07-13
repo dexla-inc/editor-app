@@ -1,9 +1,27 @@
-import { PageBody, PageResponse, PagesResponse } from "@/requests/pages/types";
-import { post, put } from "@/utils/api";
+import {
+  PageBody,
+  PageResponse,
+  PagesResponse,
+  UpdatePageBody,
+} from "@/requests/pages/types";
+import { del, post, put } from "@/utils/api";
 
 export const createPage = async (params: PageBody, projectId: string) => {
   const response = (await post<PageResponse>(
     `/projects/${projectId}/pages`,
+    params
+  )) as PageResponse;
+
+  return response;
+};
+
+export const updatePage = async (
+  params: UpdatePageBody,
+  projectId: string,
+  pageId: string
+) => {
+  const response = (await put<PageResponse>(
+    `/projects/${projectId}/pages/${pageId}`,
     params
   )) as PageResponse;
 
@@ -33,5 +51,11 @@ export const updatePageState = async (
     }
   )) as any;
   setIsSaving(false);
+  return response;
+};
+
+export const deletePage = async (id: string, pageId: string) => {
+  const response = (await del<any>(`/projects/${id}/pages/${pageId}`)) as any;
+
   return response;
 };
