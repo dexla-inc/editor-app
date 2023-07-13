@@ -1,6 +1,10 @@
 import { getPageEventSource } from "@/requests/pages/queries";
 import { StreamTypes } from "@/requests/pages/types";
+import { useAppStore } from "@/stores/app";
+import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
+import { Row, getEditorTreeFromPageStructure } from "@/utils/editor";
+import TOML from "@iarna/toml";
 import {
   ActionIcon,
   Button,
@@ -13,19 +17,17 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { EventSourceMessage } from "@microsoft/fetch-event-source";
 import { IconSparkles } from "@tabler/icons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type GenerateAIButtonProps = {
   projectId: string;
   pageTitle?: string | undefined;
-  // setStream: Dispatch<SetStateAction<string | undefined>>;
-  // startLoading: (state: DexlaNotificationProps) => void;
-  // stopLoading: (state: DexlaNotificationProps) => void;
 };
 
 type DescriptionPlaceHolderType = {
   description: string;
   placeholder: string;
+  replaceText: string;
 };
 
 const descriptionPlaceholderMapping: Record<
@@ -36,66 +38,98 @@ const descriptionPlaceholderMapping: Record<
     description: "Describe the layout you want to generate or change",
     placeholder:
       "Delete breadcrumbs, change the title from Dashboard to Metrics Dashboard, move the form to the right and add an image to the left...",
+    replaceText: "Page",
   },
   COMPONENT: {
     description: "Describe the component you want to generate or change",
     placeholder:
-      "Add a new pie chart outling the number of users per country...",
+      "Add a new pie chart outlining the number of users per country...",
+    replaceText: "Component",
   },
   DESIGN: {
     description: "Describe the design you want to generate or change",
     placeholder: "Change the color theme to dark mode...",
+    replaceText: "Design",
   },
   DATA: {
     description: "Describe the data you want to generate or change",
     placeholder:
       "Connect the table component with the transactions endpoint...",
+    replaceText: "Data",
   },
   PAGE: {
     description: "Describe the page you want to generate or change",
     placeholder: "Create a new page with the title 'Account Settings'...",
+    replaceText: "Page",
   },
 };
 
 export const GenerateAIButton = ({
   projectId,
   pageTitle = "Need to implement",
-}: // setStream,
-// startLoading,
-// stopLoading,
-GenerateAIButtonProps) => {
+}: GenerateAIButtonProps) => {
   const [openedAIModal, { open, close }] = useDisclosure(false);
   const [type, setType] = useState<StreamTypes>("LAYOUT");
   const [description, setDescription] = useState("");
   const [descriptionPlaceholder, setDescriptionPlaceholder] =
     useState<DescriptionPlaceHolderType>(descriptionPlaceholderMapping[type]);
+  const isLoading = useAppStore((state) => state.isLoading);
+  const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const startLoading = useAppStore((state) => state.startLoading);
+  const stopLoading = useAppStore((state) => state.stopLoading);
+  const editorTheme = useEditorStore((state) => state.theme);
+  const pages = useEditorStore((state) => state.pages);
+  const setEditorTree = useEditorStore((state) => state.setTree);
+
+  const [stream, setStream] = useState<string>();
 
   const handleTypeChange = (value: StreamTypes) => {
     setType(value);
     setDescriptionPlaceholder(descriptionPlaceholderMapping[value]);
   };
 
+  useEffect(() => {
+    if (stream) {
+      try {
+        const json = TOML.parse(stream);
+        const tree = getEditorTreeFromPageStructure(
+          json as { rows: Row[] },
+          editorTheme,
+          pages
+        );
+
+        setEditorTree(tree);
+      } catch (error) {
+        // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
+        // console.log({ error });
+      }
+    }
+  }, [editorTheme, setEditorTree, stream, pages]);
+
   const generate = () => {
-    // startLoading({
-    //   id: "page-generation",
-    //   title: "Generating Page",
-    //   message: "AI is generating your page",
-    // });
+    setIsLoading(true);
+    close();
+    startLoading({
+      id: "page-generation",
+      title: `Generating ${descriptionPlaceholderMapping[type].replaceText}`,
+      message: `AI is generating your ${descriptionPlaceholderMapping[type].replaceText}`,
+    });
 
     const onMessage = (event: EventSourceMessage) => {
       try {
-        // setStream((state) => {
-        //   try {
-        //     if (state === undefined) {
-        //       return event.data;
-        //     } else {
-        //       return `${state}
-        //       ${event.data}`;
-        //     }
-        //   } catch (error) {
-        //     return state;
-        //   }
-        // });
+        setStream((state) => {
+          try {
+            console.log(state);
+            if (state === undefined) {
+              return event.data;
+            } else {
+              return `${state}
+              ${event.data}`;
+            }
+          } catch (error) {
+            return state;
+          }
+        });
       } catch (error) {
         // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
         console.error(error);
@@ -103,12 +137,13 @@ GenerateAIButtonProps) => {
     };
 
     const onError = (err: any) => {
-      // stopLoading({
-      //   id: "page-generation",
-      //   title: "There was a problem",
-      //   message: err,
-      //   isError: true,
-      // });
+      stopLoading({
+        id: "page-generation",
+        title: "There was a problem",
+        message: err,
+        isError: true,
+      });
+      setIsLoading(false);
     };
 
     const onOpen = async (response: Response) => {
@@ -116,11 +151,12 @@ GenerateAIButtonProps) => {
     };
 
     const onClose = async () => {
-      // stopLoading({
-      //   id: "page-generation",
-      //   title: "Page Generated",
-      //   message: "Here's your page. We hope you like it",
-      // });
+      stopLoading({
+        id: "page-generation",
+        title: `${descriptionPlaceholderMapping[type].replaceText} Generated`,
+        message: `Here's your ${descriptionPlaceholderMapping[type].replaceText}. We hope you like it`,
+      });
+      setIsLoading(false);
     };
 
     getPageEventSource(
@@ -196,6 +232,7 @@ GenerateAIButtonProps) => {
             leftIcon={<IconSparkles size={ICON_SIZE} />}
             onClick={generate}
             disabled={description === ""}
+            loading={isLoading}
           >
             Generate
           </Button>

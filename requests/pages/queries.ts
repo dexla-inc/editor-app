@@ -67,7 +67,7 @@ export const getPageEventSource = async (
   let url = `${baseURL}/projects/${projectId}/automations/${encodedPagename}/stream`;
 
   if (description) {
-    url += buildQueryString({ description });
+    url += buildQueryString({ description, type });
   }
 
   await fetchEventSource(url, {
