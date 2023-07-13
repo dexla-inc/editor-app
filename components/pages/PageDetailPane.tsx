@@ -102,6 +102,7 @@ export default function PageDetailPane({
       const result = page
         ? await updatePage(values, projectId, page.id)
         : await createPage(values, projectId);
+
       queryClient.invalidateQueries(["pages"]);
       getPages();
       stopLoading({
