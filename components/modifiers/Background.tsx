@@ -41,7 +41,7 @@ export const Modifier = () => {
 
   const form = useForm({
     initialValues: {
-      bg: "White.0",
+      bg: "transparent",
       backgroundImage: "",
     },
   });
@@ -50,7 +50,7 @@ export const Modifier = () => {
     if (selectedComponent) {
       const { bg, style } = componentProps;
       form.setValues({
-        bg: bg ?? "White.0",
+        bg: bg ?? "transparent",
         backgroundImage: style.backgroundImage
           ? extractBackgroundUrl(style.backgroundImage)
           : "",

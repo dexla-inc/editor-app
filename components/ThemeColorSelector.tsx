@@ -6,6 +6,16 @@ import { forwardRef } from "react";
 const SelectItem = forwardRef<HTMLDivElement, any>(
   ({ value, label, ...other }: any, ref) => {
     const theme = useEditorStore((state) => state.theme);
+
+    if (value === "transparent") {
+      return (
+        <Group ref={ref} noWrap {...other}>
+          <Box w={10} h={10} bg="transparent" />
+          {label}
+        </Group>
+      );
+    }
+
     const [color, index] = value.split(".");
 
     return (
@@ -19,7 +29,7 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
 
 export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
   const theme = useEditorStore((state) => state.theme);
-  const data = (Object.keys(theme.colors) ?? []).reduce(
+  const data: any[] = (Object.keys(theme.colors) ?? []).reduce(
     (all, color: string) => {
       const colors = theme.colors[color];
 
@@ -36,5 +46,15 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
     []
   );
 
-  return <Select size="xs" {...props} data={data} itemComponent={SelectItem} />;
+  return (
+    <Select
+      size="xs"
+      {...props}
+      data={data.concat({
+        label: "transparent",
+        value: "transparent",
+      })}
+      itemComponent={SelectItem}
+    />
+  );
 };

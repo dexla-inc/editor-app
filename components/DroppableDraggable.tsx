@@ -100,7 +100,6 @@ export const DroppableDraggable = ({
     <Box
       ref={ref}
       id={id}
-      {...props}
       pos="relative"
       sx={{
         width: component.props?.style?.width ?? "auto",
@@ -120,7 +119,6 @@ export const DroppableDraggable = ({
           display: "flex",
         }}
         {...droppable}
-        {...props}
       >
         {children}
       </Box>
