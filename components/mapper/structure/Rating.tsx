@@ -1,6 +1,5 @@
 import { defaultTheme } from "@/components/IFrame";
 import { Component } from "@/utils/editor";
-import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -8,35 +7,16 @@ export const jsonStructure = (props?: any): Component => {
 
   return {
     id: nanoid(),
-    name: "Container",
-    description: "Rating Container",
+    name: "Rating",
+    description: "Rating",
     props: {
+      readOnly: true,
       style: {
-        marginTop: px(theme.spacing.xl),
-        marginBottom: px(theme.spacing.xl),
-        marginLeft: px(theme.spacing.xl),
-        marginRight: px(theme.spacing.xl),
         width: "100%",
         height: "auto",
-        minHeight: "auto",
-        backgroundColor: "white",
       },
+      ...(props.props || {}),
     },
-    children: [
-      {
-        id: nanoid(),
-        name: "Rating",
-        description: "Rating",
-        props: {
-          readOnly: true,
-          style: {
-            width: "100%",
-            height: "auto",
-          },
-          ...(props.props || {}),
-        },
-        blockDroppingChildrenInside: true,
-      },
-    ],
+    blockDroppingChildrenInside: true,
   };
 };

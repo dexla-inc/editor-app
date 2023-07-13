@@ -6,7 +6,10 @@ import { nanoid } from "nanoid";
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
 
-  console.log(JSON.stringify(props.props));
+  // TODO: Each row container should have padding. Does this mean we need to implement a Section?
+  //       Row containers should direct horizontally
+  // TODO: Form container shouldn't and any other container of that matter
+  //       Form container should direct vertically
 
   return {
     id: nanoid(),
@@ -21,7 +24,6 @@ export const jsonStructure = (props?: any): Component => {
         width: "100%",
         height: "auto",
         minHeight: "50px",
-        ...(props.props?.style || {}),
       },
       ...(props.props || {}),
     },
