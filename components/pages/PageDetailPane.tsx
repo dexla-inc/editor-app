@@ -5,6 +5,7 @@ import { ICON_SIZE } from "@/utils/config";
 import { Button, Flex, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconArrowLeft } from "@tabler/icons-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
@@ -26,6 +27,7 @@ export default function PageDetailPane({
   const router = useRouter();
   const projectId = router.query.id as string;
   const [slug, setSlug] = useState("");
+  const queryClient = useQueryClient();
 
   const form = useForm<PageBody>({
     initialValues: {
@@ -69,6 +71,7 @@ export default function PageDetailPane({
       });
 
       await deletePage(projectId, page?.id as string);
+      queryClient.invalidateQueries(["pages"]);
       getPages();
       setIsLoading(false);
 
@@ -99,7 +102,7 @@ export default function PageDetailPane({
       const result = page
         ? await updatePage(values, projectId, page.id)
         : await createPage(values, projectId);
-
+      queryClient.invalidateQueries(["pages"]);
       getPages();
       stopLoading({
         id: "mutating",
