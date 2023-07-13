@@ -102,7 +102,7 @@ export const DroppableDraggable = ({
       id={id}
       pos="relative"
       sx={{
-        width: component.props?.style?.width ?? "auto",
+        width: component.props?.style?.width ?? "100%",
         ...borders,
       }}
       onClick={(e) => {

@@ -5,23 +5,29 @@ import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
-  const { value, ...rest } = props.props ?? {};
+  const { style, ...rest } = props?.props || {};
 
   return {
     id: nanoid(),
-    name: "Button",
-    description: "Button",
+    name: "Form",
+    description: "Form",
     props: {
       style: {
-        width: "auto",
-        height: "auto",
         paddingTop: px(theme.spacing.sm),
         paddingBottom: px(theme.spacing.sm),
         paddingLeft: px(theme.spacing.lg),
         paddingRight: px(theme.spacing.lg),
+        width: "100%",
+        height: "auto",
+        minHeight: "10px",
+        flexDirection: "column",
+        rowGap: "20px",
+        columnGap: "20px",
+        alignItems: "center",
+        justifyContent: "center",
+        ...(style || {}),
       },
       ...(rest || {}),
-      children: value ?? "New Button",
     },
   };
 };

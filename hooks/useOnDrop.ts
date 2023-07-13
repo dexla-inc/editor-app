@@ -49,8 +49,12 @@ export const useOnDrop = () => {
       } else if (dropTarget.id !== "root") {
         const activeParent = getComponentParent(copy.root, droppedId);
         const targetParent = getComponentParent(copy.root, dropTarget.id);
+        const targetComponent = getComponentById(copy.root, dropTarget.id);
 
-        if (activeParent?.id !== targetParent?.id) {
+        if (targetComponent?.props?.blockDroppingChildrenInside) {
+          // reorder
+          moveComponent(copy.root, droppedId, dropTarget);
+        } else {
           // move to a new parent
           moveComponentToDifferentParent(
             copy.root,
@@ -63,9 +67,6 @@ export const useOnDrop = () => {
             droppedId,
             activeParent!.id as string
           );
-        } else {
-          // reorder
-          moveComponent(copy.root, droppedId, dropTarget);
         }
       } else {
         removeComponent(copy.root, droppedId);

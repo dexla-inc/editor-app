@@ -17,6 +17,14 @@ import { useEffect } from "react";
 export const icon = IconLayout2;
 export const label = "Layout";
 
+export const defaultLayoutValues = {
+  flexDirection: "row",
+  rowGap: "20px",
+  columnGap: "20px",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
 export const Modifier = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
@@ -36,24 +44,20 @@ export const Modifier = () => {
   const componentProps = selectedComponent?.props || {};
 
   const form = useForm({
-    initialValues: {
-      flexDirection: "row",
-      rowGap: "10px",
-      columnGap: "10px",
-      alignItems: "center",
-      justifyContent: "center",
-    },
+    initialValues: defaultLayoutValues,
   });
 
   useEffect(() => {
     if (selectedComponentId) {
       const { style = {} } = componentProps;
+
       form.setValues({
-        flexDirection: style.flexDirection ?? "row",
-        rowGap: style.rowGap ?? "10px",
-        columnGap: style.columnGap ?? "10px",
-        alignItems: style.alignItems ?? "center",
-        justifyContent: style.justifyContent ?? "center",
+        flexDirection: style.flexDirection ?? defaultLayoutValues.flexDirection,
+        rowGap: style.rowGap ?? defaultLayoutValues.rowGap,
+        columnGap: style.columnGap ?? defaultLayoutValues.columnGap,
+        alignItems: style.alignItems ?? defaultLayoutValues.alignItems,
+        justifyContent:
+          style.justifyContent ?? defaultLayoutValues.justifyContent,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes

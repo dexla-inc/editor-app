@@ -1,15 +1,12 @@
 import { defaultTheme } from "@/components/IFrame";
+import { defaultLayoutValues } from "@/components/modifiers/Layout";
 import { Component } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
-
-  // TODO: Each row container should have padding. Does this mean we need to implement a Section?
-  //       Row containers should direct horizontally
-  // TODO: Form container shouldn't and any other container of that matter
-  //       Form container should direct vertically
+  const { style, ...rest } = props?.props || {};
 
   return {
     id: nanoid(),
@@ -23,9 +20,11 @@ export const jsonStructure = (props?: any): Component => {
         paddingRight: px(theme.spacing.lg),
         width: "100%",
         height: "auto",
-        minHeight: "50px",
+        minHeight: "10px",
+        ...defaultLayoutValues,
+        ...(style || {}),
       },
-      ...(props.props || {}),
+      ...(rest || {}),
     },
   };
 };

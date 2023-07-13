@@ -31,6 +31,7 @@ import { TabsPanel } from "@/components/mapper/TabsPanel";
 import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";
 import { Title } from "@/components/mapper/Title";
+import { Form } from "@/components/mapper/Form";
 import { AreaChart } from "@/components/mapper/charts/AreaChart";
 import { BarChart } from "@/components/mapper/charts/BarChart";
 import { LineChart } from "@/components/mapper/charts/LineChart";
@@ -67,6 +68,7 @@ import * as TabsPanelStructure from "@/components/mapper/structure/TabsPanel";
 import * as TextStructure from "@/components/mapper/structure/Text";
 import * as TextareaStructure from "@/components/mapper/structure/Textarea";
 import * as TitleStructure from "@/components/mapper/structure/Title";
+import * as FormStructure from "@/components/mapper/structure/Form";
 import * as AreaChartStructure from "@/components/mapper/structure/charts/AreaChart";
 import * as BarChartStructure from "@/components/mapper/structure/charts/BarChart";
 import * as LineChartStructure from "@/components/mapper/structure/charts/LineChart";
@@ -90,6 +92,7 @@ import {
   IconExclamationMark,
   IconFile,
   IconFileText,
+  IconForms,
   IconHeading,
   IconJewishStar,
   IconLayersDifference,
@@ -221,8 +224,15 @@ export const structureMapper: StructureMapper = {
   },
 
   Form: {
-    structure: (props: any) => NotImplemented.jsonStructure(props),
+    structure: (props: any) => FormStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Form"
+        icon={<IconForms size={LARGE_ICON_SIZE} />}
+      />
+    ),
     category: "Input",
+    icon: <IconForms size={ICON_SIZE} />,
   },
   StepperForm: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -651,7 +661,9 @@ export type Modifiers =
   | "text"
   | "border"
   | "layout"
-  | "background";
+  | "background"
+  | "input"
+  | "button";
 
 export type ComponentDefinition = {
   Component: any;
@@ -667,13 +679,13 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Avatar component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Box: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Box component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Breadcrumb: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -684,13 +696,13 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Flex: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Flex component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Container: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -709,13 +721,13 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Input: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Input component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border", "input"],
   },
   DateInput: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -727,7 +739,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Text: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -745,25 +757,25 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Textarea component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Link: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Link component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Icon: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Icon component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Table: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Table component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   FilePond: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -778,7 +790,7 @@ export const componentMapper: ComponentMapper = {
         activateOnClick={false}
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Checkbox: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -790,7 +802,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Switch: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -802,7 +814,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Radio: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -814,7 +826,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Rating: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -826,14 +838,14 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Image: {
     Component: (props: { component: Component; renderTree: any }) => (
       // eslint-disable-next-line jsx-a11y/alt-text
       <Image component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Pagination: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -843,7 +855,7 @@ export const componentMapper: ComponentMapper = {
         total={10}
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Alert: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -854,7 +866,7 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Tabs: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -865,7 +877,7 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   TabsList: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -877,7 +889,7 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   TabsPanel: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -889,7 +901,7 @@ export const componentMapper: ComponentMapper = {
         value="first"
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Tab: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -901,7 +913,7 @@ export const componentMapper: ComponentMapper = {
         value="first"
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Accordion: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -913,7 +925,7 @@ export const componentMapper: ComponentMapper = {
         defaultValue="first"
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   AccordionItem: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -925,7 +937,7 @@ export const componentMapper: ComponentMapper = {
         value="first"
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   AccordionControl: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -936,7 +948,7 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   AccordionPanel: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -947,7 +959,7 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Navbar: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -958,37 +970,37 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   BarChart: {
     Component: (props: { component: Component; renderTree: any }) => (
       <BarChart component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   LineChart: {
     Component: (props: { component: Component; renderTree: any }) => (
       <LineChart component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   PieChart: {
     Component: (props: { component: Component; renderTree: any }) => (
       <PieChart component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   AreaChart: {
     Component: (props: { component: Component; renderTree: any }) => (
       <AreaChart component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   RadarChart: {
     Component: (props: { component: Component; renderTree: any }) => (
       <RadarChart component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
   },
   Button: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -1000,6 +1012,12 @@ export const componentMapper: ComponentMapper = {
           e.preventDefault();
         }}
       />
+    ),
+    modifiers: ["spacing", "size", "border", "button"],
+  },
+  Form: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Form component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["layout", "spacing", "size", "border"],
   },

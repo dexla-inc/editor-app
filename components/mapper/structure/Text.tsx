@@ -5,7 +5,11 @@ import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
-  const content = props.content ?? "New text";
+  const content =
+    props.props?.children ??
+    props.props?.content ??
+    props.props?.text ??
+    "New text";
 
   return {
     id: nanoid(),

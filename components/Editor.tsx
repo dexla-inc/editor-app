@@ -68,7 +68,11 @@ export const Editor = ({ projectId, pageId }: Props) => {
     useDisclosure(false);
 
   const deleteComponent = useCallback(() => {
-    if (selectedComponentId && selectedComponentId !== "root") {
+    if (
+      selectedComponentId &&
+      selectedComponentId !== "root" &&
+      selectedComponentId !== "content-wrapper"
+    ) {
       const copy = cloneDeep(editorTree);
       removeComponent(copy.root, selectedComponentId as string);
       setEditorTree(copy);

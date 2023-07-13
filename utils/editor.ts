@@ -87,13 +87,14 @@ export const getEditorTreeFromPageStructure = (
         {
           id: "content-wrapper",
           name: "Container",
-          description: "Container",
+          description: "Root Container",
           props: {
             style: {
               width: "100%",
               display: "flex",
               flexDirection: "column",
               boxSizing: "broder-box",
+              minHeight: "10px",
             },
           },
           children: tree.rows.map((row: Row) => {
@@ -104,6 +105,10 @@ export const getEditorTreeFromPageStructure = (
               props: {
                 style: {
                   width: "100%",
+                  paddingTop: "20px",
+                  paddingRight: "20px",
+                  paddingBottom: "20px",
+                  paddingLeft: "20px",
                 },
               },
               children: traverseComponents(row.components, theme, pages),

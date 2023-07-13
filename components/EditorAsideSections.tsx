@@ -5,6 +5,8 @@ import * as LayoutModifier from "@/components/modifiers/Layout";
 import * as SizeModifier from "@/components/modifiers/Size";
 import * as SpacingModifier from "@/components/modifiers/Spacing";
 import * as TextModifier from "@/components/modifiers/Text";
+import * as InputModifier from "@/components/modifiers/Input";
+import * as ButtonModifier from "@/components/modifiers/Button";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
 import { getComponentById } from "@/utils/editor";
@@ -21,6 +23,8 @@ const sectionMapper: SectionsMapper = {
   border: BorderModifier,
   layout: LayoutModifier,
   background: BackgroundModifier,
+  input: InputModifier,
+  button: ButtonModifier,
 };
 
 export const EditorAsideSections = () => {
