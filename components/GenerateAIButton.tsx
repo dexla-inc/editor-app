@@ -23,6 +23,40 @@ type GenerateAIButtonProps = {
   // stopLoading: (state: DexlaNotificationProps) => void;
 };
 
+type DescriptionPlaceHolderType = {
+  description: string;
+  placeholder: string;
+};
+
+const descriptionPlaceholderMapping: Record<
+  StreamTypes,
+  DescriptionPlaceHolderType
+> = {
+  LAYOUT: {
+    description: "Describe the layout you want to generate or change",
+    placeholder:
+      "Delete breadcrumbs, change the title from Dashboard to Metrics Dashboard, move the form to the right and add an image to the left...",
+  },
+  COMPONENT: {
+    description: "Describe the component you want to generate or change",
+    placeholder:
+      "Add a new pie chart outling the number of users per country...",
+  },
+  DESIGN: {
+    description: "Describe the design you want to generate or change",
+    placeholder: "Change the color theme to dark mode...",
+  },
+  DATA: {
+    description: "Describe the data you want to generate or change",
+    placeholder:
+      "Connect the table component with the transactions endpoint...",
+  },
+  PAGE: {
+    description: "Describe the page you want to generate or change",
+    placeholder: "Create a new page with the title 'Account Settings'...",
+  },
+};
+
 export const GenerateAIButton = ({
   projectId,
   pageTitle = "Need to implement",
@@ -33,6 +67,13 @@ GenerateAIButtonProps) => {
   const [openedAIModal, { open, close }] = useDisclosure(false);
   const [type, setType] = useState<StreamTypes>("LAYOUT");
   const [description, setDescription] = useState("");
+  const [descriptionPlaceholder, setDescriptionPlaceholder] =
+    useState<DescriptionPlaceHolderType>(descriptionPlaceholderMapping[type]);
+
+  const handleTypeChange = (value: StreamTypes) => {
+    setType(value);
+    setDescriptionPlaceholder(descriptionPlaceholderMapping[value]);
+  };
 
   const generate = () => {
     // startLoading({
@@ -71,7 +112,7 @@ GenerateAIButtonProps) => {
     };
 
     const onOpen = async (response: Response) => {
-      // handle open
+      // no need to do anything
     };
 
     const onClose = async () => {
@@ -114,7 +155,7 @@ GenerateAIButtonProps) => {
         <Stack>
           <Radio.Group
             value={type}
-            onChange={(value) => setType(value as StreamTypes)}
+            onChange={handleTypeChange}
             label="What do you want to generate?"
             description="Select the type of content you want to generate"
           >
@@ -129,18 +170,24 @@ GenerateAIButtonProps) => {
                 label="Component"
                 description="Add / change one component"
               />
-              <Radio value="DESIGN" label="Design" description="Change theme" />
+              <Radio
+                value="DESIGN"
+                label="Design"
+                description="Change theme"
+                disabled
+              />
               <Radio
                 value="DATA"
                 label="Data"
                 description="Connect components to data"
+                disabled
               />
             </Group>
           </Radio.Group>
           <Textarea
             label="Description"
-            description="Describe what you want to generate or change"
-            placeholder="Delete breadcrumbs, change the title from Dashboard to Metrics Dashboard, move the form to the right and add an image to the left"
+            description={descriptionPlaceholder.description}
+            placeholder={descriptionPlaceholder.placeholder}
             required
             value={description}
             onChange={(event) => setDescription(event.currentTarget.value)}

@@ -33,4 +33,4 @@ export interface PageParams extends PagingParams {
   slug?: string;
 }
 
-export type StreamTypes = "PAGE" | "COMPONENT" | "LAYOUT";
+export type StreamTypes = "PAGE" | "COMPONENT" | "LAYOUT" | "DESIGN" | "DATA";
