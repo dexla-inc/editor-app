@@ -9,10 +9,13 @@ export type PageListResponse = {
   results: PageResponse[];
 };
 
-export type PageBody = {
+export interface PageBody extends UpdatePageBody {
+  pageState?: string;
+}
+
+export type UpdatePageBody = {
   title: string;
   slug: string;
-  pageState?: string;
   isHome: boolean;
   authenticatedOnly: boolean;
   authenticatedUserRole?: string;

@@ -12,23 +12,20 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { IconFileAnalytics, IconHome, IconPlus } from "@tabler/icons-react";
-import Link from "next/link";
 import { useState } from "react";
 
 type InitialPaneProps = {
-  projectId: string;
   pages: PageResponse[];
-  setShowDetail: (id: boolean) => void;
+  setPage: (page?: PageResponse | null) => void;
   currentPage: string;
   debouncedSearch: (query: string) => void;
   search: string;
 };
 
 export default function InitialPane({
-  setShowDetail,
+  setPage,
   pages,
   currentPage,
-  projectId,
   debouncedSearch,
 }: InitialPaneProps) {
   const theme = useMantineTheme();
@@ -39,7 +36,7 @@ export default function InitialPane({
     <>
       <Button
         leftIcon={<IconPlus size={ICON_SIZE} />}
-        onClick={() => setShowDetail(true)}
+        onClick={() => setPage(null)}
       >
         Add Page
       </Button>
@@ -53,11 +50,12 @@ export default function InitialPane({
           return (
             <UnstyledButton
               key={page.id}
-              component={Link}
-              href={`/projects/${projectId}/editor/${page.id}`}
-              onClick={() => {
-                resetTree();
-              }}
+              //component={Link}
+              // href={`/projects/${projectId}/editor/${page.id}`}
+              // onClick={() => {
+              //   resetTree();
+              // }}
+              onClick={() => setPage(page)}
             >
               <Group
                 p="xs"
