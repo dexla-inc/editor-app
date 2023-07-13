@@ -50,8 +50,6 @@ export const Shell = ({
   const projectId = router.query.id as string;
   const currentPageId = router.query.page as string;
 
-  console.log("currentPageId: " + currentPageId);
-
   const pageResponse = useQuery<PageListResponse, Error>({
     queryKey: ["pages"],
     queryFn: () => getPageList(projectId),

@@ -14,7 +14,7 @@ export const EditorNavbarPagesSection = () => {
   const currentPage = router.query.page as string;
   const [page, setPage] = useState<PageResponse | undefined | null>();
   const [search, setSearch] = useState<string>("");
-  const debouncedSearch = debounce((query) => setSearch(query), 200);
+  const debouncedSearch = debounce((query) => setSearch(query), 150);
   const pages = useEditorStore((state) => state.pages);
   const setPages = useEditorStore((state) => state.setPages);
 
@@ -31,6 +31,7 @@ export const EditorNavbarPagesSection = () => {
     <Stack spacing="xs">
       {page === undefined ? (
         <InitialPane
+          projectId={projectId}
           setPage={setPage}
           pages={pages}
           currentPage={currentPage}

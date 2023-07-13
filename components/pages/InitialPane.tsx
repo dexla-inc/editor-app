@@ -11,10 +11,16 @@ import {
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
-import { IconFileAnalytics, IconHome, IconPlus } from "@tabler/icons-react";
-import { useState } from "react";
+import {
+  IconFileAnalytics,
+  IconHome,
+  IconPlus,
+  IconSettings,
+} from "@tabler/icons-react";
+import Link from "next/link";
 
 type InitialPaneProps = {
+  projectId: string;
   pages: PageResponse[];
   setPage: (page?: PageResponse | null) => void;
   currentPage: string;
@@ -23,13 +29,13 @@ type InitialPaneProps = {
 };
 
 export default function InitialPane({
+  projectId,
   setPage,
   pages,
   currentPage,
   debouncedSearch,
 }: InitialPaneProps) {
   const theme = useMantineTheme();
-  const [search, setSearch] = useState<string>("");
   const resetTree = useEditorStore((state) => state.resetTree);
 
   return (
@@ -42,20 +48,20 @@ export default function InitialPane({
       </Button>
       <TextInput
         placeholder="Search pages"
-        defaultValue={search}
-        onChange={(event) => debouncedSearch(event.currentTarget.value)}
+        onChange={(event) => {
+          debouncedSearch(event.currentTarget.value);
+        }}
       />
       <Stack spacing={0}>
         {pages.map((page) => {
           return (
             <UnstyledButton
               key={page.id}
-              //component={Link}
-              // href={`/projects/${projectId}/editor/${page.id}`}
-              // onClick={() => {
-              //   resetTree();
-              // }}
-              onClick={() => setPage(page)}
+              component={Link}
+              href={`/projects/${projectId}/editor/${page.id}`}
+              onClick={() => {
+                resetTree();
+              }}
             >
               <Group
                 p="xs"
@@ -87,6 +93,26 @@ export default function InitialPane({
                   )}
                   <Text size="xs">{page.title}</Text>
                 </Flex>
+                <UnstyledButton
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setPage(page);
+                  }}
+                  p={5}
+                  sx={{
+                    display: "flex", // added this line
+                    alignItems: "center", // added this line
+                    justifyContent: "center", // added this line
+                    borderRadius: theme.radius.md,
+                    "&:hover": {
+                      backgroundColor: theme.colors.teal[5],
+                      color: theme.white,
+                    },
+                  }}
+                >
+                  <IconSettings size={ICON_SIZE} />
+                </UnstyledButton>
               </Group>
             </UnstyledButton>
           );
