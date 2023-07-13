@@ -1,5 +1,5 @@
 import { Component } from "@/utils/editor";
-import { Input as MantineInput, InputProps } from "@mantine/core";
+import { InputProps, Input as MantineInput } from "@mantine/core";
 
 type Props = {
   renderTree: (component: Component) => any;

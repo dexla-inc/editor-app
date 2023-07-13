@@ -6,6 +6,8 @@ import { nanoid } from "nanoid";
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
 
+  console.log(JSON.stringify(props.props));
+
   return {
     id: nanoid(),
     name: "Container",
@@ -18,7 +20,8 @@ export const jsonStructure = (props?: any): Component => {
         paddingRight: px(theme.spacing.lg),
         width: "100%",
         height: "auto",
-        minHeight: "100px",
+        minHeight: "50px",
+        ...(props.props?.style || {}),
       },
       ...(props.props || {}),
     },

@@ -1,14 +1,14 @@
 import { SidebarSection } from "@/components/SidebarSection";
-import { useEditorStore } from "@/stores/editor";
-import { Box, Center, Text } from "@mantine/core";
-import { componentMapper } from "@/utils/componentMapper";
-import { getComponentById } from "@/utils/editor";
-import * as SpacingModifier from "@/components/modifiers/Spacing";
-import * as SizeModifier from "@/components/modifiers/Size";
-import * as TextModifier from "@/components/modifiers/Text";
+import * as BackgroundModifier from "@/components/modifiers/Background";
 import * as BorderModifier from "@/components/modifiers/Border";
 import * as LayoutModifier from "@/components/modifiers/Layout";
-import * as BackgroundModifier from "@/components/modifiers/Background";
+import * as SizeModifier from "@/components/modifiers/Size";
+import * as SpacingModifier from "@/components/modifiers/Spacing";
+import * as TextModifier from "@/components/modifiers/Text";
+import { useEditorStore } from "@/stores/editor";
+import { componentMapper } from "@/utils/componentMapper";
+import { getComponentById } from "@/utils/editor";
+import { Box, Center, Text } from "@mantine/core";
 
 type SectionsMapper = {
   [key: string]: any;
@@ -56,7 +56,7 @@ export const EditorAsideSections = () => {
       id: id,
       label: modifier.label,
       icon: modifier.icon,
-      initiallyOpened: id === "spacing",
+      initiallyOpened: id === "layout",
       Component: modifier.Modifier,
     };
   });
