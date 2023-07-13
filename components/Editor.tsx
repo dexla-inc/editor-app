@@ -95,18 +95,15 @@ export const Editor = ({ projectId, pageId }: Props) => {
     }
   }, [copiedComponentId, editorTree, selectedComponentId, setEditorTree]);
 
-  useHotkeys(
-    [
-      ["backspace", deleteComponent],
-      ["delete", deleteComponent],
-      ["mod+C", copySelectedCompnent],
-      ["mod+V", pasteCopiedComponent],
-      ["mod+Z", () => undo()],
-      ["mod+shift+Z", () => redo()],
-      ["mod+Y", () => redo()],
-    ],
-    ["input", "textarea"]
-  );
+  useHotkeys([
+    ["backspace", deleteComponent],
+    ["delete", deleteComponent],
+    ["mod+C", copySelectedCompnent],
+    ["mod+V", pasteCopiedComponent],
+    ["mod+Z", () => undo()],
+    ["mod+shift+Z", () => redo()],
+    ["mod+Y", () => redo()],
+  ]);
 
   useEffect(() => {
     const getPageData = async () => {
