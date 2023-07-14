@@ -1,12 +1,12 @@
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
-import { Text as MantineText, TextProps } from "@mantine/core";
+import { Title as MantineTitle, TitleProps } from "@mantine/core";
 import { useRef, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-} & TextProps;
+} & TitleProps;
 
 export const Title = ({ renderTree, component, ...props }: Props) => {
   const ref = useRef<HTMLDivElement>();
@@ -30,7 +30,7 @@ export const Title = ({ renderTree, component, ...props }: Props) => {
   };
 
   return (
-    <MantineText
+    <MantineTitle
       ref={ref}
       contentEditable={isEditable}
       onDoubleClick={handleDoubleClick}
@@ -42,6 +42,6 @@ export const Title = ({ renderTree, component, ...props }: Props) => {
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))
         : children}
-    </MantineText>
+    </MantineTitle>
   );
 };
