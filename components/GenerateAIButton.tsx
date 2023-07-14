@@ -3,7 +3,12 @@ import { StreamTypes } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
-import { EditorTree, Row, getNewComponents } from "@/utils/editor";
+import {
+  Row,
+  addComponent,
+  getEditorTreeFromPageStructure,
+  getNewComponents,
+} from "@/utils/editor";
 import TOML from "@iarna/toml";
 import {
   ActionIcon,
@@ -17,7 +22,8 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { EventSourceMessage } from "@microsoft/fetch-event-source";
 import { IconSparkles } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import cloneDeep from "lodash.clonedeep";
+import { useEffect, useRef, useState } from "react";
 
 type GenerateAIButtonProps = {
   projectId: string;
@@ -81,6 +87,7 @@ export const GenerateAIButton = ({
   const pages = useEditorStore((state) => state.pages);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const existingTree = useEditorStore((state) => state.tree);
+  const streamRef = useRef<string>();
 
   const [stream, setStream] = useState<string>();
 
@@ -90,25 +97,24 @@ export const GenerateAIButton = ({
   };
 
   useEffect(() => {
-    if (stream) {
-      try {
-        const json = TOML.parse(stream);
+    if (type === "COMPONENT") streamRef.current = stream;
+    else if (type === "LAYOUT") {
+      if (stream) {
+        try {
+          const json = TOML.parse(stream);
+          const tree = getEditorTreeFromPageStructure(
+            json as { rows: Row[] },
+            editorTheme,
+            pages
+          );
 
-        const newComponents = getNewComponents(
-          json as { rows: Row[] },
-          editorTheme,
-          pages
-        );
+          console.log(tree);
 
-        const editorTree: EditorTree = {
-          ...existingTree,
-          ...newComponents,
-        };
-
-        setEditorTree(editorTree);
-      } catch (error) {
-        // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
-        // console.log({ error });
+          setEditorTree(tree);
+        } catch (error) {
+          // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
+          console.log({ error });
+        }
       }
     }
   }, [stream]);
@@ -157,12 +163,40 @@ export const GenerateAIButton = ({
     };
 
     const onClose = async () => {
-      stopLoading({
-        id: "page-generation",
-        title: `${descriptionPlaceholderMapping[type].replaceText} Generated`,
-        message: `Here's your ${descriptionPlaceholderMapping[type].replaceText}. We hope you like it`,
-      });
-      setIsLoading(false);
+      try {
+        if (type === "PAGE") {
+          setStream("");
+          return;
+        }
+
+        const json = TOML.parse(streamRef.current as string);
+
+        const newComponents = getNewComponents(
+          json as { rows: Row[] },
+          editorTheme,
+          pages
+        );
+
+        const copy = cloneDeep(existingTree);
+
+        addComponent(copy.root, newComponents, {
+          id: "content-wrapper",
+          edge: "bottom",
+        });
+
+        setEditorTree(copy);
+        setStream("");
+      } catch (error) {
+        // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
+        console.log({ error });
+      } finally {
+        stopLoading({
+          id: "page-generation",
+          title: `${descriptionPlaceholderMapping[type].replaceText} Generated`,
+          message: `Here's your ${descriptionPlaceholderMapping[type].replaceText}. We hope you like it`,
+        });
+        setIsLoading(false);
+      }
     };
 
     getPageEventSource(
