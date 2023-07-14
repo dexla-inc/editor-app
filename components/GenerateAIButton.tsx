@@ -1,5 +1,5 @@
-import { getPageEventSource } from "@/requests/pages/queries";
-import { StreamTypes } from "@/requests/pages/types";
+import { getPageEventSource } from "@/requests/ai/queries";
+import { StreamTypes } from "@/requests/ai/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
