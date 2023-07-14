@@ -1,4 +1,5 @@
 import { PageResponse } from "@/requests/pages/types";
+import { emptyEditorTree } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import { MantineTheme } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
@@ -77,12 +78,11 @@ const traverseComponents = (
 export const getEditorTreeFromPageStructure = (
   tree: { rows: Row[] },
   theme: MantineTheme,
-  pages: PageResponse[],
-  initialRoot: Component
+  pages: PageResponse[]
 ) => {
   const editorTree: EditorTree = {
     root: {
-      ...initialRoot,
+      ...emptyEditorTree.root,
       children: [
         {
           id: "content-wrapper",
@@ -126,10 +126,34 @@ export const getNewComponents = (
   tree: { rows: Row[] },
   theme: MantineTheme,
   pages: PageResponse[]
-): Component[] => {
-  return tree.rows.flatMap((row: Row) => {
-    return traverseComponents(row.components, theme, pages);
-  });
+): Component => {
+  return {
+    id: nanoid(),
+    name: "Container",
+    description: "Container",
+    props: {
+      style: {
+        width: "100%",
+      },
+    },
+    children: tree.rows.map((row: Row) => {
+      return {
+        id: nanoid(),
+        name: "Container",
+        description: "Container",
+        props: {
+          style: {
+            width: "100%",
+            paddingTop: "20px",
+            paddingRight: "20px",
+            paddingBottom: "20px",
+            paddingLeft: "20px",
+          },
+        },
+        children: traverseComponents(row.components, theme, pages),
+      };
+    }),
+  };
 };
 
 export const addRowsToExistingTree = (
