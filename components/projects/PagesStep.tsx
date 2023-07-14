@@ -1,8 +1,8 @@
 import { InformationAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
 import NextButton from "@/components/NextButton";
+import { getPagesEventSource } from "@/requests/ai/queries";
 import { createPages } from "@/requests/pages/mutations";
-import { getPagesEventSource } from "@/requests/pages/queries";
 import { PageBody } from "@/requests/pages/types";
 import { ICON_SIZE } from "@/utils/config";
 import {
