@@ -3,7 +3,7 @@ import { StreamTypes } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
-import { Row, getEditorTreeFromPageStructure } from "@/utils/editor";
+import { EditorTree, Row, getNewComponents } from "@/utils/editor";
 import TOML from "@iarna/toml";
 import {
   ActionIcon,
@@ -80,6 +80,7 @@ export const GenerateAIButton = ({
   const editorTheme = useEditorStore((state) => state.theme);
   const pages = useEditorStore((state) => state.pages);
   const setEditorTree = useEditorStore((state) => state.setTree);
+  const existingTree = useEditorStore((state) => state.tree);
 
   const [stream, setStream] = useState<string>();
 
@@ -92,19 +93,25 @@ export const GenerateAIButton = ({
     if (stream) {
       try {
         const json = TOML.parse(stream);
-        const tree = getEditorTreeFromPageStructure(
+
+        const newComponents = getNewComponents(
           json as { rows: Row[] },
           editorTheme,
           pages
         );
 
-        setEditorTree(tree);
+        const editorTree: EditorTree = {
+          ...existingTree,
+          ...newComponents,
+        };
+
+        setEditorTree(editorTree);
       } catch (error) {
         // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
         // console.log({ error });
       }
     }
-  }, [editorTheme, setEditorTree, stream, pages]);
+  }, [stream]);
 
   const generate = () => {
     setIsLoading(true);
@@ -119,7 +126,6 @@ export const GenerateAIButton = ({
       try {
         setStream((state) => {
           try {
-            console.log(state);
             if (state === undefined) {
               return event.data;
             } else {
