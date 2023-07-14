@@ -7,11 +7,7 @@ import { IFrame } from "@/components/IFrame";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { getPage, getPageEventSource } from "@/requests/pages/queries";
 import { useAppStore } from "@/stores/app";
-import {
-  emptyEditorTree,
-  useEditorStore,
-  useTemporalStore,
-} from "@/stores/editor";
+import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
 import { HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
@@ -201,8 +197,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
         const tree = getEditorTreeFromPageStructure(
           json as { rows: Row[] },
           editorTheme,
-          pages,
-          emptyEditorTree.root
+          pages
         );
 
         console.log(tree);
