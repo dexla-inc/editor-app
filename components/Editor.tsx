@@ -5,6 +5,7 @@ import { DroppableDraggable } from "@/components/DroppableDraggable";
 import { EditorAsideSections } from "@/components/EditorAsideSections";
 import { IFrame } from "@/components/IFrame";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
+import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import { getPageEventSource } from "@/requests/ai/queries";
 import { getPage } from "@/requests/pages/queries";
 import { useAppStore } from "@/stores/app";
@@ -35,7 +36,7 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
-import { getHotkeyHandler, useDisclosure, useHotkeys } from "@mantine/hooks";
+import { useDisclosure, useHotkeys } from "@mantine/hooks";
 import { EventSourceMessage } from "@microsoft/fetch-event-source";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -105,6 +106,43 @@ export const Editor = ({ projectId, pageId }: Props) => {
     ["delete", deleteComponent],
     ["mod+C", copySelectedCompnent],
     ["mod+V", pasteCopiedComponent],
+    ["mod+Z", () => undo()],
+    ["mod+shift+Z", () => redo()],
+    ["mod+Y", () => redo()],
+  ]);
+
+  useHotkeysOnIframe([
+    [
+      "backspace",
+      (e) => {
+        // @ts-ignore
+        if (e.target.contentEditable !== "true") {
+          deleteComponent();
+        }
+      },
+      { preventDefault: false },
+    ],
+    [
+      "delete",
+      (e) => {
+        // @ts-ignore
+        if (e.target.contentEditable !== "true") {
+          deleteComponent();
+        }
+      },
+      { preventDefault: false },
+    ],
+    ["mod+C", copySelectedCompnent, { preventDefault: false }],
+    [
+      "mod+V",
+      (e) => {
+        // @ts-ignore
+        if (e.target.contentEditable !== "true") {
+          pasteCopiedComponent();
+        }
+      },
+      { preventDefault: false },
+    ],
     ["mod+Z", () => undo()],
     ["mod+shift+Z", () => redo()],
     ["mod+Y", () => redo()],
@@ -201,8 +239,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
           pages
         );
 
-        console.log(tree);
-
         setEditorTree(tree);
       } catch (error) {
         // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
@@ -210,38 +246,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
       }
     }
   }, [editorTheme, setEditorTree, stream, pages]);
-
-  // add event listeners to iframe
-  useEffect(() => {
-    const hotKeysHandler = getHotkeyHandler([
-      ["backspace", deleteComponent],
-      ["delete", deleteComponent],
-      ["mod+C", copySelectedCompnent],
-      ["mod+V", pasteCopiedComponent],
-      ["mod+Z", () => undo()],
-      ["mod+shift+Z", () => redo()],
-      ["mod+Y", () => redo()],
-    ]);
-
-    iframeWindow?.document.body.addEventListener("keydown", hotKeysHandler);
-
-    return () => {
-      iframeWindow?.document.body.removeEventListener(
-        "keydown",
-        hotKeysHandler
-      );
-    };
-  }, [
-    copySelectedCompnent,
-    deleteComponent,
-    editorTree,
-    iframeWindow,
-    pasteCopiedComponent,
-    redo,
-    selectedComponentId,
-    setEditorTree,
-    undo,
-  ]);
 
   const renderTree = (component: Component) => {
     if (component.id === "root") {
