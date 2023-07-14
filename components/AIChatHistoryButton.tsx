@@ -1,24 +1,46 @@
 import { getChatHistoryList } from "@/requests/ai/queries";
 import { ICON_SIZE } from "@/utils/config";
-import { ActionIcon, Badge, Modal, Stack, Table } from "@mantine/core";
+import {
+  ActionIcon,
+  Badge,
+  Box,
+  Collapse,
+  Modal,
+  Stack,
+  Table,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconBrandHipchat } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { buttonHoverStyles } from "./styles/buttonHoverStyles";
 
 type Props = {
   projectId: string;
   pageTitle?: string | undefined;
 };
 
+type ContentOpenedType = { [id: string]: boolean };
+
 export const AIChatHistoryButton = ({ projectId }: Props) => {
   const [opened, { open, close }] = useDisclosure(false);
-  const [contentOpened, { open: openContent, close: closeContent }] =
-    useDisclosure(false);
+  const theme = useMantineTheme();
 
   const chatHistoryList = useQuery({
     queryKey: ["chatHistory"],
     queryFn: () => getChatHistoryList(projectId),
   });
+
+  const [contentOpened, setContentOpened] = useState<ContentOpenedType>({});
+
+  const toggle = (id: string) => {
+    setContentOpened((prev: ContentOpenedType) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   const rows = chatHistoryList.data?.results.map((element) => (
     <tr key={element.id}>
@@ -29,11 +51,25 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
         <Badge color="blue">{element.requestType}</Badge>
       </td>
       <td>{new Date(element.created).toLocaleString()}</td>
-      <td style={{ whiteSpace: "pre-wrap" }}>{element.content}</td>
-      {/* <Button onClick={toggle}>Toggle content</Button>
-      <Collapse in={contentOpened}>
-        <td style={{ whiteSpace: "pre-wrap" }}>{element.content}</td>
-      </Collapse> */}
+      <td style={{ whiteSpace: "pre-wrap" }}>
+        <Box
+          onClick={() => toggle(element.id)}
+          p="xs"
+          sx={{ cursor: "pointer", ...buttonHoverStyles(theme) }}
+        >
+          {contentOpened[element.id] ? (
+            <Collapse in={contentOpened[element.id]}>
+              {element.content}
+            </Collapse>
+          ) : (
+            <Text>
+              {element.content.length > 100
+                ? `${element.content.substring(0, 100)} ...........`
+                : element.content}
+            </Text>
+          )}
+        </Box>
+      </td>
     </tr>
   ));
 
