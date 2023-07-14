@@ -15,6 +15,7 @@ import {
 import { User } from "@propelauth/react";
 import Link from "next/link";
 
+import { AIChatHistoryButton } from "@/components/AIChatHistoryButton";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { GenerateAIButton } from "@/components/GenerateAIButton";
 import { SavingDisplay } from "@/components/SavingDisplay";
@@ -93,6 +94,7 @@ export const Shell = ({
                   }}
                 />
                 <Flex gap="md" sx={{ width: "33.33%" }} justify="end">
+                  <AIChatHistoryButton projectId={projectId} />
                   <GenerateAIButton projectId={projectId} />
                   <Button.Group>
                     <Button
