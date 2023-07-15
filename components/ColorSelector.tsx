@@ -43,6 +43,7 @@ export const ColorSelector = ({
     if (onValueChange) {
       onValueChange({ friendlyName, hex });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [friendlyName, hex]);
 
   return (
@@ -59,7 +60,7 @@ export const ColorSelector = ({
         </Popover.Target>
         <Popover.Dropdown>
           <ColorPicker format="hex" value={hex} onChange={debouncedHex} />
-          <Input value={hex} mt="sm" />
+          <Input value={hex} mt="sm" onChange={(e) => setHex(e.target.value)} />
         </Popover.Dropdown>
         <TextInput
           sx={{ width: "100%" }}
