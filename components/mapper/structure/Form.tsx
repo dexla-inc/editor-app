@@ -17,7 +17,7 @@ export const jsonStructure = (props?: any): Component => {
         paddingBottom: px(theme.spacing.sm),
         paddingLeft: px(theme.spacing.lg),
         paddingRight: px(theme.spacing.lg),
-        width: "100%",
+        width: "400px",
         height: "auto",
         minHeight: "10px",
         flexDirection: "column",

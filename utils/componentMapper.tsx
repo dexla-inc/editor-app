@@ -663,7 +663,8 @@ export type Modifiers =
   | "layout"
   | "background"
   | "input"
-  | "button";
+  | "button"
+  | "title";
 
 export type ComponentDefinition = {
   Component: any;
@@ -751,7 +752,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Title component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "text"],
+    modifiers: ["spacing", "size", "title"],
   },
   Textarea: {
     Component: (props: { component: Component; renderTree: any }) => (

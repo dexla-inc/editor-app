@@ -52,7 +52,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
-  const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);

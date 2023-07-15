@@ -1,15 +1,14 @@
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
-import { Group, Select, Stack, Textarea } from "@mantine/core";
+import { Select, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconTextSize } from "@tabler/icons-react";
+import { IconH1 } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
-import { UnitInput } from "@/components/UnitInput";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 
-export const icon = IconTextSize;
-export const label = "Text";
+export const icon = IconH1;
+export const label = "Title";
 
 export const Modifier = () => {
   const theme = useEditorStore((state) => state.theme);
@@ -33,20 +32,19 @@ export const Modifier = () => {
   const form = useForm({
     initialValues: {
       value: "",
-      fontSize: "",
-      fontWeight: "",
-      lineHeight: "",
-      letterSpacing: "",
       color: "Black.6",
+      order: "1",
     },
   });
 
   useEffect(() => {
     if (selectedComponent) {
-      const { children = "", style = {} } = componentProps;
+      const { children = "", order, color } = componentProps;
+
       form.setValues({
         value: children,
-        ...style,
+        order: order?.toString() ?? "1",
+        color: color ?? "Black.6",
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
@@ -68,56 +66,31 @@ export const Modifier = () => {
             });
           }}
         />
-        <Group noWrap>
-          <UnitInput
-            label="Size"
-            {...form.getInputProps("fontSize")}
-            onChange={(value) => {
-              form.setFieldValue("fontSize", value as string);
-              debouncedTreeUpdate(selectedComponentId as string, {
-                style: { fontSize: value },
-              });
-            }}
-          />
-          <Select
-            label="Weight"
-            size="xs"
-            data={[
-              { label: "Normal", value: "normal" },
-              { label: "Bold", value: "bold" },
-            ]}
-            {...form.getInputProps("fontWeight")}
-            onChange={(value) => {
-              form.setFieldValue("fontWeight", value as string);
-              debouncedTreeUpdate(selectedComponentId as string, {
-                style: { fontWeight: value },
-              });
-            }}
-          />
-        </Group>
-        <Group noWrap>
-          <UnitInput
-            label="Line Height"
-            {...form.getInputProps("lineHeight")}
-            onChange={(value) => {
-              form.setFieldValue("lineHeight", value as string);
-              debouncedTreeUpdate(selectedComponentId as string, {
-                style: { lineHeight: value },
-              });
-            }}
-          />
-          <UnitInput
-            label="Letter Spacing"
-            disabledUnits={["%"]}
-            {...form.getInputProps("letterSpacing")}
-            onChange={(value) => {
-              form.setFieldValue("letterSpacing", value as string);
-              debouncedTreeUpdate(selectedComponentId as string, {
-                style: { letterSpacing: value },
-              });
-            }}
-          />
-        </Group>
+        <Select
+          label="Order"
+          size="xs"
+          data={[
+            { label: "H1", value: "1" },
+            { label: "H2", value: "2" },
+            { label: "H3", value: "3" },
+            { label: "H4", value: "4" },
+            { label: "H5", value: "5" },
+            { label: "H6", value: "6" },
+          ]}
+          {...form.getInputProps("order")}
+          onChange={(value) => {
+            // @ts-ignore
+            const size = theme.headings.sizes[`h${value}`];
+            form.setFieldValue("order", value as string);
+            debouncedTreeUpdate(selectedComponentId as string, {
+              order: parseInt(value as string, 10),
+              style: {
+                fontSize: size.fontSize,
+                lineHeight: size.lineHeight,
+              },
+            });
+          }}
+        />
         <ThemeColorSelector
           label="Color"
           {...form.getInputProps("color")}

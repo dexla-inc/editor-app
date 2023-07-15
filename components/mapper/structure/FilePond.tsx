@@ -53,7 +53,7 @@ export const jsonStructure = (props?: any): Component => {
             description: "FilePond Title",
             props: {
               children: "FilePond",
-              color: `${theme.colors.Black ? "Black" : "dark"}`,
+              color: `${theme.colors.Black ? "Black.6" : "dark"}`,
               style: {
                 marginTop: px(theme.spacing.xs),
                 marginBottom: "2px",

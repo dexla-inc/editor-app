@@ -7,6 +7,7 @@ import * as SpacingModifier from "@/components/modifiers/Spacing";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as InputModifier from "@/components/modifiers/Input";
 import * as ButtonModifier from "@/components/modifiers/Button";
+import * as TitleModifier from "@/components/modifiers/Title";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
 import { getComponentById } from "@/utils/editor";
@@ -25,6 +26,7 @@ const sectionMapper: SectionsMapper = {
   background: BackgroundModifier,
   input: InputModifier,
   button: ButtonModifier,
+  title: TitleModifier,
 };
 
 export const EditorAsideSections = () => {

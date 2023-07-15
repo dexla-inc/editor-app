@@ -34,7 +34,7 @@ export const jsonStructure = (props?: any): Component => {
         children: [],
         props: {
           children: "Home",
-          color: `${theme.colors.Black ? "Black" : "dark"}`,
+          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
           style: {
             fontSize: `${px(theme.fontSizes.sm)}px`,
             fontWeight: "normal",
@@ -53,7 +53,7 @@ export const jsonStructure = (props?: any): Component => {
         children: [],
         props: {
           children: "Settings",
-          color: `${theme.colors.Black ? "Black" : "dark"}`,
+          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
           style: {
             fontSize: `${px(theme.fontSizes.sm)}px`,
             fontWeight: "normal",
@@ -72,7 +72,7 @@ export const jsonStructure = (props?: any): Component => {
         children: [],
         props: {
           children: "About",
-          color: `${theme.colors.Black ? "Black" : "dark"}`,
+          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
           style: {
             fontSize: `${px(theme.fontSizes.xs)}px`,
             fontWeight: "normal",
