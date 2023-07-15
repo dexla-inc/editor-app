@@ -43,9 +43,10 @@ export const Modifier = () => {
 
   useEffect(() => {
     if (selectedComponent) {
-      const { children = "", style = {} } = componentProps;
+      const { children = "", style = {}, color } = componentProps;
       form.setValues({
         value: children,
+        color: color ?? "Black.6",
         ...style,
       });
     }
@@ -121,12 +122,8 @@ export const Modifier = () => {
         <ThemeColorSelector
           label="Color"
           {...form.getInputProps("color")}
-          onChange={(_value: string) => {
-            const [color, index] = _value.split(".");
-            // @ts-ignore
-            const value = theme.colors[color][index];
-            form.setFieldValue("color", _value);
-
+          onChange={(value: string) => {
+            form.setFieldValue("color", value);
             debouncedTreeUpdate(selectedComponentId as string, {
               color: value,
             });
