@@ -52,16 +52,17 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
 
   const canExpand = (component.children ?? [])?.length > 0;
   const isCurrentTarget = currentTargetId === `layer-${component.id}`;
-  const isAncestorOfSelectedComponent =
-    component.id && selectedComponentId
-      ? checkIfIsDirectAncestor(
-          editorTree.root,
-          selectedComponentId,
-          component.id
-        )
-      : false;
 
   useEffect(() => {
+    const isAncestorOfSelectedComponent =
+      component.id && selectedComponentId
+        ? checkIfIsDirectAncestor(
+            editorTree.root,
+            selectedComponentId,
+            component.id
+          )
+        : false;
+
     if (
       component.id === selectedComponentId ||
       isAncestorOfSelectedComponent ||
@@ -73,8 +74,8 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     selectedComponentId,
     open,
     component.id,
-    isAncestorOfSelectedComponent,
     isCurrentTarget,
+    editorTree.root,
   ]);
 
   const icon = structureMapper[component.name as string]?.icon;

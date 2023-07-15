@@ -241,6 +241,23 @@ export const checkIfIsChild = (treeRoot: Component, childId: string) => {
   return isChild;
 };
 
+const checkIfIsChildDeep = (treeRoot: Component, childId: string): boolean => {
+  let isChild = checkIfIsChild(treeRoot, childId);
+
+  if (!isChild && (treeRoot.children ?? [])?.length > 0) {
+    const length = (treeRoot.children ?? []).length;
+    for (let i = 0; i < length; i++) {
+      if (isChild) {
+        break;
+      }
+      // @ts-ignore
+      isChild = checkIfIsChildDeep(treeRoot.children[i], childId);
+    }
+  }
+
+  return isChild;
+};
+
 export const checkIfIsDirectAncestor = (
   treeRoot: Component,
   childId: string,
@@ -248,12 +265,14 @@ export const checkIfIsDirectAncestor = (
 ) => {
   let possibleAncestorDepth = null;
   let childDepth = 0;
+  let isDirectChild = false;
 
   crawl(
     treeRoot,
     (node, context) => {
       if (node.id === possibleAncestorId) {
         possibleAncestorDepth = context.depth;
+        isDirectChild = checkIfIsChildDeep(node, childId);
       } else if (node.id === childId) {
         childDepth = context.depth;
         context.break();
@@ -262,7 +281,9 @@ export const checkIfIsDirectAncestor = (
     { order: "pre" }
   );
 
-  return possibleAncestorDepth && possibleAncestorDepth < childDepth;
+  return (
+    possibleAncestorDepth && possibleAncestorDepth < childDepth && isDirectChild
+  );
 };
 
 export const moveComponentToDifferentParent = (
