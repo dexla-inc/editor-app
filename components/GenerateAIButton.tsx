@@ -75,7 +75,7 @@ export const GenerateAIButton = ({
   pageTitle = "Need to implement",
 }: GenerateAIButtonProps) => {
   const [openedAIModal, { open, close }] = useDisclosure(false);
-  const [type, setType] = useState<StreamTypes>("LAYOUT");
+  const [type, setType] = useState<StreamTypes>("COMPONENT");
   const [description, setDescription] = useState("");
   const [descriptionPlaceholder, setDescriptionPlaceholder] =
     useState<DescriptionPlaceHolderType>(descriptionPlaceholderMapping[type]);
@@ -244,14 +244,14 @@ export const GenerateAIButton = ({
           >
             <Group mt="xs" spacing="xl" py="sm">
               <Radio
-                value="LAYOUT"
-                label="Layout"
-                description="Change the entire page"
-              />
-              <Radio
                 value="COMPONENT"
                 label="Component"
                 description="Add / change one component"
+              />
+              <Radio
+                value="LAYOUT"
+                label="Layout"
+                description="Change the entire page"
               />
               <Radio
                 value="DESIGN"

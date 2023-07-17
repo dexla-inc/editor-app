@@ -14,7 +14,6 @@ export const Divider = ({ renderTree, component, ...props }: Props) => {
       {...props}
       {...componentProps}
       style={{ ...style, width: "100%" }}
-      labelPosition="center"
     >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))

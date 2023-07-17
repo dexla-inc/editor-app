@@ -11,6 +11,7 @@ import { Button } from "@/components/mapper/Button";
 import { Checkbox } from "@/components/mapper/Checkbox";
 import { Container } from "@/components/mapper/Container";
 import { DateInput } from "@/components/mapper/DateInput";
+import { Divider } from "@/components/mapper/Divider";
 import { FilePond } from "@/components/mapper/FilePond";
 import { Flex } from "@/components/mapper/Flex";
 import { Form } from "@/components/mapper/Form";
@@ -863,8 +864,7 @@ export const componentMapper: ComponentMapper = {
   },
   Divider: {
     Component: (props: { component: Component; renderTree: any }) => (
-      // eslint-disable-next-line jsx-a11y/alt-text
-      <Image component={props.component} renderTree={props.renderTree} />
+      <Divider component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
   },
