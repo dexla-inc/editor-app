@@ -85,13 +85,20 @@ export default function InitialPane({
                   },
                 }}
               >
-                <Flex gap="xs">
-                  {page.isHome ? (
-                    <IconHome size={ICON_SIZE} />
-                  ) : (
-                    <IconFileAnalytics size={ICON_SIZE} />
-                  )}
-                  <Text size="xs">{page.title}</Text>
+                <Flex gap="xs" sx={{ maxWidth: 180 }}>
+                  <Flex style={{ flex: "0 0 auto" }}>
+                    {page.isHome ? (
+                      <IconHome
+                        size={ICON_SIZE}
+                        style={{ flex: "flex-grow" }}
+                      />
+                    ) : (
+                      <IconFileAnalytics size={ICON_SIZE} />
+                    )}
+                  </Flex>
+                  <Text size="xs" truncate>
+                    {page.title}{" "}
+                  </Text>
                 </Flex>
                 <UnstyledButton
                   onClick={(e) => {
