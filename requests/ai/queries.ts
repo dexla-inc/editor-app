@@ -1,7 +1,6 @@
 import { ChatHistoryMessage, StreamTypes } from "@/requests/ai/types";
 import { PagingResponse } from "@/requests/types";
 import { baseURL, get, getAuthToken } from "@/utils/api";
-import { buildQueryString } from "@/utils/dashboardTypes";
 import {
   EventSourceMessage,
   fetchEventSource,
@@ -44,16 +43,17 @@ export const getPageEventSource = async (
   const encodedPagename = encodeURIComponent(pageName);
   let url = `${baseURL}/projects/${projectId}/automations/${encodedPagename}/stream`;
 
-  if (description) {
-    url += buildQueryString({ description });
-  }
-
   await fetchEventSource(url, {
-    method: "GET",
+    method: "POST",
     headers: {
-      "Content-Type": "text/event-stream",
+      "Content-Type": "application/json",
+      Accept: "text/event-stream",
       Authorization: "Bearer " + token,
     },
+    body: JSON.stringify({
+      type: type,
+      description: description,
+    }),
     onerror: onerror,
     onmessage: onmessage,
     onopen: onopen,

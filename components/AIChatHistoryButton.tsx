@@ -14,6 +14,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { Prism } from "@mantine/prism";
 import { IconBrandHipchat, IconCopy } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -29,14 +30,17 @@ type ContentOpenedType = { [id: string]: boolean };
 export const AIChatHistoryButton = ({ projectId }: Props) => {
   const [opened, { open, close }] = useDisclosure(false);
   const theme = useMantineTheme();
+  const [contentOpened, setContentOpened] = useState<ContentOpenedType>({});
+  const [tooltipText, setTooltipText] = useState("Copy to clipboard");
 
   const chatHistoryList = useQuery({
     queryKey: ["chatHistory"],
     queryFn: () => getChatHistoryList(projectId),
   });
 
-  const [contentOpened, setContentOpened] = useState<ContentOpenedType>({});
-  const [tooltipText, setTooltipText] = useState("Copy to clipboard");
+  const refreshChatHistory = () => {
+    chatHistoryList.refetch();
+  };
 
   const toggle = (id: string) => {
     setContentOpened((prev: ContentOpenedType) => ({
@@ -73,7 +77,9 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
           <Flex justify="space-between">
             {contentOpened[element.id] ? (
               <Collapse in={contentOpened[element.id]}>
-                {element.content}
+                <Prism language="tsx" noCopy>
+                  {element.content}
+                </Prism>
               </Collapse>
             ) : (
               <Text>
@@ -103,7 +109,10 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
   return (
     <>
       <ActionIcon
-        onClick={open}
+        onClick={() => {
+          refreshChatHistory();
+          open();
+        }}
         variant="filled"
         color="indigo"
         size="lg"
@@ -111,7 +120,7 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
       >
         <IconBrandHipchat size={ICON_SIZE} />
       </ActionIcon>
-      <Modal size="70%" opened={opened} onClose={close} title="Chat History">
+      <Modal size="90%" opened={opened} onClose={close} title="Chat History">
         <Stack>
           <Table>
             <thead>

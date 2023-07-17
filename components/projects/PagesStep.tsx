@@ -230,6 +230,7 @@ export default function PagesStep({
               variant="outline"
               leftIcon={<IconPlus size={ICON_SIZE} />}
               onClick={() => addEmptyPage()}
+              loading={isLoading}
               disabled={pages.some((page) => page === "")}
             >
               Add new page
