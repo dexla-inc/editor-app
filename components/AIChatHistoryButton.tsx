@@ -5,14 +5,16 @@ import {
   Badge,
   Box,
   Collapse,
+  Flex,
   Modal,
   Stack,
   Table,
   Text,
+  Tooltip,
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconBrandHipchat } from "@tabler/icons-react";
+import { IconBrandHipchat, IconCopy } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { buttonHoverStyles } from "./styles/buttonHoverStyles";
@@ -34,12 +36,23 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
   });
 
   const [contentOpened, setContentOpened] = useState<ContentOpenedType>({});
+  const [tooltipText, setTooltipText] = useState("Copy to clipboard");
 
   const toggle = (id: string) => {
     setContentOpened((prev: ContentOpenedType) => ({
       ...prev,
       [id]: !prev[id],
     }));
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setTooltipText("Copied to clipboard");
+
+    // Reset the tooltip text after a certain time (e.g., 3 seconds)
+    setTimeout(() => {
+      setTooltipText("Copy to clipboard");
+    }, 3000);
   };
 
   const rows = chatHistoryList.data?.results.map((element) => (
@@ -57,17 +70,31 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
           p="xs"
           sx={{ cursor: "pointer", ...buttonHoverStyles(theme) }}
         >
-          {contentOpened[element.id] ? (
-            <Collapse in={contentOpened[element.id]}>
-              {element.content}
-            </Collapse>
-          ) : (
-            <Text>
-              {element.content.length > 100
-                ? `${element.content.substring(0, 100)} ...........`
-                : element.content}
-            </Text>
-          )}
+          <Flex justify="space-between">
+            {contentOpened[element.id] ? (
+              <Collapse in={contentOpened[element.id]}>
+                {element.content}
+              </Collapse>
+            ) : (
+              <Text>
+                {element.content.length > 100
+                  ? `${element.content.substring(0, 100)} ...........`
+                  : element.content}
+              </Text>
+            )}
+            <Tooltip label={tooltipText}>
+              <ActionIcon
+                variant="transparent"
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  copyToClipboard(element.content);
+                }}
+              >
+                <IconCopy size={ICON_SIZE} />
+              </ActionIcon>
+            </Tooltip>
+          </Flex>
         </Box>
       </td>
     </tr>
