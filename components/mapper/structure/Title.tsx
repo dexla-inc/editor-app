@@ -10,6 +10,7 @@ export const jsonStructure = (props?: any): Component => {
     props.props?.children ??
     props.props?.content ??
     props.props?.text ??
+    props.props?.value ??
     "New title";
 
   return {

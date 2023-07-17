@@ -4,6 +4,7 @@ import NextButton from "@/components/NextButton";
 import { getPagesEventSource } from "@/requests/ai/queries";
 import { createPages } from "@/requests/pages/mutations";
 import { PageBody } from "@/requests/pages/types";
+import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import {
   LoadingStore,
@@ -63,6 +64,7 @@ export default function PagesStep({
 }: PagesStepProps) {
   const router = useRouter();
   const [formComplete, setFormComplete] = useState(false);
+  const resetTree = useEditorStore((state) => state.resetTree);
 
   const updatePage = (index: number, value: string) => {
     const updatedPages = [...pages];
@@ -125,6 +127,7 @@ export default function PagesStep({
   };
 
   const goToEditor = async (projectId: string) => {
+    resetTree();
     setIsLoading && setIsLoading(true);
     startLoading({
       id: "creating-pages",

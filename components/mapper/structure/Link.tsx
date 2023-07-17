@@ -5,6 +5,12 @@ import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
+  const content =
+    props.props?.children ??
+    props.props?.content ??
+    props.props?.text ??
+    props.props?.value ??
+    "New link";
 
   return {
     id: nanoid(),
@@ -25,7 +31,7 @@ export const jsonStructure = (props?: any): Component => {
         description: "Link Text",
         children: [],
         props: {
-          children: "New Link",
+          children: content,
           color: "Primary",
           style: {
             fontSize: `${px(theme.fontSizes.sm)}px`,
@@ -35,7 +41,6 @@ export const jsonStructure = (props?: any): Component => {
             width: "auto",
             height: "auto",
           },
-          ...(props.props || {}),
         },
         blockDroppingChildrenInside: true,
       },
