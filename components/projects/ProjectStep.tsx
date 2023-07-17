@@ -80,7 +80,7 @@ export default function ProjectStep({
         />
         <TextInput
           label="What do you do? *"
-          description="Your one-liner e.g. A universal API that connects all systems that small business customers use with a single integration."
+          description="Your one-liner e.g. Professional property valuation reports produced by qualified experts, leveraging Evalio’s cutting edge AI valuation and automation software"
           required
           withAsterisk={false}
           {...form.getInputProps("description")}
@@ -98,7 +98,7 @@ export default function ProjectStep({
 
         <TextInput
           label="What industry are you in? *"
-          description="e.g. FinTech"
+          description="e.g. PropTech"
           {...form.getInputProps("industry")}
         />
 

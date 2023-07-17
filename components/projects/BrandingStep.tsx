@@ -85,7 +85,7 @@ export default function BrandingStep({
         />
         <TextInput
           label="Website URL"
-          description="Enter the URL of your website so we can fetch your brand"
+          description="Enter the URL of your website so we can fetch your brand. e.g. https://evalio.io"
           placeholder="https://www.dexla.ai"
           error={websiteUrlError}
           value={websiteUrl}

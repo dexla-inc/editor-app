@@ -13,6 +13,7 @@ import { Container } from "@/components/mapper/Container";
 import { DateInput } from "@/components/mapper/DateInput";
 import { FilePond } from "@/components/mapper/FilePond";
 import { Flex } from "@/components/mapper/Flex";
+import { Form } from "@/components/mapper/Form";
 import { Icon } from "@/components/mapper/Icon";
 import { Image } from "@/components/mapper/Image";
 import { Input } from "@/components/mapper/Input";
@@ -31,7 +32,6 @@ import { TabsPanel } from "@/components/mapper/TabsPanel";
 import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";
 import { Title } from "@/components/mapper/Title";
-import { Form } from "@/components/mapper/Form";
 import { AreaChart } from "@/components/mapper/charts/AreaChart";
 import { BarChart } from "@/components/mapper/charts/BarChart";
 import { LineChart } from "@/components/mapper/charts/LineChart";
@@ -49,7 +49,9 @@ import * as ButtonStructure from "@/components/mapper/structure/Button";
 import * as CheckboxStructure from "@/components/mapper/structure/Checkbox";
 import * as ContainerStructure from "@/components/mapper/structure/Container";
 import * as DateInputStructure from "@/components/mapper/structure/DateInput";
+import * as DividerStructure from "@/components/mapper/structure/Divider";
 import * as FilePondStructure from "@/components/mapper/structure/FilePond";
+import * as FormStructure from "@/components/mapper/structure/Form";
 import * as IconStructure from "@/components/mapper/structure/Icon";
 import * as ImageStructure from "@/components/mapper/structure/Image";
 import * as InputStructure from "@/components/mapper/structure/Input";
@@ -68,7 +70,6 @@ import * as TabsPanelStructure from "@/components/mapper/structure/TabsPanel";
 import * as TextStructure from "@/components/mapper/structure/Text";
 import * as TextareaStructure from "@/components/mapper/structure/Textarea";
 import * as TitleStructure from "@/components/mapper/structure/Title";
-import * as FormStructure from "@/components/mapper/structure/Form";
 import * as AreaChartStructure from "@/components/mapper/structure/charts/AreaChart";
 import * as BarChartStructure from "@/components/mapper/structure/charts/BarChart";
 import * as LineChartStructure from "@/components/mapper/structure/charts/LineChart";
@@ -110,6 +111,7 @@ import {
   IconRowInsertBottom,
   IconRowInsertTop,
   IconSelect,
+  IconSeparator,
   IconTable,
   IconToggleLeft,
   IconUser,
@@ -351,6 +353,17 @@ export const structureMapper: StructureMapper = {
   CodeSnippet: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
     category: "Data Display",
+  },
+  Divider: {
+    structure: (props: any) => DividerStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Divider"
+        icon={<IconSeparator size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+    icon: <IconSeparator size={ICON_SIZE} />,
   },
   Newsfeed: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -709,7 +722,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Container component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border", "background"],
+    modifiers: ["layout", "background", "spacing", "size", "border"],
   },
   Select: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -728,7 +741,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Input component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border", "input"],
+    modifiers: ["input", "spacing", "size", "border"],
   },
   DateInput: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -746,13 +759,13 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Text component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "text"],
+    modifiers: ["text", "spacing", "size"],
   },
   Title: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Title component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "title"],
+    modifiers: ["title", "spacing", "size"],
   },
   Textarea: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -842,6 +855,13 @@ export const componentMapper: ComponentMapper = {
     modifiers: ["spacing", "size", "border"],
   },
   Image: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      // eslint-disable-next-line jsx-a11y/alt-text
+      <Image component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size", "border"],
+  },
+  Divider: {
     Component: (props: { component: Component; renderTree: any }) => (
       // eslint-disable-next-line jsx-a11y/alt-text
       <Image component={props.component} renderTree={props.renderTree} />
@@ -1014,7 +1034,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["spacing", "size", "border", "button"],
+    modifiers: ["button", "spacing", "size", "border"],
   },
   Form: {
     Component: (props: { component: Component; renderTree: any }) => (

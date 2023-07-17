@@ -187,8 +187,6 @@ export const EditorNavbarThemesSection = ({
           >
             Add Colour
           </Button>
-        </Stack>
-        <Stack spacing="xs">
           <SegmentedControl
             fullWidth
             size="xs"
@@ -244,37 +242,35 @@ export const EditorNavbarThemesSection = ({
               }}
             />
           </Flex>
-        </Stack>
 
-        <Box>
-          <Text size="sm" weight="500">
-            Responsive Breakpoints
-          </Text>
-          <Stack spacing="xs">
-            {form.values.responsiveBreakpoints &&
-              form.values.responsiveBreakpoints.map(
-                ({ type, breakpoint }, index) => (
-                  <Flex key={index} align="center" gap="sm">
-                    <Flex direction="column">
-                      <TextInput value={type} disabled />
+          <Box>
+            <Text size="sm" weight="500">
+              Responsive Breakpoints
+            </Text>
+            <Stack spacing="xs">
+              {form.values.responsiveBreakpoints &&
+                form.values.responsiveBreakpoints.map(
+                  ({ type, breakpoint }, index) => (
+                    <Flex key={index} align="center" gap="sm">
+                      <Flex direction="column">
+                        <TextInput value={type} disabled />
+                      </Flex>
+                      <Flex direction="column">
+                        <UnitInput
+                          value={breakpoint as any}
+                          onChange={(value) =>
+                            form.setFieldValue(
+                              `responsiveBreakpoints.${index}.breakpoint`,
+                              value
+                            )
+                          }
+                        />
+                      </Flex>
                     </Flex>
-                    <Flex direction="column">
-                      <UnitInput
-                        value={breakpoint as any}
-                        onChange={(value) =>
-                          form.setFieldValue(
-                            `responsiveBreakpoints.${index}.breakpoint`,
-                            value
-                          )
-                        }
-                      />
-                    </Flex>
-                  </Flex>
-                )
-              )}
-          </Stack>
-        </Box>
-        <Stack spacing="xs">
+                  )
+                )}
+            </Stack>
+          </Box>
           <TextInput
             label="Favicon"
             placeholder="https://example.com/favicon.ico"
@@ -287,8 +283,6 @@ export const EditorNavbarThemesSection = ({
             defaultValue={form.values.logoUrl}
             {...form.getInputProps("logoUrl")}
           />
-        </Stack>
-        <Stack spacing="xs">
           <UnitInput
             label="Default border edges"
             defaultValue={form.values.defaultBorderRadius}

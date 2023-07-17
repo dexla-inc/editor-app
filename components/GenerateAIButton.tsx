@@ -177,6 +177,7 @@ export const GenerateAIButton = ({
           pages
         );
 
+        console.log("newComponents: " + JSON.stringify(newComponents));
         const copy = cloneDeep(existingTree);
 
         addComponent(copy.root, newComponents, {
@@ -186,15 +187,21 @@ export const GenerateAIButton = ({
 
         setEditorTree(copy);
         setStream("");
-      } catch (error) {
-        // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
-        console.log({ error });
-      } finally {
         stopLoading({
           id: "page-generation",
           title: `${descriptionPlaceholderMapping[type].replaceText} Generated`,
           message: `Here's your ${descriptionPlaceholderMapping[type].replaceText}. We hope you like it`,
         });
+      } catch (error) {
+        // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
+        console.log({ error });
+        stopLoading({
+          id: "page-generation",
+          title: `${descriptionPlaceholderMapping[type].replaceText} Failed`,
+          message: `There was a problem generating your ${descriptionPlaceholderMapping[type].replaceText}`,
+          isError: true,
+        });
+      } finally {
         setIsLoading(false);
       }
     };
