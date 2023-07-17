@@ -64,6 +64,16 @@ export default function PagesStep({
   const router = useRouter();
   const [formComplete, setFormComplete] = useState(false);
 
+  const updatePage = (index: number, value: string) => {
+    const updatedPages = [...pages];
+    updatedPages[index] = value;
+    setPages(updatedPages);
+  };
+
+  const addEmptyPage = () => {
+    setPages((oldPages) => [...oldPages, ""]);
+  };
+
   const stream = async (count: number) => {
     const plural = count === 1 ? "" : "s";
     setIsLoading && setIsLoading(true);
@@ -165,13 +175,20 @@ export default function PagesStep({
           >
             {pages.map((page, index) => {
               return (
-                <List.Item key={page}>
+                <List.Item key={index}>
                   <Flex align="center" gap="md">
-                    <TextInput defaultValue={page} sx={{ width: "400px" }} />
+                    <TextInput
+                      value={page}
+                      sx={{ width: "400px" }}
+                      onChange={(event) =>
+                        updatePage(index, event.currentTarget.value)
+                      }
+                    />
                     <ActionIcon
                       onClick={() => deletePage(page)}
                       variant="filled"
                       color="red"
+                      tabIndex={-1}
                     >
                       <IconTrash size={ICON_SIZE} />
                     </ActionIcon>
@@ -200,14 +217,24 @@ export default function PagesStep({
             Generate page names
           </Button>
         ) : (
-          <Button
-            variant="light"
-            leftIcon={<IconPlus size={ICON_SIZE} />}
-            onClick={() => stream(1)}
-            loading={isLoading}
-          >
-            Generate new page
-          </Button>
+          <>
+            <Button
+              variant="light"
+              leftIcon={<IconPlus size={ICON_SIZE} />}
+              onClick={() => stream(1)}
+              loading={isLoading}
+            >
+              Generate new page
+            </Button>
+            <Button
+              variant="outline"
+              leftIcon={<IconPlus size={ICON_SIZE} />}
+              onClick={() => addEmptyPage()}
+              disabled={pages.some((page) => page === "")}
+            >
+              Add new page
+            </Button>
+          </>
         )}
       </Flex>
       <Divider></Divider>
