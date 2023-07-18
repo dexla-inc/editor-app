@@ -1,5 +1,5 @@
 import { Component } from "@/utils/editor";
-import { Button as MantineButton, ButtonProps } from "@mantine/core";
+import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import { ReactElement } from "react";
 
 type Props = {
@@ -10,6 +10,10 @@ type Props = {
 
 export const Button = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;
+
+  console.log({ renderTree });
+  console.log({ component });
+  console.log({ props });
 
   return (
     <MantineButton {...props} {...componentProps}>

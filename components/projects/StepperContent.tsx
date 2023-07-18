@@ -1,6 +1,7 @@
 import BrandingStep from "@/components/projects/BrandingStep";
 import PagesStep from "@/components/projects/PagesStep";
 import ProjectStep from "@/components/projects/ProjectStep";
+import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
 import { StepperState } from "@/utils/dashboardTypes";
 
@@ -23,6 +24,7 @@ export default function StepperContent({
   const [projectId, setProjectId] = useState("");
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [pages, setPages] = useState<string[]>([]);
+  const [themeResponse, setThemeResponse] = useState<ThemeResponse>();
 
   return (
     <Stack sx={{ width: "100%" }}>
@@ -47,6 +49,8 @@ export default function StepperContent({
           projectId={projectId}
           websiteUrl={websiteUrl}
           setWebsiteUrl={setWebsiteUrl}
+          themeResponse={themeResponse}
+          setThemeResponse={setThemeResponse}
         ></BrandingStep>
       )}
       {activeStep == 2 && (

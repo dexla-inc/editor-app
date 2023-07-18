@@ -2,8 +2,9 @@ import { ColorSelector } from "@/components/ColorSelector";
 import { UnitInput } from "@/components/UnitInput";
 import { saveTheme } from "@/requests/themes/mutations";
 import { getTheme } from "@/requests/themes/queries";
-import { ThemeMutationParams } from "@/requests/themes/types";
+import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
+import { fonts } from "@/utils/dashboardTypes";
 import {
   Box,
   Button,
@@ -74,17 +75,7 @@ export const EditorNavbarThemesSection = ({
     },
   });
 
-  const fonts = [
-    "Arial",
-    "Helvetica",
-    "Lato",
-    "Open Sans",
-    "Roboto",
-    "Raleway",
-    "Times New Roman",
-  ];
-
-  const form = useForm<ThemeMutationParams>({
+  const form = useForm<ThemeResponse>({
     initialValues: {
       colors: [],
       fonts: [],
@@ -99,12 +90,12 @@ export const EditorNavbarThemesSection = ({
 
   useEffect(() => {
     if (userTheme.isFetched) {
-      form.setValues(userTheme.data as ThemeMutationParams);
+      form.setValues(userTheme.data as ThemeResponse);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userTheme.isFetched]);
 
-  const onSubmit = async (values: ThemeMutationParams) => {
+  const onSubmit = async (values: ThemeResponse) => {
     try {
       startLoading({
         id: "saving-theme",

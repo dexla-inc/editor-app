@@ -126,3 +126,15 @@ export function replaceBrackets(
     return safeReplacements[placeholder];
   });
 }
+
+export const fonts = [
+  "Arial",
+  "Helvetica",
+  "Lato",
+  "Open Sans",
+  "Roboto",
+  "Raleway",
+  "Times New Roman",
+  "Opensaucesans",
+  "Red Hat Display",
+];
