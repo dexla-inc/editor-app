@@ -1,6 +1,6 @@
 import { Component } from "@/utils/editor";
 import { Button as MantineButton, ButtonProps } from "@mantine/core";
-import { PropsWithChildren, ReactElement } from "react";
+import { ReactElement } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;

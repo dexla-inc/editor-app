@@ -56,27 +56,29 @@ const traverseComponents = (
   theme: MantineTheme,
   pages: PageResponse[]
 ): Component[] => {
-  return components.map((component) => {
-    if (!structureMapper.hasOwnProperty(component.name)) {
-      console.log(`Missing key in structureMapper: ${component.name}`);
-    }
+  return components
+    .filter((c) => !!c.name)
+    .map((component) => {
+      if (!structureMapper.hasOwnProperty(component.name)) {
+        console.log(`Missing key in structureMapper: ${component.name}`);
+      }
 
-    const structureDefinition = structureMapper[component.name];
-    const newComponent = structureDefinition.structure({
-      ...component,
-      theme,
-      pages,
-    });
-    if (component.children) {
-      newComponent.children = traverseComponents(
-        component.children,
+      const structureDefinition = structureMapper[component.name];
+      const newComponent = structureDefinition.structure({
+        ...component,
         theme,
-        pages
-      );
-    }
+        pages,
+      });
+      if (component.children) {
+        newComponent.children = traverseComponents(
+          component.children,
+          theme,
+          pages
+        );
+      }
 
-    return newComponent;
-  });
+      return newComponent;
+    });
 };
 
 export const getEditorTreeFromPageStructure = (
@@ -136,6 +138,7 @@ export const getNewComponents = (
     name: "Container",
     description: "Container",
     props: {
+      isBeingAdded: true,
       style: {
         width: "100%",
       },
@@ -204,6 +207,25 @@ export const getComponentById = (
   return found;
 };
 
+export const getComponentBeingAddedId = (
+  treeRoot: Component
+): string | null => {
+  let id = null;
+
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.props?.isBeingAdded === true) {
+        id = node.id;
+        context.break();
+      }
+    },
+    { order: "bfs" }
+  );
+
+  return id;
+};
+
 export const updateTreeComponent = (
   treeRoot: Component,
   id: string,
@@ -221,6 +243,23 @@ export const updateTreeComponent = (
             ...(props.style || {}),
           },
         };
+        context.break();
+      }
+    },
+    { order: "bfs" }
+  );
+};
+
+export const updateTreeComponentChildren = (
+  treeRoot: Component,
+  id: string,
+  children: Component[]
+) => {
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === id) {
+        node.children = children;
         context.break();
       }
     },

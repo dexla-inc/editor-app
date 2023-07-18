@@ -2,7 +2,12 @@ import { defaultTheme } from "@/components/IFrame";
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
 import { encodeSchema } from "@/utils/compression";
-import { Component, EditorTree, updateTreeComponent } from "@/utils/editor";
+import {
+  Component,
+  EditorTree,
+  updateTreeComponent,
+  updateTreeComponentChildren,
+} from "@/utils/editor";
 import { MantineTheme } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import isEqual from "lodash.isequal";
@@ -45,6 +50,10 @@ export type EditorState = {
   setCurrentPageId: (currentPageId: string) => void;
   setComponentToAdd: (componentToAdd?: Component) => void;
   updateTreeComponent: (componentId: string, props: any) => void;
+  updateTreeComponentChildren: (
+    componentId: string,
+    children: Component[]
+  ) => void;
   setSelectedComponentId: (selectedComponentId: string) => void;
   clearSelection: () => void;
   setIsSaving: (isSaving: boolean) => void;
@@ -82,6 +91,22 @@ export const useEditorStore = create<EditorState>()(
         set((state) => {
           const copy = cloneDeep(state.tree);
           updateTreeComponent(copy.root, componentId, props);
+          updatePageState(
+            encodeSchema(JSON.stringify(copy)),
+            state.currentProjectId ?? "",
+            state.currentPageId ?? "",
+            state.setIsSaving
+          );
+
+          return {
+            tree: copy,
+          };
+        });
+      },
+      updateTreeComponentChildren: (componentId, children) => {
+        set((state) => {
+          const copy = cloneDeep(state.tree);
+          updateTreeComponentChildren(copy.root, componentId, children);
           updatePageState(
             encodeSchema(JSON.stringify(copy)),
             state.currentProjectId ?? "",

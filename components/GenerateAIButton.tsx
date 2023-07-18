@@ -6,6 +6,7 @@ import { ICON_SIZE } from "@/utils/config";
 import {
   Row,
   addComponent,
+  getComponentBeingAddedId,
   getEditorTreeFromPageStructure,
   getNewComponents,
 } from "@/utils/editor";
@@ -86,8 +87,14 @@ export const GenerateAIButton = ({
   const editorTheme = useEditorStore((state) => state.theme);
   const pages = useEditorStore((state) => state.pages);
   const setEditorTree = useEditorStore((state) => state.setTree);
+  const updateTreeComponent = useEditorStore(
+    (state) => state.updateTreeComponent
+  );
+  const updateTreeComponentChildren = useEditorStore(
+    (state) => state.updateTreeComponentChildren
+  );
   const existingTree = useEditorStore((state) => state.tree);
-  const streamRef = useRef<string>();
+  const componentBeignAddedId = useRef<string>();
 
   const [stream, setStream] = useState<string>();
 
@@ -97,8 +104,38 @@ export const GenerateAIButton = ({
   };
 
   useEffect(() => {
-    if (type === "COMPONENT") streamRef.current = stream;
-    else if (type === "LAYOUT") {
+    if (type === "COMPONENT") {
+      if (stream) {
+        try {
+          const json = TOML.parse(stream);
+
+          const newComponents = getNewComponents(
+            json as { rows: Row[] },
+            editorTheme,
+            pages
+          );
+
+          const id = getComponentBeingAddedId(existingTree.root);
+
+          if (!id) {
+            const copy = cloneDeep(existingTree);
+
+            addComponent(copy.root, newComponents, {
+              id: "content-wrapper",
+              edge: "bottom",
+            });
+
+            setEditorTree(copy);
+          } else {
+            componentBeignAddedId.current = id;
+            updateTreeComponentChildren(id, newComponents.children!);
+          }
+        } catch (error) {
+          // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
+          // console.log({ error });
+        }
+      }
+    } else if (type === "LAYOUT") {
       if (stream) {
         try {
           const json = TOML.parse(stream);
@@ -108,16 +145,22 @@ export const GenerateAIButton = ({
             pages
           );
 
-          console.log(tree);
-
           setEditorTree(tree);
         } catch (error) {
           // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
-          console.log({ error });
+          // console.log({ error });
         }
       }
     }
-  }, [stream]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    editorTheme,
+    pages,
+    setEditorTree,
+    stream,
+    type,
+    updateTreeComponentChildren,
+  ]);
 
   const generate = () => {
     setIsLoading(true);
@@ -144,7 +187,7 @@ export const GenerateAIButton = ({
         });
       } catch (error) {
         // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
-        console.error(error);
+        // console.error(error);
       }
     };
 
@@ -169,23 +212,11 @@ export const GenerateAIButton = ({
           return;
         }
 
-        const json = TOML.parse(streamRef.current as string);
-
-        const newComponents = getNewComponents(
-          json as { rows: Row[] },
-          editorTheme,
-          pages
-        );
-
-        console.log("newComponents: " + JSON.stringify(newComponents));
-        const copy = cloneDeep(existingTree);
-
-        addComponent(copy.root, newComponents, {
-          id: "content-wrapper",
-          edge: "bottom",
-        });
-
-        setEditorTree(copy);
+        if (componentBeignAddedId.current) {
+          updateTreeComponent(componentBeignAddedId.current, {
+            isBeingAdded: false,
+          });
+        }
         setStream("");
         stopLoading({
           id: "page-generation",
@@ -193,8 +224,6 @@ export const GenerateAIButton = ({
           message: `Here's your ${descriptionPlaceholderMapping[type].replaceText}. We hope you like it`,
         });
       } catch (error) {
-        // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
-        console.log({ error });
         stopLoading({
           id: "page-generation",
           title: `${descriptionPlaceholderMapping[type].replaceText} Failed`,
