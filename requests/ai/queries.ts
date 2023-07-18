@@ -15,7 +15,7 @@ export const getPagesEventSource = async (
   onopen?: (response: Response) => Promise<void>
 ) => {
   const token = await getAuthToken();
-  const url = `${baseURL}/projects/${projectId}/automations/pages/stream?count=${count}&excluded=${excludedCsv}`;
+  const url = `${baseURL}/projects/${projectId}/automations/pages?count=${count}&excluded=${excludedCsv}`;
 
   await fetchEventSource(url, {
     method: "GET",
@@ -29,7 +29,7 @@ export const getPagesEventSource = async (
   });
 };
 
-export const getPageEventSource = async (
+export const postPageEventSource = async (
   projectId: string,
   pageName: string,
   onmessage?: (ev: EventSourceMessage) => void,
@@ -40,8 +40,7 @@ export const getPageEventSource = async (
   description?: string | undefined
 ) => {
   const token = await getAuthToken();
-  const encodedPagename = encodeURIComponent(pageName);
-  let url = `${baseURL}/projects/${projectId}/automations/${encodedPagename}/stream`;
+  let url = `${baseURL}/projects/${projectId}/automations/content`;
 
   await fetchEventSource(url, {
     method: "POST",
@@ -53,6 +52,7 @@ export const getPageEventSource = async (
     body: JSON.stringify({
       type: type,
       description: description,
+      pageName: pageName,
     }),
     onerror: onerror,
     onmessage: onmessage,

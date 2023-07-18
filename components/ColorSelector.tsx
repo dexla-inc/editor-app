@@ -8,19 +8,20 @@ import {
   MantineTheme,
   Popover,
   TextInput,
+  Tooltip,
 } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect, useState } from "react";
 
-interface ColorSelectorProps {
+type Props = {
   friendlyName?: string;
   hex?: string;
   isDefault: boolean;
   onValueChange?: (value: { friendlyName: string; hex: string }) => void;
   mantineTheme: MantineTheme;
   deleteColor?: () => void;
-}
+};
 
 export const ColorSelector = ({
   hex: fetchedHex = "",
@@ -29,7 +30,7 @@ export const ColorSelector = ({
   onValueChange,
   mantineTheme,
   deleteColor,
-}: ColorSelectorProps) => {
+}: Props) => {
   const [hex, setHex] = useState(fetchedHex);
   const [friendlyName, setFriendlyName] = useState(fetchedFriendlyName);
 
@@ -47,34 +48,45 @@ export const ColorSelector = ({
   }, [friendlyName, hex]);
 
   return (
-    <Flex align="center" gap="sm">
+    <Flex align="center">
       <Popover withArrow zIndex="20">
         <Popover.Target>
-          <ColorSwatch
-            color={hex}
-            radius={mantineTheme.radius.xs}
-            size={34}
-            withShadow={false}
-            style={{ flex: "none" }}
-          />
+          <Tooltip label="Click to change color">
+            <ColorSwatch
+              color={hex}
+              size={36}
+              radius="0px"
+              withShadow={false}
+              style={{
+                flex: "none",
+                border: "1px solid " + mantineTheme.colors.gray[4],
+                borderTopLeftRadius: mantineTheme.radius.sm,
+                borderBottomLeftRadius: mantineTheme.radius.sm,
+                borderRight: "0px",
+              }}
+            />
+          </Tooltip>
         </Popover.Target>
         <Popover.Dropdown>
           <ColorPicker format="hex" value={hex} onChange={debouncedHex} />
           <Input value={hex} mt="sm" onChange={(e) => setHex(e.target.value)} />
         </Popover.Dropdown>
-        <TextInput
-          sx={{ width: "100%" }}
-          defaultValue={friendlyName}
-          onChange={(event) => debouncedFriendlyName(event.target.value)}
-          rightSection={
-            !isDefault && (
-              <ActionIcon onClick={deleteColor} color="gray">
-                <IconX size={LARGE_ICON_SIZE} />
-              </ActionIcon>
-            )
-          }
-          rightSectionWidth={40}
-        />
+        <Tooltip label="Click to edit name">
+          <TextInput
+            style={{ width: "100%", borderLeft: "0px" }}
+            radius="0px 4px 4px 0px"
+            defaultValue={friendlyName}
+            onChange={(event) => debouncedFriendlyName(event.target.value)}
+            rightSection={
+              !isDefault && (
+                <ActionIcon onClick={deleteColor} color="gray">
+                  <IconX size={LARGE_ICON_SIZE} />
+                </ActionIcon>
+              )
+            }
+            rightSectionWidth={40}
+          />
+        </Tooltip>
       </Popover>
     </Flex>
   );

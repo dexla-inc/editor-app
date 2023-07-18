@@ -1,3 +1,4 @@
+import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
 import { Stack, TextInput } from "@mantine/core";
@@ -5,7 +6,6 @@ import { useForm } from "@mantine/form";
 import { IconTexture } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
-import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 
 export const icon = IconTexture;
 export const label = "Background";
@@ -75,8 +75,9 @@ export const Modifier = () => {
           }}
         />
         <TextInput
-          label="Image"
+          label="Image URL"
           size="xs"
+          placeholder="https://example.com/image.png"
           {...form.getInputProps("backgroundImage")}
           onChange={(e) => {
             const value = e.target.value;

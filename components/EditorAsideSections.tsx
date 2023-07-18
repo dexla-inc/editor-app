@@ -1,17 +1,16 @@
 import { SidebarSection } from "@/components/SidebarSection";
 import * as BackgroundModifier from "@/components/modifiers/Background";
 import * as BorderModifier from "@/components/modifiers/Border";
+import * as ButtonModifier from "@/components/modifiers/Button";
+import * as InputModifier from "@/components/modifiers/Input";
 import * as LayoutModifier from "@/components/modifiers/Layout";
 import * as SizeModifier from "@/components/modifiers/Size";
 import * as SpacingModifier from "@/components/modifiers/Spacing";
 import * as TextModifier from "@/components/modifiers/Text";
-import * as InputModifier from "@/components/modifiers/Input";
-import * as ButtonModifier from "@/components/modifiers/Button";
 import * as TitleModifier from "@/components/modifiers/Title";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
 import { getComponentById } from "@/utils/editor";
-import { Box, Center, Text } from "@mantine/core";
 
 type SectionsMapper = {
   [key: string]: any;
@@ -35,23 +34,23 @@ export const EditorAsideSections = () => {
     (state) => state.selectedComponentId
   );
 
-  const isContentWrapperSelected = selectedComponentId === "content-wrapper";
+  // const isContentWrapperSelected = selectedComponentId === "content-wrapper";
 
-  if (!selectedComponentId || isContentWrapperSelected) {
-    return (
-      <Box py="xl">
-        <Center>
-          <Text size="xs" color="dimmed" align="center">
-            Select a component to edit
-          </Text>
-        </Center>
-      </Box>
-    );
-  }
+  // if (!selectedComponentId || isContentWrapperSelected) {
+  //   return (
+  //     <Box py="xl">
+  //       <Center>
+  //         <Text size="xs" color="dimmed" align="center">
+  //           Select a component to edit
+  //         </Text>
+  //       </Center>
+  //     </Box>
+  //   );
+  // }
 
   const selectComponent = getComponentById(
     editorTree.root,
-    selectedComponentId
+    selectedComponentId as string
   );
   const mappedComponent = componentMapper[selectComponent?.name as string];
 

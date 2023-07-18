@@ -22,6 +22,7 @@ export const jsonStructure = (props?: any): Component => {
       },
       ...(rest || {}),
       children: value ?? "New Button",
+      blockDroppingChildrenInside: true,
     },
   };
 };

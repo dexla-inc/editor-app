@@ -6,7 +6,7 @@ import { EditorAsideSections } from "@/components/EditorAsideSections";
 import { IFrame } from "@/components/IFrame";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
-import { getPageEventSource } from "@/requests/ai/queries";
+import { postPageEventSource } from "@/requests/ai/queries";
 import { getPage } from "@/requests/pages/queries";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
@@ -204,7 +204,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
           });
         };
 
-        getPageEventSource(
+        postPageEventSource(
           projectId,
           page.title,
           onMessage,

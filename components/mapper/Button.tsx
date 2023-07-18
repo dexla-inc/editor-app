@@ -1,5 +1,5 @@
 import { Component } from "@/utils/editor";
-import { Button as MantineButton, ButtonProps } from "@mantine/core";
+import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import { ReactElement } from "react";
 
 type Props = {

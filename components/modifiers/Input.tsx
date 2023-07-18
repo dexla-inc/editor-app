@@ -1,3 +1,4 @@
+import { SizeSelector } from "@/components/SizeSelector";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
@@ -5,14 +6,13 @@ import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
-import { SizeSelector } from "@/components/SizeSelector";
 
 export const icon = IconForms;
 export const label = "Input";
 
 export const defaultInputValues = {
   value: "",
-  size: "md",
+  size: "sm",
   placeholder: "Input",
   type: "text",
 };

@@ -13,11 +13,12 @@ export type ThemeMutationParams = {
 };
 
 export interface ThemeResponse extends ThemeMutationParams {
-  id: string;
-  trackingId: string;
+  id?: string;
+  trackingId?: string;
+  websiteUrl?: string;
 }
 
-type Color = {
+export type Color = {
   name: string;
   friendlyName: string;
   hex: string;

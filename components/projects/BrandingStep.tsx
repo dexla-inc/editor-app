@@ -1,16 +1,33 @@
 import { InformationAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
+import { ColorSelector } from "@/components/ColorSelector";
 import NextButton from "@/components/NextButton";
+import { saveTheme } from "@/requests/themes/mutations";
 import { getTheme } from "@/requests/themes/queries";
+import { Color, ThemeResponse } from "@/requests/themes/types";
 import {
   LoadingStore,
   NextStepperClickEvent,
   PreviousStepperClickEvent,
+  fonts,
   isWebsite,
 } from "@/utils/dashboardTypes";
-import { Anchor, Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
+import {
+  Anchor,
+  Button,
+  Divider,
+  Flex,
+  Group,
+  Select,
+  Stack,
+  TextInput,
+  Title,
+  useMantineTheme,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { SetStateAction, useState } from "react";
+// import { Button as ButtonPreview } from "@/components/mapper/Button";
+// import * as ButtonStructure from "@/components/mapper/structure/Button";
 
 export interface BrandingStepProps
   extends LoadingStore,
@@ -19,11 +36,46 @@ export interface BrandingStepProps
   projectId: string;
   websiteUrl: string;
   setWebsiteUrl: (value: SetStateAction<string>) => void;
+  themeResponse?: ThemeResponse;
+  setThemeResponse: (value: SetStateAction<ThemeResponse | undefined>) => void;
 }
 
 type BrandingParams = {
   websiteUrl: string;
 };
+
+function updateThemeResponseColor(
+  themeResponse: ThemeResponse,
+  colorIndex: number,
+  updatedColor: Color
+): ThemeResponse {
+  // Deep clone the themeResponse object
+  const updatedThemeResponse: ThemeResponse = JSON.parse(
+    JSON.stringify(themeResponse)
+  );
+
+  // Update the color
+  updatedThemeResponse.colors[colorIndex] = updatedColor;
+
+  return updatedThemeResponse;
+}
+
+function updateThemeResponseFontFamily(
+  themeResponse: ThemeResponse,
+  fontFamily: string
+): ThemeResponse {
+  // Deep clone the themeResponse object
+  const updatedThemeResponse: ThemeResponse = JSON.parse(
+    JSON.stringify(themeResponse)
+  );
+
+  // Update the fontFamily for all fonts
+  updatedThemeResponse.fonts.forEach((font) => {
+    font.fontFamily = fontFamily;
+  });
+
+  return updatedThemeResponse;
+}
 
 export default function BrandingStep({
   prevStep,
@@ -35,8 +87,11 @@ export default function BrandingStep({
   projectId,
   websiteUrl,
   setWebsiteUrl,
+  themeResponse,
+  setThemeResponse,
 }: BrandingStepProps) {
   const [websiteUrlError, setWebsiteUrlError] = useState("");
+  const mantineTheme = useMantineTheme();
 
   const form = useForm({
     initialValues: {
@@ -48,27 +103,62 @@ export default function BrandingStep({
     },
   });
 
-  const onSubmit = async (values: BrandingParams) => {
+  const next = async () => {
+    // console.log({ themeResponse });
     try {
       setIsLoading && setIsLoading(true);
       startLoading({
-        id: "creating-theme",
-        title: "Fetching Your Brand",
-        message: "Wait while we get your brand",
+        id: "saving",
+        title: "Saving Your Brand",
+        message: "Wait while we save your brand",
       });
 
-      await getTheme(projectId, values.websiteUrl);
+      const theme = await saveTheme(projectId, themeResponse as ThemeResponse);
 
       stopLoading({
-        id: "creating-theme",
-        title: "Project Created",
-        message: "Your brand was fetched successfully",
+        id: "saving",
+        title: "Theme Saved",
+        message: "Your brand was saved successfully",
       });
       nextStep();
     } catch (error) {
       stopLoading({
-        id: "creating-theme",
-        title: "Project Failed",
+        id: "saving",
+        title: "Theme Failed",
+        message: "Validation failed",
+        isError: true,
+      });
+    } finally {
+      setIsLoading && setIsLoading(false);
+    }
+  };
+
+  const onSubmit = async (values: BrandingParams) => {
+    try {
+      if (!isWebsite(websiteUrl)) {
+        setWebsiteUrlError("Must be a valid website URL");
+        return;
+      }
+
+      setIsLoading && setIsLoading(true);
+      startLoading({
+        id: "creating",
+        title: "Fetching Your Brand",
+        message: "Wait while we get your brand",
+      });
+
+      const theme = await getTheme(projectId, values.websiteUrl);
+      setThemeResponse(theme);
+
+      stopLoading({
+        id: "creating",
+        title: "Theme Fetched",
+        message: "Your brand was fetched successfully",
+      });
+    } catch (error) {
+      stopLoading({
+        id: "creating",
+        title: "Theme Failed",
         message: "Validation failed",
       });
     } finally {
@@ -101,16 +191,97 @@ export default function BrandingStep({
           }}
           required
         />
+        {themeResponse && (
+          <Flex sx={{ width: "100%" }} justify="space-between" gap="xl">
+            <Stack sx={{ width: "100%" }}>
+              <Title order={4}>Main Colors</Title>
+              {themeResponse?.colors &&
+                themeResponse?.colors
+                  .filter((t) => t.name === "Primary" || t.name === "Accent")
+                  .map(({ friendlyName, hex, name }, index) => (
+                    <ColorSelector
+                      key={`color-${name}`}
+                      friendlyName={friendlyName}
+                      hex={hex}
+                      isDefault={themeResponse.colors[index].isDefault}
+                      mantineTheme={mantineTheme}
+                      onValueChange={(value) => {
+                        const updatedColor = {
+                          ...themeResponse.colors[index],
+                          friendlyName: value.friendlyName,
+                          hex: value.hex,
+                          name: !themeResponse.colors[index].isDefault
+                            ? value.friendlyName
+                            : themeResponse.colors[index].name,
+                        };
+                        const updatedThemeResponse = updateThemeResponseColor(
+                          themeResponse,
+                          index,
+                          updatedColor
+                        );
+                        setThemeResponse(updatedThemeResponse);
+                      }}
+                    />
+                  ))}
+              {/* <Button
+                type="button"
+                fullWidth
+                onClick={() =>
+                  form.insertListItem("colors", {
+                    friendlyName: "",
+                    name: "",
+                    hex: "",
+                    isDefault: false,
+                  })
+                }
+              >
+                Add Colour
+              </Button> */}
+              <Title order={4}>Fonts</Title>
+              <Select
+                label="Family"
+                placeholder="Type to search"
+                value={themeResponse?.fonts[0].fontFamily}
+                data={fonts.map((f) => f)}
+                onChange={(value) => {
+                  const updatedThemeResponse = updateThemeResponseFontFamily(
+                    themeResponse,
+                    value as string
+                  );
+                  setThemeResponse(updatedThemeResponse);
+                }}
+              />
+            </Stack>
+            <Stack sx={{ width: "100%" }}>
+              <Title order={4}>Preview</Title>
+              <Title order={6}>Button</Title>
+              <Title order={6}>Link</Title>
+              <Title order={6}>Navigation Pane</Title>
+            </Stack>
+          </Flex>
+        )}
         <Divider></Divider>
         <Group position="apart">
           <BackButton onClick={prevStep}></BackButton>
           <Flex gap="lg" align="end">
-            <Anchor onClick={nextStep}>I don’t have a website, skip</Anchor>
-            <NextButton
-              isSubmit
-              isLoading={isLoading}
-              disabled={isLoading}
-            ></NextButton>
+            {themeResponse ? (
+              <NextButton
+                onClick={next}
+                isLoading={isLoading}
+                disabled={isLoading}
+              ></NextButton>
+            ) : (
+              <>
+                <Anchor onClick={nextStep}>I don’t have a website, skip</Anchor>
+                <Button
+                  type="submit"
+                  loading={isLoading}
+                  disabled={websiteUrl === ""}
+                >
+                  Get Brand
+                </Button>
+              </>
+            )}
           </Flex>
         </Group>
       </Stack>

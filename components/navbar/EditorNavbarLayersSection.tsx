@@ -46,6 +46,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
 
   const handleSelection = (id: string) => {
     if (id !== "root") {
+      console.log(id);
       setSelectedComponentId(id as string);
     }
   };
@@ -84,7 +85,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     <>
       <Card
         ref={ref}
-        p={`0 ${15 * level}px`}
+        p={`0 ${15 * (level - 1)}px`}
         w="100%"
         bg={hovered ? "gray.1" : undefined}
         style={{
@@ -101,40 +102,42 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
         }}
       >
         <Group position="apart" noWrap>
-          <Group spacing={4} noWrap w="100%">
-            <ActionIcon
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                toggle();
-              }}
-              sx={{
-                visibility: canExpand ? "visible" : "hidden",
-                pointerEvents: canExpand ? "all" : "none",
-                width: canExpand ? "auto" : 0,
-                minWidth: canExpand ? "auto" : 0,
-                cursor: "pointer",
-              }}
-            >
-              <IconChevronDown
-                size={ICON_SIZE}
-                style={{
-                  transition: "transform 200ms ease",
-                  transform: opened ? `none` : "rotate(-90deg)",
+          {component.id !== "root" && (
+            <Group spacing={4} noWrap w="100%">
+              <ActionIcon
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggle();
                 }}
-              />
-            </ActionIcon>
-            {component.id !== "root" && icon}
-            <Text
-              id={`layer-${component.id}`}
-              size="xs"
-              lineClamp={1}
-              sx={{ cursor: "move", width: "100%" }}
-              {...draggable}
-            >
-              {component.id === "root" ? "Body" : component.name}
-            </Text>
-          </Group>
+                sx={{
+                  visibility: canExpand ? "visible" : "hidden",
+                  pointerEvents: canExpand ? "all" : "none",
+                  width: canExpand ? "auto" : 0,
+                  minWidth: canExpand ? "auto" : 0,
+                  cursor: "pointer",
+                }}
+              >
+                <IconChevronDown
+                  size={ICON_SIZE}
+                  style={{
+                    transition: "transform 200ms ease",
+                    transform: opened ? `none` : "rotate(-90deg)",
+                  }}
+                />
+              </ActionIcon>
+              {component.id !== "root" && icon}
+              <Text
+                id={`layer-${component.id}`}
+                size="xs"
+                lineClamp={1}
+                sx={{ cursor: "move", width: "100%" }}
+                {...draggable}
+              >
+                {component.id === "root" ? "Body" : component.name}
+              </Text>
+            </Group>
+          )}
         </Group>
       </Card>
       <Collapse

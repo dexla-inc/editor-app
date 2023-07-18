@@ -1,4 +1,4 @@
-import { getPageEventSource } from "@/requests/ai/queries";
+import { postPageEventSource } from "@/requests/ai/queries";
 import { StreamTypes } from "@/requests/ai/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
@@ -235,7 +235,7 @@ export const GenerateAIButton = ({
       }
     };
 
-    getPageEventSource(
+    postPageEventSource(
       projectId,
       pageTitle,
       onMessage,
@@ -303,6 +303,7 @@ export const GenerateAIButton = ({
             required
             value={description}
             onChange={(event) => setDescription(event.currentTarget.value)}
+            autosize
           />
           <Button
             leftIcon={<IconSparkles size={ICON_SIZE} />}
