@@ -303,6 +303,7 @@ export const GenerateAIButton = ({
             required
             value={description}
             onChange={(event) => setDescription(event.currentTarget.value)}
+            autosize
           />
           <Button
             leftIcon={<IconSparkles size={ICON_SIZE} />}

@@ -1,5 +1,6 @@
 import { getChatHistoryList } from "@/requests/ai/queries";
-import { ICON_SIZE } from "@/utils/config";
+import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
+import TOML from "@iarna/toml";
 import {
   ActionIcon,
   Badge,
@@ -9,13 +10,19 @@ import {
   Modal,
   Stack,
   Table,
+  Tabs,
   Text,
   Tooltip,
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Prism } from "@mantine/prism";
-import { IconBrandHipchat, IconCopy } from "@tabler/icons-react";
+import {
+  IconBrandHipchat,
+  IconCopy,
+  IconJson,
+  IconToml,
+} from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { buttonHoverStyles } from "./styles/buttonHoverStyles";
@@ -77,9 +84,49 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
           <Flex justify="space-between">
             {contentOpened[element.id] ? (
               <Collapse in={contentOpened[element.id]}>
-                <Prism language="tsx" noCopy>
-                  {element.content}
-                </Prism>
+                {element.role === "ASSISTANT" ? (
+                  <Tabs
+                    variant="pills"
+                    defaultValue="json"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }}
+                  >
+                    <Tabs.List>
+                      <Tabs.Tab
+                        value="json"
+                        icon={<IconJson size={LARGE_ICON_SIZE} />}
+                      ></Tabs.Tab>
+                      <Tabs.Tab
+                        value="toml"
+                        icon={<IconToml size={LARGE_ICON_SIZE} />}
+                      ></Tabs.Tab>
+                    </Tabs.List>
+                    <Tabs.Panel value="json" pt="xs">
+                      <Prism language="json" noCopy>
+                        {(() => {
+                          try {
+                            const json = TOML.parse(element.content);
+                            return JSON.stringify(json, null, 2);
+                          } catch {
+                            return element.content;
+                          }
+                        })()}
+                      </Prism>
+                    </Tabs.Panel>
+
+                    <Tabs.Panel value="toml" pt="xs">
+                      <Prism language="tsx" noCopy>
+                        {element.content}
+                      </Prism>
+                    </Tabs.Panel>
+                  </Tabs>
+                ) : (
+                  <Prism language="tsx" noCopy>
+                    {element.content}
+                  </Prism>
+                )}
               </Collapse>
             ) : (
               <Text>
