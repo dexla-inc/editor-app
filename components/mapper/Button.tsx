@@ -11,10 +11,6 @@ type Props = {
 export const Button = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;
 
-  console.log({ renderTree });
-  console.log({ component });
-  console.log({ props });
-
   return (
     <MantineButton {...props} {...componentProps}>
       {component.children && component.children.length > 0
