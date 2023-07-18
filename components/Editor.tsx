@@ -57,6 +57,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const setEditorTree = useEditorStore((state) => state.setTree);
   const editorTheme = useEditorStore((state) => state.theme);
   const pages = useEditorStore((state) => state.pages);
+  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const isLoading = useAppStore((state) => state.isLoading);
@@ -289,32 +290,36 @@ export const Editor = ({ projectId, pageId }: Props) => {
       <Shell
         pos="relative"
         navbar={
-          <Navbar
-            width={{ base: NAVBAR_WIDTH }}
-            sx={{
-              height: `calc(100% - ${HEADER_HEIGHT}px)`,
-            }}
-          >
-            <Navbar.Section grow component={ScrollArea}>
-              <Box py="sm">
-                <EditorNavbarSections />
-              </Box>
-            </Navbar.Section>
-          </Navbar>
+          !isPreviewMode ? (
+            <Navbar
+              width={{ base: NAVBAR_WIDTH }}
+              sx={{
+                height: `calc(100% - ${HEADER_HEIGHT}px)`,
+              }}
+            >
+              <Navbar.Section grow component={ScrollArea}>
+                <Box py="sm">
+                  <EditorNavbarSections />
+                </Box>
+              </Navbar.Section>
+            </Navbar>
+          ) : undefined
         }
         aside={
-          <Aside
-            width={{ base: NAVBAR_WIDTH }}
-            sx={{
-              height: `calc(100% - ${HEADER_HEIGHT}px)`,
-            }}
-          >
-            <Aside.Section grow component={ScrollArea}>
-              <Box py="sm">
-                <EditorAsideSections />
-              </Box>
-            </Aside.Section>
-          </Aside>
+          !isPreviewMode ? (
+            <Aside
+              width={{ base: NAVBAR_WIDTH }}
+              sx={{
+                height: `calc(100% - ${HEADER_HEIGHT}px)`,
+              }}
+            >
+              <Aside.Section grow component={ScrollArea}>
+                <Box py="sm">
+                  <EditorAsideSections />
+                </Box>
+              </Aside.Section>
+            </Aside>
+          ) : undefined
         }
       >
         <Global

@@ -11,6 +11,7 @@ type Props = {
 export const Title = ({ renderTree, component, ...props }: Props) => {
   const ref = useRef<HTMLDivElement>();
   const [isEditable, setIsEditable] = useState(false);
+  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent
   );
@@ -18,21 +19,25 @@ export const Title = ({ renderTree, component, ...props }: Props) => {
 
   const handleDoubleClick = (e: any) => {
     e.preventDefault();
-    setIsEditable(true);
+    if (!isPreviewMode) {
+      setIsEditable(true);
+    }
   };
 
   const handleBlur = (e: any) => {
     e.preventDefault();
-    setIsEditable(false);
-    updateTreeComponent(component.id!, {
-      children: ref.current?.innerText,
-    });
+    if (!isPreviewMode) {
+      setIsEditable(false);
+      updateTreeComponent(component.id!, {
+        children: ref.current?.innerText,
+      });
+    }
   };
 
   return (
     <MantineTitle
       ref={ref}
-      contentEditable={isEditable}
+      contentEditable={!isPreviewMode && isEditable}
       onDoubleClick={handleDoubleClick}
       onBlur={handleBlur}
       {...props}

@@ -34,13 +34,13 @@ export const DroppableDraggable = ({
   children,
   component,
   customComponentModal,
-  ...props
 }: PropsWithChildren<Props>) => {
   const { hovered, ref } = useHover();
   const theme = useMantineTheme();
   const editorTree = useEditorStore((state) => state.tree);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
+  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId
   );
@@ -65,10 +65,10 @@ export const DroppableDraggable = ({
     currentWindow: iframeWindow,
   });
 
-  const isSelected = selectedComponentId === id;
+  const isSelected = selectedComponentId === id && !isPreviewMode;
 
   const baseBorder = `1px solid ${theme.colors.teal[6]}`;
-  const isOver = currentTargetId === id || hovered;
+  const isOver = (currentTargetId === id || hovered) && !isPreviewMode;
 
   const borders = isOver
     ? {
