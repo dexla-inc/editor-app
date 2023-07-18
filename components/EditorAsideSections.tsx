@@ -11,6 +11,7 @@ import * as TitleModifier from "@/components/modifiers/Title";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
 import { getComponentById } from "@/utils/editor";
+import { Box, Center, Text } from "@mantine/core";
 
 type SectionsMapper = {
   [key: string]: any;
@@ -34,19 +35,20 @@ export const EditorAsideSections = () => {
     (state) => state.selectedComponentId
   );
 
-  // const isContentWrapperSelected = selectedComponentId === "content-wrapper";
+  const isContentWrapperSelected = selectedComponentId === "content-wrapper";
 
-  // if (!selectedComponentId || isContentWrapperSelected) {
-  //   return (
-  //     <Box py="xl">
-  //       <Center>
-  //         <Text size="xs" color="dimmed" align="center">
-  //           Select a component to edit
-  //         </Text>
-  //       </Center>
-  //     </Box>
-  //   );
-  // }
+  if (!selectedComponentId || isContentWrapperSelected) {
+    return (
+      <Box py="xl">
+        <Center>
+          <Text size="xs" color="dimmed" align="center">
+            You are unable to edit this Content Wrapper. Select another
+            component to edit.
+          </Text>
+        </Center>
+      </Box>
+    );
+  }
 
   const selectComponent = getComponentById(
     editorTree.root,
