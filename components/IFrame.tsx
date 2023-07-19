@@ -59,9 +59,9 @@ export const IFrame = ({ children, ...props }: Props) => {
                 theme.fn.lighten(color.hex, 0.5),
                 theme.fn.lighten(color.hex, 0.4),
                 color.hex,
-                theme.fn.darken(color.hex, 0.6),
-                theme.fn.darken(color.hex, 0.7),
-                theme.fn.darken(color.hex, 0.8),
+                theme.fn.darken(color.hex, 0.1),
+                theme.fn.darken(color.hex, 0.2),
+                theme.fn.darken(color.hex, 0.3),
               ],
             };
           }, {}),

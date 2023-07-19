@@ -1,8 +1,7 @@
+import { defaultTheme } from "@/components/IFrame";
+import * as ChartStructure from "@/components/mapper/structure/charts/Chart";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
-import * as ChartStructure from "@/components/mapper/structure/charts/Chart";
-import { defaultTheme } from "@/components/IFrame";
-import { px } from "@mantine/core";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
@@ -15,10 +14,6 @@ export const jsonStructure = (props?: any): Component => {
     description: "LineChart Container",
     props: {
       style: {
-        marginTop: px(theme.spacing.xl),
-        marginBottom: px(theme.spacing.xl),
-        marginLeft: px(theme.spacing.xl),
-        marginRight: px(theme.spacing.xl),
         width: "100%",
         height: "auto",
         minHeight: "100px",

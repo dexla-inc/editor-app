@@ -1,3 +1,5 @@
+import { SizeSelector } from "@/components/SizeSelector";
+import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
@@ -5,7 +7,6 @@ import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
-import { SizeSelector } from "@/components/SizeSelector";
 
 export const icon = IconClick;
 export const label = "Button";
@@ -14,6 +15,7 @@ export const defaultInputValues = {
   value: "New Button",
   variant: "filled",
   size: "md",
+  color: "teal",
 };
 
 export const Modifier = () => {
@@ -40,11 +42,12 @@ export const Modifier = () => {
 
   useEffect(() => {
     if (selectedComponent) {
-      const { style = {}, children, size, variant } = componentProps;
+      const { style = {}, children, size, color, variant } = componentProps;
       form.setValues({
         value: children ?? defaultInputValues.value,
         variant: variant ?? defaultInputValues.variant,
         size: size ?? defaultInputValues.size,
+        color: color ?? defaultInputValues.color,
         ...style,
       });
     }
@@ -90,6 +93,16 @@ export const Modifier = () => {
             form.setFieldValue("size", value as string);
             debouncedTreeUpdate(selectedComponentId as string, {
               size: value,
+            });
+          }}
+        />
+        <ThemeColorSelector
+          label="Color"
+          {...form.getInputProps("color")}
+          onChange={(value: string) => {
+            form.setFieldValue("color", value);
+            debouncedTreeUpdate(selectedComponentId as string, {
+              color: value,
             });
           }}
         />

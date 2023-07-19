@@ -70,27 +70,23 @@ export const DroppableDraggable = ({
   const baseBorder = `1px solid ${theme.colors.teal[6]}`;
   const isOver = (currentTargetId === id || hovered) && !isPreviewMode;
 
-  const borders = isOver
+  const baseShadow = `0 0 0 1px ${theme.colors.teal[6]}`;
+
+  const shadows = isOver
     ? {
-        borderTop:
+        boxShadow:
           edge === "top"
-            ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
-            : baseBorder,
-        borderBottom:
-          edge === "bottom"
-            ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
-            : baseBorder,
-        borderLeft:
-          edge === "left"
-            ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
-            : baseBorder,
-        borderRight:
-          edge === "right"
-            ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
-            : baseBorder,
+            ? `inset 0 ${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+            : edge === "bottom"
+            ? `inset 0 -${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+            : edge === "left"
+            ? `inset ${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+            : edge === "right"
+            ? `inset -${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+            : baseShadow,
       }
     : isSelected
-    ? { border: baseBorder }
+    ? { boxShadow: baseShadow }
     : {};
 
   const isContentWrapper = id === "content-wrapper";
@@ -103,7 +99,7 @@ export const DroppableDraggable = ({
       pos="relative"
       sx={{
         width: component.props?.style?.width ?? "100%",
-        ...borders,
+        ...shadows,
       }}
       onClick={(e) => {
         e.preventDefault();
