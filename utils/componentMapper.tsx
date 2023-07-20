@@ -680,7 +680,8 @@ export type Modifiers =
   | "background"
   | "input"
   | "button"
-  | "title";
+  | "title"
+  | "image";
 
 export type ComponentDefinition = {
   Component: any;
@@ -875,7 +876,7 @@ export const componentMapper: ComponentMapper = {
       // eslint-disable-next-line jsx-a11y/alt-text
       <Image component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["image", "spacing", "size", "border"],
   },
   Divider: {
     Component: (props: { component: Component; renderTree: any }) => (

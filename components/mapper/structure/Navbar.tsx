@@ -1,4 +1,5 @@
 import { defaultTheme } from "@/components/IFrame";
+import { defaultImageValues } from "@/components/modifiers/Image";
 import { PageResponse } from "@/requests/pages/types";
 import { Component } from "@/utils/editor";
 import { IconHome } from "@tabler/icons-react";
@@ -7,7 +8,11 @@ import { nanoid } from "nanoid";
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
   const pages = props.pages ?? [];
-  const { value } = props.props ?? {};
+  const logoUrl =
+    theme.logoUrl ??
+    "https://www.kadencewp.com/wp-content/uploads/2020/10/alogo-2.svg";
+
+  console.log({ theme });
 
   return {
     id: nanoid(),
@@ -49,9 +54,12 @@ export const jsonStructure = (props?: any): Component => {
             props: {
               style: {
                 width: "150px",
-                height: "auto",
+                height: "50px",
+                ...defaultImageValues,
               },
-              src: "https://uploads-ssl.webflow.com/62a0c6d2136bdf9c8a2e41ef/6372524a20f971a3d46319ba_Logo.svg",
+              src:
+                logoUrl ??
+                "https://www.kadencewp.com/wp-content/uploads/2020/10/alogo-4.svg",
             },
             children: [],
             blockDroppingChildrenInside: true,
@@ -81,7 +89,6 @@ export const jsonStructure = (props?: any): Component => {
             display: "flex",
             flexDirection: "column",
             flexGrow: "1",
-            padding: "0",
           },
         },
         children: pages
@@ -101,10 +108,6 @@ export const jsonStructure = (props?: any): Component => {
                   height: "auto",
                   display: "flex",
                   alignItems: "center",
-                  paddingTop: theme.spacing.sm,
-                  paddingBottom: theme.spacing.sm,
-                  paddingLeft: theme.spacing.md,
-                  paddingRight: theme.spacing.md,
                 },
               },
               children: [],

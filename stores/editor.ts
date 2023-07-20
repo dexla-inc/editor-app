@@ -29,6 +29,11 @@ export const emptyEditorTree = {
   },
 };
 
+interface MantineThemeExtended extends MantineTheme {
+  logoUrl?: string;
+  faviconUrl?: string;
+}
+
 export type EditorState = {
   tree: EditorTree;
   currentProjectId?: string;
@@ -37,12 +42,12 @@ export type EditorState = {
   componentToAdd?: Component;
   iframeWindow?: Window;
   currentTargetId?: string;
-  theme: MantineTheme;
+  theme: MantineThemeExtended;
   isSaving: boolean;
   isPreviewMode: boolean;
   pages: PageResponse[];
   setPages: (pages: PageResponse[]) => void;
-  setTheme: (theme: MantineTheme) => void;
+  setTheme: (theme: MantineThemeExtended) => void;
   setIframeWindow: (iframeWindow: Window) => void;
   setCurrentTargetId: (currentTargetId?: string) => void;
   setTree: (tree: EditorTree, onLoad?: boolean) => void;

@@ -67,6 +67,8 @@ export const IFrame = ({ children, ...props }: Props) => {
           }, {}),
         },
         primaryColor: "Primary",
+        logoUrl: userTheme.data?.logoUrl,
+        faviconUrl: userTheme.data?.faviconUrl,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -2,8 +2,8 @@ import { Shell } from "@/components/AppShell";
 import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { Droppable } from "@/components/Droppable";
 import { DroppableDraggable } from "@/components/DroppableDraggable";
-import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { IFrame } from "@/components/IFrame";
+import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import { postPageEventSource } from "@/requests/ai/queries";
@@ -254,6 +254,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
         };
 
         const onClose = async () => {
+          // check for show navigation flag if true then show navigation by calling addComponent, also where and root. Id as root
+
           stopLoading({
             id: "page-generation",
             title: "Page Generated",
