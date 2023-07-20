@@ -19,6 +19,8 @@ export type UpdatePageBody = {
   isHome: boolean;
   authenticatedOnly: boolean;
   authenticatedUserRole?: string;
+  parentPageId?: string;
+  hasNavigation: boolean;
 };
 
 export type PagesResponse = {

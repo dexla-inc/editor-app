@@ -19,6 +19,7 @@ import { Icon } from "@/components/mapper/Icon";
 import { Image } from "@/components/mapper/Image";
 import { Input } from "@/components/mapper/Input";
 import { Link } from "@/components/mapper/Link";
+import { NavLink } from "@/components/mapper/NavLink";
 import { Navbar } from "@/components/mapper/Navbar";
 import { Pagination } from "@/components/mapper/Pagination";
 import { Radio } from "@/components/mapper/Radio";
@@ -55,6 +56,7 @@ import * as IconStructure from "@/components/mapper/structure/Icon";
 import * as ImageStructure from "@/components/mapper/structure/Image";
 import * as InputStructure from "@/components/mapper/structure/Input";
 import * as LinkStructure from "@/components/mapper/structure/Link";
+import * as NavLinkStructure from "@/components/mapper/structure/NavLink";
 import * as NavbarStructure from "@/components/mapper/structure/Navbar";
 import * as NotImplemented from "@/components/mapper/structure/NotImplemented";
 import * as PaginationStructure from "@/components/mapper/structure/Pagination";
@@ -72,7 +74,9 @@ import * as BarChartStructure from "@/components/mapper/structure/charts/BarChar
 import * as LineChartStructure from "@/components/mapper/structure/charts/LineChart";
 import * as PieChartStructure from "@/components/mapper/structure/charts/PieChart";
 import * as RadarChartStructure from "@/components/mapper/structure/charts/RadarChart";
+import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
+
 import {
   IconBrandChrome,
   IconBread,
@@ -114,7 +118,6 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 import { FileWithPath } from "file-selector";
-import { ICON_SIZE, LARGE_ICON_SIZE } from "./config";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -180,6 +183,17 @@ export const structureMapper: StructureMapper = {
     Draggable: () => (
       <DraggableComponent
         id="Button"
+        icon={<IconClick size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconClick size={ICON_SIZE} />,
+  },
+  NavLink: {
+    structure: (props: any) => NavLinkStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="NavLink"
         icon={<IconClick size={LARGE_ICON_SIZE} />}
       />
     ),
@@ -751,6 +765,13 @@ export const componentMapper: ComponentMapper = {
   Link: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Link component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size", "border"],
+  },
+
+  NavLink: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <NavLink component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
   },
