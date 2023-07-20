@@ -7,7 +7,9 @@ type Props = {
 } & RadioProps;
 
 export const Radio = ({ renderTree, component, ...props }: Props) => {
-  const { label, ...componentProps } = component.props as any;
+  const { label, value, ...componentProps } = component.props as any;
 
-  return <MantineRadio {...props} {...componentProps} label={label} />;
+  return (
+    <MantineRadio {...props} {...componentProps} label={label} value={value} />
+  );
 };

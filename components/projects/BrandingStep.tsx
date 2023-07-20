@@ -5,6 +5,9 @@ import NextButton from "@/components/NextButton";
 import { saveTheme } from "@/requests/themes/mutations";
 import { getTheme } from "@/requests/themes/queries";
 import { Color, ThemeResponse } from "@/requests/themes/types";
+import { useEditorStore } from "@/stores/editor";
+import { componentMapper } from "@/utils/componentMapper";
+import { ICON_SIZE } from "@/utils/config";
 import {
   LoadingStore,
   NextStepperClickEvent,
@@ -12,12 +15,14 @@ import {
   fonts,
   isWebsite,
 } from "@/utils/dashboardTypes";
+import { Component } from "@/utils/editor";
 import {
   Anchor,
   Button,
   Divider,
   Flex,
   Group,
+  MantineProvider,
   Select,
   Stack,
   TextInput,
@@ -25,9 +30,9 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { SetStateAction, useState } from "react";
-// import { Button as ButtonPreview } from "@/components/mapper/Button";
-// import * as ButtonStructure from "@/components/mapper/structure/Button";
+import { IconBrush } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
+import { SetStateAction, useEffect, useState } from "react";
 
 export interface BrandingStepProps
   extends LoadingStore,
@@ -93,6 +98,52 @@ export default function BrandingStep({
   const [websiteUrlError, setWebsiteUrlError] = useState("");
   const mantineTheme = useMantineTheme();
 
+  const renderTree = (component: Component) => {
+    const componentToRender = componentMapper[component.name];
+
+    return componentToRender?.Component({ component, renderTree });
+  };
+
+  const buttonComponent = componentMapper["Button"];
+  const linkComponent = componentMapper["Link"];
+  const theme = useEditorStore((state) => state.theme);
+  const setTheme = useEditorStore((state) => state.setTheme);
+
+  const userTheme = useQuery({
+    queryKey: ["theme"],
+    queryFn: () => getTheme(projectId),
+    enabled: !!themeResponse,
+  });
+
+  useEffect(() => {
+    if (userTheme.isFetched) {
+      setTheme({
+        ...theme,
+        colors: {
+          ...theme.colors,
+          ...themeResponse?.colors.reduce((userColors, color) => {
+            return {
+              ...userColors,
+              [color.name]: [
+                theme.fn.lighten(color.hex, 0.9),
+                theme.fn.lighten(color.hex, 0.8),
+                theme.fn.lighten(color.hex, 0.7),
+                theme.fn.lighten(color.hex, 0.6),
+                theme.fn.lighten(color.hex, 0.5),
+                theme.fn.lighten(color.hex, 0.4),
+                color.hex,
+                theme.fn.darken(color.hex, 0.1),
+                theme.fn.darken(color.hex, 0.2),
+                theme.fn.darken(color.hex, 0.3),
+              ],
+            };
+          }, {}),
+        },
+        primaryColor: "Primary",
+      });
+    }
+  }, [userTheme.isFetched, setTheme, themeResponse]);
+
   const form = useForm({
     initialValues: {
       websiteUrl: "",
@@ -104,7 +155,6 @@ export default function BrandingStep({
   });
 
   const next = async () => {
-    // console.log({ themeResponse });
     try {
       setIsLoading && setIsLoading(true);
       startLoading({
@@ -147,7 +197,8 @@ export default function BrandingStep({
         message: "Wait while we get your brand",
       });
 
-      const theme = await getTheme(projectId, values.websiteUrl);
+      const theme = await getTheme(projectId, websiteUrl);
+
       setThemeResponse(theme);
 
       stopLoading({
@@ -206,20 +257,26 @@ export default function BrandingStep({
                       isDefault={themeResponse.colors[index].isDefault}
                       mantineTheme={mantineTheme}
                       onValueChange={(value) => {
-                        const updatedColor = {
-                          ...themeResponse.colors[index],
-                          friendlyName: value.friendlyName,
-                          hex: value.hex,
-                          name: !themeResponse.colors[index].isDefault
-                            ? value.friendlyName
-                            : themeResponse.colors[index].name,
-                        };
-                        const updatedThemeResponse = updateThemeResponseColor(
-                          themeResponse,
-                          index,
-                          updatedColor
-                        );
-                        setThemeResponse(updatedThemeResponse);
+                        setThemeResponse((prevThemeResponse) => {
+                          if (!prevThemeResponse) {
+                            return prevThemeResponse;
+                          }
+
+                          const updatedColor = {
+                            ...prevThemeResponse.colors[index],
+                            friendlyName: value.friendlyName,
+                            hex: value.hex,
+                            name: !prevThemeResponse.colors[index].isDefault
+                              ? value.friendlyName
+                              : prevThemeResponse.colors[index].name,
+                          };
+
+                          return updateThemeResponseColor(
+                            prevThemeResponse,
+                            index,
+                            updatedColor
+                          );
+                        });
                       }}
                     />
                   ))}
@@ -255,8 +312,20 @@ export default function BrandingStep({
             <Stack sx={{ width: "100%" }}>
               <Title order={4}>Preview</Title>
               <Title order={6}>Button</Title>
+              <MantineProvider withNormalizeCSS theme={theme}>
+                {buttonComponent.Component({
+                  component: { props: { children: <>Button Preview</> } },
+                  renderTree,
+                })}
+              </MantineProvider>
+
               <Title order={6}>Link</Title>
-              <Title order={6}>Navigation Pane</Title>
+              <MantineProvider withNormalizeCSS theme={theme}>
+                {linkComponent.Component({
+                  component: { props: { children: <>Link Preview</> } },
+                  renderTree,
+                })}
+              </MantineProvider>
             </Stack>
           </Flex>
         )}
@@ -264,23 +333,22 @@ export default function BrandingStep({
         <Group position="apart">
           <BackButton onClick={prevStep}></BackButton>
           <Flex gap="lg" align="end">
-            {themeResponse ? (
+            <Anchor onClick={nextStep}>I don’t have a website, skip</Anchor>
+            <Button
+              type="submit"
+              variant="light"
+              loading={isLoading}
+              disabled={websiteUrl === ""}
+              leftIcon={<IconBrush size={ICON_SIZE} />}
+            >
+              {themeResponse ? "Refetch Brand" : "Get Brand"}
+            </Button>
+            {themeResponse && (
               <NextButton
                 onClick={next}
                 isLoading={isLoading}
                 disabled={isLoading}
               ></NextButton>
-            ) : (
-              <>
-                <Anchor onClick={nextStep}>I don’t have a website, skip</Anchor>
-                <Button
-                  type="submit"
-                  loading={isLoading}
-                  disabled={websiteUrl === ""}
-                >
-                  Get Brand
-                </Button>
-              </>
             )}
           </Flex>
         </Group>
