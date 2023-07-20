@@ -23,7 +23,7 @@ import {
   IconNewSection,
 } from "@tabler/icons-react";
 import { Router, useRouter } from "next/router";
-import { Children, PropsWithChildren, cloneElement, useEffect } from "react";
+import { PropsWithChildren, cloneElement, useEffect } from "react";
 
 type Props = {
   id: string;
@@ -122,6 +122,18 @@ export const DroppableDraggable = ({
   const isContentWrapper = id === "content-wrapper";
   const haveNonRootParent = parent && parent.id !== "root";
 
+  // Whitelist certain props that can be passed down
+  const styleWhitelist = ["display", "flexDirection", "flexGrow"];
+  const filteredProps = {
+    ...component.props,
+    style: Object.keys(component.props?.style || {}).reduce((newStyle, key) => {
+      if (styleWhitelist.includes(key)) {
+        newStyle[key] = component.props?.style[key];
+      }
+      return newStyle;
+    }, {} as Record<string, unknown>),
+  };
+
   return (
     <Box
       ref={ref}
@@ -136,6 +148,7 @@ export const DroppableDraggable = ({
         e.stopPropagation();
         setSelectedComponentId(id);
       }}
+      {...filteredProps}
     >
       <Box
         w="100%"

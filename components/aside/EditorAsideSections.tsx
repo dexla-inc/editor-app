@@ -1,8 +1,9 @@
-import { useState } from "react";
 import { SidebarSection } from "@/components/SidebarSection";
+import { ActionsForm } from "@/components/actions/ActionsForm";
 import * as BackgroundModifier from "@/components/modifiers/Background";
 import * as BorderModifier from "@/components/modifiers/Border";
 import * as ButtonModifier from "@/components/modifiers/Button";
+import * as ImageModifier from "@/components/modifiers/Image";
 import * as InputModifier from "@/components/modifiers/Input";
 import * as LayoutModifier from "@/components/modifiers/Layout";
 import * as SizeModifier from "@/components/modifiers/Size";
@@ -10,13 +11,13 @@ import * as SpacingModifier from "@/components/modifiers/Spacing";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TitleModifier from "@/components/modifiers/Title";
 import { useEditorStore } from "@/stores/editor";
+import { Action, actionMapper } from "@/utils/actions";
 import { componentMapper } from "@/utils/componentMapper";
 import { getComponentById } from "@/utils/editor";
 import { Box, Center, SegmentedControl, Stack, Text } from "@mantine/core";
-import { ActionsForm } from "@/components/actions/ActionsForm";
-import { Action, actionMapper } from "@/utils/actions";
-import startCase from "lodash.startcase";
 import { IconBolt } from "@tabler/icons-react";
+import startCase from "lodash.startcase";
+import { useState } from "react";
 
 type SectionsMapper = {
   [key: string]: any;
@@ -32,6 +33,7 @@ const sectionMapper: SectionsMapper = {
   input: InputModifier,
   button: ButtonModifier,
   title: TitleModifier,
+  image: ImageModifier,
 };
 
 type Tab = "design" | "actions";
