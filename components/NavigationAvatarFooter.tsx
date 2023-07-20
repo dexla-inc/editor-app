@@ -8,12 +8,14 @@ import {
   rem,
   useMantineTheme,
 } from "@mantine/core";
-import { User } from "@propelauth/react";
 import { IconChevronRight } from "@tabler/icons-react";
 import { forwardRef } from "react";
 
 type NavigationAvatarFooterProps = {
-  user: User | null | undefined;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  pictureUrl?: string;
 };
 
 const NavigationAvatarFooter = forwardRef<
@@ -31,6 +33,7 @@ const NavigationAvatarFooter = forwardRef<
             ? theme.colors.dark[4]
             : theme.colors.gray[2]
         }`,
+        width: "100%",
       }}
       {...props}
     >
@@ -51,17 +54,20 @@ const NavigationAvatarFooter = forwardRef<
           },
         }}
       >
-        {props.user && (
+        {(props.firstName ||
+          props.lastName ||
+          props.email ||
+          props.pictureUrl) && (
           <Flex py="xs" align="center" gap="xs">
-            <Avatar src={props.user?.pictureUrl} radius="xl" />
+            <Avatar src={props?.pictureUrl} radius="xl" />
             <Box sx={{ flex: 1 }}>
-              {props.user?.firstName && props.user.lastName && (
+              {props?.firstName && props.lastName && (
                 <Text size="sm" weight={500}>
-                  {`${props.user?.firstName} ${props.user?.lastName}`}
+                  {`${props?.firstName} ${props?.lastName}`}
                 </Text>
               )}
               <Text color="dimmed" size="xs">
-                {props.user?.email}
+                {props?.email}
               </Text>
             </Box>
             {<IconChevronRight size={ICON_SIZE} />}

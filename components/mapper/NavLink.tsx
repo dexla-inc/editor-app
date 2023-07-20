@@ -1,6 +1,6 @@
 import { Component } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
-import { IconChevronRight, IconHome } from "@tabler/icons-react";
+import { IconChevronRight } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 
 type Props = {
@@ -18,12 +18,11 @@ export const NavLink = ({ renderTree, component, ...props }: Props) => {
 
   return (
     <MantineNavLink
-      icon={<IconHome size="1rem" stroke={1.5} />}
       rightSection={
         isNested ? <IconChevronRight size="0.8rem" stroke={1.5} /> : null
       }
       active={active}
-      variant={active ? "filled" : "light"}
+      variant="light"
       {...props}
       {...componentProps}
     />

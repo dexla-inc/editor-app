@@ -1,5 +1,6 @@
 import { defaultTheme } from "@/components/IFrame";
 import { Component } from "@/utils/editor";
+import { IconHome } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -11,6 +12,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Navigation Item",
     props: {
       label: "Navigation Item",
+      icon: <IconHome size="1rem" stroke={1.5} />,
       style: {
         width: "auto",
         height: "auto",

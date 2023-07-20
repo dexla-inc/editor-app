@@ -82,7 +82,12 @@ export default function DashboardNavbar({
       <Navbar.Section>
         <Menu width={250} withArrow>
           <Menu.Target>
-            <NavigationAvatarFooter user={user} />
+            <NavigationAvatarFooter
+              firstName={user?.firstName}
+              lastName={user?.lastName}
+              email={user?.email}
+              pictureUrl={user?.pictureUrl}
+            />
           </Menu.Target>
           <Menu.Dropdown>
             <Menu.Label>Account</Menu.Label>
