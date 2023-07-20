@@ -47,6 +47,11 @@ export const ColorSelector = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [friendlyName, hex]);
 
+  useEffect(() => {
+    setHex(fetchedHex);
+    setFriendlyName(fetchedFriendlyName);
+  }, [fetchedHex, fetchedFriendlyName]);
+
   return (
     <Flex align="center">
       <Popover withArrow zIndex="20">

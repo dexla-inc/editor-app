@@ -36,7 +36,7 @@ export const Shell = ({
   children,
   navbar,
   aside,
-  navbarType = "editor",
+  navbarType,
   user,
 }: ShellProps) => {
   // This state needs to move to the parent component

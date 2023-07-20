@@ -28,8 +28,6 @@ import { Switch } from "@/components/mapper/Switch";
 import { Tab } from "@/components/mapper/Tab";
 import { Table } from "@/components/mapper/Table";
 import { Tabs } from "@/components/mapper/Tabs";
-import { TabsList } from "@/components/mapper/TabsList";
-import { TabsPanel } from "@/components/mapper/TabsPanel";
 import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";
 import { Title } from "@/components/mapper/Title";
@@ -66,8 +64,6 @@ import * as SelectStructure from "@/components/mapper/structure/Select";
 import * as SwitchStructure from "@/components/mapper/structure/Switch";
 import * as TableStructure from "@/components/mapper/structure/Table";
 import * as TabsStructure from "@/components/mapper/structure/Tabs";
-import * as TabsListStructure from "@/components/mapper/structure/TabsList";
-import * as TabsPanelStructure from "@/components/mapper/structure/TabsPanel";
 import * as TextStructure from "@/components/mapper/structure/Text";
 import * as TextareaStructure from "@/components/mapper/structure/Textarea";
 import * as TitleStructure from "@/components/mapper/structure/Title";
@@ -97,7 +93,6 @@ import {
   IconForms,
   IconHeading,
   IconJewishStar,
-  IconLayersDifference,
   IconLayoutBottombarCollapse,
   IconLayoutKanban,
   IconLayoutNavbar,
@@ -418,28 +413,7 @@ export const structureMapper: StructureMapper = {
     structure: (props: any) => NotImplemented.jsonStructure(props),
     category: "Data Display",
   },
-  TabsList: {
-    structure: (props: any) => TabsListStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="TabsList"
-        icon={<IconLayersDifference size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-    icon: <IconLayersDifference size={ICON_SIZE} />,
-  },
-  TabsPanel: {
-    structure: (props: any) => TabsPanelStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="TabsPanel"
-        icon={<IconLayersDifference size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Data Display",
-    icon: <IconLayersDifference size={ICON_SIZE} />,
-  },
+
   Accordion: {
     structure: (props: any) => AccordionStructure.jsonStructure(props),
     Draggable: () => (
@@ -484,6 +458,28 @@ export const structureMapper: StructureMapper = {
     category: "Navigation",
     icon: <IconLayoutSidebar size={ICON_SIZE} />,
   },
+  AppBar: {
+    structure: (props: any) => AppBarStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="AppBar"
+        icon={<IconLayoutNavbar size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Navigation",
+    icon: <IconLayoutNavbar size={ICON_SIZE} />,
+  },
+  Breadcrumb: {
+    structure: (props: any) => Breadcrumbs.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Breadcrumb"
+        icon={<IconBread size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Navigation",
+    icon: <IconBread size={ICON_SIZE} />,
+  },
   Pagination: {
     structure: (props: any) => PaginationStructure.jsonStructure(props),
     Draggable: () => (
@@ -505,28 +501,6 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Data Display",
     icon: <IconRowInsertBottom size={ICON_SIZE} />,
-  },
-  Breadcrumb: {
-    structure: (props: any) => Breadcrumbs.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Breadcrumb"
-        icon={<IconBread size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Navigation",
-    icon: <IconBread size={ICON_SIZE} />,
-  },
-  AppBar: {
-    structure: (props: any) => AppBarStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="AppBar"
-        icon={<IconLayoutNavbar size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Navigation",
-    icon: <IconLayoutNavbar size={ICON_SIZE} />,
   },
   Carousel: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
@@ -896,30 +870,6 @@ export const componentMapper: ComponentMapper = {
         renderTree={props.renderTree}
         // eslint-disable-next-line react/no-children-prop
         children={props.component.children as any}
-      />
-    ),
-    modifiers: ["spacing", "size", "border"],
-  },
-  TabsList: {
-    Component: (props: { component: Component; renderTree: any }) => (
-      <TabsList
-        component={props.component}
-        renderTree={props.renderTree}
-        defaultValue="first"
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-      />
-    ),
-    modifiers: ["spacing", "size", "border"],
-  },
-  TabsPanel: {
-    Component: (props: { component: Component; renderTree: any }) => (
-      <TabsPanel
-        component={props.component}
-        renderTree={props.renderTree}
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-        value="first"
       />
     ),
     modifiers: ["spacing", "size", "border"],

@@ -13,11 +13,12 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       defaultValue: "first",
       style: {
-        width: "auto",
+        width: "100%",
         height: "auto",
       },
       ...(props.props || {}),
     },
+    blockDroppingChildrenInside: true,
     children: [
       {
         id: nanoid(),
@@ -29,6 +30,7 @@ export const jsonStructure = (props?: any): Component => {
             height: "auto",
           },
         },
+        blockDroppingChildrenInside: true,
         children: [
           {
             id: nanoid(),
@@ -41,6 +43,7 @@ export const jsonStructure = (props?: any): Component => {
                 height: "auto",
               },
             },
+            blockDroppingChildrenInside: true,
             children: [
               {
                 id: nanoid(),
@@ -74,6 +77,7 @@ export const jsonStructure = (props?: any): Component => {
                 height: "auto",
               },
             },
+            blockDroppingChildrenInside: true,
             children: [
               {
                 id: nanoid(),
@@ -117,7 +121,7 @@ export const jsonStructure = (props?: any): Component => {
             description: "Tab Text",
             children: [],
             props: {
-              children: "First Tab",
+              children: "First Tab Content",
               color: `${theme.colors.Black ? "Black.6" : "dark"}`,
               style: {
                 fontSize: `${px(theme.fontSizes.sm)}px`,
@@ -126,6 +130,7 @@ export const jsonStructure = (props?: any): Component => {
                 letterSpacing: "0px",
                 width: "auto",
                 height: "auto",
+                padding: theme.spacing.md,
               },
             },
             blockDroppingChildrenInside: true,
@@ -151,7 +156,7 @@ export const jsonStructure = (props?: any): Component => {
             description: "Tab Text",
             children: [],
             props: {
-              children: "Second Tab",
+              children: "Second Tab Content",
               color: `${theme.colors.Black ? "Black.6" : "dark"}`,
               style: {
                 fontSize: `${px(theme.fontSizes.sm)}px`,
@@ -160,6 +165,7 @@ export const jsonStructure = (props?: any): Component => {
                 letterSpacing: "0px",
                 width: "auto",
                 height: "auto",
+                padding: theme.spacing.md,
               },
             },
             blockDroppingChildrenInside: true,

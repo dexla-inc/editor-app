@@ -1,5 +1,5 @@
 import { Component } from "@/utils/editor";
-import { Box as MantineBox, BoxProps } from "@mantine/core";
+import { BoxProps, Box as MantineBox } from "@mantine/core";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -11,6 +11,14 @@ export const Navbar = ({ renderTree, component, ...props }: Props) => {
 
   return (
     <MantineBox {...props} {...componentProps}>
+      {/* <Flex align="center" justify="space-between" mb="lg">
+        <Image
+          alt="logo"
+          src="https://uploads-ssl.webflow.com/62a0c6d2136bdf9c8a2e41ef/6372524a20f971a3d46319ba_Logo.svg"
+          sx={{ maxWidth: 155 }}
+        />
+        <IconArrowBarLeft />
+      </Flex> */}
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))
         : children}

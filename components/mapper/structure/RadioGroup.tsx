@@ -4,13 +4,14 @@ import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
+  const radioGroupId = nanoid();
 
   return {
-    id: nanoid(),
-    name: "Radio",
+    id: radioGroupId,
+    name: "RadioGroup",
     description: "Radio Group",
     props: {
-      label: "Radio Label",
+      name: radioGroupId,
       style: {
         width: "100%",
         height: "auto",
@@ -26,9 +27,9 @@ export const jsonStructure = (props?: any): Component => {
             { key: 3, value: "Yttrium" },
           ],
           blockDroppingChildrenInside: true,
+          ...(props.props || {}),
         },
       ],
-      ...(props.props || {}),
     },
   };
 };

@@ -10,6 +10,7 @@ import {
 } from "@/utils/editor";
 import { MantineTheme } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
+import debounce from "lodash.debounce";
 import isEqual from "lodash.isequal";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
@@ -60,6 +61,8 @@ export type EditorState = {
   togglePreviewMode: (value: boolean) => void;
 };
 
+const debouncedUpdatePageState = debounce(updatePageState, 2000);
+
 // creates a store with undo/redo capability
 export const useEditorStore = create<EditorState>()(
   temporal(
@@ -75,7 +78,7 @@ export const useEditorStore = create<EditorState>()(
       setTree: (tree, onLoad) => {
         set((state) => {
           !onLoad &&
-            updatePageState(
+            debouncedUpdatePageState(
               encodeSchema(JSON.stringify(tree)),
               state.currentProjectId ?? "",
               state.currentPageId ?? "",
@@ -91,7 +94,7 @@ export const useEditorStore = create<EditorState>()(
         set((state) => {
           const copy = cloneDeep(state.tree);
           updateTreeComponent(copy.root, componentId, props);
-          updatePageState(
+          debouncedUpdatePageState(
             encodeSchema(JSON.stringify(copy)),
             state.currentProjectId ?? "",
             state.currentPageId ?? "",
@@ -107,7 +110,7 @@ export const useEditorStore = create<EditorState>()(
         set((state) => {
           const copy = cloneDeep(state.tree);
           updateTreeComponentChildren(copy.root, componentId, children);
-          updatePageState(
+          debouncedUpdatePageState(
             encodeSchema(JSON.stringify(copy)),
             state.currentProjectId ?? "",
             state.currentPageId ?? "",
