@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { SidebarSection } from "@/components/SidebarSection";
 import * as BackgroundModifier from "@/components/modifiers/Background";
 import * as BorderModifier from "@/components/modifiers/Border";
@@ -11,7 +12,11 @@ import * as TitleModifier from "@/components/modifiers/Title";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
 import { getComponentById } from "@/utils/editor";
-import { Box, Center, Text } from "@mantine/core";
+import { Box, Center, SegmentedControl, Stack, Text } from "@mantine/core";
+import { ActionsForm } from "@/components/actions/ActionsForm";
+import { Action, actionMapper } from "@/utils/actions";
+import startCase from "lodash.startcase";
+import { IconBolt } from "@tabler/icons-react";
 
 type SectionsMapper = {
   [key: string]: any;
@@ -29,11 +34,14 @@ const sectionMapper: SectionsMapper = {
   title: TitleModifier,
 };
 
+type Tab = "design" | "actions";
+
 export const EditorAsideSections = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
+  const [tab, setTab] = useState<Tab>("design");
 
   const isContentWrapperSelected = selectedComponentId === "content-wrapper";
 
@@ -50,11 +58,11 @@ export const EditorAsideSections = () => {
     );
   }
 
-  const selectComponent = getComponentById(
+  const component = getComponentById(
     editorTree.root,
     selectedComponentId as string
   );
-  const mappedComponent = componentMapper[selectComponent?.name as string];
+  const mappedComponent = componentMapper[component?.name as string];
 
   const sections = mappedComponent?.modifiers?.map((id) => {
     const modifier = sectionMapper[id as string];
@@ -68,11 +76,48 @@ export const EditorAsideSections = () => {
     };
   });
 
-  const sectionsToRender = sections?.map(({ Component, ...item }) => (
+  const designSections = sections?.map(({ Component, ...item }) => (
     <SidebarSection {...item} key={item.label}>
       <Component />
     </SidebarSection>
   ));
 
-  return <>{sectionsToRender}</>;
+  const actionsSections = (component?.props?.actions ?? [])?.map(
+    (action: Action) => {
+      const item = {
+        id: action.trigger,
+        label: startCase(action.trigger),
+        icon: IconBolt,
+        initiallyOpened: true,
+      };
+
+      const Component = actionMapper[action.action.name].form;
+
+      return (
+        <SidebarSection {...item} key={item.label}>
+          <Component />
+        </SidebarSection>
+      );
+    }
+  );
+
+  return (
+    <Stack px="sm">
+      <SegmentedControl
+        size="xs"
+        data={[
+          { label: "Design", value: "design" },
+          { label: "Actions", value: "actions" },
+        ]}
+        onChange={(value) => setTab(value as Tab)}
+      />
+      {tab === "design" && designSections}
+      {tab === "actions" && (
+        <Stack>
+          <ActionsForm />
+          {actionsSections}
+        </Stack>
+      )}
+    </Stack>
+  );
 };

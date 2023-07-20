@@ -1,0 +1,116 @@
+import { useAppStore } from "@/stores/app";
+import { useEditorStore } from "@/stores/editor";
+import { Action, DebugAction, actions } from "@/utils/actions";
+import { getComponentById } from "@/utils/editor";
+import { Button, Select, Stack, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import startCase from "lodash.startcase";
+
+export const DebugActionForm = () => {
+  const startLoading = useAppStore((state) => state.startLoading);
+  const stopLoading = useAppStore((state) => state.stopLoading);
+  const editorTree = useEditorStore((state) => state.tree);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId
+  );
+  const updateTreeComponent = useEditorStore(
+    (state) => state.updateTreeComponent
+  );
+
+  const component = getComponentById(editorTree.root, selectedComponentId!);
+  const componentActions = component?.props?.actions ?? [];
+  const action: Action = componentActions.find(
+    (a: Action) => a.action.name === "debug"
+  );
+  const debugAction = action.action as DebugAction;
+
+  const form = useForm({
+    initialValues: {
+      action: debugAction.name,
+      message: debugAction.message,
+    },
+  });
+
+  const onSubmit = (values: any) => {
+    try {
+      startLoading({
+        id: "saving-action",
+        title: "Saving Action",
+        message: "Wait while we save your changes",
+      });
+
+      updateTreeComponent(selectedComponentId!, {
+        actions: componentActions.map((action: Action) => {
+          if (action.action.name === "debug") {
+            return {
+              ...action,
+              action: {
+                ...action.action,
+                message: values.message,
+              },
+            };
+          }
+
+          return action;
+        }),
+      });
+
+      stopLoading({
+        id: "saving-action",
+        title: "Action Saved",
+        message: "Your changes were saved successfully",
+      });
+    } catch (error) {
+      stopLoading({
+        id: "saving-action",
+        title: "Failed",
+        message: "Oops, something went wrong while saving your changes",
+        isError: true,
+      });
+    }
+  };
+
+  const removeAction = () => {
+    updateTreeComponent(selectedComponentId!, {
+      actions: componentActions.filter((action: Action) => {
+        return action.action.name !== "debug";
+      }),
+    });
+  };
+
+  return (
+    <form onSubmit={form.onSubmit(onSubmit)}>
+      <Stack spacing="xs">
+        <Select
+          size="xs"
+          placeholder="Select an action"
+          label="Action"
+          data={actions.map((action) => {
+            return {
+              label: startCase(action),
+              value: action,
+            };
+          })}
+          {...form.getInputProps("action")}
+        />
+        <TextInput
+          size="xs"
+          label="Message"
+          placeholder="The message to show"
+          {...form.getInputProps("message")}
+        />
+        <Button size="xs" type="submit" mt="xs">
+          Save
+        </Button>
+        <Button
+          size="xs"
+          type="button"
+          variant="default"
+          onClick={removeAction}
+        >
+          Remove
+        </Button>
+      </Stack>
+    </form>
+  );
+};

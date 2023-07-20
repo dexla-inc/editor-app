@@ -46,7 +46,6 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
 
   const handleSelection = (id: string) => {
     if (id !== "root") {
-      console.log(id);
       setSelectedComponentId(id as string);
     }
   };

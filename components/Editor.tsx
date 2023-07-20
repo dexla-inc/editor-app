@@ -2,7 +2,7 @@ import { Shell } from "@/components/AppShell";
 import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { Droppable } from "@/components/Droppable";
 import { DroppableDraggable } from "@/components/DroppableDraggable";
-import { EditorAsideSections } from "@/components/EditorAsideSections";
+import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { IFrame } from "@/components/IFrame";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
@@ -73,21 +73,30 @@ export const Editor = ({ projectId, pageId }: Props) => {
     if (
       selectedComponentId &&
       selectedComponentId !== "root" &&
-      selectedComponentId !== "content-wrapper"
+      selectedComponentId !== "content-wrapper" &&
+      !isPreviewMode
     ) {
       const copy = cloneDeep(editorTree);
       removeComponent(copy.root, selectedComponentId as string);
       setEditorTree(copy);
       clearSelection();
     }
-  }, [clearSelection, editorTree, selectedComponentId, setEditorTree]);
+  }, [
+    clearSelection,
+    editorTree,
+    selectedComponentId,
+    setEditorTree,
+    isPreviewMode,
+  ]);
 
   const copySelectedCompnent = useCallback(() => {
-    setCopiedComponentId(selectedComponentId);
-  }, [setCopiedComponentId, selectedComponentId]);
+    if (!isPreviewMode) {
+      setCopiedComponentId(selectedComponentId);
+    }
+  }, [isPreviewMode, selectedComponentId]);
 
   const pasteCopiedComponent = useCallback(() => {
-    if (copiedComponentId) {
+    if (copiedComponentId && !isPreviewMode) {
       const isSelectedId = selectedComponentId === copiedComponentId;
       const copy = cloneDeep(editorTree);
       addComponent(copy.root, getComponentById(copy.root, copiedComponentId)!, {
@@ -99,16 +108,43 @@ export const Editor = ({ projectId, pageId }: Props) => {
       });
       setEditorTree(copy);
     }
-  }, [copiedComponentId, editorTree, selectedComponentId, setEditorTree]);
+  }, [
+    copiedComponentId,
+    editorTree,
+    isPreviewMode,
+    selectedComponentId,
+    setEditorTree,
+  ]);
 
   useHotkeys([
     ["backspace", deleteComponent],
     ["delete", deleteComponent],
     ["mod+C", copySelectedCompnent],
     ["mod+V", pasteCopiedComponent],
-    ["mod+Z", () => undo()],
-    ["mod+shift+Z", () => redo()],
-    ["mod+Y", () => redo()],
+    [
+      "mod+Z",
+      () => {
+        if (!isPreviewMode) {
+          undo();
+        }
+      },
+    ],
+    [
+      "mod+shift+Z",
+      () => {
+        if (!isPreviewMode) {
+          redo();
+        }
+      },
+    ],
+    [
+      "mod+Y",
+      () => {
+        if (!isPreviewMode) {
+          redo();
+        }
+      },
+    ],
   ]);
 
   useHotkeysOnIframe([
@@ -116,7 +152,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
       "backspace",
       (e) => {
         // @ts-ignore
-        if (e.target.contentEditable !== "true") {
+        if (e.target.contentEditable !== "true" && !isPreviewMode) {
           deleteComponent();
         }
       },
@@ -126,7 +162,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
       "delete",
       (e) => {
         // @ts-ignore
-        if (e.target.contentEditable !== "true") {
+        if (e.target.contentEditable !== "true" && !isPreviewMode) {
           deleteComponent();
         }
       },
@@ -137,15 +173,36 @@ export const Editor = ({ projectId, pageId }: Props) => {
       "mod+V",
       (e) => {
         // @ts-ignore
-        if (e.target.contentEditable !== "true") {
+        if (e.target.contentEditable !== "true" && !isPreviewMode) {
           pasteCopiedComponent();
         }
       },
       { preventDefault: false },
     ],
-    ["mod+Z", () => undo()],
-    ["mod+shift+Z", () => redo()],
-    ["mod+Y", () => redo()],
+    [
+      "mod+Z",
+      () => {
+        if (!isPreviewMode) {
+          undo();
+        }
+      },
+    ],
+    [
+      "mod+shift+Z",
+      () => {
+        if (!isPreviewMode) {
+          redo();
+        }
+      },
+    ],
+    [
+      "mod+Y",
+      () => {
+        if (!isPreviewMode) {
+          redo();
+        }
+      },
+    ],
   ]);
 
   useEffect(() => {

@@ -76,7 +76,7 @@ export function SidebarSection({
       </UnstyledButton>
       {children ? (
         <Collapse in={opened}>
-          <Box p="md">{children}</Box>
+          <Box px="md">{children}</Box>
         </Collapse>
       ) : null}
     </>

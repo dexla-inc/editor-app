@@ -11,7 +11,6 @@ export const icon = IconForms;
 export const label = "Input";
 
 export const defaultInputValues = {
-  value: "",
   size: "sm",
   placeholder: "Input",
   type: "text",
@@ -41,9 +40,8 @@ export const Modifier = () => {
 
   useEffect(() => {
     if (selectedComponent) {
-      const { style = {}, value, size, placeholder, type } = componentProps;
+      const { style = {}, size, placeholder, type } = componentProps;
       form.setValues({
-        value: value ?? defaultInputValues.value,
         size: size ?? defaultInputValues.size,
         placeholder: placeholder ?? defaultInputValues.placeholder,
         type: type ?? defaultInputValues.type,
@@ -57,17 +55,6 @@ export const Modifier = () => {
   return (
     <form>
       <Stack>
-        <TextInput
-          label="Value"
-          size="xs"
-          {...form.getInputProps("value")}
-          onChange={(e) => {
-            form.setFieldValue("value", e.target.value);
-            debouncedTreeUpdate(selectedComponentId as string, {
-              value: e.target.value,
-            });
-          }}
-        />
         <TextInput
           label="Placeholder"
           size="xs"

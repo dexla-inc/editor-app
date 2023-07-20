@@ -3,6 +3,7 @@ import { useDroppable } from "@/hooks/useDroppable";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useOnDrop } from "@/hooks/useOnDrop";
 import { useEditorStore } from "@/stores/editor";
+import { Action, actionMapper } from "@/utils/actions";
 import { DROP_INDICATOR_WIDTH, ICON_SIZE } from "@/utils/config";
 import { Component, getComponentParent } from "@/utils/editor";
 import {
@@ -21,7 +22,8 @@ import {
   IconGripVertical,
   IconNewSection,
 } from "@tabler/icons-react";
-import { PropsWithChildren } from "react";
+import { Router, useRouter } from "next/router";
+import { Children, PropsWithChildren, cloneElement, useEffect } from "react";
 
 type Props = {
   id: string;
@@ -35,6 +37,7 @@ export const DroppableDraggable = ({
   component,
   customComponentModal,
 }: PropsWithChildren<Props>) => {
+  const router = useRouter();
   const { hovered, ref } = useHover();
   const theme = useMantineTheme();
   const editorTree = useEditorStore((state) => state.tree);
@@ -47,6 +50,35 @@ export const DroppableDraggable = ({
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
+
+  const actions = component.props?.actions ?? [];
+  const onMountAction: Action = actions.find(
+    (action: Action) => action.trigger === "onMount"
+  );
+
+  const triggers = actions
+    .filter((action: Action) => action.trigger !== "onMount")
+    .reduce((triggers: object, action: Action) => {
+      return {
+        ...triggers,
+        [action.trigger]: (e: any) =>
+          actionMapper[action.action.name].action(
+            action.action as any,
+            router as Router,
+            e
+          ),
+      };
+    }, {});
+
+  useEffect(() => {
+    if (onMountAction && isPreviewMode) {
+      actionMapper[onMountAction.action.name].action(
+        onMountAction.action as any,
+        router as Router
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPreviewMode]);
 
   const parent = getComponentParent(editorTree.root, id);
 
@@ -66,8 +98,6 @@ export const DroppableDraggable = ({
   });
 
   const isSelected = selectedComponentId === id && !isPreviewMode;
-
-  const baseBorder = `1px solid ${theme.colors.teal[6]}`;
   const isOver = (currentTargetId === id || hovered) && !isPreviewMode;
 
   const baseShadow = `0 0 0 1px ${theme.colors.teal[6]}`;
@@ -98,7 +128,7 @@ export const DroppableDraggable = ({
       id={id}
       pos="relative"
       sx={{
-        width: component.props?.style?.width ?? "100%",
+        width: component.props?.style?.width ?? "auto",
         ...shadows,
       }}
       onClick={(e) => {
@@ -116,7 +146,23 @@ export const DroppableDraggable = ({
         }}
         {...droppable}
       >
-        {children}
+        {cloneElement(
+          // @ts-ignore
+          children,
+          {
+            component: {
+              ...component,
+              props: {
+                ...component.props,
+                triggers: isPreviewMode
+                  ? { ...triggers, onMouseEnter: triggers?.onHover }
+                  : {},
+              },
+            },
+          },
+          // @ts-ignore
+          children?.children
+        )}
       </Box>
       {!isContentWrapper && (
         <Box
