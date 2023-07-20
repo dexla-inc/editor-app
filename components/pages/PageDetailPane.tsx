@@ -35,6 +35,7 @@ export default function PageDetailPane({
       slug: "",
       isHome: false,
       authenticatedOnly: false,
+      hasNavigation: false,
     },
     validate: {
       title: (value) =>
