@@ -9,6 +9,7 @@ export const jsonStructure = (props?: any): Component => {
     children: [],
     props: {
       name: "IconArrowNarrowRight",
+      width: "24px",
       ...(props.props || {}),
     },
     blockDroppingChildrenInside: true,

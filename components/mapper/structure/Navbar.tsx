@@ -1,7 +1,6 @@
 import { defaultTheme } from "@/components/IFrame";
 import { PageResponse } from "@/requests/pages/types";
 import { Component } from "@/utils/editor";
-import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -9,7 +8,6 @@ export const jsonStructure = (props?: any): Component => {
   const pages = props.pages ?? [];
   const { value } = props.props ?? {};
 
-  console.log({ theme });
   return {
     id: nanoid(),
     name: "Navbar",
@@ -81,62 +79,22 @@ export const jsonStructure = (props?: any): Component => {
         .map((page: PageResponse) => {
           return {
             id: nanoid(),
-            name: "Container",
+            name: "NavLink",
             description: "Navbar Item",
             props: {
+              label: page.title,
+              isNested: !!page.parentPageId,
+              pageId: page.id,
               style: {
                 width: "100%",
                 height: "auto",
                 display: "flex",
                 alignItems: "center",
-                paddingTop: "10px",
-                paddingRight: "16px",
-                paddingBottom: "10px",
-                paddingLeft: "16px",
-              },
-              sx: {
-                "&:hover": {
-                  backgroundColor: "teal",
-                  cursor: "pointer",
-                  color: "white",
-                },
+                paddingTop: theme.spacing.sm,
+                paddingBottom: theme.spacing.sm,
               },
             },
-            children: [
-              {
-                id: nanoid(),
-                name: "Icon",
-                description: "Navbar Item Icon",
-                props: {
-                  style: {
-                    width: "auto",
-                    height: "auto",
-                  },
-                },
-                children: [],
-                blockDroppingChildrenInside: true,
-              },
-              {
-                id: nanoid(),
-                name: "Text",
-                description: "Navbar Item Text",
-                children: [],
-                props: {
-                  children: page.title,
-                  color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-                  style: {
-                    fontSize: `${px(theme.fontSizes.sm)}px`,
-                    fontWeight: "normal",
-                    lineHeight: "110%",
-                    letterSpacing: "0px",
-                    width: "auto",
-                    height: "auto",
-                    marginLeft: "10px",
-                  },
-                },
-                blockDroppingChildrenInside: true,
-              },
-            ],
+            children: [],
           };
         }),
     ],
