@@ -19,6 +19,7 @@ import { Icon } from "@/components/mapper/Icon";
 import { Image } from "@/components/mapper/Image";
 import { Input } from "@/components/mapper/Input";
 import { Link } from "@/components/mapper/Link";
+import { Menu } from "@/components/mapper/Menu";
 import { NavLink } from "@/components/mapper/NavLink";
 import { Navbar } from "@/components/mapper/Navbar";
 import { Pagination } from "@/components/mapper/Pagination";
@@ -56,6 +57,7 @@ import * as IconStructure from "@/components/mapper/structure/Icon";
 import * as ImageStructure from "@/components/mapper/structure/Image";
 import * as InputStructure from "@/components/mapper/structure/Input";
 import * as LinkStructure from "@/components/mapper/structure/Link";
+import * as MenuStructure from "@/components/mapper/structure/Menu";
 import * as NavLinkStructure from "@/components/mapper/structure/NavLink";
 import * as NavbarStructure from "@/components/mapper/structure/Navbar";
 import * as NotImplemented from "@/components/mapper/structure/NotImplemented";
@@ -103,6 +105,7 @@ import {
   IconLayoutSidebar,
   IconLink,
   IconListCheck,
+  IconMenu,
   IconPageBreak,
   IconPhoto,
   IconPhotoSearch,
@@ -494,6 +497,17 @@ export const structureMapper: StructureMapper = {
     category: "Navigation",
     icon: <IconBread size={ICON_SIZE} />,
   },
+  Menu: {
+    structure: (props: any) => MenuStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Menu"
+        icon={<IconMenu size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Navigation",
+    icon: <IconMenu size={ICON_SIZE} />,
+  },
   Pagination: {
     structure: (props: any) => PaginationStructure.jsonStructure(props),
     Draggable: () => (
@@ -698,6 +712,12 @@ export const componentMapper: ComponentMapper = {
         // eslint-disable-next-line react/no-children-prop
         children={props.component.children as any}
       />
+    ),
+    modifiers: ["spacing", "size", "border"],
+  },
+  Menu: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Menu component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
   },

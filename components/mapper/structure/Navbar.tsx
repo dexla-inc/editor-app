@@ -1,6 +1,7 @@
 import { defaultTheme } from "@/components/IFrame";
 import { PageResponse } from "@/requests/pages/types";
 import { Component } from "@/utils/editor";
+import { IconHome } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -18,7 +19,9 @@ export const jsonStructure = (props?: any): Component => {
         height: "100vh",
         borderRightWidth: "1px",
         borderRightStyle: "solid",
-        borderRightColor: "gray.3",
+        borderRightColor: "gray.1",
+        display: "flex",
+        flexDirection: "column",
       },
       bg: "white",
       ...(props.props || {}),
@@ -69,34 +72,58 @@ export const jsonStructure = (props?: any): Component => {
           },
         ],
       },
-      ...pages
-        .filter(
-          (page: PageResponse) =>
-            page.title !== "Sign Up" &&
-            page.title !== "Sign In" &&
-            page.title !== "Forgot Password"
-        ) // Will add a back end flag here for hidden pages
-        .map((page: PageResponse) => {
-          return {
-            id: nanoid(),
-            name: "NavLink",
-            description: "Navbar Item",
-            props: {
-              label: page.title,
-              isNested: !!page.parentPageId,
-              pageId: page.id,
-              style: {
-                width: "100%",
-                height: "auto",
-                display: "flex",
-                alignItems: "center",
-                paddingTop: theme.spacing.sm,
-                paddingBottom: theme.spacing.sm,
+      {
+        id: nanoid(),
+        name: "Container",
+        description: "Container for Image and Icon",
+        props: {
+          style: {
+            display: "flex",
+            flexDirection: "column",
+            flexGrow: "1",
+            padding: "0",
+          },
+        },
+        children: pages
+          .filter((page: PageResponse) => page.hasNavigation)
+          .map((page: PageResponse) => {
+            return {
+              id: nanoid(),
+              name: "NavLink",
+              description: "Navbar Item",
+              icon: <IconHome size="1rem" stroke={1.5} />,
+              props: {
+                label: page.title,
+                isNested: !!page.parentPageId,
+                pageId: page.id,
+                style: {
+                  width: "100%",
+                  height: "auto",
+                  display: "flex",
+                  alignItems: "center",
+                  paddingTop: theme.spacing.sm,
+                  paddingBottom: theme.spacing.sm,
+                  paddingLeft: theme.spacing.md,
+                  paddingRight: theme.spacing.md,
+                },
               },
-            },
-            children: [],
-          };
-        }),
+              children: [],
+            };
+          }),
+      },
+      {
+        id: nanoid(),
+        name: "Menu",
+        description: "Profile Menu",
+        props: {
+          style: {
+            width: "100%",
+            height: "auto",
+          },
+        },
+        children: [],
+        blockDroppingChildrenInside: true,
+      },
     ],
   };
 };
