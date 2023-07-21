@@ -168,7 +168,9 @@ export const DroppableDraggable = ({
         e.preventDefault();
         e.stopPropagation();
         if (pickingComponentToBindInto) {
-          setComponentToBind(id);
+          if (canBePickedAndUserIsPicking) {
+            setComponentToBind(id);
+          }
         } else {
           setSelectedComponentId(id);
         }

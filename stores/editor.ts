@@ -47,9 +47,9 @@ export type EditorState = {
   isPreviewMode: boolean;
   pages: PageResponse[];
   pickingComponentToBindInto?: string; // <component.id>_<action.trigger>_<endpoint.id>_<param.name>_<bindedComponent.id>
-  setPickingComponentToBindInto: (pickingComponentToBindInto: string) => void;
+  setPickingComponentToBindInto: (pickingComponentToBindInto?: string) => void;
   componentToBind?: string;
-  setComponentToBind: (componentToBind: string) => void;
+  setComponentToBind: (componentToBind?: string) => void;
   setPages: (pages: PageResponse[]) => void;
   setTheme: (theme: MantineThemeExtended) => void;
   setIframeWindow: (iframeWindow: Window) => void;

@@ -61,6 +61,9 @@ export const APICallActionForm = () => {
   );
   const editorTree = useEditorStore((state) => state.tree);
   const componentToBind = useEditorStore((state) => state.componentToBind);
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind
+  );
   const pickingComponentToBindInto = useEditorStore(
     (state) => state.pickingComponentToBindInto
   );
@@ -170,6 +173,9 @@ export const APICallActionForm = () => {
           `binds.${pickingData[3]}`,
           `valueOf_${componentToBind}`
         );
+
+        setPickingComponentToBindInto(undefined);
+        setComponentToBind(undefined);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

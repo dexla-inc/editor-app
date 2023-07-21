@@ -12,8 +12,6 @@ export const jsonStructure = (props?: any): Component => {
     theme.logoUrl ??
     "https://www.kadencewp.com/wp-content/uploads/2020/10/alogo-2.svg";
 
-  console.log({ theme });
-
   return {
     id: nanoid(),
     name: "Navbar",
