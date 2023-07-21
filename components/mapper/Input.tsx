@@ -10,7 +10,7 @@ export const Input = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;
 
   return (
-    <MantineInput {...props} {...componentProps}>
+    <MantineInput id={component.id} {...props} {...componentProps}>
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))
         : children}

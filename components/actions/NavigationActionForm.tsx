@@ -1,10 +1,9 @@
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
-import { Action, NavigationAction, actions } from "@/utils/actions";
+import { Action, NavigationAction } from "@/utils/actions";
 import { getComponentById } from "@/utils/editor";
 import { Button, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import startCase from "lodash.startcase";
 
 export const NavigationActionForm = () => {
   const startLoading = useAppStore((state) => state.startLoading);
@@ -27,7 +26,6 @@ export const NavigationActionForm = () => {
 
   const form = useForm({
     initialValues: {
-      action: navigationAction.name,
       pageId: navigationAction.pageId,
     },
   });
@@ -73,8 +71,8 @@ export const NavigationActionForm = () => {
 
   const removeAction = () => {
     updateTreeComponent(selectedComponentId!, {
-      actions: componentActions.filter((action: Action) => {
-        return action.action.name !== "navigation";
+      actions: componentActions.filter((a: Action) => {
+        return a.trigger !== action.trigger;
       }),
     });
   };
@@ -82,18 +80,6 @@ export const NavigationActionForm = () => {
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
-        <Select
-          size="xs"
-          placeholder="Select an action"
-          label="Action"
-          data={actions.map((action) => {
-            return {
-              label: startCase(action),
-              value: action,
-            };
-          })}
-          {...form.getInputProps("action")}
-        />
         <Select
           size="xs"
           placeholder="Select a page"

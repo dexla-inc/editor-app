@@ -5,7 +5,7 @@ import { IconChevronDown, IconChevronRight } from "@tabler/icons-react";
 import { useState } from "react";
 import { DataSourceEndpointDetail } from "./DataSourceEndpointDetail";
 
-const colors = {
+export const colors = {
   GET: {
     background: "#EBF3FB",
     color: "#61AFFE",

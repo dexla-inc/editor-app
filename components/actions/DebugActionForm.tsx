@@ -1,10 +1,9 @@
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
-import { Action, DebugAction, actions } from "@/utils/actions";
+import { Action, DebugAction } from "@/utils/actions";
 import { getComponentById } from "@/utils/editor";
-import { Button, Select, Stack, TextInput } from "@mantine/core";
+import { Button, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import startCase from "lodash.startcase";
 
 export const DebugActionForm = () => {
   const startLoading = useAppStore((state) => state.startLoading);
@@ -26,7 +25,6 @@ export const DebugActionForm = () => {
 
   const form = useForm({
     initialValues: {
-      action: debugAction.name,
       message: debugAction.message,
     },
   });
@@ -72,8 +70,8 @@ export const DebugActionForm = () => {
 
   const removeAction = () => {
     updateTreeComponent(selectedComponentId!, {
-      actions: componentActions.filter((action: Action) => {
-        return action.action.name !== "debug";
+      actions: componentActions.filter((a: Action) => {
+        return a.trigger !== action.trigger;
       }),
     });
   };
@@ -81,18 +79,6 @@ export const DebugActionForm = () => {
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
-        <Select
-          size="xs"
-          placeholder="Select an action"
-          label="Action"
-          data={actions.map((action) => {
-            return {
-              label: startCase(action),
-              value: action,
-            };
-          })}
-          {...form.getInputProps("action")}
-        />
         <TextInput
           size="xs"
           label="Message"

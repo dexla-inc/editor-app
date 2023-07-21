@@ -31,6 +31,8 @@ type Props = {
   customComponentModal: any;
 } & BoxProps;
 
+const bidingComponentsWhitelist = ["Input"];
+
 export const DroppableDraggable = ({
   id,
   children,
@@ -44,6 +46,12 @@ export const DroppableDraggable = ({
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind
+  );
+  const pickingComponentToBindInto = useEditorStore(
+    (state) => state.pickingComponentToBindInto
+  );
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId
   );
@@ -97,27 +105,40 @@ export const DroppableDraggable = ({
     currentWindow: iframeWindow,
   });
 
+  const canBePickedAndUserIsPicking =
+    pickingComponentToBindInto &&
+    bidingComponentsWhitelist.includes(component.name);
+  const pickingData = pickingComponentToBindInto
+    ? pickingComponentToBindInto.split("_")
+    : [];
+  const isPicked =
+    pickingComponentToBindInto && pickingData[pickingData.length - 1] === id;
+
   const isSelected = selectedComponentId === id && !isPreviewMode;
-  const isOver = (currentTargetId === id || hovered) && !isPreviewMode;
+  const isOver =
+    (currentTargetId === id || hovered) &&
+    !isPreviewMode &&
+    (pickingComponentToBindInto ? canBePickedAndUserIsPicking : true);
 
   const baseShadow = `0 0 0 1px ${theme.colors.teal[6]}`;
 
-  const shadows = isOver
-    ? {
-        boxShadow:
-          edge === "top"
-            ? `inset 0 ${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
-            : edge === "bottom"
-            ? `inset 0 -${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
-            : edge === "left"
-            ? `inset ${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
-            : edge === "right"
-            ? `inset -${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
-            : baseShadow,
-      }
-    : isSelected
-    ? { boxShadow: baseShadow }
-    : {};
+  const shadows =
+    isOver || isPicked
+      ? {
+          boxShadow:
+            edge === "top"
+              ? `inset 0 ${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+              : edge === "bottom"
+              ? `inset 0 -${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+              : edge === "left"
+              ? `inset ${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+              : edge === "right"
+              ? `inset -${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+              : baseShadow,
+        }
+      : isSelected
+      ? { boxShadow: baseShadow }
+      : {};
 
   const isContentWrapper = id === "content-wrapper";
   const haveNonRootParent = parent && parent.id !== "root";
@@ -146,7 +167,11 @@ export const DroppableDraggable = ({
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        setSelectedComponentId(id);
+        if (pickingComponentToBindInto) {
+          setComponentToBind(id);
+        } else {
+          setSelectedComponentId(id);
+        }
       }}
       {...filteredProps}
     >
