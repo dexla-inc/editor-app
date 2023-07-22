@@ -4,10 +4,12 @@ import { AccordionControl } from "@/components/mapper/AccordionControl";
 import { AccordionItem } from "@/components/mapper/AccordionItem";
 import { AccordionPanel } from "@/components/mapper/AccordionPanel";
 import { Alert } from "@/components/mapper/Alert";
+import { AppBar } from "@/components/mapper/AppBar";
 import { Avatar } from "@/components/mapper/Avatar";
 import { Box } from "@/components/mapper/Box";
 import { Breadcrumb } from "@/components/mapper/Breadcrumb";
 import { Button } from "@/components/mapper/Button";
+import { ButtonIcon } from "@/components/mapper/ButtonIcon";
 import { Checkbox } from "@/components/mapper/Checkbox";
 import { Container } from "@/components/mapper/Container";
 import { DateInput } from "@/components/mapper/DateInput";
@@ -47,6 +49,7 @@ import * as AppBarStructure from "@/components/mapper/structure/AppBar";
 import * as AvatarStructure from "@/components/mapper/structure/Avatar";
 import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
 import * as ButtonStructure from "@/components/mapper/structure/Button";
+import * as ButtonIconStructure from "@/components/mapper/structure/ButtonIcon";
 import * as CheckboxStructure from "@/components/mapper/structure/Checkbox";
 import * as ContainerStructure from "@/components/mapper/structure/Container";
 import * as DateInputStructure from "@/components/mapper/structure/DateInput";
@@ -90,6 +93,7 @@ import {
   IconChartPie,
   IconChartRadar,
   IconCheckbox,
+  IconCircleDot,
   IconClick,
   IconContainer,
   IconCursorText,
@@ -181,7 +185,6 @@ export const structureMapper: StructureMapper = {
     category: "Input",
     icon: <IconSelect size={ICON_SIZE} />,
   },
-
   Button: {
     structure: (props: any) => ButtonStructure.jsonStructure(props),
     Draggable: () => (
@@ -192,6 +195,17 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconClick size={ICON_SIZE} />,
+  },
+  ButtonIcon: {
+    structure: (props: any) => ButtonIconStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="ButtonIcon"
+        icon={<IconCircleDot size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconCircleDot size={ICON_SIZE} />,
   },
   NavLink: {
     structure: (props: any) => NavLinkStructure.jsonStructure(props),
@@ -1019,6 +1033,12 @@ export const componentMapper: ComponentMapper = {
     modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount", "onSuccess", "onError"],
   },
+  AppBar: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <AppBar component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["layout", "background", "spacing", "size", "border"],
+  },
   BarChart: {
     Component: (props: { component: Component; renderTree: any }) => (
       <BarChart component={props.component} renderTree={props.renderTree} />
@@ -1073,6 +1093,19 @@ export const componentMapper: ComponentMapper = {
       "onClick",
       "onDoubleClick",
     ],
+  },
+  ButtonIcon: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <ButtonIcon
+        component={props.component}
+        renderTree={props.renderTree}
+        // @ts-ignore
+        onClick={(e) => {
+          e.preventDefault();
+        }}
+      />
+    ),
+    modifiers: ["spacing", "size", "border"],
   },
   Form: {
     Component: (props: { component: Component; renderTree: any }) => (

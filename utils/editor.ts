@@ -513,6 +513,7 @@ export const addComponent = (
 
         context.break();
       } else {
+        // Add content-wrapper
         if (node.id === dropTarget.id) {
           if (dropTarget.edge === "left" || dropTarget.edge === "top") {
             node.children = [copy, ...(node.children || [])];
