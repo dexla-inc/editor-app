@@ -246,6 +246,7 @@ export const updateTreeComponent = (
             ...(props.style || {}),
           },
         };
+
         context.break();
       }
     },

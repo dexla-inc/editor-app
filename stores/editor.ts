@@ -46,8 +46,10 @@ export type EditorState = {
   isSaving: boolean;
   isPreviewMode: boolean;
   pages: PageResponse[];
-  pickingComponentToBindInto?: string; // <component.id>_<action.trigger>_<endpoint.id>_<param.name>_<bindedComponent.id>
-  setPickingComponentToBindInto: (pickingComponentToBindInto?: string) => void;
+  pickingComponentToBindTo?: string; // <component.id>_<action.trigger>_<param.name>_<bindedComponent.id>
+  setPickingComponentToBindTo: (pickingComponentToBindTo?: string) => void;
+  pickingComponentToBindFrom?: string; // <component.id>_<action.trigger>_<endpoint.id>_<param.name>_<bindedComponent.id>
+  setPickingComponentToBindFrom: (pickingComponentToBindFrom?: string) => void;
   componentToBind?: string;
   setComponentToBind: (componentToBind?: string) => void;
   setPages: (pages: PageResponse[]) => void;
@@ -59,7 +61,11 @@ export type EditorState = {
   setCurrentProjectId: (currentProjectId: string) => void;
   setCurrentPageId: (currentPageId: string) => void;
   setComponentToAdd: (componentToAdd?: Component) => void;
-  updateTreeComponent: (componentId: string, props: any) => void;
+  updateTreeComponent: (
+    componentId: string,
+    props: any,
+    save?: boolean
+  ) => void;
   updateTreeComponentChildren: (
     componentId: string,
     children: Component[]
@@ -80,8 +86,10 @@ export const useEditorStore = create<EditorState>()(
       theme: defaultTheme,
       pages: [],
       setPages: (pages) => set({ pages }),
-      setPickingComponentToBindInto: (pickingComponentToBindInto) =>
-        set({ pickingComponentToBindInto }),
+      setPickingComponentToBindFrom: (pickingComponentToBindFrom) =>
+        set({ pickingComponentToBindFrom }),
+      setPickingComponentToBindTo: (pickingComponentToBindTo) =>
+        set({ pickingComponentToBindTo }),
       setComponentToBind: (componentToBind) => set({ componentToBind }),
       setTheme: (theme) => set({ theme }),
       setIframeWindow: (iframeWindow) => set({ iframeWindow }),
@@ -102,16 +110,18 @@ export const useEditorStore = create<EditorState>()(
       resetTree: () => {
         set({ tree: emptyEditorTree });
       },
-      updateTreeComponent: (componentId, props) => {
+      updateTreeComponent: (componentId, props, save = true) => {
         set((state) => {
           const copy = cloneDeep(state.tree);
           updateTreeComponent(copy.root, componentId, props);
-          debouncedUpdatePageState(
-            encodeSchema(JSON.stringify(copy)),
-            state.currentProjectId ?? "",
-            state.currentPageId ?? "",
-            state.setIsSaving
-          );
+          if (save) {
+            debouncedUpdatePageState(
+              encodeSchema(JSON.stringify(copy)),
+              state.currentProjectId ?? "",
+              state.currentPageId ?? "",
+              state.setIsSaving
+            );
+          }
 
           return {
             tree: copy,

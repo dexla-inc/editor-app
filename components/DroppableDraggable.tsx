@@ -31,7 +31,7 @@ type Props = {
   customComponentModal: any;
 } & BoxProps;
 
-const bidingComponentsWhitelist = ["Input"];
+const bidingComponentsWhitelist = { from: ["Input"], to: ["Text", "Title"] };
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
 
 export const DroppableDraggable = ({
@@ -50,8 +50,11 @@ export const DroppableDraggable = ({
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind
   );
-  const pickingComponentToBindInto = useEditorStore(
-    (state) => state.pickingComponentToBindInto
+  const pickingComponentToBindFrom = useEditorStore(
+    (state) => state.pickingComponentToBindFrom
+  );
+  const pickingComponentToBindTo = useEditorStore(
+    (state) => state.pickingComponentToBindTo
   );
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId
@@ -124,20 +127,27 @@ export const DroppableDraggable = ({
     currentWindow: iframeWindow,
   });
 
+  const isPicking = pickingComponentToBindFrom || pickingComponentToBindTo;
+
   const canBePickedAndUserIsPicking =
-    pickingComponentToBindInto &&
-    bidingComponentsWhitelist.includes(component.name);
-  const pickingData = pickingComponentToBindInto
-    ? pickingComponentToBindInto.split("_")
+    isPicking &&
+    bidingComponentsWhitelist[
+      pickingComponentToBindFrom ? "from" : "to"
+    ].includes(component.name);
+
+  const pickingData = pickingComponentToBindFrom
+    ? pickingComponentToBindFrom.split("_")
+    : pickingComponentToBindTo
+    ? pickingComponentToBindTo.split("_")
     : [];
-  const isPicked =
-    pickingComponentToBindInto && pickingData[pickingData.length - 1] === id;
+
+  const isPicked = isPicking && pickingData[pickingData.length - 1] === id;
 
   const isSelected = selectedComponentId === id && !isPreviewMode;
   const isOver =
     (currentTargetId === id || hovered) &&
     !isPreviewMode &&
-    (pickingComponentToBindInto ? canBePickedAndUserIsPicking : true);
+    (isPicking ? canBePickedAndUserIsPicking : true);
 
   const baseShadow = `0 0 0 1px ${theme.colors.teal[6]}`;
 
@@ -186,7 +196,7 @@ export const DroppableDraggable = ({
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (pickingComponentToBindInto) {
+        if (isPicking) {
           if (canBePickedAndUserIsPicking) {
             setComponentToBind(id);
           }

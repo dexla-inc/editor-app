@@ -56,16 +56,16 @@ type FormValues = {
 export const APICallActionForm = () => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
-  const setPickingComponentToBindInto = useEditorStore(
-    (state) => state.setPickingComponentToBindInto
+  const setPickingComponentToBindFrom = useEditorStore(
+    (state) => state.setPickingComponentToBindFrom
   );
   const editorTree = useEditorStore((state) => state.tree);
   const componentToBind = useEditorStore((state) => state.componentToBind);
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind
   );
-  const pickingComponentToBindInto = useEditorStore(
-    (state) => state.pickingComponentToBindInto
+  const pickingComponentToBindFrom = useEditorStore(
+    (state) => state.pickingComponentToBindFrom
   );
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
@@ -166,20 +166,20 @@ export const APICallActionForm = () => {
   }, [dataSources.data, projectId]);
 
   useEffect(() => {
-    if (componentToBind && pickingComponentToBindInto) {
-      const pickingData = pickingComponentToBindInto.split("_");
+    if (componentToBind && pickingComponentToBindFrom) {
+      const pickingData = pickingComponentToBindFrom.split("_");
       if (pickingData[0] === component?.id) {
         form.setFieldValue(
           `binds.${pickingData[3]}`,
           `valueOf_${componentToBind}`
         );
 
-        setPickingComponentToBindInto(undefined);
+        setPickingComponentToBindFrom(undefined);
         setComponentToBind(undefined);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [component?.id, componentToBind, pickingComponentToBindInto]);
+  }, [component?.id, componentToBind, pickingComponentToBindFrom]);
 
   useEffect(() => {
     if (
@@ -233,7 +233,7 @@ export const APICallActionForm = () => {
                   rightSection={
                     <ActionIcon
                       onClick={() => {
-                        setPickingComponentToBindInto(
+                        setPickingComponentToBindFrom(
                           `${component!.id}_${action.trigger}_${
                             selectedEndpoint.id
                           }_${param.name}_${

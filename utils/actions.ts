@@ -6,6 +6,7 @@ import { DataSourceResponse } from "@/requests/datasources/types";
 import { useEditorStore } from "@/stores/editor";
 import { Router } from "next/router";
 import { Component } from "@/utils/editor";
+import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
 
 export const triggers = [
   "onClick",
@@ -16,18 +17,25 @@ export const triggers = [
   "onError",
 ] as const;
 
-export const actions = ["debug", "navigation", "apiCall"];
+export const actions = [
+  "debug",
+  "navigation",
+  "apiCall",
+  "bindResponseToComponent",
+];
 
 export type ActionTrigger = (typeof triggers)[number];
 
 export type NavigationAction = {
   name: "navigation";
   pageId: string;
+  data?: any;
 };
 
 export type DebugAction = {
   name: "debug";
   message: string;
+  data?: any;
 };
 
 export type APICallAction = {
@@ -38,9 +46,19 @@ export type APICallAction = {
   data?: any;
 };
 
+export type BindResponseToComponentAction = {
+  name: "bindResponseToComponent";
+  componentToBind: string;
+  data?: any;
+};
+
 export type Action = {
   trigger: ActionTrigger;
-  action: NavigationAction | DebugAction | APICallAction;
+  action:
+    | NavigationAction
+    | DebugAction
+    | APICallAction
+    | BindResponseToComponentAction;
 };
 
 export type ActionParams = {
@@ -49,6 +67,7 @@ export type ActionParams = {
   onError?: Action["action"];
   event?: any;
   component: Component;
+  data?: any;
 };
 
 export type NavigationActionParams = ActionParams & {
@@ -83,9 +102,14 @@ export const apiCallAction = async ({
   component,
   ...rest
 }: APICallActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+
   try {
     const iframeWindow = useEditorStore.getState().iframeWindow;
     const projectId = router.query.id as string;
+
+    updateTreeComponent(component.id!, { loading: true }, false);
+
     const { results } = await getDataSourceEndpoints(
       projectId,
       action.datasource.id
@@ -128,6 +152,8 @@ export const apiCallAction = async ({
         action: onSuccessAction.action,
         router,
         ...rest,
+        // TODO: Get the actual data
+        data: { value: response.statusText },
       });
     }
   } catch (error) {
@@ -142,8 +168,26 @@ export const apiCallAction = async ({
         action: onErrorAction.action,
         router,
         ...rest,
+        data: { value: (error as Error).message },
       });
     }
+  } finally {
+    updateTreeComponent(component.id!, { loading: false }, false);
+  }
+};
+
+export type BindResponseToComponentActionParams = ActionParams & {
+  action: BindResponseToComponentAction;
+};
+
+export const bindResponseToComponentAction = ({
+  action,
+  data,
+}: BindResponseToComponentActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+
+  if (action.componentToBind) {
+    updateTreeComponent(action.componentToBind, { data }, false);
   }
 };
 
@@ -159,5 +203,9 @@ export const actionMapper = {
   apiCall: {
     action: apiCallAction,
     form: APICallActionForm,
+  },
+  bindResponseToComponent: {
+    action: bindResponseToComponentAction,
+    form: BindResponseToComponentActionForm,
   },
 };
