@@ -32,6 +32,7 @@ type Props = {
 } & BoxProps;
 
 const bidingComponentsWhitelist = ["Input"];
+const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
 
 export const DroppableDraggable = ({
   id,
@@ -64,26 +65,44 @@ export const DroppableDraggable = ({
     (action: Action) => action.trigger === "onMount"
   );
 
+  const onSuccessAction: Action = actions.find(
+    (action: Action) => action.trigger === "onSuccess"
+  );
+
+  const onErrorAction: Action = actions.find(
+    (action: Action) => action.trigger === "onError"
+  );
+
   const triggers = actions
-    .filter((action: Action) => action.trigger !== "onMount")
+    .filter(
+      (action: Action) => !nonDefaultActionTriggers.includes(action.trigger)
+    )
     .reduce((triggers: object, action: Action) => {
       return {
         ...triggers,
         [action.trigger]: (e: any) =>
-          actionMapper[action.action.name].action(
-            action.action as any,
-            router as Router,
-            e
-          ),
+          actionMapper[action.action.name].action({
+            // @ts-ignore
+            action: action.action,
+            router: router as Router,
+            event: e,
+            onSuccess: onSuccessAction?.action as any,
+            onError: onErrorAction?.action as any,
+            component,
+          }),
       };
     }, {});
 
   useEffect(() => {
     if (onMountAction && isPreviewMode) {
-      actionMapper[onMountAction.action.name].action(
-        onMountAction.action as any,
-        router as Router
-      );
+      actionMapper[onMountAction.action.name].action({
+        // @ts-ignore
+        action: onMountAction.action,
+        router: router as Router,
+        onSuccess: onSuccessAction?.action as any,
+        onError: onErrorAction?.action as any,
+        component,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPreviewMode]);

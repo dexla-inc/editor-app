@@ -1,5 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
-import { Action, actions, triggers } from "@/utils/actions";
+import { Action, actions } from "@/utils/actions";
+import { componentMapper } from "@/utils/componentMapper";
 import { getComponentById } from "@/utils/editor";
 import { Button, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -15,6 +16,7 @@ export const ActionsForm = () => {
   );
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
+  const actionTriggers = componentMapper[component!.name].actionTriggers;
 
   const form = useForm({
     initialValues: {
@@ -34,7 +36,7 @@ export const ActionsForm = () => {
     });
   };
 
-  const availableTriggers = triggers.filter(
+  const availableTriggers = actionTriggers.filter(
     (t) =>
       !(component?.props?.actions ?? []).find((a: Action) => a.trigger === t)
   );
