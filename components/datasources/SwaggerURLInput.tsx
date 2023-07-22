@@ -38,7 +38,7 @@ export const SwaggerURLInput = ({
   return (
     <TextInput
       label="Swagger URL"
-      description="Enter the URL of your Open API Swagger definition in JSON or YAML format so we can fetch your API endpoints, e.g. https://petstore.swagger.io/v2/swagger.json."
+      description="Enter the URL of your Open API Swagger definition in JSON or YAML format so we can fetch your API endpoints, e.g. https://petstore.swagger.io/v2/swagger.json"
       placeholder="https://petstore.swagger.io/v2/swagger.json"
       {...(form
         ? form.getInputProps("swaggerUrl")
