@@ -5,6 +5,7 @@ import { LoadingStore, NextStepperClickEvent } from "@/utils/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
 import { Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useEffect } from "react";
 
 interface ProjectStepProps extends LoadingStore, NextStepperClickEvent {
   setProjectId: (id: string) => void;
@@ -38,6 +39,10 @@ export default function ProjectStep({
           : null,
     },
   });
+
+  useEffect(() => {
+    console.log("ProjectStep: ");
+  }, []);
 
   const onSubmit = async (values: ProjectParams) => {
     try {

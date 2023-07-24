@@ -1,26 +1,81 @@
 import { Shell } from "@/components/AppShell";
-import ProjectStepper from "@/components/projects/ProjectStepper";
-import StepperContent from "@/components/projects/StepperContent";
+import BrandingStep from "@/components/projects/BrandingStep";
+import PagesStep from "@/components/projects/PagesStep";
+import ProjectStep from "@/components/projects/ProjectStep";
+import { ThemeResponse } from "@/requests/themes/types";
+import { useAppStore } from "@/stores/app";
 import { StepperDetailsType } from "@/utils/projectTypes";
-import { Container, Stack, Title } from "@mantine/core";
+import { Container, Stack, Stepper, Title } from "@mantine/core";
 import { useState } from "react";
 
 export default function New() {
   const [activeStep, setActiveStep] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const startLoading = useAppStore((state) => state.startLoading);
+  const stopLoading = useAppStore((state) => state.stopLoading);
+
+  const nextStep = () =>
+    setActiveStep((current) => (current < 3 ? current + 1 : current));
+  const prevStep = () =>
+    setActiveStep((current) => (current > 0 ? current - 1 : current));
+
+  const [projectId, setProjectId] = useState("");
+  const [websiteUrl, setWebsiteUrl] = useState("");
+  const [pages, setPages] = useState<string[]>([]);
+  const [themeResponse, setThemeResponse] = useState<ThemeResponse>();
 
   return (
     <Shell>
       <Container py={60}>
         <Stack spacing="xl">
           <StepperHeading activeStep={activeStep}></StepperHeading>
-          <ProjectStepper
-            activeStep={activeStep}
-            setActiveStep={setActiveStep}
-          />
-          <StepperContent
-            activeStep={activeStep}
-            setActiveStep={setActiveStep}
-          />
+          <Stepper
+            active={activeStep}
+            onStepClick={setActiveStep}
+            allowNextStepsSelect={false}
+            py="lg"
+          >
+            <Stepper.Step
+              label="Project"
+              description="Define your project scope"
+            >
+              <ProjectStep
+                nextStep={nextStep}
+                isLoading={isLoading}
+                setIsLoading={setIsLoading}
+                startLoading={startLoading}
+                stopLoading={stopLoading}
+                setProjectId={setProjectId}
+              ></ProjectStep>
+            </Stepper.Step>
+            <Stepper.Step label="Branding" description="Personalise your app">
+              <BrandingStep
+                prevStep={prevStep}
+                nextStep={nextStep}
+                isLoading={isLoading}
+                setIsLoading={setIsLoading}
+                startLoading={startLoading}
+                stopLoading={stopLoading}
+                projectId={projectId}
+                websiteUrl={websiteUrl}
+                setWebsiteUrl={setWebsiteUrl}
+                themeResponse={themeResponse}
+                setThemeResponse={setThemeResponse}
+              ></BrandingStep>
+            </Stepper.Step>
+            <Stepper.Step label="Pages" description="Generate your page names">
+              <PagesStep
+                prevStep={prevStep}
+                isLoading={isLoading}
+                setIsLoading={setIsLoading}
+                startLoading={startLoading}
+                stopLoading={stopLoading}
+                projectId={projectId}
+                pages={pages}
+                setPages={setPages}
+              ></PagesStep>
+            </Stepper.Step>
+          </Stepper>
         </Stack>
       </Container>
     </Shell>

@@ -12,7 +12,8 @@ export const getPagesEventSource = async (
   excludedCsv?: string,
   onmessage?: (ev: EventSourceMessage) => void,
   onerror?: (err: any) => number | null | undefined | void,
-  onopen?: (response: Response) => Promise<void>
+  onopen?: (response: Response) => Promise<void>,
+  onclose?: () => void
 ) => {
   const token = await getAuthToken();
   const url = `${baseURL}/projects/${projectId}/automations/pages?count=${count}&excluded=${excludedCsv}`;
@@ -26,6 +27,7 @@ export const getPagesEventSource = async (
     onerror: onerror,
     onmessage: onmessage,
     onopen: onopen,
+    onclose: onclose,
   });
 };
 

@@ -1,3 +1,4 @@
+import { colors } from "@/components/datasources/DataSourceEndpoint";
 import {
   getDataSourceEndpoints,
   getDataSources,
@@ -6,6 +7,7 @@ import { Endpoint } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { APICallAction, Action } from "@/utils/actions";
+import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
 import {
   ActionIcon,
@@ -17,17 +19,15 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { IconCurrentLocation } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { forwardRef, useEffect, useState } from "react";
-import { colors } from "@/components/datasources/DataSourceEndpoint";
-import { IconCurrentLocation } from "@tabler/icons-react";
-import { ICON_SIZE } from "@/utils/config";
 
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, any>(
   ({ method, label, ...others }: any, ref) => (
-    <Stack ref={ref} spacing={2} p="xs" {...others}>
+    <Stack ref={ref} spacing={2} {...others}>
       <Box
         p={2}
         sx={{

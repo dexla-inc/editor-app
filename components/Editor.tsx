@@ -254,7 +254,33 @@ export const Editor = ({ projectId, pageId }: Props) => {
         };
 
         const onClose = async () => {
-          // check for show navigation flag if true then show navigation by calling addComponent, also where and root. Id as root
+          // Reinaldo - check for show navigation flag if true then show navigation by calling addComponent and use Navbar.
+
+          // if (page.hasNavigation) {
+          //   const renderTree = (component: Component) => {
+          //     const componentToRender = componentMapper[component.name];
+
+          //     return componentToRender?.Component({ component, renderTree });
+          //   };
+
+          //   const navbarComponentDefinition = componentMapper["Navbar"];
+
+          //   const navbarComponent = navbarComponentDefinition.Component({
+          //     component: { props: { children: [] } },
+          //     renderTree,
+          //   });
+
+          //   console.log({ navbarComponent });
+
+          //   const copy = cloneDeep(editorTree);
+          //   console.log({ copy });
+
+          //   addComponent(copy.root, navbarComponent, {
+          //     id: "root",
+          //     edge: "left",
+          //   });
+          //   setEditorTree(copy);
+          // }
 
           stopLoading({
             id: "page-generation",
