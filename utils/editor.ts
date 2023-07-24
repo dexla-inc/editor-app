@@ -100,9 +100,7 @@ export const getEditorTreeFromPageStructure = (
               display: "flex",
               flexDirection: "column",
               boxSizing: "border-box",
-              minHeight: "10px",
-              paddingLeft: theme.spacing.xl,
-              paddingRight: theme.spacing.xl,
+              minHeight: "50px",
             },
           },
           children: tree.rows.map((row: Row) => {

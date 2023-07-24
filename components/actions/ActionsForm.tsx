@@ -43,7 +43,7 @@ export const ActionsForm = () => {
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack spacing="xs">
+      <Stack spacing="xs" px="md">
         <Select
           size="xs"
           placeholder="Select a trigger"

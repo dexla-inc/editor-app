@@ -82,6 +82,7 @@ import * as RadarChartStructure from "@/components/mapper/structure/charts/Radar
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 
+import { ActionTrigger } from "@/utils/actions";
 import {
   IconBrandChrome,
   IconBread,
@@ -125,7 +126,6 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 import { FileWithPath } from "file-selector";
-import { ActionTrigger } from "@/utils/actions";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -1038,6 +1038,7 @@ export const componentMapper: ComponentMapper = {
       <AppBar component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["layout", "background", "spacing", "size", "border"],
+    actionTriggers: ["onMount", "onSuccess", "onError"],
   },
   BarChart: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -1106,6 +1107,7 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
+    actionTriggers: ["onMount", "onSuccess", "onError", "onClick", "onHover"],
   },
   Form: {
     Component: (props: { component: Component; renderTree: any }) => (

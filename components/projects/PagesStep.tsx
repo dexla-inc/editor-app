@@ -1,6 +1,5 @@
 import { InformationAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
-import NextButton from "@/components/NextButton";
 import { getPagesEventSource } from "@/requests/ai/queries";
 import { createPages } from "@/requests/pages/mutations";
 import { PageBody } from "@/requests/pages/types";
@@ -13,6 +12,7 @@ import {
 import TOML from "@iarna/toml";
 import {
   ActionIcon,
+  Anchor,
   Button,
   Divider,
   Flex,
@@ -25,13 +25,15 @@ import {
 import { EventSourceMessage } from "@microsoft/fetch-event-source";
 import {
   IconCircleCheck,
+  IconDatabase,
   IconPlus,
   IconSparkles,
   IconTrash,
 } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import slugify from "slugify";
 
 export const getServerSideProps = async ({
@@ -65,7 +67,8 @@ export default function PagesStep({
   const router = useRouter();
   const [formComplete, setFormComplete] = useState(false);
   const resetTree = useEditorStore((state) => state.resetTree);
-
+  const [count, setCount] = useState(5);
+  const [homePageId, setHomePageId] = useState("");
   const updatePage = (index: number, value: string) => {
     const updatedPages = [...pages];
     updatedPages[index] = value;
@@ -76,7 +79,38 @@ export default function PagesStep({
     setPages((oldPages) => [...oldPages, ""]);
   };
 
-  const stream = async (count: number) => {
+  const onMessage = (event: EventSourceMessage) => {
+    try {
+      const json = TOML.parse(event.data);
+      const newPages = Object.values(json) as string[];
+      setPages((oldPages) => [...oldPages, ...newPages]);
+      stopLoading({
+        id: "pages-stream",
+        title: "Names Generated",
+        message: "Here's your pages names. We hope you like it",
+      });
+      setIsLoading && setIsLoading(false);
+    } catch (error) {
+      // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
+      console.error(error);
+    }
+  };
+
+  const onError = (err: any) => {
+    stopLoading({
+      id: "pages-stream",
+      title: "There was a problem",
+      message: err,
+      isError: true,
+    });
+    setIsLoading && setIsLoading(false);
+  };
+
+  const onOpen = async (response: Response) => {
+    // handle open
+  };
+
+  const fetchPageStream = async () => {
     const plural = count === 1 ? "" : "s";
     setIsLoading && setIsLoading(true);
     startLoading({
@@ -85,38 +119,7 @@ export default function PagesStep({
       message: `Wait while AI generates the name${plural} of your page${plural}`,
     });
 
-    const onMessage = (event: EventSourceMessage) => {
-      try {
-        const json = TOML.parse(event.data);
-        const newPages = Object.values(json) as string[];
-        setPages((oldPages) => [...oldPages, ...newPages]);
-        stopLoading({
-          id: "pages-stream",
-          title: "Names Generated",
-          message: "Here's your pages names. We hope you like it",
-        });
-        setIsLoading && setIsLoading(false);
-      } catch (error) {
-        // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
-        console.error(error);
-      }
-    };
-
-    const onError = (err: any) => {
-      stopLoading({
-        id: "pages-stream",
-        title: "There was a problem",
-        message: err,
-        isError: true,
-      });
-      setIsLoading && setIsLoading(false);
-    };
-
-    const onOpen = async (response: Response) => {
-      // handle open
-    };
-
-    getPagesEventSource(
+    return await getPagesEventSource(
       projectId,
       count,
       pages.join(),
@@ -126,7 +129,38 @@ export default function PagesStep({
     );
   };
 
-  const goToEditor = async (projectId: string) => {
+  const fetchPage = async () => {
+    setIsLoading && setIsLoading(true);
+    startLoading({
+      id: "pages-stream",
+      title: `Generating Page Name`,
+      message: `Wait while AI generates the name of your page`,
+    });
+
+    return await getPagesEventSource(
+      projectId,
+      1,
+      pages.join(),
+      onMessage,
+      onError,
+      onOpen
+    );
+  };
+
+  const { error, data, refetch } = useQuery(
+    ["pageStream", projectId, pages, count],
+    fetchPageStream,
+    {
+      enabled: false,
+    }
+  );
+
+  // Ensure stream pages only happens once
+  useEffect(() => {
+    if (pages.length === 0) refetch();
+  }, []);
+
+  const createManyPages = async (projectId: string) => {
     resetTree();
     setIsLoading && setIsLoading(true);
     startLoading({
@@ -147,9 +181,17 @@ export default function PagesStep({
       projectId
     );
 
-    router.push(`/projects/${projectId}/editor/${createdPages.homePageId}`);
+    setHomePageId(createdPages.homePageId);
+  };
 
-    setFormComplete(true);
+  const createPagesThenGoToEditor = async (projectId: string) => {
+    await createManyPages(projectId);
+    router.push(`/projects/${projectId}/editor/${homePageId}`);
+  };
+
+  const createPagesThenGoToDataSource = async (projectId: string) => {
+    await createManyPages(projectId);
+    router.push(`/projects/${projectId}/settings/datasources/new`);
   };
 
   const deletePage = (pageToRemove: string) => {
@@ -213,7 +255,7 @@ export default function PagesStep({
           <Button
             variant="light"
             leftIcon={<IconSparkles size={ICON_SIZE} />}
-            onClick={() => stream(5)}
+            //onClick={() => stream(5)}
             loading={isLoading}
             disabled={isLoading || hasPageNames}
           >
@@ -224,7 +266,9 @@ export default function PagesStep({
             <Button
               variant="light"
               leftIcon={<IconPlus size={ICON_SIZE} />}
-              onClick={() => stream(1)}
+              onClick={() => {
+                fetchPage();
+              }}
               loading={isLoading}
             >
               Generate new page
@@ -244,12 +288,19 @@ export default function PagesStep({
       <Divider></Divider>
       <Group position="apart">
         <BackButton onClick={prevStep}></BackButton>
-
-        <NextButton
-          onClick={() => goToEditor(projectId)}
-          isLoading={isLoading}
-          disabled={!hasPageNames}
-        ></NextButton>
+        <Flex gap="lg" align="end">
+          <Anchor onClick={() => createPagesThenGoToEditor(projectId)}>
+            Set up datasource later
+          </Anchor>
+          <Button
+            onClick={() => createPagesThenGoToDataSource(projectId)}
+            loading={isLoading}
+            disabled={!hasPageNames}
+            leftIcon={<IconDatabase size={ICON_SIZE} />}
+          >
+            Set up a datasource
+          </Button>
+        </Flex>
       </Group>
     </Stack>
   );

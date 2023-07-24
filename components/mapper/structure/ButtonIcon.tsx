@@ -4,7 +4,6 @@ import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
-  const { value, ...rest } = props.props ?? {};
 
   return {
     id: nanoid(),
@@ -14,29 +13,25 @@ export const jsonStructure = (props?: any): Component => {
       style: {
         width: "auto",
         height: "auto",
-        paddingTop: "50%",
-        paddingBottom: "50%",
-        paddingLeft: "50%",
-        paddingRight: "50%",
       },
-      ...(rest || {}),
+      color: "Primary",
       blockDroppingChildrenInside: true,
-      children: [
-        {
-          id: nanoid(),
-          name: "Icon",
-          description: "Icon",
-          props: {
-            style: {
-              width: "auto",
-              height: "auto",
-            },
-            name: "IconSettings",
-          },
-          children: [],
-          blockDroppingChildrenInside: true,
-        },
-      ],
     },
+    children: [
+      {
+        id: nanoid(),
+        name: "Icon",
+        description: "Icon",
+        props: {
+          style: {
+            width: "auto",
+            height: "auto",
+          },
+          name: "IconSettings",
+        },
+        children: [],
+        blockDroppingChildrenInside: true,
+      },
+    ],
   };
 };

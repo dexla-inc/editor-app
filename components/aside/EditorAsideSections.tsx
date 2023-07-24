@@ -14,7 +14,14 @@ import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper } from "@/utils/actions";
 import { componentMapper } from "@/utils/componentMapper";
 import { getComponentById } from "@/utils/editor";
-import { Box, Center, SegmentedControl, Stack, Text } from "@mantine/core";
+import {
+  Box,
+  Center,
+  Flex,
+  SegmentedControl,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { IconBolt } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
 import { useState } from "react";
@@ -49,7 +56,7 @@ export const EditorAsideSections = () => {
 
   if (!selectedComponentId || isContentWrapperSelected) {
     return (
-      <Box py="xl">
+      <Box p="xl">
         <Center>
           <Text size="xs" color="dimmed" align="center">
             You are unable to edit this Content Wrapper. Select another
@@ -104,15 +111,18 @@ export const EditorAsideSections = () => {
   );
 
   return (
-    <Stack px="sm">
-      <SegmentedControl
-        size="xs"
-        data={[
-          { label: "Design", value: "design" },
-          { label: "Actions", value: "actions" },
-        ]}
-        onChange={(value) => setTab(value as Tab)}
-      />
+    <Stack>
+      <Flex px="md">
+        <SegmentedControl
+          size="xs"
+          style={{ width: "100%" }}
+          data={[
+            { label: "Design", value: "design" },
+            { label: "Actions", value: "actions" },
+          ]}
+          onChange={(value) => setTab(value as Tab)}
+        />
+      </Flex>
       {tab === "design" && designSections}
       {tab === "actions" && (
         <Stack>
