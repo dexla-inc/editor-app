@@ -10,7 +10,7 @@ import { postPageEventSource } from "@/requests/ai/queries";
 import { getPage } from "@/requests/pages/queries";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
-import { componentMapper } from "@/utils/componentMapper";
+import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
 import { HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
 import {
@@ -256,31 +256,21 @@ export const Editor = ({ projectId, pageId }: Props) => {
         const onClose = async () => {
           // Reinaldo - check for show navigation flag if true then show navigation by calling addComponent and use Navbar.
 
-          // if (page.hasNavigation) {
-          //   const renderTree = (component: Component) => {
-          //     const componentToRender = componentMapper[component.name];
+          if (page.hasNavigation) {
+            const copy = cloneDeep(editorTree);
+            console.log({ copy });
+            const structureDefinition = structureMapper["Navbar"];
+            const newComponent = structureDefinition.structure({
+              theme,
+              pages,
+            });
 
-          //     return componentToRender?.Component({ component, renderTree });
-          //   };
-
-          //   const navbarComponentDefinition = componentMapper["Navbar"];
-
-          //   const navbarComponent = navbarComponentDefinition.Component({
-          //     component: { props: { children: [] } },
-          //     renderTree,
-          //   });
-
-          //   console.log({ navbarComponent });
-
-          //   const copy = cloneDeep(editorTree);
-          //   console.log({ copy });
-
-          //   addComponent(copy.root, navbarComponent, {
-          //     id: "root",
-          //     edge: "left",
-          //   });
-          //   setEditorTree(copy);
-          // }
+            addComponent(copy.root, newComponent, {
+              id: "root",
+              edge: "left",
+            });
+            setEditorTree(copy);
+          }
 
           stopLoading({
             id: "page-generation",
@@ -312,6 +302,9 @@ export const Editor = ({ projectId, pageId }: Props) => {
     startLoading,
     stopLoading,
     setIsLoading,
+    editorTree,
+    pages,
+    theme,
   ]);
 
   useEffect(() => {
