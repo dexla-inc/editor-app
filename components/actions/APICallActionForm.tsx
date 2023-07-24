@@ -13,6 +13,7 @@ import {
   ActionIcon,
   Box,
   Button,
+  Flex,
   Select,
   Stack,
   Text,
@@ -27,24 +28,25 @@ import { forwardRef, useEffect, useState } from "react";
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, any>(
   ({ method, label, ...others }: any, ref) => (
-    <Stack ref={ref} spacing={2} {...others}>
+    <Flex ref={ref} gap="xs" {...others}>
       <Box
         p={2}
         sx={{
           fontSize: 8,
-          // @ts-ignore
-          color: colors[method].color,
+          color: "white",
           // @ts-ignore
           border: colors[method].color + " 1px solid",
           // @ts-ignore
-          background: colors[method].background,
+          background: colors[method].color,
           borderRadius: "4px",
+          width: 38,
+          textAlign: "center",
         }}
       >
         {method}
       </Box>
       <Text size="xs">{label}</Text>
-    </Stack>
+    </Flex>
   )
 );
 
