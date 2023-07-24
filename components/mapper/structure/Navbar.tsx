@@ -8,9 +8,9 @@ import { nanoid } from "nanoid";
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
   const pages = props.pages ?? [];
-  const logoUrl =
-    theme.logoUrl ??
-    "https://www.kadencewp.com/wp-content/uploads/2020/10/alogo-2.svg";
+  const logoUrl = theme.logoUrl
+    ? theme.logoUrl
+    : "https://www.kadencewp.com/wp-content/uploads/2020/10/alogo-4.svg";
 
   return {
     id: nanoid(),
@@ -18,7 +18,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Navbar",
     props: {
       style: {
-        width: "300px",
+        width: "360px",
         height: "100vh",
         borderRightWidth: "1px",
         borderRightStyle: "solid",
@@ -55,9 +55,7 @@ export const jsonStructure = (props?: any): Component => {
                 height: "50px",
                 ...defaultImageValues,
               },
-              src:
-                logoUrl ??
-                "https://www.kadencewp.com/wp-content/uploads/2020/10/alogo-4.svg",
+              src: logoUrl,
             },
             children: [],
             blockDroppingChildrenInside: true,
