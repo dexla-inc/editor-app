@@ -65,10 +65,8 @@ export default function PagesStep({
   setPages,
 }: PagesStepProps) {
   const router = useRouter();
-  const [formComplete, setFormComplete] = useState(false);
   const resetTree = useEditorStore((state) => state.resetTree);
   const [count, setCount] = useState(5);
-  const [homePageId, setHomePageId] = useState("");
   const updatePage = (index: number, value: string) => {
     const updatedPages = [...pages];
     updatedPages[index] = value;
@@ -169,7 +167,7 @@ export default function PagesStep({
       message: "Wait while your pages are being created",
     });
 
-    const createdPages = await createPages(
+    return createPages(
       pages.map((page, index) => {
         return {
           title: page,
@@ -180,13 +178,11 @@ export default function PagesStep({
       }) as PageBody[],
       projectId
     );
-
-    setHomePageId(createdPages.homePageId);
   };
 
   const createPagesThenGoToEditor = async (projectId: string) => {
-    await createManyPages(projectId);
-    router.push(`/projects/${projectId}/editor/${homePageId}`);
+    const manyPages = await createManyPages(projectId);
+    router.push(`/projects/${projectId}/editor/${manyPages.homePageId}`);
   };
 
   const createPagesThenGoToDataSource = async (projectId: string) => {
@@ -289,9 +285,11 @@ export default function PagesStep({
       <Group position="apart">
         <BackButton onClick={prevStep}></BackButton>
         <Flex gap="lg" align="end">
-          <Anchor onClick={() => createPagesThenGoToEditor(projectId)}>
-            Set up datasource later
-          </Anchor>
+          {isLoading !== true && (
+            <Anchor onClick={() => createPagesThenGoToEditor(projectId)}>
+              Set up datasource later
+            </Anchor>
+          )}
           <Button
             onClick={() => createPagesThenGoToDataSource(projectId)}
             loading={isLoading}
