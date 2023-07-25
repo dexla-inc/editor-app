@@ -105,6 +105,15 @@ export const jsonStructure = (props?: any): Component => {
                   display: "flex",
                   alignItems: "center",
                 },
+                actions: [
+                  {
+                    trigger: "onClick",
+                    action: {
+                      name: "navigation",
+                      pageId: page.id,
+                    },
+                  },
+                ],
               },
               children: [],
             };

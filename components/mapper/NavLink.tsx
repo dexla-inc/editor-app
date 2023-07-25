@@ -9,7 +9,7 @@ type Props = {
 } & NavLinkProps;
 
 export const NavLink = ({ renderTree, component, ...props }: Props) => {
-  const { children, isNested, pageId, ...componentProps } =
+  const { children, isNested, pageId, triggers, ...componentProps } =
     component.props as any;
 
   const router = useRouter();
@@ -25,6 +25,7 @@ export const NavLink = ({ renderTree, component, ...props }: Props) => {
       variant="light"
       {...props}
       {...componentProps}
+      {...triggers}
     />
   );
 };

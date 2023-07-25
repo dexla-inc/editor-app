@@ -824,7 +824,7 @@ export const componentMapper: ComponentMapper = {
       <NavLink component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount", "onSuccess", "onError", "onClick"],
   },
   Icon: {
     Component: (props: { component: Component; renderTree: any }) => (

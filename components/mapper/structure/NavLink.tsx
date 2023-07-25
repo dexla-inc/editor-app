@@ -1,11 +1,8 @@
-import { defaultTheme } from "@/components/IFrame";
 import { Component } from "@/utils/editor";
 import { IconHome } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
-  const theme = props.theme ?? defaultTheme;
-
   return {
     id: nanoid(),
     name: "NavLink",
@@ -17,7 +14,7 @@ export const jsonStructure = (props?: any): Component => {
         width: "auto",
         height: "auto",
       },
-      // ...(props.props || {}),
+      ...(props.props || {}),
     },
     blockDroppingChildrenInside: true,
   };

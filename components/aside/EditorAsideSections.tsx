@@ -121,15 +121,18 @@ export const EditorAsideSections = () => {
             { label: "Actions", value: "actions" },
           ]}
           onChange={(value) => setTab(value as Tab)}
+          value={tab}
         />
       </Flex>
-      {tab === "design" && designSections}
-      {tab === "actions" && (
-        <Stack>
-          <ActionsForm />
-          {actionsSections}
-        </Stack>
-      )}
+      <Box key={selectedComponentId}>
+        {tab === "design" && designSections}
+        {tab === "actions" && (
+          <Stack>
+            <ActionsForm />
+            {actionsSections}
+          </Stack>
+        )}
+      </Box>
     </Stack>
   );
 };
