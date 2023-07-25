@@ -52,6 +52,10 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
+  const copiedComponent = useEditorStore((state) => state.copiedComponent);
+  const setCopiedComponent = useEditorStore(
+    (state) => state.setCopiedComponent
+  );
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
@@ -64,7 +68,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isStreaming = useRef<boolean>(false);
   const [stream, setStream] = useState<string>();
-  const [copiedComponentId, setCopiedComponentId] = useState<string>();
   const [canvasRef] = useAutoAnimate();
   const [isCustomComponentModalOpen, customComponentModal] =
     useDisclosure(false);
@@ -90,18 +93,20 @@ export const Editor = ({ projectId, pageId }: Props) => {
   ]);
 
   const copySelectedCompnent = useCallback(() => {
-    if (!isPreviewMode) {
-      setCopiedComponentId(selectedComponentId);
+    if (!isPreviewMode && selectedComponentId) {
+      setCopiedComponent(
+        getComponentById(editorTree.root, selectedComponentId!)!
+      );
     }
-  }, [isPreviewMode, selectedComponentId]);
+  }, [editorTree.root, isPreviewMode, selectedComponentId, setCopiedComponent]);
 
   const pasteCopiedComponent = useCallback(() => {
-    if (copiedComponentId && !isPreviewMode) {
-      const isSelectedId = selectedComponentId === copiedComponentId;
+    if (copiedComponent && !isPreviewMode && selectedComponentId) {
+      const isSelectedId = selectedComponentId === copiedComponent.id;
       const copy = cloneDeep(editorTree);
-      addComponent(copy.root, getComponentById(copy.root, copiedComponentId)!, {
+      addComponent(copy.root, copiedComponent, {
         id: isSelectedId
-          ? (getComponentParent(copy.root, copiedComponentId)!.id as string)
+          ? (getComponentParent(copy.root, copiedComponent.id!)!.id as string)
           : (getComponentById(copy.root, selectedComponentId as string)!
               .id as string),
         edge: "right",
@@ -109,7 +114,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
       setEditorTree(copy);
     }
   }, [
-    copiedComponentId,
+    copiedComponent,
     editorTree,
     isPreviewMode,
     selectedComponentId,

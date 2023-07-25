@@ -39,6 +39,7 @@ export type EditorState = {
   currentProjectId?: string;
   currentPageId?: string;
   selectedComponentId?: string;
+  copiedComponent?: Component;
   componentToAdd?: Component;
   iframeWindow?: Window;
   currentTargetId?: string;
@@ -52,6 +53,7 @@ export type EditorState = {
   setPickingComponentToBindFrom: (pickingComponentToBindFrom?: string) => void;
   componentToBind?: string;
   setComponentToBind: (componentToBind?: string) => void;
+  setCopiedComponent: (copiedComponent?: Component) => void;
   setPages: (pages: PageResponse[]) => void;
   setTheme: (theme: MantineThemeExtended) => void;
   setIframeWindow: (iframeWindow: Window) => void;
@@ -91,6 +93,7 @@ export const useEditorStore = create<EditorState>()(
       setPickingComponentToBindTo: (pickingComponentToBindTo) =>
         set({ pickingComponentToBindTo }),
       setComponentToBind: (componentToBind) => set({ componentToBind }),
+      setCopiedComponent: (copiedComponent) => set({ copiedComponent }),
       setTheme: (theme) => set({ theme }),
       setIframeWindow: (iframeWindow) => set({ iframeWindow }),
       setCurrentTargetId: (currentTargetId) => set({ currentTargetId }),
