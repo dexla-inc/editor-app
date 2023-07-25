@@ -56,6 +56,9 @@ export default function Projects() {
     );
   };
 
+  const ownedProjects = projects.filter((project) => project.isOwner);
+  const sharedProjects = projects.filter((project) => !project.isOwner);
+
   return (
     <Shell navbarType="company" user={user}>
       <Container py="xl" size="lg">
@@ -85,20 +88,43 @@ export default function Projects() {
               }}
             />
           )}
-          <Grid>
-            {projects.map((project) => {
-              return (
-                <ProjectItem
-                  key={project.id}
-                  project={project}
-                  theme={theme}
-                  buttonHoverStyles={buttonHoverStyles}
-                  goToEditor={goToEditor}
-                  onDeleteProject={handleDeleteProject}
-                />
-              );
-            })}
-          </Grid>
+
+          {ownedProjects.length > 0 && (
+            <>
+              {ownedProjects.length > 0 && sharedProjects.length > 0 && (
+                <Title order={4}>My Projects</Title>
+              )}
+              <Grid>
+                {ownedProjects.map((project) => (
+                  <ProjectItem
+                    key={project.id}
+                    project={project}
+                    theme={theme}
+                    buttonHoverStyles={buttonHoverStyles}
+                    goToEditor={goToEditor}
+                    onDeleteProject={handleDeleteProject}
+                  />
+                ))}
+              </Grid>
+            </>
+          )}
+          {sharedProjects.length > 0 && (
+            <>
+              <Title order={4}>Shared With Me</Title>
+              <Grid>
+                {sharedProjects.map((project) => (
+                  <ProjectItem
+                    key={project.id}
+                    project={project}
+                    theme={theme}
+                    buttonHoverStyles={buttonHoverStyles}
+                    goToEditor={goToEditor}
+                    onDeleteProject={handleDeleteProject}
+                  />
+                ))}
+              </Grid>
+            </>
+          )}
         </Stack>
       </Container>
     </Shell>
