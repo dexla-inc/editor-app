@@ -494,8 +494,6 @@ export const addComponent = (
     treeRoot,
     (node, context) => {
       if (copy.props?.fixedPosition && node.id === "root") {
-        console.log(node.children);
-
         // @ts-ignore
         node.children[0].props.style.width = `calc(100% - ${copy.props.style.width})`;
 

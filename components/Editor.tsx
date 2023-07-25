@@ -222,6 +222,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
         const onMessage = (event: EventSourceMessage) => {
           try {
+            // TODO: We need to pass down a specific message on the stream so we know we don't need to set the stream state
+            // like a message saying ___DONE___ or any unique end message
             setStream((state) => {
               try {
                 if (state === undefined) {
@@ -254,22 +256,40 @@ export const Editor = ({ projectId, pageId }: Props) => {
         };
 
         const onClose = async () => {
-          // Reinaldo - check for show navigation flag if true then show navigation by calling addComponent and use Navbar.
-
           if (page.hasNavigation) {
-            const copy = cloneDeep(editorTree);
-            console.log({ copy });
-            const structureDefinition = structureMapper["Navbar"];
-            const newComponent = structureDefinition.structure({
-              theme,
-              pages,
-            });
+            // TODO: Remove this timeout once we have a good way to define that the stream is done
+            // currently the onClose function is called but the last stream is still valid
+            // so we set the tree to tha latest state, which override whatever we set here
+            // We need to pass down a specific message on the stream so we know we don't need to set the state
+            // like a message saying ___DONE___ or any unique end message
+            setTimeout(() => {
+              const tree = useEditorStore.getState().tree;
+              const copy = cloneDeep(tree);
 
-            addComponent(copy.root, newComponent, {
-              id: "root",
-              edge: "left",
-            });
-            setEditorTree(copy);
+              const appbarStructure = structureMapper["AppBar"];
+              const appbar = appbarStructure.structure({
+                theme,
+                pages,
+              });
+
+              const navbarStructure = structureMapper["Navbar"];
+              const navbar = navbarStructure.structure({
+                theme,
+                pages,
+              });
+
+              addComponent(copy.root, navbar, {
+                id: "root",
+                edge: "left",
+              });
+
+              addComponent(copy.root, appbar, {
+                id: "content-wrapper",
+                edge: "top",
+              });
+
+              setEditorTree(copy);
+            }, 1000);
           }
 
           stopLoading({
@@ -302,7 +322,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
     startLoading,
     stopLoading,
     setIsLoading,
-    editorTree,
     pages,
     theme,
   ]);
