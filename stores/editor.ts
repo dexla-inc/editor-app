@@ -46,9 +46,9 @@ export type EditorState = {
   isSaving: boolean;
   isPreviewMode: boolean;
   pages: PageResponse[];
-  pickingComponentToBindTo?: string; // <component.id>_<action.trigger>_<param.name>_<bindedComponent.id>
+  pickingComponentToBindTo?: string; // <component.id>++<action.trigger>++<param.name>++<bindedComponent.id>
   setPickingComponentToBindTo: (pickingComponentToBindTo?: string) => void;
-  pickingComponentToBindFrom?: string; // <component.id>_<action.trigger>_<endpoint.id>_<param.name>_<bindedComponent.id>
+  pickingComponentToBindFrom?: string; // <component.id>++<action.trigger>++<endpoint.id>++<param.name>++<bindedComponent.id>
   setPickingComponentToBindFrom: (pickingComponentToBindFrom?: string) => void;
   componentToBind?: string;
   setComponentToBind: (componentToBind?: string) => void;

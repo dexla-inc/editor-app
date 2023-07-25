@@ -136,9 +136,9 @@ export const DroppableDraggable = ({
     ].includes(component.name);
 
   const pickingData = pickingComponentToBindFrom
-    ? pickingComponentToBindFrom.split("_")
+    ? pickingComponentToBindFrom.split("++")
     : pickingComponentToBindTo
-    ? pickingComponentToBindTo.split("_")
+    ? pickingComponentToBindTo.split("++")
     : [];
 
   const isPicked = isPicking && pickingData[pickingData.length - 1] === id;
@@ -228,6 +228,7 @@ export const DroppableDraggable = ({
                   : {},
               },
             },
+            isPreviewMode,
           },
           // @ts-ignore
           children?.children

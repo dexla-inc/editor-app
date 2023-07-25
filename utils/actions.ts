@@ -15,6 +15,7 @@ export const triggers = [
   "onMount",
   "onSuccess",
   "onError",
+  "onSubmit",
 ] as const;
 
 export const actions = [
@@ -103,6 +104,8 @@ export const apiCallAction = async ({
   ...rest
 }: APICallActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+
+  console.log({ action });
 
   try {
     const iframeWindow = useEditorStore.getState().iframeWindow;

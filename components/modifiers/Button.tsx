@@ -13,6 +13,7 @@ export const label = "Button";
 
 export const defaultInputValues = {
   value: "New Button",
+  type: "button",
   variant: "filled",
   size: "md",
   color: "teal",
@@ -42,9 +43,17 @@ export const Modifier = () => {
 
   useEffect(() => {
     if (selectedComponent) {
-      const { style = {}, children, size, color, variant } = componentProps;
+      const {
+        style = {},
+        children,
+        type,
+        size,
+        color,
+        variant,
+      } = componentProps;
       form.setValues({
         value: children ?? defaultInputValues.value,
+        type: type ?? defaultInputValues.type,
         variant: variant ?? defaultInputValues.variant,
         size: size ?? defaultInputValues.size,
         color: color ?? defaultInputValues.color,
@@ -66,6 +75,21 @@ export const Modifier = () => {
             form.setFieldValue("value", e.target.value);
             debouncedTreeUpdate(selectedComponentId as string, {
               children: e.target.value,
+            });
+          }}
+        />
+        <Select
+          label="Type"
+          size="xs"
+          data={[
+            { label: "button", value: "button" },
+            { label: "submit", value: "submit" },
+          ]}
+          {...form.getInputProps("type")}
+          onChange={(value) => {
+            form.setFieldValue("type", value as string);
+            debouncedTreeUpdate(selectedComponentId as string, {
+              type: value,
             });
           }}
         />

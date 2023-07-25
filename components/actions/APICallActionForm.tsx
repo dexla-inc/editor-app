@@ -169,7 +169,7 @@ export const APICallActionForm = () => {
 
   useEffect(() => {
     if (componentToBind && pickingComponentToBindFrom) {
-      const pickingData = pickingComponentToBindFrom.split("_");
+      const pickingData = pickingComponentToBindFrom.split("++");
       if (pickingData[0] === component?.id) {
         form.setFieldValue(
           `binds.${pickingData[3]}`,
@@ -236,9 +236,9 @@ export const APICallActionForm = () => {
                     <ActionIcon
                       onClick={() => {
                         setPickingComponentToBindFrom(
-                          `${component!.id}_${action.trigger}_${
+                          `${component!.id}++${action.trigger}++${
                             selectedEndpoint.id
-                          }_${param.name}_${
+                          }++${param.name}++${
                             form.values.binds?.[param.name] ?? ""
                           }`
                         );

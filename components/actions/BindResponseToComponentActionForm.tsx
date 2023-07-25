@@ -92,7 +92,7 @@ export const BindResponseToComponentActionForm = () => {
 
   useEffect(() => {
     if (componentToBind && pickingComponentToBindTo) {
-      const pickingData = pickingComponentToBindTo.split("_");
+      const pickingData = pickingComponentToBindTo.split("++");
       if (pickingData[0] === component?.id) {
         form.setFieldValue(`componentToBind`, componentToBind);
 
@@ -114,7 +114,7 @@ export const BindResponseToComponentActionForm = () => {
             <ActionIcon
               onClick={() => {
                 setPickingComponentToBindTo(
-                  `${component!.id}_${action.trigger}_componentToBind_${
+                  `${component!.id}++${action.trigger}++componentToBind++${
                     bindResponseToComponent?.componentToBind ?? ""
                   }`
                 );

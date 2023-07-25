@@ -1077,14 +1077,8 @@ export const componentMapper: ComponentMapper = {
   },
   Button: {
     Component: (props: { component: Component; renderTree: any }) => (
-      <Button
-        component={props.component}
-        renderTree={props.renderTree}
-        // @ts-ignore
-        onClick={(e) => {
-          e.preventDefault();
-        }}
-      />
+      // @ts-ignore
+      <Button component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["button", "spacing", "size", "border"],
     actionTriggers: [
@@ -1114,6 +1108,6 @@ export const componentMapper: ComponentMapper = {
       <Form component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["layout", "spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount", "onSuccess", "onError", "onSubmit"],
   },
 };
