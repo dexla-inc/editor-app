@@ -224,14 +224,21 @@ export const APICallActionForm = () => {
         />
         {selectedEndpoint && (
           <Stack spacing={2}>
-            {selectedEndpoint.parameters.map((param) => {
+            {[
+              ...selectedEndpoint.requestBody,
+              ...selectedEndpoint.parameters,
+            ].map((param) => {
               return (
                 <TextInput
                   size="xs"
                   label={param.name}
-                  description={`${param.location} - ${param.type}`}
+                  description={`${
+                    // @ts-ignore
+                    param.location ? `${param.location} - ` : ""
+                  }${param.type}`}
                   key={param.name}
                   type={param.type}
+                  // @ts-ignore
                   required={param.required}
                   {...form.getInputProps(`binds.${param.name}`)}
                   rightSection={

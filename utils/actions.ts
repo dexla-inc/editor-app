@@ -128,8 +128,6 @@ export const apiCallAction = async ({
 }: APICallActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
-  console.log({ action });
-
   try {
     const iframeWindow = useEditorStore.getState().iframeWindow;
     const projectId = router.query.id as string;
@@ -160,7 +158,37 @@ export const apiCallAction = async ({
       `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`
     );
 
-    const response = await fetch(url, { method: endpoint?.methodType });
+    const body =
+      endpoint?.methodType === "POST"
+        ? Object.keys(action.binds ?? {}).reduce(
+            (body: string, key: string) => {
+              // @ts-ignore
+              let value = action.binds[key] as string;
+
+              if (value.startsWith(`valueOf_`)) {
+                const el = iframeWindow?.document.querySelector(`
+          input#${value.split(`valueOf_`)[1]}
+        `) as HTMLInputElement;
+                value = el?.value ?? "";
+              }
+
+              return {
+                ...(body as any),
+                [key]: value,
+              };
+            },
+            {} as any
+          )
+        : {};
+
+    const response = await fetch(url, {
+      method: endpoint?.methodType,
+      headers: {
+        "Content-Type": endpoint?.mediaType ?? "application/json",
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+
     console.log(response);
 
     if (!response.status.toString().startsWith("20")) {
