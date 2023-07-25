@@ -1,9 +1,8 @@
-import { defaultTheme } from "@/components/IFrame";
+import { defaultLayoutValues } from "@/components/modifiers/Layout";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
-  const theme = props.theme ?? defaultTheme;
   const radioGroupId = nanoid();
 
   return {
@@ -16,20 +15,45 @@ export const jsonStructure = (props?: any): Component => {
         width: "100%",
         height: "auto",
       },
-      children: [
-        {
-          id: nanoid(),
-          name: "Radio",
-          description: "Radio",
-          data: [
-            { key: 1, value: "Carbon" },
-            { key: 2, value: "Nitrogen" },
-            { key: 3, value: "Yttrium" },
-          ],
-          blockDroppingChildrenInside: true,
-          ...(props.props || {}),
-        },
-      ],
     },
+    children: [
+      {
+        id: nanoid(),
+        name: "Container",
+        description: "Radio group Container",
+        props: {
+          style: {
+            ...defaultLayoutValues,
+            flexDirection: "column",
+            alignItems: "start",
+            justifyContent: "start",
+          },
+        },
+        children: [
+          {
+            id: nanoid(),
+            name: "Radio",
+            description: "Radio",
+            props: {
+              label: "Radio Label 1",
+              value: "radio1",
+              blockDroppingChildrenInside: true,
+              ...(props.props || {}),
+            },
+          },
+          {
+            id: nanoid(),
+            name: "Radio",
+            description: "Radio",
+            props: {
+              label: "Radio Label 2",
+              value: "radio2",
+              blockDroppingChildrenInside: true,
+              ...(props.props || {}),
+            },
+          },
+        ],
+      },
+    ],
   };
 };

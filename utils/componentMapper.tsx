@@ -26,6 +26,7 @@ import { NavLink } from "@/components/mapper/NavLink";
 import { Navbar } from "@/components/mapper/Navbar";
 import { Pagination } from "@/components/mapper/Pagination";
 import { Radio } from "@/components/mapper/Radio";
+import { RadioGroup } from "@/components/mapper/RadioGroup";
 import { Rating } from "@/components/mapper/Rating";
 import { Select } from "@/components/mapper/Select";
 import { Switch } from "@/components/mapper/Switch";
@@ -66,6 +67,7 @@ import * as NavbarStructure from "@/components/mapper/structure/Navbar";
 import * as NotImplemented from "@/components/mapper/structure/NotImplemented";
 import * as PaginationStructure from "@/components/mapper/structure/Pagination";
 import * as RadioStructure from "@/components/mapper/structure/Radio";
+import * as RadioGroupStructure from "@/components/mapper/structure/RadioGroup";
 import * as RatingStructure from "@/components/mapper/structure/Rating";
 import * as SelectStructure from "@/components/mapper/structure/Select";
 import * as SwitchStructure from "@/components/mapper/structure/Switch";
@@ -235,6 +237,17 @@ export const structureMapper: StructureMapper = {
     Draggable: () => (
       <DraggableComponent
         id="Radio"
+        icon={<IconPlaystationCircle size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconPlaystationCircle size={ICON_SIZE} />,
+  },
+  RadioGroup: {
+    structure: (props: any) => RadioGroupStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="RadioGroup"
         icon={<IconPlaystationCircle size={LARGE_ICON_SIZE} />}
       />
     ),
@@ -858,13 +871,7 @@ export const componentMapper: ComponentMapper = {
   },
   Checkbox: {
     Component: (props: { component: Component; renderTree: any }) => (
-      <Checkbox
-        component={props.component}
-        renderTree={props.renderTree}
-        onClick={(e) => {
-          e.preventDefault();
-        }}
-      />
+      <Checkbox component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount", "onSuccess", "onError"],
@@ -884,12 +891,19 @@ export const componentMapper: ComponentMapper = {
   },
   Radio: {
     Component: (props: { component: Component; renderTree: any }) => (
-      <Radio
+      // @ts-ignore
+      <Radio component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size", "border"],
+    actionTriggers: ["onMount", "onSuccess", "onError"],
+  },
+  RadioGroup: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <RadioGroup
         component={props.component}
         renderTree={props.renderTree}
-        onClick={(e) => {
-          e.preventDefault();
-        }}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
       />
     ),
     modifiers: ["spacing", "size", "border"],

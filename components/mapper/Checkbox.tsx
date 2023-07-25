@@ -1,13 +1,48 @@
 import { Component } from "@/utils/editor";
 import { Checkbox as MantineCheckbox, CheckboxProps } from "@mantine/core";
+import { useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
+  isPreviewMode?: boolean;
 } & CheckboxProps;
 
-export const Checkbox = ({ renderTree, component, ...props }: Props) => {
-  const { label, ...componentProps } = component.props as any;
+export const Checkbox = ({
+  renderTree,
+  component,
+  isPreviewMode,
+  ...props
+}: Props) => {
+  const { label, value, triggers, ...componentProps } = component.props as any;
+  const { children, ...rest } = props;
+  const [checked, setChecked] = useState(false);
 
-  return <MantineCheckbox {...props} {...componentProps} label={label} />;
+  const toggle = () => {
+    setChecked((state) => !state);
+  };
+
+  const defaultTriggers = isPreviewMode
+    ? {
+        onChange: (e: any) => {
+          toggle();
+        },
+      }
+    : {
+        onChange: (e: any) => {
+          e.preventDefault();
+        },
+      };
+
+  return (
+    <MantineCheckbox
+      {...defaultTriggers}
+      {...rest}
+      {...componentProps}
+      label={label}
+      value={value}
+      checked={checked}
+      {...triggers}
+    />
+  );
 };
