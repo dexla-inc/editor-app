@@ -1,12 +1,13 @@
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
+import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
 import { DebugActionForm } from "@/components/actions/DebugActionForm";
+import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries";
 import { DataSourceResponse } from "@/requests/datasources/types";
 import { useEditorStore } from "@/stores/editor";
-import { Router } from "next/router";
 import { Component } from "@/utils/editor";
-import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
+import { Router } from "next/router";
 
 export const triggers = [
   "onClick",
@@ -23,6 +24,7 @@ export const actions = [
   "navigation",
   "apiCall",
   "bindResponseToComponent",
+  "goToUrl",
 ];
 
 export type ActionTrigger = (typeof triggers)[number];
@@ -30,6 +32,13 @@ export type ActionTrigger = (typeof triggers)[number];
 export type NavigationAction = {
   name: "navigation";
   pageId: string;
+  data?: any;
+};
+
+export type GoToUrlAction = {
+  name: "goToUrl";
+  url: string;
+  openInNewTab: boolean;
   data?: any;
 };
 
@@ -59,7 +68,8 @@ export type Action = {
     | NavigationAction
     | DebugAction
     | APICallAction
-    | BindResponseToComponentAction;
+    | BindResponseToComponentAction
+    | GoToUrlAction;
 };
 
 export type ActionParams = {
@@ -75,12 +85,25 @@ export type NavigationActionParams = ActionParams & {
   action: NavigationAction;
 };
 
+export type GoToUrlParams = ActionParams & {
+  action: GoToUrlAction;
+};
+
 export const navigationAction = ({
   action,
   router,
 }: NavigationActionParams) => {
   const projectId = router.query.id as string;
   router.push(`/projects/${projectId}/editor/${action.pageId}`);
+};
+
+export const goToUrlAction = ({ action }: GoToUrlParams) => {
+  const { url, openInNewTab } = action;
+  if (openInNewTab) {
+    window.open(url, "_blank");
+  } else {
+    window.location.href = url;
+  }
 };
 
 export type DebugActionParams = ActionParams & {
@@ -210,5 +233,9 @@ export const actionMapper = {
   bindResponseToComponent: {
     action: bindResponseToComponentAction,
     form: BindResponseToComponentActionForm,
+  },
+  goToUrl: {
+    action: goToUrlAction,
+    form: GoToUrlForm,
   },
 };

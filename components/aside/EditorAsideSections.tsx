@@ -124,7 +124,7 @@ export const EditorAsideSections = () => {
           value={tab}
         />
       </Flex>
-      <Box key={selectedComponentId}>
+      <Stack key={selectedComponentId} spacing="xs">
         {tab === "design" && designSections}
         {tab === "actions" && (
           <Stack>
@@ -132,7 +132,7 @@ export const EditorAsideSections = () => {
             {actionsSections}
           </Stack>
         )}
-      </Box>
+      </Stack>
     </Stack>
   );
 };

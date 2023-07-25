@@ -45,7 +45,9 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
       >
         {method}
       </Box>
-      <Text size="xs">{label}</Text>
+      <Text size="xs" truncate>
+        {label}
+      </Text>
     </Flex>
   )
 );
