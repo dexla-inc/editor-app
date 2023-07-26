@@ -4,6 +4,7 @@ import { getComponentById } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
+import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
 export const icon = IconForms;
@@ -37,7 +38,7 @@ export const Modifier = () => {
   });
 
   useEffect(() => {
-    if (selectedComponent) {
+    if (selectedComponentId) {
       const { style = {}, label, size, placeholder, type } = componentProps;
       form.setValues({
         size: size ?? defaultInputValues.size,
@@ -49,7 +50,13 @@ export const Modifier = () => {
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  }, [selectedComponentId]);
+
+  const debouncedUpdate = debounce((field: string, value: string) => {
+    updateTreeComponent(selectedComponentId as string, {
+      [field]: value,
+    });
+  }, 500);
 
   return (
     <form>
@@ -60,9 +67,7 @@ export const Modifier = () => {
           {...form.getInputProps("label")}
           onChange={(e) => {
             form.setFieldValue("label", e.target.value);
-            updateTreeComponent(selectedComponentId as string, {
-              label: e.target.value,
-            });
+            debouncedUpdate("label", e.target.value);
           }}
         />
         <TextInput
@@ -71,9 +76,7 @@ export const Modifier = () => {
           {...form.getInputProps("placeholder")}
           onChange={(e) => {
             form.setFieldValue("placeholder", e.target.value);
-            updateTreeComponent(selectedComponentId as string, {
-              placeholder: e.target.value,
-            });
+            debouncedUpdate("placeholder", e.target.value);
           }}
         />
         <Select
@@ -87,18 +90,14 @@ export const Modifier = () => {
           {...form.getInputProps("type")}
           onChange={(value) => {
             form.setFieldValue("type", value as string);
-            updateTreeComponent(selectedComponentId as string, {
-              type: value,
-            });
+            debouncedUpdate("type", value as string);
           }}
         />
         <SizeSelector
           {...form.getInputProps("size")}
           onChange={(value) => {
             form.setFieldValue("size", value as string);
-            updateTreeComponent(selectedComponentId as string, {
-              size: value,
-            });
+            debouncedUpdate("size", value as string);
           }}
         />
       </Stack>

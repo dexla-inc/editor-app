@@ -26,7 +26,7 @@ export const Modifier = () => {
     (state) => state.updateTreeComponent
   );
 
-  const debouncedTreeUpdate = debounce(updateTreeComponent, 200);
+  const debouncedTreeUpdate = debounce(updateTreeComponent, 500);
 
   const selectedComponent = getComponentById(
     editorTree.root,
@@ -40,7 +40,7 @@ export const Modifier = () => {
   });
 
   useEffect(() => {
-    if (selectedComponent) {
+    if (selectedComponentId) {
       const { style = {}, children, size, color } = componentProps;
       form.setValues({
         value: children ?? defaultInputValues.value,
@@ -51,7 +51,7 @@ export const Modifier = () => {
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  }, [selectedComponentId]);
 
   return (
     <form>

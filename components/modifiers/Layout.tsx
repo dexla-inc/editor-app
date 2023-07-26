@@ -34,7 +34,7 @@ export const Modifier = () => {
     (state) => state.updateTreeComponent
   );
 
-  const debouncedTreeUpdate = debounce(updateTreeComponent, 200);
+  const debouncedTreeUpdate = debounce(updateTreeComponent, 500);
 
   const selectedComponent = getComponentById(
     editorTree.root,

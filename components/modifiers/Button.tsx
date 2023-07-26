@@ -16,7 +16,7 @@ export const defaultInputValues = {
   type: "button",
   variant: "filled",
   size: "md",
-  color: "teal",
+  color: "teal.6",
   textColor: "black",
 };
 
@@ -28,8 +28,6 @@ export const Modifier = () => {
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent
   );
-
-  const debouncedTreeUpdate = debounce(updateTreeComponent, 200);
 
   const selectedComponent = getComponentById(
     editorTree.root,
@@ -43,7 +41,7 @@ export const Modifier = () => {
   });
 
   useEffect(() => {
-    if (selectedComponent) {
+    if (selectedComponentId) {
       const {
         style = {},
         children,
@@ -64,7 +62,13 @@ export const Modifier = () => {
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  }, [selectedComponentId]);
+
+  const debouncedUpdate = debounce((field: string, value: string) => {
+    updateTreeComponent(selectedComponentId as string, {
+      [field]: value,
+    });
+  }, 500);
 
   return (
     <form>
@@ -75,9 +79,7 @@ export const Modifier = () => {
           {...form.getInputProps("value")}
           onChange={(e) => {
             form.setFieldValue("value", e.target.value);
-            debouncedTreeUpdate(selectedComponentId as string, {
-              children: e.target.value,
-            });
+            debouncedUpdate("children", e.target.value);
           }}
         />
         <Select
@@ -90,9 +92,7 @@ export const Modifier = () => {
           {...form.getInputProps("type")}
           onChange={(value) => {
             form.setFieldValue("type", value as string);
-            debouncedTreeUpdate(selectedComponentId as string, {
-              type: value,
-            });
+            debouncedUpdate("type", value as string);
           }}
         />
         <Select
@@ -108,18 +108,14 @@ export const Modifier = () => {
           {...form.getInputProps("variant")}
           onChange={(value) => {
             form.setFieldValue("variant", value as string);
-            debouncedTreeUpdate(selectedComponentId as string, {
-              variant: value,
-            });
+            debouncedUpdate("variant", value as string);
           }}
         />
         <SizeSelector
           {...form.getInputProps("size")}
           onChange={(value) => {
             form.setFieldValue("size", value as string);
-            debouncedTreeUpdate(selectedComponentId as string, {
-              size: value,
-            });
+            debouncedUpdate("size", value as string);
           }}
         />
         <ThemeColorSelector
@@ -127,19 +123,7 @@ export const Modifier = () => {
           {...form.getInputProps("color")}
           onChange={(value: string) => {
             form.setFieldValue("color", value);
-            debouncedTreeUpdate(selectedComponentId as string, {
-              color: value,
-            });
-          }}
-        />
-        <ThemeColorSelector
-          label="Text Color"
-          {...form.getInputProps("textColor")}
-          onChange={(value: string) => {
-            form.setFieldValue("textColor", value);
-            debouncedTreeUpdate(selectedComponentId as string, {
-              style: { textColor: value },
-            });
+            debouncedUpdate("color", value);
           }}
         />
       </Stack>

@@ -20,7 +20,7 @@ export const Modifier = () => {
     (state) => state.updateTreeComponent
   );
 
-  const debouncedTreeUpdate = debounce(updateTreeComponent, 200);
+  const debouncedTreeUpdate = debounce(updateTreeComponent, 500);
 
   const selectedComponent = getComponentById(
     editorTree.root,
@@ -38,7 +38,7 @@ export const Modifier = () => {
   });
 
   useEffect(() => {
-    if (selectedComponent) {
+    if (selectedComponentId) {
       const { children = "", order, color } = componentProps;
 
       form.setValues({
@@ -49,7 +49,13 @@ export const Modifier = () => {
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  }, [selectedComponentId]);
+
+  const debouncedUpdate = debounce((field: string, value: any) => {
+    updateTreeComponent(selectedComponentId as string, {
+      [field]: value,
+    });
+  }, 500);
 
   return (
     <form>
@@ -61,9 +67,7 @@ export const Modifier = () => {
           {...form.getInputProps("value")}
           onChange={(e) => {
             form.setFieldValue("value", e.target.value);
-            updateTreeComponent(selectedComponentId as string, {
-              children: e.target.value,
-            });
+            debouncedUpdate("children", e.target.value);
           }}
         />
         <Select
@@ -94,15 +98,9 @@ export const Modifier = () => {
         <ThemeColorSelector
           label="Color"
           {...form.getInputProps("color")}
-          onChange={(_value: string) => {
-            const [color, index] = _value.split(".");
-            // @ts-ignore
-            const value = theme.colors[color][index];
-            form.setFieldValue("color", _value);
-
-            debouncedTreeUpdate(selectedComponentId as string, {
-              color: value,
-            });
+          onChange={(value: string) => {
+            form.setFieldValue("color", value);
+            debouncedUpdate("color", value);
           }}
         />
       </Stack>
