@@ -1,20 +1,20 @@
 import { SizeSelector } from "@/components/SizeSelector";
+import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
-import { Select, Stack, TextInput } from "@mantine/core";
+import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconForms } from "@tabler/icons-react";
+import { IconClick } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
-export const icon = IconForms;
-export const label = "Input";
+export const icon = IconClick;
+export const label = "Link";
 
 export const defaultInputValues = {
-  size: "sm",
-  placeholder: "Input",
-  type: "text",
-  label: "A label",
+  value: "New Link",
+  size: "md",
+  color: "teal",
 };
 
 export const Modifier = () => {
@@ -41,12 +41,11 @@ export const Modifier = () => {
 
   useEffect(() => {
     if (selectedComponent) {
-      const { style = {}, size, placeholder, type } = componentProps;
+      const { style = {}, children, size, color } = componentProps;
       form.setValues({
+        value: children ?? defaultInputValues.value,
         size: size ?? defaultInputValues.size,
-        placeholder: placeholder ?? defaultInputValues.placeholder,
-        type: type ?? defaultInputValues.type,
-        label: label ?? defaultInputValues.label,
+        color: color ?? defaultInputValues.color,
         ...style,
       });
     }
@@ -58,40 +57,13 @@ export const Modifier = () => {
     <form>
       <Stack spacing="xs">
         <TextInput
-          label="Label"
+          label="Value"
           size="xs"
-          {...form.getInputProps("label")}
+          {...form.getInputProps("value")}
           onChange={(e) => {
-            form.setFieldValue("label", e.target.value);
+            form.setFieldValue("value", e.target.value);
             debouncedTreeUpdate(selectedComponentId as string, {
-              label: e.target.value,
-            });
-          }}
-        />
-        <TextInput
-          label="Placeholder"
-          size="xs"
-          {...form.getInputProps("placeholder")}
-          onChange={(e) => {
-            form.setFieldValue("placeholder", e.target.value);
-            debouncedTreeUpdate(selectedComponentId as string, {
-              placeholder: e.target.value,
-            });
-          }}
-        />
-        <Select
-          label="Type"
-          size="xs"
-          data={[
-            { label: "Text", value: "text" },
-            { label: "Email", value: "email" },
-            { label: "Password", value: "password" },
-          ]}
-          {...form.getInputProps("type")}
-          onChange={(value) => {
-            form.setFieldValue("type", value as string);
-            debouncedTreeUpdate(selectedComponentId as string, {
-              type: value,
+              children: e.target.value,
             });
           }}
         />
@@ -101,6 +73,16 @@ export const Modifier = () => {
             form.setFieldValue("size", value as string);
             debouncedTreeUpdate(selectedComponentId as string, {
               size: value,
+            });
+          }}
+        />
+        <ThemeColorSelector
+          label="Color"
+          {...form.getInputProps("color")}
+          onChange={(value: string) => {
+            form.setFieldValue("color", value);
+            debouncedTreeUpdate(selectedComponentId as string, {
+              color: value,
             });
           }}
         />

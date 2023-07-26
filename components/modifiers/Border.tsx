@@ -62,7 +62,7 @@ export const Modifier = () => {
       borderRightColor: "Border.6",
       borderBottomColor: "Border.6",
       borderLeftColor: "Border.6",
-      showRadius: "radius-sides",
+      showRadius: "radius-all",
       borderRadius: "0px",
       borderTopLeftRadius: "0px",
       borderTopRightRadius: "0px",
@@ -101,7 +101,7 @@ export const Modifier = () => {
 
   return (
     <form key={selectedComponentId}>
-      <Stack spacing={4}>
+      <Stack spacing="xs">
         <SegmentedControl
           size="xs"
           data={[

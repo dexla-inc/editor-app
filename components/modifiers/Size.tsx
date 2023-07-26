@@ -1,3 +1,4 @@
+import { UnitInput } from "@/components/UnitInput";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
 import { Group, Stack } from "@mantine/core";
@@ -5,7 +6,6 @@ import { useForm } from "@mantine/form";
 import { IconResize } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
-import { UnitInput } from "@/components/UnitInput";
 
 export const icon = IconResize;
 export const label = "Size";
@@ -50,7 +50,7 @@ export const Modifier = () => {
 
   return (
     <form key={selectedComponentId}>
-      <Stack>
+      <Stack spacing="xs">
         <Group noWrap>
           <UnitInput
             label="Width"

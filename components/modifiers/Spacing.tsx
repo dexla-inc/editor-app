@@ -35,14 +35,14 @@ export const Modifier = () => {
 
   const form = useForm({
     initialValues: {
-      showPadding: "padding-sides",
+      showPadding: "padding-all",
       padding: "0px",
       paddingTop: "0px",
       paddingBottom: "0px",
       paddingLeft: "0px",
       paddingRight: "0px",
 
-      showMargin: "margin-sides",
+      showMargin: "margin-all",
       margin: "0px",
       marginTop: "0px",
       marginBottom: "0px",
@@ -60,7 +60,6 @@ export const Modifier = () => {
         paddingBottom: style.paddingBottom ?? "0px",
         paddingLeft: style.paddingLeft ?? "0px",
         paddingRight: style.paddingRight ?? "0px",
-
         margin: style.margin ?? "0px",
         marginTop: style.marginTop ?? "0px",
         marginBottom: style.marginBottom ?? "0px",
@@ -74,7 +73,7 @@ export const Modifier = () => {
 
   return (
     <form key={selectedComponentId}>
-      <Stack>
+      <Stack spacing="xs">
         <Stack spacing={4}>
           <Text size="0.75rem" weight={500}>
             Padding

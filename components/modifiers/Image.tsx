@@ -10,7 +10,7 @@ export const icon = IconPhoto;
 export const label = "Image";
 
 export const defaultImageValues = {
-  src: "",
+  src: "https://reactnativecode.com/wp-content/uploads/2018/02/Default_Image_Thumbnail.png",
   alt: "",
   objectFit: "contain",
 };
@@ -52,7 +52,7 @@ export const Modifier = () => {
 
   return (
     <form>
-      <Stack>
+      <Stack spacing="xs">
         <TextInput
           label="Source"
           type="url"

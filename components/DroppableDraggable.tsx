@@ -69,11 +69,11 @@ export const DroppableDraggable = ({
   );
 
   const onSuccessAction: Action = actions.find(
-    (action: Action) => action.trigger === "onSuccess"
+    (action: Action) => action.sequentialTrigger === "onSuccess"
   );
 
   const onErrorAction: Action = actions.find(
-    (action: Action) => action.trigger === "onError"
+    (action: Action) => action.sequentialTrigger === "onError"
   );
 
   const triggers = actions
@@ -173,7 +173,23 @@ export const DroppableDraggable = ({
   const haveNonRootParent = parent && parent.id !== "root";
 
   // Whitelist certain props that can be passed down
-  const styleWhitelist = ["display", "flexDirection", "flexGrow"];
+  const styleWhitelist = [
+    "display",
+    "flexDirection",
+    "flexGrow",
+    "borderBottomLeftRadius",
+    "borderBottomRightRadius",
+    "borderTopLeftRadius",
+    "borderTopRightRadius",
+    "borderBottomWidth",
+    "borderLeftWidth",
+    "borderRightWidth",
+    "borderTopWidth",
+    "borderWidth",
+    "borderStyle",
+    "border",
+    "borderColor",
+  ];
   const filteredProps = {
     ...component.props,
     style: Object.keys(component.props?.style || {}).reduce((newStyle, key) => {

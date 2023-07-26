@@ -18,7 +18,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Navbar",
     props: {
       style: {
-        width: "360px",
+        width: "260px",
         height: "100vh",
         borderRightWidth: "1px",
         borderRightStyle: "solid",
@@ -109,7 +109,7 @@ export const jsonStructure = (props?: any): Component => {
                   {
                     trigger: "onClick",
                     action: {
-                      name: "navigation",
+                      name: "navigateToPage",
                       pageId: page.id,
                     },
                   },

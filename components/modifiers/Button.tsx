@@ -17,6 +17,7 @@ export const defaultInputValues = {
   variant: "filled",
   size: "md",
   color: "teal",
+  textColor: "black",
 };
 
 export const Modifier = () => {
@@ -50,6 +51,7 @@ export const Modifier = () => {
         size,
         color,
         variant,
+        textColor,
       } = componentProps;
       form.setValues({
         value: children ?? defaultInputValues.value,
@@ -57,6 +59,7 @@ export const Modifier = () => {
         variant: variant ?? defaultInputValues.variant,
         size: size ?? defaultInputValues.size,
         color: color ?? defaultInputValues.color,
+        textColor: style.color ?? defaultInputValues.textColor,
         ...style,
       });
     }
@@ -66,7 +69,7 @@ export const Modifier = () => {
 
   return (
     <form>
-      <Stack>
+      <Stack spacing="xs">
         <TextInput
           label="Value"
           size="xs"
@@ -121,12 +124,22 @@ export const Modifier = () => {
           }}
         />
         <ThemeColorSelector
-          label="Color"
+          label="Background Color"
           {...form.getInputProps("color")}
           onChange={(value: string) => {
             form.setFieldValue("color", value);
             debouncedTreeUpdate(selectedComponentId as string, {
               color: value,
+            });
+          }}
+        />
+        <ThemeColorSelector
+          label="Text Color"
+          {...form.getInputProps("textColor")}
+          onChange={(value: string) => {
+            form.setFieldValue("textColor", value);
+            debouncedTreeUpdate(selectedComponentId as string, {
+              style: { textColor: value },
             });
           }}
         />

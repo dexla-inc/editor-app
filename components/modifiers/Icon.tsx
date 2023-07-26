@@ -1,25 +1,14 @@
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
-import { Stack, TextInput } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTexture } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
 export const icon = IconTexture;
-export const label = "Background";
-
-const extractBackgroundUrl = (backgroundImageValue: string): string => {
-  const urlRegex = /url\(['"]?([^'"\(\)]+)['"]?\)/;
-  const match = backgroundImageValue.match(urlRegex);
-
-  if (match && match.length > 1) {
-    return match[1];
-  }
-
-  return "";
-};
+export const label = "Icon";
 
 export const Modifier = () => {
   const editorTree = useEditorStore((state) => state.tree);
@@ -41,19 +30,15 @@ export const Modifier = () => {
 
   const form = useForm({
     initialValues: {
-      bg: "transparent",
-      backgroundImage: "",
+      color: "Primary.6",
     },
   });
 
   useEffect(() => {
     if (selectedComponent) {
-      const { bg, style } = componentProps;
+      const { style } = componentProps;
       form.setValues({
-        bg: bg ?? "transparent",
-        backgroundImage: style.backgroundImage
-          ? extractBackgroundUrl(style.backgroundImage)
-          : "",
+        color: style?.color ?? "Primary.6",
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
@@ -65,28 +50,14 @@ export const Modifier = () => {
       <Stack spacing="xs">
         <ThemeColorSelector
           label="Color"
-          {...form.getInputProps("bg")}
+          {...form.getInputProps("color")}
           onChange={(value: string) => {
-            form.setFieldValue("bg", value);
+            form.setFieldValue("color", value);
             debouncedTreeUpdate(selectedComponentId as string, {
-              bg: value,
+              style: { color: value },
             });
           }}
           searchable
-        />
-        <TextInput
-          label="Image URL"
-          size="xs"
-          placeholder="https://example.com/image.png"
-          {...form.getInputProps("backgroundImage")}
-          onChange={(e) => {
-            const value = e.target.value;
-            form.setFieldValue("backgroundImage", value);
-
-            debouncedTreeUpdate(selectedComponentId as string, {
-              style: { backgroundImage: `url(${value})` },
-            });
-          }}
         />
       </Stack>
     </form>

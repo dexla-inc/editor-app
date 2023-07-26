@@ -12,25 +12,44 @@ import { Router } from "next/router";
 export const triggers = [
   "onClick",
   "onHover",
-  "onDoubleClick",
+  "onDoubleClick", // Do not think we need this, can just use onClick
   "onMount",
-  "onSuccess",
-  "onError",
+  "onChange",
+  "onFocus",
+  "onBlur",
+  "onOpen",
+  "onClose",
   "onSubmit",
+  "onInvalid",
+  "onReset",
+  //table actions
+  "onRowClick",
+  "onRowHover",
+  "onRowSelect",
+  "onRowExpand",
+  "onPaginationChange",
+  "onSort",
+  "onFilterApplied",
 ] as const;
 
 export const actions = [
   "debug",
-  "navigation",
+  "navigateToPage",
   "apiCall",
   "bindResponseToComponent",
   "goToUrl",
+  "openModal",
+  "openPopover",
+  "openToast",
+  "showTooltip",
+  "copyToClipboard",
 ];
 
 export type ActionTrigger = (typeof triggers)[number];
+export type SequentialTrigger = "onSuccess" | "onError";
 
 export type NavigationAction = {
-  name: "navigation";
+  name: "navigateToPage";
   pageId: string;
   data?: any;
 };
@@ -70,6 +89,7 @@ export type Action = {
     | APICallAction
     | BindResponseToComponentAction
     | GoToUrlAction;
+  sequentialTrigger?: SequentialTrigger;
 };
 
 export type ActionParams = {
@@ -198,7 +218,7 @@ export const apiCallAction = async ({
     if (onSuccess) {
       const actions = component.props?.actions ?? [];
       const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess"
+        (action: Action) => action.sequentialTrigger === "onSuccess"
       );
       const onSuccessActionMapped = actionMapper[onSuccess!.name];
       onSuccessActionMapped.action({
@@ -214,7 +234,7 @@ export const apiCallAction = async ({
     if (onError) {
       const actions = component.props?.actions ?? [];
       const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError"
+        (action: Action) => action.sequentialTrigger === "onError"
       );
       const onErrorActionMapped = actionMapper[onError.name];
       onErrorActionMapped.action({
@@ -250,7 +270,7 @@ export const actionMapper = {
     action: debugAction,
     form: DebugActionForm,
   },
-  navigation: {
+  navigateToPage: {
     action: navigationAction,
     form: NavigationActionForm,
   },

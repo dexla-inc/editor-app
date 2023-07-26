@@ -20,7 +20,7 @@ export const NavigationActionForm = () => {
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentActions = component?.props?.actions ?? [];
   const action: Action = componentActions.find(
-    (a: Action) => a.action.name === "navigation"
+    (a: Action) => a.action.name === "navigateToPage"
   );
   const navigationAction = action.action as NavigationAction;
 
@@ -40,7 +40,7 @@ export const NavigationActionForm = () => {
 
       updateTreeComponent(selectedComponentId!, {
         actions: componentActions.map((action: Action) => {
-          if (action.action.name === "navigation") {
+          if (action.action.name === "navigateToPage") {
             return {
               ...action,
               action: {
@@ -84,6 +84,7 @@ export const NavigationActionForm = () => {
           size="xs"
           placeholder="Select a page"
           label="Page"
+          searchable
           data={pages.map((page) => {
             return {
               label: page.title,

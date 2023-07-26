@@ -15,8 +15,8 @@ export const jsonStructure = (props?: any): Component => {
       style: {
         width: "200px",
         height: "150px",
-        ...defaultImageValues,
       },
+      ...defaultImageValues,
       ...(props.props || {}),
     },
     blockDroppingChildrenInside: true,
