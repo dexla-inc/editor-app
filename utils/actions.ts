@@ -34,7 +34,7 @@ export const triggers = [
 
 export const actions = [
   "debug",
-  "navigation",
+  "navigateToPage",
   "apiCall",
   "bindResponseToComponent",
   "goToUrl",
@@ -49,7 +49,7 @@ export type ActionTrigger = (typeof triggers)[number];
 export type SequentialTrigger = "onSuccess" | "onError";
 
 export type NavigationAction = {
-  name: "navigation";
+  name: "navigateToPage";
   pageId: string;
   data?: any;
 };
@@ -270,7 +270,7 @@ export const actionMapper = {
     action: debugAction,
     form: DebugActionForm,
   },
-  navigation: {
+  navigateToPage: {
     action: navigationAction,
     form: NavigationActionForm,
   },

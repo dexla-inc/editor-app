@@ -17,33 +17,17 @@ export const jsonStructure = (props?: any): Component => {
     name: "Link",
     description: "Link",
     props: {
+      children: content,
       style: {
         width: "auto",
         height: "auto",
+        fontSize: `${px(theme.fontSizes.sm)}px`,
+        fontWeight: "normal",
+        lineHeight: "110%",
+        letterSpacing: "0px",
       },
       ...(props.props || {}),
     },
     blockDroppingChildrenInside: true,
-    children: [
-      {
-        id: nanoid(),
-        name: "Text",
-        description: "Link Text",
-        children: [],
-        props: {
-          children: content,
-          color: "Primary",
-          style: {
-            fontSize: `${px(theme.fontSizes.sm)}px`,
-            fontWeight: "normal",
-            lineHeight: "110%",
-            letterSpacing: "0px",
-            width: "auto",
-            height: "auto",
-          },
-        },
-        blockDroppingChildrenInside: true,
-      },
-    ],
   };
 };

@@ -109,7 +109,7 @@ export const jsonStructure = (props?: any): Component => {
                   {
                     trigger: "onClick",
                     action: {
-                      name: "navigation",
+                      name: "navigateToPage",
                       pageId: page.id,
                     },
                   },

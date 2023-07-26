@@ -22,6 +22,7 @@ import { Image } from "@/components/mapper/Image";
 import { Input } from "@/components/mapper/Input";
 import { Link } from "@/components/mapper/Link";
 import { Menu } from "@/components/mapper/Menu";
+import { Modal } from "@/components/mapper/Modal";
 import { NavLink } from "@/components/mapper/NavLink";
 import { Navbar } from "@/components/mapper/Navbar";
 import { Pagination } from "@/components/mapper/Pagination";
@@ -61,6 +62,7 @@ import * as ImageStructure from "@/components/mapper/structure/Image";
 import * as InputStructure from "@/components/mapper/structure/Input";
 import * as LinkStructure from "@/components/mapper/structure/Link";
 import * as MenuStructure from "@/components/mapper/structure/Menu";
+import * as ModalStructure from "@/components/mapper/structure/Modal";
 import * as NavLinkStructure from "@/components/mapper/structure/NavLink";
 import * as NavbarStructure from "@/components/mapper/structure/Navbar";
 import * as NotImplemented from "@/components/mapper/structure/NotImplemented";
@@ -84,6 +86,7 @@ import { Component } from "@/utils/editor";
 
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import {
+  IconBoxModel,
   IconBrandChrome,
   IconBread,
   IconCalendar,
@@ -135,7 +138,8 @@ export type ComponentCategoryType =
   | "Data Display"
   | "Feedback"
   | "Card"
-  | "Chart";
+  | "Chart"
+  | "Overlays";
 
 export type StructureDefinition = {
   structure: (props: any) => Component;
@@ -684,6 +688,17 @@ export const structureMapper: StructureMapper = {
     category: "Navigation",
     icon: <IconLayoutKanban size={ICON_SIZE} />,
   },
+  Modal: {
+    structure: (props: any) => ModalStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Modal"
+        icon={<IconBoxModel size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Overlays",
+    icon: <IconBoxModel size={ICON_SIZE} />,
+  },
 };
 
 export type Modifiers =
@@ -696,7 +711,8 @@ export type Modifiers =
   | "input"
   | "button"
   | "title"
-  | "image";
+  | "image"
+  | "link";
 
 export type ComponentDefinition = {
   Component: any;
@@ -828,7 +844,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Link component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["link", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1152,6 +1168,15 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: ["layout", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onSubmit", "onReset", "onInvalid", "onBlur"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  Modal: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      // @ts-ignore
+      <Modal component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["layout", "spacing", "size", "border"],
+    actionTriggers: ["onMount", "onClick", "onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
 };
