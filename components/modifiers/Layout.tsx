@@ -2,7 +2,7 @@ import { UnitInput } from "@/components/UnitInput";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
-import { Group, SegmentedControl, Stack, Text } from "@mantine/core";
+import { Group, SegmentedControl, Select, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconAlignBoxBottomCenter,
@@ -23,6 +23,7 @@ export const defaultLayoutValues = {
   columnGap: "20px",
   alignItems: "center",
   justifyContent: "center",
+  position: "relative",
 };
 
 export const Modifier = () => {
@@ -52,6 +53,7 @@ export const Modifier = () => {
       const { style = {} } = componentProps;
 
       form.setValues({
+        position: style.position ?? defaultLayoutValues.position,
         flexDirection: style.flexDirection ?? defaultLayoutValues.flexDirection,
         rowGap: style.rowGap ?? defaultLayoutValues.rowGap,
         columnGap: style.columnGap ?? defaultLayoutValues.columnGap,
@@ -236,6 +238,23 @@ export const Modifier = () => {
             }}
           />
         </Stack>
+        <Select
+          label="Position"
+          size="xs"
+          data={[
+            { label: "Relative", value: "relative" },
+            { label: "Absolute", value: "absolute" },
+            { label: "Sticky", value: "sticky" },
+            { label: "Fixed", value: "fixed" },
+          ]}
+          {...form.getInputProps("position")}
+          onChange={(value) => {
+            form.setFieldValue("position", value as string);
+            debouncedTreeUpdate(selectedComponentId as string, {
+              style: { position: value },
+            });
+          }}
+        />
       </Stack>
     </form>
   );
