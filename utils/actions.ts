@@ -38,6 +38,11 @@ export const actions = [
   "apiCall",
   "bindResponseToComponent",
   "goToUrl",
+  "openModal",
+  "openPopover",
+  "openToast",
+  "showTooltip",
+  "copyToClipboard",
 ];
 
 export type ActionTrigger = (typeof triggers)[number];
