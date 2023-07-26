@@ -940,7 +940,8 @@ export const componentMapper: ComponentMapper = {
       <Radio component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   RadioGroup: {
     Component: (props: { component: Component; renderTree: any }) => (

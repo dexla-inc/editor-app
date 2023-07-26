@@ -59,10 +59,6 @@ const traverseComponents = (
   return components
     .filter((c) => !!c.name)
     .map((component) => {
-      if (!structureMapper.hasOwnProperty(component.name)) {
-        console.log(`Missing key in structureMapper: ${component.name}`);
-      }
-
       const structureDefinition = structureMapper[component.name];
       const newComponent = structureDefinition.structure({
         ...component,

@@ -1,10 +1,10 @@
 import { Component } from "@/utils/editor";
-import { InputProps, Input as MantineInput } from "@mantine/core";
+import { TextInputProps, TextInput as MantineInput } from "@mantine/core";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-} & InputProps;
+} & TextInputProps;
 
 export const Input = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;

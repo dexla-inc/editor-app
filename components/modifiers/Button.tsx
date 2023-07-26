@@ -51,7 +51,6 @@ export const Modifier = () => {
         size,
         color,
         variant,
-        textColor,
       } = componentProps;
       form.setValues({
         value: children ?? defaultInputValues.value,

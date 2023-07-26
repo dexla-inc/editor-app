@@ -4,7 +4,6 @@ import { getComponentById } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
 export const icon = IconForms;
@@ -26,8 +25,6 @@ export const Modifier = () => {
     (state) => state.updateTreeComponent
   );
 
-  const debouncedTreeUpdate = debounce(updateTreeComponent, 200);
-
   const selectedComponent = getComponentById(
     editorTree.root,
     selectedComponentId as string
@@ -41,7 +38,7 @@ export const Modifier = () => {
 
   useEffect(() => {
     if (selectedComponent) {
-      const { style = {}, size, placeholder, type } = componentProps;
+      const { style = {}, label, size, placeholder, type } = componentProps;
       form.setValues({
         size: size ?? defaultInputValues.size,
         placeholder: placeholder ?? defaultInputValues.placeholder,
@@ -63,7 +60,7 @@ export const Modifier = () => {
           {...form.getInputProps("label")}
           onChange={(e) => {
             form.setFieldValue("label", e.target.value);
-            debouncedTreeUpdate(selectedComponentId as string, {
+            updateTreeComponent(selectedComponentId as string, {
               label: e.target.value,
             });
           }}
@@ -74,7 +71,7 @@ export const Modifier = () => {
           {...form.getInputProps("placeholder")}
           onChange={(e) => {
             form.setFieldValue("placeholder", e.target.value);
-            debouncedTreeUpdate(selectedComponentId as string, {
+            updateTreeComponent(selectedComponentId as string, {
               placeholder: e.target.value,
             });
           }}
@@ -90,7 +87,7 @@ export const Modifier = () => {
           {...form.getInputProps("type")}
           onChange={(value) => {
             form.setFieldValue("type", value as string);
-            debouncedTreeUpdate(selectedComponentId as string, {
+            updateTreeComponent(selectedComponentId as string, {
               type: value,
             });
           }}
@@ -99,7 +96,7 @@ export const Modifier = () => {
           {...form.getInputProps("size")}
           onChange={(value) => {
             form.setFieldValue("size", value as string);
-            debouncedTreeUpdate(selectedComponentId as string, {
+            updateTreeComponent(selectedComponentId as string, {
               size: value,
             });
           }}
