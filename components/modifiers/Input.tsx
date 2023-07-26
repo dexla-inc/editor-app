@@ -54,7 +54,7 @@ export const Modifier = () => {
 
   return (
     <form>
-      <Stack>
+      <Stack spacing="xs">
         <TextInput
           label="Placeholder"
           size="xs"

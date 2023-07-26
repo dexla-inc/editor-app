@@ -1,6 +1,5 @@
 import { defaultTheme } from "@/components/IFrame";
 import { Component } from "@/utils/editor";
-import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -13,11 +12,10 @@ export const jsonStructure = (props?: any): Component => {
     description: "Form",
     props: {
       style: {
-        paddingTop: px(theme.spacing.sm),
-        paddingBottom: px(theme.spacing.sm),
         paddingLeft: "0px",
         paddingRight: "0px",
-        width: "400px",
+        marginBottom: "0px",
+        width: "100%",
         height: "auto",
         minHeight: "10px",
         flexDirection: "column",

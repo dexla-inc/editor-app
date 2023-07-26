@@ -62,7 +62,7 @@ export const Modifier = () => {
 
   return (
     <form>
-      <Stack>
+      <Stack spacing="xs">
         <ThemeColorSelector
           label="Color"
           {...form.getInputProps("bg")}

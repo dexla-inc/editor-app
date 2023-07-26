@@ -66,7 +66,7 @@ export const Modifier = () => {
 
   return (
     <form>
-      <Stack>
+      <Stack spacing="xs">
         <TextInput
           label="Value"
           size="xs"

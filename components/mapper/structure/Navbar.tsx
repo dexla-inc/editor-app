@@ -18,7 +18,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Navbar",
     props: {
       style: {
-        width: "360px",
+        width: "260px",
         height: "100vh",
         borderRightWidth: "1px",
         borderRightStyle: "solid",

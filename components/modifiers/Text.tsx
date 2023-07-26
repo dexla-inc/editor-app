@@ -1,3 +1,5 @@
+import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { UnitInput } from "@/components/UnitInput";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
 import { Group, Select, Stack, Textarea } from "@mantine/core";
@@ -5,8 +7,6 @@ import { useForm } from "@mantine/form";
 import { IconTextSize } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
-import { UnitInput } from "@/components/UnitInput";
-import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 
 export const icon = IconTextSize;
 export const label = "Text";
@@ -56,7 +56,7 @@ export const Modifier = () => {
 
   return (
     <form>
-      <Stack>
+      <Stack spacing="xs">
         <Textarea
           autosize
           label="Value"

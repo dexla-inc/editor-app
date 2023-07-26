@@ -173,7 +173,15 @@ export const DroppableDraggable = ({
   const haveNonRootParent = parent && parent.id !== "root";
 
   // Whitelist certain props that can be passed down
-  const styleWhitelist = ["display", "flexDirection", "flexGrow"];
+  const styleWhitelist = [
+    "display",
+    "flexDirection",
+    "flexGrow",
+    "borderBottomLeftRadius",
+    "borderBottomRightRadius",
+    "borderTopLeftRadius",
+    "borderTopRightRadius",
+  ];
   const filteredProps = {
     ...component.props,
     style: Object.keys(component.props?.style || {}).reduce((newStyle, key) => {
@@ -183,6 +191,8 @@ export const DroppableDraggable = ({
       return newStyle;
     }, {} as Record<string, unknown>),
   };
+
+  console.log(component.props);
 
   return (
     <Box

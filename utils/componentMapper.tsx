@@ -1030,7 +1030,7 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["background", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onSuccess", "onError"],
   },
   AppBar: {

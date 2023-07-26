@@ -52,7 +52,7 @@ export const Modifier = () => {
 
   return (
     <form>
-      <Stack>
+      <Stack spacing="xs">
         <TextInput
           label="Source"
           type="url"
