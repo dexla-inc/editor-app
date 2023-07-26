@@ -82,7 +82,7 @@ import * as RadarChartStructure from "@/components/mapper/structure/charts/Radar
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 
-import { ActionTrigger } from "@/utils/actions";
+import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import {
   IconBrandChrome,
   IconBread,
@@ -702,6 +702,7 @@ export type ComponentDefinition = {
   Component: any;
   modifiers: Modifiers[];
   actionTriggers: ActionTrigger[];
+  sequentialTriggers: SequentialTrigger[];
 };
 
 export type ComponentMapper = {
@@ -714,14 +715,16 @@ export const componentMapper: ComponentMapper = {
       <Avatar component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Box: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Box component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Breadcrumb: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -733,28 +736,32 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Menu: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Menu component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Flex: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Flex component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Container: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Container component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["layout", "background", "spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Select: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -768,14 +775,16 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Input: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Input component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["input", "spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   DateInput: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -788,35 +797,40 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Text: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Text component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["text", "spacing", "size"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Title: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Title component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["title", "spacing", "size"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Textarea: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Textarea component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Link: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Link component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
 
   NavLink: {
@@ -831,14 +845,16 @@ export const componentMapper: ComponentMapper = {
       <Icon component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Table: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Table component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   FilePond: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -854,7 +870,8 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Checkbox: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -867,7 +884,8 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Switch: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -880,7 +898,8 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Radio: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -893,7 +912,8 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Rating: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -906,7 +926,8 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Image: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -914,14 +935,16 @@ export const componentMapper: ComponentMapper = {
       <Image component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["image", "spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Divider: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Divider component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Pagination: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -932,7 +955,8 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Alert: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -944,7 +968,8 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Tabs: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -956,7 +981,8 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Tab: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -969,7 +995,8 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Accordion: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -982,7 +1009,8 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   AccordionItem: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -995,7 +1023,8 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   AccordionControl: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -1007,7 +1036,8 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   AccordionPanel: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -1019,7 +1049,8 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Navbar: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -1031,49 +1062,56 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["background", "spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   AppBar: {
     Component: (props: { component: Component; renderTree: any }) => (
       <AppBar component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["layout", "background", "spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   BarChart: {
     Component: (props: { component: Component; renderTree: any }) => (
       <BarChart component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   LineChart: {
     Component: (props: { component: Component; renderTree: any }) => (
       <LineChart component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   PieChart: {
     Component: (props: { component: Component; renderTree: any }) => (
       <PieChart component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   AreaChart: {
     Component: (props: { component: Component; renderTree: any }) => (
       <AreaChart component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   RadarChart: {
     Component: (props: { component: Component; renderTree: any }) => (
       <RadarChart component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Button: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -1081,13 +1119,8 @@ export const componentMapper: ComponentMapper = {
       <Button component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["button", "spacing", "size", "border"],
-    actionTriggers: [
-      "onMount",
-      "onSuccess",
-      "onError",
-      "onClick",
-      "onDoubleClick",
-    ],
+    actionTriggers: ["onMount", "onClick"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   ButtonIcon: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -1101,13 +1134,15 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError", "onClick", "onHover"],
+    actionTriggers: ["onMount", "onClick", "onHover"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
   Form: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Form component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["layout", "spacing", "size", "border"],
-    actionTriggers: ["onMount", "onSuccess", "onError", "onSubmit"],
+    actionTriggers: ["onMount", "onSubmit"],
+    sequentialTriggers: ["onSuccess", "onError"],
   },
 };

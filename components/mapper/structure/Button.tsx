@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
-  const { value, ...rest } = props.props ?? {};
+  const { value, textColor, ...rest } = props.props ?? {};
 
   return {
     id: nanoid(),
@@ -21,6 +21,7 @@ export const jsonStructure = (props?: any): Component => {
         paddingRight: px(theme.spacing.lg),
       },
       ...(rest || {}),
+      textColor: textColor ?? "white",
       children: value ?? "New Button",
       blockDroppingChildrenInside: true,
     },

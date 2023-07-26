@@ -14,8 +14,6 @@ export const triggers = [
   "onHover",
   "onDoubleClick",
   "onMount",
-  "onSuccess",
-  "onError",
   "onSubmit",
 ] as const;
 
@@ -28,6 +26,7 @@ export const actions = [
 ];
 
 export type ActionTrigger = (typeof triggers)[number];
+export type SequentialTrigger = "onSuccess" | "onError";
 
 export type NavigationAction = {
   name: "navigation";

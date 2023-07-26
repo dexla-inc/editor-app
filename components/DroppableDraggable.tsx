@@ -192,8 +192,6 @@ export const DroppableDraggable = ({
     }, {} as Record<string, unknown>),
   };
 
-  console.log(component.props);
-
   return (
     <Box
       ref={ref}

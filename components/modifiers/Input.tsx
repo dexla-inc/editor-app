@@ -14,6 +14,7 @@ export const defaultInputValues = {
   size: "sm",
   placeholder: "Input",
   type: "text",
+  label: "A label",
 };
 
 export const Modifier = () => {
@@ -45,6 +46,7 @@ export const Modifier = () => {
         size: size ?? defaultInputValues.size,
         placeholder: placeholder ?? defaultInputValues.placeholder,
         type: type ?? defaultInputValues.type,
+        label: label ?? defaultInputValues.label,
         ...style,
       });
     }
@@ -55,6 +57,17 @@ export const Modifier = () => {
   return (
     <form>
       <Stack spacing="xs">
+        <TextInput
+          label="Label"
+          size="xs"
+          {...form.getInputProps("label")}
+          onChange={(e) => {
+            form.setFieldValue("label", e.target.value);
+            debouncedTreeUpdate(selectedComponentId as string, {
+              label: e.target.value,
+            });
+          }}
+        />
         <TextInput
           label="Placeholder"
           size="xs"
