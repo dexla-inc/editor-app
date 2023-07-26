@@ -181,6 +181,14 @@ export const DroppableDraggable = ({
     "borderBottomRightRadius",
     "borderTopLeftRadius",
     "borderTopRightRadius",
+    "borderBottomWidth",
+    "borderLeftWidth",
+    "borderRightWidth",
+    "borderTopWidth",
+    "borderWidth",
+    "borderStyle",
+    "border",
+    "borderColor",
   ];
   const filteredProps = {
     ...component.props,
@@ -191,6 +199,8 @@ export const DroppableDraggable = ({
       return newStyle;
     }, {} as Record<string, unknown>),
   };
+
+  console.log(component.props?.style);
 
   return (
     <Box

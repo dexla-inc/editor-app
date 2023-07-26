@@ -29,8 +29,26 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
 
 export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
   const theme = useEditorStore((state) => state.theme);
-  const data: any[] = (Object.keys(theme.colors) ?? []).reduce(
-    (all, color: string) => {
+  const excludeColors = new Set([
+    "blue",
+    "cyan",
+    "dark",
+    "grape",
+    "gray",
+    "green",
+    "indigo",
+    "lime",
+    "orange",
+    "pink",
+    "red",
+    "teal",
+    "violet",
+    "yellow",
+  ]);
+
+  const data: any[] = (Object.keys(theme.colors) ?? [])
+    .filter((color) => !excludeColors.has(color))
+    .reduce((all, color: string) => {
       const colors = theme.colors[color];
 
       return all.concat(
@@ -42,9 +60,7 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
           };
         })
       );
-    },
-    []
-  );
+    }, []);
 
   return (
     <Select

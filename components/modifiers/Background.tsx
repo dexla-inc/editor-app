@@ -68,7 +68,6 @@ export const Modifier = () => {
           {...form.getInputProps("bg")}
           onChange={(value: string) => {
             form.setFieldValue("bg", value);
-
             debouncedTreeUpdate(selectedComponentId as string, {
               bg: value,
             });
