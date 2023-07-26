@@ -712,7 +712,8 @@ export type Modifiers =
   | "button"
   | "title"
   | "image"
-  | "link";
+  | "link"
+  | "icon";
 
 export type ComponentDefinition = {
   Component: any;
@@ -852,7 +853,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <NavLink component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["background", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -860,7 +861,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Icon component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["icon", "spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

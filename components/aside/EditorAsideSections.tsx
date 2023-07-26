@@ -3,6 +3,7 @@ import { ActionsForm } from "@/components/actions/ActionsForm";
 import * as BackgroundModifier from "@/components/modifiers/Background";
 import * as BorderModifier from "@/components/modifiers/Border";
 import * as ButtonModifier from "@/components/modifiers/Button";
+import * as IconModifier from "@/components/modifiers/Icon";
 import * as ImageModifier from "@/components/modifiers/Image";
 import * as InputModifier from "@/components/modifiers/Input";
 import * as LayoutModifier from "@/components/modifiers/Layout";
@@ -43,6 +44,7 @@ const sectionMapper: SectionsMapper = {
   title: TitleModifier,
   image: ImageModifier,
   link: LinkModifier,
+  icon: IconModifier,
 };
 
 type Tab = "design" | "actions";
