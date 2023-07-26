@@ -69,11 +69,11 @@ export const DroppableDraggable = ({
   );
 
   const onSuccessAction: Action = actions.find(
-    (action: Action) => action.trigger === "onSuccess"
+    (action: Action) => action.sequentialTrigger === "onSuccess"
   );
 
   const onErrorAction: Action = actions.find(
-    (action: Action) => action.trigger === "onError"
+    (action: Action) => action.sequentialTrigger === "onError"
   );
 
   const triggers = actions
