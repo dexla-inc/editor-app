@@ -17,10 +17,11 @@ export const defaultInputValues = {
   variant: "filled",
   size: "md",
   color: "teal.6",
-  textColor: "black",
+  textColor: "black.6",
 };
 
 export const Modifier = () => {
+  const theme = useEditorStore((state) => state.theme);
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
@@ -43,12 +44,14 @@ export const Modifier = () => {
   useEffect(() => {
     if (selectedComponentId) {
       const {
+        styles = {},
         style = {},
         children,
         type,
         size,
         color,
         variant,
+        textColor,
       } = componentProps;
       form.setValues({
         value: children ?? defaultInputValues.value,
@@ -56,7 +59,7 @@ export const Modifier = () => {
         variant: variant ?? defaultInputValues.variant,
         size: size ?? defaultInputValues.size,
         color: color ?? defaultInputValues.color,
-        textColor: style.color ?? defaultInputValues.textColor,
+        textColor: textColor ?? defaultInputValues.textColor,
         ...style,
       });
     }
@@ -64,7 +67,7 @@ export const Modifier = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId]);
 
-  const debouncedUpdate = debounce((field: string, value: string) => {
+  const debouncedUpdate = debounce((field: string, value: any) => {
     updateTreeComponent(selectedComponentId as string, {
       [field]: value,
     });
@@ -124,6 +127,18 @@ export const Modifier = () => {
           onChange={(value: string) => {
             form.setFieldValue("color", value);
             debouncedUpdate("color", value);
+          }}
+        />
+        <ThemeColorSelector
+          label="Text Color"
+          {...form.getInputProps("textColor")}
+          onChange={(value: string) => {
+            form.setFieldValue("textColor", value);
+            debouncedUpdate("textColor", value);
+            const [color, index] = value.split(".");
+            // @ts-ignore
+            const _value = theme.colors[color][index];
+            debouncedUpdate("styles", { label: { color: _value } });
           }}
         />
       </Stack>
