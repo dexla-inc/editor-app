@@ -1,13 +1,11 @@
 import { defaultTheme } from "@/components/IFrame";
+import { defaultBorderValues } from "@/components/modifiers/Border";
 import { Component } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
-  const columnsToWidth = `${
-    props.columns ? `${(props.columns * 100) / 12}%` : "100%"
-  }`;
 
   return {
     id: nanoid(),
@@ -15,6 +13,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Page Heading",
     props: {
       style: {
+        ...defaultBorderValues,
         borderBottomWidth: `1px`,
         borderBottomStyle: `solid`,
         borderBottomColor: theme.colors.Border

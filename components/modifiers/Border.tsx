@@ -25,6 +25,37 @@ import { useEffect } from "react";
 export const icon = IconBorderStyle;
 export const label = "Border";
 
+export const defaultBorderValues = {
+  borderTopStyle: "none",
+  borderRightStyle: "none",
+  borderBottomStyle: "none",
+  borderLeftStyle: "none",
+  borderTopWidth: "0px",
+  borderRightWidth: "0px",
+  borderBottomWidth: "0px",
+  borderLeftWidth: "0px",
+  borderTopColor: "Border.6",
+  borderRightColor: "Border.6",
+  borderBottomColor: "Border.6",
+  borderLeftColor: "Border.6",
+  borderTopLeftRadius: "0px",
+  borderTopRightRadius: "0px",
+  borderBottomLeftRadius: "0px",
+  borderBottomRightRadius: "0px",
+};
+
+const getThemeColor = (theme: any, hex: string) => {
+  return Object.keys(theme.colors).reduce((themeColor: string, key: string) => {
+    const colorIndex = theme.colors[key].findIndex((c: string) => c === hex);
+
+    if (colorIndex > -1) {
+      return `${key}.${colorIndex}`;
+    }
+
+    return themeColor;
+  }, "");
+};
+
 export const Modifier = () => {
   const theme = useEditorStore((state) => state.theme);
   const editorTree = useEditorStore((state) => state.tree);
@@ -46,28 +77,13 @@ export const Modifier = () => {
 
   const form = useForm({
     initialValues: {
+      ...defaultBorderValues,
       showBorder: "all",
-      borderStyle: "none",
-      borderTopStyle: "none",
-      borderRightStyle: "none",
-      borderBottomStyle: "none",
-      borderLeftStyle: "none",
-      borderWidth: "0px",
-      borderTopWidth: "0px",
-      borderRightWidth: "0px",
-      borderBottomWidth: "0px",
-      borderLeftWidth: "0px",
-      borderColor: "Border.6",
-      borderTopColor: "Border.6",
-      borderRightColor: "Border.6",
-      borderBottomColor: "Border.6",
-      borderLeftColor: "Border.6",
       showRadius: "radius-all",
+      borderStyle: "none",
       borderRadius: "0px",
-      borderTopLeftRadius: "0px",
-      borderTopRightRadius: "0px",
-      borderBottomLeftRadius: "0px",
-      borderBottomRightRadius: "0px",
+      borderWidth: "0px",
+      borderColor: "Border.6",
     },
   });
 
@@ -75,24 +91,52 @@ export const Modifier = () => {
     if (selectedComponentId) {
       const { style = {} } = componentProps;
       form.setValues({
-        borderTopStyle: style.borderTopStyle ?? "none",
-        borderRightStyle: style.borderRightStyle ?? "none",
-        borderBottomStyle: style.borderBottomStyle ?? "none",
-        borderLeftStyle: style.borderLeftStyle ?? "none",
-        borderTopWidth: style.borderTopWidth ?? "none",
-        borderRightWidth: style.borderRightWidth ?? "none",
-        borderBottomWidth: style.borderBottomWidth ?? "none",
-        borderLeftWidth: style.borderLeftWidth ?? "none",
-        borderColor: style.borderColor ?? "Border.6",
-        borderTopColor: style.borderTopColor ?? "Border.6",
-        borderRightColor: style.borderRightColor ?? "Border.6",
-        borderBottomColor: style.borderBottomColor ?? "Border.6",
-        borderLeftColor: style.borderLeftColor ?? "Border.6",
-        borderRadius: style.borderRadius ?? "0px",
-        borderTopLeftRadius: style.borderTopLeftRadius ?? "0px",
-        borderTopRightRadius: style.borderTopRightRadius ?? "0px",
-        borderBottomLeftRadius: style.borderBottomLeftRadius ?? "0px",
-        borderBottomRightRadius: style.borderBottomRightRadius ?? "0px",
+        borderStyle: style.borderTopStyle ?? defaultBorderValues.borderTopStyle,
+        borderTopStyle:
+          style.borderTopStyle ?? defaultBorderValues.borderTopStyle,
+        borderRightStyle:
+          style.borderRightStyle ?? defaultBorderValues.borderRightStyle,
+        borderBottomStyle:
+          style.borderBottomStyle ?? defaultBorderValues.borderBottomStyle,
+        borderLeftStyle:
+          style.borderLeftStyle ?? defaultBorderValues.borderLeftStyle,
+        borderColor: style.borderTopColor
+          ? getThemeColor(theme, style.borderTopColor)
+          : defaultBorderValues.borderTopColor,
+        borderTopColor: style.borderTopColor
+          ? getThemeColor(theme, style.borderTopColor)
+          : defaultBorderValues.borderTopColor,
+        borderRightColor: style.borderRightColor
+          ? getThemeColor(theme, style.borderRightColor)
+          : defaultBorderValues.borderRightColor,
+        borderBottomColor: style.borderBottomColor
+          ? getThemeColor(theme, style.borderBottomColor)
+          : defaultBorderValues.borderBottomColor,
+        borderLeftColor: style.borderLeftColor
+          ? getThemeColor(theme, style.borderLeftColor)
+          : defaultBorderValues.borderLeftColor,
+        borderRadius:
+          style.borderTopLeftRadius ?? defaultBorderValues.borderTopLeftRadius,
+        borderTopLeftRadius:
+          style.borderTopLeftRadius ?? defaultBorderValues.borderTopLeftRadius,
+        borderTopRightRadius:
+          style.borderTopRightRadius ??
+          defaultBorderValues.borderTopRightRadius,
+        borderBottomLeftRadius:
+          style.borderBottomLeftRadius ??
+          defaultBorderValues.borderBottomLeftRadius,
+        borderBottomRightRadius:
+          style.borderBottomRightRadius ??
+          defaultBorderValues.borderBottomRightRadius,
+        borderWidth: style.borderTopWidth ?? defaultBorderValues.borderTopWidth,
+        borderTopWidth:
+          style.borderTopWidth ?? defaultBorderValues.borderTopWidth,
+        borderRightWidth:
+          style.borderRightWidth ?? defaultBorderValues.borderRightWidth,
+        borderBottomWidth:
+          style.borderBottomWidth ?? defaultBorderValues.borderBottomWidth,
+        borderLeftWidth:
+          style.borderLeftWidth ?? defaultBorderValues.borderLeftWidth,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes

@@ -1,4 +1,5 @@
 import { defaultTheme } from "@/components/IFrame";
+import { defaultBorderValues } from "@/components/modifiers/Border";
 import { defaultLayoutValues } from "@/components/modifiers/Layout";
 import { Component } from "@/utils/editor";
 import { px } from "@mantine/core";
@@ -22,6 +23,7 @@ export const jsonStructure = (props?: any): Component => {
         height: "auto",
         minHeight: "10px",
         ...defaultLayoutValues,
+        ...defaultBorderValues,
         ...(style || {}),
       },
       ...(rest || {}),
