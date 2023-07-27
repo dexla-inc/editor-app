@@ -225,6 +225,10 @@ export const apiCallAction = async ({
     const authHeaderKey =
       endpoint?.authenticationScheme === "BEARER" ? await getBearerToken() : "";
 
+    //Access token from Evalio so we can use their auth endpoints. Expires every 6 hours
+    authHeaderKey ??
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkwNDgwNDMwLCJpYXQiOjE2OTA0NTg4MzAsImp0aSI6IjM2ZmU0NjI2NjUxMDQzNzViOWVkYjJkZmUzNWUyODA3IiwidXNlcl9pZCI6Mn0.CbJOO4asu2pT8zJRnJ4LYNgslCFTFZqD5Lqgq35n5OI";
+
     const response = await fetch(url, {
       method: endpoint?.methodType,
       headers: {

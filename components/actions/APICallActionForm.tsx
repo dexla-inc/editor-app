@@ -101,6 +101,7 @@ export const APICallActionForm = ({ isLogin }: Props) => {
   const action: Action = componentActions.find(
     (a: Action) => a.action.name === "apiCall"
   );
+
   const apiCall = action.action as APICallAction;
 
   const form = useForm<FormValues>({

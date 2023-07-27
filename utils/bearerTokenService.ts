@@ -16,6 +16,7 @@ async function fetchToken(url: string, data: any): Promise<TokenData> {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${tokenData?.accessToken}`,
     },
     body: JSON.stringify(data),
   });
@@ -43,6 +44,7 @@ export async function getBearerToken(): Promise<string> {
   if (!tokenData || !expiryTime || now >= expiryTime) {
     // token is expired or doesn't exist, fetch new one
     tokenData = await fetchToken(refreshTokenUrl, {
+      accessToken: tokenData?.accessToken,
       refreshToken: tokenData?.refreshToken,
     });
   }
