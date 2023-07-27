@@ -18,10 +18,20 @@ export const ActionsForm = ({ isSequential }: Props) => {
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent
   );
+  const form = useForm({
+    initialValues: {
+      trigger: "",
+      action: "",
+    },
+  });
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
-  // TODO: This line errors when a component has an empty action. May need to add a default if errors mid development ?? "Button" so the page loads
-  const ComponentDefinition = componentMapper[component?.name ?? "Button"];
+
+  const componentName = component?.name;
+
+  if (!componentName) return null;
+
+  const ComponentDefinition = componentMapper[componentName];
   const availableTriggers = isSequential
     ? ComponentDefinition.sequentialTriggers.filter(
         (t) =>
@@ -32,13 +42,6 @@ export const ActionsForm = ({ isSequential }: Props) => {
     : ComponentDefinition.actionTriggers.filter(
         (t) => !(component?.props?.actions ?? []).find((a: Action) => a.trigger)
       );
-
-  const form = useForm({
-    initialValues: {
-      trigger: "",
-      action: "",
-    },
-  });
 
   const onSubmit = (values: any) => {
     updateTreeComponent(selectedComponentId!, {
@@ -57,7 +60,7 @@ export const ActionsForm = ({ isSequential }: Props) => {
           size="xs"
           placeholder="Select a trigger"
           label="Trigger"
-          data={availableTriggers.map((trigger) => {
+          data={availableTriggers?.map((trigger) => {
             return {
               label: startCase(trigger),
               value: trigger,

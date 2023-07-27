@@ -2,6 +2,7 @@ import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
 import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
+import { LoginActionForm } from "@/components/actions/LoginActionForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries";
 import { DataSourceResponse } from "@/requests/datasources/types";
@@ -153,7 +154,25 @@ export type APICallActionParams = ActionParams & {
 };
 
 export type LoginActionParams = ActionParams & {
-  action: APICallAction;
+  action: LoginAction;
+};
+
+export const loginAction = async ({
+  action,
+  router,
+  onSuccess,
+  onError,
+  component,
+  ...rest
+}: LoginActionParams) => {
+  return apiCallAction({
+    action,
+    router,
+    onSuccess,
+    onError,
+    component,
+    ...rest,
+  });
 };
 
 export const apiCallAction = async ({
@@ -163,7 +182,7 @@ export const apiCallAction = async ({
   onError,
   component,
   ...rest
-}: APICallActionParams) => {
+}: APICallActionParams | LoginActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
   try {
@@ -317,7 +336,7 @@ export const actionMapper = {
     form: GoToUrlForm,
   },
   login: {
-    action: apiCallAction,
-    form: APICallActionForm,
+    action: loginAction,
+    form: LoginActionForm,
   },
 };
