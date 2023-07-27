@@ -57,7 +57,11 @@ type FormValues = {
   binds?: { [key: string]: any };
 };
 
-export const APICallActionForm = () => {
+type Props = {
+  isLogin?: boolean;
+};
+
+export const APICallActionForm = ({ isLogin }: Props) => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const setPickingComponentToBindFrom = useEditorStore(
@@ -159,7 +163,8 @@ export const APICallActionForm = () => {
     const getEndpoints = async () => {
       const { results } = await getDataSourceEndpoints(
         projectId,
-        dataSources.data!.results[0].id
+        dataSources.data!.results[0].id,
+        { authOnly: isLogin }
       );
       setEndpoints(results);
     };
@@ -167,7 +172,7 @@ export const APICallActionForm = () => {
     if ((dataSources.data?.results ?? []).length > 0) {
       getEndpoints();
     }
-  }, [dataSources.data, projectId]);
+  }, [dataSources.data, projectId, isLogin]);
 
   useEffect(() => {
     if (componentToBind && pickingComponentToBindFrom) {
@@ -256,6 +261,7 @@ export const APICallActionForm = () => {
                       <IconCurrentLocation size={ICON_SIZE} />
                     </ActionIcon>
                   }
+                  autoComplete="off"
                 />
               );
             })}

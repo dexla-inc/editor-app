@@ -46,9 +46,11 @@ export default function StepperContent({
   const [refreshEndpointId, setRefreshEndpointId] = useState<string | null>(
     null
   );
+
   const [userEndpointId, setUserEndpointId] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [expiryProperty, setExpiryProperty] = useState<string | null>(null);
   const [exampleResponse, setExampleResponse] = useState<
     ExampleResponseDropdown[] | undefined
   >(undefined);
@@ -104,6 +106,8 @@ export default function StepperContent({
           setRefreshToken={setRefreshToken}
           exampleResponse={exampleResponse}
           setExampleResponse={setExampleResponse}
+          expiryProperty={expiryProperty}
+          setExpiryProperty={setExpiryProperty}
         ></AuthenticationStep>
       )}
       {activeStep == 3 && (

@@ -6,6 +6,7 @@ import { NavigationActionForm } from "@/components/actions/NavigationActionForm"
 import { getDataSourceEndpoints } from "@/requests/datasources/queries";
 import { DataSourceResponse } from "@/requests/datasources/types";
 import { useEditorStore } from "@/stores/editor";
+import { getBearerToken } from "@/utils/bearerTokenService";
 import { Component } from "@/utils/editor";
 import { Router } from "next/router";
 
@@ -40,6 +41,7 @@ export const actions = [
   "apiCall",
   "bindResponseToComponent",
   "goToUrl",
+  "login",
   "openModal",
   "openPopover",
   "openToast",
@@ -82,6 +84,10 @@ export type APICallAction = {
   data?: any;
 };
 
+export type LoginAction = Omit<APICallAction, "name"> & {
+  name: "login";
+};
+
 export type BindResponseToComponentAction = {
   name: "bindResponseToComponent";
   componentToBind: string;
@@ -95,7 +101,8 @@ export type Action = {
     | DebugAction
     | APICallAction
     | BindResponseToComponentAction
-    | GoToUrlAction;
+    | GoToUrlAction
+    | LoginAction;
   sequentialTrigger?: SequentialTrigger;
 };
 
@@ -145,6 +152,10 @@ export type APICallActionParams = ActionParams & {
   action: APICallAction;
 };
 
+export type LoginActionParams = ActionParams & {
+  action: APICallAction;
+};
+
 export const apiCallAction = async ({
   action,
   router,
@@ -161,6 +172,8 @@ export const apiCallAction = async ({
 
     updateTreeComponent(component.id!, { loading: true }, false);
 
+    // TODO: This will be bad for performance if we are having to fetch this every time a customer calls an API.
+    // Can we store this in context some where?
     const { results } = await getDataSourceEndpoints(
       projectId,
       action.datasource.id
@@ -208,10 +221,16 @@ export const apiCallAction = async ({
           )
         : {};
 
+    // Should get the token from some where secure
+    const authHeaderKey =
+      endpoint?.authenticationScheme === "BEARER" ? await getBearerToken() : "";
+
     const response = await fetch(url, {
       method: endpoint?.methodType,
       headers: {
+        // Will need to build up headers from endpoint.headers in future
         "Content-Type": endpoint?.mediaType ?? "application/json",
+        Authorization: authHeaderKey,
       },
       body: body ? JSON.stringify(body) : undefined,
     });
@@ -292,5 +311,9 @@ export const actionMapper = {
   goToUrl: {
     action: goToUrlAction,
     form: GoToUrlForm,
+  },
+  login: {
+    action: apiCallAction,
+    form: APICallActionForm,
   },
 };

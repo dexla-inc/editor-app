@@ -36,6 +36,8 @@ interface AuthenticationStepProps extends DataSourceStepperProps {
   setExampleResponse: (
     exampleResponse: ExampleResponseDropdown[] | undefined
   ) => void;
+  expiryProperty: string | null;
+  setExpiryProperty: (expiryProperty: string | null) => void;
 }
 
 export default function AuthenticationStep({
@@ -62,6 +64,8 @@ export default function AuthenticationStep({
   setRefreshToken,
   setExampleResponse,
   exampleResponse,
+  expiryProperty,
+  setExpiryProperty,
 }: AuthenticationStepProps) {
   const router = useRouter();
   const projectId = router.query.id as string;
@@ -317,6 +321,30 @@ export default function AuthenticationStep({
             value={refreshToken}
             setProperty={setRefreshToken}
             required={!!refreshEndpointId}
+          />
+        )}
+        {dataSource?.swaggerUrl && loginEndpointId ? (
+          <SearchableSelectComponent
+            label="Access token expiry property"
+            description="The property name of the expiry of the access token in the response"
+            placeholder="expires_in"
+            value={expiryProperty}
+            form={form}
+            propertyName="expiry"
+            data={exampleResponse ?? []}
+            setProperty={setExpiryProperty}
+            nothingFoundText="Not found. Update your swagger to include the response property"
+          />
+        ) : (
+          <TextInputComponent
+            label="Access token expiry property"
+            description="The property name of the expiry of the access token in the response"
+            placeholder="expires_in"
+            form={form}
+            propertyName="expiryProperty"
+            value={accessToken}
+            setProperty={setExpiryProperty}
+            required={!!loginEndpointId}
           />
         )}
         <Divider></Divider>

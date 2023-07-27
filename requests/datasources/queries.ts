@@ -1,4 +1,5 @@
 import {
+  DataSourceAuthResponse,
   DataSourceEndpointsListParams,
   DataSourceResponse,
   DataSourcesListParams,
@@ -54,6 +55,17 @@ export const getDataSource = async (projectId: string, id: string) => {
     url,
     {}
   )) as DataSourceResponse;
+
+  return response;
+};
+
+export const getDataSourceAuth = async (projectId: string, id: string) => {
+  let url = `/projects/${projectId}/datasources/${id}/auth`;
+
+  const response = (await get<DataSourceAuthResponse>(
+    url,
+    {}
+  )) as DataSourceAuthResponse;
 
   return response;
 };

@@ -61,7 +61,7 @@ export type Endpoint = {
   description: string | null;
   mediaType: string;
   withCredentials: boolean | null;
-  authenticationScheme: string;
+  authenticationScheme: AuthenticationSchemes;
   headers: Header[];
   parameters: Parameter[];
   requestBody: RequestBody[];
@@ -103,4 +103,16 @@ export type ExampleResponse = {
   name: string;
   type: string;
   description: string | null;
+};
+
+export type AuthenticationSchemes = "NONE" | "BEARER" | "BASIC" | "API_KEY";
+
+export type DataSourceAuthResponse = {
+  type: AuthenticationSchemes;
+  loginEndpointUrl?: string;
+  refreshEndpointUrl?: string;
+  userEndpointUrl?: string;
+  accessTokenProperty?: string;
+  refreshTokenProperty?: string;
+  expiryTokenProperty?: string;
 };
