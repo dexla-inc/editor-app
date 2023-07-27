@@ -13,13 +13,13 @@ export const Container = ({ renderTree, component, ...props }: Props) => {
     <MantineFlex
       {...props}
       {...componentProps}
-      style={{ ...style, width: "100%" }}
+      style={{ width: "100%", ...style }}
     >
       {component.children && component.children.length > 0
         ? component.children?.map((child) =>
             renderTree({
               ...child,
-              props: { ...child.props, ...componentProps },
+              props: { ...child.props, ...componentProps, ...style },
             })
           )
         : children}

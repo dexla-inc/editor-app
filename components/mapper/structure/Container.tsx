@@ -15,6 +15,9 @@ export const jsonStructure = (props?: any): Component => {
     description: "Container",
     props: {
       style: {
+        display: "flex",
+        ...defaultLayoutValues,
+        ...defaultBorderValues,
         paddingTop: px(theme.spacing.sm),
         paddingBottom: px(theme.spacing.sm),
         paddingLeft: px(theme.spacing.lg),
@@ -22,8 +25,6 @@ export const jsonStructure = (props?: any): Component => {
         width: "100%",
         height: "auto",
         minHeight: "10px",
-        ...defaultLayoutValues,
-        ...defaultBorderValues,
         ...(style || {}),
       },
       ...(rest || {}),

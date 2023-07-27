@@ -112,6 +112,8 @@ export const getEditorTreeFromPageStructure = (
                   paddingBottom: "20px",
                   paddingLeft: "20px",
                   backgroundColor: "#fff",
+                  display: "flex",
+                  flexDirection: "row",
                 },
               },
               children: traverseComponents(row.components, theme, pages),

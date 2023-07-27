@@ -1,5 +1,5 @@
 import { Component } from "@/utils/editor";
-import { Flex as MantineFlex, FlexProps, Button } from "@mantine/core";
+import { Flex as MantineFlex, FlexProps } from "@mantine/core";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -7,17 +7,10 @@ type Props = {
 } & FlexProps;
 
 export const Form = ({ renderTree, component, ...props }: Props) => {
-  const { children, style, triggers, ...componentProps } =
-    component.props as any;
+  const { children, triggers, ...componentProps } = component.props as any;
 
   return (
-    <MantineFlex
-      {...props}
-      {...componentProps}
-      component="form"
-      style={{ ...style }}
-      {...triggers}
-    >
+    <MantineFlex {...props} {...componentProps} component="form" {...triggers}>
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))
         : children}
