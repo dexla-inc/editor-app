@@ -58,7 +58,7 @@ type FormValues = {
 };
 
 type Props = {
-  actionName: string;
+  actionName?: string;
 };
 
 export const APICallActionForm = ({ actionName = "apiCall" }: Props) => {
