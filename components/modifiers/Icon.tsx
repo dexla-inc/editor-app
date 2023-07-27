@@ -57,7 +57,6 @@ export const Modifier = () => {
               style: { color: value },
             });
           }}
-          searchable
         />
       </Stack>
     </form>

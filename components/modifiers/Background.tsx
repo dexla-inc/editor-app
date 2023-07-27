@@ -72,7 +72,6 @@ export const Modifier = () => {
               bg: value,
             });
           }}
-          searchable
         />
         <TextInput
           label="Image URL"

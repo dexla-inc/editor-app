@@ -30,6 +30,8 @@ export const triggers = [
   "onPaginationChange",
   "onSort",
   "onFilterApplied",
+  "onSuccess",
+  "onError",
 ] as const;
 
 export const actions = [
@@ -46,7 +48,6 @@ export const actions = [
 ];
 
 export type ActionTrigger = (typeof triggers)[number];
-export type SequentialTrigger = "onSuccess" | "onError";
 
 export type NavigationAction = {
   name: "navigateToPage";
@@ -82,14 +83,14 @@ export type BindResponseToComponentAction = {
 };
 
 export type Action = {
-  trigger: ActionTrigger;
+  trigger: Exclude<ActionTrigger, "onSuccess" | "onError">;
   action:
     | NavigationAction
     | DebugAction
     | APICallAction
     | BindResponseToComponentAction
     | GoToUrlAction;
-  sequentialTrigger?: SequentialTrigger;
+  sequentialTrigger?: Extract<ActionTrigger, "onSuccess" | "onError">;
 };
 
 export type ActionParams = {

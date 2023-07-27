@@ -726,7 +726,8 @@ export type Modifiers =
   | "title"
   | "image"
   | "link"
-  | "icon";
+  | "icon"
+  | "divider";
 
 export type ComponentDefinition = {
   Component: any;
@@ -983,7 +984,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Divider component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["divider", "spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

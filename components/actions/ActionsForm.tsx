@@ -6,7 +6,11 @@ import { Button, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import startCase from "lodash.startcase";
 
-export const ActionsForm = () => {
+type Props = {
+  isSequential?: boolean;
+};
+
+export const ActionsForm = ({ isSequential }: Props) => {
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
@@ -16,7 +20,10 @@ export const ActionsForm = () => {
   );
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
-  const actionTriggers = componentMapper[component!.name].actionTriggers;
+  const ComponentDefinition = componentMapper[component!.name];
+  const actionTriggers = !isSequential
+    ? ComponentDefinition.sequentialTriggers
+    : ComponentDefinition.actionTriggers;
 
   const form = useForm({
     initialValues: {
@@ -38,7 +45,9 @@ export const ActionsForm = () => {
 
   const availableTriggers = actionTriggers.filter(
     (t) =>
-      !(component?.props?.actions ?? []).find((a: Action) => a.trigger === t)
+      !(component?.props?.actions ?? []).find((a: Action) =>
+        isSequential ? a.sequentialTrigger : a.trigger
+      )
   );
 
   return (

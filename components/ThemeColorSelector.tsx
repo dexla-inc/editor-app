@@ -71,6 +71,7 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
         value: "transparent",
       })}
       itemComponent={SelectItem}
+      searchable
     />
   );
 };
