@@ -21,7 +21,7 @@ export const ActionsForm = ({ isSequential }: Props) => {
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
   // TODO: This line errors when a component has an empty action. May need to add a default if errors mid development ?? "Button" so the page loads
-  const ComponentDefinition = componentMapper[component!.name];
+  const ComponentDefinition = componentMapper[component?.name ?? "Button"];
   const availableTriggers = isSequential
     ? ComponentDefinition.sequentialTriggers.filter(
         (t) =>
