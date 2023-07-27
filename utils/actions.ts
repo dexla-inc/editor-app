@@ -9,7 +9,7 @@ import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { Router } from "next/router";
 
-export const triggers = [
+const triggers = [
   "onClick",
   "onHover",
   "onDoubleClick", // Do not think we need this, can just use onClick
@@ -47,7 +47,13 @@ export const actions = [
   "copyToClipboard",
 ];
 
-export type ActionTrigger = (typeof triggers)[number];
+type ActionTriggerAll = (typeof triggers)[number];
+
+export type ActionTrigger = Exclude<ActionTriggerAll, "onSuccess" | "onError">;
+export type SequentialTrigger = Extract<
+  ActionTriggerAll,
+  "onSuccess" | "onError"
+>;
 
 export type NavigationAction = {
   name: "navigateToPage";
@@ -83,14 +89,14 @@ export type BindResponseToComponentAction = {
 };
 
 export type Action = {
-  trigger: Exclude<ActionTrigger, "onSuccess" | "onError">;
+  trigger: ActionTrigger;
   action:
     | NavigationAction
     | DebugAction
     | APICallAction
     | BindResponseToComponentAction
     | GoToUrlAction;
-  sequentialTrigger?: Extract<ActionTrigger, "onSuccess" | "onError">;
+  sequentialTrigger?: SequentialTrigger;
 };
 
 export type ActionParams = {

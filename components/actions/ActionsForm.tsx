@@ -21,9 +21,16 @@ export const ActionsForm = ({ isSequential }: Props) => {
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const ComponentDefinition = componentMapper[component!.name];
-  const actionTriggers = !isSequential
-    ? ComponentDefinition.sequentialTriggers
-    : ComponentDefinition.actionTriggers;
+  const availableTriggers = isSequential
+    ? ComponentDefinition.sequentialTriggers.filter(
+        (t) =>
+          !(component?.props?.actions ?? []).find(
+            (a: Action) => a.sequentialTrigger
+          )
+      )
+    : ComponentDefinition.actionTriggers.filter(
+        (t) => !(component?.props?.actions ?? []).find((a: Action) => a.trigger)
+      );
 
   const form = useForm({
     initialValues: {
@@ -42,14 +49,6 @@ export const ActionsForm = ({ isSequential }: Props) => {
       }),
     });
   };
-
-  const availableTriggers = actionTriggers.filter(
-    (t) =>
-      !(component?.props?.actions ?? []).find((a: Action) =>
-        isSequential ? a.sequentialTrigger : a.trigger
-      )
-  );
-
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs" px="md">
