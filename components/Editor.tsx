@@ -100,6 +100,18 @@ export const Editor = ({ projectId, pageId }: Props) => {
     }
   }, [editorTree.root, isPreviewMode, selectedComponentId, setCopiedComponent]);
 
+  const cutSelectedComponent = useCallback(() => {
+    if (!isPreviewMode && selectedComponentId) {
+      copySelectedCompnent();
+      deleteComponent();
+    }
+  }, [
+    copySelectedCompnent,
+    deleteComponent,
+    isPreviewMode,
+    selectedComponentId,
+  ]);
+
   const pasteCopiedComponent = useCallback(() => {
     if (copiedComponent && !isPreviewMode && selectedComponentId) {
       const isSelectedId = selectedComponentId === copiedComponent.id;
@@ -126,6 +138,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
     ["delete", deleteComponent],
     ["mod+C", copySelectedCompnent],
     ["mod+V", pasteCopiedComponent],
+    ["mod+X", cutSelectedComponent],
     [
       "mod+Z",
       () => {
@@ -174,6 +187,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
       { preventDefault: false },
     ],
     ["mod+C", copySelectedCompnent, { preventDefault: false }],
+    ["mod+X", cutSelectedComponent, { preventDefault: false }],
     [
       "mod+V",
       (e) => {
