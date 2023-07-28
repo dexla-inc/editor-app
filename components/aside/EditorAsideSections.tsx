@@ -9,6 +9,7 @@ import * as ImageModifier from "@/components/modifiers/Image";
 import * as InputModifier from "@/components/modifiers/Input";
 import * as LayoutModifier from "@/components/modifiers/Layout";
 import * as LinkModifier from "@/components/modifiers/Link";
+import * as SelectModifier from "@/components/modifiers/Select";
 import * as SizeModifier from "@/components/modifiers/Size";
 import * as SpacingModifier from "@/components/modifiers/Spacing";
 import * as TextModifier from "@/components/modifiers/Text";
@@ -47,6 +48,7 @@ const sectionMapper: SectionsMapper = {
   link: LinkModifier,
   icon: IconModifier,
   divider: DividerModifier,
+  select: SelectModifier,
 };
 
 type Tab = "design" | "actions";

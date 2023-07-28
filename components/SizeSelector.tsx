@@ -7,6 +7,7 @@ export const SizeSelector = (props: Omit<SelectProps, "data">) => {
       size="xs"
       {...props}
       data={[
+        { label: "None", value: "0" },
         { label: "Extra Small", value: "xs" },
         { label: "Small", value: "sm" },
         { label: "Medium", value: "md" },
