@@ -511,13 +511,15 @@ export const addComponent = (
       } else {
         // Add content-wrapper
         if (node.id === dropTarget.id) {
+          node.children = node.children ?? [];
+
           if (dropTarget.edge === "left" || dropTarget.edge === "top") {
-            node.children = [copy, ...(node.children || [])];
+            node.children.splice(context.index - 1, 0, copy);
           } else if (
             dropTarget.edge === "right" ||
             dropTarget.edge === "bottom"
           ) {
-            node.children = [...(node.children || []), copy];
+            node.children.splice(context.index + 1, 0, copy);
           }
 
           context.break();

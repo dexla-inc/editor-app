@@ -8,7 +8,6 @@ import {
   getClosestEdge,
   distanceBetween,
   DropTarget,
-  getComponentById,
 } from "@/utils/editor";
 import { useState, useCallback } from "react";
 
@@ -23,18 +22,16 @@ export const useDroppable = ({
   activeId?: string;
   currentWindow?: Window;
 }) => {
-  const editorTree = useEditorStore((state) => state.tree);
   const setCurrentTargetId = useEditorStore(
     (state) => state.setCurrentTargetId
   );
   const [edge, setEdge] = useState<Edge>();
-  const component = getComponentById(editorTree.root, id);
 
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
       event.preventDefault();
       event.stopPropagation();
-      if (activeId !== id && !component?.blockDroppingChildrenInside) {
+      if (activeId !== id) {
         const dropTarget = {
           id,
           edge: edge!,
@@ -43,14 +40,7 @@ export const useDroppable = ({
       }
       setCurrentTargetId(undefined);
     },
-    [
-      activeId,
-      id,
-      component?.blockDroppingChildrenInside,
-      setCurrentTargetId,
-      edge,
-      onDrop,
-    ]
+    [activeId, id, setCurrentTargetId, edge, onDrop]
   );
 
   const handleDragOver = useCallback(
@@ -58,11 +48,7 @@ export const useDroppable = ({
       event.preventDefault();
       event.stopPropagation();
 
-      if (
-        activeId &&
-        activeId !== id &&
-        !component?.blockDroppingChildrenInside
-      ) {
+      if (activeId && activeId !== id) {
         const mouseX = event.clientX;
         const mouseY = event.clientY;
         const w = currentWindow ?? window;
@@ -100,18 +86,18 @@ export const useDroppable = ({
         setEdge(edge as Edge);
       }
     },
-    [activeId, id, component?.blockDroppingChildrenInside, currentWindow]
+    [activeId, id, currentWindow]
   );
 
   const handleDragEnter = useCallback(
     (event: any) => {
       event.preventDefault();
       event.stopPropagation();
-      if (activeId !== id && !component?.blockDroppingChildrenInside) {
+      if (activeId !== id) {
         setCurrentTargetId(id);
       }
     },
-    [activeId, component?.blockDroppingChildrenInside, id, setCurrentTargetId]
+    [activeId, id, setCurrentTargetId]
   );
 
   // TODO: Handle isOver differently to have better ux as currently

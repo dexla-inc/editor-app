@@ -4,8 +4,14 @@ import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useOnDrop } from "@/hooks/useOnDrop";
 import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper } from "@/utils/actions";
+import { structureMapper } from "@/utils/componentMapper";
 import { DROP_INDICATOR_WIDTH, ICON_SIZE } from "@/utils/config";
-import { Component, getComponentParent } from "@/utils/editor";
+import {
+  Component,
+  addComponent,
+  getComponentParent,
+  removeComponentFromParent,
+} from "@/utils/editor";
 import {
   ActionIcon,
   Box,
@@ -18,10 +24,11 @@ import {
 import { useHover } from "@mantine/hooks";
 import {
   IconArrowUp,
-  IconDeviceFloppy,
+  IconBoxMargin,
   IconGripVertical,
   IconNewSection,
 } from "@tabler/icons-react";
+import cloneDeep from "lodash.clonedeep";
 import { Router, useRouter } from "next/router";
 import { PropsWithChildren, cloneElement, useEffect } from "react";
 
@@ -44,6 +51,7 @@ export const DroppableDraggable = ({
   const { hovered, ref } = useHover();
   const theme = useMantineTheme();
   const editorTree = useEditorStore((state) => state.tree);
+  const setEditorTree = useEditorStore((state) => state.setTree);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
@@ -308,15 +316,27 @@ export const DroppableDraggable = ({
             <ActionIcon
               variant="transparent"
               onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+                const container = structureMapper["Container"].structure({
+                  theme,
+                  pages: [],
+                });
+
+                const copy = cloneDeep(editorTree);
+                const containerId = addComponent(copy.root, container, {
+                  id: parent?.id!,
+                  edge: "left",
+                });
+
+                addComponent(copy.root, component, {
+                  id: containerId,
+                  edge: "left",
+                });
+
+                removeComponentFromParent(copy.root, id, parent?.id!);
+                setEditorTree(copy);
               }}
             >
-              <IconDeviceFloppy
-                size={ICON_SIZE}
-                color="white"
-                strokeWidth={1.5}
-              />
+              <IconBoxMargin size={ICON_SIZE} color="white" strokeWidth={1.5} />
             </ActionIcon>
           </Group>
         </Box>

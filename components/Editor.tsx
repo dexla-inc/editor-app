@@ -1,3 +1,5 @@
+// The comment below force next to refresh the editor state every time we change something in the code
+// @refresh reset
 import { Shell } from "@/components/AppShell";
 import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { Droppable } from "@/components/Droppable";
