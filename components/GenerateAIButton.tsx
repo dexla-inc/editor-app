@@ -103,6 +103,12 @@ export const GenerateAIButton = ({
     setDescriptionPlaceholder(descriptionPlaceholderMapping[value]);
   };
 
+  const closeModal = () => {
+    close();
+    setDescription("");
+    setType("COMPONENT");
+  };
+
   useEffect(() => {
     if (type === "COMPONENT") {
       if (stream) {
@@ -164,7 +170,7 @@ export const GenerateAIButton = ({
 
   const generate = () => {
     setIsLoading(true);
-    close();
+    closeModal();
     startLoading({
       id: "page-generation",
       title: `Generating ${descriptionPlaceholderMapping[type].replaceText}`,
@@ -261,7 +267,7 @@ export const GenerateAIButton = ({
       <Modal
         size="xl"
         opened={openedAIModal}
-        onClose={close}
+        onClose={closeModal}
         title="Generate AI Content"
       >
         <Stack>

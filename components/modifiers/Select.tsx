@@ -1,19 +1,16 @@
 import { SizeSelector } from "@/components/SizeSelector";
-import { SwitchSelector } from "@/components/SwitchSelector";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconForms } from "@tabler/icons-react";
+import { IconSelect } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
-import { useEffect, useState } from "react";
-import { Icon } from "../Icon";
-import { IconSelector } from "../IconSelector";
+import { useEffect } from "react";
 
-export const icon = IconForms;
-export const label = "Input";
+export const icon = IconSelect;
+export const label = "Select";
 
-export const defaultInputValues = {
+export const defaultSelectValues = {
   size: "sm",
   placeholder: "Input",
   type: "text",
@@ -21,6 +18,7 @@ export const defaultInputValues = {
   icon: "",
   withAsterisk: false,
   labelSpacing: "0",
+  data: ["Option 1", "Option 2"],
 };
 
 export const Modifier = () => {
@@ -36,11 +34,11 @@ export const Modifier = () => {
     editorTree.root,
     selectedComponentId as string
   );
-  const [icon, setIcon] = useState("");
+
   const componentProps = selectedComponent?.props || {};
 
   const form = useForm({
-    initialValues: defaultInputValues,
+    initialValues: defaultSelectValues,
   });
 
   useEffect(() => {
@@ -57,14 +55,14 @@ export const Modifier = () => {
       } = componentProps;
 
       form.setValues({
-        size: size ?? defaultInputValues.size,
-        placeholder: placeholder ?? defaultInputValues.placeholder,
-        type: type ?? defaultInputValues.type,
-        label: label ?? defaultInputValues.label,
-        icon: icon ?? defaultInputValues.icon,
-        withAsterisk: withAsterisk ?? defaultInputValues.withAsterisk,
+        size: size ?? defaultSelectValues.size,
+        placeholder: placeholder ?? defaultSelectValues.placeholder,
+        type: type ?? defaultSelectValues.type,
+        label: label ?? defaultSelectValues.label,
+        icon: icon ?? defaultSelectValues.icon,
+        withAsterisk: withAsterisk ?? defaultSelectValues.withAsterisk,
         labelProps:
-          labelProps.style?.marginBottom ?? defaultInputValues.labelSpacing,
+          labelProps.style?.marginBottom ?? defaultSelectValues.labelSpacing,
         ...style,
       });
     }
@@ -88,15 +86,6 @@ export const Modifier = () => {
           onChange={(e) => {
             form.setFieldValue("label", e.target.value);
             debouncedUpdate("label", e.target.value);
-          }}
-        />
-        <TextInput
-          label="Placeholder"
-          size="xs"
-          {...form.getInputProps("placeholder")}
-          onChange={(e) => {
-            form.setFieldValue("placeholder", e.target.value);
-            debouncedUpdate("placeholder", e.target.value);
           }}
         />
         <Select
@@ -127,29 +116,13 @@ export const Modifier = () => {
             debouncedUpdate("icon", value);
           }}
         /> */}
-        <SwitchSelector
-          topLabel="Required"
-          {...form.getInputProps("withAsterisk")}
-          onChange={(event) => {
-            form.setFieldValue("withAsterisk", event.currentTarget.checked);
-            debouncedUpdate("withAsterisk", event.currentTarget.checked);
-          }}
-        />
+
         <SizeSelector
           label="Label Spacing"
           {...form.getInputProps("labelProps")}
           onChange={(value) => {
             form.setFieldValue("labelProps", value as string);
             debouncedUpdate("labelProps", { mb: value as string });
-          }}
-        />
-        <IconSelector
-          topLabel="Icon"
-          selectedIcon={form.values.icon}
-          onIconSelect={(iconName: string) => {
-            console.log("iconName", iconName);
-            form.setFieldValue("icon", iconName);
-            debouncedUpdate("icon", <Icon name={iconName} />);
           }}
         />
       </Stack>

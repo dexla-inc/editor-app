@@ -727,7 +727,8 @@ export type Modifiers =
   | "image"
   | "link"
   | "icon"
-  | "divider";
+  | "divider"
+  | "select";
 
 export type ComponentDefinition = {
   Component: any;
@@ -805,7 +806,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["select", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
