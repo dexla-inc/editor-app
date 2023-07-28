@@ -5,7 +5,11 @@ import { getComponentById } from "@/utils/editor";
 import { Button, Checkbox, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
-export const GoToUrlForm = () => {
+type Props = {
+  id: string;
+};
+
+export const GoToUrlForm = ({ id }: Props) => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const editorTree = useEditorStore((state) => state.tree);
@@ -18,9 +22,7 @@ export const GoToUrlForm = () => {
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentActions = component?.props?.actions ?? [];
-  const action: Action = componentActions.find(
-    (a: Action) => a.action.name === "goToUrl"
-  );
+  const action: Action = componentActions.find((a: Action) => a.id === id);
   const goToUrlAction = action.action as GoToUrlAction;
 
   const form = useForm({
@@ -40,7 +42,7 @@ export const GoToUrlForm = () => {
     try {
       updateTreeComponent(selectedComponentId!, {
         actions: componentActions.map((action: Action) => {
-          if (action.action.name === "goToUrl") {
+          if (action.id === id) {
             return {
               ...action,
               action: {
@@ -73,7 +75,7 @@ export const GoToUrlForm = () => {
   const removeAction = () => {
     updateTreeComponent(selectedComponentId!, {
       actions: componentActions.filter((a: Action) => {
-        return a.trigger !== action.trigger;
+        return a.id !== action.id;
       }),
     });
   };

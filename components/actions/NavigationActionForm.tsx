@@ -5,7 +5,11 @@ import { getComponentById } from "@/utils/editor";
 import { Button, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
-export const NavigationActionForm = () => {
+type Props = {
+  id: string;
+};
+
+export const NavigationActionForm = ({ id }: Props) => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const editorTree = useEditorStore((state) => state.tree);
@@ -19,9 +23,7 @@ export const NavigationActionForm = () => {
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentActions = component?.props?.actions ?? [];
-  const action: Action = componentActions.find(
-    (a: Action) => a.action.name === "navigateToPage"
-  );
+  const action: Action = componentActions.find((a: Action) => a.id === id);
   const navigationAction = action.action as NavigationAction;
 
   const form = useForm({
@@ -40,7 +42,7 @@ export const NavigationActionForm = () => {
 
       updateTreeComponent(selectedComponentId!, {
         actions: componentActions.map((action: Action) => {
-          if (action.action.name === "navigateToPage") {
+          if (action.id === id) {
             return {
               ...action,
               action: {
@@ -72,7 +74,7 @@ export const NavigationActionForm = () => {
   const removeAction = () => {
     updateTreeComponent(selectedComponentId!, {
       actions: componentActions.filter((a: Action) => {
-        return a.trigger !== action.trigger;
+        return a.id !== action.id;
       }),
     });
   };

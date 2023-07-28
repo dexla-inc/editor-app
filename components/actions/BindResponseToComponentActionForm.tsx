@@ -7,8 +7,15 @@ import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { ICON_SIZE } from "@/utils/config";
+import { useRouter } from "next/router";
+import { getDataSourceEndpoints } from "@/requests/datasources/queries";
 
-export const BindResponseToComponentActionForm = () => {
+type Props = {
+  id: string;
+};
+
+export const BindResponseToComponentActionForm = ({ id }: Props) => {
+  const router = useRouter();
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const setPickingComponentToBindTo = useEditorStore(
@@ -29,13 +36,16 @@ export const BindResponseToComponentActionForm = () => {
     (state) => state.updateTreeComponent
   );
 
+  const projectId = router.query.id as string;
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentActions = component?.props?.actions ?? [];
-  const action: Action = componentActions.find(
-    (a: Action) => a.action.name === "bindResponseToComponent"
-  );
+  const action: Action = componentActions.find((a: Action) => a.id === id);
   const bindResponseToComponent =
     action.action as BindResponseToComponentAction;
+
+  const originalAction = componentActions.find(
+    (a: Action) => a.id === action.sequentialTo
+  );
 
   const form = useForm({
     initialValues: {
@@ -53,7 +63,7 @@ export const BindResponseToComponentActionForm = () => {
 
       updateTreeComponent(selectedComponentId!, {
         actions: componentActions.map((action: Action) => {
-          if (action.action.name === "bindResponseToComponent") {
+          if (action.id === id) {
             return {
               ...action,
               action: {
@@ -85,7 +95,7 @@ export const BindResponseToComponentActionForm = () => {
   const removeAction = () => {
     updateTreeComponent(selectedComponentId!, {
       actions: componentActions.filter((a: Action) => {
-        return a.trigger !== action.trigger;
+        return a.id !== action.id;
       }),
     });
   };
@@ -102,6 +112,22 @@ export const BindResponseToComponentActionForm = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [component?.id, componentToBind, pickingComponentToBindTo]);
+
+  useEffect(() => {
+    const getEndpoint = async () => {
+      const { results } = await getDataSourceEndpoints(
+        projectId,
+        originalAction.action.datasource.id
+      );
+
+      const endpoint = results.find(
+        (e) => e.id === originalAction.action.endpoint
+      );
+      console.log({ action, originalAction, endpoint });
+    };
+
+    getEndpoint();
+  }, [action, originalAction, projectId]);
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>

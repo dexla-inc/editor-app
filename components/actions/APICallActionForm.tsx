@@ -60,9 +60,10 @@ type FormValues = {
 
 type Props = {
   actionName?: string;
+  id: string;
 };
 
-export const APICallActionForm = ({ actionName = "apiCall" }: Props) => {
+export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const setPickingComponentToBindFrom = useEditorStore(
@@ -100,9 +101,7 @@ export const APICallActionForm = ({ actionName = "apiCall" }: Props) => {
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentActions = component?.props?.actions ?? [];
 
-  const action: Action = componentActions.find(
-    (a: Action) => a.action.name === actionName
-  );
+  const action: Action = componentActions.find((a: Action) => a.id === id);
 
   const apiCall = action.action as LoginAction | APICallAction;
 
@@ -123,7 +122,7 @@ export const APICallActionForm = ({ actionName = "apiCall" }: Props) => {
 
       updateTreeComponent(selectedComponentId!, {
         actions: componentActions.map((action: Action) => {
-          if (action.action.name === actionName) {
+          if (action.id === id) {
             return {
               ...action,
               action: {

@@ -124,7 +124,7 @@ export const EditorAsideSections = () => {
 
         return (
           <SidebarSection {...item} key={item.label}>
-            <Component />
+            <Component id={action.id} />
           </SidebarSection>
         );
       }

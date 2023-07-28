@@ -5,7 +5,11 @@ import { getComponentById } from "@/utils/editor";
 import { Button, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
-export const DebugActionForm = () => {
+type Props = {
+  id: string;
+};
+
+export const DebugActionForm = ({ id }: Props) => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const editorTree = useEditorStore((state) => state.tree);
@@ -18,9 +22,7 @@ export const DebugActionForm = () => {
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentActions = component?.props?.actions ?? [];
-  const action: Action = componentActions.find(
-    (a: Action) => a.action.name === "debug"
-  );
+  const action: Action = componentActions.find((a: Action) => a.id === id);
   const debugAction = action.action as DebugAction;
 
   const form = useForm({
@@ -39,7 +41,7 @@ export const DebugActionForm = () => {
 
       updateTreeComponent(selectedComponentId!, {
         actions: componentActions.map((action: Action) => {
-          if (action.action.name === "debug") {
+          if (action.id === id) {
             return {
               ...action,
               action: {
@@ -71,7 +73,7 @@ export const DebugActionForm = () => {
   const removeAction = () => {
     updateTreeComponent(selectedComponentId!, {
       actions: componentActions.filter((a: Action) => {
-        return a.trigger !== action.trigger;
+        return a.id !== action.id;
       }),
     });
   };
