@@ -6,11 +6,7 @@ import { Button, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import startCase from "lodash.startcase";
 
-type Props = {
-  isSequential?: boolean;
-};
-
-export const ActionsForm = ({ isSequential }: Props) => {
+export const ActionsForm = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
@@ -18,27 +14,24 @@ export const ActionsForm = ({ isSequential }: Props) => {
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent
   );
-
-  const component = getComponentById(editorTree.root, selectedComponentId!);
-  // TODO: This line errors when a component has an empty action. May need to add a default if errors mid development ?? "Button" so the page loads
-  const ComponentDefinition = componentMapper[component!.name];
-  const availableTriggers = isSequential
-    ? ComponentDefinition.sequentialTriggers.filter(
-        (t) =>
-          !(component?.props?.actions ?? []).find(
-            (a: Action) => a.sequentialTrigger
-          )
-      )
-    : ComponentDefinition.actionTriggers.filter(
-        (t) => !(component?.props?.actions ?? []).find((a: Action) => a.trigger)
-      );
-
   const form = useForm({
     initialValues: {
       trigger: "",
       action: "",
     },
   });
+
+  const component = getComponentById(editorTree.root, selectedComponentId!);
+
+  const componentName = component?.name;
+
+  if (!componentName) return null;
+
+  const ComponentDefinition = componentMapper[componentName];
+  const availableTriggers = ComponentDefinition.actionTriggers.filter(
+    (t) =>
+      !(component?.props?.actions ?? []).find((a: Action) => a.trigger === t)
+  );
 
   const onSubmit = (values: any) => {
     updateTreeComponent(selectedComponentId!, {
@@ -49,7 +42,10 @@ export const ActionsForm = ({ isSequential }: Props) => {
         },
       }),
     });
+
+    form.reset();
   };
+
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs" px="md">
@@ -57,7 +53,7 @@ export const ActionsForm = ({ isSequential }: Props) => {
           size="xs"
           placeholder="Select a trigger"
           label="Trigger"
-          data={availableTriggers.map((trigger) => {
+          data={availableTriggers?.map((trigger) => {
             return {
               label: startCase(trigger),
               value: trigger,

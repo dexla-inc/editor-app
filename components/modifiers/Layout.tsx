@@ -18,7 +18,7 @@ export const icon = IconLayout2;
 export const label = "Layout";
 
 export const defaultLayoutValues = {
-  flexDirection: "row",
+  flexDirection: "column",
   rowGap: "20px",
   columnGap: "20px",
   alignItems: "center",

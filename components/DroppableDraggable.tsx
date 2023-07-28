@@ -9,6 +9,7 @@ import { DROP_INDICATOR_WIDTH, ICON_SIZE } from "@/utils/config";
 import {
   Component,
   addComponent,
+  getComponentIndex,
   getComponentParent,
   removeComponentFromParent,
 } from "@/utils/editor";
@@ -40,6 +41,24 @@ type Props = {
 
 const bidingComponentsWhitelist = { from: ["Input"], to: ["Text", "Title"] };
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
+// Whitelist certain props that can be passed down
+const styleWhitelist = [
+  "display",
+  "flexDirection",
+  "flexGrow",
+  "borderBottomLeftRadius",
+  "borderBottomRightRadius",
+  "borderTopLeftRadius",
+  "borderTopRightRadius",
+  "borderBottomWidth",
+  "borderLeftWidth",
+  "borderRightWidth",
+  "borderTopWidth",
+  "borderWidth",
+  "borderStyle",
+  "border",
+  "borderColor",
+];
 
 export const DroppableDraggable = ({
   id,
@@ -50,6 +69,7 @@ export const DroppableDraggable = ({
   const router = useRouter();
   const { hovered, ref } = useHover();
   const theme = useMantineTheme();
+  const editorTheme = useEditorStore((state) => state.theme);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
@@ -180,24 +200,6 @@ export const DroppableDraggable = ({
   const isContentWrapper = id === "content-wrapper";
   const haveNonRootParent = parent && parent.id !== "root";
 
-  // Whitelist certain props that can be passed down
-  const styleWhitelist = [
-    "display",
-    "flexDirection",
-    "flexGrow",
-    "borderBottomLeftRadius",
-    "borderBottomRightRadius",
-    "borderTopLeftRadius",
-    "borderTopRightRadius",
-    "borderBottomWidth",
-    "borderLeftWidth",
-    "borderRightWidth",
-    "borderTopWidth",
-    "borderWidth",
-    "borderStyle",
-    "border",
-    "borderColor",
-  ];
   const filteredProps = {
     ...component.props,
     style: Object.keys(component.props?.style || {}).reduce((newStyle, key) => {
@@ -317,15 +319,19 @@ export const DroppableDraggable = ({
               variant="transparent"
               onClick={(e) => {
                 const container = structureMapper["Container"].structure({
-                  theme,
-                  pages: [],
+                  theme: editorTheme,
                 });
 
                 const copy = cloneDeep(editorTree);
-                const containerId = addComponent(copy.root, container, {
-                  id: parent?.id!,
-                  edge: "left",
-                });
+                const containerId = addComponent(
+                  copy.root,
+                  container,
+                  {
+                    id: parent?.id!,
+                    edge: "left",
+                  },
+                  getComponentIndex(parent!, id)
+                );
 
                 addComponent(copy.root, component, {
                   id: containerId,

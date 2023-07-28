@@ -6,7 +6,7 @@ import {
 import { Endpoint } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
-import { APICallAction, Action } from "@/utils/actions";
+import { APICallAction, Action, LoginAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
 import {
@@ -58,10 +58,10 @@ type FormValues = {
 };
 
 type Props = {
-  isLogin?: boolean;
+  actionName?: string;
 };
 
-export const APICallActionForm = ({ isLogin }: Props) => {
+export const APICallActionForm = ({ actionName = "apiCall" }: Props) => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const setPickingComponentToBindFrom = useEditorStore(
@@ -98,11 +98,12 @@ export const APICallActionForm = ({ isLogin }: Props) => {
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentActions = component?.props?.actions ?? [];
+
   const action: Action = componentActions.find(
-    (a: Action) => a.action.name === "apiCall"
+    (a: Action) => a.action.name === actionName
   );
 
-  const apiCall = action.action as APICallAction;
+  const apiCall = action.action as LoginAction | APICallAction;
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -121,7 +122,7 @@ export const APICallActionForm = ({ isLogin }: Props) => {
 
       updateTreeComponent(selectedComponentId!, {
         actions: componentActions.map((action: Action) => {
-          if (action.action.name === "apiCall") {
+          if (action.action.name === actionName) {
             return {
               ...action,
               action: {
@@ -160,6 +161,7 @@ export const APICallActionForm = ({ isLogin }: Props) => {
     });
   };
 
+  const isLogin = actionName === "login";
   useEffect(() => {
     const getEndpoints = async () => {
       const { results } = await getDataSourceEndpoints(
@@ -279,7 +281,6 @@ export const APICallActionForm = ({ isLogin }: Props) => {
         >
           Remove
         </Button>
-        {/* <ActionsForm isSequential /> Tom added this for success and error triggers but does not work */}
       </Stack>
     </form>
   );

@@ -106,13 +106,17 @@ export const EditorAsideSections = () => {
         initiallyOpened: true,
       };
 
-      const Component = actionMapper[action.action.name].form;
+      const actionName = action.action.name;
 
-      return (
-        <SidebarSection {...item} key={item.label}>
-          <Component />
-        </SidebarSection>
-      );
+      if (actionName) {
+        const Component = actionMapper[actionName].form;
+
+        return (
+          <SidebarSection {...item} key={item.label}>
+            <Component />
+          </SidebarSection>
+        );
+      }
     }
   );
 

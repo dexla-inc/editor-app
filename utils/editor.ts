@@ -480,10 +480,17 @@ export const removeComponent = (treeRoot: Component, id: string) => {
   );
 };
 
+export const getComponentIndex = (parent: Component, id: string) => {
+  return (
+    parent.children?.findIndex((child: Component) => child.id === id) ?? -1
+  );
+};
+
 export const addComponent = (
   treeRoot: Component,
   componentToAdd: Component,
-  dropTarget: DropTarget
+  dropTarget: DropTarget,
+  dropIndex?: number
 ): string => {
   const copy = cloneDeep(componentToAdd);
   replaceIdsDeeply(copy);
@@ -514,12 +521,14 @@ export const addComponent = (
           node.children = node.children ?? [];
 
           if (dropTarget.edge === "left" || dropTarget.edge === "top") {
-            node.children.splice(context.index - 1, 0, copy);
+            const index = dropIndex ?? context.index - 1;
+            node.children.splice(index, 0, copy);
           } else if (
             dropTarget.edge === "right" ||
             dropTarget.edge === "bottom"
           ) {
-            node.children.splice(context.index + 1, 0, copy);
+            const index = dropIndex ?? context.index + 1;
+            node.children.splice(index, 0, copy);
           }
 
           context.break();
