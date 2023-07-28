@@ -99,9 +99,20 @@ export const EditorAsideSections = () => {
 
   const actionsSections = (component?.props?.actions ?? [])?.map(
     (action: Action) => {
+      const isSequential = !!action.sequentialTo;
+      const sequentialToAction = isSequential
+        ? (component?.props?.actions ?? []).find(
+            (a: Action) => a.id === action.sequentialTo
+          )
+        : undefined;
+
       const item = {
-        id: action.trigger,
-        label: startCase(action.trigger),
+        id: action.id,
+        label: !!sequentialToAction
+          ? `${startCase(sequentialToAction.trigger)} → ${startCase(
+              action.trigger
+            )}`
+          : startCase(action.trigger),
         icon: IconBolt,
         initiallyOpened: true,
       };
@@ -138,7 +149,9 @@ export const EditorAsideSections = () => {
         {tab === "design" && designSections}
         {tab === "actions" && (
           <Stack>
-            <ActionsForm />
+            <Box px="md">
+              <ActionsForm />
+            </Box>
             {actionsSections}
           </Stack>
         )}

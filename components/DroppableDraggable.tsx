@@ -91,17 +91,17 @@ export const DroppableDraggable = ({
     (state) => state.selectedComponentId
   );
 
-  const actions = component.props?.actions ?? [];
-  const onMountAction: Action = actions.find(
+  const actions: Action[] = component.props?.actions ?? [];
+  const onMountAction: Action | undefined = actions.find(
     (action: Action) => action.trigger === "onMount"
   );
 
-  const onSuccessAction: Action = actions.find(
-    (action: Action) => action.sequentialTrigger === "onSuccess"
+  const onSuccessActions: Action[] = actions.filter(
+    (action: Action) => action.trigger === "onSuccess"
   );
 
-  const onErrorAction: Action = actions.find(
-    (action: Action) => action.sequentialTrigger === "onError"
+  const onErrorActions: Action[] = actions.filter(
+    (action: Action) => action.trigger === "onError"
   );
 
   const triggers = actions
@@ -115,10 +115,13 @@ export const DroppableDraggable = ({
           actionMapper[action.action.name].action({
             // @ts-ignore
             action: action.action,
+            actionId: action.id,
             router: router as Router,
             event: e,
-            onSuccess: onSuccessAction?.action as any,
-            onError: onErrorAction?.action as any,
+            onSuccess: onSuccessActions.find(
+              (sa) => sa.sequentialTo === action.id
+            ),
+            onError: onErrorActions.find((ea) => ea.sequentialTo === action.id),
             component,
           }),
       };
@@ -129,14 +132,19 @@ export const DroppableDraggable = ({
       actionMapper[onMountAction.action.name].action({
         // @ts-ignore
         action: onMountAction.action,
+        actionId: onMountAction.id,
         router: router as Router,
-        onSuccess: onSuccessAction?.action as any,
-        onError: onErrorAction?.action as any,
+        onSuccess: onSuccessActions.find(
+          (sa) => sa.sequentialTo === onMountAction.id
+        ),
+        onError: onErrorActions.find(
+          (ea) => ea.sequentialTo === onMountAction.id
+        ),
         component,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPreviewMode]);
+  }, [isPreviewMode, onMountAction]);
 
   const parent = getComponentParent(editorTree.root, id);
 

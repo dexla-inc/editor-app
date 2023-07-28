@@ -6,7 +6,7 @@ import { useAppStore } from "@/stores/app";
 import { StepperState } from "@/utils/dashboardTypes";
 
 import { Stack } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function StepperContent({
   activeStep,
@@ -25,10 +25,6 @@ export default function StepperContent({
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [pages, setPages] = useState<string[]>([]);
   const [themeResponse, setThemeResponse] = useState<ThemeResponse>();
-
-  useEffect(() => {
-    console.log("StepperContent: activeStep: ", activeStep);
-  }, [activeStep]);
 
   return (
     <Stack sx={{ width: "100%" }}>

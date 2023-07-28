@@ -24,6 +24,7 @@ import { IconCurrentLocation } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { forwardRef, useEffect, useState } from "react";
+import { ActionsForm } from "@/components/actions/ActionsForm";
 
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, any>(
@@ -156,7 +157,7 @@ export const APICallActionForm = ({ actionName = "apiCall" }: Props) => {
   const removeAction = () => {
     updateTreeComponent(selectedComponentId!, {
       actions: componentActions.filter((a: Action) => {
-        return a.trigger !== action.trigger;
+        return a.id !== action.id;
       }),
     });
   };
@@ -206,82 +207,85 @@ export const APICallActionForm = ({ actionName = "apiCall" }: Props) => {
   }, [endpoints, form.values.endpoint, selectedEndpoint]);
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack spacing="xs">
-        <Select
-          size="xs"
-          label="Endpoint"
-          placeholder="The endpoint to call"
-          searchable
-          clearable
-          data={
-            endpoints?.map((endpoint) => {
-              return {
-                label: endpoint.relativeUrl,
-                value: endpoint.id,
-                method: endpoint.methodType,
-              };
-            }) ?? []
-          }
-          itemComponent={SelectItem}
-          {...form.getInputProps("endpoint")}
-          onChange={(selected) => {
-            form.setFieldValue("endpoint", selected!);
-            setSelectedEndpoint(endpoints?.find((e) => e.id === selected));
-          }}
-        />
-        {selectedEndpoint && (
-          <Stack spacing={2}>
-            {[
-              ...selectedEndpoint.requestBody,
-              ...selectedEndpoint.parameters,
-            ].map((param) => {
-              return (
-                <TextInput
-                  size="xs"
-                  label={param.name}
-                  description={`${
+    <>
+      <form onSubmit={form.onSubmit(onSubmit)}>
+        <Stack spacing="xs">
+          <Select
+            size="xs"
+            label="Endpoint"
+            placeholder="The endpoint to call"
+            searchable
+            clearable
+            data={
+              endpoints?.map((endpoint) => {
+                return {
+                  label: endpoint.relativeUrl,
+                  value: endpoint.id,
+                  method: endpoint.methodType,
+                };
+              }) ?? []
+            }
+            itemComponent={SelectItem}
+            {...form.getInputProps("endpoint")}
+            onChange={(selected) => {
+              form.setFieldValue("endpoint", selected!);
+              setSelectedEndpoint(endpoints?.find((e) => e.id === selected));
+            }}
+          />
+          {selectedEndpoint && (
+            <Stack spacing={2}>
+              {[
+                ...selectedEndpoint.requestBody,
+                ...selectedEndpoint.parameters,
+              ].map((param) => {
+                return (
+                  <TextInput
+                    size="xs"
+                    label={param.name}
+                    description={`${
+                      // @ts-ignore
+                      param.location ? `${param.location} - ` : ""
+                    }${param.type}`}
+                    key={param.name}
+                    type={param.type}
                     // @ts-ignore
-                    param.location ? `${param.location} - ` : ""
-                  }${param.type}`}
-                  key={param.name}
-                  type={param.type}
-                  // @ts-ignore
-                  required={param.required}
-                  {...form.getInputProps(`binds.${param.name}`)}
-                  rightSection={
-                    <ActionIcon
-                      onClick={() => {
-                        setPickingComponentToBindFrom(
-                          `${component!.id}++${action.trigger}++${
-                            selectedEndpoint.id
-                          }++${param.name}++${
-                            form.values.binds?.[param.name] ?? ""
-                          }`
-                        );
-                      }}
-                    >
-                      <IconCurrentLocation size={ICON_SIZE} />
-                    </ActionIcon>
-                  }
-                  autoComplete="off"
-                />
-              );
-            })}
-          </Stack>
-        )}
-        <Button size="xs" type="submit" mt="xs">
-          Save
-        </Button>
-        <Button
-          size="xs"
-          type="button"
-          variant="default"
-          onClick={removeAction}
-        >
-          Remove
-        </Button>
-      </Stack>
-    </form>
+                    required={param.required}
+                    {...form.getInputProps(`binds.${param.name}`)}
+                    rightSection={
+                      <ActionIcon
+                        onClick={() => {
+                          setPickingComponentToBindFrom(
+                            `${component!.id}++${action.trigger}++${
+                              selectedEndpoint.id
+                            }++${param.name}++${
+                              form.values.binds?.[param.name] ?? ""
+                            }`
+                          );
+                        }}
+                      >
+                        <IconCurrentLocation size={ICON_SIZE} />
+                      </ActionIcon>
+                    }
+                    autoComplete="off"
+                  />
+                );
+              })}
+            </Stack>
+          )}
+          <Button size="xs" type="submit">
+            Save
+          </Button>
+          <Button
+            size="xs"
+            type="button"
+            variant="default"
+            onClick={removeAction}
+          >
+            Remove
+          </Button>
+        </Stack>
+      </form>
+      <ActionsForm sequentialTo={action.id} />
+    </>
   );
 };

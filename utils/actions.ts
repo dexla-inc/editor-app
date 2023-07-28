@@ -52,7 +52,7 @@ export const actions = [
 
 type ActionTriggerAll = (typeof triggers)[number];
 
-export type ActionTrigger = Exclude<ActionTriggerAll, "onSuccess" | "onError">;
+export type ActionTrigger = ActionTriggerAll;
 export type SequentialTrigger = Extract<
   ActionTriggerAll,
   "onSuccess" | "onError"
@@ -96,6 +96,7 @@ export type BindResponseToComponentAction = {
 };
 
 export type Action = {
+  id: string;
   trigger: ActionTrigger;
   action:
     | NavigationAction
@@ -104,13 +105,14 @@ export type Action = {
     | BindResponseToComponentAction
     | GoToUrlAction
     | LoginAction;
-  sequentialTrigger?: SequentialTrigger;
+  sequentialTo?: string;
 };
 
 export type ActionParams = {
+  actionId: string;
   router: Router;
-  onSuccess?: Action["action"];
-  onError?: Action["action"];
+  onSuccess?: Action;
+  onError?: Action;
   event?: any;
   component: Component;
   data?: any;
@@ -176,6 +178,7 @@ export const loginAction = async ({
 };
 
 export const apiCallAction = async ({
+  actionId,
   action,
   router,
   onSuccess,
@@ -200,22 +203,24 @@ export const apiCallAction = async ({
 
     const endpoint = results.find((e) => e.id === action.endpoint);
 
-    const url = Object.keys(action.binds ?? {}).reduce(
-      (url: string, key: string) => {
-        // @ts-ignore
-        let value = action.binds[key] as string;
+    const keys = Object.keys(action.binds ?? {});
 
-        if (value.startsWith(`valueOf_`)) {
-          const el = iframeWindow?.document.querySelector(`
+    const url =
+      keys.length > 0
+        ? keys.reduce((url: string, key: string) => {
+            // @ts-ignore
+            let value = action.binds[key] as string;
+
+            if (value.startsWith(`valueOf_`)) {
+              const el = iframeWindow?.document.querySelector(`
           input#${value.split(`valueOf_`)[1]}
         `) as HTMLInputElement;
-          value = el?.value ?? "";
-        }
+              value = el?.value ?? "";
+            }
 
-        return url.replace(`{${key}}`, value);
-      },
-      `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`
-    );
+            return url.replace(`{${key}}`, value);
+          }, `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`)
+        : `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`;
 
     const body =
       endpoint?.methodType === "POST"
@@ -238,14 +243,15 @@ export const apiCallAction = async ({
             },
             {} as any
           )
-        : {};
+        : undefined;
 
     // Should get the token from some where secure
-    const authHeaderKey =
+    let authHeaderKey =
       endpoint?.authenticationScheme === "BEARER" ? await getBearerToken() : "";
 
     //Access token from Evalio so we can use their auth endpoints. Expires every 6 hours
-    authHeaderKey ??
+    authHeaderKey =
+      authHeaderKey ??
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkwNDgwNDMwLCJpYXQiOjE2OTA0NTg4MzAsImp0aSI6IjM2ZmU0NjI2NjUxMDQzNzViOWVkYjJkZmUzNWUyODA3IiwidXNlcl9pZCI6Mn0.CbJOO4asu2pT8zJRnJ4LYNgslCFTFZqD5Lqgq35n5OI";
 
     const response = await fetch(url, {
@@ -253,39 +259,38 @@ export const apiCallAction = async ({
       headers: {
         // Will need to build up headers from endpoint.headers in future
         "Content-Type": endpoint?.mediaType ?? "application/json",
-        Authorization: authHeaderKey,
+        ...(authHeaderKey ? { Authorization: authHeaderKey } : {}),
       },
-      body: body ? JSON.stringify(body) : undefined,
+      ...(!!body ? { body: JSON.stringify(body) } : {}),
     });
-
-    console.log(response);
 
     if (!response.status.toString().startsWith("20")) {
       throw new Error(response.statusText);
     }
 
-    if (onSuccess) {
+    const responseJson = await response.json();
+
+    if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.props?.actions ?? [];
       const onSuccessAction: Action = actions.find(
-        (action: Action) => action.sequentialTrigger === "onSuccess"
+        (action: Action) => action.trigger === "onSuccess"
       );
-      const onSuccessActionMapped = actionMapper[onSuccess!.name];
+      const onSuccessActionMapped = actionMapper[onSuccess.action.name];
       onSuccessActionMapped.action({
         // @ts-ignore
         action: onSuccessAction.action,
         router,
         ...rest,
-        // TODO: Get the actual data
-        data: { value: response.statusText },
+        data: responseJson,
       });
     }
   } catch (error) {
-    if (onError) {
+    if (onError && onError.sequentialTo === actionId) {
       const actions = component.props?.actions ?? [];
       const onErrorAction: Action = actions.find(
-        (action: Action) => action.sequentialTrigger === "onError"
+        (action: Action) => action.trigger === "onError"
       );
-      const onErrorActionMapped = actionMapper[onError.name];
+      const onErrorActionMapped = actionMapper[onError.action.name];
       onErrorActionMapped.action({
         // @ts-ignore
         action: onErrorAction.action,
