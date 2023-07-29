@@ -120,8 +120,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
         message: "Wait while we save your changes",
       });
 
-      console.log({ dataSources });
-
       updateTreeComponent(selectedComponentId!, {
         actions: componentActions.map((action: Action) => {
           if (action.id === id) {
