@@ -2,20 +2,30 @@ import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { Action, BindResponseToComponentAction } from "@/utils/actions";
 import { getComponentById } from "@/utils/editor";
-import { ActionIcon, Button, Stack, TextInput } from "@mantine/core";
+import { ActionIcon, Button, Popover, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { ICON_SIZE } from "@/utils/config";
 import { useRouter } from "next/router";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries";
+import { Endpoint } from "@/requests/datasources/types";
+import { useDisclosure } from "@mantine/hooks";
 
 type Props = {
   id: string;
 };
 
+type ComponentBind = { component: string; value: string };
+type FormValues = {
+  binds: ComponentBind[];
+};
+
 export const BindResponseToComponentActionForm = ({ id }: Props) => {
   const router = useRouter();
+  const [endpoint, setEndpoint] = useState<Endpoint | undefined>(undefined);
+  const [ReactJson, setReactJson] = useState();
+  const [showJsonPicker, jsonPicker] = useDisclosure(false);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const setPickingComponentToBindTo = useEditorStore(
@@ -47,13 +57,13 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
     (a: Action) => a.id === action.sequentialTo
   );
 
-  const form = useForm({
+  const form = useForm<FormValues>({
     initialValues: {
-      componentToBind: bindResponseToComponent.componentToBind,
+      binds: bindResponseToComponent.binds ?? [],
     },
   });
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: FormValues) => {
     try {
       startLoading({
         id: "saving-action",
@@ -68,7 +78,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
               ...action,
               action: {
                 ...action.action,
-                componentToBind: values.componentToBind,
+                binds: values.binds,
               },
             };
           }
@@ -102,9 +112,11 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
 
   useEffect(() => {
     if (componentToBind && pickingComponentToBindTo) {
-      const pickingData = pickingComponentToBindTo.split("++");
-      if (pickingData[0] === component?.id) {
-        form.setFieldValue(`componentToBind`, componentToBind);
+      if (pickingComponentToBindTo.componentId === component?.id) {
+        form.setFieldValue(`binds.${pickingComponentToBindTo.index ?? 0}`, {
+          component: componentToBind,
+          value: pickingComponentToBindTo.param,
+        });
 
         setPickingComponentToBindTo(undefined);
         setComponentToBind(undefined);
@@ -120,36 +132,102 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
         originalAction.action.datasource.id
       );
 
-      const endpoint = results.find(
+      const _endpoint = results.find(
         (e) => e.id === originalAction.action.endpoint
       );
-      console.log({ action, originalAction, endpoint });
+      setEndpoint(_endpoint);
     };
 
-    getEndpoint();
+    if (originalAction?.action?.datasource?.id) {
+      getEndpoint();
+    }
   }, [action, originalAction, projectId]);
+
+  useEffect(() => {
+    // we need to dynamicaly import it as it doesn't support SSR
+    const loadJsonViewer = async () => {
+      const ReactJsonView = await import("react-json-view");
+      setReactJson(ReactJsonView as any);
+    };
+
+    loadJsonViewer();
+  }, []);
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
-        <TextInput
-          size="xs"
-          label="Component to bind"
-          {...form.getInputProps(`componentToBind`)}
-          rightSection={
-            <ActionIcon
-              onClick={() => {
-                setPickingComponentToBindTo(
-                  `${component!.id}++${action.trigger}++componentToBind++${
-                    bindResponseToComponent?.componentToBind ?? ""
-                  }`
-                );
-              }}
-            >
-              <IconCurrentLocation size={ICON_SIZE} />
-            </ActionIcon>
-          }
-        />
+        {endpoint?.exampleResponse && (
+          <Popover
+            position="left"
+            withArrow
+            shadow="md"
+            withinPortal
+            opened={showJsonPicker}
+            onChange={(isOpen) => {
+              if (isOpen) {
+                jsonPicker.open();
+              } else {
+                jsonPicker.close();
+              }
+            }}
+            radius="md"
+          >
+            <Popover.Target>
+              <Button onClick={jsonPicker.open} size="xs" variant="default">
+                Add new binding
+              </Button>
+            </Popover.Target>
+            <Popover.Dropdown>
+              {ReactJson && (
+                // @ts-ignore
+                <ReactJson.default
+                  iconStyle="triangle"
+                  enableClipboard={false}
+                  displayDataTypes={false}
+                  quotesOnKeys={false}
+                  collapseStringsAfterLength={10}
+                  src={JSON.parse(endpoint?.exampleResponse as string)}
+                  onSelect={(selected: any) => {
+                    form.insertListItem("binds", {
+                      component: "",
+                      value: selected.name,
+                    });
+                    jsonPicker.close();
+                  }}
+                />
+              )}
+            </Popover.Dropdown>
+          </Popover>
+        )}
+        {form.values.binds.map((bind, index) => {
+          return (
+            <TextInput
+              key={bind.value}
+              size="xs"
+              label="Component to bind"
+              description={`Binding to ${bind.value}`}
+              {...form.getInputProps(`binds.${index}.component`)}
+              rightSection={
+                <ActionIcon
+                  onClick={() => {
+                    setPickingComponentToBindTo({
+                      componentId: component?.id!,
+                      trigger: action.trigger,
+                      bindedId:
+                        bindResponseToComponent?.binds?.[index]?.component ??
+                        "",
+                      param: bind.value,
+                      index: index,
+                    });
+                  }}
+                >
+                  <IconCurrentLocation size={ICON_SIZE} />
+                </ActionIcon>
+              }
+            />
+          );
+        })}
+
         <Button size="xs" type="submit" mt="xs">
           Save
         </Button>

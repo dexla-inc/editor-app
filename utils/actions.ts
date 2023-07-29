@@ -91,8 +91,11 @@ export type LoginAction = Omit<APICallAction, "name"> & {
 
 export type BindResponseToComponentAction = {
   name: "bindResponseToComponent";
-  componentToBind: string;
   data?: any;
+  binds?: {
+    component: string;
+    value: string;
+  }[];
 };
 
 export type Action = {
@@ -314,9 +317,15 @@ export const bindResponseToComponentAction = ({
 }: BindResponseToComponentActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
-  if (action.componentToBind) {
-    updateTreeComponent(action.componentToBind, { data }, false);
-  }
+  action.binds?.forEach((bind) => {
+    if (bind.component && bind.value) {
+      updateTreeComponent(
+        bind.component,
+        { data: { value: data[bind.value] } },
+        false
+      );
+    }
+  });
 };
 
 export const actionMapper = {

@@ -120,6 +120,8 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
         message: "Wait while we save your changes",
       });
 
+      console.log({ dataSources });
+
       updateTreeComponent(selectedComponentId!, {
         actions: componentActions.map((action: Action) => {
           if (action.id === id) {
@@ -179,10 +181,9 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
 
   useEffect(() => {
     if (componentToBind && pickingComponentToBindFrom) {
-      const pickingData = pickingComponentToBindFrom.split("++");
-      if (pickingData[0] === component?.id) {
+      if (pickingComponentToBindFrom.componentId === component?.id) {
         form.setFieldValue(
-          `binds.${pickingData[3]}`,
+          `binds.${pickingComponentToBindFrom.param}`,
           `valueOf_${componentToBind}`
         );
 
@@ -253,13 +254,13 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                     rightSection={
                       <ActionIcon
                         onClick={() => {
-                          setPickingComponentToBindFrom(
-                            `${component!.id}++${action.trigger}++${
-                              selectedEndpoint.id
-                            }++${param.name}++${
-                              form.values.binds?.[param.name] ?? ""
-                            }`
-                          );
+                          setPickingComponentToBindFrom({
+                            componentId: component?.id!,
+                            trigger: action.trigger,
+                            endpointId: selectedEndpoint.id,
+                            param: param.name,
+                            bindedId: form.values.binds?.[param.name] ?? "",
+                          });
                         }}
                       >
                         <IconCurrentLocation size={ICON_SIZE} />

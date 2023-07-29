@@ -15,7 +15,8 @@ export const Text = ({ renderTree, component, ...props }: Props) => {
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent
   );
-  const { children, triggers, ...componentProps } = component.props as any;
+  const { children, data, triggers, ...componentProps } =
+    component.props as any;
 
   const handleDoubleClick = (e: any) => {
     e.preventDefault();
@@ -34,6 +35,8 @@ export const Text = ({ renderTree, component, ...props }: Props) => {
     }
   };
 
+  const value = isPreviewMode ? data?.value ?? children : children;
+
   return (
     <MantineText
       ref={ref}
@@ -47,7 +50,7 @@ export const Text = ({ renderTree, component, ...props }: Props) => {
     >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))
-        : children}
+        : value}
     </MantineText>
   );
 };

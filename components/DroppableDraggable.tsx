@@ -171,13 +171,9 @@ export const DroppableDraggable = ({
       pickingComponentToBindFrom ? "from" : "to"
     ].includes(component.name);
 
-  const pickingData = pickingComponentToBindFrom
-    ? pickingComponentToBindFrom.split("++")
-    : pickingComponentToBindTo
-    ? pickingComponentToBindTo.split("++")
-    : [];
+  const pickingData = pickingComponentToBindFrom ?? pickingComponentToBindTo;
 
-  const isPicked = isPicking && pickingData[pickingData.length - 1] === id;
+  const isPicked = isPicking && pickingData?.componentId === id;
 
   const isSelected = selectedComponentId === id && !isPreviewMode;
   const isOver =

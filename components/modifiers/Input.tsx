@@ -147,7 +147,6 @@ export const Modifier = () => {
           topLabel="Icon"
           selectedIcon={form.values.icon}
           onIconSelect={(iconName: string) => {
-            console.log("iconName", iconName);
             form.setFieldValue("icon", iconName);
             debouncedUpdate("icon", <Icon name={iconName} />);
           }}

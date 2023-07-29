@@ -34,6 +34,15 @@ interface MantineThemeExtended extends MantineTheme {
   faviconUrl?: string;
 }
 
+export type ComponentToBind = {
+  componentId: string;
+  trigger: string;
+  endpointId?: string;
+  param?: string;
+  bindedId?: string;
+  index?: number;
+};
+
 export type EditorState = {
   tree: EditorTree;
   currentProjectId?: string;
@@ -47,10 +56,14 @@ export type EditorState = {
   isSaving: boolean;
   isPreviewMode: boolean;
   pages: PageResponse[];
-  pickingComponentToBindTo?: string; // <component.id>++<action.trigger>++<param.name>++<bindedComponent.id>
-  setPickingComponentToBindTo: (pickingComponentToBindTo?: string) => void;
-  pickingComponentToBindFrom?: string; // <component.id>++<action.trigger>++<endpoint.id>++<param.name>++<bindedComponent.id>
-  setPickingComponentToBindFrom: (pickingComponentToBindFrom?: string) => void;
+  pickingComponentToBindTo?: ComponentToBind;
+  setPickingComponentToBindTo: (
+    pickingComponentToBindTo?: ComponentToBind
+  ) => void;
+  pickingComponentToBindFrom?: ComponentToBind;
+  setPickingComponentToBindFrom: (
+    pickingComponentToBindFrom?: ComponentToBind
+  ) => void;
   componentToBind?: string;
   setComponentToBind: (componentToBind?: string) => void;
   setCopiedComponent: (copiedComponent?: Component) => void;
