@@ -118,6 +118,10 @@ export const setExampleResponseObject = (
     (option) => option.value === value
   );
 
-  const result = mapEndpointExampleResponse(selectedEndpoint?.exampleresponse);
-  setExampleResponse(result);
+  if (selectedEndpoint?.exampleresponse) {
+    const result = mapEndpointExampleResponse(
+      selectedEndpoint?.exampleresponse
+    );
+    setExampleResponse(result);
+  }
 };
