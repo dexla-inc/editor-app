@@ -167,10 +167,15 @@ export default function AuthenticationStep({
       (option) => option.value === value
     );
 
-    const result = mapEndpointExampleResponse(
-      selectedEndpoint?.exampleresponse
-    );
-    setExampleResponse(result);
+    if (selectedEndpoint?.exampleresponse) {
+      const exampleResponse = mapEndpointExampleResponse(
+        selectedEndpoint.exampleresponse
+      );
+
+      setExampleResponse(exampleResponse);
+      setAccessToken("");
+      setExpiryProperty("");
+    }
 
     setEndpoint(
       setLoginEndpointId,
@@ -190,6 +195,7 @@ export default function AuthenticationStep({
       value,
       setRefreshEndpointLabel
     );
+    setRefreshToken("");
   };
 
   const setUserEndpoint = (value: string | null) => {

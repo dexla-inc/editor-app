@@ -1,10 +1,10 @@
 import { patchDataSource } from "@/requests/datasources/mutations";
-import { Endpoint, ExampleResponse } from "@/requests/datasources/types";
+import { Endpoint } from "@/requests/datasources/types";
 
 type EndpointDropdown = {
   value: string;
   label: string;
-  exampleresponse?: ExampleResponse[];
+  exampleresponse?: string;
 }[];
 
 export function filterAndMapEndpoints(
@@ -31,15 +31,19 @@ export type ExampleResponseDropdown = {
 };
 
 export function mapEndpointExampleResponse(
-  exampleResponse: ExampleResponse[] | undefined
+  exampleJsonResponse: string
 ): ExampleResponseDropdown[] | undefined {
-  return exampleResponse
-    ?.map((e) => ({
-      value: e.name,
-      label: e.name,
-      type: e.type,
+  const exampleJson = JSON.parse(exampleJsonResponse);
+
+  const keys = Object.keys(exampleJson);
+  return keys
+    .map((e) => ({
+      value: e,
+      label: e,
     }))
-    .sort((a, b) => a.label.localeCompare(b.label));
+    .sort((a, b) =>
+      a.label.localeCompare(b.label)
+    ) as ExampleResponseDropdown[];
 }
 
 export function validateTokenProperty(

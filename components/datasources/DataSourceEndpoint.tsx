@@ -57,7 +57,7 @@ export const DataSourceEndpoint = ({
           mx={0}
           p="6px"
         >
-          <Flex gap="xs" align="center">
+          <Flex gap="xs" align="center" sx={{ maxWidth: 880 }}>
             <Text
               size="xs"
               color="white"
@@ -78,7 +78,9 @@ export const DataSourceEndpoint = ({
             >
               {endpoint.relativeUrl}
             </Text>
-            {location === "datasource" && <Flex>{endpoint.description}</Flex>}
+            {location === "datasource" && (
+              <Text truncate>{endpoint.description}</Text>
+            )}
           </Flex>
           {opened ? (
             <IconChevronDown size={ICON_SIZE} />
