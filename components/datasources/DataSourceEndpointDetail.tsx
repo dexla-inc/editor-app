@@ -24,10 +24,6 @@ const MethodTypeArray = ["GET", "POST", "PUT", "DELETE", "PATCH"] as const;
 export const DataSourceEndpointDetail = ({
   endpoint,
 }: DataSourceEndpointDetailProps) => {
-  const exampleResponseJson = convertExampleResponseToObject(
-    endpoint.exampleResponse
-  );
-
   return (
     <Stack p="md">
       <TextInput
@@ -76,7 +72,7 @@ export const DataSourceEndpointDetail = ({
         </Tabs.List>
         <Tabs.Panel value="example" pt="xs">
           <Prism language="json">
-            {JSON.stringify(exampleResponseJson, null, 2)}
+            {JSON.stringify(endpoint.exampleResponse, null, 2)}
           </Prism>
         </Tabs.Panel>
       </Tabs>
