@@ -118,6 +118,8 @@ export default function Settings() {
         refreshEndpoint?.authentication.tokenKey
       );
 
+      apiAuthForm.setFieldValue("expiry", "");
+
       setEndpoints(result.results);
     };
 
@@ -435,7 +437,26 @@ export default function Settings() {
                   required={!!refreshEndpointId}
                 />
               )}
-
+              {dataSource?.swaggerUrl && loginEndpointId ? (
+                <SearchableSelectComponent
+                  label="Access token expiry property"
+                  description="The property name of the expiry of the access token in the response"
+                  placeholder="expires_in"
+                  form={apiAuthForm}
+                  propertyName="expiry"
+                  data={exampleResponse ?? []}
+                  nothingFoundText="Not found. Update your swagger to include the response property"
+                />
+              ) : (
+                <TextInputComponent
+                  label="Access token expiry property"
+                  description="The property name of the expiry of the access token in the response"
+                  placeholder="expires_in"
+                  form={apiAuthForm}
+                  propertyName="expiryProperty"
+                  required={!!loginEndpointId}
+                />
+              )}
               <Flex>
                 <Button type="submit">Save</Button>
               </Flex>
