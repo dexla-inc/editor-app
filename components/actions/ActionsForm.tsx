@@ -99,7 +99,7 @@ export const ActionsForm = ({ sequentialTo }: Props) => {
             })}
             {...form.getInputProps("action")}
           />
-          <Button size="xs" type="submit" mt="xs">
+          <Button size="xs" type="submit" mt="xs" variant="light">
             Add {isSequential ? `sequential action` : `action`}
           </Button>
         </Stack>

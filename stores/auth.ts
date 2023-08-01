@@ -1,36 +1,30 @@
-import { cookies } from "next/headers";
+import Cookies from "js-cookie";
 import { create } from "zustand";
 
 type AuthState = {
   accessToken: string | null;
   refreshToken: string | null;
   expiresAt: number | null;
-  apiUrls: {
-    baseUrl: string;
+  apiConfig: {
     accessTokenUrl: string;
     refreshTokenUrl: string;
     userEndpointUrl: string;
-  };
-  tokenProperties: {
-    accessTokenProp: string;
-    refreshTokenProp: string;
-    expirySecondsProp: string;
+    accessTokenProperty: string;
+    refreshTokenProperty: string;
+    expiryTokenProperty: string;
   };
   userObject: any;
   setAuthTokens: (response: any) => void;
   checkTokenExpiry: () => boolean;
   clearAuthTokens: () => void;
   refreshAccessToken: () => Promise<void>;
-  setApiUrls: (
-    baseUrl: string,
+  setApiConfig: (
     accessTokenUrl: string,
     refreshTokenUrl: string,
-    userEndpointUrl: string
-  ) => void;
-  setTokenProperties: (
-    accessTokenProp: string,
-    refreshTokenProp: string,
-    expirySecondsProp: string
+    userEndpointUrl: string,
+    accessTokenProperty: string,
+    refreshTokenProperty: string,
+    expiryTokenProperty: string
   ) => void;
   setUserObject: (userObject: any) => void;
 };
@@ -40,33 +34,64 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   refreshToken: null,
   expiresAt: null,
   userObject: null,
-  apiUrls: {
-    baseUrl: "",
+  apiConfig: {
     accessTokenUrl: "",
     refreshTokenUrl: "",
     userEndpointUrl: "",
-  },
-  tokenProperties: {
-    accessTokenProp: "access_token",
-    refreshTokenProp: "refresh_token",
-    expirySecondsProp: "expiry_seconds",
+    accessTokenProperty: "",
+    refreshTokenProperty: "",
+    expiryTokenProperty: "",
   },
   setAuthTokens: (response) => {
-    const { accessTokenProp, refreshTokenProp, expirySecondsProp } =
-      get().tokenProperties;
-    const accessToken = response[accessTokenProp];
-    const refreshToken = response[refreshTokenProp];
-    const expirySeconds = response[expirySecondsProp];
+    const {
+      accessTokenProperty,
+      refreshTokenProperty,
+      expiryTokenProperty,
+      accessTokenUrl,
+      refreshTokenUrl,
+      userEndpointUrl,
+    } = response;
+
+    if (
+      accessTokenProperty &&
+      refreshTokenProperty &&
+      expiryTokenProperty &&
+      accessTokenUrl &&
+      refreshTokenUrl &&
+      userEndpointUrl
+    ) {
+      set({
+        apiConfig: {
+          accessTokenUrl,
+          refreshTokenUrl,
+          userEndpointUrl,
+          accessTokenProperty,
+          refreshTokenProperty,
+          expiryTokenProperty,
+        },
+      });
+    }
+
+    const state = get();
+
+    // Then use the updated properties to extract the token values
+    const accessToken = response[state.apiConfig.accessTokenProperty];
+    const refreshToken = response[state.apiConfig.refreshTokenProperty];
+    const expirySeconds = response[state.apiConfig.expiryTokenProperty];
+
     const expiresAt = Date.now() + expirySeconds * 1000;
-    const cookieStore = cookies();
-    cookieStore.set("refreshToken", refreshToken, {
+    Cookies.set("dexlaRefreshToken", refreshToken, {
       expires: expirySeconds / 60 / 60 / 24,
     }); // Convert seconds to days
-    set({ accessToken, refreshToken, expiresAt });
+
+    set({
+      accessToken,
+      refreshToken,
+      expiresAt,
+    });
   },
   clearAuthTokens: () => {
-    const cookieStore = cookies();
-    cookieStore.set("refreshToken", "", { expires: new Date("2016-10-05") });
+    Cookies.remove("dexlaRefreshToken");
     set({ accessToken: null, refreshToken: null, expiresAt: null });
   },
   checkTokenExpiry: () => {
@@ -75,42 +100,40 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     return Date.now() > expiresAt;
   },
   refreshAccessToken: async () => {
-    if (!get().checkTokenExpiry()) {
-      return; // Token hasn't expired yet, no need to refresh
+    const state = get();
+
+    if (!state.checkTokenExpiry()) {
+      return;
     }
 
-    const response = await fetch(
-      `${get().apiUrls.baseUrl}${get().apiUrls.refreshTokenUrl}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken: get().refreshToken }),
-      }
-    );
+    const response = await fetch(`${state.apiConfig.refreshTokenUrl}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${state.accessToken}`,
+      },
+      body: JSON.stringify({ refresh: state.refreshToken }),
+    });
 
     const data = await response.json();
-    get().setAuthTokens(data);
+    state.setAuthTokens(data);
   },
-  setApiUrls: (baseUrl, accessTokenUrl, refreshTokenUrl, userEndpointUrl) => {
+  setApiConfig: (
+    accessTokenUrl,
+    refreshTokenUrl,
+    userEndpointUrl,
+    accessTokenProperty,
+    refreshTokenProperty,
+    expiryTokenProperty
+  ) => {
     set({
-      apiUrls: {
-        baseUrl,
+      apiConfig: {
         accessTokenUrl,
         refreshTokenUrl,
         userEndpointUrl,
-      },
-    });
-  },
-  setTokenProperties: (
-    accessTokenProp,
-    refreshTokenProp,
-    expirySecondsProp
-  ) => {
-    set({
-      tokenProperties: {
-        accessTokenProp,
-        refreshTokenProp,
-        expirySecondsProp,
+        accessTokenProperty,
+        refreshTokenProperty,
+        expiryTokenProperty,
       },
     });
   },

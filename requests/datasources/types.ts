@@ -109,8 +109,8 @@ export type AuthenticationSchemes = "NONE" | "BEARER" | "BASIC" | "API_KEY";
 
 export type DataSourceAuthResponse = {
   type: AuthenticationSchemes;
-  loginEndpointUrl?: string;
-  refreshEndpointUrl?: string;
+  accessTokenUrl?: string;
+  refreshTokenUrl?: string;
   userEndpointUrl?: string;
   accessTokenProperty?: string;
   refreshTokenProperty?: string;
