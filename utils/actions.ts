@@ -4,10 +4,13 @@ import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { LoginActionForm } from "@/components/actions/LoginActionForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
-import { getDataSourceEndpoints } from "@/requests/datasources/queries";
+import {
+  getDataSourceAuth,
+  getDataSourceEndpoints,
+} from "@/requests/datasources/queries";
 import { DataSourceResponse } from "@/requests/datasources/types";
+import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
-import { getBearerToken } from "@/utils/bearerTokenService";
 import { Component } from "@/utils/editor";
 import { Router } from "next/router";
 
@@ -163,6 +166,7 @@ export type LoginActionParams = ActionParams & {
 };
 
 export const loginAction = async ({
+  actionId,
   action,
   router,
   onSuccess,
@@ -170,14 +174,119 @@ export const loginAction = async ({
   component,
   ...rest
 }: LoginActionParams) => {
-  return apiCallAction({
-    action,
-    router,
-    onSuccess,
-    onError,
-    component,
-    ...rest,
-  });
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+
+  try {
+    const iframeWindow = useEditorStore.getState().iframeWindow;
+    const projectId = router.query.id as string;
+
+    updateTreeComponent(component.id!, { loading: true }, false);
+
+    // TODO: This will be bad for performance if we are having to fetch this every time a customer calls an API.
+    // Can we store this in context some where?
+    const { results } = await getDataSourceEndpoints(
+      projectId,
+      action.datasource.id,
+      { authOnly: true }
+    );
+
+    const endpoint = results.find((e) => e.id === action.endpoint);
+
+    const keys = Object.keys(action.binds ?? {});
+
+    const url =
+      keys.length > 0
+        ? keys.reduce((url: string, key: string) => {
+            let value = action.binds?.[key] as string;
+
+            if (value?.startsWith(`valueOf_`)) {
+              const el = iframeWindow?.document.querySelector(`
+          input#${value.split(`valueOf_`)[1]}
+          `) as HTMLInputElement;
+              value = el?.value ?? "";
+            }
+
+            return url.replace(`{${key}}`, value);
+          }, `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`)
+        : `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`;
+
+    const body =
+      endpoint?.methodType === "POST"
+        ? Object.keys(action.binds ?? {}).reduce(
+            (body: string, key: string) => {
+              let value = action.binds?.[key] as string;
+
+              if (value.startsWith(`valueOf_`)) {
+                const el = iframeWindow?.document.querySelector(`
+          input#${value.split(`valueOf_`)[1]}
+        `) as HTMLInputElement;
+                value = el?.value ?? "";
+              }
+
+              return {
+                ...(body as any),
+                [key]: value,
+              };
+            },
+            {} as any
+          )
+        : undefined;
+
+    const response = await fetch(url, {
+      method: endpoint?.methodType,
+      headers: {
+        // Will need to build up headers from endpoint.headers in future
+        "Content-Type": endpoint?.mediaType ?? "application/json",
+      },
+      ...(!!body ? { body: JSON.stringify(body) } : {}),
+    });
+
+    if (!response.status.toString().startsWith("20")) {
+      throw new Error(response.statusText);
+    }
+
+    const dataSourceAuthConfig = await getDataSourceAuth(
+      projectId,
+      action.datasource.id
+    );
+
+    const responseJson = await response.json();
+    const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
+
+    useAuthStore.getState().setAuthTokens(mergedAuthConfig);
+
+    if (onSuccess && onSuccess.sequentialTo === actionId) {
+      const actions = component.props?.actions ?? [];
+      const onSuccessAction: Action = actions.find(
+        (action: Action) => action.trigger === "onSuccess"
+      );
+      const onSuccessActionMapped = actionMapper[onSuccess.action.name];
+      onSuccessActionMapped.action({
+        // @ts-ignore
+        action: onSuccessAction.action,
+        router,
+        ...rest,
+        data: responseJson,
+      });
+    }
+  } catch (error) {
+    if (onError && onError.sequentialTo === actionId) {
+      const actions = component.props?.actions ?? [];
+      const onErrorAction: Action = actions.find(
+        (action: Action) => action.trigger === "onError"
+      );
+      const onErrorActionMapped = actionMapper[onError.action.name];
+      onErrorActionMapped.action({
+        // @ts-ignore
+        action: onErrorAction.action,
+        router,
+        ...rest,
+        data: { value: (error as Error).message },
+      });
+    }
+  } finally {
+    updateTreeComponent(component.id!, { loading: false }, false);
+  }
 };
 
 export const apiCallAction = async ({
@@ -188,7 +297,7 @@ export const apiCallAction = async ({
   onError,
   component,
   ...rest
-}: APICallActionParams | LoginActionParams) => {
+}: APICallActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
   try {
@@ -248,14 +357,13 @@ export const apiCallAction = async ({
           )
         : undefined;
 
-    // Should get the token from some where secure
-    let authHeaderKey =
-      endpoint?.authenticationScheme === "BEARER" ? await getBearerToken() : "";
+    const authStore = useAuthStore.getState();
+    authStore.refreshAccessToken();
 
-    //Access token from Evalio so we can use their auth endpoints. Expires every 6 hours
-    authHeaderKey =
-      authHeaderKey ??
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkwNDgwNDMwLCJpYXQiOjE2OTA0NTg4MzAsImp0aSI6IjM2ZmU0NjI2NjUxMDQzNzViOWVkYjJkZmUzNWUyODA3IiwidXNlcl9pZCI6Mn0.CbJOO4asu2pT8zJRnJ4LYNgslCFTFZqD5Lqgq35n5OI";
+    let authHeaderKey =
+      endpoint?.authenticationScheme === "BEARER"
+        ? "Bearer " + authStore.accessToken
+        : "";
 
     const response = await fetch(url, {
       method: endpoint?.methodType,
