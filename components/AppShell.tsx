@@ -1,11 +1,17 @@
 import DashboardNavbar from "@/components/DashboardNavbar";
 import { Logo } from "@/components/Logo";
 
-import { HEADER_HEIGHT, ICON_SIZE } from "@/utils/config";
+import {
+  ASIDE_WIDTH,
+  HEADER_HEIGHT,
+  ICON_SIZE,
+  NAVBAR_WIDTH,
+} from "@/utils/config";
 import { NavbarTypes } from "@/utils/dashboardTypes";
 import {
   AppShell,
   AppShellProps,
+  Box,
   Button,
   Flex,
   Header,
@@ -26,6 +32,7 @@ import { IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 
 export interface ShellProps extends AppShellProps {
   navbarType?: NavbarTypes;
@@ -41,6 +48,7 @@ export const Shell = ({
 }: ShellProps) => {
   // This state needs to move to the parent component
   const [isLoading, setIsLoading] = useState(false);
+  const resetTree = useEditorStore((state) => state.resetTree);
   const isSaving = useEditorStore((state) => state.isSaving);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const togglePreviewMode = useEditorStore((state) => state.togglePreviewMode);
@@ -144,7 +152,26 @@ export const Shell = ({
         },
       }}
     >
-      {children}
+      <ErrorBoundary
+        FallbackComponent={() => (
+          <Box
+            w={`calc(100vw - ${ASIDE_WIDTH}px - ${NAVBAR_WIDTH}px)`}
+            h={`calc(100vh - ${HEADER_HEIGHT}px)`}
+            sx={{
+              display: "flex",
+              justifyContent: "Center",
+              alignItems: "center",
+            }}
+          >
+            Something went wrong
+          </Box>
+        )}
+        onReset={() => {
+          resetTree();
+        }}
+      >
+        {children}
+      </ErrorBoundary>
       <LoadingOverlay visible={isLoading} />
     </AppShell>
   );
