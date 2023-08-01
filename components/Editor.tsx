@@ -22,6 +22,7 @@ import {
   getComponentById,
   getComponentParent,
   getEditorTreeFromPageStructure,
+  getEditorTreeFromTemplateData,
   removeComponent,
 } from "@/utils/editor";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
@@ -277,7 +278,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
         };
 
         const onClose = async () => {
-          if (page.hasNavigation) {
+          /* if (page.hasNavigation) {
             // TODO: Remove this timeout once we have a good way to define that the stream is done
             // currently the onClose function is called but the last stream is still valid
             // so we set the tree to tha latest state, which override whatever we set here
@@ -311,7 +312,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
               setEditorTree(copy);
             }, 1000);
-          }
+          } */
 
           stopLoading({
             id: "page-generation",
@@ -351,8 +352,13 @@ export const Editor = ({ projectId, pageId }: Props) => {
     if (stream) {
       try {
         const json = TOML.parse(stream);
-        const tree = getEditorTreeFromPageStructure(
+        /* const tree = getEditorTreeFromPageStructure(
           json as { rows: Row[] },
+          editorTheme,
+          pages
+        ); */
+        const tree = getEditorTreeFromTemplateData(
+          json as any,
           editorTheme,
           pages
         );

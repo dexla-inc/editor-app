@@ -5,6 +5,7 @@ import { MantineTheme } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
+import { templatesMapper } from "./templatesMapper";
 
 export type Component = {
   id?: string;
@@ -111,7 +112,7 @@ export const getEditorTreeFromPageStructure = (
                   paddingRight: "20px",
                   paddingBottom: "20px",
                   paddingLeft: "20px",
-                  backgroundColor: "#fff",
+                  backgroundColor: "White.0",
                   display: "flex",
                   flexDirection: "row",
                 },
@@ -124,6 +125,18 @@ export const getEditorTreeFromPageStructure = (
     },
   };
 
+  return editorTree;
+};
+
+export const getEditorTreeFromTemplateData = (
+  tree: { template: { name: string; data: any } },
+  theme: MantineTheme,
+  pages: PageResponse[]
+) => {
+  // @ts-ignore
+  const editorTree: EditorTree = templatesMapper[tree.template.name](
+    tree.template.data
+  );
   return editorTree;
 };
 

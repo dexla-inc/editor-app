@@ -1,9 +1,11 @@
 import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
 import { PageBody, PageResponse } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
+import { decodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
 import { Button, Flex, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useClipboard } from "@mantine/hooks";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
@@ -21,6 +23,7 @@ export default function PageDetailPane({
   setPage,
   getPages,
 }: PageDetailPaneProps) {
+  const { copy, copied } = useClipboard();
   const [isLoading, setIsLoading] = useState(false);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
@@ -169,6 +172,18 @@ export default function PageDetailPane({
             <Button loading={isLoading} onClick={deleteFn} color="red">
               Delete
             </Button>
+            {page?.pageState && (
+              <Button
+                loading={isLoading}
+                onClick={(e) => {
+                  const pageStructure = decodeSchema(page.pageState!);
+                  copy(pageStructure);
+                }}
+                variant="default"
+              >
+                {copied ? "Copied" : `Copy Page`}
+              </Button>
+            )}
           </Stack>
         </form>
       </Flex>
