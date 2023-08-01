@@ -166,6 +166,10 @@ export const Shell = ({
             Something went wrong
           </Box>
         )}
+        onError={(error, info) => {
+          console.error("Error:", error);
+          console.error("Info:", info);
+        }}
         onReset={() => {
           resetTree();
         }}
