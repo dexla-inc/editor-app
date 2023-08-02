@@ -366,6 +366,8 @@ export const apiCallAction = async ({
           )
         : undefined;
 
+    // TODO: Need to add one for headers, we could then remove the auth code below and just build headers up instead
+
     const authStore = useAuthStore.getState();
     authStore.refreshAccessToken();
 

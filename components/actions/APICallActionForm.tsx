@@ -1,3 +1,4 @@
+import { ActionsForm } from "@/components/actions/ActionsForm";
 import { colors } from "@/components/datasources/DataSourceEndpoint";
 import {
   getDataSourceEndpoints,
@@ -5,6 +6,7 @@ import {
 } from "@/requests/datasources/queries";
 import { Endpoint } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
+import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import { APICallAction, Action, LoginAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
@@ -24,7 +26,6 @@ import { IconCurrentLocation } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { forwardRef, useEffect, useState } from "react";
-import { ActionsForm } from "@/components/actions/ActionsForm";
 
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, any>(
@@ -204,6 +205,9 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     }
   }, [endpoints, form.values.endpoint, selectedEndpoint]);
 
+  useAuthStore((state) => state.refreshAccessToken);
+  const accessToken = useAuthStore((state) => state.getAccessToken);
+
   return (
     <>
       <form onSubmit={form.onSubmit(onSubmit)}>
@@ -233,9 +237,22 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
           {selectedEndpoint && (
             <Stack spacing={2}>
               {[
+                ...selectedEndpoint.headers,
                 ...selectedEndpoint.requestBody,
                 ...selectedEndpoint.parameters,
               ].map((param) => {
+                let additionalProps = {};
+
+                if (param.name === "Authorization" && param.type === "BEARER") {
+                  const token = accessToken();
+                  if (token) {
+                    additionalProps = {
+                      defaultValue: token.substring(0, 35) + "...",
+                      disabled: true,
+                    };
+                  }
+                }
+
                 return (
                   <TextInput
                     size="xs"
@@ -249,6 +266,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                     // @ts-ignore
                     required={param.required}
                     {...form.getInputProps(`binds.${param.name}`)}
+                    {...additionalProps}
                     rightSection={
                       <ActionIcon
                         onClick={() => {

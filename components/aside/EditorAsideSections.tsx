@@ -1,9 +1,11 @@
 import { SidebarSection } from "@/components/SidebarSection";
 import { ActionsForm } from "@/components/actions/ActionsForm";
+import * as AdvancedLayoutModifier from "@/components/modifiers/AdvancedLayout";
 import * as BackgroundModifier from "@/components/modifiers/Background";
 import * as BorderModifier from "@/components/modifiers/Border";
 import * as ButtonModifier from "@/components/modifiers/Button";
 import * as DividerModifier from "@/components/modifiers/Divider";
+import * as EffectsModifier from "@/components/modifiers/Effects";
 import * as IconModifier from "@/components/modifiers/Icon";
 import * as ImageModifier from "@/components/modifiers/Image";
 import * as InputModifier from "@/components/modifiers/Input";
@@ -16,7 +18,7 @@ import * as TextModifier from "@/components/modifiers/Text";
 import * as TitleModifier from "@/components/modifiers/Title";
 import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper } from "@/utils/actions";
-import { componentMapper } from "@/utils/componentMapper";
+import { Modifiers, componentMapper } from "@/utils/componentMapper";
 import { getComponentById } from "@/utils/editor";
 import {
   Box,
@@ -31,7 +33,7 @@ import startCase from "lodash.startcase";
 import { useState } from "react";
 
 type SectionsMapper = {
-  [key: string]: any;
+  [key in Modifiers]: any;
 };
 
 const sectionMapper: SectionsMapper = {
@@ -49,6 +51,8 @@ const sectionMapper: SectionsMapper = {
   icon: IconModifier,
   divider: DividerModifier,
   select: SelectModifier,
+  advancedLayout: AdvancedLayoutModifier,
+  effects: EffectsModifier,
 };
 
 type Tab = "design" | "actions";
@@ -82,7 +86,7 @@ export const EditorAsideSections = () => {
   const mappedComponent = componentMapper[component?.name as string];
 
   const sections = mappedComponent?.modifiers?.map((id) => {
-    const modifier = sectionMapper[id as string];
+    const modifier = sectionMapper[id];
 
     return {
       id: id,

@@ -9,6 +9,7 @@ type Props = {
 export const Image = ({ renderTree, component, ...props }: Props) => {
   const {
     style: { width, height, alt, ...style },
+    triggers,
     ...componentProps
   } = component.props as any;
 
@@ -18,6 +19,7 @@ export const Image = ({ renderTree, component, ...props }: Props) => {
       alt={alt || "Image"}
       {...props}
       {...componentProps}
+      {...triggers}
       width={width}
       height={height}
       style={style}
