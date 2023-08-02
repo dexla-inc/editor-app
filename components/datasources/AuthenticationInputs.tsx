@@ -58,8 +58,9 @@ export async function patchDataSourceWithParams(
   projectId: string,
   dataSourceId: string,
   endpointId: string,
-  token: string | null,
-  endpointType: string
+  endpointType: string,
+  token?: string | undefined,
+  secondaryToken?: string | undefined
 ) {
   const patchParams = [
     {
@@ -74,6 +75,14 @@ export async function patchDataSourceWithParams(
       op: "replace",
       path: "/authentication/tokenKey",
       value: token,
+    });
+  }
+
+  if (secondaryToken) {
+    patchParams.push({
+      op: "replace",
+      path: "/authentication/tokenSecondaryKey",
+      value: secondaryToken,
     });
   }
 
@@ -105,6 +114,7 @@ export type AuthenticationStepParams = {
   userEndpointId?: string | undefined;
   accessToken?: string | undefined;
   refreshToken?: string | undefined;
+  expiryProperty?: string | undefined;
 };
 
 export const setExampleResponseObject = (

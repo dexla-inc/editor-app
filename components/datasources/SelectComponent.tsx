@@ -2,7 +2,7 @@ import { Select } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { ReactNode } from "react";
 
-interface SearchableSelectComponentProps<TForm> {
+type SearchableSelectComponentProps<TForm> = {
   label: ReactNode;
   description: ReactNode;
   placeholder: string;
@@ -12,7 +12,7 @@ interface SearchableSelectComponentProps<TForm> {
   value?: any;
   setProperty?: (value: string | null) => void;
   nothingFoundText?: string;
-}
+};
 
 export default function SearchableSelectComponent<TForm>({
   label,
@@ -24,6 +24,7 @@ export default function SearchableSelectComponent<TForm>({
   data,
   setProperty,
   nothingFoundText,
+  ...props
 }: SearchableSelectComponentProps<TForm>) {
   const { value: formValue, ...inputProps } = form.getInputProps(propertyName);
 
@@ -47,6 +48,7 @@ export default function SearchableSelectComponent<TForm>({
             ...inputProps,
             defaultValue: value ?? formValue,
           })}
+      {...props}
     />
   );
 }

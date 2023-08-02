@@ -72,6 +72,7 @@ export type Endpoint = {
 type AuthenticationEndpoint = {
   endpointType: string;
   tokenKey: string;
+  tokenSecondaryKey: string;
 };
 
 type Header = {

@@ -8,7 +8,7 @@ import {
   getDataSourceAuth,
   getDataSourceEndpoints,
 } from "@/requests/datasources/queries";
-import { DataSourceResponse } from "@/requests/datasources/types";
+import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
@@ -165,6 +165,8 @@ export type LoginActionParams = ActionParams & {
   action: LoginAction;
 };
 
+let cachedEndpoints: Endpoint[] | undefined;
+
 export const loginAction = async ({
   actionId,
   action,
@@ -182,15 +184,18 @@ export const loginAction = async ({
 
     updateTreeComponent(component.id!, { loading: true }, false);
 
-    // TODO: This will be bad for performance if we are having to fetch this every time a customer calls an API.
-    // Can we store this in context some where?
-    const { results } = await getDataSourceEndpoints(
-      projectId,
-      action.datasource.id,
-      { authOnly: true }
-    );
+    // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
+    // Can revisit later and create a cashing layer.
+    if (!cachedEndpoints) {
+      console.log("getting login endpoints");
+      const { results } = await getDataSourceEndpoints(
+        projectId,
+        action.datasource.id
+      );
+      cachedEndpoints = results;
+    }
 
-    const endpoint = results.find((e) => e.id === action.endpoint);
+    const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
 
     const keys = Object.keys(action.binds ?? {});
 
@@ -253,7 +258,8 @@ export const loginAction = async ({
     const responseJson = await response.json();
     const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
 
-    useAuthStore.getState().setAuthTokens(mergedAuthConfig);
+    const authStore = useAuthStore.getState();
+    authStore.setAuthTokens(mergedAuthConfig);
 
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.props?.actions ?? [];
@@ -306,14 +312,17 @@ export const apiCallAction = async ({
 
     updateTreeComponent(component.id!, { loading: true }, false);
 
-    // TODO: This will be bad for performance if we are having to fetch this every time a customer calls an API.
-    // Can we store this in context some where?
-    const { results } = await getDataSourceEndpoints(
-      projectId,
-      action.datasource.id
-    );
-
-    const endpoint = results.find((e) => e.id === action.endpoint);
+    // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
+    // Can revisit later and create a cashing layer.
+    if (!cachedEndpoints) {
+      console.log("getting endpoints");
+      const { results } = await getDataSourceEndpoints(
+        projectId,
+        action.datasource.id
+      );
+      cachedEndpoints = results;
+    }
+    const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
 
     const keys = Object.keys(action.binds ?? {});
 

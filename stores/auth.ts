@@ -73,7 +73,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     const state = get();
 
-    // Then use the updated properties to extract the token values
     const accessToken = response[state.apiConfig.accessTokenProperty];
     const refreshToken = response[state.apiConfig.refreshTokenProperty];
     const expirySeconds = response[state.apiConfig.expiryTokenProperty];

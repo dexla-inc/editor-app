@@ -62,7 +62,7 @@ export const UnitInput = ({
       value={unit ?? splitUnit}
       onChange={(val: Unit) => {
         setUnit(val);
-        if (val === "%") {
+        if (val === "%" || val === "vh" || val === "vw") {
           setValue(100);
         } else if (value === "auto") {
           setValue(0);
