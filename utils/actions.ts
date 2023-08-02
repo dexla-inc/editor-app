@@ -362,7 +362,7 @@ export const apiCallAction = async ({
 
     let authHeaderKey =
       endpoint?.authenticationScheme === "BEARER"
-        ? "Bearer " + authStore.accessToken
+        ? "Bearer " + authStore.getAccessToken()
         : "";
 
     const response = await fetch(url, {
