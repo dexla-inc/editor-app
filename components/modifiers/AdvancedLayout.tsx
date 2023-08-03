@@ -8,7 +8,7 @@ import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
 export const icon = IconLayout;
-export const label = "Advanced Layout";
+export const label = "Position";
 
 export const defaultLayoutValues = {
   position: "relative",

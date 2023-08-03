@@ -1,5 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
-import { Box, Group, Select, SelectProps } from "@mantine/core";
+import { Box, Group, Paper, Select, SelectProps } from "@mantine/core";
 import { forwardRef } from "react";
 
 // eslint-disable-next-line react/display-name
@@ -25,6 +25,14 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
       </Group>
     );
   }
+);
+
+type SelectedColorProps = {
+  color: any;
+};
+
+const SelectedColor: React.FC<SelectedColorProps> = ({ color }) => (
+  <Paper p="xs" bg={color} />
 );
 
 export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
@@ -62,6 +70,14 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
       );
     }, []);
 
+  let selectedColor = "Primary"; // default color if none is selected
+
+  // If a color is selected and it's not 'transparent', determine the color
+  if (props.value && props.value !== "transparent") {
+    const [color, index] = props.value.split(".");
+    selectedColor = color;
+  }
+
   return (
     <Select
       size="xs"
@@ -72,6 +88,7 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
       })}
       itemComponent={SelectItem}
       searchable
+      icon={<Paper p="xs" bg="Primary-6" />}
     />
   );
 };
