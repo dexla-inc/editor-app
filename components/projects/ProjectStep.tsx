@@ -18,10 +18,10 @@ export default function ProjectStep({
   stopLoading,
   setProjectId,
 }: ProjectStepProps) {
-  const form = useForm({
+  const form = useForm<ProjectParams>({
     initialValues: {
       description: "",
-      region: "",
+      region: undefined,
       type: "" as ProjectTypes,
       industry: "",
       friendlyName: "",
