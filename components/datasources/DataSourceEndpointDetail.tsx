@@ -76,7 +76,7 @@ export const DataSourceEndpointDetail = ({
         })),
       ].map((parameter, index, self) => {
         const title = getTitle(parameter);
-        console.log(parameter.apiType);
+
         return (
           <React.Fragment key={index}>
             {(index === 0 || title !== getTitle(self[index - 1])) && (

@@ -1,18 +1,22 @@
 import { del, post, put } from "@/utils/api";
 import { ProjectTypes } from "@/utils/projectTypes";
+import { RegionTypes } from "./queries";
 
-export type ProjectParams = {
+export interface ProjectParams extends ProjectUpdateParams {
   description: string;
-  friendlyName: string;
-  region?: string;
   type: ProjectTypes;
   industry?: string;
   similarCompany?: string;
-};
+}
 
 export type ProjectResponse = {
   id: string;
   [key: string]: any;
+};
+
+export type ProjectUpdateParams = {
+  friendlyName: string;
+  region?: RegionTypes;
 };
 
 export const createProject = async (params: ProjectParams) => {
@@ -26,7 +30,7 @@ export const createProject = async (params: ProjectParams) => {
 
 export const updateProject = async (
   id: string,
-  params: { friendlyName: string }
+  params: ProjectUpdateParams
 ) => {
   const response = (await put<ProjectResponse>(
     `/projects/${id}`,

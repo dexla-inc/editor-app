@@ -1,7 +1,7 @@
 import { get } from "@/utils/api";
 import { ProjectTypes } from "@/utils/projectTypes";
 
-type RegionTypes = "FRANCE_CENTRAL" | "US_CENTRAL" | "UK_SOUTH";
+export type RegionTypes = "FRANCE_CENTRAL" | "US_CENTRAL" | "UK_SOUTH";
 
 export type UserRoles = "MEMBER" | "ADMIN" | "OWNER" | "GUEST" | "DEXLA_ADMIN";
 

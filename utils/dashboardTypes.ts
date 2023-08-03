@@ -1,4 +1,5 @@
 import { DataSourceResponse } from "@/requests/datasources/types";
+import { RegionTypes } from "@/requests/projects/queries";
 import { DexlaNotificationProps } from "@/stores/app";
 
 export type NavbarTypes = "editor" | "company" | "project";
@@ -138,3 +139,15 @@ export const fonts = [
   "Opensaucesans",
   "Red Hat Display",
 ];
+
+export const regionTypeLabels: { [key in RegionTypes]: string } = {
+  UK_SOUTH: "United Kingdom",
+  US_CENTRAL: "United States",
+  FRANCE_CENTRAL: "European Union",
+};
+
+export const regionTypeFlags: Record<RegionTypes, string> = {
+  UK_SOUTH: "/uk-flag.svg",
+  US_CENTRAL: "/us-flag.svg",
+  FRANCE_CENTRAL: "/eu-flag.svg",
+};
