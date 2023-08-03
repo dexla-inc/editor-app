@@ -13,6 +13,7 @@ interface AuthenticationStepParams extends DataSourceStepperWithoutNextProps {
   loginEndpointLabel: string | null;
   refreshEndpointLabel: string | null;
   userEndpointLabel: string | null;
+  expiryProperty: string | null;
 }
 
 export default function EndpointsStep({
@@ -27,6 +28,7 @@ export default function EndpointsStep({
   userEndpointLabel,
   accessToken,
   refreshToken,
+  expiryProperty,
 }: AuthenticationStepParams) {
   const router = useRouter();
   const projectId = router.query.id as string;
@@ -120,6 +122,13 @@ export default function EndpointsStep({
           </Col>
           <Col span={8}>
             <Text size="sm">{refreshToken}</Text>
+          </Col>
+
+          <Col span={4} fw={700}>
+            <Text>Access Token Expiry Property</Text>
+          </Col>
+          <Col span={8}>
+            <Text size="sm">{expiryProperty}</Text>
           </Col>
         </Grid>
 

@@ -3,7 +3,9 @@ import { PageResponse } from "@/requests/pages/types";
 import { deleteProject } from "@/requests/projects/mutations";
 import { ProjectResponse } from "@/requests/projects/queries";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
+import { regionTypeFlags } from "@/utils/dashboardTypes";
 import {
+  Avatar,
   Box,
   Col,
   Collapse,
@@ -18,10 +20,12 @@ import {
 import {
   IconChevronDown,
   IconChevronRight,
+  IconDatabase,
   IconDots,
   IconFileAnalytics,
   IconHome,
   IconSettings,
+  IconSettings2,
   IconTrash,
 } from "@tabler/icons-react";
 import Link from "next/link";
@@ -46,6 +50,7 @@ export function ProjectItem({
   const [pages, setPages] = useState<PageResponse[]>([]);
   const [pagesLoading] = useState(false);
   const [opened, setOpened] = useState(false);
+  const [settingsOpened, setSettingsOpened] = useState(false);
 
   const goToEditorHomePage = async () => {
     const pages = await getPageList(project.id);
@@ -106,7 +111,7 @@ export function ProjectItem({
             <Text size="xs" color="dimmed">
               Hosted In
             </Text>
-            <Text>{project.region.name}</Text>
+            <Avatar src={regionTypeFlags[project.region.type]} size="sm" />
           </Flex>
           <Menu width={250} withArrow offset={20} onOpen={getPages}>
             <Menu.Target>
@@ -155,13 +160,36 @@ export function ProjectItem({
                   );
                 })}
               </Collapse>
-              <Menu.Item
+              <NavLink
+                label="Settings"
                 icon={<IconSettings size={ICON_SIZE} />}
-                component={Link}
-                href={`/projects/${project.id}/settings`}
-              >
-                Settings
-              </Menu.Item>
+                rightSection={
+                  settingsOpened ? (
+                    <IconChevronDown size={ICON_SIZE} />
+                  ) : (
+                    <IconChevronRight size={ICON_SIZE} />
+                  )
+                }
+                onClick={() => setSettingsOpened((isOpen) => !isOpen)}
+              />
+              <Collapse in={settingsOpened}>
+                <Box ml={10}>
+                  <Menu.Item
+                    icon={<IconSettings2 size={ICON_SIZE} />}
+                    component={Link}
+                    href={`/projects/${project.id}/settings`}
+                  >
+                    General
+                  </Menu.Item>
+                  <Menu.Item
+                    icon={<IconDatabase size={ICON_SIZE} />}
+                    component={Link}
+                    href={`/projects/${project.id}/settings/datasources`}
+                  >
+                    Datasource
+                  </Menu.Item>
+                </Box>
+              </Collapse>
               <Menu.Item
                 icon={<IconTrash size={ICON_SIZE} />}
                 color="red"

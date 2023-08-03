@@ -2,7 +2,6 @@ import Cookies from "js-cookie";
 import { create } from "zustand";
 
 type AuthState = {
-  accessToken: string | null;
   refreshToken: string | null;
   expiresAt: number | null;
   apiConfig: {
@@ -27,10 +26,10 @@ type AuthState = {
     expiryTokenProperty: string
   ) => void;
   setUserObject: (userObject: any) => void;
+  getAccessToken: () => string | null;
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
-  accessToken: null,
   refreshToken: null,
   expiresAt: null,
   userObject: null,
@@ -74,7 +73,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     const state = get();
 
-    // Then use the updated properties to extract the token values
     const accessToken = response[state.apiConfig.accessTokenProperty];
     const refreshToken = response[state.apiConfig.refreshTokenProperty];
     const expirySeconds = response[state.apiConfig.expiryTokenProperty];
@@ -84,15 +82,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       expires: expirySeconds / 60 / 60 / 24,
     }); // Convert seconds to days
 
+    localStorage.setItem("dexlaToken", accessToken);
+
     set({
-      accessToken,
       refreshToken,
       expiresAt,
     });
   },
   clearAuthTokens: () => {
     Cookies.remove("dexlaRefreshToken");
-    set({ accessToken: null, refreshToken: null, expiresAt: null });
+    localStorage.removeItem("dexlaToken");
+    set({ refreshToken: null, expiresAt: null });
   },
   checkTokenExpiry: () => {
     const expiresAt = get().expiresAt;
@@ -101,8 +101,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
   refreshAccessToken: async () => {
     const state = get();
-
-    if (!state.checkTokenExpiry()) {
+    const accessToken = localStorage.getItem("dexlaToken");
+    if (!accessToken || !state.checkTokenExpiry()) {
       return;
     }
 
@@ -110,7 +110,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${state.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({ refresh: state.refreshToken }),
     });
@@ -139,5 +139,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
   setUserObject: (userObject) => {
     set({ userObject });
+  },
+  getAccessToken: () => {
+    return localStorage.getItem("dexlaToken");
   },
 }));

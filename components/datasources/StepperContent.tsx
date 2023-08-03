@@ -123,6 +123,7 @@ export default function StepperContent({
           loginEndpointLabel={loginEndpointLabel}
           refreshEndpointLabel={refreshEndpointLabel}
           userEndpointLabel={userEndpointLabel}
+          expiryProperty={expiryProperty}
         ></EndpointsStep>
       )}
     </Stack>

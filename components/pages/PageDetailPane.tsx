@@ -39,6 +39,7 @@ export default function PageDetailPane({
       isHome: false,
       authenticatedOnly: false,
       hasNavigation: false,
+      copyFrom: undefined,
     },
     validate: {
       title: (value) =>
@@ -55,14 +56,6 @@ export default function PageDetailPane({
           : null,
     },
   });
-
-  useEffect(() => {
-    if (page) {
-      form.setFieldValue("title", page.title);
-      form.setFieldValue("slug", page.slug.toLowerCase());
-      setSlug(page.slug);
-    }
-  }, [page]);
 
   const deleteFn = async () => {
     try {
@@ -94,7 +87,6 @@ export default function PageDetailPane({
   const onSubmit = async (values: PageBody) => {
     try {
       setIsLoading(true);
-
       startLoading({
         id: "mutating",
         title: "Saving Page",
@@ -103,7 +95,7 @@ export default function PageDetailPane({
 
       form.validate();
 
-      const result = page
+      const result = page?.id
         ? await updatePage(values, projectId, page.id)
         : await createPage(values, projectId);
 
@@ -126,6 +118,41 @@ export default function PageDetailPane({
     }
   };
 
+  const duplicate = () => {
+    setPage({
+      id: "",
+      title: "",
+      slug: "",
+      isHome: false,
+      authenticatedOnly: false,
+      hasNavigation: false,
+      copyFrom: {
+        id: page!.id as string,
+        type: "PAGE",
+      },
+    });
+
+    form.setFieldValue("copyFrom", {
+      id: page!.id as string,
+      type: "PAGE",
+    });
+
+    form.setFieldValue("title", "");
+    form.setFieldValue("slug", "");
+    form.setFieldValue("isHome", false);
+    form.setFieldValue("authenticatedOnly", false);
+    form.setFieldValue("hasNavigation", false);
+  };
+
+  useEffect(() => {
+    if (page) {
+      form.setFieldValue("title", page.title);
+      form.setFieldValue("slug", page.slug.toLowerCase());
+      setSlug(page.slug);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
+
   return (
     <>
       <Flex>
@@ -137,7 +164,7 @@ export default function PageDetailPane({
           >
             Back
           </Button>
-          <Stack mt="sm">
+          <Stack my="sm">
             <TextInput
               label="Page Title"
               placeholder="Dashboard Analysis"
@@ -147,9 +174,9 @@ export default function PageDetailPane({
                 const newSlug = slugify(event.currentTarget.value, {
                   lower: true,
                 });
-                page?.id ?? setSlug(newSlug);
-                page?.id ?? form.setFieldValue("slug", newSlug);
-                page?.id ?? form.setTouched({ slug: false });
+                setSlug(newSlug);
+                form.setFieldValue("slug", newSlug);
+                form.setTouched({ slug: false });
               }}
             />
             <TextInput
@@ -159,11 +186,9 @@ export default function PageDetailPane({
               value={slug}
               onChange={(event) => {
                 const newSlug = event.target.value;
-                if (page?.id) {
-                  setSlug(newSlug);
-                  form.setFieldValue("slug", newSlug);
-                  form.setTouched({ slug: true });
-                }
+                setSlug(newSlug);
+                form.setFieldValue("slug", newSlug);
+                form.setTouched({ slug: true });
               }}
             />
             <Button type="submit" loading={isLoading}>
@@ -183,6 +208,20 @@ export default function PageDetailPane({
               >
                 {copied ? "Copied" : `Copy Page`}
               </Button>
+            )}
+            {page?.id && (
+              <>
+                <Button
+                  loading={isLoading}
+                  onClick={duplicate}
+                  variant="default"
+                >
+                  Duplicate
+                </Button>
+                <Button loading={isLoading} onClick={deleteFn} color="red">
+                  Delete
+                </Button>
+              </>
             )}
           </Stack>
         </form>

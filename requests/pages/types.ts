@@ -1,4 +1,5 @@
 import { PagingParams } from "@/requests/types";
+import { AppTypes } from "@/utils/dashboardTypes";
 
 export interface PageResponse extends PageBody {
   id: string;
@@ -21,6 +22,10 @@ export type UpdatePageBody = {
   authenticatedUserRole?: string;
   parentPageId?: string;
   hasNavigation: boolean;
+  copyFrom?: {
+    id: string;
+    type: AppTypes;
+  };
 };
 
 export type PagesResponse = {

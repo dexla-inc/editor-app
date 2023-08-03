@@ -12,7 +12,8 @@ export const label = "Image";
 export const defaultImageValues = {
   src: "https://reactnativecode.com/wp-content/uploads/2018/02/Default_Image_Thumbnail.png",
   alt: "",
-  objectFit: "contain",
+  objectFit: "scale-down",
+  position: "relative",
 };
 
 export const Modifier = () => {
@@ -44,6 +45,7 @@ export const Modifier = () => {
         src: src ?? defaultImageValues.src,
         alt: alt ?? defaultImageValues.alt,
         objectFit: style.objectFit ?? defaultImageValues.objectFit,
+        position: style.position ?? defaultImageValues.position,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes

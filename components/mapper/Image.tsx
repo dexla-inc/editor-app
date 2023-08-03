@@ -7,7 +7,11 @@ type Props = {
 } & ImageProps;
 
 export const Image = ({ renderTree, component, ...props }: Props) => {
-  const { style = {}, ...componentProps } = component.props as any;
+  const {
+    style: { width, height, alt, ...style },
+    triggers,
+    ...componentProps
+  } = component.props as any;
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
@@ -17,6 +21,7 @@ export const Image = ({ renderTree, component, ...props }: Props) => {
       {...componentProps}
       width={style?.width ?? "100px"}
       height={style?.height ?? "100px"}
+      {...triggers}
       style={style}
     />
   );

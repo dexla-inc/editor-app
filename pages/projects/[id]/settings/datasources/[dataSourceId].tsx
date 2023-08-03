@@ -15,7 +15,6 @@ import {
 } from "@/components/datasources/BasicDetailsInputs";
 import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
 import EndpointsButton from "@/components/datasources/EndpointsButton";
-import SearchableSelectComponent from "@/components/datasources/SelectComponent";
 import {
   SwaggerURLInput,
   validateSwaggerUrl,
@@ -40,6 +39,7 @@ import {
   Divider,
   Flex,
   Group,
+  Select,
   Stack,
   Title,
 } from "@mantine/core";
@@ -78,53 +78,15 @@ export default function Settings() {
   const [userEndpointId, setUserEndpointId] = useState<string | undefined>(
     undefined
   );
+  const [expiryProperty, setExpiryProperty] = useState<string | undefined>(
+    undefined
+  );
   const [exampleResponse, setExampleResponse] = useState<
     ExampleResponseDropdown[] | undefined
   >(undefined);
 
   const postEndpoints = filterAndMapEndpoints(endpoints, "POST");
   const getEndpoints = filterAndMapEndpoints(endpoints, "GET");
-
-  useEffect(() => {
-    const fetch = async () => {
-      const result = await getDataSource(projectId, dataSourceId);
-      apiForm.setValues(result);
-      setDataSource(result);
-      setSwaggerUrl(result.swaggerUrl);
-      setAuthenticationScheme(result.authenticationScheme);
-    };
-
-    fetch();
-  }, []);
-
-  useEffect(() => {
-    const fetch = async () => {
-      const result = await getDataSourceEndpoints(projectId, dataSourceId);
-
-      const loginEndpoint = getAuthEndpoint("ACCESS", result.results);
-      const refreshEndpoint = getAuthEndpoint("REFRESH", result.results);
-      const userEndpoint = getAuthEndpoint("USER", result.results);
-
-      setLoginEndpoint(loginEndpoint?.id);
-      setRefreshEndpoint(refreshEndpoint?.id);
-      setUserEndpointId(userEndpoint?.id);
-
-      apiAuthForm.setFieldValue(
-        "accessToken",
-        loginEndpoint?.authentication.tokenKey
-      );
-      apiAuthForm.setFieldValue(
-        "refreshToken",
-        refreshEndpoint?.authentication.tokenKey
-      );
-
-      apiAuthForm.setFieldValue("expiry", "");
-
-      setEndpoints(result.results);
-    };
-
-    fetch();
-  }, []);
 
   const apiForm = useForm<DataSourceParams>({
     validate: {
@@ -167,18 +129,14 @@ export default function Settings() {
       userEndpointId: undefined,
       accessToken: undefined,
       refreshToken: undefined,
+      expiryProperty: undefined,
     },
-    // validate: {
-    //   accessToken: (value, values) =>
-    //     validateTokenProperty("Access", value, values.loginEndpointId),
-    //   refreshToken: (value, values) =>
-    //     validateTokenProperty("Refresh", value, values.refreshEndpointId),
-    // },
   });
 
   const onApiAuthSubmit = async (values: AuthenticationStepParams) => {
     try {
       apiAuthForm.validate();
+      console.log(values);
 
       if (Object.keys(apiAuthForm.errors).length > 0) {
         console.log("Errors: " + apiAuthForm.errors);
@@ -201,22 +159,24 @@ export default function Settings() {
         userEndpointId,
         accessToken,
         refreshToken,
+        expiryProperty,
       } = values;
 
       await patchDataSourceWithParams(
         projectId,
         dataSource.id,
         loginEndpointId as string,
+        "ACCESS",
         accessToken as string,
-        "ACCESS"
+        expiryProperty
       );
 
       await patchDataSourceWithParams(
         projectId,
         dataSource.id,
         refreshEndpointId as string,
-        refreshToken as string,
-        "REFRESH"
+        "REFRESH",
+        refreshToken as string
       );
 
       if (userEndpointId) {
@@ -224,7 +184,6 @@ export default function Settings() {
           projectId,
           dataSource.id,
           userEndpointId,
-          null,
           "USER"
         );
       }
@@ -234,8 +193,15 @@ export default function Settings() {
         title: "Data Source Saved",
         message: "The data source was saved successfully",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      stopLoading({
+        id: "updating",
+        title: "Data Source Failed",
+        message: error,
+        isError: true,
+      });
+      setIsLoading && setIsLoading(false);
     }
   };
 
@@ -252,8 +218,6 @@ export default function Settings() {
       apiForm.validate();
 
       const result = await getSwagger(projectId, dataSourceId, swaggerUrl);
-
-      console.log(result);
 
       setDataSource(result);
 
@@ -274,13 +238,66 @@ export default function Settings() {
 
   const setLoginEndpoint = (value: string | undefined) => {
     setLoginEndpointId(value);
+    apiAuthForm.setFieldValue("loginEndpointId", value);
     setExampleResponseObject(postEndpoints, setExampleResponse, value);
   };
 
   const setRefreshEndpoint = (value: string | undefined) => {
     setRefreshEndpointId(value);
+    apiAuthForm.setFieldValue("refreshEndpointId", value);
     setExampleResponseObject(postEndpoints, setExampleResponse, value);
   };
+
+  const setUserEndpoint = (value: string | undefined) => {
+    setUserEndpointId(value);
+    apiAuthForm.setFieldValue("userEndpointId", value);
+    setExampleResponseObject(postEndpoints, setExampleResponse, value);
+  };
+
+  useEffect(() => {
+    (async () => {
+      const result = await getDataSource(projectId, dataSourceId);
+      apiForm.setValues(result);
+      setDataSource(result);
+      setSwaggerUrl(result.swaggerUrl);
+      setAuthenticationScheme(result.authenticationScheme);
+
+      const endpointsResult = await getDataSourceEndpoints(
+        projectId,
+        dataSourceId
+      );
+      setEndpoints(endpointsResult.results);
+    })();
+  }, [dataSourceId, projectId]);
+
+  useEffect(() => {
+    if (endpoints) {
+      const loginEndpoint = getAuthEndpoint("ACCESS", endpoints);
+      const refreshEndpoint = getAuthEndpoint("REFRESH", endpoints);
+      const userEndpoint = getAuthEndpoint("USER", endpoints);
+
+      setLoginEndpoint(loginEndpoint?.id);
+      setRefreshEndpoint(refreshEndpoint?.id);
+      setUserEndpoint(userEndpoint?.id);
+
+      console.log("accessToken", loginEndpoint?.authentication.tokenKey);
+      console.log("refreshToken", refreshEndpoint?.authentication.tokenKey);
+
+      apiAuthForm.setFieldValue(
+        "accessToken",
+        loginEndpoint?.authentication.tokenKey
+      );
+      apiAuthForm.setFieldValue(
+        "expiryProperty",
+        loginEndpoint?.authentication.tokenSecondaryKey
+      );
+
+      apiAuthForm.setFieldValue(
+        "refreshToken",
+        refreshEndpoint?.authentication.tokenKey
+      );
+    }
+  }, [endpoints]);
 
   return (
     <Shell navbarType="project" user={user}>
@@ -338,35 +355,61 @@ export default function Settings() {
               <Title order={3}>Bearer Token Configuration</Title>
               {swaggerUrl ? (
                 <>
-                  <SearchableSelectComponent
+                  {/* <SearchableSelectComponent
                     label="Login Endpoint (POST)"
                     description="The endpoint used to login to your API"
                     placeholder="/v1/login"
-                    value={loginEndpointId}
                     form={apiAuthForm}
                     propertyName="loginEndpointId"
                     data={postEndpoints}
                     setProperty={(value) => setLoginEndpoint(value ?? "")}
+                  /> */}
+                  <Select
+                    label="Login Endpoint (POST)"
+                    description="The endpoint used to login to your API"
+                    placeholder="/v1/login"
+                    searchable
+                    clearable
+                    required
+                    data={postEndpoints ?? []}
+                    {...apiAuthForm.getInputProps("loginEndpointId")}
+                    onChange={(value) => {
+                      apiAuthForm.setFieldValue(
+                        "loginEndpointId",
+                        value as string
+                      );
+                    }}
                   />
-                  <SearchableSelectComponent
+                  <Select
                     label="Refresh Endpoint (POST)"
                     description="The endpoint used to refresh your API token"
                     placeholder="/v1/login/refresh"
-                    value={refreshEndpointId}
-                    form={apiAuthForm}
-                    propertyName="refreshEndpointId"
-                    data={postEndpoints}
-                    setProperty={(value) => setRefreshEndpoint(value ?? "")}
+                    searchable
+                    clearable
+                    required
+                    data={postEndpoints ?? []}
+                    {...apiAuthForm.getInputProps("refreshEndpointId")}
+                    onChange={(value) => {
+                      apiAuthForm.setFieldValue(
+                        "refreshEndpointId",
+                        value as string
+                      );
+                    }}
                   />
-                  <SearchableSelectComponent
+                  <Select
                     label="User Endpoint (GET)"
                     description="The endpoint used to user information"
                     placeholder="/v1/user"
-                    form={apiAuthForm}
-                    propertyName="userEndpointId"
-                    data={getEndpoints}
-                    value={userEndpointId}
-                    setProperty={(value) => setUserEndpointId(value ?? "")}
+                    searchable
+                    clearable
+                    data={getEndpoints ?? []}
+                    {...apiAuthForm.getInputProps("userEndpointId")}
+                    onChange={(value) => {
+                      apiAuthForm.setFieldValue(
+                        "userEndpointId",
+                        value as string
+                      );
+                    }}
                   />
                 </>
               ) : (
@@ -398,14 +441,19 @@ export default function Settings() {
                 </>
               )}
               {dataSource?.swaggerUrl && loginEndpointId ? (
-                <SearchableSelectComponent
+                <Select
                   label="Access token property"
                   description="The property name of the access token in the response"
                   placeholder="access"
-                  form={apiAuthForm}
-                  propertyName="accessToken"
+                  searchable
+                  clearable
+                  nothingFound="Not found. Update your swagger to include the response property"
                   data={exampleResponse ?? []}
-                  nothingFoundText="Not found. Update your swagger to include the response property"
+                  {...apiAuthForm.getInputProps("accessToken")}
+                  onChange={(value) => {
+                    apiAuthForm.setFieldValue("accessToken", value as string);
+                  }}
+                  required
                 />
               ) : (
                 <TextInputComponent
@@ -418,14 +466,19 @@ export default function Settings() {
                 />
               )}
               {dataSource?.swaggerUrl && refreshEndpointId ? (
-                <SearchableSelectComponent
+                <Select
                   label="Refresh token property"
                   description="The property name of the refresh token in the response"
                   placeholder="refresh"
-                  form={apiAuthForm}
-                  propertyName="refreshToken"
+                  searchable
+                  clearable
+                  nothingFound="Not found. Update your swagger to include the response property"
                   data={exampleResponse ?? []}
-                  nothingFoundText="Not found. Update your swagger to include the response property"
+                  {...apiAuthForm.getInputProps("refreshToken")}
+                  onChange={(value) => {
+                    apiAuthForm.setFieldValue("refreshToken", value as string);
+                  }}
+                  required
                 />
               ) : (
                 <TextInputComponent
@@ -438,14 +491,26 @@ export default function Settings() {
                 />
               )}
               {dataSource?.swaggerUrl && loginEndpointId ? (
-                <SearchableSelectComponent
+                <Select
                   label="Access token expiry property"
                   description="The property name of the expiry of the access token in the response"
                   placeholder="expires_in"
-                  form={apiAuthForm}
-                  propertyName="expiry"
+                  searchable
+                  clearable
+                  nothingFound={
+                    exampleResponse
+                      ? "Not found. Update your swagger to include the response property"
+                      : "No options"
+                  }
                   data={exampleResponse ?? []}
-                  nothingFoundText="Not found. Update your swagger to include the response property"
+                  {...apiAuthForm.getInputProps("expiryProperty")}
+                  onChange={(value) => {
+                    apiAuthForm.setFieldValue(
+                      "expiryProperty",
+                      value as string
+                    );
+                  }}
+                  required
                 />
               ) : (
                 <TextInputComponent

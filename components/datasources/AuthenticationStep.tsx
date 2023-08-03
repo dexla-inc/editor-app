@@ -13,7 +13,7 @@ import TextInputComponent from "@/components/datasources/TextInputComponent";
 import NextButton from "@/components/NextButton";
 import { Endpoint } from "@/requests/datasources/types";
 import { DataSourceStepperProps } from "@/utils/dashboardTypes";
-import { Anchor, Divider, Flex, Group, Stack } from "@mantine/core";
+import { Anchor, Divider, Flex, Group, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 
@@ -117,15 +117,19 @@ export default function AuthenticationStep({
         userEndpointId,
         accessToken,
         refreshToken,
+        expiryProperty,
       } = values;
+
+      console.log("expiryProperty", expiryProperty);
 
       if (loginEndpointId !== undefined && accessToken !== undefined) {
         await patchDataSourceWithParams(
           projectId,
           dataSource.id,
           loginEndpointId,
+          "ACCESS",
           accessToken,
-          "ACCESS"
+          expiryProperty
         );
       }
 
@@ -134,8 +138,8 @@ export default function AuthenticationStep({
           projectId,
           dataSource.id,
           refreshEndpointId,
-          refreshToken,
-          "REFRESH"
+          "REFRESH",
+          refreshToken
         );
       }
 
@@ -144,7 +148,6 @@ export default function AuthenticationStep({
           projectId,
           dataSource.id,
           userEndpointId,
-          null,
           "USER"
         );
       }
@@ -157,8 +160,15 @@ export default function AuthenticationStep({
         message: "The data source was saved successfully",
       });
       setIsLoading && setIsLoading(false);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      stopLoading({
+        id: "updating",
+        title: "Data Source Failed",
+        message: error,
+        isError: true,
+      });
+      setIsLoading && setIsLoading(false);
     }
   };
 
@@ -330,16 +340,24 @@ export default function AuthenticationStep({
           />
         )}
         {dataSource?.swaggerUrl && loginEndpointId ? (
-          <SearchableSelectComponent
+          <Select
             label="Access token expiry property"
             description="The property name of the expiry of the access token in the response"
             placeholder="expires_in"
-            value={expiryProperty}
-            form={form}
-            propertyName="expiry"
+            searchable
+            clearable
+            nothingFound={
+              exampleResponse
+                ? "Not found. Update your swagger to include the response property"
+                : "No options"
+            }
             data={exampleResponse ?? []}
-            setProperty={setExpiryProperty}
-            nothingFoundText="Not found. Update your swagger to include the response property"
+            {...form.getInputProps("expiryProperty")}
+            onChange={(value) => {
+              form.setFieldValue("expiryProperty", value as string);
+              setExpiryProperty(value);
+            }}
+            required
           />
         ) : (
           <TextInputComponent

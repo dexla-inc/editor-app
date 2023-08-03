@@ -1,5 +1,5 @@
 import { Component } from "@/utils/editor";
-import { Anchor as MantineAnchor, AnchorProps } from "@mantine/core";
+import { AnchorProps, Anchor as MantineAnchor } from "@mantine/core";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -7,12 +7,17 @@ type Props = {
 } & AnchorProps;
 
 export const Link = ({ renderTree, component, ...props }: Props) => {
-  const { children, ...componentProps } = component.props as any;
+  const { children, triggers, ...componentProps } = component.props as any;
 
   return (
-    <MantineAnchor {...props} {...componentProps}>
+    <MantineAnchor {...props} {...componentProps} {...triggers}>
       {component.children && component.children.length > 0
-        ? component.children?.map((child) => renderTree(child))
+        ? component.children?.map((child) =>
+            renderTree({
+              ...child,
+              props: { ...child.props, ...triggers },
+            })
+          )
         : children}
     </MantineAnchor>
   );

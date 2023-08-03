@@ -9,6 +9,7 @@ import {
   Title,
 } from "@mantine/core";
 import { Prism } from "@mantine/prism";
+import React from "react";
 
 type DataSourceEndpointDetailProps = {
   endpoint: Endpoint;
@@ -20,6 +21,16 @@ function Demo() {
 }`;
 
 const MethodTypeArray = ["GET", "POST", "PUT", "DELETE", "PATCH"] as const;
+function getTitle(parameter: any) {
+  switch (parameter.apiType) {
+    case "header":
+      return "Headers";
+    case "body":
+      return "Body";
+    default:
+      return "Parameters";
+  }
+}
 
 export const DataSourceEndpointDetail = ({
   endpoint,
@@ -53,18 +64,37 @@ export const DataSourceEndpointDetail = ({
           <TextInput placeholder="value" sx={{ flexGrow: 1 }} />
         </Flex>
       ))}
-      <Title order={6}>Parameters</Title>
-      {endpoint.parameters.length > 0
-        ? endpoint.parameters.map((parameter, index) => (
-            <Flex key={index} align="center" gap="md">
+      {[
+        ...endpoint.headers.map((header) => ({
+          ...header,
+          apiType: "header",
+        })),
+        ...endpoint.requestBody.map((body) => ({ ...body, apiType: "body" })),
+        ...endpoint.parameters.map((parameter) => ({
+          ...parameter,
+          apiType: "parameter",
+        })),
+      ].map((parameter, index, self) => {
+        const title = getTitle(parameter);
+
+        return (
+          <React.Fragment key={index}>
+            {(index === 0 || title !== getTitle(self[index - 1])) && (
+              <Title order={6}>{title}</Title>
+            )}
+            <Flex align="center" gap="md">
               <Text size="xs" color="grey" sx={{ width: 50 }}>
-                {`(${parameter.location})`}
+                {
+                  // @ts-ignore
+                  `(${parameter.location ?? parameter.type})`
+                }
               </Text>
               <TextInput size="sm" defaultValue={parameter.name}></TextInput>
               <TextInput placeholder="value" sx={{ flexGrow: 1 }} />
             </Flex>
-          ))
-        : "1"}
+          </React.Fragment>
+        );
+      })}
       <Tabs defaultValue="example">
         <Tabs.List>
           <Tabs.Tab value="example">Example Response</Tabs.Tab>

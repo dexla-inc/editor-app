@@ -720,6 +720,7 @@ export type Modifiers =
   | "text"
   | "border"
   | "layout"
+  | "advancedLayout"
   | "background"
   | "input"
   | "button"
@@ -728,7 +729,8 @@ export type Modifiers =
   | "link"
   | "icon"
   | "divider"
-  | "select";
+  | "select"
+  | "effects";
 
 export type ComponentDefinition = {
   Component: any;
@@ -791,7 +793,15 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Container component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "background", "spacing", "size", "border"],
+    modifiers: [
+      "layout",
+      "advancedLayout",
+      "effects",
+      "background",
+      "spacing",
+      "size",
+      "border",
+    ],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -977,8 +987,15 @@ export const componentMapper: ComponentMapper = {
       // eslint-disable-next-line jsx-a11y/alt-text
       <Image component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["image", "spacing", "size", "border"],
-    actionTriggers: ["onMount"],
+    modifiers: [
+      "image",
+      "advancedLayout",
+      "effects",
+      "spacing",
+      "size",
+      "border",
+    ],
+    actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Divider: {

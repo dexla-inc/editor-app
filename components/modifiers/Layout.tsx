@@ -241,23 +241,6 @@ export const Modifier = () => {
           />
         </Stack>
         <Select
-          label="Position"
-          size="xs"
-          data={[
-            { label: "Relative", value: "relative" },
-            { label: "Absolute", value: "absolute" },
-            { label: "Sticky", value: "sticky" },
-            { label: "Fixed", value: "fixed" },
-          ]}
-          {...form.getInputProps("position")}
-          onChange={(value) => {
-            form.setFieldValue("position", value as string);
-            debouncedTreeUpdate(selectedComponentId as string, {
-              style: { position: value },
-            });
-          }}
-        />
-        <Select
           label="Wrap"
           size="xs"
           data={[
