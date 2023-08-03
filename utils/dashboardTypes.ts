@@ -151,3 +151,5 @@ export const regionTypeFlags: Record<RegionTypes, string> = {
   US_CENTRAL: "/us-flag.svg",
   FRANCE_CENTRAL: "/eu-flag.svg",
 };
+
+export type AppTypes = "PAGE" | "TEMPLATE" | "PROJECT";

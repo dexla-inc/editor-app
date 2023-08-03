@@ -108,9 +108,9 @@ export default function InitialPane({
                   }}
                   p={5}
                   sx={{
-                    display: "flex", // added this line
-                    alignItems: "center", // added this line
-                    justifyContent: "center", // added this line
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                     borderRadius: theme.radius.md,
                     "&:hover": {
                       backgroundColor: theme.colors.teal[5],
