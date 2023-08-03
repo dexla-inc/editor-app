@@ -1,44 +1,27 @@
-import { defaultTheme } from "@/components/IFrame";
 import * as ChartStructure from "@/components/mapper/structure/charts/Chart";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
-  const theme = props.theme ?? defaultTheme;
   const chartProps = ChartStructure.jsonStructure(props).props;
   const { options, ...rest } = props.props || {};
 
   return {
     id: nanoid(),
-    name: "Container",
-    description: "PieChart Container",
+    name: "PieChart",
+    description: "PieChart",
+    children: [],
     props: {
-      style: {
-        width: "100%",
-        height: "auto",
-        minHeight: "100px",
-        backgroundColor: "white",
+      ...chartProps,
+      type: "pie",
+      series: [44, 55, 13, 43, 22],
+      options: {
+        ...chartProps?.options,
+        labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+        ...(options || {}),
       },
+      ...(rest || {}),
     },
-    children: [
-      {
-        id: nanoid(),
-        name: "PieChart",
-        description: "PieChart",
-        children: [],
-        props: {
-          ...chartProps,
-          type: "pie",
-          series: [44, 55, 13, 43, 22],
-          options: {
-            ...chartProps?.options,
-            labels: ["Jan", "Feb", "Mar", "Apr", "May"],
-            ...(options || {}),
-          },
-          ...(rest || {}),
-        },
-        blockDroppingChildrenInside: true,
-      },
-    ],
+    blockDroppingChildrenInside: true,
   };
 };

@@ -18,6 +18,7 @@ export const icon = IconLayout2;
 export const label = "Layout";
 
 export const defaultLayoutValues = {
+  flexWrap: "wrap",
   flexDirection: "column",
   rowGap: "20px",
   columnGap: "20px",
@@ -54,6 +55,7 @@ export const Modifier = () => {
 
       form.setValues({
         position: style.position ?? defaultLayoutValues.position,
+        flexWrap: style.flexWrap ?? defaultLayoutValues.flexWrap,
         flexDirection: style.flexDirection ?? defaultLayoutValues.flexDirection,
         rowGap: style.rowGap ?? defaultLayoutValues.rowGap,
         columnGap: style.columnGap ?? defaultLayoutValues.columnGap,
@@ -252,6 +254,22 @@ export const Modifier = () => {
             form.setFieldValue("position", value as string);
             debouncedTreeUpdate(selectedComponentId as string, {
               style: { position: value },
+            });
+          }}
+        />
+        <Select
+          label="Wrap"
+          size="xs"
+          data={[
+            { label: "Wrap", value: "wrap" },
+            { label: "Wrap Reverse", value: "wrap-reverse" },
+            { label: "No Wrap", value: "no-wrap" },
+          ]}
+          {...form.getInputProps("flexWrap")}
+          onChange={(value) => {
+            form.setFieldValue("flexWrap", value as string);
+            debouncedTreeUpdate(selectedComponentId as string, {
+              style: { flexWrap: value },
             });
           }}
         />

@@ -13,7 +13,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Button",
     props: {
       style: {
-        width: "auto",
+        width: "100%",
         height: "auto",
         paddingTop: px(theme.spacing.sm),
         paddingBottom: px(theme.spacing.sm),
@@ -21,7 +21,7 @@ export const jsonStructure = (props?: any): Component => {
         paddingRight: px(theme.spacing.lg),
       },
       ...(rest || {}),
-      textColor: textColor ?? "white",
+      textColor: textColor ?? "White.0",
       children: value ?? "New Button",
       blockDroppingChildrenInside: true,
     },

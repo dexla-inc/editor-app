@@ -1,12 +1,45 @@
 import { nanoid } from "nanoid";
 
+type Input = {
+  placeholder: string;
+  label: string;
+  type: "text" | "email" | "password";
+};
+
 export type Data = {
+  inputs: Input[];
+  button: {
+    text: string;
+  };
   title: {
     text: string;
   };
 };
 
 export const template = (data: Data) => {
+  const inputs = data.inputs.map((input: Input) => {
+    return {
+      id: nanoid(),
+      name: "Input",
+      description: "Input",
+      props: {
+        style: {
+          width: "100%",
+          height: "auto",
+          flexDirection: "column",
+        },
+        size: "sm",
+        placeholder: input.placeholder,
+        type: input.type,
+        label: input.label,
+        icon: "",
+        withAsterisk: false,
+        labelSpacing: "0",
+      },
+      blockDroppingChildrenInside: true,
+    };
+  });
+
   return {
     root: {
       id: "root",
@@ -48,6 +81,24 @@ export const template = (data: Data) => {
                 bg: "Neutral.4",
               },
               children: [
+                {
+                  id: nanoid(),
+                  name: "Image",
+                  description: "Image",
+                  props: {
+                    withPlaceholder: true,
+                    style: {
+                      width: "auto",
+                      height: "100px",
+                      objectFit: "contain",
+                      marginBottom: "20px",
+                    },
+                    src: "https://www.kadencewp.com/wp-content/uploads/2020/10/alogo-4.svg",
+                    alt: "Logo",
+                    objectFit: "contain",
+                  },
+                  blockDroppingChildrenInside: true,
+                },
                 {
                   id: nanoid(),
                   name: "Container",
@@ -97,7 +148,7 @@ export const template = (data: Data) => {
                       description: "Title",
                       children: [],
                       props: {
-                        value: data.title.text,
+                        children: data.title.text,
                         color: "Black.6",
                         order: 2,
                         style: {
@@ -110,6 +161,65 @@ export const template = (data: Data) => {
                         },
                       },
                       blockDroppingChildrenInside: true,
+                    },
+                    {
+                      id: nanoid(),
+                      name: "Form",
+                      description: "Form",
+                      props: {
+                        style: {
+                          display: "flex",
+                          flexDirection: "column",
+                          rowGap: "25px",
+                          columnGap: "20px",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          position: "relative",
+                          borderTopStyle: "none",
+                          borderRightStyle: "none",
+                          borderBottomStyle: "none",
+                          borderLeftStyle: "none",
+                          borderTopWidth: "0px",
+                          borderRightWidth: "0px",
+                          borderBottomWidth: "0px",
+                          borderLeftWidth: "0px",
+                          borderTopColor: "Border.6",
+                          borderRightColor: "Border.6",
+                          borderBottomColor: "Border.6",
+                          borderLeftColor: "Border.6",
+                          borderTopLeftRadius: "0px",
+                          borderTopRightRadius: "0px",
+                          borderBottomLeftRadius: "0px",
+                          borderBottomRightRadius: "0px",
+                          paddingLeft: "0px",
+                          paddingRight: "0px",
+                          marginBottom: "0px",
+                          width: "100%",
+                          height: "auto",
+                          minHeight: "auto",
+                        },
+                      },
+                      children: [
+                        ...inputs,
+                        {
+                          id: nanoid(),
+                          name: "Button",
+                          description: "Button",
+                          props: {
+                            style: {
+                              width: "100%",
+                              height: "auto",
+                              paddingTop: 12,
+                              paddingBottom: 12,
+                              paddingLeft: 20,
+                              paddingRight: 20,
+                            },
+                            textColor: "White.0",
+                            children: data.button.text,
+                            blockDroppingChildrenInside: true,
+                          },
+                        },
+                      ],
                     },
                   ],
                 },

@@ -30,5 +30,6 @@ export const jsonStructure = (props?: any): Component => {
       },
       ...(rest || {}),
     },
+    children: props.children ?? [],
   };
 };

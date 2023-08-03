@@ -9,7 +9,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Navigation Item",
     props: {
       label: "Navigation Item",
-      icon: <IconHome size="1rem" stroke={1.5} />,
+      icon: IconHome,
       style: {
         width: "auto",
         height: "auto",

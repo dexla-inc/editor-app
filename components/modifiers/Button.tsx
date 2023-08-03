@@ -17,7 +17,7 @@ export const defaultInputValues = {
   variant: "filled",
   size: "md",
   color: "teal.6",
-  textColor: "black.6",
+  textColor: "White.0",
 };
 
 export const Modifier = () => {
@@ -44,7 +44,6 @@ export const Modifier = () => {
   useEffect(() => {
     if (selectedComponentId) {
       const {
-        styles = {},
         style = {},
         children,
         type,

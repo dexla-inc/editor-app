@@ -10,11 +10,15 @@ import { templatesMapper } from "./templatesMapper";
 export type Component = {
   id?: string;
   name: string;
-  description: string;
+  description?: string;
   title?: string;
   children?: Component[];
   props?: { [key: string]: any };
   blockDroppingChildrenInside?: boolean;
+  fixedPosition?: {
+    position: "left" | "top";
+    target: string;
+  };
 };
 
 export type Row = {
@@ -52,7 +56,7 @@ export const replaceIdsDeeply = (treeRoot: Component) => {
   );
 };
 
-const traverseComponents = (
+export const traverseComponents = (
   components: Component[],
   theme: MantineTheme,
   pages: PageResponse[]
@@ -135,7 +139,9 @@ export const getEditorTreeFromTemplateData = (
 ) => {
   // @ts-ignore
   const editorTree: EditorTree = templatesMapper[tree.template.name](
-    tree.template.data
+    tree.template.data,
+    theme,
+    pages
   );
   return editorTree;
 };
@@ -511,25 +517,23 @@ export const addComponent = (
   crawl(
     treeRoot,
     (node, context) => {
-      if (copy.props?.fixedPosition && node.id === "root") {
-        // @ts-ignore
-        node.children[0].props.style.width = `calc(100% - ${copy.props.style.width})`;
+      if (copy.fixedPosition) {
+        if (node.id === copy.fixedPosition.target) {
+          if (
+            copy.fixedPosition.position === "left" ||
+            copy.fixedPosition.position === "top"
+          ) {
+            node.children = [copy, ...(node.children || [])];
+          } else if (
+            copy.fixedPosition.position === "right" ||
+            copy.fixedPosition.position === "bottom"
+          ) {
+            node.children = [...(node.children || []), copy];
+          }
 
-        if (
-          copy.props?.fixedPosition === "left" ||
-          copy.props?.fixedPosition === "top"
-        ) {
-          node.children = [copy, ...(node.children || [])];
-        } else if (
-          copy.props?.fixedPosition === "right" ||
-          copy.props?.fixedPosition === "bottom"
-        ) {
-          node.children = [...(node.children || []), copy];
+          context.break();
         }
-
-        context.break();
       } else {
-        // Add content-wrapper
         if (node.id === dropTarget.id) {
           node.children = node.children ?? [];
 

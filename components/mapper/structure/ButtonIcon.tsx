@@ -10,6 +10,9 @@ export const jsonStructure = (props?: any): Component => {
       style: {
         width: "auto",
         height: "auto",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       },
       color: "Primary",
       blockDroppingChildrenInside: true,

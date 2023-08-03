@@ -244,20 +244,20 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
         const onMessage = (event: EventSourceMessage) => {
           try {
-            // TODO: We need to pass down a specific message on the stream so we know we don't need to set the stream state
-            // like a message saying ___DONE___ or any unique end message
-            setStream((state) => {
-              try {
-                if (state === undefined) {
-                  return event.data;
-                } else {
-                  return `${state}
-                  ${event.data}`;
+            if (event.data !== "___DONE___") {
+              setStream((state) => {
+                try {
+                  if (state === undefined) {
+                    return event.data;
+                  } else {
+                    return `${state}
+                    ${event.data}`;
+                  }
+                } catch (error) {
+                  return state;
                 }
-              } catch (error) {
-                return state;
-              }
-            });
+              });
+            }
           } catch (error) {
             // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
             console.error(error);

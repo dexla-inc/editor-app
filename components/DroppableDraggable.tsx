@@ -46,18 +46,10 @@ const styleWhitelist = [
   "display",
   "flexDirection",
   "flexGrow",
-  "borderBottomLeftRadius",
-  "borderBottomRightRadius",
   "borderTopLeftRadius",
   "borderTopRightRadius",
-  "borderBottomWidth",
-  "borderLeftWidth",
-  "borderRightWidth",
-  "borderTopWidth",
-  "borderWidth",
-  "borderStyle",
-  "border",
-  "borderColor",
+  "borderBottomLeftRadius",
+  "borderBottomRightRadius",
 ];
 
 export const DroppableDraggable = ({
@@ -238,7 +230,7 @@ export const DroppableDraggable = ({
     >
       <Box
         w="100%"
-        h="auto"
+        h={component.name === "Container" ? "100%" : "auto"}
         pos="relative"
         sx={{
           display: "flex",
@@ -278,7 +270,7 @@ export const DroppableDraggable = ({
           }}
         >
           <Group py={4} px={8} h={36} noWrap spacing="xs" align="center">
-            {!component.props?.fixedPosition && (
+            {!component.fixedPosition && (
               <UnstyledButton
                 sx={{ cursor: "move", alignItems: "center", display: "flex" }}
                 {...draggable}

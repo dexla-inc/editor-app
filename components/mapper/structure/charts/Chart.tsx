@@ -9,9 +9,9 @@ export const jsonStructure = (props?: any): Component => {
     children: [],
     props: {
       type: "line",
-      height: "350px",
+      height: "auto",
       style: {
-        height: "350px",
+        height: "auto",
         width: "100%",
       },
       series: [
@@ -28,10 +28,6 @@ export const jsonStructure = (props?: any): Component => {
         },
         dataLabels: {
           enabled: false,
-        },
-        title: {
-          text: "Product Trends by Month",
-          align: "left",
         },
       },
       ...(props.props || {}),

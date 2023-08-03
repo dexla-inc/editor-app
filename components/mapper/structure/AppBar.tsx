@@ -11,14 +11,13 @@ export const jsonStructure = (props?: any): Component => {
     id: nanoid(),
     name: "AppBar",
     description: "Page Heading",
+    fixedPosition: { position: "top", target: "content-wrapper" },
     props: {
       style: {
         ...defaultBorderValues,
         borderBottomWidth: `1px`,
         borderBottomStyle: `solid`,
-        borderBottomColor: theme.colors.Border
-          ? theme.colors.Border[6]
-          : theme.colors.gray[3],
+        borderBottomColor: theme.colors.Border ? "Border.6" : "gray.3",
         paddingTop: px(theme.spacing.lg),
         paddingBottom: px(theme.spacing.lg),
         paddingLeft: px(theme.spacing.lg),
