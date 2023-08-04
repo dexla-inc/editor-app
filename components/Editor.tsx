@@ -118,10 +118,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
       const isSelectedId = selectedComponentId === copiedComponent.id;
       const copy = cloneDeep(editorTree);
       addComponent(copy.root, copiedComponent, {
-        id: isSelectedId
-          ? (getComponentParent(copy.root, copiedComponent.id!)!.id as string)
-          : (getComponentById(copy.root, selectedComponentId as string)!
-              .id as string),
+        id: getComponentParent(copy.root, copiedComponent.id!)!.id as string,
         edge: "right",
       });
       setEditorTree(copy);

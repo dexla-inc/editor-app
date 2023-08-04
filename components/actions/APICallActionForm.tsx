@@ -91,6 +91,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   >(undefined);
   const router = useRouter();
   const projectId = router.query.id as string;
+  const [hasAction, setHasAction] = useState(false);
 
   const dataSources = useQuery({
     queryKey: ["datasources"],
@@ -137,6 +138,8 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
           return action;
         }),
       });
+      console.log("onSubmit");
+      setHasAction && setHasAction(true);
 
       stopLoading({
         id: "saving-action",
@@ -159,6 +162,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
         return a.id !== action.id;
       }),
     });
+    setHasAction && setHasAction(false);
   };
 
   const isLogin = actionName === "login";
@@ -317,12 +321,13 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
             type="button"
             variant="default"
             onClick={removeAction}
+            color="red"
           >
             Remove
           </Button>
         </Stack>
       </form>
-      <ActionsForm sequentialTo={action.id} />
+      <ActionsForm sequentialTo={action.id} hasAction={hasAction} />
     </>
   );
 };

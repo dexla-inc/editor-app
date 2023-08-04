@@ -123,7 +123,7 @@ export const EditorAsideSections = () => {
               action.trigger
             )}`
           : startCase(action.trigger),
-        icon: IconBolt,
+        icon: IconBolt, // Need to add an icon property to a trigger
         initiallyOpened: true,
       };
 

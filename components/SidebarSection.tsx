@@ -48,7 +48,7 @@ export function SidebarSection({
           color: theme.black,
 
           "&:hover": {
-            backgroundColor: theme.colors.gray[0],
+            backgroundColor: theme.colors.gray[1],
             color: theme.black,
           },
         }}
