@@ -1,11 +1,19 @@
 import { Endpoint } from "@/requests/datasources/types";
+import { MethodTypes } from "@/requests/types";
 import { ICON_SIZE } from "@/utils/config";
 import { Box, Flex, Group, Text, UnstyledButton } from "@mantine/core";
 import { IconChevronDown, IconChevronRight } from "@tabler/icons-react";
 import { useState } from "react";
 import { DataSourceEndpointDetail } from "./DataSourceEndpointDetail";
 
-export const colors = {
+export type ColorScheme = {
+  [key in MethodTypes]: {
+    background: string;
+    color: string;
+  };
+};
+
+export const colors: ColorScheme = {
   GET: {
     background: "#EBF3FB",
     color: "#61AFFE",

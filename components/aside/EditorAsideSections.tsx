@@ -4,6 +4,7 @@ import * as BackgroundModifier from "@/components/modifiers/Background";
 import * as BorderModifier from "@/components/modifiers/Border";
 import * as BoxShadowModifier from "@/components/modifiers/BoxShadow";
 import * as ButtonModifier from "@/components/modifiers/Button";
+import * as CheckboxModifier from "@/components/modifiers/Checkbox";
 import * as DividerModifier from "@/components/modifiers/Divider";
 import * as EffectsModifier from "@/components/modifiers/Effects";
 import * as IconModifier from "@/components/modifiers/Icon";
@@ -55,6 +56,7 @@ const sectionMapper: SectionsMapper = {
   position: PositionModifier,
   effects: EffectsModifier,
   boxShadow: BoxShadowModifier,
+  checkbox: CheckboxModifier,
 };
 
 type Tab = "design" | "actions";

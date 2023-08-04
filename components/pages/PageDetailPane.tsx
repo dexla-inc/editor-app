@@ -194,9 +194,6 @@ export default function PageDetailPane({
             <Button type="submit" loading={isLoading}>
               {page ? "Save" : "Create"}
             </Button>
-            <Button loading={isLoading} onClick={deleteFn} color="red">
-              Delete
-            </Button>
             {page?.pageState && (
               <Button
                 loading={isLoading}
@@ -204,9 +201,9 @@ export default function PageDetailPane({
                   const pageStructure = decodeSchema(page.pageState!);
                   copy(pageStructure);
                 }}
-                variant="default"
+                variant="outline"
               >
-                {copied ? "Copied" : `Copy Page`}
+                {copied ? "Copied" : `Copy Design`}
               </Button>
             )}
             {page?.id && (

@@ -12,16 +12,14 @@ import { postPageEventSource } from "@/requests/ai/queries";
 import { getPage } from "@/requests/pages/queries";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
-import { componentMapper, structureMapper } from "@/utils/componentMapper";
+import { componentMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
 import { HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
 import {
   Component,
-  Row,
   addComponent,
   getComponentById,
   getComponentParent,
-  getEditorTreeFromPageStructure,
   getEditorTreeFromTemplateData,
   removeComponent,
 } from "@/utils/editor";
@@ -278,42 +276,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
         };
 
         const onClose = async () => {
-          /* if (page.hasNavigation) {
-            // TODO: Remove this timeout once we have a good way to define that the stream is done
-            // currently the onClose function is called but the last stream is still valid
-            // so we set the tree to tha latest state, which override whatever we set here
-            // We need to pass down a specific message on the stream so we know we don't need to set the state
-            // like a message saying ___DONE___ or any unique end message
-            setTimeout(() => {
-              const tree = useEditorStore.getState().tree;
-              const copy = cloneDeep(tree);
-
-              const appbarStructure = structureMapper["AppBar"];
-              const appbar = appbarStructure.structure({
-                theme,
-                pages,
-              });
-
-              const navbarStructure = structureMapper["Navbar"];
-              const navbar = navbarStructure.structure({
-                theme,
-                pages,
-              });
-
-              addComponent(copy.root, navbar, {
-                id: "root",
-                edge: "left",
-              });
-
-              addComponent(copy.root, appbar, {
-                id: "content-wrapper",
-                edge: "top",
-              });
-
-              setEditorTree(copy);
-            }, 1000);
-          } */
-
           stopLoading({
             id: "page-generation",
             title: "Page Generated",

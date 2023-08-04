@@ -731,7 +731,8 @@ export type Modifiers =
   | "divider"
   | "select"
   | "effects"
-  | "boxShadow";
+  | "boxShadow"
+  | "checkbox";
 
 export type ComponentDefinition = {
   Component: any;
@@ -796,11 +797,11 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: [
       "layout",
-      "position",
-      "effects",
       "background",
       "spacing",
       "size",
+      "position",
+      "effects",
       "border",
       "boxShadow",
     ],
@@ -930,7 +931,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Checkbox component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["checkbox", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

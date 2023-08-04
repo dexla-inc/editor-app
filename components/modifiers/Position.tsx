@@ -60,7 +60,7 @@ export const Modifier = () => {
 
   return (
     <form key={selectedComponentId}>
-      <Stack>
+      <Stack spacing="xs">
         <Stack spacing={2}>
           <Select
             label="Position"

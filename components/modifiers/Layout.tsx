@@ -10,6 +10,11 @@ import {
   IconAlignBoxLeftMiddle,
   IconAlignBoxRightMiddle,
   IconLayout2,
+  IconLayoutAlignCenter,
+  IconLayoutAlignLeft,
+  IconLayoutAlignRight,
+  IconLayoutDistributeHorizontal,
+  IconLayoutDistributeVertical,
 } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
@@ -70,7 +75,7 @@ export const Modifier = () => {
 
   return (
     <form key={selectedComponentId}>
-      <Stack>
+      <Stack spacing="xs">
         <Stack spacing={2}>
           <Text size="0.75rem">Direction</Text>
           <SegmentedControl
@@ -181,7 +186,7 @@ export const Modifier = () => {
                 label: (
                   <StylingPaneItemIcon
                     label="Start"
-                    icon={<IconAlignBoxLeftMiddle size={14} />}
+                    icon={<IconLayoutAlignLeft size={14} />}
                   />
                 ),
                 value: "flex-start",
@@ -190,7 +195,7 @@ export const Modifier = () => {
                 label: (
                   <StylingPaneItemIcon
                     label="Center"
-                    icon={<IconAlignBoxCenterMiddle size={14} />}
+                    icon={<IconLayoutAlignCenter size={14} />}
                   />
                 ),
                 value: "center",
@@ -199,7 +204,7 @@ export const Modifier = () => {
                 label: (
                   <StylingPaneItemIcon
                     label="End"
-                    icon={<IconAlignBoxRightMiddle size={14} />}
+                    icon={<IconLayoutAlignRight size={14} />}
                   />
                 ),
                 value: "flex-end",
@@ -208,7 +213,7 @@ export const Modifier = () => {
                 label: (
                   <StylingPaneItemIcon
                     label="Space Between"
-                    icon={<IconAlignBoxBottomCenter size={14} />}
+                    icon={<IconLayoutDistributeHorizontal size={14} />}
                   />
                 ),
                 value: "space-between",
@@ -217,7 +222,7 @@ export const Modifier = () => {
                 label: (
                   <StylingPaneItemIcon
                     label="Space Around"
-                    icon={<IconAlignBoxCenterMiddle size={14} />}
+                    icon={<IconLayoutDistributeVertical size={14} />}
                   />
                 ),
                 value: "space-around",
