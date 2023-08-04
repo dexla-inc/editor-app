@@ -1,3 +1,4 @@
+import { IconSelector } from "@/components/IconSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
@@ -9,6 +10,11 @@ import { useEffect } from "react";
 
 export const icon = IconTexture;
 export const label = "Icon";
+
+export const defaultIconValues = {
+  color: "Primary.6",
+  icon: "",
+};
 
 export const Modifier = () => {
   const editorTree = useEditorStore((state) => state.tree);
@@ -29,9 +35,7 @@ export const Modifier = () => {
   const componentProps = selectedComponent?.props || {};
 
   const form = useForm({
-    initialValues: {
-      color: "Primary.6",
-    },
+    initialValues: defaultIconValues,
   });
 
   useEffect(() => {
@@ -39,6 +43,7 @@ export const Modifier = () => {
       const { style } = componentProps;
       form.setValues({
         color: style?.color ?? "Primary.6",
+        icon: componentProps.name,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
@@ -56,6 +61,14 @@ export const Modifier = () => {
             debouncedTreeUpdate(selectedComponentId as string, {
               style: { color: value },
             });
+          }}
+        />
+        <IconSelector
+          topLabel="Icon"
+          selectedIcon={form.values.icon}
+          onIconSelect={(value: string) => {
+            form.setFieldValue("icon", value);
+            debouncedTreeUpdate(selectedComponentId as string, { name: value });
           }}
         />
       </Stack>

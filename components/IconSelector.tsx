@@ -1,4 +1,3 @@
-import { Icon } from "@/components/Icon";
 import { IconModal } from "@/components/IconModal";
 import { Box, Flex, Text } from "@mantine/core";
 
@@ -20,7 +19,7 @@ export const IconSelector = ({
       </Text>
       <Flex gap="md">
         <IconModal onIconSelect={onIconSelect} />
-        <Icon name={selectedIcon} />
+        {/* <Icon name={selectedIcon} /> */}
       </Flex>
     </Box>
   );
