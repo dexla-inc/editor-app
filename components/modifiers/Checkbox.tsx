@@ -2,23 +2,19 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
-import { Select, Stack, TextInput } from "@mantine/core";
+import { Checkbox, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconForms } from "@tabler/icons-react";
+import { IconCheckbox } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
-import { Icon } from "../Icon";
-import { IconSelector } from "../IconSelector";
 
-export const icon = IconForms;
-export const label = "Input";
+export const icon = IconCheckbox;
+export const label = "Checkbox";
 
 export const defaultInputValues = {
+  label: "A label",
+  checked: false,
   size: "sm",
-  placeholder: "Input",
-  type: "text",
-  label: "",
-  icon: "",
   withAsterisk: false,
   labelSpacing: "0",
 };
@@ -49,20 +45,16 @@ export const Modifier = () => {
         style = {},
         label,
         size,
-        placeholder,
-        type,
-        icon,
         withAsterisk,
+        checked,
         labelProps = {},
       } = componentProps;
 
       form.setValues({
         size: size ?? defaultInputValues.size,
-        placeholder: placeholder ?? defaultInputValues.placeholder,
-        type: type ?? defaultInputValues.type,
         label: label ?? defaultInputValues.label,
-        icon: icon ?? defaultInputValues.icon,
         withAsterisk: withAsterisk ?? defaultInputValues.withAsterisk,
+        checked: checked ?? defaultInputValues.checked,
         labelProps:
           labelProps.style?.marginBottom ?? defaultInputValues.labelSpacing,
         ...style,
@@ -81,7 +73,7 @@ export const Modifier = () => {
   return (
     <form>
       <Stack spacing="xs">
-        <TextInput
+        <Checkbox
           label="Label"
           size="xs"
           {...form.getInputProps("label")}
@@ -90,27 +82,13 @@ export const Modifier = () => {
             debouncedUpdate("label", e.target.value);
           }}
         />
-        <TextInput
-          label="Placeholder"
+        <Checkbox
+          label="Checked"
           size="xs"
-          {...form.getInputProps("placeholder")}
+          {...form.getInputProps("checked")}
           onChange={(e) => {
-            form.setFieldValue("placeholder", e.target.value);
-            debouncedUpdate("placeholder", e.target.value);
-          }}
-        />
-        <Select
-          label="Type"
-          size="xs"
-          data={[
-            { label: "Text", value: "text" },
-            { label: "Email", value: "email" },
-            { label: "Password", value: "password" },
-          ]}
-          {...form.getInputProps("type")}
-          onChange={(value) => {
-            form.setFieldValue("type", value as string);
-            debouncedUpdate("type", value as string);
+            form.setFieldValue("checked", e.currentTarget.checked);
+            debouncedUpdate("checked", e.currentTarget.checked);
           }}
         />
         <SizeSelector
@@ -120,13 +98,6 @@ export const Modifier = () => {
             debouncedUpdate("size", value as string);
           }}
         />
-        {/* <IconSelector
-          {...form.getInputProps("icon")}
-          onChange={(value) => {
-            form.setFieldValue("icon", value);
-            debouncedUpdate("icon", value);
-          }}
-        /> */}
         <SwitchSelector
           topLabel="Required"
           {...form.getInputProps("withAsterisk")}
@@ -141,14 +112,6 @@ export const Modifier = () => {
           onChange={(value) => {
             form.setFieldValue("labelProps", value as string);
             debouncedUpdate("labelProps", { mb: value as string });
-          }}
-        />
-        <IconSelector
-          topLabel="Icon"
-          selectedIcon={form.values.icon}
-          onIconSelect={(iconName: string) => {
-            form.setFieldValue("icon", iconName);
-            debouncedUpdate("icon", <Icon name={iconName} />);
           }}
         />
       </Stack>

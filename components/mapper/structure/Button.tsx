@@ -13,7 +13,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Button",
     props: {
       style: {
-        width: "100%",
+        width: "auto",
         height: "auto",
         paddingTop: px(theme.spacing.sm),
         paddingBottom: px(theme.spacing.sm),

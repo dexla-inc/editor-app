@@ -1,16 +1,16 @@
+import { getDataSourceEndpoints } from "@/requests/datasources/queries";
+import { Endpoint } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { Action, BindResponseToComponentAction } from "@/utils/actions";
+import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
 import { ActionIcon, Button, Popover, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEffect, useState } from "react";
-import { IconCurrentLocation } from "@tabler/icons-react";
-import { ICON_SIZE } from "@/utils/config";
-import { useRouter } from "next/router";
-import { getDataSourceEndpoints } from "@/requests/datasources/queries";
-import { Endpoint } from "@/requests/datasources/types";
 import { useDisclosure } from "@mantine/hooks";
+import { IconCurrentLocation } from "@tabler/icons-react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 type Props = {
   id: string;
@@ -236,6 +236,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
           type="button"
           variant="default"
           onClick={removeAction}
+          color="red"
         >
           Remove
         </Button>

@@ -8,7 +8,7 @@ import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
 export const icon = IconLayout;
-export const label = "Advanced Layout";
+export const label = "Position";
 
 export const defaultLayoutValues = {
   position: "relative",
@@ -60,7 +60,7 @@ export const Modifier = () => {
 
   return (
     <form key={selectedComponentId}>
-      <Stack>
+      <Stack spacing="xs">
         <Stack spacing={2}>
           <Select
             label="Position"

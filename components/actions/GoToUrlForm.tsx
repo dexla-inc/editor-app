@@ -101,6 +101,7 @@ export const GoToUrlForm = ({ id }: Props) => {
           type="button"
           variant="default"
           onClick={removeAction}
+          color="red"
         >
           Remove
         </Button>

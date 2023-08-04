@@ -95,6 +95,7 @@ export const DebugActionForm = ({ id }: Props) => {
           type="button"
           variant="default"
           onClick={removeAction}
+          color="red"
         >
           Remove
         </Button>

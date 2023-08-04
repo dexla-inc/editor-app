@@ -426,6 +426,11 @@ export const Modifier = () => {
                   },
                 });
               }}
+              options={[
+                { value: "px", label: "PX" },
+                { value: "rem", label: "REM" },
+                { value: "%", label: "%" },
+              ]}
             />
           </Group>
           {form.values.showRadius === "radius-sides" && (

@@ -15,24 +15,26 @@ type Props = {
   value?: string;
   onChange?: (value: string) => void;
   disabledUnits?: Unit[];
+  options?: SelectItem[];
 };
-
-const options: SelectItem[] = [
-  { value: "px", label: "PX" },
-  { value: "rem", label: "REM" },
-  { value: "%", label: "%" },
-  { value: "vh", label: "VH" },
-  { value: "vw", label: "VW" },
-  { value: "auto", label: "auto" },
-];
 
 export const UnitInput = ({
   value: fetchedValue = "",
   onChange,
   disabledUnits,
+  options: customOptions,
   ...props
 }: Props & Omit<NumberInputProps, "onChange">) => {
   const theme = useMantineTheme();
+
+  const options = customOptions ?? [
+    { value: "px", label: "PX" },
+    { value: "rem", label: "REM" },
+    { value: "%", label: "%" },
+    { value: "vh", label: "VH" },
+    { value: "vw", label: "VW" },
+    { value: "auto", label: "auto" },
+  ];
 
   const [splitValue, splitUnit] = splitValueAndUnit(
     fetchedValue.toString()

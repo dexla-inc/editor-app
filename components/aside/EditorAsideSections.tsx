@@ -1,9 +1,10 @@
 import { SidebarSection } from "@/components/SidebarSection";
 import { ActionsForm } from "@/components/actions/ActionsForm";
-import * as AdvancedLayoutModifier from "@/components/modifiers/AdvancedLayout";
 import * as BackgroundModifier from "@/components/modifiers/Background";
 import * as BorderModifier from "@/components/modifiers/Border";
+import * as BoxShadowModifier from "@/components/modifiers/BoxShadow";
 import * as ButtonModifier from "@/components/modifiers/Button";
+import * as CheckboxModifier from "@/components/modifiers/Checkbox";
 import * as DividerModifier from "@/components/modifiers/Divider";
 import * as EffectsModifier from "@/components/modifiers/Effects";
 import * as IconModifier from "@/components/modifiers/Icon";
@@ -11,6 +12,7 @@ import * as ImageModifier from "@/components/modifiers/Image";
 import * as InputModifier from "@/components/modifiers/Input";
 import * as LayoutModifier from "@/components/modifiers/Layout";
 import * as LinkModifier from "@/components/modifiers/Link";
+import * as PositionModifier from "@/components/modifiers/Position";
 import * as SelectModifier from "@/components/modifiers/Select";
 import * as SizeModifier from "@/components/modifiers/Size";
 import * as SpacingModifier from "@/components/modifiers/Spacing";
@@ -52,9 +54,11 @@ const sectionMapper: SectionsMapper = {
   icon: IconModifier,
   divider: DividerModifier,
   select: SelectModifier,
-  advancedLayout: AdvancedLayoutModifier,
+  position: PositionModifier,
   effects: EffectsModifier,
   modal: ModalModifier,
+  boxShadow: BoxShadowModifier,
+  checkbox: CheckboxModifier,
 };
 
 type Tab = "design" | "actions";
@@ -121,7 +125,7 @@ export const EditorAsideSections = () => {
               action.trigger
             )}`
           : startCase(action.trigger),
-        icon: IconBolt,
+        icon: IconBolt, // Need to add an icon property to a trigger
         initiallyOpened: true,
       };
 

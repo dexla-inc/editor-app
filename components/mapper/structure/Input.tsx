@@ -9,7 +9,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Input",
     props: {
       style: {
-        width: "100%",
+        width: "auto",
         height: "auto",
         flexDirection: "column",
       },

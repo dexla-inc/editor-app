@@ -46,6 +46,8 @@ const styleWhitelist = [
   "display",
   "flexDirection",
   "flexGrow",
+  "alignItems",
+  "justifyContent",
   "borderTopLeftRadius",
   "borderTopRightRadius",
   "borderBottomLeftRadius",
@@ -194,6 +196,8 @@ export const DroppableDraggable = ({
       ? { boxShadow: baseShadow }
       : {};
 
+  // console.log(shadows);
+
   const isContentWrapper = id === "content-wrapper";
   const haveNonRootParent = parent && parent.id !== "root";
 
@@ -321,6 +325,17 @@ export const DroppableDraggable = ({
                 const container = structureMapper["Container"].structure({
                   theme: editorTheme,
                 });
+
+                if (container.props && container.props.style) {
+                  container.props.style = {
+                    ...container.props.style,
+                    width: "auto",
+                    paddingBottom: 0,
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                    paddingTop: 0,
+                  };
+                }
 
                 const copy = cloneDeep(editorTree);
                 const containerId = addComponent(

@@ -5,6 +5,7 @@ import {
   getDataSources,
 } from "@/requests/datasources/queries";
 import { Endpoint } from "@/requests/datasources/types";
+import { MethodTypes } from "@/requests/types";
 import { useAppStore } from "@/stores/app";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
@@ -36,10 +37,8 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
         sx={{
           fontSize: 8,
           color: "white",
-          // @ts-ignore
-          border: colors[method].color + " 1px solid",
-          // @ts-ignore
-          background: colors[method].color,
+          border: colors[method as MethodTypes].color + " 1px solid",
+          background: colors[method as MethodTypes].color,
           borderRadius: "4px",
           width: 38,
           textAlign: "center",
@@ -233,6 +232,28 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
               form.setFieldValue("endpoint", selected!);
               setSelectedEndpoint(endpoints?.find((e) => e.id === selected));
             }}
+            icon={
+              <Flex gap="lg">
+                <Box
+                  p={2}
+                  sx={{
+                    fontSize: 8,
+                    color: "white",
+                    border:
+                      selectedEndpoint?.methodType &&
+                      colors[selectedEndpoint.methodType].color + " 1px solid",
+                    background:
+                      selectedEndpoint?.methodType &&
+                      colors[selectedEndpoint.methodType].color,
+                    borderRadius: "4px",
+                    width: 20,
+                    textAlign: "center",
+                  }}
+                >
+                  {selectedEndpoint?.methodType}
+                </Box>
+              </Flex>
+            }
           />
           {selectedEndpoint && (
             <Stack spacing={2}>

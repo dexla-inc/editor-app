@@ -720,7 +720,7 @@ export type Modifiers =
   | "text"
   | "border"
   | "layout"
-  | "advancedLayout"
+  | "position"
   | "background"
   | "input"
   | "button"
@@ -731,7 +731,9 @@ export type Modifiers =
   | "divider"
   | "select"
   | "effects"
-  | "modal";
+  | "modal"
+  | "boxShadow"
+  | "checkbox";
 
 export type ComponentDefinition = {
   Component: any;
@@ -796,12 +798,13 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: [
       "layout",
-      "advancedLayout",
-      "effects",
       "background",
       "spacing",
       "size",
+      "position",
+      "effects",
       "border",
+      "boxShadow",
     ],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
@@ -929,7 +932,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Checkbox component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["checkbox", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -988,14 +991,7 @@ export const componentMapper: ComponentMapper = {
       // eslint-disable-next-line jsx-a11y/alt-text
       <Image component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: [
-      "image",
-      "advancedLayout",
-      "effects",
-      "spacing",
-      "size",
-      "border",
-    ],
+    modifiers: ["image", "position", "effects", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

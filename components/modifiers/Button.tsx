@@ -16,7 +16,7 @@ export const defaultInputValues = {
   type: "button",
   variant: "filled",
   size: "md",
-  color: "teal.6",
+  color: "Primary.6",
   textColor: "White.0",
 };
 

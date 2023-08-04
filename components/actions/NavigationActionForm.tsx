@@ -103,6 +103,7 @@ export const NavigationActionForm = ({ id }: Props) => {
           type="button"
           variant="default"
           onClick={removeAction}
+          color="red"
         >
           Remove
         </Button>

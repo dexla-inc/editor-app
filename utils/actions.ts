@@ -199,13 +199,13 @@ export const loginAction = async ({
   try {
     const iframeWindow = useEditorStore.getState().iframeWindow;
     const projectId = router.query.id as string;
+    console.log(actionId, action, router, onSuccess, onError, component, rest);
 
     updateTreeComponent(component.id!, { loading: true }, false);
 
     // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
     // Can revisit later and create a cashing layer.
     if (!cachedEndpoints) {
-      console.log("getting login endpoints");
       const { results } = await getDataSourceEndpoints(
         projectId,
         action.datasource.id
@@ -384,7 +384,8 @@ export const apiCallAction = async ({
           )
         : undefined;
 
-    // TODO: Need to add one for headers, we could then remove the auth code below and just build headers up instead
+    // TODO: Need to add a binding for headers.
+    // We could then remove the auth code below and just build headers up instead
 
     const authStore = useAuthStore.getState();
     authStore.refreshAccessToken();

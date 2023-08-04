@@ -88,9 +88,16 @@ export default function PagesStep({
         message: "Here's your pages names. We hope you like it",
       });
       setIsLoading && setIsLoading(false);
-    } catch (error) {
+    } catch (error: any) {
       // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
       console.error(error);
+      stopLoading({
+        id: "pages-stream",
+        title: "There was a problem",
+        message: error,
+        isError: true,
+      });
+      setIsLoading && setIsLoading(false);
     }
   };
 
