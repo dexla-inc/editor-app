@@ -33,7 +33,7 @@ export const useOnDrop = () => {
 
   const onDrop = useCallback(
     (_droppedId: string, dropTarget: DropTarget) => {
-      const droppedId = parseId(_droppedId);
+      const droppedId = parseId(_droppedId ?? componentToAdd?.id);
       dropTarget.id = parseId(dropTarget.id);
       const copy = cloneDeep(editorTree);
       const activeComponent = getComponentById(copy.root, droppedId);

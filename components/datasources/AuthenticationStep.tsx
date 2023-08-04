@@ -120,8 +120,6 @@ export default function AuthenticationStep({
         expiryProperty,
       } = values;
 
-      console.log("expiryProperty", expiryProperty);
-
       if (loginEndpointId !== undefined && accessToken !== undefined) {
         await patchDataSourceWithParams(
           projectId,

@@ -450,6 +450,22 @@ export const getComponentParent = (
   return parent;
 };
 
+export const getAllModals = (treeRoot: Component): Component[] => {
+  const modals: Component[] = [];
+
+  crawl(
+    treeRoot,
+    (node) => {
+      if (node.name === "Modal") {
+        modals.push(node);
+      }
+    },
+    { order: "bfs" }
+  );
+
+  return modals;
+};
+
 export const removeComponentFromParent = (
   treeRoot: Component,
   id: string,

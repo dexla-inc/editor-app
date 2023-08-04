@@ -4,6 +4,7 @@ import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { LoginActionForm } from "@/components/actions/LoginActionForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
+import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import {
   getDataSourceAuth,
   getDataSourceEndpoints,
@@ -51,6 +52,7 @@ export const actions = [
   "openToast",
   "showTooltip",
   "copyToClipboard",
+  "openModal",
 ];
 
 type ActionTriggerAll = (typeof triggers)[number];
@@ -77,6 +79,12 @@ export type GoToUrlAction = {
 export type DebugAction = {
   name: "debug";
   message: string;
+  data?: any;
+};
+
+export type OpenModalAction = {
+  name: "openModal";
+  modalId: string;
   data?: any;
 };
 
@@ -110,7 +118,8 @@ export type Action = {
     | APICallAction
     | BindResponseToComponentAction
     | GoToUrlAction
-    | LoginAction;
+    | LoginAction
+    | OpenModalAction;
   sequentialTo?: string;
 };
 
@@ -155,6 +164,15 @@ export type DebugActionParams = ActionParams & {
 
 export const debugAction = ({ action }: DebugActionParams) => {
   alert(action.message);
+};
+
+export type OpenModalActionParams = ActionParams & {
+  action: OpenModalAction;
+};
+
+export const openModalAction = ({ action }: OpenModalActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  updateTreeComponent(action.modalId, { opened: true }, false);
 };
 
 export type APICallActionParams = ActionParams & {
@@ -471,5 +489,9 @@ export const actionMapper = {
   login: {
     action: loginAction,
     form: LoginActionForm,
+  },
+  openModal: {
+    action: openModalAction,
+    form: OpenModalActionForm,
   },
 };

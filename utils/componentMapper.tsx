@@ -730,7 +730,8 @@ export type Modifiers =
   | "icon"
   | "divider"
   | "select"
-  | "effects";
+  | "effects"
+  | "modal";
 
 export type ComponentDefinition = {
   Component: any;
@@ -1210,8 +1211,8 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <Modal component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "spacing", "size", "border"],
-    actionTriggers: ["onMount", "onClick", "onClose"],
+    modifiers: ["modal", "border"],
+    actionTriggers: ["onMount", "onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
 };

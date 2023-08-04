@@ -1,37 +1,73 @@
-import { Component } from "@/utils/editor";
+import { useEditorStore } from "@/stores/editor";
+import { Component, checkIfIsChild } from "@/utils/editor";
 import { Modal as MantineModal, ModalProps } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { useEffect } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-} & ModalProps;
+} & Omit<ModalProps, "opened">;
 
 export const Modal = ({
   renderTree,
   component,
-  opened: propOpened,
   onClose: propOnClose,
   ...props
 }: Props) => {
-  const { children, title, ...componentProps } = component.props as any;
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId
+  );
+  const theme = useEditorStore((state) => state.theme);
+  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
+  const updateTreeComponent = useEditorStore(
+    (state) => state.updateTreeComponent
+  );
+
+  const {
+    children,
+    title,
+    opened: propOpened,
+    style,
+    ...componentProps
+  } = component.props as any;
 
   const [opened, { open, close }] = useDisclosure(propOpened);
-
-  const modalRef = { open, close };
 
   const handleClose = () => {
     close();
     propOnClose && propOnClose();
+    updateTreeComponent(component.id!, { opened: false }, false);
   };
+
+  useEffect(() => {
+    if (propOpened) open();
+    if (!propOpened) close();
+  }, [close, open, propOpened]);
 
   return (
     <MantineModal
-      opened={opened}
-      onClose={handleClose}
+      centered
+      withinPortal
+      trapFocus={false}
+      lockScroll={false}
+      target={iframeWindow?.document.getElementById("iframe-content")}
+      opened={
+        isPreviewMode
+          ? opened
+          : selectedComponentId === component.id ||
+            checkIfIsChild(component, selectedComponentId as string)
+      }
+      onClose={isPreviewMode ? handleClose : () => {}}
       title={title}
       {...props}
       {...componentProps}
+      styles={{
+        content: style ?? {},
+        body: { marginTop: "40px" },
+        title: { fontFamily: theme.fontFamily },
+      }}
     >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))

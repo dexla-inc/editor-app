@@ -51,6 +51,7 @@ const styleWhitelist = [
   "borderBottomLeftRadius",
   "borderBottomRightRadius",
 ];
+const handlerBlacklist = ["Modal"];
 
 export const DroppableDraggable = ({
   id,
@@ -206,6 +207,8 @@ export const DroppableDraggable = ({
     }, {} as Record<string, unknown>),
   };
 
+  const isModal = component.name === "Modal";
+
   return (
     <Box
       ref={ref}
@@ -245,6 +248,7 @@ export const DroppableDraggable = ({
               ...component,
               props: {
                 ...component.props,
+                ...(isModal ? { style: shadows } : {}),
                 triggers: isPreviewMode
                   ? { ...triggers, onMouseEnter: triggers?.onHover }
                   : {},
@@ -256,7 +260,7 @@ export const DroppableDraggable = ({
           children?.children
         )}
       </Box>
-      {!isContentWrapper && (
+      {!isContentWrapper && !handlerBlacklist.includes(component.name) && (
         <Box
           pos="absolute"
           h={36}
@@ -313,7 +317,7 @@ export const DroppableDraggable = ({
             </ActionIcon>
             <ActionIcon
               variant="transparent"
-              onClick={(e) => {
+              onClick={() => {
                 const container = structureMapper["Container"].structure({
                   theme: editorTheme,
                 });

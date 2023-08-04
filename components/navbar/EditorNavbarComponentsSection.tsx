@@ -56,40 +56,8 @@ export const EditorNavbarComponentsSection = () => {
     {} as Record<string, DraggableComponentData[]>
   );
 
-  const sort = (a: DraggableComponentData, b: DraggableComponentData) => {
-    const aId = a.id as string;
-    const bId = b.id as string;
-
-    if (aId < bId) {
-      return -1;
-    }
-    if (aId > bId) {
-      return 1;
-    }
-
-    return 0;
-  };
-
   const customComponents =
     componentList.data?.results.filter((c) => c.scope !== "GLOBAL") ?? [];
-
-  const globalComponents = (
-    componentList.data?.results.filter((c) => c.scope === "GLOBAL") ?? []
-  ).reduce((draggables, component): DraggableComponentData[] => {
-    const draggable = (props: any) => (
-      <DraggableComponent
-        key={component.id}
-        id={component.id}
-        text={component.description}
-        data={JSON.parse(decodeSchema(component.content))}
-        {...props}
-      />
-    );
-
-    return draggables.concat({ draggable, id: component.description });
-  }, [] as DraggableComponentData[]);
-
-  const sortedComponents = [...globalComponents].sort(sort);
 
   return (
     <Stack spacing="xl">

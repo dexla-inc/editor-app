@@ -141,9 +141,6 @@ export const template = (data: Data, theme: any, pages: any) => {
       ? traverseComponents(children, theme, pages)
       : undefined;
 
-    if (card.type === "Form") {
-      console.log({ children, childrenComponents, card });
-    }
     const cardContent = structureMapper[card.component.name].structure({
       theme,
       props: { ...((card.component as any).props ?? {}) },

@@ -85,7 +85,7 @@ export type EditorState = {
     componentId: string,
     children: Component[]
   ) => void;
-  setSelectedComponentId: (selectedComponentId: string) => void;
+  setSelectedComponentId: (selectedComponentId?: string) => void;
   clearSelection: () => void;
   setIsSaving: (isSaving: boolean) => void;
   togglePreviewMode: (value: boolean) => void;

@@ -114,7 +114,7 @@ export const IFrame = ({ children, ...props }: Props) => {
               key: "iframe-canvas",
             })}
           >
-            {children}
+            <Box id="iframe-content">{children}</Box>
           </MantineProvider>,
           mountNode
         )}

@@ -33,14 +33,10 @@ export const Draggable = ({
   const theme = useMantineTheme();
 
   const setComponentToAdd = useEditorStore((state) => state.setComponentToAdd);
-  const setSelectedComponentId = useEditorStore(
-    (state) => state.setSelectedComponentId
-  );
 
   const onDragStart = useCallback(() => {
-    setSelectedComponentId(id);
     setComponentToAdd(data);
-  }, [data, id, setComponentToAdd, setSelectedComponentId]);
+  }, [data, setComponentToAdd]);
 
   const draggable = useDraggable({
     id: `add-${id}`,

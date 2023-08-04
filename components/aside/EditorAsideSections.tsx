@@ -16,6 +16,7 @@ import * as SizeModifier from "@/components/modifiers/Size";
 import * as SpacingModifier from "@/components/modifiers/Spacing";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TitleModifier from "@/components/modifiers/Title";
+import * as ModalModifier from "@/components/modifiers/Modal";
 import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper } from "@/utils/actions";
 import { Modifiers, componentMapper } from "@/utils/componentMapper";
@@ -53,6 +54,7 @@ const sectionMapper: SectionsMapper = {
   select: SelectModifier,
   advancedLayout: AdvancedLayoutModifier,
   effects: EffectsModifier,
+  modal: ModalModifier,
 };
 
 type Tab = "design" | "actions";

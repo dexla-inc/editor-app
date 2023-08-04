@@ -51,7 +51,7 @@ export const Modifier = () => {
       const { bg, style } = componentProps;
       form.setValues({
         bg: bg ?? "transparent",
-        backgroundImage: style.backgroundImage
+        backgroundImage: style?.backgroundImage
           ? extractBackgroundUrl(style.backgroundImage)
           : "",
       });
