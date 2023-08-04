@@ -193,6 +193,8 @@ export const DroppableDraggable = ({
       ? { boxShadow: baseShadow }
       : {};
 
+  // console.log(shadows);
+
   const isContentWrapper = id === "content-wrapper";
   const haveNonRootParent = parent && parent.id !== "root";
 

@@ -720,7 +720,7 @@ export type Modifiers =
   | "text"
   | "border"
   | "layout"
-  | "advancedLayout"
+  | "position"
   | "background"
   | "input"
   | "button"
@@ -730,7 +730,8 @@ export type Modifiers =
   | "icon"
   | "divider"
   | "select"
-  | "effects";
+  | "effects"
+  | "boxShadow";
 
 export type ComponentDefinition = {
   Component: any;
@@ -795,12 +796,13 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: [
       "layout",
-      "advancedLayout",
+      "position",
       "effects",
       "background",
       "spacing",
       "size",
       "border",
+      "boxShadow",
     ],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
@@ -987,14 +989,7 @@ export const componentMapper: ComponentMapper = {
       // eslint-disable-next-line jsx-a11y/alt-text
       <Image component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: [
-      "image",
-      "advancedLayout",
-      "effects",
-      "spacing",
-      "size",
-      "border",
-    ],
+    modifiers: ["image", "position", "effects", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
