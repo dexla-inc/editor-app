@@ -1,12 +1,12 @@
 import { Component } from "@/utils/editor";
-import { Radio as MantineRadio, RadioProps } from "@mantine/core";
+import { Group, Radio as MantineRadio, RadioGroupProps } from "@mantine/core";
 import { useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-  isPreviewMode: boolean;
-} & RadioProps;
+  isPreviewMode?: boolean;
+} & RadioGroupProps;
 
 export const Radio = ({
   renderTree,
@@ -14,44 +14,39 @@ export const Radio = ({
   isPreviewMode,
   ...props
 }: Props) => {
-  const {
-    label,
-    value,
-    triggers,
-    checked,
-    isInsideGroup = false,
-    ...componentProps
-  } = component.props as any;
-
-  const [_checked, setChecked] = useState<boolean>(
-    isPreviewMode ? checked : false
-  );
+  const { children, value, ...componentProps } = component.props as any;
+  const [_value, setValue] = useState(value);
 
   const defaultTriggers = isPreviewMode
-    ? isInsideGroup
-      ? {}
-      : {
-          onChange: (e: any) => {
-            setChecked(e.currentTarget.checked);
-          },
-        }
+    ? {
+        onChange: (val: string) => {
+          setValue(val);
+        },
+      }
     : {
         onChange: (e: any) => {
-          e?.preventDefault();
-          e?.stopPropagation();
-          setChecked(false);
+          setValue(undefined);
         },
       };
 
   return (
-    <MantineRadio
-      {...props}
-      {...componentProps}
-      {...defaultTriggers}
-      label={label}
-      value={value}
-      checked={isPreviewMode ? _checked : false}
-      {...triggers}
-    />
+    <MantineRadio.Group {...props} {...defaultTriggers} {...componentProps}>
+      <Group mt="xs">
+        {component.children && component.children.length > 0
+          ? component.children?.map((child) =>
+              renderTree({
+                ...child,
+                props: {
+                  ...child.props,
+                  isInsideGroup: isPreviewMode,
+                  checked: isPreviewMode
+                    ? child?.props?.value?.toString() === _value?.toString()
+                    : false,
+                },
+              })
+            )
+          : children}
+      </Group>
+    </MantineRadio.Group>
   );
 };

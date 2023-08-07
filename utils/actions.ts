@@ -52,7 +52,6 @@ export const actions = [
   "openToast",
   "showTooltip",
   "copyToClipboard",
-  "openModal",
 ];
 
 type ActionTriggerAll = (typeof triggers)[number];

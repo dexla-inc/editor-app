@@ -27,7 +27,7 @@ import { NavLink } from "@/components/mapper/NavLink";
 import { Navbar } from "@/components/mapper/Navbar";
 import { Pagination } from "@/components/mapper/Pagination";
 import { Radio } from "@/components/mapper/Radio";
-import { RadioGroup } from "@/components/mapper/RadioGroup";
+import { RadioItem } from "@/components/mapper/RadioItem";
 import { Rating } from "@/components/mapper/Rating";
 import { Select } from "@/components/mapper/Select";
 import { Switch } from "@/components/mapper/Switch";
@@ -68,8 +68,8 @@ import * as NavLinkStructure from "@/components/mapper/structure/NavLink";
 import * as NavbarStructure from "@/components/mapper/structure/Navbar";
 import * as NotImplemented from "@/components/mapper/structure/NotImplemented";
 import * as PaginationStructure from "@/components/mapper/structure/Pagination";
-import * as RadioStructure from "@/components/mapper/structure/Radio";
-import * as RadioGroupStructure from "@/components/mapper/structure/RadioGroup";
+import * as RadioGroupStructure from "@/components/mapper/structure/Radio";
+import * as RadioItemStructure from "@/components/mapper/structure/RadioItem";
 import * as RatingStructure from "@/components/mapper/structure/Rating";
 import * as SelectStructure from "@/components/mapper/structure/Select";
 import * as SwitchStructure from "@/components/mapper/structure/Switch";
@@ -235,23 +235,16 @@ export const structureMapper: StructureMapper = {
     category: "Input",
     icon: <IconLink size={ICON_SIZE} />,
   },
-
-  Radio: {
-    structure: (props: any) => RadioStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Radio"
-        icon={<IconPlaystationCircle size={LARGE_ICON_SIZE} />}
-      />
-    ),
+  RadioItem: {
+    structure: (props: any) => RadioItemStructure.jsonStructure(props),
     category: "Input",
     icon: <IconPlaystationCircle size={ICON_SIZE} />,
   },
-  RadioGroup: {
+  Radio: {
     structure: (props: any) => RadioGroupStructure.jsonStructure(props),
     Draggable: () => (
       <DraggableComponent
-        id="RadioGroup"
+        id="Radio"
         icon={<IconPlaystationCircle size={LARGE_ICON_SIZE} />}
       />
     ),
@@ -950,18 +943,18 @@ export const componentMapper: ComponentMapper = {
     actionTriggers: ["onMount", "onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
-  Radio: {
+  RadioItem: {
     Component: (props: { component: Component; renderTree: any }) => (
       // @ts-ignore
-      <Radio component={props.component} renderTree={props.renderTree} />
+      <RadioItem component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
-  RadioGroup: {
+  Radio: {
     Component: (props: { component: Component; renderTree: any }) => (
-      <RadioGroup
+      <Radio
         component={props.component}
         renderTree={props.renderTree}
         // eslint-disable-next-line react/no-children-prop

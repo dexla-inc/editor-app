@@ -1,6 +1,7 @@
 import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
 import { PageBody, PageResponse } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
+import { useEditorStore } from "@/stores/editor";
 import { decodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
 import { Button, Flex, Stack, TextInput } from "@mantine/core";
@@ -31,6 +32,7 @@ export default function PageDetailPane({
   const projectId = router.query.id as string;
   const [slug, setSlug] = useState("");
   const queryClient = useQueryClient();
+  const resetTree = useEditorStore((state) => state.resetTree);
 
   const form = useForm<PageBody>({
     initialValues: {
@@ -95,9 +97,13 @@ export default function PageDetailPane({
 
       form.validate();
 
-      const result = page?.id
-        ? await updatePage(values, projectId, page.id)
-        : await createPage(values, projectId);
+      if (page?.id) {
+        await updatePage(values, projectId, page.id);
+      } else {
+        const result = await createPage(values, projectId);
+        router.push(`/projects/${projectId}/editor/${result.id}`);
+        resetTree();
+      }
 
       queryClient.invalidateQueries(["pages"]);
       getPages();
