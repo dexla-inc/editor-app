@@ -1,17 +1,21 @@
+import { useEditorStore } from "@/stores/editor";
 import { ICON_MEDIUM_SIZE } from "@/utils/config";
 import { Group, Switch, useMantineTheme } from "@mantine/core";
 import { IconBrush, IconEye } from "@tabler/icons-react";
 
 type EditorPreviewModeToggleProps = {
   isPreviewMode: boolean;
-  togglePreviewMode: (value: boolean) => void;
+  setPreviewMode: (value: boolean) => void;
 };
 
 export const EditorPreviewModeToggle = ({
   isPreviewMode = false,
-  togglePreviewMode,
+  setPreviewMode,
 }: EditorPreviewModeToggleProps) => {
   const theme = useMantineTheme();
+  const resetOnMountActionsRan = useEditorStore(
+    (state) => state.resetOnMountActionsRan
+  );
 
   return (
     <Group position="center">
@@ -23,7 +27,11 @@ export const EditorPreviewModeToggle = ({
           <IconEye size={ICON_MEDIUM_SIZE} color={theme.colors.teal[5]} />
         }
         checked={isPreviewMode}
-        onChange={(event) => togglePreviewMode(event.currentTarget.checked)}
+        onChange={(event) => {
+          const isPreviewMode = event.currentTarget.checked;
+          setPreviewMode(isPreviewMode);
+          resetOnMountActionsRan();
+        }}
       />
     </Group>
   );

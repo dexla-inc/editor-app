@@ -70,6 +70,10 @@ export const DroppableDraggable = ({
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const onMountActionsRan = useEditorStore((state) => state.onMountActionsRan);
+  const addOnMountActionsRan = useEditorStore(
+    (state) => state.addOnMountActionsRan
+  );
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind
   );
@@ -123,7 +127,12 @@ export const DroppableDraggable = ({
     }, {});
 
   useEffect(() => {
-    if (onMountAction && isPreviewMode) {
+    if (
+      onMountAction &&
+      isPreviewMode &&
+      !onMountActionsRan.includes(onMountAction.id)
+    ) {
+      addOnMountActionsRan(onMountAction.id);
       actionMapper[onMountAction.action.name].action({
         // @ts-ignore
         action: onMountAction.action,
@@ -139,7 +148,7 @@ export const DroppableDraggable = ({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPreviewMode, onMountAction]);
+  }, [isPreviewMode, onMountAction, onMountActionsRan]);
 
   const parent = getComponentParent(editorTree.root, id);
 
@@ -195,8 +204,6 @@ export const DroppableDraggable = ({
       : isSelected
       ? { boxShadow: baseShadow }
       : {};
-
-  // console.log(shadows);
 
   const isContentWrapper = id === "content-wrapper";
   const haveNonRootParent = parent && parent.id !== "root";

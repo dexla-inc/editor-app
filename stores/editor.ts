@@ -56,16 +56,19 @@ export type EditorState = {
   isSaving: boolean;
   isPreviewMode: boolean;
   pages: PageResponse[];
+  onMountActionsRan: string[];
   pickingComponentToBindTo?: ComponentToBind;
+  pickingComponentToBindFrom?: ComponentToBind;
+  componentToBind?: string;
   setPickingComponentToBindTo: (
     pickingComponentToBindTo?: ComponentToBind
   ) => void;
-  pickingComponentToBindFrom?: ComponentToBind;
   setPickingComponentToBindFrom: (
     pickingComponentToBindFrom?: ComponentToBind
   ) => void;
-  componentToBind?: string;
   setComponentToBind: (componentToBind?: string) => void;
+  addOnMountActionsRan: (action: string) => void;
+  resetOnMountActionsRan: () => void;
   setCopiedComponent: (copiedComponent?: Component) => void;
   setPages: (pages: PageResponse[]) => void;
   setTheme: (theme: MantineThemeExtended) => void;
@@ -88,7 +91,7 @@ export type EditorState = {
   setSelectedComponentId: (selectedComponentId?: string) => void;
   clearSelection: () => void;
   setIsSaving: (isSaving: boolean) => void;
-  togglePreviewMode: (value: boolean) => void;
+  setPreviewMode: (value: boolean) => void;
 };
 
 const debouncedUpdatePageState = debounce(updatePageState, 2000);
@@ -100,6 +103,13 @@ export const useEditorStore = create<EditorState>()(
       tree: emptyEditorTree,
       theme: defaultTheme,
       pages: [],
+      onMountActionsRan: [],
+      addOnMountActionsRan: (onMountAction) =>
+        set((state) => ({
+          ...state,
+          onMountActionsRan: state.onMountActionsRan.concat(onMountAction),
+        })),
+      resetOnMountActionsRan: () => set({ onMountActionsRan: [] }),
       setPages: (pages) => set({ pages }),
       setPickingComponentToBindFrom: (pickingComponentToBindFrom) =>
         set({ pickingComponentToBindFrom }),
@@ -168,7 +178,7 @@ export const useEditorStore = create<EditorState>()(
       clearSelection: () => set({ selectedComponentId: undefined }),
       setIsSaving: (isSaving) => set({ isSaving }),
       isPreviewMode: false,
-      togglePreviewMode: (value) => set({ isPreviewMode: value }),
+      setPreviewMode: (value) => set({ isPreviewMode: value }),
     }),
     {
       partialize: (state) => {

@@ -51,7 +51,7 @@ export const Shell = ({
   const resetTree = useEditorStore((state) => state.resetTree);
   const isSaving = useEditorStore((state) => state.isSaving);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-  const togglePreviewMode = useEditorStore((state) => state.togglePreviewMode);
+  const setPreviewMode = useEditorStore((state) => state.setPreviewMode);
   const { undo, redo, pastStates, futureStates } = useTemporalStore(
     (state) => state
   );
@@ -125,7 +125,7 @@ export const Shell = ({
                   <SavingDisplay isSaving={isSaving} />{" "}
                   <EditorPreviewModeToggle
                     isPreviewMode={isPreviewMode}
-                    togglePreviewMode={togglePreviewMode}
+                    setPreviewMode={setPreviewMode}
                   />
                 </Flex>
               </>
