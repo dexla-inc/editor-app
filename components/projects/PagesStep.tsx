@@ -82,7 +82,6 @@ export default function PagesStep({
   useEffect(() => {
     if (streamCancelled) {
       onClose();
-      console.log("Stream cancelled " + streamCancelled);
       stopLoading({
         id: "pages-stream",
         title: "Successfully cancelled",
@@ -96,8 +95,7 @@ export default function PagesStep({
 
   const onMessage = (event: EventSourceMessage) => {
     try {
-      console.log("streamCancelled", streamCancelled);
-      if (event.data !== "___DONE___" && !streamCancelled) {
+      if (event.data !== "___DONE___") {
         const json = TOML.parse(event.data);
         const newPages = Object.values(json) as string[];
         setPages((oldPages) => [...oldPages, ...newPages]);
@@ -145,7 +143,6 @@ export default function PagesStep({
 
   function cancelStream() {
     setStreamCancelled(true);
-    console.log("cancelStream");
   }
 
   const fetchPageStream = async () => {

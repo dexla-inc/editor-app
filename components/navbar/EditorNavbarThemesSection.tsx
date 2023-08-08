@@ -82,6 +82,7 @@ export const EditorNavbarThemesSection = ({
       responsiveBreakpoints: [],
       faviconUrl: "",
       logoUrl: "",
+      logos: [],
       defaultBorderRadius: 0,
       defaultSpacing: 0,
     },
