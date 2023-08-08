@@ -8,6 +8,7 @@ export type ThemeMutationParams = {
   responsiveBreakpoints: ResponsiveBreakpoint[];
   faviconUrl: string;
   logoUrl: string;
+  logos: Logo[];
   defaultBorderRadius: number;
   defaultSpacing: number;
 };
@@ -24,6 +25,11 @@ export type Color = {
   hex: string;
   brightness: number;
   isDefault: boolean;
+};
+
+export type Logo = {
+  url: string;
+  type: "LIGHT" | "DARK";
 };
 
 type Font = {
