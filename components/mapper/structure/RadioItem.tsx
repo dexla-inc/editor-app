@@ -7,7 +7,7 @@ export const jsonStructure = (props?: any): Component => {
     name: "RadioItem",
     description: "Radio",
     props: {
-      label: "Radio Label",
+      label: "Radio Item",
       value: "radio1",
       blockDroppingChildrenInside: true,
       ...(props?.props ?? {}),

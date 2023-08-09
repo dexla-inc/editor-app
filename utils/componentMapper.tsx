@@ -726,7 +726,8 @@ export type Modifiers =
   | "effects"
   | "modal"
   | "boxShadow"
-  | "checkbox";
+  | "checkbox"
+  | "radio";
 
 export type ComponentDefinition = {
   Component: any;
@@ -961,7 +962,7 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["radio", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -984,7 +985,7 @@ export const componentMapper: ComponentMapper = {
       // eslint-disable-next-line jsx-a11y/alt-text
       <Image component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["image", "position", "effects", "spacing", "size", "border"],
+    modifiers: ["image", "effects", "spacing", "size", "border", "position"],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1183,7 +1184,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border", "position"],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

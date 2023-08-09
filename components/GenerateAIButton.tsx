@@ -20,10 +20,12 @@ import {
   Stack,
   Textarea,
 } from "@mantine/core";
+import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { EventSourceMessage } from "@microsoft/fetch-event-source";
 import { IconSparkles } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
+import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 
 type GenerateAIButtonProps = {
@@ -71,10 +73,7 @@ const descriptionPlaceholderMapping: Record<
   },
 };
 
-export const GenerateAIButton = ({
-  projectId,
-  pageTitle = "Need to implement",
-}: GenerateAIButtonProps) => {
+export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
   const [openedAIModal, { open, close }] = useDisclosure(false);
   const [type, setType] = useState<StreamTypes>("COMPONENT");
   const [description, setDescription] = useState("");
@@ -86,6 +85,10 @@ export const GenerateAIButton = ({
   const stopLoading = useAppStore((state) => state.stopLoading);
   const editorTheme = useEditorStore((state) => state.theme);
   const pages = useEditorStore((state) => state.pages);
+  const router = useRouter();
+  const currentPageId = router.query.page as string;
+  const pageTitle = pages?.find((p) => p.id === currentPageId)?.title;
+
   const setEditorTree = useEditorStore((state) => state.setTree);
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent
@@ -108,6 +111,13 @@ export const GenerateAIButton = ({
     setDescription("");
     setType("COMPONENT");
   };
+
+  const form = useForm({
+    initialValues: {
+      type: "COMPONENT",
+      description: "",
+    },
+  });
 
   useEffect(() => {
     if (type === "COMPONENT") {
@@ -168,7 +178,71 @@ export const GenerateAIButton = ({
     updateTreeComponentChildren,
   ]);
 
-  const generate = () => {
+  const onMessage = (event: EventSourceMessage) => {
+    try {
+      setStream((state) => {
+        try {
+          if (state === undefined) {
+            return event.data;
+          } else {
+            return `${state}
+            ${event.data}`;
+          }
+        } catch (error) {
+          return state;
+        }
+      });
+    } catch (error) {
+      // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
+      // console.error(error);
+    }
+  };
+
+  const onError = (err: any) => {
+    stopLoading({
+      id: "page-generation",
+      title: "There was a problem",
+      message: err,
+      isError: true,
+    });
+    setIsLoading(false);
+  };
+
+  const onOpen = async (response: Response) => {
+    // no need to do anything
+  };
+
+  const onClose = async () => {
+    try {
+      if (type === "PAGE") {
+        setStream("");
+        return;
+      }
+
+      if (componentBeignAddedId.current) {
+        updateTreeComponent(componentBeignAddedId.current, {
+          isBeingAdded: false,
+        });
+      }
+      setStream("");
+      stopLoading({
+        id: "page-generation",
+        title: `${descriptionPlaceholderMapping[type].replaceText} Generated`,
+        message: `Here's your ${descriptionPlaceholderMapping[type].replaceText}. We hope you like it`,
+      });
+    } catch (error) {
+      stopLoading({
+        id: "page-generation",
+        title: `${descriptionPlaceholderMapping[type].replaceText} Failed`,
+        message: `There was a problem generating your ${descriptionPlaceholderMapping[type].replaceText}`,
+        isError: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onSubmit = async (values: any) => {
     setIsLoading(true);
     closeModal();
     startLoading({
@@ -177,80 +251,25 @@ export const GenerateAIButton = ({
       message: `AI is generating your ${descriptionPlaceholderMapping[type].replaceText}`,
     });
 
-    const onMessage = (event: EventSourceMessage) => {
-      try {
-        setStream((state) => {
-          try {
-            if (state === undefined) {
-              return event.data;
-            } else {
-              return `${state}
-              ${event.data}`;
-            }
-          } catch (error) {
-            return state;
-          }
-        });
-      } catch (error) {
-        // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
-        // console.error(error);
-      }
-    };
-
-    const onError = (err: any) => {
-      stopLoading({
-        id: "page-generation",
-        title: "There was a problem",
-        message: err,
-        isError: true,
-      });
-      setIsLoading(false);
-    };
-
-    const onOpen = async (response: Response) => {
-      // no need to do anything
-    };
-
-    const onClose = async () => {
-      try {
-        if (type === "PAGE") {
-          setStream("");
-          return;
-        }
-
-        if (componentBeignAddedId.current) {
-          updateTreeComponent(componentBeignAddedId.current, {
-            isBeingAdded: false,
-          });
-        }
-        setStream("");
-        stopLoading({
-          id: "page-generation",
-          title: `${descriptionPlaceholderMapping[type].replaceText} Generated`,
-          message: `Here's your ${descriptionPlaceholderMapping[type].replaceText}. We hope you like it`,
-        });
-      } catch (error) {
-        stopLoading({
-          id: "page-generation",
-          title: `${descriptionPlaceholderMapping[type].replaceText} Failed`,
-          message: `There was a problem generating your ${descriptionPlaceholderMapping[type].replaceText}`,
-          isError: true,
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     postPageEventSource(
       projectId,
-      pageTitle,
+      pageTitle ?? "",
       onMessage,
       onError,
       onOpen,
       onClose,
-      type,
-      description
+      values.type,
+      values.description
     );
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Check if Enter key was pressed without Shift key
+    if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+      event.preventDefault();
+
+      onSubmit(form.values);
+    }
   };
 
   return (
@@ -270,56 +289,68 @@ export const GenerateAIButton = ({
         onClose={closeModal}
         title="Generate AI Content"
       >
-        <Stack>
-          <Radio.Group
-            value={type}
-            onChange={handleTypeChange}
-            label="What do you want to generate?"
-            description="Select the type of content you want to generate"
-          >
-            <Group mt="xs" spacing="xl" py="sm">
-              <Radio
-                value="COMPONENT"
-                label="Component"
-                description="Add / change one component"
-              />
-              <Radio
-                value="LAYOUT"
-                label="Layout"
-                description="Change the entire page"
-              />
-              <Radio
-                value="DESIGN"
-                label="Design"
-                description="Change theme"
-                disabled
-              />
-              <Radio
-                value="DATA"
-                label="Data"
-                description="Connect components to data"
-                disabled
-              />
-            </Group>
-          </Radio.Group>
-          <Textarea
-            label="Description"
-            description={descriptionPlaceholder.description}
-            placeholder={descriptionPlaceholder.placeholder}
-            required
-            value={description}
-            onChange={(event) => setDescription(event.currentTarget.value)}
-            autosize
-          />
-          <Button
-            leftIcon={<IconSparkles size={ICON_SIZE} />}
-            onClick={generate}
-            disabled={description === ""}
-            loading={isLoading}
-          >
-            Generate
-          </Button>
-        </Stack>
+        <form onSubmit={form.onSubmit(onSubmit)}>
+          <Stack>
+            <Radio.Group
+              value={type}
+              onChange={(value) => {
+                form.setFieldValue("type", value as StreamTypes);
+                handleTypeChange(value as StreamTypes);
+              }}
+              label="What do you want to generate?"
+              description="Select the type of content you want to generate"
+            >
+              <Group mt="xs" spacing="xl" py="sm">
+                <Radio
+                  value="COMPONENT"
+                  label="Component"
+                  description="Add / change one component"
+                />
+                <Radio
+                  value="LAYOUT"
+                  label="Layout"
+                  description="Change the entire page"
+                />
+                <Radio
+                  value="DESIGN"
+                  label="Design"
+                  description="Change theme"
+                  disabled
+                />
+                <Radio
+                  value="DATA"
+                  label="Data"
+                  description="Connect components to data"
+                  disabled
+                />
+              </Group>
+            </Radio.Group>
+            <Textarea
+              label="Description"
+              description={descriptionPlaceholder.description}
+              placeholder={descriptionPlaceholder.placeholder}
+              required
+              value={description}
+              onChange={(event) => {
+                form.setFieldValue(
+                  "description",
+                  event.currentTarget.value as string
+                );
+                setDescription(event.currentTarget.value);
+              }}
+              autosize
+              onKeyDown={handleKeyDown}
+            />
+            <Button
+              leftIcon={<IconSparkles size={ICON_SIZE} />}
+              type="submit"
+              disabled={isLoading}
+              loading={isLoading}
+            >
+              Generate
+            </Button>
+          </Stack>
+        </form>
       </Modal>
     </>
   );

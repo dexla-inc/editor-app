@@ -14,6 +14,7 @@ export const jsonStructure = (props?: any): Component => {
     name: "Container",
     description: "Container",
     props: {
+      ...(rest || {}),
       style: {
         display: "flex",
         ...defaultLayoutValues,
@@ -24,7 +25,6 @@ export const jsonStructure = (props?: any): Component => {
         minHeight: "10px",
         ...(style || {}),
       },
-      ...(rest || {}),
     },
   };
 };

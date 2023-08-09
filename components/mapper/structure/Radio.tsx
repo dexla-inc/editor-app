@@ -10,11 +10,12 @@ export const jsonStructure = (props?: any): Component => {
     description: "Radio Group",
     props: {
       name: radioGroupId,
+      label: "Select a radio",
       style: {
-        width: "100%",
+        width: "auto",
         height: "auto",
-        label: "Select a radio",
       },
+      ...(props.props || {}),
     },
     children: [
       {
