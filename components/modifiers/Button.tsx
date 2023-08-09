@@ -7,6 +7,7 @@ import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
+import { IconSelector } from "../IconSelector";
 
 export const icon = IconClick;
 export const label = "Button";
@@ -18,6 +19,7 @@ export const defaultInputValues = {
   size: "md",
   color: "Primary.6",
   textColor: "White.0",
+  leftIcon: "",
 };
 
 export const Modifier = () => {
@@ -51,6 +53,7 @@ export const Modifier = () => {
         color,
         variant,
         textColor,
+        leftIcon,
       } = componentProps;
       form.setValues({
         value: children ?? defaultInputValues.value,
@@ -59,6 +62,7 @@ export const Modifier = () => {
         size: size ?? defaultInputValues.size,
         color: color ?? defaultInputValues.color,
         textColor: textColor ?? defaultInputValues.textColor,
+        icon: leftIcon ?? defaultInputValues.leftIcon,
         ...style,
       });
     }
@@ -138,6 +142,17 @@ export const Modifier = () => {
             // @ts-ignore
             const _value = theme.colors[color][index];
             debouncedUpdate("styles", { label: { color: _value } });
+          }}
+        />
+        {/* Adding a react component as a property doesn't work -
+        Error: Objects are not valid as a React child (found: object with keys {key, ref, props, _owner, _store}). 
+        If you meant to render a collection of children, use an array instead. */}
+        <IconSelector
+          topLabel="Icon"
+          selectedIcon={form.values.leftIcon}
+          onIconSelect={(value: string) => {
+            form.setFieldValue("leftIcon", value);
+            debouncedUpdate("leftIcon", value);
           }}
         />
       </Stack>

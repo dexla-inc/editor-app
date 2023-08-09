@@ -7,6 +7,7 @@ import { useForm } from "@mantine/form";
 import { IconTextSize } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
+import { SizeSelector } from "../SizeSelector";
 
 export const icon = IconTextSize;
 export const label = "Text";
@@ -30,7 +31,7 @@ export const Modifier = () => {
   const form = useForm({
     initialValues: {
       value: "",
-      fontSize: "",
+      fontSize: "md",
       fontWeight: "",
       lineHeight: "",
       letterSpacing: "",
@@ -71,12 +72,12 @@ export const Modifier = () => {
           }}
         />
         <Group noWrap>
-          <UnitInput
+          <SizeSelector
             label="Size"
             {...form.getInputProps("fontSize")}
             onChange={(value) => {
               form.setFieldValue("fontSize", value as string);
-              debouncedUpdate("style", { fontSize: value });
+              debouncedUpdate("size", value);
             }}
           />
           <Select
