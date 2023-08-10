@@ -159,6 +159,7 @@ export const getNewComponents = (
       isBeingAdded: true,
       style: {
         width: "100%",
+        flexDirection: "column",
       },
     },
     children: tree.rows.map((row: Row) => {

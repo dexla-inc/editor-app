@@ -13,6 +13,7 @@ import * as InputModifier from "@/components/modifiers/Input";
 import * as LayoutModifier from "@/components/modifiers/Layout";
 import * as LinkModifier from "@/components/modifiers/Link";
 import * as PositionModifier from "@/components/modifiers/Position";
+import * as RadioModifier from "@/components/modifiers/Radio";
 import * as SelectModifier from "@/components/modifiers/Select";
 import * as SizeModifier from "@/components/modifiers/Size";
 import * as SpacingModifier from "@/components/modifiers/Spacing";
@@ -61,6 +62,7 @@ const sectionMapper: SectionsMapper = {
   boxShadow: BoxShadowModifier,
   checkbox: CheckboxModifier,
   table: TableModifier,
+  radio: RadioModifier,
 };
 
 type Tab = "design" | "actions";

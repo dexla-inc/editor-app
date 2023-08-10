@@ -19,6 +19,7 @@ import {
   Group,
   List,
   Stack,
+  Text,
   TextInput,
   ThemeIcon,
 } from "@mantine/core";
@@ -67,6 +68,7 @@ export default function PagesStep({
   const router = useRouter();
   const resetTree = useEditorStore((state) => state.resetTree);
   const [count, setCount] = useState(5);
+  const [streamCancelled, setStreamCancelled] = useState(false);
   const updatePage = (index: number, value: string) => {
     const updatedPages = [...pages];
     updatedPages[index] = value;
@@ -77,17 +79,27 @@ export default function PagesStep({
     setPages((oldPages) => [...oldPages, ""]);
   };
 
-  const onMessage = (event: EventSourceMessage) => {
-    try {
-      const json = TOML.parse(event.data);
-      const newPages = Object.values(json) as string[];
-      setPages((oldPages) => [...oldPages, ...newPages]);
+  useEffect(() => {
+    if (streamCancelled) {
+      onClose();
       stopLoading({
         id: "pages-stream",
-        title: "Names Generated",
-        message: "Here's your pages names. We hope you like it",
+        title: "Successfully cancelled",
+        message: "Action has been cancelled",
+        isError: true,
       });
       setIsLoading && setIsLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [streamCancelled]);
+
+  const onMessage = (event: EventSourceMessage) => {
+    try {
+      if (event.data !== "___DONE___") {
+        const json = TOML.parse(event.data);
+        const newPages = Object.values(json) as string[];
+        setPages((oldPages) => [...oldPages, ...newPages]);
+      }
     } catch (error: any) {
       // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
       console.error(error);
@@ -96,6 +108,16 @@ export default function PagesStep({
         title: "There was a problem",
         message: error,
         isError: true,
+      });
+      setIsLoading && setIsLoading(false);
+    }
+
+    if (event.data === "___DONE___") {
+      stopLoading({
+        id: "pages-stream",
+        title: "Successfully generated",
+        message: "Page names have been generated",
+        isError: false,
       });
       setIsLoading && setIsLoading(false);
     }
@@ -115,13 +137,28 @@ export default function PagesStep({
     // handle open
   };
 
+  const onClose = async () => {
+    // send cancellation token to api
+  };
+
+  function cancelStream() {
+    setStreamCancelled(true);
+  }
+
   const fetchPageStream = async () => {
     const plural = count === 1 ? "" : "s";
     setIsLoading && setIsLoading(true);
     startLoading({
       id: "pages-stream",
       title: `Generating Page Name${plural}`,
-      message: `Wait while AI generates the name${plural} of your page${plural}`,
+      message: (
+        <Stack spacing="sm">
+          <Text> Wait while AI generates the names of your pages</Text>
+          <Button color="red" onClick={cancelStream} sx={{ width: "90px" }}>
+            Cancel
+          </Button>
+        </Stack>
+      ),
     });
 
     return await getPagesEventSource(
@@ -130,7 +167,8 @@ export default function PagesStep({
       pages.join(),
       onMessage,
       onError,
-      onOpen
+      onOpen,
+      onClose
     );
   };
 
@@ -139,7 +177,14 @@ export default function PagesStep({
     startLoading({
       id: "pages-stream",
       title: `Generating Page Name`,
-      message: `Wait while AI generates the name of your page`,
+      message: (
+        <Stack spacing="sm">
+          <Text>Wait while AI generates a page name</Text>
+          <Button color="red" onClick={cancelStream} sx={{ width: "90px" }}>
+            Cancel
+          </Button>
+        </Stack>
+      ),
     });
 
     return await getPagesEventSource(
@@ -148,7 +193,8 @@ export default function PagesStep({
       pages.join(),
       onMessage,
       onError,
-      onOpen
+      onOpen,
+      onClose
     );
   };
 
@@ -204,7 +250,7 @@ export default function PagesStep({
   const hasPageNames = pages.length > 0;
 
   return (
-    <Stack spacing="xl">
+    <Stack spacing="xl" mb="xl">
       {hasPageNames && (
         <>
           <InformationAlert

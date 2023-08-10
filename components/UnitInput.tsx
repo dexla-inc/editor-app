@@ -66,6 +66,8 @@ export const UnitInput = ({
         setUnit(val);
         if (val === "%" || val === "vh" || val === "vw") {
           setValue(100);
+        } else if (val === "px") {
+          setValue(value);
         } else if (value === "auto") {
           setValue(0);
         } else {
