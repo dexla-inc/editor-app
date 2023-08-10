@@ -1,16 +1,15 @@
 import { getDataSourceEndpoints } from "@/requests/datasources/queries";
-import { Endpoint } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { Action, BindResponseToComponentAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
-import { ActionIcon, Button, Popover, Stack, TextInput } from "@mantine/core";
+import { flattenKeysWithRoot } from "@/utils/flattenKeys";
+import { ActionIcon, Button, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 type Props = {
   id: string;
@@ -23,9 +22,6 @@ type FormValues = {
 
 export const BindResponseToComponentActionForm = ({ id }: Props) => {
   const router = useRouter();
-  const [endpoint, setEndpoint] = useState<Endpoint | undefined>(undefined);
-  const [ReactJson, setReactJson] = useState();
-  const [showJsonPicker, jsonPicker] = useDisclosure(false);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const setPickingComponentToBindTo = useEditorStore(
@@ -135,70 +131,29 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
       const _endpoint = results.find(
         (e) => e.id === originalAction.action.endpoint
       );
-      setEndpoint(_endpoint);
+
+      if (_endpoint?.exampleResponse) {
+        const json = JSON.parse(_endpoint?.exampleResponse as string);
+        const binds = flattenKeysWithRoot(json);
+        Object.keys(binds).forEach((bind) => {
+          form.insertListItem("binds", {
+            component: "",
+            value: bind,
+          });
+        });
+      }
+      // setEndpoint(_endpoint);
     };
 
     if (originalAction?.action?.datasource?.id) {
       getEndpoint();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [action, originalAction, projectId]);
-
-  useEffect(() => {
-    // we need to dynamicaly import it as it doesn't support SSR
-    const loadJsonViewer = async () => {
-      const ReactJsonView = await import("react-json-view");
-      setReactJson(ReactJsonView as any);
-    };
-
-    loadJsonViewer();
-  }, []);
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
-        {endpoint?.exampleResponse && (
-          <Popover
-            position="left"
-            withArrow
-            shadow="md"
-            withinPortal
-            opened={showJsonPicker}
-            onChange={(isOpen) => {
-              if (isOpen) {
-                jsonPicker.open();
-              } else {
-                jsonPicker.close();
-              }
-            }}
-            radius="md"
-          >
-            <Popover.Target>
-              <Button onClick={jsonPicker.open} size="xs" variant="default">
-                Add new binding
-              </Button>
-            </Popover.Target>
-            <Popover.Dropdown>
-              {ReactJson && (
-                // @ts-ignore
-                <ReactJson.default
-                  iconStyle="triangle"
-                  enableClipboard={false}
-                  displayDataTypes={false}
-                  quotesOnKeys={false}
-                  collapseStringsAfterLength={10}
-                  src={JSON.parse(endpoint?.exampleResponse as string)}
-                  onSelect={(selected: any) => {
-                    form.insertListItem("binds", {
-                      component: "",
-                      value: selected.name,
-                    });
-                    jsonPicker.close();
-                  }}
-                />
-              )}
-            </Popover.Dropdown>
-          </Popover>
-        )}
         {form.values.binds.map((bind, index) => {
           return (
             <TextInput

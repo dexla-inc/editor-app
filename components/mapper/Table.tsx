@@ -8,8 +8,14 @@ type Props = {
 } & TableProps;
 
 export const Table = ({ renderTree, component, ...props }: Props) => {
-  const { children, data, style, ...componentProps } = component.props as any;
+  const {
+    children,
+    data: dataProp,
+    style,
+    ...componentProps
+  } = component.props as any;
 
+  const data = dataProp?.value ?? dataProp;
   const dataSample = (data ?? [])?.[0];
 
   if (!dataSample) {
@@ -23,7 +29,12 @@ export const Table = ({ renderTree, component, ...props }: Props) => {
   const rows = (data ?? [])?.map((_data: any) => (
     <tr key={JSON.stringify(_data)}>
       {Object.keys(_data).map((key: string) => {
-        return <td key={key}>{_data[key]}</td>;
+        const val = _data[key];
+        return (
+          <td key={key}>
+            {typeof val === "string" ? val : JSON.stringify(val)}
+          </td>
+        );
       })}
     </tr>
   ));

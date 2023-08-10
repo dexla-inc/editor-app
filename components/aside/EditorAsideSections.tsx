@@ -19,6 +19,7 @@ import * as SpacingModifier from "@/components/modifiers/Spacing";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TitleModifier from "@/components/modifiers/Title";
 import * as ModalModifier from "@/components/modifiers/Modal";
+import * as TableModifier from "@/components/modifiers/Table";
 import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper } from "@/utils/actions";
 import { Modifiers, componentMapper } from "@/utils/componentMapper";
@@ -59,6 +60,7 @@ const sectionMapper: SectionsMapper = {
   modal: ModalModifier,
   boxShadow: BoxShadowModifier,
   checkbox: CheckboxModifier,
+  table: TableModifier,
 };
 
 type Tab = "design" | "actions";

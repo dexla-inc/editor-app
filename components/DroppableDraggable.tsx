@@ -39,7 +39,10 @@ type Props = {
   customComponentModal: any;
 } & BoxProps;
 
-const bidingComponentsWhitelist = { from: ["Input"], to: ["Text", "Title"] };
+const bidingComponentsWhitelist = {
+  from: ["Input"],
+  to: ["Text", "Title", "Table"],
+};
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
 // Whitelist certain props that can be passed down
 const styleWhitelist = [

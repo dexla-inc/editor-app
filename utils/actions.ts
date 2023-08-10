@@ -14,6 +14,8 @@ import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { Router } from "next/router";
+import { flattenKeysWithRoot } from "@/utils/flattenKeys";
+import get from "lodash.get";
 
 const triggers = [
   "onClick",
@@ -332,7 +334,6 @@ export const apiCallAction = async ({
     // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
     // Can revisit later and create a cashing layer.
     if (!cachedEndpoints) {
-      console.log("getting endpoints");
       const { results } = await getDataSourceEndpoints(
         projectId,
         action.datasource.id
@@ -356,7 +357,13 @@ export const apiCallAction = async ({
               value = el?.value ?? "";
             }
 
-            return url.replace(`{${key}}`, value);
+            if (!url.includes(`{${key}}`)) {
+              const _url = new URL(url);
+              _url.searchParams.append(key, value);
+              return _url.toString();
+            } else {
+              return url.replace(`{${key}}`, value);
+            }
           }, `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`)
         : `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`;
 
@@ -456,11 +463,9 @@ export const bindResponseToComponentAction = ({
 
   action.binds?.forEach((bind) => {
     if (bind.component && bind.value) {
-      updateTreeComponent(
-        bind.component,
-        { data: { value: data[bind.value] } },
-        false
-      );
+      const dataFlatten = flattenKeysWithRoot(data);
+      const value = get(dataFlatten, bind.value);
+      updateTreeComponent(bind.component, { data: { value } }, false);
     }
   });
 };
