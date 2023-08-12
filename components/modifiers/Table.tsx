@@ -105,6 +105,19 @@ export const Modifier = () => {
         />
         <Switch
           size="xs"
+          label="Filter"
+          checked={get(form.values.config, "filter") ?? false}
+          onChange={(e) => {
+            const config = {
+              ...form.values.config,
+              filter: e.currentTarget.checked,
+            };
+            form.setFieldValue("config", config);
+            debouncedUpdate("config", config);
+          }}
+        />
+        <Switch
+          size="xs"
           label="Numbers"
           checked={get(form.values.config, "numbers") ?? false}
           onChange={(e) => {

@@ -44,6 +44,7 @@ export const Table = ({ renderTree, component, ...props }: Props) => {
         accessorKey: key,
         columnDefType: "display",
         enableSorting: config?.sorting,
+        enableGlobalFilter: config?.filter,
         Cell: ({ row }: any) => {
           const val = row.original[key];
           return typeof val === "object" ? JSON.stringify(val) : val;
@@ -60,10 +61,13 @@ export const Table = ({ renderTree, component, ...props }: Props) => {
     enableSorting: config?.sorting,
     enableRowSelection: config?.select,
     enableRowNumbers: config?.numbers,
+    enableGlobalFilter: config?.filter,
+    enableTopToolbar: config?.filter,
     enableColumnActions: false,
     enableDensityToggle: false,
     enableFullScreenToggle: false,
     enableHiding: false,
+    enableColumnFilters: false,
   });
 
   useEffect(() => {
