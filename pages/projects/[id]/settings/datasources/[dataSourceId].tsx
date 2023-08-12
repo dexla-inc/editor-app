@@ -136,7 +136,6 @@ export default function Settings() {
   const onApiAuthSubmit = async (values: AuthenticationStepParams) => {
     try {
       apiAuthForm.validate();
-      console.log(values);
 
       if (Object.keys(apiAuthForm.errors).length > 0) {
         console.log("Errors: " + apiAuthForm.errors);
@@ -279,9 +278,6 @@ export default function Settings() {
       setLoginEndpoint(loginEndpoint?.id);
       setRefreshEndpoint(refreshEndpoint?.id);
       setUserEndpoint(userEndpoint?.id);
-
-      console.log("accessToken", loginEndpoint?.authentication.tokenKey);
-      console.log("refreshToken", refreshEndpoint?.authentication.tokenKey);
 
       apiAuthForm.setFieldValue(
         "accessToken",

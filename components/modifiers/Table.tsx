@@ -1,9 +1,10 @@
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
-import { Stack, Textarea } from "@mantine/core";
+import { Box, Divider, Stack, Switch, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTable } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
+import get from "lodash.get";
 import { useEffect } from "react";
 
 export const icon = IconTable;
@@ -28,14 +29,18 @@ export const Modifier = () => {
   const form = useForm({
     initialValues: {
       data: "",
+      headers: {},
+      config: {},
     },
   });
 
   useEffect(() => {
     if (selectedComponentId) {
-      const { data = {} } = componentProps;
+      const { data = {}, headers = {}, config = {} } = componentProps;
       form.setValues({
         data: JSON.stringify(data?.value ?? data, null, 2),
+        headers,
+        config,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
@@ -51,6 +56,67 @@ export const Modifier = () => {
   return (
     <form>
       <Stack spacing="xs">
+        <Divider label="Headers" labelPosition="center" />
+        {form.values.data &&
+          Object.keys(JSON.parse(form.values.data)[0]).map((key) => {
+            return (
+              <Switch
+                size="xs"
+                key={key}
+                label={key}
+                checked={get(form.values.headers, key) ?? false}
+                onChange={(e) => {
+                  const headers = {
+                    ...form.values.headers,
+                    [key]: e.currentTarget.checked,
+                  };
+                  form.setFieldValue("headers", headers);
+                  debouncedUpdate("headers", headers);
+                }}
+              />
+            );
+          })}
+        <Divider label="Config" labelPosition="center" />
+        <Switch
+          size="xs"
+          label="Sorting"
+          checked={get(form.values.config, "sorting") ?? false}
+          onChange={(e) => {
+            const config = {
+              ...form.values.config,
+              sorting: e.currentTarget.checked,
+            };
+            form.setFieldValue("config", config);
+            debouncedUpdate("config", config);
+          }}
+        />
+        <Switch
+          size="xs"
+          label="Select"
+          checked={get(form.values.config, "select") ?? false}
+          onChange={(e) => {
+            const config = {
+              ...form.values.config,
+              select: e.currentTarget.checked,
+            };
+            form.setFieldValue("config", config);
+            debouncedUpdate("config", config);
+          }}
+        />
+        <Switch
+          size="xs"
+          label="Numbers"
+          checked={get(form.values.config, "numbers") ?? false}
+          onChange={(e) => {
+            const config = {
+              ...form.values.config,
+              numbers: e.currentTarget.checked,
+            };
+            form.setFieldValue("config", config);
+            debouncedUpdate("config", config);
+          }}
+        />
+        <Divider label="Data" labelPosition="center" />
         <Textarea
           autosize
           label="Data"

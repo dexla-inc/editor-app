@@ -142,7 +142,6 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
           });
         });
       }
-      // setEndpoint(_endpoint);
     };
 
     if (originalAction?.action?.datasource?.id) {

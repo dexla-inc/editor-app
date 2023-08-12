@@ -891,7 +891,11 @@ export const componentMapper: ComponentMapper = {
   },
   Table: {
     Component: (props: { component: Component; renderTree: any }) => (
-      <Table component={props.component} renderTree={props.renderTree} />
+      <Table
+        key={JSON.stringify(props.component?.props?.config ?? {})}
+        component={props.component}
+        renderTree={props.renderTree}
+      />
     ),
     modifiers: ["table", "spacing", "size", "border"],
     actionTriggers: [

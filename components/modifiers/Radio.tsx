@@ -33,7 +33,6 @@ const createRadioItem = (label: string, value: string) => {
       value: value,
     },
   });
-  console.log("Created RadioItem:", radioItem);
   return radioItem;
 };
 
@@ -96,7 +95,6 @@ export const Modifier = () => {
   }, [selectedComponentId]);
 
   const debouncedUpdate = debounce((field: string, value: any) => {
-    console.log(`Updating field ${field} with value:`, value);
     updateTreeComponent(selectedComponentId as string, {
       [field]: value,
     });

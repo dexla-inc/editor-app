@@ -200,7 +200,6 @@ export const loginAction = async ({
   try {
     const iframeWindow = useEditorStore.getState().iframeWindow;
     const projectId = router.query.id as string;
-    console.log(actionId, action, router, onSuccess, onError, component, rest);
 
     updateTreeComponent(component.id!, { loading: true }, false);
 

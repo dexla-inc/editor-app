@@ -6,6 +6,7 @@ import cloneDeep from "lodash.clonedeep";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
 import { templatesMapper } from "./templatesMapper";
+import { Action } from "@/utils/actions";
 
 export type Component = {
   id?: string;
@@ -45,6 +46,22 @@ export function arrayMove<T>(array: T[], from: number, to: number): T[] {
 
   return newArray;
 }
+
+export const getAllActions = (treeRoot: Component): Action[] => {
+  const actions: Action[] = [];
+
+  crawl(
+    treeRoot,
+    (node) => {
+      if (node.props?.actions?.length > 0) {
+        actions.push(...node.props?.actions);
+      }
+    },
+    { order: "bfs" }
+  );
+
+  return actions;
+};
 
 export const replaceIdsDeeply = (treeRoot: Component) => {
   crawl(
