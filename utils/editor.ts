@@ -568,7 +568,10 @@ export const addComponent = (
           context.break();
         }
       } else {
-        if (node.id === dropTarget.id) {
+        if (copy.name === "Modal" && node.id === "content-wrapper") {
+          node.children = [...(node.children || []), copy];
+          context.break();
+        } else if (node.id === dropTarget.id) {
           node.children = node.children ?? [];
 
           if (dropTarget.edge === "left" || dropTarget.edge === "top") {
