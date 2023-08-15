@@ -1,5 +1,5 @@
 import { defaultTheme } from "@/components/IFrame";
-import { defaultDrawerValues } from "@/components/modifiers/Modal";
+import { defaultModalValues } from "@/components/modifiers/Modal";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
@@ -47,7 +47,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Modal",
     props: {
       ...(props.props || {}),
-      ...defaultDrawerValues,
+      ...defaultModalValues,
       style: {
         padding: "0px",
       },
