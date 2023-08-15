@@ -69,6 +69,7 @@ export const IFrame = ({ children, ...props }: Props) => {
         primaryColor: "Primary",
         logoUrl: userTheme.data?.logoUrl,
         faviconUrl: userTheme.data?.faviconUrl,
+        logos: userTheme.data?.logos,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
