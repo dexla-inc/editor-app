@@ -1,12 +1,12 @@
 import { PageResponse } from "@/requests/pages/types";
 import { emptyEditorTree } from "@/stores/editor";
+import { Action } from "@/utils/actions";
 import { structureMapper } from "@/utils/componentMapper";
 import { MantineTheme } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
 import { templatesMapper } from "./templatesMapper";
-import { Action } from "@/utils/actions";
 
 export type Component = {
   id?: string;
@@ -484,6 +484,22 @@ export const getAllModals = (treeRoot: Component): Component[] => {
   return modals;
 };
 
+export const getAllDrawers = (treeRoot: Component): Component[] => {
+  const drawers: Component[] = [];
+
+  crawl(
+    treeRoot,
+    (node) => {
+      if (node.name === "Drawer") {
+        drawers.push(node);
+      }
+    },
+    { order: "bfs" }
+  );
+
+  return drawers;
+};
+
 export const removeComponentFromParent = (
   treeRoot: Component,
   id: string,
@@ -547,6 +563,7 @@ export const addComponent = (
 ): string => {
   const copy = cloneDeep(componentToAdd);
   replaceIdsDeeply(copy);
+  const directChildren = ["Modal", "Drawer", "Toast", "Popover"];
 
   crawl(
     treeRoot,
@@ -568,7 +585,10 @@ export const addComponent = (
           context.break();
         }
       } else {
-        if (copy.name === "Modal" && node.id === "content-wrapper") {
+        if (
+          directChildren.includes(copy.name) &&
+          node.id === "content-wrapper"
+        ) {
           node.children = [...(node.children || []), copy];
           context.break();
         } else if (node.id === dropTarget.id) {

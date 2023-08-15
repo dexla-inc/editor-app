@@ -1,16 +1,31 @@
 import { defaultTheme } from "@/components/IFrame";
 import { defaultImageValues } from "@/components/modifiers/Image";
 import { PageResponse } from "@/requests/pages/types";
+import { MantineThemeExtended } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { IconHome } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
-  const theme = props.theme ?? defaultTheme;
-  const pages = props.pages ?? [];
-  const logoUrl = theme.logoUrl
-    ? theme.logoUrl
-    : "https://www.kadencewp.com/wp-content/uploads/2020/10/alogo-4.svg";
+  const theme = (props.theme ?? defaultTheme) as MantineThemeExtended;
+  const pages = (props.pages ?? [
+    {
+      id: nanoid(),
+      title: "Dashboard",
+    },
+    {
+      id: nanoid(),
+      title: "Application Form",
+    },
+  ]) as PageResponse[];
+
+  const darkLogo = theme.logos?.find((logo) => logo.type === "DARK");
+  const lightLogo = theme.logos?.find((logo) => logo.type === "LIGHT");
+
+  const logoUrl =
+    darkLogo?.url ||
+    lightLogo?.url ||
+    "https://www.kadencewp.com/wp-content/uploads/2020/10/alogo-4.svg";
 
   return {
     id: nanoid(),
@@ -29,7 +44,7 @@ export const jsonStructure = (props?: any): Component => {
         rowGap: "0px",
         columnGaop: "0px",
       },
-      bg: "White.0",
+      bg: darkLogo ? "White.0" : "Primary.6",
       ...(props.props || {}),
     },
     fixedPosition: { position: "left", target: "root" },

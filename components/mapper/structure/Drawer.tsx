@@ -1,5 +1,5 @@
 import { defaultTheme } from "@/components/IFrame";
-import { defaultDrawerValues } from "@/components/modifiers/Modal";
+import { defaultDrawerValues } from "@/components/modifiers/Drawer";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
@@ -24,7 +24,7 @@ export const jsonStructure = (props?: any): Component => {
           name: "Text",
           description: "Text",
           props: {
-            children: "Modal content",
+            children: "Drawer content",
             color: `${theme.colors.Black ? "Black.6" : "dark"}`,
             style: {
               fontSize: "16px",
@@ -43,14 +43,11 @@ export const jsonStructure = (props?: any): Component => {
 
   return {
     id: nanoid(),
-    name: "Modal",
-    description: "Modal",
+    name: "Drawer",
+    description: "Drawer",
     props: {
       ...(props.props || {}),
       ...defaultDrawerValues,
-      style: {
-        padding: "0px",
-      },
     },
     children: props.children ?? defaultChildren,
   };

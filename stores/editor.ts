@@ -1,6 +1,7 @@
 import { defaultTheme } from "@/components/IFrame";
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
+import { Logo } from "@/requests/themes/types";
 import { encodeSchema } from "@/utils/compression";
 import {
   Component,
@@ -29,9 +30,10 @@ export const emptyEditorTree = {
   },
 };
 
-interface MantineThemeExtended extends MantineTheme {
+export interface MantineThemeExtended extends MantineTheme {
   logoUrl?: string;
   faviconUrl?: string;
+  logos?: Logo[];
 }
 
 export type ComponentToBind = {
