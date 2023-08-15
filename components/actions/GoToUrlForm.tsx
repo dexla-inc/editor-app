@@ -38,7 +38,7 @@ export const GoToUrlForm = ({ id }: Props) => {
       title: "Saving Action",
       message: "Wait while we save your changes",
     });
-
+    console.log(componentActions);
     try {
       updateTreeComponent(selectedComponentId!, {
         actions: componentActions.map((action: Action) => {
@@ -80,6 +80,8 @@ export const GoToUrlForm = ({ id }: Props) => {
     });
   };
 
+  const openInNewTabInputProps = form.getInputProps("openInNewTab");
+
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack>
@@ -91,7 +93,8 @@ export const GoToUrlForm = ({ id }: Props) => {
         ></TextInput>
         <Checkbox
           label="Open in new tab"
-          {...form.getInputProps("openInNewTab")}
+          {...openInNewTabInputProps}
+          checked={openInNewTabInputProps.value}
         />
         <Button size="xs" type="submit">
           Save
