@@ -38,7 +38,7 @@ export const GoToUrlForm = ({ id }: Props) => {
       title: "Saving Action",
       message: "Wait while we save your changes",
     });
-    console.log(componentActions);
+
     try {
       updateTreeComponent(selectedComponentId!, {
         actions: componentActions.map((action: Action) => {
