@@ -20,6 +20,7 @@ import {
   SwaggerURLInput,
   validateSwaggerUrl,
 } from "@/components/datasources/SwaggerURLInput";
+import { TestUserLogin } from "@/components/datasources/TestUserLogin";
 import TextInputComponent from "@/components/datasources/TextInputComponent";
 import { updateDataSource } from "@/requests/datasources/mutations";
 import {
@@ -43,7 +44,6 @@ import {
   Group,
   Select,
   Stack,
-  TextInput,
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -81,13 +81,15 @@ export default function Settings() {
   const [userEndpointId, setUserEndpointId] = useState<string | undefined>(
     undefined
   );
-  const [loginParameters, setLoginParameters] = useState<
+  const [loginRequestBody, setLoginRequestBody] = useState<
     RequestBody[] | undefined
   >(undefined);
   const [exampleResponse, setExampleResponse] = useState<
     ExampleResponseDropdown[] | undefined
   >(undefined);
-
+  const [loginEndpointObj, setLoginEndpointObj] = useState<
+    Endpoint | undefined
+  >(undefined);
   const postEndpoints = filterAndMapEndpoints(endpoints, "POST");
   const getEndpoints = filterAndMapEndpoints(endpoints, "GET");
 
@@ -242,6 +244,8 @@ export default function Settings() {
     setLoginEndpointId(value);
     apiAuthForm.setFieldValue("loginEndpointId", value);
     setExampleResponseObject(postEndpoints, setExampleResponse, value);
+    const selectedEndpoint = endpoints?.find((option) => option.id === value);
+    setLoginEndpointObj(selectedEndpoint);
   };
 
   const setRefreshEndpoint = (value: string | undefined) => {
@@ -294,6 +298,12 @@ export default function Settings() {
       apiAuthForm.setFieldValue(
         "refreshToken",
         refreshEndpoint?.authentication.tokenKey
+      );
+
+      setRequestBodyObject(
+        postEndpoints,
+        setLoginRequestBody,
+        loginEndpoint?.id as string
       );
     }
   }, [endpoints]);
@@ -370,7 +380,7 @@ export default function Settings() {
                       );
                       setRequestBodyObject(
                         postEndpoints,
-                        setLoginParameters,
+                        setLoginRequestBody,
                         value as string
                       );
                     }}
@@ -521,22 +531,16 @@ export default function Settings() {
                 <Button type="submit">Save</Button>
               </Flex>
               <Divider></Divider>
-              <Stack>
-                <Title order={4} pt="lg">
-                  Test Account Login
-                </Title>
-                {loginParameters?.map((parameter) => {
-                  return (
-                    <TextInput
-                      key={parameter.name}
-                      label={parameter.name}
-                      placeholder={"Enter your " + parameter.name}
-                      value={parameter.name}
-                      type={parameter.type ? parameter.type : "text"}
-                    />
-                  );
-                })}
-              </Stack>
+              {loginRequestBody && loginRequestBody.length > 0 && (
+                <TestUserLogin
+                  projectId={projectId}
+                  requestBody={loginRequestBody}
+                  url={
+                    dataSource?.baseUrl + "/" + loginEndpointObj?.relativeUrl
+                  }
+                  dataSourceId={dataSource.id}
+                ></TestUserLogin>
+              )}
               <Stack>
                 {dataSource?.changedEndpoints && (
                   <Title order={6}>Changed Endpoints</Title>
@@ -554,6 +558,7 @@ export default function Settings() {
                     ></DataSourceEndpoint>
                   );
                 })}
+
                 {dataSource?.deletedEndpoints && (
                   <Title order={6}>Deleted Endpoints</Title>
                 )}

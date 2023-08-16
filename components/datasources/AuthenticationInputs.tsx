@@ -21,7 +21,7 @@ export function filterAndMapEndpoints(
       value: endpoint.id,
       label: endpoint.relativeUrl,
       exampleresponse: endpoint.exampleResponse,
-      parameters: endpoint.parameters,
+      requestbody: endpoint.requestBody,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 }
@@ -146,8 +146,6 @@ export const setRequestBodyObject = (
   const selectedEndpoint = postEndpoints.find(
     (option) => option.value === value
   );
-
-  console.log("selectedEndpoint", selectedEndpoint);
 
   if (selectedEndpoint?.requestbody) {
     setRequestBody(selectedEndpoint?.requestbody);
