@@ -19,8 +19,8 @@ export const Image = ({ renderTree, component, ...props }: Props) => {
       alt={style?.alt || "Image"}
       {...props}
       {...componentProps}
-      width={style?.width ?? "100px"}
-      height={style?.height ?? "100px"}
+      width={width ?? "100px"}
+      height={height ?? "100px"}
       {...triggers}
       style={style}
     />
