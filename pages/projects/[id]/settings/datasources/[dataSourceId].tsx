@@ -31,7 +31,7 @@ import {
   DataSourceParams,
   DataSourceResponse,
   Endpoint,
-  Parameter,
+  RequestBody,
 } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
 import { ICON_SIZE } from "@/utils/config";
@@ -82,7 +82,7 @@ export default function Settings() {
     undefined
   );
   const [loginParameters, setLoginParameters] = useState<
-    Parameter[] | undefined
+    RequestBody[] | undefined
   >(undefined);
   const [exampleResponse, setExampleResponse] = useState<
     ExampleResponseDropdown[] | undefined
