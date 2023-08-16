@@ -65,7 +65,7 @@ export const Modal = ({
       {...componentProps}
       styles={{
         content: style ?? {},
-        body: { marginTop: "40px" },
+        body: { marginTop: "40px", height: "fit-content" },
         title: { fontFamily: theme.fontFamily },
       }}
     >

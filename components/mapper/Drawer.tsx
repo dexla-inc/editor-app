@@ -64,6 +64,7 @@ export const Drawer = ({
       {...componentProps}
       styles={{
         title: { fontFamily: theme.fontFamily },
+        body: { height: "fit-content" },
       }}
     >
       {component.children && component.children.length > 0
