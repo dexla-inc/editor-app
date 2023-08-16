@@ -19,6 +19,7 @@ import {
   BoxProps,
   Group,
   Text,
+  Tooltip,
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
@@ -31,7 +32,7 @@ import {
 } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { Router, useRouter } from "next/router";
-import { PropsWithChildren, cloneElement, useEffect } from "react";
+import { PropsWithChildren, cloneElement, useEffect, Fragment } from "react";
 
 type Props = {
   id: string;
@@ -222,6 +223,8 @@ export const DroppableDraggable = ({
   };
 
   const isModal = component.name === "Modal";
+  const hasTooltip = !!component.props?.tooltip;
+  const ComponentWrapper = hasTooltip ? Tooltip : Fragment;
 
   return (
     <Box
@@ -245,35 +248,40 @@ export const DroppableDraggable = ({
       }}
       {...filteredProps}
     >
-      <Box
-        w="100%"
-        h={component.name === "Container" ? "100%" : "auto"}
-        pos="relative"
-        sx={{
-          display: "flex",
-        }}
-        {...droppable}
+      {/* @ts-ignore */}
+      <ComponentWrapper
+        {...(hasTooltip ? { label: component.props?.tooltip } : {})}
       >
-        {cloneElement(
-          // @ts-ignore
-          children,
-          {
-            component: {
-              ...component,
-              props: {
-                ...component.props,
-                ...(isModal ? { style: shadows } : {}),
-                triggers: isPreviewMode
-                  ? { ...triggers, onMouseEnter: triggers?.onHover }
-                  : {},
+        <Box
+          w="100%"
+          h={component.name === "Container" ? "100%" : "auto"}
+          pos="relative"
+          sx={{
+            display: "flex",
+          }}
+          {...droppable}
+        >
+          {cloneElement(
+            // @ts-ignore
+            children,
+            {
+              component: {
+                ...component,
+                props: {
+                  ...component.props,
+                  ...(isModal ? { style: shadows } : {}),
+                  triggers: isPreviewMode
+                    ? { ...triggers, onMouseEnter: triggers?.onHover }
+                    : {},
+                },
               },
+              isPreviewMode,
             },
-            isPreviewMode,
-          },
-          // @ts-ignore
-          children?.children
-        )}
-      </Box>
+            // @ts-ignore
+            children?.children
+          )}
+        </Box>
+      </ComponentWrapper>
       {!isContentWrapper && !handlerBlacklist.includes(component.name) && (
         <Box
           pos="absolute"

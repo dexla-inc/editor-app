@@ -1189,7 +1189,7 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <Button component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["button", "spacing", "size", "border"],
+    modifiers: ["button", "spacing", "size", "border", "effects"],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
