@@ -83,7 +83,7 @@ type Header = {
   description: string | null;
 };
 
-type Parameter = {
+export type Parameter = {
   location: string;
   required: boolean;
   name: string;
@@ -91,7 +91,7 @@ type Parameter = {
   description: string | null;
 };
 
-type RequestBody = {
+export type RequestBody = {
   value: any | null;
   name: string;
   type: string;
