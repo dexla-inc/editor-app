@@ -1,4 +1,5 @@
 import BackButton from "@/components/BackButton";
+import NextButton from "@/components/NextButton";
 import {
   AuthenticationStepParams,
   ExampleResponseDropdown,
@@ -6,12 +7,11 @@ import {
   mapEndpointExampleResponse,
   patchDataSourceWithParams,
   setEndpoint,
+  setRequestBodyObject,
   validateTokenProperty,
 } from "@/components/datasources/AuthenticationInputs";
-import SearchableSelectComponent from "@/components/datasources/SelectComponent";
 import TextInputComponent from "@/components/datasources/TextInputComponent";
-import NextButton from "@/components/NextButton";
-import { Endpoint } from "@/requests/datasources/types";
+import { Endpoint, RequestBody } from "@/requests/datasources/types";
 import { DataSourceStepperProps } from "@/utils/dashboardTypes";
 import { Anchor, Divider, Flex, Group, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -38,6 +38,7 @@ interface AuthenticationStepProps extends DataSourceStepperProps {
   ) => void;
   expiryProperty: string | null;
   setExpiryProperty: (expiryProperty: string | null) => void;
+  setLoginRequestBody: (requestBody: RequestBody[] | undefined) => void;
 }
 
 export default function AuthenticationStep({
@@ -66,6 +67,7 @@ export default function AuthenticationStep({
   exampleResponse,
   expiryProperty,
   setExpiryProperty,
+  setLoginRequestBody,
 }: AuthenticationStepProps) {
   const router = useRouter();
   const projectId = router.query.id as string;
@@ -223,38 +225,54 @@ export default function AuthenticationStep({
       onSubmit={form.onSubmit(onSubmit)}
       onError={(error) => console.log(error)}
     >
-      <Stack>
+      <Stack pb={100}>
         {dataSource?.swaggerUrl ? (
           <>
-            <SearchableSelectComponent
+            <Select
               label="Login Endpoint (POST)"
               description="The endpoint used to login to your API"
               placeholder="/v1/login"
+              searchable
+              clearable
+              required
+              data={postEndpoints ?? []}
               value={loginEndpointId}
-              form={form}
-              propertyName="loginEndpointId"
-              data={postEndpoints}
-              setProperty={(value) => setLoginEndpoint(value ?? "")}
+              onChange={(value) => {
+                form.setFieldValue("loginEndpointId", value as string);
+                setLoginEndpoint(value ?? "");
+                setRequestBodyObject(
+                  postEndpoints,
+                  setLoginRequestBody,
+                  value as string
+                );
+              }}
             />
-            <SearchableSelectComponent
+            <Select
               label="Refresh Endpoint (POST)"
               description="The endpoint used to refresh your API token"
               placeholder="/v1/login/refresh"
+              searchable
+              clearable
+              required
+              data={postEndpoints ?? []}
               value={refreshEndpointId}
-              form={form}
-              propertyName="refreshEndpointId"
-              data={postEndpoints}
-              setProperty={(value) => setRefreshEndpoint(value ?? "")}
+              onChange={(value) => {
+                form.setFieldValue("refreshEndpointId", value as string);
+                setRefreshEndpoint(value ?? "");
+              }}
             />
-            <SearchableSelectComponent
+            <Select
               label="User Endpoint (GET)"
               description="The endpoint used to user information"
               placeholder="/v1/user"
+              searchable
+              clearable
+              data={getEndpoints ?? []}
               value={userEndpointId}
-              form={form}
-              propertyName="userEndpointId"
-              data={getEndpoints}
-              setProperty={(value) => setUserEndpoint(value ?? "")}
+              onChange={(value) => {
+                form.setFieldValue("userEndpointId", value as string);
+                setUserEndpoint(value ?? "");
+              }}
             />
           </>
         ) : (
@@ -290,16 +308,20 @@ export default function AuthenticationStep({
           </>
         )}
         {dataSource?.swaggerUrl && loginEndpointId ? (
-          <SearchableSelectComponent
+          <Select
             label="Access token property"
             description="The property name of the access token in the response"
             placeholder="access"
-            value={accessToken}
-            form={form}
-            propertyName="accessToken"
+            searchable
+            clearable
+            nothingFound="Not found. Update your swagger to include the response property"
             data={exampleResponse ?? []}
-            setProperty={setAccessToken}
-            nothingFoundText="Not found. Update your swagger to include the response property"
+            value={accessToken}
+            onChange={(value) => {
+              form.setFieldValue("accessToken", value as string);
+              setAccessToken(value);
+            }}
+            required
           />
         ) : (
           <TextInputComponent
@@ -314,16 +336,20 @@ export default function AuthenticationStep({
           />
         )}
         {dataSource?.swaggerUrl && refreshEndpointId ? (
-          <SearchableSelectComponent
+          <Select
             label="Refresh token property"
             description="The property name of the refresh token in the response"
             placeholder="refresh"
-            value={refreshToken}
-            form={form}
-            propertyName="refreshToken"
+            searchable
+            clearable
+            nothingFound="Not found. Update your swagger to include the response property"
             data={exampleResponse ?? []}
-            setProperty={setRefreshToken}
-            nothingFoundText="Not found. Update your swagger to include the response property"
+            value={refreshToken}
+            onChange={(value) => {
+              form.setFieldValue("refreshToken", value as string);
+              setRefreshToken(value);
+            }}
+            required
           />
         ) : (
           <TextInputComponent
@@ -350,7 +376,7 @@ export default function AuthenticationStep({
                 : "No options"
             }
             data={exampleResponse ?? []}
-            {...form.getInputProps("expiryProperty")}
+            value={expiryProperty}
             onChange={(value) => {
               form.setFieldValue("expiryProperty", value as string);
               setExpiryProperty(value);

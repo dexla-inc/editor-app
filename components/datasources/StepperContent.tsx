@@ -3,7 +3,11 @@ import AuthenticationStep from "@/components/datasources/AuthenticationStep";
 import BasicDetailsStep from "@/components/datasources/BasicDetailsStep";
 import EndpointsStep from "@/components/datasources/EndpointsStep";
 import SwaggerStep from "@/components/datasources/SwaggerStep";
-import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
+import {
+  DataSourceResponse,
+  Endpoint,
+  RequestBody,
+} from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
 import {
   NextStepperClickEvent,
@@ -53,6 +57,9 @@ export default function StepperContent({
   const [expiryProperty, setExpiryProperty] = useState<string | null>(null);
   const [exampleResponse, setExampleResponse] = useState<
     ExampleResponseDropdown[] | undefined
+  >(undefined);
+  const [loginRequestBody, setLoginRequestBody] = useState<
+    RequestBody[] | undefined
   >(undefined);
 
   return (
@@ -108,6 +115,7 @@ export default function StepperContent({
           setExampleResponse={setExampleResponse}
           expiryProperty={expiryProperty}
           setExpiryProperty={setExpiryProperty}
+          setLoginRequestBody={setLoginRequestBody}
         ></AuthenticationStep>
       )}
       {activeStep == 3 && (
@@ -124,6 +132,7 @@ export default function StepperContent({
           refreshEndpointLabel={refreshEndpointLabel}
           userEndpointLabel={userEndpointLabel}
           expiryProperty={expiryProperty}
+          loginRequestBody={loginRequestBody}
         ></EndpointsStep>
       )}
     </Stack>

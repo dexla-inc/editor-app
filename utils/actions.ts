@@ -286,12 +286,13 @@ export const loginAction = async ({
       throw new Error(response.statusText);
     }
 
+    const responseJson = await response.json();
+
     const dataSourceAuthConfig = await getDataSourceAuth(
       projectId,
       action.datasource.id
     );
 
-    const responseJson = await response.json();
     const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
 
     const authStore = useAuthStore.getState();
