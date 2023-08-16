@@ -63,8 +63,6 @@ export const Drawer = ({
       {...props}
       {...componentProps}
       styles={{
-        content: style ?? {},
-        body: { marginTop: "40px" },
         title: { fontFamily: theme.fontFamily },
       }}
     >

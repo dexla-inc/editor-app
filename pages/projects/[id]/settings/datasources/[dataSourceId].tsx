@@ -7,6 +7,7 @@ import {
   getAuthEndpoint,
   patchDataSourceWithParams,
   setExampleResponseObject,
+  setRequestBodyObject,
 } from "@/components/datasources/AuthenticationInputs";
 import {
   BasicDetailsInputs,
@@ -30,6 +31,7 @@ import {
   DataSourceParams,
   DataSourceResponse,
   Endpoint,
+  Parameter,
 } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
 import { ICON_SIZE } from "@/utils/config";
@@ -41,6 +43,7 @@ import {
   Group,
   Select,
   Stack,
+  TextInput,
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -78,9 +81,9 @@ export default function Settings() {
   const [userEndpointId, setUserEndpointId] = useState<string | undefined>(
     undefined
   );
-  const [expiryProperty, setExpiryProperty] = useState<string | undefined>(
-    undefined
-  );
+  const [loginParameters, setLoginParameters] = useState<
+    Parameter[] | undefined
+  >(undefined);
   const [exampleResponse, setExampleResponse] = useState<
     ExampleResponseDropdown[] | undefined
   >(undefined);
@@ -351,15 +354,6 @@ export default function Settings() {
               <Title order={3}>Bearer Token Configuration</Title>
               {swaggerUrl ? (
                 <>
-                  {/* <SearchableSelectComponent
-                    label="Login Endpoint (POST)"
-                    description="The endpoint used to login to your API"
-                    placeholder="/v1/login"
-                    form={apiAuthForm}
-                    propertyName="loginEndpointId"
-                    data={postEndpoints}
-                    setProperty={(value) => setLoginEndpoint(value ?? "")}
-                  /> */}
                   <Select
                     label="Login Endpoint (POST)"
                     description="The endpoint used to login to your API"
@@ -372,6 +366,11 @@ export default function Settings() {
                     onChange={(value) => {
                       apiAuthForm.setFieldValue(
                         "loginEndpointId",
+                        value as string
+                      );
+                      setRequestBodyObject(
+                        postEndpoints,
+                        setLoginParameters,
                         value as string
                       );
                     }}
@@ -522,6 +521,22 @@ export default function Settings() {
                 <Button type="submit">Save</Button>
               </Flex>
               <Divider></Divider>
+              <Stack>
+                <Title order={4} pt="lg">
+                  Test Account Login
+                </Title>
+                {loginParameters?.map((parameter) => {
+                  return (
+                    <TextInput
+                      key={parameter.name}
+                      label={parameter.name}
+                      placeholder={"Enter your " + parameter.name}
+                      value={parameter.name}
+                      type={parameter.type ? parameter.type : "text"}
+                    />
+                  );
+                })}
+              </Stack>
               <Stack>
                 {dataSource?.changedEndpoints && (
                   <Title order={6}>Changed Endpoints</Title>

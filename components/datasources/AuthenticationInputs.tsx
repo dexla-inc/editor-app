@@ -1,10 +1,11 @@
 import { patchDataSource } from "@/requests/datasources/mutations";
-import { Endpoint } from "@/requests/datasources/types";
+import { Endpoint, RequestBody } from "@/requests/datasources/types";
 
 type EndpointDropdown = {
   value: string;
   label: string;
   exampleresponse?: string;
+  requestbody?: RequestBody[];
 }[];
 
 export function filterAndMapEndpoints(
@@ -20,6 +21,7 @@ export function filterAndMapEndpoints(
       value: endpoint.id,
       label: endpoint.relativeUrl,
       exampleresponse: endpoint.exampleResponse,
+      parameters: endpoint.parameters,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 }
@@ -133,5 +135,21 @@ export const setExampleResponseObject = (
       selectedEndpoint?.exampleresponse
     );
     setExampleResponse(result);
+  }
+};
+
+export const setRequestBodyObject = (
+  postEndpoints: EndpointDropdown,
+  setRequestBody: (requestBody: RequestBody[] | undefined) => void,
+  value: string | undefined
+) => {
+  const selectedEndpoint = postEndpoints.find(
+    (option) => option.value === value
+  );
+
+  console.log("selectedEndpoint", selectedEndpoint);
+
+  if (selectedEndpoint?.requestbody) {
+    setRequestBody(selectedEndpoint?.requestbody);
   }
 };
