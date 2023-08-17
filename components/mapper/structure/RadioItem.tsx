@@ -9,8 +9,8 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       label: "Radio Item",
       value: "radio1",
-      blockDroppingChildrenInside: true,
       ...(props?.props ?? {}),
     },
+    blockDroppingChildrenInside: true,
   };
 };

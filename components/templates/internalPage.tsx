@@ -223,9 +223,9 @@ export const template = (data: Data, theme: any, pages: any) => {
                     color: "Primary",
                     size: "lg",
                     radius: "xl",
-                    blockDroppingChildrenInside: true,
                     style: { backgroundColor: "white" },
                   },
+                  blockDroppingChildrenInside: true,
                   children: [
                     {
                       id: nanoid(),
@@ -246,9 +246,9 @@ export const template = (data: Data, theme: any, pages: any) => {
                     color: "Primary",
                     size: "lg",
                     radius: "xl",
-                    blockDroppingChildrenInside: true,
                     style: { backgroundColor: "white" },
                   },
+                  blockDroppingChildrenInside: true,
                   children: [
                     {
                       id: nanoid(),
@@ -272,9 +272,9 @@ export const template = (data: Data, theme: any, pages: any) => {
                     color: "Primary",
                     size: "lg",
                     radius: "xl",
-                    blockDroppingChildrenInside: true,
                     style: { backgroundColor: "white" },
                   },
+                  blockDroppingChildrenInside: true,
                   children: [
                     {
                       id: nanoid(),
