@@ -40,7 +40,6 @@ export const PopOver = ({
 
   let targetComponent: Component | null = null;
   const [opened, { open, close }] = useDisclosure(propOpened);
-  console.log(children, component.children);
   const childrenWithoutTarget = (children || component.children).reduce(
     (acc: any, item: any) => {
       if (item.id === targetId) {
