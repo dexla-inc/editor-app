@@ -4,6 +4,7 @@ import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { LoginActionForm } from "@/components/actions/LoginActionForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
+import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
 import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm";
 import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import {
@@ -97,6 +98,12 @@ export type OpenDrawerAction = {
   data?: any;
 };
 
+export type OpenPopOverAction = {
+  name: "openPopOver";
+  popOverId: string;
+  data?: any;
+};
+
 export type APICallAction = {
   name: "apiCall";
   endpoint: string;
@@ -129,7 +136,8 @@ export type Action = {
     | GoToUrlAction
     | LoginAction
     | OpenModalAction
-    | OpenDrawerAction;
+    | OpenDrawerAction
+    | OpenPopOverAction;
   sequentialTo?: string;
 };
 
@@ -184,6 +192,10 @@ export type OpenDrawerActionParams = ActionParams & {
   action: OpenDrawerAction;
 };
 
+export type OpenPopOverActionParams = ActionParams & {
+  action: OpenPopOverAction;
+};
+
 export const openModalAction = ({ action }: OpenModalActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   updateTreeComponent(action.modalId, { opened: true }, false);
@@ -192,6 +204,11 @@ export const openModalAction = ({ action }: OpenModalActionParams) => {
 export const openDrawerAction = ({ action }: OpenDrawerActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   updateTreeComponent(action.drawerId, { opened: true }, false);
+};
+
+export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  updateTreeComponent(action.popOverId, { opened: true }, false);
 };
 
 export type APICallActionParams = ActionParams & {
@@ -520,5 +537,9 @@ export const actionMapper = {
   openDrawer: {
     action: openDrawerAction,
     form: OpenDrawerActionForm,
+  },
+  openPopOver: {
+    action: openPopOverAction,
+    form: OpenPopOverActionForm,
   },
 };
