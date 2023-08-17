@@ -138,7 +138,7 @@ export const EditorAsideSections = () => {
       const actionName = action.action.name;
 
       if (actionName) {
-        const Component = actionMapper[actionName].form;
+        const Component = actionMapper[actionName]?.form;
 
         return (
           <SidebarSection {...item} key={item.label}>

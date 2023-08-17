@@ -1,3 +1,4 @@
+import { Icon } from "@/components/Icon";
 import { Component } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import { ReactElement } from "react";
@@ -15,8 +16,8 @@ export const Button = ({
   isPreviewMode,
   ...props
 }: Props) => {
-  console.log("button", component);
-  const { children, triggers, ...componentProps } = component.props as any;
+  const { children, triggers, leftIcon, ...componentProps } =
+    component.props as any;
 
   const defaultTriggers = isPreviewMode
     ? {}
@@ -28,6 +29,7 @@ export const Button = ({
 
   return (
     <MantineButton
+      leftIcon={<Icon name={leftIcon} />}
       {...defaultTriggers}
       {...props}
       {...componentProps}
