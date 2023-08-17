@@ -25,9 +25,9 @@ export const jsonStructure = (props?: any): Component => {
         props: {
           label: "Radio Label 1",
           value: "radio1",
-          blockDroppingChildrenInside: true,
           ...(props.props || {}),
         },
+        blockDroppingChildrenInside: true,
       },
       {
         id: nanoid(),
@@ -36,9 +36,9 @@ export const jsonStructure = (props?: any): Component => {
         props: {
           label: "Radio Label 2",
           value: "radio2",
-          blockDroppingChildrenInside: true,
           ...(props.props || {}),
         },
+        blockDroppingChildrenInside: true,
       },
     ],
   };
