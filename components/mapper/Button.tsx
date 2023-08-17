@@ -1,7 +1,7 @@
+import { Icon } from "@/components/Icon";
 import { Component } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import { ReactElement } from "react";
-import { Icon } from "@/components/Icon";
 
 type Props = {
   renderTree: (component: Component) => any;
