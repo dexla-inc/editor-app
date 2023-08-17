@@ -12,6 +12,7 @@ import {
 } from "@/utils/dashboardTypes";
 import { Anchor, Divider, Flex, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import Image from "next/image";
 import { useRouter } from "next/router";
 
 export default function SwaggerStep({
@@ -97,21 +98,29 @@ export default function SwaggerStep({
           title="Let's get started!"
           text="Instead of manually adding your API endpoints, you can import via swagger to save you time. When you add new API endpoints you will just need to refetch. We can show you how to do this later."
         />
-
         <SwaggerURLInput isLoading={isLoading} form={form} />
         <Divider></Divider>
-        <Group position="right">
-          <Flex gap="lg" align="end">
-            {!isLoading && (
-              <Anchor onClick={nextStep}>Continue without Swagger</Anchor>
-            )}
-            <NextButton
-              isLoading={isLoading}
-              disabled={isLoading}
-              isSubmit={true}
-            ></NextButton>
-          </Flex>
-        </Group>
+
+        <Flex align="center" gap="md" justify="space-between">
+          <Image
+            src="/swagger_logo.svg"
+            alt="Swagger Logo"
+            width={200}
+            height={80}
+          />
+          <Group position="right">
+            <Flex gap="lg" align="end">
+              {!isLoading && (
+                <Anchor onClick={nextStep}>Continue without Swagger</Anchor>
+              )}
+              <NextButton
+                isLoading={isLoading}
+                disabled={isLoading}
+                isSubmit={true}
+              ></NextButton>
+            </Flex>
+          </Group>
+        </Flex>
       </Stack>
     </form>
   );

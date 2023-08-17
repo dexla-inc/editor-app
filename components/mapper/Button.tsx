@@ -15,6 +15,7 @@ export const Button = ({
   isPreviewMode,
   ...props
 }: Props) => {
+  console.log("button", component);
   const { children, triggers, ...componentProps } = component.props as any;
 
   const defaultTriggers = isPreviewMode
