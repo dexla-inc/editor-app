@@ -120,13 +120,6 @@ export const Modifier = () => {
             debouncedUpdate("size", value as string);
           }}
         />
-        {/* <IconSelector
-          {...form.getInputProps("icon")}
-          onChange={(value) => {
-            form.setFieldValue("icon", value);
-            debouncedUpdate("icon", value);
-          }}
-        /> */}
         <SwitchSelector
           topLabel="Required"
           {...form.getInputProps("withAsterisk")}

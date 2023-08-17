@@ -1,5 +1,6 @@
 import { Component } from "@/utils/editor";
 import { TextInputProps, TextInput as MantineInput } from "@mantine/core";
+import { Icon } from "@/components/Icon";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -7,11 +8,12 @@ type Props = {
 } & TextInputProps;
 
 export const Input = ({ renderTree, component, ...props }: Props) => {
-  const { children, ...componentProps } = component.props as any;
-
+  const { children, icon, ...componentProps } = component.props as any;
+  const { name: iconName } = icon && icon!.props!;
   return (
     <MantineInput
       id={component.id}
+      icon={iconName ? <Icon name={iconName} /> : null}
       styles={{ root: { display: "block !important" } }}
       {...props}
       {...componentProps}
