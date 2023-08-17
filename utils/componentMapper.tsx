@@ -15,6 +15,7 @@ import { Container } from "@/components/mapper/Container";
 import { DateInput } from "@/components/mapper/DateInput";
 import { Divider } from "@/components/mapper/Divider";
 import { Drawer } from "@/components/mapper/Drawer";
+import { PopOver } from "@/components/mapper/PopOver";
 import { FilePond } from "@/components/mapper/FilePond";
 import { Flex } from "@/components/mapper/Flex";
 import { Form } from "@/components/mapper/Form";
@@ -58,6 +59,7 @@ import * as ContainerStructure from "@/components/mapper/structure/Container";
 import * as DateInputStructure from "@/components/mapper/structure/DateInput";
 import * as DividerStructure from "@/components/mapper/structure/Divider";
 import * as DrawerStructure from "@/components/mapper/structure/Drawer";
+import * as PopOverStructure from "@/components/mapper/structure/PopOver";
 import * as FilePondStructure from "@/components/mapper/structure/FilePond";
 import * as FormStructure from "@/components/mapper/structure/Form";
 import * as IconStructure from "@/components/mapper/structure/Icon";
@@ -719,6 +721,17 @@ export const structureMapper: StructureMapper = {
     category: "Overlays",
     icon: <IconLayoutSidebarLeftCollapse size={ICON_SIZE} />,
   },
+  PopOver: {
+    structure: (props: any) => PopOverStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="PopOver"
+        icon={<IconLayoutSidebarLeftCollapse size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Overlays",
+    icon: <IconLayoutSidebarLeftCollapse size={ICON_SIZE} />,
+  },
 };
 
 export type Modifiers =
@@ -1231,6 +1244,15 @@ export const componentMapper: ComponentMapper = {
       <Drawer component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["drawer", "border"],
+    actionTriggers: ["onMount", "onClose"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  PopOver: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      // @ts-ignore
+      <PopOver component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["border"],
     actionTriggers: ["onMount", "onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
