@@ -7,7 +7,7 @@ export const jsonStructure = (props?: any): Component => {
     name: "Menu",
     description: "Profile Menu",
     props: {
-      style: {
+      sx: {
         width: "100%",
         height: "auto",
       },
