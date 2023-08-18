@@ -14,6 +14,8 @@ export interface PageBody extends UpdatePageBody {
   pageState?: string;
 }
 
+export type QueryStringListItem = { key: string; value: string };
+
 export type UpdatePageBody = {
   title: string;
   slug: string;
@@ -22,6 +24,7 @@ export type UpdatePageBody = {
   authenticatedUserRole?: string;
   parentPageId?: string;
   hasNavigation: boolean;
+  queryStrings?: Record<string, string>;
   copyFrom?: {
     id: string;
     type: AppTypes;
