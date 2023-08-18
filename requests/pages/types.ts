@@ -22,6 +22,7 @@ export type UpdatePageBody = {
   authenticatedUserRole?: string;
   parentPageId?: string;
   hasNavigation: boolean;
+  queryStrings?: any;
   copyFrom?: {
     id: string;
     type: AppTypes;

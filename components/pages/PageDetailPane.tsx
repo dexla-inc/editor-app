@@ -4,14 +4,15 @@ import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { decodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
-import { Button, Flex, Stack, TextInput } from "@mantine/core";
+import { Button, Flex, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useClipboard } from "@mantine/hooks";
-import { IconArrowLeft } from "@tabler/icons-react";
+import { IconArrowLeft, IconTrash } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
+import { QueryStringsForm } from "@/components/QueryStringsForm";
 
 type PageDetailPaneProps = {
   page?: PageResponse | null | undefined;
@@ -33,6 +34,14 @@ export default function PageDetailPane({
   const [slug, setSlug] = useState("");
   const queryClient = useQueryClient();
   const resetTree = useEditorStore((state) => state.resetTree);
+  const queryStringState = useState(
+    page!.queryStrings
+      ? Object.entries(page!.queryStrings).map(([key, value]) => ({
+          key,
+          value,
+        }))
+      : []
+  );
 
   const form = useForm<PageBody>({
     initialValues: {
@@ -42,6 +51,7 @@ export default function PageDetailPane({
       authenticatedOnly: false,
       hasNavigation: false,
       copyFrom: undefined,
+      queryStrings: [],
     },
     validate: {
       title: (value) =>
@@ -95,6 +105,14 @@ export default function PageDetailPane({
         message: "Wait while your page is being saved",
       });
 
+      values.queryStrings = queryStringState[0].reduce(
+        (acc: any, item: any) => {
+          acc[item.key] = item.value;
+          return acc;
+        },
+        {}
+      );
+
       form.validate();
 
       if (page?.id) {
@@ -136,6 +154,7 @@ export default function PageDetailPane({
         id: page!.id as string,
         type: "PAGE",
       },
+      queryStrings: [],
     });
 
     form.setFieldValue("copyFrom", {
@@ -148,12 +167,14 @@ export default function PageDetailPane({
     form.setFieldValue("isHome", false);
     form.setFieldValue("authenticatedOnly", false);
     form.setFieldValue("hasNavigation", false);
+    form.setFieldValue("queryStrings", []);
   };
 
   useEffect(() => {
     if (page) {
       form.setFieldValue("title", page.title);
       form.setFieldValue("slug", page.slug.toLowerCase());
+      form.setFieldValue("queryStrings", page.queryStrings);
       setSlug(page.slug);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -197,6 +218,9 @@ export default function PageDetailPane({
                 form.setTouched({ slug: true });
               }}
             />
+
+            <QueryStringsForm queryStringState={queryStringState} />
+
             <Button type="submit" loading={isLoading}>
               {page ? "Save" : "Create"}
             </Button>
