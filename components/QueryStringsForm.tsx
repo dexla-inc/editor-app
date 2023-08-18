@@ -1,11 +1,15 @@
 import { Button, Group, TextInput } from "@mantine/core";
 import { Icon } from "@/components/Icon";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { QueryStringListItem } from "@/requests/pages/types";
 
 export const QueryStringsForm = ({
   queryStringState,
 }: {
-  queryStringState: any;
+  queryStringState: [
+    QueryStringListItem[],
+    Dispatch<SetStateAction<QueryStringListItem[]>>
+  ];
 }) => {
   const [queryKey, setQueryKey] = useState("");
   const [queryValue, setQueryValue] = useState("");
@@ -38,9 +42,9 @@ export const QueryStringsForm = ({
       <Button
         type="button"
         onClick={() => {
-          setQueryStrings((prev: any) =>
-            prev.concat({ key: queryKey, value: queryValue })
-          );
+          setQueryStrings((prev: QueryStringListItem[]) => {
+            return prev.concat({ key: queryKey, value: queryValue });
+          });
           setQueryKey("");
           setQueryValue("");
         }}
@@ -51,48 +55,46 @@ export const QueryStringsForm = ({
       </Button>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        {queryStrings.map(
-          ({ key, value }: { key: string; value: string }, index: number) => {
-            return (
-              <Group key={index} style={{ flexWrap: "nowrap" }}>
-                <TextInput
-                  placeholder="key"
-                  value={key}
-                  onChange={(event) => {
-                    setQueryStrings((prev: any) => {
-                      const nPrev = [...prev];
-                      (nPrev[index] as any).key = event.target.value;
-                      return nPrev;
-                    });
-                  }}
-                  style={{ width: "50%" }}
-                />
-                <TextInput
-                  placeholder="value"
-                  value={value}
-                  onChange={(event) => {
-                    setQueryStrings((prev: any) => {
-                      const nPrev = [...prev];
-                      (nPrev[index] as any).value = event.target.value;
-                      return nPrev;
-                    });
-                  }}
-                  style={{ width: "50%" }}
-                />
+        {queryStrings.map(({ key, value }, index) => {
+          return (
+            <Group key={index} style={{ flexWrap: "nowrap" }}>
+              <TextInput
+                placeholder="key"
+                value={key}
+                onChange={(event) => {
+                  setQueryStrings((prev: QueryStringListItem[]) => {
+                    const nPrev = [...prev];
+                    nPrev[index].key = event.target.value;
+                    return nPrev;
+                  });
+                }}
+                style={{ width: "50%" }}
+              />
+              <TextInput
+                placeholder="value"
+                value={value}
+                onChange={(event) => {
+                  setQueryStrings((prev: QueryStringListItem[]) => {
+                    const nPrev = [...prev];
+                    nPrev[index].value = event.target.value;
+                    return nPrev;
+                  });
+                }}
+                style={{ width: "50%" }}
+              />
 
-                <Icon
-                  name="IconTrash"
-                  onClick={() => {
-                    setQueryStrings((prev: any) => {
-                      return prev.filter((_: any, i: number) => index !== i);
-                    });
-                  }}
-                  style={{ cursor: "pointer" }}
-                />
-              </Group>
-            );
-          }
-        )}
+              <Icon
+                name="IconTrash"
+                onClick={() => {
+                  setQueryStrings((prev: QueryStringListItem[]) => {
+                    return prev.filter((_, i) => index !== i);
+                  });
+                }}
+                style={{ cursor: "pointer" }}
+              />
+            </Group>
+          );
+        })}
       </div>
     </>
   );

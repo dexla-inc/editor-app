@@ -1,5 +1,9 @@
 import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
-import { PageBody, PageResponse } from "@/requests/pages/types";
+import {
+  PageBody,
+  PageResponse,
+  QueryStringListItem,
+} from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { decodeSchema } from "@/utils/compression";
@@ -51,7 +55,7 @@ export default function PageDetailPane({
       authenticatedOnly: false,
       hasNavigation: false,
       copyFrom: undefined,
-      queryStrings: [],
+      queryStrings: {},
     },
     validate: {
       title: (value) =>
@@ -106,7 +110,7 @@ export default function PageDetailPane({
       });
 
       values.queryStrings = queryStringState[0].reduce(
-        (acc: any, item: any) => {
+        (acc: Record<string, string>, item: QueryStringListItem) => {
           acc[item.key] = item.value;
           return acc;
         },
@@ -154,7 +158,7 @@ export default function PageDetailPane({
         id: page!.id as string,
         type: "PAGE",
       },
-      queryStrings: [],
+      queryStrings: {},
     });
 
     form.setFieldValue("copyFrom", {
@@ -167,7 +171,7 @@ export default function PageDetailPane({
     form.setFieldValue("isHome", false);
     form.setFieldValue("authenticatedOnly", false);
     form.setFieldValue("hasNavigation", false);
-    form.setFieldValue("queryStrings", []);
+    form.setFieldValue("queryStrings", {});
   };
 
   useEffect(() => {
