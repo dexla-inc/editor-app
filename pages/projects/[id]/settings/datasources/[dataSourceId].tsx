@@ -7,6 +7,7 @@ import {
   getAuthEndpoint,
   patchDataSourceWithParams,
   setExampleResponseObject,
+  setRequestBodyObject,
 } from "@/components/datasources/AuthenticationInputs";
 import {
   BasicDetailsInputs,
@@ -19,6 +20,7 @@ import {
   SwaggerURLInput,
   validateSwaggerUrl,
 } from "@/components/datasources/SwaggerURLInput";
+import { TestUserLogin } from "@/components/datasources/TestUserLogin";
 import TextInputComponent from "@/components/datasources/TextInputComponent";
 import { updateDataSource } from "@/requests/datasources/mutations";
 import {
@@ -30,6 +32,7 @@ import {
   DataSourceParams,
   DataSourceResponse,
   Endpoint,
+  RequestBody,
 } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
 import { ICON_SIZE } from "@/utils/config";
@@ -78,13 +81,15 @@ export default function Settings() {
   const [userEndpointId, setUserEndpointId] = useState<string | undefined>(
     undefined
   );
-  const [expiryProperty, setExpiryProperty] = useState<string | undefined>(
-    undefined
-  );
+  const [loginRequestBody, setLoginRequestBody] = useState<
+    RequestBody[] | undefined
+  >(undefined);
   const [exampleResponse, setExampleResponse] = useState<
     ExampleResponseDropdown[] | undefined
   >(undefined);
-
+  const [loginEndpointObj, setLoginEndpointObj] = useState<
+    Endpoint | undefined
+  >(undefined);
   const postEndpoints = filterAndMapEndpoints(endpoints, "POST");
   const getEndpoints = filterAndMapEndpoints(endpoints, "GET");
 
@@ -239,6 +244,8 @@ export default function Settings() {
     setLoginEndpointId(value);
     apiAuthForm.setFieldValue("loginEndpointId", value);
     setExampleResponseObject(postEndpoints, setExampleResponse, value);
+    const selectedEndpoint = endpoints?.find((option) => option.id === value);
+    setLoginEndpointObj(selectedEndpoint);
   };
 
   const setRefreshEndpoint = (value: string | undefined) => {
@@ -291,6 +298,12 @@ export default function Settings() {
       apiAuthForm.setFieldValue(
         "refreshToken",
         refreshEndpoint?.authentication.tokenKey
+      );
+
+      setRequestBodyObject(
+        postEndpoints,
+        setLoginRequestBody,
+        loginEndpoint?.id as string
       );
     }
   }, [endpoints]);
@@ -351,15 +364,6 @@ export default function Settings() {
               <Title order={3}>Bearer Token Configuration</Title>
               {swaggerUrl ? (
                 <>
-                  {/* <SearchableSelectComponent
-                    label="Login Endpoint (POST)"
-                    description="The endpoint used to login to your API"
-                    placeholder="/v1/login"
-                    form={apiAuthForm}
-                    propertyName="loginEndpointId"
-                    data={postEndpoints}
-                    setProperty={(value) => setLoginEndpoint(value ?? "")}
-                  /> */}
                   <Select
                     label="Login Endpoint (POST)"
                     description="The endpoint used to login to your API"
@@ -372,6 +376,11 @@ export default function Settings() {
                     onChange={(value) => {
                       apiAuthForm.setFieldValue(
                         "loginEndpointId",
+                        value as string
+                      );
+                      setRequestBodyObject(
+                        postEndpoints,
+                        setLoginRequestBody,
                         value as string
                       );
                     }}
@@ -522,6 +531,16 @@ export default function Settings() {
                 <Button type="submit">Save</Button>
               </Flex>
               <Divider></Divider>
+              {loginRequestBody && loginRequestBody.length > 0 && (
+                <TestUserLogin
+                  projectId={projectId}
+                  requestBody={loginRequestBody}
+                  url={
+                    dataSource?.baseUrl + "/" + loginEndpointObj?.relativeUrl
+                  }
+                  dataSourceId={dataSource.id}
+                ></TestUserLogin>
+              )}
               <Stack>
                 {dataSource?.changedEndpoints && (
                   <Title order={6}>Changed Endpoints</Title>
@@ -539,6 +558,7 @@ export default function Settings() {
                     ></DataSourceEndpoint>
                   );
                 })}
+
                 {dataSource?.deletedEndpoints && (
                   <Title order={6}>Deleted Endpoints</Title>
                 )}

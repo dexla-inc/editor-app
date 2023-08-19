@@ -15,8 +15,8 @@ export const jsonStructure = (props?: any): Component => {
         justifyContent: "center",
       },
       color: "Primary",
-      blockDroppingChildrenInside: true,
     },
+    blockDroppingChildrenInside: true,
     children: [
       {
         id: nanoid(),

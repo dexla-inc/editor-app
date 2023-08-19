@@ -1,12 +1,12 @@
 import { PageResponse } from "@/requests/pages/types";
 import { emptyEditorTree } from "@/stores/editor";
+import { Action } from "@/utils/actions";
 import { structureMapper } from "@/utils/componentMapper";
 import { MantineTheme } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
 import { templatesMapper } from "./templatesMapper";
-import { Action } from "@/utils/actions";
 
 export type Component = {
   id?: string;
@@ -484,6 +484,38 @@ export const getAllModals = (treeRoot: Component): Component[] => {
   return modals;
 };
 
+export const getAllDrawers = (treeRoot: Component): Component[] => {
+  const drawers: Component[] = [];
+
+  crawl(
+    treeRoot,
+    (node) => {
+      if (node.name === "Drawer") {
+        drawers.push(node);
+      }
+    },
+    { order: "bfs" }
+  );
+
+  return drawers;
+};
+
+export const getAllPopOvers = (treeRoot: Component): Component[] => {
+  const drawers: Component[] = [];
+
+  crawl(
+    treeRoot,
+    (node) => {
+      if (node.name === "Drawer") {
+        drawers.push(node);
+      }
+    },
+    { order: "bfs" }
+  );
+
+  return drawers;
+};
+
 export const removeComponentFromParent = (
   treeRoot: Component,
   id: string,
@@ -547,6 +579,7 @@ export const addComponent = (
 ): string => {
   const copy = cloneDeep(componentToAdd);
   replaceIdsDeeply(copy);
+  const directChildren = ["Modal", "Drawer", "Toast"];
 
   crawl(
     treeRoot,
@@ -568,21 +601,31 @@ export const addComponent = (
           context.break();
         }
       } else {
-        if (copy.name === "Modal" && node.id === "content-wrapper") {
+        if (
+          directChildren.includes(copy.name) &&
+          node.id === "content-wrapper"
+        ) {
           node.children = [...(node.children || []), copy];
           context.break();
         } else if (node.id === dropTarget.id) {
-          node.children = node.children ?? [];
+          const isPopOver = copy.name === "PopOver";
+          if (isPopOver) {
+            copy.props!.targetId = node.id;
+            copy.children = [...(copy.children || []), node];
+            context.parent?.children?.splice(context.index, 0, copy);
+          } else {
+            node.children = node.children ?? [];
 
-          if (dropTarget.edge === "left" || dropTarget.edge === "top") {
-            const index = dropIndex ?? context.index - 1;
-            node.children.splice(index, 0, copy);
-          } else if (
-            dropTarget.edge === "right" ||
-            dropTarget.edge === "bottom"
-          ) {
-            const index = dropIndex ?? context.index + 1;
-            node.children.splice(index, 0, copy);
+            if (dropTarget.edge === "left" || dropTarget.edge === "top") {
+              const index = dropIndex ?? context.index - 1;
+              node.children.splice(index, 0, copy);
+            } else if (
+              dropTarget.edge === "right" ||
+              dropTarget.edge === "bottom"
+            ) {
+              const index = dropIndex ?? context.index + 1;
+              node.children.splice(index, 0, copy);
+            }
           }
 
           context.break();

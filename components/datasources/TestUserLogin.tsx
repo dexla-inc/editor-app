@@ -1,0 +1,117 @@
+import { ErrorAlert, SuccessAlert } from "@/components/Alerts";
+import { getDataSourceAuth } from "@/requests/datasources/queries";
+import {
+  DataSourceAuthResponse,
+  RequestBody,
+} from "@/requests/datasources/types";
+import { useAuthStore } from "@/stores/auth";
+import { Button, Stack, TextInput, Title } from "@mantine/core";
+import { useEffect, useState } from "react";
+
+type Props = {
+  projectId: string;
+  dataSourceId: string | undefined;
+  url?: string;
+  requestBody?: RequestBody[];
+};
+
+export const TestUserLogin = ({
+  projectId,
+  dataSourceId,
+  requestBody,
+  url,
+}: Props) => {
+  const [testLoginValues, setTestLogin] = useState({});
+  const handleInputChange = (name: string, value: string) => {
+    setTestLogin({ ...testLoginValues, [name]: value });
+  };
+  const [userLoggedIn, setUserLoggedIn] = useState<boolean | undefined>(
+    undefined
+  );
+
+  const [dataSourceAuthConfig, setDataSourceAuthConfig] =
+    useState<DataSourceAuthResponse>();
+
+  useEffect(() => {
+    const fetchDataSourceAuthConfig = async () => {
+      const config = await getDataSourceAuth(projectId, dataSourceId ?? "");
+      console.log(config);
+      setDataSourceAuthConfig(config);
+    };
+
+    fetchDataSourceAuthConfig();
+  }, [projectId, dataSourceId]);
+
+  const handleLoginClick = async () => {
+    console.log("responseJson", dataSourceAuthConfig?.accessTokenUrl);
+    const response = await fetch(
+      url ?? dataSourceAuthConfig?.accessTokenUrl ?? "",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(testLoginValues),
+      }
+    );
+
+    const responseJson = await response.json();
+
+    if (!response.ok) {
+      console.error(
+        "Failed to log in:",
+        response.status,
+        response.statusText,
+        responseJson.message
+      );
+      setUserLoggedIn(false);
+      return;
+    }
+
+    const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
+
+    const authStore = useAuthStore.getState();
+    authStore.setAuthTokens(mergedAuthConfig);
+
+    setUserLoggedIn(true);
+  };
+
+  return (
+    <Stack spacing="xs" py="xl">
+      <Title order={4}>Test Account Login</Title>
+      {requestBody?.map((parameter) => (
+        <TextInput
+          key={parameter.name}
+          label={parameter.name}
+          placeholder={`Enter your ${parameter.name}`}
+          type={
+            parameter.name.includes("password")
+              ? "password"
+              : parameter.name.includes("email")
+              ? "email"
+              : "text"
+          }
+          onChange={(event) =>
+            handleInputChange(parameter.name, event.currentTarget.value)
+          }
+        />
+      ))}
+      <Button onClick={handleLoginClick} color="indigo" sx={{ width: "80px" }}>
+        Login
+      </Button>
+      {userLoggedIn === true ? (
+        <SuccessAlert
+          title="User Logged In"
+          text="You can now use your authenticated endpoints within the editor"
+        />
+      ) : (
+        userLoggedIn === false && (
+          <ErrorAlert
+            title="Login Failed"
+            text="Please check your credentials and try again"
+          />
+        )
+      )}
+    </Stack>
+  );
+};

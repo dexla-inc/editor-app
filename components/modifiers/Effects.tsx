@@ -1,6 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
-import { NumberInput, Select, Stack } from "@mantine/core";
+import { NumberInput, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTransform } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
@@ -13,6 +13,7 @@ export const defaultEffectsValues = {
   cursor: "auto",
   overflow: "auto",
   opacity: 1,
+  tooltip: "",
 };
 
 export const Modifier = () => {
@@ -39,12 +40,13 @@ export const Modifier = () => {
 
   useEffect(() => {
     if (selectedComponentId) {
-      const { style = {} } = componentProps;
+      const { style = {}, tooltip } = componentProps;
 
       form.setValues({
         cursor: style.cursor ?? defaultEffectsValues.cursor,
         overflow: style.pointer ?? defaultEffectsValues.overflow,
         opacity: style.opacity ?? defaultEffectsValues.opacity,
+        tooltip: tooltip ?? defaultEffectsValues.tooltip,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
@@ -109,6 +111,18 @@ export const Modifier = () => {
             form.setFieldValue("opacity", value as number);
             debouncedTreeUpdate(selectedComponentId as string, {
               style: { opacity: value },
+            });
+          }}
+        />
+
+        <TextInput
+          label="Tooltip"
+          size="xs"
+          {...form.getInputProps("tooltip")}
+          onChange={(e) => {
+            form.setFieldValue("tooltip", e.target.value);
+            debouncedTreeUpdate(selectedComponentId as string, {
+              tooltip: e.target.value,
             });
           }}
         />

@@ -1,15 +1,15 @@
 import { useEditorStore } from "@/stores/editor";
 import { Component, checkIfIsChild } from "@/utils/editor";
-import { Modal as MantineModal, ModalProps } from "@mantine/core";
+import { DrawerProps, Drawer as MantineDrawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-} & Omit<ModalProps, "opened">;
+} & Omit<DrawerProps, "opened">;
 
-export const Modal = ({
+export const Drawer = ({
   renderTree,
   component,
   onClose: propOnClose,
@@ -47,8 +47,7 @@ export const Modal = ({
   }, [close, open, propOpened]);
 
   return (
-    <MantineModal
-      centered
+    <MantineDrawer
       withinPortal
       trapFocus={false}
       lockScroll={false}
@@ -64,14 +63,13 @@ export const Modal = ({
       {...props}
       {...componentProps}
       styles={{
-        content: style ?? {},
-        body: { marginTop: "40px", height: "fit-content" },
         title: { fontFamily: theme.fontFamily },
+        body: { height: "fit-content" },
       }}
     >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))
         : children}
-    </MantineModal>
+    </MantineDrawer>
   );
 };

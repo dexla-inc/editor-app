@@ -1,8 +1,8 @@
 import { defaultTheme } from "@/components/IFrame";
-import { defaultModalValues } from "@/components/modifiers/Modal";
+import { defaultDrawerValues } from "@/components/modifiers/Drawer";
+import { defaultInputValues } from "@/components/modifiers/Input";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
-import { defaultInputValues } from "@/components/modifiers/Input";
 import { px } from "@mantine/core";
 
 export const jsonStructure = (props?: any): Component => {
@@ -174,14 +174,11 @@ export const jsonStructure = (props?: any): Component => {
 
   return {
     id: nanoid(),
-    name: "Modal",
-    description: "Modal",
+    name: "Drawer",
+    description: "Drawer",
     props: {
       ...(props.props || {}),
-      ...defaultModalValues,
-      style: {
-        padding: "0px",
-      },
+      ...defaultDrawerValues,
     },
     children: props.children ?? defaultChildren,
   };

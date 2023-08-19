@@ -1,14 +1,14 @@
 import { useEditorStore } from "@/stores/editor";
 import {
-  DropTarget,
-  getComponentById,
-  addComponent,
-  getComponentParent,
-  moveComponentToDifferentParent,
-  removeComponentFromParent,
-  moveComponent,
-  removeComponent,
   Component,
+  DropTarget,
+  addComponent,
+  getComponentById,
+  getComponentParent,
+  moveComponent,
+  moveComponentToDifferentParent,
+  removeComponent,
+  removeComponentFromParent,
 } from "@/utils/editor";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
@@ -37,21 +37,32 @@ export const useOnDrop = () => {
       dropTarget.id = parseId(dropTarget.id);
       const copy = cloneDeep(editorTree);
       const activeComponent = getComponentById(copy.root, droppedId);
+      const targetComponent = getComponentById(copy.root, dropTarget.id);
 
       if (droppedId && componentToAdd) {
-        const newSelectedId = addComponent(
-          copy.root,
-          componentToAdd,
-          dropTarget
-        );
-        setSelectedComponentId(newSelectedId);
-        setComponentToAdd(undefined);
+        if (!targetComponent?.blockDroppingChildrenInside) {
+          const newSelectedId = addComponent(
+            copy.root,
+            componentToAdd,
+            dropTarget
+          );
+          setSelectedComponentId(newSelectedId);
+          setComponentToAdd(undefined);
+        } else {
+          const targetParent = getComponentParent(copy.root, dropTarget.id);
+          if (targetParent) {
+            const newSelectedId = addComponent(copy.root, componentToAdd, {
+              id: targetParent.id as string,
+              edge: "bottom",
+            });
+            setSelectedComponentId(newSelectedId);
+          }
+        }
       } else if (dropTarget.id !== "root") {
         const activeParent = getComponentParent(copy.root, droppedId);
         const targetParent = getComponentParent(copy.root, dropTarget.id);
-        const targetComponent = getComponentById(copy.root, dropTarget.id);
 
-        if (targetComponent?.props?.blockDroppingChildrenInside) {
+        if (targetComponent?.blockDroppingChildrenInside) {
           // reorder
           moveComponent(copy.root, droppedId, dropTarget);
         } else {

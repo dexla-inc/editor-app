@@ -1,15 +1,15 @@
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
-import { Action, GoToUrlAction } from "@/utils/actions";
-import { getComponentById } from "@/utils/editor";
-import { Button, Checkbox, Stack, TextInput } from "@mantine/core";
+import { Action, OpenPopOverAction } from "@/utils/actions";
+import { Component, getAllPopOvers, getComponentById } from "@/utils/editor";
+import { Button, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 type Props = {
   id: string;
 };
 
-export const GoToUrlForm = ({ id }: Props) => {
+export const OpenPopOverActionForm = ({ id }: Props) => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const editorTree = useEditorStore((state) => state.tree);
@@ -23,23 +23,22 @@ export const GoToUrlForm = ({ id }: Props) => {
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentActions = component?.props?.actions ?? [];
   const action: Action = componentActions.find((a: Action) => a.id === id);
-  const goToUrlAction = action.action as GoToUrlAction;
+  const openPopOverAction = action.action as OpenPopOverAction;
 
   const form = useForm({
     initialValues: {
-      url: goToUrlAction.url,
-      openInNewTab: goToUrlAction.openInNewTab,
+      popOverId: openPopOverAction.popOverId,
     },
   });
 
   const onSubmit = (values: any) => {
-    startLoading({
-      id: "saving-action",
-      title: "Saving Action",
-      message: "Wait while we save your changes",
-    });
-
     try {
+      startLoading({
+        id: "saving-action",
+        title: "Saving Action",
+        message: "Wait while we save your changes",
+      });
+
       updateTreeComponent(selectedComponentId!, {
         actions: componentActions.map((action: Action) => {
           if (action.id === id) {
@@ -47,8 +46,7 @@ export const GoToUrlForm = ({ id }: Props) => {
               ...action,
               action: {
                 ...action.action,
-                url: values.url,
-                openInNewTab: values.openInNewTab,
+                popOverId: values.popOverId,
               },
             };
           }
@@ -80,23 +78,24 @@ export const GoToUrlForm = ({ id }: Props) => {
     });
   };
 
-  const openInNewTabInputProps = form.getInputProps("openInNewTab");
+  const popOvers = getAllPopOvers(editorTree.root);
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack>
-        <TextInput
+      <Stack spacing="xs">
+        <Select
           size="xs"
-          placeholder="Enter a URL"
-          label="URL"
-          {...form.getInputProps("url")}
-        ></TextInput>
-        <Checkbox
-          label="Open in new tab"
-          {...openInNewTabInputProps}
-          checked={openInNewTabInputProps.value}
+          label="PopOver to Open"
+          placeholder="Select a popOver"
+          data={popOvers.map((popOver: Component) => {
+            return {
+              label: popOver.props?.title ?? popOver.id,
+              value: popOver.id!,
+            };
+          })}
+          {...form.getInputProps("popOverId")}
         />
-        <Button size="xs" type="submit">
+        <Button size="xs" type="submit" mt="xs">
           Save
         </Button>
         <Button
@@ -104,7 +103,6 @@ export const GoToUrlForm = ({ id }: Props) => {
           type="button"
           variant="default"
           onClick={removeAction}
-          color="red"
         >
           Remove
         </Button>

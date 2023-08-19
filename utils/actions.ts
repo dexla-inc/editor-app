@@ -4,6 +4,8 @@ import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { LoginActionForm } from "@/components/actions/LoginActionForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
+import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
+import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm";
 import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import {
   getDataSourceAuth,
@@ -13,9 +15,9 @@ import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
-import { Router } from "next/router";
 import { flattenKeysWithRoot } from "@/utils/flattenKeys";
 import get from "lodash.get";
+import { Router } from "next/router";
 
 const triggers = [
   "onClick",
@@ -43,17 +45,18 @@ const triggers = [
 ] as const;
 
 export const actions = [
-  "debug",
-  "navigateToPage",
   "apiCall",
   "bindResponseToComponent",
+  "copyToClipboard",
+  "debug",
   "goToUrl",
   "login",
+  "navigateToPage",
+  "openDrawer",
   "openModal",
   "openPopover",
   "openToast",
   "showTooltip",
-  "copyToClipboard",
 ];
 
 type ActionTriggerAll = (typeof triggers)[number];
@@ -89,6 +92,18 @@ export type OpenModalAction = {
   data?: any;
 };
 
+export type OpenDrawerAction = {
+  name: "openDrawer";
+  drawerId: string;
+  data?: any;
+};
+
+export type OpenPopOverAction = {
+  name: "openPopOver";
+  popOverId: string;
+  data?: any;
+};
+
 export type APICallAction = {
   name: "apiCall";
   endpoint: string;
@@ -120,7 +135,9 @@ export type Action = {
     | BindResponseToComponentAction
     | GoToUrlAction
     | LoginAction
-    | OpenModalAction;
+    | OpenModalAction
+    | OpenDrawerAction
+    | OpenPopOverAction;
   sequentialTo?: string;
 };
 
@@ -171,9 +188,27 @@ export type OpenModalActionParams = ActionParams & {
   action: OpenModalAction;
 };
 
+export type OpenDrawerActionParams = ActionParams & {
+  action: OpenDrawerAction;
+};
+
+export type OpenPopOverActionParams = ActionParams & {
+  action: OpenPopOverAction;
+};
+
 export const openModalAction = ({ action }: OpenModalActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   updateTreeComponent(action.modalId, { opened: true }, false);
+};
+
+export const openDrawerAction = ({ action }: OpenDrawerActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  updateTreeComponent(action.drawerId, { opened: true }, false);
+};
+
+export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  updateTreeComponent(action.popOverId, { opened: true }, false);
 };
 
 export type APICallActionParams = ActionParams & {
@@ -268,12 +303,13 @@ export const loginAction = async ({
       throw new Error(response.statusText);
     }
 
+    const responseJson = await response.json();
+
     const dataSourceAuthConfig = await getDataSourceAuth(
       projectId,
       action.datasource.id
     );
 
-    const responseJson = await response.json();
     const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
 
     const authStore = useAuthStore.getState();
@@ -497,5 +533,13 @@ export const actionMapper = {
   openModal: {
     action: openModalAction,
     form: OpenModalActionForm,
+  },
+  openDrawer: {
+    action: openDrawerAction,
+    form: OpenDrawerActionForm,
+  },
+  openPopOver: {
+    action: openPopOverAction,
+    form: OpenPopOverActionForm,
   },
 };

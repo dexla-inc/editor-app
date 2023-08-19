@@ -39,7 +39,7 @@ export const Table = ({ renderTree, component, ...props }: Props) => {
   console.log({ dataProp, headers, component, props });
 
   const columns = Object.keys(dataSample).reduce((acc: any[], key: string) => {
-    if (headers[key]) {
+    if (headers?.[key]) {
       return acc.concat({
         header: startCase(key),
         accessorKey: key,

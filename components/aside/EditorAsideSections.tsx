@@ -6,21 +6,22 @@ import * as BoxShadowModifier from "@/components/modifiers/BoxShadow";
 import * as ButtonModifier from "@/components/modifiers/Button";
 import * as CheckboxModifier from "@/components/modifiers/Checkbox";
 import * as DividerModifier from "@/components/modifiers/Divider";
+import * as DrawerModifier from "@/components/modifiers/Drawer";
 import * as EffectsModifier from "@/components/modifiers/Effects";
 import * as IconModifier from "@/components/modifiers/Icon";
 import * as ImageModifier from "@/components/modifiers/Image";
 import * as InputModifier from "@/components/modifiers/Input";
 import * as LayoutModifier from "@/components/modifiers/Layout";
 import * as LinkModifier from "@/components/modifiers/Link";
+import * as ModalModifier from "@/components/modifiers/Modal";
 import * as PositionModifier from "@/components/modifiers/Position";
 import * as RadioModifier from "@/components/modifiers/Radio";
 import * as SelectModifier from "@/components/modifiers/Select";
 import * as SizeModifier from "@/components/modifiers/Size";
 import * as SpacingModifier from "@/components/modifiers/Spacing";
+import * as TableModifier from "@/components/modifiers/Table";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TitleModifier from "@/components/modifiers/Title";
-import * as ModalModifier from "@/components/modifiers/Modal";
-import * as TableModifier from "@/components/modifiers/Table";
 import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper } from "@/utils/actions";
 import { Modifiers, componentMapper } from "@/utils/componentMapper";
@@ -63,6 +64,7 @@ const sectionMapper: SectionsMapper = {
   checkbox: CheckboxModifier,
   table: TableModifier,
   radio: RadioModifier,
+  drawer: DrawerModifier,
 };
 
 type Tab = "design" | "actions";
@@ -136,7 +138,7 @@ export const EditorAsideSections = () => {
       const actionName = action.action.name;
 
       if (actionName) {
-        const Component = actionMapper[actionName].form;
+        const Component = actionMapper[actionName]?.form;
 
         return (
           <SidebarSection {...item} key={item.label}>

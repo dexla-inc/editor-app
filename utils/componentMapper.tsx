@@ -14,6 +14,8 @@ import { Checkbox } from "@/components/mapper/Checkbox";
 import { Container } from "@/components/mapper/Container";
 import { DateInput } from "@/components/mapper/DateInput";
 import { Divider } from "@/components/mapper/Divider";
+import { Drawer } from "@/components/mapper/Drawer";
+import { PopOver } from "@/components/mapper/PopOver";
 import { FilePond } from "@/components/mapper/FilePond";
 import { Flex } from "@/components/mapper/Flex";
 import { Form } from "@/components/mapper/Form";
@@ -56,6 +58,8 @@ import * as CheckboxStructure from "@/components/mapper/structure/Checkbox";
 import * as ContainerStructure from "@/components/mapper/structure/Container";
 import * as DateInputStructure from "@/components/mapper/structure/DateInput";
 import * as DividerStructure from "@/components/mapper/structure/Divider";
+import * as DrawerStructure from "@/components/mapper/structure/Drawer";
+import * as PopOverStructure from "@/components/mapper/structure/PopOver";
 import * as FilePondStructure from "@/components/mapper/structure/FilePond";
 import * as FormStructure from "@/components/mapper/structure/Form";
 import * as IconStructure from "@/components/mapper/structure/Icon";
@@ -113,6 +117,7 @@ import {
   IconLayoutKanban,
   IconLayoutNavbar,
   IconLayoutSidebar,
+  IconLayoutSidebarLeftCollapse,
   IconLink,
   IconListCheck,
   IconMenu,
@@ -705,6 +710,28 @@ export const structureMapper: StructureMapper = {
     category: "Overlays",
     icon: <IconBoxModel size={ICON_SIZE} />,
   },
+  Drawer: {
+    structure: (props: any) => DrawerStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Drawer"
+        icon={<IconLayoutSidebarLeftCollapse size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Overlays",
+    icon: <IconLayoutSidebarLeftCollapse size={ICON_SIZE} />,
+  },
+  PopOver: {
+    structure: (props: any) => PopOverStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="PopOver"
+        icon={<IconLayoutSidebarLeftCollapse size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Overlays",
+    icon: <IconLayoutSidebarLeftCollapse size={ICON_SIZE} />,
+  },
 };
 
 export type Modifiers =
@@ -728,7 +755,8 @@ export type Modifiers =
   | "boxShadow"
   | "checkbox"
   | "table"
-  | "radio";
+  | "radio"
+  | "drawer";
 
 export type ComponentDefinition = {
   Component: any;
@@ -1176,7 +1204,7 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <Button component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["button", "spacing", "size", "border"],
+    modifiers: ["button", "spacing", "size", "border", "effects"],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1209,6 +1237,24 @@ export const componentMapper: ComponentMapper = {
       <Modal component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["modal", "border"],
+    actionTriggers: ["onMount", "onClose"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  Drawer: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      // @ts-ignore
+      <Drawer component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["drawer", "border"],
+    actionTriggers: ["onMount", "onClose"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  PopOver: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      // @ts-ignore
+      <PopOver component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["border"],
     actionTriggers: ["onMount", "onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

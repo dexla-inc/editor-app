@@ -23,7 +23,7 @@ export const jsonStructure = (props?: any): Component => {
       ...(rest || {}),
       textColor: textColor ?? "White.0",
       children: value ?? "New Button",
-      blockDroppingChildrenInside: true,
     },
+    blockDroppingChildrenInside: true,
   };
 };

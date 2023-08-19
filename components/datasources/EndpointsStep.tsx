@@ -2,6 +2,8 @@ import { InformationAlert, WarningAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
 import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
 import EndpointsButton from "@/components/datasources/EndpointsButton";
+import { TestUserLogin } from "@/components/datasources/TestUserLogin";
+import { RequestBody } from "@/requests/datasources/types";
 import { getPageList } from "@/requests/pages/queries";
 import { DataSourceStepperWithoutNextProps } from "@/utils/dashboardTypes";
 import { Col, Divider, Grid, Group, Stack, Text, Title } from "@mantine/core";
@@ -14,6 +16,7 @@ interface AuthenticationStepParams extends DataSourceStepperWithoutNextProps {
   refreshEndpointLabel: string | null;
   userEndpointLabel: string | null;
   expiryProperty: string | null;
+  loginRequestBody: RequestBody[] | undefined;
 }
 
 export default function EndpointsStep({
@@ -29,6 +32,7 @@ export default function EndpointsStep({
   accessToken,
   refreshToken,
   expiryProperty,
+  loginRequestBody,
 }: AuthenticationStepParams) {
   const router = useRouter();
   const projectId = router.query.id as string;
@@ -46,11 +50,16 @@ export default function EndpointsStep({
   };
 
   return (
-    <Stack sx={{ marginBottom: 100 }}>
+    <Stack mb={100}>
       <InformationAlert
         title="Set Up Complete"
-        text="You have setup your API Data Source settings correctly and they are ready to use. You can view your API endpoints within the editor."
+        text="You have setup your API Data Source settings correctly. Login as a test user below so you can use your authenticated endpoints in the editor. You can view your API endpoints within the editor."
       />
+      <TestUserLogin
+        projectId={projectId}
+        dataSourceId={dataSource?.id}
+        requestBody={loginRequestBody}
+      ></TestUserLogin>
       <WarningAlert title="CORS Action Required" isHtml>
         <Text>
           Please add&nbsp;
@@ -59,6 +68,7 @@ export default function EndpointsStep({
           building your project within the editor
         </Text>
       </WarningAlert>
+
       <Stack>
         <Grid gutter="md">
           <Col span={4} fw={700}>
