@@ -41,10 +41,9 @@ export const jsonStructure = (props?: any): Component => {
         display: "flex",
         flexDirection: "column",
         position: "sticky",
-        rowGap: "0px",
-        columnGaop: "0px",
+        gap: "0px",
+        backgroundColor: darkLogo ? "#fff" : theme.colors.dark[6],
       },
-      bg: darkLogo ? "White.0" : "Primary.6",
       ...(props.props || {}),
     },
     fixedPosition: { position: "left", target: "root" },
@@ -59,14 +58,13 @@ export const jsonStructure = (props?: any): Component => {
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: "16px",
-            paddingTop: "20px",
-            paddingBottom: "20px",
-            paddingLeft: "20px",
-            paddingRight: "20px",
+            padding: "20px",
             borderBottomStyle: "solid",
             borderBottomWidth: "1px",
-            borderBottomColor: "#CCCCCC",
+            borderBottomColor: darkLogo
+              ? theme.colors.gray[3]
+              : theme.colors.gray[5],
+            margin: "0 10px",
           },
         },
         children: [
@@ -96,6 +94,7 @@ export const jsonStructure = (props?: any): Component => {
             display: "flex",
             flexDirection: "column",
             flexGrow: "1",
+            padding: "20px 10px",
           },
         },
         children: pages
@@ -105,8 +104,8 @@ export const jsonStructure = (props?: any): Component => {
               id: nanoid(),
               name: "NavLink",
               description: "Navbar Item",
-              icon: IconHome,
               props: {
+                icon: "IconHome",
                 label: page.title,
                 isNested: !!page.parentPageId,
                 pageId: page.id,
@@ -115,6 +114,15 @@ export const jsonStructure = (props?: any): Component => {
                   height: "auto",
                   display: "flex",
                   alignItems: "center",
+                  color: darkLogo ? theme.colors.dark[9] : theme.colors.gray[5],
+                },
+                sx: {
+                  borderRadius: "3px",
+                  "&:hover": {
+                    backgroundColor: darkLogo
+                      ? theme.colors.gray[0]
+                      : theme.colors.dark[4],
+                  },
                 },
                 actions: [
                   {
