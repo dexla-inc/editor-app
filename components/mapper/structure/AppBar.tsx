@@ -41,11 +41,11 @@ export const jsonStructure = (props?: any): Component => {
           color: "Primary",
           size: "lg",
           radius: "xl",
-          blockDroppingChildrenInside: true,
           style: {
             backgroundColor: "white",
           },
         },
+        blockDroppingChildrenInside: true,
         children: [
           {
             id: nanoid(),

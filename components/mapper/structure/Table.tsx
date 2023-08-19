@@ -11,7 +11,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Table Container",
     props: {
       style: {
-        width: "100%",
+        width: "auto",
         height: "auto",
         minHeight: "auto",
         backgroundColor: "white",
@@ -34,6 +34,8 @@ export const jsonStructure = (props?: any): Component => {
             { position: 56, mass: 137.33, symbol: "Ba", name: "Barium" },
             { position: 58, mass: 140.12, symbol: "Ce", name: "Cerium" },
           ],
+          headers: { position: true, mass: true, symbol: true, name: true },
+          config: { filter: false, sorting: false, pagination: false },
           style: {
             width: "100%",
           },

@@ -892,7 +892,9 @@ export const componentMapper: ComponentMapper = {
   Table: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Table
-        key={JSON.stringify(props.component?.props?.config ?? {})}
+        key={`${JSON.stringify(
+          props.component?.props?.config ?? {}
+        )}-${JSON.stringify(props.component?.props?.headers ?? {})}`}
         component={props.component}
         renderTree={props.renderTree}
       />

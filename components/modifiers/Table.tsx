@@ -118,6 +118,19 @@ export const Modifier = () => {
         />
         <Switch
           size="xs"
+          label="Pagination"
+          checked={get(form.values.config, "pagination") ?? false}
+          onChange={(e) => {
+            const config = {
+              ...form.values.config,
+              pagination: e.currentTarget.checked,
+            };
+            form.setFieldValue("config", config);
+            debouncedUpdate("config", config);
+          }}
+        />
+        <Switch
+          size="xs"
           label="Numbers"
           checked={get(form.values.config, "numbers") ?? false}
           onChange={(e) => {

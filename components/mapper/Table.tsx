@@ -27,8 +27,8 @@ export const Table = ({ renderTree, component, ...props }: Props) => {
   const {
     children,
     data: dataProp,
-    headers,
-    config,
+    headers = {},
+    config = {},
     style,
     ...componentProps
   } = component.props as any;
@@ -36,6 +36,7 @@ export const Table = ({ renderTree, component, ...props }: Props) => {
   let _data = dataProp?.value ?? dataProp;
   const [data, setData] = useState(_data);
   const dataSample = (data ?? [])?.[0];
+  console.log({ dataProp, headers, component, props });
 
   const columns = Object.keys(dataSample).reduce((acc: any[], key: string) => {
     if (headers[key]) {
@@ -45,9 +46,10 @@ export const Table = ({ renderTree, component, ...props }: Props) => {
         columnDefType: "display",
         enableSorting: config?.sorting,
         enableGlobalFilter: config?.filter,
+        enablePagination: config?.pagination,
         Cell: ({ row }: any) => {
           const val = row.original[key];
-          return typeof val === "object" ? JSON.stringify(val) : val;
+          return typeof val === "object" ? JSON.stringify(val) : val || "---";
         },
       });
     }
@@ -63,6 +65,8 @@ export const Table = ({ renderTree, component, ...props }: Props) => {
     enableRowNumbers: config?.numbers,
     enableGlobalFilter: config?.filter,
     enableTopToolbar: config?.filter,
+    enablePagination: config?.pagination,
+    enableBottomToolbar: config?.pagination,
     enableColumnActions: false,
     enableDensityToggle: false,
     enableFullScreenToggle: false,
@@ -81,17 +85,20 @@ export const Table = ({ renderTree, component, ...props }: Props) => {
         (e) => e.id === originalAction.action.endpoint
       );
 
+      console.log({ UEH: data });
       if (_endpoint?.exampleResponse) {
         const json = JSON.parse(_endpoint?.exampleResponse as string);
         const binds = flattenKeysWithRoot(json);
-        const data = get(binds, binded.value);
+        const data = get(binds, binded.value, "---");
+        const _headers = Object.keys(data[0]).reduce((acc, key) => {
+          return { ...acc, [key]: true };
+        }, {});
+        console.log({ data, _headers });
         updateTreeComponent(
           component.id!,
           {
             data: { value: data },
-            headers: Object.keys(data[0]).reduce((acc, key) => {
-              return { ...acc, [key]: true };
-            }, {}),
+            headers: _headers,
           },
           false
         );
