@@ -217,7 +217,6 @@ export const template = (data: Data) => {
                             textColor: "White.0",
                             children: data.button.text,
                           },
-                          children: data.button.text,
                           blockDroppingChildrenInside: true,
                         },
                       ],
