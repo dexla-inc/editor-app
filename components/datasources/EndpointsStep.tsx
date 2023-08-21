@@ -55,11 +55,13 @@ export default function EndpointsStep({
         title="Set Up Complete"
         text="You have setup your API Data Source settings correctly. Login as a test user below so you can use your authenticated endpoints in the editor. You can view your API endpoints within the editor."
       />
-      <TestUserLogin
-        projectId={projectId}
-        dataSourceId={dataSource?.id}
-        requestBody={loginRequestBody}
-      ></TestUserLogin>
+      {dataSource?.authenticationScheme === "BEARER" && (
+        <TestUserLogin
+          projectId={projectId}
+          dataSourceId={dataSource?.id}
+          requestBody={loginRequestBody}
+        ></TestUserLogin>
+      )}
       <WarningAlert title="CORS Action Required" isHtml>
         <Text>
           Please add&nbsp;
@@ -144,7 +146,16 @@ export default function EndpointsStep({
 
         <Divider></Divider>
         <Group position="apart">
-          <BackButton onClick={prevStep}></BackButton>
+          <BackButton
+            onClick={() => {
+              if (dataSource?.authenticationScheme === "BEARER") {
+                prevStep();
+              } else {
+                prevStep();
+                prevStep();
+              }
+            }}
+          ></BackButton>
           <EndpointsButton
             projectId={projectId}
             startLoading={startLoading}

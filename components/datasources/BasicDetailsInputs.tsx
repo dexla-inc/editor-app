@@ -62,8 +62,8 @@ export const BasicDetailsInputs = ({
         placeholder="Select an authentication scheme"
         value={authenticationScheme}
         onChange={(value) => {
+          form.setFieldValue("authenticationScheme", value as string);
           setAuthenticationScheme && setAuthenticationScheme(value as string);
-          form.getInputProps("authenticationScheme");
         }}
         data={[
           { value: "NONE", label: "None" },
