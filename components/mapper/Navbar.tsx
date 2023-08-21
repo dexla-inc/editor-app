@@ -7,18 +7,13 @@ type Props = {
 } & BoxProps;
 
 export const Navbar = ({ renderTree, component, ...props }: Props) => {
-  const { children, style, ...componentProps } = component.props as any;
+  const { children, ...componentProps } = component.props as any;
 
   return (
-    <>
-      <MantineBox
-        style={{ width: style.width, height: "100vh", position: "sticky" }}
-      />
-      <MantineBox style={style} {...props} {...componentProps}>
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) => renderTree(child))
-          : children}
-      </MantineBox>
-    </>
+    <MantineBox {...props} {...componentProps}>
+      {component.children && component.children.length > 0
+        ? component.children?.map((child) => renderTree(child))
+        : children}
+    </MantineBox>
   );
 };

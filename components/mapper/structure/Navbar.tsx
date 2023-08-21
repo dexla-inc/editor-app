@@ -35,13 +35,13 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       style: {
         width: "260px",
-        height: "calc(100vh - 57px)",
+        height: "100vh",
         borderRightWidth: "1px",
         borderRightStyle: "solid",
         borderRightColor: "#CCCCCC",
         display: "flex",
         flexDirection: "column",
-        position: "fixed",
+        position: "sticky",
         gap: "0px",
         backgroundColor: isDarkTheme ? theme.colors.dark[6] : "#fff",
       },
