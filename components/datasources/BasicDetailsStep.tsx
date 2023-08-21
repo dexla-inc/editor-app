@@ -49,7 +49,7 @@ export default function BasicDetailsStep({
       name: dataSource?.name || "",
       baseUrl: dataSource?.baseUrl || "",
       environment: dataSource?.environment || "",
-      authenticationScheme: dataSource?.authenticationScheme || "",
+      authenticationScheme: dataSource?.authenticationScheme || "NONE",
     },
     validate: {
       baseUrl: (value) => validateBaseUrl(value),
@@ -58,6 +58,7 @@ export default function BasicDetailsStep({
   });
 
   const onSubmit = async (values: DataSourceParams) => {
+    console.log("DATASOURCE", values);
     try {
       if (areValuesEqual<DataSourceParams>(values, dataSource)) {
         nextStep();
@@ -85,7 +86,11 @@ export default function BasicDetailsStep({
 
       setDataSource(result);
 
-      nextStep();
+      if (values.authenticationScheme === "BEARER") nextStep();
+      else {
+        nextStep();
+        nextStep();
+      }
 
       stopLoading({
         id: "creating",

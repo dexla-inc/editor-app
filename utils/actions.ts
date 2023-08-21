@@ -4,9 +4,9 @@ import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { LoginActionForm } from "@/components/actions/LoginActionForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
-import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
 import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm";
 import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
+import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
 import {
   getDataSourceAuth,
   getDataSourceEndpoints,
@@ -46,9 +46,9 @@ const triggers = [
 
 export const actions = [
   "apiCall",
-  "bindResponseToComponent",
+  "alert",
+  "bindResponse",
   "copyToClipboard",
-  "debug",
   "goToUrl",
   "login",
   "navigateToPage",
@@ -80,8 +80,8 @@ export type GoToUrlAction = {
   data?: any;
 };
 
-export type DebugAction = {
-  name: "debug";
+export type AlertAction = {
+  name: "alert";
   message: string;
   data?: any;
 };
@@ -117,7 +117,7 @@ export type LoginAction = Omit<APICallAction, "name"> & {
 };
 
 export type BindResponseToComponentAction = {
-  name: "bindResponseToComponent";
+  name: "bindResponse";
   data?: any;
   binds?: {
     component: string;
@@ -130,7 +130,7 @@ export type Action = {
   trigger: ActionTrigger;
   action:
     | NavigationAction
-    | DebugAction
+    | AlertAction
     | APICallAction
     | BindResponseToComponentAction
     | GoToUrlAction
@@ -177,7 +177,7 @@ export const goToUrlAction = ({ action }: GoToUrlParams) => {
 };
 
 export type DebugActionParams = ActionParams & {
-  action: DebugAction;
+  action: AlertAction;
 };
 
 export const debugAction = ({ action }: DebugActionParams) => {
@@ -506,7 +506,7 @@ export const bindResponseToComponentAction = ({
 };
 
 export const actionMapper = {
-  debug: {
+  alert: {
     action: debugAction,
     form: DebugActionForm,
   },
@@ -518,7 +518,7 @@ export const actionMapper = {
     action: apiCallAction,
     form: APICallActionForm,
   },
-  bindResponseToComponent: {
+  bindResponse: {
     action: bindResponseToComponentAction,
     form: BindResponseToComponentActionForm,
   },

@@ -1,6 +1,6 @@
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
-import { Action, DebugAction } from "@/utils/actions";
+import { Action, AlertAction } from "@/utils/actions";
 import { getComponentById } from "@/utils/editor";
 import { Button, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -23,7 +23,7 @@ export const DebugActionForm = ({ id }: Props) => {
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentActions = component?.props?.actions ?? [];
   const action: Action = componentActions.find((a: Action) => a.id === id);
-  const debugAction = action.action as DebugAction;
+  const debugAction = action.action as AlertAction;
 
   const form = useForm({
     initialValues: {
