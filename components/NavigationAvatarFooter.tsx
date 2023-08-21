@@ -23,19 +23,18 @@ const NavigationAvatarFooter = forwardRef<
   NavigationAvatarFooterProps
 >((props, ref) => {
   const theme = useMantineTheme();
+  const isDarkTheme = theme.colorScheme === "dark";
 
   return (
     <Box
       ref={ref}
       sx={{
-        margin: "0 10px",
+        margin: "0 auto",
         padding: "10px 0",
         borderTop: `${rem(1)} solid ${
-          theme.colorScheme === "dark"
-            ? theme.colors.gray[3]
-            : theme.colors.gray[5]
+          isDarkTheme ? theme.colors.gray[5] : theme.colors.gray[3]
         }`,
-        width: "100%",
+        width: "95%",
       }}
       {...props}
     >
@@ -45,16 +44,12 @@ const NavigationAvatarFooter = forwardRef<
           width: "100%",
           padding: theme.spacing.xs,
           borderRadius: theme.radius.sm,
-          color:
-            theme.colorScheme === "dark"
-              ? theme.colors.dark[8]
-              : theme.colors.gray[4],
+          color: isDarkTheme ? theme.colors.gray[4] : theme.colors.dark[8],
 
           "&:hover": {
-            backgroundColor:
-              theme.colorScheme === "dark"
-                ? theme.colors.gray[0]
-                : theme.colors.dark[4],
+            backgroundColor: isDarkTheme
+              ? theme.colors.dark[4]
+              : theme.colors.gray[0],
           },
         }}
       >
