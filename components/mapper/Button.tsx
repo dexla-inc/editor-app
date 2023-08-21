@@ -29,7 +29,7 @@ export const Button = ({
 
   return (
     <MantineButton
-      leftIcon={<Icon name={leftIcon} />}
+      {...(leftIcon && { leftIcon: <Icon name={leftIcon} /> })}
       {...defaultTriggers}
       {...props}
       {...componentProps}
