@@ -39,8 +39,8 @@ export default function PageDetailPane({
   const queryClient = useQueryClient();
   const resetTree = useEditorStore((state) => state.resetTree);
   const queryStringState = useState(
-    page!.queryStrings
-      ? Object.entries(page!.queryStrings).map(([key, value]) => ({
+    page?.queryStrings
+      ? Object.entries(page?.queryStrings || {}).map(([key, value]) => ({
           key,
           value,
         }))
