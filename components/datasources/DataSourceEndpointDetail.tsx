@@ -102,7 +102,7 @@ export const DataSourceEndpointDetail = ({
         </Tabs.List>
         <Tabs.Panel value="example" pt="xs">
           <Prism language="json">
-            {JSON.stringify(endpoint.exampleResponse, null, 2)}
+            {JSON.stringify(JSON.parse(endpoint.exampleResponse), null, 2)}
           </Prism>
         </Tabs.Panel>
       </Tabs>
