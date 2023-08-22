@@ -43,7 +43,6 @@ export const TestUserLogin = ({
   }, [projectId, dataSourceId]);
 
   const handleLoginClick = async () => {
-    console.log("responseJson", dataSourceAuthConfig?.accessTokenUrl);
     const response = await fetch(
       url ?? dataSourceAuthConfig?.accessTokenUrl ?? "",
       {
