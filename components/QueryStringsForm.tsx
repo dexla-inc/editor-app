@@ -24,6 +24,7 @@ export const QueryStringsForm = ({
 
         <Button
           type="button"
+          compact
           onClick={() => {
             setQueryStrings((prev: QueryStringListItem[]) => {
               return prev.concat({ key: queryKey, value: queryValue });
