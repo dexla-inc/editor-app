@@ -1,8 +1,7 @@
 import { PageResponse } from "@/requests/pages/types";
-import { emptyEditorTree } from "@/stores/editor";
+import { MantineThemeExtended, emptyEditorTree } from "@/stores/editor";
 import { Action } from "@/utils/actions";
 import { structureMapper } from "@/utils/componentMapper";
-import { MantineTheme } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
@@ -75,7 +74,7 @@ export const replaceIdsDeeply = (treeRoot: Component) => {
 
 export const traverseComponents = (
   components: Component[],
-  theme: MantineTheme,
+  theme: MantineThemeExtended,
   pages: PageResponse[]
 ): Component[] => {
   return components
@@ -101,7 +100,7 @@ export const traverseComponents = (
 
 export const getEditorTreeFromPageStructure = (
   tree: { rows: Row[] },
-  theme: MantineTheme,
+  theme: MantineThemeExtended,
   pages: PageResponse[]
 ) => {
   const editorTree: EditorTree = {
@@ -151,7 +150,7 @@ export const getEditorTreeFromPageStructure = (
 
 export const getEditorTreeFromTemplateData = (
   tree: { template: { name: string; data: any } },
-  theme: MantineTheme,
+  theme: MantineThemeExtended,
   pages: PageResponse[]
 ) => {
   // @ts-ignore
@@ -165,7 +164,7 @@ export const getEditorTreeFromTemplateData = (
 
 export const getNewComponents = (
   tree: { rows: Row[] },
-  theme: MantineTheme,
+  theme: MantineThemeExtended,
   pages: PageResponse[]
 ): Component => {
   return {

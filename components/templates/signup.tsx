@@ -1,3 +1,4 @@
+import { MantineThemeExtended } from "@/stores/editor";
 import { nanoid } from "nanoid";
 
 type Input = {
@@ -16,7 +17,7 @@ export type Data = {
   };
 };
 
-export const template = (data: Data) => {
+export const template = (data: Data, theme: MantineThemeExtended) => {
   const inputs = data.inputs.map((input: Input) => {
     return {
       id: nanoid(),
@@ -78,7 +79,7 @@ export const template = (data: Data) => {
                   alignItems: "center",
                   justifyContent: "center",
                 },
-                bg: "Neutral.4",
+                bg: `linear-gradient(175deg, ${theme.colors.Primary[6]} 45%, ${theme.colors.Accent[6]} 45%)`,
               },
               children: [
                 {
