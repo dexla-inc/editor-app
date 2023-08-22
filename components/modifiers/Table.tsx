@@ -1,10 +1,11 @@
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
-import { Box, Divider, Stack, Switch, Textarea } from "@mantine/core";
+import { Divider, Stack, Switch, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTable } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import get from "lodash.get";
+import isEmpty from "lodash.isempty";
 import { useEffect } from "react";
 
 export const icon = IconTable;
@@ -36,16 +37,26 @@ export const Modifier = () => {
 
   useEffect(() => {
     if (selectedComponentId) {
-      const { data = {}, headers = {}, config = {} } = componentProps;
+      const {
+        data = {},
+        exampleData = {},
+        headers = {},
+        config = {},
+      } = componentProps;
+
+      const _data = isEmpty(exampleData?.value ?? exampleData)
+        ? data
+        : exampleData?.value ?? exampleData;
+
       form.setValues({
-        data: JSON.stringify(data?.value ?? data, null, 2),
+        data: JSON.stringify(_data, null, 2),
         headers,
         config,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponentId, componentProps.data, componentProps.exampleData]);
 
   const debouncedUpdate = debounce((field: string, value: any) => {
     updateTreeComponent(selectedComponentId as string, {

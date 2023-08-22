@@ -15,7 +15,7 @@ type Props = {
   id: string;
 };
 
-type ComponentBind = { component: string; value: string };
+type ComponentBind = { component: string; value: string; example: string };
 type FormValues = {
   binds: ComponentBind[];
 };
@@ -83,6 +83,22 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
         }),
       });
 
+      values.binds
+        .filter((b) => !!b.component)
+        .forEach((bind) => {
+          updateTreeComponent(bind.component!, {
+            exampleData: { value: bind.example },
+            headers: Array.isArray(bind.example)
+              ? Object.keys(bind.example[0]).reduce((acc, key) => {
+                  return {
+                    ...acc,
+                    [key]: typeof key === "string",
+                  };
+                }, {})
+              : {},
+          });
+        });
+
       stopLoading({
         id: "saving-action",
         title: "Action Saved",
@@ -110,6 +126,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
     if (componentToBind && pickingComponentToBindTo) {
       if (pickingComponentToBindTo.componentId === component?.id) {
         form.setFieldValue(`binds.${pickingComponentToBindTo.index ?? 0}`, {
+          ...(form.values.binds[pickingComponentToBindTo.index ?? 0] ?? {}),
           component: componentToBind,
           value: pickingComponentToBindTo.param,
         });
@@ -135,20 +152,25 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
       if (_endpoint?.exampleResponse) {
         const json = JSON.parse(_endpoint?.exampleResponse as string);
         const binds = flattenKeysWithRoot(json);
+
         Object.keys(binds).forEach((bind) => {
           form.insertListItem("binds", {
             component: "",
             value: bind,
+            example: bind === "root[0]" ? json : json[bind] || "--",
           });
         });
       }
     };
 
-    if (originalAction?.action?.datasource?.id) {
+    if (
+      originalAction?.action?.datasource?.id &&
+      form.values.binds.length === 0
+    ) {
       getEndpoint();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [action, originalAction, projectId]);
+  }, [originalAction, projectId, form]);
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>

@@ -1,14 +1,9 @@
-import { getDataSourceEndpoints } from "@/requests/datasources/queries";
 import { useEditorStore } from "@/stores/editor";
-import { Action } from "@/utils/actions";
-import { Component, getAllActions } from "@/utils/editor";
-import { flattenKeysWithRoot } from "@/utils/flattenKeys";
+import { Component } from "@/utils/editor";
 import { TableProps } from "@mantine/core";
-import get from "lodash.get";
+import isEmpty from "lodash.isempty";
 import startCase from "lodash.startcase";
 import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -16,27 +11,24 @@ type Props = {
 } & TableProps;
 
 export const Table = ({ renderTree, component, ...props }: Props) => {
-  const router = useRouter();
-  const editorTree = useEditorStore((state) => state.tree);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
-  );
-  const projectId = router.query.id as string;
 
   const {
     children,
     data: dataProp,
+    exampleData = {},
     headers = {},
     config = {},
     style,
     ...componentProps
   } = component.props as any;
 
-  let _data = dataProp?.value ?? dataProp;
-  const [data, setData] = useState(_data);
+  const data = !isPreviewMode
+    ? isEmpty(exampleData?.value ?? exampleData)
+      ? dataProp
+      : exampleData?.value ?? exampleData
+    : dataProp?.value ?? dataProp;
   const dataSample = (data ?? [])?.[0];
-  console.log({ dataProp, headers, component, props });
 
   const columns = Object.keys(dataSample).reduce((acc: any[], key: string) => {
     if (headers?.[key]) {
@@ -72,73 +64,8 @@ export const Table = ({ renderTree, component, ...props }: Props) => {
     enableFullScreenToggle: false,
     enableHiding: false,
     enableColumnFilters: false,
+    state: { isLoading: componentProps.loading },
   });
-
-  useEffect(() => {
-    const getEndpoint = async (originalAction: any, binded: any) => {
-      const { results } = await getDataSourceEndpoints(
-        projectId,
-        originalAction.action.datasource.id
-      );
-
-      const _endpoint = results.find(
-        (e) => e.id === originalAction.action.endpoint
-      );
-
-      console.log({ UEH: data });
-      if (_endpoint?.exampleResponse) {
-        const json = JSON.parse(_endpoint?.exampleResponse as string);
-        const binds = flattenKeysWithRoot(json);
-        const data = get(binds, binded.value, "---");
-        const _headers = Object.keys(data[0]).reduce((acc, key) => {
-          return { ...acc, [key]: true };
-        }, {});
-        console.log({ data, _headers });
-        updateTreeComponent(
-          component.id!,
-          {
-            data: { value: data },
-            headers: _headers,
-          },
-          false
-        );
-        setData(data);
-      }
-    };
-
-    if (!isPreviewMode && !dataProp?.value) {
-      const actions = getAllActions(editorTree.root);
-      let binded = null;
-      let originalAction = null;
-
-      for (const _action of actions) {
-        const action = _action as unknown as Action;
-        if (action.action.name === "bindResponse") {
-          binded = (action.action.binds ?? [])?.find((bind: any) => {
-            return bind.component === component.id;
-          });
-
-          if (binded) {
-            originalAction = actions.find((a) => {
-              return a.id === action.sequentialTo;
-            });
-            break;
-          }
-        }
-      }
-
-      if (binded && originalAction) {
-        getEndpoint(originalAction, binded);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    projectId,
-    isPreviewMode,
-    component.id,
-    updateTreeComponent,
-    dataProp?.value,
-  ]);
 
   return (
     <MantineReactTable

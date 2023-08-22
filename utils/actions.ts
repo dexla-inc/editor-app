@@ -131,6 +131,7 @@ export type BindResponseToComponentAction = {
   binds?: {
     component: string;
     value: string;
+    example: string;
   }[];
 };
 
