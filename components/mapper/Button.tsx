@@ -37,7 +37,7 @@ export const Button = ({
     >
       {component.children && Array.isArray(component.children)
         ? component.children.map((child) => renderTree(child))
-        : component.children}
+        : children}
     </MantineButton>
   );
 };
