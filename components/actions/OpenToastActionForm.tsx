@@ -92,7 +92,7 @@ export const OpenToastActionForm = ({ id }: Props) => {
         <TextInput
           size="xs"
           placeholder="Notification message"
-          label="message"
+          label="Message"
           {...form.getInputProps("message")}
         ></TextInput>
         <Button size="xs" type="submit" mt="xs">
