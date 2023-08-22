@@ -1,4 +1,4 @@
-import { Button, Group, TextInput, Text } from "@mantine/core";
+import { Button, Group, TextInput, Text, Flex } from "@mantine/core";
 import { Icon } from "@/components/Icon";
 import { Dispatch, SetStateAction, useState } from "react";
 import { QueryStringListItem } from "@/requests/pages/types";
@@ -17,7 +17,7 @@ export const QueryStringsForm = ({
 
   return (
     <>
-      <Group style={{ flexWrap: "nowrap" }}>
+      <Flex justify="space-between">
         <Text fz="sm" weight="500">
           Query Strings
         </Text>
@@ -37,7 +37,7 @@ export const QueryStringsForm = ({
         >
           Add query string
         </Button>
-      </Group>
+      </Flex>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         {queryStrings.map(({ key, value }, index) => {
