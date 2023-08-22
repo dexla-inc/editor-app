@@ -1,7 +1,8 @@
-import { Button, Group, TextInput, Text, Flex } from "@mantine/core";
 import { Icon } from "@/components/Icon";
-import { Dispatch, SetStateAction, useState } from "react";
 import { QueryStringListItem } from "@/requests/pages/types";
+import { ICON_SIZE } from "@/utils/config";
+import { Button, Flex, Group, Text, TextInput } from "@mantine/core";
+import { Dispatch, SetStateAction, useState } from "react";
 
 export const QueryStringsForm = ({
   queryStringState,
@@ -32,10 +33,11 @@ export const QueryStringsForm = ({
             setQueryKey("");
             setQueryValue("");
           }}
-          variant="outline"
-          color="blue"
+          color="indigo"
+          sx={{ marginRight: 0 }}
+          leftIcon={<Icon name="IconPlus" size={ICON_SIZE} />}
         >
-          Add query string
+          Add
         </Button>
       </Flex>
 
@@ -76,6 +78,7 @@ export const QueryStringsForm = ({
                   });
                 }}
                 style={{ cursor: "pointer" }}
+                color="red"
               />
             </Group>
           );
