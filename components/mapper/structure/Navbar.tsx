@@ -3,7 +3,6 @@ import { defaultImageValues } from "@/components/modifiers/Image";
 import { PageResponse } from "@/requests/pages/types";
 import { MantineThemeExtended } from "@/stores/editor";
 import { Component } from "@/utils/editor";
-import { IconHome } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -27,6 +26,8 @@ export const jsonStructure = (props?: any): Component => {
     lightLogo?.url ||
     "https://www.kadencewp.com/wp-content/uploads/2020/10/alogo-4.svg";
 
+  const isDarkTheme = theme.colorScheme === "dark";
+
   return {
     id: nanoid(),
     name: "Navbar",
@@ -42,7 +43,7 @@ export const jsonStructure = (props?: any): Component => {
         flexDirection: "column",
         position: "sticky",
         gap: "0px",
-        backgroundColor: darkLogo ? "#fff" : theme.colors.dark[6],
+        backgroundColor: isDarkTheme ? theme.colors.dark[6] : "#fff",
       },
       ...(props.props || {}),
     },
@@ -61,9 +62,9 @@ export const jsonStructure = (props?: any): Component => {
             padding: "20px",
             borderBottomStyle: "solid",
             borderBottomWidth: "1px",
-            borderBottomColor: darkLogo
-              ? theme.colors.gray[3]
-              : theme.colors.gray[5],
+            borderBottomColor: isDarkTheme
+              ? theme.colors.gray[5]
+              : theme.colors.gray[3],
             margin: "0 10px",
           },
         },
@@ -114,14 +115,16 @@ export const jsonStructure = (props?: any): Component => {
                   height: "auto",
                   display: "flex",
                   alignItems: "center",
-                  color: darkLogo ? theme.colors.dark[9] : theme.colors.gray[5],
+                  color: isDarkTheme
+                    ? theme.colors.gray[5]
+                    : theme.colors.dark[9],
                 },
                 sx: {
                   borderRadius: "3px",
-                  "&:hover": {
-                    backgroundColor: darkLogo
-                      ? theme.colors.gray[0]
-                      : theme.colors.dark[4],
+                  "&:hover, [data-active]": {
+                    backgroundColor: `${
+                      isDarkTheme ? theme.colors.dark[4] : theme.colors.gray[0]
+                    } !important`,
                   },
                 },
                 actions: [
