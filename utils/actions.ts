@@ -1,3 +1,4 @@
+import { showNotification } from "@mantine/notifications";
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
 import { DebugActionForm } from "@/components/actions/DebugActionForm";
@@ -18,6 +19,7 @@ import { Component } from "@/utils/editor";
 import { flattenKeysWithRoot } from "@/utils/flattenKeys";
 import get from "lodash.get";
 import { Router } from "next/router";
+import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 
 const triggers = [
   "onClick",
@@ -104,6 +106,13 @@ export type OpenPopOverAction = {
   data?: any;
 };
 
+export type OpenToastAction = {
+  name: "openToast";
+  toastId: string;
+  title: string;
+  message: string;
+};
+
 export type APICallAction = {
   name: "apiCall";
   endpoint: string;
@@ -137,7 +146,8 @@ export type Action = {
     | LoginAction
     | OpenModalAction
     | OpenDrawerAction
-    | OpenPopOverAction;
+    | OpenPopOverAction
+    | OpenToastAction;
   sequentialTo?: string;
 };
 
@@ -196,6 +206,10 @@ export type OpenPopOverActionParams = ActionParams & {
   action: OpenPopOverAction;
 };
 
+export type OpenToastActionParams = ActionParams & {
+  action: OpenToastAction;
+};
+
 export const openModalAction = ({ action }: OpenModalActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   updateTreeComponent(action.modalId, { opened: true }, false);
@@ -209,6 +223,10 @@ export const openDrawerAction = ({ action }: OpenDrawerActionParams) => {
 export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   updateTreeComponent(action.popOverId, { opened: true }, false);
+};
+
+export const openToastAction = ({ action }: OpenToastActionParams) => {
+  showNotification({ title: action.title, message: action.message });
 };
 
 export type APICallActionParams = ActionParams & {
@@ -541,5 +559,9 @@ export const actionMapper = {
   openPopOver: {
     action: openPopOverAction,
     form: OpenPopOverActionForm,
+  },
+  openToast: {
+    action: openToastAction,
+    form: OpenToastActionForm,
   },
 };
