@@ -6,6 +6,7 @@ import { useForm } from "@mantine/form";
 import { IconSelect } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
+import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 
 export const icon = IconSelect;
 export const label = "Select";
@@ -18,7 +19,7 @@ export const defaultSelectValues = {
   icon: "",
   withAsterisk: false,
   labelSpacing: "0",
-  data: ["Option 1", "Option 2"],
+  data: [],
 };
 
 export const Modifier = () => {
@@ -50,6 +51,7 @@ export const Modifier = () => {
         placeholder,
         type,
         icon,
+        data = [],
         withAsterisk,
         labelProps = {},
       } = componentProps;
@@ -63,6 +65,7 @@ export const Modifier = () => {
         withAsterisk: withAsterisk ?? defaultSelectValues.withAsterisk,
         labelProps:
           labelProps.style?.marginBottom ?? defaultSelectValues.labelSpacing,
+        data: data ?? defaultSelectValues.data,
         ...style,
       });
     }
@@ -76,6 +79,11 @@ export const Modifier = () => {
     });
   }, 500);
 
+  const setFieldValue = (key: any, value: any) => {
+    form.setFieldValue(key, value);
+    debouncedUpdate(key, value);
+  };
+
   return (
     <form>
       <Stack spacing="xs">
@@ -84,8 +92,7 @@ export const Modifier = () => {
           size="xs"
           {...form.getInputProps("label")}
           onChange={(e) => {
-            form.setFieldValue("label", e.target.value);
-            debouncedUpdate("label", e.target.value);
+            setFieldValue("label", e.target.value);
           }}
         />
         <Select
@@ -98,15 +105,13 @@ export const Modifier = () => {
           ]}
           {...form.getInputProps("type")}
           onChange={(value) => {
-            form.setFieldValue("type", value as string);
-            debouncedUpdate("type", value as string);
+            setFieldValue("type", value as string);
           }}
         />
         <SizeSelector
           {...form.getInputProps("size")}
           onChange={(value) => {
-            form.setFieldValue("size", value as string);
-            debouncedUpdate("size", value as string);
+            setFieldValue("size", value as string);
           }}
         />
         {/* <IconSelector
@@ -121,9 +126,12 @@ export const Modifier = () => {
           label="Label Spacing"
           {...form.getInputProps("labelProps")}
           onChange={(value) => {
-            form.setFieldValue("labelProps", value as string);
-            debouncedUpdate("labelProps", { mb: value as string });
+            setFieldValue("labelProps", value as string);
           }}
+        />
+        <SelectOptionsForm
+          getValue={() => form.getInputProps("data").value}
+          setFieldValue={setFieldValue}
         />
       </Stack>
     </form>
