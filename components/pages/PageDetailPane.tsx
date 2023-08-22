@@ -273,10 +273,6 @@ export default function PageDetailPane({
                 </Button.Group>
               </Popover.Dropdown>
             </Popover>
-            <Button.Group
-              orientation="vertical"
-              sx={{ gap: "1rem" }}
-            ></Button.Group>
           </Stack>
         </form>
       </Flex>
