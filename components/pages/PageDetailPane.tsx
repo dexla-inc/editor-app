@@ -8,7 +8,7 @@ import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { decodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
-import { Button, Flex, Group, Stack, TextInput } from "@mantine/core";
+import { Button, Flex, Popover, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useClipboard } from "@mantine/hooks";
 import { IconArrowLeft, IconTrash } from "@tabler/icons-react";
@@ -225,35 +225,58 @@ export default function PageDetailPane({
 
             <QueryStringsForm queryStringState={queryStringState} />
 
-            <Button type="submit" loading={isLoading}>
-              {page ? "Save" : "Create"}
-            </Button>
-            {page?.pageState && (
-              <Button
-                loading={isLoading}
-                onClick={(e) => {
-                  const pageStructure = decodeSchema(page.pageState!);
-                  copy(pageStructure);
-                }}
-                variant="outline"
-              >
-                {copied ? "Copied" : `Copy Design`}
-              </Button>
-            )}
-            {page?.id && (
-              <>
-                <Button
-                  loading={isLoading}
-                  onClick={duplicate}
-                  variant="default"
-                >
-                  Duplicate
-                </Button>
-                <Button loading={isLoading} onClick={deleteFn} color="red">
-                  Delete
-                </Button>
-              </>
-            )}
+            <Popover
+              width="target"
+              position="bottom"
+              withArrow
+              arrowPosition="side"
+              shadow="md"
+            >
+              <Popover.Target>
+                <Button>Settings</Button>
+              </Popover.Target>
+              <Popover.Dropdown>
+                <Button.Group orientation="vertical" sx={{ gap: "1rem" }}>
+                  <Button type="submit" loading={isLoading}>
+                    {page ? "Save" : "Create"}
+                  </Button>
+                  {page?.pageState && (
+                    <Button
+                      loading={isLoading}
+                      onClick={(e) => {
+                        const pageStructure = decodeSchema(page.pageState!);
+                        copy(pageStructure);
+                      }}
+                      variant="outline"
+                    >
+                      {copied ? "Copied" : `Copy Design`}
+                    </Button>
+                  )}
+                  {page?.id && (
+                    <>
+                      <Button
+                        loading={isLoading}
+                        onClick={duplicate}
+                        variant="default"
+                      >
+                        Duplicate
+                      </Button>
+                      <Button
+                        loading={isLoading}
+                        onClick={deleteFn}
+                        color="red"
+                      >
+                        Delete
+                      </Button>
+                    </>
+                  )}
+                </Button.Group>
+              </Popover.Dropdown>
+            </Popover>
+            <Button.Group
+              orientation="vertical"
+              sx={{ gap: "1rem" }}
+            ></Button.Group>
           </Stack>
         </form>
       </Flex>
