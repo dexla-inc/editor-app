@@ -1,6 +1,6 @@
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
-import { Action, AlertAction } from "@/utils/actions";
+import { Action, OpenToastAction } from "@/utils/actions";
 import { getComponentById } from "@/utils/editor";
 import { Button, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -9,7 +9,7 @@ type Props = {
   id: string;
 };
 
-export const DebugActionForm = ({ id }: Props) => {
+export const OpenToastActionForm = ({ id }: Props) => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const editorTree = useEditorStore((state) => state.tree);
@@ -23,11 +23,12 @@ export const DebugActionForm = ({ id }: Props) => {
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentActions = component?.props?.actions ?? [];
   const action: Action = componentActions.find((a: Action) => a.id === id);
-  const debugAction = action.action as AlertAction;
+  const toastAction = action.action as OpenToastAction;
 
   const form = useForm({
     initialValues: {
-      message: debugAction.message,
+      title: toastAction.title,
+      message: toastAction.message,
     },
   });
 
@@ -46,6 +47,7 @@ export const DebugActionForm = ({ id }: Props) => {
               ...action,
               action: {
                 ...action.action,
+                title: values.title,
                 message: values.message,
               },
             };
@@ -83,10 +85,16 @@ export const DebugActionForm = ({ id }: Props) => {
       <Stack spacing="xs">
         <TextInput
           size="xs"
+          placeholder="Notification title"
+          label="Title"
+          {...form.getInputProps("title")}
+        ></TextInput>
+        <TextInput
+          size="xs"
+          placeholder="Notification message"
           label="Message"
-          placeholder="The message to show"
           {...form.getInputProps("message")}
-        />
+        ></TextInput>
         <Button size="xs" type="submit" mt="xs">
           Save
         </Button>
@@ -95,7 +103,6 @@ export const DebugActionForm = ({ id }: Props) => {
           type="button"
           variant="default"
           onClick={removeAction}
-          color="red"
         >
           Remove
         </Button>

@@ -113,7 +113,7 @@ export const Table = ({ renderTree, component, ...props }: Props) => {
 
       for (const _action of actions) {
         const action = _action as unknown as Action;
-        if (action.action.name === "bindResponseToComponent") {
+        if (action.action.name === "bindResponse") {
           binded = (action.action.binds ?? [])?.find((bind: any) => {
             return bind.component === component.id;
           });

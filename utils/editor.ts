@@ -501,19 +501,19 @@ export const getAllDrawers = (treeRoot: Component): Component[] => {
 };
 
 export const getAllPopOvers = (treeRoot: Component): Component[] => {
-  const drawers: Component[] = [];
+  const popOvers: Component[] = [];
 
   crawl(
     treeRoot,
     (node) => {
-      if (node.name === "Drawer") {
-        drawers.push(node);
+      if (node.name === "PopOver") {
+        popOvers.push(node);
       }
     },
     { order: "bfs" }
   );
 
-  return drawers;
+  return popOvers;
 };
 
 export const removeComponentFromParent = (
