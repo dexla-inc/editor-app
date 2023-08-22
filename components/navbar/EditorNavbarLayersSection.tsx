@@ -185,11 +185,9 @@ export const EditorNavbarLayersSection = () => {
 
     return (
       <ListItemWrapper key={component.id} component={component} level={level}>
-        {component.children
-          ? Array.isArray(component.children)
-            ? component.children.map((child) => renderList(child, level + 1))
-            : component.children
-          : null}
+        {component.children?.map((child) => {
+          return renderList(child, level + 1);
+        })}
       </ListItemWrapper>
     );
   };
