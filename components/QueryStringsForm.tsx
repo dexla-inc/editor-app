@@ -1,4 +1,4 @@
-import { Button, Group, TextInput } from "@mantine/core";
+import { Button, Group, TextInput, Text } from "@mantine/core";
 import { Icon } from "@/components/Icon";
 import { Dispatch, SetStateAction, useState } from "react";
 import { QueryStringListItem } from "@/requests/pages/types";
@@ -18,41 +18,25 @@ export const QueryStringsForm = ({
   return (
     <>
       <Group style={{ flexWrap: "nowrap" }}>
-        <TextInput
-          label="Query strings"
-          placeholder="key"
-          value={queryKey}
-          onChange={(event) => setQueryKey(event.target.value)}
-          style={{
-            width: "50%",
-          }}
-        />
+        <Text fz="sm" weight="500">
+          Query Strings
+        </Text>
 
-        <TextInput
-          label=" "
-          placeholder="value"
-          value={queryValue}
-          onChange={(event) => setQueryValue(event.target.value)}
-          style={{
-            width: "50%",
+        <Button
+          type="button"
+          onClick={() => {
+            setQueryStrings((prev: QueryStringListItem[]) => {
+              return prev.concat({ key: queryKey, value: queryValue });
+            });
+            setQueryKey("");
+            setQueryValue("");
           }}
-        />
+          variant="outline"
+          color="blue"
+        >
+          Add query string
+        </Button>
       </Group>
-
-      <Button
-        type="button"
-        onClick={() => {
-          setQueryStrings((prev: QueryStringListItem[]) => {
-            return prev.concat({ key: queryKey, value: queryValue });
-          });
-          setQueryKey("");
-          setQueryValue("");
-        }}
-        variant="outline"
-        color="blue"
-      >
-        Add query string
-      </Button>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         {queryStrings.map(({ key, value }, index) => {
