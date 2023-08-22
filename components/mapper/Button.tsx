@@ -35,9 +35,9 @@ export const Button = ({
       {...componentProps}
       {...triggers}
     >
-      {component.children && component.children.length > 0
-        ? component.children?.map((child) => renderTree(child))
-        : children}
+      {component.children && Array.isArray(component.children)
+        ? component.children.map((child) => renderTree(child))
+        : component.children}
     </MantineButton>
   );
 };
