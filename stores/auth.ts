@@ -71,11 +71,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
     }
 
-    const state = get();
-
-    const accessToken = response[state.apiConfig.accessTokenProperty];
-    const refreshToken = response[state.apiConfig.refreshTokenProperty];
-    const expirySeconds = response[state.apiConfig.expiryTokenProperty];
+    const accessToken = response[accessTokenProperty];
+    const refreshToken = response[refreshTokenProperty];
+    const expirySeconds = response[expiryTokenProperty];
 
     const expiresAt = Date.now() + expirySeconds * 1000;
     Cookies.set("dexlaRefreshToken", refreshToken, {
