@@ -1,3 +1,4 @@
+import { QueryStringsForm } from "@/components/QueryStringsForm";
 import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
 import {
   PageBody,
@@ -8,15 +9,23 @@ import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { decodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
-import { Button, Flex, Group, Stack, TextInput } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Flex,
+  Group,
+  Stack,
+  TextInput,
+  Tooltip,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useClipboard } from "@mantine/hooks";
-import { IconArrowLeft, IconTrash } from "@tabler/icons-react";
+import { IconArrowLeft } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
-import { QueryStringsForm } from "@/components/QueryStringsForm";
+import { Icon } from "../Icon";
 
 type PageDetailPaneProps = {
   page?: PageResponse | null | undefined;
@@ -188,13 +197,74 @@ export default function PageDetailPane({
     <>
       <Flex>
         <form onSubmit={form.onSubmit(onSubmit)} style={{ width: "100%" }}>
-          <Button
-            onClick={() => setPage(undefined)}
-            variant="subtle"
-            leftIcon={<IconArrowLeft size={ICON_SIZE} />}
-          >
-            Back
-          </Button>
+          <Group noWrap sx={{ justifyContent: "space-between" }}>
+            <Button
+              onClick={() => setPage(undefined)}
+              variant="subtle"
+              leftIcon={<IconArrowLeft size={ICON_SIZE} />}
+            >
+              Back
+            </Button>
+            <Group sx={{ gap: "5px" }}>
+              {page?.id && (
+                <Tooltip
+                  withArrow
+                  color="green"
+                  label="Duplicate"
+                  sx={{ fontSize: "0.75rem" }}
+                >
+                  <ActionIcon
+                    loading={isLoading}
+                    onClick={duplicate}
+                    color="green"
+                    variant="light"
+                    radius="xl"
+                  >
+                    <Icon name="IconCopy" size={ICON_SIZE} />
+                  </ActionIcon>
+                </Tooltip>
+              )}
+              {page?.pageState && (
+                <Tooltip
+                  withArrow
+                  color="orange"
+                  label={copied ? "Copied" : "Copy Design"}
+                  sx={{ fontSize: "0.75rem" }}
+                >
+                  <ActionIcon
+                    loading={isLoading}
+                    onClick={(e) => {
+                      const pageStructure = decodeSchema(page.pageState!);
+                      copy(pageStructure);
+                    }}
+                    color="orange"
+                    variant="light"
+                    radius="xl"
+                  >
+                    <Icon name="IconPhotoPlus" size={ICON_SIZE} />
+                  </ActionIcon>
+                </Tooltip>
+              )}
+              {page?.id && (
+                <Tooltip
+                  withArrow
+                  color="red"
+                  label="Delete"
+                  sx={{ fontSize: "0.75rem" }}
+                >
+                  <ActionIcon
+                    loading={isLoading}
+                    onClick={deleteFn}
+                    color="red"
+                    variant="light"
+                    radius="xl"
+                  >
+                    <Icon name="IconTrash" size={ICON_SIZE} />
+                  </ActionIcon>
+                </Tooltip>
+              )}
+            </Group>
+          </Group>
           <Stack my="sm">
             <TextInput
               label="Page Title"
@@ -225,34 +295,14 @@ export default function PageDetailPane({
 
             <QueryStringsForm queryStringState={queryStringState} />
 
-            <Button type="submit" loading={isLoading}>
-              {page ? "Save" : "Create"}
-            </Button>
-            {page?.pageState && (
-              <Button
-                loading={isLoading}
-                onClick={(e) => {
-                  const pageStructure = decodeSchema(page.pageState!);
-                  copy(pageStructure);
-                }}
-                variant="outline"
-              >
-                {copied ? "Copied" : `Copy Design`}
+            {page ? (
+              <Button type="submit" loading={isLoading}>
+                Save
               </Button>
-            )}
-            {page?.id && (
-              <>
-                <Button
-                  loading={isLoading}
-                  onClick={duplicate}
-                  variant="default"
-                >
-                  Duplicate
-                </Button>
-                <Button loading={isLoading} onClick={deleteFn} color="red">
-                  Delete
-                </Button>
-              </>
+            ) : (
+              <Button type="submit" loading={isLoading}>
+                Create
+              </Button>
             )}
           </Stack>
         </form>

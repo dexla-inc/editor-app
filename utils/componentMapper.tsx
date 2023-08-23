@@ -15,7 +15,6 @@ import { Container } from "@/components/mapper/Container";
 import { DateInput } from "@/components/mapper/DateInput";
 import { Divider } from "@/components/mapper/Divider";
 import { Drawer } from "@/components/mapper/Drawer";
-import { PopOver } from "@/components/mapper/PopOver";
 import { FilePond } from "@/components/mapper/FilePond";
 import { Flex } from "@/components/mapper/Flex";
 import { Form } from "@/components/mapper/Form";
@@ -28,6 +27,7 @@ import { Modal } from "@/components/mapper/Modal";
 import { NavLink } from "@/components/mapper/NavLink";
 import { Navbar } from "@/components/mapper/Navbar";
 import { Pagination } from "@/components/mapper/Pagination";
+import { PopOver } from "@/components/mapper/PopOver";
 import { Radio } from "@/components/mapper/Radio";
 import { RadioItem } from "@/components/mapper/RadioItem";
 import { Rating } from "@/components/mapper/Rating";
@@ -59,7 +59,6 @@ import * as ContainerStructure from "@/components/mapper/structure/Container";
 import * as DateInputStructure from "@/components/mapper/structure/DateInput";
 import * as DividerStructure from "@/components/mapper/structure/Divider";
 import * as DrawerStructure from "@/components/mapper/structure/Drawer";
-import * as PopOverStructure from "@/components/mapper/structure/PopOver";
 import * as FilePondStructure from "@/components/mapper/structure/FilePond";
 import * as FormStructure from "@/components/mapper/structure/Form";
 import * as IconStructure from "@/components/mapper/structure/Icon";
@@ -72,6 +71,7 @@ import * as NavLinkStructure from "@/components/mapper/structure/NavLink";
 import * as NavbarStructure from "@/components/mapper/structure/Navbar";
 import * as NotImplemented from "@/components/mapper/structure/NotImplemented";
 import * as PaginationStructure from "@/components/mapper/structure/Pagination";
+import * as PopOverStructure from "@/components/mapper/structure/PopOver";
 import * as RadioGroupStructure from "@/components/mapper/structure/Radio";
 import * as RadioItemStructure from "@/components/mapper/structure/RadioItem";
 import * as RatingStructure from "@/components/mapper/structure/Rating";
@@ -913,7 +913,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Icon component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["icon", "spacing", "size", "border"],
+    modifiers: ["icon", "spacing", "size", "border", "position"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
