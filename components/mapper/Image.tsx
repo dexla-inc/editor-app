@@ -1,5 +1,5 @@
 import { Component } from "@/utils/editor";
-import { ImageProps } from "@mantine/core";
+import { ImageProps, Image as MantineImage } from "@mantine/core";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -8,16 +8,17 @@ type Props = {
 
 export const Image = ({ renderTree, component, ...props }: Props) => {
   const {
-    style: { width, height, alt, ...style },
+    alt = "Image",
+    src,
+    style: { width, height, ...style },
     triggers,
     ...componentProps
   } = component.props as any;
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      alt={style?.alt || "Image"}
-      {...props}
+    <MantineImage
+      alt={alt}
+      imageProps={{ src }}
       {...componentProps}
       width={width ?? "100px"}
       height={height ?? "100px"}
