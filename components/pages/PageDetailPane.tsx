@@ -220,7 +220,7 @@ export default function PageDetailPane({
                       copy(pageStructure);
                     }}
                     color="orange"
-                    variant="filled"
+                    variant="subtle"
                     radius="xl"
                   >
                     <Icon name="IconCopy" size={ICON_SIZE} />
@@ -239,7 +239,7 @@ export default function PageDetailPane({
                       loading={isLoading}
                       onClick={duplicate}
                       color="green"
-                      variant="filled"
+                      variant="subtle"
                       radius="xl"
                     >
                       <Icon name="IconPhotoPlus" size={ICON_SIZE} />
@@ -256,7 +256,7 @@ export default function PageDetailPane({
                       loading={isLoading}
                       onClick={deleteFn}
                       color="red"
-                      variant="filled"
+                      variant="subtle"
                       radius="xl"
                     >
                       <Icon name="IconTrash" size={ICON_SIZE} />
