@@ -19,10 +19,10 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useClipboard } from "@mantine/hooks";
-import { IconArrowLeft, IconSettings, IconTrash } from "@tabler/icons-react";
+import { IconArrowLeft } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import slugify from "slugify";
 import { QueryStringsForm } from "@/components/QueryStringsForm";
 import { Icon } from "../Icon";
