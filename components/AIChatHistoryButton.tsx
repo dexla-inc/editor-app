@@ -17,14 +17,10 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Prism } from "@mantine/prism";
-import {
-  IconBrandHipchat,
-  IconCopy,
-  IconJson,
-  IconToml,
-} from "@tabler/icons-react";
+import { IconBrandHipchat, IconJson, IconToml } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { Icon } from "./Icon";
 import { buttonHoverStyles } from "./styles/buttonHoverStyles";
 
 type Props = {
@@ -144,7 +140,7 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
                   copyToClipboard(element.content);
                 }}
               >
-                <IconCopy size={ICON_SIZE} />
+                <Icon name="IconCopy" size={ICON_SIZE} />
               </ActionIcon>
             </Tooltip>
           </Flex>
