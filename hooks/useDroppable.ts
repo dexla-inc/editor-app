@@ -54,7 +54,7 @@ export const useDroppable = ({
         const w = currentWindow ?? window;
         const rect = w.document.getElementById(id)?.getBoundingClientRect()!;
         let activeRect = w.document
-          .getElementById(activeId || "")
+          .getElementById(activeId || "content-wrapper")
           ?.getBoundingClientRect()!;
 
         if (activeRect) {
