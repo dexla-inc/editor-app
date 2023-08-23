@@ -12,7 +12,7 @@ export const label = "Image";
 export const defaultImageValues = {
   src: "https://reactnativecode.com/wp-content/uploads/2018/02/Default_Image_Thumbnail.png",
   alt: "",
-  objectFit: "scale-down",
+  fit: "scale-down",
   position: "relative",
 };
 
@@ -44,8 +44,7 @@ export const Modifier = () => {
       form.setValues({
         src: src ?? defaultImageValues.src,
         alt: alt ?? defaultImageValues.alt,
-        objectFit: style.objectFit ?? defaultImageValues.objectFit,
-        position: style.position ?? defaultImageValues.position,
+        fit: style.fit ?? defaultImageValues.fit,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
@@ -88,12 +87,10 @@ export const Modifier = () => {
             { label: "None", value: "none" },
             { label: "Scale down", value: "scale-down" },
           ]}
-          {...form.getInputProps("objectFit")}
+          {...form.getInputProps("fit")}
           onChange={(value) => {
-            form.setFieldValue("objectFit", value as string);
-            debouncedTreeUpdate(selectedComponentId as string, {
-              style: { objectFit: value },
-            });
+            form.setFieldValue("fit", value as string);
+            debouncedTreeUpdate(selectedComponentId as string, { fit: value });
           }}
         />
       </Stack>
