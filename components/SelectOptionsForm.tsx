@@ -1,6 +1,7 @@
-import { Button, Group, TextInput } from "@mantine/core";
+import { Button, Flex, Group, Text, TextInput } from "@mantine/core";
 import { Icon } from "@/components/Icon";
 import { useState } from "react";
+import { ICON_SIZE } from "@/utils/config";
 
 export const SelectOptionsForm = ({
   getValue,
@@ -14,43 +15,26 @@ export const SelectOptionsForm = ({
 
   return (
     <>
-      <Group style={{ flexWrap: "nowrap" }}>
-        <TextInput
-          size="xs"
-          label="Options"
-          placeholder="label"
-          value={label}
-          onChange={(event) => setKey(event.target.value)}
-          style={{
-            width: "50%",
-          }}
-        />
+      <Flex justify="space-between" gap="xl" sx={{ marginTop: "0.5rem" }}>
+        <Text fz="xs" weight="500">
+          Options
+        </Text>
 
-        <TextInput
-          size="xs"
-          label=" "
-          placeholder="value"
-          value={value}
-          onChange={(event) => setValue(event.target.value)}
-          style={{
-            width: "50%",
+        <Button
+          type="button"
+          compact
+          onClick={() => {
+            setFieldValue("data", getValue().concat({ label, value }));
+            setKey("");
+            setValue("");
           }}
-        />
-      </Group>
-
-      <Button
-        size="xs"
-        type="button"
-        onClick={() => {
-          setFieldValue("data", getValue().concat({ label, value }));
-          setKey("");
-          setValue("");
-        }}
-        variant="outline"
-        color="blue"
-      >
-        Add option
-      </Button>
+          color="indigo"
+          sx={{ marginRight: 0 }}
+          leftIcon={<Icon name="IconPlus" size={ICON_SIZE} />}
+        >
+          Add
+        </Button>
+      </Flex>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         {/* @ts-ignore*/}
