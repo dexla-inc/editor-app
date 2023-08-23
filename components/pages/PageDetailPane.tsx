@@ -25,6 +25,7 @@ import { useRouter } from "next/router";
 import { ReactNode, useEffect, useState } from "react";
 import slugify from "slugify";
 import { QueryStringsForm } from "@/components/QueryStringsForm";
+import { Icon } from "../Icon";
 
 type PageDetailPaneProps = {
   page?: PageResponse | null | undefined;
@@ -204,7 +205,7 @@ export default function PageDetailPane({
             >
               Back
             </Button>
-            <Group>
+            <Group sx={{ gap: "5px" }}>
               {page?.pageState && (
                 <Tooltip
                   withArrow
@@ -218,11 +219,9 @@ export default function PageDetailPane({
                       const pageStructure = decodeSchema(page.pageState!);
                       copy(pageStructure);
                     }}
-                    size="lg"
-                    variant={copied ? "filled" : "outline"}
                     color="gray"
                   >
-                    <IconSettings size="1.75rem" />
+                    <Icon name="IconCopy" size={ICON_SIZE} />
                   </ActionIcon>
                 </Tooltip>
               )}
@@ -237,11 +236,9 @@ export default function PageDetailPane({
                     <ActionIcon
                       loading={isLoading}
                       onClick={duplicate}
-                      size="lg"
-                      variant="outline"
                       color="gray"
                     >
-                      <IconSettings size="1.75rem" />
+                      <Icon name="IconPhotoPlus" size={ICON_SIZE} />
                     </ActionIcon>
                   </Tooltip>
 
@@ -254,11 +251,9 @@ export default function PageDetailPane({
                     <ActionIcon
                       loading={isLoading}
                       onClick={deleteFn}
-                      size="lg"
-                      variant="outline"
                       color="red"
                     >
-                      <IconSettings size="1.75rem" />
+                      <Icon name="IconTrash" size={ICON_SIZE} />
                     </ActionIcon>
                   </Tooltip>
                 </>
