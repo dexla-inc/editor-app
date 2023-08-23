@@ -321,6 +321,8 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                       </ActionIcon>
                     }
                     autoComplete="off"
+                    data-lpignore="true"
+                    data-form-type="other"
                   />
                 );
               })}
