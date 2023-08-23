@@ -209,7 +209,7 @@ export default function PageDetailPane({
               {page?.pageState && (
                 <Tooltip
                   withArrow
-                  color="gray"
+                  color="orange"
                   label={copied ? "Copied" : "Copy Design"}
                   sx={{ fontSize: "0.75rem" }}
                 >
@@ -219,7 +219,9 @@ export default function PageDetailPane({
                       const pageStructure = decodeSchema(page.pageState!);
                       copy(pageStructure);
                     }}
-                    color="gray"
+                    color="orange"
+                    variant="filled"
+                    radius="xl"
                   >
                     <Icon name="IconCopy" size={ICON_SIZE} />
                   </ActionIcon>
@@ -229,14 +231,16 @@ export default function PageDetailPane({
                 <>
                   <Tooltip
                     withArrow
-                    color="gray"
+                    color="green"
                     label="Duplicate"
                     sx={{ fontSize: "0.75rem" }}
                   >
                     <ActionIcon
                       loading={isLoading}
                       onClick={duplicate}
-                      color="gray"
+                      color="green"
+                      variant="filled"
+                      radius="xl"
                     >
                       <Icon name="IconPhotoPlus" size={ICON_SIZE} />
                     </ActionIcon>
@@ -252,6 +256,8 @@ export default function PageDetailPane({
                       loading={isLoading}
                       onClick={deleteFn}
                       color="red"
+                      variant="filled"
+                      radius="xl"
                     >
                       <Icon name="IconTrash" size={ICON_SIZE} />
                     </ActionIcon>
