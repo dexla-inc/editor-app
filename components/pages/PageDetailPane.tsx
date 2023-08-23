@@ -192,72 +192,19 @@ export default function PageDetailPane({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
-  const saveBtn = page?.pageState ? (
-    <Tooltip withArrow color="teal" label="Save" sx={{ fontSize: "0.75rem" }}>
-      <ActionIcon
-        loading={isLoading}
-        type="submit"
-        size="lg"
-        variant="outline"
-        color="teal"
-      >
-        <IconSettings size="1.75rem" />
-      </ActionIcon>
-    </Tooltip>
-  ) : (
-    <Button type="submit" loading={isLoading}>
-      Save
-    </Button>
-  );
   return (
     <>
       <Flex>
         <form onSubmit={form.onSubmit(onSubmit)} style={{ width: "100%" }}>
-          <Button
-            onClick={() => setPage(undefined)}
-            variant="subtle"
-            leftIcon={<IconArrowLeft size={ICON_SIZE} />}
-          >
-            Back
-          </Button>
-          <Stack my="sm">
-            <TextInput
-              label="Page Title"
-              placeholder="Dashboard Analysis"
-              {...form.getInputProps("title")}
-              onChange={(event) => {
-                form.getInputProps("title").onChange(event);
-                const newSlug = slugify(event.currentTarget.value, {
-                  lower: true,
-                });
-                setSlug(newSlug);
-                form.setFieldValue("slug", newSlug);
-                form.setTouched({ slug: false });
-              }}
-            />
-            <TextInput
-              label="Slug"
-              placeholder="dashboard-analysis"
-              {...form.getInputProps("slug")}
-              value={slug}
-              onChange={(event) => {
-                const newSlug = event.target.value;
-                setSlug(newSlug);
-                form.setFieldValue("slug", newSlug);
-                form.setTouched({ slug: true });
-              }}
-            />
-
-            <QueryStringsForm queryStringState={queryStringState} />
-
-            <Group grow>
-              {page ? (
-                saveBtn
-              ) : (
-                <Button type="submit" loading={isLoading}>
-                  Create
-                </Button>
-              )}
+          <Group noWrap sx={{ justifyContent: "space-between" }}>
+            <Button
+              onClick={() => setPage(undefined)}
+              variant="subtle"
+              leftIcon={<IconArrowLeft size={ICON_SIZE} />}
+            >
+              Back
+            </Button>
+            <Group>
               {page?.pageState && (
                 <Tooltip
                   withArrow
@@ -317,6 +264,46 @@ export default function PageDetailPane({
                 </>
               )}
             </Group>
+          </Group>
+          <Stack my="sm">
+            <TextInput
+              label="Page Title"
+              placeholder="Dashboard Analysis"
+              {...form.getInputProps("title")}
+              onChange={(event) => {
+                form.getInputProps("title").onChange(event);
+                const newSlug = slugify(event.currentTarget.value, {
+                  lower: true,
+                });
+                setSlug(newSlug);
+                form.setFieldValue("slug", newSlug);
+                form.setTouched({ slug: false });
+              }}
+            />
+            <TextInput
+              label="Slug"
+              placeholder="dashboard-analysis"
+              {...form.getInputProps("slug")}
+              value={slug}
+              onChange={(event) => {
+                const newSlug = event.target.value;
+                setSlug(newSlug);
+                form.setFieldValue("slug", newSlug);
+                form.setTouched({ slug: true });
+              }}
+            />
+
+            <QueryStringsForm queryStringState={queryStringState} />
+
+            {page ? (
+              <Button type="submit" loading={isLoading}>
+                Save
+              </Button>
+            ) : (
+              <Button type="submit" loading={isLoading}>
+                Create
+              </Button>
+            )}
           </Stack>
         </form>
       </Flex>
