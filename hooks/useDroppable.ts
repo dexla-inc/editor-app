@@ -48,13 +48,13 @@ export const useDroppable = ({
       event.preventDefault();
       event.stopPropagation();
 
-      if (activeId && activeId !== id) {
+      if (activeId !== id) {
         const mouseX = event.clientX;
         const mouseY = event.clientY;
         const w = currentWindow ?? window;
         const rect = w.document.getElementById(id)?.getBoundingClientRect()!;
         let activeRect = w.document
-          .getElementById(activeId)
+          .getElementById(activeId || "")
           ?.getBoundingClientRect()!;
 
         if (activeRect) {
