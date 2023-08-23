@@ -8,13 +8,21 @@ import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { decodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
-import { Button, Flex, Popover, Stack, TextInput } from "@mantine/core";
+import {
+  Button,
+  Flex,
+  Stack,
+  TextInput,
+  Tooltip,
+  ActionIcon,
+  Group,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useClipboard } from "@mantine/hooks";
-import { IconArrowLeft, IconTrash } from "@tabler/icons-react";
+import { IconArrowLeft, IconSettings, IconTrash } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import slugify from "slugify";
 import { QueryStringsForm } from "@/components/QueryStringsForm";
 
@@ -184,6 +192,23 @@ export default function PageDetailPane({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
+  const saveBtn = page?.pageState ? (
+    <Tooltip withArrow color="teal" label="Save" sx={{ fontSize: "0.75rem" }}>
+      <ActionIcon
+        loading={isLoading}
+        type="submit"
+        size="lg"
+        variant="outline"
+        color="teal"
+      >
+        <IconSettings size="1.75rem" />
+      </ActionIcon>
+    </Tooltip>
+  ) : (
+    <Button type="submit" loading={isLoading}>
+      Save
+    </Button>
+  );
   return (
     <>
       <Flex>
@@ -225,54 +250,73 @@ export default function PageDetailPane({
 
             <QueryStringsForm queryStringState={queryStringState} />
 
-            <Popover
-              width="target"
-              position="bottom"
-              withArrow
-              arrowPosition="side"
-              shadow="md"
-            >
-              <Popover.Target>
-                <Button>Settings</Button>
-              </Popover.Target>
-              <Popover.Dropdown>
-                <Button.Group orientation="vertical" sx={{ gap: "1rem" }}>
-                  <Button type="submit" loading={isLoading}>
-                    {page ? "Save" : "Create"}
-                  </Button>
-                  {page?.pageState && (
-                    <Button
+            <Group grow>
+              {page ? (
+                saveBtn
+              ) : (
+                <Button type="submit" loading={isLoading}>
+                  Create
+                </Button>
+              )}
+              {page?.pageState && (
+                <Tooltip
+                  withArrow
+                  color="gray"
+                  label={copied ? "Copied" : "Copy Design"}
+                  sx={{ fontSize: "0.75rem" }}
+                >
+                  <ActionIcon
+                    loading={isLoading}
+                    onClick={(e) => {
+                      const pageStructure = decodeSchema(page.pageState!);
+                      copy(pageStructure);
+                    }}
+                    size="lg"
+                    variant={copied ? "filled" : "outline"}
+                    color="gray"
+                  >
+                    <IconSettings size="1.75rem" />
+                  </ActionIcon>
+                </Tooltip>
+              )}
+              {page?.id && (
+                <>
+                  <Tooltip
+                    withArrow
+                    color="gray"
+                    label="Duplicate"
+                    sx={{ fontSize: "0.75rem" }}
+                  >
+                    <ActionIcon
                       loading={isLoading}
-                      onClick={(e) => {
-                        const pageStructure = decodeSchema(page.pageState!);
-                        copy(pageStructure);
-                      }}
+                      onClick={duplicate}
+                      size="lg"
                       variant="outline"
+                      color="gray"
                     >
-                      {copied ? "Copied" : `Copy Design`}
-                    </Button>
-                  )}
-                  {page?.id && (
-                    <>
-                      <Button
-                        loading={isLoading}
-                        onClick={duplicate}
-                        variant="default"
-                      >
-                        Duplicate
-                      </Button>
-                      <Button
-                        loading={isLoading}
-                        onClick={deleteFn}
-                        color="red"
-                      >
-                        Delete
-                      </Button>
-                    </>
-                  )}
-                </Button.Group>
-              </Popover.Dropdown>
-            </Popover>
+                      <IconSettings size="1.75rem" />
+                    </ActionIcon>
+                  </Tooltip>
+
+                  <Tooltip
+                    withArrow
+                    color="red"
+                    label="Delete"
+                    sx={{ fontSize: "0.75rem" }}
+                  >
+                    <ActionIcon
+                      loading={isLoading}
+                      onClick={deleteFn}
+                      size="lg"
+                      variant="outline"
+                      color="red"
+                    >
+                      <IconSettings size="1.75rem" />
+                    </ActionIcon>
+                  </Tooltip>
+                </>
+              )}
+            </Group>
           </Stack>
         </form>
       </Flex>
