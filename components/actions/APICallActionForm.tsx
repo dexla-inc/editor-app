@@ -19,6 +19,7 @@ import {
   Flex,
   Select,
   Stack,
+  Switch,
   Text,
   TextInput,
 } from "@mantine/core";
@@ -54,6 +55,7 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
 );
 
 type FormValues = {
+  showLoader: boolean;
   endpoint?: string;
   binds?: { [key: string]: any };
 };
@@ -107,6 +109,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
+      showLoader: apiCall.showLoader ?? true,
       endpoint: apiCall.endpoint,
       binds: apiCall.binds ?? {},
     },
@@ -128,6 +131,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
               action: {
                 ...action.action,
                 endpoint: values.endpoint,
+                showLoader: values.showLoader,
                 datasource: dataSources.data!.results[0],
                 binds: values.binds,
               },
@@ -207,6 +211,8 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   useAuthStore((state) => state.refreshAccessToken);
   const accessToken = useAuthStore((state) => state.getAccessToken);
 
+  const showLoaderInputProps = form.getInputProps("showLoader");
+
   return (
     <>
       <form onSubmit={form.onSubmit(onSubmit)}>
@@ -254,6 +260,17 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                 </Box>
               </Flex>
             }
+          />
+          <Switch
+            size="xs"
+            label="Show Loader"
+            labelPosition="left"
+            {...showLoaderInputProps}
+            checked={showLoaderInputProps.value}
+            onChange={(event) => {
+              showLoaderInputProps.onChange(event);
+            }}
+            sx={{ fontWeight: 500 }}
           />
           {selectedEndpoint && (
             <Stack spacing={2}>

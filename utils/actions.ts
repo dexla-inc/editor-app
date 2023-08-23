@@ -1,4 +1,3 @@
-import { showNotification } from "@mantine/notifications";
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
 import { DebugActionForm } from "@/components/actions/DebugActionForm";
@@ -8,6 +7,7 @@ import { NavigationActionForm } from "@/components/actions/NavigationActionForm"
 import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm";
 import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
+import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 import {
   getDataSourceAuth,
   getDataSourceEndpoints,
@@ -17,9 +17,9 @@ import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { flattenKeysWithRoot } from "@/utils/flattenKeys";
+import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
 import { Router } from "next/router";
-import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 
 const triggers = [
   "onClick",
@@ -116,6 +116,7 @@ export type OpenToastAction = {
 export type APICallAction = {
   name: "apiCall";
   endpoint: string;
+  showLoader?: boolean;
   datasource: DataSourceResponse;
   binds?: { [key: string]: any };
   data?: any;
@@ -383,7 +384,15 @@ export const apiCallAction = async ({
     const iframeWindow = useEditorStore.getState().iframeWindow;
     const projectId = router.query.id as string;
 
-    updateTreeComponent(component.id!, { loading: true }, false);
+    updateTreeComponent(
+      component.id!,
+      {
+        loading: component.props?.actions.find(
+          (a: { id: string }) => a.id === actionId
+        ).action.showLoader,
+      },
+      false
+    );
 
     // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
     // Can revisit later and create a cashing layer.
