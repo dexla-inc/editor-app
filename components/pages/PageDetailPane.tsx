@@ -1,3 +1,4 @@
+import { QueryStringsForm } from "@/components/QueryStringsForm";
 import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
 import {
   PageBody,
@@ -9,13 +10,13 @@ import { useEditorStore } from "@/stores/editor";
 import { decodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
 import {
+  ActionIcon,
   Button,
   Flex,
+  Group,
   Stack,
   TextInput,
   Tooltip,
-  ActionIcon,
-  Group,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useClipboard } from "@mantine/hooks";
@@ -24,7 +25,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
-import { QueryStringsForm } from "@/components/QueryStringsForm";
 import { Icon } from "../Icon";
 
 type PageDetailPaneProps = {
@@ -206,6 +206,24 @@ export default function PageDetailPane({
               Back
             </Button>
             <Group sx={{ gap: "5px" }}>
+              {page?.id && (
+                <Tooltip
+                  withArrow
+                  color="green"
+                  label="Duplicate"
+                  sx={{ fontSize: "0.75rem" }}
+                >
+                  <ActionIcon
+                    loading={isLoading}
+                    onClick={duplicate}
+                    color="green"
+                    variant="light"
+                    radius="xl"
+                  >
+                    <Icon name="IconCopy" size={ICON_SIZE} />
+                  </ActionIcon>
+                </Tooltip>
+              )}
               {page?.pageState && (
                 <Tooltip
                   withArrow
@@ -220,49 +238,30 @@ export default function PageDetailPane({
                       copy(pageStructure);
                     }}
                     color="orange"
-                    variant="subtle"
+                    variant="light"
                     radius="xl"
                   >
-                    <Icon name="IconCopy" size={ICON_SIZE} />
+                    <Icon name="IconPhotoPlus" size={ICON_SIZE} />
                   </ActionIcon>
                 </Tooltip>
               )}
               {page?.id && (
-                <>
-                  <Tooltip
-                    withArrow
-                    color="green"
-                    label="Duplicate"
-                    sx={{ fontSize: "0.75rem" }}
-                  >
-                    <ActionIcon
-                      loading={isLoading}
-                      onClick={duplicate}
-                      color="green"
-                      variant="subtle"
-                      radius="xl"
-                    >
-                      <Icon name="IconPhotoPlus" size={ICON_SIZE} />
-                    </ActionIcon>
-                  </Tooltip>
-
-                  <Tooltip
-                    withArrow
+                <Tooltip
+                  withArrow
+                  color="red"
+                  label="Delete"
+                  sx={{ fontSize: "0.75rem" }}
+                >
+                  <ActionIcon
+                    loading={isLoading}
+                    onClick={deleteFn}
                     color="red"
-                    label="Delete"
-                    sx={{ fontSize: "0.75rem" }}
+                    variant="light"
+                    radius="xl"
                   >
-                    <ActionIcon
-                      loading={isLoading}
-                      onClick={deleteFn}
-                      color="red"
-                      variant="subtle"
-                      radius="xl"
-                    >
-                      <Icon name="IconTrash" size={ICON_SIZE} />
-                    </ActionIcon>
-                  </Tooltip>
-                </>
+                    <Icon name="IconTrash" size={ICON_SIZE} />
+                  </ActionIcon>
+                </Tooltip>
               )}
             </Group>
           </Group>
