@@ -49,7 +49,7 @@ export type EditorState = {
   tree: EditorTree;
   currentProjectId?: string;
   currentPageId?: string;
-  selectedComponentId?: string;
+  selectedComponentId: string;
   copiedComponent?: Component;
   componentToAdd?: Component;
   iframeWindow?: Window;
@@ -106,6 +106,7 @@ export const useEditorStore = create<EditorState>()(
       theme: defaultTheme,
       pages: [],
       onMountActionsRan: [],
+      selectedComponentId: "content-wrapper",
       addOnMountActionsRan: (onMountAction) =>
         set((state) => ({
           ...state,
@@ -177,7 +178,7 @@ export const useEditorStore = create<EditorState>()(
       setComponentToAdd: (componentToAdd) => set({ componentToAdd }),
       setSelectedComponentId: (selectedComponentId) =>
         set({ selectedComponentId }),
-      clearSelection: () => set({ selectedComponentId: undefined }),
+      clearSelection: () => set({ selectedComponentId: "content-wrapper" }),
       setIsSaving: (isSaving) => set({ isSaving }),
       isPreviewMode: false,
       setPreviewMode: (value) => set({ isPreviewMode: value }),
