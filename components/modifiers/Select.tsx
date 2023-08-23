@@ -1,3 +1,4 @@
+import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 import { SizeSelector } from "@/components/SizeSelector";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
@@ -6,7 +7,6 @@ import { useForm } from "@mantine/form";
 import { IconSelect } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
-import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 
 export const icon = IconSelect;
 export const label = "Select";
@@ -19,7 +19,10 @@ export const defaultSelectValues = {
   icon: "",
   withAsterisk: false,
   labelSpacing: "0",
-  data: [],
+  data: [
+    { label: "Option 1", value: "option-1" },
+    { label: "Option 2", value: "option-2" },
+  ],
 };
 
 export const Modifier = () => {
