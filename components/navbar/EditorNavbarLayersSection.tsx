@@ -13,11 +13,13 @@ import {
   Group,
   List,
   Text,
+  ThemeIcon,
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { Icon } from "../Icon";
 
 type ListItemProps = {
   component: Component;
@@ -79,6 +81,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   ]);
 
   const icon = structureMapper[component.name as string]?.icon;
+  const componentActions = component.props?.actions;
 
   return (
     <>
@@ -87,12 +90,14 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
         p={`0 ${15 * level}px`}
         w="100%"
         bg={hovered ? "gray.1" : undefined}
-        style={{
+        sx={{
           cursor: "move",
           border:
             selectedComponentId === component.id
               ? `1px solid ${theme.colors.teal[6]}`
               : undefined,
+          display: "flex",
+          position: "relative",
         }}
         onClick={(e) => {
           e.preventDefault();
@@ -140,6 +145,16 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
             </Text>
           </Group>
         </Group>
+        {componentActions && !!componentActions.length && (
+          <ActionIcon
+            color="teal"
+            variant="transparent"
+            size={30}
+            sx={{ position: "absolute", right: "0%" }}
+          >
+            <Icon name="IconBolt" size={ICON_SIZE} />
+          </ActionIcon>
+        )}
       </Card>
       <Collapse
         key={`${component.id}-${opened}`}
