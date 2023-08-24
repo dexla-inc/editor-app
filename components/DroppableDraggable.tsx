@@ -62,6 +62,7 @@ const styleWhitelist = [
   "right",
   "bottom",
   "height",
+  "width",
 ];
 const handlerBlacklist = ["Modal"];
 
