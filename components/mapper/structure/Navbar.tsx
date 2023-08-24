@@ -43,6 +43,8 @@ export const jsonStructure = (props?: any): Component => {
         flexDirection: "column",
         position: "sticky",
         gap: "0px",
+        top: 0,
+        left: 0,
         backgroundColor: isDarkTheme ? theme.colors.dark[6] : "#fff",
       },
       ...(props.props || {}),
