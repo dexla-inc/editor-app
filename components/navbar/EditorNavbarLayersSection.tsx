@@ -1,3 +1,4 @@
+// import debounce from "lodash.debounce";
 import { SortableTreeItem } from "@/components/SortableTreeItem";
 import { useDraggable } from "@/hooks/useDraggable";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
@@ -13,20 +14,40 @@ import {
   Group,
   List,
   Text,
-  ThemeIcon,
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "../Icon";
 
 type ListItemProps = {
   component: Component;
   level?: number;
+  openCustom: any;
+  test: any;
+  counter: any;
 } & CardProps;
 
-const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
+const debounce = (callback: any, wait: number) => {
+  let timeoutId: any = null;
+  return (...args: any[]) => {
+    //console.log({ timeoutId });
+    window.clearTimeout(timeoutId);
+    timeoutId = window.setTimeout(() => {
+      callback.apply(null, args);
+    }, wait);
+  };
+};
+
+const ListItem = ({
+  component,
+  children,
+  level = 0,
+  openCustom,
+  test,
+  counter,
+}: ListItemProps) => {
   const theme = useMantineTheme();
   const { ref, hovered } = useHover();
   const editorTree = useEditorStore((state) => state.tree);
@@ -38,6 +59,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     (state) => state.setSelectedComponentId
   );
   const [opened, { toggle, open }] = useDisclosure(false);
+  // console.log({ currentTargetId });
 
   const onDragStart = useOnDragStart();
 
@@ -53,32 +75,39 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   };
 
   const canExpand = (component.children ?? [])?.length > 0;
-  const isCurrentTarget = currentTargetId === `layer-${component.id}`;
+  // const isCurrentTarget = currentTargetId === `layer-${component.id}`;
 
-  useEffect(() => {
-    const isAncestorOfSelectedComponent =
-      component.id && selectedComponentId
-        ? checkIfIsDirectAncestor(
-            editorTree.root,
-            selectedComponentId,
-            component.id
-          )
-        : false;
+  // const openCustom: any = useMemo(
+  //   () =>
+  //     debounce(() => {
+  //       const isAncestorOfSelectedComponent =
+  //         component.id && selectedComponentId
+  //           ? checkIfIsDirectAncestor(
+  //               editorTree.root,
+  //               selectedComponentId,
+  //               component.id
+  //             )
+  //           : false;
+  //
+  //       if (
+  //         component.id === selectedComponentId ||
+  //         isAncestorOfSelectedComponent ||
+  //         isCurrentTarget
+  //       ) {
+  //         open();
+  //       }
+  //     }, 3000),
+  //   [selectedComponentId, open, component.id, isCurrentTarget, editorTree.root]
+  // );
 
-    if (
-      component.id === selectedComponentId ||
-      isAncestorOfSelectedComponent ||
-      isCurrentTarget
-    ) {
-      open();
-    }
-  }, [
-    selectedComponentId,
-    open,
-    component.id,
-    isCurrentTarget,
-    editorTree.root,
-  ]);
+  // useEffect(() => {
+  //   openCustom(selectedComponentId, open, component);
+  // }, [openCustom, selectedComponentId, open, component]);
+
+  useEffect(
+    () => test(selectedComponentId, open, component, opened),
+    [openCustom, selectedComponentId, open, component, test]
+  );
 
   const icon = structureMapper[component.name as string]?.icon;
   const componentActions = component.props?.actions;
@@ -166,11 +195,24 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   );
 };
 
-const ListItemWrapper = ({ component, children, level }: ListItemProps) => {
+const ListItemWrapper = ({
+  component,
+  children,
+  level,
+  openCustom,
+  test,
+  counter,
+}: ListItemProps) => {
   return (
     <SortableTreeItem component={component}>
       <List.Item key={component.id} w="100%">
-        <ListItem component={component} level={level}>
+        <ListItem
+          component={component}
+          level={level}
+          openCustom={openCustom}
+          test={test}
+          counter={counter}
+        >
           {(component.children ?? [])?.length > 0 && (
             <List
               size="xs"
@@ -192,6 +234,78 @@ const ListItemWrapper = ({ component, children, level }: ListItemProps) => {
 
 export const EditorNavbarLayersSection = () => {
   const editorTree = useEditorStore((state) => state.tree);
+  const currentTargetId = useEditorStore((state) => state.currentTargetId);
+  const [counter, setCounter] = useState(0);
+  const ref = useRef({
+    currentTargetId,
+  });
+
+  const openCustom: any = useMemo(
+    () =>
+      debounce((selectedComponentId: any, open: any, component: any) => {
+        console.log("test", { currentTargetId: ref.current.currentTargetId });
+        //setCounter((prev) => ++prev);
+
+        // const isCurrentTarget = currentTargetId === `layer-${component.id}`;
+        // const isAncestorOfSelectedComponent =
+        //   component.id && selectedComponentId
+        //     ? checkIfIsDirectAncestor(
+        //         editorTree.root,
+        //         selectedComponentId,
+        //         component.id
+        //       )
+        //     : false;
+
+        // console.log(
+        //   component.id === selectedComponentId,
+        //   isAncestorOfSelectedComponent,
+        //   isCurrentTarget
+        // );
+        // if (
+        //   component.id === selectedComponentId ||
+        //   isAncestorOfSelectedComponent ||
+        //   isCurrentTarget
+        // ) {
+        //   open();
+        // }
+      }, 2000),
+    [editorTree.root, currentTargetId]
+  );
+
+  const test = useMemo(
+    () =>
+      debounce(
+        (selectedComponentId: any, open: any, component: any, opened: any) => {
+          console.log("carai");
+
+          const isAncestorOfSelectedComponent =
+            component.id && selectedComponentId
+              ? checkIfIsDirectAncestor(
+                  editorTree.root,
+                  selectedComponentId,
+                  component.id
+                )
+              : false;
+
+          if (
+            component.id === selectedComponentId ||
+            isAncestorOfSelectedComponent ||
+            ref.current?.currentTargetId
+          ) {
+            console.log("carai", ref.current?.currentTargetId, opened);
+            open();
+          }
+        },
+        200
+      ),
+    [editorTree.root]
+  );
+
+  // useEffect(test, [counter, test]);
+
+  useEffect(() => {
+    ref.current.currentTargetId = currentTargetId;
+  }, [currentTargetId]);
 
   const renderList = (component: Component, level: number = 0) => {
     if (!component) {
@@ -199,7 +313,14 @@ export const EditorNavbarLayersSection = () => {
     }
 
     return (
-      <ListItemWrapper key={component.id} component={component} level={level}>
+      <ListItemWrapper
+        key={component.id}
+        component={component}
+        level={level}
+        openCustom={openCustom}
+        test={test}
+        counter={counter}
+      >
         {component.children?.map((child) => {
           return renderList(child, level + 1);
         })}
@@ -208,16 +329,20 @@ export const EditorNavbarLayersSection = () => {
   };
 
   return (
-    <List
-      size="xs"
-      listStyleType="none"
-      styles={{
-        itemWrapper: {
-          width: "100%",
-        },
-      }}
-    >
-      {renderList(editorTree.root)}
-    </List>
+    <>
+      -{counter}-
+      <button onClick={() => setCounter((prev) => ++prev)}>test</button>
+      <List
+        size="xs"
+        listStyleType="none"
+        styles={{
+          itemWrapper: {
+            width: "100%",
+          },
+        }}
+      >
+        {renderList(editorTree.root)}
+      </List>
+    </>
   );
 };
