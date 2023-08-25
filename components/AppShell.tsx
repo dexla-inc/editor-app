@@ -28,7 +28,12 @@ import { SavingDisplay } from "@/components/SavingDisplay";
 import { getPageList } from "@/requests/pages/queries";
 import { PageListResponse } from "@/requests/pages/types";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
-import { IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
+import {
+  IconArrowBackUp,
+  IconArrowForwardUp,
+  IconLayoutNavbarCollapse,
+  IconLayoutNavbarExpand,
+} from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -38,6 +43,23 @@ export interface ShellProps extends AppShellProps {
   navbarType?: NavbarTypes;
   user?: User | null | undefined;
 }
+
+const ToggleNavbarButton = () => {
+  const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
+  const setIsNavBarVisible = useEditorStore(
+    (state) => state.setIsNavBarVisible
+  );
+  const IconToggle = isNavBarVisible
+    ? IconLayoutNavbarCollapse
+    : IconLayoutNavbarExpand;
+
+  return (
+    <IconToggle
+      onClick={setIsNavBarVisible}
+      style={{ transform: "rotate(-90deg)", cursor: "pointer" }}
+    />
+  );
+};
 
 export const Shell = ({
   children,
@@ -81,10 +103,11 @@ export const Shell = ({
       header={
         <Header height={HEADER_HEIGHT}>
           <Flex h={HEADER_HEIGHT} px="lg" align="center">
-            <Flex sx={{ width: "33%" }}>
+            <Flex sx={{ width: "33%" }} align="center" gap={10}>
               <Link href="/">
                 <Logo />
               </Link>
+              <ToggleNavbarButton />
             </Flex>
             {navbarType === "editor" && (
               <>

@@ -61,7 +61,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     }
   }, [component.id, open]);
 
-  const onDragEnterCallback = () => {
+  const onDragEnter = useMemoizedDebounce(() => {
     const isAncestorOfSelectedComponent =
       component.id && selectedComponentId
         ? checkIfIsDirectAncestor(
@@ -78,9 +78,8 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     ) {
       open();
     }
-  };
+  }, 200);
 
-  const onDragEnter = useMemoizedDebounce(onDragEnterCallback, 200);
   const icon = structureMapper[component.name as string]?.icon;
   const componentActions = component.props?.actions;
 
@@ -195,7 +194,6 @@ const ListItemWrapper = ({ component, children, level }: ListItemProps) => {
 
 export const EditorNavbarLayersSection = () => {
   const editorTree = useEditorStore((state) => state.tree);
-  const currentTargetId = useEditorStore((state) => state.currentTargetId);
 
   const renderList = (component: Component, level: number = 0) => {
     if (!component) {
