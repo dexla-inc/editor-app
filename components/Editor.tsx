@@ -63,6 +63,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const editorTheme = useEditorStore((state) => state.theme);
   const pages = useEditorStore((state) => state.pages);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const isLoading = useAppStore((state) => state.isLoading);
@@ -372,8 +373,10 @@ export const Editor = ({ projectId, pageId }: Props) => {
         pos="relative"
         navbarType="editor"
         navbar={
-          !isPreviewMode ? (
+          !isPreviewMode && isNavBarVisible ? (
             <Navbar
+              hidden
+              hiddenBreakpoint="sm"
               width={{ base: NAVBAR_WIDTH }}
               sx={{
                 height: `calc(100% - ${HEADER_HEIGHT}px)`,
