@@ -1,18 +1,17 @@
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
-import { Select, Stack } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconHandClick } from "@tabler/icons-react";
+import { IconColorFilter } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
-export const icon = IconHandClick;
-export const label = "ButtonIcon";
+export const icon = IconColorFilter;
+export const label = "Background";
 
 export const defaultInputValues = {
-  type: "button",
-  color: "Primary.6",
+  bg: "transparent",
 };
 
 export const Modifier = () => {
@@ -37,10 +36,9 @@ export const Modifier = () => {
 
   useEffect(() => {
     if (selectedComponentId) {
-      const { style = {}, type, color } = componentProps;
+      const { bg, style = {} } = componentProps;
       form.setValues({
-        type: type ?? defaultInputValues.type,
-        color: color ?? defaultInputValues.color,
+        bg: bg ?? defaultInputValues.bg,
         ...style,
       });
     }
@@ -57,26 +55,12 @@ export const Modifier = () => {
   return (
     <form>
       <Stack spacing="xs">
-        <Select
-          label="Type"
-          size="xs"
-          data={[
-            { label: "button", value: "button" },
-            { label: "submit", value: "submit" },
-          ]}
-          {...form.getInputProps("type")}
-          onChange={(value) => {
-            form.setFieldValue("type", value as string);
-            debouncedUpdate("type", value as string);
-          }}
-        />
-
         <ThemeColorSelector
           label="Background Color"
-          {...form.getInputProps("color")}
+          {...form.getInputProps("bg")}
           onChange={(value: string) => {
-            form.setFieldValue("color", value);
-            debouncedUpdate("color", value);
+            form.setFieldValue("bg", value);
+            debouncedUpdate("bg", value);
           }}
         />
       </Stack>
