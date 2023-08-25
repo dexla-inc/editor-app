@@ -756,7 +756,8 @@ export type Modifiers =
   | "checkbox"
   | "table"
   | "radio"
-  | "drawer";
+  | "drawer"
+  | "buttonIcon";
 
 export type ComponentDefinition = {
   Component: any;
@@ -1219,7 +1220,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["spacing", "size", "border", "position"],
+    modifiers: ["buttonIcon", "spacing", "size", "border", "position"],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
