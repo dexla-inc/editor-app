@@ -82,7 +82,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   useEffect(onDragEnter, [onDragEnter]);
 
   const icon = structureMapper[component.name as string]?.icon;
-  const componentActions = component.props?.actions;
+  const componentActions = component.actions;
 
   return (
     <Group
