@@ -19,7 +19,7 @@ import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
 import { Icon } from "../Icon";
 import { useMemoizedDebounce } from "@/hooks/useMemoizedDebounce";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type ListItemProps = {
   component: Component;
@@ -38,7 +38,6 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     (state) => state.setSelectedComponentId
   );
   const [opened, { toggle, open }] = useDisclosure(false);
-
   const onDragStart = useOnDragStart();
 
   const draggable = useDraggable({
@@ -80,15 +79,38 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     }
   }, 200);
 
+  useEffect(() => {
+    onDragEnter();
+  }, [onDragEnter]);
+
   const icon = structureMapper[component.name as string]?.icon;
   const componentActions = component.props?.actions;
 
   return (
-    <>
+    <Group
+      unstyled
+      w="100%"
+      p={`0 ${6 * level}px`}
+      pr={0}
+      {...(isCurrentTarget && { className: "is-drag-over" })}
+      style={{
+        borderLeft: "1px solid transparent",
+      }}
+      sx={(theme) =>
+        component.id !== "root"
+          ? {
+              "&:has(.is-drag-over)": {
+                borderLeft: `1px solid ${theme.colors.teal[6]}!important`,
+              },
+            }
+          : {}
+      }
+    >
       <Card
         ref={ref}
-        p={`0 ${15 * level}px`}
         w="100%"
+        p={0}
+        pr={`0 ${15 * level}px`}
         bg={hovered ? "gray.1" : undefined}
         sx={{
           cursor: "move",
@@ -104,8 +126,8 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
           e.stopPropagation();
           handleSelection(component.id as string);
         }}
-        onDragOver={(e) => e.preventDefault()}
-        onDragEnter={onDragEnter}
+        // onDragOver={(e) => e.preventDefault()}
+        // onDragEnter={onDragEnter}
       >
         <Group position="apart" noWrap>
           <Group spacing={4} noWrap w="100%">
@@ -164,7 +186,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
       >
         {children}
       </Collapse>
-    </>
+    </Group>
   );
 };
 
