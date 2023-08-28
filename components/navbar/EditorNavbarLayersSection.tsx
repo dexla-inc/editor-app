@@ -108,7 +108,6 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
         ref={ref}
         w="100%"
         p={0}
-        pr={`0 ${15 * level}px`}
         bg={hovered ? "gray.1" : undefined}
         sx={{
           cursor: "move",
