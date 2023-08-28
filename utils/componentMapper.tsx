@@ -1148,7 +1148,14 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["layout", "background", "spacing", "size", "border"],
+    modifiers: [
+      "layout",
+      "background",
+      "spacing",
+      "size",
+      "position",
+      "border",
+    ],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
