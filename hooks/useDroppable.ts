@@ -1,16 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
-import {
-  Edge,
-  leftOfRectangle,
-  rightOfRectangle,
-  topOfRectangle,
-  bottomOfRectangle,
-  getClosestEdge,
-  distanceBetween,
-  DropTarget,
-} from "@/utils/editor";
+import { Edge, getClosestEdge, DropTarget } from "@/utils/editor";
 import { useState, useCallback } from "react";
-import { useMemoizedDebounce } from "@/hooks/useMemoizedDebounce";
 
 export const useDroppable = ({
   id,
