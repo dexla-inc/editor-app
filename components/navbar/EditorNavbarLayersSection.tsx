@@ -19,7 +19,7 @@ import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
 import { Icon } from "../Icon";
 import { useMemoizedDebounce } from "@/hooks/useMemoizedDebounce";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 type ListItemProps = {
   component: Component;
@@ -79,9 +79,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     }
   }, 200);
 
-  useEffect(() => {
-    onDragEnter();
-  }, [onDragEnter]);
+  useEffect(onDragEnter, [onDragEnter]);
 
   const icon = structureMapper[component.name as string]?.icon;
   const componentActions = component.props?.actions;
@@ -126,8 +124,6 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
           e.stopPropagation();
           handleSelection(component.id as string);
         }}
-        // onDragOver={(e) => e.preventDefault()}
-        // onDragEnter={onDragEnter}
       >
         <Group position="apart" noWrap>
           <Group spacing={4} noWrap w="100%">
