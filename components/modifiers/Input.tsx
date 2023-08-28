@@ -104,8 +104,12 @@ export const Modifier = () => {
           size="xs"
           data={[
             { label: "Text", value: "text" },
+            { label: "Number", value: "number" },
             { label: "Email", value: "email" },
             { label: "Password", value: "password" },
+            { label: "Tel", value: "tel" },
+            { label: "Url", value: "url" },
+            { label: "Search", value: "search" },
           ]}
           {...form.getInputProps("type")}
           onChange={(value) => {
