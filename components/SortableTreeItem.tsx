@@ -52,7 +52,7 @@ export const SortableTreeItem = ({
       w="100%"
       h="100%"
       pos="relative"
-      sx={borders}
+      sx={{ ...borders, marginBottom: "3px" }}
       {...props}
     >
       {children}
