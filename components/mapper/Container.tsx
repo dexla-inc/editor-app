@@ -7,12 +7,14 @@ type Props = {
 } & FlexProps;
 
 export const Container = ({ renderTree, component, ...props }: Props) => {
-  const { children, style, bg, ...componentProps } = component.props as any;
+  const { children, style, bg, triggers, ...componentProps } =
+    component.props as any;
 
   return (
     <MantineFlex
       {...props}
       {...componentProps}
+      {...triggers}
       style={{ width: "100%", ...style }}
       bg={bg}
     >

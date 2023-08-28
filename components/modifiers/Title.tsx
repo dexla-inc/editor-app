@@ -19,6 +19,9 @@ export const Modifier = () => {
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent
   );
+  const currentTreeComponentsStates = useEditorStore(
+    (state) => state.currentTreeComponentsStates
+  );
 
   const debouncedTreeUpdate = debounce(updateTreeComponent, 500);
 
@@ -41,10 +44,26 @@ export const Modifier = () => {
     if (selectedComponentId) {
       const { children = "", order, color } = componentProps;
 
-      form.setValues({
+      let data = {
         value: children,
-        order: order?.toString() ?? "1",
-        color: color ?? "Black.6",
+        order,
+        color,
+      };
+
+      const currentState =
+        currentTreeComponentsStates?.[selectedComponentId] ?? "default";
+
+      if (currentState !== "default") {
+        data = {
+          ...data,
+          ...(selectedComponent?.states?.[currentState] ?? {}),
+        };
+      }
+
+      form.setValues({
+        value: data.value,
+        order: data.order?.toString() ?? "1",
+        color: data.color ?? "Black.6",
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes

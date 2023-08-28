@@ -1,5 +1,6 @@
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
+import { ChangeStateActionForm } from "@/components/actions/ChangeStateActionForm";
 import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { LoginActionForm } from "@/components/actions/LoginActionForm";
@@ -59,6 +60,7 @@ export const actions = [
   "openPopover",
   "openToast",
   "showTooltip",
+  "changeState",
 ];
 
 type ActionTriggerAll = (typeof triggers)[number];
@@ -113,6 +115,13 @@ export type OpenToastAction = {
   message: string;
 };
 
+export type ChangeStateAction = {
+  name: "changeState";
+  componentId: string;
+  state?: string;
+  data?: any;
+};
+
 export type APICallAction = {
   name: "apiCall";
   endpoint: string;
@@ -149,7 +158,8 @@ export type Action = {
     | OpenModalAction
     | OpenDrawerAction
     | OpenPopOverAction
-    | OpenToastAction;
+    | OpenToastAction
+    | ChangeStateAction;
   sequentialTo?: string;
 };
 
@@ -212,6 +222,10 @@ export type OpenToastActionParams = ActionParams & {
   action: OpenToastAction;
 };
 
+export type ChangeStateActionParams = ActionParams & {
+  action: ChangeStateAction;
+};
+
 export const openModalAction = ({ action }: OpenModalActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   updateTreeComponent(action.modalId, { opened: true }, false);
@@ -229,6 +243,12 @@ export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
 
 export const openToastAction = ({ action }: OpenToastActionParams) => {
   showNotification({ title: action.title, message: action.message });
+};
+
+export const changeStateAction = ({ action }: ChangeStateActionParams) => {
+  const setTreeComponentCurrentState =
+    useEditorStore.getState().setTreeComponentCurrentState;
+  setTreeComponentCurrentState(action.componentId, action.state ?? "default");
 };
 
 export type APICallActionParams = ActionParams & {
@@ -336,10 +356,10 @@ export const loginAction = async ({
     authStore.setAuthTokens(mergedAuthConfig);
 
     if (onSuccess && onSuccess.sequentialTo === actionId) {
-      const actions = component.props?.actions ?? [];
+      const actions = component.actions ?? [];
       const onSuccessAction: Action = actions.find(
         (action: Action) => action.trigger === "onSuccess"
-      );
+      )!;
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
       onSuccessActionMapped.action({
         // @ts-ignore
@@ -351,10 +371,10 @@ export const loginAction = async ({
     }
   } catch (error) {
     if (onError && onError.sequentialTo === actionId) {
-      const actions = component.props?.actions ?? [];
+      const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(
         (action: Action) => action.trigger === "onError"
-      );
+      )!;
       const onErrorActionMapped = actionMapper[onError.action.name];
       onErrorActionMapped.action({
         // @ts-ignore
@@ -387,8 +407,10 @@ export const apiCallAction = async ({
     updateTreeComponent(
       component.id!,
       {
-        loading: component.props?.actions.find(
+        // @ts-ignore
+        loading: component.actions.find(
           (a: { id: string }) => a.id === actionId
+          // @ts-ignore
         ).action.showLoader,
       },
       false
@@ -481,10 +503,10 @@ export const apiCallAction = async ({
     const responseJson = await response.json();
 
     if (onSuccess && onSuccess.sequentialTo === actionId) {
-      const actions = component.props?.actions ?? [];
+      const actions = component.actions ?? [];
       const onSuccessAction: Action = actions.find(
         (action: Action) => action.trigger === "onSuccess"
-      );
+      )!;
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
       onSuccessActionMapped.action({
         // @ts-ignore
@@ -496,10 +518,10 @@ export const apiCallAction = async ({
     }
   } catch (error) {
     if (onError && onError.sequentialTo === actionId) {
-      const actions = component.props?.actions ?? [];
+      const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(
         (action: Action) => action.trigger === "onError"
-      );
+      )!;
       const onErrorActionMapped = actionMapper[onError.action.name];
       onErrorActionMapped.action({
         // @ts-ignore
@@ -573,5 +595,9 @@ export const actionMapper = {
   openToast: {
     action: openToastAction,
     form: OpenToastActionForm,
+  },
+  changeState: {
+    action: changeStateAction,
+    form: ChangeStateActionForm,
   },
 };

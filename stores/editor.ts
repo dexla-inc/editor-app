@@ -2,11 +2,13 @@ import { defaultTheme } from "@/components/IFrame";
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
 import { Logo } from "@/requests/themes/types";
+import { Action } from "@/utils/actions";
 import { encodeSchema } from "@/utils/compression";
 import {
   Component,
   EditorTree,
   updateTreeComponent,
+  updateTreeComponentActions,
   updateTreeComponentChildren,
 } from "@/utils/editor";
 import { MantineTheme } from "@mantine/core";
@@ -62,6 +64,9 @@ export type EditorState = {
   pickingComponentToBindTo?: ComponentToBind;
   pickingComponentToBindFrom?: ComponentToBind;
   componentToBind?: string;
+  currentTreeComponentsStates?: {
+    [key: string]: string;
+  };
   setPickingComponentToBindTo: (
     pickingComponentToBindTo?: ComponentToBind
   ) => void;
@@ -89,6 +94,11 @@ export type EditorState = {
   updateTreeComponentChildren: (
     componentId: string,
     children: Component[]
+  ) => void;
+  updateTreeComponentActions: (componentId: string, actions: Action[]) => void;
+  setTreeComponentCurrentState: (
+    componentId: string,
+    currentState: string
   ) => void;
   setSelectedComponentId: (selectedComponentId?: string) => void;
   clearSelection: () => void;
@@ -126,13 +136,14 @@ export const useEditorStore = create<EditorState>()(
       isSaving: false,
       setTree: (tree, onLoad) => {
         set((state) => {
-          !onLoad &&
+          if (!onLoad) {
             debouncedUpdatePageState(
               encodeSchema(JSON.stringify(tree)),
               state.currentProjectId ?? "",
               state.currentPageId ?? "",
               state.setIsSaving
             );
+          }
           return { tree };
         });
       },
@@ -140,15 +151,17 @@ export const useEditorStore = create<EditorState>()(
         set({ tree: emptyEditorTree });
       },
       updateTreeComponent: (componentId, props, save = true) => {
-        set((state) => {
-          const copy = cloneDeep(state.tree);
-          updateTreeComponent(copy.root, componentId, props);
+        set((prev) => {
+          const copy = cloneDeep(prev.tree);
+          const currentState =
+            prev.currentTreeComponentsStates?.[componentId] ?? "default";
+          updateTreeComponent(copy.root, componentId, props, currentState);
           if (save) {
             debouncedUpdatePageState(
               encodeSchema(JSON.stringify(copy)),
-              state.currentProjectId ?? "",
-              state.currentPageId ?? "",
-              state.setIsSaving
+              prev.currentProjectId ?? "",
+              prev.currentPageId ?? "",
+              prev.setIsSaving
             );
           }
 
@@ -170,6 +183,32 @@ export const useEditorStore = create<EditorState>()(
 
           return {
             tree: copy,
+          };
+        });
+      },
+      updateTreeComponentActions: (componentId, actions) => {
+        set((state) => {
+          const copy = cloneDeep(state.tree);
+          updateTreeComponentActions(copy.root, componentId, actions);
+          debouncedUpdatePageState(
+            encodeSchema(JSON.stringify(copy)),
+            state.currentProjectId ?? "",
+            state.currentPageId ?? "",
+            state.setIsSaving
+          );
+
+          return {
+            tree: copy,
+          };
+        });
+      },
+      setTreeComponentCurrentState: (componentId, currentState = "default") => {
+        set((prev) => {
+          return {
+            currentTreeComponentsStates: {
+              ...prev.currentTreeComponentsStates,
+              [componentId]: currentState,
+            },
           };
         });
       },

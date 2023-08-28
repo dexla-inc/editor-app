@@ -20,6 +20,9 @@ export const Modifier = () => {
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent
   );
+  const currentTreeComponentsStates = useEditorStore(
+    (state) => state.currentTreeComponentsStates
+  );
 
   const selectedComponent = getComponentById(
     editorTree.root,
@@ -42,10 +45,30 @@ export const Modifier = () => {
   useEffect(() => {
     if (selectedComponentId) {
       const { children = "", style = {}, color } = componentProps;
-      form.setValues({
+
+      let data: any = {
         value: children,
-        color: color ?? "Black.6",
-        ...style,
+        color,
+      };
+
+      const currentState =
+        currentTreeComponentsStates?.[selectedComponentId] ?? "default";
+
+      if (currentState !== "default") {
+        data = {
+          ...data,
+          ...(selectedComponent?.states?.[currentState] ?? {}),
+          style: {
+            ...style,
+            ...(selectedComponent?.states?.[currentState].style ?? {}),
+          },
+        };
+      }
+
+      form.setValues({
+        value: data.value,
+        color: data.color ?? "Black.6",
+        ...data.style,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes

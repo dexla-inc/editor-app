@@ -5,7 +5,7 @@ import { structureMapper } from "@/utils/componentMapper";
 import cloneDeep from "lodash.clonedeep";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
-import { templatesMapper } from "./templatesMapper";
+import { templatesMapper } from "@/utils/templatesMapper";
 
 export type Component = {
   id?: string;
@@ -19,6 +19,8 @@ export type Component = {
     position: "left" | "top";
     target: string;
   };
+  actions?: Action[];
+  states?: { [key: string]: { [key: string]: any } };
 };
 
 export type Row = {
@@ -52,8 +54,8 @@ export const getAllActions = (treeRoot: Component): Action[] => {
   crawl(
     treeRoot,
     (node) => {
-      if (node.props?.actions?.length > 0) {
-        actions.push(...node.props?.actions);
+      if ((node.actions?.length ?? 0) > 0) {
+        actions.push(...(node.actions ?? []));
       }
     },
     { order: "bfs" }
@@ -264,20 +266,36 @@ export const getComponentBeingAddedId = (
 export const updateTreeComponent = (
   treeRoot: Component,
   id: string,
-  props: any
+  props: any,
+  state: string = "default"
 ) => {
   crawl(
     treeRoot,
     (node, context) => {
       if (node.id === id) {
-        node.props = {
-          ...node.props,
-          ...props,
-          style: {
-            ...(node.props?.style || {}),
-            ...(props.style || {}),
-          },
-        };
+        if (state === "default") {
+          node.props = {
+            ...node.props,
+            ...props,
+            style: {
+              ...(node.props?.style || {}),
+              ...(props.style || {}),
+            },
+          };
+        } else {
+          const nodeState = node.states?.[state] ?? {};
+          node.states = {
+            ...(node.states ?? {}),
+            [state]: {
+              ...nodeState,
+              ...props,
+              style: {
+                ...(nodeState?.style || {}),
+                ...(props.style || {}),
+              },
+            },
+          };
+        }
 
         context.break();
       }
@@ -296,6 +314,23 @@ export const updateTreeComponentChildren = (
     (node, context) => {
       if (node.id === id) {
         node.children = children;
+        context.break();
+      }
+    },
+    { order: "bfs" }
+  );
+};
+
+export const updateTreeComponentActions = (
+  treeRoot: Component,
+  id: string,
+  actions: Action[]
+) => {
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === id) {
+        node.actions = actions;
         context.break();
       }
     },

@@ -41,11 +41,16 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent
   );
+  const updateTreeComponentActions = useEditorStore(
+    (state) => state.updateTreeComponentActions
+  );
 
   const projectId = router.query.id as string;
   const component = getComponentById(editorTree.root, selectedComponentId!);
-  const componentActions = component?.props?.actions ?? [];
-  const action: Action = componentActions.find((a: Action) => a.id === id);
+  const componentActions = component?.actions ?? [];
+  const action: Action = componentActions.find(
+    (a: Action) => a.id === id
+  ) as Action;
   const bindResponseToComponent =
     action.action as BindResponseToComponentAction;
 
@@ -67,8 +72,9 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
         message: "Wait while we save your changes",
       });
 
-      updateTreeComponent(selectedComponentId!, {
-        actions: componentActions.map((action: Action) => {
+      updateTreeComponentActions(
+        selectedComponentId!,
+        componentActions.map((action: Action) => {
           if (action.id === id) {
             return {
               ...action,
@@ -80,8 +86,8 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
           }
 
           return action;
-        }),
-      });
+        })
+      );
 
       values.binds
         .filter((b) => !!b.component)
@@ -115,11 +121,12 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
   };
 
   const removeAction = () => {
-    updateTreeComponent(selectedComponentId!, {
-      actions: componentActions.filter((a: Action) => {
+    updateTreeComponentActions(
+      selectedComponentId!,
+      componentActions.filter((a: Action) => {
         return a.id !== action.id;
-      }),
-    });
+      })
+    );
   };
 
   useEffect(() => {
@@ -142,11 +149,13 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
     const getEndpoint = async () => {
       const { results } = await getDataSourceEndpoints(
         projectId,
-        originalAction.action.datasource.id
+        // @ts-ignore
+        originalAction?.action.datasource.id
       );
 
       const _endpoint = results.find(
-        (e) => e.id === originalAction.action.endpoint
+        // @ts-ignore
+        (e) => e.id === originalAction?.action.endpoint
       );
 
       if (_endpoint?.exampleResponse) {
@@ -164,6 +173,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
     };
 
     if (
+      // @ts-ignore
       originalAction?.action?.datasource?.id &&
       form.values.binds.length === 0
     ) {

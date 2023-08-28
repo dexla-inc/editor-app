@@ -16,8 +16,8 @@ export const ActionsForm = ({ sequentialTo }: Props) => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
+  const updateTreeComponentActions = useEditorStore(
+    (state) => state.updateTreeComponentActions
   );
   const form = useForm({
     initialValues: {
@@ -37,30 +37,28 @@ export const ActionsForm = ({ sequentialTo }: Props) => {
   const availableTriggers = isSequential
     ? ComponentDefinition.sequentialTriggers.filter(
         (t) =>
-          !(component?.props?.actions ?? []).find(
+          !(component?.actions ?? []).find(
             (a: Action) =>
               (a.trigger as SequentialTrigger) === t &&
               a.sequentialTo === sequentialTo
           )
       )
     : ComponentDefinition.actionTriggers.filter(
-        (t) =>
-          !(component?.props?.actions ?? []).find(
-            (a: Action) => a.trigger === t
-          )
+        (t) => !(component?.actions ?? []).find((a: Action) => a.trigger === t)
       );
 
   const onSubmit = (values: any) => {
-    updateTreeComponent(selectedComponentId!, {
-      actions: (component?.props?.actions ?? []).concat({
+    updateTreeComponentActions(
+      selectedComponentId!,
+      (component?.actions ?? []).concat({
         id: nanoid(),
         sequentialTo: sequentialTo,
         trigger: values.trigger,
         action: {
           name: values.action,
         },
-      }),
-    });
+      })
+    );
 
     form.reset();
   };

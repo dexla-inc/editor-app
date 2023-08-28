@@ -16,13 +16,15 @@ export const OpenToastActionForm = ({ id }: Props) => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
+  const updateTreeComponentActions = useEditorStore(
+    (state) => state.updateTreeComponentActions
   );
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
-  const componentActions = component?.props?.actions ?? [];
-  const action: Action = componentActions.find((a: Action) => a.id === id);
+  const componentActions = component?.actions ?? [];
+  const action: Action = componentActions.find(
+    (a: Action) => a.id === id
+  ) as Action;
   const toastAction = action.action as OpenToastAction;
 
   const form = useForm({
@@ -40,8 +42,9 @@ export const OpenToastActionForm = ({ id }: Props) => {
         message: "Wait while we save your changes",
       });
 
-      updateTreeComponent(selectedComponentId!, {
-        actions: componentActions.map((action: Action) => {
+      updateTreeComponentActions(
+        selectedComponentId!,
+        componentActions.map((action: Action) => {
           if (action.id === id) {
             return {
               ...action,
@@ -54,8 +57,8 @@ export const OpenToastActionForm = ({ id }: Props) => {
           }
 
           return action;
-        }),
-      });
+        })
+      );
 
       stopLoading({
         id: "saving-action",
@@ -73,11 +76,12 @@ export const OpenToastActionForm = ({ id }: Props) => {
   };
 
   const removeAction = () => {
-    updateTreeComponent(selectedComponentId!, {
-      actions: componentActions.filter((a: Action) => {
+    updateTreeComponentActions(
+      selectedComponentId!,
+      componentActions.filter((a: Action) => {
         return a.id !== action.id;
-      }),
-    });
+      })
+    );
   };
 
   return (

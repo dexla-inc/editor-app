@@ -65,6 +65,9 @@ export const Modifier = () => {
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent
   );
+  const currentTreeComponentsStates = useEditorStore(
+    (state) => state.currentTreeComponentsStates
+  );
 
   const debouncedTreeUpdate = debounce(updateTreeComponent, 500);
 
@@ -89,7 +92,16 @@ export const Modifier = () => {
 
   useEffect(() => {
     if (selectedComponentId) {
-      const { style = {} } = componentProps;
+      let { style = {} } = componentProps;
+      const currentState =
+        currentTreeComponentsStates?.[selectedComponentId] ?? "default";
+
+      if (currentState !== "default") {
+        style = {
+          ...style,
+          ...(selectedComponent?.states?.[currentState].style ?? {}),
+        };
+      }
       form.setValues({
         borderStyle: style.borderTopStyle ?? defaultBorderValues.borderTopStyle,
         borderTopStyle:

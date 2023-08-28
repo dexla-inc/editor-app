@@ -7,10 +7,10 @@ type Props = {
 };
 
 export const Icon = ({ renderTree, component, ...props }: Props) => {
-  const { children, ...componentProps } = component.props as any;
+  const { children, triggers, ...componentProps } = component.props as any;
 
   return (
-    <IconComponent {...props} {...componentProps}>
+    <IconComponent {...props} {...triggers} {...componentProps}>
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))
         : children}

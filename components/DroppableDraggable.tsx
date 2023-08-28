@@ -90,11 +90,17 @@ export const DroppableDraggable = ({
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId
   );
+  const setTreeComponentCurrentState = useEditorStore(
+    (state) => state.setTreeComponentCurrentState
+  );
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
+  const currentTreeComponentsStates = useEditorStore(
+    (state) => state.currentTreeComponentsStates
+  );
 
-  const actions: Action[] = component.props?.actions ?? [];
+  const actions: Action[] = component.actions ?? [];
   const onMountAction: Action | undefined = actions.find(
     (action: Action) => action.trigger === "onMount"
   );
@@ -226,6 +232,38 @@ export const DroppableDraggable = ({
   const hasTooltip = !!component.props?.tooltip;
   const ComponentWrapper = hasTooltip ? Tooltip : Fragment;
 
+  const currentState =
+    currentTreeComponentsStates?.[component.id!] ?? "default";
+
+  const isDefaultState = currentState === "default";
+  const hoverStateFunc = () => {
+    setTreeComponentCurrentState(component.id!, "hover");
+  };
+  const leaveHoverStateFunc = () => {
+    setTreeComponentCurrentState(component.id!, "default");
+  };
+  const propsWithOverwrites = {
+    ...component.props,
+    ...(isDefaultState ? {} : component.states?.[currentState] ?? {}),
+    ...(isModal
+      ? {
+          style: {
+            ...(isDefaultState
+              ? component.props?.style ?? {}
+              : component.states?.[currentState].props ?? {}),
+            ...shadows,
+          },
+        }
+      : {}),
+    triggers: isPreviewMode
+      ? {
+          ...triggers,
+          onMouseEnter: triggers?.onHover ?? hoverStateFunc,
+          onMouseLeave: leaveHoverStateFunc,
+        }
+      : {},
+  };
+
   return (
     <Box
       ref={ref}
@@ -267,13 +305,7 @@ export const DroppableDraggable = ({
             {
               component: {
                 ...component,
-                props: {
-                  ...component.props,
-                  ...(isModal ? { style: shadows } : {}),
-                  triggers: isPreviewMode
-                    ? { ...triggers, onMouseEnter: triggers?.onHover }
-                    : {},
-                },
+                props: propsWithOverwrites,
               },
               isPreviewMode,
             },

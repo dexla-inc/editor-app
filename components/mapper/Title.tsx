@@ -15,7 +15,8 @@ export const Title = ({ renderTree, component, ...props }: Props) => {
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent
   );
-  const { children, data, ...componentProps } = component.props as any;
+  const { children, data, triggers, ...componentProps } =
+    component.props as any;
 
   const handleDoubleClick = (e: any) => {
     e.preventDefault();
@@ -44,6 +45,7 @@ export const Title = ({ renderTree, component, ...props }: Props) => {
       onBlur={handleBlur}
       {...props}
       {...componentProps}
+      {...triggers}
       suppressContentEditableWarning
     >
       {component.children && component.children.length > 0

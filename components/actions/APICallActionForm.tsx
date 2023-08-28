@@ -82,8 +82,8 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
+  const updateTreeComponentActions = useEditorStore(
+    (state) => state.updateTreeComponentActions
   );
   const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
     undefined
@@ -101,9 +101,11 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   });
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
-  const componentActions = component?.props?.actions ?? [];
+  const componentActions = component?.actions ?? [];
 
-  const action: Action = componentActions.find((a: Action) => a.id === id);
+  const action: Action = componentActions.find(
+    (a: Action) => a.id === id
+  ) as Action;
 
   const apiCall = action.action as LoginAction | APICallAction;
 
@@ -123,8 +125,9 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
         message: "Wait while we save your changes",
       });
 
-      updateTreeComponent(selectedComponentId!, {
-        actions: componentActions.map((action: Action) => {
+      updateTreeComponentActions(
+        selectedComponentId!,
+        componentActions.map((action: Action) => {
           if (action.id === id) {
             return {
               ...action,
@@ -139,8 +142,8 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
           }
 
           return action;
-        }),
-      });
+        })
+      );
 
       stopLoading({
         id: "saving-action",
@@ -158,11 +161,12 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   };
 
   const removeAction = () => {
-    updateTreeComponent(selectedComponentId!, {
-      actions: componentActions.filter((a: Action) => {
+    updateTreeComponentActions(
+      selectedComponentId!,
+      componentActions.filter((a: Action) => {
         return a.id !== action.id;
-      }),
-    });
+      })
+    );
   };
 
   const isLogin = actionName === "login";

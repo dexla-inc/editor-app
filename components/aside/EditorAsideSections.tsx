@@ -31,6 +31,7 @@ import {
   Center,
   Flex,
   SegmentedControl,
+  Select,
   Stack,
   Text,
 } from "@mantine/core";
@@ -74,6 +75,15 @@ export const EditorAsideSections = () => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
+  const setTreeComponentCurrentState = useEditorStore(
+    (state) => state.setTreeComponentCurrentState
+  );
+  const updateTreeComponent = useEditorStore(
+    (state) => state.updateTreeComponent
+  );
+  const currentTreeComponentsStates = useEditorStore(
+    (state) => state.currentTreeComponentsStates
+  );
   const [tab, setTab] = useState<Tab>("design");
 
   const isContentWrapperSelected = selectedComponentId === "content-wrapper";
@@ -109,45 +119,46 @@ export const EditorAsideSections = () => {
     };
   });
 
+  const currentState =
+    currentTreeComponentsStates?.[selectedComponentId!] ?? "default";
+
   const designSections = sections?.map(({ Component, ...item }) => (
     <SidebarSection {...item} key={item.label}>
-      <Component />
+      <Component key={currentState} />
     </SidebarSection>
   ));
 
-  const actionsSections = (component?.props?.actions ?? [])?.map(
-    (action: Action) => {
-      const isSequential = !!action.sequentialTo;
-      const sequentialToAction = isSequential
-        ? (component?.props?.actions ?? []).find(
-            (a: Action) => a.id === action.sequentialTo
-          )
-        : undefined;
+  const actionsSections = (component?.actions ?? [])?.map((action: Action) => {
+    const isSequential = !!action.sequentialTo;
+    const sequentialToAction = isSequential
+      ? (component?.actions ?? []).find(
+          (a: Action) => a.id === action.sequentialTo
+        )
+      : undefined;
 
-      const item = {
-        id: action.id,
-        label: !!sequentialToAction
-          ? `${startCase(sequentialToAction.trigger)} → ${startCase(
-              action.trigger
-            )}`
-          : startCase(action.trigger),
-        icon: IconBolt, // Need to add an icon property to a trigger
-        initiallyOpened: true,
-      };
+    const item = {
+      id: action.id,
+      label: !!sequentialToAction
+        ? `${startCase(sequentialToAction.trigger)} → ${startCase(
+            action.trigger
+          )}`
+        : startCase(action.trigger),
+      icon: IconBolt, // Need to add an icon property to a trigger
+      initiallyOpened: true,
+    };
 
-      const actionName = action.action.name;
+    const actionName = action.action.name;
 
-      if (actionName) {
-        const Component = actionMapper[actionName]?.form;
+    if (actionName) {
+      const Component = actionMapper[actionName]?.form;
 
-        return (
-          <SidebarSection {...item} key={item.label}>
-            <Component id={action.id} />
-          </SidebarSection>
-        );
-      }
+      return (
+        <SidebarSection {...item} key={item.label}>
+          <Component id={action.id} />
+        </SidebarSection>
+      );
     }
-  );
+  });
 
   return (
     <Stack>
@@ -164,7 +175,43 @@ export const EditorAsideSections = () => {
         />
       </Flex>
       <Stack key={selectedComponentId} spacing="xs">
-        {tab === "design" && designSections}
+        {tab === "design" && (
+          <Stack>
+            <Select
+              px="md"
+              value={currentState}
+              size="xs"
+              label="State"
+              data={[
+                { label: "Default", value: "default" },
+                { label: "Hover", value: "hover" },
+                ...Object.keys(component?.states ?? {}).reduce((acc, key) => {
+                  if (key === "hover") return acc;
+
+                  return acc.concat({
+                    label: key,
+                    value: key,
+                  });
+                }, [] as any[]),
+              ]}
+              placeholder="Select State"
+              nothingFound="Nothing found"
+              searchable
+              creatable
+              getCreateLabel={(query) => `+ Custom State "${query}"`}
+              onCreate={(query) => {
+                const item = { value: query, label: query };
+                setTreeComponentCurrentState(selectedComponentId, query);
+                updateTreeComponent(selectedComponentId, {}, true);
+                return item;
+              }}
+              onChange={(value: string) => {
+                setTreeComponentCurrentState(selectedComponentId, value);
+              }}
+            />
+            {designSections}
+          </Stack>
+        )}
         {tab === "actions" && (
           <Stack>
             <Box px="md">
