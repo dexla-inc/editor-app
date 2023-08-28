@@ -6,7 +6,7 @@ type EmptyDatasourcesPlaceholderProps = {
   projectId: string;
 };
 
-export default function DataSourcesContainer({
+export default function EmptyDatasourcesPlaceholder({
   projectId,
 }: EmptyDatasourcesPlaceholderProps) {
   return (

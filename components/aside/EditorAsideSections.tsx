@@ -4,6 +4,7 @@ import * as BackgroundModifier from "@/components/modifiers/Background";
 import * as BorderModifier from "@/components/modifiers/Border";
 import * as BoxShadowModifier from "@/components/modifiers/BoxShadow";
 import * as ButtonModifier from "@/components/modifiers/Button";
+import * as ButtonIconModifier from "@/components/modifiers/ButtonIcon";
 import * as CheckboxModifier from "@/components/modifiers/Checkbox";
 import * as DividerModifier from "@/components/modifiers/Divider";
 import * as DrawerModifier from "@/components/modifiers/Drawer";
@@ -66,6 +67,7 @@ const sectionMapper: SectionsMapper = {
   table: TableModifier,
   radio: RadioModifier,
   drawer: DrawerModifier,
+  buttonIcon: ButtonIconModifier,
 };
 
 type Tab = "design" | "actions";

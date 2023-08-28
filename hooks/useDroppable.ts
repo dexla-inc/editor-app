@@ -1,14 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
-import {
-  Edge,
-  leftOfRectangle,
-  rightOfRectangle,
-  topOfRectangle,
-  bottomOfRectangle,
-  getClosestEdge,
-  distanceBetween,
-  DropTarget,
-} from "@/utils/editor";
+import { Edge, getClosestEdge, DropTarget } from "@/utils/editor";
 import { useState, useCallback } from "react";
 
 export const useDroppable = ({
@@ -53,32 +44,15 @@ export const useDroppable = ({
         const mouseY = event.clientY;
         const w = currentWindow ?? window;
         const rect = w.document.getElementById(id)?.getBoundingClientRect()!;
-        let activeRect = w.document
-          .getElementById(activeId)
-          ?.getBoundingClientRect()!;
 
-        if (activeRect) {
-          activeRect.x = mouseX;
-          activeRect.y = mouseY;
-        } else {
-          activeRect = {
-            x: mouseX,
-            y: mouseY,
-            left: mouseX,
-            top: mouseY,
-            width: 0,
-            height: 0,
-          } as DOMRect;
-        }
-
-        const leftDist = distanceBetween(leftOfRectangle(rect), activeRect);
-        const rigthDist = distanceBetween(rightOfRectangle(rect), activeRect);
-        const topDist = distanceBetween(topOfRectangle(rect), activeRect);
-        const bottomDist = distanceBetween(bottomOfRectangle(rect), activeRect);
+        const leftDist = mouseX - rect.left;
+        const rightDist = rect.right - mouseX;
+        const topDist = mouseY - rect.top;
+        const bottomDist = rect.bottom - mouseY;
 
         const { edge } = getClosestEdge(
           leftDist,
-          rigthDist,
+          rightDist,
           topDist,
           bottomDist
         );

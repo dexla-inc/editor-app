@@ -1,5 +1,6 @@
 import { IconSelector } from "@/components/IconSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { theme } from "@/pages/_app";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
 import { Stack } from "@mantine/core";
@@ -14,6 +15,10 @@ export const label = "Icon";
 export const defaultIconValues = {
   color: "Primary.6",
   icon: "",
+};
+
+type ColorMappings = {
+  [index: string]: string;
 };
 
 export const Modifier = () => {
@@ -50,26 +55,53 @@ export const Modifier = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId]);
 
+  const handleColorChange = (value: string) => {
+    let [color, index] = value.split(".");
+    let opacity = 1;
+
+    const colorMappings: ColorMappings = {
+      Primary: "blue",
+      Accent: "orange",
+      Danger: "red",
+      Warning: "yellow",
+      Success: "green",
+      Neutral: "gray",
+      Black: "dark",
+      White: "white",
+      Border: "dark",
+    };
+
+    color = colorMappings[color] || "transparent";
+
+    const variant = parseInt(index);
+    const colorToRgb =
+      color === "transparent"
+        ? color
+        : theme.fn.rgba(theme.colors[color][variant], opacity);
+
+    form.setFieldValue("color", value);
+    debouncedTreeUpdate(selectedComponentId as string, {
+      style: { color: colorToRgb },
+    });
+  };
+
+  const handleIconSelect = (value: string) => {
+    form.setFieldValue("icon", value);
+    debouncedTreeUpdate(selectedComponentId as string, { name: value });
+  };
+
   return (
     <form>
       <Stack spacing="xs">
         <ThemeColorSelector
           label="Color"
           {...form.getInputProps("color")}
-          onChange={(value: string) => {
-            form.setFieldValue("color", value);
-            debouncedTreeUpdate(selectedComponentId as string, {
-              style: { color: value },
-            });
-          }}
+          onChange={handleColorChange}
         />
         <IconSelector
           topLabel="Icon"
           selectedIcon={form.values.icon}
-          onIconSelect={(value: string) => {
-            form.setFieldValue("icon", value);
-            debouncedTreeUpdate(selectedComponentId as string, { name: value });
-          }}
+          onIconSelect={handleIconSelect}
         />
       </Stack>
     </form>

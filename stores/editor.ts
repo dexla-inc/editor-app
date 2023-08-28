@@ -59,6 +59,7 @@ export type EditorState = {
   theme: MantineThemeExtended;
   isSaving: boolean;
   isPreviewMode: boolean;
+  isNavBarVisible: boolean;
   pages: PageResponse[];
   onMountActionsRan: string[];
   pickingComponentToBindTo?: ComponentToBind;
@@ -104,6 +105,7 @@ export type EditorState = {
   clearSelection: () => void;
   setIsSaving: (isSaving: boolean) => void;
   setPreviewMode: (value: boolean) => void;
+  setIsNavBarVisible: () => void;
 };
 
 const debouncedUpdatePageState = debounce(updatePageState, 2000);
@@ -220,7 +222,10 @@ export const useEditorStore = create<EditorState>()(
       clearSelection: () => set({ selectedComponentId: "content-wrapper" }),
       setIsSaving: (isSaving) => set({ isSaving }),
       isPreviewMode: false,
+      isNavBarVisible: true,
       setPreviewMode: (value) => set({ isPreviewMode: value }),
+      setIsNavBarVisible: () =>
+        set((state) => ({ isNavBarVisible: !state.isNavBarVisible })),
     }),
     {
       partialize: (state) => {

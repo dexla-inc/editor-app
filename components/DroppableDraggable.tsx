@@ -56,6 +56,13 @@ const styleWhitelist = [
   "borderTopRightRadius",
   "borderBottomLeftRadius",
   "borderBottomRightRadius",
+  "position",
+  "top",
+  "left",
+  "right",
+  "bottom",
+  "height",
+  "width",
 ];
 const handlerBlacklist = ["Modal"];
 

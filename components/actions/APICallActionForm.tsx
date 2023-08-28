@@ -1,5 +1,6 @@
 import { ActionsForm } from "@/components/actions/ActionsForm";
 import { colors } from "@/components/datasources/DataSourceEndpoint";
+import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import {
   getDataSourceEndpoints,
   getDataSources,
@@ -217,7 +218,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
 
   const showLoaderInputProps = form.getInputProps("showLoader");
 
-  return (
+  return endpoints && endpoints.length > 0 ? (
     <>
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack spacing="xs">
@@ -347,5 +348,14 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
       </form>
       <ActionsForm sequentialTo={action.id} />
     </>
+  ) : (
+    <Stack>
+      <EmptyDatasourcesPlaceholder
+        projectId={projectId}
+      ></EmptyDatasourcesPlaceholder>
+      <Button size="xs" type="button" variant="default" onClick={removeAction}>
+        Remove
+      </Button>
+    </Stack>
   );
 };

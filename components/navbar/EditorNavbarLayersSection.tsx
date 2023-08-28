@@ -17,6 +17,8 @@ import {
 } from "@mantine/core";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
+import { Icon } from "../Icon";
+import { useMemoizedDebounce } from "@/hooks/useMemoizedDebounce";
 import { useEffect } from "react";
 
 type ListItemProps = {
@@ -36,7 +38,6 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     (state) => state.setSelectedComponentId
   );
   const [opened, { toggle, open }] = useDisclosure(false);
-
   const onDragStart = useOnDragStart();
 
   const draggable = useDraggable({
@@ -54,6 +55,12 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   const isCurrentTarget = currentTargetId === `layer-${component.id}`;
 
   useEffect(() => {
+    if (component.id === "content-wrapper") {
+      open();
+    }
+  }, [component.id, open]);
+
+  const onDragEnter = useMemoizedDebounce(() => {
     const isAncestorOfSelectedComponent =
       component.id && selectedComponentId
         ? checkIfIsDirectAncestor(
@@ -70,29 +77,46 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     ) {
       open();
     }
-  }, [
-    selectedComponentId,
-    open,
-    component.id,
-    isCurrentTarget,
-    editorTree.root,
-  ]);
+  }, 200);
+
+  useEffect(onDragEnter, [onDragEnter]);
 
   const icon = structureMapper[component.name as string]?.icon;
+  const componentActions = component.props?.actions;
 
   return (
-    <>
+    <Group
+      unstyled
+      w="100%"
+      p={`0 ${6 * level}px`}
+      pr={0}
+      {...(isCurrentTarget && { className: "is-drag-over" })}
+      style={{
+        borderLeft: "1px solid transparent",
+      }}
+      sx={(theme) =>
+        component.id !== "root"
+          ? {
+              "&:has(.is-drag-over)": {
+                borderLeft: `1px solid ${theme.colors.teal[6]}!important`,
+              },
+            }
+          : {}
+      }
+    >
       <Card
         ref={ref}
-        p={`0 ${15 * level}px`}
         w="100%"
+        p={0}
         bg={hovered ? "gray.1" : undefined}
-        style={{
+        sx={{
           cursor: "move",
           border:
             selectedComponentId === component.id
               ? `1px solid ${theme.colors.teal[6]}`
               : undefined,
+          display: "flex",
+          position: "relative",
         }}
         onClick={(e) => {
           e.preventDefault();
@@ -140,6 +164,16 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
             </Text>
           </Group>
         </Group>
+        {componentActions && !!componentActions.length && (
+          <ActionIcon
+            color="teal"
+            variant="transparent"
+            size={30}
+            sx={{ position: "absolute", right: "0%" }}
+          >
+            <Icon name="IconBolt" size={ICON_SIZE} />
+          </ActionIcon>
+        )}
       </Card>
       <Collapse
         key={`${component.id}-${opened}`}
@@ -147,7 +181,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
       >
         {children}
       </Collapse>
-    </>
+    </Group>
   );
 };
 

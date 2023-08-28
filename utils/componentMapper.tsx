@@ -756,7 +756,8 @@ export type Modifiers =
   | "checkbox"
   | "table"
   | "radio"
-  | "drawer";
+  | "drawer"
+  | "buttonIcon";
 
 export type ComponentDefinition = {
   Component: any;
@@ -1147,7 +1148,14 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["layout", "background", "spacing", "size", "border"],
+    modifiers: [
+      "layout",
+      "background",
+      "spacing",
+      "size",
+      "position",
+      "border",
+    ],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1219,7 +1227,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["spacing", "size", "border", "position"],
+    modifiers: ["buttonIcon", "spacing", "size", "border", "position"],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
