@@ -149,7 +149,7 @@ export const ChangeStateActionForm = ({ id }: Props) => {
                     ?.states ?? {}
                 : {}
             ).reduce((acc, key) => {
-              if (key === "hover" || "disabled") return acc;
+              if (key === "hover" || key === "disabled") return acc;
 
               return acc.concat({
                 label: key,

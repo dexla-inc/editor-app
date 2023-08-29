@@ -189,7 +189,7 @@ export const EditorAsideSections = () => {
                 { label: "Hover", value: "hover" },
                 { label: "Disabled", value: "disabled" },
                 ...Object.keys(component?.states ?? {}).reduce((acc, key) => {
-                  if (key === "hover" || "disabled") return acc;
+                  if (key === "hover" || key === "disabled") return acc;
 
                   return acc.concat({
                     label: key,
