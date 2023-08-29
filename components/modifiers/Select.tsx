@@ -1,6 +1,7 @@
 import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 import { SizeSelector } from "@/components/SizeSelector";
 import { useEditorStore } from "@/stores/editor";
+import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
 import { getComponentById } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -101,11 +102,7 @@ export const Modifier = () => {
         <Select
           label="Type"
           size="xs"
-          data={[
-            { label: "Text", value: "text" },
-            { label: "Email", value: "email" },
-            { label: "Password", value: "password" },
-          ]}
+          data={INPUT_TYPES_DATA}
           {...form.getInputProps("type")}
           onChange={(value) => {
             setFieldValue("type", value as string);
