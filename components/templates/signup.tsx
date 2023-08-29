@@ -1,3 +1,4 @@
+import { defaultImageValues } from "@/components/modifiers/Image";
 import { MantineThemeExtended } from "@/stores/editor";
 import { InputTypes } from "@/utils/dashboardTypes";
 import { nanoid } from "nanoid";
@@ -19,6 +20,12 @@ export type Data = {
 };
 
 export const template = (data: Data, theme: MantineThemeExtended) => {
+  console.log("theme", theme);
+  const darkLogo = theme.logos?.find((logo) => logo.type === "DARK");
+  const lightLogo = theme.logos?.find((logo) => logo.type === "LIGHT");
+
+  const logoUrl = darkLogo?.url ?? lightLogo?.url;
+
   const inputs = data.inputs.map((input: Input) => {
     return {
       id: nanoid(),
@@ -88,17 +95,15 @@ export const template = (data: Data, theme: MantineThemeExtended) => {
                   name: "Image",
                   description: "Image",
                   props: {
-                    withPlaceholder: true,
                     style: {
                       width: "auto",
-                      height: "100px",
-                      objectFit: "contain",
-                      marginBottom: "20px",
+                      height: "50px",
                     },
-                    src: "https://www.kadencewp.com/wp-content/uploads/2020/10/alogo-4.svg",
+                    ...defaultImageValues,
+                    src: logoUrl,
                     alt: "Logo",
-                    objectFit: "contain",
                   },
+                  children: [],
                   blockDroppingChildrenInside: true,
                 },
                 {

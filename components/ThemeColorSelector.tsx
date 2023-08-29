@@ -98,7 +98,14 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
         color={theme.fn.rgba(theme.colors.gray[3], 0.2)}
       />
     ) : (
-      <Paper p="xs" bg={theme.colors[selectedColor][selectedIndex]} />
+      <Paper
+        p="xs"
+        bg={
+          theme && theme.colors && theme.colors[selectedColor]
+            ? theme.colors[selectedColor][selectedIndex]
+            : "Primary.6"
+        }
+      />
     );
 
   return (
