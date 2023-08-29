@@ -1,5 +1,13 @@
 import { useEditorStore } from "@/stores/editor";
-import { Box, Group, Paper, Select, SelectProps } from "@mantine/core";
+import {
+  BackgroundImage,
+  Box,
+  ColorSwatch,
+  Group,
+  Paper,
+  Select,
+  SelectProps,
+} from "@mantine/core";
 import { forwardRef } from "react";
 
 // eslint-disable-next-line react/display-name
@@ -10,7 +18,12 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
     if (value === "transparent") {
       return (
         <Group ref={ref} noWrap {...other}>
-          <Box w={10} h={10} bg="transparent" />
+          {/* <Box w={10} h={10} bg="transparent" /> */}
+          <ColorSwatch
+            radius="xs"
+            size={10}
+            color={theme.fn.rgba(theme.colors.gray[3], 0.2)}
+          />
           {label}
         </Group>
       );
@@ -78,6 +91,17 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
     [selectedColor, selectedIndex] = [color, Number(index)];
   }
 
+  const bgColor =
+    props.value && props.value === "transparent" ? (
+      <ColorSwatch
+        radius="sm"
+        size={20}
+        color={theme.fn.rgba(theme.colors.gray[3], 0.2)}
+      />
+    ) : (
+      <Paper p="xs" bg={theme.colors[selectedColor][selectedIndex]} />
+    );
+
   return (
     <Select
       size="xs"
@@ -88,7 +112,7 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
       })}
       itemComponent={SelectItem}
       searchable
-      icon={<Paper p="xs" bg={theme.colors[selectedColor][selectedIndex]} />}
+      icon={bgColor}
     />
   );
 };
