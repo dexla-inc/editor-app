@@ -25,6 +25,7 @@ export const jsonStructure = (props?: any): Component => {
           toolbar: {
             show: false,
           },
+          width: "100%",
         },
         dataLabels: {
           enabled: false,
