@@ -59,7 +59,6 @@ export const actions = [
   "openModal",
   "openPopover",
   "openToast",
-  "showTooltip",
   "changeState",
 ];
 

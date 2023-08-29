@@ -153,3 +153,22 @@ export const regionTypeFlags: Record<RegionTypes, string> = {
 };
 
 export type AppTypes = "PAGE" | "TEMPLATE" | "PROJECT";
+
+export type InputTypes =
+  | "text"
+  | "number"
+  | "password"
+  | "email"
+  | "url"
+  | "tel"
+  | "search";
+
+export const INPUT_TYPES_DATA: { label: string; value: InputTypes }[] = [
+  { label: "Text", value: "text" },
+  { label: "Number", value: "number" },
+  { label: "Email", value: "email" },
+  { label: "Password", value: "password" },
+  { label: "Telephone", value: "tel" },
+  { label: "Url", value: "url" },
+  { label: "Search", value: "search" },
+];
