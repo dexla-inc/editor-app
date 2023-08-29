@@ -91,8 +91,9 @@ export const ActionsForm = ({ sequentialTo }: Props) => {
             label="Action"
             data={actions.map((action) => {
               return {
-                label: startCase(action),
-                value: action,
+                label: startCase(action.name),
+                value: action.name,
+                group: action.group,
               };
             })}
             {...form.getInputProps("action")}
