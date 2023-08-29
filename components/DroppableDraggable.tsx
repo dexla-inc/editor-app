@@ -32,7 +32,7 @@ import {
 } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { Router, useRouter } from "next/router";
-import { PropsWithChildren, cloneElement, useEffect, Fragment } from "react";
+import { Fragment, PropsWithChildren, cloneElement, useEffect } from "react";
 
 type Props = {
   id: string;
@@ -249,6 +249,11 @@ export const DroppableDraggable = ({
   const leaveHoverStateFunc = () => {
     setTreeComponentCurrentState(component.id!, "default");
   };
+
+  const setDisabledStateFunc = () => {
+    setTreeComponentCurrentState(component.id!, "disabled");
+  };
+
   const propsWithOverwrites = {
     ...component.props,
     ...(isDefaultState ? {} : component.states?.[currentState] ?? {}),
@@ -261,6 +266,9 @@ export const DroppableDraggable = ({
             ...shadows,
           },
         }
+      : {}),
+    ...(component.props?.disabled
+      ? { disabled: component.states?.disabled }
       : {}),
     triggers: isPreviewMode
       ? {
