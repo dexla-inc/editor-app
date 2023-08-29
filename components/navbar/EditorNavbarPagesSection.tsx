@@ -1,3 +1,5 @@
+import InitialPane from "@/components/pages/InitialPane";
+import PageDetailPane from "@/components/pages/PageDetailPane";
 import { getPageList } from "@/requests/pages/queries";
 import { PageResponse } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
@@ -5,8 +7,6 @@ import { Stack } from "@mantine/core";
 import debounce from "lodash.debounce";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import InitialPane from "../pages/InitialPane";
-import PageDetailPane from "../pages/PageDetailPane";
 
 export const EditorNavbarPagesSection = () => {
   const router = useRouter();

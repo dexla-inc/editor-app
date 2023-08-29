@@ -1,3 +1,5 @@
+import { Icon } from "@/components/Icon";
+import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
 import { getChatHistoryList } from "@/requests/ai/queries";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import TOML from "@iarna/toml";
@@ -20,8 +22,6 @@ import { Prism } from "@mantine/prism";
 import { IconBrandHipchat, IconJson, IconToml } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Icon } from "./Icon";
-import { buttonHoverStyles } from "./styles/buttonHoverStyles";
 
 type Props = {
   projectId: string;
