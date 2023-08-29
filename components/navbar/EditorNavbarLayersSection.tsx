@@ -88,8 +88,6 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     <Group
       unstyled
       w="100%"
-      p={`0 ${6 * level}px`}
-      pr={0}
       {...(isCurrentTarget && { className: "is-drag-over" })}
       style={{
         borderLeft: "1px solid transparent",
@@ -97,6 +95,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
       sx={(theme) =>
         component.id !== "root"
           ? {
+              padding: "0 0 0 20px",
               "&:has(.is-drag-over)": {
                 borderLeft: `1px solid ${theme.colors.teal[6]}!important`,
               },
