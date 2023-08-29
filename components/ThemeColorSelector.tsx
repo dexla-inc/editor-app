@@ -1,6 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
 import {
-  BackgroundImage,
   Box,
   ColorSwatch,
   Group,
