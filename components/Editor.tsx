@@ -132,10 +132,9 @@ export const Editor = ({ projectId, pageId }: Props) => {
     setEditorTree,
   ]);
 
-  const isMac = window.navigator.userAgent.includes("Mac");
-
   useHotkeys([
-    [isMac ? "backspace" : "delete", deleteComponent],
+    ["backspace", deleteComponent],
+    ["delete", deleteComponent],
     ["mod+C", copySelectedCompnent],
     ["mod+V", pasteCopiedComponent],
     ["mod+X", cutSelectedComponent],
@@ -165,15 +164,15 @@ export const Editor = ({ projectId, pageId }: Props) => {
     ],
   ]);
 
+  const isMac = window.navigator.userAgent.includes("Mac");
+
   useHotkeysOnIframe([
     [
       isMac ? "backspace" : "delete",
       (e) => {
-        if (isMac) {
-          // @ts-ignore
-          if (e.target.contentEditable !== "true" && !isPreviewMode) {
-            deleteComponent();
-          }
+        // @ts-ignore
+        if (e.target.contentEditable !== "true" && !isPreviewMode) {
+          deleteComponent();
         }
       },
       { preventDefault: false },
