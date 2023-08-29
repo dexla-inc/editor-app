@@ -267,7 +267,9 @@ export const DroppableDraggable = ({
           },
         }
       : {}),
-    disabled: component.props?.disabled ?? component.states?.disabled,
+    disabled:
+      component.props?.disabled ??
+      (currentState === "disabled" && !!component.states?.disabled),
     triggers: isPreviewMode
       ? {
           ...triggers,
