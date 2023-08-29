@@ -375,8 +375,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
         navbar={
           !isPreviewMode && isNavBarVisible ? (
             <Navbar
-              hidden
-              hiddenBreakpoint="sm"
               width={{ base: NAVBAR_WIDTH }}
               sx={{
                 height: `calc(100% - ${HEADER_HEIGHT}px)`,
