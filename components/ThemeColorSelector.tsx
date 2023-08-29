@@ -70,12 +70,12 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
       );
     }, []);
 
-  let selectedColor = "Primary"; // default color if none is selected
+  let [selectedColor, selectedIndex] = ["Primary", 6]; // default color if none is selected
 
   // If a color is selected and it's not 'transparent', determine the color
   if (props.value && props.value !== "transparent") {
     const [color, index] = props.value.split(".");
-    selectedColor = color;
+    [selectedColor, selectedIndex] = [color, Number(index)];
   }
 
   return (
@@ -88,7 +88,7 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
       })}
       itemComponent={SelectItem}
       searchable
-      icon={<Paper p="xs" bg="Primary-6" />}
+      icon={<Paper p="xs" bg={theme.colors[selectedColor][selectedIndex]} />}
     />
   );
 };
