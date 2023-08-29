@@ -123,7 +123,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
           handleSelection(component.id as string);
         }}
       >
-        <Group position="apart" noWrap>
+        <Group position="apart" noWrap w="100%">
           <Group spacing={4} noWrap w="100%">
             <ActionIcon
               onClick={(e) => {

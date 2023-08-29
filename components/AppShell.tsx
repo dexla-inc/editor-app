@@ -107,7 +107,7 @@ export const Shell = ({
               <Link href="/">
                 <Logo />
               </Link>
-              <ToggleNavbarButton />
+              {navbarType === "editor" && <ToggleNavbarButton />}
             </Flex>
             {navbarType === "editor" && (
               <>
