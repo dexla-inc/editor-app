@@ -19,6 +19,7 @@ export type Data = {
 };
 
 export const template = (data: Data, theme: MantineThemeExtended) => {
+  console.log("theme", theme);
   const inputs = data.inputs.map((input: Input) => {
     return {
       id: nanoid(),

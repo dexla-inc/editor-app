@@ -1,8 +1,8 @@
+import NavigationAvatarFooter from "@/components/NavigationAvatarFooter";
 import { ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 import { Menu as MantineMenu, MenuProps } from "@mantine/core";
 import { IconLogout, IconSettings } from "@tabler/icons-react";
-import NavigationAvatarFooter from "../NavigationAvatarFooter";
 
 type Props = {
   renderTree: (component: Component) => any;

@@ -1,3 +1,4 @@
+import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { useEditorStore } from "@/stores/editor";
@@ -7,7 +8,6 @@ import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
-import { IconSelector } from "../IconSelector";
 
 export const icon = IconClick;
 export const label = "Button";

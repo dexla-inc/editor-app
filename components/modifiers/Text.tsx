@@ -1,3 +1,4 @@
+import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { UnitInput } from "@/components/UnitInput";
 import { useEditorStore } from "@/stores/editor";
@@ -7,7 +8,6 @@ import { useForm } from "@mantine/form";
 import { IconTextSize } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
-import { SizeSelector } from "../SizeSelector";
 
 export const icon = IconTextSize;
 export const label = "Text";

@@ -1,5 +1,7 @@
+import { Icon } from "@/components/Icon";
 import { SortableTreeItem } from "@/components/SortableTreeItem";
 import { useDraggable } from "@/hooks/useDraggable";
+import { useMemoizedDebounce } from "@/hooks/useMemoizedDebounce";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
@@ -17,8 +19,6 @@ import {
 } from "@mantine/core";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
-import { Icon } from "../Icon";
-import { useMemoizedDebounce } from "@/hooks/useMemoizedDebounce";
 import { useEffect } from "react";
 
 type ListItemProps = {

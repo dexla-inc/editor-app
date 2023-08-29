@@ -1,6 +1,6 @@
+import { RegionTypes } from "@/requests/projects/queries";
 import { del, post, put } from "@/utils/api";
 import { ProjectTypes } from "@/utils/projectTypes";
-import { RegionTypes } from "./queries";
 
 export interface ProjectParams extends ProjectUpdateParams {
   description: string;

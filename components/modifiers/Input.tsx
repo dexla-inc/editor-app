@@ -1,3 +1,5 @@
+import { Icon } from "@/components/Icon";
+import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { useEditorStore } from "@/stores/editor";
@@ -8,8 +10,6 @@ import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
-import { Icon } from "../Icon";
-import { IconSelector } from "../IconSelector";
 
 export const icon = IconForms;
 export const label = "Input";
