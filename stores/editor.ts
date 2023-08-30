@@ -212,8 +212,7 @@ export const useEditorStore = create<EditorState>()(
       updateTreeComponentDescription: (componentId, description) => {
         set((state) => {
           const copy = cloneDeep(state.tree);
-          const currentState =
-            state.currentTreeComponentsStates?.[componentId] ?? "default";
+
           updateTreeComponentDescription(copy.root, componentId, description);
           debouncedUpdatePageState(
             encodeSchema(JSON.stringify(copy)),
