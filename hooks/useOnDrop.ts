@@ -90,7 +90,10 @@ export const useOnDrop = () => {
   ) {
     const activeParent = getComponentParent(copy.root, droppedId);
     const targetParent = getComponentParent(copy.root, dropTarget.id);
-    if (targetComponent?.blockDroppingChildrenInside) {
+    if (
+      targetComponent?.blockDroppingChildrenInside &&
+      activeParent?.id === targetParent?.id
+    ) {
       console.log("droppedId", getComponentById(copy.root, droppedId));
       console.log("dropTarget", getComponentById(copy.root, dropTarget.id), {
         dropTarget,
