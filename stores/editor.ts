@@ -10,6 +10,7 @@ import {
   updateTreeComponent,
   updateTreeComponentActions,
   updateTreeComponentChildren,
+  updateTreeComponentDescription,
 } from "@/utils/editor";
 import { MantineTheme } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
@@ -97,6 +98,10 @@ export type EditorState = {
     children: Component[]
   ) => void;
   updateTreeComponentActions: (componentId: string, actions: Action[]) => void;
+  updateTreeComponentDescription: (
+    componentId: string,
+    description: string
+  ) => void;
   setTreeComponentCurrentState: (
     componentId: string,
     currentState: string
@@ -192,6 +197,24 @@ export const useEditorStore = create<EditorState>()(
         set((state) => {
           const copy = cloneDeep(state.tree);
           updateTreeComponentActions(copy.root, componentId, actions);
+          debouncedUpdatePageState(
+            encodeSchema(JSON.stringify(copy)),
+            state.currentProjectId ?? "",
+            state.currentPageId ?? "",
+            state.setIsSaving
+          );
+
+          return {
+            tree: copy,
+          };
+        });
+      },
+      updateTreeComponentDescription: (componentId, description) => {
+        set((state) => {
+          const copy = cloneDeep(state.tree);
+          const currentState =
+            state.currentTreeComponentsStates?.[componentId] ?? "default";
+          updateTreeComponentDescription(copy.root, componentId, description);
           debouncedUpdatePageState(
             encodeSchema(JSON.stringify(copy)),
             state.currentProjectId ?? "",
