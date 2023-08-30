@@ -35,13 +35,14 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       style: {
         width: "260px",
-        height: "100vh",
+        height: "auto",
+        minHeight: "100vh",
         borderRightWidth: "1px",
         borderRightStyle: "solid",
         borderRightColor: "#CCCCCC",
         display: "flex",
         flexDirection: "column",
-        position: "sticky",
+        flexGrow: "1",
         gap: "0px",
         top: 0,
         left: 0,
@@ -91,12 +92,14 @@ export const jsonStructure = (props?: any): Component => {
       {
         id: nanoid(),
         name: "Container",
-        description: "Container for Image and Icon",
+        description: "Container for navigation links",
         props: {
           style: {
             display: "flex",
             flexDirection: "column",
             flexGrow: "1",
+            height: "auto",
+            minHeight: "100vh",
             padding: "20px 10px",
           },
         },

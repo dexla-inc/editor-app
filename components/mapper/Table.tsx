@@ -41,7 +41,7 @@ export const Table = ({ renderTree, component, ...props }: Props) => {
         enablePagination: config?.pagination,
         Cell: ({ row }: any) => {
           const val = row.original[key];
-          return typeof val === "object" ? JSON.stringify(val) : val || "---";
+          return typeof val === "object" ? JSON.stringify(val) : val;
         },
       });
     }
