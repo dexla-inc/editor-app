@@ -141,7 +141,7 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
               edge: "bottom",
             });
 
-            setEditorTree(copy);
+            setEditorTree(copy, { action: `Added ${newComponents.name}` });
           } else {
             componentBeignAddedId.current = id;
             updateTreeComponentChildren(id, newComponents.children!);
