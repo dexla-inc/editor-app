@@ -348,19 +348,7 @@ export const updateTreeComponentDescription = (
     treeRoot,
     (node, context) => {
       if (node.id === id) {
-        if (state === "default") {
-          node.description = description;
-        } else {
-          const nodeState = node.states?.[state] ?? {};
-          node.states = {
-            ...(node.states ?? {}),
-            [state]: {
-              ...nodeState,
-              name,
-            },
-          };
-        }
-
+        node.description = description;
         context.break();
       }
     },
