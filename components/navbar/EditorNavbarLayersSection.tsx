@@ -153,7 +153,12 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
         onKeyDown={handleKeyPress}
       >
         <Group position="apart" noWrap w="100%">
-          <Group spacing={4} noWrap w="100%">
+          <Group
+            spacing={4}
+            noWrap
+            w="100%"
+            sx={{ backgroundColor: `${editable && "white"}` }}
+          >
             <ActionIcon
               onClick={(e) => {
                 e.preventDefault();
@@ -185,17 +190,14 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
                 sx={{ cursor: "move", width: "100%" }}
                 {...draggable}
               >
-                {component.id === "root" ? "Body" : component.name}
+                {component.id === "root" ? "Body" : "Content Wrapper"}
               </Text>
             ) : editable ? (
               <TextInput
                 id={`layer-${component.id}`}
                 size="xs"
+                w="100%"
                 variant="unstyled"
-                style={{
-                  backgroundColor: "rgb(255,255,255)",
-                  width: "100%",
-                }}
                 {...form.getInputProps("value")}
                 onChange={(e) => {
                   e.preventDefault();
