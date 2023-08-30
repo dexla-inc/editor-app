@@ -22,7 +22,7 @@ import { useForm } from "@mantine/form";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
-import { useEffect } from "react";
+import { KeyboardEvent, useEffect } from "react";
 
 type ListItemProps = {
   component: Component;
@@ -41,7 +41,8 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     (state) => state.setSelectedComponentId
   );
   const [opened, { toggle, open }] = useDisclosure(false);
-  const [editable, { toggle: toggleEdit }] = useDisclosure(false);
+  const [editable, { toggle: toggleEdit, close: closeEdit }] =
+    useDisclosure(false);
   const onDragStart = useOnDragStart();
 
   const draggable = useDraggable({
@@ -55,7 +56,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
 
   const form = useForm({
     initialValues: {
-      value: component.name,
+      value: component.description,
     },
   });
 
@@ -71,6 +72,10 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   const debouncedUpdate = debounce((value: string) => {
     updateTreeComponentDescription(selectedComponentId as string, value);
   }, 500);
+
+  const handleKeyPress = (e: KeyboardEvent) => {
+    if (e.key === "Enter") closeEdit();
+  };
 
   useEffect(() => {
     if (component.id === "content-wrapper") {
@@ -145,6 +150,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
           e.stopPropagation();
           toggleEdit();
         }}
+        onKeyDown={handleKeyPress}
       >
         <Group position="apart" noWrap w="100%">
           <Group spacing={4} noWrap w="100%">
@@ -186,6 +192,10 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
                 id={`layer-${component.id}`}
                 size="xs"
                 variant="unstyled"
+                style={{
+                  backgroundColor: "rgba(14, 20, 14, 0.1)",
+                  width: "100%",
+                }}
                 {...form.getInputProps("value")}
                 onChange={(e) => {
                   e.preventDefault();
