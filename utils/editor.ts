@@ -338,6 +338,36 @@ export const updateTreeComponentActions = (
   );
 };
 
+export const updateTreeComponentDescription = (
+  treeRoot: Component,
+  id: string,
+  description: string,
+  state: string = "default"
+) => {
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === id) {
+        if (state === "default") {
+          node.description = description;
+        } else {
+          const nodeState = node.states?.[state] ?? {};
+          node.states = {
+            ...(node.states ?? {}),
+            [state]: {
+              ...nodeState,
+              name,
+            },
+          };
+        }
+
+        context.break();
+      }
+    },
+    { order: "bfs" }
+  );
+};
+
 export const checkIfIsChild = (treeRoot: Component, childId: string) => {
   let isChild = false;
 
