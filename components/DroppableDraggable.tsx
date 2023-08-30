@@ -358,7 +358,7 @@ export const DroppableDraggable = ({
               </UnstyledButton>
             )}
             <Text color="white" size="xs" pr={haveNonRootParent ? 0 : "xs"}>
-              {component.name}
+              {component.description}
             </Text>
             {haveNonRootParent && (
               <ActionIcon
