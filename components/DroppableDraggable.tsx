@@ -421,7 +421,7 @@ export const DroppableDraggable = ({
                 });
 
                 removeComponentFromParent(copy.root, id, parent?.id!);
-                setEditorTree(copy);
+                setEditorTree(copy, { action: `Moved ${component.name}` });
               }}
             >
               <IconBoxMargin size={ICON_SIZE} color="white" strokeWidth={1.5} />

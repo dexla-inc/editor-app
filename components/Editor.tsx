@@ -83,7 +83,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
     ) {
       const copy = cloneDeep(editorTree);
       removeComponent(copy.root, selectedComponentId as string);
-      setEditorTree(copy);
+      setEditorTree(copy, { action: `Removed ${selectedComponentId}` });
       clearSelection();
     }
   }, [
@@ -122,7 +122,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
         id: getComponentParent(copy.root, copiedComponent.id!)!.id as string,
         edge: "right",
       });
-      setEditorTree(copy);
+      setEditorTree(copy, { action: `Pasted ${copiedComponent.name}` });
     }
   }, [
     copiedComponent,
@@ -221,7 +221,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
       const page = await getPage(projectId, pageId);
       if (page.pageState) {
         const decodedSchema = decodeSchema(page.pageState);
-        setEditorTree(JSON.parse(decodedSchema), true);
+        setEditorTree(JSON.parse(decodedSchema), { onLoad: true });
         setIsLoading(false);
       } else {
         startLoading({
@@ -441,7 +441,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
             </Paper>
           </Box>
         )}
-        {(editorTree.root.children ?? [])?.length > 0 && (
+        {(editorTree?.root?.children ?? [])?.length > 0 && (
           <Box
             pos="relative"
             onClick={clearSelection}

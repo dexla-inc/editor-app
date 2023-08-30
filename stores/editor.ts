@@ -18,6 +18,7 @@ import debounce from "lodash.debounce";
 import isEqual from "lodash.isequal";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
+import { devtools } from "zustand/middleware";
 
 export const emptyEditorTree = {
   root: {
@@ -84,7 +85,10 @@ export type EditorState = {
   setTheme: (theme: MantineThemeExtended) => void;
   setIframeWindow: (iframeWindow: Window) => void;
   setCurrentTargetId: (currentTargetId?: string) => void;
-  setTree: (tree: EditorTree, onLoad?: boolean) => void;
+  setTree: (
+    tree: EditorTree,
+    options?: { onLoad?: boolean; action?: string }
+  ) => void;
   resetTree: () => void;
   setCurrentProjectId: (currentProjectId: string) => void;
   setCurrentPageId: (currentPageId: string) => void;
@@ -112,6 +116,8 @@ export type EditorState = {
   setIsSaving: (isSaving: boolean) => void;
   setPreviewMode: (value: boolean) => void;
   setIsNavBarVisible: () => void;
+  changeHistory: string[];
+  currentChangeHistoryRevision: number;
   setCopiedAction: (copiedAction?: Action[]) => void;
   // pasteAction: (componentId: string) => void;
 };
@@ -122,6 +128,8 @@ const debouncedUpdatePageState = debounce(updatePageState, 2000);
 export const useEditorStore = create<EditorState>()(
   temporal(
     (set) => ({
+      changeHistory: ["Initial State"],
+      currentChangeHistoryRevision: 0,
       tree: emptyEditorTree,
       theme: defaultTheme,
       pages: [],
