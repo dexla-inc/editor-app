@@ -26,7 +26,7 @@ export const jsonStructure = (props?: any): Component => {
     lightLogo?.url ||
     "https://www.kadencewp.com/wp-content/uploads/2020/10/alogo-4.svg";
 
-  const isDarkTheme = theme.colorScheme === "dark";
+  const isDarkTheme = lightLogo ? true : false;
 
   return {
     id: nanoid(),
@@ -142,19 +142,6 @@ export const jsonStructure = (props?: any): Component => {
               children: [],
             };
           }),
-      },
-      {
-        id: nanoid(),
-        name: "Menu",
-        description: "Profile Menu",
-        props: {
-          style: {
-            width: "100%",
-            height: "auto",
-          },
-        },
-        children: [],
-        blockDroppingChildrenInside: true,
       },
     ],
   };
