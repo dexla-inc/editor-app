@@ -18,8 +18,7 @@ const isSavingDisplay = {
   },
 };
 
-// eslint-disable-next-line react/display-name
-export const SavingDisplay = forwardRef(
+export const SavingDisplay = forwardRef<HTMLDivElement, SavingDisplayProps>(
   ({ isSaving, ...props }: SavingDisplayProps, ref) => {
     const saving = isSaving ? "saving" : "saved";
     const theme = useMantineTheme();
@@ -45,3 +44,5 @@ export const SavingDisplay = forwardRef(
     );
   }
 );
+
+SavingDisplay.displayName = "SavingDisplay";

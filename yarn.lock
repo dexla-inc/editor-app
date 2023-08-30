@@ -3756,11 +3756,6 @@ zod@3.21.4:
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.21.4.tgz#10882231d992519f0a10b5dd58a38c9dabbb64db"
   integrity sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==
 
-zukeeper@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/zukeeper/-/zukeeper-1.0.2.tgz#7e5ff289af39001566b885a842e180b0e16860b8"
-  integrity sha512-mffz8JpzC96B3Gpoixklfl2/wY4KsYxZvgPRLFMIqAvEQeMPTjLYG8oUWXm9eoItU/nQ5Lt0G2b0GcZRDGzVgA==
-
 zundo@^2.0.0-beta.23:
   version "2.0.0-beta.23"
   resolved "https://registry.yarnpkg.com/zundo/-/zundo-2.0.0-beta.23.tgz#3f8af125e01b87d05a197d5b5fd5f031f223d9b7"

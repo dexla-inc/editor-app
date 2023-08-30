@@ -126,151 +126,164 @@ const debouncedUpdatePageState = debounce(updatePageState, 2000);
 
 // creates a store with undo/redo capability
 export const useEditorStore = create<EditorState>()(
-  temporal(
-    (set) => ({
-      changeHistory: ["Initial State"],
-      currentChangeHistoryRevision: 0,
-      tree: emptyEditorTree,
-      theme: defaultTheme,
-      pages: [],
-      onMountActionsRan: [],
-      selectedComponentId: "content-wrapper",
-      addOnMountActionsRan: (onMountAction) =>
-        set((state) => ({
-          ...state,
-          onMountActionsRan: state.onMountActionsRan.concat(onMountAction),
-        })),
-      resetOnMountActionsRan: () => set({ onMountActionsRan: [] }),
-      setPages: (pages) => set({ pages }),
-      setPickingComponentToBindFrom: (pickingComponentToBindFrom) =>
-        set({ pickingComponentToBindFrom }),
-      setPickingComponentToBindTo: (pickingComponentToBindTo) =>
-        set({ pickingComponentToBindTo }),
-      setComponentToBind: (componentToBind) => set({ componentToBind }),
-      setCopiedComponent: (copiedComponent) => set({ copiedComponent }),
-      setTheme: (theme) => set({ theme }),
-      setIframeWindow: (iframeWindow) => set({ iframeWindow }),
-      setCurrentTargetId: (currentTargetId) => set({ currentTargetId }),
-      isSaving: false,
-      setTree: (tree, onLoad) => {
-        set((state) => {
-          if (!onLoad) {
+  devtools(
+    temporal(
+      (set) => ({
+        changeHistory: ["Initial State"],
+        currentChangeHistoryRevision: 0,
+        tree: emptyEditorTree,
+        theme: defaultTheme,
+        pages: [],
+        onMountActionsRan: [],
+        selectedComponentId: "content-wrapper",
+        addOnMountActionsRan: (onMountAction) =>
+          set((state) => ({
+            ...state,
+            onMountActionsRan: state.onMountActionsRan.concat(onMountAction),
+          })),
+        resetOnMountActionsRan: () => set({ onMountActionsRan: [] }),
+        setPages: (pages) => set({ pages }),
+        setPickingComponentToBindFrom: (pickingComponentToBindFrom) =>
+          set({ pickingComponentToBindFrom }),
+        setPickingComponentToBindTo: (pickingComponentToBindTo) =>
+          set({ pickingComponentToBindTo }),
+        setComponentToBind: (componentToBind) => set({ componentToBind }),
+        setCopiedComponent: (copiedComponent) => set({ copiedComponent }),
+        setTheme: (theme) => set({ theme }),
+        setIframeWindow: (iframeWindow) => set({ iframeWindow }),
+        setCurrentTargetId: (currentTargetId) => set({ currentTargetId }),
+        isSaving: false,
+        setTree: (tree, options) => {
+          console.log("setTree", { tree, options });
+          set((state: EditorState) => {
+            if (!options?.onLoad) {
+              debouncedUpdatePageState(
+                encodeSchema(JSON.stringify(tree)),
+                state.currentProjectId ?? "",
+                state.currentPageId ?? "",
+                state.setIsSaving
+              );
+            }
+            return {
+              tree,
+              ...(options?.action && {
+                changeHistory: state.changeHistory.concat(options.action),
+                currentChangeHistoryRevision: state.changeHistory.length,
+              }),
+            };
+          });
+        },
+        resetTree: () => {
+          set({ tree: emptyEditorTree });
+        },
+        updateTreeComponent: (componentId, props, save = true) => {
+          set((prev) => {
+            const copy = cloneDeep(prev.tree);
+            const currentState =
+              prev.currentTreeComponentsStates?.[componentId] ?? "default";
+            updateTreeComponent(copy.root, componentId, props, currentState);
+            if (save) {
+              debouncedUpdatePageState(
+                encodeSchema(JSON.stringify(copy)),
+                prev.currentProjectId ?? "",
+                prev.currentPageId ?? "",
+                prev.setIsSaving
+              );
+            }
+
+            return {
+              tree: copy,
+            };
+          });
+        },
+        updateTreeComponentChildren: (componentId, children) => {
+          set((state) => {
+            const copy = cloneDeep(state.tree);
+            updateTreeComponentChildren(copy.root, componentId, children);
             debouncedUpdatePageState(
-              encodeSchema(JSON.stringify(tree)),
+              encodeSchema(JSON.stringify(copy)),
               state.currentProjectId ?? "",
               state.currentPageId ?? "",
               state.setIsSaving
             );
-          }
-          return { tree };
-        });
-      },
-      resetTree: () => {
-        set({ tree: emptyEditorTree });
-      },
-      updateTreeComponent: (componentId, props, save = true) => {
-        set((prev) => {
-          const copy = cloneDeep(prev.tree);
-          const currentState =
-            prev.currentTreeComponentsStates?.[componentId] ?? "default";
-          updateTreeComponent(copy.root, componentId, props, currentState);
-          if (save) {
+
+            return {
+              tree: copy,
+            };
+          });
+        },
+        updateTreeComponentActions: (componentId, actions) => {
+          set((state) => {
+            const copy = cloneDeep(state.tree);
+            updateTreeComponentActions(copy.root, componentId, actions);
             debouncedUpdatePageState(
               encodeSchema(JSON.stringify(copy)),
-              prev.currentProjectId ?? "",
-              prev.currentPageId ?? "",
-              prev.setIsSaving
+              state.currentProjectId ?? "",
+              state.currentPageId ?? "",
+              state.setIsSaving
             );
-          }
 
-          return {
-            tree: copy,
-          };
-        });
-      },
-      updateTreeComponentChildren: (componentId, children) => {
-        set((state) => {
-          const copy = cloneDeep(state.tree);
-          updateTreeComponentChildren(copy.root, componentId, children);
-          debouncedUpdatePageState(
-            encodeSchema(JSON.stringify(copy)),
-            state.currentProjectId ?? "",
-            state.currentPageId ?? "",
-            state.setIsSaving
-          );
+            return {
+              tree: copy,
+            };
+          });
+        },
+        updateTreeComponentDescription: (componentId, description) => {
+          set((state) => {
+            const copy = cloneDeep(state.tree);
 
-          return {
-            tree: copy,
-          };
-        });
-      },
-      updateTreeComponentActions: (componentId, actions) => {
-        set((state) => {
-          const copy = cloneDeep(state.tree);
-          updateTreeComponentActions(copy.root, componentId, actions);
-          debouncedUpdatePageState(
-            encodeSchema(JSON.stringify(copy)),
-            state.currentProjectId ?? "",
-            state.currentPageId ?? "",
-            state.setIsSaving
-          );
+            updateTreeComponentDescription(copy.root, componentId, description);
+            debouncedUpdatePageState(
+              encodeSchema(JSON.stringify(copy)),
+              state.currentProjectId ?? "",
+              state.currentPageId ?? "",
+              state.setIsSaving
+            );
 
-          return {
-            tree: copy,
-          };
-        });
-      },
-      updateTreeComponentDescription: (componentId, description) => {
-        set((state) => {
-          const copy = cloneDeep(state.tree);
-
-          updateTreeComponentDescription(copy.root, componentId, description);
-          debouncedUpdatePageState(
-            encodeSchema(JSON.stringify(copy)),
-            state.currentProjectId ?? "",
-            state.currentPageId ?? "",
-            state.setIsSaving
-          );
-
-          return {
-            tree: copy,
-          };
-        });
-      },
-      setTreeComponentCurrentState: (componentId, currentState = "default") => {
-        set((prev) => {
-          return {
-            currentTreeComponentsStates: {
-              ...prev.currentTreeComponentsStates,
-              [componentId]: currentState,
-            },
-          };
-        });
-      },
-      setCurrentProjectId: (currentProjectId) => set({ currentProjectId }),
-      setCurrentPageId: (currentPageId) => set({ currentPageId }),
-      setComponentToAdd: (componentToAdd) => set({ componentToAdd }),
-      setSelectedComponentId: (selectedComponentId) =>
-        set({ selectedComponentId }),
-      clearSelection: () => set({ selectedComponentId: "content-wrapper" }),
-      setIsSaving: (isSaving) => set({ isSaving }),
-      isPreviewMode: false,
-      isNavBarVisible: true,
-      setPreviewMode: (value) => set({ isPreviewMode: value }),
-      setIsNavBarVisible: () =>
-        set((state) => ({ isNavBarVisible: !state.isNavBarVisible })),
-      setCopiedAction: (copiedAction) => set({ copiedAction }),
-    }),
-    {
-      partialize: (state) => {
-        const { tree } = state;
-        return { tree };
-      },
-      limit: 500,
-      equality(currentState, pastState) {
-        return isEqual(currentState.tree, pastState.tree);
-      },
-    }
+            return {
+              tree: copy,
+            };
+          });
+        },
+        setTreeComponentCurrentState: (
+          componentId,
+          currentState = "default"
+        ) => {
+          set((prev) => {
+            return {
+              currentTreeComponentsStates: {
+                ...prev.currentTreeComponentsStates,
+                [componentId]: currentState,
+              },
+            };
+          });
+        },
+        setCurrentProjectId: (currentProjectId) => set({ currentProjectId }),
+        setCurrentPageId: (currentPageId) => set({ currentPageId }),
+        setComponentToAdd: (componentToAdd) => set({ componentToAdd }),
+        setSelectedComponentId: (selectedComponentId) =>
+          set({ selectedComponentId }),
+        clearSelection: () => set({ selectedComponentId: "content-wrapper" }),
+        setIsSaving: (isSaving) => set({ isSaving }),
+        isPreviewMode: false,
+        isNavBarVisible: true,
+        setPreviewMode: (value) => set({ isPreviewMode: value }),
+        setIsNavBarVisible: () =>
+          set((state) => ({ isNavBarVisible: !state.isNavBarVisible })),
+        setCopiedAction: (copiedAction) => set({ copiedAction }),
+      }),
+      {
+        partialize: (state) => {
+          const { currentChangeHistoryRevision, tree } = state;
+          return { tree, currentChangeHistoryRevision };
+        },
+        limit: 500,
+        equality(currentState, pastState) {
+          return isEqual(currentState.tree, pastState.tree);
+        },
+      }
+    ),
+    { name: "Editor store" }
   )
 );
 
