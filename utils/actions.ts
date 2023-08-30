@@ -48,21 +48,19 @@ const triggers = [
 ] as const;
 
 export const actions = [
-  "apiCall",
-  "alert",
-  "bindResponse",
-  "copyToClipboard",
-  "goToUrl",
-  "login",
-  "navigateToPage",
-  "openDrawer",
-  "openModal",
-  "openPopover",
-  "openToast",
-  "showTooltip",
-  "changeState",
+  { name: "apiCall", group: "API & Data" },
+  { name: "bindResponse", group: "API & Data" },
+  { name: "login", group: "API & Data" },
+  { name: "goToUrl", group: "Navigation" },
+  { name: "navigateToPage", group: "Navigation" },
+  { name: "openDrawer", group: "Modal & Overlays" },
+  { name: "openModal", group: "Modal & Overlays" },
+  { name: "openPopover", group: "Modal & Overlays" },
+  { name: "alert", group: "Feedback" },
+  { name: "changeState", group: "Feedback" },
+  { name: "openToast", group: "Feedback" },
+  { name: "copyToClipboard", group: "Utilities & Tools" },
 ];
-
 type ActionTriggerAll = (typeof triggers)[number];
 
 export type ActionTrigger = ActionTriggerAll;

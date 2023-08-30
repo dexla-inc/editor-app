@@ -1,3 +1,4 @@
+import { Icon } from "@/components/Icon";
 import { QueryStringsForm } from "@/components/QueryStringsForm";
 import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
 import {
@@ -25,7 +26,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
-import { Icon } from "../Icon";
 
 type PageDetailPaneProps = {
   page?: PageResponse | null | undefined;

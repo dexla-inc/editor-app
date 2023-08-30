@@ -187,8 +187,9 @@ export const EditorAsideSections = () => {
               data={[
                 { label: "Default", value: "default" },
                 { label: "Hover", value: "hover" },
+                { label: "Disabled", value: "disabled" },
                 ...Object.keys(component?.states ?? {}).reduce((acc, key) => {
-                  if (key === "hover") return acc;
+                  if (key === "hover" || key === "disabled") return acc;
 
                   return acc.concat({
                     label: key,

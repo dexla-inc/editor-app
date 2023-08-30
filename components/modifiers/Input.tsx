@@ -1,14 +1,15 @@
+import { Icon } from "@/components/Icon";
+import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { useEditorStore } from "@/stores/editor";
+import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
 import { getComponentById } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { useEffect } from "react";
-import { Icon } from "../Icon";
-import { IconSelector } from "../IconSelector";
 
 export const icon = IconForms;
 export const label = "Input";
@@ -102,15 +103,7 @@ export const Modifier = () => {
         <Select
           label="Type"
           size="xs"
-          data={[
-            { label: "Text", value: "text" },
-            { label: "Number", value: "number" },
-            { label: "Email", value: "email" },
-            { label: "Password", value: "password" },
-            { label: "Tel", value: "tel" },
-            { label: "Url", value: "url" },
-            { label: "Search", value: "search" },
-          ]}
+          data={INPUT_TYPES_DATA}
           {...form.getInputProps("type")}
           onChange={(value) => {
             form.setFieldValue("type", value as string);

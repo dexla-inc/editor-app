@@ -107,7 +107,7 @@ export const Shell = ({
               <Link href="/">
                 <Logo />
               </Link>
-              <ToggleNavbarButton />
+              {navbarType === "editor" && <ToggleNavbarButton />}
             </Flex>
             {navbarType === "editor" && (
               <>
@@ -122,6 +122,7 @@ export const Shell = ({
                     alignItems: "center",
                     gap: "10px",
                     width: "33.33%",
+                    whiteSpace: "nowrap",
                   }}
                 />
                 <Flex gap="md" sx={{ width: "33.33%" }} justify="end">

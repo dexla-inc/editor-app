@@ -1,5 +1,7 @@
+import { Icon } from "@/components/Icon";
 import { SortableTreeItem } from "@/components/SortableTreeItem";
 import { useDraggable } from "@/hooks/useDraggable";
+import { useMemoizedDebounce } from "@/hooks/useMemoizedDebounce";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
@@ -17,8 +19,6 @@ import {
 } from "@mantine/core";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
-import { Icon } from "../Icon";
-import { useMemoizedDebounce } from "@/hooks/useMemoizedDebounce";
 import { useEffect } from "react";
 
 type ListItemProps = {
@@ -88,8 +88,6 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     <Group
       unstyled
       w="100%"
-      p={`0 ${6 * level}px`}
-      pr={0}
       {...(isCurrentTarget && { className: "is-drag-over" })}
       style={{
         borderLeft: "1px solid transparent",
@@ -97,6 +95,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
       sx={(theme) =>
         component.id !== "root"
           ? {
+              padding: "0 0 0 20px",
               "&:has(.is-drag-over)": {
                 borderLeft: `1px solid ${theme.colors.teal[6]}!important`,
               },
@@ -124,7 +123,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
           handleSelection(component.id as string);
         }}
       >
-        <Group position="apart" noWrap>
+        <Group position="apart" noWrap w="100%">
           <Group spacing={4} noWrap w="100%">
             <ActionIcon
               onClick={(e) => {

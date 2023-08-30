@@ -10,7 +10,7 @@ export const icon = IconPhoto;
 export const label = "Image";
 
 export const defaultImageValues = {
-  src: "https://reactnativecode.com/wp-content/uploads/2018/02/Default_Image_Thumbnail.png",
+  src: "https://www.contentviewspro.com/wp-content/uploads/2017/07/default_image.png",
   alt: "",
   fit: "scale-down",
   position: "relative",
@@ -41,6 +41,8 @@ export const Modifier = () => {
   useEffect(() => {
     if (selectedComponentId) {
       const { src, alt, style } = componentProps;
+
+      console.log("src", src);
       form.setValues({
         src: src ?? defaultImageValues.src,
         alt: alt ?? defaultImageValues.alt,

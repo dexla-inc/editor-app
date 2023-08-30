@@ -26,7 +26,7 @@ export const jsonStructure = (props?: any): Component => {
     lightLogo?.url ||
     "https://www.kadencewp.com/wp-content/uploads/2020/10/alogo-4.svg";
 
-  const isDarkTheme = theme.colorScheme === "dark";
+  const isDarkTheme = lightLogo ? true : false;
 
   return {
     id: nanoid(),
@@ -35,17 +35,18 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       style: {
         width: "260px",
-        height: "100vh",
+        height: "auto",
+        minHeight: "100vh",
         borderRightWidth: "1px",
         borderRightStyle: "solid",
         borderRightColor: "#CCCCCC",
         display: "flex",
         flexDirection: "column",
-        position: "sticky",
+        flexGrow: "1",
         gap: "0px",
         top: 0,
         left: 0,
-        backgroundColor: isDarkTheme ? theme.colors.dark[6] : "#fff",
+        background: isDarkTheme ? theme.colors.dark[6] : "#fff",
       },
       ...(props.props || {}),
     },
@@ -91,12 +92,14 @@ export const jsonStructure = (props?: any): Component => {
       {
         id: nanoid(),
         name: "Container",
-        description: "Container for Image and Icon",
+        description: "Container for navigation links",
         props: {
           style: {
             display: "flex",
             flexDirection: "column",
             flexGrow: "1",
+            height: "auto",
+            minHeight: "100vh",
             padding: "20px 10px",
           },
         },
@@ -142,19 +145,6 @@ export const jsonStructure = (props?: any): Component => {
               children: [],
             };
           }),
-      },
-      {
-        id: nanoid(),
-        name: "Menu",
-        description: "Profile Menu",
-        props: {
-          style: {
-            width: "100%",
-            height: "auto",
-          },
-        },
-        children: [],
-        blockDroppingChildrenInside: true,
       },
     ],
   };

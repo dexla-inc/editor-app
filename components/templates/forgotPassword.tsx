@@ -1,9 +1,10 @@
+import { InputTypes } from "@/utils/dashboardTypes";
 import { nanoid } from "nanoid";
 
 type Input = {
   placeholder: string;
   label: string;
-  type: "text" | "email" | "password";
+  type: InputTypes;
 };
 
 export type Data = {

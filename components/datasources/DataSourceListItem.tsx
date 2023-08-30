@@ -1,9 +1,9 @@
+import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { Button, Stack } from "@mantine/core";
 import { useState } from "react";
-import { DataSourceEndpoint } from "./DataSourceEndpoint";
 
 type DataSourceItemProps = {
   projectId: string;

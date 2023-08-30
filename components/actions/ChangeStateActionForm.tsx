@@ -142,13 +142,14 @@ export const ChangeStateActionForm = ({ id }: Props) => {
           data={[
             { label: "Default", value: "default" },
             { label: "Hover", value: "hover" },
+            { label: "Disabled", value: "disabled" },
             ...Object.keys(
               form.values.componentId
                 ? getComponentById(editorTree.root, form.values.componentId!)
                     ?.states ?? {}
                 : {}
             ).reduce((acc, key) => {
-              if (key === "hover") return acc;
+              if (key === "hover" || key === "disabled") return acc;
 
               return acc.concat({
                 label: key,

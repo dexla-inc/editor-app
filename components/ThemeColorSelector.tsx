@@ -1,5 +1,12 @@
 import { useEditorStore } from "@/stores/editor";
-import { Box, Group, Paper, Select, SelectProps } from "@mantine/core";
+import {
+  Box,
+  ColorSwatch,
+  Group,
+  Paper,
+  Select,
+  SelectProps,
+} from "@mantine/core";
 import { forwardRef } from "react";
 
 // eslint-disable-next-line react/display-name
@@ -10,7 +17,12 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
     if (value === "transparent") {
       return (
         <Group ref={ref} noWrap {...other}>
-          <Box w={10} h={10} bg="transparent" />
+          {/* <Box w={10} h={10} bg="transparent" /> */}
+          <ColorSwatch
+            radius="xs"
+            size={10}
+            color={theme.fn.rgba(theme.colors.gray[3], 0.2)}
+          />
           {label}
         </Group>
       );
@@ -70,13 +82,31 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
       );
     }, []);
 
-  let selectedColor = "Primary"; // default color if none is selected
+  let [selectedColor, selectedIndex] = ["Primary", 6]; // default color if none is selected
 
   // If a color is selected and it's not 'transparent', determine the color
   if (props.value && props.value !== "transparent") {
     const [color, index] = props.value.split(".");
-    selectedColor = color;
+    [selectedColor, selectedIndex] = [color, Number(index)];
   }
+
+  const bgColor =
+    props.value && props.value === "transparent" ? (
+      <ColorSwatch
+        radius="sm"
+        size={20}
+        color={theme.fn.rgba(theme.colors.gray[3], 0.2)}
+      />
+    ) : (
+      <Paper
+        p="xs"
+        bg={
+          theme && theme.colors && theme.colors[selectedColor]
+            ? theme.colors[selectedColor][selectedIndex]
+            : "Primary.6"
+        }
+      />
+    );
 
   return (
     <Select
@@ -88,7 +118,7 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
       })}
       itemComponent={SelectItem}
       searchable
-      icon={<Paper p="xs" bg="Primary-6" />}
+      icon={bgColor}
     />
   );
 };
