@@ -193,7 +193,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
                 size="xs"
                 variant="unstyled"
                 style={{
-                  backgroundColor: "rgba(14, 20, 14, 0.1)",
+                  backgroundColor: "rgb(255,255,255)",
                   width: "100%",
                 }}
                 {...form.getInputProps("value")}
