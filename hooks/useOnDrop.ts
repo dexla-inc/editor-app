@@ -38,68 +38,91 @@ export const useOnDrop = () => {
       const copy = cloneDeep(editorTree);
       const activeComponent = getComponentById(copy.root, droppedId);
       const targetComponent = getComponentById(copy.root, dropTarget.id);
-
       if (droppedId && componentToAdd) {
-        if (!targetComponent?.blockDroppingChildrenInside) {
-          const newSelectedId = addComponent(
-            copy.root,
-            componentToAdd,
-            dropTarget
-          );
-          setSelectedComponentId(newSelectedId);
-          setComponentToAdd(undefined);
-        } else {
-          const targetParent = getComponentParent(copy.root, dropTarget.id);
-          if (targetParent) {
-            const newSelectedId = addComponent(copy.root, componentToAdd, {
-              id: targetParent.id as string,
-              edge: "bottom",
-            });
-            setSelectedComponentId(newSelectedId);
-          }
-        }
-      } else if (dropTarget.id !== "root") {
-        const activeParent = getComponentParent(copy.root, droppedId);
-        const targetParent = getComponentParent(copy.root, dropTarget.id);
-
-        if (targetComponent?.blockDroppingChildrenInside) {
-          // reorder
-          moveComponent(copy.root, droppedId, dropTarget);
-        } else {
-          // move to a new parent
-          moveComponentToDifferentParent(
-            copy.root,
-            droppedId,
-            dropTarget,
-            targetParent!.id as string
-          );
-          removeComponentFromParent(
-            copy.root,
-            droppedId,
-            activeParent!.id as string
-          );
-        }
-      } else {
-        removeComponent(copy.root, droppedId);
-        const newSelectedId = addComponent(
-          copy.root,
-          activeComponent as unknown as Component,
-          dropTarget
+        handleComponentAddition(
+          copy,
+          dropTarget,
+          targetComponent,
+          componentToAdd
         );
-
-        setSelectedComponentId(newSelectedId);
+      } else if (dropTarget.id !== "root") {
+        handleReorderingOrMoving(copy, droppedId, targetComponent, dropTarget);
+      } else {
+        handleRootDrop(copy, droppedId, activeComponent, dropTarget);
       }
-
       setEditorTree(copy);
     },
     [
       componentToAdd,
       editorTree,
-      setComponentToAdd,
       setEditorTree,
-      setSelectedComponentId,
+      handleComponentAddition,
+      handleReorderingOrMoving,
+      handleRootDrop,
     ]
   );
-
+  function handleComponentAddition(
+    copy: any,
+    dropTarget: any,
+    targetComponent: any,
+    componentToAdd: any
+  ) {
+    if (!targetComponent?.blockDroppingChildrenInside) {
+      const newSelectedId = addComponent(copy.root, componentToAdd, dropTarget);
+      setSelectedComponentId(newSelectedId);
+      setComponentToAdd(undefined);
+    } else {
+      const targetParent = getComponentParent(copy.root, dropTarget.id);
+      if (targetParent) {
+        const newSelectedId = addComponent(copy.root, componentToAdd, {
+          id: targetParent.id as string,
+          edge: "bottom",
+        });
+        setSelectedComponentId(newSelectedId);
+      }
+    }
+  }
+  function handleReorderingOrMoving(
+    copy: any,
+    droppedId: any,
+    targetComponent: any,
+    dropTarget: any
+  ) {
+    const activeParent = getComponentParent(copy.root, droppedId);
+    const targetParent = getComponentParent(copy.root, dropTarget.id);
+    if (targetComponent?.blockDroppingChildrenInside) {
+      console.log("droppedId", getComponentById(copy.root, droppedId));
+      console.log("dropTarget", getComponentById(copy.root, dropTarget.id), {
+        dropTarget,
+      });
+      moveComponent(copy.root, droppedId, dropTarget);
+    } else {
+      moveComponentToDifferentParent(
+        copy.root,
+        droppedId,
+        dropTarget,
+        targetParent!.id as string
+      );
+      removeComponentFromParent(
+        copy.root,
+        droppedId,
+        activeParent!.id as string
+      );
+    }
+  }
+  function handleRootDrop(
+    copy: any,
+    droppedId: any,
+    activeComponent: any,
+    dropTarget: any
+  ) {
+    removeComponent(copy.root, droppedId);
+    const newSelectedId = addComponent(
+      copy.root,
+      activeComponent as unknown as Component,
+      dropTarget
+    );
+    setSelectedComponentId(newSelectedId);
+  }
   return onDrop;
 };
