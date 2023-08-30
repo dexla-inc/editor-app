@@ -9,6 +9,7 @@ import {
   moveComponentToDifferentParent,
   removeComponent,
   removeComponentFromParent,
+  EditorTree,
 } from "@/utils/editor";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
@@ -62,10 +63,10 @@ export const useOnDrop = () => {
     ]
   );
   function handleComponentAddition(
-    copy: any,
-    dropTarget: any,
-    targetComponent: any,
-    componentToAdd: any
+    copy: EditorTree,
+    dropTarget: DropTarget,
+    targetComponent: Component | null,
+    componentToAdd: Component
   ) {
     if (!targetComponent?.blockDroppingChildrenInside) {
       const newSelectedId = addComponent(copy.root, componentToAdd, dropTarget);
@@ -83,10 +84,10 @@ export const useOnDrop = () => {
     }
   }
   function handleReorderingOrMoving(
-    copy: any,
-    droppedId: any,
-    targetComponent: any,
-    dropTarget: any
+    copy: EditorTree,
+    droppedId: string,
+    targetComponent: Component | null,
+    dropTarget: DropTarget
   ) {
     const activeParent = getComponentParent(copy.root, droppedId);
     const targetParent = getComponentParent(copy.root, dropTarget.id);
@@ -94,10 +95,6 @@ export const useOnDrop = () => {
       targetComponent?.blockDroppingChildrenInside &&
       activeParent?.id === targetParent?.id
     ) {
-      console.log("droppedId", getComponentById(copy.root, droppedId));
-      console.log("dropTarget", getComponentById(copy.root, dropTarget.id), {
-        dropTarget,
-      });
       moveComponent(copy.root, droppedId, dropTarget);
     } else {
       moveComponentToDifferentParent(
@@ -114,10 +111,10 @@ export const useOnDrop = () => {
     }
   }
   function handleRootDrop(
-    copy: any,
-    droppedId: any,
-    activeComponent: any,
-    dropTarget: any
+    copy: EditorTree,
+    droppedId: string,
+    activeComponent: Component | null,
+    dropTarget: DropTarget
   ) {
     removeComponent(copy.root, droppedId);
     const newSelectedId = addComponent(
