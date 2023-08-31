@@ -78,7 +78,7 @@ export const Shell = ({
   const { undo, redo, pastStates, futureStates } = useTemporalStore(
     (state) => state
   );
-  // console.log({ pastStates, futureStates });
+
   const router = useRouter();
   const projectId = router.query.id as string;
   const currentPageId = router.query.page as string;
@@ -109,7 +109,9 @@ export const Shell = ({
               <Link href="/">
                 <Logo />
               </Link>
-              {navbarType === "editor" && <ToggleNavbarButton />}
+              {navbarType === "editor" && !isPreviewMode && (
+                <ToggleNavbarButton />
+              )}
             </Flex>
             {navbarType === "editor" && (
               <>

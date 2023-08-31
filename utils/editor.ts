@@ -30,6 +30,8 @@ export type Row = {
 
 export type EditorTree = {
   root: Component;
+  name?: string;
+  timestamp?: number;
 };
 
 export type DropTarget = {

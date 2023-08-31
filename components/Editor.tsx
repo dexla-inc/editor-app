@@ -94,7 +94,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
     isPreviewMode,
   ]);
 
-  const copySelectedCompnent = useCallback(() => {
+  const copySelectedComponent = useCallback(() => {
     if (!isPreviewMode && selectedComponentId) {
       setCopiedComponent(
         getComponentById(editorTree.root, selectedComponentId!)!
@@ -104,11 +104,11 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
   const cutSelectedComponent = useCallback(() => {
     if (!isPreviewMode && selectedComponentId) {
-      copySelectedCompnent();
+      copySelectedComponent();
       deleteComponent();
     }
   }, [
-    copySelectedCompnent,
+    copySelectedComponent,
     deleteComponent,
     isPreviewMode,
     selectedComponentId,
@@ -135,7 +135,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   useHotkeys([
     ["backspace", deleteComponent],
     ["delete", deleteComponent],
-    ["mod+C", copySelectedCompnent],
+    ["mod+C", copySelectedComponent],
     ["mod+V", pasteCopiedComponent],
     ["mod+X", cutSelectedComponent],
     [
@@ -177,7 +177,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
       },
       { preventDefault: false },
     ],
-    ["mod+C", copySelectedCompnent, { preventDefault: false }],
+    ["mod+C", copySelectedComponent, { preventDefault: false }],
     ["mod+X", cutSelectedComponent, { preventDefault: false }],
     [
       "mod+V",
@@ -304,11 +304,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
     if (stream) {
       try {
         const json = TOML.parse(stream);
-        /* const tree = getEditorTreeFromPageStructure(
-          json as { rows: Row[] },
-          editorTheme,
-          pages
-        ); */
         const tree = getEditorTreeFromTemplateData(
           json as any,
           editorTheme,
