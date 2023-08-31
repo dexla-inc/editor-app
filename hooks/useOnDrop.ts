@@ -34,12 +34,14 @@ export const useOnDrop = () => {
 
   const onDrop = useCallback(
     (_droppedId: string, dropTarget: DropTarget) => {
+      let action = "";
       const droppedId = parseId(_droppedId ?? componentToAdd?.id);
       dropTarget.id = parseId(dropTarget.id);
       const copy = cloneDeep(editorTree);
       const activeComponent = getComponentById(copy.root, droppedId);
       const targetComponent = getComponentById(copy.root, dropTarget.id);
       if (droppedId && componentToAdd) {
+        action = "Added";
         handleComponentAddition(
           copy,
           dropTarget,
@@ -47,11 +49,13 @@ export const useOnDrop = () => {
           componentToAdd
         );
       } else if (dropTarget.id !== "root") {
+        action = "Moved";
         handleReorderingOrMoving(copy, droppedId, targetComponent, dropTarget);
       } else {
+        action = "Moved";
         handleRootDrop(copy, droppedId, activeComponent, dropTarget);
       }
-      setEditorTree(copy);
+      setEditorTree(copy, { action: `${action} ${activeComponent?.name}` });
     },
     [
       componentToAdd,

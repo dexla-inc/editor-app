@@ -9,7 +9,7 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
   const diffInSeconds = Math.floor((now - timestamp) / 1000);
 
   if (diffInSeconds < 60) {
-    return `${diffInSeconds} second${diffInSeconds !== 1 ? "s" : ""} ago`;
+    return `a few seconds ago`;
   } else if (diffInSeconds < 3600) {
     const minutes = Math.floor(diffInSeconds / 60);
     return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
@@ -22,15 +22,24 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
 export const ChangeHistoryPopover: FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const changeHistory = useEditorStore((state) => state.changeHistory);
-  const currentChangeHistoryRevision = useEditorStore(
-    (state) => state.currentChangeHistoryRevision
-  );
-  const { pastStates } = useTemporalStore((state) => state);
+  const currentState = useEditorStore((state) => state);
+  const { changeHistory, pastStates } = useTemporalStore((state) => ({
+    changeHistory: [
+      ...state.pastStates,
+      currentState,
+      ...state.futureStates,
+    ].reduce((acc, { tree }, index) => {
+      return index === 0
+        ? acc
+        : acc.concat({
+            name: tree?.name,
+            timestamp: tree?.timestamp,
+          });
+    }, [] as Array<{ name?: string; timestamp?: number }>),
+    pastStates: state.pastStates,
+  }));
   const [opened, { close, open }] = useDisclosure(true);
   const theme = useMantineTheme();
-
-  console.log({ pastStates });
 
   return (
     <Popover
@@ -59,17 +68,18 @@ export const ChangeHistoryPopover: FC<{ children: React.ReactNode }> = ({
           {changeHistory
             .map((item, index) => {
               const color =
-                currentChangeHistoryRevision === index
+                pastStates.length - 1 === index
                   ? theme.colors.blue[4]
                   : theme.colors.dark[9];
               return (
                 <li key={index}>
                   <Text component="span" size="sm" color={color}>
-                    {item}
+                    {item.name}
                   </Text>
                   <Text component="span" size="xs" color={color}>
                     {" "}
-                    (a few seconds ago)
+                    ({convertTimestampToTimeTaken(item.timestamp || Date.now())}
+                    )
                   </Text>
                 </li>
               );

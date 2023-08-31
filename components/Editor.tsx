@@ -221,7 +221,10 @@ export const Editor = ({ projectId, pageId }: Props) => {
       const page = await getPage(projectId, pageId);
       if (page.pageState) {
         const decodedSchema = decodeSchema(page.pageState);
-        setEditorTree(JSON.parse(decodedSchema), { onLoad: true });
+        setEditorTree(JSON.parse(decodedSchema), {
+          onLoad: true,
+          action: "Initial State",
+        });
         setIsLoading(false);
       } else {
         startLoading({
@@ -310,7 +313,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
           pages
         );
 
-        setEditorTree(tree);
+        setEditorTree(tree, { action: "Test 2" });
       } catch (error) {
         // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
         // console.log({ error });
