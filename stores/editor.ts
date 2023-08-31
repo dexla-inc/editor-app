@@ -69,6 +69,7 @@ export type EditorState = {
   currentTreeComponentsStates?: {
     [key: string]: string;
   };
+  copiedAction?: Action[];
   setPickingComponentToBindTo: (
     pickingComponentToBindTo?: ComponentToBind
   ) => void;
@@ -111,6 +112,8 @@ export type EditorState = {
   setIsSaving: (isSaving: boolean) => void;
   setPreviewMode: (value: boolean) => void;
   setIsNavBarVisible: () => void;
+  setCopiedAction: (copiedAction?: Action[]) => void;
+  // pasteAction: (componentId: string) => void;
 };
 
 const debouncedUpdatePageState = debounce(updatePageState, 2000);
@@ -248,6 +251,7 @@ export const useEditorStore = create<EditorState>()(
       setPreviewMode: (value) => set({ isPreviewMode: value }),
       setIsNavBarVisible: () =>
         set((state) => ({ isNavBarVisible: !state.isNavBarVisible })),
+      setCopiedAction: (copiedAction) => set({ copiedAction }),
     }),
     {
       partialize: (state) => {

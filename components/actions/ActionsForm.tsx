@@ -19,6 +19,9 @@ export const ActionsForm = ({ sequentialTo }: Props) => {
   const updateTreeComponentActions = useEditorStore(
     (state) => state.updateTreeComponentActions
   );
+
+  const setCopiedAction = useEditorStore((state) => state.setCopiedAction);
+
   const form = useForm({
     initialValues: {
       trigger: "",
@@ -28,6 +31,11 @@ export const ActionsForm = ({ sequentialTo }: Props) => {
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentName = component?.name;
+  const componentActions = component?.actions ?? [];
+
+  const copiedAction = useEditorStore((state) => state.copiedAction);
+
+  const isCopiedAction = !!copiedAction && !!copiedAction.length;
 
   if (!componentName) return null;
 
@@ -61,6 +69,14 @@ export const ActionsForm = ({ sequentialTo }: Props) => {
     );
 
     form.reset();
+  };
+
+  const pasteAction = (copiedAction: Action[]) => {
+    updateTreeComponentActions(
+      selectedComponentId!,
+      componentActions.concat(copiedAction)
+    );
+    setCopiedAction(undefined);
   };
 
   return (
@@ -101,6 +117,20 @@ export const ActionsForm = ({ sequentialTo }: Props) => {
           <Button size="xs" type="submit" mt="xs" variant="light">
             Add {isSequential ? `sequential action` : `action`}
           </Button>
+          {isCopiedAction &&
+            componentActions.every((action) =>
+              copiedAction.every((a) => a.id !== action.id)
+            ) && (
+              <Button
+                size="xs"
+                type="button"
+                variant="light"
+                color="pink"
+                onClick={() => pasteAction(copiedAction)}
+              >
+                Paste Action
+              </Button>
+            )}
         </Stack>
       </form>
     </Box>
