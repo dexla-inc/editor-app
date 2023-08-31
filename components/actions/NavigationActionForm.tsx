@@ -4,6 +4,8 @@ import { Action, NavigationAction } from "@/utils/actions";
 import { getComponentById } from "@/utils/editor";
 import { Button, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
+import { useEffect } from "react";
 
 type Props = {
   id: string;
@@ -21,11 +23,20 @@ export const NavigationActionForm = ({ id }: Props) => {
   );
   const pages = useEditorStore((state) => state.pages);
 
+  const setCopiedAction = useEditorStore((state) => state.setCopiedAction);
+
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentActions = component?.actions ?? [];
   const action: Action = componentActions.find(
     (a: Action) => a.id === id
   ) as Action;
+
+  const [copied, { open, close }] = useDisclosure(false);
+
+  const filteredComponentActions = componentActions.filter((a: Action) => {
+    return a.id === action.id || a.sequentialTo === action.id;
+  });
+
   const navigationAction = action.action as NavigationAction;
 
   const form = useForm({
@@ -74,6 +85,16 @@ export const NavigationActionForm = ({ id }: Props) => {
     }
   };
 
+  const copyAction = () => {
+    setCopiedAction(filteredComponentActions);
+    open();
+  };
+
+  useEffect(() => {
+    const timeout = setTimeout(() => copied && close(), 2000);
+    return () => clearTimeout(timeout);
+  });
+
   const removeAction = () => {
     updateTreeComponentActions(
       selectedComponentId!,
@@ -101,6 +122,15 @@ export const NavigationActionForm = ({ id }: Props) => {
         />
         <Button size="xs" type="submit">
           Save
+        </Button>
+        <Button
+          size="xs"
+          type="button"
+          variant="light"
+          color="pink"
+          onClick={copyAction}
+        >
+          {copied ? "Copied" : "Copy"}
         </Button>
         <Button
           size="xs"
