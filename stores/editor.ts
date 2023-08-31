@@ -153,6 +153,7 @@ export const useEditorStore = create<EditorState>()(
         setIframeWindow: (iframeWindow) => set({ iframeWindow }),
         setCurrentTargetId: (currentTargetId) => set({ currentTargetId }),
         isSaving: false,
+        // muda de posicao ou adicionar componente ou remove CRD de posicao
         setTree: (tree, options) => {
           console.log("setTree", { tree, options });
           set((state: EditorState) => {
@@ -164,18 +165,24 @@ export const useEditorStore = create<EditorState>()(
                 state.setIsSaving
               );
             }
+
             return {
-              tree,
-              ...(options?.action && {
-                changeHistory: state.changeHistory.concat(options.action),
-                currentChangeHistoryRevision: state.changeHistory.length,
-              }),
+              tree: {
+                ...tree,
+                ...(options?.action
+                  ? {
+                      name: options.action,
+                      timestamp: Date.now(),
+                    }
+                  : {}),
+              },
             };
           });
         },
         resetTree: () => {
           set({ tree: emptyEditorTree });
         },
+        // modificao em qualquer componente, tudo que é .props
         updateTreeComponent: (componentId, props, save = true) => {
           set((prev) => {
             const copy = cloneDeep(prev.tree);
@@ -196,6 +203,7 @@ export const useEditorStore = create<EditorState>()(
             };
           });
         },
+        // tudo que for fora de .props, para mudar .children[]
         updateTreeComponentChildren: (componentId, children) => {
           set((state) => {
             const copy = cloneDeep(state.tree);
@@ -212,6 +220,7 @@ export const useEditorStore = create<EditorState>()(
             };
           });
         },
+        // tudo que muda .actions
         updateTreeComponentActions: (componentId, actions) => {
           set((state) => {
             const copy = cloneDeep(state.tree);

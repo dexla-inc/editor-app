@@ -161,7 +161,7 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
             pages
           );
 
-          setEditorTree(tree);
+          setEditorTree(tree, { action: `Layout changed` });
         } catch (error) {
           // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
           // console.log({ error });
