@@ -69,6 +69,12 @@ export const useOnDrop = () => {
     componentToAdd: Component
   ) {
     if (!targetComponent?.blockDroppingChildrenInside) {
+      if (dropTarget.id === "root") {
+        dropTarget = {
+          ...dropTarget,
+          id: "content-wrapper",
+        };
+      }
       const newSelectedId = addComponent(copy.root, componentToAdd, dropTarget);
       setSelectedComponentId(newSelectedId);
       setComponentToAdd(undefined);
