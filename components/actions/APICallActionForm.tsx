@@ -103,7 +103,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentActions = component?.actions ?? [];
-  console.log(componentActions);
 
   const action: Action = componentActions.find(
     (a: Action) => a.id === id
