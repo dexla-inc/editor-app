@@ -103,6 +103,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentActions = component?.actions ?? [];
+  console.log(componentActions);
 
   const action: Action = componentActions.find(
     (a: Action) => a.id === id
@@ -141,7 +142,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
               },
             };
           }
-
           return action;
         })
       );
@@ -165,7 +165,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     updateTreeComponentActions(
       selectedComponentId!,
       componentActions.filter((a: Action) => {
-        return a.id !== action.id;
+        return a.id !== action.id && a.sequentialTo !== action.id;
       })
     );
   };

@@ -97,7 +97,7 @@ export const ChangeStateActionForm = ({ id }: Props) => {
     updateTreeComponentActions(
       selectedComponentId!,
       componentActions.filter((a: Action) => {
-        return a.id !== action.id;
+        return a.id !== action.id && a.sequentialTo !== action.id;
       })
     );
   };
