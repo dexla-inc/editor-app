@@ -22,7 +22,7 @@ import { useForm } from "@mantine/form";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
-import { KeyboardEvent, useEffect } from "react";
+import { KeyboardEvent, useEffect, useState } from "react";
 
 type ListItemProps = {
   component: Component;
@@ -41,6 +41,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     (state) => state.setSelectedComponentId
   );
   const [opened, { toggle, open }] = useDisclosure(false);
+  const [clickedManualToggle, setClickedManualToggle] = useState(false);
   const [editable, { toggle: toggleEdit, close: closeEdit }] =
     useDisclosure(false);
   const onDragStart = useOnDragStart();
@@ -77,12 +78,6 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     if (e.key === "Enter") closeEdit();
   };
 
-  useEffect(() => {
-    if (component.id === "content-wrapper") {
-      open();
-    }
-  }, [component.id, open]);
-
   const onDragEnter = useMemoizedDebounce(() => {
     const isAncestorOfSelectedComponent =
       component.id && selectedComponentId
@@ -94,14 +89,18 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
         : false;
 
     if (
-      component.id === selectedComponentId ||
-      isAncestorOfSelectedComponent ||
-      isCurrentTarget
+      (component.id === selectedComponentId ||
+        isAncestorOfSelectedComponent ||
+        isCurrentTarget) &&
+      !clickedManualToggle
     ) {
       open();
     }
   }, 200);
 
+  useEffect(() => {
+    setClickedManualToggle(false);
+  }, [selectedComponentId]);
   useEffect(onDragEnter, [onDragEnter]);
 
   const icon = structureMapper[component.name as string]?.icon;
@@ -164,6 +163,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
                 e.preventDefault();
                 e.stopPropagation();
                 toggle();
+                setClickedManualToggle(true);
               }}
               sx={{
                 visibility: canExpand ? "visible" : "hidden",
