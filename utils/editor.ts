@@ -30,8 +30,8 @@ export type Row = {
 
 export type EditorTree = {
   root: Component;
-  name?: string;
-  timestamp?: number;
+  name: string;
+  timestamp: number;
 };
 
 export type DropTarget = {
@@ -108,6 +108,8 @@ export const getEditorTreeFromPageStructure = (
   pages: PageResponse[]
 ) => {
   const editorTree: EditorTree = {
+    name: "Initial State",
+    timestamp: Date.now(),
     root: {
       ...emptyEditorTree.root,
       children: [
@@ -217,6 +219,8 @@ export const addRowsToExistingTree = (
 
   // Return a new editor tree with the combined children
   const editorTree: EditorTree = {
+    name: "Initial State",
+    timestamp: Date.now(),
     root: {
       ...existingTree.root,
       children: combinedChildren,

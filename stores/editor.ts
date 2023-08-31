@@ -20,7 +20,10 @@ import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
 
+const initialTimestamp = Date.now();
 export const emptyEditorTree = {
+  name: "Initial State",
+  timestamp: initialTimestamp,
   root: {
     id: "root",
     name: "Container",
@@ -116,8 +119,6 @@ export type EditorState = {
   setIsSaving: (isSaving: boolean) => void;
   setPreviewMode: (value: boolean) => void;
   setIsNavBarVisible: () => void;
-  changeHistory: string[];
-  currentChangeHistoryRevision: number;
   setCopiedAction: (copiedAction?: Action[]) => void;
   // pasteAction: (componentId: string) => void;
 };
@@ -130,7 +131,7 @@ export const useEditorStore = create<EditorState>()(
     temporal(
       (set) => ({
         changeHistory: ["Initial State"],
-        currentChangeHistoryRevision: 0,
+        currentChangeHistoryRevision: initialTimestamp,
         tree: emptyEditorTree,
         theme: defaultTheme,
         pages: [],
@@ -155,7 +156,6 @@ export const useEditorStore = create<EditorState>()(
         isSaving: false,
         // muda de posicao ou adicionar componente ou remove CRD de posicao
         setTree: (tree, options) => {
-          console.log("setTree", { tree, options });
           set((state: EditorState) => {
             if (!options?.onLoad) {
               debouncedUpdatePageState(
@@ -166,21 +166,23 @@ export const useEditorStore = create<EditorState>()(
               );
             }
 
+            const timestamp = Date.now();
+            console.log(options?.action);
             return {
               tree: {
                 ...tree,
-                ...(options?.action
-                  ? {
-                      name: options.action,
-                      timestamp: Date.now(),
-                    }
-                  : {}),
+                name: options?.action || "Generic move",
+                timestamp: Date.now(),
               },
+              currentChangeHistoryRevision: timestamp,
             };
           });
         },
         resetTree: () => {
-          set({ tree: emptyEditorTree });
+          const timestamp = Date.now();
+          set({
+            tree: { ...emptyEditorTree, timestamp },
+          });
         },
         // modificao em qualquer componente, tudo que é .props
         updateTreeComponent: (componentId, props, save = true) => {
@@ -283,8 +285,8 @@ export const useEditorStore = create<EditorState>()(
       }),
       {
         partialize: (state) => {
-          const { currentChangeHistoryRevision, tree } = state;
-          return { tree, currentChangeHistoryRevision };
+          const { tree } = state;
+          return { tree };
         },
         limit: 500,
         equality(currentState, pastState) {
