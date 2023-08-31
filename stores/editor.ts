@@ -123,7 +123,7 @@ export const useEditorStore = create<EditorState>()(
       theme: defaultTheme,
       pages: [],
       onMountActionsRan: [],
-      selectedComponentId: "root",
+      selectedComponentId: "content-wrapper",
       addOnMountActionsRan: (onMountAction) =>
         set((state) => ({
           ...state,
@@ -241,7 +241,7 @@ export const useEditorStore = create<EditorState>()(
       setComponentToAdd: (componentToAdd) => set({ componentToAdd }),
       setSelectedComponentId: (selectedComponentId) =>
         set({ selectedComponentId }),
-      clearSelection: () => set({ selectedComponentId: undefined }),
+      clearSelection: () => set({ selectedComponentId: "content-wrapper" }),
       setIsSaving: (isSaving) => set({ isSaving }),
       isPreviewMode: false,
       isNavBarVisible: true,
