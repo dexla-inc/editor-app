@@ -3,8 +3,6 @@ import { forwardRef } from "react";
 
 type SavingDisplayProps = {
   isSaving: boolean;
-  onMouseEnter?: any;
-  onMouseLeave?: any;
 };
 
 const isSavingDisplay = {
@@ -35,6 +33,7 @@ export const SavingDisplay = forwardRef<HTMLDivElement, SavingDisplayProps>(
           padding: 4,
           height: 34,
           borderRadius: 4,
+          cursor: "pointer",
         }}
       >
         <Text color={isSavingDisplay[saving].color}>
