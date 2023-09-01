@@ -41,7 +41,7 @@ export const useOnDrop = () => {
       const activeComponent = getComponentById(copy.root, droppedId);
       const targetComponent = getComponentById(copy.root, dropTarget.id);
       if (droppedId && componentToAdd) {
-        action = "Added";
+        action = `Added ${componentToAdd.name}`;
         handleComponentAddition(
           copy,
           dropTarget,
@@ -49,13 +49,13 @@ export const useOnDrop = () => {
           componentToAdd
         );
       } else if (dropTarget.id !== "root") {
-        action = "Moved";
+        action = `Moved ${activeComponent?.name}`;
         handleReorderingOrMoving(copy, droppedId, targetComponent, dropTarget);
       } else {
-        action = "Moved";
+        action = `Moved ${activeComponent?.name}`;
         handleRootDrop(copy, droppedId, activeComponent, dropTarget);
       }
-      setEditorTree(copy, { action: `${action} ${activeComponent?.name}` });
+      setEditorTree(copy, { action });
     },
     [
       componentToAdd,
