@@ -1,6 +1,6 @@
 import { SavingDisplay } from "@/components/SavingDisplay";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
-import { Popover, ScrollArea, Text, useMantineTheme } from "@mantine/core";
+import { Popover, Text, useMantineTheme } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import React, { FC } from "react";
 
@@ -19,9 +19,7 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
   }
 };
 
-export const ChangeHistoryPopover: FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const ChangeHistoryPopover: FC = () => {
   const currentState = useEditorStore((state) => state);
   const { changeHistory, pastStates } = useTemporalStore((state) => ({
     changeHistory: [
@@ -42,38 +40,42 @@ export const ChangeHistoryPopover: FC<{ children: React.ReactNode }> = ({
   const theme = useMantineTheme();
 
   return (
-    <Popover
-      width={200}
-      position="bottom"
-      withArrow
-      shadow="md"
-      radius="md"
-      opened={opened}
-    >
-      <Popover.Target>
-        <SavingDisplay
-          isSaving={false}
-          onMouseEnter={open}
-          onMouseLeave={close}
-        />
-      </Popover.Target>
-      <Popover.Dropdown
-        sx={{
-          pointerEvents: "none",
-          padding: "10px 5px",
-          width: "auto!important",
-        }}
+    <div onMouseEnter={open} onMouseLeave={close}>
+      <Popover
+        width={200}
+        position="bottom"
+        withArrow
+        shadow="md"
+        radius="md"
+        opened={opened}
+        withinPortal
       >
-        <ScrollArea.Autosize mah={200} mx="auto">
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+        <Popover.Target>
+          <SavingDisplay isSaving={currentState.isSaving} />
+        </Popover.Target>
+        <Popover.Dropdown
+          sx={{
+            padding: "10px 5px",
+            width: "auto!important",
+          }}
+        >
+          <ul
+            style={{
+              listStyle: "none",
+              padding: 0,
+              margin: 0,
+              maxHeight: "200px",
+              overflowY: "auto",
+            }}
+          >
             {changeHistory
               .map((item: any, index: number) => {
                 const color =
                   pastStates.length - 1 === index
-                    ? theme.colors.blue[4]
+                    ? "indigo"
                     : theme.colors.dark[9];
                 return (
-                  <li key={index}>
+                  <li key={index} onClick={(e) => e.stopPropagation()}>
                     <Text component="span" size="sm" color={color}>
                       {item.name}
                     </Text>
@@ -90,8 +92,8 @@ export const ChangeHistoryPopover: FC<{ children: React.ReactNode }> = ({
               })
               .reverse()}
           </ul>
-        </ScrollArea.Autosize>
-      </Popover.Dropdown>
-    </Popover>
+        </Popover.Dropdown>
+      </Popover>
+    </div>
   );
 };
