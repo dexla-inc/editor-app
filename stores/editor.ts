@@ -7,6 +7,7 @@ import { encodeSchema } from "@/utils/compression";
 import {
   Component,
   EditorTree,
+  getComponentById,
   updateTreeComponent,
   updateTreeComponentActions,
   updateTreeComponentChildren,
@@ -130,8 +131,6 @@ export const useEditorStore = create<EditorState>()(
   devtools(
     temporal(
       (set) => ({
-        changeHistory: ["Initial State"],
-        currentChangeHistoryRevision: initialTimestamp,
         tree: emptyEditorTree,
         theme: defaultTheme,
         pages: [],
@@ -166,15 +165,12 @@ export const useEditorStore = create<EditorState>()(
               );
             }
 
-            const timestamp = Date.now();
-            console.log(options?.action);
             return {
               tree: {
                 ...tree,
                 name: options?.action || "Generic move",
                 timestamp: Date.now(),
               },
-              currentChangeHistoryRevision: timestamp,
             };
           });
         },
@@ -184,8 +180,9 @@ export const useEditorStore = create<EditorState>()(
             tree: { ...emptyEditorTree, timestamp },
           });
         },
-        // modificao em qualquer componente, tudo que é .props
+        // any props change
         updateTreeComponent: (componentId, props, save = true) => {
+          console.log("props");
           set((prev) => {
             const copy = cloneDeep(prev.tree);
             const currentState =
@@ -200,12 +197,18 @@ export const useEditorStore = create<EditorState>()(
               );
             }
 
+            const component = getComponentById(copy.root, componentId);
+
             return {
-              tree: copy,
+              tree: {
+                ...copy,
+                name: `Edited ${component?.name}`,
+                timestamp: Date.now(),
+              },
             };
           });
         },
-        // tudo que for fora de .props, para mudar .children[]
+        // anything out of .props that changes .children[]
         updateTreeComponentChildren: (componentId, children) => {
           set((state) => {
             const copy = cloneDeep(state.tree);
@@ -217,12 +220,18 @@ export const useEditorStore = create<EditorState>()(
               state.setIsSaving
             );
 
+            const component = getComponentById(copy.root, componentId);
+
             return {
-              tree: copy,
+              tree: {
+                ...copy,
+                name: `Edited ${component?.name}`,
+                timestamp: Date.now(),
+              },
             };
           });
         },
-        // tudo que muda .actions
+        // any action change
         updateTreeComponentActions: (componentId, actions) => {
           set((state) => {
             const copy = cloneDeep(state.tree);
@@ -234,8 +243,14 @@ export const useEditorStore = create<EditorState>()(
               state.setIsSaving
             );
 
+            const component = getComponentById(copy.root, componentId);
+
             return {
-              tree: copy,
+              tree: {
+                ...copy,
+                name: `Edited ${component?.name}`,
+                timestamp: Date.now(),
+              },
             };
           });
         },

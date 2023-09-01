@@ -82,8 +82,9 @@ export const Editor = ({ projectId, pageId }: Props) => {
       !isPreviewMode
     ) {
       const copy = cloneDeep(editorTree);
+      const component = getComponentById(copy.root, selectedComponentId);
       removeComponent(copy.root, selectedComponentId as string);
-      setEditorTree(copy, { action: `Removed ${selectedComponentId}` });
+      setEditorTree(copy, { action: `Removed ${component?.name}` });
       clearSelection();
     }
   }, [
@@ -313,7 +314,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
           pages
         );
 
-        setEditorTree(tree, { action: "Test 2" });
+        setEditorTree(tree);
       } catch (error) {
         // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
         // console.log({ error });
