@@ -19,9 +19,7 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
   }
 };
 
-export const ChangeHistoryPopover: FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const ChangeHistoryPopover: FC = () => {
   const currentState = useEditorStore((state) => state);
   const { changeHistory, pastStates } = useTemporalStore((state) => ({
     changeHistory: [
@@ -53,7 +51,7 @@ export const ChangeHistoryPopover: FC<{ children: React.ReactNode }> = ({
         withinPortal
       >
         <Popover.Target>
-          <SavingDisplay isSaving={false} />
+          <SavingDisplay isSaving={currentState.isSaving} />
         </Popover.Target>
         <Popover.Dropdown
           sx={{
