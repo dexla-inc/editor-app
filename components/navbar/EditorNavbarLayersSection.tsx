@@ -75,7 +75,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   }, 500);
 
   const handleKeyPress = (e: KeyboardEvent) => {
-    if (e.key === "Enter") closeEdit();
+    if (e.key === "Enter" || e.key === "Escape") closeEdit();
   };
 
   const onDragEnter = useMemoizedDebounce(() => {

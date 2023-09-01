@@ -1,8 +1,8 @@
-import { useDisclosure } from "@mantine/hooks";
-import { Popover, Text, useMantineTheme } from "@mantine/core";
-import React, { FC } from "react";
 import { SavingDisplay } from "@/components/SavingDisplay";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
+import { Popover, ScrollArea, Text, useMantineTheme } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import React, { FC } from "react";
 
 const convertTimestampToTimeTaken = (timestamp: number) => {
   const now = Date.now();
@@ -64,28 +64,33 @@ export const ChangeHistoryPopover: FC<{ children: React.ReactNode }> = ({
           width: "auto!important",
         }}
       >
-        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-          {changeHistory
-            .map((item, index) => {
-              const color =
-                pastStates.length - 1 === index
-                  ? theme.colors.blue[4]
-                  : theme.colors.dark[9];
-              return (
-                <li key={index}>
-                  <Text component="span" size="sm" color={color}>
-                    {item.name}
-                  </Text>
-                  <Text component="span" size="xs" color={color}>
-                    {" "}
-                    ({convertTimestampToTimeTaken(item.timestamp || Date.now())}
-                    )
-                  </Text>
-                </li>
-              );
-            })
-            .reverse()}
-        </ul>
+        <ScrollArea.Autosize mah={200} mx="auto">
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {changeHistory
+              .map((item: any, index: number) => {
+                const color =
+                  pastStates.length - 1 === index
+                    ? theme.colors.blue[4]
+                    : theme.colors.dark[9];
+                return (
+                  <li key={index}>
+                    <Text component="span" size="sm" color={color}>
+                      {item.name}
+                    </Text>
+                    <Text component="span" size="xs" color={color}>
+                      {" "}
+                      (
+                      {convertTimestampToTimeTaken(
+                        item.timestamp || Date.now()
+                      )}
+                      )
+                    </Text>
+                  </li>
+                );
+              })
+              .reverse()}
+          </ul>
+        </ScrollArea.Autosize>
       </Popover.Dropdown>
     </Popover>
   );
