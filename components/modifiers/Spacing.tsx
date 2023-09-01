@@ -112,6 +112,7 @@ export const Modifier = () => {
                 });
                 debouncedTreeUpdate(selectedComponentId as string, {
                   style: {
+                    padding: value,
                     paddingTop: value,
                     paddingBottom: value,
                     paddingLeft: value,
@@ -221,6 +222,7 @@ export const Modifier = () => {
                 });
                 debouncedTreeUpdate(selectedComponentId as string, {
                   style: {
+                    margin: value,
                     marginTop: value,
                     marginBottom: value,
                     marginLeft: value,

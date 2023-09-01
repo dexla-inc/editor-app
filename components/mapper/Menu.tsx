@@ -19,7 +19,7 @@ export const Menu = ({ renderTree, component, ...props }: Props) => {
     //     : children}
     // </MantineMenu>
 
-    <MantineMenu width="100%" withArrow {...props}>
+    <MantineMenu width="100%" withArrow {...props} {...componentProps}>
       <MantineMenu.Target>
         <NavigationAvatarFooter
           firstName="Tom"
