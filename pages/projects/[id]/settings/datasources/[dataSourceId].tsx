@@ -1,5 +1,5 @@
 import { SuccessAlert } from "@/components/Alerts";
-import { Shell } from "@/components/AppShell";
+import { DashboardShell } from "@/components/DashboardShell";
 import {
   AuthenticationStepParams,
   ExampleResponseDropdown,
@@ -22,6 +22,8 @@ import {
 } from "@/components/datasources/SwaggerURLInput";
 import { TestUserLogin } from "@/components/datasources/TestUserLogin";
 import TextInputComponent from "@/components/datasources/TextInputComponent";
+import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
+import { SettingsTabs } from "@/components/settings/SettingsTabs";
 import { updateDataSource } from "@/requests/datasources/mutations";
 import {
   getDataSource,
@@ -44,6 +46,7 @@ import {
   Group,
   Select,
   Stack,
+  Tabs,
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -59,8 +62,12 @@ export default function Settings() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
-  const projectId = router.query.id as string;
-  const dataSourceId = router.query.dataSourceId as string;
+  const { id, name, dataSourceId } = router.query as {
+    id: string;
+    name: string;
+    dataSourceId: string;
+  };
+
   const [dataSource, setDataSource] = useState<DataSourceResponse>(
     {} as DataSourceResponse
   );
@@ -114,7 +121,7 @@ export default function Settings() {
 
       const reFetch = swaggerUrl !== values.swaggerUrl;
 
-      await updateDataSource(projectId, dataSourceId, reFetch, values);
+      await updateDataSource(id, dataSourceId, reFetch, values);
 
       stopLoading({
         id: "updating",
@@ -167,7 +174,7 @@ export default function Settings() {
       } = values;
 
       await patchDataSourceWithParams(
-        projectId,
+        id,
         dataSource.id,
         loginEndpointId as string,
         "ACCESS",
@@ -176,7 +183,7 @@ export default function Settings() {
       );
 
       await patchDataSourceWithParams(
-        projectId,
+        id,
         dataSource.id,
         refreshEndpointId as string,
         "REFRESH",
@@ -185,7 +192,7 @@ export default function Settings() {
 
       if (userEndpointId) {
         await patchDataSourceWithParams(
-          projectId,
+          id,
           dataSource.id,
           userEndpointId,
           "USER"
@@ -221,7 +228,7 @@ export default function Settings() {
 
       apiForm.validate();
 
-      const result = await getSwagger(projectId, dataSourceId, swaggerUrl);
+      const result = await getSwagger(id, dataSourceId, swaggerUrl);
 
       setDataSource(result);
 
@@ -262,19 +269,16 @@ export default function Settings() {
 
   useEffect(() => {
     (async () => {
-      const result = await getDataSource(projectId, dataSourceId);
+      const result = await getDataSource(id, dataSourceId);
       apiForm.setValues(result);
       setDataSource(result);
       setSwaggerUrl(result.swaggerUrl);
       setAuthenticationScheme(result.authenticationScheme);
 
-      const endpointsResult = await getDataSourceEndpoints(
-        projectId,
-        dataSourceId
-      );
+      const endpointsResult = await getDataSourceEndpoints(id, dataSourceId);
       setEndpoints(endpointsResult.results);
     })();
-  }, [dataSourceId, projectId]);
+  }, [dataSourceId, id]);
 
   useEffect(() => {
     if (endpoints) {
@@ -309,274 +313,289 @@ export default function Settings() {
   }, [endpoints]);
 
   return (
-    <Shell navbarType="project" user={user}>
-      <Container py="xl">
-        <form onSubmit={apiForm.onSubmit(onApiSubmit)}>
-          <Stack>
-            <Title>Data Source Details</Title>
-            <Title order={3}>API Information</Title>
+    <DashboardShell user={user}>
+      <SettingsTabHeader name={name} />
+      <Tabs defaultValue="datasources" py="xs">
+        <SettingsTabs />
 
-            {swaggerUrl && (
-              <Group position="apart">
-                <Button
-                  onClick={refetchSwagger}
-                  variant="light"
-                  leftIcon={<IconRefresh size={ICON_SIZE} />}
-                >
-                  Refetch Swagger
-                </Button>
-                <EndpointsButton
-                  projectId={projectId}
-                  startLoading={startLoading}
-                  stopLoading={stopLoading}
-                  isLoading={isLoading}
-                  text="Go To Editor"
-                ></EndpointsButton>
-              </Group>
-            )}
-            {swaggerRefetched && (
-              <>
-                <SuccessAlert
-                  title="Successfully Updated"
-                  text="Your API has been successfully. The editor will now show your updated API and API endpoints."
-                ></SuccessAlert>
-              </>
-            )}
-            <SwaggerURLInput
-              isLoading={isLoading}
-              swaggerUrl={swaggerUrl}
-              setSwaggerUrl={setSwaggerUrl}
-            />
-            <BasicDetailsInputs
-              form={apiForm}
-              authenticationScheme={authenticationScheme}
-              setAuthenticationScheme={setAuthenticationScheme}
-            />
-            <Flex>
-              <Button type="submit">Save</Button>
-            </Flex>
-            <Divider></Divider>
-          </Stack>
-        </form>
-        {authenticationScheme === "BEARER" && (
-          <form onSubmit={apiAuthForm.onSubmit(onApiAuthSubmit)}>
-            <Stack py="xl">
-              <Title order={3}>Bearer Token Configuration</Title>
-              {swaggerUrl ? (
-                <>
-                  <Select
-                    label="Login Endpoint (POST)"
-                    description="The endpoint used to login to your API"
-                    placeholder="/v1/login"
-                    searchable
-                    clearable
-                    required
-                    data={postEndpoints ?? []}
-                    {...apiAuthForm.getInputProps("loginEndpointId")}
-                    onChange={(value) => {
-                      apiAuthForm.setFieldValue(
-                        "loginEndpointId",
-                        value as string
-                      );
-                      setRequestBodyObject(
-                        postEndpoints,
-                        setLoginRequestBody,
-                        value as string
-                      );
-                    }}
-                  />
-                  <Select
-                    label="Refresh Endpoint (POST)"
-                    description="The endpoint used to refresh your API token"
-                    placeholder="/v1/login/refresh"
-                    searchable
-                    clearable
-                    required
-                    data={postEndpoints ?? []}
-                    {...apiAuthForm.getInputProps("refreshEndpointId")}
-                    onChange={(value) => {
-                      apiAuthForm.setFieldValue(
-                        "refreshEndpointId",
-                        value as string
-                      );
-                    }}
-                  />
-                  <Select
-                    label="User Endpoint (GET)"
-                    description="The endpoint used to user information"
-                    placeholder="/v1/user"
-                    searchable
-                    clearable
-                    data={getEndpoints ?? []}
-                    {...apiAuthForm.getInputProps("userEndpointId")}
-                    onChange={(value) => {
-                      apiAuthForm.setFieldValue(
-                        "userEndpointId",
-                        value as string
-                      );
-                    }}
-                  />
-                </>
-              ) : (
-                <>
-                  <TextInputComponent
-                    label="Login Endpoint (POST)"
-                    description="The endpoint used to login to your API"
-                    placeholder="/v1/login"
-                    form={apiAuthForm}
-                    propertyName="loginEndpointId"
-                    required={true}
-                  />
-                  <TextInputComponent
-                    label="Refresh Endpoint (POST)"
-                    description="The endpoint used to refresh your API token"
-                    placeholder="/v1/login/refresh"
-                    form={apiAuthForm}
-                    propertyName="refreshEndpointId"
-                    required={true}
-                  />
-                  <TextInputComponent
-                    label="User Endpoint (GET)"
-                    description="The endpoint used to user information"
-                    placeholder="/v1/user"
-                    form={apiAuthForm}
-                    propertyName="userEndpointId"
-                    required={true}
-                  />
-                </>
-              )}
-              {dataSource?.swaggerUrl && loginEndpointId ? (
-                <Select
-                  label="Access token property"
-                  description="The property name of the access token in the response"
-                  placeholder="access"
-                  searchable
-                  clearable
-                  nothingFound="Not found. Update your swagger to include the response property"
-                  data={exampleResponse ?? []}
-                  {...apiAuthForm.getInputProps("accessToken")}
-                  onChange={(value) => {
-                    apiAuthForm.setFieldValue("accessToken", value as string);
-                  }}
-                  required
-                />
-              ) : (
-                <TextInputComponent
-                  label="Access token property"
-                  description="The property name of the access token in the response"
-                  placeholder="access"
-                  form={apiAuthForm}
-                  propertyName="accessToken"
-                  required={!!loginEndpointId}
-                />
-              )}
-              {dataSource?.swaggerUrl && refreshEndpointId ? (
-                <Select
-                  label="Refresh token property"
-                  description="The property name of the refresh token in the response"
-                  placeholder="refresh"
-                  searchable
-                  clearable
-                  nothingFound="Not found. Update your swagger to include the response property"
-                  data={exampleResponse ?? []}
-                  {...apiAuthForm.getInputProps("refreshToken")}
-                  onChange={(value) => {
-                    apiAuthForm.setFieldValue("refreshToken", value as string);
-                  }}
-                  required
-                />
-              ) : (
-                <TextInputComponent
-                  label="Refresh token property"
-                  description="The property name of the refresh token in the response"
-                  placeholder="refresh"
-                  form={apiAuthForm}
-                  propertyName="refreshToken"
-                  required={!!refreshEndpointId}
-                />
-              )}
-              {dataSource?.swaggerUrl && loginEndpointId ? (
-                <Select
-                  label="Access token expiry property"
-                  description="The property name of the expiry of the access token in the response"
-                  placeholder="expires_in"
-                  searchable
-                  clearable
-                  nothingFound={
-                    exampleResponse
-                      ? "Not found. Update your swagger to include the response property"
-                      : "No options"
-                  }
-                  data={exampleResponse ?? []}
-                  {...apiAuthForm.getInputProps("expiryProperty")}
-                  onChange={(value) => {
-                    apiAuthForm.setFieldValue(
-                      "expiryProperty",
-                      value as string
-                    );
-                  }}
-                  required
-                />
-              ) : (
-                <TextInputComponent
-                  label="Access token expiry property"
-                  description="The property name of the expiry of the access token in the response"
-                  placeholder="expires_in"
-                  form={apiAuthForm}
-                  propertyName="expiryProperty"
-                  required={!!loginEndpointId}
-                />
-              )}
-              <Flex>
-                <Button type="submit">Save</Button>
-              </Flex>
-              <Divider></Divider>
-              {loginRequestBody && loginRequestBody.length > 0 && (
-                <TestUserLogin
-                  projectId={projectId}
-                  requestBody={loginRequestBody}
-                  url={
-                    dataSource?.baseUrl + "/" + loginEndpointObj?.relativeUrl
-                  }
-                  dataSourceId={dataSource.id}
-                ></TestUserLogin>
-              )}
+        <Tabs.Panel value="datasources" pt="xs">
+          <Container py="xl">
+            <form onSubmit={apiForm.onSubmit(onApiSubmit)}>
               <Stack>
-                {dataSource?.changedEndpoints && (
-                  <Title order={6}>Changed Endpoints</Title>
-                )}
-                <Title order={4} pt="lg">
-                  API Endpoints
-                </Title>
-                {dataSource?.changedEndpoints?.map((endpoint) => {
-                  return (
-                    <DataSourceEndpoint
-                      key={endpoint.id}
-                      projectId={projectId}
-                      endpoint={endpoint}
-                      location="datasource"
-                    ></DataSourceEndpoint>
-                  );
-                })}
+                <Title>Data Source Details</Title>
+                <Title order={3}>API Information</Title>
 
-                {dataSource?.deletedEndpoints && (
-                  <Title order={6}>Deleted Endpoints</Title>
+                {swaggerUrl && (
+                  <Group position="apart">
+                    <Button
+                      onClick={refetchSwagger}
+                      variant="light"
+                      leftIcon={<IconRefresh size={ICON_SIZE} />}
+                    >
+                      Refetch Swagger
+                    </Button>
+                    <EndpointsButton
+                      projectId={id}
+                      startLoading={startLoading}
+                      stopLoading={stopLoading}
+                      isLoading={isLoading}
+                      text="Go To Editor"
+                    ></EndpointsButton>
+                  </Group>
                 )}
-                {dataSource?.deletedEndpoints?.map((endpoint) => {
-                  return (
-                    <DataSourceEndpoint
-                      key={endpoint.id}
-                      projectId={projectId}
-                      endpoint={endpoint}
-                      location="datasource"
-                    ></DataSourceEndpoint>
-                  );
-                })}
+                {swaggerRefetched && (
+                  <>
+                    <SuccessAlert
+                      title="Successfully Updated"
+                      text="Your API has been successfully. The editor will now show your updated API and API endpoints."
+                    ></SuccessAlert>
+                  </>
+                )}
+                <SwaggerURLInput
+                  isLoading={isLoading}
+                  swaggerUrl={swaggerUrl}
+                  setSwaggerUrl={setSwaggerUrl}
+                />
+                <BasicDetailsInputs
+                  form={apiForm}
+                  authenticationScheme={authenticationScheme}
+                  setAuthenticationScheme={setAuthenticationScheme}
+                />
+                <Flex>
+                  <Button type="submit">Save</Button>
+                </Flex>
+                <Divider></Divider>
               </Stack>
-            </Stack>
-          </form>
-        )}
-      </Container>
-    </Shell>
+            </form>
+            {authenticationScheme === "BEARER" && (
+              <form onSubmit={apiAuthForm.onSubmit(onApiAuthSubmit)}>
+                <Stack py="xl">
+                  <Title order={3}>Bearer Token Configuration</Title>
+                  {swaggerUrl ? (
+                    <>
+                      <Select
+                        label="Login Endpoint (POST)"
+                        description="The endpoint used to login to your API"
+                        placeholder="/v1/login"
+                        searchable
+                        clearable
+                        required
+                        data={postEndpoints ?? []}
+                        {...apiAuthForm.getInputProps("loginEndpointId")}
+                        onChange={(value) => {
+                          apiAuthForm.setFieldValue(
+                            "loginEndpointId",
+                            value as string
+                          );
+                          setRequestBodyObject(
+                            postEndpoints,
+                            setLoginRequestBody,
+                            value as string
+                          );
+                        }}
+                      />
+                      <Select
+                        label="Refresh Endpoint (POST)"
+                        description="The endpoint used to refresh your API token"
+                        placeholder="/v1/login/refresh"
+                        searchable
+                        clearable
+                        required
+                        data={postEndpoints ?? []}
+                        {...apiAuthForm.getInputProps("refreshEndpointId")}
+                        onChange={(value) => {
+                          apiAuthForm.setFieldValue(
+                            "refreshEndpointId",
+                            value as string
+                          );
+                        }}
+                      />
+                      <Select
+                        label="User Endpoint (GET)"
+                        description="The endpoint used to user information"
+                        placeholder="/v1/user"
+                        searchable
+                        clearable
+                        data={getEndpoints ?? []}
+                        {...apiAuthForm.getInputProps("userEndpointId")}
+                        onChange={(value) => {
+                          apiAuthForm.setFieldValue(
+                            "userEndpointId",
+                            value as string
+                          );
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <TextInputComponent
+                        label="Login Endpoint (POST)"
+                        description="The endpoint used to login to your API"
+                        placeholder="/v1/login"
+                        form={apiAuthForm}
+                        propertyName="loginEndpointId"
+                        required={true}
+                      />
+                      <TextInputComponent
+                        label="Refresh Endpoint (POST)"
+                        description="The endpoint used to refresh your API token"
+                        placeholder="/v1/login/refresh"
+                        form={apiAuthForm}
+                        propertyName="refreshEndpointId"
+                        required={true}
+                      />
+                      <TextInputComponent
+                        label="User Endpoint (GET)"
+                        description="The endpoint used to user information"
+                        placeholder="/v1/user"
+                        form={apiAuthForm}
+                        propertyName="userEndpointId"
+                        required={true}
+                      />
+                    </>
+                  )}
+                  {dataSource?.swaggerUrl && loginEndpointId ? (
+                    <Select
+                      label="Access token property"
+                      description="The property name of the access token in the response"
+                      placeholder="access"
+                      searchable
+                      clearable
+                      nothingFound="Not found. Update your swagger to include the response property"
+                      data={exampleResponse ?? []}
+                      {...apiAuthForm.getInputProps("accessToken")}
+                      onChange={(value) => {
+                        apiAuthForm.setFieldValue(
+                          "accessToken",
+                          value as string
+                        );
+                      }}
+                      required
+                    />
+                  ) : (
+                    <TextInputComponent
+                      label="Access token property"
+                      description="The property name of the access token in the response"
+                      placeholder="access"
+                      form={apiAuthForm}
+                      propertyName="accessToken"
+                      required={!!loginEndpointId}
+                    />
+                  )}
+                  {dataSource?.swaggerUrl && refreshEndpointId ? (
+                    <Select
+                      label="Refresh token property"
+                      description="The property name of the refresh token in the response"
+                      placeholder="refresh"
+                      searchable
+                      clearable
+                      nothingFound="Not found. Update your swagger to include the response property"
+                      data={exampleResponse ?? []}
+                      {...apiAuthForm.getInputProps("refreshToken")}
+                      onChange={(value) => {
+                        apiAuthForm.setFieldValue(
+                          "refreshToken",
+                          value as string
+                        );
+                      }}
+                      required
+                    />
+                  ) : (
+                    <TextInputComponent
+                      label="Refresh token property"
+                      description="The property name of the refresh token in the response"
+                      placeholder="refresh"
+                      form={apiAuthForm}
+                      propertyName="refreshToken"
+                      required={!!refreshEndpointId}
+                    />
+                  )}
+                  {dataSource?.swaggerUrl && loginEndpointId ? (
+                    <Select
+                      label="Access token expiry property"
+                      description="The property name of the expiry of the access token in the response"
+                      placeholder="expires_in"
+                      searchable
+                      clearable
+                      nothingFound={
+                        exampleResponse
+                          ? "Not found. Update your swagger to include the response property"
+                          : "No options"
+                      }
+                      data={exampleResponse ?? []}
+                      {...apiAuthForm.getInputProps("expiryProperty")}
+                      onChange={(value) => {
+                        apiAuthForm.setFieldValue(
+                          "expiryProperty",
+                          value as string
+                        );
+                      }}
+                      required
+                    />
+                  ) : (
+                    <TextInputComponent
+                      label="Access token expiry property"
+                      description="The property name of the expiry of the access token in the response"
+                      placeholder="expires_in"
+                      form={apiAuthForm}
+                      propertyName="expiryProperty"
+                      required={!!loginEndpointId}
+                    />
+                  )}
+                  <Flex>
+                    <Button type="submit">Save</Button>
+                  </Flex>
+                  <Divider></Divider>
+                  {loginRequestBody && loginRequestBody.length > 0 && (
+                    <TestUserLogin
+                      projectId={id}
+                      requestBody={loginRequestBody}
+                      url={
+                        dataSource?.baseUrl +
+                        "/" +
+                        loginEndpointObj?.relativeUrl
+                      }
+                      dataSourceId={dataSource.id}
+                    ></TestUserLogin>
+                  )}
+                  <Stack>
+                    {dataSource?.changedEndpoints && (
+                      <Title order={6}>Changed Endpoints</Title>
+                    )}
+                    <Title order={4} pt="lg">
+                      API Endpoints
+                    </Title>
+                    {dataSource?.changedEndpoints?.map((endpoint) => {
+                      return (
+                        <DataSourceEndpoint
+                          key={endpoint.id}
+                          projectId={id}
+                          endpoint={endpoint}
+                          location="datasource"
+                        ></DataSourceEndpoint>
+                      );
+                    })}
+
+                    {dataSource?.deletedEndpoints && (
+                      <Title order={6}>Deleted Endpoints</Title>
+                    )}
+                    {dataSource?.deletedEndpoints?.map((endpoint) => {
+                      return (
+                        <DataSourceEndpoint
+                          key={endpoint.id}
+                          projectId={id}
+                          endpoint={endpoint}
+                          location="datasource"
+                        ></DataSourceEndpoint>
+                      );
+                    })}
+                  </Stack>
+                </Stack>
+              </form>
+            )}
+          </Container>
+        </Tabs.Panel>
+      </Tabs>
+    </DashboardShell>
   );
 }

@@ -1,0 +1,160 @@
+import {
+  ProjectUpdateParams,
+  updateProject,
+} from "@/requests/projects/mutations";
+import { RegionTypes, getProject } from "@/requests/projects/queries";
+import { useAppStore } from "@/stores/app";
+import { regionTypeFlags, regionTypeLabels } from "@/utils/dashboardTypes";
+import {
+  Avatar,
+  Button,
+  Container,
+  Flex,
+  Group,
+  Loader,
+  Paper,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { forwardRef, useEffect, useState } from "react";
+
+type Props = {
+  projectId: string;
+};
+
+const regionTypes = (Object.keys(regionTypeLabels) as RegionTypes[]).map(
+  (regionType) => ({
+    value: regionType,
+    label: regionTypeLabels[regionType],
+    flag: regionTypeFlags[regionType],
+  })
+);
+
+interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
+  value: string;
+  label: string;
+  flag: string;
+}
+
+export default function GeneralSettings({ projectId }: Props) {
+  const [selectedRegion, setSelectedRegion] = useState<RegionTypes | undefined>(
+    undefined
+  );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const startLoading = useAppStore((state) => state.startLoading);
+  const stopLoading = useAppStore((state) => state.stopLoading);
+
+  const form = useForm<ProjectUpdateParams>({
+    initialValues: {
+      friendlyName: "",
+      region: undefined,
+    },
+    validate: {
+      friendlyName: (value) =>
+        value.length > 50 ? "Description too long" : null,
+    },
+  });
+
+  const onSubmit = async (values: ProjectUpdateParams) => {
+    try {
+      startLoading({
+        id: "updating-project",
+        title: "Updating Project",
+        message: "Wait while your project is being updated",
+      });
+      setIsLoading(true);
+
+      form.validate();
+
+      await updateProject(projectId, values);
+
+      stopLoading({
+        id: "updating-project",
+        title: "Project Updated",
+        message: "The project was updated successfully",
+      });
+      setIsLoading(false);
+    } catch (error: any) {
+      stopLoading({
+        id: "updating-project",
+        title: "Project Updated",
+        message: error,
+        isError: true,
+      });
+    }
+  };
+
+  useEffect(() => {
+    const fetch = async () => {
+      const project = await getProject(projectId);
+      form.setFieldValue("friendlyName", project.friendlyName);
+      form.setFieldValue("region", project.region.type);
+    };
+
+    fetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId]);
+
+  useEffect(() => {
+    setSelectedRegion(form.values.region as RegionTypes);
+  }, [form.values.region]);
+
+  const RegionSelectItem = forwardRef<HTMLDivElement, ItemProps>(
+    ({ flag, label, ...others }: ItemProps, ref) => (
+      <Paper ref={ref} {...others}>
+        <Group noWrap>
+          <Avatar src={flag} size="sm" />
+
+          <Text size="sm">{label}</Text>
+        </Group>
+      </Paper>
+    )
+  );
+  RegionSelectItem.displayName = "RegionSelectItem";
+
+  return (
+    <Container py="xl">
+      <form onSubmit={form.onSubmit(onSubmit)}>
+        <Stack spacing="xl">
+          <Title order={2}>General Settings</Title>
+          <TextInput
+            label="Project Name"
+            required
+            withAsterisk={true}
+            {...form.getInputProps("friendlyName")}
+            sx={{ maxWidth: "400px" }}
+            rightSection={isLoading && <Loader size="xs" />}
+          />
+          <Select
+            label="Region"
+            {...form.getInputProps("region")}
+            data={regionTypes}
+            sx={{ maxWidth: "400px" }}
+            itemComponent={RegionSelectItem}
+            icon={
+              regionTypeFlags[selectedRegion as RegionTypes] && (
+                <Avatar
+                  src={regionTypeFlags[selectedRegion as RegionTypes]}
+                  size="sm"
+                />
+              )
+            }
+            onChange={(value: RegionTypes) => {
+              form.setFieldValue("region", value);
+              setSelectedRegion(value);
+            }}
+          />
+          <Flex>
+            <Button type="submit" loading={isLoading} disabled={isLoading}>
+              Save
+            </Button>
+          </Flex>
+        </Stack>
+      </form>
+    </Container>
+  );
+}
