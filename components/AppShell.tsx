@@ -72,7 +72,6 @@ export const Shell = ({
   // This state needs to move to the parent component
   const [isLoading, setIsLoading] = useState(false);
   const resetTree = useEditorStore((state) => state.resetTree);
-  const isSaving = useEditorStore((state) => state.isSaving);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setPreviewMode = useEditorStore((state) => state.setPreviewMode);
   const { undo, redo, pastStates, futureStates } = useTemporalStore(
@@ -150,9 +149,7 @@ export const Shell = ({
                       Redo
                     </Button>
                   </Button.Group>
-                  <ChangeHistoryPopover>
-                    <SavingDisplay isSaving={isSaving} />
-                  </ChangeHistoryPopover>{" "}
+                  <ChangeHistoryPopover />{" "}
                   <EditorPreviewModeToggle
                     isPreviewMode={isPreviewMode}
                     setPreviewMode={setPreviewMode}
