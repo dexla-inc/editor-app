@@ -123,28 +123,30 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
     if (type === "COMPONENT") {
       if (stream) {
         try {
-          const json = TOML.parse(stream);
+          if (!stream.endsWith("___DONE___")) {
+            const json = TOML.parse(stream);
 
-          const newComponents = getNewComponents(
-            json as { rows: Row[] },
-            editorTheme,
-            pages
-          );
+            const newComponents = getNewComponents(
+              json as { rows: Row[] },
+              editorTheme,
+              pages
+            );
 
-          const id = getComponentBeingAddedId(existingTree.root);
+            const id = getComponentBeingAddedId(existingTree.root);
 
-          if (!id) {
-            const copy = cloneDeep(existingTree);
+            if (!id) {
+              const copy = cloneDeep(existingTree);
 
-            addComponent(copy.root, newComponents, {
-              id: "content-wrapper",
-              edge: "bottom",
-            });
+              addComponent(copy.root, newComponents, {
+                id: "content-wrapper",
+                edge: "bottom",
+              });
 
-            setEditorTree(copy, { action: `Added ${newComponents.name}` });
-          } else {
-            componentBeignAddedId.current = id;
-            updateTreeComponentChildren(id, newComponents.children!);
+              setEditorTree(copy, { action: `Added ${newComponents.name}` });
+            } else {
+              componentBeignAddedId.current = id;
+              updateTreeComponentChildren(id, newComponents.children!);
+            }
           }
         } catch (error) {
           // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
@@ -154,14 +156,16 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
     } else if (type === "LAYOUT") {
       if (stream) {
         try {
-          const json = TOML.parse(stream);
-          const tree = getEditorTreeFromPageStructure(
-            json as { rows: Row[] },
-            editorTheme,
-            pages
-          );
+          if (!stream.endsWith("___DONE___")) {
+            const json = TOML.parse(stream);
+            const tree = getEditorTreeFromPageStructure(
+              json as { rows: Row[] },
+              editorTheme,
+              pages
+            );
 
-          setEditorTree(tree, { action: `Layout changed` });
+            setEditorTree(tree, { action: `Layout changed` });
+          }
         } catch (error) {
           // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
           // console.log({ error });
