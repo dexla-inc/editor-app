@@ -15,7 +15,7 @@ export const Title = ({ renderTree, component, ...props }: Props) => {
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent
   );
-  const { children, data, triggers, ...componentProps } =
+  const { children, data, triggers, repeatedIndex, ...componentProps } =
     component.props as any;
 
   const handleDoubleClick = (e: any) => {

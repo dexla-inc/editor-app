@@ -42,7 +42,7 @@ type Props = {
 
 const bidingComponentsWhitelist = {
   from: ["Input"],
-  to: ["Text", "Title", "Table"],
+  to: ["Text", "Title", "Table", "Container"],
 };
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
 // Whitelist certain props that can be passed down
@@ -151,6 +151,7 @@ export const DroppableDraggable = ({
       isPreviewMode &&
       !onMountActionsRan.includes(onMountAction.id)
     ) {
+      console.log("ueh");
       addOnMountActionsRan(onMountAction.id);
       actionMapper[onMountAction.action.name].action({
         // @ts-ignore
@@ -250,10 +251,6 @@ export const DroppableDraggable = ({
   };
   const leaveHoverStateFunc = () => {
     setTreeComponentCurrentState(component.id!, "default");
-  };
-
-  const setDisabledStateFunc = () => {
-    setTreeComponentCurrentState(component.id!, "disabled");
   };
 
   const propsWithOverwrites = {

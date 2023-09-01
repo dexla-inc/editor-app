@@ -1,5 +1,7 @@
+import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { Flex as MantineFlex, FlexProps } from "@mantine/core";
+import isEmpty from "lodash.isempty";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -7,8 +9,23 @@ type Props = {
 } & FlexProps;
 
 export const Container = ({ renderTree, component, ...props }: Props) => {
-  const { children, style, bg, triggers, ...componentProps } =
-    component.props as any;
+  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+
+  const {
+    children,
+    style,
+    bg,
+    triggers,
+    data: dataProp,
+    exampleData = {},
+    ...componentProps
+  } = component.props as any;
+
+  const data = !isPreviewMode
+    ? isEmpty(exampleData?.value ?? exampleData)
+      ? dataProp
+      : exampleData?.value ?? exampleData
+    : dataProp?.value ?? dataProp;
 
   return (
     <MantineFlex
@@ -18,7 +35,21 @@ export const Container = ({ renderTree, component, ...props }: Props) => {
       style={{ width: "100%", ...style }}
       bg={bg}
     >
-      {component.children && component.children.length > 0
+      {data &&
+        data.length > 0 &&
+        data.map((_: any, repeatedIndex: number) => {
+          return component.children && component.children.length > 0
+            ? component.children?.map((child) =>
+                renderTree({
+                  ...child,
+                  props: { ...child.props, ...componentProps, repeatedIndex },
+                })
+              )
+            : children;
+        })}
+      {(!data || isEmpty(data) || data.length === 0) &&
+      component.children &&
+      component.children.length > 0
         ? component.children?.map((child) =>
             renderTree({
               ...child,
