@@ -58,7 +58,6 @@ export default function BasicDetailsStep({
   });
 
   const onSubmit = async (values: DataSourceParams) => {
-    console.log("DATASOURCE", values);
     try {
       if (areValuesEqual<DataSourceParams>(values, dataSource)) {
         nextStep();

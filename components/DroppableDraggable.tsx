@@ -151,7 +151,6 @@ export const DroppableDraggable = ({
       isPreviewMode &&
       !onMountActionsRan.includes(onMountAction.id)
     ) {
-      console.log("ueh");
       addOnMountActionsRan(onMountAction.id);
       actionMapper[onMountAction.action.name].action({
         // @ts-ignore

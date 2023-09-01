@@ -548,7 +548,16 @@ export const bindResponseToComponentAction = ({
     if (bind.component && bind.value) {
       const dataFlatten = flattenKeysWithRoot(data);
       const value = get(dataFlatten, bind.value);
-      updateTreeComponent(bind.component, { data: { value } }, false);
+      updateTreeComponent(
+        bind.component,
+        {
+          data: { value },
+          dataPath: bind.value.startsWith("root[0].")
+            ? bind.value.split("root[0].")[1]
+            : bind.value,
+        },
+        false
+      );
     }
   });
 };

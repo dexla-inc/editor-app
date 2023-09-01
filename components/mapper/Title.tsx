@@ -15,8 +15,14 @@ export const Title = ({ renderTree, component, ...props }: Props) => {
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent
   );
-  const { children, data, triggers, repeatedIndex, ...componentProps } =
-    component.props as any;
+  const {
+    children,
+    data,
+    triggers,
+    repeatedIndex,
+    dataPath,
+    ...componentProps
+  } = component.props as any;
 
   const handleDoubleClick = (e: any) => {
     e.preventDefault();
@@ -35,7 +41,11 @@ export const Title = ({ renderTree, component, ...props }: Props) => {
     }
   };
 
-  const value = isPreviewMode ? data?.value ?? children : children;
+  const value = isPreviewMode
+    ? typeof repeatedIndex !== "undefined"
+      ? data?.value[dataPath]
+      : data?.value ?? children
+    : children;
 
   return (
     <MantineTitle
@@ -47,6 +57,7 @@ export const Title = ({ renderTree, component, ...props }: Props) => {
       {...componentProps}
       {...triggers}
       suppressContentEditableWarning
+      key={`${component.id}-${repeatedIndex}`}
     >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))
