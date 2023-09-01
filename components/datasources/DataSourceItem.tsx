@@ -28,10 +28,10 @@ export function DataSourceItem({
   onDelete,
 }: DataSourceItemProps) {
   const router = useRouter();
-  const projectId = router.query.id as string;
+  const { id, name } = router.query as { id: string; name: string };
 
   const deleteFn = async () => {
-    await deleteDataSource(projectId, datasource.id);
+    await deleteDataSource(id, datasource.id);
     onDelete(datasource.id);
   };
 
@@ -55,7 +55,7 @@ export function DataSourceItem({
                   : theme.black,
             }}
             component={Link}
-            href={`/projects/${projectId}/settings/datasources/${datasource.id}`}
+            href={`/projects/${id}/settings/datasources/${datasource.id}?name=${name}`}
           >
             <Text>{datasource.name}</Text>
             <Text size="xs" color="dimmed">

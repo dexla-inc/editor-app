@@ -177,14 +177,14 @@ export function ProjectItem({
                   <Menu.Item
                     icon={<IconSettings2 size={ICON_SIZE} />}
                     component={Link}
-                    href={`/projects/${project.id}/settings`}
+                    href={`/projects/${project.id}/settings?name=${project.friendlyName}`}
                   >
                     General
                   </Menu.Item>
                   <Menu.Item
                     icon={<IconDatabase size={ICON_SIZE} />}
                     component={Link}
-                    href={`/projects/${project.id}/settings/datasources`}
+                    href={`/projects/${project.id}/settings/datasources?name=${project.friendlyName}`}
                   >
                     Datasource
                   </Menu.Item>

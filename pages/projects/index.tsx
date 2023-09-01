@@ -1,4 +1,4 @@
-import { Shell } from "@/components/AppShell";
+import { DashboardShell } from "@/components/DashboardShell";
 import IconTitleDescriptionButton from "@/components/projects/NewProjectButton";
 import { ProjectItem } from "@/components/projects/ProjectItem";
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
@@ -60,7 +60,7 @@ export default function Projects() {
   const sharedProjects = projects.filter((project) => !project.isOwner);
 
   return (
-    <Shell navbarType="company" user={user}>
+    <DashboardShell user={user}>
       <Container py="xl" size="lg">
         <Stack spacing="xl">
           <Title>Welcome back, {user?.firstName}</Title>
@@ -127,6 +127,6 @@ export default function Projects() {
           )}
         </Stack>
       </Container>
-    </Shell>
+    </DashboardShell>
   );
 }

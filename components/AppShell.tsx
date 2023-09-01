@@ -22,6 +22,7 @@ import { User } from "@propelauth/react";
 import Link from "next/link";
 
 import { AIChatHistoryButton } from "@/components/AIChatHistoryButton";
+import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { GenerateAIButton } from "@/components/GenerateAIButton";
 import { SavingDisplay } from "@/components/SavingDisplay";
@@ -38,7 +39,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
 
 export interface ShellProps extends AppShellProps {
   navbarType?: NavbarTypes;
