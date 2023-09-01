@@ -38,7 +38,7 @@ export const ChangeHistoryPopover: FC<{ children: React.ReactNode }> = ({
     }, [] as Array<{ name?: string; timestamp?: number }>),
     pastStates: state.pastStates,
   }));
-  const [opened, { close, open }] = useDisclosure(true);
+  const [opened, { close, open }] = useDisclosure(false);
   const theme = useMantineTheme();
 
   return (
