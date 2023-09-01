@@ -132,16 +132,17 @@ export const jsonStructure = (props?: any): Component => {
                     } !important`,
                   },
                 },
-                actions: [
-                  {
-                    trigger: "onClick",
-                    action: {
-                      name: "navigateToPage",
-                      pageId: page.id,
-                    },
-                  },
-                ],
               },
+              actions: [
+                {
+                  id: nanoid(),
+                  trigger: "onClick",
+                  action: {
+                    name: "navigateToPage",
+                    pageId: page.id,
+                  },
+                },
+              ],
               children: [],
             };
           }),

@@ -15,11 +15,14 @@ import {
   Group,
   List,
   Text,
+  TextInput,
   useMantineTheme,
 } from "@mantine/core";
+import { useForm } from "@mantine/form";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
-import { useEffect } from "react";
+import debounce from "lodash.debounce";
+import { KeyboardEvent, useEffect, useState } from "react";
 
 type ListItemProps = {
   component: Component;
@@ -38,11 +41,24 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     (state) => state.setSelectedComponentId
   );
   const [opened, { toggle, open }] = useDisclosure(false);
+  const [clickedManualToggle, setClickedManualToggle] = useState(false);
+  const [editable, { toggle: toggleEdit, close: closeEdit }] =
+    useDisclosure(false);
   const onDragStart = useOnDragStart();
 
   const draggable = useDraggable({
     id: `layer-${component.id}`,
     onDragStart,
+  });
+
+  const updateTreeComponentDescription = useEditorStore(
+    (state) => state.updateTreeComponentDescription
+  );
+
+  const form = useForm({
+    initialValues: {
+      value: component.description,
+    },
   });
 
   const handleSelection = (id: string) => {
@@ -54,11 +70,13 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   const canExpand = (component.children ?? [])?.length > 0;
   const isCurrentTarget = currentTargetId === `layer-${component.id}`;
 
-  useEffect(() => {
-    if (component.id === "content-wrapper") {
-      open();
-    }
-  }, [component.id, open]);
+  const debouncedUpdate = debounce((value: string) => {
+    updateTreeComponentDescription(selectedComponentId as string, value);
+  }, 500);
+
+  const handleKeyPress = (e: KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === "Escape") closeEdit();
+  };
 
   const onDragEnter = useMemoizedDebounce(() => {
     const isAncestorOfSelectedComponent =
@@ -71,14 +89,18 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
         : false;
 
     if (
-      component.id === selectedComponentId ||
-      isAncestorOfSelectedComponent ||
-      isCurrentTarget
+      (component.id === selectedComponentId ||
+        isAncestorOfSelectedComponent ||
+        isCurrentTarget) &&
+      !clickedManualToggle
     ) {
       open();
     }
   }, 200);
 
+  useEffect(() => {
+    setClickedManualToggle(false);
+  }, [selectedComponentId]);
   useEffect(onDragEnter, [onDragEnter]);
 
   const icon = structureMapper[component.name as string]?.icon;
@@ -122,14 +144,26 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
           e.stopPropagation();
           handleSelection(component.id as string);
         }}
+        onDoubleClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleEdit();
+        }}
+        onKeyDown={handleKeyPress}
       >
         <Group position="apart" noWrap w="100%">
-          <Group spacing={4} noWrap w="100%">
+          <Group
+            spacing={4}
+            noWrap
+            w="100%"
+            sx={{ backgroundColor: `${editable && "white"}` }}
+          >
             <ActionIcon
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 toggle();
+                setClickedManualToggle(true);
               }}
               sx={{
                 visibility: canExpand ? "visible" : "hidden",
@@ -148,19 +182,40 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
               />
             </ActionIcon>
             {component.id !== "root" && icon}
-            <Text
-              id={`layer-${component.id}`}
-              size="xs"
-              lineClamp={1}
-              sx={{ cursor: "move", width: "100%" }}
-              {...draggable}
-            >
-              {component.id === "root"
-                ? "Body"
-                : component.id === "content-wrapper"
-                ? "Content Wrapper"
-                : component.name}
-            </Text>
+            {component.id === "root" || component.id === "content-wrapper" ? (
+              <Text
+                id={`layer-${component.id}`}
+                size="xs"
+                lineClamp={1}
+                sx={{ cursor: "move", width: "100%" }}
+                {...draggable}
+              >
+                {component.id === "root" ? "Body" : "Content Wrapper"}
+              </Text>
+            ) : editable ? (
+              <TextInput
+                id={`layer-${component.id}`}
+                size="xs"
+                w="100%"
+                variant="unstyled"
+                {...form.getInputProps("value")}
+                onChange={(e) => {
+                  e.preventDefault();
+                  form.setFieldValue("value", e.target.value);
+                  debouncedUpdate(e.target.value);
+                }}
+              />
+            ) : (
+              <Text
+                id={`layer-${component.id}`}
+                size="xs"
+                lineClamp={1}
+                sx={{ cursor: "move", width: "100%" }}
+                {...draggable}
+              >
+                {component.description}
+              </Text>
+            )}
           </Group>
         </Group>
         {componentActions && !!componentActions.length && (

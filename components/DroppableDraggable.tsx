@@ -355,7 +355,7 @@ export const DroppableDraggable = ({
               </UnstyledButton>
             )}
             <Text color="white" size="xs" pr={haveNonRootParent ? 0 : "xs"}>
-              {component.name}
+              {component.description}
             </Text>
             {haveNonRootParent && (
               <ActionIcon
@@ -418,7 +418,9 @@ export const DroppableDraggable = ({
                 });
 
                 removeComponentFromParent(copy.root, id, parent?.id!);
-                setEditorTree(copy);
+                setEditorTree(copy, {
+                  action: `Wrapped ${component.name} with a Container`,
+                });
               }}
             >
               <IconBoxMargin size={ICON_SIZE} color="white" strokeWidth={1.5} />

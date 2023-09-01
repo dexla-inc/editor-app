@@ -38,6 +38,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
 
 export interface ShellProps extends AppShellProps {
   navbarType?: NavbarTypes;
@@ -77,6 +78,7 @@ export const Shell = ({
   const { undo, redo, pastStates, futureStates } = useTemporalStore(
     (state) => state
   );
+
   const router = useRouter();
   const projectId = router.query.id as string;
   const currentPageId = router.query.page as string;
@@ -101,13 +103,15 @@ export const Shell = ({
       fixed
       padding={0}
       header={
-        <Header height={HEADER_HEIGHT}>
+        <Header height={HEADER_HEIGHT} sx={{ zIndex: 110 }}>
           <Flex h={HEADER_HEIGHT} px="lg" align="center">
             <Flex sx={{ width: "33%" }} align="center" gap={10}>
               <Link href="/">
                 <Logo />
               </Link>
-              {navbarType === "editor" && <ToggleNavbarButton />}
+              {navbarType === "editor" && !isPreviewMode && (
+                <ToggleNavbarButton />
+              )}
             </Flex>
             {navbarType === "editor" && (
               <>
@@ -146,7 +150,9 @@ export const Shell = ({
                       Redo
                     </Button>
                   </Button.Group>
-                  <SavingDisplay isSaving={isSaving} />{" "}
+                  <ChangeHistoryPopover>
+                    <SavingDisplay isSaving={isSaving} />
+                  </ChangeHistoryPopover>{" "}
                   <EditorPreviewModeToggle
                     isPreviewMode={isPreviewMode}
                     setPreviewMode={setPreviewMode}
