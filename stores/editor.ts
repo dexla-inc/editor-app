@@ -153,7 +153,7 @@ export const useEditorStore = create<EditorState>()(
         setIframeWindow: (iframeWindow) => set({ iframeWindow }),
         setCurrentTargetId: (currentTargetId) => set({ currentTargetId }),
         isSaving: false,
-        // muda de posicao ou adicionar componente ou remove CRD de posicao
+        // any component's move or reordering
         setTree: (tree, options) => {
           set((state: EditorState) => {
             if (!options?.onLoad) {
@@ -182,7 +182,6 @@ export const useEditorStore = create<EditorState>()(
         },
         // any props change
         updateTreeComponent: (componentId, props, save = true) => {
-          console.log("props");
           set((prev) => {
             const copy = cloneDeep(prev.tree);
             const currentState =
