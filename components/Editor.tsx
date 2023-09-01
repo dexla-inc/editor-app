@@ -216,6 +216,47 @@ export const Editor = ({ projectId, pageId }: Props) => {
     ],
   ]);
 
+  const onMessage = (event: EventSourceMessage) => {
+    try {
+      setStream((state) => {
+        try {
+          if (state === undefined) {
+            return event.data;
+          } else {
+            return `${state}
+              ${event.data}`;
+          }
+        } catch (error) {
+          return state;
+        }
+      });
+    } catch (error) {
+      // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
+      console.error(error);
+    }
+  };
+
+  const onError = (err: any) => {
+    stopLoading({
+      id: "page-generation",
+      title: "There was a problem",
+      message: err,
+      isError: true,
+    });
+  };
+
+  const onOpen = async (response: Response) => {
+    // handle open
+  };
+
+  const onClose = async () => {
+    stopLoading({
+      id: "page-generation",
+      title: "Page Generated",
+      message: "Here's your page. We hope you like it",
+    });
+  };
+
   useEffect(() => {
     const getPageData = async () => {
       setIsLoading(true);
@@ -234,49 +275,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
           message: "AI is generating your page",
         });
 
-        const onMessage = (event: EventSourceMessage) => {
-          try {
-            if (event.data !== "___DONE___") {
-              setStream((state) => {
-                try {
-                  if (state === undefined) {
-                    return event.data;
-                  } else {
-                    return `${state}
-                    ${event.data}`;
-                  }
-                } catch (error) {
-                  return state;
-                }
-              });
-            }
-          } catch (error) {
-            // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
-            console.error(error);
-          }
-        };
-
-        const onError = (err: any) => {
-          stopLoading({
-            id: "page-generation",
-            title: "There was a problem",
-            message: err,
-            isError: true,
-          });
-        };
-
-        const onOpen = async (response: Response) => {
-          // handle open
-        };
-
-        const onClose = async () => {
-          stopLoading({
-            id: "page-generation",
-            title: "Page Generated",
-            message: "Here's your page. We hope you like it",
-          });
-        };
-
         postPageEventSource(
           projectId,
           page.title,
@@ -293,6 +291,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
       (isStreaming as any).current = true;
       getPageData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     projectId,
     pageId,
@@ -307,14 +306,16 @@ export const Editor = ({ projectId, pageId }: Props) => {
   useEffect(() => {
     if (stream) {
       try {
-        const json = TOML.parse(stream);
-        const tree = getEditorTreeFromTemplateData(
-          json as any,
-          editorTheme,
-          pages
-        );
+        if (!stream.endsWith("___DONE___")) {
+          const json = TOML.parse(stream);
+          const tree = getEditorTreeFromTemplateData(
+            json as any,
+            editorTheme,
+            pages
+          );
 
-        setEditorTree(tree);
+          setEditorTree(tree);
+        }
       } catch (error) {
         // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
         // console.log({ error });
