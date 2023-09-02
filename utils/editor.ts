@@ -84,9 +84,38 @@ export const traverseComponents = (
   return components
     .filter((c) => !!c.name)
     .map((component) => {
+      const isTable = component.name === "Table";
+
+      let tableData = {};
+      if (isTable && component?.props?.data?.length > 0) {
+        const headers = Object.keys(component?.props?.data[0]).reduce(
+          (acc, key) => {
+            return {
+              ...acc,
+              [key]: true,
+            };
+          },
+          {}
+        );
+
+        tableData = {
+          headers,
+          config: { filter: false, sorting: false, pagination: false },
+        };
+      }
+
       const structureDefinition = structureMapper[component.name];
       const newComponent = structureDefinition.structure({
         ...component,
+        props: {
+          ...(component?.props ?? {}),
+          ...(isTable
+            ? {
+                exampleData: { value: component?.props?.data ?? {} },
+                ...tableData,
+              }
+            : {}),
+        },
         theme,
         pages,
       });

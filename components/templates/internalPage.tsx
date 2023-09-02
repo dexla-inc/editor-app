@@ -141,9 +141,38 @@ export const template = (data: Data, theme: any, pages: any) => {
       ? traverseComponents(children, theme, pages)
       : undefined;
 
+    const isTable = card.component.name === "Table";
+
+    let tableData = {};
+    if (isTable && (card.component as any)?.props?.data?.length > 0) {
+      const headers = Object.keys(
+        (card.component as any)?.props?.data[0]
+      ).reduce((acc, key) => {
+        return {
+          ...acc,
+          [key]: true,
+        };
+      }, {});
+
+      tableData = {
+        headers,
+        config: { filter: false, sorting: false, pagination: false },
+      };
+    }
+
     const cardContent = structureMapper[card.component.name].structure({
       theme,
-      props: { ...((card.component as any).props ?? {}) },
+      props: {
+        ...((card.component as any).props ?? {}),
+        ...(isTable
+          ? {
+              exampleData: {
+                value: (card.component as any)?.props?.data ?? {},
+              },
+              ...tableData,
+            }
+          : {}),
+      },
       children: childrenComponents,
     });
 

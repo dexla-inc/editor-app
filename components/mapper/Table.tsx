@@ -25,7 +25,7 @@ export const Table = ({ renderTree, component, ...props }: Props) => {
 
   const data = !isPreviewMode
     ? isEmpty(exampleData?.value ?? exampleData)
-      ? dataProp
+      ? dataProp?.value ?? dataProp
       : exampleData?.value ?? exampleData
     : dataProp?.value ?? dataProp;
   const dataSample = (data ?? [])?.[0];
