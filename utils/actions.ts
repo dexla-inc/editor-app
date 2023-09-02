@@ -9,6 +9,7 @@ import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm"
 import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
 import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
+import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
 import {
   getDataSourceAuth,
   getDataSourceEndpoints,
@@ -16,7 +17,7 @@ import {
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
-import { Component } from "@/utils/editor";
+import { Component, getComponentById } from "@/utils/editor";
 import { flattenKeysWithRoot } from "@/utils/flattenKeys";
 import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
@@ -56,6 +57,7 @@ export const actions = [
   { name: "openDrawer", group: "Modal & Overlays" },
   { name: "openModal", group: "Modal & Overlays" },
   { name: "openPopover", group: "Modal & Overlays" },
+  { name: "toggleVisibility", group: "Style & Props" },
   { name: "alert", group: "Feedback" },
   { name: "changeState", group: "Feedback" },
   { name: "openToast", group: "Feedback" },
@@ -104,6 +106,12 @@ export type OpenPopOverAction = {
   name: "openPopOver";
   popOverId: string;
   data?: any;
+};
+
+export type TogglePropsAction = {
+  name: "toggleVisibility";
+  componentId: string;
+  props: string;
 };
 
 export type OpenToastAction = {
@@ -156,6 +164,7 @@ export type Action = {
     | OpenModalAction
     | OpenDrawerAction
     | OpenPopOverAction
+    | TogglePropsAction
     | OpenToastAction
     | ChangeStateAction;
   sequentialTo?: string;
@@ -220,6 +229,10 @@ export type OpenToastActionParams = ActionParams & {
   action: OpenToastAction;
 };
 
+export type TogglePropsActionParams = ActionParams & {
+  action: TogglePropsAction;
+};
+
 export type ChangeStateActionParams = ActionParams & {
   action: ChangeStateAction;
 };
@@ -237,6 +250,28 @@ export const openDrawerAction = ({ action }: OpenDrawerActionParams) => {
 export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   updateTreeComponent(action.popOverId, { opened: true }, false);
+};
+
+export const togglePropsAction = ({ action }: TogglePropsActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const editorTree = useEditorStore.getState().tree;
+  const selectedComponent = getComponentById(
+    editorTree.root,
+    action.componentId as string
+  );
+  let viewItem;
+  if (action.props === "toggle") {
+    selectedComponent?.props?.style.visibility === "none"
+      ? (viewItem = "flex")
+      : (viewItem = "none");
+  }
+
+  if (action.props === "visible") viewItem = "flex";
+  if (action.props === "hidden") viewItem = "none";
+
+  updateTreeComponent(action.componentId, {
+    style: { visibility: viewItem as string },
+  });
 };
 
 export const openToastAction = ({ action }: OpenToastActionParams) => {
@@ -606,5 +641,9 @@ export const actionMapper = {
   changeState: {
     action: changeStateAction,
     form: ChangeStateActionForm,
+  },
+  toggleVisibility: {
+    action: togglePropsAction,
+    form: TogglePropsActionForm,
   },
 };

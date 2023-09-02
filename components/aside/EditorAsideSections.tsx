@@ -23,6 +23,7 @@ import * as SpacingModifier from "@/components/modifiers/Spacing";
 import * as TableModifier from "@/components/modifiers/Table";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TitleModifier from "@/components/modifiers/Title";
+import * as DisplayModifier from "@/components/modifiers/Visibility";
 import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper } from "@/utils/actions";
 import { Modifiers, componentMapper } from "@/utils/componentMapper";
@@ -68,6 +69,7 @@ const sectionMapper: SectionsMapper = {
   radio: RadioModifier,
   drawer: DrawerModifier,
   buttonIcon: ButtonIconModifier,
+  display: DisplayModifier,
 };
 
 type Tab = "design" | "actions";
