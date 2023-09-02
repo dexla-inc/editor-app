@@ -156,18 +156,6 @@ export const TogglePropsActionForm = ({ id }: Props) => {
             </ActionIcon>
           }
         />
-        <Select
-          size="xs"
-          label="State"
-          data={[
-            { label: "Toggle", value: "toggle" },
-            { label: "Visible", value: "visible" },
-            { label: "Hidden", value: "hidden" },
-          ]}
-          placeholder="Select State"
-          nothingFound="Nothing found"
-          searchable
-        />
 
         <Button size="xs" type="submit" mt="xs">
           Save
