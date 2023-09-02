@@ -167,7 +167,6 @@ export const TogglePropsActionForm = ({ id }: Props) => {
           placeholder="Select State"
           nothingFound="Nothing found"
           searchable
-          // {...form.getInputProps("state")}
         />
 
         <Button size="xs" type="submit" mt="xs">
