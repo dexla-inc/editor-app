@@ -260,14 +260,10 @@ export const togglePropsAction = ({ action }: TogglePropsActionParams) => {
     action.componentId as string
   );
   let viewItem;
-  if (action.props === "toggle") {
-    selectedComponent?.props?.style.visibility === "none"
-      ? (viewItem = "flex")
-      : (viewItem = "none");
-  }
 
-  if (action.props === "visible") viewItem = "flex";
-  if (action.props === "hidden") viewItem = "none";
+  selectedComponent?.props?.style.visibility === "none"
+    ? (viewItem = "flex")
+    : (viewItem = "none");
 
   updateTreeComponent(action.componentId, {
     style: { visibility: viewItem as string },
