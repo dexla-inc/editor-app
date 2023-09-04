@@ -172,3 +172,6 @@ export const INPUT_TYPES_DATA: { label: string; value: InputTypes }[] = [
   { label: "Url", value: "url" },
   { label: "Search", value: "search" },
 ];
+
+export type UserRoles = "MEMBER" | "ADMIN" | "OWNER" | "GUEST" | "DEXLA_ADMIN";
+export type TeamStatus = "PENDING" | "INVITED" | "ACCEPTED" | "REJECTED";

@@ -1,12 +1,12 @@
 import { DashboardShell } from "@/components/DashboardShell";
-import DataSourceSettings from "@/components/settings/DataSourceSettings";
+import DomainSettings from "@/components/settings/DomainSettings";
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
 import { Tabs } from "@mantine/core";
 import { useAuthInfo } from "@propelauth/react";
 import { useRouter } from "next/router";
 
-export default function DataSources() {
+export default function Domain() {
   const authInfo = useAuthInfo();
   const { user } = authInfo || {};
   const router = useRouter();
@@ -15,11 +15,11 @@ export default function DataSources() {
   return (
     <DashboardShell user={user}>
       <SettingsTabHeader name={name} />
-      <Tabs defaultValue="datasources" py="xs">
+      <Tabs defaultValue="domain" py="xs">
         <SettingsTabs />
 
-        <Tabs.Panel value="datasources" pt="xs">
-          <DataSourceSettings projectId={id} />
+        <Tabs.Panel value="domain" pt="xs">
+          <DomainSettings projectId={id} />
         </Tabs.Panel>
       </Tabs>
     </DashboardShell>
