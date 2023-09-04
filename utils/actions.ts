@@ -1,6 +1,7 @@
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
 import { ChangeStateActionForm } from "@/components/actions/ChangeStateActionForm";
+import { CloseModalActionForm } from "@/components/actions/CloseModalActionForm";
 import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { LoginActionForm } from "@/components/actions/LoginActionForm";
@@ -56,6 +57,7 @@ export const actions = [
   { name: "navigateToPage", group: "Navigation" },
   { name: "openDrawer", group: "Modal & Overlays" },
   { name: "openModal", group: "Modal & Overlays" },
+  { name: "closeModal", group: "Modal & Overlays" },
   { name: "openPopover", group: "Modal & Overlays" },
   { name: "toggleVisibility", group: "Style & Props" },
   { name: "alert", group: "Feedback" },
@@ -240,6 +242,11 @@ export type ChangeStateActionParams = ActionParams & {
 export const openModalAction = ({ action }: OpenModalActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   updateTreeComponent(action.modalId, { opened: true }, false);
+};
+
+export const closeModalAction = ({ action }: OpenModalActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  updateTreeComponent(action.modalId, { opened: false }, false);
 };
 
 export const openDrawerAction = ({ action }: OpenDrawerActionParams) => {
@@ -621,6 +628,10 @@ export const actionMapper = {
   openModal: {
     action: openModalAction,
     form: OpenModalActionForm,
+  },
+  closeModal: {
+    action: closeModalAction,
+    form: CloseModalActionForm,
   },
   openDrawer: {
     action: openDrawerAction,
