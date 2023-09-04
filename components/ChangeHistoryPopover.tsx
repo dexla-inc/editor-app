@@ -49,6 +49,7 @@ export const ChangeHistoryPopover: FC = () => {
         radius="md"
         opened={opened}
         withinPortal
+        offset={0}
       >
         <Popover.Target>
           <SavingDisplay isSaving={currentState.isSaving} />
