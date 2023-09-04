@@ -24,8 +24,8 @@ export const SettingsTabContent = ({ name, id }: Props) => {
           <DataSourceSettings projectId={id} />
         </Tabs.Panel>
 
-        <Tabs.Panel value="users" pt="xs">
-          Users
+        <Tabs.Panel value="team" pt="xs">
+          Team
         </Tabs.Panel>
 
         <Tabs.Panel value="domain" pt="xs">

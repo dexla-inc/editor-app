@@ -1,7 +1,7 @@
 import { DashboardShell } from "@/components/DashboardShell";
-import DataSourceSettings from "@/components/settings/DataSourceSettings";
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
+import TeamSettings from "@/components/settings/TeamSettings";
 import { Tabs } from "@mantine/core";
 import { useAuthInfo } from "@propelauth/react";
 import { useRouter } from "next/router";
@@ -15,11 +15,11 @@ export default function DataSources() {
   return (
     <DashboardShell user={user}>
       <SettingsTabHeader name={name} />
-      <Tabs defaultValue="datasources" py="xs">
+      <Tabs defaultValue="team" py="xs">
         <SettingsTabs />
 
-        <Tabs.Panel value="datasources" pt="xs">
-          <DataSourceSettings projectId={id} />
+        <Tabs.Panel value="team" pt="xs">
+          <TeamSettings projectId={id} />
         </Tabs.Panel>
       </Tabs>
     </DashboardShell>
