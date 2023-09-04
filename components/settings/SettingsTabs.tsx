@@ -1,4 +1,5 @@
 import { Icon } from "@/components/Icon";
+import { ICON_SIZE } from "@/utils/config";
 import { Tabs } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -15,7 +16,7 @@ export const SettingsTabs = () => {
       >
         <Tabs.Tab
           value="general"
-          icon={<Icon name="IconSettings" size="0.8rem" />}
+          icon={<Icon name="IconSettings" size={ICON_SIZE} />}
           px="xl"
         >
           General
@@ -27,32 +28,36 @@ export const SettingsTabs = () => {
       >
         <Tabs.Tab
           value="datasources"
-          icon={<Icon name="IconDatabase" size="0.8rem" />}
+          icon={<Icon name="IconDatabase" size={ICON_SIZE} />}
           px="xl"
         >
           Data Sources
         </Tabs.Tab>
       </Link>
       <Link
-        href={`/projects/${id}/settings/users?name=${name}`}
+        href={`/projects/${id}/settings/team?name=${name}`}
         style={{ textDecoration: "none" }}
       >
         <Tabs.Tab
           value="team"
-          icon={<Icon name="IconUsers" size="0.8rem" />}
+          icon={<Icon name="IconUsers" size={ICON_SIZE} />}
           px="xl"
         >
           Team
         </Tabs.Tab>
       </Link>
-      <Tabs.Tab
-        value="domain"
-        icon={<Icon name="IconWorldWww" size="0.8rem" />}
-        px="xl"
-        disabled
+      <Link
+        href={`/projects/${id}/settings/domain?name=${name}`}
+        style={{ textDecoration: "none" }}
       >
-        Domain
-      </Tabs.Tab>
+        <Tabs.Tab
+          value="domain"
+          icon={<Icon name="IconWorldWww" size={ICON_SIZE} />}
+          px="xl"
+        >
+          Domain
+        </Tabs.Tab>
+      </Link>
     </Tabs.List>
   );
 };
