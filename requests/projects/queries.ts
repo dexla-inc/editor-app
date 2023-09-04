@@ -1,9 +1,8 @@
 import { get } from "@/utils/api";
+import { UserRoles } from "@/utils/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
 
 export type RegionTypes = "FRANCE_CENTRAL" | "US_CENTRAL" | "UK_SOUTH";
-
-export type UserRoles = "MEMBER" | "ADMIN" | "OWNER" | "GUEST" | "DEXLA_ADMIN";
 
 export type ProjectResponse = {
   id: string;

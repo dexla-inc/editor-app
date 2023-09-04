@@ -33,14 +33,18 @@ export const SettingsTabs = () => {
           Data Sources
         </Tabs.Tab>
       </Link>
-      <Tabs.Tab
-        value="users"
-        icon={<Icon name="IconUsers" size="0.8rem" />}
-        px="xl"
-        disabled
+      <Link
+        href={`/projects/${id}/settings/users?name=${name}`}
+        style={{ textDecoration: "none" }}
       >
-        Users
-      </Tabs.Tab>
+        <Tabs.Tab
+          value="team"
+          icon={<Icon name="IconUsers" size="0.8rem" />}
+          px="xl"
+        >
+          Team
+        </Tabs.Tab>
+      </Link>
       <Tabs.Tab
         value="domain"
         icon={<Icon name="IconWorldWww" size="0.8rem" />}
