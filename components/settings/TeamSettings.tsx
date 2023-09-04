@@ -1,3 +1,4 @@
+import { WarningAlert } from "@/components/Alerts";
 import { Icon } from "@/components/Icon";
 import { inviteTeam } from "@/requests/teams/mutations";
 import { acceptInvite, getTeamsList } from "@/requests/teams/queries";
@@ -5,7 +6,7 @@ import {
   AcceptInviteParams,
   InviteTeamParams,
   TeamResponse,
-} from "@/requests/teams/types"; // Adjust import as needed
+} from "@/requests/teams/types";
 import { useAppStore } from "@/stores/app";
 import { ICON_SIZE } from "@/utils/config";
 import { TeamStatus, UserRoles } from "@/utils/dashboardTypes";
@@ -21,7 +22,6 @@ import {
   Title,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { WarningAlert } from "../Alerts";
 
 type Props = {
   projectId: string;
@@ -51,7 +51,7 @@ export default function TeamSettings({ projectId }: Props) {
         ]);
 
         setTeamList(teamResponse.results);
-        setPendingInviteList(invitedResponse.results); // Set the invited team list
+        setPendingInviteList(invitedResponse.results);
       } catch (error) {
         console.error(error);
       }
@@ -98,7 +98,7 @@ export default function TeamSettings({ projectId }: Props) {
     const params: AcceptInviteParams = { id, status };
     const response = await acceptInvite(params);
     console.log(response);
-    // Update the team list by replacing the old team with the new one. You can find the old by filtering on User Name
+
     const updatedTeamList = teamList.filter(
       (team) => team.usersName !== response.usersName
     );
