@@ -511,11 +511,11 @@ export const moveComponent = (
         const oldIndex = items.indexOf(id);
         let newIndex = items.indexOf(dropTarget.id);
 
-        if (dropTarget.edge === "left" || dropTarget.edge === "top") {
+        if (["top", "left"].includes(dropTarget.edge) && oldIndex < newIndex) {
           newIndex = Math.max(newIndex - 1, 0);
         } else if (
-          dropTarget.edge === "right" ||
-          dropTarget.edge === "bottom"
+          ["right", "bottom"].includes(dropTarget.edge) &&
+          newIndex < oldIndex
         ) {
           newIndex = Math.min(newIndex + 1, items.length);
         }

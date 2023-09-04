@@ -10,6 +10,7 @@ import {
   removeComponent,
   removeComponentFromParent,
   EditorTree,
+  getComponentIndex,
 } from "@/utils/editor";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
@@ -81,17 +82,26 @@ export const useOnDrop = () => {
       }
       const newSelectedId = addComponent(copy.root, componentToAdd, dropTarget);
       setSelectedComponentId(newSelectedId);
-      setComponentToAdd(undefined);
     } else {
       const targetParent = getComponentParent(copy.root, dropTarget.id);
       if (targetParent) {
-        const newSelectedId = addComponent(copy.root, componentToAdd, {
-          id: targetParent.id as string,
-          edge: "bottom",
-        });
+        const dropTargetIndex = getComponentIndex(targetParent, dropTarget.id);
+
+        const newSelectedId = addComponent(
+          copy.root,
+          componentToAdd,
+          {
+            id: targetParent.id as string,
+            edge: dropTarget.edge,
+          },
+          ["right", "bottom"].includes(dropTarget.edge)
+            ? dropTargetIndex + 1
+            : dropTargetIndex
+        );
         setSelectedComponentId(newSelectedId);
       }
     }
+    setComponentToAdd(undefined);
   }
   function handleReorderingOrMoving(
     copy: EditorTree,

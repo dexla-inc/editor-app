@@ -22,13 +22,11 @@ export const useDroppable = ({
     (event: React.DragEvent) => {
       event.preventDefault();
       event.stopPropagation();
-      if (activeId !== id) {
-        const dropTarget = {
-          id,
-          edge: edge!,
-        } as DropTarget;
-        onDrop?.(activeId!, dropTarget);
-      }
+      const dropTarget = {
+        id,
+        edge: edge!,
+      } as DropTarget;
+      onDrop?.(activeId!, dropTarget);
       setCurrentTargetId(undefined);
     },
     [activeId, id, setCurrentTargetId, edge, onDrop]
@@ -39,39 +37,30 @@ export const useDroppable = ({
       event.preventDefault();
       event.stopPropagation();
 
-      if (activeId && activeId !== id) {
-        const mouseX = event.clientX;
-        const mouseY = event.clientY;
-        const w = currentWindow ?? window;
-        const rect = w.document.getElementById(id)?.getBoundingClientRect()!;
+      const mouseX = event.clientX;
+      const mouseY = event.clientY;
+      const w = currentWindow ?? window;
+      const rect = w.document.getElementById(id)?.getBoundingClientRect()!;
 
-        const leftDist = mouseX - rect.left;
-        const rightDist = rect.right - mouseX;
-        const topDist = mouseY - rect.top;
-        const bottomDist = rect.bottom - mouseY;
+      const leftDist = mouseX - rect.left;
+      const rightDist = rect.right - mouseX;
+      const topDist = mouseY - rect.top;
+      const bottomDist = rect.bottom - mouseY;
 
-        const { edge } = getClosestEdge(
-          leftDist,
-          rightDist,
-          topDist,
-          bottomDist
-        );
+      const { edge } = getClosestEdge(leftDist, rightDist, topDist, bottomDist);
 
-        setEdge(edge as Edge);
-      }
+      setEdge(edge as Edge);
     },
-    [activeId, id, currentWindow]
+    [id, currentWindow]
   );
 
   const handleDragEnter = useCallback(
     (event: any) => {
       event.preventDefault();
       event.stopPropagation();
-      if (activeId !== id) {
-        setCurrentTargetId(id);
-      }
+      setCurrentTargetId(id);
     },
-    [activeId, id, setCurrentTargetId]
+    [id, setCurrentTargetId]
   );
 
   // TODO: Handle isOver differently to have better ux as currently
