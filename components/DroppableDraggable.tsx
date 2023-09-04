@@ -284,7 +284,17 @@ export const DroppableDraggable = ({
       pos="relative"
       sx={{
         width: component.props?.style?.width ?? "auto",
-        ...shadows,
+        "&:before": {
+          ...shadows,
+          content: '""',
+          position: "absolute",
+          pointerEvents: "none",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: 80,
+        },
       }}
       onClick={(e) => {
         e.preventDefault();
