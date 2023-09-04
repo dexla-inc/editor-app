@@ -2,6 +2,7 @@ import DataSourceSettings from "@/components/settings/DataSourceSettings";
 import GeneralSettings from "@/components/settings/GeneralSettings";
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
+import TeamSettings from "@/components/settings/TeamSettings";
 import { Tabs } from "@mantine/core";
 
 type Props = {
@@ -25,7 +26,7 @@ export const SettingsTabContent = ({ name, id }: Props) => {
         </Tabs.Panel>
 
         <Tabs.Panel value="team" pt="xs">
-          Team
+          <TeamSettings projectId={id} />
         </Tabs.Panel>
 
         <Tabs.Panel value="domain" pt="xs">
