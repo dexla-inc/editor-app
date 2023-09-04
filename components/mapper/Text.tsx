@@ -1,6 +1,7 @@
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
+import get from "lodash.get";
 import { useRef, useState } from "react";
 
 type Props = {
@@ -15,8 +16,14 @@ export const Text = ({ renderTree, component, ...props }: Props) => {
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent
   );
-  const { children, data, triggers, ...componentProps } =
-    component.props as any;
+  const {
+    children,
+    data,
+    triggers,
+    repeatedIndex,
+    dataPath,
+    ...componentProps
+  } = component.props as any;
 
   const handleDoubleClick = (e: any) => {
     e.preventDefault();
@@ -35,7 +42,12 @@ export const Text = ({ renderTree, component, ...props }: Props) => {
     }
   };
 
-  const value = isPreviewMode ? data?.value ?? children : children;
+  let value = isPreviewMode ? data?.value ?? children : children;
+
+  if (isPreviewMode && typeof repeatedIndex !== "undefined" && dataPath) {
+    const path = dataPath.replaceAll("[0]", `[${repeatedIndex}]`);
+    value = get(data?.base ?? {}, path) ?? children;
+  }
 
   return (
     <MantineText

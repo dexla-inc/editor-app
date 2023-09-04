@@ -1,6 +1,7 @@
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { Title as MantineTitle, TitleProps } from "@mantine/core";
+import get from "lodash.get";
 import { useRef, useState } from "react";
 
 type Props = {
@@ -41,11 +42,12 @@ export const Title = ({ renderTree, component, ...props }: Props) => {
     }
   };
 
-  const value = isPreviewMode
-    ? typeof repeatedIndex !== "undefined"
-      ? data?.value[dataPath]
-      : data?.value ?? children
-    : children;
+  let value = isPreviewMode ? data?.value ?? children : children;
+
+  if (isPreviewMode && typeof repeatedIndex !== "undefined" && dataPath) {
+    const path = dataPath.replaceAll("[0]", `[${repeatedIndex}]`);
+    value = get(data?.base ?? {}, path) ?? children;
+  }
 
   return (
     <MantineTitle

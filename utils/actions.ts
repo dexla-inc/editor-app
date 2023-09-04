@@ -582,10 +582,10 @@ export const bindResponseToComponentAction = ({
       updateTreeComponent(
         bind.component,
         {
-          data: { value },
+          data: { value, base: data },
           dataPath: bind.value.startsWith("root[0].")
             ? bind.value.split("root[0].")[1]
-            : bind.value,
+            : bind.value.split("root.")[1],
         },
         false
       );

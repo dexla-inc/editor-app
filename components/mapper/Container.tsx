@@ -23,11 +23,13 @@ export const Container = ({ renderTree, component, ...props }: Props) => {
     ...componentProps
   } = component.props as any;
 
-  const data = !isPreviewMode
+  /* const data = !isPreviewMode
     ? isEmpty(exampleData?.value ?? exampleData)
       ? dataProp
       : exampleData?.value ?? exampleData
-    : dataProp?.value ?? dataProp;
+    : dataProp?.value ?? dataProp; */
+
+  const data = !isPreviewMode ? undefined : dataProp?.value ?? dataProp;
 
   return (
     <MantineFlex
@@ -39,8 +41,9 @@ export const Container = ({ renderTree, component, ...props }: Props) => {
     >
       <LoadingOverlay visible={loading} overlayBlur={2} />
       {data &&
+        !isEmpty(data) &&
         data.length > 0 &&
-        data.map((_data: any, repeatedIndex: number) => {
+        data.map((_: any, repeatedIndex: number) => {
           return component.children && component.children.length > 0
             ? component.children?.map((child) =>
                 renderTree({
@@ -49,9 +52,6 @@ export const Container = ({ renderTree, component, ...props }: Props) => {
                     ...child.props,
                     ...componentProps,
                     repeatedIndex,
-                    ...(child.name === "Table"
-                      ? {}
-                      : { data: { value: _data } }),
                   },
                 })
               )

@@ -42,7 +42,6 @@ export const Modifier = () => {
     if (selectedComponentId) {
       const { src, alt, style } = componentProps;
 
-      console.log("src", src);
       form.setValues({
         src: src ?? defaultImageValues.src,
         alt: alt ?? defaultImageValues.alt,

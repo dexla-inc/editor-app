@@ -103,6 +103,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
         .filter((b) => !!b.component)
         .forEach((bind) => {
           updateTreeComponent(bind.component!, {
+            data: undefined,
             exampleData: { value: bind.example },
             headers: Array.isArray(bind.example)
               ? Object.keys(bind.example[0]).reduce((acc, key) => {
@@ -147,6 +148,20 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
         return a.id !== action.id && a.sequentialTo !== action.id;
       })
     );
+
+    updateTreeComponent(selectedComponentId!, {
+      data: undefined,
+      exampleData: undefined,
+    });
+
+    form.values.binds
+      .filter((b) => !!b.component)
+      .forEach((bind) => {
+        updateTreeComponent(bind.component!, {
+          data: undefined,
+          exampleData: undefined,
+        });
+      });
   };
 
   useEffect(() => {
@@ -186,7 +201,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
           form.insertListItem("binds", {
             component: "",
             value: bind,
-            example: bind === "root[0]" ? json : json[bind] || "--",
+            example: bind.endsWith("[0]") ? json : json[bind] || "--",
           });
         });
       }
