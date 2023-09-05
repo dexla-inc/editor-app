@@ -103,7 +103,9 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
         .filter((b) => !!b.component)
         .forEach((bind) => {
           updateTreeComponent(bind.component!, {
-            data: undefined,
+            dataPath: bind.value.startsWith("root[0].")
+              ? bind.value.split("root[0].")[1]
+              : bind.value.split("root.")[1],
             exampleData: { value: bind.example },
             headers: Array.isArray(bind.example)
               ? Object.keys(bind.example[0]).reduce((acc, key) => {

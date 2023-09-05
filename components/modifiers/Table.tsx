@@ -42,11 +42,16 @@ export const Modifier = () => {
         exampleData = {},
         headers = {},
         config = {},
+        dataPath,
       } = componentProps;
 
-      const _data = isEmpty(exampleData?.value ?? exampleData)
+      let _data = isEmpty(exampleData?.value ?? exampleData)
         ? data
         : exampleData?.value ?? exampleData;
+
+      if (dataPath) {
+        _data = get(_data, dataPath.replace("[0]", ""));
+      }
 
       form.setValues({
         data: JSON.stringify(_data, null, 2),

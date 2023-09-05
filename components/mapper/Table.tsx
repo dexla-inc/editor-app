@@ -1,6 +1,7 @@
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { TableProps } from "@mantine/core";
+import get from "lodash.get";
 import isEmpty from "lodash.isempty";
 import startCase from "lodash.startcase";
 import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
@@ -20,14 +21,26 @@ export const Table = ({ renderTree, component, ...props }: Props) => {
     headers = {},
     config = {},
     style,
+    dataPath,
     ...componentProps
   } = component.props as any;
 
-  const data = !isPreviewMode
-    ? isEmpty(exampleData?.value ?? exampleData)
-      ? dataProp?.value ?? dataProp
-      : exampleData?.value ?? exampleData
-    : dataProp?.value ?? dataProp;
+  let data = isEmpty(exampleData?.value ?? exampleData)
+    ? dataProp?.value ?? dataProp
+    : exampleData?.value ?? exampleData;
+
+  if (isPreviewMode) {
+    if (dataPath) {
+      const path = dataPath.replaceAll("[0]", "");
+      data = get(dataProp?.base ?? {}, path) ?? dataProp?.value ?? dataProp;
+    } else {
+      data = dataProp?.value ?? dataProp;
+    }
+  } else if (dataPath) {
+    const path = dataPath.replaceAll("[0]", "");
+    data = get(data ?? {}, path) ?? data;
+  }
+
   const dataSample = (data ?? [])?.[0];
 
   const columns = dataSample

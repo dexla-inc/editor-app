@@ -97,7 +97,6 @@ export default function TeamSettings({ projectId }: Props) {
   ) => {
     const params: AcceptInviteParams = { id, status };
     const response = await acceptInvite(params);
-    console.log(response);
 
     const updatedTeamList = teamList.filter(
       (team) => team.usersName !== response.usersName
