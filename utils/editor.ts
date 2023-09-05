@@ -471,11 +471,7 @@ export const moveComponentToDifferentParent = (
           const dropIndex = node.children?.findIndex(
             (c) => c.id === dropTarget.id
           );
-          node.children?.splice(
-            Math.max((dropIndex || 0) - 1, 0),
-            0,
-            componentToAdd
-          );
+          node.children?.splice(Math.max(dropIndex || 0, 0), 0, componentToAdd);
         } else if (
           dropTarget.edge === "right" ||
           dropTarget.edge === "bottom"
