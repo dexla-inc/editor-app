@@ -1,32 +1,29 @@
 import Cookies from "js-cookie";
 import { create } from "zustand";
 
+type ApiConfig = {
+  accessTokenUrl: string;
+  refreshTokenUrl: string;
+  userEndpointUrl: string;
+  accessTokenProperty: string;
+  refreshTokenProperty: string;
+  expiryTokenProperty: string;
+};
+
 type AuthState = {
   refreshToken: string | null;
   expiresAt: number | null;
-  apiConfig: {
-    accessTokenUrl: string;
-    refreshTokenUrl: string;
-    userEndpointUrl: string;
-    accessTokenProperty: string;
-    refreshTokenProperty: string;
-    expiryTokenProperty: string;
-  };
+  apiConfig: ApiConfig;
   userObject: any;
   setAuthTokens: (response: any) => void;
-  checkTokenExpiry: () => boolean;
+  hasTokenExpired: () => boolean;
   clearAuthTokens: () => void;
   refreshAccessToken: () => Promise<void>;
-  setApiConfig: (
-    accessTokenUrl: string,
-    refreshTokenUrl: string,
-    userEndpointUrl: string,
-    accessTokenProperty: string,
-    refreshTokenProperty: string,
-    expiryTokenProperty: string
-  ) => void;
+  setApiConfig: (apiConfig: ApiConfig) => void;
   setUserObject: (userObject: any) => void;
   getAccessToken: () => string | null;
+  getRefreshToken: () => string | null;
+  getApiConfig: () => ApiConfig | null;
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -42,105 +39,105 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     expiryTokenProperty: "",
   },
   setAuthTokens: (response) => {
+    const storedConfig = get().getApiConfig();
+
     const {
-      accessTokenProperty,
-      refreshTokenProperty,
-      expiryTokenProperty,
+      accessTokenProperty = storedConfig?.accessTokenProperty,
+      refreshTokenProperty = storedConfig?.refreshTokenProperty,
+      expiryTokenProperty = storedConfig?.expiryTokenProperty,
+      accessTokenUrl = storedConfig?.accessTokenUrl,
+      refreshTokenUrl = storedConfig?.refreshTokenUrl,
+      userEndpointUrl = storedConfig?.userEndpointUrl,
+    } = response;
+
+    const apiConfig = {
       accessTokenUrl,
       refreshTokenUrl,
       userEndpointUrl,
-    } = response;
+      accessTokenProperty,
+      refreshTokenProperty,
+      expiryTokenProperty,
+    };
 
-    if (
-      accessTokenProperty &&
-      refreshTokenProperty &&
-      expiryTokenProperty &&
-      accessTokenUrl &&
-      refreshTokenUrl &&
-      userEndpointUrl
-    ) {
-      set({
-        apiConfig: {
-          accessTokenUrl,
-          refreshTokenUrl,
-          userEndpointUrl,
-          accessTokenProperty,
-          refreshTokenProperty,
-          expiryTokenProperty,
-        },
-      });
-    }
+    set({
+      apiConfig: apiConfig,
+    });
 
+    console.log(response);
     const accessToken = response[accessTokenProperty];
     const refreshToken = response[refreshTokenProperty];
     const expirySeconds = response[expiryTokenProperty];
-    console.log("accessToken", accessToken);
-    console.log("refreshToken", refreshToken);
 
-    const expiresAt = Date.now() + expirySeconds * 1000;
-    Cookies.set("dexlaRefreshToken", refreshToken, {
-      expires: 100, //expirySeconds / 60 / 60 / 24,
-    }); // Convert seconds to days
+    // Only update if these values are valid
+    if (accessToken && typeof accessToken === "string") {
+      localStorage.setItem("dexlaToken", accessToken);
+    }
 
-    localStorage.setItem("dexlaToken", accessToken);
+    if (refreshToken && typeof refreshToken === "string") {
+      Cookies.set("dexlaRefreshToken", refreshToken, {
+        expires: expirySeconds / 60 / 60 / 24,
+      });
+      set({ refreshToken });
+    }
 
-    set({
-      refreshToken,
-      expiresAt,
-    });
+    if (expirySeconds && typeof expirySeconds === "number") {
+      const expiresAt = Date.now() + expirySeconds * 1000;
+      set({ expiresAt });
+    }
+
+    if (apiConfig && apiConfig.refreshTokenUrl) {
+      localStorage.setItem("apiConfig", JSON.stringify(apiConfig));
+    }
   },
   clearAuthTokens: () => {
     Cookies.remove("dexlaRefreshToken");
     localStorage.removeItem("dexlaToken");
     set({ refreshToken: null, expiresAt: null });
   },
-  checkTokenExpiry: () => {
+  hasTokenExpired: () => {
     const expiresAt = get().expiresAt;
-    if (!expiresAt) return true; // No token is considered as expired
-    return Date.now() > expiresAt;
+    console.log(expiresAt);
+    if (expiresAt) {
+      return Date.now() > expiresAt;
+    }
+    return true;
   },
   refreshAccessToken: async () => {
     const state = get();
-    const accessToken = localStorage.getItem("dexlaToken");
-    if (!accessToken || !state.checkTokenExpiry()) {
+    console.log(state);
+    const accessToken = state.getAccessToken();
+    const refreshToken = state.getRefreshToken();
+
+    if (accessToken && !state.hasTokenExpired()) {
       return;
     }
 
-    const response = await fetch(`${state.apiConfig.refreshTokenUrl}`, {
+    const response = await fetch(`${state.getApiConfig()?.refreshTokenUrl}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({ refresh: state.refreshToken }),
+      body: JSON.stringify({ refresh: refreshToken }),
     });
 
     const data = await response.json();
+    console.log(data);
     state.setAuthTokens(data);
   },
-  setApiConfig: (
-    accessTokenUrl,
-    refreshTokenUrl,
-    userEndpointUrl,
-    accessTokenProperty,
-    refreshTokenProperty,
-    expiryTokenProperty
-  ) => {
-    set({
-      apiConfig: {
-        accessTokenUrl,
-        refreshTokenUrl,
-        userEndpointUrl,
-        accessTokenProperty,
-        refreshTokenProperty,
-        expiryTokenProperty,
-      },
-    });
+  setApiConfig: (config: ApiConfig) => {
+    set({ apiConfig: config });
   },
   setUserObject: (userObject) => {
     set({ userObject });
   },
   getAccessToken: () => {
     return localStorage.getItem("dexlaToken");
+  },
+  getRefreshToken: () => {
+    return Cookies.get("dexlaRefreshToken") || null;
+  },
+  getApiConfig: () => {
+    return JSON.parse(localStorage.getItem("apiConfig") || "{}");
   },
 }));

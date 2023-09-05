@@ -1,7 +1,7 @@
+import { defaultImageValues } from "@/components/modifiers/Image";
 import { MantineThemeExtended } from "@/stores/editor";
 import { InputTypes } from "@/utils/dashboardTypes";
 import { nanoid } from "nanoid";
-import { defaultImageValues } from "../modifiers/Image";
 
 type Input = {
   placeholder: string;
