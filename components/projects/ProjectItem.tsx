@@ -1,3 +1,4 @@
+import { Icon } from "@/components/Icon";
 import { getPageList } from "@/requests/pages/queries";
 import { PageResponse } from "@/requests/pages/types";
 import { deleteProject } from "@/requests/projects/mutations";
@@ -28,7 +29,6 @@ import {
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { useState } from "react";
-import { Icon } from "../Icon";
 
 type ProjectItemProps = {
   project: ProjectResponse;

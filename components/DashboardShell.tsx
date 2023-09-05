@@ -19,6 +19,8 @@ import {
 import { User } from "@propelauth/react";
 import Link from "next/link";
 
+import { Icon } from "@/components/Icon";
+import NavigationAvatarFooter from "@/components/NavigationAvatarFooter";
 import { useEditorStore } from "@/stores/editor";
 import { useLogoutFunction } from "@propelauth/react";
 import {
@@ -27,8 +29,6 @@ import {
 } from "@tabler/icons-react";
 import { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { Icon } from "./Icon";
-import NavigationAvatarFooter from "./NavigationAvatarFooter";
 
 export interface ShellProps extends AppShellProps {
   navbarType?: NavbarTypes;

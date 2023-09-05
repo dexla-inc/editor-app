@@ -1,3 +1,5 @@
+import { InformationAlert } from "@/components/Alerts";
+import { DnsRecord } from "@/components/settings/DnsRecord";
 import {
   Button,
   Container,
@@ -8,8 +10,6 @@ import {
   Title,
 } from "@mantine/core";
 import { useState } from "react";
-import { InformationAlert } from "../Alerts";
-import { DnsRecord } from "./DnsRecord";
 
 type Props = {
   projectId: string;
