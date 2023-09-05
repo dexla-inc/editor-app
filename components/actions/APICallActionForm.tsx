@@ -25,11 +25,11 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { forwardRef, useEffect, useState } from "react";
+import { ActionButtons } from "./ActionButtons";
 
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, any>(
@@ -88,12 +88,9 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     (state) => state.updateTreeComponentActions
   );
 
-  const setCopiedAction = useEditorStore((state) => state.setCopiedAction);
-
   const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
     undefined
   );
-  const [copied, { open, close }] = useDisclosure(false);
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
   >(undefined);
@@ -112,10 +109,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   const action: Action = componentActions.find(
     (a: Action) => a.id === id
   ) as Action;
-
-  const filteredComponentActions = componentActions.filter((a: Action) => {
-    return a.id === action.id || a.sequentialTo === action.id;
-  });
 
   const apiCall = action.action as LoginAction | APICallAction;
 
@@ -169,6 +162,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     }
   };
 
+  // For EmptyDatasourcesPlaceholder
   const removeAction = () => {
     updateTreeComponentActions(
       selectedComponentId!,
@@ -177,16 +171,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
       })
     );
   };
-
-  const copyAction = () => {
-    setCopiedAction(filteredComponentActions);
-    open();
-  };
-
-  useEffect(() => {
-    const timeout = setTimeout(() => copied && close(), 2000);
-    return () => clearTimeout(timeout);
-  });
 
   const isLogin = actionName === "login";
   useEffect(() => {
@@ -351,26 +335,11 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
               })}
             </Stack>
           )}
-          <Button size="xs" type="submit">
-            Save
-          </Button>
-          <Button
-            size="xs"
-            type="button"
-            variant="light"
-            color="pink"
-            onClick={copyAction}
-          >
-            {copied ? "Copied" : "Copy"}
-          </Button>
-          <Button
-            size="xs"
-            type="button"
-            variant="default"
-            onClick={removeAction}
-          >
-            Remove
-          </Button>
+          <ActionButtons
+            actionId={action.id}
+            componentActions={componentActions}
+            selectedComponentId={selectedComponentId}
+          ></ActionButtons>
         </Stack>
       </form>
       <ActionsForm sequentialTo={action.id} />

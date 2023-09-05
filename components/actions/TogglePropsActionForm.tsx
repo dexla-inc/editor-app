@@ -1,13 +1,13 @@
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
-import { Action, ChangeStateAction, TogglePropsAction } from "@/utils/actions";
+import { Action, TogglePropsAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
-import { ActionIcon, Button, Select, Stack, TextInput } from "@mantine/core";
+import { ActionIcon, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { ActionButtons } from "./ActionButtons";
 
 type Props = {
   id: string;
@@ -39,19 +39,11 @@ export const TogglePropsActionForm = ({ id }: Props) => {
     (state) => state.updateTreeComponentActions
   );
 
-  const setCopiedAction = useEditorStore((state) => state.setCopiedAction);
-
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentActions = component?.actions ?? [];
   const action: Action = componentActions.find(
     (a: Action) => a.id === id
   ) as Action;
-
-  const [copied, { open, close }] = useDisclosure(false);
-
-  const filteredComponentActions = componentActions.filter((a: Action) => {
-    return a.id === action.id || a.sequentialTo === action.id;
-  });
 
   const togglePropsAction = action.action as TogglePropsAction;
 
@@ -103,25 +95,6 @@ export const TogglePropsActionForm = ({ id }: Props) => {
     }
   };
 
-  const copyAction = () => {
-    setCopiedAction(filteredComponentActions);
-    open();
-  };
-
-  useEffect(() => {
-    const timeout = setTimeout(() => copied && close(), 2000);
-    return () => clearTimeout(timeout);
-  });
-
-  const removeAction = () => {
-    updateTreeComponentActions(
-      selectedComponentId!,
-      componentActions.filter((a: Action) => {
-        return a.id !== action.id && a.sequentialTo !== action.id;
-      })
-    );
-  };
-
   useEffect(() => {
     if (componentToBind && pickingComponentToBindTo) {
       if (pickingComponentToBindTo.componentId === component?.id) {
@@ -157,27 +130,11 @@ export const TogglePropsActionForm = ({ id }: Props) => {
           }
         />
 
-        <Button size="xs" type="submit" mt="xs">
-          Save
-        </Button>
-        <Button
-          size="xs"
-          type="button"
-          variant="light"
-          color="pink"
-          onClick={copyAction}
-        >
-          {copied ? "Copied" : "Copy"}
-        </Button>
-        <Button
-          size="xs"
-          type="button"
-          variant="default"
-          onClick={removeAction}
-          color="red"
-        >
-          Remove
-        </Button>
+        <ActionButtons
+          actionId={action.id}
+          componentActions={componentActions}
+          selectedComponentId={selectedComponentId}
+        ></ActionButtons>
       </Stack>
     </form>
   );

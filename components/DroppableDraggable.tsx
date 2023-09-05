@@ -207,7 +207,8 @@ export const DroppableDraggable = ({
   const baseShadow = `0 0 0 1px ${theme.colors.teal[6]}`;
 
   const shadows =
-    isOver || isPicked
+    !isPreviewMode &&
+    (isOver || isPicked
       ? {
           boxShadow:
             edge === "top"
@@ -222,7 +223,7 @@ export const DroppableDraggable = ({
         }
       : isSelected || hovered
       ? { boxShadow: baseShadow }
-      : {};
+      : {});
 
   const isContentWrapper = id === "content-wrapper";
   const haveNonRootParent = parent && parent.id !== "root";
