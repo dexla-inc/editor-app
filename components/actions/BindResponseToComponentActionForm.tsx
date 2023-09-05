@@ -5,12 +5,12 @@ import { Action, BindResponseToComponentAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
 import { flattenKeysWithRoot } from "@/utils/flattenKeys";
-import { ActionIcon, Button, Stack, TextInput } from "@mantine/core";
+import { ActionIcon, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { ActionButtons } from "./ActionButtons";
 
 type Props = {
   id: string;
@@ -46,8 +46,6 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
     (state) => state.updateTreeComponentActions
   );
 
-  const setCopiedAction = useEditorStore((state) => state.setCopiedAction);
-
   const projectId = router.query.id as string;
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentActions = component?.actions ?? [];
@@ -55,18 +53,12 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
     (a: Action) => a.id === id
   ) as Action;
 
-  const filteredComponentActions = componentActions.filter((a: Action) => {
-    return a.id === action.id || a.sequentialTo === action.id;
-  });
-
   const bindResponseToComponent =
     action.action as BindResponseToComponentAction;
 
   const originalAction = componentActions.find(
     (a: Action) => a.id === action.sequentialTo
   );
-
-  const [copied, { open, close }] = useDisclosure(false);
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -132,16 +124,6 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
       });
     }
   };
-
-  const copyAction = () => {
-    setCopiedAction(filteredComponentActions);
-    open();
-  };
-
-  useEffect(() => {
-    const timeout = setTimeout(() => copied && close(), 2000);
-    return () => clearTimeout(timeout);
-  });
 
   const removeAction = () => {
     updateTreeComponentActions(
@@ -250,28 +232,12 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
             />
           );
         })}
-
-        <Button size="xs" type="submit" mt="xs">
-          Save
-        </Button>
-        <Button
-          size="xs"
-          type="button"
-          variant="light"
-          color="pink"
-          onClick={copyAction}
-        >
-          {copied ? "Copied" : "Copy"}
-        </Button>
-        <Button
-          size="xs"
-          type="button"
-          variant="default"
-          onClick={removeAction}
-          color="red"
-        >
-          Remove
-        </Button>
+        <ActionButtons
+          actionId={action.id}
+          componentActions={componentActions}
+          selectedComponentId={selectedComponentId}
+          optionalRemoveAction={removeAction}
+        ></ActionButtons>
       </Stack>
     </form>
   );
