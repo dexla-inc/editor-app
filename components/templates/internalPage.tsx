@@ -1,6 +1,9 @@
 import { structureMapper } from "@/utils/componentMapper";
 import { Component, traverseComponents } from "@/utils/editor";
 import { nanoid } from "nanoid";
+import { jsonStructure } from "../mapper/structure/AppBar";
+import { defaultBorderValues } from "../modifiers/Border";
+import { px } from "@mantine/core";
 
 type ChartProps = { series: { name: string; data: number[] }[] };
 type XAxisProps = { xaxis: { categories: string[] } };
@@ -213,105 +216,246 @@ export const template = (data: Data, theme: any, pages: any) => {
               fixedPosition: { position: "top", target: "content-wrapper" },
               props: {
                 style: {
-                  borderTopStyle: "none",
-                  borderRightStyle: "none",
-                  borderBottomStyle: "solid",
-                  borderLeftStyle: "none",
-                  borderTopWidth: "0px",
-                  borderRightWidth: "0px",
-                  borderBottomWidth: "1px",
-                  borderLeftWidth: "1px",
-                  borderTopColor: "Border.6",
-                  borderRightColor: "Border.6",
-                  borderBottomColor: "#CCCCCC",
-                  borderLeftColor: "#CCCCCC",
-                  borderTopLeftRadius: "0px",
-                  borderTopRightRadius: "0px",
-                  borderBottomLeftRadius: "0px",
-                  borderBottomRightRadius: "0px",
-                  paddingTop: "20px",
-                  paddingBottom: "20px",
-                  paddingLeft: "40px",
-                  paddingRight: "40px",
+                  ...defaultBorderValues,
+                  borderBottomWidth: `1px`,
+                  borderBottomStyle: `solid`,
+                  borderBottomColor: theme.colors.Border
+                    ? "Border.6"
+                    : "gray.3",
+                  paddingTop: px(theme.spacing.lg),
+                  paddingBottom: px(theme.spacing.lg),
+                  paddingLeft: px(theme.spacing.lg),
+                  paddingRight: px(theme.spacing.lg),
                   height: "auto",
                   width: "100%",
                   display: "flex",
-                  justifyContent: "flex-end",
+                  justifyContent: "space-between",
                   alignItems: "center",
-                  gap: "1rem",
+                  gap: theme.spacing.md,
                 },
-                bg: "White.0",
               },
               children: [
                 {
                   id: nanoid(),
-                  name: "ButtonIcon",
-                  description: "Notifications button",
+                  name: "Container",
+                  description: "Search box",
                   props: {
-                    variant: "outline",
-                    color: "Primary",
-                    size: "lg",
-                    radius: "xl",
-                    style: { backgroundColor: "white" },
+                    style: { display: "flex", alignItems: "center" },
                   },
                   blockDroppingChildrenInside: true,
                   children: [
                     {
                       id: nanoid(),
-                      name: "Icon",
-                      description: "Icon",
-                      props: { name: "IconBell" },
-                      children: [],
-                      blockDroppingChildrenInside: true,
-                    },
-                  ],
-                },
-                {
-                  id: nanoid(),
-                  name: "ButtonIcon",
-                  description: "Settings button",
-                  props: {
-                    variant: "outline",
-                    color: "Primary",
-                    size: "lg",
-                    radius: "xl",
-                    style: { backgroundColor: "white" },
-                  },
-                  blockDroppingChildrenInside: true,
-                  children: [
-                    {
-                      id: nanoid(),
-                      name: "Icon",
-                      description: "Icon",
+                      name: "Input",
+                      description: "Search",
                       props: {
-                        name: "IconSettings",
-                        style: { color: "Primary.6" },
+                        variant: "default",
+                        radius: "md",
+                        type: "search",
+                        size: "sm",
+                        icon: {
+                          props: { name: "IconSearch" },
+                        },
+                        placeholder: "Search anything...",
                       },
-                      children: [],
                       blockDroppingChildrenInside: true,
                     },
                   ],
                 },
                 {
                   id: nanoid(),
-                  name: "ButtonIcon",
-                  description: "Profile button",
+                  name: "Container",
+                  description: "Buttons container",
                   props: {
-                    variant: "outline",
-                    color: "Primary",
-                    size: "lg",
-                    radius: "xl",
-                    style: { backgroundColor: "white" },
+                    style: {
+                      display: "flex",
+                      alignItems: "center",
+                      gap: theme.spacing.sm,
+                    },
                   },
                   blockDroppingChildrenInside: true,
                   children: [
                     {
                       id: nanoid(),
-                      name: "Icon",
-                      description: "Icon",
-                      props: { name: "IconUserCircle" },
-                      children: [],
+                      name: "Container",
+                      description: "Notifications Container",
+                      props: {
+                        style: {
+                          width: "35px",
+                          height: "35px",
+                          overflow: "hidden",
+                          borderRadius: "50%",
+                          padding: "0px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          cursor: "pointer",
+                          type: "button",
+                        },
+                      },
                       blockDroppingChildrenInside: true,
+                      children: [
+                        {
+                          id: nanoid(),
+                          name: "Container",
+                          description: "Notifications Container",
+                          props: {
+                            style: {
+                              width: "25px",
+                              height: "25px",
+                              overflow: "hidden",
+                              borderRadius: "50%",
+                            },
+                          },
+                          blockDroppingChildrenInside: true,
+                          children: [
+                            {
+                              id: nanoid(),
+                              name: "Image",
+                              description: "Notifications button",
+                              props: {
+                                fit: "cover",
+                                alt: "Notification",
+                                src: "https://dexlastatesdev.blob.core.windows.net/temp/notifications.svg",
+                                style: {
+                                  width: "25px",
+                                  height: "25px",
+                                  filter: "contrast(40%)",
+                                },
+                              },
+                              blockDroppingChildrenInside: true,
+                              children: [],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                    {
+                      id: nanoid(),
+                      name: "Container",
+                      description: "Settings Container",
+                      props: {
+                        style: {
+                          width: "35px",
+                          height: "35px",
+                          overflow: "hidden",
+                          borderRadius: "50%",
+                          padding: "0px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          cursor: "pointer",
+                          type: "button",
+                        },
+                      },
+                      blockDroppingChildrenInside: true,
+                      children: [
+                        {
+                          id: nanoid(),
+                          name: "Container",
+                          description: "Settings Container",
+                          props: {
+                            style: {
+                              width: "25px",
+                              height: "25px",
+                              overflow: "hidden",
+                              borderRadius: "50%",
+                            },
+                          },
+                          blockDroppingChildrenInside: true,
+                          children: [
+                            {
+                              id: nanoid(),
+                              name: "Image",
+                              description: "Settings button",
+                              props: {
+                                fit: "cover",
+                                alt: "Settings",
+                                src: "https://dexlastatesdev.blob.core.windows.net/temp/settings.svg",
+                                style: {
+                                  width: "25px",
+                                  height: "25px",
+                                  filter: "contrast(40%)",
+                                },
+                              },
+                              blockDroppingChildrenInside: true,
+                              children: [],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                    {
+                      id: nanoid(),
+                      name: "Container",
+                      description: "Profile Container",
+                      props: {
+                        style: {
+                          width: "auto",
+                          height: "35px",
+                          overflow: "hidden",
+                          borderRadius: "50%",
+                          padding: "0px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: theme.spacing.xs,
+                          cursor: "pointer",
+                          type: "button",
+                        },
+                      },
+                      blockDroppingChildrenInside: true,
+                      children: [
+                        {
+                          id: nanoid(),
+                          name: "Container",
+                          description: "Profile Container",
+                          props: {
+                            style: {
+                              width: "25px",
+                              height: "25px",
+                              overflow: "hidden",
+                              borderRadius: "50%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            },
+                          },
+                          blockDroppingChildrenInside: true,
+                          children: [
+                            {
+                              id: nanoid(),
+                              name: "Image",
+                              description: "Profile Image",
+                              props: {
+                                fit: "contain",
+                                radius: "md",
+                                alt: "Profile Image",
+                                src: "https://dexlastatesdev.blob.core.windows.net/temp/avatar_25.jpg",
+                                style: {
+                                  width: "100%",
+                                  height: "100%",
+                                },
+                              },
+                              blockDroppingChildrenInside: true,
+                              children: [],
+                            },
+                          ],
+                        },
+                        {
+                          id: nanoid(),
+                          name: "Title",
+                          description: "Title",
+                          props: {
+                            children: "John Doe",
+                            color: theme.colors.dark[7],
+                            order: 5,
+                            style: { fontWeight: "semibold" },
+                          },
+                          children: [],
+                          blockDroppingChildrenInside: true,
+                        },
+                      ],
                     },
                   ],
                 },
