@@ -10,6 +10,7 @@ import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm"
 import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
 import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
+import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
 import {
   getDataSourceAuth,
@@ -22,6 +23,7 @@ import { Component, getComponentById } from "@/utils/editor";
 import { flattenKeysWithRoot } from "@/utils/flattenKeys";
 import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
+import { nanoid } from "nanoid";
 import { Router } from "next/router";
 
 const triggers = [
@@ -63,6 +65,7 @@ export const actions = [
   { name: "alert", group: "Feedback" },
   { name: "changeState", group: "Feedback" },
   { name: "openToast", group: "Feedback" },
+  { name: "reloadComponent", group: "Feedback" },
   { name: "copyToClipboard", group: "Utilities & Tools" },
 ];
 type ActionTriggerAll = (typeof triggers)[number];
@@ -153,6 +156,13 @@ export type BindResponseToComponentAction = {
   }[];
 };
 
+export type ReloadComponentAction = {
+  name: "reloadComponent";
+  componentId: string;
+  onMountActionId?: string;
+  data?: any;
+};
+
 export type Action = {
   id: string;
   trigger: ActionTrigger;
@@ -168,7 +178,8 @@ export type Action = {
     | OpenPopOverAction
     | TogglePropsAction
     | OpenToastAction
-    | ChangeStateAction;
+    | ChangeStateAction
+    | ReloadComponentAction;
   sequentialTo?: string;
 };
 
@@ -600,6 +611,21 @@ export const bindResponseToComponentAction = ({
   });
 };
 
+export type ReloadComponentActionParams = ActionParams & {
+  action: ReloadComponentAction;
+};
+
+export const reloadComponentAction = ({
+  action,
+}: ReloadComponentActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const removeOnMountActionsRan =
+    useEditorStore.getState().removeOnMountActionsRan;
+
+  removeOnMountActionsRan(action.onMountActionId ?? "");
+  updateTreeComponent(action.componentId, { key: nanoid() }, false);
+};
+
 export const actionMapper = {
   alert: {
     action: debugAction,
@@ -652,5 +678,9 @@ export const actionMapper = {
   toggleVisibility: {
     action: togglePropsAction,
     form: TogglePropsActionForm,
+  },
+  reloadComponent: {
+    action: reloadComponentAction,
+    form: ReloadComponentActionForm,
   },
 };

@@ -83,6 +83,7 @@ export type EditorState = {
   ) => void;
   setComponentToBind: (componentToBind?: string) => void;
   addOnMountActionsRan: (action: string) => void;
+  removeOnMountActionsRan: (action: string) => void;
   resetOnMountActionsRan: () => void;
   setCopiedComponent: (copiedComponent?: Component) => void;
   setPages: (pages: PageResponse[]) => void;
@@ -140,6 +141,13 @@ export const useEditorStore = create<EditorState>()(
           set((state) => ({
             ...state,
             onMountActionsRan: state.onMountActionsRan.concat(onMountAction),
+          })),
+        removeOnMountActionsRan: (onMountAction) =>
+          set((state) => ({
+            ...state,
+            onMountActionsRan: state.onMountActionsRan.filter(
+              (action) => action !== onMountAction
+            ),
           })),
         resetOnMountActionsRan: () => set({ onMountActionsRan: [] }),
         setPages: (pages) => set({ pages }),

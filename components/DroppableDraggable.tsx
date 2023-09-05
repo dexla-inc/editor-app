@@ -42,7 +42,7 @@ type Props = {
 
 const bidingComponentsWhitelist = {
   from: ["Input"],
-  to: ["Text", "Title", "Table", "Container"],
+  to: ["Text", "Title", "Table", "Container", "Image"],
 };
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
 // Whitelist certain props that can be passed down
@@ -167,7 +167,7 @@ export const DroppableDraggable = ({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPreviewMode, onMountAction, onMountActionsRan]);
+  }, [isPreviewMode, onMountAction, onMountActionsRan, component]);
 
   const parent = getComponentParent(editorTree.root, id);
 

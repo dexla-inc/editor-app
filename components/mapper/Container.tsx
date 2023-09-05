@@ -2,6 +2,7 @@ import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { Flex as MantineFlex, FlexProps, LoadingOverlay } from "@mantine/core";
 import isEmpty from "lodash.isempty";
+import { useEffect } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -22,12 +23,6 @@ export const Container = ({ renderTree, component, ...props }: Props) => {
     loading,
     ...componentProps
   } = component.props as any;
-
-  /* const data = !isPreviewMode
-    ? isEmpty(exampleData?.value ?? exampleData)
-      ? dataProp
-      : exampleData?.value ?? exampleData
-    : dataProp?.value ?? dataProp; */
 
   const data = !isPreviewMode ? undefined : dataProp?.value ?? dataProp;
 

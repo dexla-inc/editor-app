@@ -117,7 +117,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
   const pasteCopiedComponent = useCallback(() => {
     if (copiedComponent && !isPreviewMode && selectedComponentId) {
-      const isSelectedId = selectedComponentId === copiedComponent.id;
       const copy = cloneDeep(editorTree);
       addComponent(copy.root, copiedComponent, {
         id: getComponentParent(copy.root, copiedComponent.id!)!.id as string,
@@ -344,7 +343,9 @@ export const Editor = ({ projectId, pageId }: Props) => {
     if (!componentToRender) {
       return (
         <DroppableDraggable
-          key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
+          key={`${component.id}-${component?.props?.key}-${
+            isPreviewMode ? "preview" : "editor"
+          }`}
           id={component.id!}
           component={component}
           customComponentModal={customComponentModal}
@@ -356,7 +357,9 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
     return (
       <DroppableDraggable
-        key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
+        key={`${component.id}-${component?.props?.key}-${
+          isPreviewMode ? "preview" : "editor"
+        }`}
         id={component.id!}
         component={component}
         customComponentModal={customComponentModal}

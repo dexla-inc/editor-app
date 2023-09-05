@@ -1,6 +1,7 @@
 import { Component } from "@/utils/editor";
 import { TextInputProps, TextInput as MantineInput } from "@mantine/core";
 import { Icon } from "@/components/Icon";
+import debounce from "lodash.debounce";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -8,8 +9,14 @@ type Props = {
 } & TextInputProps;
 
 export const Input = ({ renderTree, component, ...props }: Props) => {
-  const { children, icon, ...componentProps } = component.props as any;
+  const { children, icon, triggers, ...componentProps } =
+    component.props as any;
   const { name: iconName } = icon && icon!.props!;
+
+  const debouncedOnChange = debounce((e) => {
+    triggers?.onChange(e);
+  }, 400);
+
   return (
     <MantineInput
       id={component.id}
@@ -17,6 +24,7 @@ export const Input = ({ renderTree, component, ...props }: Props) => {
       styles={{ root: { display: "block !important" } }}
       {...props}
       {...componentProps}
+      onChange={triggers?.onChange ? debouncedOnChange : undefined}
     >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))
