@@ -91,19 +91,32 @@ export const template = (data: Data, theme: MantineThemeExtended) => {
               children: [
                 {
                   id: nanoid(),
-                  name: "Image",
-                  description: "Image",
+                  name: "Container",
+                  description: "Image Container",
                   props: {
                     style: {
                       width: "auto",
-                      height: "50px",
+                      marginBottom: "40px",
                     },
-                    ...defaultImageValues,
-                    src: logoUrl,
-                    alt: "Logo",
                   },
-                  children: [],
-                  blockDroppingChildrenInside: true,
+                  children: [
+                    {
+                      id: nanoid(),
+                      name: "Image",
+                      description: "Image",
+                      props: {
+                        style: {
+                          width: "auto",
+                          height: "50px",
+                        },
+                        ...defaultImageValues,
+                        src: logoUrl,
+                        alt: "Logo",
+                      },
+                      children: [],
+                      blockDroppingChildrenInside: true,
+                    },
+                  ],
                 },
                 {
                   id: nanoid(),
@@ -221,7 +234,11 @@ export const template = (data: Data, theme: MantineThemeExtended) => {
                               paddingRight: 20,
                             },
                             textColor: "White.0",
-                            children: data.button.text,
+                            children:
+                              data.button.text ??
+                              (Array.isArray(data.button)
+                                ? data.button[0]?.text
+                                : data.button?.text),
                           },
                           blockDroppingChildrenInside: true,
                         },
