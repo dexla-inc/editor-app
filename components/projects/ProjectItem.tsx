@@ -1,3 +1,4 @@
+import { Icon } from "@/components/Icon";
 import { getPageList } from "@/requests/pages/queries";
 import { PageResponse } from "@/requests/pages/types";
 import { deleteProject } from "@/requests/projects/mutations";
@@ -20,12 +21,10 @@ import {
 import {
   IconChevronDown,
   IconChevronRight,
-  IconDatabase,
   IconDots,
   IconFileAnalytics,
   IconHome,
   IconSettings,
-  IconSettings2,
   IconTrash,
 } from "@tabler/icons-react";
 import Link from "next/link";
@@ -175,18 +174,32 @@ export function ProjectItem({
               <Collapse in={settingsOpened}>
                 <Box ml={10}>
                   <Menu.Item
-                    icon={<IconSettings2 size={ICON_SIZE} />}
+                    icon={<Icon name="IconSettings2" size={ICON_SIZE} />}
                     component={Link}
                     href={`/projects/${project.id}/settings?name=${project.friendlyName}`}
                   >
                     General
                   </Menu.Item>
                   <Menu.Item
-                    icon={<IconDatabase size={ICON_SIZE} />}
+                    icon={<Icon name="IconDatabase" size={ICON_SIZE} />}
                     component={Link}
                     href={`/projects/${project.id}/settings/datasources?name=${project.friendlyName}`}
                   >
                     Datasource
+                  </Menu.Item>
+                  <Menu.Item
+                    icon={<Icon name="IconUser" size={ICON_SIZE} />}
+                    component={Link}
+                    href={`/projects/${project.id}/settings/team?name=${project.friendlyName}`}
+                  >
+                    Team
+                  </Menu.Item>
+                  <Menu.Item
+                    icon={<Icon name="IconWorldWww" size={ICON_SIZE} />}
+                    component={Link}
+                    href={`/projects/${project.id}/settings/domain?name=${project.friendlyName}`}
+                  >
+                    Domain
                   </Menu.Item>
                 </Box>
               </Collapse>

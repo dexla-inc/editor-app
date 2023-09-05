@@ -1,3 +1,4 @@
+import { Icon } from "@/components/Icon";
 import { ICON_SIZE } from "@/utils/config";
 import {
   Avatar,
@@ -8,7 +9,6 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { forwardRef } from "react";
-import { Icon } from "./Icon";
 
 type NavigationAvatarFooterProps = {
   firstName?: string;

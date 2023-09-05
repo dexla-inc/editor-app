@@ -1,7 +1,7 @@
+import { defaultImageValues } from "@/components/modifiers/Image";
 import { MantineThemeExtended } from "@/stores/editor";
 import { InputTypes } from "@/utils/dashboardTypes";
 import { nanoid } from "nanoid";
-import { defaultImageValues } from "../modifiers/Image";
 
 type Input = {
   placeholder: string;
@@ -20,8 +20,6 @@ export type Data = {
 };
 
 export const template = (data: Data, theme: MantineThemeExtended) => {
-  console.log("theme", theme);
-
   const darkLogo = theme.logos?.find((logo) => logo.type === "DARK");
   const lightLogo = theme.logos?.find((logo) => logo.type === "LIGHT");
 
