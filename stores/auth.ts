@@ -74,10 +74,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const accessToken = response[accessTokenProperty];
     const refreshToken = response[refreshTokenProperty];
     const expirySeconds = response[expiryTokenProperty];
+    console.log("accessToken", accessToken);
+    console.log("refreshToken", refreshToken);
 
     const expiresAt = Date.now() + expirySeconds * 1000;
     Cookies.set("dexlaRefreshToken", refreshToken, {
-      expires: expirySeconds / 60 / 60 / 24,
+      expires: 100, //expirySeconds / 60 / 60 / 24,
     }); // Convert seconds to days
 
     localStorage.setItem("dexlaToken", accessToken);
