@@ -189,7 +189,7 @@ export const template = (data: Data, theme: MantineThemeExtended) => {
                         style: {
                           display: "flex",
                           flexDirection: "column",
-                          rowGap: "25px",
+                          rowGap: "20px",
                           columnGap: "20px",
                           alignItems: "center",
                           justifyContent: "center",

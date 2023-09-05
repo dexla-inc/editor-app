@@ -1,10 +1,12 @@
+import { ICON_SIZE } from "@/utils/config";
 import * as Icons from "@tabler/icons-react";
 
 type Props = {
   name: string;
+  size?: number;
 } & Icons.TablerIconsProps;
 
-export const Icon = ({ name, ...props }: Props) => {
+export const Icon = ({ name, size = ICON_SIZE, ...props }: Props) => {
   // @ts-ignore
   const IconToRender = Icons[name];
 
@@ -12,5 +14,5 @@ export const Icon = ({ name, ...props }: Props) => {
     return null;
   }
 
-  return <IconToRender {...props} />;
+  return <IconToRender size={size} {...props} />;
 };
