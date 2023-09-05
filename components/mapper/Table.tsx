@@ -30,27 +30,29 @@ export const Table = ({ renderTree, component, ...props }: Props) => {
     : dataProp?.value ?? dataProp;
   const dataSample = (data ?? [])?.[0];
 
-  const columns = Object.keys(dataSample).reduce((acc: any[], key: string) => {
-    if (headers?.[key]) {
-      return acc.concat({
-        header: startCase(key),
-        accessorKey: key,
-        columnDefType: "display",
-        enableSorting: config?.sorting,
-        enableGlobalFilter: config?.filter,
-        enablePagination: config?.pagination,
-        Cell: ({ row }: any) => {
-          const val = row.original[key];
-          return typeof val === "object" ? JSON.stringify(val) : val;
-        },
-      });
-    }
+  const columns = dataSample
+    ? Object.keys(dataSample).reduce((acc: any[], key: string) => {
+        if (headers?.[key]) {
+          return acc.concat({
+            header: startCase(key),
+            accessorKey: key,
+            columnDefType: "display",
+            enableSorting: config?.sorting,
+            enableGlobalFilter: config?.filter,
+            enablePagination: config?.pagination,
+            Cell: ({ row }: any) => {
+              const val = row.original[key];
+              return typeof val === "object" ? JSON.stringify(val) : val;
+            },
+          });
+        }
 
-    return acc;
-  }, []);
+        return acc;
+      }, [])
+    : [];
 
   const table = useMantineReactTable({
-    data,
+    data: data ?? [],
     columns,
     enableSorting: config?.sorting,
     enableRowSelection: config?.select,
