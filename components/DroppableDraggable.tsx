@@ -200,7 +200,7 @@ export const DroppableDraggable = ({
 
   const isSelected = selectedComponentId === id && !isPreviewMode;
   const isOver =
-    (currentTargetId === id || hovered) &&
+    currentTargetId === id &&
     !isPreviewMode &&
     (isPicking ? canBePickedAndUserIsPicking : true);
 
@@ -220,7 +220,7 @@ export const DroppableDraggable = ({
               ? `inset -${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
               : baseShadow,
         }
-      : isSelected
+      : isSelected || hovered
       ? { boxShadow: baseShadow }
       : {};
 
