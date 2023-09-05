@@ -63,7 +63,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       apiConfig: apiConfig,
     });
 
-    console.log(response);
     const accessToken = response[accessTokenProperty];
     const refreshToken = response[refreshTokenProperty];
     const expirySeconds = response[expiryTokenProperty];
@@ -96,7 +95,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
   hasTokenExpired: () => {
     const expiresAt = get().expiresAt;
-    console.log(expiresAt);
     if (expiresAt) {
       return Date.now() > expiresAt;
     }
@@ -104,7 +102,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
   refreshAccessToken: async () => {
     const state = get();
-    console.log(state);
     const accessToken = state.getAccessToken();
     const refreshToken = state.getRefreshToken();
 
@@ -122,7 +119,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     });
 
     const data = await response.json();
-    console.log(data);
     state.setAuthTokens(data);
   },
   setApiConfig: (config: ApiConfig) => {
