@@ -404,10 +404,7 @@ export const DroppableDraggable = ({
                   container.props.style = {
                     ...container.props.style,
                     width: "auto",
-                    paddingBottom: 0,
-                    paddingLeft: 0,
-                    paddingRight: 0,
-                    paddingTop: 0,
+                    padding: "0px",
                   };
                 }
 

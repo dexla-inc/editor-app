@@ -76,10 +76,7 @@ export const template = (data: Data, theme: MantineThemeExtended) => {
               props: {
                 style: {
                   width: "100%",
-                  paddingTop: "20px",
-                  paddingRight: "20px",
-                  paddingBottom: "20px",
-                  paddingLeft: "20px",
+                  padding: "20px",
                   display: "flex",
                   flexDirection: "column",
                   height: "100vh",
@@ -147,10 +144,7 @@ export const template = (data: Data, theme: MantineThemeExtended) => {
                       borderTopRightRadius: "10px",
                       borderBottomLeftRadius: "10px",
                       borderBottomRightRadius: "10px",
-                      paddingTop: "40px",
-                      paddingBottom: "40px",
-                      paddingLeft: "40px",
-                      paddingRight: "40px",
+                      padding: "20px",
                       width: "400px",
                       height: "auto",
                       minHeight: "10px",
@@ -167,7 +161,7 @@ export const template = (data: Data, theme: MantineThemeExtended) => {
                       description: "Title",
                       children: [],
                       props: {
-                        children: data.title.text,
+                        children: data.title.text ?? "Sign Up",
                         color: "Black.6",
                         order: 2,
                         style: {
@@ -228,10 +222,10 @@ export const template = (data: Data, theme: MantineThemeExtended) => {
                             style: {
                               width: "100%",
                               height: "auto",
-                              paddingTop: 12,
-                              paddingBottom: 12,
-                              paddingLeft: 20,
-                              paddingRight: 20,
+                              paddingTop: "12px",
+                              paddingBottom: "12px",
+                              paddingLeft: "20px",
+                              paddingRight: "20px",
                             },
                             textColor: "White.0",
                             children:

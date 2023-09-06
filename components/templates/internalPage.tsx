@@ -1,9 +1,8 @@
 import { structureMapper } from "@/utils/componentMapper";
 import { Component, traverseComponents } from "@/utils/editor";
-import { nanoid } from "nanoid";
-import { jsonStructure } from "../mapper/structure/AppBar";
-import { defaultBorderValues } from "../modifiers/Border";
 import { px } from "@mantine/core";
+import { nanoid } from "nanoid";
+import { defaultBorderValues } from "../modifiers/Border";
 
 type ChartProps = { series: { name: string; data: number[] }[] };
 type XAxisProps = { xaxis: { categories: string[] } };
@@ -97,10 +96,7 @@ const getCard = (card: Card, cardContent: Component) => {
         borderTopRightRadius: "10px",
         borderBottomLeftRadius: "10px",
         borderBottomRightRadius: "10px",
-        paddingTop: "40px",
-        paddingBottom: "40px",
-        paddingLeft: "40px",
-        paddingRight: "40px",
+        padding: "20px",
         width: card.isFullWidth ? "100%" : "48%",
         height: "auto",
         minHeight: "10px",
@@ -222,10 +218,7 @@ export const template = (data: Data, theme: any, pages: any) => {
                   borderBottomColor: theme.colors.Border
                     ? "Border.6"
                     : "gray.3",
-                  paddingTop: px(theme.spacing.lg),
-                  paddingBottom: px(theme.spacing.lg),
-                  paddingLeft: px(theme.spacing.lg),
-                  paddingRight: px(theme.spacing.lg),
+                  padding: px(theme.spacing.lg),
                   height: "auto",
                   width: "100%",
                   display: "flex",
@@ -490,10 +483,7 @@ export const template = (data: Data, theme: any, pages: any) => {
                   borderTopRightRadius: "0px",
                   borderBottomLeftRadius: "0px",
                   borderBottomRightRadius: "0px",
-                  paddingTop: "40px",
-                  paddingBottom: "40px",
-                  paddingLeft: "40px",
-                  paddingRight: "40px",
+                  padding: "20px",
                   width: "100%",
                   height: "auto",
                   minHeight: "10px",

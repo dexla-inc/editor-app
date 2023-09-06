@@ -15,10 +15,7 @@ export const jsonStructure = (props?: any): Component => {
       style: {
         width: "auto",
         height: "auto",
-        paddingTop: px(theme.spacing.sm),
-        paddingBottom: px(theme.spacing.sm),
-        paddingLeft: px(theme.spacing.lg),
-        paddingRight: px(theme.spacing.lg),
+        padding: px(theme.spacing.sm),
       },
       ...(rest || {}),
       textColor: textColor ?? "White.0",
