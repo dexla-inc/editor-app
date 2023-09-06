@@ -213,6 +213,9 @@ export const EditorAsideSections = () => {
               onChange={(value: string) => {
                 setTreeComponentCurrentState(selectedComponentId, value);
               }}
+              autoComplete="off"
+              data-lpignore="true"
+              data-form-type="other"
             />
             {designSections}
           </Stack>

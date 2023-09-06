@@ -2,8 +2,8 @@ import { defaultTheme } from "@/components/IFrame";
 import { defaultDrawerValues } from "@/components/modifiers/Drawer";
 import { defaultInputValues } from "@/components/modifiers/Input";
 import { Component } from "@/utils/editor";
-import { nanoid } from "nanoid";
 import { px } from "@mantine/core";
+import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
@@ -156,10 +156,7 @@ export const jsonStructure = (props?: any): Component => {
               props: {
                 style: {
                   width: "auto",
-                  paddingTop: px(theme.spacing.sm),
-                  paddingBottom: px(theme.spacing.sm),
-                  paddingLeft: px(theme.spacing.lg),
-                  paddingRight: px(theme.spacing.lg),
+                  padding: px(theme.spacing.sm),
                 },
                 textColor: "White.0",
                 children: "Register",

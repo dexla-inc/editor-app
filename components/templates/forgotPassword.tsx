@@ -1,3 +1,5 @@
+import { defaultImageValues } from "@/components/modifiers/Image";
+import { MantineThemeExtended } from "@/stores/editor";
 import { InputTypes } from "@/utils/dashboardTypes";
 import { nanoid } from "nanoid";
 
@@ -17,7 +19,12 @@ export type Data = {
   };
 };
 
-export const template = (data: Data) => {
+export const template = (data: Data, theme: MantineThemeExtended) => {
+  const darkLogo = theme.logos?.find((logo) => logo.type === "DARK");
+  const lightLogo = theme.logos?.find((logo) => logo.type === "LIGHT");
+
+  const logoUrl = darkLogo?.url ?? lightLogo?.url;
+
   const inputs = data.inputs.map((input: Input) => {
     return {
       id: nanoid(),
@@ -69,36 +76,44 @@ export const template = (data: Data) => {
               props: {
                 style: {
                   width: "100%",
-                  paddingTop: "20px",
-                  paddingRight: "20px",
-                  paddingBottom: "20px",
-                  paddingLeft: "20px",
+                  padding: "20px",
                   display: "flex",
                   flexDirection: "column",
                   height: "100vh",
                   alignItems: "center",
                   justifyContent: "center",
                 },
-                bg: "Neutral.4",
+                bg: `linear-gradient(175deg, ${theme.colors.Primary[6]} 45%, ${theme.colors.Accent[6]} 45%)`,
               },
               children: [
                 {
                   id: nanoid(),
-                  name: "Image",
-                  description: "Image",
+                  name: "Container",
+                  description: "Image Container",
                   props: {
-                    withPlaceholder: true,
                     style: {
                       width: "auto",
-                      height: "100px",
-                      objectFit: "contain",
-                      marginBottom: "20px",
+                      marginBottom: "40px",
                     },
-                    src: "https://www.kadencewp.com/wp-content/uploads/2020/10/alogo-4.svg",
-                    alt: "Logo",
-                    objectFit: "contain",
                   },
-                  blockDroppingChildrenInside: true,
+                  children: [
+                    {
+                      id: nanoid(),
+                      name: "Image",
+                      description: "Image",
+                      props: {
+                        style: {
+                          width: "auto",
+                          height: "50px",
+                        },
+                        ...defaultImageValues,
+                        src: logoUrl,
+                        alt: "Logo",
+                      },
+                      children: [],
+                      blockDroppingChildrenInside: true,
+                    },
+                  ],
                 },
                 {
                   id: nanoid(),
@@ -129,10 +144,7 @@ export const template = (data: Data) => {
                       borderTopRightRadius: "10px",
                       borderBottomLeftRadius: "10px",
                       borderBottomRightRadius: "10px",
-                      paddingTop: "40px",
-                      paddingBottom: "40px",
-                      paddingLeft: "40px",
-                      paddingRight: "40px",
+                      padding: "20px",
                       width: "400px",
                       height: "auto",
                       minHeight: "10px",
@@ -210,15 +222,19 @@ export const template = (data: Data) => {
                             style: {
                               width: "100%",
                               height: "auto",
-                              paddingTop: 12,
-                              paddingBottom: 12,
-                              paddingLeft: 20,
-                              paddingRight: 20,
+                              paddingTop: "12px",
+                              paddingBottom: "12px",
+                              paddingLeft: "20px",
+                              paddingRight: "20px",
                             },
                             textColor: "White.0",
-                            children: data.button.text,
+                            children:
+                              data.button.text ??
+                              (Array.isArray(data.button)
+                                ? data.button[0]?.text
+                                : data.button?.text),
                           },
-                          children: data.button.text,
+
                           blockDroppingChildrenInside: true,
                         },
                       ],

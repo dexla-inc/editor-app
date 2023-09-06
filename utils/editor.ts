@@ -2,10 +2,10 @@ import { PageResponse } from "@/requests/pages/types";
 import { MantineThemeExtended, emptyEditorTree } from "@/stores/editor";
 import { Action } from "@/utils/actions";
 import { structureMapper } from "@/utils/componentMapper";
+import { templatesMapper } from "@/utils/templatesMapper";
 import cloneDeep from "lodash.clonedeep";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
-import { templatesMapper } from "@/utils/templatesMapper";
 
 export type Component = {
   id?: string;
@@ -163,10 +163,7 @@ export const getEditorTreeFromPageStructure = (
               props: {
                 style: {
                   width: "100%",
-                  paddingTop: "20px",
-                  paddingRight: "20px",
-                  paddingBottom: "20px",
-                  paddingLeft: "20px",
+                  padding: "20px",
                   backgroundColor: "White.0",
                   display: "flex",
                   flexDirection: "row",
@@ -221,10 +218,7 @@ export const getNewComponents = (
         props: {
           style: {
             width: "100%",
-            paddingTop: "20px",
-            paddingRight: "20px",
-            paddingBottom: "20px",
-            paddingLeft: "20px",
+            padding: "20px",
           },
         },
         children: traverseComponents(row.components, theme, pages),

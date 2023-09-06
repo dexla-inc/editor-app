@@ -216,7 +216,7 @@ export default function PageDetailPane({
                   <ActionIcon
                     loading={isLoading}
                     onClick={duplicate}
-                    color="green"
+                    color="yellow"
                     variant="light"
                     radius="xl"
                   >
@@ -237,7 +237,7 @@ export default function PageDetailPane({
                       const pageStructure = decodeSchema(page.pageState!);
                       copy(pageStructure);
                     }}
-                    color="orange"
+                    color="grape"
                     variant="light"
                     radius="xl"
                   >

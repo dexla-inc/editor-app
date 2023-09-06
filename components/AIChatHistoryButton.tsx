@@ -139,6 +139,7 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
                   event.stopPropagation();
                   copyToClipboard(element.content);
                 }}
+                color="yellow"
               >
                 <Icon name="IconCopy" size={ICON_SIZE} />
               </ActionIcon>

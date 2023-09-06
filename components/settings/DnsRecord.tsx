@@ -40,7 +40,7 @@ export const DnsRecord = ({ dnsRecord }: Props) => {
               }
               variant="light"
               radius="xl"
-              color="Primary.6"
+              color="yellow"
             >
               <Icon name="IconCopy" size={ICON_SIZE}></Icon>
             </ActionIcon>
