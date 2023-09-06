@@ -58,8 +58,11 @@ const styleWhitelist = [
   "bottom",
   "background",
   "backgroundColor",
-  "padding",
   "margin",
+  "marginTop",
+  "marginBottom",
+  "marginLeft",
+  "marginRight",
 ];
 const handlerBlacklist = ["Modal"];
 
@@ -271,8 +274,6 @@ export const DroppableDraggable = ({
         width: isWidthPercentage ? "100%" : component.props?.style?.width,
         height: isHeightPercentage ? "100%" : component.props?.style?.height,
         position: "static",
-        // margin: 0,
-        // padding: 0,
       },
     },
     disabled:

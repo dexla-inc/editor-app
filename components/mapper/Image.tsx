@@ -32,12 +32,11 @@ export const Image = ({ component }: Props) => {
   return (
     <MantineImage
       alt={alt}
-      imageProps={{ src: value }}
+      imageProps={{ src: value, style }}
       {...componentProps}
       width={width ?? "100px"}
       height={height ?? "100px"}
       {...triggers}
-      style={style}
     />
   );
 };
