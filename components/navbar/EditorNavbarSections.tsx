@@ -3,13 +3,16 @@ import { EditorNavbarComponentsSection } from "@/components/navbar/EditorNavbarC
 import { EditorNavbarLayersSection } from "@/components/navbar/EditorNavbarLayersSection";
 import { EditorNavbarPagesSection } from "@/components/navbar/EditorNavbarPagesSection";
 import { EditorNavbarThemesSection } from "@/components/navbar/EditorNavbarThemesSection";
+import { Stack, Text } from "@mantine/core";
 import {
   IconBrush,
   IconFileInvoice,
   IconLayoutDashboard,
   IconStack2,
 } from "@tabler/icons-react";
+import { useRouter } from "next/router";
 import { useState } from "react";
+import { SettingsButton } from "./SettingsButtons";
 
 type SectionId = "pages" | "layers" | "components" | "theme";
 
@@ -35,11 +38,6 @@ const sections = [
     label: "Theme",
     icon: IconBrush,
   },
-  // {
-  //   id: "datasources",
-  //   label: "Data Sources",
-  //   icon: IconDatabase,
-  // },
 ];
 
 type SectionsMapper = {
@@ -57,6 +55,7 @@ const sectionMapper: SectionsMapper = {
 
 export const EditorNavbarSections = () => {
   const [activeTab, setActiveTab] = useState<string | null>(null);
+  const router = useRouter();
 
   const sectionsToRender = sections.map((item) => (
     <SidebarSection
@@ -71,5 +70,40 @@ export const EditorNavbarSections = () => {
     </SidebarSection>
   ));
 
-  return <>{sectionsToRender}</>;
+  return (
+    <>
+      {sectionsToRender}
+      <Stack p="md" mt="xl" mb="xs" spacing="xs" align="self-start">
+        <Text size="sm" fw={500}>
+          Settings
+        </Text>
+        <SettingsButton
+          iconName="IconSettings"
+          text="General"
+          href={`/projects/${router.query.id}/settings`}
+        />
+        <SettingsButton
+          iconName="IconDatabase"
+          text="Data Sources"
+          href={`/projects/${router.query.id}/settings/datasources`}
+        />
+        <SettingsButton
+          iconName="IconUser"
+          text="Team"
+          href={`/projects/${router.query.id}/settings/team`}
+        />
+        <SettingsButton
+          iconName="IconWorldWww"
+          text="Domain"
+          href={`/projects/${router.query.id}/settings/domain`}
+        />
+        <SettingsButton
+          iconName="IconLanguage"
+          text="Language"
+          href={`/projects/${router.query.id}/settings/language`}
+          disabled
+        />
+      </Stack>
+    </>
+  );
 };
