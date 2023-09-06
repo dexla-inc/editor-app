@@ -471,11 +471,6 @@ export const moveComponentToDifferentParent = (
           dropTarget.edge === "bottom" ||
           dropTarget.edge === "center"
         ) {
-          // if (!node.children) {
-          //   node.children = [componentToAdd];
-          //   context.break();
-          // }
-
           if (!node.children) {
             node.children = [];
           }
