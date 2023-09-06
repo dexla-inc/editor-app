@@ -20,7 +20,7 @@ export const jsonStructure = (props?: any): Component => {
         marginBottom: "0px",
         width: "100%",
         height: "auto",
-        minHeight: "auto",
+        minHeight: "10px",
         flexDirection: "column",
         rowGap: "20px",
         columnGap: "20px",

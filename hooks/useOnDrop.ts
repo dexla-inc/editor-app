@@ -73,17 +73,21 @@ export const useOnDrop = () => {
     targetComponent: Component | null,
     componentToAdd: Component
   ) {
+    const targetParent = getComponentParent(copy.root, dropTarget.id);
     if (!targetComponent?.blockDroppingChildrenInside) {
-      if (dropTarget.id === "root") {
-        dropTarget = {
-          ...dropTarget,
-          id: "content-wrapper",
-        };
-      }
       const newSelectedId = addComponent(copy.root, componentToAdd, dropTarget);
+
+      if (dropTarget.edge !== "center") {
+        handleReorderingOrMoving(
+          copy,
+          newSelectedId,
+          targetComponent,
+          dropTarget
+        );
+      }
+
       setSelectedComponentId(newSelectedId);
     } else {
-      const targetParent = getComponentParent(copy.root, dropTarget.id);
       if (targetParent) {
         const dropTargetIndex = getComponentIndex(targetParent, dropTarget.id);
 
@@ -117,11 +121,15 @@ export const useOnDrop = () => {
     ) {
       moveComponent(copy.root, droppedId, dropTarget);
     } else {
+      let newParentId = targetParent!.id;
+      if (dropTarget.edge === "center") {
+        newParentId = dropTarget.id;
+      }
       moveComponentToDifferentParent(
         copy.root,
         droppedId,
         dropTarget,
-        targetParent!.id as string
+        newParentId as string
       );
       removeComponentFromParent(
         copy.root,

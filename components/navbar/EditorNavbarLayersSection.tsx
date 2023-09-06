@@ -22,7 +22,7 @@ import { useForm } from "@mantine/form";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
-import { KeyboardEvent, useEffect, useState } from "react";
+import { KeyboardEvent, useEffect, useRef, useState } from "react";
 
 type ListItemProps = {
   component: Component;
@@ -44,6 +44,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   const [clickedManualToggle, setClickedManualToggle] = useState(false);
   const [editable, { toggle: toggleEdit, close: closeEdit }] =
     useDisclosure(false);
+  const editFieldRef = useRef<HTMLInputElement>(null);
   const onDragStart = useOnDragStart();
 
   const draggable = useDraggable({
@@ -102,6 +103,11 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     setClickedManualToggle(false);
   }, [selectedComponentId]);
   useEffect(onDragEnter, [onDragEnter]);
+  useEffect(() => {
+    if (editable) {
+      editFieldRef?.current?.focus();
+    }
+  }, [editable]);
 
   const icon = structureMapper[component.name as string]?.icon;
   const componentActions = component.actions;
@@ -144,11 +150,8 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
           e.stopPropagation();
           handleSelection(component.id as string);
         }}
-        onDoubleClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          toggleEdit();
-        }}
+        onDoubleClick={toggleEdit}
+        onBlur={closeEdit}
         onKeyDown={handleKeyPress}
       >
         <Group position="apart" noWrap w="100%">
@@ -194,6 +197,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
               </Text>
             ) : editable ? (
               <TextInput
+                ref={editFieldRef}
                 id={`layer-${component.id}`}
                 size="xs"
                 w="100%"

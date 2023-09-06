@@ -47,11 +47,6 @@ const bidingComponentsWhitelist = {
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
 // Whitelist certain props that can be passed down
 const styleWhitelist = [
-  "display",
-  "flexDirection",
-  "flexGrow",
-  "alignItems",
-  "justifyContent",
   "borderTopLeftRadius",
   "borderTopRightRadius",
   "borderBottomLeftRadius",
@@ -61,10 +56,10 @@ const styleWhitelist = [
   "left",
   "right",
   "bottom",
-  "height",
-  "width",
   "background",
   "backgroundColor",
+  "padding",
+  "margin",
 ];
 const handlerBlacklist = ["Modal"];
 
@@ -220,6 +215,8 @@ export const DroppableDraggable = ({
               : edge === "right"
               ? `inset -${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
               : baseShadow,
+          background: edge === "center" ? theme.colors.teal[6] : "none",
+          opacity: edge === "center" ? 0.4 : 1,
         }
       : isSelected || hovered
       ? { boxShadow: baseShadow }
@@ -229,7 +226,6 @@ export const DroppableDraggable = ({
   const haveNonRootParent = parent && parent.id !== "root";
 
   const filteredProps = {
-    ...component.props,
     style: Object.keys(component.props?.style || {}).reduce((newStyle, key) => {
       if (styleWhitelist.includes(key)) {
         newStyle[key] = component.props?.style[key];
@@ -253,6 +249,9 @@ export const DroppableDraggable = ({
     setTreeComponentCurrentState(component.id!, "default");
   };
 
+  const isWidthPercentage = component.props?.style?.width?.endsWith("%");
+  const isHeightPercentage = component.props?.style?.height?.endsWith("%");
+
   const propsWithOverwrites = {
     ...component.props,
     ...(isDefaultState ? {} : component.states?.[currentState] ?? {}),
@@ -266,6 +265,16 @@ export const DroppableDraggable = ({
           },
         }
       : {}),
+    ...{
+      style: {
+        ...component?.props?.style,
+        width: isWidthPercentage ? "100%" : component.props?.style?.width,
+        height: isHeightPercentage ? "100%" : component.props?.style?.height,
+        position: "static",
+        // margin: 0,
+        // padding: 0,
+      },
+    },
     disabled:
       component.props?.disabled ??
       (currentState === "disabled" && !!component.states?.disabled),
@@ -284,9 +293,14 @@ export const DroppableDraggable = ({
       id={id}
       pos="relative"
       sx={{
-        width: component.props?.style?.width ?? "auto",
+        width: component.props?.style?.width
+          ? component.props?.style?.width
+          : "auto",
+        height: component.props?.style?.height
+          ? component.props?.style?.height
+          : "auto",
         "&:before": {
-          ...shadows,
+          ...(!isPreviewMode ? shadows : {}),
           content: '""',
           position: "absolute",
           pointerEvents: "none",
@@ -309,34 +323,25 @@ export const DroppableDraggable = ({
         }
       }}
       {...filteredProps}
+      {...droppable}
     >
       {/* @ts-ignore */}
       <ComponentWrapper
         {...(hasTooltip ? { label: component.props?.tooltip } : {})}
       >
-        <Box
-          w="100%"
-          h={component.name === "Container" ? "100%" : "auto"}
-          pos="relative"
-          sx={{
-            display: "flex",
-          }}
-          {...droppable}
-        >
-          {cloneElement(
-            // @ts-ignore
-            children,
-            {
-              component: {
-                ...component,
-                props: propsWithOverwrites,
-              },
-              isPreviewMode,
+        {cloneElement(
+          // @ts-ignore
+          children,
+          {
+            component: {
+              ...component,
+              props: propsWithOverwrites,
             },
-            // @ts-ignore
-            children?.children
-          )}
-        </Box>
+            isPreviewMode,
+          },
+          // @ts-ignore
+          children?.children
+        )}
       </ComponentWrapper>
       {!isContentWrapper && !handlerBlacklist.includes(component.name) && (
         <Box

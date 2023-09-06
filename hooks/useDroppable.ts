@@ -1,5 +1,10 @@
 import { useEditorStore } from "@/stores/editor";
-import { Edge, getClosestEdge, DropTarget } from "@/utils/editor";
+import {
+  Edge,
+  getClosestEdge,
+  DropTarget,
+  getComponentById,
+} from "@/utils/editor";
 import { useState, useCallback } from "react";
 
 export const useDroppable = ({
@@ -13,10 +18,13 @@ export const useDroppable = ({
   activeId?: string;
   currentWindow?: Window;
 }) => {
+  const editorTree = useEditorStore((state) => state.tree);
   const setCurrentTargetId = useEditorStore(
     (state) => state.setCurrentTargetId
   );
   const [edge, setEdge] = useState<Edge>();
+
+  const component = getComponentById(editorTree.root, id);
 
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
@@ -41,6 +49,18 @@ export const useDroppable = ({
       const mouseY = event.clientY;
       const w = currentWindow ?? window;
       const rect = w.document.getElementById(id)?.getBoundingClientRect()!;
+
+      if (!component?.blockDroppingChildrenInside) {
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const distX = Math.abs(centerX - mouseX);
+        const distY = Math.abs(centerY - mouseY);
+
+        if (distX < rect.width / 4 && distY < rect.height / 4) {
+          return setEdge("center");
+        }
+      }
 
       const leftDist = mouseX - rect.left;
       const rightDist = rect.right - mouseX;
