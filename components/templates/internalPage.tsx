@@ -208,7 +208,7 @@ export const template = (data: Data, theme: any, pages: any) => {
             {
               id: nanoid(),
               name: "AppBar",
-              description: "Page Heading",
+              description: "AppBar",
               fixedPosition: { position: "top", target: "content-wrapper" },
               props: {
                 style: {
