@@ -251,7 +251,7 @@ export const Modifier = () => {
           data={[
             { label: "Wrap", value: "wrap" },
             { label: "Wrap Reverse", value: "wrap-reverse" },
-            { label: "No Wrap", value: "no-wrap" },
+            { label: "No Wrap", value: "nowrap" },
           ]}
           {...form.getInputProps("flexWrap")}
           onChange={(value) => {

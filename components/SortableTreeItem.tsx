@@ -40,7 +40,7 @@ export const SortableTreeItem = ({
             ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
             : undefined,
         borderBottom:
-          edge === "bottom" || edge === "right"
+          edge === "bottom" || edge === "right" || edge === "center"
             ? `${DROP_INDICATOR_WIDTH}px solid ${theme.colors.teal[6]}`
             : undefined,
       }

@@ -468,12 +468,22 @@ export const moveComponentToDifferentParent = (
           node.children?.splice(Math.max(dropIndex || 0, 0), 0, componentToAdd);
         } else if (
           dropTarget.edge === "right" ||
-          dropTarget.edge === "bottom"
+          dropTarget.edge === "bottom" ||
+          dropTarget.edge === "center"
         ) {
-          const dropIndex = node.children?.findIndex(
+          // if (!node.children) {
+          //   node.children = [componentToAdd];
+          //   context.break();
+          // }
+
+          if (!node.children) {
+            node.children = [];
+          }
+
+          const dropIndex = node.children.findIndex(
             (c) => c.id === dropTarget.id
           );
-          node.children?.splice(
+          node.children.splice(
             Math.min((dropIndex || 0) + 1, node.children.length),
             0,
             componentToAdd
@@ -504,7 +514,7 @@ export const moveComponent = (
         if (["top", "left"].includes(dropTarget.edge) && oldIndex < newIndex) {
           newIndex = Math.max(newIndex - 1, 0);
         } else if (
-          ["right", "bottom"].includes(dropTarget.edge) &&
+          ["right", "bottom", "center"].includes(dropTarget.edge) &&
           newIndex < oldIndex
         ) {
           newIndex = Math.min(newIndex + 1, items.length);
@@ -697,8 +707,7 @@ export const addComponent = (
               const index = dropIndex ?? context.index - 1;
               node.children.splice(index, 0, copy);
             } else if (
-              dropTarget.edge === "right" ||
-              dropTarget.edge === "bottom"
+              ["right", "bottom", "center"].includes(dropTarget.edge)
             ) {
               const index = dropIndex ?? context.index + 1;
               node.children.splice(index, 0, copy);
@@ -782,7 +791,7 @@ export function centerOfRectangle(
   return new DOMRect(newRect.x, newRect.y, newRect.width, newRect.height);
 }
 
-export type Edge = "left" | "right" | "top" | "bottom";
+export type Edge = "left" | "right" | "top" | "bottom" | "center";
 
 export function distanceBetween(p1: DOMRect, p2: DOMRect) {
   return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
@@ -794,7 +803,7 @@ export const getClosestEdge = (
   top: number,
   bottom: number
 ) => {
-  const all = { left, right, top, bottom };
+  const all = { left, right, top, bottom, center: Infinity };
   const closest = Math.min(...Object.values(all));
   const closestKey = Object.keys(all).find((key: string) => {
     return all[key as Edge] === closest;
