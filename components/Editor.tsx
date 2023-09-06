@@ -373,7 +373,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
     <>
       <Shell
         pos="relative"
-        navbarType="editor"
         navbar={
           !isPreviewMode && isNavBarVisible ? (
             <Navbar
