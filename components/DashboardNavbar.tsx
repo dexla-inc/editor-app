@@ -1,14 +1,10 @@
+import { Icon } from "@/components/Icon";
 import NavigationAvatarFooter from "@/components/NavigationAvatarFooter";
 import { HEADER_HEIGHT, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
 import { NavbarTypes } from "@/utils/dashboardTypes";
 import { Box, Button, Menu, NavLink, Navbar, ScrollArea } from "@mantine/core";
 import { User, useLogoutFunction } from "@propelauth/react";
-import {
-  IconArrowLeft,
-  IconDatabase,
-  IconLogout,
-  IconSettings,
-} from "@tabler/icons-react";
+import { IconArrowLeft, IconLogout, IconSettings } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -58,7 +54,7 @@ export default function DashboardNavbar({
                   label="General"
                   component={Link}
                   href={`/projects/${projectId}/settings`}
-                  icon={<IconSettings size={ICON_SIZE} />}
+                  icon={<Icon name="IconSettings" size={ICON_SIZE} />}
                   variant="subtle"
                   active={router.pathname === "/projects/[id]/settings"}
                   py={12}
@@ -68,7 +64,7 @@ export default function DashboardNavbar({
                   component={Link}
                   href={`/projects/${projectId}/settings/datasources`}
                   variant="subtle"
-                  icon={<IconDatabase size={ICON_SIZE} />}
+                  icon={<Icon name="IconDatabase" size={ICON_SIZE} />}
                   active={router.pathname.startsWith(
                     "/projects/[id]/settings/datasources"
                   )}

@@ -308,8 +308,10 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                     }${param.type}`}
                     key={param.name}
                     type={param.type}
-                    // @ts-ignore
-                    required={param.required}
+                    {...(param.name !== "Authorization"
+                      ? // @ts-ignore
+                        { required: param.required }
+                      : {})}
                     {...form.getInputProps(`binds.${param.name}`)}
                     {...additionalProps}
                     rightSection={
