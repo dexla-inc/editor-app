@@ -279,6 +279,9 @@ export default function PageDetailPane({
                 form.setFieldValue("slug", newSlug);
                 form.setTouched({ slug: false });
               }}
+              autoComplete="off"
+              data-lpignore="true"
+              data-form-type="other"
             />
             <TextInput
               label="Slug"

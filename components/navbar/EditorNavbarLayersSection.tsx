@@ -223,13 +223,13 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
           </Group>
         </Group>
         {componentActions && !!componentActions.length && (
-          <ActionIcon
-            color="teal"
-            variant="transparent"
-            size={30}
-            sx={{ position: "absolute", right: "0%" }}
-          >
+          <ActionIcon color="teal" variant="transparent" size={30}>
             <Icon name="IconBolt" size={ICON_SIZE} />
+          </ActionIcon>
+        )}
+        {component.props?.style?.display === "none" && (
+          <ActionIcon color="dark" variant="transparent" size={30}>
+            <Icon name="IconEyeOff" size={ICON_SIZE} />
           </ActionIcon>
         )}
       </Card>
