@@ -3,13 +3,15 @@ import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import { IconChevronRight, IconHome } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { Icon } from "@/components/Icon";
+import { isSame } from "@/utils/componentComparison";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & NavLinkProps;
 
-export const NavLink = ({ renderTree, component, ...props }: Props) => {
+const NavLinkComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, isNested, pageId, triggers, icon, ...componentProps } =
     component.props as any;
 
@@ -31,3 +33,5 @@ export const NavLink = ({ renderTree, component, ...props }: Props) => {
     />
   );
 };
+
+export const NavLink = memo(NavLinkComponent, isSame);

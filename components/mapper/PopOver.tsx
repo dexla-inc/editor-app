@@ -6,15 +6,16 @@ import {
   Popover,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import { componentMapper } from "@/utils/componentMapper";
+import { isSame } from "@/utils/componentComparison";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & Omit<PopoverProps, "opened">;
 
-export const PopOver = ({
+const PopOverComponent = ({
   renderTree,
   component,
   onClose: propOnClose,
@@ -97,3 +98,5 @@ export const PopOver = ({
     </MantinePopOver>
   );
 };
+
+export const PopOver = memo(PopOverComponent, isSame);

@@ -1,15 +1,16 @@
 import { useEditorStore } from "@/stores/editor";
+import { isSame } from "@/utils/componentComparison";
 import { Component, checkIfIsChild } from "@/utils/editor";
 import { Modal as MantineModal, ModalProps } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & Omit<ModalProps, "opened">;
 
-export const Modal = ({
+const ModalComponent = ({
   renderTree,
   component,
   onClose: propOnClose,
@@ -75,3 +76,5 @@ export const Modal = ({
     </MantineModal>
   );
 };
+
+export const Modal = memo(ModalComponent, isSame);

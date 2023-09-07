@@ -1,12 +1,14 @@
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { DividerProps, Divider as MantineDivider } from "@mantine/core";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & DividerProps;
 
-export const Divider = ({ renderTree, component, ...props }: Props) => {
+const DividerComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, style, ...componentProps } = component.props as any;
 
   return (
@@ -21,3 +23,5 @@ export const Divider = ({ renderTree, component, ...props }: Props) => {
     </MantineDivider>
   );
 };
+
+export const Divider = memo(DividerComponent, isSame);

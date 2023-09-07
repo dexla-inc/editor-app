@@ -1,15 +1,16 @@
 import { useEditorStore } from "@/stores/editor";
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Flex as MantineFlex, FlexProps, LoadingOverlay } from "@mantine/core";
 import isEmpty from "lodash.isempty";
-import { useEffect } from "react";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & FlexProps;
 
-export const Container = ({ renderTree, component, ...props }: Props) => {
+const ContainerComponent = ({ renderTree, component, ...props }: Props) => {
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
 
   const {
@@ -65,3 +66,5 @@ export const Container = ({ renderTree, component, ...props }: Props) => {
     </MantineFlex>
   );
 };
+
+export const Container = memo(ContainerComponent, isSame);

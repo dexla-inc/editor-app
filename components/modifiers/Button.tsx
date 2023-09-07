@@ -2,11 +2,13 @@ import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { useEditorStore } from "@/stores/editor";
-import { getComponentById } from "@/utils/editor";
+import {
+  debouncedTreeComponentPropsUpdate,
+  getComponentById,
+} from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
 export const icon = IconClick;
@@ -27,9 +29,6 @@ export const Modifier = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
-  );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
   );
 
   const selectedComponent = getComponentById(
@@ -70,12 +69,6 @@ export const Modifier = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId]);
 
-  const debouncedUpdate = debounce((field: string, value: any) => {
-    updateTreeComponent(selectedComponentId as string, {
-      [field]: value,
-    });
-  }, 500);
-
   return (
     <form>
       <Stack spacing="xs">
@@ -85,7 +78,7 @@ export const Modifier = () => {
           {...form.getInputProps("value")}
           onChange={(e) => {
             form.setFieldValue("value", e.target.value);
-            debouncedUpdate("children", e.target.value);
+            debouncedTreeComponentPropsUpdate("children", e.target.value);
           }}
         />
         <Select
@@ -98,7 +91,7 @@ export const Modifier = () => {
           {...form.getInputProps("type")}
           onChange={(value) => {
             form.setFieldValue("type", value as string);
-            debouncedUpdate("type", value as string);
+            debouncedTreeComponentPropsUpdate("type", value as string);
           }}
         />
         <Select
@@ -114,14 +107,14 @@ export const Modifier = () => {
           {...form.getInputProps("variant")}
           onChange={(value) => {
             form.setFieldValue("variant", value as string);
-            debouncedUpdate("variant", value as string);
+            debouncedTreeComponentPropsUpdate("variant", value as string);
           }}
         />
         <SizeSelector
           {...form.getInputProps("size")}
           onChange={(value) => {
             form.setFieldValue("size", value as string);
-            debouncedUpdate("size", value as string);
+            debouncedTreeComponentPropsUpdate("size", value as string);
           }}
         />
         <ThemeColorSelector
@@ -129,7 +122,7 @@ export const Modifier = () => {
           {...form.getInputProps("color")}
           onChange={(value: string) => {
             form.setFieldValue("color", value);
-            debouncedUpdate("color", value);
+            debouncedTreeComponentPropsUpdate("color", value);
           }}
         />
         <ThemeColorSelector
@@ -137,11 +130,13 @@ export const Modifier = () => {
           {...form.getInputProps("textColor")}
           onChange={(value: string) => {
             form.setFieldValue("textColor", value);
-            debouncedUpdate("textColor", value);
+            debouncedTreeComponentPropsUpdate("textColor", value);
             const [color, index] = value.split(".");
             // @ts-ignore
             const _value = theme.colors[color][index];
-            debouncedUpdate("styles", { label: { color: _value } });
+            debouncedTreeComponentPropsUpdate("styles", {
+              label: { color: _value },
+            });
           }}
         />
         {/* Adding a react component as a property doesn't work -
@@ -152,7 +147,7 @@ export const Modifier = () => {
           selectedIcon={form.values.leftIcon}
           onIconSelect={(value: string) => {
             form.setFieldValue("leftIcon", value);
-            debouncedUpdate("leftIcon", value);
+            debouncedTreeComponentPropsUpdate("leftIcon", value);
           }}
         />
       </Stack>

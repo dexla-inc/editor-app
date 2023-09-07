@@ -1,12 +1,14 @@
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { BoxProps, Box as MantineBox } from "@mantine/core";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & BoxProps;
 
-export const Navbar = ({ renderTree, component, ...props }: Props) => {
+const NavbarComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;
 
   return (
@@ -17,3 +19,5 @@ export const Navbar = ({ renderTree, component, ...props }: Props) => {
     </MantineBox>
   );
 };
+
+export const Navbar = memo(NavbarComponent, isSame);

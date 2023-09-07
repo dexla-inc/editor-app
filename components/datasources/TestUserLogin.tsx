@@ -35,7 +35,6 @@ export const TestUserLogin = ({
   useEffect(() => {
     const fetchDataSourceAuthConfig = async () => {
       const config = await getDataSourceAuth(projectId, dataSourceId ?? "");
-      console.log(config);
       setDataSourceAuthConfig(config);
     };
 

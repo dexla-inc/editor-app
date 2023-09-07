@@ -1,9 +1,11 @@
 import { useEditorStore } from "@/stores/editor";
-import { getComponentById } from "@/utils/editor";
+import {
+  debouncedTreeComponentStyleUpdate,
+  getComponentById,
+} from "@/utils/editor";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutGrid } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
 export const icon = IconLayoutGrid;
@@ -14,16 +16,6 @@ export const Modifier = () => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
-  );
-
-  const debouncedUpdate = debounce((field: string, value: any) => {
-    updateTreeComponent(selectedComponentId as string, {
-      style: { [field]: value },
-    });
-  }, 500);
-
   const selectedComponent = getComponentById(
     editorTree.root,
     selectedComponentId as string
@@ -64,7 +56,7 @@ export const Modifier = () => {
           {...form.getInputProps("display")}
           onChange={(value) => {
             form.setFieldValue("display", value as string);
-            debouncedUpdate("display", value as string);
+            debouncedTreeComponentStyleUpdate("display", value as string);
           }}
         />{" "}
       </Stack>

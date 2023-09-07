@@ -1,9 +1,11 @@
 import { useEditorStore } from "@/stores/editor";
-import { getComponentById } from "@/utils/editor";
+import {
+  debouncedTreeComponentPropsUpdate,
+  getComponentById,
+} from "@/utils/editor";
 import { Divider, Stack, Switch, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTable } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
 import get from "lodash.get";
 import isEmpty from "lodash.isempty";
 import { useEffect } from "react";
@@ -15,9 +17,6 @@ export const Modifier = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
-  );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
   );
 
   const selectedComponent = getComponentById(
@@ -63,12 +62,6 @@ export const Modifier = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId, componentProps.data, componentProps.exampleData]);
 
-  const debouncedUpdate = debounce((field: string, value: any) => {
-    updateTreeComponent(selectedComponentId as string, {
-      [field]: value,
-    });
-  }, 500);
-
   return (
     <form>
       <Stack spacing="xs">
@@ -87,7 +80,7 @@ export const Modifier = () => {
                     [key]: e.currentTarget.checked,
                   };
                   form.setFieldValue("headers", headers);
-                  debouncedUpdate("headers", headers);
+                  debouncedTreeComponentPropsUpdate("headers", headers);
                 }}
               />
             );
@@ -103,7 +96,7 @@ export const Modifier = () => {
               sorting: e.currentTarget.checked,
             };
             form.setFieldValue("config", config);
-            debouncedUpdate("config", config);
+            debouncedTreeComponentPropsUpdate("config", config);
           }}
         />
         <Switch
@@ -116,7 +109,7 @@ export const Modifier = () => {
               select: e.currentTarget.checked,
             };
             form.setFieldValue("config", config);
-            debouncedUpdate("config", config);
+            debouncedTreeComponentPropsUpdate("config", config);
           }}
         />
         <Switch
@@ -129,7 +122,7 @@ export const Modifier = () => {
               filter: e.currentTarget.checked,
             };
             form.setFieldValue("config", config);
-            debouncedUpdate("config", config);
+            debouncedTreeComponentPropsUpdate("config", config);
           }}
         />
         <Switch
@@ -142,7 +135,7 @@ export const Modifier = () => {
               pagination: e.currentTarget.checked,
             };
             form.setFieldValue("config", config);
-            debouncedUpdate("config", config);
+            debouncedTreeComponentPropsUpdate("config", config);
           }}
         />
         <Switch
@@ -155,7 +148,7 @@ export const Modifier = () => {
               numbers: e.currentTarget.checked,
             };
             form.setFieldValue("config", config);
-            debouncedUpdate("config", config);
+            debouncedTreeComponentPropsUpdate("config", config);
           }}
         />
         <Divider label="Data" labelPosition="center" />
@@ -167,7 +160,10 @@ export const Modifier = () => {
           onChange={(e) => {
             form.setFieldValue("data", e.target.value);
             try {
-              debouncedUpdate("data", JSON.parse(e.target.value ?? ""));
+              debouncedTreeComponentPropsUpdate(
+                "data",
+                JSON.parse(e.target.value ?? "")
+              );
             } catch (error) {
               console.log(error);
             }

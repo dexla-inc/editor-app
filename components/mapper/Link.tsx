@@ -1,12 +1,14 @@
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { AnchorProps, Anchor as MantineAnchor } from "@mantine/core";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & AnchorProps;
 
-export const Link = ({ renderTree, component, ...props }: Props) => {
+const LinkComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, triggers, ...componentProps } = component.props as any;
 
   return (
@@ -22,3 +24,5 @@ export const Link = ({ renderTree, component, ...props }: Props) => {
     </MantineAnchor>
   );
 };
+
+export const Link = memo(LinkComponent, isSame);

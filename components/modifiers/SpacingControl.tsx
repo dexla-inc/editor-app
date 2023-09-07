@@ -3,6 +3,7 @@ import { Flex, Group, SegmentedControl, Stack, Text } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { IconBoxModel2 } from "@tabler/icons-react";
 import { Icon } from "../Icon";
+import { debouncedTreeUpdate } from "@/utils/editor";
 
 export const icon = IconBoxModel2;
 export const label = "Spacing";
@@ -10,16 +11,10 @@ export const label = "Spacing";
 type Props = {
   type: "Padding" | "Margin";
   form: UseFormReturnType<any>;
-  debouncedTreeUpdate: (id: string, data: any) => void;
   selectedComponentId: string | null;
 };
 
-export const SpacingControl = ({
-  type,
-  form,
-  debouncedTreeUpdate,
-  selectedComponentId,
-}: Props) => {
+export const SpacingControl = ({ type, form, selectedComponentId }: Props) => {
   const sideTypes = type === "Padding" ? "padding-sides" : "margin-sides";
   const allTypes = type === "Padding" ? "padding-all" : "margin-all";
 

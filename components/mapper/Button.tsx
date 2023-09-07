@@ -1,7 +1,8 @@
 import { Icon } from "@/components/Icon";
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
-import { ReactElement } from "react";
+import { ReactElement, memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -10,7 +11,7 @@ type Props = {
 } & ButtonProps &
   ReactElement<"Button">;
 
-export const Button = ({
+const ButtonComponent = ({
   renderTree,
   component,
   isPreviewMode,
@@ -41,3 +42,5 @@ export const Button = ({
     </MantineButton>
   );
 };
+
+export const Button = memo(ButtonComponent, isSame);

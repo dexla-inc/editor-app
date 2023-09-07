@@ -3,7 +3,6 @@ import { getComponentById } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconBoxModel2 } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
 import { useEffect } from "react";
 import { SpacingControl } from "./SpacingControl";
 
@@ -15,11 +14,6 @@ export const Modifier = () => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
-  );
-
-  const debouncedTreeUpdate = debounce(updateTreeComponent, 500);
 
   const selectedComponent = getComponentById(
     editorTree.root,
@@ -88,13 +82,11 @@ export const Modifier = () => {
         <SpacingControl
           type="Padding"
           form={form}
-          debouncedTreeUpdate={debouncedTreeUpdate}
           selectedComponentId={selectedComponentId as string}
         />
         <SpacingControl
           type="Margin"
           form={form}
-          debouncedTreeUpdate={debouncedTreeUpdate}
           selectedComponentId={selectedComponentId as string}
         />
       </Stack>

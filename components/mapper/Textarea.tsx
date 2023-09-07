@@ -1,12 +1,14 @@
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Textarea as MantineTextarea, TextareaProps } from "@mantine/core";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & TextareaProps;
 
-export const Textarea = ({ renderTree, component, ...props }: Props) => {
+const TextareaComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;
 
   return (
@@ -17,3 +19,5 @@ export const Textarea = ({ renderTree, component, ...props }: Props) => {
     </MantineTextarea>
   );
 };
+
+export const Textarea = memo(TextareaComponent, isSame);

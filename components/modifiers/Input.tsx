@@ -4,11 +4,13 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { useEditorStore } from "@/stores/editor";
 import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
-import { getComponentById } from "@/utils/editor";
+import {
+  debouncedTreeComponentPropsUpdate,
+  getComponentById,
+} from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
 export const icon = IconForms;
@@ -28,9 +30,6 @@ export const Modifier = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
-  );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
   );
 
   const selectedComponent = getComponentById(
@@ -73,12 +72,6 @@ export const Modifier = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId]);
 
-  const debouncedUpdate = debounce((field: string, value: any) => {
-    updateTreeComponent(selectedComponentId as string, {
-      [field]: value,
-    });
-  }, 500);
-
   return (
     <form>
       <Stack spacing="xs">
@@ -88,7 +81,7 @@ export const Modifier = () => {
           {...form.getInputProps("label")}
           onChange={(e) => {
             form.setFieldValue("label", e.target.value);
-            debouncedUpdate("label", e.target.value);
+            debouncedTreeComponentPropsUpdate("label", e.target.value);
           }}
         />
         <TextInput
@@ -97,7 +90,7 @@ export const Modifier = () => {
           {...form.getInputProps("placeholder")}
           onChange={(e) => {
             form.setFieldValue("placeholder", e.target.value);
-            debouncedUpdate("placeholder", e.target.value);
+            debouncedTreeComponentPropsUpdate("placeholder", e.target.value);
           }}
         />
         <Select
@@ -107,14 +100,14 @@ export const Modifier = () => {
           {...form.getInputProps("type")}
           onChange={(value) => {
             form.setFieldValue("type", value as string);
-            debouncedUpdate("type", value as string);
+            debouncedTreeComponentPropsUpdate("type", value as string);
           }}
         />
         <SizeSelector
           {...form.getInputProps("size")}
           onChange={(value) => {
             form.setFieldValue("size", value as string);
-            debouncedUpdate("size", value as string);
+            debouncedTreeComponentPropsUpdate("size", value as string);
           }}
         />
         <SwitchSelector
@@ -122,7 +115,10 @@ export const Modifier = () => {
           {...form.getInputProps("withAsterisk")}
           onChange={(event) => {
             form.setFieldValue("withAsterisk", event.currentTarget.checked);
-            debouncedUpdate("withAsterisk", event.currentTarget.checked);
+            debouncedTreeComponentPropsUpdate(
+              "withAsterisk",
+              event.currentTarget.checked
+            );
           }}
         />
         <SizeSelector
@@ -130,7 +126,9 @@ export const Modifier = () => {
           {...form.getInputProps("labelProps")}
           onChange={(value) => {
             form.setFieldValue("labelProps", value as string);
-            debouncedUpdate("labelProps", { mb: value as string });
+            debouncedTreeComponentPropsUpdate("labelProps", {
+              mb: value as string,
+            });
           }}
         />
         <IconSelector
@@ -138,7 +136,7 @@ export const Modifier = () => {
           selectedIcon={form.values.icon}
           onIconSelect={(iconName: string) => {
             form.setFieldValue("icon", iconName);
-            debouncedUpdate("icon", <Icon name={iconName} />);
+            debouncedTreeComponentPropsUpdate("icon", <Icon name={iconName} />);
           }}
         />
       </Stack>

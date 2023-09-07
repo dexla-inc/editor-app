@@ -2,13 +2,15 @@ import { Component } from "@/utils/editor";
 import { TextInputProps, TextInput as MantineInput } from "@mantine/core";
 import { Icon } from "@/components/Icon";
 import debounce from "lodash.debounce";
+import { isSame } from "@/utils/componentComparison";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & TextInputProps;
 
-export const Input = ({ renderTree, component, ...props }: Props) => {
+const InputComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, icon, triggers, ...componentProps } =
     component.props as any;
   const { name: iconName } = icon && icon!.props!;
@@ -32,3 +34,5 @@ export const Input = ({ renderTree, component, ...props }: Props) => {
     </MantineInput>
   );
 };
+
+export const Input = memo(InputComponent, isSame);

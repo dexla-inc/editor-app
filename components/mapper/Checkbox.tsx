@@ -1,6 +1,7 @@
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Checkbox as MantineCheckbox, CheckboxProps } from "@mantine/core";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -8,7 +9,7 @@ type Props = {
   isPreviewMode?: boolean;
 } & CheckboxProps;
 
-export const Checkbox = ({
+const CheckboxComponent = ({
   renderTree,
   component,
   isPreviewMode,
@@ -46,3 +47,5 @@ export const Checkbox = ({
     />
   );
 };
+
+export const Checkbox = memo(CheckboxComponent, isSame);

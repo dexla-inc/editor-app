@@ -1,12 +1,14 @@
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Tabs as MantineTabs, TabsProps } from "@mantine/core";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & TabsProps;
 
-export const Tabs = ({ renderTree, component, ...props }: Props) => {
+const TabsComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;
 
   return (
@@ -17,3 +19,5 @@ export const Tabs = ({ renderTree, component, ...props }: Props) => {
     </MantineTabs>
   );
 };
+
+export const Tabs = memo(TabsComponent, isSame);

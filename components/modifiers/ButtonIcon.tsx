@@ -1,10 +1,12 @@
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { useEditorStore } from "@/stores/editor";
-import { getComponentById } from "@/utils/editor";
+import {
+  debouncedTreeComponentPropsUpdate,
+  getComponentById,
+} from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconColorFilter } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
 export const icon = IconColorFilter;
@@ -19,10 +21,6 @@ export const Modifier = () => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
-  );
-
   const selectedComponent = getComponentById(
     editorTree.root,
     selectedComponentId as string
@@ -46,12 +44,6 @@ export const Modifier = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId]);
 
-  const debouncedUpdate = debounce((field: string, value: any) => {
-    updateTreeComponent(selectedComponentId as string, {
-      [field]: value,
-    });
-  }, 500);
-
   return (
     <form>
       <Stack spacing="xs">
@@ -60,7 +52,7 @@ export const Modifier = () => {
           {...form.getInputProps("bg")}
           onChange={(value: string) => {
             form.setFieldValue("bg", value);
-            debouncedUpdate("bg", value);
+            debouncedTreeComponentPropsUpdate("bg", value);
           }}
         />
       </Stack>

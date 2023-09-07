@@ -1,15 +1,16 @@
 import { useEditorStore } from "@/stores/editor";
+import { isSame } from "@/utils/componentComparison";
 import { Component, checkIfIsChild } from "@/utils/editor";
 import { DrawerProps, Drawer as MantineDrawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & Omit<DrawerProps, "opened">;
 
-export const Drawer = ({
+const DrawerComponent = ({
   renderTree,
   component,
   onClose: propOnClose,
@@ -73,3 +74,5 @@ export const Drawer = ({
     </MantineDrawer>
   );
 };
+
+export const Drawer = memo(DrawerComponent, isSame);

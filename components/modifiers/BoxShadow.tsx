@@ -1,11 +1,10 @@
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { UnitInput } from "@/components/UnitInput";
 import { useEditorStore } from "@/stores/editor";
-import { getComponentById } from "@/utils/editor";
+import { debouncedTreeUpdate, getComponentById } from "@/utils/editor";
 import { Flex, SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconShadow } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
 export const icon = IconShadow;
@@ -25,11 +24,6 @@ export const Modifier = () => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
-  );
-
-  const debouncedTreeUpdate = debounce(updateTreeComponent, 500);
 
   const selectedComponent = getComponentById(
     editorTree.root,

@@ -1,12 +1,14 @@
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Select as MantineSelect, SelectProps } from "@mantine/core";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & SelectProps;
 
-export const Select = ({ renderTree, component, ...props }: Props) => {
+const SelectComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;
 
   return (
@@ -17,3 +19,5 @@ export const Select = ({ renderTree, component, ...props }: Props) => {
     </MantineSelect>
   );
 };
+
+export const Select = memo(SelectComponent, isSame);

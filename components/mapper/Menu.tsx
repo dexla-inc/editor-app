@@ -1,15 +1,17 @@
 import NavigationAvatarFooter from "@/components/NavigationAvatarFooter";
+import { isSame } from "@/utils/componentComparison";
 import { ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 import { Menu as MantineMenu, MenuProps } from "@mantine/core";
 import { IconLogout, IconSettings } from "@tabler/icons-react";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & MenuProps;
 
-export const Menu = ({ renderTree, component, ...props }: Props) => {
+const MenuComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;
 
   return (
@@ -40,3 +42,5 @@ export const Menu = ({ renderTree, component, ...props }: Props) => {
     </MantineMenu>
   );
 };
+
+export const Menu = memo(MenuComponent, isSame);

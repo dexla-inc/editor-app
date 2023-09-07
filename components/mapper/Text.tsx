@@ -1,15 +1,16 @@
 import { useEditorStore } from "@/stores/editor";
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
 import get from "lodash.get";
-import { useRef, useState } from "react";
+import { memo, useRef, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & TextProps;
 
-export const Text = ({ renderTree, component, ...props }: Props) => {
+const TextComponent = ({ renderTree, component, ...props }: Props) => {
   const ref = useRef<HTMLDivElement>();
   const [isEditable, setIsEditable] = useState(false);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
@@ -66,3 +67,5 @@ export const Text = ({ renderTree, component, ...props }: Props) => {
     </MantineText>
   );
 };
+
+export const Text = memo(TextComponent, isSame);

@@ -1,9 +1,14 @@
 import { PageResponse } from "@/requests/pages/types";
-import { MantineThemeExtended, emptyEditorTree } from "@/stores/editor";
+import {
+  MantineThemeExtended,
+  emptyEditorTree,
+  useEditorStore,
+} from "@/stores/editor";
 import { Action } from "@/utils/actions";
 import { structureMapper } from "@/utils/componentMapper";
 import { templatesMapper } from "@/utils/templatesMapper";
 import cloneDeep from "lodash.clonedeep";
+import debounce from "lodash.debounce";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
 
@@ -806,3 +811,31 @@ export const getClosestEdge = (
 
   return { edge: closestKey, value: all[closestKey as Edge] };
 };
+
+export const debouncedTreeComponentPropsUpdate = debounce(
+  (field: string, value: any) => {
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    const selectedComponentId = useEditorStore.getState().selectedComponentId;
+    updateTreeComponent(selectedComponentId as string, {
+      [field]: value,
+    });
+  },
+  300
+);
+
+export const debouncedTreeComponentStyleUpdate = debounce(
+  (field: string, value: any) => {
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    const selectedComponentId = useEditorStore.getState().selectedComponentId;
+    updateTreeComponent(selectedComponentId as string, {
+      style: { [field]: value },
+    });
+  },
+  300
+);
+
+export const debouncedTreeUpdate = debounce((...params: any[]) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  // @ts-ignore
+  updateTreeComponent(...params);
+}, 300);

@@ -1,12 +1,14 @@
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { DateInput as MantineDateInput, DateInputProps } from "@mantine/dates";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & DateInputProps;
 
-export const DateInput = ({ renderTree, component, ...props }: Props) => {
+const DateInputComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;
 
   return (
@@ -17,3 +19,5 @@ export const DateInput = ({ renderTree, component, ...props }: Props) => {
     </MantineDateInput>
   );
 };
+
+export const DateInput = memo(DateInputComponent, isSame);

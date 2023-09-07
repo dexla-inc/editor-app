@@ -2,11 +2,13 @@ import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 import { SizeSelector } from "@/components/SizeSelector";
 import { useEditorStore } from "@/stores/editor";
 import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
-import { getComponentById } from "@/utils/editor";
+import {
+  debouncedTreeComponentPropsUpdate,
+  getComponentById,
+} from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconSelect } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
 export const icon = IconSelect;
@@ -30,9 +32,6 @@ export const Modifier = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
-  );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
   );
 
   const selectedComponent = getComponentById(
@@ -77,15 +76,9 @@ export const Modifier = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId]);
 
-  const debouncedUpdate = debounce((field: string, value: any) => {
-    updateTreeComponent(selectedComponentId as string, {
-      [field]: value,
-    });
-  }, 500);
-
   const setFieldValue = (key: any, value: any) => {
     form.setFieldValue(key, value);
-    debouncedUpdate(key, value);
+    debouncedTreeComponentPropsUpdate(key, value);
   };
 
   return (
@@ -114,13 +107,6 @@ export const Modifier = () => {
             setFieldValue("size", value as string);
           }}
         />
-        {/* <IconSelector
-          {...form.getInputProps("icon")}
-          onChange={(value) => {
-            form.setFieldValue("icon", value);
-            debouncedUpdate("icon", value);
-          }}
-        /> */}
 
         <SizeSelector
           label="Label Spacing"

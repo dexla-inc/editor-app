@@ -1,9 +1,11 @@
 import { useEditorStore } from "@/stores/editor";
-import { getComponentById } from "@/utils/editor";
+import {
+  debouncedTreeComponentPropsUpdate,
+  getComponentById,
+} from "@/utils/editor";
 import { Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconBoxModel } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
 export const icon = IconBoxModel;
@@ -17,9 +19,6 @@ export const Modifier = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
-  );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
   );
   const selectedComponent = getComponentById(
     editorTree.root,
@@ -46,12 +45,6 @@ export const Modifier = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId]);
 
-  const debouncedUpdate = debounce((field: string, value: any) => {
-    updateTreeComponent(selectedComponentId as string, {
-      [field]: value,
-    });
-  }, 500);
-
   return (
     <form>
       <Stack spacing="xs">
@@ -62,7 +55,7 @@ export const Modifier = () => {
           {...form.getInputProps("title")}
           onChange={(e) => {
             form.setFieldValue("title", e.target.value);
-            debouncedUpdate("title", e.target.value);
+            debouncedTreeComponentPropsUpdate("title", e.target.value);
           }}
         />
       </Stack>

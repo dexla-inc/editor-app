@@ -1,15 +1,17 @@
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import {
   Breadcrumbs as MantineBreadcrumbs,
   BreadcrumbsProps,
 } from "@mantine/core";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & BreadcrumbsProps;
 
-export const Breadcrumb = ({ renderTree, component, ...props }: Props) => {
+const BreadcrumbComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;
 
   return (
@@ -20,3 +22,5 @@ export const Breadcrumb = ({ renderTree, component, ...props }: Props) => {
     </MantineBreadcrumbs>
   );
 };
+
+export const Breadcrumb = memo(BreadcrumbComponent, isSame);

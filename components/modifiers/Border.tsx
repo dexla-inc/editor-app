@@ -2,7 +2,7 @@ import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { UnitInput } from "@/components/UnitInput";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { useEditorStore } from "@/stores/editor";
-import { getComponentById } from "@/utils/editor";
+import { getComponentById, debouncedTreeUpdate } from "@/utils/editor";
 import { Group, SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
@@ -18,7 +18,6 @@ import {
   IconSquare,
   IconX,
 } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
 import startCase from "lodash.startcase";
 import { useEffect } from "react";
 
@@ -62,14 +61,9 @@ export const Modifier = () => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
-  );
   const currentTreeComponentsStates = useEditorStore(
     (state) => state.currentTreeComponentsStates
   );
-
-  const debouncedTreeUpdate = debounce(updateTreeComponent, 500);
 
   const selectedComponent = getComponentById(
     editorTree.root,

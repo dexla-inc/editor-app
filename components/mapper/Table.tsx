@@ -1,17 +1,19 @@
 import { useEditorStore } from "@/stores/editor";
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { TableProps } from "@mantine/core";
 import get from "lodash.get";
 import isEmpty from "lodash.isempty";
 import startCase from "lodash.startcase";
 import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & TableProps;
 
-export const Table = ({ renderTree, component, ...props }: Props) => {
+const TableComponent = ({ renderTree, component, ...props }: Props) => {
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
 
   const {
@@ -91,3 +93,5 @@ export const Table = ({ renderTree, component, ...props }: Props) => {
     />
   );
 };
+
+export const Table = memo(TableComponent, isSame);

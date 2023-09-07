@@ -1,15 +1,16 @@
 import { useEditorStore } from "@/stores/editor";
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Title as MantineTitle, TitleProps } from "@mantine/core";
 import get from "lodash.get";
-import { useRef, useState } from "react";
+import { memo, useRef, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & TitleProps;
 
-export const Title = ({ renderTree, component, ...props }: Props) => {
+const TitleComponent = ({ renderTree, component, ...props }: Props) => {
   const ref = useRef<HTMLDivElement>();
   const [isEditable, setIsEditable] = useState(false);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
@@ -67,3 +68,5 @@ export const Title = ({ renderTree, component, ...props }: Props) => {
     </MantineTitle>
   );
 };
+
+export const Title = memo(TitleComponent, isSame);

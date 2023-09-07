@@ -1,12 +1,14 @@
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Avatar as MantineAvatar, AvatarProps } from "@mantine/core";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & AvatarProps;
 
-export const Avatar = ({ renderTree, component, ...props }: Props) => {
+const AvatarComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;
 
   return (
@@ -17,3 +19,5 @@ export const Avatar = ({ renderTree, component, ...props }: Props) => {
     </MantineAvatar>
   );
 };
+
+export const Avatar = memo(AvatarComponent, isSame);

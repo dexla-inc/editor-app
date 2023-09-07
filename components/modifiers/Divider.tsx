@@ -1,11 +1,13 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { useEditorStore } from "@/stores/editor";
-import { getComponentById } from "@/utils/editor";
+import {
+  debouncedTreeComponentPropsUpdate,
+  getComponentById,
+} from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconDivide } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
 export const icon = IconDivide;
@@ -24,9 +26,6 @@ export const Modifier = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
-  );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
   );
 
   const selectedComponent = getComponentById(
@@ -61,12 +60,6 @@ export const Modifier = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId]);
 
-  const debouncedUpdate = debounce((field: string, value: any) => {
-    updateTreeComponent(selectedComponentId as string, {
-      [field]: value,
-    });
-  }, 500);
-
   return (
     <form>
       <Stack spacing="xs">
@@ -76,7 +69,7 @@ export const Modifier = () => {
           {...form.getInputProps("label")}
           onChange={(e) => {
             form.setFieldValue("label", e.target.value);
-            debouncedUpdate("label", e.target.value);
+            debouncedTreeComponentPropsUpdate("label", e.target.value);
           }}
         />
         <Select
@@ -90,7 +83,7 @@ export const Modifier = () => {
           {...form.getInputProps("labelPosition")}
           onChange={(value) => {
             form.setFieldValue("labelPosition", value as string);
-            debouncedUpdate("labelPosition", value as string);
+            debouncedTreeComponentPropsUpdate("labelPosition", value as string);
           }}
         />
         <Select
@@ -103,14 +96,14 @@ export const Modifier = () => {
           {...form.getInputProps("orientation")}
           onChange={(value) => {
             form.setFieldValue("orientation", value as string);
-            debouncedUpdate("orientation", value as string);
+            debouncedTreeComponentPropsUpdate("orientation", value as string);
           }}
         />
         <SizeSelector
           {...form.getInputProps("size")}
           onChange={(value) => {
             form.setFieldValue("size", value as string);
-            debouncedUpdate("size", value as string);
+            debouncedTreeComponentPropsUpdate("size", value as string);
           }}
         />
         <Select
@@ -124,7 +117,7 @@ export const Modifier = () => {
           {...form.getInputProps("variant")}
           onChange={(value) => {
             form.setFieldValue("variant", value as string);
-            debouncedUpdate("variant", value as string);
+            debouncedTreeComponentPropsUpdate("variant", value as string);
           }}
         />
         <ThemeColorSelector
@@ -132,7 +125,7 @@ export const Modifier = () => {
           {...form.getInputProps("color")}
           onChange={(value: string) => {
             form.setFieldValue("color", value);
-            debouncedUpdate("color", value);
+            debouncedTreeComponentPropsUpdate("color", value);
           }}
         />
       </Stack>

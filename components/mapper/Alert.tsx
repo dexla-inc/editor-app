@@ -1,12 +1,14 @@
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Alert as MantineAlert, AlertProps } from "@mantine/core";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & AlertProps;
 
-export const Alert = ({ renderTree, component, ...props }: Props) => {
+const AlertComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;
 
   return (
@@ -17,3 +19,5 @@ export const Alert = ({ renderTree, component, ...props }: Props) => {
     </MantineAlert>
   );
 };
+
+export const Alert = memo(AlertComponent, isSame);

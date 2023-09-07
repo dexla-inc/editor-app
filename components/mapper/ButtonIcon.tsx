@@ -1,9 +1,10 @@
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import {
   ActionIconProps,
   ActionIcon as MantineActionIcon,
 } from "@mantine/core";
-import { ReactElement } from "react";
+import { ReactElement, memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -11,7 +12,7 @@ type Props = {
 } & ActionIconProps &
   ReactElement<"Button">;
 
-export const ButtonIcon = ({ renderTree, component, ...props }: Props) => {
+const ButtonIconComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, triggers, ...componentProps } = component.props as any;
 
   return (
@@ -27,3 +28,5 @@ export const ButtonIcon = ({ renderTree, component, ...props }: Props) => {
     </MantineActionIcon>
   );
 };
+
+export const ButtonIcon = memo(ButtonIconComponent, isSame);

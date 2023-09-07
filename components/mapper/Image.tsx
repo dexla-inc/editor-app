@@ -1,14 +1,16 @@
 import { useEditorStore } from "@/stores/editor";
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { ImageProps, Image as MantineImage } from "@mantine/core";
 import get from "lodash.get";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & ImageProps;
 
-export const Image = ({ component }: Props) => {
+const ImageComponent = ({ component }: Props) => {
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
 
   const {
@@ -40,3 +42,5 @@ export const Image = ({ component }: Props) => {
     />
   );
 };
+
+export const Image = memo(ImageComponent, isSame);

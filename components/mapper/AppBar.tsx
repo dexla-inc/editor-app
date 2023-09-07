@@ -1,12 +1,14 @@
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { FlexProps, Flex as MantineFlex } from "@mantine/core";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & FlexProps;
 
-export const AppBar = ({ renderTree, component, ...props }: Props) => {
+const AppBarComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, style, ...componentProps } = component.props as any;
 
   return (
@@ -21,3 +23,5 @@ export const AppBar = ({ renderTree, component, ...props }: Props) => {
     </MantineFlex>
   );
 };
+
+export const AppBar = memo(AppBarComponent, isSame);

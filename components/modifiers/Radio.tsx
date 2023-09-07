@@ -3,7 +3,10 @@ import { SwitchSelector } from "@/components/SwitchSelector";
 import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
-import { getComponentById } from "@/utils/editor";
+import {
+  debouncedTreeComponentPropsUpdate,
+  getComponentById,
+} from "@/utils/editor";
 import {
   ActionIcon,
   Box,
@@ -17,7 +20,6 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconPlus, IconRadio, IconTrash } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
 export const icon = IconRadio;
@@ -53,9 +55,6 @@ export const Modifier = () => {
 
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
-  );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
   );
 
   const selectedComponent = getComponentById(
@@ -94,32 +93,26 @@ export const Modifier = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId]);
 
-  const debouncedUpdate = debounce((field: string, value: any) => {
-    updateTreeComponent(selectedComponentId as string, {
-      [field]: value,
-    });
-  }, 500);
-
   const addRadioItem = () => {
     const count = form.values.children.length + 1;
     const newRadioItem = createRadioItem("Label " + count, "value" + count);
     const updatedChildren = [...form.values.children, newRadioItem];
     form.setValues({ ...form.values, children: updatedChildren });
-    debouncedUpdate("children", updatedChildren);
+    debouncedTreeComponentPropsUpdate("children", updatedChildren);
   };
 
   const updateRadioItem = (index: number, field: string, value: string) => {
     const updatedRadioItems = [...form.values.children];
     updatedRadioItems[index].props![field] = value;
     form.setValues({ ...form.values, children: updatedRadioItems });
-    debouncedUpdate("children", updatedRadioItems);
+    debouncedTreeComponentPropsUpdate("children", updatedRadioItems);
   };
 
   const deleteRadioItem = (index: number) => {
     const updatedRadioItems = [...form.values.children];
     updatedRadioItems.splice(index, 1);
     form.setValues({ ...form.values, children: updatedRadioItems });
-    debouncedUpdate("children", updatedRadioItems);
+    debouncedTreeComponentPropsUpdate("children", updatedRadioItems);
   };
 
   return (
@@ -177,7 +170,7 @@ export const Modifier = () => {
           {...form.getInputProps("label")}
           onChange={(e) => {
             form.setFieldValue("label", e.target.value);
-            debouncedUpdate("label", e.target.value);
+            debouncedTreeComponentPropsUpdate("label", e.target.value);
           }}
         />
         <Select
@@ -191,14 +184,14 @@ export const Modifier = () => {
           {...form.getInputProps("type")}
           onChange={(value) => {
             form.setFieldValue("type", value as string);
-            debouncedUpdate("type", value as string);
+            debouncedTreeComponentPropsUpdate("type", value as string);
           }}
         />
         <SizeSelector
           {...form.getInputProps("size")}
           onChange={(value) => {
             form.setFieldValue("size", value as string);
-            debouncedUpdate("size", value as string);
+            debouncedTreeComponentPropsUpdate("size", value as string);
           }}
         />
         <SwitchSelector
@@ -206,7 +199,10 @@ export const Modifier = () => {
           {...form.getInputProps("withAsterisk")}
           onChange={(event) => {
             form.setFieldValue("withAsterisk", event.currentTarget.checked);
-            debouncedUpdate("withAsterisk", event.currentTarget.checked);
+            debouncedTreeComponentPropsUpdate(
+              "withAsterisk",
+              event.currentTarget.checked
+            );
           }}
         />
         <SizeSelector
@@ -214,7 +210,9 @@ export const Modifier = () => {
           {...form.getInputProps("labelProps")}
           onChange={(value) => {
             form.setFieldValue("labelProps", value as string);
-            debouncedUpdate("labelProps", { mb: value as string });
+            debouncedTreeComponentPropsUpdate("labelProps", {
+              mb: value as string,
+            });
           }}
         />
       </Stack>

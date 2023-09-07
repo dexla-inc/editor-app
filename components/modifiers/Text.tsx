@@ -2,11 +2,13 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { UnitInput } from "@/components/UnitInput";
 import { useEditorStore } from "@/stores/editor";
-import { getComponentById } from "@/utils/editor";
+import {
+  debouncedTreeComponentPropsUpdate,
+  getComponentById,
+} from "@/utils/editor";
 import { Group, Select, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTextSize } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
 import { useEffect } from "react";
 
 export const icon = IconTextSize;
@@ -75,12 +77,6 @@ export const Modifier = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId]);
 
-  const debouncedUpdate = debounce((field: string, value: any) => {
-    updateTreeComponent(selectedComponentId as string, {
-      [field]: value,
-    });
-  }, 500);
-
   return (
     <form>
       <Stack spacing="xs">
@@ -91,7 +87,7 @@ export const Modifier = () => {
           {...form.getInputProps("value")}
           onChange={(e) => {
             form.setFieldValue("value", e.target.value);
-            debouncedUpdate("children", e.target.value);
+            debouncedTreeComponentPropsUpdate("children", e.target.value);
           }}
         />
         <Group noWrap>
@@ -100,7 +96,7 @@ export const Modifier = () => {
             {...form.getInputProps("fontSize")}
             onChange={(value) => {
               form.setFieldValue("fontSize", value as string);
-              debouncedUpdate("size", value);
+              debouncedTreeComponentPropsUpdate("size", value);
             }}
           />
           <Select
@@ -113,7 +109,7 @@ export const Modifier = () => {
             {...form.getInputProps("fontWeight")}
             onChange={(value) => {
               form.setFieldValue("fontWeight", value as string);
-              debouncedUpdate("style", { fontWeight: value });
+              debouncedTreeComponentPropsUpdate("style", { fontWeight: value });
             }}
           />
         </Group>
@@ -123,7 +119,7 @@ export const Modifier = () => {
             {...form.getInputProps("lineHeight")}
             onChange={(value) => {
               form.setFieldValue("lineHeight", value as string);
-              debouncedUpdate("style", { lineHeight: value });
+              debouncedTreeComponentPropsUpdate("style", { lineHeight: value });
             }}
           />
           <UnitInput
@@ -132,7 +128,9 @@ export const Modifier = () => {
             {...form.getInputProps("letterSpacing")}
             onChange={(value) => {
               form.setFieldValue("letterSpacing", value as string);
-              debouncedUpdate("style", { letterSpacing: value });
+              debouncedTreeComponentPropsUpdate("style", {
+                letterSpacing: value,
+              });
             }}
           />
         </Group>
@@ -141,7 +139,7 @@ export const Modifier = () => {
           {...form.getInputProps("color")}
           onChange={(value: string) => {
             form.setFieldValue("color", value);
-            debouncedUpdate("color", value);
+            debouncedTreeComponentPropsUpdate("color", value);
           }}
         />
       </Stack>

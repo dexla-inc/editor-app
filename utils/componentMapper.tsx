@@ -6,7 +6,6 @@ import { AccordionPanel } from "@/components/mapper/AccordionPanel";
 import { Alert } from "@/components/mapper/Alert";
 import { AppBar } from "@/components/mapper/AppBar";
 import { Avatar } from "@/components/mapper/Avatar";
-import { Box } from "@/components/mapper/Box";
 import { Breadcrumb } from "@/components/mapper/Breadcrumb";
 import { Button } from "@/components/mapper/Button";
 import { ButtonIcon } from "@/components/mapper/ButtonIcon";
@@ -16,7 +15,6 @@ import { DateInput } from "@/components/mapper/DateInput";
 import { Divider } from "@/components/mapper/Divider";
 import { Drawer } from "@/components/mapper/Drawer";
 import { FilePond } from "@/components/mapper/FilePond";
-import { Flex } from "@/components/mapper/Flex";
 import { Form } from "@/components/mapper/Form";
 import { Icon } from "@/components/mapper/Icon";
 import { Image } from "@/components/mapper/Image";
@@ -780,14 +778,6 @@ export const componentMapper: ComponentMapper = {
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
-  Box: {
-    Component: (props: { component: Component; renderTree: any }) => (
-      <Box component={props.component} renderTree={props.renderTree} />
-    ),
-    modifiers: ["display", "spacing", "size", "border"],
-    actionTriggers: ["onMount", "onClick"],
-    sequentialTriggers: ["onSuccess", "onError"],
-  },
   Breadcrumb: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Breadcrumb
@@ -807,14 +797,6 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: ["display", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onOpen", "onClose"],
-    sequentialTriggers: ["onSuccess", "onError"],
-  },
-  Flex: {
-    Component: (props: { component: Component; renderTree: any }) => (
-      <Flex component={props.component} renderTree={props.renderTree} />
-    ),
-    modifiers: ["display", "spacing", "size", "border"],
-    actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Container: {

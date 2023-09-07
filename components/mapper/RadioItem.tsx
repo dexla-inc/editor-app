@@ -1,6 +1,7 @@
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Radio as MantineRadio, RadioProps } from "@mantine/core";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -8,7 +9,7 @@ type Props = {
   isPreviewMode: boolean;
 } & RadioProps;
 
-export const RadioItem = ({
+const RadioItemComponent = ({
   renderTree,
   component,
   isPreviewMode,
@@ -55,3 +56,5 @@ export const RadioItem = ({
     />
   );
 };
+
+export const RadioItem = memo(RadioItemComponent, isSame);

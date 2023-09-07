@@ -37,7 +37,7 @@ import { Fragment, PropsWithChildren, cloneElement, useEffect } from "react";
 type Props = {
   id: string;
   component: Component;
-  customComponentModal: any;
+  customComponentModal?: any;
 } & BoxProps;
 
 const bidingComponentsWhitelist = {
@@ -246,10 +246,14 @@ export const DroppableDraggable = ({
 
   const isDefaultState = currentState === "default";
   const hoverStateFunc = () => {
-    setTreeComponentCurrentState(component.id!, "hover");
+    if (currentState !== "hover") {
+      setTreeComponentCurrentState(component.id!, "hover");
+    }
   };
   const leaveHoverStateFunc = () => {
-    setTreeComponentCurrentState(component.id!, "default");
+    if (currentState !== "default") {
+      setTreeComponentCurrentState(component.id!, "default");
+    }
   };
 
   const isWidthPercentage = component.props?.style?.width?.endsWith("%");
@@ -290,7 +294,7 @@ export const DroppableDraggable = ({
 
   return (
     <Box
-      ref={ref}
+      ref={isPreviewMode ? undefined : ref}
       id={id}
       pos="relative"
       sx={{
@@ -315,16 +319,16 @@ export const DroppableDraggable = ({
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (isPicking) {
+        if (isPicking && !isPreviewMode) {
           if (canBePickedAndUserIsPicking) {
             setComponentToBind(id);
           }
-        } else {
+        } else if (!isPreviewMode) {
           setSelectedComponentId(id);
         }
       }}
       {...filteredProps}
-      {...droppable}
+      {...(isPreviewMode ? {} : droppable)}
     >
       {/* @ts-ignore */}
       <ComponentWrapper
@@ -344,103 +348,113 @@ export const DroppableDraggable = ({
           children?.children
         )}
       </ComponentWrapper>
-      {!isContentWrapper && !handlerBlacklist.includes(component.name) && (
-        <Box
-          pos="absolute"
-          h={36}
-          top={-36}
-          sx={{
-            zIndex: 90,
-            display: isSelected ? "block" : "none",
-            background: theme.colors.teal[6],
-            borderTopLeftRadius: theme.radius.sm,
-            borderTopRightRadius: theme.radius.sm,
-          }}
-        >
-          <Group py={4} px={8} h={36} noWrap spacing="xs" align="center">
-            {!component.fixedPosition && (
-              <UnstyledButton
-                sx={{ cursor: "move", alignItems: "center", display: "flex" }}
-                {...draggable}
-              >
-                <IconGripVertical
-                  size={ICON_SIZE}
-                  color="white"
-                  strokeWidth={1.5}
-                />
-              </UnstyledButton>
-            )}
-            <Text color="white" size="xs" pr={haveNonRootParent ? 0 : "xs"}>
-              {component.description}
-            </Text>
-            {haveNonRootParent && (
+      {!isPreviewMode &&
+        !isContentWrapper &&
+        !handlerBlacklist.includes(component.name) && (
+          <Box
+            pos="absolute"
+            h={36}
+            top={-36}
+            sx={{
+              zIndex: 90,
+              display: isSelected ? "block" : "none",
+              background: theme.colors.teal[6],
+              borderTopLeftRadius: theme.radius.sm,
+              borderTopRightRadius: theme.radius.sm,
+            }}
+          >
+            <Group py={4} px={8} h={36} noWrap spacing="xs" align="center">
+              {!component.fixedPosition && (
+                <UnstyledButton
+                  sx={{ cursor: "move", alignItems: "center", display: "flex" }}
+                  {...draggable}
+                >
+                  <IconGripVertical
+                    size={ICON_SIZE}
+                    color="white"
+                    strokeWidth={1.5}
+                  />
+                </UnstyledButton>
+              )}
+              <Text color="white" size="xs" pr={haveNonRootParent ? 0 : "xs"}>
+                {component.description}
+              </Text>
+              {haveNonRootParent && (
+                <ActionIcon
+                  variant="transparent"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSelectedComponentId(parent.id as string);
+                  }}
+                >
+                  <IconArrowUp
+                    size={ICON_SIZE}
+                    color="white"
+                    strokeWidth={1.5}
+                  />
+                </ActionIcon>
+              )}
               <ActionIcon
                 variant="transparent"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  setSelectedComponentId(parent.id as string);
+                  customComponentModal?.open();
                 }}
               >
-                <IconArrowUp size={ICON_SIZE} color="white" strokeWidth={1.5} />
+                <IconNewSection
+                  size={ICON_SIZE}
+                  color="white"
+                  strokeWidth={1.5}
+                />
               </ActionIcon>
-            )}
-            <ActionIcon
-              variant="transparent"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                customComponentModal.open();
-              }}
-            >
-              <IconNewSection
-                size={ICON_SIZE}
-                color="white"
-                strokeWidth={1.5}
-              />
-            </ActionIcon>
-            <ActionIcon
-              variant="transparent"
-              onClick={() => {
-                const container = structureMapper["Container"].structure({
-                  theme: editorTheme,
-                });
+              <ActionIcon
+                variant="transparent"
+                onClick={() => {
+                  const container = structureMapper["Container"].structure({
+                    theme: editorTheme,
+                  });
 
-                if (container.props && container.props.style) {
-                  container.props.style = {
-                    ...container.props.style,
-                    width: "auto",
-                    padding: "0px",
-                  };
-                }
+                  if (container.props && container.props.style) {
+                    container.props.style = {
+                      ...container.props.style,
+                      width: "auto",
+                      padding: "0px",
+                    };
+                  }
 
-                const copy = cloneDeep(editorTree);
-                const containerId = addComponent(
-                  copy.root,
-                  container,
-                  {
-                    id: parent?.id!,
+                  const copy = cloneDeep(editorTree);
+                  const containerId = addComponent(
+                    copy.root,
+                    container,
+                    {
+                      id: parent?.id!,
+                      edge: "left",
+                    },
+                    getComponentIndex(parent!, id)
+                  );
+
+                  addComponent(copy.root, component, {
+                    id: containerId,
                     edge: "left",
-                  },
-                  getComponentIndex(parent!, id)
-                );
+                  });
 
-                addComponent(copy.root, component, {
-                  id: containerId,
-                  edge: "left",
-                });
-
-                removeComponentFromParent(copy.root, id, parent?.id!);
-                setEditorTree(copy, {
-                  action: `Wrapped ${component.name} with a Container`,
-                });
-              }}
-            >
-              <IconBoxMargin size={ICON_SIZE} color="white" strokeWidth={1.5} />
-            </ActionIcon>
-          </Group>
-        </Box>
-      )}
+                  removeComponentFromParent(copy.root, id, parent?.id!);
+                  setEditorTree(copy, {
+                    action: `Wrapped ${component.name} with a Container`,
+                  });
+                }}
+              >
+                <IconBoxMargin
+                  size={ICON_SIZE}
+                  color="white"
+                  strokeWidth={1.5}
+                />
+              </ActionIcon>
+            </Group>
+          </Box>
+        )}
     </Box>
   );
 };

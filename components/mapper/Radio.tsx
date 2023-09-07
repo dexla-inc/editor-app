@@ -1,6 +1,7 @@
+import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Group, Radio as MantineRadio, RadioGroupProps } from "@mantine/core";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -8,7 +9,7 @@ type Props = {
   isPreviewMode?: boolean;
 } & RadioGroupProps;
 
-export const Radio = ({
+const RadioComponent = ({
   renderTree,
   component,
   isPreviewMode,
@@ -50,3 +51,5 @@ export const Radio = ({
     </MantineRadio.Group>
   );
 };
+
+export const Radio = memo(RadioComponent, isSame);
