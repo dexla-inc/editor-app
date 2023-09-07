@@ -208,7 +208,6 @@ export const jsonStructure = (props?: any): Component => {
               id: nanoid(),
               name: "Container",
               description: "Container for Navlink",
-              icon: page?.isHome ? "IconHome" : _pickRandomIcon(),
               isNested: !!page.parentPageId,
               pageId: page.id,
               actions: [
@@ -244,7 +243,7 @@ export const jsonStructure = (props?: any): Component => {
                   name: "Icon",
                   description: "Navbar Icon",
                   props: {
-                    name: "IconHome",
+                    name: page?.isHome ? "IconHome" : _pickRandomIcon(),
                     style: {
                       width: "auto",
                       height: "auto",
