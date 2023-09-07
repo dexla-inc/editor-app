@@ -16,7 +16,7 @@ export const Button = ({
   isPreviewMode,
   ...props
 }: Props) => {
-  const { children, triggers, leftIcon, ...componentProps } =
+  const { children, triggers, leftIcon, rightIcon, ...componentProps } =
     component.props as any;
 
   const defaultTriggers = isPreviewMode
@@ -30,6 +30,7 @@ export const Button = ({
   return (
     <MantineButton
       {...(leftIcon && { leftIcon: <Icon name={leftIcon} /> })}
+      {...(rightIcon && { rightIcon: <Icon name={rightIcon} /> })}
       {...defaultTriggers}
       {...props}
       {...componentProps}
