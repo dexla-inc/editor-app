@@ -102,13 +102,10 @@ export const jsonStructure = (props?: any): Component => {
         flexDirection: "column",
         flexGrow: "1",
         gap: "0px",
-        position: "relative",
         top: 0,
         left: 0,
         background: isDarkTheme ? theme.colors.dark[6] : "#fff",
       },
-      isOpen: true,
-
       ...(props.props || {}),
     },
     fixedPosition: { position: "left", target: "root" },
@@ -206,10 +203,31 @@ export const jsonStructure = (props?: any): Component => {
           .map((page: PageResponse) => {
             return {
               id: nanoid(),
-              name: "Container",
-              description: "Container for Navlink",
-              isNested: !!page.parentPageId,
-              pageId: page.id,
+              name: "NavLink",
+              description: "Navbar Item",
+              props: {
+                icon: "IconHome",
+                label: page.title,
+                isNested: !!page.parentPageId,
+                pageId: page.id,
+                style: {
+                  width: "100%",
+                  height: "auto",
+                  display: "flex",
+                  alignItems: "center",
+                  color: isDarkTheme
+                    ? theme.colors.gray[5]
+                    : theme.colors.dark[9],
+                },
+                sx: {
+                  borderRadius: "3px",
+                  "&:hover, [data-active]": {
+                    backgroundColor: `${
+                      isDarkTheme ? theme.colors.dark[4] : theme.colors.gray[0]
+                    } !important`,
+                  },
+                },
+              },
               actions: [
                 {
                   id: nanoid(),
@@ -220,64 +238,7 @@ export const jsonStructure = (props?: any): Component => {
                   },
                 },
               ],
-              props: {
-                sx: {
-                  cursor: "pointer",
-                  display: "flex",
-                  flexWrap: "wrap",
-                  width: "100%",
-                  gap: theme.spacing.sm,
-                  padding: "4px",
-                  alignItems: "center",
-                  borderRadius: "3px",
-                  "&:hover, [data-active]": {
-                    backgroundColor: `${
-                      isDarkTheme ? theme.colors.dark[4] : theme.colors.gray[0]
-                    } !important`,
-                  },
-                },
-              },
-              children: [
-                {
-                  id: nanoid(),
-                  name: "Icon",
-                  description: "Navbar Icon",
-                  props: {
-                    name: page?.isHome ? "IconHome" : _pickRandomIcon(),
-                    style: {
-                      width: "auto",
-                      height: "auto",
-                      padding: "0px",
-                      color: isDarkTheme
-                        ? theme.colors.gray[5]
-                        : theme.colors.dark[9],
-                    },
-                  },
-
-                  children: [],
-                },
-                {
-                  id: nanoid(),
-                  name: "Text",
-                  description: "Navbar Title",
-                  props: {
-                    children: page.title,
-                    style: {
-                      width: "auto",
-                      height: "auto",
-                      fontWeight: "semibold",
-                      textAlign: "center",
-                      padding: "0px",
-                      fontSize: "14px",
-                      color: isDarkTheme
-                        ? theme.colors.gray[5]
-                        : theme.colors.dark[9],
-                    },
-                  },
-
-                  children: [],
-                },
-              ],
+              children: [],
             };
           }),
       },
