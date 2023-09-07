@@ -32,6 +32,7 @@ import { Radio } from "@/components/mapper/Radio";
 import { RadioItem } from "@/components/mapper/RadioItem";
 import { Rating } from "@/components/mapper/Rating";
 import { Select } from "@/components/mapper/Select";
+import { Stepper } from "@/components/mapper/Stepper";
 import { Switch } from "@/components/mapper/Switch";
 import { Tab } from "@/components/mapper/Tab";
 import { Table } from "@/components/mapper/Table";
@@ -76,6 +77,7 @@ import * as RadioGroupStructure from "@/components/mapper/structure/Radio";
 import * as RadioItemStructure from "@/components/mapper/structure/RadioItem";
 import * as RatingStructure from "@/components/mapper/structure/Rating";
 import * as SelectStructure from "@/components/mapper/structure/Select";
+import * as StepperStructure from "@/components/mapper/structure/Stepper";
 import * as SwitchStructure from "@/components/mapper/structure/Switch";
 import * as TableStructure from "@/components/mapper/structure/Table";
 import * as TabsStructure from "@/components/mapper/structure/Tabs";
@@ -92,6 +94,7 @@ import { Component } from "@/utils/editor";
 
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import {
+  IconArrowAutofitContent,
   IconBoxModel,
   IconBrandChrome,
   IconBread,
@@ -173,7 +176,6 @@ export const structureMapper: StructureMapper = {
     category: "Layout",
     icon: <IconContainer size={ICON_SIZE} />,
   },
-
   Input: {
     structure: (props: any) => InputStructure.jsonStructure(props),
     Draggable: () => (
@@ -527,6 +529,17 @@ export const structureMapper: StructureMapper = {
     category: "Navigation",
     icon: <IconBread size={ICON_SIZE} />,
   },
+  Stepper: {
+    structure: (props: any) => StepperStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Stepper"
+        icon={<IconArrowAutofitContent size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Navigation",
+    icon: <IconArrowAutofitContent size={ICON_SIZE} />,
+  },
   Menu: {
     structure: (props: any) => MenuStructure.jsonStructure(props),
     Draggable: () => (
@@ -564,7 +577,6 @@ export const structureMapper: StructureMapper = {
     structure: (props: any) => NotImplemented.jsonStructure(props),
     category: "Navigation",
   },
-
   Card: {
     structure: (props: any) => NotImplemented.jsonStructure(props),
     category: "Card",
@@ -807,6 +819,14 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: ["display", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onOpen", "onClose"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  Stepper: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Stepper component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size", "border"],
+    actionTriggers: ["onMount", "onNext", "onPrevious"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Flex: {

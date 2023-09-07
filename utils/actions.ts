@@ -39,7 +39,7 @@ const triggers = [
   "onSubmit",
   "onInvalid",
   "onReset",
-  //table actions
+  // table actions
   "onRowClick",
   "onRowHover",
   "onRowSelect",
@@ -47,6 +47,8 @@ const triggers = [
   "onPaginationChange",
   "onSort",
   "onFilterApplied",
+  "onNext",
+  "onPrevious",
   "onSuccess",
   "onError",
 ] as const;
