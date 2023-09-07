@@ -308,10 +308,6 @@ export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const linksComponent = selectedComponent?.children?.find(
     (tree) => tree.description === "Container for navigation links"
   );
-  const buttonIcon = buttonComponent?.children?.reduce(
-    (obj, tree) => ({ ...obj, ...tree }),
-    {} as Component
-  );
 
   const isExpanded = selectedComponent?.props?.style.width !== "100px";
   const name = isExpanded ? "IconChevronRight" : "IconChevronLeft";
@@ -319,7 +315,7 @@ export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const flexDirection = isExpanded ? "column" : "row";
   const justifyContent = isExpanded ? "center" : "flex-start";
 
-  updateTreeComponent(buttonIcon?.id!, { name });
+  updateTreeComponent(buttonComponent?.id!, { name });
   linksComponent?.children?.forEach((child) => {
     updateTreeComponent(child?.id as string, {
       style: { flexDirection, justifyContent },
