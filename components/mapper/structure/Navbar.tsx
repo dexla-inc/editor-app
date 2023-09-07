@@ -167,7 +167,7 @@ export const jsonStructure = (props?: any): Component => {
                   display: "flex",
                   flexWrap: "wrap",
                   width: "100%",
-                  rowGap: theme.spacing.sm,
+                  gap: theme.spacing.sm,
                   padding: "4px",
                   alignItems: "center",
                   borderRadius: "3px",
