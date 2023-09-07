@@ -21,6 +21,64 @@ export const jsonStructure = (props?: any): Component => {
   const darkLogo = theme.logos?.find((logo) => logo.type === "DARK");
   const lightLogo = theme.logos?.find((logo) => logo.type === "LIGHT");
 
+  const _pickRandomIcon = () => {
+    const icons = [
+      "IconAdjustmentsSearch",
+      "IconAdjustmentsShare",
+      "IconAdjustmentsStar",
+      "IconAdjustmentsUp",
+      "IconAdjustmentsX",
+      "IconAdjustments",
+      "IconAerialLift",
+      "IconAffiliateFilled",
+      "IconAffiliate",
+      "IconAirBalloon",
+      "IconAirConditioningDisabled",
+      "IconAirConditioning",
+      "IconAirTrafficControl",
+      "IconAlarmFilled",
+      "IconAlarmMinusFilled",
+      "IconAlarmMinus",
+      "IconAlarmOff",
+      "IconAlarmPlusFilled",
+      "IconAlarmPlus",
+      "IconAlarmSnoozeFilled",
+      "IconAlarmSnooze",
+      "IconAlarm",
+      "IconAlbumOff",
+      "IconAlbum",
+      "IconAlertCircleFilled",
+      "IconAlertCircle",
+      "IconAlertHexagonFilled",
+      "IconAlertHexagon",
+      "IconAlertOctagonFilled",
+      "IconAlertOctagon",
+      "IconAlertSmall",
+      "IconAlertSquareFilled",
+      "IconAlertSquareRoundedFilled",
+      "IconAlertSquareRounded",
+      "IconAlertSquare",
+      "IconAlertTriangleFilled",
+      "IconAlertTriangle",
+      "IconAlienFilled",
+      "IconAlien",
+      "IconAlignBoxBottomCenterFilled",
+      "IconAlignBoxBottomCenter",
+      "IconAlignBoxBottomLeftFilled",
+      "IconAlignBoxBottomLeft",
+      "IconAlignBoxBottomRightFilled",
+      "IconAlignBoxBottomRight",
+      "IconAlignBoxCenterBottom",
+      "IconAlignBoxCenterMiddleFilled",
+      "IconAlignBoxCenterMiddle",
+      "IconAlignBoxCenterStretch",
+      // Add more icon names as needed
+    ];
+
+    const randomIndex = Math.floor(Math.random() * icons.length);
+    return icons[randomIndex];
+  };
+
   const logoUrl =
     darkLogo?.url ||
     lightLogo?.url ||
@@ -118,6 +176,7 @@ export const jsonStructure = (props?: any): Component => {
             props: {
               style: {
                 width: "auto",
+                maxWidth: "180px",
                 height: "34px",
                 ...defaultImageValues,
               },
@@ -149,6 +208,7 @@ export const jsonStructure = (props?: any): Component => {
               id: nanoid(),
               name: "Container",
               description: "Container for Navlink",
+              icon: page?.isHome ? "IconHome" : _pickRandomIcon(),
               isNested: !!page.parentPageId,
               pageId: page.id,
               actions: [

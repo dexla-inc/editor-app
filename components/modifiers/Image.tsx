@@ -12,7 +12,7 @@ export const label = "Image";
 export const defaultImageValues = {
   src: "https://www.contentviewspro.com/wp-content/uploads/2017/07/default_image.png",
   alt: "",
-  fit: "scale-down",
+  fit: "contain",
   position: "relative",
 };
 
