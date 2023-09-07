@@ -8,6 +8,7 @@ type Props = {
 
 export const Stepper = ({ renderTree, component, ...props }: Props) => {
   const {
+    active,
     activeStep,
     setActive,
     breakpoint,
