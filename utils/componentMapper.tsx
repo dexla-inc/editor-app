@@ -823,7 +823,13 @@ export const componentMapper: ComponentMapper = {
   },
   Stepper: {
     Component: (props: { component: Component; renderTree: any }) => (
-      <Stepper component={props.component} renderTree={props.renderTree} />
+      <Stepper
+        component={props.component}
+        renderTree={props.renderTree}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+        active={1}
+      />
     ),
     modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount", "onNext", "onPrevious"],
