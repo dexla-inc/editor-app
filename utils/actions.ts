@@ -298,57 +298,34 @@ export const togglePropsAction = ({ action }: TogglePropsActionParams) => {
   });
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  const editorTree = useEditorStore.getState().tree;
-  const selectedComponent = editorTree.root.children
-    ?.filter((tree) => tree.name === "Navbar")
-    .reduce((obj, tree) => {
-      return { ...obj, ...tree };
-    }, {} as Component);
-  const buttonComponent = selectedComponent
-    ?.children!.filter((tree) => tree.description === "Button to toggle Navbar")
-    .reduce((obj, tree) => {
-      return { ...obj, ...tree };
-    }, {} as Component);
+  const { updateTreeComponent, tree: editorTree } = useEditorStore.getState();
+  const selectedComponent = editorTree.root.children?.find(
+    (tree) => tree.name === "Navbar"
+  );
+  const buttonComponent = selectedComponent?.children?.find(
+    (tree) => tree.description === "Button to toggle Navbar"
+  );
+  const linksComponent = selectedComponent?.children?.find(
+    (tree) => tree.description === "Container for navigation links"
+  );
+  const buttonIcon = buttonComponent?.children?.reduce(
+    (obj, tree) => ({ ...obj, ...tree }),
+    {} as Component
+  );
 
-  const linksComponent = selectedComponent
-    ?.children!.filter(
-      (tree) => tree.description === "Container for navigation links"
-    )
-    .reduce((obj, tree) => {
-      return { ...obj, ...tree };
-    }, {} as Component);
-
-  const buttonIcon = buttonComponent?.children!.reduce((obj, tree) => {
-    return { ...obj, ...tree };
-  }, {} as Component);
-
-  interface Style {
-    style: { [key: string]: string };
-  }
-  let obj: Style;
-  let name: string;
-  let links: Style;
-
-  selectedComponent?.props?.style.width !== "100px"
-    ? (name = "IconChevronRight")
-    : (name = "IconChevronLeft");
-
-  selectedComponent?.props?.style.width !== "100px"
-    ? (obj = { style: { width: "100px" } })
-    : (obj = { style: { width: "260px" } });
-
-  selectedComponent?.props?.style.width !== "100px"
-    ? (links = { style: { flexDirection: "column", justifyContent: "center" } })
-    : (links = {
-        style: { flexDirection: "row", justifyContent: "flex-start" },
-      });
+  const isExpanded = selectedComponent?.props?.style.width !== "100px";
+  const name = isExpanded ? "IconChevronRight" : "IconChevronLeft";
+  const width = isExpanded ? "100px" : "260px";
+  const flexDirection = isExpanded ? "column" : "row";
+  const justifyContent = isExpanded ? "center" : "flex-start";
 
   updateTreeComponent(buttonIcon?.id!, { name });
-  linksComponent?.children?.map((child) => {
-    updateTreeComponent(child?.id as string, links);
+  linksComponent?.children?.forEach((child) => {
+    updateTreeComponent(child?.id as string, {
+      style: { flexDirection, justifyContent },
+    });
   });
-  updateTreeComponent(selectedComponent?.id!, obj);
+  updateTreeComponent(selectedComponent?.id!, { style: { width } });
 };
 
 export const openToastAction = ({ action }: OpenToastActionParams) => {
