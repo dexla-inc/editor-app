@@ -39,7 +39,7 @@ const triggers = [
   "onSubmit",
   "onInvalid",
   "onReset",
-  //table actions
+  // table actions
   "onRowClick",
   "onRowHover",
   "onRowSelect",
@@ -47,6 +47,8 @@ const triggers = [
   "onPaginationChange",
   "onSort",
   "onFilterApplied",
+  "onNext",
+  "onPrevious",
   "onSuccess",
   "onError",
 ] as const;
@@ -163,6 +165,10 @@ export type ReloadComponentAction = {
   data?: any;
 };
 
+export type ToggleNavbarAction = {
+  name: "toggleNavbar";
+};
+
 export type Action = {
   id: string;
   trigger: ActionTrigger;
@@ -179,7 +185,8 @@ export type Action = {
     | TogglePropsAction
     | OpenToastAction
     | ChangeStateAction
-    | ReloadComponentAction;
+    | ReloadComponentAction
+    | ToggleNavbarAction;
   sequentialTo?: string;
 };
 
@@ -249,6 +256,9 @@ export type TogglePropsActionParams = ActionParams & {
 export type ChangeStateActionParams = ActionParams & {
   action: ChangeStateAction;
 };
+export type ToggleNavbarActionParams = ActionParams & {
+  action: ToggleNavbarAction;
+};
 
 export const openModalAction = ({ action }: OpenModalActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
@@ -286,6 +296,32 @@ export const togglePropsAction = ({ action }: TogglePropsActionParams) => {
   updateTreeComponent(action.componentId, {
     style: { visibility: viewItem as string },
   });
+};
+export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
+  const { updateTreeComponent, tree: editorTree } = useEditorStore.getState();
+  const selectedComponent = editorTree.root.children?.find(
+    (tree) => tree.name === "Navbar"
+  );
+  const buttonComponent = selectedComponent?.children?.find(
+    (tree) => tree.description === "Button to toggle Navbar"
+  );
+  const linksComponent = selectedComponent?.children?.find(
+    (tree) => tree.description === "Container for navigation links"
+  );
+
+  const isExpanded = selectedComponent?.props?.style.width !== "100px";
+  const name = isExpanded ? "IconChevronRight" : "IconChevronLeft";
+  const width = isExpanded ? "100px" : "260px";
+  const flexDirection = isExpanded ? "column" : "row";
+  const justifyContent = isExpanded ? "center" : "flex-start";
+
+  updateTreeComponent(buttonComponent?.id!, { name });
+  linksComponent?.children?.forEach((child) => {
+    updateTreeComponent(child?.id as string, {
+      style: { flexDirection, justifyContent },
+    });
+  });
+  updateTreeComponent(selectedComponent?.id!, { style: { width } });
 };
 
 export const openToastAction = ({ action }: OpenToastActionParams) => {
@@ -682,5 +718,9 @@ export const actionMapper = {
   reloadComponent: {
     action: reloadComponentAction,
     form: ReloadComponentActionForm,
+  },
+  toggleNavbar: {
+    action: toggleNavbarAction,
+    form: TogglePropsActionForm,
   },
 };

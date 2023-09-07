@@ -17,7 +17,7 @@ const ButtonComponent = ({
   isPreviewMode,
   ...props
 }: Props) => {
-  const { children, triggers, leftIcon, ...componentProps } =
+  const { children, triggers, leftIcon, rightIcon, ...componentProps } =
     component.props as any;
 
   const defaultTriggers = isPreviewMode
@@ -31,6 +31,7 @@ const ButtonComponent = ({
   return (
     <MantineButton
       {...(leftIcon && { leftIcon: <Icon name={leftIcon} /> })}
+      {...(rightIcon && { rightIcon: <Icon name={rightIcon} /> })}
       {...defaultTriggers}
       {...props}
       {...componentProps}

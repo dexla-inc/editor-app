@@ -41,6 +41,7 @@ export const UnitInput = ({
   ) ?? [0, "auto"];
 
   const [value, setValue] = useState<number | "auto">();
+  const [textValue, setTextValue] = useState<string>();
   const [unit, setUnit] = useState<Unit>();
 
   useEffect(() => {
@@ -57,6 +58,18 @@ export const UnitInput = ({
 
   const isAuto = (unit ?? splitUnit) === "auto";
 
+  const handleChange = (val: string, isTextInput: boolean = false) => {
+    if (!isNaN(Number(val))) {
+      if (unit === "auto" && val !== "") {
+        setUnit("px");
+        setValue(Number(val));
+      } else {
+        isTextInput ? setTextValue(val) : setValue(Number(val));
+        setUnit((unit ?? splitUnit) as Unit);
+      }
+    }
+  };
+
   const RightSection = (
     <Select
       size="xs"
@@ -68,8 +81,9 @@ export const UnitInput = ({
           setValue(100);
         } else if (val === "px") {
           setValue(value);
-        } else if (value === "auto") {
-          setValue(0);
+        } else if (value === "auto" || val === "auto") {
+          setValue("auto");
+          setTextValue("auto");
         } else {
           setValue(value ?? splitValue);
         }
@@ -106,29 +120,28 @@ export const UnitInput = ({
       <TextInput
         size="xs"
         {...props}
-        value="auto"
-        onChange={(val: any) => {
-          setValue(val);
-          setUnit((unit ?? splitUnit) as Unit);
+        value={textValue || "auto"}
+        onChange={(e) => {
+          handleChange(e.target.value, true);
         }}
         rightSection={RightSection}
         rightSectionWidth={53}
       />
     );
+  } else {
+    return (
+      <NumberInput
+        size="xs"
+        hideControls
+        value={(value ?? splitValue) as number}
+        autoFocus={unit !== "auto"}
+        onChange={(val: number) => {
+          handleChange(val.toString());
+        }}
+        {...props}
+        rightSection={RightSection}
+        rightSectionWidth={53}
+      />
+    );
   }
-
-  return (
-    <NumberInput
-      size="xs"
-      hideControls
-      value={(value ?? splitValue) as number}
-      onChange={(val: any) => {
-        setValue(val);
-        setUnit((unit ?? splitUnit) as Unit);
-      }}
-      {...props}
-      rightSection={RightSection}
-      rightSectionWidth={53}
-    />
-  );
 };

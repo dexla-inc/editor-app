@@ -21,6 +21,64 @@ export const jsonStructure = (props?: any): Component => {
   const darkLogo = theme.logos?.find((logo) => logo.type === "DARK");
   const lightLogo = theme.logos?.find((logo) => logo.type === "LIGHT");
 
+  const _pickRandomIcon = () => {
+    const icons = [
+      "IconAdjustmentsSearch",
+      "IconAdjustmentsShare",
+      "IconAdjustmentsStar",
+      "IconAdjustmentsUp",
+      "IconAdjustmentsX",
+      "IconAdjustments",
+      "IconAerialLift",
+      "IconAffiliateFilled",
+      "IconAffiliate",
+      "IconAirBalloon",
+      "IconAirConditioningDisabled",
+      "IconAirConditioning",
+      "IconAirTrafficControl",
+      "IconAlarmFilled",
+      "IconAlarmMinusFilled",
+      "IconAlarmMinus",
+      "IconAlarmOff",
+      "IconAlarmPlusFilled",
+      "IconAlarmPlus",
+      "IconAlarmSnoozeFilled",
+      "IconAlarmSnooze",
+      "IconAlarm",
+      "IconAlbumOff",
+      "IconAlbum",
+      "IconAlertCircleFilled",
+      "IconAlertCircle",
+      "IconAlertHexagonFilled",
+      "IconAlertHexagon",
+      "IconAlertOctagonFilled",
+      "IconAlertOctagon",
+      "IconAlertSmall",
+      "IconAlertSquareFilled",
+      "IconAlertSquareRoundedFilled",
+      "IconAlertSquareRounded",
+      "IconAlertSquare",
+      "IconAlertTriangleFilled",
+      "IconAlertTriangle",
+      "IconAlienFilled",
+      "IconAlien",
+      "IconAlignBoxBottomCenterFilled",
+      "IconAlignBoxBottomCenter",
+      "IconAlignBoxBottomLeftFilled",
+      "IconAlignBoxBottomLeft",
+      "IconAlignBoxBottomRightFilled",
+      "IconAlignBoxBottomRight",
+      "IconAlignBoxCenterBottom",
+      "IconAlignBoxCenterMiddleFilled",
+      "IconAlignBoxCenterMiddle",
+      "IconAlignBoxCenterStretch",
+      // Add more icon names as needed
+    ];
+
+    const randomIndex = Math.floor(Math.random() * icons.length);
+    return icons[randomIndex];
+  };
+
   const logoUrl =
     darkLogo?.url ||
     lightLogo?.url ||
@@ -54,6 +112,42 @@ export const jsonStructure = (props?: any): Component => {
     children: [
       {
         id: nanoid(),
+        name: "ButtonIcon",
+        description: "Button to toggle Navbar",
+        props: {
+          style: {
+            position: "absolute",
+            right: "-5%",
+            top: "20px",
+            width: "auto",
+            height: "auto",
+            cursor: "pointer",
+            zIndex: 10,
+          },
+          variant: "default",
+          radius: "xl",
+        },
+        actions: [
+          {
+            id: nanoid(),
+            trigger: "onClick",
+            action: { name: "toggleNavbar" },
+          },
+        ],
+        blockDroppingChildrenInside: true,
+        children: [
+          {
+            id: nanoid(),
+            name: "Icon",
+            description: "Icon",
+            props: {
+              name: "IconChevronLeft",
+            },
+          },
+        ],
+      },
+      {
+        id: nanoid(),
         name: "Container",
         description: "Container for Image and Icon",
         props: {
@@ -79,6 +173,7 @@ export const jsonStructure = (props?: any): Component => {
             props: {
               style: {
                 width: "auto",
+                maxWidth: "180px",
                 height: "34px",
                 ...defaultImageValues,
               },
