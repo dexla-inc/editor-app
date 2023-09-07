@@ -1,4 +1,4 @@
-import { Shell } from "@/components/AppShell";
+import { DashboardShell } from "@/components/DashboardShell";
 import BrandingStep from "@/components/projects/BrandingStep";
 import PagesStep from "@/components/projects/PagesStep";
 import ProjectStep from "@/components/projects/ProjectStep";
@@ -25,7 +25,7 @@ export default function New() {
   const [themeResponse, setThemeResponse] = useState<ThemeResponse>();
 
   return (
-    <Shell>
+    <DashboardShell>
       <Container py={60}>
         <Stack spacing="xl">
           <StepperHeading activeStep={activeStep}></StepperHeading>
@@ -78,7 +78,7 @@ export default function New() {
           </Stepper>
         </Stack>
       </Container>
-    </Shell>
+    </DashboardShell>
   );
 }
 
