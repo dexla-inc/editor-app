@@ -163,6 +163,10 @@ export type ReloadComponentAction = {
   data?: any;
 };
 
+export type ToggleNavbarAction = {
+  name: "toggleNavbar";
+};
+
 export type Action = {
   id: string;
   trigger: ActionTrigger;
@@ -179,7 +183,8 @@ export type Action = {
     | TogglePropsAction
     | OpenToastAction
     | ChangeStateAction
-    | ReloadComponentAction;
+    | ReloadComponentAction
+    | ToggleNavbarAction;
   sequentialTo?: string;
 };
 
@@ -249,6 +254,9 @@ export type TogglePropsActionParams = ActionParams & {
 export type ChangeStateActionParams = ActionParams & {
   action: ChangeStateAction;
 };
+export type ToggleNavbarActionParams = ActionParams & {
+  action: ToggleNavbarAction;
+};
 
 export const openModalAction = ({ action }: OpenModalActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
@@ -286,6 +294,59 @@ export const togglePropsAction = ({ action }: TogglePropsActionParams) => {
   updateTreeComponent(action.componentId, {
     style: { visibility: viewItem as string },
   });
+};
+export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const editorTree = useEditorStore.getState().tree;
+  const selectedComponent = editorTree.root.children
+    ?.filter((tree) => tree.name === "Navbar")
+    .reduce((obj, tree) => {
+      return { ...obj, ...tree };
+    }, {} as Component);
+  const buttonComponent = selectedComponent
+    ?.children!.filter((tree) => tree.description === "Button to toggle Navbar")
+    .reduce((obj, tree) => {
+      return { ...obj, ...tree };
+    }, {} as Component);
+
+  const linksComponent = selectedComponent
+    ?.children!.filter(
+      (tree) => tree.description === "Container for navigation links"
+    )
+    .reduce((obj, tree) => {
+      return { ...obj, ...tree };
+    }, {} as Component);
+
+  const buttonIcon = buttonComponent?.children!.reduce((obj, tree) => {
+    return { ...obj, ...tree };
+  }, {} as Component);
+
+  interface Style {
+    style: { [key: string]: string };
+  }
+  let obj: Style;
+  let name: string;
+  let links: Style;
+
+  selectedComponent?.props?.style.width !== "100px"
+    ? (name = "IconChevronRight")
+    : (name = "IconChevronLeft");
+
+  selectedComponent?.props?.style.width !== "100px"
+    ? (obj = { style: { width: "100px" } })
+    : (obj = { style: { width: "260px" } });
+
+  selectedComponent?.props?.style.width !== "100px"
+    ? (links = { style: { flexDirection: "column", justifyContent: "center" } })
+    : (links = {
+        style: { flexDirection: "row", justifyContent: "flex-start" },
+      });
+
+  updateTreeComponent(buttonIcon?.id!, { name });
+  linksComponent?.children?.map((child) => {
+    updateTreeComponent(child?.id as string, links);
+  });
+  updateTreeComponent(selectedComponent?.id!, obj);
 };
 
 export const openToastAction = ({ action }: OpenToastActionParams) => {
@@ -682,5 +743,9 @@ export const actionMapper = {
   reloadComponent: {
     action: reloadComponentAction,
     form: ReloadComponentActionForm,
+  },
+  toggleNavbar: {
+    action: toggleNavbarAction,
+    form: TogglePropsActionForm,
   },
 };
