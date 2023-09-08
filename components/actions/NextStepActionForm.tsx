@@ -8,30 +8,27 @@ import {
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
-import { ChangeStateAction } from "@/utils/actions";
-import { ICON_SIZE } from "@/utils/config";
+import { NextStepAction } from "@/utils/actions";
 import { getComponentById } from "@/utils/editor";
-import { ActionIcon, Select, Stack, TextInput } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconCurrentLocation } from "@tabler/icons-react";
 import { useEffect } from "react";
 
 type Props = {
   id: string;
 };
 
-type FormValues = Omit<ChangeStateAction, "name">;
+type FormValues = Omit<NextStepAction, "name">;
 
-export const ChangeStateActionForm = ({ id }: Props) => {
+export const NextStepActionForm = ({ id }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
   const { editorTree, selectedComponentId, updateTreeComponentActions } =
     useEditorStores();
-  const { componentActions, action } = useActionData<ChangeStateAction>({
+  const { componentActions, action } = useActionData<NextStepAction>({
     actionId: id,
     editorTree,
     selectedComponentId,
   });
-
   const setPickingComponentToBindTo = useEditorStore(
     (state) => state.setPickingComponentToBindTo
   );
@@ -47,22 +44,24 @@ export const ChangeStateActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      componentId: action.action.componentId,
-      state: action.action.state,
+      stepperId: action.action.stepperId,
+      stepNumber: action.action.stepNumber,
+      setStepNumber: action.action.setStepNumber,
     },
   });
 
   const onSubmit = (values: FormValues) => {
-    try {
-      handleLoadingStart({ startLoading });
+    handleLoadingStart({ startLoading });
 
-      updateActionInTree<ChangeStateAction>({
+    try {
+      updateActionInTree<NextStepAction>({
         selectedComponentId: selectedComponentId!,
         componentActions,
         id,
         updateValues: {
-          componentId: values.componentId ?? "",
-          state: values.state ?? "default",
+          stepperId: values.stepperId ?? "",
+          stepNumber: action.action.stepNumber,
+          setStepNumber: action.action.setStepNumber,
         },
         updateTreeComponentActions,
       });
@@ -88,52 +87,6 @@ export const ChangeStateActionForm = ({ id }: Props) => {
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
-        <TextInput
-          key={form.values.componentId}
-          size="xs"
-          label="Component to bind"
-          {...form.getInputProps("componentId")}
-          rightSection={
-            <ActionIcon
-              onClick={() => {
-                setPickingComponentToBindTo({
-                  componentId: component?.id!,
-                  trigger: action.trigger,
-                  bindedId: action.action.componentId ?? "",
-                });
-              }}
-            >
-              <IconCurrentLocation size={ICON_SIZE} />
-            </ActionIcon>
-          }
-        />
-        <Select
-          size="xs"
-          label="State"
-          data={[
-            { label: "Default", value: "default" },
-            { label: "Hover", value: "hover" },
-            { label: "Disabled", value: "disabled" },
-            ...Object.keys(
-              form.values.componentId
-                ? getComponentById(editorTree.root, form.values.componentId!)
-                    ?.states ?? {}
-                : {}
-            ).reduce((acc, key) => {
-              if (key === "hover" || key === "disabled") return acc;
-
-              return acc.concat({
-                label: key,
-                value: key,
-              });
-            }, [] as any[]),
-          ]}
-          placeholder="Select State"
-          nothingFound="Nothing found"
-          searchable
-          {...form.getInputProps("state")}
-        />
-
         <ActionButtons
           actionId={action.id}
           componentActions={componentActions}

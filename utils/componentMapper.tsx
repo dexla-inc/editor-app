@@ -822,7 +822,7 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onNext", "onPrevious"],
+    actionTriggers: ["onMount", "onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Container: {

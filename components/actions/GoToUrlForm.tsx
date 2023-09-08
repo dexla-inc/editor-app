@@ -1,79 +1,54 @@
-import { useAppStore } from "@/stores/app";
-import { useEditorStore } from "@/stores/editor";
-import { Action, GoToUrlAction } from "@/utils/actions";
-import { getComponentById } from "@/utils/editor";
+import { ActionButtons } from "@/components/actions/ActionButtons";
+import {
+  handleLoadingStart,
+  handleLoadingStop,
+  updateActionInTree,
+  useActionData,
+  useEditorStores,
+  useLoadingState,
+} from "@/components/actions/_BaseActionFunctions";
+import { GoToUrlAction } from "@/utils/actions";
 import { Checkbox, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { ActionButtons } from "./ActionButtons";
 
 type Props = {
   id: string;
 };
 
+type FormValues = Omit<GoToUrlAction, "name">;
+
 export const GoToUrlForm = ({ id }: Props) => {
-  const startLoading = useAppStore((state) => state.startLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-  const updateTreeComponentActions = useEditorStore(
-    (state) => state.updateTreeComponentActions
-  );
+  const { startLoading, stopLoading } = useLoadingState();
+  const { editorTree, selectedComponentId, updateTreeComponentActions } =
+    useEditorStores();
+  const { componentActions, action } = useActionData<GoToUrlAction>({
+    actionId: id,
+    editorTree,
+    selectedComponentId,
+  });
 
-  const component = getComponentById(editorTree.root, selectedComponentId!);
-  const componentActions = component?.actions ?? [];
-  const action: Action = componentActions.find(
-    (a: Action) => a.id === id
-  ) as Action;
-
-  const goToUrlAction = action.action as GoToUrlAction;
-
-  const form = useForm({
+  const form = useForm<FormValues>({
     initialValues: {
-      url: goToUrlAction.url,
-      openInNewTab: goToUrlAction.openInNewTab,
+      url: action.action.url,
+      openInNewTab: action.action.openInNewTab,
     },
   });
 
-  const onSubmit = (values: any) => {
-    startLoading({
-      id: "saving-action",
-      title: "Saving Action",
-      message: "Wait while we save your changes",
-    });
+  const onSubmit = (values: FormValues) => {
+    handleLoadingStart({ startLoading });
 
     try {
-      updateTreeComponentActions(
-        selectedComponentId!,
-        componentActions.map((action: Action) => {
-          if (action.id === id) {
-            return {
-              ...action,
-              action: {
-                ...action.action,
-                url: values.url,
-                openInNewTab: values.openInNewTab,
-              },
-            };
-          }
-
-          return action;
-        })
-      );
-
-      stopLoading({
-        id: "saving-action",
-        title: "Action Saved",
-        message: "Your changes were saved successfully",
+      updateActionInTree<GoToUrlAction>({
+        selectedComponentId: selectedComponentId!,
+        componentActions,
+        id,
+        updateValues: { url: values.url, openInNewTab: values.openInNewTab },
+        updateTreeComponentActions,
       });
+
+      handleLoadingStop({ stopLoading });
     } catch (error) {
-      stopLoading({
-        id: "saving-action",
-        title: "Failed",
-        message: "Oops, something went wrong while saving your changes",
-        isError: true,
-      });
+      handleLoadingStop({ stopLoading, success: false });
     }
   };
 
@@ -94,7 +69,7 @@ export const GoToUrlForm = ({ id }: Props) => {
           checked={openInNewTabInputProps.value}
         />
         <ActionButtons
-          actionId={action.id}
+          actionId={id}
           componentActions={componentActions}
           selectedComponentId={selectedComponentId}
         ></ActionButtons>
