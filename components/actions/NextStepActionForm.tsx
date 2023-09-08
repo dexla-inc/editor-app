@@ -9,8 +9,12 @@ import {
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
 import { NextStepAction } from "@/utils/actions";
-import { getComponentById } from "@/utils/editor";
-import { Stack } from "@mantine/core";
+import {
+  Component,
+  getAllComponentsByName,
+  getComponentById,
+} from "@/utils/editor";
+import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 
@@ -45,8 +49,7 @@ export const NextStepActionForm = ({ id }: Props) => {
   const form = useForm<FormValues>({
     initialValues: {
       stepperId: action.action.stepperId,
-      stepNumber: action.action.stepNumber,
-      setStepNumber: action.action.setStepNumber,
+      activeStep: action.action.activeStep ?? 1,
     },
   });
 
@@ -60,8 +63,7 @@ export const NextStepActionForm = ({ id }: Props) => {
         id,
         updateValues: {
           stepperId: values.stepperId ?? "",
-          stepNumber: action.action.stepNumber,
-          setStepNumber: action.action.setStepNumber,
+          activeStep: action.action.activeStep ?? 1,
         },
         updateTreeComponentActions,
       });
@@ -84,9 +86,23 @@ export const NextStepActionForm = ({ id }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [component?.id, componentToBind, pickingComponentToBindTo]);
 
+  const steppers = getAllComponentsByName(editorTree.root, "Stepper");
+
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
+        <Select
+          size="xs"
+          label="Stepper to change step"
+          placeholder="Select a stepper"
+          data={steppers.map((stepper: Component) => {
+            return {
+              label: stepper.props?.description ?? stepper.id,
+              value: stepper.id!,
+            };
+          })}
+          {...form.getInputProps("stepperId")}
+        />
         <ActionButtons
           actionId={action.id}
           componentActions={componentActions}

@@ -8,25 +8,27 @@ import {
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
-import { TogglePropsAction } from "@/utils/actions";
-import { ICON_SIZE } from "@/utils/config";
-import { getComponentById } from "@/utils/editor";
-import { ActionIcon, Stack, TextInput } from "@mantine/core";
+import { PreviousStepAction } from "@/utils/actions";
+import {
+  Component,
+  getAllComponentsByName,
+  getComponentById,
+} from "@/utils/editor";
+import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconCurrentLocation } from "@tabler/icons-react";
 import { useEffect } from "react";
 
 type Props = {
   id: string;
 };
 
-type FormValues = Omit<TogglePropsAction, "name">;
+type FormValues = Omit<PreviousStepAction, "name">;
 
 export const PreviousStepActionForm = ({ id }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
   const { editorTree, selectedComponentId, updateTreeComponentActions } =
     useEditorStores();
-  const { componentActions, action } = useActionData<TogglePropsAction>({
+  const { componentActions, action } = useActionData<PreviousStepAction>({
     actionId: id,
     editorTree,
     selectedComponentId,
@@ -46,8 +48,8 @@ export const PreviousStepActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      componentId: action.action.componentId,
-      state: action.action.state,
+      stepperId: action.action.stepperId,
+      activeStep: action.action.activeStep ?? 1,
     },
   });
 
@@ -55,13 +57,13 @@ export const PreviousStepActionForm = ({ id }: Props) => {
     handleLoadingStart({ startLoading });
 
     try {
-      updateActionInTree<TogglePropsAction>({
+      updateActionInTree<PreviousStepAction>({
         selectedComponentId: selectedComponentId!,
         componentActions,
         id,
         updateValues: {
-          componentId: values.componentId ?? "",
-          state: values.state ?? "hidden",
+          stepperId: values.stepperId ?? "",
+          activeStep: action.action.activeStep ?? 1,
         },
         updateTreeComponentActions,
       });
@@ -84,29 +86,23 @@ export const PreviousStepActionForm = ({ id }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [component?.id, componentToBind, pickingComponentToBindTo]);
 
+  const steppers = getAllComponentsByName(editorTree.root, "Stepper");
+
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
-        <TextInput
-          key={form.values.componentId}
+        <Select
           size="xs"
-          label="Component to bind"
-          {...form.getInputProps("componentId")}
-          rightSection={
-            <ActionIcon
-              onClick={() => {
-                setPickingComponentToBindTo({
-                  componentId: component?.id!,
-                  trigger: action.trigger,
-                  bindedId: action.action.componentId ?? "",
-                });
-              }}
-            >
-              <IconCurrentLocation size={ICON_SIZE} />
-            </ActionIcon>
-          }
+          label="Stepper to go to previous step"
+          placeholder="Select a stepper"
+          data={steppers.map((stepper: Component) => {
+            return {
+              label: stepper.props?.description ?? stepper.id,
+              value: stepper.id!,
+            };
+          })}
+          {...form.getInputProps("stepperId")}
         />
-
         <ActionButtons
           actionId={action.id}
           componentActions={componentActions}
