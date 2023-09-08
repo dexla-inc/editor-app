@@ -123,6 +123,8 @@ export type EditorState = {
   setIsNavBarVisible: () => void;
   setCopiedAction: (copiedAction?: Action[]) => void;
   // pasteAction: (componentId: string) => void;
+  language: string;
+  setLanguage: (isSaving: string) => void;
 };
 
 const debouncedUpdatePageState = debounce(updatePageState, 2000);
@@ -137,6 +139,7 @@ export const useEditorStore = create<EditorState>()(
         pages: [],
         onMountActionsRan: [],
         selectedComponentId: "content-wrapper",
+        language: "default",
         addOnMountActionsRan: (onMountAction) =>
           set((state) => ({
             ...state,
@@ -194,7 +197,15 @@ export const useEditorStore = create<EditorState>()(
             const copy = cloneDeep(prev.tree);
             const currentState =
               prev.currentTreeComponentsStates?.[componentId] ?? "default";
-            updateTreeComponent(copy.root, componentId, props, currentState);
+            const currentLanguage = prev.language;
+
+            updateTreeComponent(
+              copy.root,
+              componentId,
+              props,
+              currentState,
+              currentLanguage
+            );
             if (save) {
               debouncedUpdatePageState(
                 encodeSchema(JSON.stringify(copy)),
@@ -304,6 +315,7 @@ export const useEditorStore = create<EditorState>()(
         setIsNavBarVisible: () =>
           set((state) => ({ isNavBarVisible: !state.isNavBarVisible })),
         setCopiedAction: (copiedAction) => set({ copiedAction }),
+        setLanguage: (language) => set({ language }),
       }),
       {
         partialize: (state) => {
