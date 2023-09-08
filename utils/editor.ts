@@ -317,10 +317,10 @@ export const updateTreeComponent = (
             [state]: props,
           });
         } else if (language !== "default") {
-          const { style, ...languageProps } = props;
+          const { style, sx, ...languageProps } = props;
           state === "default"
-            ? merge(node.props, { style })
-            : merge(node.states, { [state]: { style } });
+            ? merge(node.props, { style, sx })
+            : merge(node.states, { [state]: { style, sx } });
           node.languages = merge(node.languages, {
             [language]: {
               [state]: languageProps,
