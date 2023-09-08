@@ -12,6 +12,8 @@ import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
+import pickBy from "lodash.pickby";
 
 export type Component = {
   id?: string;
@@ -26,8 +28,8 @@ export type Component = {
     target: string;
   };
   actions?: Action[];
-  states?: { [key: string]: { [key: string]: any } };
-  languages?: Record<string, Record<string, any>>;
+  states?: Record<string, any>;
+  languages?: Record<string, any>;
 };
 
 export type Row = {
@@ -299,6 +301,19 @@ export const getComponentBeingAddedId = (
   return id;
 };
 
+const translatableFields = [
+  "children",
+  "label",
+  "title",
+  "alt",
+  "placeholder",
+  "data",
+];
+
+const pickTranslatableFields = (value: string, key: string) => {
+  return value !== "" && translatableFields.includes(key);
+};
+
 export const updateTreeComponent = (
   treeRoot: Component,
   id: string,
@@ -306,25 +321,26 @@ export const updateTreeComponent = (
   state: string = "default",
   language: string = "default"
 ) => {
+  const textFields = pickBy(props, pickTranslatableFields);
+  const stylingFields = omit(props, translatableFields);
+
   crawl(
     treeRoot,
     (node, context) => {
       if (node.id === id) {
-        if (language === "default" && state === "default") {
-          node.props = merge(node.props, props);
-        } else if (language === "default" && state !== "default") {
-          node.states = merge(node.states, {
-            [state]: props,
-          });
-        } else if (language !== "default") {
-          const { style, sx, ...languageProps } = props;
-          state === "default"
-            ? merge(node.props, { style, sx })
-            : merge(node.states, { [state]: { style, sx } });
+        if (language === "default") {
+          node.props = merge(node.props, textFields);
+        } else {
           node.languages = merge(node.languages, {
-            [language]: {
-              [state]: languageProps,
-            },
+            [language]: textFields,
+          });
+        }
+
+        if (state === "default") {
+          node.props = merge(node.props, stylingFields);
+        } else {
+          node.states = merge(node.states, {
+            [state]: stylingFields,
           });
         }
 
