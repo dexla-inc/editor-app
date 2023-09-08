@@ -4,6 +4,7 @@ import { NumberInput, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTransform } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { withModifier } from "@/hoc/withModifier";
 
 export const icon = IconTransform;
 export const label = "Effects";
@@ -15,26 +16,14 @@ export const defaultEffectsValues = {
   tooltip: "",
 };
 
-export const Modifier = () => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string
-  );
-
-  const componentProps = selectedComponent?.props || {};
-
+export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: defaultEffectsValues,
   });
 
   useEffect(() => {
-    if (selectedComponentId) {
-      const { style = {}, tooltip } = componentProps;
+    if (selectedComponent?.id) {
+      const { style = {}, tooltip } = selectedComponent.props!;
 
       form.setValues({
         cursor: style.cursor ?? defaultEffectsValues.cursor,
@@ -45,10 +34,10 @@ export const Modifier = () => {
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponent?.id]);
 
   return (
-    <form key={selectedComponentId}>
+    <form key={selectedComponent?.id}>
       <Stack spacing="xs">
         <Select
           label="Cursor"
@@ -72,7 +61,7 @@ export const Modifier = () => {
           {...form.getInputProps("cursor")}
           onChange={(value) => {
             form.setFieldValue("cursor", value as string);
-            debouncedTreeUpdate(selectedComponentId as string, {
+            debouncedTreeUpdate(selectedComponent?.id as string, {
               style: { cursor: value },
             });
           }}
@@ -92,7 +81,7 @@ export const Modifier = () => {
           {...form.getInputProps("overflow")}
           onChange={(value) => {
             form.setFieldValue("overflow", value as string);
-            debouncedTreeUpdate(selectedComponentId as string, {
+            debouncedTreeUpdate(selectedComponent?.id as string, {
               style: { overflow: value },
             });
           }}
@@ -103,7 +92,7 @@ export const Modifier = () => {
           {...form.getInputProps("opacity")}
           onChange={(value) => {
             form.setFieldValue("opacity", value as number);
-            debouncedTreeUpdate(selectedComponentId as string, {
+            debouncedTreeUpdate(selectedComponent?.id as string, {
               style: { opacity: value },
             });
           }}
@@ -115,7 +104,7 @@ export const Modifier = () => {
           {...form.getInputProps("tooltip")}
           onChange={(e) => {
             form.setFieldValue("tooltip", e.target.value);
-            debouncedTreeUpdate(selectedComponentId as string, {
+            debouncedTreeUpdate(selectedComponent?.id as string, {
               tooltip: e.target.value,
             });
           }}
@@ -123,4 +112,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});
