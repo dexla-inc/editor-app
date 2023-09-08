@@ -13,22 +13,30 @@ import { pick } from "next/dist/lib/pick";
 export const icon = IconTextSize;
 export const label = "Text";
 
+export const defaultInputValues = {
+  value: "New Text",
+  size: "md",
+  weight: "normal",
+  color: "Black.6",
+  lineHeight: "",
+  letterSpacing: "",
+};
+
 export const Modifier = withModifier(
   ({ selectedComponent, componentProps, language, currentState }) => {
     const form = useForm({
-      initialValues: {
-        value: "",
-        fontSize: "md",
-        fontWeight: "",
-        lineHeight: "",
-        letterSpacing: "",
-        color: "Black.6",
-      },
+      initialValues: defaultInputValues,
     });
 
     useEffect(() => {
       if (selectedComponent?.id) {
-        const data = pick(componentProps, ["children", "style", "color"]);
+        const data = pick(componentProps, [
+          "children",
+          "style",
+          "color",
+          "size",
+          "weight",
+        ]);
 
         merge(
           data,
@@ -38,8 +46,10 @@ export const Modifier = withModifier(
         );
 
         form.setValues({
-          value: data.children,
-          color: data.color ?? "Black.6",
+          value: data.children ?? defaultInputValues.value,
+          color: data.color ?? defaultInputValues.color,
+          size: data.size ?? defaultInputValues.size,
+          weight: data.weight ?? defaultInputValues.weight,
           ...data.style,
         });
       }
@@ -63,9 +73,9 @@ export const Modifier = withModifier(
           <Group noWrap>
             <SizeSelector
               label="Size"
-              {...form.getInputProps("fontSize")}
+              {...form.getInputProps("size")}
               onChange={(value) => {
-                form.setFieldValue("fontSize", value as string);
+                form.setFieldValue("size", value as string);
                 debouncedTreeComponentPropsUpdate("size", value);
               }}
             />
@@ -76,12 +86,10 @@ export const Modifier = withModifier(
                 { label: "Normal", value: "normal" },
                 { label: "Bold", value: "bold" },
               ]}
-              {...form.getInputProps("fontWeight")}
+              {...form.getInputProps("weight")}
               onChange={(value) => {
-                form.setFieldValue("fontWeight", value as string);
-                debouncedTreeComponentPropsUpdate("style", {
-                  fontWeight: value,
-                });
+                form.setFieldValue("weight", value as string);
+                debouncedTreeComponentPropsUpdate("weight", value);
               }}
             />
           </Group>
