@@ -10,6 +10,7 @@ import { Group, Select, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTextSize } from "@tabler/icons-react";
 import { useEffect } from "react";
+import merge from "lodash.merge";
 
 export const icon = IconTextSize;
 export const label = "Text";
@@ -19,9 +20,7 @@ export const Modifier = () => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
-  );
+  const language = useEditorStore((state) => state.language);
   const currentTreeComponentsStates = useEditorStore(
     (state) => state.currentTreeComponentsStates
   );
@@ -49,26 +48,22 @@ export const Modifier = () => {
       const { children = "", style = {}, color } = componentProps;
 
       let data: any = {
-        value: children,
+        children,
         color,
       };
 
       const currentState =
         currentTreeComponentsStates?.[selectedComponentId] ?? "default";
 
-      if (currentState !== "default") {
-        data = {
-          ...data,
-          ...(selectedComponent?.states?.[currentState] ?? {}),
-          style: {
-            ...style,
-            ...(selectedComponent?.states?.[currentState].style ?? {}),
-          },
-        };
-      }
+      merge(
+        data,
+        language !== "default"
+          ? selectedComponent?.languages?.[language]?.[currentState]
+          : selectedComponent?.states?.[currentState]
+      );
 
       form.setValues({
-        value: data.value,
+        value: data.children,
         color: data.color ?? "Black.6",
         ...data.style,
       });
