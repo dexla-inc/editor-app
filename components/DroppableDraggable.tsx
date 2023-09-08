@@ -261,9 +261,8 @@ export const DroppableDraggable = ({
   const propsWithOverwrites = merge(
     {},
     component.props,
-    language !== "default"
-      ? component.languages?.[language]?.[currentState]
-      : component.states?.[currentState],
+    component.languages?.[language],
+    component.states?.[currentState],
     {
       style: {
         width: isWidthPercentage ? "100%" : component.props?.style?.width,

@@ -7,7 +7,6 @@ import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
 import { useEffect } from "react";
-import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { withModifier } from "@/hoc/withModifier";
 
@@ -45,13 +44,6 @@ export const Modifier = withModifier(
           "leftIcon",
         ]);
 
-        merge(
-          data,
-          language !== "default"
-            ? selectedComponent?.languages?.[language]?.[currentState]
-            : selectedComponent?.states?.[currentState]
-        );
-
         form.setValues({
           value: data.children ?? defaultInputValues.value,
           type: data.type ?? defaultInputValues.type,
@@ -65,7 +57,7 @@ export const Modifier = withModifier(
       }
       // Disabling the lint here because we don't want this to be updated every time the form changes
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComponent?.id, currentState, language]);
+    }, [selectedComponent]);
 
     return (
       <form>
