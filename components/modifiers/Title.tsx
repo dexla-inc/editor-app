@@ -3,7 +3,6 @@ import { useEditorStore } from "@/stores/editor";
 import {
   debouncedTreeComponentPropsUpdate,
   debouncedTreeUpdate,
-  getComponentById,
 } from "@/utils/editor";
 import { Select, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -11,6 +10,7 @@ import { IconH1 } from "@tabler/icons-react";
 import { useEffect } from "react";
 import merge from "lodash.merge";
 import { withModifier } from "@/hoc/withModifier";
+import { pick } from "next/dist/lib/pick";
 
 export const icon = IconH1;
 export const label = "Title";
@@ -29,13 +29,7 @@ export const Modifier = withModifier(
 
     useEffect(() => {
       if (selectedComponent?.id) {
-        const { children = "", order, color } = componentProps;
-
-        let data = {
-          children,
-          order,
-          color,
-        };
+        const data = pick(componentProps, ["children", "order", "color"]);
 
         merge(
           data,
