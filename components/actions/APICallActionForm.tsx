@@ -1,4 +1,13 @@
+import { ActionButtons } from "@/components/actions/ActionButtons";
 import { ActionsForm } from "@/components/actions/ActionsForm";
+import {
+  handleLoadingStart,
+  handleLoadingStop,
+  updateActionInTree,
+  useActionData,
+  useEditorStores,
+  useLoadingState,
+} from "@/components/actions/_BaseActionFunctions";
 import { colors } from "@/components/datasources/DataSourceEndpoint";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import {
@@ -7,7 +16,6 @@ import {
 } from "@/requests/datasources/queries";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
-import { useAppStore } from "@/stores/app";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import { APICallAction, Action, LoginAction } from "@/utils/actions";
@@ -29,7 +37,6 @@ import { IconCurrentLocation } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { forwardRef, useEffect, useState } from "react";
-import { ActionButtons } from "./ActionButtons";
 
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, any>(
@@ -56,11 +63,7 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
   )
 );
 
-type FormValues = {
-  showLoader: boolean;
-  endpoint?: string;
-  binds?: { [key: string]: any };
-};
+type FormValues = Omit<APICallAction | LoginAction, "name" | "datasource">;
 
 type Props = {
   actionName?: string;
@@ -68,24 +71,28 @@ type Props = {
 };
 
 export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
-  const startLoading = useAppStore((state) => state.startLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
+  const { startLoading, stopLoading } = useLoadingState();
+  const { editorTree, selectedComponentId, updateTreeComponentActions } =
+    useEditorStores();
+  const {
+    componentActions,
+    action: baseAction,
+    action,
+  } = useActionData<LoginAction | APICallAction>({
+    actionId: id,
+    editorTree,
+    selectedComponentId,
+  });
+
   const setPickingComponentToBindFrom = useEditorStore(
     (state) => state.setPickingComponentToBindFrom
   );
-  const editorTree = useEditorStore((state) => state.tree);
   const componentToBind = useEditorStore((state) => state.componentToBind);
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind
   );
   const pickingComponentToBindFrom = useEditorStore(
     (state) => state.pickingComponentToBindFrom
-  );
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-  const updateTreeComponentActions = useEditorStore(
-    (state) => state.updateTreeComponentActions
   );
 
   const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
@@ -104,61 +111,35 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   });
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
-  const componentActions = component?.actions ?? [];
-
-  const action: Action = componentActions.find(
-    (a: Action) => a.id === id
-  ) as Action;
-
-  const apiCall = action.action as LoginAction | APICallAction;
 
   const form = useForm<FormValues>({
     initialValues: {
-      showLoader: apiCall.showLoader ?? true,
-      endpoint: apiCall.endpoint,
-      binds: apiCall.binds ?? {},
+      showLoader: action.action.showLoader ?? true,
+      endpoint: action.action.endpoint,
+      binds: action.action.binds ?? {},
     },
   });
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: FormValues) => {
     try {
-      startLoading({
-        id: "saving-action",
-        title: "Saving Action",
-        message: "Wait while we save your changes",
+      handleLoadingStart({ startLoading });
+
+      updateActionInTree<LoginAction | APICallAction>({
+        selectedComponentId: selectedComponentId!,
+        componentActions,
+        id,
+        updateValues: {
+          endpoint: values.endpoint,
+          showLoader: values.showLoader,
+          datasource: dataSources.data!.results[0],
+          binds: values.binds,
+        },
+        updateTreeComponentActions,
       });
 
-      updateTreeComponentActions(
-        selectedComponentId!,
-        componentActions.map((action: Action) => {
-          if (action.id === id) {
-            return {
-              ...action,
-              action: {
-                ...action.action,
-                endpoint: values.endpoint,
-                showLoader: values.showLoader,
-                datasource: dataSources.data!.results[0],
-                binds: values.binds,
-              },
-            };
-          }
-          return action;
-        })
-      );
-
-      stopLoading({
-        id: "saving-action",
-        title: "Action Saved",
-        message: "Your changes were saved successfully",
-      });
+      handleLoadingStop({ stopLoading });
     } catch (error) {
-      stopLoading({
-        id: "saving-action",
-        title: "Failed",
-        message: "Oops, something went wrong while saving your changes",
-        isError: true,
-      });
+      handleLoadingStop({ stopLoading, success: false });
     }
   };
 
@@ -167,7 +148,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     updateTreeComponentActions(
       selectedComponentId!,
       componentActions.filter((a: Action) => {
-        return a.id !== action.id && a.sequentialTo !== action.id;
+        return a.id !== id && a.sequentialTo !== id;
       })
     );
   };
@@ -319,7 +300,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                         onClick={() => {
                           setPickingComponentToBindFrom({
                             componentId: component?.id!,
-                            trigger: action.trigger,
+                            trigger: baseAction.trigger,
                             endpointId: selectedEndpoint.id,
                             param: param.name,
                             bindedId: form.values.binds?.[param.name] ?? "",
@@ -338,13 +319,13 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
             </Stack>
           )}
           <ActionButtons
-            actionId={action.id}
+            actionId={id}
             componentActions={componentActions}
             selectedComponentId={selectedComponentId}
           ></ActionButtons>
         </Stack>
       </form>
-      <ActionsForm sequentialTo={action.id} />
+      <ActionsForm sequentialTo={id} />
     </>
   ) : (
     <Stack>

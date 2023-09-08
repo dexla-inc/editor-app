@@ -1,5 +1,12 @@
 import { ActionsForm } from "@/components/actions/ActionsForm";
-import { useAppStore } from "@/stores/app";
+import {
+  handleLoadingStart,
+  handleLoadingStop,
+  updateActionInTree,
+  useActionData,
+  useEditorStores,
+  useLoadingState,
+} from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
 import { Action, ReloadComponentAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
@@ -10,22 +17,22 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { useEffect } from "react";
 
-type FormValues = {
-  componentId?: string;
-  onMountActionId?: string;
-};
+type FormValues = Omit<ReloadComponentAction, "name">;
 
 type Props = {
   id: string;
 };
 
 export const ReloadComponentActionForm = ({ id }: Props) => {
-  const startLoading = useAppStore((state) => state.startLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
-  const editorTree = useEditorStore((state) => state.tree);
-  const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo
-  );
+  const { startLoading, stopLoading } = useLoadingState();
+  const { editorTree, selectedComponentId, updateTreeComponentActions } =
+    useEditorStores();
+  const { componentActions, action } = useActionData<ReloadComponentAction>({
+    actionId: id,
+    editorTree,
+    selectedComponentId,
+  });
+
   const pickingComponentToBindTo = useEditorStore(
     (state) => state.pickingComponentToBindTo
   );
@@ -33,22 +40,14 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind
   );
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-  const updateTreeComponentActions = useEditorStore(
-    (state) => state.updateTreeComponentActions
-  );
 
   const setCopiedAction = useEditorStore((state) => state.setCopiedAction);
   const [copied, { open, close }] = useDisclosure(false);
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
-  const componentActions = component?.actions ?? [];
-
-  const action: Action = componentActions.find(
-    (a: Action) => a.id === id
-  ) as Action;
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo
+  );
 
   const filteredComponentActions = componentActions.filter((a: Action) => {
     return a.id === action.id || a.sequentialTo === action.id;
@@ -63,43 +62,24 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
     },
   });
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: FormValues) => {
+    handleLoadingStart({ startLoading });
+
     try {
-      startLoading({
-        id: "saving-action",
-        title: "Saving Action",
-        message: "Wait while we save your changes",
+      updateActionInTree<ReloadComponentAction>({
+        selectedComponentId: selectedComponentId!,
+        componentActions,
+        id,
+        updateValues: {
+          componentId: values.componentId,
+          onMountActionId: values.onMountActionId,
+        },
+        updateTreeComponentActions,
       });
 
-      updateTreeComponentActions(
-        selectedComponentId!,
-        componentActions.map((action: Action) => {
-          if (action.id === id) {
-            return {
-              ...action,
-              action: {
-                ...action.action,
-                componentId: values.componentId,
-                onMountActionId: values.onMountActionId,
-              },
-            };
-          }
-          return action;
-        })
-      );
-
-      stopLoading({
-        id: "saving-action",
-        title: "Action Saved",
-        message: "Your changes were saved successfully",
-      });
+      handleLoadingStop({ stopLoading });
     } catch (error) {
-      stopLoading({
-        id: "saving-action",
-        title: "Failed",
-        message: "Oops, something went wrong while saving your changes",
-        isError: true,
-      });
+      handleLoadingStop({ stopLoading, success: false });
     }
   };
 

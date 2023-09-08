@@ -6,10 +6,12 @@ import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { LoginActionForm } from "@/components/actions/LoginActionForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
+import { NextStepActionForm } from "@/components/actions/NextStepActionForm";
 import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm";
 import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
 import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
+import { PreviousStepActionForm } from "@/components/actions/PreviousStepActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
 import {
@@ -47,8 +49,6 @@ const triggers = [
   "onPaginationChange",
   "onSort",
   "onFilterApplied",
-  "onNext",
-  "onPrevious",
   "onSuccess",
   "onError",
 ] as const;
@@ -59,6 +59,8 @@ export const actions = [
   { name: "login", group: "API & Data" },
   { name: "goToUrl", group: "Navigation" },
   { name: "navigateToPage", group: "Navigation" },
+  { name: "nextStep", group: "Navigation" },
+  { name: "previousStep", group: "Navigation" },
   { name: "openDrawer", group: "Modal & Overlays" },
   { name: "openModal", group: "Modal & Overlays" },
   { name: "closeModal", group: "Modal & Overlays" },
@@ -70,6 +72,7 @@ export const actions = [
   { name: "reloadComponent", group: "Feedback" },
   { name: "copyToClipboard", group: "Utilities & Tools" },
 ];
+
 type ActionTriggerAll = (typeof triggers)[number];
 
 export type ActionTrigger = ActionTriggerAll;
@@ -78,77 +81,73 @@ export type SequentialTrigger = Extract<
   "onSuccess" | "onError"
 >;
 
-export type NavigationAction = {
+export interface BaseAction {
+  name: string;
+  data?: any;
+}
+
+export interface NavigationAction extends BaseAction {
   name: "navigateToPage";
   pageId: string;
-  data?: any;
-};
+}
 
-export type GoToUrlAction = {
+export interface GoToUrlAction extends BaseAction {
   name: "goToUrl";
   url: string;
   openInNewTab: boolean;
-  data?: any;
-};
+}
 
-export type AlertAction = {
+export interface AlertAction extends BaseAction {
   name: "alert";
   message: string;
-  data?: any;
-};
+}
 
-export type OpenModalAction = {
+export interface OpenModalAction extends BaseAction {
   name: "openModal";
   modalId: string;
-  data?: any;
-};
+}
 
-export type OpenDrawerAction = {
+export interface OpenDrawerAction extends BaseAction {
   name: "openDrawer";
   drawerId: string;
-  data?: any;
-};
+}
 
-export type OpenPopOverAction = {
+export interface OpenPopOverAction extends BaseAction {
   name: "openPopOver";
   popOverId: string;
-  data?: any;
-};
+}
 
-export type TogglePropsAction = {
+export interface TogglePropsAction extends BaseAction {
   name: "toggleVisibility";
   componentId: string;
-  props: string;
-};
+  state: string;
+}
 
-export type OpenToastAction = {
+export interface OpenToastAction extends BaseAction {
   name: "openToast";
-  toastId: string;
   title: string;
   message: string;
-};
+}
 
-export type ChangeStateAction = {
+export interface ChangeStateAction extends BaseAction {
   name: "changeState";
   componentId: string;
   state?: string;
-  data?: any;
-};
+}
 
-export type APICallAction = {
+export interface APICallAction extends BaseAction {
   name: "apiCall";
   endpoint: string;
   showLoader?: boolean;
   datasource: DataSourceResponse;
   binds?: { [key: string]: any };
-  data?: any;
-};
+}
 
-export type LoginAction = Omit<APICallAction, "name"> & {
+export interface LoginAction extends Omit<APICallAction, "name"> {
   name: "login";
-};
+}
 
-export type BindResponseToComponentAction = {
+export interface BindResponseToComponentAction extends BaseAction {
   name: "bindResponse";
   data?: any;
   binds?: {
@@ -156,18 +155,29 @@ export type BindResponseToComponentAction = {
     value: string;
     example: string;
   }[];
-};
+}
 
-export type ReloadComponentAction = {
+export interface ReloadComponentAction extends BaseAction {
   name: "reloadComponent";
   componentId: string;
   onMountActionId?: string;
-  data?: any;
-};
+}
 
-export type ToggleNavbarAction = {
+export interface ToggleNavbarAction extends BaseAction {
   name: "toggleNavbar";
-};
+}
+
+export interface NextStepAction extends BaseAction {
+  name: "nextStep";
+  stepperId: string;
+  stepNumber: number;
+  setStepNumber: (stepNumber: number) => void;
+}
+
+export interface PreviousStepAction extends BaseAction {
+  name: "previousStep";
+  stepperId: string;
+}
 
 export type Action = {
   id: string;
@@ -186,7 +196,9 @@ export type Action = {
     | OpenToastAction
     | ChangeStateAction
     | ReloadComponentAction
-    | ToggleNavbarAction;
+    | ToggleNavbarAction
+    | NextStepAction
+    | PreviousStepAction;
   sequentialTo?: string;
 };
 
@@ -259,6 +271,12 @@ export type ChangeStateActionParams = ActionParams & {
 export type ToggleNavbarActionParams = ActionParams & {
   action: ToggleNavbarAction;
 };
+export type NextStepActionParams = ActionParams & {
+  action: NextStepAction;
+};
+export type PreviousStepActionParams = ActionParams & {
+  action: PreviousStepAction;
+};
 
 export const openModalAction = ({ action }: OpenModalActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
@@ -278,6 +296,15 @@ export const openDrawerAction = ({ action }: OpenDrawerActionParams) => {
 export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   updateTreeComponent(action.popOverId, { opened: true }, false);
+};
+
+export const goToNextStepAction = ({ action }: NextStepActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  updateTreeComponent(
+    action.stepperId,
+    { stepNumber: action.stepNumber, setStepNumber: action.setStepNumber },
+    false
+  );
 };
 
 export const togglePropsAction = ({ action }: TogglePropsActionParams) => {
@@ -308,6 +335,10 @@ export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const linksComponent = selectedComponent?.children?.find(
     (tree) => tree.description === "Container for navigation links"
   );
+  const buttonIcon = buttonComponent?.children?.reduce(
+    (obj, tree) => ({ ...obj, ...tree }),
+    {} as Component
+  );
 
   const isExpanded = selectedComponent?.props?.style.width !== "100px";
   const name = isExpanded ? "IconChevronRight" : "IconChevronLeft";
@@ -315,7 +346,7 @@ export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const flexDirection = isExpanded ? "column" : "row";
   const justifyContent = isExpanded ? "center" : "flex-start";
 
-  updateTreeComponent(buttonComponent?.id!, { name });
+  updateTreeComponent(buttonIcon?.id!, { name });
   linksComponent?.children?.forEach((child) => {
     updateTreeComponent(child?.id as string, {
       style: { flexDirection, justifyContent },
@@ -722,5 +753,13 @@ export const actionMapper = {
   toggleNavbar: {
     action: toggleNavbarAction,
     form: TogglePropsActionForm,
+  },
+  nextStep: {
+    action: navigationAction,
+    form: NextStepActionForm,
+  },
+  previousStep: {
+    action: navigationAction,
+    form: PreviousStepActionForm,
   },
 };

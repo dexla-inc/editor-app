@@ -1,79 +1,54 @@
-import { useAppStore } from "@/stores/app";
-import { useEditorStore } from "@/stores/editor";
-import { Action, OpenToastAction } from "@/utils/actions";
-import { getComponentById } from "@/utils/editor";
+import { ActionButtons } from "@/components/actions/ActionButtons";
+import {
+  handleLoadingStart,
+  handleLoadingStop,
+  updateActionInTree,
+  useActionData,
+  useEditorStores,
+  useLoadingState,
+} from "@/components/actions/_BaseActionFunctions";
+import { OpenToastAction } from "@/utils/actions";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { ActionButtons } from "./ActionButtons";
 
 type Props = {
   id: string;
 };
 
+type FormValues = Omit<OpenToastAction, "name">;
+
 export const OpenToastActionForm = ({ id }: Props) => {
-  const startLoading = useAppStore((state) => state.startLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-  const updateTreeComponentActions = useEditorStore(
-    (state) => state.updateTreeComponentActions
-  );
+  const { startLoading, stopLoading } = useLoadingState();
+  const { editorTree, selectedComponentId, updateTreeComponentActions } =
+    useEditorStores();
+  const { componentActions, action } = useActionData<OpenToastAction>({
+    actionId: id,
+    editorTree,
+    selectedComponentId,
+  });
 
-  const component = getComponentById(editorTree.root, selectedComponentId!);
-  const componentActions = component?.actions ?? [];
-  const action: Action = componentActions.find(
-    (a: Action) => a.id === id
-  ) as Action;
-
-  const toastAction = action.action as OpenToastAction;
-
-  const form = useForm({
+  const form = useForm<FormValues>({
     initialValues: {
-      title: toastAction.title,
-      message: toastAction.message,
+      title: action.action.title,
+      message: action.action.message,
     },
   });
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: FormValues) => {
+    handleLoadingStart({ startLoading });
+
     try {
-      startLoading({
-        id: "saving-action",
-        title: "Saving Action",
-        message: "Wait while we save your changes",
+      updateActionInTree<OpenToastAction>({
+        selectedComponentId: selectedComponentId!,
+        componentActions,
+        id,
+        updateValues: { title: values.title, message: values.message },
+        updateTreeComponentActions,
       });
 
-      updateTreeComponentActions(
-        selectedComponentId!,
-        componentActions.map((action: Action) => {
-          if (action.id === id) {
-            return {
-              ...action,
-              action: {
-                ...action.action,
-                title: values.title,
-                message: values.message,
-              },
-            };
-          }
-
-          return action;
-        })
-      );
-
-      stopLoading({
-        id: "saving-action",
-        title: "Action Saved",
-        message: "Your changes were saved successfully",
-      });
+      handleLoadingStop({ stopLoading });
     } catch (error) {
-      stopLoading({
-        id: "saving-action",
-        title: "Failed",
-        message: "Oops, something went wrong while saving your changes",
-        isError: true,
-      });
+      handleLoadingStop({ stopLoading, success: false });
     }
   };
 

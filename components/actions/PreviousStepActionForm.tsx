@@ -8,10 +8,10 @@ import {
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
-import { ChangeStateAction } from "@/utils/actions";
+import { TogglePropsAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
-import { ActionIcon, Select, Stack, TextInput } from "@mantine/core";
+import { ActionIcon, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { useEffect } from "react";
@@ -20,18 +20,17 @@ type Props = {
   id: string;
 };
 
-type FormValues = Omit<ChangeStateAction, "name">;
+type FormValues = Omit<TogglePropsAction, "name">;
 
-export const ChangeStateActionForm = ({ id }: Props) => {
+export const PreviousStepActionForm = ({ id }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
   const { editorTree, selectedComponentId, updateTreeComponentActions } =
     useEditorStores();
-  const { componentActions, action } = useActionData<ChangeStateAction>({
+  const { componentActions, action } = useActionData<TogglePropsAction>({
     actionId: id,
     editorTree,
     selectedComponentId,
   });
-
   const setPickingComponentToBindTo = useEditorStore(
     (state) => state.setPickingComponentToBindTo
   );
@@ -53,16 +52,16 @@ export const ChangeStateActionForm = ({ id }: Props) => {
   });
 
   const onSubmit = (values: FormValues) => {
-    try {
-      handleLoadingStart({ startLoading });
+    handleLoadingStart({ startLoading });
 
-      updateActionInTree<ChangeStateAction>({
+    try {
+      updateActionInTree<TogglePropsAction>({
         selectedComponentId: selectedComponentId!,
         componentActions,
         id,
         updateValues: {
           componentId: values.componentId ?? "",
-          state: values.state ?? "default",
+          state: values.state ?? "hidden",
         },
         updateTreeComponentActions,
       });
@@ -106,32 +105,6 @@ export const ChangeStateActionForm = ({ id }: Props) => {
               <IconCurrentLocation size={ICON_SIZE} />
             </ActionIcon>
           }
-        />
-        <Select
-          size="xs"
-          label="State"
-          data={[
-            { label: "Default", value: "default" },
-            { label: "Hover", value: "hover" },
-            { label: "Disabled", value: "disabled" },
-            ...Object.keys(
-              form.values.componentId
-                ? getComponentById(editorTree.root, form.values.componentId!)
-                    ?.states ?? {}
-                : {}
-            ).reduce((acc, key) => {
-              if (key === "hover" || key === "disabled") return acc;
-
-              return acc.concat({
-                label: key,
-                value: key,
-              });
-            }, [] as any[]),
-          ]}
-          placeholder="Select State"
-          nothingFound="Nothing found"
-          searchable
-          {...form.getInputProps("state")}
         />
 
         <ActionButtons

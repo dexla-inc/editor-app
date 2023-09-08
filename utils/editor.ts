@@ -555,52 +555,23 @@ export const getComponentParent = (
   return parent;
 };
 
-export const getAllModals = (treeRoot: Component): Component[] => {
-  const modals: Component[] = [];
+export const getAllComponentsByName = (
+  treeRoot: Component,
+  componentName: string
+): Component[] => {
+  const components: Component[] = [];
 
   crawl(
     treeRoot,
     (node) => {
-      if (node.name === "Modal") {
-        modals.push(node);
+      if (node.name === componentName) {
+        components.push(node);
       }
     },
     { order: "bfs" }
   );
 
-  return modals;
-};
-
-export const getAllDrawers = (treeRoot: Component): Component[] => {
-  const drawers: Component[] = [];
-
-  crawl(
-    treeRoot,
-    (node) => {
-      if (node.name === "Drawer") {
-        drawers.push(node);
-      }
-    },
-    { order: "bfs" }
-  );
-
-  return drawers;
-};
-
-export const getAllPopOvers = (treeRoot: Component): Component[] => {
-  const popOvers: Component[] = [];
-
-  crawl(
-    treeRoot,
-    (node) => {
-      if (node.name === "PopOver") {
-        popOvers.push(node);
-      }
-    },
-    { order: "bfs" }
-  );
-
-  return popOvers;
+  return components;
 };
 
 export const removeComponentFromParent = (

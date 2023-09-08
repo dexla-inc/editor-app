@@ -1,5 +1,13 @@
+import { ActionButtons } from "@/components/actions/ActionButtons";
+import {
+  handleLoadingStart,
+  handleLoadingStop,
+  updateActionInTree,
+  useActionData,
+  useEditorStores,
+  useLoadingState,
+} from "@/components/actions/_BaseActionFunctions";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries";
-import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { Action, BindResponseToComponentAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
@@ -10,25 +18,27 @@ import { useForm } from "@mantine/form";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { ActionButtons } from "./ActionButtons";
 
 type Props = {
   id: string;
 };
 
-type ComponentBind = { component: string; value: string; example: string };
-type FormValues = {
-  binds: ComponentBind[];
-};
+type FormValues = Omit<BindResponseToComponentAction, "name">;
 
 export const BindResponseToComponentActionForm = ({ id }: Props) => {
   const router = useRouter();
-  const startLoading = useAppStore((state) => state.startLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
+  const { startLoading, stopLoading } = useLoadingState();
+  const { editorTree, selectedComponentId, updateTreeComponentActions } =
+    useEditorStores();
+  const { componentActions, action } =
+    useActionData<BindResponseToComponentAction>({
+      actionId: id,
+      editorTree,
+      selectedComponentId,
+    });
   const setPickingComponentToBindTo = useEditorStore(
     (state) => state.setPickingComponentToBindTo
   );
-  const editorTree = useEditorStore((state) => state.tree);
   const componentToBind = useEditorStore((state) => state.componentToBind);
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind
@@ -36,25 +46,13 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
   const pickingComponentToBindTo = useEditorStore(
     (state) => state.pickingComponentToBindTo
   );
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
+
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent
-  );
-  const updateTreeComponentActions = useEditorStore(
-    (state) => state.updateTreeComponentActions
   );
 
   const projectId = router.query.id as string;
   const component = getComponentById(editorTree.root, selectedComponentId!);
-  const componentActions = component?.actions ?? [];
-  const action: Action = componentActions.find(
-    (a: Action) => a.id === id
-  ) as Action;
-
-  const bindResponseToComponent =
-    action.action as BindResponseToComponentAction;
 
   const originalAction = componentActions.find(
     (a: Action) => a.id === action.sequentialTo
@@ -62,37 +60,24 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      binds: bindResponseToComponent.binds ?? [],
+      binds: action.action.binds ?? [],
     },
   });
 
   const onSubmit = (values: FormValues) => {
+    handleLoadingStart({ startLoading });
+
     try {
-      startLoading({
-        id: "saving-action",
-        title: "Saving Action",
-        message: "Wait while we save your changes",
+      updateActionInTree<BindResponseToComponentAction>({
+        selectedComponentId: selectedComponentId!,
+        componentActions,
+        id,
+        updateValues: { binds: values.binds },
+        updateTreeComponentActions,
       });
 
-      updateTreeComponentActions(
-        selectedComponentId!,
-        componentActions.map((action: Action) => {
-          if (action.id === id) {
-            return {
-              ...action,
-              action: {
-                ...action.action,
-                binds: values.binds,
-              },
-            };
-          }
-
-          return action;
-        })
-      );
-
-      values.binds
-        .filter((b) => !!b.component)
+      values
+        .binds!.filter((b) => !!b.component)
         .forEach((bind) => {
           updateTreeComponent(bind.component!, {
             dataPath: bind.value.startsWith("root[0].")
@@ -110,18 +95,9 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
           });
         });
 
-      stopLoading({
-        id: "saving-action",
-        title: "Action Saved",
-        message: "Your changes were saved successfully",
-      });
+      handleLoadingStop({ stopLoading });
     } catch (error) {
-      stopLoading({
-        id: "saving-action",
-        title: "Failed",
-        message: "Oops, something went wrong while saving your changes",
-        isError: true,
-      });
+      handleLoadingStop({ stopLoading, success: false });
     }
   };
 
@@ -129,7 +105,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
     updateTreeComponentActions(
       selectedComponentId!,
       componentActions.filter((a: Action) => {
-        return a.id !== action.id && a.sequentialTo !== action.id;
+        return a.id !== id && a.sequentialTo !== id;
       })
     );
 
@@ -138,8 +114,8 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
       exampleData: undefined,
     });
 
-    form.values.binds
-      .filter((b) => !!b.component)
+    form.values
+      .binds!.filter((b) => !!b.component)
       .forEach((bind) => {
         updateTreeComponent(bind.component!, {
           data: undefined,
@@ -152,7 +128,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
     if (componentToBind && pickingComponentToBindTo) {
       if (pickingComponentToBindTo.componentId === component?.id) {
         form.setFieldValue(`binds.${pickingComponentToBindTo.index ?? 0}`, {
-          ...(form.values.binds[pickingComponentToBindTo.index ?? 0] ?? {}),
+          ...(form.values.binds![pickingComponentToBindTo.index ?? 0] ?? {}),
           component: componentToBind,
           value: pickingComponentToBindTo.param,
         });
@@ -194,7 +170,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
     if (
       // @ts-ignore
       originalAction?.action?.datasource?.id &&
-      form.values.binds.length === 0
+      form.values.binds?.length === 0
     ) {
       getEndpoint();
     }
@@ -204,7 +180,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
-        {form.values.binds.map((bind, index) => {
+        {form.values.binds?.map((bind, index) => {
           return (
             <TextInput
               key={bind.value}
@@ -218,9 +194,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
                     setPickingComponentToBindTo({
                       componentId: component?.id!,
                       trigger: action.trigger,
-                      bindedId:
-                        bindResponseToComponent?.binds?.[index]?.component ??
-                        "",
+                      bindedId: action.action.binds?.[index]?.component ?? "",
                       param: bind.value,
                       index: index,
                     });
@@ -233,7 +207,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
           );
         })}
         <ActionButtons
-          actionId={action.id}
+          actionId={id}
           componentActions={componentActions}
           selectedComponentId={selectedComponentId}
           optionalRemoveAction={removeAction}
