@@ -311,31 +311,19 @@ export const updateTreeComponent = (
     (node, context) => {
       if (node.id === id) {
         if (language === "default" && state === "default") {
-          node.props = {
-            ...node.props,
-            ...props,
-            style: {
-              ...(node.props?.style || {}),
-              ...(props.style || {}),
-            },
-          };
+          node.props = merge(node.props, props);
         } else if (language === "default" && state !== "default") {
-          const nodeState = node.states?.[state] ?? {};
-          node.states = {
-            ...(node.states ?? {}),
-            [state]: {
-              ...nodeState,
-              ...props,
-              style: {
-                ...(nodeState?.style || {}),
-                ...(props.style || {}),
-              },
-            },
-          };
+          node.states = merge(node.states, {
+            [state]: props,
+          });
         } else if (language !== "default") {
-          merge(node.languages, {
+          const { style, ...languageProps } = props;
+          state === "default"
+            ? merge(node.props, { style })
+            : merge(node.states, { [state]: { style } });
+          node.languages = merge(node.languages, {
             [language]: {
-              [state]: props,
+              [state]: languageProps,
             },
           });
         }

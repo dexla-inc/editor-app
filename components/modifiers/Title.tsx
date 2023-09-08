@@ -9,6 +9,7 @@ import { Select, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconH1 } from "@tabler/icons-react";
 import { useEffect } from "react";
+import merge from "lodash.merge";
 
 export const icon = IconH1;
 export const label = "Title";
@@ -39,43 +40,35 @@ export const Modifier = () => {
     },
   });
 
+  const currentState =
+    currentTreeComponentsStates?.[selectedComponentId || ""] ?? "default";
+
   useEffect(() => {
     if (selectedComponentId) {
       const { children = "", order, color } = componentProps;
 
       let data = {
-        value: children,
+        children,
         order,
         color,
       };
 
-      const currentState =
-        currentTreeComponentsStates?.[selectedComponentId] ?? "default";
-
-      if (currentState !== "default") {
-        data = {
-          ...data,
-          ...(selectedComponent?.states?.[currentState] ?? {}),
-        };
-      }
-
-      if (language !== "default") {
-        const languageSettings = selectedComponent?.languages?.[language];
-        data = {
-          ...data,
-          ...(languageSettings?.[currentState] ?? {}),
-        };
-      }
+      merge(
+        data,
+        language !== "default"
+          ? selectedComponent?.languages?.[language]?.[currentState]
+          : selectedComponent?.states?.[currentState]
+      );
 
       form.setValues({
-        value: data.value,
+        value: data.children,
         order: data.order?.toString() ?? "1",
         color: data.color ?? "Black.6",
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponentId, currentState, language]);
 
   return (
     <form>

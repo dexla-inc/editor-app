@@ -95,37 +95,39 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               <ToggleNavbarButton />
             </Flex>
             <>
-              <Select
-                label="Page"
-                value={currentPageId}
-                onChange={goToEditor}
-                data={pages}
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: "10px",
-                  width: "33.33%",
-                  whiteSpace: "nowrap",
-                }}
-              />
-              <Select
-                label="Language"
-                value={language}
-                onChange={setLanguage}
-                data={[
-                  { value: "default", label: "English" },
-                  { value: "french", label: "French" },
-                ]}
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: "10px",
-                  width: "33.33%",
-                  whiteSpace: "nowrap",
-                }}
-              />
+              <Flex gap={20}>
+                <Select
+                  label="Page"
+                  value={currentPageId}
+                  onChange={goToEditor}
+                  data={pages}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "10px",
+                    whiteSpace: "nowrap",
+                  }}
+                />
+                <Select
+                  label="Language"
+                  value={language}
+                  onChange={setLanguage}
+                  data={[
+                    { value: "default", label: "English" },
+                    { value: "french", label: "French" },
+                  ]}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "10px",
+                    width: "33.33%",
+                    whiteSpace: "nowrap",
+                  }}
+                />
+              </Flex>
+
               <Flex gap="md" sx={{ width: "33.33%" }} justify="end">
                 <AIChatHistoryButton projectId={projectId} />
                 <GenerateAIButton projectId={projectId} />
