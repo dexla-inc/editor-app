@@ -5,7 +5,8 @@ import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
-
+  const stepperId = nanoid();
+  console.log(stepperId);
   return {
     id: nanoid(),
     name: "Container",
@@ -21,7 +22,7 @@ export const jsonStructure = (props?: any): Component => {
     },
     children: [
       {
-        id: nanoid(),
+        id: stepperId,
         name: "Stepper",
         description: "Stepper",
         props: {
@@ -121,6 +122,94 @@ export const jsonStructure = (props?: any): Component => {
               },
             ],
           },
+          {
+            id: nanoid(),
+            name: "StepperStep",
+            description: "StepperStep",
+            props: {
+              label: "Third step",
+              description: "Step description",
+            },
+            children: [
+              {
+                id: nanoid(),
+                name: "Container",
+                description: "Container",
+                props: {
+                  style: {
+                    display: "flex",
+                    flexDirection: "row",
+                    minHeight: "100px",
+                  },
+                },
+                children: [
+                  {
+                    id: nanoid(),
+                    name: "Text",
+                    description: "Text",
+                    children: [],
+                    props: {
+                      children: "Build your step and move your components here",
+                      color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                      style: {
+                        fontSize: `${px(theme.fontSizes.sm)}px`,
+                        fontWeight: "normal",
+                        lineHeight: "110%",
+                        letterSpacing: "0px",
+                        width: "auto",
+                        height: "auto",
+                      },
+                    },
+                    blockDroppingChildrenInside: true,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            id: nanoid(),
+            name: "StepperStep",
+            description: "StepperStep",
+            props: {
+              label: "Fourth step",
+              description: "Step description",
+            },
+            children: [
+              {
+                id: nanoid(),
+                name: "Container",
+                description: "Container",
+                props: {
+                  style: {
+                    display: "flex",
+                    flexDirection: "row",
+                    minHeight: "100px",
+                  },
+                },
+                children: [
+                  {
+                    id: nanoid(),
+                    name: "Text",
+                    description: "Text",
+                    children: [],
+                    props: {
+                      children: "Build your step and move your components here",
+                      color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                      style: {
+                        fontSize: `${px(theme.fontSizes.sm)}px`,
+                        fontWeight: "normal",
+                        lineHeight: "110%",
+                        letterSpacing: "0px",
+                        width: "auto",
+                        height: "auto",
+                      },
+                    },
+                    blockDroppingChildrenInside: true,
+                  },
+                ],
+              },
+            ],
+          },
         ],
       },
       {
@@ -153,6 +242,17 @@ export const jsonStructure = (props?: any): Component => {
               leftIcon: "IconArrowLeft",
             },
             blockDroppingChildrenInside: true,
+            actions: [
+              {
+                id: nanoid(),
+                trigger: "onClick",
+                action: {
+                  name: "previousStep",
+                  stepperId: stepperId,
+                  activeStep: 1,
+                },
+              },
+            ],
           },
           {
             id: nanoid(),
@@ -168,6 +268,17 @@ export const jsonStructure = (props?: any): Component => {
               rightIcon: "IconArrowRight",
             },
             blockDroppingChildrenInside: true,
+            actions: [
+              {
+                id: nanoid(),
+                trigger: "onClick",
+                action: {
+                  name: "nextStep",
+                  stepperId: stepperId,
+                  activeStep: 1,
+                },
+              },
+            ],
           },
         ],
       },

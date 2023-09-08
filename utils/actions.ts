@@ -170,13 +170,13 @@ export interface ToggleNavbarAction extends BaseAction {
 export interface NextStepAction extends BaseAction {
   name: "nextStep";
   stepperId: string;
-  stepNumber: number;
-  setStepNumber: (stepNumber: number) => void;
+  activeStep: number;
 }
 
 export interface PreviousStepAction extends BaseAction {
   name: "previousStep";
   stepperId: string;
+  activeStep: number;
 }
 
 export type Action = {
@@ -300,13 +300,21 @@ export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
 
 export const goToNextStepAction = ({ action }: NextStepActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent(
-    action.stepperId,
-    { stepNumber: action.stepNumber, setStepNumber: action.setStepNumber },
-    false
-  );
+  console.log(action);
+  const step = action.activeStep + 1;
+
+  updateTreeComponent(action.stepperId, { activeStep: step }, false);
 };
 
+export const goToPreviousStepAction = ({
+  action,
+}: PreviousStepActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  console.log(action);
+  const step = Math.max(1, action.activeStep - 1);
+
+  updateTreeComponent(action.stepperId, { activeStep: step }, false);
+};
 export const togglePropsAction = ({ action }: TogglePropsActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   const editorTree = useEditorStore.getState().tree;
@@ -755,11 +763,11 @@ export const actionMapper = {
     form: TogglePropsActionForm,
   },
   nextStep: {
-    action: navigationAction,
+    action: goToNextStepAction,
     form: NextStepActionForm,
   },
   previousStep: {
-    action: navigationAction,
+    action: goToPreviousStepAction,
     form: PreviousStepActionForm,
   },
 };

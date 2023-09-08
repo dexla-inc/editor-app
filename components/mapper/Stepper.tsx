@@ -1,5 +1,7 @@
+import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
-import { Stepper as MantineStepper, StepperProps, Text } from "@mantine/core";
+import { Stepper as MantineStepper, StepperProps } from "@mantine/core";
+import { useEffect, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -8,9 +10,7 @@ type Props = {
 
 export const Stepper = ({ renderTree, component, ...props }: Props) => {
   const {
-    active,
     activeStep,
-    setActive,
     breakpoint,
     children,
     triggers,
@@ -18,17 +18,28 @@ export const Stepper = ({ renderTree, component, ...props }: Props) => {
     ...componentProps
   } = component.props as any;
 
-  const validatedActiveStep = Math.max(1, activeStep);
+  const [active, setActive] = useState(activeStep ?? 1);
 
-  const handleStepClick = (step: number) => {
-    const newStep = Math.max(1, step);
-    setActive(newStep);
+  const updateTreeComponent = useEditorStore(
+    (state) => state.updateTreeComponent
+  );
+
+  useEffect(() => {
+    // Reflect any external changes to the activeStep property
+    if (activeStep !== undefined && activeStep !== active) {
+      setActive(activeStep);
+    }
+  }, [activeStep, active]);
+
+  const handleStepClick = (stepIndex: number) => {
+    setActive(stepIndex);
+    updateTreeComponent(component.id!, { activeStep: stepIndex }, false);
   };
 
   return (
     <MantineStepper
       {...props}
-      active={validatedActiveStep}
+      active={active}
       onStepClick={handleStepClick}
       breakpoint={breakpoint}
       {...componentProps}
@@ -36,24 +47,18 @@ export const Stepper = ({ renderTree, component, ...props }: Props) => {
     >
       {component.children &&
         component.children.map((child: Component, index: number) => {
-          if (child.name === "StepperStep") {
-            return (
-              <MantineStepper.Step
-                key={index}
-                label={child.props?.label}
-                description={child.props?.description}
-              >
-                {child.children ? (
-                  child.children.map((grandChild: Component) => {
-                    return renderTree(grandChild);
-                  })
-                ) : (
-                  <Text>Testing</Text>
-                )}
-              </MantineStepper.Step>
-            );
-          }
-          return <Text key={index}>Testing</Text>;
+          return (
+            <MantineStepper.Step
+              key={index}
+              label={child.props?.label}
+              description={child.props?.description}
+            >
+              {child.children &&
+                child.children.map((grandChild: Component) => {
+                  return renderTree(grandChild);
+                })}
+            </MantineStepper.Step>
+          );
         })}
     </MantineStepper>
   );
