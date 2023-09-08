@@ -56,9 +56,8 @@ const ToggleNavbarButton = () => {
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   // This state needs to move to the parent component
   const [isLoading, setIsLoading] = useState(false);
-  const resetTree = useEditorStore((state) => state.resetTree);
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-  const setPreviewMode = useEditorStore((state) => state.setPreviewMode);
+  const { resetTree, isPreviewMode, setPreviewMode, language, setLanguage } =
+    useEditorStore((state) => state);
   const { undo, redo, pastStates, futureStates } = useTemporalStore(
     (state) => state
   );
@@ -99,8 +98,25 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               <Select
                 label="Page"
                 value={currentPageId}
-                onChange={(value) => goToEditor(value as string)}
+                onChange={goToEditor}
                 data={pages}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "10px",
+                  width: "33.33%",
+                  whiteSpace: "nowrap",
+                }}
+              />
+              <Select
+                label="Language"
+                value={language}
+                onChange={setLanguage}
+                data={[
+                  { value: "default", label: "English" },
+                  { value: "french", label: "French" },
+                ]}
                 sx={{
                   display: "flex",
                   justifyContent: "center",

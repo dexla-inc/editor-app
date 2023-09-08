@@ -16,6 +16,7 @@ export const label = "Title";
 export const Modifier = () => {
   const theme = useEditorStore((state) => state.theme);
   const editorTree = useEditorStore((state) => state.tree);
+  const language = useEditorStore((state) => state.language);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId
   );
@@ -55,6 +56,14 @@ export const Modifier = () => {
         data = {
           ...data,
           ...(selectedComponent?.states?.[currentState] ?? {}),
+        };
+      }
+
+      if (language !== "default") {
+        const languageSettings = selectedComponent?.languages?.[language];
+        data = {
+          ...data,
+          ...(languageSettings?.[currentState] ?? {}),
         };
       }
 

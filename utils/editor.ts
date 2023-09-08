@@ -9,6 +9,7 @@ import { structureMapper } from "@/utils/componentMapper";
 import { templatesMapper } from "@/utils/templatesMapper";
 import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
+import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
 
@@ -26,6 +27,7 @@ export type Component = {
   };
   actions?: Action[];
   states?: { [key: string]: { [key: string]: any } };
+  languages?: Record<string, Record<string, any>>;
 };
 
 export type Row = {
@@ -301,13 +303,14 @@ export const updateTreeComponent = (
   treeRoot: Component,
   id: string,
   props: any,
-  state: string = "default"
+  state: string = "default",
+  language: string = "default"
 ) => {
   crawl(
     treeRoot,
     (node, context) => {
       if (node.id === id) {
-        if (state === "default") {
+        if (language === "default" && state === "default") {
           node.props = {
             ...node.props,
             ...props,
@@ -316,7 +319,7 @@ export const updateTreeComponent = (
               ...(props.style || {}),
             },
           };
-        } else {
+        } else if (language === "default" && state !== "default") {
           const nodeState = node.states?.[state] ?? {};
           node.states = {
             ...(node.states ?? {}),
@@ -329,6 +332,12 @@ export const updateTreeComponent = (
               },
             },
           };
+        } else if (language !== "default") {
+          merge(node.languages, {
+            [language]: {
+              [state]: props,
+            },
+          });
         }
 
         context.break();
