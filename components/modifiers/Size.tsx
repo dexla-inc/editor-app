@@ -1,27 +1,15 @@
 import { UnitInput } from "@/components/UnitInput";
-import { useEditorStore } from "@/stores/editor";
-import { debouncedTreeUpdate, getComponentById } from "@/utils/editor";
+import { debouncedTreeUpdate } from "@/utils/editor";
 import { Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconResize } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { withModifier } from "@/hoc/withModifier";
 
 export const icon = IconResize;
 export const label = "Size";
 
-export const Modifier = () => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string
-  );
-
-  const componentProps = selectedComponent?.props || {};
-
+export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: {
       width: "",
@@ -34,16 +22,16 @@ export const Modifier = () => {
   });
 
   useEffect(() => {
-    if (selectedComponentId) {
-      const { style = {} } = componentProps;
+    if (selectedComponent?.id) {
+      const { style = {} } = selectedComponent.props!;
       form.setValues(style);
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponent]);
 
   return (
-    <form key={selectedComponentId}>
+    <form key={selectedComponent?.id}>
       <Stack spacing="xs">
         <Group noWrap>
           <UnitInput
@@ -51,7 +39,7 @@ export const Modifier = () => {
             {...form.getInputProps("width")}
             onChange={(value) => {
               form.setFieldValue("width", value as string);
-              debouncedTreeUpdate(selectedComponentId as string, {
+              debouncedTreeUpdate(selectedComponent?.id as string, {
                 style: { width: value },
               });
             }}
@@ -61,7 +49,7 @@ export const Modifier = () => {
             {...form.getInputProps("height")}
             onChange={(value) => {
               form.setFieldValue("height", value as string);
-              debouncedTreeUpdate(selectedComponentId as string, {
+              debouncedTreeUpdate(selectedComponent?.id as string, {
                 style: { height: value },
               });
             }}
@@ -73,7 +61,7 @@ export const Modifier = () => {
             {...form.getInputProps("minWidth")}
             onChange={(value) => {
               form.setFieldValue("minWidth", value as string);
-              debouncedTreeUpdate(selectedComponentId as string, {
+              debouncedTreeUpdate(selectedComponent?.id as string, {
                 style: { minWidth: value },
               });
             }}
@@ -83,7 +71,7 @@ export const Modifier = () => {
             {...form.getInputProps("minHeight")}
             onChange={(value) => {
               form.setFieldValue("minHeight", value as string);
-              debouncedTreeUpdate(selectedComponentId as string, {
+              debouncedTreeUpdate(selectedComponent?.id as string, {
                 style: { minHeight: value },
               });
             }}
@@ -95,7 +83,7 @@ export const Modifier = () => {
             {...form.getInputProps("maxWidth")}
             onChange={(value) => {
               form.setFieldValue("maxWidth", value as string);
-              debouncedTreeUpdate(selectedComponentId as string, {
+              debouncedTreeUpdate(selectedComponent?.id as string, {
                 style: { maxWidth: value },
               });
             }}
@@ -105,7 +93,7 @@ export const Modifier = () => {
             {...form.getInputProps("maxHeight")}
             onChange={(value) => {
               form.setFieldValue("maxHeight", value as string);
-              debouncedTreeUpdate(selectedComponentId as string, {
+              debouncedTreeUpdate(selectedComponent?.id as string, {
                 style: { maxHeight: value },
               });
             }}
@@ -114,4 +102,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});

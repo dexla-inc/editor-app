@@ -53,7 +53,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         icon: data.icon ?? defaultSelectValues.icon,
         withAsterisk: data.withAsterisk ?? defaultSelectValues.withAsterisk,
         labelProps:
-          data.labelProps.style?.marginBottom ??
+          data.labelProps?.style?.marginBottom ??
           defaultSelectValues.labelSpacing,
         data: data.data ?? defaultSelectValues.data,
         ...data.style,

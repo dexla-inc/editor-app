@@ -308,6 +308,7 @@ const translatableFields = [
   "alt",
   "placeholder",
   "data",
+  "tooltip",
 ];
 
 const pickTranslatableFields = (value: string, key: string) => {
