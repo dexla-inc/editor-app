@@ -4,9 +4,7 @@ import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import {
-  debouncedTreeComponentPropsUpdate,
-  getComponentById,
-  debouncedTreeComponentChildrenUpdate,
+    debouncedTreeComponentChildrenUpdate,
 } from "@/utils/editor";
 import {
   ActionIcon,
@@ -24,7 +22,6 @@ import { IconPlus, IconRadio, IconTrash } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { withModifier } from "@/hoc/withModifier";
 import { pick } from "next/dist/lib/pick";
-import merge from "lodash.merge";
 
 export const icon = IconRadio;
 export const label = "Radio";
@@ -53,47 +50,39 @@ export const defaultRadioValues = {
   labelSpacing: "0",
 };
 
-export const Modifier = withModifier(
-  ({ selectedComponent, componentProps, language, currentState }) => {
-    const theme = useMantineTheme();
-    const form = useForm({
-      initialValues: defaultRadioValues,
-    });
+export const Modifier = withModifier(({ selectedComponent }) => {
+  const theme = useMantineTheme();
+  const form = useForm({
+    initialValues: defaultRadioValues,
+  });
 
-    useEffect(() => {
-      if (selectedComponent?.id) {
-        const data = pick(componentProps, [
-          "style",
-          "children",
-          "label",
-          "size",
-          "withAsterisk",
-          "labelProps",
-        ]);
+  useEffect(() => {
+    if (selectedComponent?.id) {
+      const data = pick(selectedComponent.props!, [
+        "style",
+        "children",
+        "label",
+        "size",
+        "withAsterisk",
+        "labelProps",
+      ]);
 
-        merge(
-          data,
-          language !== "default"
-            ? selectedComponent?.languages?.[language]?.[currentState]
-            : selectedComponent?.states?.[currentState]
-        );
-
-        form.setValues({
-          children: data.children?.length
-            ? data.children
-            : defaultRadioValues.children,
-          size: data.size ?? defaultRadioValues.size,
-          label: data.label ?? defaultRadioValues.label,
-          withAsterisk: data.withAsterisk ?? defaultRadioValues.withAsterisk,
-          labelProps:
-            data.labelProps?.style?.marginBottom ??
-            defaultRadioValues.labelSpacing,
-          ...data.style,
-        });
-      }
-      // Disabling the lint here because we don't want this to be updated every time the form changes
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComponent?.id, currentState, language]);
+      form.setValues({
+        children: data.children?.length
+          ? data.children
+          : defaultRadioValues.children,
+        size: data.size ?? defaultRadioValues.size,
+        label: data.label ?? defaultRadioValues.label,
+        withAsterisk: data.withAsterisk ?? defaultRadioValues.withAsterisk,
+        labelProps:
+          data.labelProps?.style?.marginBottom ??
+          defaultRadioValues.labelSpacing,
+        ...data.style,
+      });
+    }
+    // Disabling the lint here because we don't want this to be updated every time the form changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponent]);
 
   const addRadioItem = () => {
     const count = form.values.children.length + 1;
@@ -117,108 +106,107 @@ export const Modifier = withModifier(
     debouncedTreeComponentChildrenUpdate(updatedRadioItems);
   };
 
-    return (
-      <form>
-        <Stack spacing="xs">
-          <Stack>
-            <Flex justify="space-between" align="center">
-              <Text size="sm">Choices</Text>
-              <Button
-                size="xs"
-                onClick={addRadioItem}
-                leftIcon={<IconPlus size={ICON_SIZE} />}
-              >
-                Add
-              </Button>
-            </Flex>
+  return (
+    <form>
+      <Stack spacing="xs">
+        <Stack>
+          <Flex justify="space-between" align="center">
+            <Text size="sm">Choices</Text>
+            <Button
+              size="xs"
+              onClick={addRadioItem}
+              leftIcon={<IconPlus size={ICON_SIZE} />}
+            >
+              Add
+            </Button>
+          </Flex>
 
-            {form.values.children.map((child, index) => (
-              <Box
-                key={index}
-                py="md"
-                sx={{
-                  borderBottom: "1px solid " + theme.colors.gray[3],
-                  borderTop: "1px solid " + theme.colors.gray[3],
-                }}
-              >
-                <Flex justify="space-between">
-                  <Text size="sm">Item {index + 1}</Text>
-                  <ActionIcon onClick={() => deleteRadioItem(index)}>
-                    <IconTrash size={ICON_SIZE} color="red" />
-                  </ActionIcon>
-                </Flex>
-                <TextInput
-                  label="Label"
-                  size="xs"
-                  value={child.props?.label}
-                  onChange={(e) =>
-                    updateRadioItem(index, "label", e.target.value)
-                  }
-                />
-                <TextInput
-                  label="Value"
-                  size="xs"
-                  value={child.props?.value}
-                  onChange={(e) =>
-                    updateRadioItem(index, "value", e.target.value)
-                  }
-                />
-              </Box>
-            ))}
-          </Stack>
-          <TextInput
-            label="Title"
-            size="xs"
-            {...form.getInputProps("label")}
-            onChange={(e) => {
-              form.setFieldValue("label", e.target.value);
-              debouncedTreeComponentPropsUpdate("label", e.target.value);
-            }}
-          />
-          <Select
-            label="Type"
-            size="xs"
-            data={[
-              { label: "Text", value: "text" },
-              { label: "Email", value: "email" },
-              { label: "Password", value: "password" },
-            ]}
-            {...form.getInputProps("type")}
-            onChange={(value) => {
-              form.setFieldValue("type", value as string);
-              debouncedTreeComponentPropsUpdate("type", value as string);
-            }}
-          />
-          <SizeSelector
-            {...form.getInputProps("size")}
-            onChange={(value) => {
-              form.setFieldValue("size", value as string);
-              debouncedTreeComponentPropsUpdate("size", value as string);
-            }}
-          />
-          <SwitchSelector
-            topLabel="Required"
-            {...form.getInputProps("withAsterisk")}
-            onChange={(event) => {
-              form.setFieldValue("withAsterisk", event.currentTarget.checked);
-              debouncedTreeComponentPropsUpdate(
-                "withAsterisk",
-                event.currentTarget.checked
-              );
-            }}
-          />
-          <SizeSelector
-            label="Label Spacing"
-            {...form.getInputProps("labelProps")}
-            onChange={(value) => {
-              form.setFieldValue("labelProps", value as string);
-              debouncedTreeComponentPropsUpdate("labelProps", {
-                mb: value as string,
-              });
-            }}
-          />
+          {form.values.children.map((child, index) => (
+            <Box
+              key={index}
+              py="md"
+              sx={{
+                borderBottom: "1px solid " + theme.colors.gray[3],
+                borderTop: "1px solid " + theme.colors.gray[3],
+              }}
+            >
+              <Flex justify="space-between">
+                <Text size="sm">Item {index + 1}</Text>
+                <ActionIcon onClick={() => deleteRadioItem(index)}>
+                  <IconTrash size={ICON_SIZE} color="red" />
+                </ActionIcon>
+              </Flex>
+              <TextInput
+                label="Label"
+                size="xs"
+                value={child.props?.label}
+                onChange={(e) =>
+                  updateRadioItem(index, "label", e.target.value)
+                }
+              />
+              <TextInput
+                label="Value"
+                size="xs"
+                value={child.props?.value}
+                onChange={(e) =>
+                  updateRadioItem(index, "value", e.target.value)
+                }
+              />
+            </Box>
+          ))}
         </Stack>
-      </form>
-    );
-  }
-);
+        <TextInput
+          label="Title"
+          size="xs"
+          {...form.getInputProps("label")}
+          onChange={(e) => {
+            form.setFieldValue("label", e.target.value);
+            debouncedTreeComponentPropsUpdate("label", e.target.value);
+          }}
+        />
+        <Select
+          label="Type"
+          size="xs"
+          data={[
+            { label: "Text", value: "text" },
+            { label: "Email", value: "email" },
+            { label: "Password", value: "password" },
+          ]}
+          {...form.getInputProps("type")}
+          onChange={(value) => {
+            form.setFieldValue("type", value as string);
+            debouncedTreeComponentPropsUpdate("type", value as string);
+          }}
+        />
+        <SizeSelector
+          {...form.getInputProps("size")}
+          onChange={(value) => {
+            form.setFieldValue("size", value as string);
+            debouncedTreeComponentPropsUpdate("size", value as string);
+          }}
+        />
+        <SwitchSelector
+          topLabel="Required"
+          {...form.getInputProps("withAsterisk")}
+          onChange={(event) => {
+            form.setFieldValue("withAsterisk", event.currentTarget.checked);
+            debouncedTreeComponentPropsUpdate(
+              "withAsterisk",
+              event.currentTarget.checked
+            );
+          }}
+        />
+        <SizeSelector
+          label="Label Spacing"
+          {...form.getInputProps("labelProps")}
+          onChange={(value) => {
+            form.setFieldValue("labelProps", value as string);
+            debouncedTreeComponentPropsUpdate("labelProps", {
+              mb: value as string,
+            });
+          }}
+        />
+      </Stack>
+    </form>
+  );
+});

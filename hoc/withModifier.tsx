@@ -6,9 +6,6 @@ import cloneDeep from "lodash.clonedeep";
 
 type WithModifier = {
   selectedComponent: Component | null;
-  language: string;
-  componentProps: any;
-  currentState: string;
 };
 
 export const withModifier = (Modifier: ComponentType<WithModifier>) => {
@@ -26,8 +23,6 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
       getComponentById(editorTree.root, selectedComponentId as string)
     );
 
-    const componentProps = selectedComponent?.props || {};
-
     const currentState =
       currentTreeComponentsStates?.[selectedComponentId || ""] ?? "default";
 
@@ -44,10 +39,7 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
     return (
       <Modifier
         {...{
-          language,
-          selectedComponent: mergedCustomData,
-          componentProps,
-          currentState,
+          selectedComponent: mergedCustomData as Component,
         }}
       />
     );
