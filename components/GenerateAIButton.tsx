@@ -124,7 +124,7 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
       if (stream) {
         try {
           if (!stream.endsWith("___DONE___")) {
-            const json = TOML.parse(stream);
+            const json = TOML.parse(stream) as unknown as { rows: Row[] };
 
             const newComponents = getNewComponents(
               json as { rows: Row[] },
@@ -157,7 +157,8 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
       if (stream) {
         try {
           if (!stream.endsWith("___DONE___")) {
-            const json = TOML.parse(stream);
+            const json = TOML.parse(stream) as unknown as { rows: Row[] };
+
             const tree = getEditorTreeFromPageStructure(
               json as { rows: Row[] },
               editorTheme,
