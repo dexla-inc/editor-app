@@ -20,9 +20,9 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       children: content,
       color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+      size: "md",
+      weight: "normal",
       style: {
-        fontSize: `${px(theme.fontSizes.sm)}px`,
-        fontWeight: "normal",
         lineHeight: "110%",
         letterSpacing: "0px",
         width: "auto",
