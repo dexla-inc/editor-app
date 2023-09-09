@@ -34,6 +34,7 @@ export const Modal = ({
   } = component.props as any;
 
   const [opened, { open, close }] = useDisclosure(propOpened);
+  console.log({ opened, propOpened });
 
   const handleClose = () => {
     close();
