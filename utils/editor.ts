@@ -783,6 +783,16 @@ export const getClosestEdge = (
   return { edge: closestKey, value: all[closestKey as Edge] };
 };
 
+export const debouncedTreeComponentChildrenUpdate = debounce(
+  (value: Component[]) => {
+    const updateTreeComponentChildren =
+      useEditorStore.getState().updateTreeComponentChildren;
+    const selectedComponentId = useEditorStore.getState().selectedComponentId;
+    updateTreeComponentChildren(selectedComponentId as string, value);
+  },
+  300
+);
+
 export const debouncedTreeComponentPropsUpdate = debounce(
   (field: string, value: any) => {
     const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
