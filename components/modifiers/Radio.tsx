@@ -6,6 +6,7 @@ import { ICON_SIZE } from "@/utils/config";
 import {
   debouncedTreeComponentPropsUpdate,
   getComponentById,
+  debouncedTreeComponentChildrenUpdate,
 } from "@/utils/editor";
 import {
   ActionIcon,
@@ -98,21 +99,21 @@ export const Modifier = () => {
     const newRadioItem = createRadioItem("Label " + count, "value" + count);
     const updatedChildren = [...form.values.children, newRadioItem];
     form.setValues({ ...form.values, children: updatedChildren });
-    debouncedTreeComponentPropsUpdate("children", updatedChildren);
+    debouncedTreeComponentChildrenUpdate(updatedChildren);
   };
 
   const updateRadioItem = (index: number, field: string, value: string) => {
     const updatedRadioItems = [...form.values.children];
     updatedRadioItems[index].props![field] = value;
     form.setValues({ ...form.values, children: updatedRadioItems });
-    debouncedTreeComponentPropsUpdate("children", updatedRadioItems);
+    debouncedTreeComponentChildrenUpdate(updatedRadioItems);
   };
 
   const deleteRadioItem = (index: number) => {
     const updatedRadioItems = [...form.values.children];
     updatedRadioItems.splice(index, 1);
     form.setValues({ ...form.values, children: updatedRadioItems });
-    debouncedTreeComponentPropsUpdate("children", updatedRadioItems);
+    debouncedTreeComponentChildrenUpdate(updatedRadioItems);
   };
 
   return (
