@@ -16,7 +16,7 @@ export const label = "Select";
 
 export const defaultSelectValues = {
   size: "sm",
-  placeholder: "Input",
+  placeholder: "Select",
   type: "text",
   label: "A label",
   icon: "",
@@ -90,6 +90,14 @@ export const Modifier = () => {
           {...form.getInputProps("label")}
           onChange={(e) => {
             setFieldValue("label", e.target.value);
+          }}
+        />
+        <TextInput
+          label="Placeholder"
+          size="xs"
+          {...form.getInputProps("placeholder")}
+          onChange={(e) => {
+            setFieldValue("placeholder", e.target.value);
           }}
         />
         <Select
