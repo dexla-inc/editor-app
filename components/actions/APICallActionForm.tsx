@@ -26,7 +26,6 @@ import {
   Box,
   Button,
   Flex,
-  Popover,
   Select,
   Stack,
   Switch,
@@ -34,11 +33,10 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconChevronDown, IconCurrentLocation } from "@tabler/icons-react";
+import { IconCurrentLocation } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { forwardRef, useEffect, useState } from "react";
-import { useDisclosure } from "@mantine/hooks";
 
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, any>(
@@ -72,8 +70,6 @@ type Props = {
   id: string;
 };
 
-type Feature = "Query Strings" | "Languages";
-
 export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
   const { editorTree, selectedComponentId, updateTreeComponentActions } =
@@ -105,7 +101,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
   >(undefined);
-
   const router = useRouter();
   const projectId = router.query.id as string;
 
@@ -125,60 +120,24 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     },
   });
 
-  const queryStringsArray = useEditorStore((state) => state.pages)
-    .map((page) => page.queryStrings)
-    .filter((item) => Object.keys(item as { [i: string]: string }).length > 0);
-
-  const setQueryToBindTo = useEditorStore((state) => state.setQueryToBindTo);
-
-  const [selectedParam, setSelectedParam] = useState<string | undefined>(
-    undefined
-  );
-  const [isFeaturesOpen, { toggle, close }] = useDisclosure(false);
-  const [feature, setFeature] = useState<Feature>(null!);
-
-  const queries = useForm({
-    initialValues: {
-      keys: [] as string[],
-      selectedQuery: "",
-      feature: ["Query Strings", "Languages"] as Feature[],
-    },
-  });
-
-  useEffect(() => {
-    const queriesKeys = queryStringsArray.map((query) =>
-      Object.keys(query as { [i: string]: string })
-    );
-    const mappedQueryKeys = queriesKeys.reduce(
-      (query, arr) => [...arr, ...query],
-      []
-    );
-
-    queries.setFieldValue("keys", mappedQueryKeys);
-  }, [queryStringsArray, queries]);
-
   const onSubmit = (values: FormValues) => {
     try {
       handleLoadingStart({ startLoading });
 
-      if (queries.values.selectedQuery) {
-        updateActionInTree<LoginAction | APICallAction>({
-          selectedComponentId: selectedComponentId!,
-          componentActions,
-          id,
-          updateValues: {
-            endpoint: values.endpoint,
-            showLoader: values.showLoader,
-            datasource: dataSources.data!.results[0],
-            binds: values.binds,
-          },
-          updateTreeComponentActions,
-        });
+      updateActionInTree<LoginAction | APICallAction>({
+        selectedComponentId: selectedComponentId!,
+        componentActions,
+        id,
+        updateValues: {
+          endpoint: values.endpoint,
+          showLoader: values.showLoader,
+          datasource: dataSources.data!.results[0],
+          binds: values.binds,
+        },
+        updateTreeComponentActions,
+      });
 
-        handleLoadingStop({ stopLoading });
-      } else {
-        handleLoadingStop({ stopLoading, success: false });
-      }
+      handleLoadingStop({ stopLoading });
     } catch (error) {
       handleLoadingStop({ stopLoading, success: false });
     }
@@ -321,117 +280,40 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                 }
 
                 return (
-                  <Stack key={param.name}>
-                    <TextInput
-                      size="xs"
-                      label={param.name}
-                      description={`${
-                        // @ts-ignore
-                        param.location ? `${param.location} - ` : ""
-                      }${param.type}`}
-                      type={param.type}
-                      {...(param.name !== "Authorization"
-                        ? // @ts-ignore
-                          { required: param.required }
-                        : {})}
-                      {...form.getInputProps(`binds.${param.name}`)}
-                      {...additionalProps}
-                      rightSectionWidth="auto"
-                      rightSection={
-                        <Box sx={{ display: "flex" }}>
-                          <ActionIcon
-                            onClick={() => {
-                              setPickingComponentToBindFrom({
-                                componentId: component?.id!,
-                                trigger: action.trigger,
-                                endpointId: selectedEndpoint.id,
-                                param: param.name,
-                                bindedId: form.values.binds?.[param.name] ?? "",
-                              });
-                            }}
-                          >
-                            <IconCurrentLocation size={ICON_SIZE} />
-                          </ActionIcon>
-                          <ActionIcon
-                            onClick={() => {
-                              setSelectedParam(param.name);
-                              toggle();
-                            }}
-                          >
-                            <IconChevronDown size={ICON_SIZE} />
-                          </ActionIcon>
-                        </Box>
-                      }
-                      autoComplete="off"
-                      data-lpignore="true"
-                      data-form-type="other"
-                    />
-                    {isFeaturesOpen && param.name === selectedParam && (
-                      <Popover withArrow shadow="md" width="100%">
-                        <Popover.Target>
-                          <Stack
-                            spacing="xs"
-                            sx={{
-                              backgroundColor: "white",
-                              borderRadius: "5px",
-                            }}
-                          >
-                            {queries.values.feature.map((featureItem) => (
-                              <Button
-                                key={featureItem}
-                                onClick={() => setFeature(featureItem)}
-                                size="xs"
-                                variant="subtle"
-                                color="gray"
-                                sx={{
-                                  display: "flex",
-                                  justifyContent: "flex-start",
-                                }}
-                              >
-                                {featureItem}
-                              </Button>
-                            ))}
-                          </Stack>
-                        </Popover.Target>
-                        <Popover.Dropdown>
-                          {feature === "Query Strings" && (
-                            <Stack>
-                              {queries.values.keys.map((value) => (
-                                <Text
-                                  fz="sm"
-                                  sx={{ cursor: "pointer" }}
-                                  onClick={() => {
-                                    setQueryToBindTo({
-                                      queryKey: value,
-                                      queryValue: queryStringsArray.find(
-                                        (item) =>
-                                          (item as Record<string, string>)[
-                                            value
-                                          ]
-                                      )![value],
-                                      trigger: action.trigger,
-                                      endpointId: selectedEndpoint.id,
-                                      param: param.name,
-                                      bindedId:
-                                        form.values.binds?.[param.name] ?? "",
-                                    });
-                                    queries.setFieldValue(
-                                      "selectedQuery",
-                                      value
-                                    );
-                                    close();
-                                  }}
-                                  key={value}
-                                >
-                                  {value}
-                                </Text>
-                              ))}
-                            </Stack>
-                          )}
-                        </Popover.Dropdown>
-                      </Popover>
-                    )}
-                  </Stack>
+                  <TextInput
+                    size="xs"
+                    label={param.name}
+                    description={`${
+                      // @ts-ignore
+                      param.location ? `${param.location} - ` : ""
+                    }${param.type}`}
+                    key={param.name}
+                    type={param.type}
+                    {...(param.name !== "Authorization"
+                      ? // @ts-ignore
+                        { required: param.required }
+                      : {})}
+                    {...form.getInputProps(`binds.${param.name}`)}
+                    {...additionalProps}
+                    rightSection={
+                      <ActionIcon
+                        onClick={() => {
+                          setPickingComponentToBindFrom({
+                            componentId: component?.id!,
+                            trigger: baseAction.trigger,
+                            endpointId: selectedEndpoint.id,
+                            param: param.name,
+                            bindedId: form.values.binds?.[param.name] ?? "",
+                          });
+                        }}
+                      >
+                        <IconCurrentLocation size={ICON_SIZE} />
+                      </ActionIcon>
+                    }
+                    autoComplete="off"
+                    data-lpignore="true"
+                    data-form-type="other"
+                  />
                 );
               })}
             </Stack>
