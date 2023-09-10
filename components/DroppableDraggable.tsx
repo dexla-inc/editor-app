@@ -274,6 +274,7 @@ export const DroppableDraggable = ({
         (currentState === "disabled" && !!component.states?.disabled),
       triggers: isPreviewMode
         ? {
+            ...triggers,
             onMouseEnter: triggers?.onHover ?? hoverStateFunc,
             onMouseLeave: leaveHoverStateFunc,
           }
