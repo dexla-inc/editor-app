@@ -85,10 +85,10 @@ export type EditorState = {
     [key: string]: string;
   };
   copiedAction?: Action[];
-  queryToBind?: Record<string, string>;
+  queryToBind?: string;
   queryToBindTo?: QueryToBind;
   setQueryToBindTo: (querytoBindTo?: QueryToBind) => void;
-  setQueryToBind: (queryToBind?: Record<string, string>) => void;
+  setQueryToBind: (queryToBind?: string) => void;
   setPickingComponentToBindTo: (
     pickingComponentToBindTo?: ComponentToBind
   ) => void;

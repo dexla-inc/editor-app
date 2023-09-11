@@ -130,12 +130,18 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     },
   });
 
-  const queryStrings = useEditorStore((state) => state.pages);
-  const queryStringsArray = queryStrings
-    .map((page) => page.queryStrings)
-    .filter((item) => Object.keys(item as { [i: string]: string }).length > 0);
+  const currentPageId = router.query.page;
+  const currentPage = useEditorStore((state) =>
+    state.pages.find((page) => page.id === currentPageId)
+  );
+  const currentPageQueries = currentPage?.queryStrings;
+
+  const queryStringsArray = Object.keys(
+    currentPageQueries as Record<string, string>
+  );
   const isQueryEmpty = queryStringsArray.length === 0;
 
+  const queryToBindTo = useEditorStore((state) => state.queryToBindTo);
   const setQueryToBindTo = useEditorStore((state) => state.setQueryToBindTo);
 
   const [selectedParam, setSelectedParam] = useState<string | undefined>(
@@ -151,20 +157,26 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
       selectedQuery: "",
       feature: ["Query Strings", "Languages"] as Feature[],
       selectQueryValue: "",
+      param: "",
     },
   });
 
   useEffect(() => {
-    const mappedQueryKeys = queryStrings
-      .flatMap((page) =>
-        Object.keys(page.queryStrings as { [i: string]: string })
-      )
-      .filter((key) => key.length > 0);
-    queries.setFieldValue("keys", mappedQueryKeys);
-    if (!isQueryEmpty) {
+    if (typeof currentPageQueries !== undefined) {
+      const mappedQueryKeys = queryStringsArray;
+      queries.setFieldValue("keys", mappedQueryKeys);
     }
+    if (queryToBindTo) {
+      form.setFieldValue(
+        `binds.typeKey_${queryToBindTo.queryKey}`,
+        `valueOf_${queryToBindTo.queryValue}`
+      );
+      queries.setFieldValue("param", queryToBindTo.param as string);
+      setQueryToBindTo(undefined);
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryStrings]);
+  }, [currentPage, currentPageQueries, queryToBindTo]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -184,8 +196,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     try {
       handleLoadingStart({ startLoading });
 
-      const { selectedQuery, selectQueryValue } = queries.values;
-
       updateActionInTree<LoginAction | APICallAction>({
         selectedComponentId: selectedComponentId!,
         componentActions,
@@ -194,7 +204,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
           endpoint: values.endpoint,
           showLoader: values.showLoader,
           datasource: dataSources.data!.results[0],
-          binds: { ...values.binds, [selectedQuery]: selectQueryValue },
+          binds: values.binds,
         },
         updateTreeComponentActions,
       });
@@ -329,7 +339,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                 ...selectedEndpoint.parameters,
               ].map((param) => {
                 let additionalProps = {};
-
                 if (param.name === "Authorization" && param.type === "BEARER") {
                   const token = accessToken();
                   if (token) {
@@ -339,6 +348,12 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                     };
                   }
                 }
+                const itemProps =
+                  param.name === queries.values.param
+                    ? form.getInputProps(
+                        `binds.typeKey_${queries.values.selectedQuery}`
+                      )
+                    : form.getInputProps(`binds.${param.name}`);
 
                 return (
                   <Stack key={param.name}>
@@ -354,7 +369,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                         ? // @ts-ignore
                           { required: param.required }
                         : {})}
-                      {...form.getInputProps(`binds.${param.name}`)}
+                      {...itemProps}
                       {...additionalProps}
                       rightSectionWidth="auto"
                       rightSection={
@@ -422,12 +437,12 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                                     fz="sm"
                                     sx={{ cursor: "pointer" }}
                                     onClick={() => {
-                                      const queryValue = queryStringsArray.find(
-                                        (item) =>
-                                          (item as Record<string, string>)[
-                                            value
-                                          ]
-                                      )![value];
+                                      const queryValue = (
+                                        currentPageQueries as Record<
+                                          string,
+                                          string
+                                        >
+                                      )[value];
                                       setQueryToBindTo({
                                         queryKey: value,
                                         queryValue,
