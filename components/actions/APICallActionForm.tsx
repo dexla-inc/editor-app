@@ -155,18 +155,11 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   });
 
   useEffect(() => {
-    const queryStringsArray = queryStrings
-      .map((page) => page.queryStrings)
-      .filter(
-        (item) => Object.keys(item as { [i: string]: string }).length > 0
-      );
-    const queriesKeys = queryStringsArray.map((query) =>
-      Object.keys(query as { [i: string]: string })
-    );
-    const mappedQueryKeys = queriesKeys.reduce(
-      (query, arr) => [...arr, ...query],
-      []
-    );
+    const mappedQueryKeys = queryStrings
+      .flatMap((page) =>
+        Object.keys(page.queryStrings as { [i: string]: string })
+      )
+      .filter((key) => key.length > 0);
     queries.setFieldValue("keys", mappedQueryKeys);
     if (!isQueryEmpty) {
     }
