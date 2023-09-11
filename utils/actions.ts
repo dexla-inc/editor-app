@@ -417,6 +417,9 @@ export const loginAction = async ({
     const url =
       keys.length > 0
         ? keys.reduce((url: string, key: string) => {
+            key.startsWith("type_key_")
+              ? (key = key.split(`type_Key_`)[1])
+              : key;
             let value = action.binds?.[key] as string;
 
             if (value?.startsWith(`valueOf_`)) {
@@ -568,6 +571,9 @@ export const apiCallAction = async ({
     const url =
       keys.length > 0
         ? keys.reduce((url: string, key: string) => {
+            key.startsWith("type_Key_")
+              ? (key = key.split(`type_key_`)[1])
+              : key;
             // @ts-ignore
             let value = action.binds[key] as string;
 

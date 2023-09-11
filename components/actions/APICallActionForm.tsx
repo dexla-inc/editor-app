@@ -162,7 +162,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   });
 
   useEffect(() => {
-    if (typeof currentPageQueries !== undefined) {
+    if (currentPageQueries !== undefined) {
       const mappedQueryKeys = queryStringsArray;
       queries.setFieldValue("keys", mappedQueryKeys);
     }
