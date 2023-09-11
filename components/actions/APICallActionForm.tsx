@@ -23,6 +23,7 @@ import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
 import {
   ActionIcon,
+  Alert,
   Box,
   Button,
   Flex,
@@ -34,7 +35,11 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconChevronDown, IconCurrentLocation } from "@tabler/icons-react";
+import {
+  IconAlertCircle,
+  IconChevronDown,
+  IconCurrentLocation,
+} from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { forwardRef, useEffect, useState } from "react";
@@ -129,6 +134,8 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     .map((page) => page.queryStrings)
     .filter((item) => Object.keys(item as { [i: string]: string }).length > 0);
 
+  const isQueryEmpty = queryStringsArray.length === 0;
+
   const setQueryToBindTo = useEditorStore((state) => state.setQueryToBindTo);
 
   const [selectedParam, setSelectedParam] = useState<string | undefined>(
@@ -136,6 +143,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   );
   const [isFeaturesOpen, { toggle, close }] = useDisclosure(false);
   const [feature, setFeature] = useState<Feature>(null!);
+  const [isQuerryError, setIsQuerryError] = useState<boolean>(false);
 
   const queries = useForm({
     initialValues: {
@@ -157,28 +165,36 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     queries.setFieldValue("keys", mappedQueryKeys);
   }, [queryStringsArray, queries]);
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      isQuerryError && setIsQuerryError(false);
+    }, 5000);
+
+    return () => clearTimeout(timeout);
+  }, [feature, isQuerryError]);
+
+  const handleFeature = (featureItem: Feature) => {
+    setFeature(featureItem);
+    isQueryEmpty && setIsQuerryError(true);
+  };
+
   const onSubmit = (values: FormValues) => {
     try {
       handleLoadingStart({ startLoading });
 
-      if (queries.values.selectedQuery) {
-        updateActionInTree<LoginAction | APICallAction>({
-          selectedComponentId: selectedComponentId!,
-          componentActions,
-          id,
-          updateValues: {
-            endpoint: values.endpoint,
-            showLoader: values.showLoader,
-            datasource: dataSources.data!.results[0],
-            binds: values.binds,
-          },
-          updateTreeComponentActions,
-        });
-
-        handleLoadingStop({ stopLoading });
-      } else {
-        handleLoadingStop({ stopLoading, success: false });
-      }
+      updateActionInTree<LoginAction | APICallAction>({
+        selectedComponentId: selectedComponentId!,
+        componentActions,
+        id,
+        updateValues: {
+          endpoint: values.endpoint,
+          showLoader: values.showLoader,
+          datasource: dataSources.data!.results[0],
+          binds: values.binds,
+        },
+        updateTreeComponentActions,
+      });
+      handleLoadingStop({ stopLoading });
     } catch (error) {
       handleLoadingStop({ stopLoading, success: false });
     }
@@ -379,7 +395,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                             {queries.values.feature.map((featureItem) => (
                               <Button
                                 key={featureItem}
-                                onClick={() => setFeature(featureItem)}
+                                onClick={() => handleFeature(featureItem)}
                                 size="xs"
                                 variant="subtle"
                                 color="gray"
@@ -393,48 +409,59 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                             ))}
                           </Stack>
                         </Popover.Target>
-                        <Popover.Dropdown>
-                          {feature === "Query Strings" && (
-                            <Stack>
-                              {queries.values.keys.map((value) => (
-                                <Text
-                                  fz="sm"
-                                  sx={{ cursor: "pointer" }}
-                                  onClick={() => {
-                                    setQueryToBindTo({
-                                      queryKey: value,
-                                      queryValue: queryStringsArray.find(
-                                        (item) =>
-                                          (item as Record<string, string>)[
-                                            value
-                                          ]
-                                      )![value],
-                                      trigger: action.trigger,
-                                      endpointId: selectedEndpoint.id,
-                                      param: param.name,
-                                      bindedId:
-                                        form.values.binds?.[param.name] ?? "",
-                                    });
-                                    queries.setFieldValue(
-                                      "selectedQuery",
-                                      value
-                                    );
-                                    close();
-                                  }}
-                                  key={value}
-                                >
-                                  {value}
-                                </Text>
-                              ))}
-                            </Stack>
-                          )}
-                        </Popover.Dropdown>
+                        {!isQueryEmpty && (
+                          <Popover.Dropdown>
+                            {feature === "Query Strings" && (
+                              <Stack>
+                                {queries.values.keys.map((value) => (
+                                  <Text
+                                    fz="sm"
+                                    sx={{ cursor: "pointer" }}
+                                    onClick={() => {
+                                      setQueryToBindTo({
+                                        queryKey: value,
+                                        queryValue: queryStringsArray.find(
+                                          (item) =>
+                                            (item as Record<string, string>)[
+                                              value
+                                            ]
+                                        )![value],
+                                        trigger: action.trigger,
+                                        endpointId: selectedEndpoint.id,
+                                        param: param.name,
+                                        bindedId:
+                                          form.values.binds?.[param.name] ?? "",
+                                      });
+                                      queries.setFieldValue(
+                                        "selectedQuery",
+                                        value
+                                      );
+                                      close();
+                                    }}
+                                    key={value}
+                                  >
+                                    {value}
+                                  </Text>
+                                ))}
+                              </Stack>
+                            )}
+                          </Popover.Dropdown>
+                        )}
                       </Popover>
                     )}
                   </Stack>
                 );
               })}
             </Stack>
+          )}
+          {feature === "Query Strings" && isQuerryError && (
+            <Alert
+              icon={<IconAlertCircle size="1rem" />}
+              title="Error!"
+              color="red"
+            >
+              Add query string(s) to pages(s)
+            </Alert>
           )}
           <ActionButtons
             actionId={id}
