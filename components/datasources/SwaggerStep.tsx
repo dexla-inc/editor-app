@@ -40,6 +40,36 @@ export default function SwaggerStep({
     },
   });
 
+  const persistDatasource = async (values: DataSourceParams) => {
+    startLoading({
+      id: "creating",
+      title: "Creating Data Source",
+      message:
+        "Wait while we generate your API endpoints from your API specification",
+    });
+
+    setIsLoading && setIsLoading(true);
+
+    const result = await createDataSource(projectId, "API", values);
+
+    if (!result) {
+      throw new Error("Failed to create data source");
+    }
+
+    setDataSource && setDataSource(result);
+    setEndpoints(result.changedEndpoints || []);
+
+    nextStep();
+
+    stopLoading({
+      id: "creating",
+      title: "Data Source Saved",
+      message: "The data source was saved successfully",
+    });
+
+    setIsLoading && setIsLoading(false);
+  };
+
   const onSubmit = async (values: DataSourceParams) => {
     try {
       if (
@@ -50,35 +80,9 @@ export default function SwaggerStep({
         return;
       }
 
-      startLoading({
-        id: "creating",
-        title: "Creating Data Source",
-        message:
-          "Wait while we generate your API endpoints from your API specification",
-      });
-
-      setIsLoading && setIsLoading(true);
-
       form.validate();
 
-      const result = await createDataSource(projectId, "API", values);
-
-      if (!result) {
-        throw new Error("Failed to create data source");
-      }
-
-      setDataSource(result);
-      setEndpoints(result.changedEndpoints || []);
-
-      nextStep();
-
-      stopLoading({
-        id: "creating",
-        title: "Data Source Saved",
-        message: "The data source was saved successfully",
-      });
-
-      setIsLoading && setIsLoading(false);
+      await persistDatasource(values);
     } catch (error: any) {
       stopLoading({
         id: "creating",
@@ -87,7 +91,20 @@ export default function SwaggerStep({
         isError: true,
       });
       setIsLoading && setIsLoading(false);
-      console.log(error);
+    }
+  };
+
+  const skipValidationAndProceed = async () => {
+    try {
+      await persistDatasource(form.values);
+    } catch (error: any) {
+      stopLoading({
+        id: "creating",
+        title: "Error",
+        message: error,
+        isError: true,
+      });
+      setIsLoading && setIsLoading(false);
     }
   };
 
@@ -111,7 +128,9 @@ export default function SwaggerStep({
           <Group position="right">
             <Flex gap="lg" align="end">
               {!isLoading && (
-                <Anchor onClick={nextStep}>Continue without Swagger</Anchor>
+                <Anchor onClick={skipValidationAndProceed}>
+                  Continue without Swagger
+                </Anchor>
               )}
               <NextButton
                 isLoading={isLoading}

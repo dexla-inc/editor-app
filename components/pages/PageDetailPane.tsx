@@ -104,8 +104,14 @@ export default function PageDetailPane({
       });
 
       setPage(undefined);
-    } catch (error) {
+    } catch (error: any) {
       setIsLoading(false);
+      stopLoading({
+        id: "deleting",
+        title: "Page failed to delete",
+        message: error || "Something went wrong",
+        isError: true,
+      });
     }
   };
 

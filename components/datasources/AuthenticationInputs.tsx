@@ -110,13 +110,17 @@ export const getAuthEndpoint = (
   return endpoints?.find((d) => d.authentication.endpointType === endpointType);
 };
 
-export type AuthenticationStepParams = {
+export type AuthenticationBearerTokenParams = {
   loginEndpointId?: string | undefined;
   refreshEndpointId?: string | undefined;
   userEndpointId?: string | undefined;
   accessToken?: string | undefined;
   refreshToken?: string | undefined;
   expiryProperty?: string | undefined;
+};
+
+export type AuthenticationApiKeyParams = {
+  accessToken?: string | undefined;
 };
 
 export const setExampleResponseObject = (
