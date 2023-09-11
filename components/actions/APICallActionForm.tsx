@@ -23,6 +23,7 @@ import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
 import {
   ActionIcon,
+  Alert,
   Box,
   Button,
   Flex,
@@ -34,7 +35,11 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconChevronDown, IconCurrentLocation } from "@tabler/icons-react";
+import {
+  IconAlertCircle,
+  IconChevronDown,
+  IconCurrentLocation,
+} from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { forwardRef, useEffect, useState } from "react";
