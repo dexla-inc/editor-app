@@ -130,10 +130,10 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     },
   });
 
-  const queryStringsArray = useEditorStore((state) => state.pages)
+  const queryStrings = useEditorStore((state) => state.pages);
+  const queryStringsArray = queryStrings
     .map((page) => page.queryStrings)
     .filter((item) => Object.keys(item as { [i: string]: string }).length > 0);
-
   const isQueryEmpty = queryStringsArray.length === 0;
 
   const setQueryToBindTo = useEditorStore((state) => state.setQueryToBindTo);
@@ -150,10 +150,16 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
       keys: [] as string[],
       selectedQuery: "",
       feature: ["Query Strings", "Languages"] as Feature[],
+      selectQueryValue: "",
     },
   });
 
   useEffect(() => {
+    const queryStringsArray = queryStrings
+      .map((page) => page.queryStrings)
+      .filter(
+        (item) => Object.keys(item as { [i: string]: string }).length > 0
+      );
     const queriesKeys = queryStringsArray.map((query) =>
       Object.keys(query as { [i: string]: string })
     );
@@ -161,9 +167,11 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
       (query, arr) => [...arr, ...query],
       []
     );
-
     queries.setFieldValue("keys", mappedQueryKeys);
-  }, [queryStringsArray, queries]);
+    if (!isQueryEmpty) {
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryStrings]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -171,6 +179,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     }, 5000);
 
     return () => clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feature, isQuerryError]);
 
   const handleFeature = (featureItem: Feature) => {
@@ -182,6 +191,8 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     try {
       handleLoadingStart({ startLoading });
 
+      const { selectedQuery, selectQueryValue } = queries.values;
+
       updateActionInTree<LoginAction | APICallAction>({
         selectedComponentId: selectedComponentId!,
         componentActions,
@@ -190,7 +201,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
           endpoint: values.endpoint,
           showLoader: values.showLoader,
           datasource: dataSources.data!.results[0],
-          binds: values.binds,
+          binds: { ...values.binds, [selectedQuery]: selectQueryValue },
         },
         updateTreeComponentActions,
       });
@@ -418,14 +429,15 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                                     fz="sm"
                                     sx={{ cursor: "pointer" }}
                                     onClick={() => {
+                                      const queryValue = queryStringsArray.find(
+                                        (item) =>
+                                          (item as Record<string, string>)[
+                                            value
+                                          ]
+                                      )![value];
                                       setQueryToBindTo({
                                         queryKey: value,
-                                        queryValue: queryStringsArray.find(
-                                          (item) =>
-                                            (item as Record<string, string>)[
-                                              value
-                                            ]
-                                        )![value],
+                                        queryValue,
                                         trigger: action.trigger,
                                         endpointId: selectedEndpoint.id,
                                         param: param.name,
@@ -435,6 +447,10 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                                       queries.setFieldValue(
                                         "selectedQuery",
                                         value
+                                      );
+                                      queries.setFieldValue(
+                                        "selectQueryValue",
+                                        queryValue
                                       );
                                       close();
                                     }}
