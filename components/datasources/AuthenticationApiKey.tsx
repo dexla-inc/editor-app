@@ -1,15 +1,18 @@
-import { AuthenticationApiKeyParams } from "@/components/datasources/AuthenticationInputs";
+import { updateDataSource } from "@/requests/datasources/mutations";
+import { DataSourceParams } from "@/requests/datasources/types";
 import { DataSourceStepperProps } from "@/utils/dashboardTypes";
-import { Stack, TextInput } from "@mantine/core";
+import { Divider, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
+import BackButton from "../BackButton";
+import NextButton from "../NextButton";
 
 interface AuthenticationStepProps extends DataSourceStepperProps {
   accessToken: string | null;
   setAccessToken: (accessToken: string | null) => void;
 }
 
-export default function ApiKeyAuthentication({
+export default function AuthenticationApiKey({
   prevStep,
   nextStep,
   isLoading,
@@ -23,17 +26,19 @@ export default function ApiKeyAuthentication({
   const router = useRouter();
   const projectId = router.query.id as string;
 
-  const form = useForm<AuthenticationApiKeyParams>({
+  const form = useForm<DataSourceParams>({
     validateInputOnBlur: true,
     initialValues: {
-      accessToken: undefined,
+      authValue: undefined,
+    },
+    validate: {
+      authValue: (value) =>
+        value === "" ? "You must provide an API key" : null,
     },
   });
 
-  const onSubmit = async (values: AuthenticationApiKeyParams) => {
+  const onSubmit = async (values: DataSourceParams) => {
     try {
-      form.validate();
-
       if (Object.keys(form.errors).length > 0) {
         console.log("Errors: " + form.errors);
         return;
@@ -43,6 +48,8 @@ export default function ApiKeyAuthentication({
         throw new Error("Can't find data source");
       }
 
+      form.validate();
+
       startLoading({
         id: "updating",
         title: "Updating Data Source",
@@ -50,6 +57,12 @@ export default function ApiKeyAuthentication({
       });
 
       setIsLoading && setIsLoading(true);
+
+      const mergedDataSource = { ...dataSource, ...values };
+
+      console.log(mergedDataSource);
+
+      await updateDataSource(projectId, dataSource.id, false, mergedDataSource);
 
       nextStep();
 
@@ -76,11 +89,23 @@ export default function ApiKeyAuthentication({
       <Stack pb={100}>
         <TextInput
           label="API Key"
-          description="The key used to authenticate with the API"
-          placeholder="aa982f3c39b17eff97df7d02cf8724126aa6d44fef80268ce307e3492e8ec591d0212978264b74f4755eea0985ddd1d4"
-          value={accessToken ?? ""}
-          onChange={(e) => setAccessToken(e.target.value)}
+          description="The key used to authenticate to the API"
+          placeholder="aa982f3c39b17...."
+          {...form.getInputProps("authValue")}
+          onChange={(e) => {
+            form.setFieldValue("authValue", e.target.value);
+            setAccessToken(e.target.value);
+          }}
         />
+        <Divider></Divider>
+        <Group position="apart">
+          <BackButton onClick={prevStep}></BackButton>
+          <NextButton
+            isLoading={isLoading}
+            disabled={isLoading}
+            isSubmit={true}
+          ></NextButton>
+        </Group>
       </Stack>
     </form>
   );

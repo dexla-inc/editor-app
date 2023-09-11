@@ -17,7 +17,7 @@ import { Anchor, Divider, Flex, Group, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 
-interface AuthenticationStepProps extends DataSourceStepperProps {
+interface BearerTokenAuthenticationProps extends DataSourceStepperProps {
   endpoints: Array<Endpoint> | undefined;
   loginEndpointId: string | null;
   setLoginEndpointId: (loginEndpointId: string | null) => void;
@@ -41,7 +41,7 @@ interface AuthenticationStepProps extends DataSourceStepperProps {
   setLoginRequestBody: (requestBody: RequestBody[] | undefined) => void;
 }
 
-export default function AuthenticationStep({
+export default function AuthenticationBearer({
   prevStep,
   nextStep,
   isLoading,
@@ -68,7 +68,7 @@ export default function AuthenticationStep({
   expiryProperty,
   setExpiryProperty,
   setLoginRequestBody,
-}: AuthenticationStepProps) {
+}: BearerTokenAuthenticationProps) {
   const router = useRouter();
   const projectId = router.query.id as string;
 

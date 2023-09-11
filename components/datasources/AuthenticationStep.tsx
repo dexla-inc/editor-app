@@ -1,21 +1,9 @@
-import BackButton from "@/components/BackButton";
-import NextButton from "@/components/NextButton";
-import {
-  AuthenticationBearerTokenParams,
-  ExampleResponseDropdown,
-  filterAndMapEndpoints,
-  mapEndpointExampleResponse,
-  patchDataSourceWithParams,
-  setEndpoint,
-  setRequestBodyObject,
-  validateTokenProperty,
-} from "@/components/datasources/AuthenticationInputs";
-import TextInputComponent from "@/components/datasources/TextInputComponent";
+import AuthenticationApiKey from "@/components/datasources/AuthenticationApiKey";
+import AuthenticationBearer from "@/components/datasources/AuthenticationBearer";
+import { ExampleResponseDropdown } from "@/components/datasources/AuthenticationInputs";
 import { Endpoint, RequestBody } from "@/requests/datasources/types";
 import { DataSourceStepperProps } from "@/utils/dashboardTypes";
-import { Anchor, Divider, Flex, Group, Select, Stack } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useRouter } from "next/router";
+import { Stack } from "@mantine/core";
 
 interface AuthenticationStepProps extends DataSourceStepperProps {
   endpoints: Array<Endpoint> | undefined;
@@ -39,6 +27,7 @@ interface AuthenticationStepProps extends DataSourceStepperProps {
   expiryProperty: string | null;
   setExpiryProperty: (expiryProperty: string | null) => void;
   setLoginRequestBody: (requestBody: RequestBody[] | undefined) => void;
+  authenticationScheme?: string | null;
 }
 
 export default function AuthenticationStep({
@@ -68,350 +57,54 @@ export default function AuthenticationStep({
   expiryProperty,
   setExpiryProperty,
   setLoginRequestBody,
+  authenticationScheme,
 }: AuthenticationStepProps) {
-  const router = useRouter();
-  const projectId = router.query.id as string;
-
-  const form = useForm<AuthenticationBearerTokenParams>({
-    validateInputOnBlur: true,
-    initialValues: {
-      loginEndpointId: undefined,
-      refreshEndpointId: undefined,
-      userEndpointId: undefined,
-      accessToken: undefined,
-      refreshToken: undefined,
-    },
-    validate: {
-      accessToken: (value, values) =>
-        validateTokenProperty("Access", value, values.loginEndpointId),
-      refreshToken: (value, values) =>
-        validateTokenProperty("Refresh", value, values.refreshEndpointId),
-    },
-  });
-
-  const postEndpoints = filterAndMapEndpoints(endpoints, "POST");
-  const getEndpoints = filterAndMapEndpoints(endpoints, "GET");
-
-  const onSubmit = async (values: AuthenticationBearerTokenParams) => {
-    try {
-      form.validate();
-
-      if (Object.keys(form.errors).length > 0) {
-        console.log("Errors: " + form.errors);
-        return;
-      }
-
-      if (!dataSource?.id) {
-        throw new Error("Can't find data source");
-      }
-
-      startLoading({
-        id: "updating",
-        title: "Updating Data Source",
-        message: "Wait while your data source is being saved",
-      });
-
-      setIsLoading && setIsLoading(true);
-
-      const {
-        loginEndpointId,
-        refreshEndpointId,
-        userEndpointId,
-        accessToken,
-        refreshToken,
-        expiryProperty,
-      } = values;
-
-      if (loginEndpointId !== undefined && accessToken !== undefined) {
-        await patchDataSourceWithParams(
-          projectId,
-          dataSource.id,
-          loginEndpointId,
-          "ACCESS",
-          accessToken,
-          expiryProperty
-        );
-      }
-
-      if (refreshEndpointId !== undefined && refreshToken !== undefined) {
-        await patchDataSourceWithParams(
-          projectId,
-          dataSource.id,
-          refreshEndpointId,
-          "REFRESH",
-          refreshToken
-        );
-      }
-
-      if (userEndpointId) {
-        await patchDataSourceWithParams(
-          projectId,
-          dataSource.id,
-          userEndpointId,
-          "USER"
-        );
-      }
-
-      nextStep();
-
-      stopLoading({
-        id: "updating",
-        title: "Data Source Saved",
-        message: "The data source was saved successfully",
-      });
-      setIsLoading && setIsLoading(false);
-    } catch (error: any) {
-      console.log(error);
-      stopLoading({
-        id: "updating",
-        title: "Data Source Failed",
-        message: error,
-        isError: true,
-      });
-      setIsLoading && setIsLoading(false);
-    }
-  };
-
-  const setLoginEndpoint = (value: string) => {
-    const selectedEndpoint = postEndpoints.find(
-      (option) => option.value === value
-    );
-
-    if (selectedEndpoint?.exampleresponse) {
-      const exampleResponse = mapEndpointExampleResponse(
-        selectedEndpoint.exampleresponse
-      );
-
-      setExampleResponse(exampleResponse);
-      setAccessToken("");
-      setExpiryProperty("");
-    }
-
-    setEndpoint(
-      setLoginEndpointId,
-      selectedEndpoint,
-      value,
-      setLoginEndpointLabel
-    );
-  };
-
-  const setRefreshEndpoint = (value: string | null) => {
-    const selectedEndpoint = postEndpoints.find(
-      (option) => option.value === value
-    );
-    setEndpoint(
-      setRefreshEndpointId,
-      selectedEndpoint,
-      value,
-      setRefreshEndpointLabel
-    );
-    setRefreshToken("");
-  };
-
-  const setUserEndpoint = (value: string | null) => {
-    const selectedEndpoint = getEndpoints.find(
-      (option) => option.value === value
-    );
-    setEndpoint(
-      setUserEndpointId,
-      selectedEndpoint,
-      value,
-      setUserEndpointLabel
-    );
-  };
-
   return (
-    <form
-      onSubmit={form.onSubmit(onSubmit)}
-      onError={(error) => console.log(error)}
-    >
-      <Stack pb={100}>
-        {dataSource?.swaggerUrl ? (
-          <>
-            <Select
-              label="Login Endpoint (POST)"
-              description="The endpoint used to login to your API"
-              placeholder="/v1/login"
-              searchable
-              clearable
-              required
-              data={postEndpoints ?? []}
-              value={loginEndpointId}
-              onChange={(value) => {
-                form.setFieldValue("loginEndpointId", value as string);
-                setLoginEndpoint(value ?? "");
-                setRequestBodyObject(
-                  postEndpoints,
-                  setLoginRequestBody,
-                  value as string
-                );
-              }}
-            />
-            <Select
-              label="Refresh Endpoint (POST)"
-              description="The endpoint used to refresh your API token"
-              placeholder="/v1/login/refresh"
-              searchable
-              clearable
-              required
-              data={postEndpoints ?? []}
-              value={refreshEndpointId}
-              onChange={(value) => {
-                form.setFieldValue("refreshEndpointId", value as string);
-                setRefreshEndpoint(value ?? "");
-              }}
-            />
-            <Select
-              label="User Endpoint (GET)"
-              description="The endpoint used to user information"
-              placeholder="/v1/user"
-              searchable
-              clearable
-              data={getEndpoints ?? []}
-              value={userEndpointId}
-              onChange={(value) => {
-                form.setFieldValue("userEndpointId", value as string);
-                setUserEndpoint(value ?? "");
-              }}
-            />
-          </>
-        ) : (
-          <>
-            <TextInputComponent
-              label="Login Endpoint (POST)"
-              description="The endpoint used to login to your API"
-              placeholder="/v1/login"
-              value={loginEndpointId}
-              form={form}
-              propertyName="loginEndpointId"
-              setProperty={(value) => setLoginEndpoint(value ?? "")}
-            />
-            <TextInputComponent
-              label="Refresh Endpoint (POST)"
-              description="The endpoint used to refresh your API token"
-              placeholder="/v1/login/refresh"
-              value={refreshEndpointId}
-              form={form}
-              propertyName="refreshEndpointId"
-              setProperty={(value) => setRefreshEndpoint(value ?? "")}
-            />
+    <Stack>
+      {authenticationScheme === "BEARER" && (
+        <AuthenticationBearer
+          prevStep={prevStep}
+          nextStep={nextStep}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+          startLoading={startLoading}
+          stopLoading={stopLoading}
+          dataSource={dataSource}
+          endpoints={endpoints}
+          loginEndpointId={loginEndpointId}
+          setLoginEndpointId={setLoginEndpointId}
+          setLoginEndpointLabel={setLoginEndpointLabel}
+          setRefreshEndpointLabel={setRefreshEndpointLabel}
+          setUserEndpointLabel={setUserEndpointLabel}
+          refreshEndpointId={refreshEndpointId}
+          setRefreshEndpointId={setRefreshEndpointId}
+          userEndpointId={userEndpointId}
+          setUserEndpointId={setUserEndpointId}
+          accessToken={accessToken}
+          setAccessToken={setAccessToken}
+          refreshToken={refreshToken}
+          setRefreshToken={setRefreshToken}
+          setExampleResponse={setExampleResponse}
+          exampleResponse={exampleResponse}
+          expiryProperty={expiryProperty}
+          setExpiryProperty={setExpiryProperty}
+          setLoginRequestBody={setLoginRequestBody}
+        />
+      )}
 
-            <TextInputComponent
-              label="User Endpoint (GET)"
-              description="The endpoint used to user information"
-              placeholder="/v1/user"
-              value={userEndpointId}
-              form={form}
-              propertyName="userEndpointId"
-              setProperty={(value) => setUserEndpoint(value ?? "")}
-            />
-          </>
-        )}
-        {dataSource?.swaggerUrl && loginEndpointId ? (
-          <Select
-            label="Access token property"
-            description="The property name of the access token in the response"
-            placeholder="access"
-            searchable
-            clearable
-            nothingFound="Not found. Update your swagger to include the response property"
-            data={exampleResponse ?? []}
-            value={accessToken}
-            onChange={(value) => {
-              form.setFieldValue("accessToken", value as string);
-              setAccessToken(value);
-            }}
-            required
-          />
-        ) : (
-          <TextInputComponent
-            label="Access token property"
-            description="The property name of the access token in the response"
-            placeholder="access"
-            form={form}
-            propertyName="accessToken"
-            value={accessToken}
-            setProperty={setAccessToken}
-            required={!!loginEndpointId}
-          />
-        )}
-        {dataSource?.swaggerUrl && refreshEndpointId ? (
-          <Select
-            label="Refresh token property"
-            description="The property name of the refresh token in the response"
-            placeholder="refresh"
-            searchable
-            clearable
-            nothingFound="Not found. Update your swagger to include the response property"
-            data={exampleResponse ?? []}
-            value={refreshToken}
-            onChange={(value) => {
-              form.setFieldValue("refreshToken", value as string);
-              setRefreshToken(value);
-            }}
-            required
-          />
-        ) : (
-          <TextInputComponent
-            label="Refresh token property"
-            description="The property name of the refresh token in the response"
-            placeholder="refresh"
-            form={form}
-            propertyName="refreshToken"
-            value={refreshToken}
-            setProperty={setRefreshToken}
-            required={!!refreshEndpointId}
-          />
-        )}
-        {dataSource?.swaggerUrl && loginEndpointId ? (
-          <Select
-            label="Access token expiry property"
-            description="The property name of the expiry of the access token in the response"
-            placeholder="expires_in"
-            searchable
-            clearable
-            nothingFound={
-              exampleResponse
-                ? "Not found. Update your swagger to include the response property"
-                : "No options"
-            }
-            data={exampleResponse ?? []}
-            value={expiryProperty}
-            onChange={(value) => {
-              form.setFieldValue("expiryProperty", value as string);
-              setExpiryProperty(value);
-            }}
-            required
-          />
-        ) : (
-          <TextInputComponent
-            label="Access token expiry property"
-            description="The property name of the expiry of the access token in the response"
-            placeholder="expires_in"
-            form={form}
-            propertyName="expiryProperty"
-            value={accessToken}
-            setProperty={setExpiryProperty}
-            required={!!loginEndpointId}
-          />
-        )}
-        <Divider></Divider>
-        <Group position="apart">
-          <BackButton onClick={prevStep}></BackButton>
-          <Flex gap="lg" align="end">
-            {!isLoading && (
-              <Anchor onClick={nextStep}>
-                Skip, I use an external auth provider
-              </Anchor>
-            )}
-            <NextButton
-              isLoading={isLoading}
-              disabled={isLoading}
-              isSubmit={true}
-            ></NextButton>
-          </Flex>
-        </Group>
-      </Stack>
-    </form>
+      {authenticationScheme === "API_KEY" && (
+        <AuthenticationApiKey
+          prevStep={prevStep}
+          nextStep={nextStep}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+          startLoading={startLoading}
+          stopLoading={stopLoading}
+          dataSource={dataSource}
+          accessToken={accessToken}
+          setAccessToken={setAccessToken}
+        />
+      )}
+    </Stack>
   );
 }
