@@ -53,6 +53,16 @@ export type ComponentToBind = {
   index?: number;
 };
 
+export type QueryToBind = {
+  queryKey: string;
+  queryValue: string;
+  trigger: string;
+  endpointId?: string;
+  param?: string;
+  bindedId?: string;
+  index?: number;
+};
+
 export type EditorState = {
   tree: EditorTree;
   currentProjectId?: string;
@@ -75,6 +85,10 @@ export type EditorState = {
     [key: string]: string;
   };
   copiedAction?: Action[];
+  queryToBind?: Record<string, string>;
+  queryToBindTo?: QueryToBind;
+  setQueryToBindTo: (querytoBindTo?: QueryToBind) => void;
+  setQueryToBind: (queryToBind?: Record<string, string>) => void;
   setPickingComponentToBindTo: (
     pickingComponentToBindTo?: ComponentToBind
   ) => void;
@@ -158,6 +172,8 @@ export const useEditorStore = create<EditorState>()(
           set({ pickingComponentToBindFrom }),
         setPickingComponentToBindTo: (pickingComponentToBindTo) =>
           set({ pickingComponentToBindTo }),
+        setQueryToBind: (queryToBind) => set({ queryToBind }),
+        setQueryToBindTo: (queryToBindTo) => set({ queryToBindTo }),
         setComponentToBind: (componentToBind) => set({ componentToBind }),
         setCopiedComponent: (copiedComponent) => set({ copiedComponent }),
         setTheme: (theme) => set({ theme }),
