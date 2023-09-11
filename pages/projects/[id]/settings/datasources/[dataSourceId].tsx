@@ -31,6 +31,7 @@ import {
   getSwagger,
 } from "@/requests/datasources/queries";
 import {
+  AuthenticationSchemes,
   DataSourceParams,
   DataSourceResponse,
   Endpoint,
@@ -76,7 +77,8 @@ export default function Settings() {
     undefined
   );
 
-  const [authenticationScheme, setAuthenticationScheme] = useState<string>("");
+  const [authenticationScheme, setAuthenticationScheme] =
+    useState<AuthenticationSchemes | null>(null);
   const [swaggerUrl, setSwaggerUrl] = useState<string>("");
   const [swaggerRefetched, setSwaggerRefetched] = useState<boolean>(false);
   const [loginEndpointId, setLoginEndpointId] = useState<string | undefined>(
