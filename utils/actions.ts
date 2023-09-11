@@ -426,6 +426,13 @@ export const loginAction = async ({
               value = el?.value ?? "";
             }
 
+            if (value?.startsWith(`queryString_pass_`)) {
+              const el = iframeWindow?.document.querySelector(`
+          input#${value.split(`queryString_pass_`)[1]}
+          `) as HTMLInputElement;
+              value = el?.value ?? "";
+            }
+
             return url.replace(`{${key}}`, value);
           }, `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`)
         : `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`;
@@ -440,6 +447,13 @@ export const loginAction = async ({
                 const el = iframeWindow?.document.querySelector(`
           input#${value.split(`valueOf_`)[1]}
         `) as HTMLInputElement;
+                value = el?.value ?? "";
+              }
+
+              if (value?.startsWith(`queryString_pass_`)) {
+                const el = iframeWindow?.document.querySelector(`
+          input#${value.split(`queryString_pass_`)[1]}
+          `) as HTMLInputElement;
                 value = el?.value ?? "";
               }
 
@@ -564,6 +578,13 @@ export const apiCallAction = async ({
               value = el?.value ?? "";
             }
 
+            if (value?.startsWith(`queryString_pass_`)) {
+              const el = iframeWindow?.document.querySelector(`
+          input#${value.split(`queryString_pass_`)[1]}
+          `) as HTMLInputElement;
+              value = el?.value ?? "";
+            }
+
             if (!url.includes(`{${key}}`)) {
               const _url = new URL(url);
               _url.searchParams.append(key, value);
@@ -585,6 +606,13 @@ export const apiCallAction = async ({
                 const el = iframeWindow?.document.querySelector(`
           input#${value.split(`valueOf_`)[1]}
         `) as HTMLInputElement;
+                value = el?.value ?? "";
+              }
+
+              if (value?.startsWith(`queryString_pass_`)) {
+                const el = iframeWindow?.document.querySelector(`
+          input#${value.split(`queryString_pass_`)[1]}
+          `) as HTMLInputElement;
                 value = el?.value ?? "";
               }
 

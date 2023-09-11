@@ -169,7 +169,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     if (queryToBindTo) {
       form.setFieldValue(
         `binds.typeKey_${queryToBindTo.queryKey}`,
-        `valueOf_${queryToBindTo.queryValue}`
+        `queryString_pass_${queryToBindTo.queryValue}`
       );
       queries.setFieldValue("param", queryToBindTo.param as string);
       setQueryToBindTo(undefined);
