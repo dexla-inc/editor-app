@@ -486,7 +486,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
               title="Error!"
               color="red"
             >
-              Add query string(s) to pages(s)
+              Add query string(s) to page
             </Alert>
           )}
           {feature === "Query Strings" && isQuerryError && (
