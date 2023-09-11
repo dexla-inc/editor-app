@@ -56,7 +56,7 @@ export default function SwaggerStep({
       throw new Error("Failed to create data source");
     }
 
-    setDataSource(result);
+    setDataSource && setDataSource(result);
     setEndpoints(result.changedEndpoints || []);
 
     nextStep();
