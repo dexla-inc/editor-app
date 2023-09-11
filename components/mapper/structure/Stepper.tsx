@@ -6,7 +6,7 @@ import { nanoid } from "nanoid";
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
   const stepperId = nanoid();
-  console.log(stepperId);
+
   return {
     id: nanoid(),
     name: "Container",

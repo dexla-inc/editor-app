@@ -4,7 +4,8 @@ import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import {
-    debouncedTreeComponentChildrenUpdate,
+  debouncedTreeComponentPropsUpdate,
+  debouncedTreeComponentChildrenUpdate,
 } from "@/utils/editor";
 import {
   ActionIcon,
