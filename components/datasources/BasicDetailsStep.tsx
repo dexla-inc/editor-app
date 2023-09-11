@@ -72,6 +72,9 @@ export default function BasicDetailsStep({
 
       form.validate();
 
+      console.log(values);
+      console.log(dataSource);
+
       if (!dataSource?.id) {
         throw new Error("Can't find data source");
       }
@@ -85,9 +88,10 @@ export default function BasicDetailsStep({
 
       setDataSource(result);
 
-      if (values.authenticationScheme === "BEARER") nextStep();
-      else {
+      if (values.authenticationScheme === "NONE") {
         nextStep();
+        nextStep();
+      } else {
         nextStep();
       }
 
@@ -96,8 +100,13 @@ export default function BasicDetailsStep({
         title: "Data Source Saved",
         message: "The data source was saved successfully",
       });
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      stopLoading({
+        id: "creating",
+        title: "Data Source Failed",
+        message: error,
+        isError: true,
+      });
     }
   };
 

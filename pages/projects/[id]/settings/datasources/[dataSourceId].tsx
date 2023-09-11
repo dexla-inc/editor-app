@@ -1,7 +1,7 @@
 import { SuccessAlert } from "@/components/Alerts";
 import { DashboardShell } from "@/components/DashboardShell";
 import {
-  AuthenticationStepParams,
+  AuthenticationBearerTokenParams,
   ExampleResponseDropdown,
   filterAndMapEndpoints,
   getAuthEndpoint,
@@ -133,7 +133,7 @@ export default function Settings() {
     }
   };
 
-  const apiAuthForm = useForm<AuthenticationStepParams>({
+  const apiAuthForm = useForm<AuthenticationBearerTokenParams>({
     validateInputOnBlur: true,
     initialValues: {
       loginEndpointId: undefined,
@@ -145,7 +145,7 @@ export default function Settings() {
     },
   });
 
-  const onApiAuthSubmit = async (values: AuthenticationStepParams) => {
+  const onApiAuthSubmit = async (values: AuthenticationBearerTokenParams) => {
     try {
       apiAuthForm.validate();
 
