@@ -191,7 +191,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     if (featureToBindTo) {
       form.setFieldValue(
         `binds.typeKey_${featureToBindTo.key}`,
-        `queryString_pass_${featureToBindTo.value}`
+        `valueOf_${featureToBindTo.value}`
       );
       queries.setFieldValue("param", featureToBindTo.param as string);
       setFeatureToBindTo(undefined);
@@ -213,8 +213,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     try {
       handleLoadingStart({ startLoading });
 
-      const { selectedQuery, selectQueryValue } = queries.values;
-
       updateActionInTree<LoginAction | APICallAction>({
         selectedComponentId: selectedComponentId!,
         componentActions,
@@ -223,7 +221,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
           endpoint: values.endpoint,
           showLoader: values.showLoader,
           datasource: dataSources.data!.results[0],
-          binds: { ...values.binds, [selectedQuery]: selectQueryValue },
+          binds: values.binds,
         },
         updateTreeComponentActions,
       });
