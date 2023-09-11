@@ -196,6 +196,8 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     try {
       handleLoadingStart({ startLoading });
 
+      const { selectedQuery, selectQueryValue } = queries.values;
+
       updateActionInTree<LoginAction | APICallAction>({
         selectedComponentId: selectedComponentId!,
         componentActions,
@@ -204,7 +206,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
           endpoint: values.endpoint,
           showLoader: values.showLoader,
           datasource: dataSources.data!.results[0],
-          binds: values.binds,
+          binds: { ...values.binds, [selectedQuery]: selectQueryValue },
         },
         updateTreeComponentActions,
       });
@@ -477,6 +479,15 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                 );
               })}
             </Stack>
+          )}
+          {feature === "Query Strings" && isQuerryError && (
+            <Alert
+              icon={<IconAlertCircle size="1rem" />}
+              title="Error!"
+              color="red"
+            >
+              Add query string(s) to pages(s)
+            </Alert>
           )}
           {feature === "Query Strings" && isQuerryError && (
             <Alert
