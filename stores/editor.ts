@@ -53,9 +53,9 @@ export type ComponentToBind = {
   index?: number;
 };
 
-export type QueryToBind = {
-  queryKey: string;
-  queryValue: string;
+export type FeatureToBind = {
+  key: string;
+  value: string;
   trigger: string;
   endpointId?: string;
   param?: string;
@@ -85,10 +85,10 @@ export type EditorState = {
     [key: string]: string;
   };
   copiedAction?: Action[];
-  queryToBind?: string;
-  queryToBindTo?: QueryToBind;
-  setQueryToBindTo: (querytoBindTo?: QueryToBind) => void;
-  setQueryToBind: (queryToBind?: string) => void;
+  featureToBind?: string;
+  featureToBindTo?: FeatureToBind;
+  setFeatureToBindTo: (featuretoBindTo?: FeatureToBind) => void;
+  setFeatureToBind: (featureToBind?: string) => void;
   setPickingComponentToBindTo: (
     pickingComponentToBindTo?: ComponentToBind
   ) => void;
@@ -172,8 +172,8 @@ export const useEditorStore = create<EditorState>()(
           set({ pickingComponentToBindFrom }),
         setPickingComponentToBindTo: (pickingComponentToBindTo) =>
           set({ pickingComponentToBindTo }),
-        setQueryToBind: (queryToBind) => set({ queryToBind }),
-        setQueryToBindTo: (queryToBindTo) => set({ queryToBindTo }),
+        setFeatureToBind: (featureToBind) => set({ featureToBind }),
+        setFeatureToBindTo: (featureToBindTo) => set({ featureToBindTo }),
         setComponentToBind: (componentToBind) => set({ componentToBind }),
         setCopiedComponent: (copiedComponent) => set({ copiedComponent }),
         setTheme: (theme) => set({ theme }),

@@ -23,7 +23,6 @@ import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
 import {
   ActionIcon,
-  Alert,
   Box,
   Button,
   Flex,
@@ -35,15 +34,12 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import {
-  IconAlertCircle,
-  IconChevronDown,
-  IconCurrentLocation,
-} from "@tabler/icons-react";
+import { IconChevronDown, IconCurrentLocation } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { forwardRef, useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
+import { InformationAlert } from "../Alerts";
 
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, any>(
@@ -134,63 +130,79 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   const currentPage = useEditorStore((state) =>
     state.pages.find((page) => page.id === currentPageId)
   );
-  const currentPageQueries = currentPage?.queryStrings;
 
-  const queryStringsArray = Object.keys(
-    currentPageQueries as Record<string, string>
+  const featureToBindTo = useEditorStore((state) => state.featureToBindTo);
+  const setFeatureToBindTo = useEditorStore(
+    (state) => state.setFeatureToBindTo
   );
-  const isQueryEmpty = queryStringsArray.length === 0;
-
-  const queryToBindTo = useEditorStore((state) => state.queryToBindTo);
-  const setQueryToBindTo = useEditorStore((state) => state.setQueryToBindTo);
 
   const [selectedParam, setSelectedParam] = useState<string | undefined>(
     undefined
   );
   const [isFeaturesOpen, { toggle, close }] = useDisclosure(false);
   const [feature, setFeature] = useState<Feature>(null!);
-  const [isQuerryError, setIsQuerryError] = useState<boolean>(false);
+  const [isFeaturesArrayEmpty, setIsFeaturesArrayEmpty] =
+    useState<boolean>(true);
+  const [isFeatureError, setIsFeatureError] = useState<boolean>(false);
 
   const queries = useForm({
     initialValues: {
+      featuresObj: {} as Record<string, string>,
       keys: [] as string[],
-      selectedQuery: "",
+      selectedKey: "",
       feature: ["Query Strings", "Languages"] as Feature[],
-      selectQueryValue: "",
+      selectedValue: "",
       param: "",
     },
   });
 
-  useEffect(() => {
-    if (currentPageQueries !== undefined) {
-      const mappedQueryKeys = queryStringsArray;
-      queries.setFieldValue("keys", mappedQueryKeys);
+  const handleFeature = (featureItem: Feature) => {
+    setFeature(featureItem);
+    const featureWithoutSpaces = featureItem.replace(/\s+/g, "");
+    const feature =
+      featureWithoutSpaces.charAt(0).toLowerCase() +
+      featureWithoutSpaces.slice(1);
+    if (currentPage) {
+      if (Object.keys(currentPage).includes(feature)) {
+        const currentPageFeatures = currentPage[feature];
+        const featuresArray = Object.keys(currentPageFeatures);
+        const isFeaturesArrayEmpty = featuresArray.length === 0;
+        setIsFeaturesArrayEmpty(isFeaturesArrayEmpty);
+        if (isFeaturesArrayEmpty) {
+          setIsFeatureError(true);
+          close();
+        }
+        if (currentPageFeatures !== undefined && !isFeaturesArrayEmpty) {
+          queries.setFieldValue("keys", featuresArray);
+          queries.setFieldValue("featuresObj", currentPageFeatures);
+        }
+      } else {
+        setIsFeatureError(true);
+      }
     }
-    if (queryToBindTo) {
+  };
+
+  useEffect(() => {
+    if (featureToBindTo) {
       form.setFieldValue(
-        `binds.typeKey_${queryToBindTo.queryKey}`,
-        `queryString_pass_${queryToBindTo.queryValue}`
+        `binds.typeKey_${featureToBindTo.key}`,
+        `queryString_pass_${featureToBindTo.value}`
       );
-      queries.setFieldValue("param", queryToBindTo.param as string);
-      setQueryToBindTo(undefined);
+      queries.setFieldValue("param", featureToBindTo.param as string);
+      setFeatureToBindTo(undefined);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, currentPageQueries, queryToBindTo]);
+  }, [featureToBindTo]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      isQuerryError && setIsQuerryError(false);
+      isFeatureError && setIsFeatureError(false);
     }, 5000);
 
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [feature, isQuerryError]);
-
-  const handleFeature = (featureItem: Feature) => {
-    setFeature(featureItem);
-    isQueryEmpty && setIsQuerryError(true);
-  };
+  }, [feature, isFeatureError]);
 
   const onSubmit = (values: FormValues) => {
     try {
@@ -353,7 +365,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                 const itemProps =
                   param.name === queries.values.param
                     ? form.getInputProps(
-                        `binds.typeKey_${queries.values.selectedQuery}`
+                        `binds.typeKey_${queries.values.selectedKey}`
                       )
                     : form.getInputProps(`binds.${param.name}`);
 
@@ -430,47 +442,38 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                             ))}
                           </Stack>
                         </Popover.Target>
-                        {!isQueryEmpty && (
+                        {!isFeaturesArrayEmpty && (
                           <Popover.Dropdown>
-                            {feature === "Query Strings" && (
-                              <Stack>
-                                {queries.values.keys.map((value) => (
-                                  <Text
-                                    fz="sm"
-                                    sx={{ cursor: "pointer" }}
-                                    onClick={() => {
-                                      const queryValue = (
-                                        currentPageQueries as Record<
-                                          string,
-                                          string
-                                        >
-                                      )[value];
-                                      setQueryToBindTo({
-                                        queryKey: value,
-                                        queryValue,
-                                        trigger: action.trigger,
-                                        endpointId: selectedEndpoint.id,
-                                        param: param.name,
-                                        bindedId:
-                                          form.values.binds?.[param.name] ?? "",
-                                      });
-                                      queries.setFieldValue(
-                                        "selectedQuery",
-                                        value
-                                      );
-                                      queries.setFieldValue(
-                                        "selectQueryValue",
-                                        queryValue
-                                      );
-                                      close();
-                                    }}
-                                    key={value}
-                                  >
-                                    {value}
-                                  </Text>
-                                ))}
-                              </Stack>
-                            )}
+                            <Stack>
+                              {queries.values.keys.map((value) => (
+                                <Text
+                                  fz="sm"
+                                  sx={{ cursor: "pointer" }}
+                                  onClick={() => {
+                                    const featureValue =
+                                      queries.values.featuresObj[value];
+                                    setFeatureToBindTo({
+                                      key: value,
+                                      value: featureValue,
+                                      trigger: action.trigger,
+                                      endpointId: selectedEndpoint.id,
+                                      param: param.name,
+                                      bindedId:
+                                        form.values.binds?.[param.name] ?? "",
+                                    });
+                                    queries.setFieldValue("selectedKey", value);
+                                    queries.setFieldValue(
+                                      "selectedValue",
+                                      featureValue
+                                    );
+                                    close();
+                                  }}
+                                  key={value}
+                                >
+                                  {value}
+                                </Text>
+                              ))}
+                            </Stack>
                           </Popover.Dropdown>
                         )}
                       </Popover>
@@ -480,23 +483,11 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
               })}
             </Stack>
           )}
-          {feature === "Query Strings" && isQuerryError && (
-            <Alert
-              icon={<IconAlertCircle size="1rem" />}
-              title="Error!"
-              color="red"
-            >
-              Add query string(s) to page
-            </Alert>
-          )}
-          {feature === "Query Strings" && isQuerryError && (
-            <Alert
-              icon={<IconAlertCircle size="1rem" />}
-              title="Error!"
-              color="red"
-            >
-              Add query string(s) to pages(s)
-            </Alert>
+          {isFeatureError && (
+            <InformationAlert
+              title="Empty strings!"
+              text={`add ${feature.toLowerCase()} to page`}
+            />
           )}
           <ActionButtons
             actionId={id}
