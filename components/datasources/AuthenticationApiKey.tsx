@@ -1,0 +1,112 @@
+import { updateDataSource } from "@/requests/datasources/mutations";
+import { DataSourceParams } from "@/requests/datasources/types";
+import { DataSourceStepperProps } from "@/utils/dashboardTypes";
+import { Divider, Group, Stack, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useRouter } from "next/router";
+import BackButton from "../BackButton";
+import NextButton from "../NextButton";
+
+interface AuthenticationStepProps extends DataSourceStepperProps {
+  accessToken: string | null;
+  setAccessToken: (accessToken: string | null) => void;
+}
+
+export default function AuthenticationApiKey({
+  prevStep,
+  nextStep,
+  isLoading,
+  setIsLoading,
+  startLoading,
+  stopLoading,
+  dataSource,
+  accessToken,
+  setAccessToken,
+}: AuthenticationStepProps) {
+  const router = useRouter();
+  const projectId = router.query.id as string;
+
+  const form = useForm<DataSourceParams>({
+    validateInputOnBlur: true,
+    initialValues: {
+      authValue: undefined,
+    },
+    validate: {
+      authValue: (value) =>
+        value === "" ? "You must provide an API key" : null,
+    },
+  });
+
+  const onSubmit = async (values: DataSourceParams) => {
+    try {
+      if (Object.keys(form.errors).length > 0) {
+        console.log("Errors: " + form.errors);
+        return;
+      }
+
+      if (!dataSource?.id) {
+        throw new Error("Can't find data source");
+      }
+
+      form.validate();
+
+      startLoading({
+        id: "updating",
+        title: "Updating Data Source",
+        message: "Wait while your data source is being saved",
+      });
+
+      setIsLoading && setIsLoading(true);
+
+      const mergedDataSource = { ...dataSource, ...values };
+
+      console.log(mergedDataSource);
+
+      await updateDataSource(projectId, dataSource.id, false, mergedDataSource);
+
+      nextStep();
+
+      stopLoading({
+        id: "updating",
+        title: "Data Source Saved",
+        message: "The data source was saved successfully",
+      });
+      setIsLoading && setIsLoading(false);
+    } catch (error: any) {
+      console.log(error);
+      stopLoading({
+        id: "updating",
+        title: "Data Source Failed",
+        message: error,
+        isError: true,
+      });
+      setIsLoading && setIsLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={form.onSubmit(onSubmit)}>
+      <Stack pb={100}>
+        <TextInput
+          label="API Key"
+          description="The key used to authenticate to the API"
+          placeholder="aa982f3c39b17...."
+          {...form.getInputProps("authValue")}
+          onChange={(e) => {
+            form.setFieldValue("authValue", e.target.value);
+            setAccessToken(e.target.value);
+          }}
+        />
+        <Divider></Divider>
+        <Group position="apart">
+          <BackButton onClick={prevStep}></BackButton>
+          <NextButton
+            isLoading={isLoading}
+            disabled={isLoading}
+            isSubmit={true}
+          ></NextButton>
+        </Group>
+      </Stack>
+    </form>
+  );
+}

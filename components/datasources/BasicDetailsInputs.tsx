@@ -1,4 +1,7 @@
-import { DataSourceParams } from "@/requests/datasources/types";
+import {
+  AuthenticationSchemes,
+  DataSourceParams,
+} from "@/requests/datasources/types";
 import { isWebsite } from "@/utils/dashboardTypes";
 import { Select, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
@@ -29,8 +32,10 @@ export const BasicDetailsInputs = ({
   setAuthenticationScheme,
 }: {
   form: UseFormReturnType<DataSourceParams>;
-  authenticationScheme?: string;
-  setAuthenticationScheme?: (value: string) => void;
+  authenticationScheme?: AuthenticationSchemes | null;
+  setAuthenticationScheme: (
+    authenticationScheme: AuthenticationSchemes | null
+  ) => void;
 }) => {
   return (
     <>
@@ -60,17 +65,21 @@ export const BasicDetailsInputs = ({
         label="Authentication Scheme"
         description="The scheme used to authenticate endpoints"
         placeholder="Select an authentication scheme"
-        value={authenticationScheme}
-        onChange={(value) => {
-          form.setFieldValue("authenticationScheme", value as string);
-          setAuthenticationScheme && setAuthenticationScheme(value as string);
-        }}
         data={[
           { value: "NONE", label: "None" },
           { value: "BEARER", label: "Bearer" },
           { value: "BASIC", label: "Basic" },
           { value: "API_KEY", label: "API Key" },
         ]}
+        {...form.getInputProps("authenticationScheme")}
+        onChange={(value) => {
+          form.setFieldValue(
+            "authenticationScheme",
+            value as AuthenticationSchemes
+          );
+          setAuthenticationScheme &&
+            setAuthenticationScheme(value as AuthenticationSchemes);
+        }}
       />
     </>
   );

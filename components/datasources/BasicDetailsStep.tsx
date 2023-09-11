@@ -7,6 +7,7 @@ import {
 import NextButton from "@/components/NextButton";
 import { updateDataSource } from "@/requests/datasources/mutations";
 import {
+  AuthenticationSchemes,
   DataSourceParams,
   DataSourceResponse,
 } from "@/requests/datasources/types";
@@ -19,7 +20,6 @@ import {
 import { Divider, Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
-import { useState } from "react";
 
 export interface BasicDetailsStepProps
   extends LoadingStore,
@@ -27,6 +27,10 @@ export interface BasicDetailsStepProps
     PreviousStepperClickEvent {
   dataSource: DataSourceResponse;
   setDataSource: (dataSource: DataSourceResponse) => void;
+  authenticationScheme?: AuthenticationSchemes | null;
+  setAuthenticationScheme: (
+    authenticationScheme: AuthenticationSchemes | null
+  ) => void;
 }
 
 export default function BasicDetailsStep({
@@ -37,12 +41,14 @@ export default function BasicDetailsStep({
   stopLoading,
   dataSource,
   setDataSource,
+  authenticationScheme,
+  setAuthenticationScheme,
 }: BasicDetailsStepProps) {
   const router = useRouter();
   const projectId = router.query.id as string;
-  const [authenticationScheme, setAuthenticationScheme] = useState<string>(
-    dataSource?.authenticationScheme
-  );
+  if (dataSource?.authenticationScheme) {
+    setAuthenticationScheme(dataSource?.authenticationScheme);
+  }
 
   const form = useForm<DataSourceParams>({
     initialValues: {
@@ -72,6 +78,9 @@ export default function BasicDetailsStep({
 
       form.validate();
 
+      console.log(values);
+      console.log(dataSource);
+
       if (!dataSource?.id) {
         throw new Error("Can't find data source");
       }
@@ -85,9 +94,10 @@ export default function BasicDetailsStep({
 
       setDataSource(result);
 
-      if (values.authenticationScheme === "BEARER") nextStep();
-      else {
+      if (values.authenticationScheme === "NONE") {
         nextStep();
+        nextStep();
+      } else {
         nextStep();
       }
 
@@ -96,8 +106,13 @@ export default function BasicDetailsStep({
         title: "Data Source Saved",
         message: "The data source was saved successfully",
       });
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      stopLoading({
+        id: "creating",
+        title: "Data Source Failed",
+        message: error,
+        isError: true,
+      });
     }
   };
 

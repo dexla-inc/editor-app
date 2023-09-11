@@ -50,7 +50,7 @@ export function isSwaggerFile(url: string) {
 
 type DataSourceSettingsProps = {
   dataSource: DataSourceResponse | undefined;
-  setDataSource: (dataSource: DataSourceResponse) => void;
+  setDataSource?: (dataSource: DataSourceResponse) => void;
 };
 
 export interface DataSourceStepperProps

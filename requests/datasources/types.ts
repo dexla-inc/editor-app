@@ -20,16 +20,17 @@ export type SwaggerParams = { swaggerUrl: string };
 
 export type DataSourceParams = {
   name?: string;
-  authenticationScheme?: string;
+  authenticationScheme?: AuthenticationSchemes;
   environment?: string;
   baseUrl?: string;
   swaggerUrl?: string;
+  authValue?: string;
 };
 
 export interface DataSourceResponse {
   id: string;
   name: string;
-  authenticationScheme: string;
+  authenticationScheme: AuthenticationSchemes;
   environment: string;
   baseUrl: string;
   swaggerUrl: string;
@@ -38,6 +39,7 @@ export interface DataSourceResponse {
   isTested: boolean;
   changedEndpoints?: Endpoint[];
   deletedEndpoints?: Endpoint[];
+  authValue?: string;
 }
 
 export interface ErrorResponse extends Error {
@@ -107,6 +109,15 @@ export type ExampleResponse = {
 };
 
 export type AuthenticationSchemes = "NONE" | "BEARER" | "BASIC" | "API_KEY";
+
+// Copilot create authentication scheme object for AuthenticationSchemes and friendly labels
+export const AuthenticationSchemeLabels: Record<AuthenticationSchemes, string> =
+  {
+    NONE: "No Authentication",
+    BEARER: "Bearer Token",
+    BASIC: "Basic Auth",
+    API_KEY: "API Key",
+  };
 
 export type DataSourceAuthResponse = {
   type: AuthenticationSchemes;
