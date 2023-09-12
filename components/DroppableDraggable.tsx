@@ -3,7 +3,7 @@ import { useDroppable } from "@/hooks/useDroppable";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useOnDrop } from "@/hooks/useOnDrop";
 import { useEditorStore } from "@/stores/editor";
-import { Action, actionMapper } from "@/utils/actions";
+import { Action, actionMapper, ActionTrigger } from "@/utils/actions";
 import { structureMapper } from "@/utils/componentMapper";
 import { DROP_INDICATOR_WIDTH, ICON_SIZE } from "@/utils/config";
 import {
@@ -122,28 +122,28 @@ export const DroppableDraggable = ({
     (action: Action) => action.trigger === "onError"
   );
 
-  const triggers = actions
-    .filter(
-      (action: Action) => !nonDefaultActionTriggers.includes(action.trigger)
-    )
-    .reduce((triggers: object, action: Action) => {
-      return {
-        ...triggers,
-        [action.trigger]: (e: any) =>
-          actionMapper[action.action.name].action({
-            // @ts-ignore
-            action: action.action,
-            actionId: action.id,
-            router: router as Router,
-            event: e,
-            onSuccess: onSuccessActions.find(
-              (sa) => sa.sequentialTo === action.id
-            ),
-            onError: onErrorActions.find((ea) => ea.sequentialTo === action.id),
-            component,
-          }),
-      };
-    }, {});
+  const triggers = actions.reduce((acc, action: Action) => {
+    if (nonDefaultActionTriggers.includes(action.trigger)) {
+      return acc;
+    }
+
+    return {
+      ...acc,
+      [action.trigger]: (e: any) =>
+        actionMapper[action.action.name].action({
+          // @ts-ignore
+          action: action.action,
+          actionId: action.id,
+          router: router as Router,
+          event: e,
+          onSuccess: onSuccessActions.find(
+            (sa) => sa.sequentialTo === action.id
+          ),
+          onError: onErrorActions.find((ea) => ea.sequentialTo === action.id),
+          component,
+        }),
+    };
+  }, {} as Record<ActionTrigger, any>);
 
   useEffect(() => {
     if (
@@ -307,7 +307,9 @@ export const DroppableDraggable = ({
         },
       }}
       onClick={(e) => {
-        e.preventDefault();
+        if (!isPreviewMode) {
+          e.preventDefault();
+        }
         e.stopPropagation();
         if (isPicking && !isPreviewMode) {
           if (canBePickedAndUserIsPicking) {
