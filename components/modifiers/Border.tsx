@@ -2,7 +2,7 @@ import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { UnitInput } from "@/components/UnitInput";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { useEditorStore } from "@/stores/editor";
-import { getComponentById, debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeUpdate } from "@/utils/editor";
 import { Group, SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {

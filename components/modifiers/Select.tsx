@@ -24,6 +24,10 @@ export const defaultSelectValues = {
     { label: "Option 1", value: "option-1" },
     { label: "Option 2", value: "option-2" },
   ],
+  exampleData: [
+    { label: "Option 1", value: "option-1" },
+    { label: "Option 2", value: "option-2" },
+  ],
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
