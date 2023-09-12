@@ -15,8 +15,16 @@ export type NextStepperClickEvent = {
   nextStep: () => void;
 };
 
+export type NextStepperOptionalClickEvent = {
+  nextStep?: () => void;
+};
+
 export type PreviousStepperClickEvent = {
   prevStep: () => void;
+};
+
+export type PreviousStepperOptionalClickEvent = {
+  prevStep?: () => void;
 };
 
 export type LoadingStore = {
@@ -56,8 +64,8 @@ type DataSourceSettingsProps = {
 export interface DataSourceStepperProps
   extends DataSourceSettingsProps,
     LoadingStore,
-    NextStepperClickEvent,
-    PreviousStepperClickEvent {}
+    NextStepperOptionalClickEvent,
+    PreviousStepperOptionalClickEvent {}
 
 export interface DataSourceStepperWithoutPreviousProps
   extends DataSourceSettingsProps,

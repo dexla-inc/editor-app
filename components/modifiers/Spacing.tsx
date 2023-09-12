@@ -1,10 +1,10 @@
+import { SpacingControl } from "@/components/modifiers/SpacingControl";
 import { useEditorStore } from "@/stores/editor";
 import { getComponentById } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconBoxModel2 } from "@tabler/icons-react";
 import { useEffect } from "react";
-import { SpacingControl } from "./SpacingControl";
 
 export const icon = IconBoxModel2;
 export const label = "Spacing";

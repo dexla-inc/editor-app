@@ -1,8 +1,8 @@
+import { defaultBorderValues } from "@/components/modifiers/Border";
 import { structureMapper } from "@/utils/componentMapper";
 import { Component, traverseComponents } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
-import { defaultBorderValues } from "../modifiers/Border";
 
 type ChartProps = { series: { name: string; data: number[] }[] };
 type XAxisProps = { xaxis: { categories: string[] } };

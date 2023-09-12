@@ -1,9 +1,9 @@
+import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
 import { Action } from "@/utils/actions";
 import { Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
-import { Icon } from "../Icon";
 
 type Props = {
   actionId: string;
