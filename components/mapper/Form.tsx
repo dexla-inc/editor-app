@@ -6,7 +6,7 @@ import { FormEvent, memo } from "react";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-  isPreviewMode: boolean;
+  isPreviewMode?: boolean;
 } & FlexProps;
 
 const FormComponent = ({ renderTree, component, ...props }: Props) => {
