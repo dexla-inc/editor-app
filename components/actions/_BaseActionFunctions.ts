@@ -31,18 +31,14 @@ export const handleLoadingStart = ({
 export const handleLoadingStop = ({
   stopLoading,
   success = true,
-  isFeature = false,
 }: { stopLoading: (loading: any) => void } & {
   success?: boolean;
-  isFeature?: boolean;
 }) => {
   stopLoading({
     id: "saving-action",
     title: success ? "Action Saved" : "Failed",
     message: success
       ? "Your changes were saved successfully"
-      : !isFeature
-      ? "Add query string to action"
       : "Oops, something went wrong while saving your changes",
     isError: !success,
   });

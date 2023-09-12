@@ -417,11 +417,21 @@ export const loginAction = async ({
     const url =
       keys.length > 0
         ? keys.reduce((url: string, key: string) => {
+            key.startsWith("type_key_")
+              ? (key = key.split(`type_Key_`)[1])
+              : key;
             let value = action.binds?.[key] as string;
 
             if (value?.startsWith(`valueOf_`)) {
               const el = iframeWindow?.document.querySelector(`
           input#${value.split(`valueOf_`)[1]}
+          `) as HTMLInputElement;
+              value = el?.value ?? "";
+            }
+
+            if (value?.startsWith(`queryString_pass_`)) {
+              const el = iframeWindow?.document.querySelector(`
+          input#${value.split(`queryString_pass_`)[1]}
           `) as HTMLInputElement;
               value = el?.value ?? "";
             }
@@ -440,6 +450,13 @@ export const loginAction = async ({
                 const el = iframeWindow?.document.querySelector(`
           input#${value.split(`valueOf_`)[1]}
         `) as HTMLInputElement;
+                value = el?.value ?? "";
+              }
+
+              if (value?.startsWith(`queryString_pass_`)) {
+                const el = iframeWindow?.document.querySelector(`
+          input#${value.split(`queryString_pass_`)[1]}
+          `) as HTMLInputElement;
                 value = el?.value ?? "";
               }
 
@@ -554,6 +571,9 @@ export const apiCallAction = async ({
     const url =
       keys.length > 0
         ? keys.reduce((url: string, key: string) => {
+            key.startsWith("type_Key_")
+              ? (key = key.split(`type_key_`)[1])
+              : key;
             // @ts-ignore
             let value = action.binds[key] as string;
 
@@ -561,6 +581,13 @@ export const apiCallAction = async ({
               const el = iframeWindow?.document.querySelector(`
           input#${value.split(`valueOf_`)[1]}
         `) as HTMLInputElement;
+              value = el?.value ?? "";
+            }
+
+            if (value?.startsWith(`queryString_pass_`)) {
+              const el = iframeWindow?.document.querySelector(`
+          input#${value.split(`queryString_pass_`)[1]}
+          `) as HTMLInputElement;
               value = el?.value ?? "";
             }
 
@@ -585,6 +612,13 @@ export const apiCallAction = async ({
                 const el = iframeWindow?.document.querySelector(`
           input#${value.split(`valueOf_`)[1]}
         `) as HTMLInputElement;
+                value = el?.value ?? "";
+              }
+
+              if (value?.startsWith(`queryString_pass_`)) {
+                const el = iframeWindow?.document.querySelector(`
+          input#${value.split(`queryString_pass_`)[1]}
+          `) as HTMLInputElement;
                 value = el?.value ?? "";
               }
 

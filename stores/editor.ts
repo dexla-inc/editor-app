@@ -53,6 +53,16 @@ export type ComponentToBind = {
   index?: number;
 };
 
+export type FeatureToBind = {
+  key: string;
+  value: string;
+  trigger: string;
+  endpointId?: string;
+  param?: string;
+  bindedId?: string;
+  index?: number;
+};
+
 export type EditorState = {
   tree: EditorTree;
   currentProjectId?: string;
@@ -75,6 +85,10 @@ export type EditorState = {
     [key: string]: string;
   };
   copiedAction?: Action[];
+  featureToBind?: string;
+  featureToBindTo?: FeatureToBind;
+  setFeatureToBindTo: (featuretoBindTo?: FeatureToBind) => void;
+  setFeatureToBind: (featureToBind?: string) => void;
   setPickingComponentToBindTo: (
     pickingComponentToBindTo?: ComponentToBind
   ) => void;
@@ -158,6 +172,8 @@ export const useEditorStore = create<EditorState>()(
           set({ pickingComponentToBindFrom }),
         setPickingComponentToBindTo: (pickingComponentToBindTo) =>
           set({ pickingComponentToBindTo }),
+        setFeatureToBind: (featureToBind) => set({ featureToBind }),
+        setFeatureToBindTo: (featureToBindTo) => set({ featureToBindTo }),
         setComponentToBind: (componentToBind) => set({ componentToBind }),
         setCopiedComponent: (copiedComponent) => set({ copiedComponent }),
         setTheme: (theme) => set({ theme }),
