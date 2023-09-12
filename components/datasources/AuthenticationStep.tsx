@@ -101,7 +101,6 @@ export default function AuthenticationStep({
           startLoading={startLoading}
           stopLoading={stopLoading}
           dataSource={dataSource}
-          accessToken={accessToken}
           setAccessToken={setAccessToken}
         />
       )}
