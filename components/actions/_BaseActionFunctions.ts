@@ -31,7 +31,9 @@ export const handleLoadingStart = ({
 export const handleLoadingStop = ({
   stopLoading,
   success = true,
-}: { stopLoading: (loading: any) => void } & { success?: boolean }) => {
+}: { stopLoading: (loading: any) => void } & {
+  success?: boolean;
+}) => {
   stopLoading({
     id: "saving-action",
     title: success ? "Action Saved" : "Failed",

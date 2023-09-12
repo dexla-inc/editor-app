@@ -1,7 +1,7 @@
 import { SuccessAlert } from "@/components/Alerts";
 import { DashboardShell } from "@/components/DashboardShell";
 import {
-  AuthenticationStepParams,
+  AuthenticationBearerTokenParams,
   ExampleResponseDropdown,
   filterAndMapEndpoints,
   getAuthEndpoint,
@@ -31,6 +31,7 @@ import {
   getSwagger,
 } from "@/requests/datasources/queries";
 import {
+  AuthenticationSchemes,
   DataSourceParams,
   DataSourceResponse,
   Endpoint,
@@ -76,7 +77,8 @@ export default function Settings() {
     undefined
   );
 
-  const [authenticationScheme, setAuthenticationScheme] = useState<string>("");
+  const [authenticationScheme, setAuthenticationScheme] =
+    useState<AuthenticationSchemes | null>(null);
   const [swaggerUrl, setSwaggerUrl] = useState<string>("");
   const [swaggerRefetched, setSwaggerRefetched] = useState<boolean>(false);
   const [loginEndpointId, setLoginEndpointId] = useState<string | undefined>(
@@ -133,7 +135,7 @@ export default function Settings() {
     }
   };
 
-  const apiAuthForm = useForm<AuthenticationStepParams>({
+  const apiAuthForm = useForm<AuthenticationBearerTokenParams>({
     validateInputOnBlur: true,
     initialValues: {
       loginEndpointId: undefined,
@@ -145,7 +147,7 @@ export default function Settings() {
     },
   });
 
-  const onApiAuthSubmit = async (values: AuthenticationStepParams) => {
+  const onApiAuthSubmit = async (values: AuthenticationBearerTokenParams) => {
     try {
       apiAuthForm.validate();
 

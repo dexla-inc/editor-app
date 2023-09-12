@@ -33,6 +33,7 @@ import {
 import cloneDeep from "lodash.clonedeep";
 import { Router, useRouter } from "next/router";
 import { Fragment, PropsWithChildren, cloneElement, useEffect } from "react";
+import merge from "lodash.merge";
 
 type Props = {
   id: string;
@@ -106,6 +107,7 @@ export const DroppableDraggable = ({
   const currentTreeComponentsStates = useEditorStore(
     (state) => state.currentTreeComponentsStates
   );
+  const language = useEditorStore((state) => state.language);
 
   const actions: Action[] = component.actions ?? [];
   const onMountAction: Action | undefined = actions.find(
@@ -237,14 +239,11 @@ export const DroppableDraggable = ({
     }, {} as Record<string, unknown>),
   };
 
-  const isModal = component.name === "Modal";
   const hasTooltip = !!component.props?.tooltip;
   const ComponentWrapper = hasTooltip ? Tooltip : Fragment;
 
   const currentState =
     currentTreeComponentsStates?.[component.id!] ?? "default";
-
-  const isDefaultState = currentState === "default";
   const hoverStateFunc = () => {
     if (currentState !== "hover") {
       setTreeComponentCurrentState(component.id!, "hover");
@@ -259,38 +258,29 @@ export const DroppableDraggable = ({
   const isWidthPercentage = component.props?.style?.width?.endsWith("%");
   const isHeightPercentage = component.props?.style?.height?.endsWith("%");
 
-  const propsWithOverwrites = {
-    ...component.props,
-    ...(isDefaultState ? {} : component.states?.[currentState] ?? {}),
-    ...(isModal
-      ? {
-          style: {
-            ...(isDefaultState
-              ? component.props?.style ?? {}
-              : component.states?.[currentState].props ?? {}),
-            ...shadows,
-          },
-        }
-      : {}),
-    ...{
+  const propsWithOverwrites = merge(
+    {},
+    component.props,
+    component.languages?.[language],
+    component.states?.[currentState],
+    {
       style: {
-        ...component?.props?.style,
         width: isWidthPercentage ? "100%" : component.props?.style?.width,
         height: isHeightPercentage ? "100%" : component.props?.style?.height,
         position: "static",
       },
-    },
-    disabled:
-      component.props?.disabled ??
-      (currentState === "disabled" && !!component.states?.disabled),
-    triggers: isPreviewMode
-      ? {
-          ...triggers,
-          onMouseEnter: triggers?.onHover ?? hoverStateFunc,
-          onMouseLeave: leaveHoverStateFunc,
-        }
-      : {},
-  };
+      disabled:
+        component.props?.disabled ??
+        (currentState === "disabled" && !!component.states?.disabled),
+      triggers: isPreviewMode
+        ? {
+            ...triggers,
+            onMouseEnter: triggers?.onHover ?? hoverStateFunc,
+            onMouseLeave: leaveHoverStateFunc,
+          }
+        : {},
+    }
+  );
 
   return (
     <Box

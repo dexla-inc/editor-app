@@ -3,32 +3,19 @@ import { useEditorStore } from "@/stores/editor";
 import {
   debouncedTreeComponentPropsUpdate,
   debouncedTreeUpdate,
-  getComponentById,
 } from "@/utils/editor";
 import { Select, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconH1 } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { withModifier } from "@/hoc/withModifier";
+import { pick } from "next/dist/lib/pick";
 
 export const icon = IconH1;
 export const label = "Title";
 
-export const Modifier = () => {
+export const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useEditorStore((state) => state.theme);
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-  const currentTreeComponentsStates = useEditorStore(
-    (state) => state.currentTreeComponentsStates
-  );
-
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string
-  );
-
-  const componentProps = selectedComponent?.props || {};
 
   const form = useForm({
     initialValues: {
@@ -39,34 +26,22 @@ export const Modifier = () => {
   });
 
   useEffect(() => {
-    if (selectedComponentId) {
-      const { children = "", order, color } = componentProps;
-
-      let data = {
-        value: children,
-        order,
-        color,
-      };
-
-      const currentState =
-        currentTreeComponentsStates?.[selectedComponentId] ?? "default";
-
-      if (currentState !== "default") {
-        data = {
-          ...data,
-          ...(selectedComponent?.states?.[currentState] ?? {}),
-        };
-      }
+    if (selectedComponent?.id) {
+      const data = pick(selectedComponent.props!, [
+        "children",
+        "order",
+        "color",
+      ]);
 
       form.setValues({
-        value: data.value,
+        value: data.children,
         order: data.order?.toString() ?? "1",
         color: data.color ?? "Black.6",
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponent]);
 
   return (
     <form>
@@ -97,7 +72,7 @@ export const Modifier = () => {
             // @ts-ignore
             const size = theme.headings.sizes[`h${value}`];
             form.setFieldValue("order", value as string);
-            debouncedTreeUpdate(selectedComponentId as string, {
+            debouncedTreeUpdate(selectedComponent?.id as string, {
               order: parseInt(value as string, 10),
               style: {
                 fontSize: size.fontSize,
@@ -117,4 +92,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});

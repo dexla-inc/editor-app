@@ -1,12 +1,10 @@
-import { useEditorStore } from "@/stores/editor";
-import {
-  debouncedTreeComponentPropsUpdate,
-  getComponentById,
-} from "@/utils/editor";
+import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { SegmentedControl, Stack, Text, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutSidebarLeftCollapse } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { withModifier } from "@/hoc/withModifier";
+import { pick } from "next/dist/lib/pick";
 
 export const icon = IconLayoutSidebarLeftCollapse;
 export const label = "Drawer";
@@ -16,18 +14,7 @@ export const defaultDrawerValues = {
   position: "left",
 };
 
-export const Modifier = () => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string
-  );
-
-  const componentProps = selectedComponent?.props || {};
-
+export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: {
       title: defaultDrawerValues.title,
@@ -36,17 +23,17 @@ export const Modifier = () => {
   });
 
   useEffect(() => {
-    if (selectedComponentId) {
-      const { title, position } = componentProps;
+    if (selectedComponent?.id) {
+      const data = pick(selectedComponent.props!, ["title", "position"]);
 
       form.setValues({
-        title: title ?? defaultDrawerValues.title,
-        position: position ?? defaultDrawerValues.position,
+        title: data.title ?? defaultDrawerValues.title,
+        position: data.position ?? defaultDrawerValues.position,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponent]);
 
   return (
     <form>
@@ -83,4 +70,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});

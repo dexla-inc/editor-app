@@ -1,14 +1,12 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
-import { useEditorStore } from "@/stores/editor";
-import {
-  debouncedTreeComponentPropsUpdate,
-  getComponentById,
-} from "@/utils/editor";
-import { Checkbox, Stack } from "@mantine/core";
+import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
+import { Checkbox, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconCheckbox } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { pick } from "next/dist/lib/pick";
+import { withModifier } from "@/hoc/withModifier";
 
 export const icon = IconCheckbox;
 export const label = "Checkbox";
@@ -21,52 +19,41 @@ export const defaultInputValues = {
   labelSpacing: "0",
 };
 
-export const Modifier = () => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string
-  );
-
-  const componentProps = selectedComponent?.props || {};
-
+export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: defaultInputValues,
   });
 
   useEffect(() => {
-    if (selectedComponentId) {
-      const {
-        style = {},
-        label,
-        size,
-        withAsterisk,
-        checked,
-        labelProps = {},
-      } = componentProps;
+    if (selectedComponent?.id) {
+      const data = pick(selectedComponent.props!, [
+        "style",
+        "label",
+        "size",
+        "withAsterisk",
+        "checked",
+        "labelProps",
+      ]);
 
       form.setValues({
-        size: size ?? defaultInputValues.size,
-        label: label ?? defaultInputValues.label,
-        withAsterisk: withAsterisk ?? defaultInputValues.withAsterisk,
-        checked: checked ?? defaultInputValues.checked,
+        size: data.size ?? defaultInputValues.size,
+        label: data.label ?? defaultInputValues.label,
+        withAsterisk: data.withAsterisk ?? defaultInputValues.withAsterisk,
+        checked: data.checked ?? defaultInputValues.checked,
         labelProps:
-          labelProps.style?.marginBottom ?? defaultInputValues.labelSpacing,
-        ...style,
+          data.labelProps?.style?.marginBottom ??
+          defaultInputValues.labelSpacing,
+        ...data.style,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponent]);
 
   return (
     <form>
       <Stack spacing="xs">
-        <Checkbox
+        <TextInput
           label="Label"
           size="xs"
           {...form.getInputProps("label")}
@@ -118,4 +105,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});

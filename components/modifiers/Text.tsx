@@ -1,81 +1,52 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { UnitInput } from "@/components/UnitInput";
-import { useEditorStore } from "@/stores/editor";
-import {
-  debouncedTreeComponentPropsUpdate,
-  getComponentById,
-} from "@/utils/editor";
+import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { Group, Select, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTextSize } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { withModifier } from "@/hoc/withModifier";
+import { pick } from "next/dist/lib/pick";
 
 export const icon = IconTextSize;
 export const label = "Text";
 
-export const Modifier = () => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
-  );
-  const currentTreeComponentsStates = useEditorStore(
-    (state) => state.currentTreeComponentsStates
-  );
+export const defaultInputValues = {
+  value: "New Text",
+  size: "md",
+  weight: "normal",
+  color: "Black.6",
+  lineHeight: "",
+  letterSpacing: "",
+};
 
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string
-  );
-
-  const componentProps = selectedComponent?.props || {};
-
+export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
-    initialValues: {
-      value: "",
-      fontSize: "md",
-      fontWeight: "",
-      lineHeight: "",
-      letterSpacing: "",
-      color: "Black.6",
-    },
+    initialValues: defaultInputValues,
   });
 
   useEffect(() => {
-    if (selectedComponentId) {
-      const { children = "", style = {}, color } = componentProps;
-
-      let data: any = {
-        value: children,
-        color,
-      };
-
-      const currentState =
-        currentTreeComponentsStates?.[selectedComponentId] ?? "default";
-
-      if (currentState !== "default") {
-        data = {
-          ...data,
-          ...(selectedComponent?.states?.[currentState] ?? {}),
-          style: {
-            ...style,
-            ...(selectedComponent?.states?.[currentState].style ?? {}),
-          },
-        };
-      }
+    if (selectedComponent?.id) {
+      const data = pick(selectedComponent.props!, [
+        "children",
+        "style",
+        "color",
+        "size",
+        "weight",
+      ]);
 
       form.setValues({
-        value: data.value,
-        color: data.color ?? "Black.6",
+        value: data.children ?? defaultInputValues.value,
+        color: data.color ?? defaultInputValues.color,
+        size: data.size ?? defaultInputValues.size,
+        weight: data.weight ?? defaultInputValues.weight,
         ...data.style,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponent]);
 
   return (
     <form>
@@ -93,9 +64,9 @@ export const Modifier = () => {
         <Group noWrap>
           <SizeSelector
             label="Size"
-            {...form.getInputProps("fontSize")}
+            {...form.getInputProps("size")}
             onChange={(value) => {
-              form.setFieldValue("fontSize", value as string);
+              form.setFieldValue("size", value as string);
               debouncedTreeComponentPropsUpdate("size", value);
             }}
           />
@@ -106,10 +77,10 @@ export const Modifier = () => {
               { label: "Normal", value: "normal" },
               { label: "Bold", value: "bold" },
             ]}
-            {...form.getInputProps("fontWeight")}
+            {...form.getInputProps("weight")}
             onChange={(value) => {
-              form.setFieldValue("fontWeight", value as string);
-              debouncedTreeComponentPropsUpdate("style", { fontWeight: value });
+              form.setFieldValue("weight", value as string);
+              debouncedTreeComponentPropsUpdate("weight", value);
             }}
           />
         </Group>
@@ -119,7 +90,9 @@ export const Modifier = () => {
             {...form.getInputProps("lineHeight")}
             onChange={(value) => {
               form.setFieldValue("lineHeight", value as string);
-              debouncedTreeComponentPropsUpdate("style", { lineHeight: value });
+              debouncedTreeComponentPropsUpdate("style", {
+                lineHeight: value,
+              });
             }}
           />
           <UnitInput
@@ -145,4 +118,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});

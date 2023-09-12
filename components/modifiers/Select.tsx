@@ -1,15 +1,13 @@
 import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 import { SizeSelector } from "@/components/SizeSelector";
-import { useEditorStore } from "@/stores/editor";
 import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
-import {
-  debouncedTreeComponentPropsUpdate,
-  getComponentById,
-} from "@/utils/editor";
+import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconSelect } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { withModifier } from "@/hoc/withModifier";
+import { pick } from "next/dist/lib/pick";
 
 export const icon = IconSelect;
 export const label = "Select";
@@ -28,53 +26,42 @@ export const defaultSelectValues = {
   ],
 };
 
-export const Modifier = () => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string
-  );
-
-  const componentProps = selectedComponent?.props || {};
-
+export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: defaultSelectValues,
   });
 
   useEffect(() => {
-    if (selectedComponentId) {
-      const {
-        style = {},
-        label,
-        size,
-        placeholder,
-        type,
-        icon,
-        data = [],
-        withAsterisk,
-        labelProps = {},
-      } = componentProps;
+    if (selectedComponent?.id) {
+      const data = pick(selectedComponent.props!, [
+        "style",
+        "label",
+        "size",
+        "placeholder",
+        "type",
+        "icon",
+        "data",
+        "withAsterisk",
+        "labelProps",
+      ]);
 
       form.setValues({
-        size: size ?? defaultSelectValues.size,
-        placeholder: placeholder ?? defaultSelectValues.placeholder,
-        type: type ?? defaultSelectValues.type,
-        label: label ?? defaultSelectValues.label,
-        icon: icon ?? defaultSelectValues.icon,
-        withAsterisk: withAsterisk ?? defaultSelectValues.withAsterisk,
+        size: data.size ?? defaultSelectValues.size,
+        placeholder: data.placeholder ?? defaultSelectValues.placeholder,
+        type: data.type ?? defaultSelectValues.type,
+        label: data.label ?? defaultSelectValues.label,
+        icon: data.icon ?? defaultSelectValues.icon,
+        withAsterisk: data.withAsterisk ?? defaultSelectValues.withAsterisk,
         labelProps:
-          labelProps.style?.marginBottom ?? defaultSelectValues.labelSpacing,
-        data: data ?? defaultSelectValues.data,
-        ...style,
+          data.labelProps?.style?.marginBottom ??
+          defaultSelectValues.labelSpacing,
+        data: data.data ?? defaultSelectValues.data,
+        ...data.style,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponent]);
 
   const setFieldValue = (key: any, value: any) => {
     form.setFieldValue(key, value);
@@ -130,4 +117,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});

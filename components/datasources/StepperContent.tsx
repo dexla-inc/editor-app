@@ -4,6 +4,7 @@ import BasicDetailsStep from "@/components/datasources/BasicDetailsStep";
 import EndpointsStep from "@/components/datasources/EndpointsStep";
 import SwaggerStep from "@/components/datasources/SwaggerStep";
 import {
+  AuthenticationSchemes,
   DataSourceResponse,
   Endpoint,
   RequestBody,
@@ -61,6 +62,8 @@ export default function StepperContent({
   const [loginRequestBody, setLoginRequestBody] = useState<
     RequestBody[] | undefined
   >(undefined);
+  const [authenticationScheme, setAuthenticationScheme] =
+    useState<AuthenticationSchemes | null>(null);
 
   return (
     <Stack sx={{ width: "100%" }}>
@@ -85,6 +88,8 @@ export default function StepperContent({
           stopLoading={stopLoading}
           dataSource={dataSource}
           setDataSource={setDataSource}
+          authenticationScheme={authenticationScheme}
+          setAuthenticationScheme={setAuthenticationScheme}
         ></BasicDetailsStep>
       )}
       {activeStep == 2 && (
@@ -116,6 +121,7 @@ export default function StepperContent({
           expiryProperty={expiryProperty}
           setExpiryProperty={setExpiryProperty}
           setLoginRequestBody={setLoginRequestBody}
+          authenticationScheme={authenticationScheme}
         ></AuthenticationStep>
       )}
       {activeStep == 3 && (

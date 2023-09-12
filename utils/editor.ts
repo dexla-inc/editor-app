@@ -9,8 +9,11 @@ import { structureMapper } from "@/utils/componentMapper";
 import { templatesMapper } from "@/utils/templatesMapper";
 import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
+import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
+import pickBy from "lodash.pickby";
 
 export type Component = {
   id?: string;
@@ -25,7 +28,8 @@ export type Component = {
     target: string;
   };
   actions?: Action[];
-  states?: { [key: string]: { [key: string]: any } };
+  states?: Record<string, any>;
+  languages?: Record<string, any>;
 };
 
 export type Row = {
@@ -297,38 +301,48 @@ export const getComponentBeingAddedId = (
   return id;
 };
 
+const translatableFields = [
+  "children",
+  "label",
+  "title",
+  "alt",
+  "placeholder",
+  "data",
+  "tooltip",
+];
+
+const pickTranslatableFields = (value: string, key: string) => {
+  return value !== "" && translatableFields.includes(key);
+};
+
 export const updateTreeComponent = (
   treeRoot: Component,
   id: string,
   props: any,
-  state: string = "default"
+  state: string = "default",
+  language: string = "default"
 ) => {
+  const textFields = pickBy(props, pickTranslatableFields);
+  const stylingFields = omit(props, translatableFields);
+
   crawl(
     treeRoot,
     (node, context) => {
       if (node.id === id) {
-        if (state === "default") {
-          node.props = {
-            ...node.props,
-            ...props,
-            style: {
-              ...(node.props?.style || {}),
-              ...(props.style || {}),
-            },
-          };
+        if (language === "default") {
+          node.props = merge(node.props, textFields);
         } else {
-          const nodeState = node.states?.[state] ?? {};
-          node.states = {
-            ...(node.states ?? {}),
-            [state]: {
-              ...nodeState,
-              ...props,
-              style: {
-                ...(nodeState?.style || {}),
-                ...(props.style || {}),
-              },
-            },
-          };
+          node.languages = merge(node.languages, {
+            [language]: textFields,
+          });
+        }
+
+        if (state === "default") {
+          node.props = merge(node.props, stylingFields);
+        } else {
+          node.states = merge(node.states, {
+            [state]: stylingFields,
+          });
         }
 
         context.break();
@@ -793,6 +807,16 @@ export const getClosestEdge = (
 
   return { edge: closestKey, value: all[closestKey as Edge] };
 };
+
+export const debouncedTreeComponentChildrenUpdate = debounce(
+  (value: Component[]) => {
+    const updateTreeComponentChildren =
+      useEditorStore.getState().updateTreeComponentChildren;
+    const selectedComponentId = useEditorStore.getState().selectedComponentId;
+    updateTreeComponentChildren(selectedComponentId as string, value);
+  },
+  300
+);
 
 export const debouncedTreeComponentPropsUpdate = debounce(
   (field: string, value: any) => {

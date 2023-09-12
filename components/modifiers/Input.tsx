@@ -2,16 +2,14 @@ import { Icon } from "@/components/Icon";
 import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
-import { useEditorStore } from "@/stores/editor";
 import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
-import {
-  debouncedTreeComponentPropsUpdate,
-  getComponentById,
-} from "@/utils/editor";
+import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { withModifier } from "@/hoc/withModifier";
+import { pick } from "next/dist/lib/pick";
 
 export const icon = IconForms;
 export const label = "Input";
@@ -26,51 +24,40 @@ export const defaultInputValues = {
   labelSpacing: "0",
 };
 
-export const Modifier = () => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string
-  );
-
-  const componentProps = selectedComponent?.props || {};
-
+export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: defaultInputValues,
   });
 
   useEffect(() => {
-    if (selectedComponentId) {
-      const {
-        style = {},
-        label,
-        size,
-        placeholder,
-        type,
-        icon,
-        withAsterisk,
-        labelProps = {},
-      } = componentProps;
+    if (selectedComponent?.id) {
+      const data = pick(selectedComponent.props!, [
+        "style",
+        "label",
+        "size",
+        "placeholder",
+        "type",
+        "icon",
+        "withAsterisk",
+        "labelProps",
+      ]);
 
       form.setValues({
-        size: size ?? defaultInputValues.size,
-        placeholder: placeholder ?? defaultInputValues.placeholder,
-        type: type ?? defaultInputValues.type,
-        label: label ?? defaultInputValues.label,
-        icon: icon ?? defaultInputValues.icon,
-        withAsterisk: withAsterisk ?? defaultInputValues.withAsterisk,
+        size: data.size ?? defaultInputValues.size,
+        placeholder: data.placeholder ?? defaultInputValues.placeholder,
+        type: data.type ?? defaultInputValues.type,
+        label: data.label ?? defaultInputValues.label,
+        icon: data.icon ?? defaultInputValues.icon,
+        withAsterisk: data.withAsterisk ?? defaultInputValues.withAsterisk,
         labelProps:
-          labelProps.style?.marginBottom ?? defaultInputValues.labelSpacing,
-        ...style,
+          data.labelProps?.style?.marginBottom ??
+          defaultInputValues.labelSpacing,
+        ...data.style,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponent]);
 
   return (
     <form>
@@ -142,4 +129,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});

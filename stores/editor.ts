@@ -53,6 +53,16 @@ export type ComponentToBind = {
   index?: number;
 };
 
+export type FeatureToBind = {
+  key: string;
+  value: string;
+  trigger: string;
+  endpointId?: string;
+  param?: string;
+  bindedId?: string;
+  index?: number;
+};
+
 export type EditorState = {
   tree: EditorTree;
   currentProjectId?: string;
@@ -75,6 +85,10 @@ export type EditorState = {
     [key: string]: string;
   };
   copiedAction?: Action[];
+  featureToBind?: string;
+  featureToBindTo?: FeatureToBind;
+  setFeatureToBindTo: (featuretoBindTo?: FeatureToBind) => void;
+  setFeatureToBind: (featureToBind?: string) => void;
   setPickingComponentToBindTo: (
     pickingComponentToBindTo?: ComponentToBind
   ) => void;
@@ -123,6 +137,8 @@ export type EditorState = {
   setIsNavBarVisible: () => void;
   setCopiedAction: (copiedAction?: Action[]) => void;
   // pasteAction: (componentId: string) => void;
+  language: string;
+  setLanguage: (isSaving: string) => void;
 };
 
 const debouncedUpdatePageState = debounce(updatePageState, 2000);
@@ -137,6 +153,7 @@ export const useEditorStore = create<EditorState>()(
         pages: [],
         onMountActionsRan: [],
         selectedComponentId: "content-wrapper",
+        language: "default",
         addOnMountActionsRan: (onMountAction) =>
           set((state) => ({
             ...state,
@@ -155,6 +172,8 @@ export const useEditorStore = create<EditorState>()(
           set({ pickingComponentToBindFrom }),
         setPickingComponentToBindTo: (pickingComponentToBindTo) =>
           set({ pickingComponentToBindTo }),
+        setFeatureToBind: (featureToBind) => set({ featureToBind }),
+        setFeatureToBindTo: (featureToBindTo) => set({ featureToBindTo }),
         setComponentToBind: (componentToBind) => set({ componentToBind }),
         setCopiedComponent: (copiedComponent) => set({ copiedComponent }),
         setTheme: (theme) => set({ theme }),
@@ -194,7 +213,15 @@ export const useEditorStore = create<EditorState>()(
             const copy = cloneDeep(prev.tree);
             const currentState =
               prev.currentTreeComponentsStates?.[componentId] ?? "default";
-            updateTreeComponent(copy.root, componentId, props, currentState);
+            const currentLanguage = prev.language;
+
+            updateTreeComponent(
+              copy.root,
+              componentId,
+              props,
+              currentState,
+              currentLanguage
+            );
             if (save) {
               debouncedUpdatePageState(
                 encodeSchema(JSON.stringify(copy)),
@@ -304,6 +331,7 @@ export const useEditorStore = create<EditorState>()(
         setIsNavBarVisible: () =>
           set((state) => ({ isNavBarVisible: !state.isNavBarVisible })),
         setCopiedAction: (copiedAction) => set({ copiedAction }),
+        setLanguage: (language) => set({ language }),
       }),
       {
         partialize: (state) => {

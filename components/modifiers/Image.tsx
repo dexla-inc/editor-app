@@ -1,9 +1,10 @@
-import { useEditorStore } from "@/stores/editor";
-import { debouncedTreeUpdate, getComponentById } from "@/utils/editor";
+import { debouncedTreeUpdate } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconPhoto } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { withModifier } from "@/hoc/withModifier";
+import { pick } from "next/dist/lib/pick";
 
 export const icon = IconPhoto;
 export const label = "Image";
@@ -15,36 +16,24 @@ export const defaultImageValues = {
   position: "relative",
 };
 
-export const Modifier = () => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string
-  );
-
-  const componentProps = selectedComponent?.props || {};
-
+export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: defaultImageValues,
   });
 
   useEffect(() => {
-    if (selectedComponentId) {
-      const { src, alt, style } = componentProps;
+    if (selectedComponent?.id) {
+      const data = pick(selectedComponent.props!, ["src", "alt", "style"]);
 
       form.setValues({
-        src: src ?? defaultImageValues.src,
-        alt: alt ?? defaultImageValues.alt,
-        fit: style.fit ?? defaultImageValues.fit,
+        src: data.src ?? defaultImageValues.src,
+        alt: data.alt ?? defaultImageValues.alt,
+        fit: data.style.fit ?? defaultImageValues.fit,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponent]);
 
   return (
     <form>
@@ -56,7 +45,7 @@ export const Modifier = () => {
           {...form.getInputProps("src")}
           onChange={(e) => {
             form.setFieldValue("src", e.target.value);
-            debouncedTreeUpdate(selectedComponentId as string, {
+            debouncedTreeUpdate(selectedComponent?.id as string, {
               src: e.target.value,
             });
           }}
@@ -67,7 +56,7 @@ export const Modifier = () => {
           {...form.getInputProps("alt")}
           onChange={(e) => {
             form.setFieldValue("alt", e.target.value);
-            debouncedTreeUpdate(selectedComponentId as string, {
+            debouncedTreeUpdate(selectedComponent?.id as string, {
               alt: e.target.value,
             });
           }}
@@ -85,10 +74,12 @@ export const Modifier = () => {
           {...form.getInputProps("fit")}
           onChange={(value) => {
             form.setFieldValue("fit", value as string);
-            debouncedTreeUpdate(selectedComponentId as string, { fit: value });
+            debouncedTreeUpdate(selectedComponent?.id as string, {
+              fit: value,
+            });
           }}
         />
       </Stack>
     </form>
   );
-};
+});

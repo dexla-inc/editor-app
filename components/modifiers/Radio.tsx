@@ -5,7 +5,7 @@ import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import {
   debouncedTreeComponentPropsUpdate,
-  getComponentById,
+  debouncedTreeComponentChildrenUpdate,
 } from "@/utils/editor";
 import {
   ActionIcon,
@@ -21,6 +21,8 @@ import {
 import { useForm } from "@mantine/form";
 import { IconPlus, IconRadio, IconTrash } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { withModifier } from "@/hoc/withModifier";
+import { pick } from "next/dist/lib/pick";
 
 export const icon = IconRadio;
 export const label = "Radio";
@@ -49,70 +51,60 @@ export const defaultRadioValues = {
   labelSpacing: "0",
 };
 
-export const Modifier = () => {
+export const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useMantineTheme();
-  const editorTree = useEditorStore((state) => state.tree);
-
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string
-  );
-
-  const componentProps = selectedComponent?.props || {};
-
   const form = useForm({
     initialValues: defaultRadioValues,
   });
 
   useEffect(() => {
-    if (selectedComponentId) {
-      const {
-        style = {},
-        children = [],
-        label,
-        size,
-        withAsterisk,
-        labelProps = {},
-      } = componentProps;
+    if (selectedComponent?.id) {
+      const data = pick(selectedComponent.props!, [
+        "style",
+        "children",
+        "label",
+        "size",
+        "withAsterisk",
+        "labelProps",
+      ]);
 
       form.setValues({
-        children: children.length ? children : defaultRadioValues.children,
-        size: size ?? defaultRadioValues.size,
-        label: label ?? defaultRadioValues.label,
-        withAsterisk: withAsterisk ?? defaultRadioValues.withAsterisk,
+        children: data.children?.length
+          ? data.children
+          : defaultRadioValues.children,
+        size: data.size ?? defaultRadioValues.size,
+        label: data.label ?? defaultRadioValues.label,
+        withAsterisk: data.withAsterisk ?? defaultRadioValues.withAsterisk,
         labelProps:
-          labelProps.style?.marginBottom ?? defaultRadioValues.labelSpacing,
-        ...style,
+          data.labelProps?.style?.marginBottom ??
+          defaultRadioValues.labelSpacing,
+        ...data.style,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponent]);
 
   const addRadioItem = () => {
     const count = form.values.children.length + 1;
     const newRadioItem = createRadioItem("Label " + count, "value" + count);
     const updatedChildren = [...form.values.children, newRadioItem];
     form.setValues({ ...form.values, children: updatedChildren });
-    debouncedTreeComponentPropsUpdate("children", updatedChildren);
+    debouncedTreeComponentChildrenUpdate(updatedChildren);
   };
 
   const updateRadioItem = (index: number, field: string, value: string) => {
     const updatedRadioItems = [...form.values.children];
     updatedRadioItems[index].props![field] = value;
     form.setValues({ ...form.values, children: updatedRadioItems });
-    debouncedTreeComponentPropsUpdate("children", updatedRadioItems);
+    debouncedTreeComponentChildrenUpdate(updatedRadioItems);
   };
 
   const deleteRadioItem = (index: number) => {
     const updatedRadioItems = [...form.values.children];
     updatedRadioItems.splice(index, 1);
     form.setValues({ ...form.values, children: updatedRadioItems });
-    debouncedTreeComponentPropsUpdate("children", updatedRadioItems);
+    debouncedTreeComponentChildrenUpdate(updatedRadioItems);
   };
 
   return (
@@ -218,4 +210,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});

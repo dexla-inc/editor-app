@@ -2,14 +2,13 @@ import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { useEditorStore } from "@/stores/editor";
-import {
-  debouncedTreeComponentPropsUpdate,
-  getComponentById,
-} from "@/utils/editor";
+import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { pick } from "next/dist/lib/pick";
+import { withModifier } from "@/hoc/withModifier";
 
 export const icon = IconClick;
 export const label = "Button";
@@ -24,50 +23,40 @@ export const defaultInputValues = {
   leftIcon: "",
 };
 
-export const Modifier = () => {
+export const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useEditorStore((state) => state.theme);
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string
-  );
-
-  const componentProps = selectedComponent?.props || {};
 
   const form = useForm({
     initialValues: defaultInputValues,
   });
 
   useEffect(() => {
-    if (selectedComponentId) {
-      const {
-        style = {},
-        children,
-        type,
-        size,
-        color,
-        variant,
-        textColor,
-        leftIcon,
-      } = componentProps;
+    if (selectedComponent?.id) {
+      const data = pick(selectedComponent.props!, [
+        "style",
+        "children",
+        "type",
+        "size",
+        "color",
+        "variant",
+        "textColor",
+        "leftIcon",
+      ]);
+
       form.setValues({
-        value: children ?? defaultInputValues.value,
-        type: type ?? defaultInputValues.type,
-        variant: variant ?? defaultInputValues.variant,
-        size: size ?? defaultInputValues.size,
-        color: color ?? defaultInputValues.color,
-        textColor: textColor ?? defaultInputValues.textColor,
-        icon: leftIcon ?? defaultInputValues.leftIcon,
-        ...style,
+        value: data.children ?? defaultInputValues.value,
+        type: data.type ?? defaultInputValues.type,
+        variant: data.variant ?? defaultInputValues.variant,
+        size: data.size ?? defaultInputValues.size,
+        color: data.color ?? defaultInputValues.color,
+        textColor: data.textColor ?? defaultInputValues.textColor,
+        icon: data.leftIcon ?? defaultInputValues.leftIcon,
+        ...data.style,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponent]);
 
   return (
     <form>
@@ -153,4 +142,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});

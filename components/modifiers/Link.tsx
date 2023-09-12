@@ -1,11 +1,12 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
-import { useEditorStore } from "@/stores/editor";
-import { debouncedTreeUpdate, getComponentById } from "@/utils/editor";
+import { debouncedTreeUpdate } from "@/utils/editor";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { withModifier } from "@/hoc/withModifier";
+import { pick } from "next/dist/lib/pick";
 
 export const icon = IconClick;
 export const label = "Link";
@@ -16,36 +17,30 @@ export const defaultInputValues = {
   color: "teal",
 };
 
-export const Modifier = () => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string
-  );
-
-  const componentProps = selectedComponent?.props || {};
-
+export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: defaultInputValues,
   });
 
   useEffect(() => {
-    if (selectedComponentId) {
-      const { style = {}, children, size, color } = componentProps;
+    if (selectedComponent?.id) {
+      const data = pick(selectedComponent.props!, [
+        "style",
+        "children",
+        "size",
+        "color",
+      ]);
+
       form.setValues({
-        value: children ?? defaultInputValues.value,
-        size: size ?? defaultInputValues.size,
-        color: color ?? defaultInputValues.color,
-        ...style,
+        value: data.children ?? defaultInputValues.value,
+        size: data.size ?? defaultInputValues.size,
+        color: data.color ?? defaultInputValues.color,
+        ...data.style,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponent]);
 
   return (
     <form>
@@ -56,7 +51,7 @@ export const Modifier = () => {
           {...form.getInputProps("value")}
           onChange={(e) => {
             form.setFieldValue("value", e.target.value);
-            debouncedTreeUpdate(selectedComponentId as string, {
+            debouncedTreeUpdate(selectedComponent?.id as string, {
               children: e.target.value,
             });
           }}
@@ -65,7 +60,7 @@ export const Modifier = () => {
           {...form.getInputProps("size")}
           onChange={(value) => {
             form.setFieldValue("size", value as string);
-            debouncedTreeUpdate(selectedComponentId as string, {
+            debouncedTreeUpdate(selectedComponent?.id as string, {
               size: value,
             });
           }}
@@ -75,7 +70,7 @@ export const Modifier = () => {
           {...form.getInputProps("color")}
           onChange={(value: string) => {
             form.setFieldValue("color", value);
-            debouncedTreeUpdate(selectedComponentId as string, {
+            debouncedTreeUpdate(selectedComponent?.id as string, {
               color: value,
             });
           }}
@@ -83,4 +78,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});

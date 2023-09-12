@@ -170,13 +170,13 @@ export interface ToggleNavbarAction extends BaseAction {
 export interface NextStepAction extends BaseAction {
   name: "nextStep";
   stepperId: string;
-  stepNumber: number;
-  setStepNumber: (stepNumber: number) => void;
+  activeStep: number;
 }
 
 export interface PreviousStepAction extends BaseAction {
   name: "previousStep";
   stepperId: string;
+  activeStep: number;
 }
 
 export type Action = {
@@ -300,13 +300,21 @@ export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
 
 export const goToNextStepAction = ({ action }: NextStepActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent(
-    action.stepperId,
-    { stepNumber: action.stepNumber, setStepNumber: action.setStepNumber },
-    false
-  );
+  console.log(action);
+  const step = action.activeStep + 1;
+
+  updateTreeComponent(action.stepperId, { activeStep: step }, false);
 };
 
+export const goToPreviousStepAction = ({
+  action,
+}: PreviousStepActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  console.log(action);
+  const step = Math.max(1, action.activeStep - 1);
+
+  updateTreeComponent(action.stepperId, { activeStep: step }, false);
+};
 export const togglePropsAction = ({ action }: TogglePropsActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   const editorTree = useEditorStore.getState().tree;
@@ -409,11 +417,21 @@ export const loginAction = async ({
     const url =
       keys.length > 0
         ? keys.reduce((url: string, key: string) => {
+            key.startsWith("type_key_")
+              ? (key = key.split(`type_Key_`)[1])
+              : key;
             let value = action.binds?.[key] as string;
 
             if (value?.startsWith(`valueOf_`)) {
               const el = iframeWindow?.document.querySelector(`
           input#${value.split(`valueOf_`)[1]}
+          `) as HTMLInputElement;
+              value = el?.value ?? "";
+            }
+
+            if (value?.startsWith(`queryString_pass_`)) {
+              const el = iframeWindow?.document.querySelector(`
+          input#${value.split(`queryString_pass_`)[1]}
           `) as HTMLInputElement;
               value = el?.value ?? "";
             }
@@ -432,6 +450,13 @@ export const loginAction = async ({
                 const el = iframeWindow?.document.querySelector(`
           input#${value.split(`valueOf_`)[1]}
         `) as HTMLInputElement;
+                value = el?.value ?? "";
+              }
+
+              if (value?.startsWith(`queryString_pass_`)) {
+                const el = iframeWindow?.document.querySelector(`
+          input#${value.split(`queryString_pass_`)[1]}
+          `) as HTMLInputElement;
                 value = el?.value ?? "";
               }
 
@@ -546,6 +571,9 @@ export const apiCallAction = async ({
     const url =
       keys.length > 0
         ? keys.reduce((url: string, key: string) => {
+            key.startsWith("type_Key_")
+              ? (key = key.split(`type_key_`)[1])
+              : key;
             // @ts-ignore
             let value = action.binds[key] as string;
 
@@ -557,6 +585,13 @@ export const apiCallAction = async ({
                 el = el?.getElementsByTagName("input")[0];
               }
               value = (el as HTMLInputElement)?.value ?? "";
+            }
+
+            if (value?.startsWith(`queryString_pass_`)) {
+              const el = iframeWindow?.document.querySelector(`
+          input#${value.split(`queryString_pass_`)[1]}
+          `) as HTMLInputElement;
+              value = el?.value ?? "";
             }
 
             if (!url.includes(`{${key}}`)) {
@@ -584,6 +619,13 @@ export const apiCallAction = async ({
                   el = el?.getElementsByTagName("input")[0];
                 }
                 value = (el as HTMLInputElement)?.value ?? "";
+              }
+
+              if (value?.startsWith(`queryString_pass_`)) {
+                const el = iframeWindow?.document.querySelector(`
+          input#${value.split(`queryString_pass_`)[1]}
+          `) as HTMLInputElement;
+                value = el?.value ?? "";
               }
 
               return {
@@ -762,11 +804,11 @@ export const actionMapper = {
     form: TogglePropsActionForm,
   },
   nextStep: {
-    action: navigationAction,
+    action: goToNextStepAction,
     form: NextStepActionForm,
   },
   previousStep: {
-    action: navigationAction,
+    action: goToPreviousStepAction,
     form: PreviousStepActionForm,
   },
 };

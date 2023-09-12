@@ -20,6 +20,7 @@ import {
 } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
 import { useEffect } from "react";
+import { withModifier } from "@/hoc/withModifier";
 
 export const icon = IconBorderStyle;
 export const label = "Border";
@@ -55,23 +56,8 @@ const getThemeColor = (theme: any, hex: string) => {
   }, "");
 };
 
-export const Modifier = () => {
+export const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useEditorStore((state) => state.theme);
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-  const currentTreeComponentsStates = useEditorStore(
-    (state) => state.currentTreeComponentsStates
-  );
-
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string
-  );
-
-  const componentProps = selectedComponent?.props || {};
-
   const form = useForm({
     initialValues: {
       ...defaultBorderValues,
@@ -85,17 +71,9 @@ export const Modifier = () => {
   });
 
   useEffect(() => {
-    if (selectedComponentId) {
-      let { style = {} } = componentProps;
-      const currentState =
-        currentTreeComponentsStates?.[selectedComponentId] ?? "default";
+    if (selectedComponent?.id) {
+      let { style = {} } = selectedComponent.props!;
 
-      if (currentState !== "default") {
-        style = {
-          ...style,
-          ...(selectedComponent?.states?.[currentState].style ?? {}),
-        };
-      }
       form.setValues({
         borderStyle: style.borderTopStyle ?? defaultBorderValues.borderTopStyle,
         borderTopStyle:
@@ -147,10 +125,10 @@ export const Modifier = () => {
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponent]);
 
   return (
-    <form key={selectedComponentId}>
+    <form key={selectedComponent?.id}>
       <Stack spacing="xs">
         <SegmentedControl
           size="xs"
@@ -302,7 +280,7 @@ export const Modifier = () => {
                 };
               }
 
-              debouncedTreeUpdate(selectedComponentId as string, {
+              debouncedTreeUpdate(selectedComponent?.id as string, {
                 style: borderStyle,
               });
             }}
@@ -335,7 +313,7 @@ export const Modifier = () => {
               };
             }
 
-            debouncedTreeUpdate(selectedComponentId as string, {
+            debouncedTreeUpdate(selectedComponent?.id as string, {
               style: borderWidth,
             });
           }}
@@ -370,7 +348,7 @@ export const Modifier = () => {
               };
             }
 
-            debouncedTreeUpdate(selectedComponentId as string, {
+            debouncedTreeUpdate(selectedComponent?.id as string, {
               style: borderColor,
             });
           }}
@@ -423,7 +401,7 @@ export const Modifier = () => {
                 form.setFieldValue("borderBottomLeftRadius", value);
                 form.setFieldValue("borderBottomRightRadius", value);
 
-                debouncedTreeUpdate(selectedComponentId as string, {
+                debouncedTreeUpdate(selectedComponent?.id as string, {
                   style: {
                     borderTopLeftRadius: value,
                     borderTopRightRadius: value,
@@ -447,7 +425,7 @@ export const Modifier = () => {
                   {...form.getInputProps("borderTopLeftRadius")}
                   onChange={(value) => {
                     form.setFieldValue("borderTopLeftRadius", value as string);
-                    debouncedTreeUpdate(selectedComponentId as string, {
+                    debouncedTreeUpdate(selectedComponent?.id as string, {
                       style: { borderTopLeftRadius: value },
                     });
                   }}
@@ -457,7 +435,7 @@ export const Modifier = () => {
                   {...form.getInputProps("borderTopRightRadius")}
                   onChange={(value) => {
                     form.setFieldValue("borderTopRightRadius", value as string);
-                    debouncedTreeUpdate(selectedComponentId as string, {
+                    debouncedTreeUpdate(selectedComponent?.id as string, {
                       style: { borderTopRightRadius: value },
                     });
                   }}
@@ -472,7 +450,7 @@ export const Modifier = () => {
                       "borderBottomLeftRadius",
                       value as string
                     );
-                    debouncedTreeUpdate(selectedComponentId as string, {
+                    debouncedTreeUpdate(selectedComponent?.id as string, {
                       style: { borderBottomLeftRadius: value },
                     });
                   }}
@@ -485,7 +463,7 @@ export const Modifier = () => {
                       "borderBottomRightRadius",
                       value as string
                     );
-                    debouncedTreeUpdate(selectedComponentId as string, {
+                    debouncedTreeUpdate(selectedComponent?.id as string, {
                       style: { borderBottomRightRadius: value },
                     });
                   }}
@@ -497,4 +475,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});
