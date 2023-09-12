@@ -9,7 +9,16 @@ import {
 } from "@/requests/datasources/types";
 import { getPageList } from "@/requests/pages/queries";
 import { DataSourceStepperWithoutNextProps } from "@/utils/dashboardTypes";
-import { Col, Divider, Grid, Group, Stack, Text, Title } from "@mantine/core";
+import {
+  Col,
+  Divider,
+  Grid,
+  Group,
+  GroupProps,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { useRouter } from "next/router";
 
 interface AuthenticationStepParams extends DataSourceStepperWithoutNextProps {
@@ -54,6 +63,15 @@ export default function EndpointsStep({
 
   return (
     <Stack mb={100}>
+      <BackAndEndpointsButtonGroup
+        dataSource={dataSource}
+        prevStep={prevStep}
+        projectId={projectId}
+        startLoading={startLoading}
+        stopLoading={stopLoading}
+        isLoading={isLoading}
+        mb="lg"
+      />
       <InformationAlert
         title="Set Up Complete"
         text={
@@ -62,7 +80,6 @@ export default function EndpointsStep({
             : "You have set up your API Data Source settings correctly. You can create your API endpoints within the editor."
         }
       />
-
       {dataSource?.authenticationScheme === "BEARER" && (
         <TestUserLogin
           projectId={projectId}
@@ -169,24 +186,7 @@ export default function EndpointsStep({
         </Grid>
 
         <Divider></Divider>
-        <Group position="apart">
-          <BackButton
-            onClick={() => {
-              if (dataSource?.authenticationScheme === "NONE") {
-                prevStep();
-                prevStep();
-              } else {
-                prevStep();
-              }
-            }}
-          ></BackButton>
-          <EndpointsButton
-            projectId={projectId}
-            startLoading={startLoading}
-            stopLoading={stopLoading}
-            isLoading={isLoading}
-          ></EndpointsButton>
-        </Group>
+
         {dataSource?.changedEndpoints &&
           dataSource?.changedEndpoints.length > 0 && (
             <>
@@ -204,19 +204,52 @@ export default function EndpointsStep({
                   ></DataSourceEndpoint>
                 );
               })}
-              <Group position="apart">
-                <BackButton onClick={prevStep}></BackButton>
-                <EndpointsButton
-                  projectId={projectId}
-                  startLoading={startLoading}
-                  stopLoading={stopLoading}
-                  isLoading={isLoading}
-                  text="Go to Editor"
-                ></EndpointsButton>
-              </Group>
+              <BackAndEndpointsButtonGroup
+                dataSource={dataSource}
+                prevStep={prevStep}
+                projectId={projectId}
+                startLoading={startLoading}
+                stopLoading={stopLoading}
+                isLoading={isLoading}
+              />
             </>
           )}
       </Stack>
     </Stack>
   );
 }
+
+export const BackAndEndpointsButtonGroup = ({
+  dataSource,
+  prevStep,
+  projectId,
+  startLoading,
+  stopLoading,
+  isLoading,
+  ...props
+}: Pick<
+  AuthenticationStepParams,
+  "dataSource" | "prevStep" | "startLoading" | "stopLoading" | "isLoading"
+> & { projectId: string } & GroupProps) => {
+  return (
+    <Group position="apart" {...props}>
+      <BackButton
+        onClick={() => {
+          if (dataSource?.authenticationScheme === "NONE") {
+            prevStep();
+            prevStep();
+          } else {
+            prevStep();
+          }
+        }}
+      ></BackButton>
+      <EndpointsButton
+        projectId={projectId}
+        startLoading={startLoading}
+        stopLoading={stopLoading}
+        isLoading={isLoading}
+        text="Go to Editor"
+      ></EndpointsButton>
+    </Group>
+  );
+};

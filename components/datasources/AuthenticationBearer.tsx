@@ -4,20 +4,31 @@ import {
   AuthenticationBearerTokenParams,
   ExampleResponseDropdown,
   filterAndMapEndpoints,
+  getAuthEndpoint,
   mapEndpointExampleResponse,
   patchDataSourceWithParams,
   setEndpoint,
+  setExampleResponseObject,
   setRequestBodyObject,
   validateTokenProperty,
 } from "@/components/datasources/AuthenticationInputs";
 import TextInputComponent from "@/components/datasources/TextInputComponent";
 import { Endpoint, RequestBody } from "@/requests/datasources/types";
 import { DataSourceStepperProps } from "@/utils/dashboardTypes";
-import { Anchor, Divider, Flex, Group, Select, Stack } from "@mantine/core";
+import {
+  Anchor,
+  Button,
+  Divider,
+  Flex,
+  Group,
+  Select,
+  Stack,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
-interface BearerTokenAuthenticationProps extends DataSourceStepperProps {
+export interface BearerTokenAuthenticationProps extends DataSourceStepperProps {
   endpoints: Array<Endpoint> | undefined;
   loginEndpointId: string | null;
   setLoginEndpointId: (loginEndpointId: string | null) => void;
@@ -25,20 +36,21 @@ interface BearerTokenAuthenticationProps extends DataSourceStepperProps {
   setRefreshEndpointId: (refreshEndpointId: string | null) => void;
   userEndpointId: string | null;
   setUserEndpointId: (userEndpointId: string | null) => void;
-  accessToken: string | null;
-  setAccessToken: (accessToken: string | null) => void;
-  refreshToken: string | null;
-  setRefreshToken: (refreshToken: string | null) => void;
-  setLoginEndpointLabel: (loginEndpointLabel: string | null) => void;
-  setRefreshEndpointLabel: (refreshEndpointLabel: string | null) => void;
-  setUserEndpointLabel: (userEndpointLabel: string | null) => void;
+  accessToken?: string | null;
+  setAccessToken?: (accessToken: string | null) => void;
+  refreshToken?: string | null;
+  setRefreshToken?: (refreshToken: string | null) => void;
+  setLoginEndpointLabel?: (loginEndpointLabel: string | null) => void;
+  setRefreshEndpointLabel?: (refreshEndpointLabel: string | null) => void;
+  setUserEndpointLabel?: (userEndpointLabel: string | null) => void;
   exampleResponse: ExampleResponseDropdown[] | undefined;
   setExampleResponse: (
     exampleResponse: ExampleResponseDropdown[] | undefined
   ) => void;
-  expiryProperty: string | null;
-  setExpiryProperty: (expiryProperty: string | null) => void;
+  expiryProperty?: string | null;
+  setExpiryProperty?: (expiryProperty: string | null) => void;
   setLoginRequestBody: (requestBody: RequestBody[] | undefined) => void;
+  fromPage?: boolean;
 }
 
 export default function AuthenticationBearer({
@@ -68,6 +80,7 @@ export default function AuthenticationBearer({
   expiryProperty,
   setExpiryProperty,
   setLoginRequestBody,
+  fromPage,
 }: BearerTokenAuthenticationProps) {
   const router = useRouter();
   const projectId = router.query.id as string;
@@ -152,7 +165,7 @@ export default function AuthenticationBearer({
         );
       }
 
-      nextStep();
+      nextStep && nextStep();
 
       stopLoading({
         id: "updating",
@@ -173,59 +186,110 @@ export default function AuthenticationBearer({
   };
 
   const setLoginEndpoint = (value: string) => {
-    const selectedEndpoint = postEndpoints.find(
-      (option) => option.value === value
-    );
-
-    if (selectedEndpoint?.exampleresponse) {
-      const exampleResponse = mapEndpointExampleResponse(
-        selectedEndpoint.exampleresponse
+    if (fromPage) {
+      setLoginEndpointId(value);
+      form.setFieldValue("loginEndpointId", value);
+      setExampleResponseObject(postEndpoints, setExampleResponse, value);
+      // Need to do a fetch on the auth data source before testing the user in [dataSourceId] page
+      //const selectedEndpoint = endpoints?.find((option) => option.id === value);
+      //setLoginEndpointObj(selectedEndpoint);
+    } else {
+      const selectedEndpoint = postEndpoints.find(
+        (option) => option.value === value
       );
 
-      setExampleResponse(exampleResponse);
-      setAccessToken("");
-      setExpiryProperty("");
+      if (selectedEndpoint?.exampleresponse) {
+        const exampleResponse = mapEndpointExampleResponse(
+          selectedEndpoint.exampleresponse
+        );
+
+        setExampleResponse(exampleResponse);
+        setAccessToken && setAccessToken("");
+        setExpiryProperty && setExpiryProperty("");
+      }
+
+      setEndpoint(
+        setLoginEndpointId,
+        selectedEndpoint,
+        value,
+        setLoginEndpointLabel
+      );
     }
-
-    setEndpoint(
-      setLoginEndpointId,
-      selectedEndpoint,
-      value,
-      setLoginEndpointLabel
-    );
   };
 
-  const setRefreshEndpoint = (value: string | null) => {
-    const selectedEndpoint = postEndpoints.find(
-      (option) => option.value === value
-    );
-    setEndpoint(
-      setRefreshEndpointId,
-      selectedEndpoint,
-      value,
-      setRefreshEndpointLabel
-    );
-    setRefreshToken("");
+  const setRefreshEndpoint = (value: string) => {
+    if (fromPage) {
+      setRefreshEndpointId(value);
+      form.setFieldValue("refreshEndpointId", value ?? "");
+      setExampleResponseObject(postEndpoints, setExampleResponse, value ?? "");
+    } else {
+      const selectedEndpoint = postEndpoints.find(
+        (option) => option.value === value
+      );
+      setEndpoint(
+        setRefreshEndpointId,
+        selectedEndpoint,
+        value,
+        setRefreshEndpointLabel
+      );
+      setRefreshToken && setRefreshToken("");
+    }
   };
 
-  const setUserEndpoint = (value: string | null) => {
-    const selectedEndpoint = getEndpoints.find(
-      (option) => option.value === value
-    );
-    setEndpoint(
-      setUserEndpointId,
-      selectedEndpoint,
-      value,
-      setUserEndpointLabel
-    );
+  const setUserEndpoint = (value: string) => {
+    if (fromPage) {
+      setUserEndpointId(value);
+      form.setFieldValue("userEndpointId", value);
+      setExampleResponseObject(postEndpoints, setExampleResponse, value);
+    } else {
+      const selectedEndpoint = getEndpoints.find(
+        (option) => option.value === value
+      );
+      setEndpoint(
+        setUserEndpointId,
+        selectedEndpoint,
+        value,
+        setUserEndpointLabel
+      );
+    }
   };
+
+  useEffect(() => {
+    if (fromPage && endpoints) {
+      const loginEndpoint = getAuthEndpoint("ACCESS", endpoints);
+      const refreshEndpoint = getAuthEndpoint("REFRESH", endpoints);
+      const userEndpoint = getAuthEndpoint("USER", endpoints);
+
+      loginEndpoint?.id && setLoginEndpoint(loginEndpoint.id);
+      refreshEndpoint?.id && setRefreshEndpoint(refreshEndpoint.id);
+      userEndpoint?.id && setUserEndpoint(userEndpoint.id);
+
+      form.setFieldValue("accessToken", loginEndpoint?.authentication.tokenKey);
+      form.setFieldValue(
+        "expiryProperty",
+        loginEndpoint?.authentication.tokenSecondaryKey
+      );
+
+      form.setFieldValue(
+        "refreshToken",
+        refreshEndpoint?.authentication.tokenKey
+      );
+
+      setRequestBodyObject(
+        postEndpoints,
+        setLoginRequestBody,
+        loginEndpoint?.id as string
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endpoints]);
 
   return (
     <form
       onSubmit={form.onSubmit(onSubmit)}
       onError={(error) => console.log(error)}
     >
-      <Stack pb={100}>
+      <Stack pb={fromPage ? "lg" : 100}>
         {dataSource?.swaggerUrl ? (
           <>
             <Select
@@ -236,7 +300,9 @@ export default function AuthenticationBearer({
               clearable
               required
               data={postEndpoints ?? []}
-              value={loginEndpointId}
+              {...(loginEndpointId
+                ? { value: loginEndpointId }
+                : { ...form.getInputProps("loginEndpointId") })}
               onChange={(value) => {
                 form.setFieldValue("loginEndpointId", value as string);
                 setLoginEndpoint(value ?? "");
@@ -255,7 +321,9 @@ export default function AuthenticationBearer({
               clearable
               required
               data={postEndpoints ?? []}
-              value={refreshEndpointId}
+              {...(refreshEndpointId
+                ? { value: refreshEndpointId }
+                : { ...form.getInputProps("refreshEndpointId") })}
               onChange={(value) => {
                 form.setFieldValue("refreshEndpointId", value as string);
                 setRefreshEndpoint(value ?? "");
@@ -268,7 +336,9 @@ export default function AuthenticationBearer({
               searchable
               clearable
               data={getEndpoints ?? []}
-              value={userEndpointId}
+              {...(userEndpointId
+                ? { value: userEndpointId }
+                : { ...form.getInputProps("userEndpointId") })}
               onChange={(value) => {
                 form.setFieldValue("userEndpointId", value as string);
                 setUserEndpoint(value ?? "");
@@ -316,10 +386,12 @@ export default function AuthenticationBearer({
             clearable
             nothingFound="Not found. Update your swagger to include the response property"
             data={exampleResponse ?? []}
-            value={accessToken}
+            {...(accessToken
+              ? { value: accessToken }
+              : { ...form.getInputProps("accessToken") })}
             onChange={(value) => {
               form.setFieldValue("accessToken", value as string);
-              setAccessToken(value);
+              setAccessToken && setAccessToken(value);
             }}
             required
           />
@@ -344,10 +416,12 @@ export default function AuthenticationBearer({
             clearable
             nothingFound="Not found. Update your swagger to include the response property"
             data={exampleResponse ?? []}
-            value={refreshToken}
+            {...(refreshToken
+              ? { value: refreshToken }
+              : { ...form.getInputProps("refreshToken") })}
             onChange={(value) => {
               form.setFieldValue("refreshToken", value as string);
-              setRefreshToken(value);
+              setRefreshToken && setRefreshToken(value);
             }}
             required
           />
@@ -376,10 +450,12 @@ export default function AuthenticationBearer({
                 : "No options"
             }
             data={exampleResponse ?? []}
-            value={expiryProperty}
+            {...(expiryProperty
+              ? { value: expiryProperty }
+              : { ...form.getInputProps("expiryProperty") })}
             onChange={(value) => {
               form.setFieldValue("expiryProperty", value as string);
-              setExpiryProperty(value);
+              setExpiryProperty && setExpiryProperty(value);
             }}
             required
           />
@@ -395,22 +471,30 @@ export default function AuthenticationBearer({
             required={!!loginEndpointId}
           />
         )}
-        <Divider></Divider>
-        <Group position="apart">
-          <BackButton onClick={prevStep}></BackButton>
-          <Flex gap="lg" align="end">
-            {!isLoading && (
-              <Anchor onClick={nextStep}>
-                Skip, I use an external auth provider
-              </Anchor>
-            )}
-            <NextButton
-              isLoading={isLoading}
-              disabled={isLoading}
-              isSubmit={true}
-            ></NextButton>
+        {fromPage ? (
+          <Flex>
+            <Button type="submit">Save</Button>
           </Flex>
-        </Group>
+        ) : (
+          <>
+            <Divider></Divider>
+            <Group position="apart">
+              <BackButton onClick={prevStep}></BackButton>
+              <Flex gap="lg" align="end">
+                {!isLoading && (
+                  <Anchor onClick={nextStep}>
+                    Skip, I use an external auth provider
+                  </Anchor>
+                )}
+                <NextButton
+                  isLoading={isLoading}
+                  disabled={isLoading}
+                  isSubmit={true}
+                ></NextButton>
+              </Flex>
+            </Group>
+          </>
+        )}
       </Stack>
     </form>
   );

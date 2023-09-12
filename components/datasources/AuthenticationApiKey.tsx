@@ -1,14 +1,13 @@
+import BackButton from "@/components/BackButton";
+import NextButton from "@/components/NextButton";
 import { updateDataSource } from "@/requests/datasources/mutations";
 import { DataSourceParams } from "@/requests/datasources/types";
 import { DataSourceStepperProps } from "@/utils/dashboardTypes";
 import { Divider, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
-import BackButton from "../BackButton";
-import NextButton from "../NextButton";
 
 interface AuthenticationStepProps extends DataSourceStepperProps {
-  accessToken: string | null;
   setAccessToken: (accessToken: string | null) => void;
 }
 
@@ -20,7 +19,6 @@ export default function AuthenticationApiKey({
   startLoading,
   stopLoading,
   dataSource,
-  accessToken,
   setAccessToken,
 }: AuthenticationStepProps) {
   const router = useRouter();
@@ -64,7 +62,7 @@ export default function AuthenticationApiKey({
 
       await updateDataSource(projectId, dataSource.id, false, mergedDataSource);
 
-      nextStep();
+      nextStep && nextStep();
 
       stopLoading({
         id: "updating",

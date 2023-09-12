@@ -1,7 +1,7 @@
+import { Icon } from "@/components/Icon";
 import { Button, ButtonProps } from "@mantine/core";
 import Link from "next/link";
 import { useState } from "react";
-import { Icon } from "../Icon";
 
 type Props = {
   iconName: string;

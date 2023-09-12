@@ -1,9 +1,9 @@
+import { Icon } from "@/components/Icon";
 import { UnitInput } from "@/components/UnitInput";
+import { debouncedTreeUpdate } from "@/utils/editor";
 import { Flex, Group, SegmentedControl, Stack, Text } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { IconBoxModel2 } from "@tabler/icons-react";
-import { Icon } from "../Icon";
-import { debouncedTreeUpdate } from "@/utils/editor";
 
 export const icon = IconBoxModel2;
 export const label = "Spacing";

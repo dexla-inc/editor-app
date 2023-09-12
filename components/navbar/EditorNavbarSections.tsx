@@ -3,6 +3,7 @@ import { EditorNavbarComponentsSection } from "@/components/navbar/EditorNavbarC
 import { EditorNavbarLayersSection } from "@/components/navbar/EditorNavbarLayersSection";
 import { EditorNavbarPagesSection } from "@/components/navbar/EditorNavbarPagesSection";
 import { EditorNavbarThemesSection } from "@/components/navbar/EditorNavbarThemesSection";
+import { SettingsButton } from "@/components/navbar/SettingsButtons";
 import { Stack, Text } from "@mantine/core";
 import {
   IconBrush,
@@ -12,7 +13,6 @@ import {
 } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { SettingsButton } from "./SettingsButtons";
 
 type SectionId = "pages" | "layers" | "components" | "theme";
 
