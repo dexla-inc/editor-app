@@ -578,10 +578,13 @@ export const apiCallAction = async ({
             let value = action.binds[key] as string;
 
             if (value.startsWith(`valueOf_`)) {
-              const el = iframeWindow?.document.querySelector(`
-          input#${value.split(`valueOf_`)[1]}
-        `) as HTMLInputElement;
-              value = el?.value ?? "";
+              const _id = value.split(`valueOf_`)[1];
+              let el = iframeWindow?.document.getElementById(_id);
+              const tag = el?.tagName?.toLowerCase();
+              if (tag !== "input") {
+                el = el?.getElementsByTagName("input")[0];
+              }
+              value = (el as HTMLInputElement)?.value ?? "";
             }
 
             if (value?.startsWith(`queryString_pass_`)) {
@@ -609,10 +612,13 @@ export const apiCallAction = async ({
               let value = action.binds[key] as string;
 
               if (value.startsWith(`valueOf_`)) {
-                const el = iframeWindow?.document.querySelector(`
-          input#${value.split(`valueOf_`)[1]}
-        `) as HTMLInputElement;
-                value = el?.value ?? "";
+                const _id = value.split(`valueOf_`)[1];
+                let el = iframeWindow?.document.getElementById(_id);
+                const tag = el?.tagName?.toLowerCase();
+                if (tag !== "input") {
+                  el = el?.getElementsByTagName("input")[0];
+                }
+                value = (el as HTMLInputElement)?.value ?? "";
               }
 
               if (value?.startsWith(`queryString_pass_`)) {
@@ -673,6 +679,7 @@ export const apiCallAction = async ({
       });
     }
   } catch (error) {
+    console.log({ error });
     if (onError && onError.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(

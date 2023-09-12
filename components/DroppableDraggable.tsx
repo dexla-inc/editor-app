@@ -42,8 +42,8 @@ type Props = {
 } & BoxProps;
 
 const bidingComponentsWhitelist = {
-  from: ["Input"],
-  to: ["Text", "Title", "Table", "Container", "Image"],
+  from: ["Input", "Select"],
+  to: ["Text", "Title", "Table", "Container", "Image", "Select"],
 };
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
 // Whitelist certain props that can be passed down

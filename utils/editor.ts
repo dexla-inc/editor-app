@@ -389,8 +389,7 @@ export const updateTreeComponentActions = (
 export const updateTreeComponentDescription = (
   treeRoot: Component,
   id: string,
-  description: string,
-  state: string = "default"
+  description: string
 ) => {
   crawl(
     treeRoot,
@@ -398,6 +397,18 @@ export const updateTreeComponentDescription = (
       if (node.id === id) {
         node.description = description;
         context.break();
+      }
+    },
+    { order: "bfs" }
+  );
+};
+
+export const resetAllData = (treeRoot: Component) => {
+  crawl(
+    treeRoot,
+    (node) => {
+      if (node.props?.data) {
+        node.props.data = undefined;
       }
     },
     { order: "bfs" }
