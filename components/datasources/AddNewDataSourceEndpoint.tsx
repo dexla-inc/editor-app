@@ -44,13 +44,12 @@ export const AddNewDataSourceEndpoint = ({}) => {
         </Button>
       </Group>
       {isEndpointDetailVisible && (
-        <>
-          <DataSourceEndpointDetail
-            endpoint={endpoint}
-            projectId={id}
-            dataSourceId={dataSourceId}
-          />
-        </>
+        <DataSourceEndpointDetail
+          endpoint={endpoint}
+          projectId={id}
+          dataSourceId={dataSourceId}
+          setEndpointDetailVisible={setEndpointDetailVisible}
+        />
       )}
     </Stack>
   );

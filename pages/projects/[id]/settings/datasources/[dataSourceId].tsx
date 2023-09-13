@@ -292,6 +292,7 @@ export default function DataSourcePage() {
                   dataSourceId={dataSource.id}
                 ></TestUserLogin>
               )}
+              <AddNewDataSourceEndpoint />
               <DataSourceEndpointList
                 projectId={id}
                 dataSourceId={dataSourceId}
@@ -326,7 +327,6 @@ export default function DataSourcePage() {
                 })}
               </Stack>
             </Stack>
-            <AddNewDataSourceEndpoint />
           </Container>
         </Tabs.Panel>
       </Tabs>

@@ -63,7 +63,7 @@ export const updateDataSourceEndpoint = async (
   id: string,
   params: EndpointParams
 ): Promise<SuccessResponse> => {
-  const response = (await post<SuccessResponse>(
+  const response = (await put<SuccessResponse>(
     `/projects/${projectId}/datasources/${datasourceId}/endpoints/${id}`,
     params
   )) as SuccessResponse;

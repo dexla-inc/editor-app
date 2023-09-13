@@ -23,17 +23,13 @@ import {
   TextInput,
   Title,
   Tooltip,
+  useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { Prism } from "@mantine/prism";
 import { Editor } from "@monaco-editor/react";
+import { useQueryClient } from "@tanstack/react-query";
+import debounce from "lodash.debounce";
 import { useEffect, useReducer } from "react";
-
-type DataSourceEndpointDetailProps = {
-  endpoint: Endpoint | EndpointParams;
-  projectId: string;
-  dataSourceId: string;
-};
 
 const MethodTypeArray: MethodTypes[] = [
   "GET",
@@ -115,14 +111,24 @@ type Action =
       };
     };
 
+type DataSourceEndpointDetailProps = {
+  endpoint: Endpoint | EndpointParams;
+  projectId: string;
+  dataSourceId: string;
+  setEndpointDetailVisible?: (visible: boolean) => void;
+};
+
 // Start of component
 export const DataSourceEndpointDetail = ({
   endpoint,
   projectId,
   dataSourceId,
+  setEndpointDetailVisible,
 }: DataSourceEndpointDetailProps) => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
+  const theme = useMantineTheme();
+  const queryClient = useQueryClient();
 
   const initialState: EndpointParams = {
     description: endpoint.description ?? null,
@@ -185,8 +191,10 @@ export const DataSourceEndpointDetail = ({
   };
 
   const handleInputChange = (field: keyof EndpointParams, value: any) => {
+    console.log(value);
     handleFieldChange(field, value);
   };
+  const debouncedInputChange = debounce(handleInputChange, 300);
 
   const handleArrayChange = (
     index: number,
@@ -218,8 +226,8 @@ export const DataSourceEndpointDetail = ({
   const onSubmit = async () => {
     const payload = {
       ...state,
-      exampleResponse: JSON.stringify(state.exampleResponse),
-      errorExampleResponse: JSON.stringify(state.errorExampleResponse),
+      exampleResponse: state.exampleResponse,
+      errorExampleResponse: state.errorExampleResponse,
     };
 
     try {
@@ -249,6 +257,9 @@ export const DataSourceEndpointDetail = ({
 
       console.log(result);
 
+      queryClient.refetchQueries(["endpoints"]);
+      setEndpointDetailVisible && setEndpointDetailVisible(false);
+
       stopLoading({
         id: "saving",
         title: "Data Source Saved",
@@ -276,7 +287,11 @@ export const DataSourceEndpointDetail = ({
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack py="lg" spacing="xs">
+      <Stack
+        py="lg"
+        spacing="xs"
+        sx={{ borderBottom: "1px solid " + theme.colors.gray[3] }}
+      >
         <TextInput
           label="Description"
           placeholder="Add a new user"
@@ -309,6 +324,7 @@ export const DataSourceEndpointDetail = ({
                 event.currentTarget.value as string
               );
             }}
+            required
             sx={{ flexGrow: 1 }}
           />
         </Flex>
@@ -458,27 +474,31 @@ export const DataSourceEndpointDetail = ({
             </Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="example" pt="xs">
-            {endpoint.exampleResponse ? (
+            {/* {endpoint.exampleResponse ? (
               <Prism language="json">
                 {JSON.stringify(JSON.parse(endpoint.exampleResponse), null, 2)}
               </Prism>
-            ) : (
-              <Editor
-                height="250px"
-                defaultLanguage="json"
-                value={state.exampleResponse}
-                onChange={(value) => {
-                  handleInputChange("exampleResponse", value);
-                }}
-                options={{
-                  wordWrap: "on",
-                  scrollBeyondLastLine: false,
-                  minimap: {
-                    enabled: false,
-                  },
-                }}
-              />
-            )}
+            ) : ( */}
+            <Editor
+              height={endpoint.exampleResponse ? "250px" : "100px"}
+              defaultLanguage="json"
+              value={
+                state.exampleResponse ? JSON.parse(state.exampleResponse) : ""
+              }
+              onChange={(value) => {
+                debouncedInputChange(
+                  "exampleResponse",
+                  JSON.stringify(value) as string
+                );
+              }}
+              options={{
+                wordWrap: "on",
+                scrollBeyondLastLine: false,
+                minimap: {
+                  enabled: false,
+                },
+              }}
+            />
           </Tabs.Panel>
         </Tabs>
         <Group>
