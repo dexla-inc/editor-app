@@ -89,7 +89,7 @@ export interface BaseAction {
 export interface NavigationAction extends BaseAction {
   name: "navigateToPage";
   pageId: string;
-  setDataAsQueryStrings: boolean;
+  setDataAsQueryStrings?: boolean;
 }
 
 export interface GoToUrlAction extends BaseAction {
