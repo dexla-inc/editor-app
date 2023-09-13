@@ -128,7 +128,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
               py="md"
               sx={{
                 borderBottom: "1px solid " + theme.colors.gray[3],
-                borderTop: "1px solid " + theme.colors.gray[3],
               }}
             >
               <Flex justify="space-between">

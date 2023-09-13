@@ -119,8 +119,7 @@ export interface OpenPopOverAction extends BaseAction {
 
 export interface TogglePropsAction extends BaseAction {
   name: "toggleVisibility";
-  componentId: string;
-  state: string;
+  conditionRules: Array<{ componentId: string; condition: string }>;
 }
 
 export interface OpenToastAction extends BaseAction {
@@ -300,7 +299,7 @@ export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
 
 export const goToNextStepAction = ({ action }: NextStepActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  console.log(action);
+
   const step = action.activeStep + 1;
 
   updateTreeComponent(action.stepperId, { activeStep: step }, false);
@@ -310,26 +309,25 @@ export const goToPreviousStepAction = ({
   action,
 }: PreviousStepActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  console.log(action);
+
   const step = Math.max(1, action.activeStep - 1);
 
   updateTreeComponent(action.stepperId, { activeStep: step }, false);
 };
-export const togglePropsAction = ({ action }: TogglePropsActionParams) => {
+export const togglePropsAction = ({
+  action,
+  event,
+}: TogglePropsActionParams) => {
+  console.log(action, event);
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  const editorTree = useEditorStore.getState().tree;
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    action.componentId as string
-  );
-  let viewItem;
-
-  selectedComponent?.props?.style.visibility === "none"
-    ? (viewItem = "flex")
-    : (viewItem = "none");
-
-  updateTreeComponent(action.componentId, {
-    style: { visibility: viewItem as string },
+  action.conditionRules.map((item) => {
+    updateTreeComponent(
+      item.componentId,
+      {
+        style: { display: item.condition === event ? "flex" : "none" },
+      },
+      false
+    );
   });
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
