@@ -174,6 +174,7 @@ export const DataSourceEndpointDetail = ({
           | "headers"
           | "requestBody";
         const updatedArray = [...state[updateKey]];
+        // @ts-ignore
         updatedArray[payload.index][payload.field] = payload.value;
         return { ...state, [updateKey]: updatedArray };
       default:
