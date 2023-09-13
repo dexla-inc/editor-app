@@ -22,6 +22,7 @@ const SelectComponent = ({
     data: dataProp,
     exampleData = {},
     dataPath,
+    triggers,
     ...componentProps
   } = component.props as any;
 
@@ -47,6 +48,7 @@ const SelectComponent = ({
     <MantineSelect
       {...props}
       {...componentProps}
+      {...triggers}
       withinPortal={false}
       maxDropdownHeight={120}
       data={data.map((d: any) => {
