@@ -9,7 +9,7 @@ import {
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
 import { NavigationAction } from "@/utils/actions";
-import { Select, Stack } from "@mantine/core";
+import { Checkbox, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 type Props = {
   id: string;
@@ -31,6 +31,7 @@ export const NavigationActionForm = ({ id }: Props) => {
   const form = useForm<FormValues>({
     initialValues: {
       pageId: action.action.pageId,
+      setDataAsQueryStrings: action.action.setDataAsQueryStrings,
     },
   });
 
@@ -42,7 +43,10 @@ export const NavigationActionForm = ({ id }: Props) => {
         selectedComponentId: selectedComponentId!,
         componentActions,
         id,
-        updateValues: { pageId: values.pageId },
+        updateValues: {
+          pageId: values.pageId,
+          setDataAsQueryStrings: values.setDataAsQueryStrings,
+        },
         updateTreeComponentActions,
       });
 
@@ -51,6 +55,8 @@ export const NavigationActionForm = ({ id }: Props) => {
       handleLoadingStop({ stopLoading, success: false });
     }
   };
+
+  const setDataAsQueryStrings = form.getInputProps("setDataAsQueryStrings");
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
@@ -67,6 +73,11 @@ export const NavigationActionForm = ({ id }: Props) => {
             };
           })}
           {...form.getInputProps("pageId")}
+        />
+        <Checkbox
+          label="Set form data as Query strings"
+          {...setDataAsQueryStrings}
+          checked={setDataAsQueryStrings.value}
         />
         <ActionButtons
           actionId={id}

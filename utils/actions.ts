@@ -89,12 +89,14 @@ export interface BaseAction {
 export interface NavigationAction extends BaseAction {
   name: "navigateToPage";
   pageId: string;
+  setDataAsQueryStrings: boolean;
 }
 
 export interface GoToUrlAction extends BaseAction {
   name: "goToUrl";
   url: string;
   openInNewTab: boolean;
+  setDataAsQueryStrings: boolean;
 }
 
 export interface AlertAction extends BaseAction {
@@ -222,17 +224,40 @@ export type GoToUrlParams = ActionParams & {
 export const navigationAction = ({
   action,
   router,
+  event,
 }: NavigationActionParams) => {
   const projectId = router.query.id as string;
-  router.push(`/projects/${projectId}/editor/${action.pageId}`);
+
+  let url = `/projects/${projectId}/editor/${action.pageId}`;
+
+  if (action.setDataAsQueryStrings) {
+    const formData = new FormData(event.target);
+    const queryStrings = [];
+    for (const [key, value] of formData.entries()) {
+      queryStrings.push(`${key}=${value}`);
+    }
+
+    url += `?${queryStrings.join("&")}`;
+  }
+
+  router.push(url);
 };
 
-export const goToUrlAction = ({ action }: GoToUrlParams) => {
-  const { url, openInNewTab } = action;
+export const goToUrlAction = ({ action, event, router }: GoToUrlParams) => {
+  const { url, openInNewTab, setDataAsQueryStrings } = action;
+
+  const currentUrl = new URL(url);
+  if (setDataAsQueryStrings) {
+    const formData = new FormData(event.target);
+    for (const [key, value] of formData.entries()) {
+      currentUrl.searchParams.set(key, value as string);
+    }
+  }
+
   if (openInNewTab) {
-    window.open(url, "_blank");
+    window.open(currentUrl.href, "_blank");
   } else {
-    window.location.href = url;
+    window.location.href = currentUrl.href;
   }
 };
 

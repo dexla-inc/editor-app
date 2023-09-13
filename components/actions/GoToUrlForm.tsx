@@ -31,6 +31,7 @@ export const GoToUrlForm = ({ id }: Props) => {
     initialValues: {
       url: action.action.url,
       openInNewTab: action.action.openInNewTab,
+      setDataAsQueryStrings: action.action.setDataAsQueryStrings,
     },
   });
 
@@ -42,7 +43,11 @@ export const GoToUrlForm = ({ id }: Props) => {
         selectedComponentId: selectedComponentId!,
         componentActions,
         id,
-        updateValues: { url: values.url, openInNewTab: values.openInNewTab },
+        updateValues: {
+          url: values.url,
+          openInNewTab: values.openInNewTab,
+          setDataAsQueryStrings: values.setDataAsQueryStrings,
+        },
         updateTreeComponentActions,
       });
 
@@ -53,6 +58,7 @@ export const GoToUrlForm = ({ id }: Props) => {
   };
 
   const openInNewTabInputProps = form.getInputProps("openInNewTab");
+  const setDataAsQueryStrings = form.getInputProps("setDataAsQueryStrings");
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
@@ -67,6 +73,11 @@ export const GoToUrlForm = ({ id }: Props) => {
           label="Open in new tab"
           {...openInNewTabInputProps}
           checked={openInNewTabInputProps.value}
+        />
+        <Checkbox
+          label="Set form data as Query strings"
+          {...setDataAsQueryStrings}
+          checked={setDataAsQueryStrings.value}
         />
         <ActionButtons
           actionId={id}
