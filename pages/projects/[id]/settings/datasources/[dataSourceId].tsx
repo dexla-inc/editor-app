@@ -1,16 +1,15 @@
 import { SuccessAlert } from "@/components/Alerts";
 import { DashboardShell } from "@/components/DashboardShell";
+import { AddNewDataSourceEndpoint } from "@/components/datasources/AddNewDataSourceEndpoint";
 import AuthenticationBearer from "@/components/datasources/AuthenticationBearer";
-import {
-  ExampleResponseDropdown,
-  filterAndMapEndpoints,
-} from "@/components/datasources/AuthenticationInputs";
+import { ExampleResponseDropdown } from "@/components/datasources/AuthenticationInputs";
 import {
   BasicDetailsInputs,
   validateBaseUrl,
   validateName,
 } from "@/components/datasources/BasicDetailsInputs";
 import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
+import { DataSourceEndpointList } from "@/components/datasources/DataSourceEndpointList";
 import EndpointsButton from "@/components/datasources/EndpointsButton";
 import {
   SwaggerURLInput,
@@ -43,6 +42,7 @@ import {
   Group,
   Stack,
   Tabs,
+  TextInput,
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -51,7 +51,7 @@ import { IconRefresh } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-export default function Settings() {
+export default function DataSourcePage() {
   const authInfo = useAuthInfo();
   const { user } = authInfo || {};
   const router = useRouter();
@@ -90,18 +90,19 @@ export default function Settings() {
   const [loginEndpointObj, setLoginEndpointObj] = useState<
     Endpoint | undefined
   >(undefined);
-  const postEndpoints = filterAndMapEndpoints(endpoints, "POST");
-  const getEndpoints = filterAndMapEndpoints(endpoints, "GET");
+  const [authValue, setAuthValue] = useState<string | null>(null);
 
-  const apiForm = useForm<DataSourceParams>({
+  const form = useForm<DataSourceParams>({
     validate: {
-      swaggerUrl: (value) => validateSwaggerUrl(value),
+      swaggerUrl: (value) => (value ? validateSwaggerUrl(value) : null),
       baseUrl: (value) => validateBaseUrl(value),
       name: (value) => validateName(value),
+      authValue: (value) =>
+        value === "" ? "You must provide an API key" : null,
     },
   });
 
-  const onApiSubmit = async (values: DataSourceParams) => {
+  const onSubmit = async (values: DataSourceParams) => {
     try {
       startLoading({
         id: "updating",
@@ -110,11 +111,11 @@ export default function Settings() {
           "Wait while we generate your API endpoints from your API specification",
       });
 
-      apiForm.validate();
+      form.validate();
 
       const reFetch = swaggerUrl !== values.swaggerUrl;
 
-      await updateDataSource(id, dataSourceId, reFetch, values);
+      var result = await updateDataSource(id, dataSourceId, reFetch, values);
 
       stopLoading({
         id: "updating",
@@ -142,13 +143,13 @@ export default function Settings() {
       });
       setIsLoading(true);
 
-      apiForm.validate();
+      form.validate();
 
       const result = await getSwagger(id, dataSourceId, swaggerUrl);
 
       setDataSource(result);
 
-      apiForm.setValues(result);
+      form.setValues(result);
 
       setSwaggerRefetched(true);
 
@@ -158,18 +159,28 @@ export default function Settings() {
         message: "The data source was saved successfully",
       });
       setIsLoading(false);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      stopLoading({
+        id: "updating",
+        title: "Data Source Failed",
+        message:
+          error ??
+          "Could not fetch swagger file. Please check the URL and try again.",
+        isError: true,
+      });
     }
   };
 
   useEffect(() => {
     (async () => {
       const result = await getDataSource(id, dataSourceId);
-      apiForm.setValues(result);
+      form.setValues(result);
       setDataSource(result);
       setSwaggerUrl(result.swaggerUrl);
       setAuthenticationScheme(result.authenticationScheme);
+
+      result.authValue && setAuthValue(result.authValue);
 
       const endpointsResult = await getDataSourceEndpoints(id, dataSourceId);
       setEndpoints(endpointsResult.results);
@@ -185,7 +196,7 @@ export default function Settings() {
 
         <Tabs.Panel value="datasources" pt="xs">
           <Container py="xl">
-            <form onSubmit={apiForm.onSubmit(onApiSubmit)}>
+            <form onSubmit={form.onSubmit(onSubmit)}>
               <Stack>
                 <Title>Data Source Details</Title>
                 <Title order={3}>API Information</Title>
@@ -222,39 +233,53 @@ export default function Settings() {
                   setSwaggerUrl={setSwaggerUrl}
                 />
                 <BasicDetailsInputs
-                  form={apiForm}
+                  form={form}
                   authenticationScheme={authenticationScheme}
                   setAuthenticationScheme={setAuthenticationScheme}
                 />
+                {authenticationScheme === "API_KEY" && (
+                  <TextInput
+                    label="API Key"
+                    description="The key used to authenticate to the API"
+                    placeholder="aa982f3c39b17...."
+                    {...form.getInputProps("authValue")}
+                    onChange={(e) => {
+                      form.setFieldValue("authValue", e.target.value);
+                      setAuthValue(e.target.value);
+                    }}
+                  />
+                )}
                 <Flex>
                   <Button type="submit">Save</Button>
                 </Flex>
-                <Divider></Divider>
               </Stack>
             </form>
-            {authenticationScheme === "BEARER" && (
-              <Box mt="lg">
-                <Title order={3}>Bearer Token Configuration</Title>
-                <AuthenticationBearer
-                  isLoading={isLoading}
-                  setIsLoading={setIsLoading}
-                  startLoading={startLoading}
-                  stopLoading={stopLoading}
-                  dataSource={dataSource}
-                  endpoints={endpoints}
-                  loginEndpointId={loginEndpointId}
-                  setLoginEndpointId={setLoginEndpointId}
-                  refreshEndpointId={refreshEndpointId}
-                  setRefreshEndpointId={setRefreshEndpointId}
-                  userEndpointId={userEndpointId}
-                  setUserEndpointId={setUserEndpointId}
-                  setExampleResponse={setExampleResponse}
-                  exampleResponse={exampleResponse}
-                  setLoginRequestBody={setLoginRequestBody}
-                  fromPage={true}
-                />
-              </Box>
-            )}
+            <Box mt="lg">
+              {authenticationScheme === "BEARER" && (
+                <Stack>
+                  <Divider></Divider>
+                  <Title order={3}>Bearer Token Configuration</Title>
+                  <AuthenticationBearer
+                    isLoading={isLoading}
+                    setIsLoading={setIsLoading}
+                    startLoading={startLoading}
+                    stopLoading={stopLoading}
+                    dataSource={dataSource}
+                    endpoints={endpoints}
+                    loginEndpointId={loginEndpointId}
+                    setLoginEndpointId={setLoginEndpointId}
+                    refreshEndpointId={refreshEndpointId}
+                    setRefreshEndpointId={setRefreshEndpointId}
+                    userEndpointId={userEndpointId}
+                    setUserEndpointId={setUserEndpointId}
+                    setExampleResponse={setExampleResponse}
+                    exampleResponse={exampleResponse}
+                    setLoginRequestBody={setLoginRequestBody}
+                    fromPage={true}
+                  />
+                </Stack>
+              )}
+            </Box>
             <Stack>
               <Divider></Divider>
               {loginRequestBody && loginRequestBody.length > 0 && (
@@ -267,6 +292,11 @@ export default function Settings() {
                   dataSourceId={dataSource.id}
                 ></TestUserLogin>
               )}
+              <AddNewDataSourceEndpoint />
+              <DataSourceEndpointList
+                projectId={id}
+                dataSourceId={dataSourceId}
+              />
               <Stack>
                 {dataSource?.changedEndpoints && (
                   <Title order={6}>Changed Endpoints</Title>
