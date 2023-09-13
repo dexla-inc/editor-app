@@ -1,4 +1,4 @@
-import { patchDataSource } from "@/requests/datasources/mutations";
+import { patchDataSourceEndpoint } from "@/requests/datasources/mutations";
 import { Endpoint, RequestBody } from "@/requests/datasources/types";
 
 type EndpointDropdown = {
@@ -88,7 +88,12 @@ export async function patchDataSourceWithParams(
     });
   }
 
-  await patchDataSource(projectId, dataSourceId, endpointId, patchParams);
+  await patchDataSourceEndpoint(
+    projectId,
+    dataSourceId,
+    endpointId,
+    patchParams
+  );
 }
 
 type EndpointSetter = (value: string | null) => void;

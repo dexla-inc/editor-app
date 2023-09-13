@@ -16,6 +16,8 @@ export type CreatedResponse = {
   trackingId: string;
 };
 
+export type SuccessResponse = Omit<CreatedResponse, "id">;
+
 export type SwaggerParams = { swaggerUrl: string };
 
 export type DataSourceParams = {
@@ -56,20 +58,30 @@ type ErrorDetail = {
 
 export type EnvironmentTypes = "None" | "Staging" | "Production";
 
+export type MediaTypes =
+  | "application/json"
+  | "application/x-www-form-urlencoded"
+  | "application/graphql"
+  | "text/event-stream"
+  | "application/octet-stream";
+
 export type Endpoint = {
   id: string;
   relativeUrl: string;
   methodType: MethodTypes;
   description: string | null;
-  mediaType: string;
+  mediaType: MediaTypes;
   withCredentials: boolean | null;
   authenticationScheme: AuthenticationSchemes;
   headers: Header[];
   parameters: Parameter[];
   requestBody: RequestBody[];
   exampleResponse: string;
+  errorExampleResponse: string;
   authentication: AuthenticationEndpoint;
 };
+
+export type EndpointParams = Omit<Endpoint, "id" | "authentication">;
 
 type AuthenticationEndpoint = {
   endpointType: string;
@@ -77,26 +89,30 @@ type AuthenticationEndpoint = {
   tokenSecondaryKey: string;
 };
 
-type Header = {
+export type ParameterTypes = "string" | "number" | "boolean" | "datetime";
+
+export type Header = {
   required: boolean;
   value: string | null;
   name: string;
-  type: string;
+  type: ParameterTypes;
   description: string | null;
 };
 
+export type ParameterLocations = "Query" | "Path" | "Header" | "Cookie";
+
 export type Parameter = {
-  location: string;
+  location: ParameterLocations;
   required: boolean;
   name: string;
-  type: string;
+  type: ParameterTypes;
   description: string | null;
 };
 
 export type RequestBody = {
   value: any | null;
   name: string;
-  type: string;
+  type: ParameterTypes;
   description: string | null;
 };
 

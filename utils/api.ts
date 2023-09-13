@@ -45,6 +45,8 @@ async function doFetch<Type>({
         ...(body ? { body: JSON.stringify(body) } : {}),
       });
 
+      console.log("response", response);
+
       if (isStream) {
         if (!response.status.toString().startsWith("20")) {
           return reject(response.statusText);
