@@ -95,7 +95,7 @@ export type Header = {
   required: boolean;
   value: string | null;
   name: string;
-  type: ParameterTypes;
+  type: ParameterTypes | AuthenticationSchemes;
   description: string | null;
 };
 
