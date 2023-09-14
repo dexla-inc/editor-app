@@ -23,6 +23,7 @@ import { IconPlus, IconRadio, IconTrash } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { withModifier } from "@/hoc/withModifier";
 import { pick } from "next/dist/lib/pick";
+import { IconSelector } from "@/components/IconSelector";
 
 export const icon = IconRadio;
 export const label = "Radio";
@@ -35,6 +36,7 @@ const createRadioItem = (label: string, value: string) => {
     props: {
       label: label,
       value: value,
+      icon: "",
     },
   });
   return radioItem;
@@ -151,6 +153,14 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                 onChange={(e) =>
                   updateRadioItem(index, "value", e.target.value)
                 }
+              />
+              <IconSelector
+                topLabel="Icon"
+                selectedIcon={child.props?.icon}
+                onIconSelect={(value: string) => {
+                  console.log({ value });
+                  updateRadioItem(index, "icon", value);
+                }}
               />
             </Box>
           ))}
