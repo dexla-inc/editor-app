@@ -25,6 +25,7 @@ export const jsonStructure = (props?: any): Component => {
         props: {
           label: "Radio Label 1",
           value: "radio1",
+          icon: "",
           ...(props.props || {}),
         },
         blockDroppingChildrenInside: true,
@@ -36,6 +37,7 @@ export const jsonStructure = (props?: any): Component => {
         props: {
           label: "Radio Label 2",
           value: "radio2",
+          icon: "",
           ...(props.props || {}),
         },
         blockDroppingChildrenInside: true,
