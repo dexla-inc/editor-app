@@ -158,7 +158,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                 topLabel="Icon"
                 selectedIcon={child.props?.icon}
                 onIconSelect={(value: string) => {
-                  console.log({ value });
                   updateRadioItem(index, "icon", value);
                 }}
               />
