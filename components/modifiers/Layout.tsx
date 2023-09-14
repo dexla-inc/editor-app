@@ -1,7 +1,11 @@
 import { UnitInput } from "@/components/UnitInput";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { useEditorStore } from "@/stores/editor";
-import { debouncedTreeUpdate, getComponentById } from "@/utils/editor";
+import {
+  debouncedTreeComponentStyleUpdate,
+  debouncedTreeUpdate,
+  getComponentById,
+} from "@/utils/editor";
 import { Group, SegmentedControl, Select, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
@@ -16,12 +20,13 @@ import {
   IconLayoutDistributeHorizontal,
   IconLayoutDistributeVertical,
 } from "@tabler/icons-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const icon = IconLayout2;
 export const label = "Layout";
 
 export const defaultLayoutValues = {
+  display: "flex",
   flexWrap: "wrap",
   flexDirection: "column",
   rowGap: "20px",
@@ -34,12 +39,12 @@ export const defaultLayoutValues = {
 export const Modifier = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
+    (state) => state.selectedComponentId,
   );
 
   const selectedComponent = getComponentById(
     editorTree.root,
-    selectedComponentId as string
+    selectedComponentId as string,
   );
 
   const componentProps = selectedComponent?.props || {};
@@ -48,11 +53,16 @@ export const Modifier = () => {
     initialValues: defaultLayoutValues,
   });
 
+  const [displayType, setDisplayType] = useState(
+    componentProps?.style?.display ?? defaultLayoutValues.display,
+  );
+
   useEffect(() => {
     if (selectedComponentId) {
       const { style = {} } = componentProps;
 
       form.setValues({
+        display: style?.display ?? defaultLayoutValues.display,
         position: style.position ?? defaultLayoutValues.position,
         flexWrap: style.flexWrap ?? defaultLayoutValues.flexWrap,
         flexDirection: style.flexDirection ?? defaultLayoutValues.flexDirection,
@@ -70,191 +80,218 @@ export const Modifier = () => {
   return (
     <form key={selectedComponentId}>
       <Stack spacing="xs">
-        <Stack spacing={2}>
-          <Text size="0.75rem">Direction</Text>
-          <SegmentedControl
-            size="xs"
-            data={[
-              { label: "Horizontal", value: "row" },
-              { label: "Vertical", value: "column" },
-            ]}
-            {...form.getInputProps("flexDirection")}
-            onChange={(value) => {
-              form.setFieldValue("flexDirection", value as string);
-              debouncedTreeUpdate(selectedComponentId as string, {
-                style: { flexDirection: value },
-              });
-            }}
-          />
-        </Stack>
-        <Stack spacing={2}>
-          <Text size="0.75rem">Gap</Text>
-          <Group noWrap>
-            <UnitInput
-              label="Rows"
-              {...form.getInputProps("rowGap")}
-              onChange={(value) => {
-                form.setFieldValue("rowGap", value as string);
-                debouncedTreeUpdate(selectedComponentId as string, {
-                  style: { rowGap: value },
-                });
-              }}
-            />
-            <UnitInput
-              label="Columns"
-              {...form.getInputProps("columnGap")}
-              onChange={(value) => {
-                form.setFieldValue("columnGap", value as string);
-                debouncedTreeUpdate(selectedComponentId as string, {
-                  style: { columnGap: value },
-                });
-              }}
-            />
-          </Group>
-        </Stack>
-        <Stack spacing={2}>
-          <Text size="0.75rem">Align</Text>
-          <SegmentedControl
-            size="xs"
-            data={[
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="Start"
-                    icon={<IconAlignBoxLeftMiddle size={14} />}
-                  />
-                ),
-                value: "flex-start",
-              },
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="Center"
-                    icon={<IconAlignBoxCenterMiddle size={14} />}
-                  />
-                ),
-                value: "center",
-              },
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="End"
-                    icon={<IconAlignBoxRightMiddle size={14} />}
-                  />
-                ),
-                value: "flex-end",
-              },
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="Stretch"
-                    icon={<IconAlignBoxBottomCenter size={14} />}
-                  />
-                ),
-                value: "stretch",
-              },
-            ]}
-            styles={{
-              label: {
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
-              },
-            }}
-            {...form.getInputProps("alignItems")}
-            onChange={(value) => {
-              form.setFieldValue("alignItems", value as string);
-              debouncedTreeUpdate(selectedComponentId as string, {
-                style: { alignItems: value },
-              });
-            }}
-          />
-        </Stack>
-        <Stack spacing={2}>
-          <Text size="0.75rem">Justify</Text>
-          <SegmentedControl
-            size="xs"
-            data={[
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="Start"
-                    icon={<IconLayoutAlignLeft size={14} />}
-                  />
-                ),
-                value: "flex-start",
-              },
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="Center"
-                    icon={<IconLayoutAlignCenter size={14} />}
-                  />
-                ),
-                value: "center",
-              },
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="End"
-                    icon={<IconLayoutAlignRight size={14} />}
-                  />
-                ),
-                value: "flex-end",
-              },
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="Space Between"
-                    icon={<IconLayoutDistributeHorizontal size={14} />}
-                  />
-                ),
-                value: "space-between",
-              },
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="Space Around"
-                    icon={<IconLayoutDistributeVertical size={14} />}
-                  />
-                ),
-                value: "space-around",
-              },
-            ]}
-            styles={{
-              label: {
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
-              },
-            }}
-            {...form.getInputProps("justifyContent")}
-            onChange={(value) => {
-              form.setFieldValue("justifyContent", value as string);
-              debouncedTreeUpdate(selectedComponentId as string, {
-                style: { justifyContent: value },
-              });
-            }}
-          />
-        </Stack>
         <Select
-          label="Wrap"
+          label="Display"
           size="xs"
           data={[
-            { label: "Wrap", value: "wrap" },
-            { label: "Wrap Reverse", value: "wrap-reverse" },
-            { label: "No Wrap", value: "nowrap" },
+            { label: "flex", value: "flex" },
+            { label: "none", value: "none" },
+            // { label: "inline", value: "inline" },
+            // { label: "block", value: "block" },
+            // { label: "inherit", value: "inherit" },
           ]}
-          {...form.getInputProps("flexWrap")}
+          {...form.getInputProps("display")}
           onChange={(value) => {
-            form.setFieldValue("flexWrap", value as string);
-            debouncedTreeUpdate(selectedComponentId as string, {
-              style: { flexWrap: value },
-            });
+            form.setFieldValue("display", value as string);
+            debouncedTreeComponentStyleUpdate("display", value as string);
+            setDisplayType(value as string);
           }}
         />
+        {displayType === "flex" && (
+          // When adding new displays such as inline, block, grid etc, these Flex components should be moved into a LayoutFlex component
+          <>
+            <Stack spacing={2}>
+              <Text size="xs" fw={500}>
+                Direction
+              </Text>
+              <SegmentedControl
+                size="xs"
+                data={[
+                  { label: "Horizontal", value: "row" },
+                  { label: "Vertical", value: "column" },
+                ]}
+                {...form.getInputProps("flexDirection")}
+                onChange={(value) => {
+                  form.setFieldValue("flexDirection", value as string);
+                  debouncedTreeUpdate(selectedComponentId as string, {
+                    style: { flexDirection: value },
+                  });
+                }}
+              />
+            </Stack>
+            <Stack spacing={2}>
+              <Group noWrap>
+                <UnitInput
+                  label="Row Gap"
+                  {...form.getInputProps("rowGap")}
+                  onChange={(value) => {
+                    form.setFieldValue("rowGap", value as string);
+                    debouncedTreeUpdate(selectedComponentId as string, {
+                      style: { rowGap: value },
+                    });
+                  }}
+                />
+                <UnitInput
+                  label="Column Gap"
+                  {...form.getInputProps("columnGap")}
+                  onChange={(value) => {
+                    form.setFieldValue("columnGap", value as string);
+                    debouncedTreeUpdate(selectedComponentId as string, {
+                      style: { columnGap: value },
+                    });
+                  }}
+                />
+              </Group>
+            </Stack>
+            <Stack spacing={2}>
+              <Text size="xs" fw={500}>
+                Align
+              </Text>
+              <SegmentedControl
+                size="xs"
+                data={[
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Start"
+                        icon={<IconAlignBoxLeftMiddle size={14} />}
+                      />
+                    ),
+                    value: "flex-start",
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Center"
+                        icon={<IconAlignBoxCenterMiddle size={14} />}
+                      />
+                    ),
+                    value: "center",
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="End"
+                        icon={<IconAlignBoxRightMiddle size={14} />}
+                      />
+                    ),
+                    value: "flex-end",
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Stretch"
+                        icon={<IconAlignBoxBottomCenter size={14} />}
+                      />
+                    ),
+                    value: "stretch",
+                  },
+                ]}
+                styles={{
+                  label: {
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  },
+                }}
+                {...form.getInputProps("alignItems")}
+                onChange={(value) => {
+                  form.setFieldValue("alignItems", value as string);
+                  debouncedTreeUpdate(selectedComponentId as string, {
+                    style: { alignItems: value },
+                  });
+                }}
+              />
+            </Stack>
+            <Stack spacing={2}>
+              <Text size="xs" fw={500}>
+                Justify
+              </Text>
+              <SegmentedControl
+                size="xs"
+                data={[
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Start"
+                        icon={<IconLayoutAlignLeft size={14} />}
+                      />
+                    ),
+                    value: "flex-start",
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Center"
+                        icon={<IconLayoutAlignCenter size={14} />}
+                      />
+                    ),
+                    value: "center",
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="End"
+                        icon={<IconLayoutAlignRight size={14} />}
+                      />
+                    ),
+                    value: "flex-end",
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Space Between"
+                        icon={<IconLayoutDistributeHorizontal size={14} />}
+                      />
+                    ),
+                    value: "space-between",
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Space Around"
+                        icon={<IconLayoutDistributeVertical size={14} />}
+                      />
+                    ),
+                    value: "space-around",
+                  },
+                ]}
+                styles={{
+                  label: {
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  },
+                }}
+                {...form.getInputProps("justifyContent")}
+                onChange={(value) => {
+                  form.setFieldValue("justifyContent", value as string);
+                  debouncedTreeUpdate(selectedComponentId as string, {
+                    style: { justifyContent: value },
+                  });
+                }}
+              />
+            </Stack>
+            <Select
+              label="Wrap"
+              size="xs"
+              data={[
+                { label: "Wrap", value: "wrap" },
+                { label: "Wrap Reverse", value: "wrap-reverse" },
+                { label: "No Wrap", value: "nowrap" },
+              ]}
+              {...form.getInputProps("flexWrap")}
+              onChange={(value) => {
+                form.setFieldValue("flexWrap", value as string);
+                debouncedTreeUpdate(selectedComponentId as string, {
+                  style: { flexWrap: value },
+                });
+              }}
+            />
+          </>
+        )}
       </Stack>
     </form>
   );
