@@ -37,6 +37,7 @@ import { Table } from "@/components/mapper/Table";
 import { Tabs } from "@/components/mapper/Tabs";
 import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";
+import { GoogleMapPlugin } from "@/components/mapper/GoogleMapPlugin";
 import { Title } from "@/components/mapper/Title";
 import { AreaChart } from "@/components/mapper/charts/AreaChart";
 import { BarChart } from "@/components/mapper/charts/BarChart";
@@ -80,6 +81,7 @@ import * as SwitchStructure from "@/components/mapper/structure/Switch";
 import * as TableStructure from "@/components/mapper/structure/Table";
 import * as TabsStructure from "@/components/mapper/structure/Tabs";
 import * as TextStructure from "@/components/mapper/structure/Text";
+import * as MapStructure from "@/components/mapper/structure/GoogleMap";
 import * as TextareaStructure from "@/components/mapper/structure/Textarea";
 import * as TitleStructure from "@/components/mapper/structure/Title";
 import * as AreaChartStructure from "@/components/mapper/structure/charts/AreaChart";
@@ -121,6 +123,7 @@ import {
   IconLayoutSidebarLeftCollapse,
   IconLink,
   IconListCheck,
+  IconMapPin,
   IconMenu,
   IconPageBreak,
   IconPhoto,
@@ -173,6 +176,17 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Layout",
     icon: <IconContainer size={ICON_SIZE} />,
+  },
+  GoogleMap: {
+    structure: (props: any) => MapStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="GoogleMap"
+        icon={<IconMapPin size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+    icon: <IconMapPin size={ICON_SIZE} />,
   },
   Input: {
     structure: (props: any) => InputStructure.jsonStructure(props),
@@ -767,7 +781,8 @@ export type Modifiers =
   | "table"
   | "radio"
   | "drawer"
-  | "buttonIcon";
+  | "buttonIcon"
+  | "mapSettings";
 
 export type ComponentDefinition = {
   Component: any;
@@ -781,6 +796,17 @@ export type ComponentMapper = {
 };
 
 export const componentMapper: ComponentMapper = {
+  GoogleMap: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <GoogleMapPlugin
+        component={props.component}
+        renderTree={props.renderTree}
+      />
+    ),
+    modifiers: ["mapSettings", "size", "border"],
+    actionTriggers: ["onMount", "onClick"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
   Avatar: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Avatar component={props.component} renderTree={props.renderTree} />
