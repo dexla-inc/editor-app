@@ -38,6 +38,7 @@ export const defaultBorderValues = {
   borderRightColor: "Border.6",
   borderBottomColor: "Border.6",
   borderLeftColor: "Border.6",
+  borderRadius: "0px",
   borderTopLeftRadius: "0px",
   borderTopRightRadius: "0px",
   borderBottomLeftRadius: "0px",
@@ -99,8 +100,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         borderLeftColor: style.borderLeftColor
           ? getThemeColor(theme, style.borderLeftColor)
           : defaultBorderValues.borderLeftColor,
-        borderRadius:
-          style.borderTopLeftRadius ?? defaultBorderValues.borderTopLeftRadius,
+        borderRadius: style.borderRadius ?? defaultBorderValues.borderRadius,
         borderTopLeftRadius:
           style.borderTopLeftRadius ?? defaultBorderValues.borderTopLeftRadius,
         borderTopRightRadius:
