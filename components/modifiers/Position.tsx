@@ -9,7 +9,7 @@ import { useEffect } from "react";
 export const icon = IconLayout;
 export const label = "Position";
 
-export const defaultLayoutValues = {
+export const defaultPositionValues = {
   position: "relative",
   top: "auto",
   right: "auto",
@@ -21,18 +21,18 @@ export const defaultLayoutValues = {
 export const Modifier = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
+    (state) => state.selectedComponentId,
   );
 
   const selectedComponent = getComponentById(
     editorTree.root,
-    selectedComponentId as string
+    selectedComponentId as string,
   );
 
   const componentProps = selectedComponent?.props || {};
 
   const form = useForm({
-    initialValues: defaultLayoutValues,
+    initialValues: defaultPositionValues,
   });
 
   useEffect(() => {
@@ -40,12 +40,12 @@ export const Modifier = () => {
       const { style = {} } = componentProps;
 
       form.setValues({
-        position: style.position ?? defaultLayoutValues.position,
-        top: style.top ?? defaultLayoutValues.top,
-        right: style.right ?? defaultLayoutValues.right,
-        bottom: style.bottom ?? defaultLayoutValues.bottom,
-        left: style.left ?? defaultLayoutValues.left,
-        zIndex: style.zIndex ?? defaultLayoutValues.zIndex,
+        position: style.position ?? defaultPositionValues.position,
+        top: style.top ?? defaultPositionValues.top,
+        right: style.right ?? defaultPositionValues.right,
+        bottom: style.bottom ?? defaultPositionValues.bottom,
+        left: style.left ?? defaultPositionValues.left,
+        zIndex: style.zIndex ?? defaultPositionValues.zIndex,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes

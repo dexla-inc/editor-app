@@ -12,7 +12,6 @@ export const jsonStructure = (props?: any): Component => {
     description: "Form",
     props: {
       style: {
-        display: "flex",
         ...defaultLayoutValues,
         ...defaultBorderValues,
         paddingLeft: "0px",
