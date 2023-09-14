@@ -245,7 +245,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
 
 const ListItemWrapper = ({ component, children, level }: ListItemProps) => {
   return (
-    <SortableTreeItem component={component}>
+    <SortableTreeItem component={component} style={{ marginBottom: "3px" }}>
       <List.Item key={component.id} w="100%">
         <ListItem component={component} level={level}>
           {(component.children ?? [])?.length > 0 && (
