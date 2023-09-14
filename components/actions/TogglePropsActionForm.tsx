@@ -24,6 +24,7 @@ import { useForm } from "@mantine/form";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
+import { ComponentToBindActionsPopover } from "@/components/ComponentToBindActionsPopover";
 
 type Props = {
   id: string;
@@ -50,7 +51,6 @@ export const TogglePropsActionForm = ({ id }: Props) => {
     setComponentToBind,
     pickingComponentToBindTo,
   } = useEditorStore();
-  // console.log({ componentToBind, pickingComponentToBindTo });
   const component = getComponentById(editorTree.root, selectedComponentId!);
 
   const form = useForm<FormValues>({
@@ -177,19 +177,26 @@ export const TogglePropsActionForm = ({ id }: Props) => {
                   }}
                   value={componentId}
                   rightSection={
-                    <ActionIcon
-                      onClick={() => {
-                        setComponentToBindIndex(i);
-                        setPickingComponentToBindTo({
-                          componentId: component?.id!,
-                          trigger: action.trigger,
-                          bindedId: componentId ?? "",
-                        });
-                      }}
-                    >
-                      <IconCurrentLocation size={ICON_SIZE} />
-                    </ActionIcon>
+                    <>
+                      <ComponentToBindActionsPopover />
+                      <ActionIcon
+                        onClick={() => {
+                          setComponentToBindIndex(i);
+                          setPickingComponentToBindTo({
+                            componentId: component?.id!,
+                            trigger: action.trigger,
+                            bindedId: componentId ?? "",
+                          });
+                        }}
+                      >
+                        <IconCurrentLocation size={ICON_SIZE} />
+                      </ActionIcon>
+                    </>
                   }
+                  styles={{
+                    input: { paddingRight: "3.65rem" },
+                    rightSection: { width: "3.65rem" },
+                  }}
                 />
               </div>
             );

@@ -108,6 +108,9 @@ export const DroppableDraggable = ({
     (state) => state.currentTreeComponentsStates
   );
   const language = useEditorStore((state) => state.language);
+  const highlightedComponentId = useEditorStore(
+    (state) => state.highlightedComponentId
+  );
 
   const actions: Action[] = component.actions ?? [];
   const onMountAction: Action | undefined = actions.find(
@@ -207,25 +210,27 @@ export const DroppableDraggable = ({
   const baseShadow = `0 0 0 1px ${theme.colors.teal[6]}`;
 
   const shadows =
-    !isPreviewMode &&
-    (isOver || isPicked
-      ? {
-          boxShadow:
-            edge === "top"
-              ? `inset 0 ${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
-              : edge === "bottom"
-              ? `inset 0 -${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
-              : edge === "left"
-              ? `inset ${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
-              : edge === "right"
-              ? `inset -${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
-              : baseShadow,
-          background: edge === "center" ? theme.colors.teal[6] : "none",
-          opacity: edge === "center" ? 0.4 : 1,
-        }
-      : isSelected || hovered
-      ? { boxShadow: baseShadow }
-      : {});
+    highlightedComponentId === component.id
+      ? { boxShadow: `0 0 0 1px ${theme.colors.orange[6]}` }
+      : !isPreviewMode &&
+        (isOver || isPicked
+          ? {
+              boxShadow:
+                edge === "top"
+                  ? `inset 0 ${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+                  : edge === "bottom"
+                  ? `inset 0 -${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+                  : edge === "left"
+                  ? `inset ${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+                  : edge === "right"
+                  ? `inset -${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+                  : baseShadow,
+              background: edge === "center" ? theme.colors.teal[6] : "none",
+              opacity: edge === "center" ? 0.4 : 1,
+            }
+          : isSelected || hovered
+          ? { boxShadow: baseShadow }
+          : {});
 
   const isContentWrapper = id === "content-wrapper";
   const haveNonRootParent = parent && parent.id !== "root";

@@ -139,6 +139,8 @@ export type EditorState = {
   // pasteAction: (componentId: string) => void;
   language: string;
   setLanguage: (isSaving: string) => void;
+  setHighlightedComponentId: (componentId: string | null) => void;
+  highlightedComponentId?: string | null;
 };
 
 const debouncedUpdatePageState = debounce(updatePageState, 2000);
@@ -332,6 +334,8 @@ export const useEditorStore = create<EditorState>()(
           set((state) => ({ isNavBarVisible: !state.isNavBarVisible })),
         setCopiedAction: (copiedAction) => set({ copiedAction }),
         setLanguage: (language) => set({ language }),
+        setHighlightedComponentId: (componentId) =>
+          set({ highlightedComponentId: componentId }),
       }),
       {
         partialize: (state) => {
