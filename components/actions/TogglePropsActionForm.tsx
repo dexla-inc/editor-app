@@ -82,14 +82,10 @@ export const TogglePropsActionForm = ({ id }: Props) => {
   };
 
   useEffect(() => {
-    if (
-      componentToBind &&
-      pickingComponentToBindTo &&
-      componentToBindIndex !== undefined
-    ) {
+    if (componentToBind && pickingComponentToBindTo) {
       if (pickingComponentToBindTo.componentId === component?.id) {
         const newValue = conditionRules();
-        newValue[componentToBindIndex].componentId = componentToBind;
+        newValue[componentToBindIndex ?? 0].componentId = componentToBind;
 
         form.setFieldValue("conditionRules", newValue);
 
@@ -178,7 +174,14 @@ export const TogglePropsActionForm = ({ id }: Props) => {
                   value={componentId}
                   rightSection={
                     <>
-                      <ComponentToBindActionsPopover />
+                      <ComponentToBindActionsPopover
+                        onClick={(componentToBind: string) => {
+                          const newValue = conditionRules();
+                          newValue[i].componentId = componentToBind;
+
+                          form.setFieldValue("conditionRules", newValue);
+                        }}
+                      />
                       <ActionIcon
                         onClick={() => {
                           setComponentToBindIndex(i);

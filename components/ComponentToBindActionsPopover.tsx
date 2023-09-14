@@ -16,7 +16,13 @@ import { SortableTreeItem } from "@/components/SortableTreeItem";
 import { structureMapper } from "@/utils/componentMapper";
 import { useState } from "react";
 
-export const ComponentToBindActionsPopover = () => {
+interface IComponentToBindActionsPopover {
+  onClick: (componentToBind: string) => void;
+}
+
+export const ComponentToBindActionsPopover = ({
+  onClick,
+}: IComponentToBindActionsPopover) => {
   return (
     <Popover width={200} position="bottom" withArrow shadow="md">
       <Popover.Target>
@@ -29,7 +35,7 @@ export const ComponentToBindActionsPopover = () => {
           <Accordion.Item value="components">
             <Accordion.Control>Components</Accordion.Control>
             <Accordion.Panel>
-              <ListComponentToBindPopover />
+              <ListComponentToBindPopover onClick={onClick} />
             </Accordion.Panel>
           </Accordion.Item>
           <Accordion.Item value="pages">
@@ -48,7 +54,12 @@ export const ComponentToBindActionsPopover = () => {
 
 const ListItem = ({ component, children, level = 0 }: any) => {
   const [isClicked, setIsClicked] = useState(false);
-  const { setHighlightedComponentId } = useEditorStore((state) => state);
+  const {
+    setHighlightedComponentId,
+    setComponentToBind,
+    selectedComponentId,
+    setPickingComponentToBindTo,
+  } = useEditorStore();
 
   const icon = structureMapper[component.name as string]?.icon;
 
@@ -69,6 +80,12 @@ const ListItem = ({ component, children, level = 0 }: any) => {
           onClick={(e) => {
             e.stopPropagation();
             setHighlightedComponentId(component.id);
+            setComponentToBind(component.id);
+            setPickingComponentToBindTo({
+              componentId: selectedComponentId!,
+              trigger: "onClick",
+              bindedId: selectedComponentId ?? "",
+            });
             setIsClicked(true);
           }}
           onMouseEnter={(e) => {
@@ -126,7 +143,9 @@ const ListItemWrapper = ({ component, children, level }: any) => {
   );
 };
 
-const ListComponentToBindPopover = () => {
+const ListComponentToBindPopover = ({
+  onClick,
+}: IComponentToBindActionsPopover) => {
   const editorTree = useEditorStore((state) => state.tree);
 
   const renderList = (component: Component, level: number = 0) => {
