@@ -160,6 +160,8 @@ export const DataSourceEndpointDetail = ({
     exampleResponse: endpoint.exampleResponse ?? "",
     errorExampleResponse: endpoint.errorExampleResponse ?? "",
     isServerRequest: endpoint.isServerRequest ?? false,
+    baseUrl: baseUrl,
+    dataSourceId: dataSourceId,
   };
 
   function reducer(state: EndpointParams, action: Action): EndpointParams {

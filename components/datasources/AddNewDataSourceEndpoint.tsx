@@ -19,6 +19,8 @@ export const AddNewDataSourceEndpoint = ({ baseUrl }: { baseUrl: string }) => {
     exampleResponse: "",
     errorExampleResponse: "",
     isServerRequest: false,
+    dataSourceId: "",
+    baseUrl: baseUrl,
   };
 
   const addNewEndpoint = () => {
