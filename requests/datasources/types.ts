@@ -68,6 +68,8 @@ export type MediaTypes =
 
 export type Endpoint = {
   id: string;
+  dataSourceId: string;
+  baseUrl: string | undefined;
   relativeUrl: string;
   methodType: MethodTypes;
   description: string | null;
