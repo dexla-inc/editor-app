@@ -7,11 +7,13 @@ import { AddNewDataSourceEndpoint } from "./AddNewDataSourceEndpoint";
 type DataSourceEndpointListProps = {
   projectId: string;
   dataSourceId: string;
+  baseUrl: string;
 };
 
 export const DataSourceEndpointList = ({
   projectId,
   dataSourceId,
+  baseUrl,
 }: DataSourceEndpointListProps) => {
   const endpoints = useQuery({
     queryKey: ["endpoints"],
@@ -22,10 +24,11 @@ export const DataSourceEndpointList = ({
   return (
     <>
       <Title order={5}>API Endpoints</Title>
-      <AddNewDataSourceEndpoint />
+      <AddNewDataSourceEndpoint baseUrl={baseUrl} />
       {endpoints.data?.results.map((endpoint) => {
         return (
           <DataSourceEndpoint
+            baseUrl={baseUrl}
             key={endpoint.id}
             projectId={projectId}
             endpoint={endpoint}

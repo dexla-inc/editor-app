@@ -39,11 +39,13 @@ export const colors: ColorScheme = {
 
 type DataSourceEndpointProps = {
   projectId: string;
+  baseUrl: string;
   endpoint: Endpoint;
   location: "editor" | "datasource";
 };
 
 export const DataSourceEndpoint = ({
+  baseUrl,
   projectId,
   endpoint,
   location,
@@ -104,6 +106,7 @@ export const DataSourceEndpoint = ({
       </UnstyledButton>
       {opened && (
         <DataSourceEndpointDetail
+          baseUrl={baseUrl}
           endpoint={endpoint}
           projectId={projectId}
           dataSourceId={dataSourceId}

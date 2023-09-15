@@ -9,12 +9,14 @@ type DataSourceItemProps = {
   projectId: string;
   name: string;
   id: string;
+  baseUrl: string;
 };
 
 export const DataSourceListItem = ({
   projectId,
   name,
   id,
+  baseUrl,
 }: DataSourceItemProps) => {
   let initialBody = {
     results: [],
@@ -45,6 +47,7 @@ export const DataSourceListItem = ({
         {endpoints.results.map((endpoint) => {
           return (
             <DataSourceEndpoint
+              baseUrl={baseUrl}
               key={endpoint.id}
               endpoint={endpoint}
               projectId={projectId}

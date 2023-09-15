@@ -296,6 +296,7 @@ export default function DataSourcePage() {
               )}
 
               <DataSourceEndpointList
+                baseUrl={dataSource?.baseUrl}
                 projectId={id}
                 dataSourceId={dataSourceId}
               />
@@ -306,6 +307,7 @@ export default function DataSourcePage() {
                 {dataSource?.changedEndpoints?.map((endpoint) => {
                   return (
                     <DataSourceEndpoint
+                      baseUrl={dataSource.baseUrl}
                       key={endpoint.id}
                       projectId={id}
                       endpoint={endpoint}
@@ -320,6 +322,7 @@ export default function DataSourcePage() {
                 {dataSource?.deletedEndpoints?.map((endpoint) => {
                   return (
                     <DataSourceEndpoint
+                      baseUrl={dataSource.baseUrl}
                       key={endpoint.id}
                       projectId={id}
                       endpoint={endpoint}

@@ -32,7 +32,8 @@ import { useForm } from "@mantine/form";
 import { Editor } from "@monaco-editor/react";
 import { useQueryClient } from "@tanstack/react-query";
 import debounce from "lodash.debounce";
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
+import { WarningAlert } from "../Alerts";
 
 const MethodTypeArray: MethodTypes[] = [
   "GET",
@@ -119,6 +120,7 @@ const valuePlaceholder =
   "Usually dynamic and replaced in the editor. Add to test or values that do not change";
 
 type DataSourceEndpointDetailProps = {
+  baseUrl: string;
   endpoint: Endpoint | EndpointParams;
   projectId: string;
   dataSourceId: string;
@@ -127,6 +129,7 @@ type DataSourceEndpointDetailProps = {
 
 // Start of component
 export const DataSourceEndpointDetail = ({
+  baseUrl,
   endpoint,
   projectId,
   dataSourceId,
@@ -136,6 +139,8 @@ export const DataSourceEndpointDetail = ({
   const stopLoading = useAppStore((state) => state.stopLoading);
   const isLoading = useAppStore((state) => state.isLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const [displayIsServerRequestWarning, setDisplayIsServerRequestWarning] =
+    useState(false);
 
   const theme = useMantineTheme();
   const queryClient = useQueryClient();
@@ -206,7 +211,6 @@ export const DataSourceEndpointDetail = ({
   };
 
   const handleInputChange = (field: keyof EndpointParams, value: any) => {
-    console.log(value);
     handleFieldChange(field, value);
   };
   const debouncedInputChange = debounce(handleInputChange, 300);
@@ -250,8 +254,8 @@ export const DataSourceEndpointDetail = ({
       setIsLoading(true);
       startLoading({
         id: "saving",
-        title: "Updating Data Source",
-        message: "Wait while your data source is being saved",
+        title: "Updating API Endpoint",
+        message: "Wait while your API endpoint is being saved",
       });
 
       form.validate();
@@ -270,14 +274,14 @@ export const DataSourceEndpointDetail = ({
 
       stopLoading({
         id: "saving",
-        title: "Data Source Saved",
-        message: "The data source was saved successfully",
+        title: "API Endpoint Saved",
+        message: "The API endpoint was saved successfully",
       });
     } catch (error: any) {
       console.log(error);
       stopLoading({
         id: "saving",
-        title: "Data Source Failed",
+        title: "API Endpoint Failed",
         message: error,
         isError: true,
       });
@@ -291,8 +295,8 @@ export const DataSourceEndpointDetail = ({
       setIsLoading(true);
       startLoading({
         id: "deleting",
-        title: "Deleting Data Source",
-        message: "Wait while your data source is being deleted",
+        title: "Deleting API Endpoint",
+        message: "Wait while your API Endpoint is being deleted",
       });
 
       if ("id" in endpoint) {
@@ -304,8 +308,8 @@ export const DataSourceEndpointDetail = ({
 
       stopLoading({
         id: "deleting",
-        title: "Data Source Deleted",
-        message: "The data source was deleted successfully",
+        title: "API Endpoint Deleted",
+        message: "The API endpoint was deleted successfully",
       });
     } catch (error: any) {
       stopLoading({
@@ -320,9 +324,13 @@ export const DataSourceEndpointDetail = ({
   };
 
   const handleTestEndpoint = async () => {
-    const baseUrl = "https://maps.googleapis.com";
     try {
       setIsLoading(true);
+      startLoading({
+        id: "testing",
+        title: "Testing API Endpoint",
+        message: "Wait while your API endpoint is being tested",
+      });
       const {
         methodType,
         relativeUrl,
@@ -361,15 +369,11 @@ export const DataSourceEndpointDetail = ({
         ? `/api/proxy?targetUrl=${encodeURIComponent(apiUrl)}`
         : apiUrl;
 
-      console.log(requestHeaders);
-
       const response = await fetch(fetchUrl, {
         method: methodType,
         headers: requestHeaders,
         ...(withCredentials ? { credentials: "include" } : {}),
       });
-
-      console.log("response", response);
 
       if (!response.status.toString().startsWith("20")) {
         throw new Error(
@@ -378,9 +382,28 @@ export const DataSourceEndpointDetail = ({
       }
 
       const result = await response.json();
-      console.log(result);
+
+      handleInputChange(
+        "exampleResponse",
+        JSON.stringify(JSON.stringify(result, null, 2)),
+      );
+      setDisplayIsServerRequestWarning(false);
+      stopLoading({
+        id: "testing",
+        title: "API Endpoint Tested",
+        message: "The API endpoint works",
+      });
     } catch (error: any) {
       console.log(error);
+      if (!state.isServerRequest) {
+        setDisplayIsServerRequestWarning(true);
+      }
+      stopLoading({
+        id: "tested",
+        title: "API Endpoint Failed",
+        message: error,
+        isError: true,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -648,6 +671,12 @@ export const DataSourceEndpointDetail = ({
             );
           }}
         />
+        {displayIsServerRequestWarning && (
+          <WarningAlert
+            title="API Failed"
+            text="Does this API endpoint need to be made through a server? If so turn on 'Make request through server' and try again."
+          ></WarningAlert>
+        )}
         <Group mt="xl">
           <Button
             type="submit"
