@@ -33,14 +33,14 @@ export const ChangeStateActionForm = ({ id }: Props) => {
   });
 
   const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo
+    (state) => state.setPickingComponentToBindTo,
   );
   const componentToBind = useEditorStore((state) => state.componentToBind);
   const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind
+    (state) => state.setComponentToBind,
   );
   const pickingComponentToBindTo = useEditorStore(
-    (state) => state.pickingComponentToBindTo
+    (state) => state.pickingComponentToBindTo,
   );
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
@@ -114,13 +114,15 @@ export const ChangeStateActionForm = ({ id }: Props) => {
             { label: "Default", value: "default" },
             { label: "Hover", value: "hover" },
             { label: "Disabled", value: "disabled" },
+            { label: "Checked", value: "checked" },
             ...Object.keys(
               form.values.componentId
                 ? getComponentById(editorTree.root, form.values.componentId!)
                     ?.states ?? {}
-                : {}
+                : {},
             ).reduce((acc, key) => {
-              if (key === "hover" || key === "disabled") return acc;
+              if (key === "hover" || key === "disabled" || key === "checked")
+                return acc;
 
               return acc.concat({
                 label: key,
