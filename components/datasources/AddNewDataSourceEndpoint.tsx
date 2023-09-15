@@ -35,6 +35,8 @@ export const AddNewDataSourceEndpoint = ({ baseUrl }: { baseUrl: string }) => {
     dataSourceId: string;
   };
 
+  emptyEndpoint.dataSourceId = dataSourceId;
+
   return (
     <Stack>
       <Group>
