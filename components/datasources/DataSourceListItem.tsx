@@ -33,7 +33,9 @@ export const DataSourceListItem = ({
   const [showEndpoints, setShowEndpoints] = useState<boolean>(false);
 
   const onClick = async () => {
-    const result = await getDataSourceEndpoints(projectId, id);
+    const result = await getDataSourceEndpoints(projectId, {
+      dataSourceId: id,
+    });
     setEndpoints(result);
     setShowEndpoints(result.results.length > 0);
   };

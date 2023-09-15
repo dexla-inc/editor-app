@@ -7,6 +7,7 @@ export interface DataSourcesListParams extends PagingParams {
 }
 
 export interface DataSourceEndpointsListParams extends PagingParams {
+  dataSourceId?: string | undefined;
   authOnly?: boolean;
   methodType?: MethodTypes;
 }

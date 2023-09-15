@@ -37,25 +37,25 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
       selectedComponentId,
     });
   const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo
+    (state) => state.setPickingComponentToBindTo,
   );
   const componentToBind = useEditorStore((state) => state.componentToBind);
   const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind
+    (state) => state.setComponentToBind,
   );
   const pickingComponentToBindTo = useEditorStore(
-    (state) => state.pickingComponentToBindTo
+    (state) => state.pickingComponentToBindTo,
   );
 
   const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
+    (state) => state.updateTreeComponent,
   );
 
   const projectId = router.query.id as string;
   const component = getComponentById(editorTree.root, selectedComponentId!);
 
   const originalAction = componentActions.find(
-    (a: Action) => a.id === action.sequentialTo
+    (a: Action) => a.id === action.sequentialTo,
   );
 
   const form = useForm<FormValues>({
@@ -106,7 +106,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
       selectedComponentId!,
       componentActions.filter((a: Action) => {
         return a.id !== id && a.sequentialTo !== id;
-      })
+      }),
     );
 
     updateTreeComponent(selectedComponentId!, {
@@ -144,13 +144,12 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
     const getEndpoint = async () => {
       const { results } = await getDataSourceEndpoints(
         projectId,
-        // @ts-ignore
-        originalAction?.action.datasource.id
+        //originalAction?.action.datasource.id
       );
 
       const _endpoint = results.find(
         // @ts-ignore
-        (e) => e.id === originalAction?.action.endpoint
+        (e) => e.id === originalAction?.action.endpoint,
       );
 
       if (_endpoint?.exampleResponse) {

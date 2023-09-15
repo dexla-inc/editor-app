@@ -403,7 +403,7 @@ export const loginAction = async ({
     if (!cachedEndpoints) {
       const { results } = await getDataSourceEndpoints(
         projectId,
-        action.datasource.id,
+        //action.datasource.id,
       );
       cachedEndpoints = results;
     }
@@ -574,7 +574,7 @@ export const apiCallAction = async ({
     if (!cachedEndpoints) {
       const { results } = await getDataSourceEndpoints(
         projectId,
-        action.datasource.id,
+        //action.datasource.id,
       );
       cachedEndpoints = results;
     }
@@ -582,35 +582,34 @@ export const apiCallAction = async ({
 
     const keys = Object.keys(action.binds ?? {});
 
+    const apiUrl = `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`;
+
     const url =
       keys.length > 0
-        ? keys.reduce(
-            (url: string, key: string) => {
-              key.startsWith("type_Key_")
-                ? (key = key.split(`type_key_`)[1])
-                : key;
-              // @ts-ignore
-              let value = action.binds[key] as string;
+        ? keys.reduce((url: string, key: string) => {
+            key.startsWith("type_Key_")
+              ? (key = key.split(`type_key_`)[1])
+              : key;
+            // @ts-ignore
+            let value = action.binds[key] as string;
 
-              if (value.startsWith(`valueOf_`)) {
-                value = getElementValue(value, iframeWindow);
-              }
+            if (value.startsWith(`valueOf_`)) {
+              value = getElementValue(value, iframeWindow);
+            }
 
-              if (value?.startsWith(`queryString_pass_`)) {
-                value = getQueryElementValue(value, iframeWindow);
-              }
+            if (value?.startsWith(`queryString_pass_`)) {
+              value = getQueryElementValue(value, iframeWindow);
+            }
 
-              if (!url.includes(`{${key}}`)) {
-                const _url = new URL(url);
-                _url.searchParams.append(key, value);
-                return _url.toString();
-              } else {
-                return url.replace(`{${key}}`, value);
-              }
-            },
-            `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`,
-          )
-        : `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`;
+            if (!url.includes(`{${key}}`)) {
+              const _url = new URL(url);
+              _url.searchParams.append(key, value);
+              return _url.toString();
+            } else {
+              return url.replace(`{${key}}`, value);
+            }
+          }, apiUrl)
+        : apiUrl;
 
     const body =
       endpoint?.methodType === "POST"
@@ -647,7 +646,11 @@ export const apiCallAction = async ({
         ? "Bearer " + authStore.getAccessToken()
         : "";
 
-    const response = await fetch(url, {
+    const fetchUrl = endpoint?.isServerRequest
+      ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
+      : url;
+
+    const response = await fetch(fetchUrl, {
       method: endpoint?.methodType,
       headers: {
         // Will need to build up headers from endpoint.headers in future

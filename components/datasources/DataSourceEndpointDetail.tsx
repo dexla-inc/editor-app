@@ -270,7 +270,6 @@ export const DataSourceEndpointDetail = ({
         : await createDataSourceEndpoint(projectId, dataSourceId, payload);
 
       queryClient.refetchQueries(["endpoints"]);
-      setEndpointDetailVisible && setEndpointDetailVisible(false);
 
       stopLoading({
         id: "saving",
@@ -391,7 +390,7 @@ export const DataSourceEndpointDetail = ({
       stopLoading({
         id: "testing",
         title: "API Endpoint Tested",
-        message: "The API endpoint works",
+        message: "The API endpoint works. Hit save to save the response.",
       });
     } catch (error: any) {
       console.log(error);
