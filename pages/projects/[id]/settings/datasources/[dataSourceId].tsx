@@ -185,7 +185,9 @@ export default function DataSourcePage() {
 
       result.authValue && setAuthValue(result.authValue);
 
-      const endpointsResult = await getDataSourceEndpoints(id, dataSourceId);
+      const endpointsResult = await getDataSourceEndpoints(id, {
+        dataSourceId,
+      });
       setEndpoints(endpointsResult.results);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps

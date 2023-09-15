@@ -58,8 +58,6 @@ export default function AuthenticationApiKey({
 
       const mergedDataSource = { ...dataSource, ...values };
 
-      console.log(mergedDataSource);
-
       await updateDataSource(projectId, dataSource.id, false, mergedDataSource);
 
       nextStep && nextStep();

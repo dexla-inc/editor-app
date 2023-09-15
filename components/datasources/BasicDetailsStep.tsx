@@ -29,7 +29,7 @@ export interface BasicDetailsStepProps
   setDataSource: (dataSource: DataSourceResponse) => void;
   authenticationScheme?: AuthenticationSchemes | null;
   setAuthenticationScheme: (
-    authenticationScheme: AuthenticationSchemes | null
+    authenticationScheme: AuthenticationSchemes | null,
   ) => void;
 }
 
@@ -77,9 +77,6 @@ export default function BasicDetailsStep({
       });
 
       form.validate();
-
-      console.log(values);
-      console.log(dataSource);
 
       if (!dataSource?.id) {
         throw new Error("Can't find data source");

@@ -17,7 +17,7 @@ export const DataSourceEndpointList = ({
 }: DataSourceEndpointListProps) => {
   const endpoints = useQuery({
     queryKey: ["endpoints"],
-    queryFn: () => getDataSourceEndpoints(projectId, dataSourceId),
+    queryFn: () => getDataSourceEndpoints(projectId, { dataSourceId }),
     enabled: !!projectId,
   });
 
