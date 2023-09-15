@@ -1,6 +1,5 @@
 import { SuccessAlert } from "@/components/Alerts";
 import { DashboardShell } from "@/components/DashboardShell";
-import { AddNewDataSourceEndpoint } from "@/components/datasources/AddNewDataSourceEndpoint";
 import AuthenticationBearer from "@/components/datasources/AuthenticationBearer";
 import { ExampleResponseDropdown } from "@/components/datasources/AuthenticationInputs";
 import {
@@ -65,11 +64,11 @@ export default function DataSourcePage() {
   };
 
   const [dataSource, setDataSource] = useState<DataSourceResponse>(
-    {} as DataSourceResponse
+    {} as DataSourceResponse,
   );
 
   const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
-    undefined
+    undefined,
   );
 
   const [authenticationScheme, setAuthenticationScheme] =
@@ -78,7 +77,7 @@ export default function DataSourcePage() {
   const [swaggerRefetched, setSwaggerRefetched] = useState<boolean>(false);
   const [loginEndpointId, setLoginEndpointId] = useState<string | null>(null);
   const [refreshEndpointId, setRefreshEndpointId] = useState<string | null>(
-    null
+    null,
   );
   const [userEndpointId, setUserEndpointId] = useState<string | null>(null);
   const [loginRequestBody, setLoginRequestBody] = useState<
@@ -97,8 +96,12 @@ export default function DataSourcePage() {
       swaggerUrl: (value) => (value ? validateSwaggerUrl(value) : null),
       baseUrl: (value) => validateBaseUrl(value),
       name: (value) => validateName(value),
-      authValue: (value) =>
-        value === "" ? "You must provide an API key" : null,
+      authValue: (value, values) =>
+        values.authenticationScheme === "NONE"
+          ? null
+          : value === ""
+          ? "You must provide an API key"
+          : null,
     },
   });
 
@@ -234,7 +237,6 @@ export default function DataSourcePage() {
                 />
                 <BasicDetailsInputs
                   form={form}
-                  authenticationScheme={authenticationScheme}
                   setAuthenticationScheme={setAuthenticationScheme}
                 />
                 {authenticationScheme === "API_KEY" && (
@@ -292,7 +294,7 @@ export default function DataSourcePage() {
                   dataSourceId={dataSource.id}
                 ></TestUserLogin>
               )}
-              <AddNewDataSourceEndpoint />
+
               <DataSourceEndpointList
                 projectId={id}
                 dataSourceId={dataSourceId}

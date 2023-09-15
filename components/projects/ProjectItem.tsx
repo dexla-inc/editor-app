@@ -3,7 +3,7 @@ import { getPageList } from "@/requests/pages/queries";
 import { PageResponse } from "@/requests/pages/types";
 import { deleteProject } from "@/requests/projects/mutations";
 import { ProjectResponse } from "@/requests/projects/queries";
-import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
+import { ICON_DELETE, ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { regionTypeFlags } from "@/utils/dashboardTypes";
 import {
   Avatar,
@@ -25,7 +25,6 @@ import {
   IconFileAnalytics,
   IconHome,
   IconSettings,
-  IconTrash,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -204,7 +203,7 @@ export function ProjectItem({
                 </Box>
               </Collapse>
               <Menu.Item
-                icon={<IconTrash size={ICON_SIZE} />}
+                icon={<Icon name={ICON_DELETE} />}
                 color="red"
                 onClick={deleteProjectFn}
               >

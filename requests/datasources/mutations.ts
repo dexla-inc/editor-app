@@ -12,11 +12,11 @@ import { del, patch, post, put } from "@/utils/api";
 export async function createDataSource(
   projectId: string,
   type: DataSourceTypes,
-  params: DataSourceParams
+  params: DataSourceParams,
 ): Promise<DataSourceResponse> {
   const response = (await post<DataSourceResponse>(
     `/projects/${projectId}/datasources/${type}`,
-    params
+    params,
   )) as DataSourceResponse;
 
   return response;
@@ -26,11 +26,11 @@ export async function updateDataSource(
   projectId: string,
   id: string,
   reFetch: boolean,
-  params: DataSourceParams
+  params: DataSourceParams,
 ): Promise<DataSourceResponse> {
   const response = (await put<DataSourceResponse>(
     `/projects/${projectId}/datasources/${id}?reFetch=${reFetch}`,
-    params
+    params,
   )) as DataSourceResponse;
 
   return response;
@@ -38,7 +38,7 @@ export async function updateDataSource(
 
 export const deleteDataSource = async (projectId: string, id: string) => {
   const response = (await del<any>(
-    `/projects/${projectId}/datasources/${id}`
+    `/projects/${projectId}/datasources/${id}`,
   )) as any;
 
   return response;
@@ -47,11 +47,11 @@ export const deleteDataSource = async (projectId: string, id: string) => {
 export const createDataSourceEndpoint = async (
   projectId: string,
   datasourceId: string,
-  params: EndpointParams
+  params: EndpointParams,
 ): Promise<CreatedResponse> => {
   const response = (await post<CreatedResponse>(
     `/projects/${projectId}/datasources/${datasourceId}/endpoints`,
-    params
+    params,
   )) as CreatedResponse;
 
   return response;
@@ -61,11 +61,11 @@ export const updateDataSourceEndpoint = async (
   projectId: string,
   datasourceId: string,
   id: string,
-  params: EndpointParams
+  params: EndpointParams,
 ): Promise<SuccessResponse> => {
   const response = (await put<SuccessResponse>(
     `/projects/${projectId}/datasources/${datasourceId}/endpoints/${id}`,
-    params
+    params,
   )) as SuccessResponse;
 
   return response;
@@ -75,12 +75,24 @@ export async function patchDataSourceEndpoint(
   projectId: string,
   apiId: string,
   id: string,
-  params: PatchParams[]
+  params: PatchParams[],
 ): Promise<SuccessResponse> {
   const response = (await patch<SuccessResponse>(
     `/projects/${projectId}/datasources/${apiId}/endpoints/${id}`,
-    params
+    params,
   )) as SuccessResponse;
 
   return response;
 }
+
+export const deleteDataSourceEndpoint = async (
+  projectId: string,
+  datasourceId: string,
+  id: string,
+): Promise<SuccessResponse> => {
+  const response = (await del<SuccessResponse>(
+    `/projects/${projectId}/datasources/${datasourceId}/endpoints/${id}`,
+  )) as SuccessResponse;
+
+  return response;
+};

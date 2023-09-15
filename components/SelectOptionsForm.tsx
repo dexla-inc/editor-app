@@ -1,7 +1,7 @@
-import { Button, Flex, Group, Text, TextInput } from "@mantine/core";
 import { Icon } from "@/components/Icon";
+import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
+import { Button, Flex, Group, Text, TextInput } from "@mantine/core";
 import { useState } from "react";
-import { ICON_SIZE } from "@/utils/config";
 
 export const SelectOptionsForm = ({
   getValue,
@@ -65,10 +65,10 @@ export const SelectOptionsForm = ({
               />
 
               <Icon
-                name="IconTrash"
+                name={ICON_DELETE}
                 onClick={() => {
                   const nPrev = getValue().filter(
-                    (_: any, i: number) => index !== i
+                    (_: any, i: number) => index !== i,
                   );
 
                   setFieldValue("data", nPrev);

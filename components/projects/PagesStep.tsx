@@ -1,10 +1,11 @@
 import { InformationAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
+import { Icon } from "@/components/Icon";
 import { getPagesEventSource } from "@/requests/ai/queries";
 import { createPages } from "@/requests/pages/mutations";
 import { PageBody } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
-import { ICON_SIZE } from "@/utils/config";
+import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import {
   LoadingStore,
   PreviousStepperClickEvent,
@@ -29,7 +30,6 @@ import {
   IconDatabase,
   IconPlus,
   IconSparkles,
-  IconTrash,
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
@@ -168,7 +168,7 @@ export default function PagesStep({
       onMessage,
       onError,
       onOpen,
-      onClose
+      onClose,
     );
   };
 
@@ -194,7 +194,7 @@ export default function PagesStep({
       onMessage,
       onError,
       onOpen,
-      onClose
+      onClose,
     );
   };
 
@@ -203,7 +203,7 @@ export default function PagesStep({
     fetchPageStream,
     {
       enabled: false,
-    }
+    },
   );
 
   // Ensure stream pages only happens once
@@ -229,7 +229,7 @@ export default function PagesStep({
           authenticatedOnly: false,
         } as PageBody;
       }) as PageBody[],
-      projectId
+      projectId,
     );
   };
 
@@ -284,7 +284,7 @@ export default function PagesStep({
                       color="red"
                       tabIndex={-1}
                     >
-                      <IconTrash size={ICON_SIZE} />
+                      <Icon name={ICON_DELETE} />
                     </ActionIcon>
                   </Flex>
                 </List.Item>

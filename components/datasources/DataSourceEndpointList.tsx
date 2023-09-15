@@ -2,6 +2,7 @@ import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint"
 import { getDataSourceEndpoints } from "@/requests/datasources/queries";
 import { Title } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
+import { AddNewDataSourceEndpoint } from "./AddNewDataSourceEndpoint";
 
 type DataSourceEndpointListProps = {
   projectId: string;
@@ -21,6 +22,7 @@ export const DataSourceEndpointList = ({
   return (
     <>
       <Title order={5}>API Endpoints</Title>
+      <AddNewDataSourceEndpoint />
       {endpoints.data?.results.map((endpoint) => {
         return (
           <DataSourceEndpoint
