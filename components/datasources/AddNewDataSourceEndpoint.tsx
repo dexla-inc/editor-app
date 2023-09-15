@@ -18,6 +18,7 @@ export const AddNewDataSourceEndpoint = ({}) => {
     requestBody: [],
     exampleResponse: "",
     errorExampleResponse: "",
+    isServerRequest: false,
   };
 
   const addNewEndpoint = () => {
