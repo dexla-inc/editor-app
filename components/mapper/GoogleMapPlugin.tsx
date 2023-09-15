@@ -5,7 +5,6 @@ import {
   InfoWindow,
   Marker,
   useLoadScript,
-  Autocomplete,
 } from "@react-google-maps/api";
 import { useState } from "react";
 
