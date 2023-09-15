@@ -197,6 +197,7 @@ export default function EndpointsStep({
               {dataSource?.changedEndpoints?.map((endpoint) => {
                 return (
                   <DataSourceEndpoint
+                    baseUrl={dataSource?.baseUrl}
                     key={endpoint.id}
                     projectId={projectId}
                     endpoint={endpoint}
