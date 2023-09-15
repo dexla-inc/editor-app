@@ -53,6 +53,7 @@ export const EditorNavbarDataSourcesSection = ({
           dataSources.data.results.map((dataSource) => {
             return (
               <DataSourceListItem
+                baseUrl={dataSource.baseUrl}
                 key={dataSource.id}
                 projectId={projectId}
                 id={dataSource.id}

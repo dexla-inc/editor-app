@@ -5,7 +5,7 @@ import { Button, Group, Stack } from "@mantine/core";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-export const AddNewDataSourceEndpoint = ({}) => {
+export const AddNewDataSourceEndpoint = ({ baseUrl }: { baseUrl: string }) => {
   const emptyEndpoint: EndpointParams = {
     relativeUrl: "",
     methodType: "GET",
@@ -46,6 +46,7 @@ export const AddNewDataSourceEndpoint = ({}) => {
       </Group>
       {isEndpointDetailVisible && (
         <DataSourceEndpointDetail
+          baseUrl={baseUrl}
           endpoint={endpoint}
           projectId={id}
           dataSourceId={dataSourceId}
