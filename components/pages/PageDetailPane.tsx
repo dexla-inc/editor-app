@@ -9,7 +9,7 @@ import {
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { decodeSchema } from "@/utils/compression";
-import { ICON_SIZE } from "@/utils/config";
+import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
   Button,
@@ -53,7 +53,7 @@ export default function PageDetailPane({
           key,
           value,
         }))
-      : []
+      : [],
   );
 
   const form = useForm<PageBody>({
@@ -129,7 +129,7 @@ export default function PageDetailPane({
           acc[item.key] = item.value;
           return acc;
         },
-        {}
+        {},
       );
 
       form.validate();
@@ -265,7 +265,7 @@ export default function PageDetailPane({
                     variant="light"
                     radius="xl"
                   >
-                    <Icon name="IconTrash" size={ICON_SIZE} />
+                    <Icon name={ICON_DELETE} />
                   </ActionIcon>
                 </Tooltip>
               )}

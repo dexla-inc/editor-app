@@ -89,32 +89,23 @@ type AuthenticationEndpoint = {
   tokenSecondaryKey: string;
 };
 
-export type ParameterTypes = "string" | "number" | "boolean" | "datetime";
-
-export type Header = {
-  required: boolean;
-  value: string | null;
+export interface FieldTypeBase {
   name: string;
-  type: ParameterTypes | AuthenticationSchemes;
+  type: ParameterTypes;
   description: string | null;
-};
+  value: any | null;
+}
 
-export type ParameterLocations = "Query" | "Path" | "Header" | "Cookie";
+export interface Header extends FieldTypeBase {
+  required: boolean;
+}
 
-export type Parameter = {
+export interface Parameter extends FieldTypeBase {
   location: ParameterLocations;
   required: boolean;
-  name: string;
-  type: ParameterTypes;
-  description: string | null;
-};
+}
 
-export type RequestBody = {
-  value: any | null;
-  name: string;
-  type: ParameterTypes;
-  description: string | null;
-};
+export interface RequestBody extends FieldTypeBase {}
 
 export type ExampleResponse = {
   value: any | null;
@@ -124,6 +115,8 @@ export type ExampleResponse = {
   description: string | null;
 };
 
+export type ParameterTypes = "string" | "number" | "boolean" | "datetime";
+export type ParameterLocations = "Query" | "Path" | "Header" | "Cookie";
 export type AuthenticationSchemes = "NONE" | "BEARER" | "BASIC" | "API_KEY";
 
 // Copilot create authentication scheme object for AuthenticationSchemes and friendly labels

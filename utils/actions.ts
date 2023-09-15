@@ -21,7 +21,7 @@ import {
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
-import { Component, getComponentById } from "@/utils/editor";
+import { Component } from "@/utils/editor";
 import { flattenKeysWithRoot } from "@/utils/flattenKeys";
 import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
@@ -326,24 +326,24 @@ export const togglePropsAction = ({
       {
         style: { display: item.condition === event ? "flex" : "none" },
       },
-      false
+      false,
     );
   });
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const { updateTreeComponent, tree: editorTree } = useEditorStore.getState();
   const selectedComponent = editorTree.root.children?.find(
-    (tree) => tree.name === "Navbar"
+    (tree) => tree.name === "Navbar",
   );
   const buttonComponent = selectedComponent?.children?.find(
-    (tree) => tree.description === "Button to toggle Navbar"
+    (tree) => tree.description === "Button to toggle Navbar",
   );
   const linksComponent = selectedComponent?.children?.find(
-    (tree) => tree.description === "Container for navigation links"
+    (tree) => tree.description === "Container for navigation links",
   );
   const buttonIcon = buttonComponent?.children?.reduce(
     (obj, tree) => ({ ...obj, ...tree }),
-    {} as Component
+    {} as Component,
   );
 
   const isExpanded = selectedComponent?.props?.style.width !== "100px";
@@ -403,7 +403,7 @@ export const loginAction = async ({
     if (!cachedEndpoints) {
       const { results } = await getDataSourceEndpoints(
         projectId,
-        action.datasource.id
+        action.datasource.id,
       );
       cachedEndpoints = results;
     }
@@ -414,28 +414,28 @@ export const loginAction = async ({
 
     const url =
       keys.length > 0
-        ? keys.reduce((url: string, key: string) => {
-            key.startsWith("type_key_")
-              ? (key = key.split(`type_Key_`)[1])
-              : key;
-            let value = action.binds?.[key] as string;
+        ? keys.reduce(
+            (url: string, key: string) => {
+              key.startsWith("type_key_")
+                ? (key = key.split(`type_Key_`)[1])
+                : key;
+              let value = action.binds?.[key] as string;
 
-            if (value?.startsWith(`valueOf_`)) {
-              const el = iframeWindow?.document.querySelector(`
+              if (value?.startsWith(`valueOf_`)) {
+                const el = iframeWindow?.document.querySelector(`
           input#${value.split(`valueOf_`)[1]}
           `) as HTMLInputElement;
-              value = el?.value ?? "";
-            }
+                value = el?.value ?? "";
+              }
 
-            if (value?.startsWith(`queryString_pass_`)) {
-              const el = iframeWindow?.document.querySelector(`
-          input#${value.split(`queryString_pass_`)[1]}
-          `) as HTMLInputElement;
-              value = el?.value ?? "";
-            }
+              if (value?.startsWith(`queryString_pass_`)) {
+                value = getQueryElementValue(value, iframeWindow);
+              }
 
-            return url.replace(`{${key}}`, value);
-          }, `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`)
+              return url.replace(`{${key}}`, value);
+            },
+            `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`,
+          )
         : `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`;
 
     const body =
@@ -452,10 +452,7 @@ export const loginAction = async ({
               }
 
               if (value?.startsWith(`queryString_pass_`)) {
-                const el = iframeWindow?.document.querySelector(`
-          input#${value.split(`queryString_pass_`)[1]}
-          `) as HTMLInputElement;
-                value = el?.value ?? "";
+                value = getQueryElementValue(value, iframeWindow);
               }
 
               return {
@@ -463,7 +460,7 @@ export const loginAction = async ({
                 [key]: value,
               };
             },
-            {} as any
+            {} as any,
           )
         : undefined;
 
@@ -484,7 +481,7 @@ export const loginAction = async ({
 
     const dataSourceAuthConfig = await getDataSourceAuth(
       projectId,
-      action.datasource.id
+      action.datasource.id,
     );
 
     const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
@@ -495,7 +492,7 @@ export const loginAction = async ({
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess"
+        (action: Action) => action.trigger === "onSuccess",
       )!;
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
       onSuccessActionMapped.action({
@@ -510,7 +507,7 @@ export const loginAction = async ({
     if (onError && onError.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError"
+        (action: Action) => action.trigger === "onError",
       )!;
       const onErrorActionMapped = actionMapper[onError.action.name];
       onErrorActionMapped.action({
@@ -525,6 +522,25 @@ export const loginAction = async ({
     updateTreeComponent(component.id!, { loading: false }, false);
   }
 };
+
+function getElementValue(value: string, iframeWindow: any): string {
+  const _id = value.split("valueOf_")[1];
+  let el = iframeWindow?.document.getElementById(_id);
+  const tag = el?.tagName?.toLowerCase();
+
+  if (tag !== "input") {
+    el = el?.getElementsByTagName("input")[0];
+  }
+
+  return (el as HTMLInputElement)?.value ?? "";
+}
+
+function getQueryElementValue(value: string, iframeWindow: any): string {
+  const el = iframeWindow?.document.querySelector(
+    `input#${value.split("queryString_pass_")[1]}`,
+  ) as HTMLInputElement;
+  return el?.value ?? "";
+}
 
 export const apiCallAction = async ({
   actionId,
@@ -546,11 +562,11 @@ export const apiCallAction = async ({
       {
         // @ts-ignore
         loading: component.actions.find(
-          (a: { id: string }) => a.id === actionId
+          (a: { id: string }) => a.id === actionId,
           // @ts-ignore
         ).action.showLoader,
       },
-      false
+      false,
     );
 
     // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
@@ -558,7 +574,7 @@ export const apiCallAction = async ({
     if (!cachedEndpoints) {
       const { results } = await getDataSourceEndpoints(
         projectId,
-        action.datasource.id
+        action.datasource.id,
       );
       cachedEndpoints = results;
     }
@@ -568,38 +584,32 @@ export const apiCallAction = async ({
 
     const url =
       keys.length > 0
-        ? keys.reduce((url: string, key: string) => {
-            key.startsWith("type_Key_")
-              ? (key = key.split(`type_key_`)[1])
-              : key;
-            // @ts-ignore
-            let value = action.binds[key] as string;
+        ? keys.reduce(
+            (url: string, key: string) => {
+              key.startsWith("type_Key_")
+                ? (key = key.split(`type_key_`)[1])
+                : key;
+              // @ts-ignore
+              let value = action.binds[key] as string;
 
-            if (value.startsWith(`valueOf_`)) {
-              const _id = value.split(`valueOf_`)[1];
-              let el = iframeWindow?.document.getElementById(_id);
-              const tag = el?.tagName?.toLowerCase();
-              if (tag !== "input") {
-                el = el?.getElementsByTagName("input")[0];
+              if (value.startsWith(`valueOf_`)) {
+                value = getElementValue(value, iframeWindow);
               }
-              value = (el as HTMLInputElement)?.value ?? "";
-            }
 
-            if (value?.startsWith(`queryString_pass_`)) {
-              const el = iframeWindow?.document.querySelector(`
-          input#${value.split(`queryString_pass_`)[1]}
-          `) as HTMLInputElement;
-              value = el?.value ?? "";
-            }
+              if (value?.startsWith(`queryString_pass_`)) {
+                value = getQueryElementValue(value, iframeWindow);
+              }
 
-            if (!url.includes(`{${key}}`)) {
-              const _url = new URL(url);
-              _url.searchParams.append(key, value);
-              return _url.toString();
-            } else {
-              return url.replace(`{${key}}`, value);
-            }
-          }, `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`)
+              if (!url.includes(`{${key}}`)) {
+                const _url = new URL(url);
+                _url.searchParams.append(key, value);
+                return _url.toString();
+              } else {
+                return url.replace(`{${key}}`, value);
+              }
+            },
+            `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`,
+          )
         : `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`;
 
     const body =
@@ -610,20 +620,11 @@ export const apiCallAction = async ({
               let value = action.binds[key] as string;
 
               if (value.startsWith(`valueOf_`)) {
-                const _id = value.split(`valueOf_`)[1];
-                let el = iframeWindow?.document.getElementById(_id);
-                const tag = el?.tagName?.toLowerCase();
-                if (tag !== "input") {
-                  el = el?.getElementsByTagName("input")[0];
-                }
-                value = (el as HTMLInputElement)?.value ?? "";
+                value = getElementValue(value, iframeWindow);
               }
 
               if (value?.startsWith(`queryString_pass_`)) {
-                const el = iframeWindow?.document.querySelector(`
-          input#${value.split(`queryString_pass_`)[1]}
-          `) as HTMLInputElement;
-                value = el?.value ?? "";
+                value = getQueryElementValue(value, iframeWindow);
               }
 
               return {
@@ -631,7 +632,7 @@ export const apiCallAction = async ({
                 [key]: value,
               };
             },
-            {} as any
+            {} as any,
           )
         : undefined;
 
@@ -665,7 +666,7 @@ export const apiCallAction = async ({
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess"
+        (action: Action) => action.trigger === "onSuccess",
       )!;
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
       onSuccessActionMapped.action({
@@ -681,7 +682,7 @@ export const apiCallAction = async ({
     if (onError && onError.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError"
+        (action: Action) => action.trigger === "onError",
       )!;
       const onErrorActionMapped = actionMapper[onError.action.name];
       onErrorActionMapped.action({
@@ -719,7 +720,7 @@ export const bindResponseToComponentAction = ({
             ? bind.value.split("root[0].")[1]
             : bind.value.split("root.")[1],
         },
-        false
+        false,
       );
     }
   });

@@ -1,7 +1,8 @@
+import { Icon } from "@/components/Icon";
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
 import { deleteDataSource } from "@/requests/datasources/mutations";
 import { DataSourceResponse } from "@/requests/datasources/types";
-import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
+import { ICON_DELETE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
   Box,
   Col,
@@ -12,7 +13,7 @@ import {
   Text,
   UnstyledButton,
 } from "@mantine/core";
-import { IconDots, IconTrash } from "@tabler/icons-react";
+import { IconDots } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -98,7 +99,7 @@ export function DataSourceItem({
               <Menu.Dropdown>
                 <Menu.Label>Data Source</Menu.Label>
                 <Menu.Item
-                  icon={<IconTrash size={ICON_SIZE} />}
+                  icon={<Icon name={ICON_DELETE} />}
                   color="red"
                   onClick={deleteFn}
                 >

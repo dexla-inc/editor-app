@@ -1,6 +1,6 @@
 import { Icon } from "@/components/Icon";
 import { QueryStringListItem } from "@/requests/pages/types";
-import { ICON_SIZE } from "@/utils/config";
+import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Flex, Group, Text, TextInput } from "@mantine/core";
 import { Dispatch, SetStateAction, useState } from "react";
 
@@ -9,7 +9,7 @@ export const QueryStringsForm = ({
 }: {
   queryStringState: [
     QueryStringListItem[],
-    Dispatch<SetStateAction<QueryStringListItem[]>>
+    Dispatch<SetStateAction<QueryStringListItem[]>>,
   ];
 }) => {
   const [queryKey, setQueryKey] = useState("");
@@ -71,7 +71,7 @@ export const QueryStringsForm = ({
               />
 
               <Icon
-                name="IconTrash"
+                name={ICON_DELETE}
                 onClick={() => {
                   setQueryStrings((prev: QueryStringListItem[]) => {
                     return prev.filter((_, i) => index !== i);

@@ -1,11 +1,14 @@
+import { Icon } from "@/components/Icon";
+import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
+import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
-import { ICON_SIZE } from "@/utils/config";
+import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import {
-  debouncedTreeComponentPropsUpdate,
   debouncedTreeComponentChildrenUpdate,
+  debouncedTreeComponentPropsUpdate,
 } from "@/utils/editor";
 import {
   ActionIcon,
@@ -19,11 +22,9 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconPlus, IconRadio, IconTrash } from "@tabler/icons-react";
-import { useEffect } from "react";
-import { withModifier } from "@/hoc/withModifier";
+import { IconPlus, IconRadio } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
-import { IconSelector } from "@/components/IconSelector";
+import { useEffect } from "react";
 
 export const icon = IconRadio;
 export const label = "Radio";
@@ -135,7 +136,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
               <Flex justify="space-between">
                 <Text size="sm">Item {index + 1}</Text>
                 <ActionIcon onClick={() => deleteRadioItem(index)}>
-                  <IconTrash size={ICON_SIZE} color="red" />
+                  <Icon name={ICON_DELETE} color="red" />
                 </ActionIcon>
               </Flex>
               <TextInput
@@ -201,7 +202,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             form.setFieldValue("withAsterisk", event.currentTarget.checked);
             debouncedTreeComponentPropsUpdate(
               "withAsterisk",
-              event.currentTarget.checked
+              event.currentTarget.checked,
             );
           }}
         />

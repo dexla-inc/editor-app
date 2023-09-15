@@ -1,6 +1,7 @@
 import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
 import { Action } from "@/utils/actions";
+import { ICON_DELETE } from "@/utils/config";
 import { Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
@@ -30,7 +31,7 @@ export const ActionButtons = ({
   };
 
   const updateTreeComponentActions = useEditorStore(
-    (state) => state.updateTreeComponentActions
+    (state) => state.updateTreeComponentActions,
   );
 
   const defaultRemoveAction = () => {
@@ -38,7 +39,7 @@ export const ActionButtons = ({
       selectedComponentId!,
       componentActions.filter((a: Action) => {
         return a.id !== actionId && a.sequentialTo !== actionId;
-      })
+      }),
     );
   };
 
@@ -75,7 +76,7 @@ export const ActionButtons = ({
         variant="light"
         onClick={removeAction}
         color="red"
-        leftIcon={<Icon name="IconTrash"></Icon>}
+        leftIcon={<Icon name={ICON_DELETE}></Icon>}
       >
         Remove
       </Button>

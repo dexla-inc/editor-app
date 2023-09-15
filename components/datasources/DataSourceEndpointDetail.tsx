@@ -1,6 +1,7 @@
 import { Icon } from "@/components/Icon";
 import {
   createDataSourceEndpoint,
+  deleteDataSourceEndpoint,
   updateDataSourceEndpoint,
 } from "@/requests/datasources/mutations";
 import {
@@ -12,6 +13,7 @@ import {
 } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { useAppStore } from "@/stores/app";
+import { ICON_DELETE } from "@/utils/config";
 import {
   ActionIcon,
   Button,
@@ -62,10 +64,10 @@ type ApiType = "header" | "parameter" | "body";
 const defaultConfig: { [K in keyof Defaults as ApiType]: Defaults[K] } = {
   header: {
     required: false,
-    value: null,
     name: "",
     type: "string",
     description: null,
+    value: null,
   },
   parameter: {
     location: "Query",
@@ -73,12 +75,13 @@ const defaultConfig: { [K in keyof Defaults as ApiType]: Defaults[K] } = {
     name: "",
     type: "string",
     description: null,
+    value: null,
   },
   body: {
-    value: null,
     name: "",
     type: "string",
     description: null,
+    value: null,
   },
 };
 
@@ -105,11 +108,14 @@ type Action =
       type: "UPDATE_ARRAY_FIELD";
       payload: {
         index: number;
-        field: keyof Header | keyof Parameter | keyof RequestBody;
+        field: keyof Header | Parameter | RequestBody;
         value: any;
         apiType: ApiType;
       };
     };
+
+const valuePlaceholder =
+  "Usually dynamic and replaced in the editor. Add to test or values that do not change";
 
 type DataSourceEndpointDetailProps = {
   endpoint: Endpoint | EndpointParams;
@@ -127,6 +133,9 @@ export const DataSourceEndpointDetail = ({
 }: DataSourceEndpointDetailProps) => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
+  const isLoading = useAppStore((state) => state.isLoading);
+  const setIsLoading = useAppStore((state) => state.setIsLoading);
+
   const theme = useMantineTheme();
   const queryClient = useQueryClient();
 
@@ -174,8 +183,11 @@ export const DataSourceEndpointDetail = ({
           | "headers"
           | "requestBody";
         const updatedArray = [...state[updateKey]];
+        const itemToUpdate = updatedArray[payload.index];
+
         // @ts-ignore
-        updatedArray[payload.index][payload.field] = payload.value;
+        itemToUpdate[payload.field] = payload.value;
+
         return { ...state, [updateKey]: updatedArray };
       default:
         return state;
@@ -201,10 +213,11 @@ export const DataSourceEndpointDetail = ({
     index: number,
     field: keyof Header | keyof Parameter | keyof RequestBody,
     value: any,
-    apiType: ApiType
+    apiType: ApiType,
   ) => {
     dispatch({
       type: "UPDATE_ARRAY_FIELD",
+      // @ts-ignore
       payload: { index, field, value, apiType },
     });
   };
@@ -232,6 +245,7 @@ export const DataSourceEndpointDetail = ({
     };
 
     try {
+      setIsLoading(true);
       startLoading({
         id: "saving",
         title: "Updating Data Source",
@@ -240,23 +254,14 @@ export const DataSourceEndpointDetail = ({
 
       form.validate();
 
-      console.log("dataSourceId", dataSourceId);
-
-      const result =
-        "id" in endpoint
-          ? await updateDataSourceEndpoint(
-              projectId,
-              dataSourceId ?? "",
-              endpoint.id,
-              payload
-            )
-          : await createDataSourceEndpoint(
-              projectId,
-              dataSourceId ?? "",
-              payload
-            );
-
-      console.log(result);
+      "id" in endpoint
+        ? await updateDataSourceEndpoint(
+            projectId,
+            dataSourceId,
+            endpoint.id,
+            payload,
+          )
+        : await createDataSourceEndpoint(projectId, dataSourceId, payload);
 
       queryClient.refetchQueries(["endpoints"]);
       setEndpointDetailVisible && setEndpointDetailVisible(false);
@@ -274,6 +279,103 @@ export const DataSourceEndpointDetail = ({
         message: error,
         isError: true,
       });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteEndpoint = async () => {
+    try {
+      setIsLoading(true);
+      startLoading({
+        id: "deleting",
+        title: "Deleting Data Source",
+        message: "Wait while your data source is being deleted",
+      });
+
+      if ("id" in endpoint) {
+        await deleteDataSourceEndpoint(projectId, dataSourceId, endpoint.id);
+      }
+
+      queryClient.refetchQueries(["endpoints"]);
+      setEndpointDetailVisible && setEndpointDetailVisible(false);
+
+      stopLoading({
+        id: "deleting",
+        title: "Data Source Deleted",
+        message: "The data source was deleted successfully",
+      });
+    } catch (error: any) {
+      stopLoading({
+        id: "deleting",
+        title: "Delete Failed",
+        message: error,
+        isError: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleTestEndpoint = async () => {
+    try {
+      setIsLoading(true);
+      const {
+        methodType,
+        relativeUrl,
+        headers,
+        mediaType,
+        withCredentials,
+        parameters,
+      } = state;
+
+      // Build the full URL
+      let fullUrl = `https://maps.googleapis.com/${relativeUrl}`;
+
+      // Add query parameters to URL if any
+      if (parameters && parameters.length > 0) {
+        const urlParams = new URLSearchParams();
+        for (const param of parameters) {
+          if (param.value !== null && param.location === "Query") {
+            urlParams.append(param.name, param.value.toString());
+          }
+        }
+        fullUrl = `${fullUrl}?${urlParams.toString()}`;
+      }
+      // Prepare request headers
+      const requestHeaders: Record<string, string> = {
+        Accept: "*/*",
+        "Content-Type": mediaType,
+      };
+
+      for (const header of headers) {
+        if (header.value !== null) {
+          requestHeaders[header.name] = header.value.toString();
+        }
+      }
+      console.log(requestHeaders);
+      console.log(fullUrl);
+      // Fetch the API
+      const response = await fetch(fullUrl, {
+        method: methodType,
+        headers: requestHeaders,
+        ...(withCredentials ? { credentials: "include" } : {}),
+      });
+
+      console.log(response);
+      if (!response.status.toString().startsWith("20")) {
+        throw new Error(
+          `Failed to fetch, status: ${response.status}, text: ${response.statusText}`,
+        );
+      }
+
+      const result = await response.json();
+
+      console.log(result);
+    } catch (error: any) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -300,7 +402,7 @@ export const DataSourceEndpointDetail = ({
           onChange={(event) => {
             handleInputChange(
               "description",
-              event.currentTarget.value as string
+              event.currentTarget.value as string,
             );
           }}
         />
@@ -322,7 +424,7 @@ export const DataSourceEndpointDetail = ({
             onChange={(event) => {
               handleInputChange(
                 "relativeUrl",
-                event.currentTarget.value as string
+                event.currentTarget.value as string,
               );
             }}
             required
@@ -351,15 +453,22 @@ export const DataSourceEndpointDetail = ({
                   index,
                   "name",
                   event.currentTarget.value,
-                  "header"
+                  "header",
                 )
               }
               required
             ></TextInput>
             <TextInput
-              placeholder="A dynamic value replaced in your app"
+              placeholder={valuePlaceholder}
               value={item.value || ""}
-              disabled
+              onChange={(event) =>
+                handleArrayChange(
+                  index,
+                  "value",
+                  event.currentTarget.value,
+                  "header",
+                )
+              }
               sx={{ flexGrow: 1 }}
             />
             <Tooltip label="Delete">
@@ -369,7 +478,7 @@ export const DataSourceEndpointDetail = ({
                 color="red"
                 onClick={() => handleDelete(index, "header")}
               >
-                <Icon name="IconTrash" />
+                <Icon name={ICON_DELETE} />
               </ActionIcon>
             </Tooltip>
           </Flex>
@@ -397,15 +506,22 @@ export const DataSourceEndpointDetail = ({
                   index,
                   "name",
                   event.currentTarget.value,
-                  "parameter"
+                  "parameter",
                 );
               }}
               required
             ></TextInput>
             <TextInput
-              placeholder="a dynamic value replaced in your app"
-              value={""}
-              disabled
+              placeholder={valuePlaceholder}
+              value={item.value || ""}
+              onChange={(event) =>
+                handleArrayChange(
+                  index,
+                  "value",
+                  event.currentTarget.value,
+                  "parameter",
+                )
+              }
               sx={{ flexGrow: 1 }}
             />
             <Tooltip label="Delete">
@@ -415,7 +531,7 @@ export const DataSourceEndpointDetail = ({
                 color="red"
                 onClick={() => handleDelete(index, "parameter")}
               >
-                <Icon name="IconTrash" />
+                <Icon name={ICON_DELETE} />
               </ActionIcon>
             </Tooltip>
           </Flex>
@@ -444,15 +560,22 @@ export const DataSourceEndpointDetail = ({
                   index,
                   "name",
                   event.currentTarget.value,
-                  "body"
+                  "body",
                 )
               }
               required
             ></TextInput>
             <TextInput
-              placeholder="A dynamic value replaced in your app"
+              placeholder={valuePlaceholder}
               value={item.value || ""}
-              disabled
+              onChange={(event) =>
+                handleArrayChange(
+                  index,
+                  "value",
+                  event.currentTarget.value,
+                  "body",
+                )
+              }
               sx={{ flexGrow: 1 }}
             />
             <Tooltip label="Delete">
@@ -462,7 +585,7 @@ export const DataSourceEndpointDetail = ({
                 color="red"
                 onClick={() => handleDelete(index, "body")}
               >
-                <Icon name="IconTrash" />
+                <Icon name={ICON_DELETE} />
               </ActionIcon>
             </Tooltip>
           </Flex>
@@ -475,11 +598,6 @@ export const DataSourceEndpointDetail = ({
             </Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="example" pt="xs">
-            {/* {endpoint.exampleResponse ? (
-              <Prism language="json">
-                {JSON.stringify(JSON.parse(endpoint.exampleResponse), null, 2)}
-              </Prism>
-            ) : ( */}
             <Editor
               height={endpoint.exampleResponse ? "250px" : "100px"}
               defaultLanguage="json"
@@ -489,7 +607,7 @@ export const DataSourceEndpointDetail = ({
               onChange={(value) => {
                 debouncedInputChange(
                   "exampleResponse",
-                  JSON.stringify(value) as string
+                  JSON.stringify(value) as string,
                 );
               }}
               options={{
@@ -503,7 +621,30 @@ export const DataSourceEndpointDetail = ({
           </Tabs.Panel>
         </Tabs>
         <Group>
-          <Button type="submit">Save Endpoint</Button>
+          <Button
+            type="submit"
+            leftIcon={<Icon name="IconCheck"></Icon>}
+            loading={isLoading}
+          >
+            Save
+          </Button>
+
+          <Button
+            onClick={handleTestEndpoint}
+            color="indigo"
+            leftIcon={<Icon name="IconClick"></Icon>}
+            loading={isLoading}
+          >
+            Test
+          </Button>
+          <Button
+            onClick={handleDeleteEndpoint}
+            color="red"
+            leftIcon={<Icon name={ICON_DELETE}></Icon>}
+            loading={isLoading}
+          >
+            Delete
+          </Button>
         </Group>
       </Stack>
     </form>
