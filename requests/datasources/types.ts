@@ -91,7 +91,7 @@ type AuthenticationEndpoint = {
 
 export interface FieldTypeBase {
   name: string;
-  type: ParameterTypes;
+  type: ParameterTypes | AuthenticationSchemes;
   description: string | null;
   value: any | null;
 }
