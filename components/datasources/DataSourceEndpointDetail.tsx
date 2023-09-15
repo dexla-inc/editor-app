@@ -21,6 +21,7 @@ import {
   Group,
   Select,
   Stack,
+  Switch,
   Tabs,
   TextInput,
   Title,
@@ -153,6 +154,7 @@ export const DataSourceEndpointDetail = ({
     authenticationScheme: endpoint.authenticationScheme ?? "NONE",
     exampleResponse: endpoint.exampleResponse ?? "",
     errorExampleResponse: endpoint.errorExampleResponse ?? "",
+    isServerRequest: endpoint.isServerRequest ?? false,
   };
 
   function reducer(state: EndpointParams, action: Action): EndpointParams {
@@ -318,6 +320,7 @@ export const DataSourceEndpointDetail = ({
   };
 
   const handleTestEndpoint = async () => {
+    const baseUrl = "https://maps.googleapis.com";
     try {
       setIsLoading(true);
       const {
@@ -329,10 +332,9 @@ export const DataSourceEndpointDetail = ({
         parameters,
       } = state;
 
-      // Build the full URL
-      let fullUrl = `https://maps.googleapis.com/${relativeUrl}`;
+      let apiUrl = `${baseUrl}/${relativeUrl}`;
 
-      // Add query parameters to URL if any
+      // Add query parameters if any
       if (parameters && parameters.length > 0) {
         const urlParams = new URLSearchParams();
         for (const param of parameters) {
@@ -340,11 +342,11 @@ export const DataSourceEndpointDetail = ({
             urlParams.append(param.name, param.value.toString());
           }
         }
-        fullUrl = `${fullUrl}?${urlParams.toString()}`;
+        apiUrl = `${apiUrl}?${urlParams.toString()}`;
       }
+
       // Prepare request headers
       const requestHeaders: Record<string, string> = {
-        Accept: "*/*",
         "Content-Type": mediaType,
       };
 
@@ -353,16 +355,22 @@ export const DataSourceEndpointDetail = ({
           requestHeaders[header.name] = header.value.toString();
         }
       }
+
+      // Use the Next.js API route as a proxy if isServerRequest is true
+      const fetchUrl = state.isServerRequest
+        ? `/api/proxy?targetUrl=${encodeURIComponent(apiUrl)}`
+        : apiUrl;
+
       console.log(requestHeaders);
-      console.log(fullUrl);
-      // Fetch the API
-      const response = await fetch(fullUrl, {
+
+      const response = await fetch(fetchUrl, {
         method: methodType,
         headers: requestHeaders,
         ...(withCredentials ? { credentials: "include" } : {}),
       });
 
-      console.log(response);
+      console.log("response", response);
+
       if (!response.status.toString().startsWith("20")) {
         throw new Error(
           `Failed to fetch, status: ${response.status}, text: ${response.statusText}`,
@@ -370,7 +378,6 @@ export const DataSourceEndpointDetail = ({
       }
 
       const result = await response.json();
-
       console.log(result);
     } catch (error: any) {
       console.log(error);
@@ -620,7 +627,28 @@ export const DataSourceEndpointDetail = ({
             />
           </Tabs.Panel>
         </Tabs>
-        <Group>
+
+        <Switch
+          label="Make request through server"
+          checked={state.isServerRequest}
+          onChange={(event) => {
+            debouncedInputChange(
+              "isServerRequest",
+              event.currentTarget.checked as boolean,
+            );
+          }}
+        />
+        <Switch
+          label="With credentials"
+          checked={state.withCredentials ?? false}
+          onChange={(event) => {
+            debouncedInputChange(
+              "withCredentials",
+              event.currentTarget.checked as boolean,
+            );
+          }}
+        />
+        <Group mt="xl">
           <Button
             type="submit"
             leftIcon={<Icon name="IconCheck"></Icon>}

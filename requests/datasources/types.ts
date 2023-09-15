@@ -71,7 +71,6 @@ export type Endpoint = {
   methodType: MethodTypes;
   description: string | null;
   mediaType: MediaTypes;
-  withCredentials: boolean | null;
   authenticationScheme: AuthenticationSchemes;
   headers: Header[];
   parameters: Parameter[];
@@ -79,6 +78,8 @@ export type Endpoint = {
   exampleResponse: string;
   errorExampleResponse: string;
   authentication: AuthenticationEndpoint;
+  withCredentials: boolean | null;
+  isServerRequest: boolean;
 };
 
 export type EndpointParams = Omit<Endpoint, "id" | "authentication">;
