@@ -34,11 +34,11 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
 import { IconChevronDown, IconCurrentLocation } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { forwardRef, useEffect, useState } from "react";
-import { useDisclosure } from "@mantine/hooks";
 import { InformationAlert } from "../Alerts";
 
 // eslint-disable-next-line react/display-name
@@ -63,7 +63,7 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
         {label}
       </Text>
     </Flex>
-  )
+  ),
 );
 
 type FormValues = Omit<APICallAction | LoginAction, "name" | "datasource">;
@@ -90,18 +90,18 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   });
 
   const setPickingComponentToBindFrom = useEditorStore(
-    (state) => state.setPickingComponentToBindFrom
+    (state) => state.setPickingComponentToBindFrom,
   );
   const componentToBind = useEditorStore((state) => state.componentToBind);
   const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind
+    (state) => state.setComponentToBind,
   );
   const pickingComponentToBindFrom = useEditorStore(
-    (state) => state.pickingComponentToBindFrom
+    (state) => state.pickingComponentToBindFrom,
   );
 
   const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
-    undefined
+    undefined,
   );
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
@@ -128,16 +128,16 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
 
   const currentPageId = router.query.page;
   const currentPage = useEditorStore((state) =>
-    state.pages.find((page) => page.id === currentPageId)
+    state.pages.find((page) => page.id === currentPageId),
   );
 
   const featureToBindTo = useEditorStore((state) => state.featureToBindTo);
   const setFeatureToBindTo = useEditorStore(
-    (state) => state.setFeatureToBindTo
+    (state) => state.setFeatureToBindTo,
   );
 
   const [selectedParam, setSelectedParam] = useState<string | undefined>(
-    undefined
+    undefined,
   );
   const [isFeaturesOpen, { toggle, close }] = useDisclosure(false);
   const [feature, setFeature] = useState<Feature>(null!);
@@ -186,7 +186,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     if (featureToBindTo) {
       form.setFieldValue(
         `binds.typeKey_${featureToBindTo.key}`,
-        `queryString_pass_${featureToBindTo.value}`
+        `queryString_pass_${featureToBindTo.value}`,
       );
       queries.setFieldValue("param", featureToBindTo.param as string);
       setFeatureToBindTo(undefined);
@@ -232,7 +232,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
       selectedComponentId!,
       componentActions.filter((a: Action) => {
         return a.id !== id && a.sequentialTo !== id;
-      })
+      }),
     );
   };
 
@@ -241,8 +241,8 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     const getEndpoints = async () => {
       const { results } = await getDataSourceEndpoints(
         projectId,
-        dataSources.data!.results[0].id,
-        { authOnly: isLogin }
+        //dataSources.data!.results[0].id,
+        { authOnly: isLogin },
       );
       setEndpoints(results);
     };
@@ -257,7 +257,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
       if (pickingComponentToBindFrom.componentId === component?.id) {
         form.setFieldValue(
           `binds.${pickingComponentToBindFrom.param}`,
-          `valueOf_${componentToBind}`
+          `valueOf_${componentToBind}`,
         );
 
         setPickingComponentToBindFrom(undefined);
@@ -274,7 +274,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
       (endpoints ?? [])?.length > 0
     ) {
       setSelectedEndpoint(
-        endpoints?.find((e) => e.id === form.values.endpoint)
+        endpoints?.find((e) => e.id === form.values.endpoint),
       );
     }
   }, [endpoints, form.values.endpoint, selectedEndpoint]);
@@ -363,7 +363,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                 const itemProps =
                   param.name === queries.values.param
                     ? form.getInputProps(
-                        `binds.typeKey_${queries.values.selectedKey}`
+                        `binds.typeKey_${queries.values.selectedKey}`,
                       )
                     : form.getInputProps(`binds.${param.name}`);
 
@@ -462,7 +462,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                                     queries.setFieldValue("selectedKey", value);
                                     queries.setFieldValue(
                                       "selectedValue",
-                                      featureValue
+                                      featureValue,
                                     );
                                     close();
                                   }}
