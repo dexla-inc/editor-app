@@ -89,6 +89,7 @@ export interface BaseAction {
 export interface NavigationAction extends BaseAction {
   name: "navigateToPage";
   pageId: string;
+  queryStrings?: Record<string, string>;
 }
 
 export interface GoToUrlAction extends BaseAction {
@@ -224,7 +225,18 @@ export const navigationAction = ({
   router,
 }: NavigationActionParams) => {
   const projectId = router.query.id as string;
-  router.push(`/projects/${projectId}/editor/${action.pageId}`);
+  let url = `/projects/${projectId}/editor/${action.pageId}`;
+
+  if (action.queryStrings && Object.keys(action.queryStrings).length) {
+    const queryStrings = [];
+    for (const key in action.queryStrings) {
+      queryStrings.push(`${key}=${action.queryStrings[key]}`);
+    }
+
+    url += `?${queryStrings.join("&")}`;
+  }
+
+  router.push(url);
 };
 
 export const goToUrlAction = ({ action }: GoToUrlParams) => {
@@ -318,7 +330,6 @@ export const togglePropsAction = ({
   action,
   event,
 }: TogglePropsActionParams) => {
-  console.log(action, event);
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   action.conditionRules.map((item) => {
     updateTreeComponent(
@@ -586,20 +597,21 @@ export const apiCallAction = async ({
 
     const url =
       keys.length > 0
-        ? keys.reduce((url: string, key: string) => {
-            key.startsWith("type_Key_")
-              ? (key = key.split(`type_key_`)[1])
-              : key;
-            // @ts-ignore
-            let value = action.binds[key] as string;
+        ? keys.reduce(
+            (url: string, key: string) => {
+              key.startsWith("type_Key_")
+                ? (key = key.split(`type_key_`)[1])
+                : key;
+              // @ts-ignore
+              let value = action.binds[key] as string;
 
-            if (value.startsWith(`valueOf_`)) {
-              value = getElementValue(value, iframeWindow);
-            }
+              if (value.startsWith(`valueOf_`)) {
+                value = getElementValue(value, iframeWindow);
+              }
 
-            if (value?.startsWith(`queryString_pass_`)) {
-              value = getQueryElementValue(value, iframeWindow);
-            }
+              if (value?.startsWith(`queryString_pass_`)) {
+                value = getQueryElementValue(value, iframeWindow);
+              }
 
             if (!url.includes(`{${key}}`)) {
               const _url = new URL(url);
