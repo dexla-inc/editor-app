@@ -24,13 +24,7 @@ export const ComponentToBindActionsPopover = ({
   onClick,
 }: IComponentToBindActionsPopover) => {
   return (
-    <Popover
-      width={200}
-      position="left-end"
-      withArrow
-      shadow="md"
-      // arrowPosition="side"
-    >
+    <Popover width={200} position="left-end" withArrow shadow="md">
       <Popover.Target>
         <ActionIcon>
           <IconExternalLink size={ICON_SIZE} />
