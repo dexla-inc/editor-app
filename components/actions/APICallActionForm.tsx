@@ -123,6 +123,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
       showLoader: action.action.showLoader ?? true,
       endpoint: action.action.endpoint,
       binds: action.action.binds ?? {},
+      datasources: action.action.datasources,
     },
   });
 
@@ -215,7 +216,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
         updateValues: {
           endpoint: values.endpoint,
           showLoader: values.showLoader,
-          datasource: dataSources.data!.results[0],
+          datasources: dataSources.data!.results,
           binds: values.binds,
         },
         updateTreeComponentActions,
@@ -239,11 +240,9 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   const isLogin = actionName === "login";
   useEffect(() => {
     const getEndpoints = async () => {
-      const { results } = await getDataSourceEndpoints(
-        projectId,
-        //dataSources.data!.results[0].id,
-        { authOnly: isLogin },
-      );
+      const { results } = await getDataSourceEndpoints(projectId, {
+        authOnly: isLogin,
+      });
       setEndpoints(results);
     };
 

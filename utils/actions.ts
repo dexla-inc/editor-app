@@ -138,7 +138,7 @@ export interface APICallAction extends BaseAction {
   name: "apiCall";
   endpoint: string;
   showLoader?: boolean;
-  datasource: DataSourceResponse;
+  datasources: DataSourceResponse[];
   binds?: { [key: string]: any };
 }
 
@@ -318,7 +318,6 @@ export const togglePropsAction = ({
   action,
   event,
 }: TogglePropsActionParams) => {
-  console.log(action, event);
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   action.conditionRules.map((item) => {
     updateTreeComponent(
@@ -401,42 +400,36 @@ export const loginAction = async ({
     // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
     // Can revisit later and create a cashing layer.
     if (!cachedEndpoints) {
-      const { results } = await getDataSourceEndpoints(
-        projectId,
-        //action.datasource.id,
-      );
+      const { results } = await getDataSourceEndpoints(projectId);
       cachedEndpoints = results;
     }
 
     const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
-
+    const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
     const keys = Object.keys(action.binds ?? {});
 
     const url =
       keys.length > 0
-        ? keys.reduce(
-            (url: string, key: string) => {
-              key.startsWith("type_key_")
-                ? (key = key.split(`type_Key_`)[1])
-                : key;
-              let value = action.binds?.[key] as string;
+        ? keys.reduce((url: string, key: string) => {
+            key.startsWith("type_key_")
+              ? (key = key.split(`type_Key_`)[1])
+              : key;
+            let value = action.binds?.[key] as string;
 
-              if (value?.startsWith(`valueOf_`)) {
-                const el = iframeWindow?.document.querySelector(`
+            if (value?.startsWith(`valueOf_`)) {
+              const el = iframeWindow?.document.querySelector(`
           input#${value.split(`valueOf_`)[1]}
           `) as HTMLInputElement;
-                value = el?.value ?? "";
-              }
+              value = el?.value ?? "";
+            }
 
-              if (value?.startsWith(`queryString_pass_`)) {
-                value = getQueryElementValue(value, iframeWindow);
-              }
+            if (value?.startsWith(`queryString_pass_`)) {
+              value = getQueryElementValue(value, iframeWindow);
+            }
 
-              return url.replace(`{${key}}`, value);
-            },
-            `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`,
-          )
-        : `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`;
+            return url.replace(`{${key}}`, value);
+          }, apiUrl)
+        : apiUrl;
 
     const body =
       endpoint?.methodType === "POST"
@@ -481,7 +474,7 @@ export const loginAction = async ({
 
     const dataSourceAuthConfig = await getDataSourceAuth(
       projectId,
-      action.datasource.id,
+      endpoint?.dataSourceId!,
     );
 
     const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
@@ -572,17 +565,14 @@ export const apiCallAction = async ({
     // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
     // Can revisit later and create a cashing layer.
     if (!cachedEndpoints) {
-      const { results } = await getDataSourceEndpoints(
-        projectId,
-        //action.datasource.id,
-      );
+      const { results } = await getDataSourceEndpoints(projectId);
       cachedEndpoints = results;
     }
     const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
 
     const keys = Object.keys(action.binds ?? {});
 
-    const apiUrl = `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`;
+    const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
 
     const url =
       keys.length > 0
