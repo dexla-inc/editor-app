@@ -1,4 +1,3 @@
-import { theme } from "@/pages/_app";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -23,7 +22,6 @@ import { IconMapPin, IconPlus, IconTrash } from "@tabler/icons-react";
 import { Position } from "../mapper/GoogleMapPlugin";
 import { useEffect, useState } from "react";
 import { pick } from "next/dist/lib/pick";
-import { ThemeColorSelector } from "../ThemeColorSelector";
 import { nanoid } from "nanoid";
 
 export const icon = IconMapPin;

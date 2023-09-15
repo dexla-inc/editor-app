@@ -5,6 +5,7 @@ import {
   InfoWindow,
   Marker,
   useLoadScript,
+  Autocomplete,
 } from "@react-google-maps/api";
 import { useState } from "react";
 
@@ -23,17 +24,18 @@ type MarkerProp = {
 } & Position;
 
 export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
-  const [activeMarker, setActiveMarker] = useState<string>(null!);
+  const [activeMarker, setActiveMarker] = useState<string | null>(null);
 
-  const { markers, options, ...componentProps } = component.props as any;
+  const { markers, options, style, apiKey, language, ...componentProps } =
+    component.props as any;
 
-  const { width, height, ...googleStyles } = componentProps?.style;
+  const { width, height, ...googleStyles } = style ?? {};
   const containerStyle = { width, height };
 
   const { isLoaded } = useLoadScript({
     id: "google-map-script",
-    googleMapsApiKey: componentProps?.apiKey as string,
-    language: componentProps?.language as string,
+    googleMapsApiKey: apiKey as string,
+    language: language as string,
   });
 
   const handleActiveMarker = (marker: string) => {
@@ -48,6 +50,10 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
     markers?.forEach(({ position }: Position) => bounds.extend(position));
     map.fitBounds(bounds);
   };
+
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
 
   return (
     isLoaded && (
