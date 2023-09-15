@@ -24,17 +24,27 @@ export const ComponentToBindActionsPopover = ({
   onClick,
 }: IComponentToBindActionsPopover) => {
   return (
-    <Popover width={200} position="bottom" withArrow shadow="md">
+    <Popover
+      width={200}
+      position="left-end"
+      withArrow
+      shadow="md"
+      // arrowPosition="side"
+    >
       <Popover.Target>
         <ActionIcon>
           <IconExternalLink size={ICON_SIZE} />
         </ActionIcon>
       </Popover.Target>
       <Popover.Dropdown p={0}>
-        <Accordion multiple defaultValue={["components"]}>
+        <Accordion
+          multiple
+          defaultValue={["components"]}
+          styles={{ content: { padding: 0 } }}
+        >
           <Accordion.Item value="components">
             <Accordion.Control>Components</Accordion.Control>
-            <Accordion.Panel>
+            <Accordion.Panel p={0}>
               <ListComponentToBindPopover onClick={onClick} />
             </Accordion.Panel>
           </Accordion.Item>
@@ -104,7 +114,7 @@ const ListItem = ({ component, children, level = 0 }: any) => {
             {component.id !== "root" && component.id !== "content-wrapper" && (
               <>
                 {icon}
-                <Text id={`layer-${component.id}`} size="xs" lineClamp={1}>
+                <Text id={`layer-${component.id}`} size="sm" lineClamp={1}>
                   {component.description}
                 </Text>
               </>
@@ -166,7 +176,7 @@ const ListComponentToBindPopover = ({
     <List
       size="xs"
       listStyleType="none"
-      sx={{ padding: 0, marginTop: -20 }}
+      sx={{ padding: 0, marginTop: -20, overflow: "auto", height: "250px" }}
       styles={{
         itemWrapper: {
           width: "100%",

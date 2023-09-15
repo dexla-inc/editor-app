@@ -11,6 +11,9 @@ import { useEditorStore } from "@/stores/editor";
 import { NavigationAction } from "@/utils/actions";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { QueryStringsForm } from "@/components/QueryStringsForm";
+import { useEffect, useMemo, useState } from "react";
+import { QueryStringListItem } from "@/requests/pages/types";
 type Props = {
   id: string;
 };
@@ -34,15 +37,44 @@ export const NavigationActionForm = ({ id }: Props) => {
     },
   });
 
+  const pageId = form.getInputProps("pageId").value;
+
+  const pageQueryStrings = useMemo(() => {
+    if (action.action.pageId === pageId && action.action.queryStrings) {
+      return action.action.queryStrings;
+    }
+
+    return pages.find((page) => page.id === pageId)?.queryStrings ?? {};
+  }, [pages, pageId, action.action]);
+
+  const queryStringState = useState<Array<{ key: string; value: string }>>([]);
+
+  useEffect(() => {
+    queryStringState[1](
+      Object.entries(pageQueryStrings).map(([key, value]) => ({
+        key,
+        value,
+      }))
+    );
+  }, [pageQueryStrings]);
+
   const onSubmit = (values: FormValues) => {
     handleLoadingStart({ startLoading });
+
+    const queryStrings = queryStringState[0].reduce(
+      (acc: Record<string, string>, item: QueryStringListItem) => {
+        acc[item.key] = item.value;
+        return acc;
+      },
+      {}
+    );
 
     try {
       updateActionInTree<NavigationAction>({
         selectedComponentId: selectedComponentId!,
         componentActions,
         id,
-        updateValues: { pageId: values.pageId },
+        updateValues: { pageId: values.pageId, queryStrings },
         updateTreeComponentActions,
       });
 
@@ -68,6 +100,7 @@ export const NavigationActionForm = ({ id }: Props) => {
           })}
           {...form.getInputProps("pageId")}
         />
+        <QueryStringsForm queryStringState={queryStringState} readOnlyKeys />
         <ActionButtons
           actionId={id}
           componentActions={componentActions}
