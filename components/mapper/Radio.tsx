@@ -19,6 +19,8 @@ const RadioComponent = ({
     component.props as any;
 
   const [_value, setValue] = useState(value);
+
+  console.log({ _value });
   const { onChange, ...otherTriggers } = triggers;
 
   const defaultTriggers = isPreviewMode
@@ -30,6 +32,7 @@ const RadioComponent = ({
       }
     : {
         onChange: () => {
+          console.log("test2");
           setValue(undefined);
         },
       };
@@ -40,6 +43,7 @@ const RadioComponent = ({
       {...defaultTriggers}
       {...componentProps}
       {...otherTriggers}
+      value={value}
     >
       <Group mt="xs">
         {component.children && component.children.length > 0
@@ -52,8 +56,14 @@ const RadioComponent = ({
                   checked: isPreviewMode
                     ? child?.props?.value?.toString() === _value?.toString()
                     : false,
+                  triggers: {
+                    onChange: (val: string) => {
+                      console.log("eita");
+                      setValue(val);
+                    },
+                  },
                 },
-              })
+              }),
             )
           : children}
       </Group>
