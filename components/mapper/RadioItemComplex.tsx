@@ -1,10 +1,6 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import {
-  Radio as MantineRadio,
-  RadioProps,
-  Button as MantineButton,
-} from "@mantine/core";
+import { Radio as MantineRadio, RadioProps } from "@mantine/core";
 import { memo, useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
@@ -41,9 +37,9 @@ const RadioItemComplexComponent = ({
   useEffect(() => {
     setTreeComponentCurrentState(
       component.id!,
-      _checked ? "checked" : "default",
+      checked ? "checked" : "default",
     );
-  }, [setTreeComponentCurrentState, _checked, component.id]);
+  }, [setTreeComponentCurrentState, checked, component.id]);
 
   const defaultTriggers = isPreviewMode
     ? isInsideGroup
@@ -62,46 +58,44 @@ const RadioItemComplexComponent = ({
       };
 
   return (
-    <MantineButton
-      unstyled
-      onClick={() => setChecked(isPreviewMode)}
-      {...triggers}
+    <MantineRadio
+      {...props}
       {...componentProps}
-    >
-      <div
-        style={{
+      {...defaultTriggers}
+      value={value}
+      styles={{
+        inner: { display: "none" },
+        label: {
           padding: 15,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-        }}
-      >
-        <Icon
-          name="IconCircleCheck"
-          width={20}
-          height={20}
-          style={{ position: "absolute", right: 5, top: 5 }}
-        />
-        <MantineRadio
-          {...props}
-          {...defaultTriggers}
-          value={value}
-          checked={isPreviewMode ? _checked : false}
-          {...triggers}
-          sx={{ display: "none" }}
-        />
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) =>
-              renderTree({
-                ...child,
-                props: {
-                  ...child.props,
-                },
-              }),
-            )
-          : children}
-      </div>
-    </MantineButton>
+        },
+      }}
+      label={
+        <>
+          <Icon
+            name="IconCircleCheck"
+            width={20}
+            height={20}
+            style={{ position: "absolute", right: 5, top: 5 }}
+            color="white"
+          />
+
+          {component.children && component.children.length > 0
+            ? component.children?.map((child) =>
+                renderTree({
+                  ...child,
+                  props: {
+                    ...child.props,
+                  },
+                }),
+              )
+            : children}
+        </>
+      }
+      checked={isPreviewMode ? _checked : false}
+    />
   );
 };
 
