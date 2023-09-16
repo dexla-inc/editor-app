@@ -262,16 +262,22 @@ export const DataSourceEndpointDetail = ({
 
       form.validate();
 
-      "id" in endpoint
-        ? await updateDataSourceEndpoint(
-            projectId,
-            dataSourceId,
-            endpoint.id,
-            payload,
-          )
-        : await createDataSourceEndpoint(projectId, dataSourceId, payload);
+      var result =
+        "id" in endpoint
+          ? await updateDataSourceEndpoint(
+              projectId,
+              dataSourceId,
+              endpoint.id,
+              payload,
+            )
+          : await createDataSourceEndpoint(projectId, dataSourceId, payload);
 
       queryClient.refetchQueries(["endpoints"]);
+
+      setEndpointDetailVisible && setEndpointDetailVisible(false);
+
+      // @ts-ignore
+      endpoint.id = result.id;
 
       stopLoading({
         id: "saving",
