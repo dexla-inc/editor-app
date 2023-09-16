@@ -4,6 +4,7 @@ import { Radio as MantineRadio, RadioProps } from "@mantine/core";
 import { memo, useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
+import { IconCircleCheck } from "@tabler/icons-react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -63,8 +64,21 @@ const RadioItemComplexComponent = ({
       {...componentProps}
       {...defaultTriggers}
       value={value}
+      icon={() => (
+        <Icon
+          name="IconCircleCheck"
+          width={26}
+          height={26}
+          style={{ position: "absolute", right: -3, top: -3 }}
+          color="white"
+        />
+      )}
       styles={{
-        inner: { display: "none" },
+        inner: {
+          position: "absolute",
+          right: 5,
+          top: 5,
+        },
         label: {
           padding: 15,
           display: "flex",
@@ -73,26 +87,16 @@ const RadioItemComplexComponent = ({
         },
       }}
       label={
-        <>
-          <Icon
-            name="IconCircleCheck"
-            width={20}
-            height={20}
-            style={{ position: "absolute", right: 5, top: 5 }}
-            color="white"
-          />
-
-          {component.children && component.children.length > 0
-            ? component.children?.map((child) =>
-                renderTree({
-                  ...child,
-                  props: {
-                    ...child.props,
-                  },
-                }),
-              )
-            : children}
-        </>
+        component.children && component.children.length > 0
+          ? component.children?.map((child) =>
+              renderTree({
+                ...child,
+                props: {
+                  ...child.props,
+                },
+              }),
+            )
+          : children
       }
       checked={isPreviewMode ? _checked : false}
     />
