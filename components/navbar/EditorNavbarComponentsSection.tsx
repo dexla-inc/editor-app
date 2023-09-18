@@ -7,6 +7,7 @@ import {
 } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
+import { toSpaced } from "@/utils/dashboardTypes";
 import {
   Center,
   Grid,
@@ -48,12 +49,12 @@ export const EditorNavbarComponentsSection = () => {
         if (!groups[category]) {
           groups[category] = [];
         }
-        groups[category].push({ draggable, id: key });
+        groups[category].push({ draggable, id: toSpaced(key) });
       }
 
       return groups;
     },
-    {} as Record<string, DraggableComponentData[]>
+    {} as Record<string, DraggableComponentData[]>,
   );
 
   const customComponents =
@@ -87,7 +88,7 @@ export const EditorNavbarComponentsSection = () => {
             ([category, components]) => {
               // Filter the components based on the query before rendering
               const filteredComponents = components.filter(({ id }) =>
-                query ? new RegExp(query, "i").test(id) : true
+                query ? new RegExp(query, "i").test(id) : true,
               );
 
               if (filteredComponents.length === 0) {
@@ -106,7 +107,7 @@ export const EditorNavbarComponentsSection = () => {
                   ))}
                 </>
               );
-            }
+            },
           )}
         </Grid>
       )}
@@ -123,7 +124,7 @@ export const EditorNavbarComponentsSection = () => {
           )}
           {(query
             ? customComponents.filter((sc) =>
-                new RegExp(query, "i").test(sc.id)
+                new RegExp(query, "i").test(sc.id),
               )
             : customComponents
           ).map(
@@ -136,7 +137,7 @@ export const EditorNavbarComponentsSection = () => {
                   data={JSON.parse(decodeSchema(content))}
                 />
               );
-            }
+            },
           )}
         </Stack>
       )}
