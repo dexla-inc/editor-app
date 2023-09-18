@@ -188,7 +188,7 @@ export default function EndpointsStep({
 
         <Divider></Divider>
 
-        {dataSource?.authenticationScheme === "NONE" && (
+        {dataSource?.swaggerUrl === "" && (
           <DataSourceEndpointList
             baseUrl={dataSource?.baseUrl}
             projectId={projectId}
