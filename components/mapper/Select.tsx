@@ -1,6 +1,6 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { Select as MantineSelect, SelectProps } from "@mantine/core";
+import { Loader, Select as MantineSelect, SelectProps } from "@mantine/core";
 import get from "lodash.get";
 import isEmpty from "lodash.isempty";
 import { memo } from "react";
@@ -22,13 +22,14 @@ const SelectComponent = ({
     data: dataProp,
     exampleData = {},
     dataPath,
+    triggers,
+    loading,
     ...componentProps
   } = component.props as any;
 
   let data = isEmpty(exampleData?.value ?? exampleData)
     ? dataProp?.value ?? dataProp
     : exampleData?.value ?? exampleData;
-
   if (isPreviewMode) {
     if (dataPath) {
       const path = dataPath.replaceAll("[0]", "");
@@ -47,6 +48,7 @@ const SelectComponent = ({
     <MantineSelect
       {...props}
       {...componentProps}
+      {...triggers}
       withinPortal={false}
       maxDropdownHeight={120}
       data={data.map((d: any) => {
@@ -55,6 +57,7 @@ const SelectComponent = ({
           value: d.value ?? d[keys[0]],
         };
       })}
+      rightSection={loading ? <Loader size="xs" /> : null}
     >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))

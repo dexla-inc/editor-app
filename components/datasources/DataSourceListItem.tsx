@@ -9,12 +9,14 @@ type DataSourceItemProps = {
   projectId: string;
   name: string;
   id: string;
+  baseUrl: string;
 };
 
 export const DataSourceListItem = ({
   projectId,
   name,
   id,
+  baseUrl,
 }: DataSourceItemProps) => {
   let initialBody = {
     results: [],
@@ -31,7 +33,9 @@ export const DataSourceListItem = ({
   const [showEndpoints, setShowEndpoints] = useState<boolean>(false);
 
   const onClick = async () => {
-    const result = await getDataSourceEndpoints(projectId, id);
+    const result = await getDataSourceEndpoints(projectId, {
+      dataSourceId: id,
+    });
     setEndpoints(result);
     setShowEndpoints(result.results.length > 0);
   };
@@ -45,6 +49,7 @@ export const DataSourceListItem = ({
         {endpoints.results.map((endpoint) => {
           return (
             <DataSourceEndpoint
+              baseUrl={baseUrl}
               key={endpoint.id}
               endpoint={endpoint}
               projectId={projectId}

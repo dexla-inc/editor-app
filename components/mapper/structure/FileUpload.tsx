@@ -8,8 +8,8 @@ export const jsonStructure = (props?: any): Component => {
 
   return {
     id: nanoid(),
-    name: "FilePond",
-    description: "FilePond",
+    name: "FileUpload",
+    description: "FileUpload",
     props: {
       style: {
         width: "100%",
@@ -23,7 +23,7 @@ export const jsonStructure = (props?: any): Component => {
       {
         id: nanoid(),
         name: "Container",
-        description: "FilePond Child Container",
+        description: "FileUpload Child Container",
         props: {
           style: {
             paddingTop: px(theme.spacing.lg),
@@ -40,7 +40,7 @@ export const jsonStructure = (props?: any): Component => {
           {
             id: nanoid(),
             name: "Icon",
-            description: "FilePond Icon",
+            description: "FileUpload Icon",
             children: [],
             props: {
               name: "IconUpload",
@@ -50,9 +50,9 @@ export const jsonStructure = (props?: any): Component => {
           {
             id: nanoid(),
             name: "Text",
-            description: "FilePond Title",
+            description: "FileUpload Title",
             props: {
-              children: "FilePond",
+              children: "FileUpload",
               color: `${theme.colors.Black ? "Black.6" : "dark"}`,
               style: {
                 marginTop: px(theme.spacing.xs),
@@ -70,7 +70,7 @@ export const jsonStructure = (props?: any): Component => {
           {
             id: nanoid(),
             name: "Text",
-            description: "FilePond Text",
+            description: "FileUpload Text",
             props: {
               children: "Drag a file here",
               style: {

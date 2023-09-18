@@ -11,7 +11,7 @@ import { buildQueryString } from "@/utils/dashboardTypes";
 
 export const getDataSources = async (
   projectId: string,
-  { type, search, offset, limit }: DataSourcesListParams
+  { type, search, offset, limit }: DataSourcesListParams,
 ) => {
   let url = `/projects/${projectId}/datasources`;
 
@@ -19,7 +19,7 @@ export const getDataSources = async (
 
   const response = (await get<PagingResponse<DataSourceResponse>>(
     url,
-    {}
+    {},
   )) as PagingResponse<DataSourceResponse>;
 
   return response;
@@ -27,22 +27,29 @@ export const getDataSources = async (
 
 export const getDataSourceEndpoints = async (
   projectId: string,
-  id: string,
   {
+    dataSourceId,
     authOnly,
     methodType,
     search,
     offset,
     limit,
-  }: DataSourceEndpointsListParams = {}
+  }: DataSourceEndpointsListParams = {},
 ) => {
-  let url = `/projects/${projectId}/datasources/${id}/endpoints`;
+  let url = `/projects/${projectId}/datasources/endpoints`;
 
-  url += buildQueryString({ authOnly, methodType, search, offset, limit });
+  url += buildQueryString({
+    dataSourceId,
+    authOnly,
+    methodType,
+    search,
+    offset,
+    limit,
+  });
 
   const response = (await get<PagingResponse<Endpoint>>(
     url,
-    {}
+    {},
   )) as PagingResponse<Endpoint>;
 
   return response;
@@ -53,7 +60,7 @@ export const getDataSource = async (projectId: string, id: string) => {
 
   const response = (await get<DataSourceResponse>(
     url,
-    {}
+    {},
   )) as DataSourceResponse;
 
   return response;
@@ -64,7 +71,7 @@ export const getDataSourceAuth = async (projectId: string, id: string) => {
 
   const response = (await get<DataSourceAuthResponse>(
     url,
-    {}
+    {},
   )) as DataSourceAuthResponse;
 
   return response;
@@ -73,7 +80,7 @@ export const getDataSourceAuth = async (projectId: string, id: string) => {
 export const getSwagger = async (
   projectId: string,
   id: string,
-  swaggerUrl: string
+  swaggerUrl: string,
 ) => {
   let url = `/projects/${projectId}/datasources/${id}/swagger`;
 
@@ -81,7 +88,7 @@ export const getSwagger = async (
 
   const response = (await get<DataSourceResponse>(
     url,
-    {}
+    {},
   )) as DataSourceResponse;
 
   return response;

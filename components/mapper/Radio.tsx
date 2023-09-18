@@ -15,23 +15,36 @@ const RadioComponent = ({
   isPreviewMode,
   ...props
 }: Props) => {
-  const { children, value, ...componentProps } = component.props as any;
+  const { children, value, triggers, ...componentProps } =
+    component.props as any;
+
   const [_value, setValue] = useState(value);
+
+  console.log({ _value });
+  const { onChange, ...otherTriggers } = triggers;
 
   const defaultTriggers = isPreviewMode
     ? {
         onChange: (val: string) => {
           setValue(val);
+          onChange && onChange(val);
         },
       }
     : {
-        onChange: (e: any) => {
+        onChange: () => {
+          console.log("test2");
           setValue(undefined);
         },
       };
 
   return (
-    <MantineRadio.Group {...props} {...defaultTriggers} {...componentProps}>
+    <MantineRadio.Group
+      {...props}
+      {...defaultTriggers}
+      {...componentProps}
+      {...otherTriggers}
+      value={value}
+    >
       <Group mt="xs">
         {component.children && component.children.length > 0
           ? component.children?.map((child) =>
@@ -43,8 +56,14 @@ const RadioComponent = ({
                   checked: isPreviewMode
                     ? child?.props?.value?.toString() === _value?.toString()
                     : false,
+                  triggers: {
+                    onChange: (val: string) => {
+                      console.log("eita");
+                      setValue(val);
+                    },
+                  },
                 },
-              })
+              }),
             )
           : children}
       </Group>

@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from "react";
+import React, { CSSProperties, PropsWithChildren } from "react";
 import { Box, BoxProps, useMantineTheme } from "@mantine/core";
 import { Component } from "@/utils/editor";
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
@@ -8,17 +8,19 @@ import { useOnDrop } from "@/hooks/useOnDrop";
 
 type Props = {
   component: Component;
+  style?: CSSProperties;
 } & BoxProps;
 
 export const SortableTreeItem = ({
   children,
   component,
+  style,
   ...props
 }: PropsWithChildren<Props>) => {
   const theme = useMantineTheme();
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
+    (state) => state.selectedComponentId,
   );
 
   const onDrop = useOnDrop();
@@ -52,7 +54,7 @@ export const SortableTreeItem = ({
       w="100%"
       h="100%"
       pos="relative"
-      sx={{ ...borders, marginBottom: "3px" }}
+      style={{ ...borders, ...style }}
       {...props}
     >
       {children}

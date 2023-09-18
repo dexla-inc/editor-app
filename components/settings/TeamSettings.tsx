@@ -30,7 +30,7 @@ type Props = {
 export default function TeamSettings({ projectId }: Props) {
   const [teamList, setTeamList] = useState<TeamResponse[]>([]);
   const [pendingInviteList, setPendingInviteList] = useState<TeamResponse[]>(
-    []
+    [],
   );
   const [email, setEmail] = useState<string>("");
   const [userRole, setUserRole] = useState<UserRoles>("MEMBER");
@@ -74,6 +74,7 @@ export default function TeamSettings({ projectId }: Props) {
       };
       const response = await inviteTeam(params);
       setTeamList([...teamList, response]);
+      closeInviteModal();
       stopLoading({
         id: "inviting-user",
         title: "User Invited",
@@ -93,13 +94,13 @@ export default function TeamSettings({ projectId }: Props) {
 
   const handleAcceptOrRejectInvite = async (
     id: string,
-    status: Extract<TeamStatus, "ACCEPTED" | "REJECTED">
+    status: Extract<TeamStatus, "ACCEPTED" | "REJECTED">,
   ) => {
     const params: AcceptInviteParams = { id, status };
     const response = await acceptInvite(params);
 
     const updatedTeamList = teamList.filter(
-      (team) => team.usersName !== response.usersName
+      (team) => team.usersName !== response.usersName,
     );
     setTeamList([...updatedTeamList, response]);
     setPendingInviteList([]);

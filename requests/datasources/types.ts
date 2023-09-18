@@ -7,6 +7,7 @@ export interface DataSourcesListParams extends PagingParams {
 }
 
 export interface DataSourceEndpointsListParams extends PagingParams {
+  dataSourceId?: string | undefined;
   authOnly?: boolean;
   methodType?: MethodTypes;
 }
@@ -15,6 +16,8 @@ export type CreatedResponse = {
   id: string;
   trackingId: string;
 };
+
+export type SuccessResponse = Omit<CreatedResponse, "id">;
 
 export type SwaggerParams = { swaggerUrl: string };
 
@@ -56,20 +59,33 @@ type ErrorDetail = {
 
 export type EnvironmentTypes = "None" | "Staging" | "Production";
 
+export type MediaTypes =
+  | "application/json"
+  | "application/x-www-form-urlencoded"
+  | "application/graphql"
+  | "text/event-stream"
+  | "application/octet-stream";
+
 export type Endpoint = {
   id: string;
+  dataSourceId: string;
+  baseUrl: string | undefined;
   relativeUrl: string;
   methodType: MethodTypes;
   description: string | null;
-  mediaType: string;
-  withCredentials: boolean | null;
+  mediaType: MediaTypes;
   authenticationScheme: AuthenticationSchemes;
   headers: Header[];
   parameters: Parameter[];
   requestBody: RequestBody[];
   exampleResponse: string;
+  errorExampleResponse: string;
   authentication: AuthenticationEndpoint;
+  withCredentials: boolean | null;
+  isServerRequest: boolean;
 };
+
+export type EndpointParams = Omit<Endpoint, "id" | "authentication">;
 
 type AuthenticationEndpoint = {
   endpointType: string;
@@ -77,28 +93,23 @@ type AuthenticationEndpoint = {
   tokenSecondaryKey: string;
 };
 
-type Header = {
-  required: boolean;
-  value: string | null;
+export interface FieldTypeBase {
   name: string;
-  type: string;
+  type: ParameterTypes | AuthenticationSchemes;
   description: string | null;
-};
-
-export type Parameter = {
-  location: string;
-  required: boolean;
-  name: string;
-  type: string;
-  description: string | null;
-};
-
-export type RequestBody = {
   value: any | null;
-  name: string;
-  type: string;
-  description: string | null;
-};
+}
+
+export interface Header extends FieldTypeBase {
+  required: boolean;
+}
+
+export interface Parameter extends FieldTypeBase {
+  location: ParameterLocations;
+  required: boolean;
+}
+
+export interface RequestBody extends FieldTypeBase {}
 
 export type ExampleResponse = {
   value: any | null;
@@ -108,6 +119,8 @@ export type ExampleResponse = {
   description: string | null;
 };
 
+export type ParameterTypes = "string" | "number" | "boolean" | "datetime";
+export type ParameterLocations = "Query" | "Path" | "Header" | "Cookie";
 export type AuthenticationSchemes = "NONE" | "BEARER" | "BASIC" | "API_KEY";
 
 // Copilot create authentication scheme object for AuthenticationSchemes and friendly labels

@@ -1,8 +1,12 @@
-import { Component } from "@/utils/editor";
-import { TextInputProps, TextInput as MantineInput } from "@mantine/core";
 import { Icon } from "@/components/Icon";
-import debounce from "lodash.debounce";
 import { isSame } from "@/utils/componentComparison";
+import { Component } from "@/utils/editor";
+import {
+  Loader,
+  TextInput as MantineInput,
+  TextInputProps,
+} from "@mantine/core";
+import debounce from "lodash.debounce";
 import { memo } from "react";
 
 type Props = {
@@ -11,7 +15,7 @@ type Props = {
 } & TextInputProps;
 
 const InputComponent = ({ renderTree, component, ...props }: Props) => {
-  const { children, icon, triggers, ...componentProps } =
+  const { children, icon, triggers, loading, ...componentProps } =
     component.props as any;
   const { name: iconName } = icon && icon!.props!;
 
@@ -27,6 +31,7 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
       {...props}
       {...componentProps}
       onChange={triggers?.onChange ? debouncedOnChange : undefined}
+      rightSection={loading ? <Loader size="xs" /> : null}
     >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))

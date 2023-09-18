@@ -89,6 +89,7 @@ export interface BaseAction {
 export interface NavigationAction extends BaseAction {
   name: "navigateToPage";
   pageId: string;
+  queryStrings?: Record<string, string>;
 }
 
 export interface GoToUrlAction extends BaseAction {
@@ -119,8 +120,7 @@ export interface OpenPopOverAction extends BaseAction {
 
 export interface TogglePropsAction extends BaseAction {
   name: "toggleVisibility";
-  componentId: string;
-  state: string;
+  conditionRules: Array<{ componentId: string; condition: string }>;
 }
 
 export interface OpenToastAction extends BaseAction {
@@ -139,7 +139,7 @@ export interface APICallAction extends BaseAction {
   name: "apiCall";
   endpoint: string;
   showLoader?: boolean;
-  datasource: DataSourceResponse;
+  datasources: DataSourceResponse[];
   binds?: { [key: string]: any };
 }
 
@@ -225,7 +225,18 @@ export const navigationAction = ({
   router,
 }: NavigationActionParams) => {
   const projectId = router.query.id as string;
-  router.push(`/projects/${projectId}/editor/${action.pageId}`);
+  let url = `/projects/${projectId}/editor/${action.pageId}`;
+
+  if (action.queryStrings && Object.keys(action.queryStrings).length) {
+    const queryStrings = [];
+    for (const key in action.queryStrings) {
+      queryStrings.push(`${key}=${action.queryStrings[key]}`);
+    }
+
+    url += `?${queryStrings.join("&")}`;
+  }
+
+  router.push(url);
 };
 
 export const goToUrlAction = ({ action }: GoToUrlParams) => {
@@ -309,7 +320,7 @@ export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
 
 export const goToNextStepAction = ({ action }: NextStepActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  console.log(action);
+
   const step = action.activeStep + 1;
 
   updateTreeComponent(action.stepperId, { activeStep: step }, false);
@@ -319,42 +330,40 @@ export const goToPreviousStepAction = ({
   action,
 }: PreviousStepActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  console.log(action);
+
   const step = Math.max(1, action.activeStep - 1);
 
   updateTreeComponent(action.stepperId, { activeStep: step }, false);
 };
-export const togglePropsAction = ({ action }: TogglePropsActionParams) => {
+export const togglePropsAction = ({
+  action,
+  event,
+}: TogglePropsActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  const editorTree = useEditorStore.getState().tree;
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    action.componentId as string
-  );
-  let viewItem;
-
-  selectedComponent?.props?.style.visibility === "none"
-    ? (viewItem = "flex")
-    : (viewItem = "none");
-
-  updateTreeComponent(action.componentId, {
-    style: { visibility: viewItem as string },
+  action.conditionRules.map((item) => {
+    updateTreeComponent(
+      item.componentId,
+      {
+        style: { display: item.condition === event ? "flex" : "none" },
+      },
+      false,
+    );
   });
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const { updateTreeComponent, tree: editorTree } = useEditorStore.getState();
   const selectedComponent = editorTree.root.children?.find(
-    (tree) => tree.name === "Navbar"
+    (tree) => tree.name === "Navbar",
   );
   const buttonComponent = selectedComponent?.children?.find(
-    (tree) => tree.description === "Button to toggle Navbar"
+    (tree) => tree.description === "Button to toggle Navbar",
   );
   const linksComponent = selectedComponent?.children?.find(
-    (tree) => tree.description === "Container for navigation links"
+    (tree) => tree.description === "Container for navigation links",
   );
   const buttonIcon = buttonComponent?.children?.reduce(
     (obj, tree) => ({ ...obj, ...tree }),
-    {} as Component
+    {} as Component,
   );
 
   const isExpanded = selectedComponent?.props?.style.width !== "100px";
@@ -412,15 +421,12 @@ export const loginAction = async ({
     // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
     // Can revisit later and create a cashing layer.
     if (!cachedEndpoints) {
-      const { results } = await getDataSourceEndpoints(
-        projectId,
-        action.datasource.id
-      );
+      const { results } = await getDataSourceEndpoints(projectId);
       cachedEndpoints = results;
     }
 
     const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
-
+    const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
     const keys = Object.keys(action.binds ?? {});
 
     const url =
@@ -439,15 +445,12 @@ export const loginAction = async ({
             }
 
             if (value?.startsWith(`queryString_pass_`)) {
-              const el = iframeWindow?.document.querySelector(`
-          input#${value.split(`queryString_pass_`)[1]}
-          `) as HTMLInputElement;
-              value = el?.value ?? "";
+              value = getQueryElementValue(value, iframeWindow);
             }
 
             return url.replace(`{${key}}`, value);
-          }, `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`)
-        : `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`;
+          }, apiUrl)
+        : apiUrl;
 
     const body =
       endpoint?.methodType === "POST"
@@ -463,10 +466,7 @@ export const loginAction = async ({
               }
 
               if (value?.startsWith(`queryString_pass_`)) {
-                const el = iframeWindow?.document.querySelector(`
-          input#${value.split(`queryString_pass_`)[1]}
-          `) as HTMLInputElement;
-                value = el?.value ?? "";
+                value = getQueryElementValue(value, iframeWindow);
               }
 
               return {
@@ -474,7 +474,7 @@ export const loginAction = async ({
                 [key]: value,
               };
             },
-            {} as any
+            {} as any,
           )
         : undefined;
 
@@ -495,7 +495,7 @@ export const loginAction = async ({
 
     const dataSourceAuthConfig = await getDataSourceAuth(
       projectId,
-      action.datasource.id
+      endpoint?.dataSourceId!,
     );
 
     const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
@@ -506,7 +506,7 @@ export const loginAction = async ({
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess"
+        (action: Action) => action.trigger === "onSuccess",
       )!;
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
       onSuccessActionMapped.action({
@@ -521,7 +521,7 @@ export const loginAction = async ({
     if (onError && onError.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError"
+        (action: Action) => action.trigger === "onError",
       )!;
       const onErrorActionMapped = actionMapper[onError.action.name];
       onErrorActionMapped.action({
@@ -536,6 +536,25 @@ export const loginAction = async ({
     updateTreeComponent(component.id!, { loading: false }, false);
   }
 };
+
+function getElementValue(value: string, iframeWindow: any): string {
+  const _id = value.split("valueOf_")[1];
+  let el = iframeWindow?.document.getElementById(_id);
+  const tag = el?.tagName?.toLowerCase();
+
+  if (tag !== "input") {
+    el = el?.getElementsByTagName("input")[0];
+  }
+
+  return (el as HTMLInputElement)?.value ?? "";
+}
+
+function getQueryElementValue(value: string, iframeWindow: any): string {
+  const el = iframeWindow?.document.querySelector(
+    `input#${value.split("queryString_pass_")[1]}`,
+  ) as HTMLInputElement;
+  return el?.value ?? "";
+}
 
 export const apiCallAction = async ({
   actionId,
@@ -557,25 +576,24 @@ export const apiCallAction = async ({
       {
         // @ts-ignore
         loading: component.actions.find(
-          (a: { id: string }) => a.id === actionId
+          (a: { id: string }) => a.id === actionId,
           // @ts-ignore
         ).action.showLoader,
       },
-      false
+      false,
     );
 
     // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
     // Can revisit later and create a cashing layer.
     if (!cachedEndpoints) {
-      const { results } = await getDataSourceEndpoints(
-        projectId,
-        action.datasource.id
-      );
+      const { results } = await getDataSourceEndpoints(projectId);
       cachedEndpoints = results;
     }
     const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
 
     const keys = Object.keys(action.binds ?? {});
+
+    const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
 
     const url =
       keys.length > 0
@@ -587,20 +605,11 @@ export const apiCallAction = async ({
             let value = action.binds[key] as string;
 
             if (value.startsWith(`valueOf_`)) {
-              const _id = value.split(`valueOf_`)[1];
-              let el = iframeWindow?.document.getElementById(_id);
-              const tag = el?.tagName?.toLowerCase();
-              if (tag !== "input") {
-                el = el?.getElementsByTagName("input")[0];
-              }
-              value = (el as HTMLInputElement)?.value ?? "";
+              value = getElementValue(value, iframeWindow);
             }
 
             if (value?.startsWith(`queryString_pass_`)) {
-              const el = iframeWindow?.document.querySelector(`
-          input#${value.split(`queryString_pass_`)[1]}
-          `) as HTMLInputElement;
-              value = el?.value ?? "";
+              value = getQueryElementValue(value, iframeWindow);
             }
 
             if (!url.includes(`{${key}}`)) {
@@ -610,8 +619,8 @@ export const apiCallAction = async ({
             } else {
               return url.replace(`{${key}}`, value);
             }
-          }, `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`)
-        : `${action.datasource.baseUrl}/${endpoint?.relativeUrl}`;
+          }, apiUrl)
+        : apiUrl;
 
     const body =
       endpoint?.methodType === "POST"
@@ -621,20 +630,11 @@ export const apiCallAction = async ({
               let value = action.binds[key] as string;
 
               if (value.startsWith(`valueOf_`)) {
-                const _id = value.split(`valueOf_`)[1];
-                let el = iframeWindow?.document.getElementById(_id);
-                const tag = el?.tagName?.toLowerCase();
-                if (tag !== "input") {
-                  el = el?.getElementsByTagName("input")[0];
-                }
-                value = (el as HTMLInputElement)?.value ?? "";
+                value = getElementValue(value, iframeWindow);
               }
 
               if (value?.startsWith(`queryString_pass_`)) {
-                const el = iframeWindow?.document.querySelector(`
-          input#${value.split(`queryString_pass_`)[1]}
-          `) as HTMLInputElement;
-                value = el?.value ?? "";
+                value = getQueryElementValue(value, iframeWindow);
               }
 
               return {
@@ -642,7 +642,7 @@ export const apiCallAction = async ({
                 [key]: value,
               };
             },
-            {} as any
+            {} as any,
           )
         : undefined;
 
@@ -657,7 +657,11 @@ export const apiCallAction = async ({
         ? "Bearer " + authStore.getAccessToken()
         : "";
 
-    const response = await fetch(url, {
+    const fetchUrl = endpoint?.isServerRequest
+      ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
+      : url;
+
+    const response = await fetch(fetchUrl, {
       method: endpoint?.methodType,
       headers: {
         // Will need to build up headers from endpoint.headers in future
@@ -676,7 +680,7 @@ export const apiCallAction = async ({
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess"
+        (action: Action) => action.trigger === "onSuccess",
       )!;
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
       onSuccessActionMapped.action({
@@ -692,7 +696,7 @@ export const apiCallAction = async ({
     if (onError && onError.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError"
+        (action: Action) => action.trigger === "onError",
       )!;
       const onErrorActionMapped = actionMapper[onError.action.name];
       onErrorActionMapped.action({
@@ -730,7 +734,7 @@ export const bindResponseToComponentAction = ({
             ? bind.value.split("root[0].")[1]
             : bind.value.split("root.")[1],
         },
-        false
+        false,
       );
     }
   });

@@ -1,6 +1,7 @@
 import { Draggable } from "@/components/Draggable";
 import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
+import { toSpaced } from "@/utils/dashboardTypes";
 import { Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 
@@ -28,7 +29,7 @@ export const DraggableComponent = ({ id, text, data, icon }: Props) => {
   return (
     <Draggable id={id} data={draggableData} isDeletable={!!data} sx={{}}>
       {icon}
-      <Text size="xs">{text ?? id}</Text>
+      <Text size="xs">{toSpaced(text ?? id)}</Text>
     </Draggable>
   );
 };

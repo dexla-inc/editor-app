@@ -1,17 +1,21 @@
 import { Icon } from "@/components/Icon";
 import { QueryStringListItem } from "@/requests/pages/types";
-import { ICON_SIZE } from "@/utils/config";
+import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Flex, Group, Text, TextInput } from "@mantine/core";
 import { Dispatch, SetStateAction, useState } from "react";
 
-export const QueryStringsForm = ({
-  queryStringState,
-}: {
+type QueryStringsFormProps = {
   queryStringState: [
     QueryStringListItem[],
-    Dispatch<SetStateAction<QueryStringListItem[]>>
+    Dispatch<SetStateAction<QueryStringListItem[]>>,
   ];
-}) => {
+  readOnlyKeys?: boolean;
+};
+
+export const QueryStringsForm = ({
+  queryStringState,
+  readOnlyKeys = false,
+}: QueryStringsFormProps) => {
   const [queryKey, setQueryKey] = useState("");
   const [queryValue, setQueryValue] = useState("");
   const [queryStrings, setQueryStrings] = queryStringState;
@@ -23,22 +27,24 @@ export const QueryStringsForm = ({
           Query Strings
         </Text>
 
-        <Button
-          type="button"
-          compact
-          onClick={() => {
-            setQueryStrings((prev: QueryStringListItem[]) => {
-              return prev.concat({ key: queryKey, value: queryValue });
-            });
-            setQueryKey("");
-            setQueryValue("");
-          }}
-          color="indigo"
-          sx={{ marginRight: 0 }}
-          leftIcon={<Icon name="IconPlus" size={ICON_SIZE} />}
-        >
-          Add
-        </Button>
+        {!readOnlyKeys && (
+          <Button
+            type="button"
+            compact
+            onClick={() => {
+              setQueryStrings((prev: QueryStringListItem[]) => {
+                return prev.concat({ key: queryKey, value: queryValue });
+              });
+              setQueryKey("");
+              setQueryValue("");
+            }}
+            color="indigo"
+            sx={{ marginRight: 0 }}
+            leftIcon={<Icon name="IconPlus" size={ICON_SIZE} />}
+          >
+            Add
+          </Button>
+        )}
       </Flex>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -46,6 +52,7 @@ export const QueryStringsForm = ({
           return (
             <Group key={index} style={{ flexWrap: "nowrap" }}>
               <TextInput
+                disabled={readOnlyKeys}
                 placeholder="key"
                 value={key}
                 onChange={(event) => {
@@ -71,7 +78,7 @@ export const QueryStringsForm = ({
               />
 
               <Icon
-                name="IconTrash"
+                name={ICON_DELETE}
                 onClick={() => {
                   setQueryStrings((prev: QueryStringListItem[]) => {
                     return prev.filter((_, i) => index !== i);

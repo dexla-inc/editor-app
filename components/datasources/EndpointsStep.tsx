@@ -20,6 +20,7 @@ import {
   Title,
 } from "@mantine/core";
 import { useRouter } from "next/router";
+import { DataSourceEndpointList } from "./DataSourceEndpointList";
 
 interface AuthenticationStepParams extends DataSourceStepperWithoutNextProps {
   accessToken?: string | null;
@@ -77,7 +78,7 @@ export default function EndpointsStep({
         text={
           dataSource?.authenticationScheme === "BEARER"
             ? "You have set up your API Data Source settings correctly. Login as a test user below so you can use your authenticated endpoints in the editor. You can view your API endpoints within the editor."
-            : "You have set up your API Data Source settings correctly. You can create your API endpoints within the editor."
+            : "You have set up your API Data Source settings correctly. You can create your API endpoints below."
         }
       />
       {dataSource?.authenticationScheme === "BEARER" && (
@@ -99,28 +100,28 @@ export default function EndpointsStep({
       <Stack>
         <Grid gutter="md">
           <Col span={4} fw={700}>
-            <Text>API Name</Text>
+            <Text size="sm">API Name</Text>
           </Col>
           <Col span={8}>
             <Text size="sm">{dataSource?.name}</Text>
           </Col>
 
           <Col span={4} fw={700}>
-            <Text>Base URL</Text>
+            <Text size="sm">Base URL</Text>
           </Col>
           <Col span={8}>
             <Text size="sm">{dataSource?.baseUrl}</Text>
           </Col>
 
           <Col span={4} fw={700}>
-            <Text>Environment</Text>
+            <Text size="sm">Environment</Text>
           </Col>
           <Col span={8}>
             <Text size="sm">{dataSource?.environment}</Text>
           </Col>
 
           <Col span={4} fw={700}>
-            <Text>Authentication Scheme</Text>
+            <Text size="sm">Authentication Scheme</Text>
           </Col>
           <Col span={8}>
             <Text size="sm">
@@ -131,42 +132,42 @@ export default function EndpointsStep({
           {dataSource?.authenticationScheme === "BEARER" && (
             <>
               <Col span={4} fw={700}>
-                <Text>Login Endpoint (POST)</Text>
+                <Text size="sm">Login Endpoint (POST)</Text>
               </Col>
               <Col span={8}>
                 <Text size="sm">{loginEndpointLabel}</Text>
               </Col>
 
               <Col span={4} fw={700}>
-                <Text>Refresh Endpoint (POST)</Text>
+                <Text size="sm">Refresh Endpoint (POST)</Text>
               </Col>
               <Col span={8}>
                 <Text size="sm">{refreshEndpointLabel}</Text>
               </Col>
 
               <Col span={4} fw={700}>
-                <Text>User Endpoint (GET)</Text>
+                <Text size="sm">User Endpoint (GET)</Text>
               </Col>
               <Col span={8}>
                 <Text size="sm">{userEndpointLabel}</Text>
               </Col>
 
               <Col span={4} fw={700}>
-                <Text>Access Token Property</Text>
+                <Text size="sm">Access Token Property</Text>
               </Col>
               <Col span={8}>
                 <Text size="sm">{accessToken}</Text>
               </Col>
 
               <Col span={4} fw={700}>
-                <Text>Refresh Token Property</Text>
+                <Text size="sm">Refresh Token Property</Text>
               </Col>
               <Col span={8}>
                 <Text size="sm">{refreshToken}</Text>
               </Col>
 
               <Col span={4} fw={700}>
-                <Text>Access Token Expiry Property</Text>
+                <Text size="sm">Access Token Expiry Property</Text>
               </Col>
               <Col span={8}>
                 <Text size="sm">{expiryProperty}</Text>
@@ -187,6 +188,14 @@ export default function EndpointsStep({
 
         <Divider></Divider>
 
+        {dataSource?.swaggerUrl === "" && (
+          <DataSourceEndpointList
+            baseUrl={dataSource?.baseUrl}
+            projectId={projectId}
+            dataSourceId={dataSource?.id}
+          />
+        )}
+
         {dataSource?.changedEndpoints &&
           dataSource?.changedEndpoints.length > 0 && (
             <>
@@ -197,6 +206,7 @@ export default function EndpointsStep({
               {dataSource?.changedEndpoints?.map((endpoint) => {
                 return (
                   <DataSourceEndpoint
+                    baseUrl={dataSource?.baseUrl}
                     key={endpoint.id}
                     projectId={projectId}
                     endpoint={endpoint}

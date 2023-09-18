@@ -28,13 +28,12 @@ export function validateName(value: string | undefined) {
 
 export const BasicDetailsInputs = ({
   form,
-  authenticationScheme,
   setAuthenticationScheme,
 }: {
   form: UseFormReturnType<DataSourceParams>;
   authenticationScheme?: AuthenticationSchemes | null;
   setAuthenticationScheme: (
-    authenticationScheme: AuthenticationSchemes | null
+    authenticationScheme: AuthenticationSchemes | null,
   ) => void;
 }) => {
   return (
@@ -75,7 +74,7 @@ export const BasicDetailsInputs = ({
         onChange={(value) => {
           form.setFieldValue(
             "authenticationScheme",
-            value as AuthenticationSchemes
+            value as AuthenticationSchemes,
           );
           setAuthenticationScheme &&
             setAuthenticationScheme(value as AuthenticationSchemes);

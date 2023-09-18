@@ -84,66 +84,72 @@ export const DroppableDraggable = ({
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const onMountActionsRan = useEditorStore((state) => state.onMountActionsRan);
   const addOnMountActionsRan = useEditorStore(
-    (state) => state.addOnMountActionsRan
+    (state) => state.addOnMountActionsRan,
   );
   const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind
+    (state) => state.setComponentToBind,
   );
   const pickingComponentToBindFrom = useEditorStore(
-    (state) => state.pickingComponentToBindFrom
+    (state) => state.pickingComponentToBindFrom,
   );
   const pickingComponentToBindTo = useEditorStore(
-    (state) => state.pickingComponentToBindTo
+    (state) => state.pickingComponentToBindTo,
   );
   const setSelectedComponentId = useEditorStore(
-    (state) => state.setSelectedComponentId
+    (state) => state.setSelectedComponentId,
   );
   const setTreeComponentCurrentState = useEditorStore(
-    (state) => state.setTreeComponentCurrentState
+    (state) => state.setTreeComponentCurrentState,
   );
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
+    (state) => state.selectedComponentId,
   );
   const currentTreeComponentsStates = useEditorStore(
-    (state) => state.currentTreeComponentsStates
+    (state) => state.currentTreeComponentsStates,
   );
   const language = useEditorStore((state) => state.language);
+  const highlightedComponentId = useEditorStore(
+    (state) => state.highlightedComponentId,
+  );
 
   const actions: Action[] = component.actions ?? [];
   const onMountAction: Action | undefined = actions.find(
-    (action: Action) => action.trigger === "onMount"
+    (action: Action) => action.trigger === "onMount",
   );
 
   const onSuccessActions: Action[] = actions.filter(
-    (action: Action) => action.trigger === "onSuccess"
+    (action: Action) => action.trigger === "onSuccess",
   );
 
   const onErrorActions: Action[] = actions.filter(
-    (action: Action) => action.trigger === "onError"
+    (action: Action) => action.trigger === "onError",
   );
 
-  const triggers = actions.reduce((acc, action: Action) => {
-    if (nonDefaultActionTriggers.includes(action.trigger)) {
-      return acc;
-    }
+  const triggers = actions.reduce(
+    (acc, action: Action) => {
+      if (nonDefaultActionTriggers.includes(action.trigger)) {
+        return acc;
+      }
 
-    return {
-      ...acc,
-      [action.trigger]: (e: any) =>
-        actionMapper[action.action.name].action({
-          // @ts-ignore
-          action: action.action,
-          actionId: action.id,
-          router: router as Router,
-          event: e,
-          onSuccess: onSuccessActions.find(
-            (sa) => sa.sequentialTo === action.id
-          ),
-          onError: onErrorActions.find((ea) => ea.sequentialTo === action.id),
-          component,
-        }),
-    };
-  }, {} as Record<ActionTrigger, any>);
+      return {
+        ...acc,
+        [action.trigger]: (e: any) =>
+          actionMapper[action.action.name].action({
+            // @ts-ignore
+            action: action.action,
+            actionId: action.id,
+            router: router as Router,
+            event: e,
+            onSuccess: onSuccessActions.find(
+              (sa) => sa.sequentialTo === action.id,
+            ),
+            onError: onErrorActions.find((ea) => ea.sequentialTo === action.id),
+            component,
+          }),
+      };
+    },
+    {} as Record<ActionTrigger, any>,
+  );
 
   useEffect(() => {
     if (
@@ -158,10 +164,10 @@ export const DroppableDraggable = ({
         actionId: onMountAction.id,
         router: router as Router,
         onSuccess: onSuccessActions.find(
-          (sa) => sa.sequentialTo === onMountAction.id
+          (sa) => sa.sequentialTo === onMountAction.id,
         ),
         onError: onErrorActions.find(
-          (ea) => ea.sequentialTo === onMountAction.id
+          (ea) => ea.sequentialTo === onMountAction.id,
         ),
         component,
       });
@@ -207,36 +213,41 @@ export const DroppableDraggable = ({
   const baseShadow = `0 0 0 1px ${theme.colors.teal[6]}`;
 
   const shadows =
-    !isPreviewMode &&
-    (isOver || isPicked
-      ? {
-          boxShadow:
-            edge === "top"
-              ? `inset 0 ${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
-              : edge === "bottom"
-              ? `inset 0 -${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
-              : edge === "left"
-              ? `inset ${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
-              : edge === "right"
-              ? `inset -${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
-              : baseShadow,
-          background: edge === "center" ? theme.colors.teal[6] : "none",
-          opacity: edge === "center" ? 0.4 : 1,
-        }
-      : isSelected || hovered
-      ? { boxShadow: baseShadow }
-      : {});
+    highlightedComponentId === component.id
+      ? { boxShadow: `0 0 0 1px ${theme.colors.orange[6]}` }
+      : !isPreviewMode &&
+        (isOver || isPicked
+          ? {
+              boxShadow:
+                edge === "top"
+                  ? `inset 0 ${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+                  : edge === "bottom"
+                  ? `inset 0 -${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+                  : edge === "left"
+                  ? `inset ${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+                  : edge === "right"
+                  ? `inset -${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+                  : baseShadow,
+              background: edge === "center" ? theme.colors.teal[6] : "none",
+              opacity: edge === "center" ? 0.4 : 1,
+            }
+          : isSelected || hovered
+          ? { boxShadow: baseShadow }
+          : {});
 
   const isContentWrapper = id === "content-wrapper";
   const haveNonRootParent = parent && parent.id !== "root";
 
   const filteredProps = {
-    style: Object.keys(component.props?.style || {}).reduce((newStyle, key) => {
-      if (styleWhitelist.includes(key)) {
-        newStyle[key] = component.props?.style[key];
-      }
-      return newStyle;
-    }, {} as Record<string, unknown>),
+    style: Object.keys(component.props?.style || {}).reduce(
+      (newStyle, key) => {
+        if (styleWhitelist.includes(key)) {
+          newStyle[key] = component.props?.style[key];
+        }
+        return newStyle;
+      },
+      {} as Record<string, unknown>,
+    ),
   };
 
   const hasTooltip = !!component.props?.tooltip;
@@ -245,12 +256,12 @@ export const DroppableDraggable = ({
   const currentState =
     currentTreeComponentsStates?.[component.id!] ?? "default";
   const hoverStateFunc = () => {
-    if (currentState !== "hover") {
+    if (currentState === "default") {
       setTreeComponentCurrentState(component.id!, "hover");
     }
   };
   const leaveHoverStateFunc = () => {
-    if (currentState !== "default") {
+    if (currentState === "hover") {
       setTreeComponentCurrentState(component.id!, "default");
     }
   };
@@ -279,7 +290,7 @@ export const DroppableDraggable = ({
             onMouseLeave: leaveHoverStateFunc,
           }
         : {},
-    }
+    },
   );
 
   return (
@@ -337,7 +348,7 @@ export const DroppableDraggable = ({
             isPreviewMode,
           },
           // @ts-ignore
-          children?.children
+          children?.children,
         )}
       </ComponentWrapper>
       {!isPreviewMode &&
@@ -424,7 +435,7 @@ export const DroppableDraggable = ({
                       id: parent?.id!,
                       edge: "left",
                     },
-                    getComponentIndex(parent!, id)
+                    getComponentIndex(parent!, id),
                   );
 
                   addComponent(copy.root, component, {

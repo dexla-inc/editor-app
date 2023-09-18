@@ -23,7 +23,7 @@ import * as SpacingModifier from "@/components/modifiers/Spacing";
 import * as TableModifier from "@/components/modifiers/Table";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TitleModifier from "@/components/modifiers/Title";
-import * as DisplayModifier from "@/components/modifiers/Visibility";
+import * as GoogleMapModifier from "@/components/modifiers/GoogleMap";
 import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper } from "@/utils/actions";
 import { Modifiers, componentMapper } from "@/utils/componentMapper";
@@ -69,7 +69,7 @@ const sectionMapper: SectionsMapper = {
   radio: RadioModifier,
   drawer: DrawerModifier,
   buttonIcon: ButtonIconModifier,
-  display: DisplayModifier,
+  mapSettings: GoogleMapModifier,
 };
 
 type Tab = "design" | "actions";
@@ -77,16 +77,16 @@ type Tab = "design" | "actions";
 export const EditorAsideSections = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
+    (state) => state.selectedComponentId,
   );
   const setTreeComponentCurrentState = useEditorStore(
-    (state) => state.setTreeComponentCurrentState
+    (state) => state.setTreeComponentCurrentState,
   );
   const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
+    (state) => state.updateTreeComponent,
   );
   const currentTreeComponentsStates = useEditorStore(
-    (state) => state.currentTreeComponentsStates
+    (state) => state.currentTreeComponentsStates,
   );
   const [tab, setTab] = useState<Tab>("design");
 
@@ -107,7 +107,7 @@ export const EditorAsideSections = () => {
 
   const component = getComponentById(
     editorTree.root,
-    selectedComponentId as string
+    selectedComponentId as string,
   );
   const mappedComponent = componentMapper[component?.name as string];
 
@@ -136,7 +136,7 @@ export const EditorAsideSections = () => {
     const isSequential = !!action.sequentialTo;
     const sequentialToAction = isSequential
       ? (component?.actions ?? []).find(
-          (a: Action) => a.id === action.sequentialTo
+          (a: Action) => a.id === action.sequentialTo,
         )
       : undefined;
 
@@ -144,7 +144,7 @@ export const EditorAsideSections = () => {
       id: action.id,
       label: !!sequentialToAction
         ? `${startCase(sequentialToAction.trigger)} → ${startCase(
-            action.trigger
+            action.trigger,
           )}`
         : startCase(action.trigger),
       icon: IconBolt, // Need to add an icon property to a trigger
@@ -190,8 +190,14 @@ export const EditorAsideSections = () => {
                 { label: "Default", value: "default" },
                 { label: "Hover", value: "hover" },
                 { label: "Disabled", value: "disabled" },
+                { label: "Checked", value: "checked" },
                 ...Object.keys(component?.states ?? {}).reduce((acc, key) => {
-                  if (key === "hover" || key === "disabled") return acc;
+                  if (
+                    key === "hover" ||
+                    key === "disabled" ||
+                    key === "checked"
+                  )
+                    return acc;
 
                   return acc.concat({
                     label: key,

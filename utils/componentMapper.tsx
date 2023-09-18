@@ -14,8 +14,9 @@ import { Container } from "@/components/mapper/Container";
 import { DateInput } from "@/components/mapper/DateInput";
 import { Divider } from "@/components/mapper/Divider";
 import { Drawer } from "@/components/mapper/Drawer";
-import { FilePond } from "@/components/mapper/FilePond";
+import { FileUpload } from "@/components/mapper/FileUpload";
 import { Form } from "@/components/mapper/Form";
+import { GoogleMapPlugin } from "@/components/mapper/GoogleMapPlugin";
 import { Icon } from "@/components/mapper/Icon";
 import { Image } from "@/components/mapper/Image";
 import { Input } from "@/components/mapper/Input";
@@ -28,6 +29,7 @@ import { Pagination } from "@/components/mapper/Pagination";
 import { PopOver } from "@/components/mapper/PopOver";
 import { Radio } from "@/components/mapper/Radio";
 import { RadioItem } from "@/components/mapper/RadioItem";
+import { RadioItemComplex } from "@/components/mapper/RadioItemComplex";
 import { Rating } from "@/components/mapper/Rating";
 import { Select } from "@/components/mapper/Select";
 import { Stepper } from "@/components/mapper/Stepper";
@@ -58,8 +60,9 @@ import * as ContainerStructure from "@/components/mapper/structure/Container";
 import * as DateInputStructure from "@/components/mapper/structure/DateInput";
 import * as DividerStructure from "@/components/mapper/structure/Divider";
 import * as DrawerStructure from "@/components/mapper/structure/Drawer";
-import * as FilePondStructure from "@/components/mapper/structure/FilePond";
+import * as FileUploadStructure from "@/components/mapper/structure/FileUpload";
 import * as FormStructure from "@/components/mapper/structure/Form";
+import * as MapStructure from "@/components/mapper/structure/GoogleMap";
 import * as IconStructure from "@/components/mapper/structure/Icon";
 import * as ImageStructure from "@/components/mapper/structure/Image";
 import * as InputStructure from "@/components/mapper/structure/Input";
@@ -72,6 +75,7 @@ import * as NotImplemented from "@/components/mapper/structure/NotImplemented";
 import * as PaginationStructure from "@/components/mapper/structure/Pagination";
 import * as PopOverStructure from "@/components/mapper/structure/PopOver";
 import * as RadioGroupStructure from "@/components/mapper/structure/Radio";
+import * as RadioComplexGroupStructure from "@/components/mapper/structure/RadioComplex";
 import * as RadioItemStructure from "@/components/mapper/structure/RadioItem";
 import * as RatingStructure from "@/components/mapper/structure/Rating";
 import * as SelectStructure from "@/components/mapper/structure/Select";
@@ -121,6 +125,7 @@ import {
   IconLayoutSidebarLeftCollapse,
   IconLink,
   IconListCheck,
+  IconMapPin,
   IconMenu,
   IconPageBreak,
   IconPhoto,
@@ -173,6 +178,17 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Layout",
     icon: <IconContainer size={ICON_SIZE} />,
+  },
+  GoogleMap: {
+    structure: (props: any) => MapStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="GoogleMap"
+        icon={<IconMapPin size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+    icon: <IconMapPin size={ICON_SIZE} />,
   },
   Input: {
     structure: (props: any) => InputStructure.jsonStructure(props),
@@ -256,6 +272,17 @@ export const structureMapper: StructureMapper = {
     category: "Input",
     icon: <IconPlaystationCircle size={ICON_SIZE} />,
   },
+  RadioComplex: {
+    structure: (props: any) => RadioComplexGroupStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="RadioComplex"
+        icon={<IconPlaystationCircle size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconPlaystationCircle size={ICON_SIZE} />,
+  },
   Checkbox: {
     structure: (props: any) => CheckboxStructure.jsonStructure(props),
     Draggable: () => (
@@ -327,11 +354,11 @@ export const structureMapper: StructureMapper = {
     category: "Input",
     icon: <IconJewishStar size={ICON_SIZE} />,
   },
-  FilePond: {
-    structure: (props: any) => FilePondStructure.jsonStructure(props),
+  FileUpload: {
+    structure: (props: any) => FileUploadStructure.jsonStructure(props),
     Draggable: () => (
       <DraggableComponent
-        id="FilePond"
+        id="FileUpload"
         icon={<IconFile size={LARGE_ICON_SIZE} />}
       />
     ),
@@ -768,7 +795,7 @@ export type Modifiers =
   | "radio"
   | "drawer"
   | "buttonIcon"
-  | "display";
+  | "mapSettings";
 
 export type ComponentDefinition = {
   Component: any;
@@ -782,11 +809,22 @@ export type ComponentMapper = {
 };
 
 export const componentMapper: ComponentMapper = {
+  GoogleMap: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <GoogleMapPlugin
+        component={props.component}
+        renderTree={props.renderTree}
+      />
+    ),
+    modifiers: ["mapSettings", "size", "border"],
+    actionTriggers: ["onMount", "onClick"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
   Avatar: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Avatar component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -799,7 +837,7 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -807,7 +845,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Menu component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount", "onOpen", "onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -831,7 +869,6 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: [
       "layout",
-      "display",
       "background",
       "spacing",
       "size",
@@ -854,7 +891,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["select", "display", "spacing", "size", "border"],
+    modifiers: ["select", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -862,7 +899,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Input component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["input", "display", "spacing", "size", "border"],
+    modifiers: ["input", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange", "onFocus", "onBlur"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -876,7 +913,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange", "onFocus", "onBlur"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -884,7 +921,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Text component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["text", "display", "spacing", "size"],
+    modifiers: ["text", "spacing", "size"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -892,7 +929,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Title component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["title", "display", "spacing", "size"],
+    modifiers: ["title", "spacing", "size"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -900,7 +937,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Textarea component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange", "onFocus", "onBlur"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -908,7 +945,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Link component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["link", "display", "spacing", "size", "border"],
+    modifiers: ["link", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -916,7 +953,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <NavLink component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["background", "display", "spacing", "size", "border"],
+    modifiers: ["background", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -924,7 +961,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Icon component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["icon", "display", "spacing", "size", "border", "position"],
+    modifiers: ["icon", "background", "spacing", "size", "border", "position"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -932,13 +969,13 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Table
         key={`${JSON.stringify(
-          props.component?.props?.config ?? {}
+          props.component?.props?.config ?? {},
         )}-${JSON.stringify(props.component?.props?.headers ?? {})}`}
         component={props.component}
         renderTree={props.renderTree}
       />
     ),
-    modifiers: ["table", "display", "spacing", "size", "border"],
+    modifiers: ["table", "spacing", "size", "border"],
     actionTriggers: [
       "onMount",
       "onRowClick",
@@ -951,9 +988,9 @@ export const componentMapper: ComponentMapper = {
     ],
     sequentialTriggers: ["onSuccess", "onError"],
   },
-  FilePond: {
+  FileUpload: {
     Component: (props: { component: Component; renderTree: any }) => (
-      <FilePond
+      <FileUpload
         component={props.component}
         renderTree={props.renderTree}
         // eslint-disable-next-line react/no-children-prop
@@ -964,7 +1001,7 @@ export const componentMapper: ComponentMapper = {
         activateOnClick={false}
       />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -972,7 +1009,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Checkbox component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["checkbox", "display", "spacing", "size", "border"],
+    modifiers: ["checkbox", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -986,7 +1023,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -995,7 +1032,19 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <RadioItem component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  RadioItemComplex: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      // @ts-ignore
+      <RadioItemComplex
+        component={props.component}
+        renderTree={props.renderTree}
+      />
+    ),
+    modifiers: ["background", "spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1008,7 +1057,7 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["radio", "display", "spacing", "size", "border"],
+    modifiers: ["radio", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1022,7 +1071,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1031,15 +1080,7 @@ export const componentMapper: ComponentMapper = {
       // eslint-disable-next-line jsx-a11y/alt-text
       <Image component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: [
-      "image",
-      "effects",
-      "display",
-      "spacing",
-      "size",
-      "border",
-      "position",
-    ],
+    modifiers: ["image", "effects", "spacing", "size", "border", "position"],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1047,7 +1088,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Divider component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["divider", "display", "spacing", "size", "border"],
+    modifiers: ["divider", "spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1059,7 +1100,7 @@ export const componentMapper: ComponentMapper = {
         total={10}
       />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1072,7 +1113,7 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1085,7 +1126,7 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1099,7 +1140,7 @@ export const componentMapper: ComponentMapper = {
         value="first"
       />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1113,7 +1154,7 @@ export const componentMapper: ComponentMapper = {
         defaultValue="first"
       />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount", "onOpen", "onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1127,7 +1168,7 @@ export const componentMapper: ComponentMapper = {
         value="first"
       />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1140,7 +1181,7 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1153,7 +1194,7 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1168,7 +1209,6 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: [
       "layout",
-      "display",
       "background",
       "spacing",
       "size",
@@ -1182,7 +1222,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <AppBar component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "display", "background", "spacing", "size", "border"],
+    modifiers: ["layout", "background", "spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1190,7 +1230,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <BarChart component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1198,7 +1238,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <LineChart component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1206,7 +1246,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <PieChart component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1214,7 +1254,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <AreaChart component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1222,7 +1262,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <RadarChart component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["display", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1231,7 +1271,7 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <Button component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["button", "display", "spacing", "size", "border", "effects"],
+    modifiers: ["button", "spacing", "size", "border", "effects"],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1246,14 +1286,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: [
-      "buttonIcon",
-      "display",
-      "spacing",
-      "size",
-      "border",
-      "position",
-    ],
+    modifiers: ["buttonIcon", "spacing", "size", "border", "position"],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1261,7 +1294,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Form component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["layout", "display", "spacing", "size", "border"],
+    modifiers: ["layout", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onSubmit", "onReset", "onInvalid", "onBlur"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1270,7 +1303,7 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <Modal component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["modal", "display", "border"],
+    modifiers: ["modal", "border"],
     actionTriggers: ["onMount", "onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1279,7 +1312,7 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <Drawer component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["drawer", "display", "border"],
+    modifiers: ["drawer", "border"],
     actionTriggers: ["onMount", "onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1288,7 +1321,7 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <PopOver component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["border", "display"],
+    modifiers: ["border"],
     actionTriggers: ["onMount", "onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

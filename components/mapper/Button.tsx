@@ -17,8 +17,14 @@ const ButtonComponent = ({
   isPreviewMode,
   ...props
 }: Props) => {
-  const { children, triggers, leftIcon, rightIcon, ...componentProps } =
-    component.props as any;
+  const {
+    children,
+    triggers,
+    leftIcon,
+    rightIcon,
+    loading,
+    ...componentProps
+  } = component.props as any;
 
   const defaultTriggers = isPreviewMode
     ? {}

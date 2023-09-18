@@ -2,6 +2,7 @@ import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Radio as MantineRadio, RadioProps } from "@mantine/core";
 import { memo, useState } from "react";
+import { Icon } from "@/components/Icon";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -18,6 +19,7 @@ const RadioItemComponent = ({
   const {
     label,
     value,
+    icon,
     triggers,
     checked,
     isInsideGroup = false,
@@ -25,7 +27,7 @@ const RadioItemComponent = ({
   } = component.props as any;
 
   const [_checked, setChecked] = useState<boolean>(
-    isPreviewMode ? checked : false
+    isPreviewMode ? checked : false,
   );
 
   const defaultTriggers = isPreviewMode
@@ -49,10 +51,26 @@ const RadioItemComponent = ({
       {...props}
       {...componentProps}
       {...defaultTriggers}
-      label={label}
+      label={
+        <span
+          style={{
+            display: "flex",
+            gap: 30,
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          {label}
+          <Icon name={icon} size={30} />
+        </span>
+      }
       value={value}
       checked={isPreviewMode ? _checked : false}
       {...triggers}
+      styles={{
+        inner: { display: "flex", height: "30px", alignItems: "center" },
+        label: { height: "100%" },
+      }}
     />
   );
 };

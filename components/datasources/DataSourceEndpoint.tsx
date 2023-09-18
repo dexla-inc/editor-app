@@ -4,6 +4,7 @@ import { MethodTypes } from "@/requests/types";
 import { ICON_SIZE } from "@/utils/config";
 import { Box, Flex, Group, Text, UnstyledButton } from "@mantine/core";
 import { IconChevronDown, IconChevronRight } from "@tabler/icons-react";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 export type ColorScheme = {
@@ -38,19 +39,28 @@ export const colors: ColorScheme = {
 
 type DataSourceEndpointProps = {
   projectId: string;
+  baseUrl: string;
   endpoint: Endpoint;
   location: "editor" | "datasource";
+  dataSourceId?: string | undefined;
 };
 
 export const DataSourceEndpoint = ({
+  baseUrl,
+  projectId,
   endpoint,
   location,
+  dataSourceId,
 }: DataSourceEndpointProps) => {
   const [opened, toggleOpened] = useState<boolean>(false);
+  const router = useRouter();
 
   const open = () => {
     toggleOpened(opened ? false : true);
   };
+
+  const actualDataSourceId =
+    dataSourceId ?? (router.query.dataSourceId as string);
 
   return (
     <Box>
@@ -97,7 +107,14 @@ export const DataSourceEndpoint = ({
           )}
         </Group>
       </UnstyledButton>
-      {opened && <DataSourceEndpointDetail endpoint={endpoint} />}
+      {opened && (
+        <DataSourceEndpointDetail
+          baseUrl={baseUrl}
+          endpoint={endpoint}
+          projectId={projectId}
+          dataSourceId={actualDataSourceId}
+        />
+      )}
     </Box>
   );
 };

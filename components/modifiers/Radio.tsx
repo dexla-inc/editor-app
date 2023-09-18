@@ -1,11 +1,14 @@
+import { Icon } from "@/components/Icon";
+import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
+import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
-import { ICON_SIZE } from "@/utils/config";
+import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import {
-  debouncedTreeComponentPropsUpdate,
   debouncedTreeComponentChildrenUpdate,
+  debouncedTreeComponentPropsUpdate,
 } from "@/utils/editor";
 import {
   ActionIcon,
@@ -19,10 +22,9 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconPlus, IconRadio, IconTrash } from "@tabler/icons-react";
-import { useEffect } from "react";
-import { withModifier } from "@/hoc/withModifier";
+import { IconPlus, IconRadio } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
+import { useEffect } from "react";
 
 export const icon = IconRadio;
 export const label = "Radio";
@@ -35,6 +37,7 @@ const createRadioItem = (label: string, value: string) => {
     props: {
       label: label,
       value: value,
+      icon: "",
     },
   });
   return radioItem;
@@ -110,52 +113,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
-        <Stack>
-          <Flex justify="space-between" align="center">
-            <Text size="sm">Choices</Text>
-            <Button
-              size="xs"
-              onClick={addRadioItem}
-              leftIcon={<IconPlus size={ICON_SIZE} />}
-            >
-              Add
-            </Button>
-          </Flex>
-
-          {form.values.children.map((child, index) => (
-            <Box
-              key={index}
-              py="md"
-              sx={{
-                borderBottom: "1px solid " + theme.colors.gray[3],
-                borderTop: "1px solid " + theme.colors.gray[3],
-              }}
-            >
-              <Flex justify="space-between">
-                <Text size="sm">Item {index + 1}</Text>
-                <ActionIcon onClick={() => deleteRadioItem(index)}>
-                  <IconTrash size={ICON_SIZE} color="red" />
-                </ActionIcon>
-              </Flex>
-              <TextInput
-                label="Label"
-                size="xs"
-                value={child.props?.label}
-                onChange={(e) =>
-                  updateRadioItem(index, "label", e.target.value)
-                }
-              />
-              <TextInput
-                label="Value"
-                size="xs"
-                value={child.props?.value}
-                onChange={(e) =>
-                  updateRadioItem(index, "value", e.target.value)
-                }
-              />
-            </Box>
-          ))}
-        </Stack>
         <TextInput
           label="Title"
           size="xs"
@@ -193,7 +150,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             form.setFieldValue("withAsterisk", event.currentTarget.checked);
             debouncedTreeComponentPropsUpdate(
               "withAsterisk",
-              event.currentTarget.checked
+              event.currentTarget.checked,
             );
           }}
         />
@@ -207,6 +164,58 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             });
           }}
         />
+        <Stack>
+          <Flex justify="space-between" align="center">
+            <Text size="sm">Choices</Text>
+            <Button
+              size="xs"
+              onClick={addRadioItem}
+              leftIcon={<IconPlus size={ICON_SIZE} />}
+            >
+              Add
+            </Button>
+          </Flex>
+
+          {form.values.children.map((child, index) => (
+            <Box
+              key={index}
+              py="md"
+              sx={{
+                borderBottom: "1px solid " + theme.colors.gray[3],
+              }}
+            >
+              <Flex justify="space-between">
+                <Text size="sm">Item {index + 1}</Text>
+                <ActionIcon onClick={() => deleteRadioItem(index)}>
+                  <Icon name={ICON_DELETE} color="red" />
+                </ActionIcon>
+              </Flex>
+              <TextInput
+                label="Label"
+                size="xs"
+                value={child.props?.label}
+                onChange={(e) =>
+                  updateRadioItem(index, "label", e.target.value)
+                }
+              />
+              <TextInput
+                label="Value"
+                size="xs"
+                value={child.props?.value}
+                onChange={(e) =>
+                  updateRadioItem(index, "value", e.target.value)
+                }
+              />
+              <IconSelector
+                topLabel="Icon"
+                selectedIcon={child.props?.icon}
+                onIconSelect={(value: string) => {
+                  updateRadioItem(index, "icon", value);
+                }}
+              />
+            </Box>
+          ))}
+        </Stack>
       </Stack>
     </form>
   );
