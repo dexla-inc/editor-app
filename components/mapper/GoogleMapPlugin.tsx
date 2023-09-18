@@ -78,7 +78,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
       setInternalZoom(internalZoom);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [map, center, apiKey, markers],
+    [map, center, apiKey, markers]
   );
 
   useEffect(() => {
