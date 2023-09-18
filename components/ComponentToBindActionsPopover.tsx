@@ -27,6 +27,7 @@ export const ComponentToBindActionsPopover = ({ inputIndex }: any) => {
       withArrow
       shadow="md"
       opened={opened}
+      onClose={close}
     >
       <Popover.Target>
         <ActionIcon onClick={toggle}>

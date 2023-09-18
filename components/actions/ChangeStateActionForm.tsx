@@ -9,12 +9,11 @@ import {
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
 import { ChangeStateAction } from "@/utils/actions";
-import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
-import { ActionIcon, Select, Stack, TextInput } from "@mantine/core";
+import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconCurrentLocation } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { ComponentToBindInput } from "@/components/ComponentToBindInput";
 
 type Props = {
   id: string;
@@ -88,24 +87,10 @@ export const ChangeStateActionForm = ({ id }: Props) => {
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
-        <TextInput
-          key={form.values.componentId}
-          size="xs"
-          label="Component to bind"
+        <ComponentToBindInput
           {...form.getInputProps("componentId")}
-          rightSection={
-            <ActionIcon
-              onClick={() => {
-                setPickingComponentToBindTo({
-                  componentId: component?.id!,
-                  trigger: action.trigger,
-                  bindedId: action.action.componentId ?? "",
-                });
-              }}
-            >
-              <IconCurrentLocation size={ICON_SIZE} />
-            </ActionIcon>
-          }
+          componentId={component?.id}
+          triggerTo={action.trigger}
         />
         <Select
           size="xs"
