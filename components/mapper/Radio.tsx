@@ -20,7 +20,6 @@ const RadioComponent = ({
 
   const [_value, setValue] = useState(value);
 
-  console.log({ _value });
   const { onChange, ...otherTriggers } = triggers;
 
   const defaultTriggers = isPreviewMode
@@ -32,7 +31,6 @@ const RadioComponent = ({
       }
     : {
         onChange: () => {
-          console.log("test2");
           setValue(undefined);
         },
       };
