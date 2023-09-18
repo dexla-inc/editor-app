@@ -77,7 +77,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
 
       setInternalZoom(internalZoom);
     },
-    [map, center, apiKey, markers],
+    [map, center, apiKey, markers]
   );
 
   useEffect(() => {
