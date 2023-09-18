@@ -6,82 +6,109 @@ import {
   Marker,
   useLoadScript,
 } from "@react-google-maps/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { MarkerItem } from "../modifiers/GoogleMap";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & BoxProps;
 
+type GoogleMapProps = {
+  markers: MarkerItem[];
+  options?: any;
+  style?: { width?: string; height?: string; [key: string]: any };
+  apiKey: string;
+  language?: string;
+  zoom?: number;
+};
+
 export type Position = {
   position: { lat: number; lng: number };
 };
 
-type MarkerProp = {
-  id: string;
-  name: string;
-} & Position;
+const LOADING_TEXT = <Text>Loading...</Text>;
 
 export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
-  const [activeMarker, setActiveMarker] = useState<string | null>(null);
+  const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
+  const [map, setMap] = useState<any | null>(null);
 
-  const { markers, options, style, apiKey, language, ...componentProps } =
-    component.props as any;
+  const {
+    markers,
+    options,
+    style = {},
+    apiKey,
+    language,
+    zoom,
+    ...componentProps
+  } = component.props as GoogleMapProps;
 
-  const { width, height, ...googleStyles } = style ?? {};
+  const { width, height, ...googleStyles } = style;
   const containerStyle = { width, height };
 
-  const { isLoaded } = useLoadScript({
+  const loadScript = useLoadScript({
     id: "google-map-script",
-    googleMapsApiKey: apiKey as string,
-    language: language as string,
+    googleMapsApiKey: apiKey,
+    language: language,
   });
 
-  const handleActiveMarker = (marker: string) => {
-    if (marker === activeMarker) {
-      return;
+  // Determine whether the maps API is loaded
+  const isAlreadyLoaded = !!window.google;
+  const isLoaded = isAlreadyLoaded || loadScript.isLoaded;
+
+  const handleActiveMarker = (markerId: string) => {
+    if (markerId !== activeMarkerId) {
+      setActiveMarkerId(markerId);
     }
-    setActiveMarker(marker);
   };
 
-  const handleOnLoad = (map: any) => {
+  const handleOnLoad = (loadedMap: any) => {
     const bounds = new google.maps.LatLngBounds();
-    markers?.forEach(({ position }: Position) => bounds.extend(position));
-    map.fitBounds(bounds);
+    markers.forEach(({ position }: Position) => bounds.extend(position));
+    loadedMap.fitBounds(bounds);
   };
+
+  useEffect(
+    () => {
+      if (map) {
+        handleOnLoad(map);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [apiKey, map, markers],
+  );
 
   if (!isLoaded) {
-    return <div>Loading...</div>;
+    return LOADING_TEXT;
   }
 
   return (
-    isLoaded && (
-      <GoogleMap
-        onLoad={handleOnLoad}
-        onClick={() => setActiveMarker(null!)}
-        mapContainerStyle={containerStyle}
-        {...componentProps}
-        {...props}
-        {...googleStyles}
-      >
-        {markers &&
-          markers.length > 0 &&
-          markers.map(({ id, name, position }: MarkerProp) => {
-            return (
-              <Marker
-                key={id}
-                position={position}
-                onClick={() => handleActiveMarker(id)}
-              >
-                {activeMarker === id && (
-                  <InfoWindow onCloseClick={() => setActiveMarker(null!)}>
-                    <Text>{name}</Text>
-                  </InfoWindow>
-                )}
-              </Marker>
-            );
-          })}
-      </GoogleMap>
-    )
+    <GoogleMap
+      key={apiKey}
+      onLoad={handleOnLoad}
+      onUnmount={() => setMap(null)}
+      zoom={zoom as number}
+      onClick={() => setActiveMarkerId(null)}
+      mapContainerStyle={containerStyle}
+      {...componentProps}
+      {...props}
+      {...googleStyles}
+    >
+      {markers &&
+        markers.length > 0 &&
+        (markers as MarkerItem[]).map(({ id, name, position }) => (
+          <Marker
+            key={id}
+            position={position}
+            onClick={() => handleActiveMarker(id)}
+          >
+            {activeMarkerId === id && (
+              <InfoWindow onCloseClick={() => setActiveMarkerId(null)}>
+                <Text>{name}</Text>
+              </InfoWindow>
+            )}
+          </Marker>
+        ))}
+    </GoogleMap>
   );
 };
