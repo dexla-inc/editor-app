@@ -1,3 +1,4 @@
+import { MarkerItem, Options } from "@/components/modifiers/GoogleMap";
 import { Component } from "@/utils/editor";
 import { BoxProps, Text } from "@mantine/core";
 import {
@@ -7,7 +8,6 @@ import {
   useLoadScript,
 } from "@react-google-maps/api";
 import { useEffect, useState } from "react";
-import { MarkerItem, Options } from "@/components/modifiers/GoogleMap";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -27,11 +27,12 @@ export type Position = {
   position: { lat: number; lng: number };
 };
 
-const LOADING_TEXT = <Text>Loading...</Text>;
+const LOADING_TEXT = <Text>Enter API key and refresh the page...</Text>;
 
 export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
   const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
   const [map, setMap] = useState<any | null>(null);
+  const [forceRender, setForceRender] = useState(false);
 
   const {
     markers,
@@ -70,7 +71,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
 
   useEffect(
     () => {
-      if (map) {
+      if (apiKey && map) {
         handleOnLoad(map);
       }
     },
@@ -78,9 +79,11 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
     [apiKey, map, markers],
   );
 
-  if (!isLoaded) {
+  if (!isLoaded || !apiKey) {
     return LOADING_TEXT;
   }
+
+  console.log(zoom);
 
   return (
     <GoogleMap
