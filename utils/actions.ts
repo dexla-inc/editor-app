@@ -588,21 +588,20 @@ export const apiCallAction = async ({
 
     const url =
       keys.length > 0
-        ? keys.reduce(
-            (url: string, key: string) => {
-              key.startsWith("type_Key_")
-                ? (key = key.split(`type_key_`)[1])
-                : key;
-              // @ts-ignore
-              let value = action.binds[key] as string;
+        ? keys.reduce((url: string, key: string) => {
+            key.startsWith("type_Key_")
+              ? (key = key.split(`type_key_`)[1])
+              : key;
+            // @ts-ignore
+            let value = action.binds[key] as string;
 
-              if (value.startsWith(`valueOf_`)) {
-                value = getElementValue(value, iframeWindow);
-              }
+            if (value.startsWith(`valueOf_`)) {
+              value = getElementValue(value, iframeWindow);
+            }
 
-              if (value?.startsWith(`queryString_pass_`)) {
-                value = getQueryElementValue(value, iframeWindow);
-              }
+            if (value?.startsWith(`queryString_pass_`)) {
+              value = getQueryElementValue(value, iframeWindow);
+            }
 
             if (!url.includes(`{${key}}`)) {
               const _url = new URL(url);

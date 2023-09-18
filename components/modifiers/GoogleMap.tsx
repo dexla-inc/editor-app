@@ -29,6 +29,7 @@ export const label = "Map Settings";
 
 export type MarkerItem = { id: string; name: string } & Position;
 type Styler = Record<string, string | Record<string, any>[]>;
+export type Options = { mapTypeId: string; styles: Styler[] };
 
 export const defaultMapValues = {
   language: "en",
