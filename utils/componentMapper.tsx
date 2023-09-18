@@ -14,8 +14,9 @@ import { Container } from "@/components/mapper/Container";
 import { DateInput } from "@/components/mapper/DateInput";
 import { Divider } from "@/components/mapper/Divider";
 import { Drawer } from "@/components/mapper/Drawer";
-import { FilePond } from "@/components/mapper/FilePond";
+import { FileUpload } from "@/components/mapper/FileUpload";
 import { Form } from "@/components/mapper/Form";
+import { GoogleMapPlugin } from "@/components/mapper/GoogleMapPlugin";
 import { Icon } from "@/components/mapper/Icon";
 import { Image } from "@/components/mapper/Image";
 import { Input } from "@/components/mapper/Input";
@@ -38,7 +39,6 @@ import { Table } from "@/components/mapper/Table";
 import { Tabs } from "@/components/mapper/Tabs";
 import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";
-import { GoogleMapPlugin } from "@/components/mapper/GoogleMapPlugin";
 import { Title } from "@/components/mapper/Title";
 import { AreaChart } from "@/components/mapper/charts/AreaChart";
 import { BarChart } from "@/components/mapper/charts/BarChart";
@@ -60,8 +60,9 @@ import * as ContainerStructure from "@/components/mapper/structure/Container";
 import * as DateInputStructure from "@/components/mapper/structure/DateInput";
 import * as DividerStructure from "@/components/mapper/structure/Divider";
 import * as DrawerStructure from "@/components/mapper/structure/Drawer";
-import * as FilePondStructure from "@/components/mapper/structure/FilePond";
+import * as FileUploadStructure from "@/components/mapper/structure/FileUpload";
 import * as FormStructure from "@/components/mapper/structure/Form";
+import * as MapStructure from "@/components/mapper/structure/GoogleMap";
 import * as IconStructure from "@/components/mapper/structure/Icon";
 import * as ImageStructure from "@/components/mapper/structure/Image";
 import * as InputStructure from "@/components/mapper/structure/Input";
@@ -83,7 +84,6 @@ import * as SwitchStructure from "@/components/mapper/structure/Switch";
 import * as TableStructure from "@/components/mapper/structure/Table";
 import * as TabsStructure from "@/components/mapper/structure/Tabs";
 import * as TextStructure from "@/components/mapper/structure/Text";
-import * as MapStructure from "@/components/mapper/structure/GoogleMap";
 import * as TextareaStructure from "@/components/mapper/structure/Textarea";
 import * as TitleStructure from "@/components/mapper/structure/Title";
 import * as AreaChartStructure from "@/components/mapper/structure/charts/AreaChart";
@@ -354,11 +354,11 @@ export const structureMapper: StructureMapper = {
     category: "Input",
     icon: <IconJewishStar size={ICON_SIZE} />,
   },
-  FilePond: {
-    structure: (props: any) => FilePondStructure.jsonStructure(props),
+  FileUpload: {
+    structure: (props: any) => FileUploadStructure.jsonStructure(props),
     Draggable: () => (
       <DraggableComponent
-        id="FilePond"
+        id="FileUpload"
         icon={<IconFile size={LARGE_ICON_SIZE} />}
       />
     ),
@@ -988,9 +988,9 @@ export const componentMapper: ComponentMapper = {
     ],
     sequentialTriggers: ["onSuccess", "onError"],
   },
-  FilePond: {
+  FileUpload: {
     Component: (props: { component: Component; renderTree: any }) => (
-      <FilePond
+      <FileUpload
         component={props.component}
         renderTree={props.renderTree}
         // eslint-disable-next-line react/no-children-prop

@@ -8,7 +8,7 @@ type Props = {
   component: Component;
 } & DropzoneProps;
 
-const FilePondComponent = ({ renderTree, component, ...props }: Props) => {
+const FileUploadComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;
 
   return (
@@ -20,4 +20,4 @@ const FilePondComponent = ({ renderTree, component, ...props }: Props) => {
   );
 };
 
-export const FilePond = memo(FilePondComponent, isSame);
+export const FileUpload = memo(FileUploadComponent, isSame);
