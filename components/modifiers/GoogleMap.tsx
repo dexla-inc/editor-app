@@ -25,7 +25,7 @@ import { pick } from "next/dist/lib/pick";
 import { nanoid } from "nanoid";
 
 export const icon = IconMapPin;
-export const label = "MapSettings";
+export const label = "Map Settings";
 
 export type MarkerItem = { id: string; name: string } & Position;
 type Styler = Record<string, string | Record<string, any>[]>;
