@@ -30,7 +30,6 @@ const SelectComponent = ({
   let data = isEmpty(exampleData?.value ?? exampleData)
     ? dataProp?.value ?? dataProp
     : exampleData?.value ?? exampleData;
-
   if (isPreviewMode) {
     if (dataPath) {
       const path = dataPath.replaceAll("[0]", "");

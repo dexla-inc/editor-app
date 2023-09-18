@@ -113,6 +113,57 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
+        <TextInput
+          label="Title"
+          size="xs"
+          {...form.getInputProps("label")}
+          onChange={(e) => {
+            form.setFieldValue("label", e.target.value);
+            debouncedTreeComponentPropsUpdate("label", e.target.value);
+          }}
+        />
+        <Select
+          label="Type"
+          size="xs"
+          data={[
+            { label: "Text", value: "text" },
+            { label: "Email", value: "email" },
+            { label: "Password", value: "password" },
+          ]}
+          {...form.getInputProps("type")}
+          onChange={(value) => {
+            form.setFieldValue("type", value as string);
+            debouncedTreeComponentPropsUpdate("type", value as string);
+          }}
+        />
+        <SizeSelector
+          {...form.getInputProps("size")}
+          onChange={(value) => {
+            form.setFieldValue("size", value as string);
+            debouncedTreeComponentPropsUpdate("size", value as string);
+          }}
+        />
+        <SwitchSelector
+          topLabel="Required"
+          {...form.getInputProps("withAsterisk")}
+          onChange={(event) => {
+            form.setFieldValue("withAsterisk", event.currentTarget.checked);
+            debouncedTreeComponentPropsUpdate(
+              "withAsterisk",
+              event.currentTarget.checked,
+            );
+          }}
+        />
+        <SizeSelector
+          label="Label Spacing"
+          {...form.getInputProps("labelProps")}
+          onChange={(value) => {
+            form.setFieldValue("labelProps", value as string);
+            debouncedTreeComponentPropsUpdate("labelProps", {
+              mb: value as string,
+            });
+          }}
+        />
         <Stack>
           <Flex justify="space-between" align="center">
             <Text size="sm">Choices</Text>
@@ -165,57 +216,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             </Box>
           ))}
         </Stack>
-        <TextInput
-          label="Title"
-          size="xs"
-          {...form.getInputProps("label")}
-          onChange={(e) => {
-            form.setFieldValue("label", e.target.value);
-            debouncedTreeComponentPropsUpdate("label", e.target.value);
-          }}
-        />
-        <Select
-          label="Type"
-          size="xs"
-          data={[
-            { label: "Text", value: "text" },
-            { label: "Email", value: "email" },
-            { label: "Password", value: "password" },
-          ]}
-          {...form.getInputProps("type")}
-          onChange={(value) => {
-            form.setFieldValue("type", value as string);
-            debouncedTreeComponentPropsUpdate("type", value as string);
-          }}
-        />
-        <SizeSelector
-          {...form.getInputProps("size")}
-          onChange={(value) => {
-            form.setFieldValue("size", value as string);
-            debouncedTreeComponentPropsUpdate("size", value as string);
-          }}
-        />
-        <SwitchSelector
-          topLabel="Required"
-          {...form.getInputProps("withAsterisk")}
-          onChange={(event) => {
-            form.setFieldValue("withAsterisk", event.currentTarget.checked);
-            debouncedTreeComponentPropsUpdate(
-              "withAsterisk",
-              event.currentTarget.checked,
-            );
-          }}
-        />
-        <SizeSelector
-          label="Label Spacing"
-          {...form.getInputProps("labelProps")}
-          onChange={(value) => {
-            form.setFieldValue("labelProps", value as string);
-            debouncedTreeComponentPropsUpdate("labelProps", {
-              mb: value as string,
-            });
-          }}
-        />
       </Stack>
     </form>
   );
