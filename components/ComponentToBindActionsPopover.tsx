@@ -15,12 +15,21 @@ import { Component } from "@/utils/editor";
 import { SortableTreeItem } from "@/components/SortableTreeItem";
 import { structureMapper } from "@/utils/componentMapper";
 import { useState } from "react";
+import { useDisclosure } from "@mantine/hooks";
 
 export const ComponentToBindActionsPopover = ({ inputIndex }: any) => {
+  const [opened, { close, toggle }] = useDisclosure(false);
+
   return (
-    <Popover width={200} position="left-end" withArrow shadow="md">
+    <Popover
+      width={200}
+      position="left-end"
+      withArrow
+      shadow="md"
+      opened={opened}
+    >
       <Popover.Target>
-        <ActionIcon>
+        <ActionIcon onClick={toggle}>
           <IconExternalLink size={ICON_SIZE} />
         </ActionIcon>
       </Popover.Target>
@@ -33,7 +42,10 @@ export const ComponentToBindActionsPopover = ({ inputIndex }: any) => {
           <Accordion.Item value="components">
             <Accordion.Control>Components</Accordion.Control>
             <Accordion.Panel p={0}>
-              <ListComponentToBindPopover inputIndex={inputIndex} />
+              <ListComponentToBindPopover
+                inputIndex={inputIndex}
+                onSelectItem={close}
+              />
             </Accordion.Panel>
           </Accordion.Item>
           <Accordion.Item value="pages">
@@ -50,7 +62,13 @@ export const ComponentToBindActionsPopover = ({ inputIndex }: any) => {
   );
 };
 
-const ListItem = ({ component, children, level = 0, inputIndex }: any) => {
+const ListItem = ({
+  component,
+  children,
+  level = 0,
+  inputIndex,
+  onSelectItem,
+}: any) => {
   const [isClicked, setIsClicked] = useState(false);
   const {
     setHighlightedComponentId,
@@ -86,6 +104,7 @@ const ListItem = ({ component, children, level = 0, inputIndex }: any) => {
               index: inputIndex,
             });
             setIsClicked(true);
+            onSelectItem();
           }}
           onMouseEnter={(e) => {
             e.stopPropagation();
@@ -118,11 +137,22 @@ const ListItem = ({ component, children, level = 0, inputIndex }: any) => {
   );
 };
 
-const ListItemWrapper = ({ component, children, level, inputIndex }: any) => {
+const ListItemWrapper = ({
+  component,
+  children,
+  level,
+  inputIndex,
+  onSelectItem,
+}: any) => {
   return (
     <SortableTreeItem component={component}>
       <List.Item key={component.id} w="100%">
-        <ListItem component={component} level={level} inputIndex={inputIndex}>
+        <ListItem
+          component={component}
+          level={level}
+          inputIndex={inputIndex}
+          onSelectItem={onSelectItem}
+        >
           {(component.children ?? [])?.length > 0 && (
             <List
               size="xs"
@@ -142,7 +172,7 @@ const ListItemWrapper = ({ component, children, level, inputIndex }: any) => {
   );
 };
 
-const ListComponentToBindPopover = ({ inputIndex }: any) => {
+const ListComponentToBindPopover = ({ inputIndex, onSelectItem }: any) => {
   const editorTree = useEditorStore((state) => state.tree);
 
   const renderList = (component: Component, level: number = 0) => {
@@ -156,6 +186,7 @@ const ListComponentToBindPopover = ({ inputIndex }: any) => {
         component={component}
         level={level}
         inputIndex={inputIndex}
+        onSelectItem={onSelectItem}
       >
         {component.children?.map((child) => {
           return renderList(child, level + 1);

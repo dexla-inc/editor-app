@@ -96,7 +96,7 @@ export const TogglePropsActionForm = ({ id }: Props) => {
 
   const conditionOptions =
     component?.name === "Select"
-      ? component?.props?.data
+      ? component?.props?.data ?? component?.props?.exampleData
       : component?.children?.map((child) => child.props);
 
   return (
