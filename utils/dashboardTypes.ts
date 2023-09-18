@@ -128,7 +128,7 @@ export type Split<S extends string, D extends string> = string extends S
 
 export function replaceBrackets(
   basePath: string,
-  replacements: Record<string, string> | undefined
+  replacements: Record<string, string> | undefined,
 ): string {
   const safeReplacements = replacements || {};
   return basePath.replace(/\[([^\]]+)\]/g, (_, placeholder) => {
@@ -183,3 +183,7 @@ export const INPUT_TYPES_DATA: { label: string; value: InputTypes }[] = [
 
 export type UserRoles = "MEMBER" | "ADMIN" | "OWNER" | "GUEST" | "DEXLA_ADMIN";
 export type TeamStatus = "PENDING" | "INVITED" | "ACCEPTED" | "REJECTED";
+
+export function toSpaced(name: string) {
+  return name.replace(/([A-Z])/g, " $1").trim();
+}
