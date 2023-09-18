@@ -19,8 +19,6 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
     component.props as any;
   const { name: iconName } = icon && icon!.props!;
 
-  console.log(component);
-
   const debouncedOnChange = debounce((e) => {
     triggers?.onChange(e);
   }, 400);
