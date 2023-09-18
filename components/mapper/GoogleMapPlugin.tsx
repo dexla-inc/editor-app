@@ -7,7 +7,7 @@ import {
   useLoadScript,
 } from "@react-google-maps/api";
 import { useEffect, useState } from "react";
-import { MarkerItem, Options } from "../modifiers/GoogleMap";
+import { MarkerItem, Options } from "@/components/modifiers/GoogleMap";
 
 type Props = {
   renderTree: (component: Component) => any;

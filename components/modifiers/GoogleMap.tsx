@@ -19,7 +19,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconMapPin, IconPlus, IconTrash } from "@tabler/icons-react";
-import { Position } from "../mapper/GoogleMapPlugin";
+import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { useEffect, useState } from "react";
 import { pick } from "next/dist/lib/pick";
 import { nanoid } from "nanoid";
