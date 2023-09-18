@@ -16,13 +16,7 @@ import { SortableTreeItem } from "@/components/SortableTreeItem";
 import { structureMapper } from "@/utils/componentMapper";
 import { useState } from "react";
 
-interface IComponentToBindActionsPopover {
-  onClick: (componentToBind: string) => void;
-}
-
-export const ComponentToBindActionsPopover = ({
-  onClick,
-}: IComponentToBindActionsPopover) => {
+export const ComponentToBindActionsPopover = ({ inputIndex }: any) => {
   return (
     <Popover width={200} position="left-end" withArrow shadow="md">
       <Popover.Target>
@@ -39,7 +33,7 @@ export const ComponentToBindActionsPopover = ({
           <Accordion.Item value="components">
             <Accordion.Control>Components</Accordion.Control>
             <Accordion.Panel p={0}>
-              <ListComponentToBindPopover onClick={onClick} />
+              <ListComponentToBindPopover inputIndex={inputIndex} />
             </Accordion.Panel>
           </Accordion.Item>
           <Accordion.Item value="pages">
@@ -56,7 +50,7 @@ export const ComponentToBindActionsPopover = ({
   );
 };
 
-const ListItem = ({ component, children, level = 0 }: any) => {
+const ListItem = ({ component, children, level = 0, inputIndex }: any) => {
   const [isClicked, setIsClicked] = useState(false);
   const {
     setHighlightedComponentId,
@@ -89,6 +83,7 @@ const ListItem = ({ component, children, level = 0 }: any) => {
               componentId: selectedComponentId!,
               trigger: "onClick",
               bindedId: selectedComponentId ?? "",
+              index: inputIndex,
             });
             setIsClicked(true);
           }}
@@ -123,11 +118,11 @@ const ListItem = ({ component, children, level = 0 }: any) => {
   );
 };
 
-const ListItemWrapper = ({ component, children, level }: any) => {
+const ListItemWrapper = ({ component, children, level, inputIndex }: any) => {
   return (
     <SortableTreeItem component={component}>
       <List.Item key={component.id} w="100%">
-        <ListItem component={component} level={level}>
+        <ListItem component={component} level={level} inputIndex={inputIndex}>
           {(component.children ?? [])?.length > 0 && (
             <List
               size="xs"
@@ -147,9 +142,7 @@ const ListItemWrapper = ({ component, children, level }: any) => {
   );
 };
 
-const ListComponentToBindPopover = ({
-  onClick,
-}: IComponentToBindActionsPopover) => {
+const ListComponentToBindPopover = ({ inputIndex }: any) => {
   const editorTree = useEditorStore((state) => state.tree);
 
   const renderList = (component: Component, level: number = 0) => {
@@ -158,7 +151,12 @@ const ListComponentToBindPopover = ({
     }
 
     return (
-      <ListItemWrapper key={component.id} component={component} level={level}>
+      <ListItemWrapper
+        key={component.id}
+        component={component}
+        level={level}
+        inputIndex={inputIndex}
+      >
         {component.children?.map((child) => {
           return renderList(child, level + 1);
         })}
