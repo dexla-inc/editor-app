@@ -19,6 +19,7 @@ import {
   Stack,
   Text,
   TextInput,
+  useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTrash } from "@tabler/icons-react";
@@ -35,6 +36,7 @@ type FormValues = Omit<TogglePropsAction, "name">;
 type SelectData = Array<{ value: string; label: string }>;
 
 export const TogglePropsActionForm = ({ id }: Props) => {
+  const theme = useMantineTheme();
   const { startLoading, stopLoading } = useLoadingState();
   const { editorTree, selectedComponentId, updateTreeComponentActions } =
     useEditorStores();
@@ -125,13 +127,19 @@ export const TogglePropsActionForm = ({ id }: Props) => {
         </Flex>
         {conditionRules().map(({ componentId, condition }: any, i: number) => {
           return (
-            <div key={i}>
+            <div
+              key={i}
+              style={{
+                borderBottom: "1px solid " + theme.colors.gray[3],
+                paddingBottom: 20,
+              }}
+            >
               {["Radio", "Select"].includes(component!.name) ? (
                 <Select
                   size="xs"
                   label={
                     <Flex justify="space-between" align="center">
-                      Component to bind{" "}
+                      Toggle when{" "}
                       <ActionIcon
                         onClick={() => {
                           form.removeListItem("conditionRules", i);

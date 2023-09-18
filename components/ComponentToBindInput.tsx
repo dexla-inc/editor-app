@@ -26,7 +26,7 @@ export const ComponentToBindInput = ({
                 componentId: componentId,
                 trigger: triggerTo,
                 bindedId: value ?? "",
-                index,
+                ...(index ?? { index }),
               });
             }}
           >
