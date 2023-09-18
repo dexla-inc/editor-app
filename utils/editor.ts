@@ -14,6 +14,7 @@ import { nanoid } from "nanoid";
 import crawl from "tree-crawl";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import pickBy from "lodash.pickby";
+import isEmpty from "lodash.isempty";
 
 export type Component = {
   id?: string;
@@ -475,6 +476,30 @@ export const checkIfIsDirectAncestor = (
   return (
     possibleAncestorDepth && possibleAncestorDepth < childDepth && isDirectChild
   );
+};
+
+export const getAllParentsWithExampleData = (
+  treeRoot: Component,
+  childId: string
+): Component[] => {
+  const parentsWithExampleData: any[] = [];
+  crawl(
+    treeRoot,
+    (node) => {
+      const isDirectAncestor = checkIfIsDirectAncestor(
+        treeRoot,
+        childId,
+        node.id!
+      );
+
+      if (isDirectAncestor && !isEmpty(node.props?.exampleData?.value)) {
+        parentsWithExampleData.push(node);
+      }
+    },
+    { order: "pre" }
+  );
+
+  return parentsWithExampleData;
 };
 
 export const moveComponentToDifferentParent = (

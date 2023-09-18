@@ -10,6 +10,13 @@ import {
 import { GoToUrlAction } from "@/utils/actions";
 import { Checkbox, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { DataPicker } from "@/components/DataPicker";
+import {
+  Component,
+  getAllParentsWithExampleData,
+  getComponentById,
+} from "@/utils/editor";
+import isEmpty from "lodash.isempty";
 
 type Props = {
   id: string;
@@ -39,9 +46,9 @@ export const GoToUrlForm = ({ id }: Props) => {
 
     try {
       updateActionInTree<GoToUrlAction>({
+        id,
         selectedComponentId: selectedComponentId!,
         componentActions,
-        id,
         updateValues: { url: values.url, openInNewTab: values.openInNewTab },
         updateTreeComponentActions,
       });
@@ -52,7 +59,28 @@ export const GoToUrlForm = ({ id }: Props) => {
     }
   };
 
+  const allParentsWithExampleData = getAllParentsWithExampleData(
+    editorTree.root,
+    selectedComponentId!
+  );
+
+  const parentData = allParentsWithExampleData.reduce(
+    (acc: any, parent: Component) => {
+      return {
+        ...acc,
+        [parent.id!]: parent.props?.exampleData.value,
+      };
+    },
+    {}
+  );
+
   const openInNewTabInputProps = form.getInputProps("openInNewTab");
+  const component = getComponentById(editorTree.root, selectedComponentId!);
+  const exampleData = isEmpty(component?.props?.exampleData?.value)
+    ? {}
+    : {
+        [selectedComponentId!]: component?.props?.exampleData.value,
+      };
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
@@ -62,7 +90,16 @@ export const GoToUrlForm = ({ id }: Props) => {
           placeholder="Enter a URL"
           label="URL"
           {...form.getInputProps("url")}
-        ></TextInput>
+          rightSection={
+            <DataPicker
+              data={{ ...parentData, ...exampleData }}
+              onSelectValue={(selected) => {
+                console.log({ selected });
+                form.setFieldValue("url", `dataPath_${selected}`);
+              }}
+            />
+          }
+        />
         <Checkbox
           label="Open in new tab"
           {...openInNewTabInputProps}
@@ -72,7 +109,7 @@ export const GoToUrlForm = ({ id }: Props) => {
           actionId={id}
           componentActions={componentActions}
           selectedComponentId={selectedComponentId}
-        ></ActionButtons>
+        />
       </Stack>
     </form>
   );

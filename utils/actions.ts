@@ -230,6 +230,15 @@ export const navigationAction = ({
 
 export const goToUrlAction = ({ action }: GoToUrlParams) => {
   const { url, openInNewTab } = action;
+
+  if (url.startsWith("dataPath_")) {
+    const { tree: editorTree } = useEditorStore.getState();
+    const path = url.split(`dataPath_`)[1];
+    const componentId = path.split(".")[0];
+    const component = getComponentById(editorTree.root, componentId);
+    console.log({ component, path });
+  }
+
   if (openInNewTab) {
     window.open(url, "_blank");
   } else {
