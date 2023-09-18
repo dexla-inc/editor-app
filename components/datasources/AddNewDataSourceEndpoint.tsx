@@ -5,7 +5,13 @@ import { Button, Group, Stack } from "@mantine/core";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-export const AddNewDataSourceEndpoint = ({ baseUrl }: { baseUrl: string }) => {
+export const AddNewDataSourceEndpoint = ({
+  baseUrl,
+  dataSourceId,
+}: {
+  baseUrl: string;
+  dataSourceId: string;
+}) => {
   const emptyEndpoint: EndpointParams = {
     relativeUrl: "",
     methodType: "GET",
@@ -19,7 +25,7 @@ export const AddNewDataSourceEndpoint = ({ baseUrl }: { baseUrl: string }) => {
     exampleResponse: "",
     errorExampleResponse: "",
     isServerRequest: false,
-    dataSourceId: "",
+    dataSourceId: dataSourceId ?? "",
     baseUrl: baseUrl,
   };
 
@@ -27,15 +33,15 @@ export const AddNewDataSourceEndpoint = ({ baseUrl }: { baseUrl: string }) => {
     setEndpoint(emptyEndpoint);
     setEndpointDetailVisible(true);
   };
+
   const [isEndpointDetailVisible, setEndpointDetailVisible] = useState(false);
   const [endpoint, setEndpoint] = useState(emptyEndpoint);
   const router = useRouter();
-  const { id, dataSourceId } = router.query as {
-    id: string;
-    dataSourceId: string;
-  };
+  const projectId = router.query.id as string;
+  const actualDataSourceId =
+    dataSourceId ?? (router.query.dataSourceId as string);
 
-  emptyEndpoint.dataSourceId = dataSourceId;
+  emptyEndpoint.dataSourceId = actualDataSourceId;
 
   return (
     <Stack>
@@ -52,7 +58,7 @@ export const AddNewDataSourceEndpoint = ({ baseUrl }: { baseUrl: string }) => {
         <DataSourceEndpointDetail
           baseUrl={baseUrl}
           endpoint={endpoint}
-          projectId={id}
+          projectId={projectId}
           dataSourceId={dataSourceId}
           setEndpointDetailVisible={setEndpointDetailVisible}
         />

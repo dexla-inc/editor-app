@@ -42,6 +42,7 @@ type DataSourceEndpointProps = {
   baseUrl: string;
   endpoint: Endpoint;
   location: "editor" | "datasource";
+  dataSourceId?: string | undefined;
 };
 
 export const DataSourceEndpoint = ({
@@ -49,6 +50,7 @@ export const DataSourceEndpoint = ({
   projectId,
   endpoint,
   location,
+  dataSourceId,
 }: DataSourceEndpointProps) => {
   const [opened, toggleOpened] = useState<boolean>(false);
   const router = useRouter();
@@ -57,7 +59,8 @@ export const DataSourceEndpoint = ({
     toggleOpened(opened ? false : true);
   };
 
-  const dataSourceId = router.query.dataSourceId as string;
+  const actualDataSourceId =
+    dataSourceId ?? (router.query.dataSourceId as string);
 
   return (
     <Box>
@@ -109,7 +112,7 @@ export const DataSourceEndpoint = ({
           baseUrl={baseUrl}
           endpoint={endpoint}
           projectId={projectId}
-          dataSourceId={dataSourceId}
+          dataSourceId={actualDataSourceId}
         />
       )}
     </Box>

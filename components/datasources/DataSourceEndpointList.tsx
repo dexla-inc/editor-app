@@ -24,7 +24,7 @@ export const DataSourceEndpointList = ({
   return (
     <>
       <Title order={5}>API Endpoints</Title>
-      <AddNewDataSourceEndpoint baseUrl={baseUrl} />
+      <AddNewDataSourceEndpoint baseUrl={baseUrl} dataSourceId={dataSourceId} />
       {endpoints.data?.results.map((endpoint) => {
         return (
           <DataSourceEndpoint
@@ -33,6 +33,7 @@ export const DataSourceEndpointList = ({
             projectId={projectId}
             endpoint={endpoint}
             location="datasource"
+            dataSourceId={dataSourceId}
           ></DataSourceEndpoint>
         );
       })}
