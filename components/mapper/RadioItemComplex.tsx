@@ -64,26 +64,27 @@ const RadioItemComplexComponent = ({
       {...componentProps}
       {...defaultTriggers}
       value={value}
-      icon={() => (
-        <Icon
-          name="IconCircleCheck"
-          width={26}
-          height={26}
-          style={{ position: "absolute", right: -3, top: -3 }}
-          color="white"
-        />
-      )}
+      // icon={() => (
+      //   <Icon
+      //     name="IconCircleCheck"
+      //     width={26}
+      //     height={26}
+      //     style={{ position: "absolute", right: -3, top: -3 }}
+      //     color="white"
+      //   />
+      // )}
       styles={{
         inner: {
+          display: "none",
           position: "absolute",
           right: 5,
           top: 5,
         },
         label: {
-          padding: 15,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          padding: 0,
+          //   display: "flex",
+          //   flexDirection: "column",
+          //   alignItems: "center",
         },
       }}
       label={

@@ -76,6 +76,7 @@ import * as PaginationStructure from "@/components/mapper/structure/Pagination";
 import * as PopOverStructure from "@/components/mapper/structure/PopOver";
 import * as RadioGroupStructure from "@/components/mapper/structure/Radio";
 import * as RadioComplexGroupStructure from "@/components/mapper/structure/RadioComplex";
+import * as RadioItemComplexStructure from "@/components/mapper/structure/RadioItemComplex";
 import * as RadioItemStructure from "@/components/mapper/structure/RadioItem";
 import * as RatingStructure from "@/components/mapper/structure/Rating";
 import * as SelectStructure from "@/components/mapper/structure/Select";
@@ -259,6 +260,23 @@ export const structureMapper: StructureMapper = {
   RadioItem: {
     structure: (props: any) => RadioItemStructure.jsonStructure(props),
     category: "Input",
+    Draggable: () => (
+      <DraggableComponent
+        id="RadioItem"
+        icon={<IconPlaystationCircle size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    icon: <IconPlaystationCircle size={ICON_SIZE} />,
+  },
+  RadioItemComplex: {
+    structure: (props: any) => RadioItemComplexStructure.jsonStructure(props),
+    category: "Input",
+    Draggable: () => (
+      <DraggableComponent
+        id="RadioItemComplex"
+        icon={<IconPlaystationCircle size={LARGE_ICON_SIZE} />}
+      />
+    ),
     icon: <IconPlaystationCircle size={ICON_SIZE} />,
   },
   Radio: {
@@ -1032,7 +1050,7 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <RadioItem component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["background", "spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

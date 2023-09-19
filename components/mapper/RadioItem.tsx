@@ -1,8 +1,8 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Radio as MantineRadio, RadioProps } from "@mantine/core";
-import { memo, useState } from "react";
-import { Icon } from "@/components/Icon";
+import { memo, useEffect, useState } from "react";
+import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -17,18 +17,28 @@ const RadioItemComponent = ({
   ...props
 }: Props) => {
   const {
-    label,
     value,
-    icon,
     triggers,
     checked,
     isInsideGroup = false,
+    children,
     ...componentProps
   } = component.props as any;
+
+  const setTreeComponentCurrentState = useEditorStore(
+    (state) => state.setTreeComponentCurrentState,
+  );
 
   const [_checked, setChecked] = useState<boolean>(
     isPreviewMode ? checked : false,
   );
+
+  useEffect(() => {
+    setTreeComponentCurrentState(
+      component.id!,
+      checked ? "checked" : "default",
+    );
+  }, [setTreeComponentCurrentState, checked, component.id]);
 
   const defaultTriggers = isPreviewMode
     ? isInsideGroup
@@ -52,24 +62,25 @@ const RadioItemComponent = ({
       {...componentProps}
       {...defaultTriggers}
       label={
-        <span
-          style={{
-            display: "flex",
-            gap: 30,
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          {label}
-          <Icon name={icon} size={30} />
-        </span>
+        component.children && component.children.length > 0
+          ? component.children?.map((child) =>
+              renderTree({
+                ...child,
+                props: {
+                  ...child.props,
+                },
+              }),
+            )
+          : children
       }
       value={value}
       checked={isPreviewMode ? _checked : false}
       {...triggers}
       styles={{
-        inner: { display: "flex", height: "30px", alignItems: "center" },
-        label: { height: "100%" },
+        inner: { display: "none" },
+        label: {
+          padding: 0,
+        },
       }}
     />
   );
