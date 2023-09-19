@@ -26,9 +26,10 @@ export const defaultTheme: MantineTheme = {
 
 type Props = {
   onClick?: () => void;
+  isLive?: boolean;
 } & BoxProps;
 
-export const IFrame = ({ children, ...props }: Props) => {
+export const IFrame = ({ children, isLive, ...props }: Props) => {
   const router = useRouter();
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
@@ -78,7 +79,11 @@ export const IFrame = ({ children, ...props }: Props) => {
   const w = contentRef?.contentWindow;
   const mountNode = w?.document.body;
   const insertionTarget = w?.document.head;
-  mountNode?.setAttribute("style", "overflow: visible; margin: 40px 10px");
+  if (!isLive) {
+    mountNode?.setAttribute("style", "overflow: visible; margin: 40px 10px");
+  } else {
+    mountNode?.setAttribute("style", "margin: 0px");
+  }
 
   const styleTag = document.createElement("style");
   styleTag.textContent = `* { box-sizing: border-box; }`;
@@ -98,8 +103,8 @@ export const IFrame = ({ children, ...props }: Props) => {
       style={{
         overflow: "visible",
         border: "none",
-        width: "100%",
-        height: `calc(100vh - ${HEADER_HEIGHT}px)`,
+        width: isLive ? "100vw" : "100%",
+        height: isLive ? "100vh" : `calc(100vh - ${HEADER_HEIGHT}px)`,
       }}
       {...props}
       allow="clipboard-read; clipboard-write"
@@ -117,7 +122,7 @@ export const IFrame = ({ children, ...props }: Props) => {
           >
             <Box id="iframe-content">{children}</Box>
           </MantineProvider>,
-          mountNode
+          mountNode,
         )}
     </Box>
   );

@@ -75,6 +75,7 @@ export type EditorState = {
   theme: MantineThemeExtended;
   isSaving: boolean;
   isPreviewMode: boolean;
+  isLive: boolean;
   isNavBarVisible: boolean;
   pages: PageResponse[];
   onMountActionsRan: string[];
@@ -134,6 +135,7 @@ export type EditorState = {
   clearSelection: () => void;
   setIsSaving: (isSaving: boolean) => void;
   setPreviewMode: (value: boolean) => void;
+  setIsLive: (value: boolean) => void;
   setIsNavBarVisible: () => void;
   setCopiedAction: (copiedAction?: Action[]) => void;
   // pasteAction: (componentId: string) => void;
@@ -328,8 +330,10 @@ export const useEditorStore = create<EditorState>()(
         clearSelection: () => set({ selectedComponentId: "content-wrapper" }),
         setIsSaving: (isSaving) => set({ isSaving }),
         isPreviewMode: false,
+        isLive: false,
         isNavBarVisible: true,
         setPreviewMode: (value) => set({ isPreviewMode: value }),
+        setIsLive: (value) => set({ isLive: value }),
         setIsNavBarVisible: () =>
           set((state) => ({ isNavBarVisible: !state.isNavBarVisible })),
         setCopiedAction: (copiedAction) => set({ copiedAction }),
