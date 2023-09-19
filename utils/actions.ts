@@ -620,6 +620,8 @@ export const apiCallAction = async ({
   ...rest
 }: APICallActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const setStoreData = useEditorStore.getState().setStoreData;
+  const storeData = useEditorStore.getState().storeData;
 
   try {
     const iframeWindow = useEditorStore.getState().iframeWindow;
@@ -730,6 +732,7 @@ export const apiCallAction = async ({
     }
 
     const responseJson = await response.json();
+    setStoreData({ data: responseJson });
 
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
