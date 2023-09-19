@@ -14,10 +14,9 @@ import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { SortableTreeItem } from "@/components/SortableTreeItem";
 import { structureMapper } from "@/utils/componentMapper";
-import { useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 
-export const ComponentToBindActionsPopover = ({ inputIndex }: any) => {
+export const ComponentToBindActionsPopover = ({ onPick }: any) => {
   const [opened, { close, toggle }] = useDisclosure(false);
 
   return (
@@ -44,8 +43,10 @@ export const ComponentToBindActionsPopover = ({ inputIndex }: any) => {
             <Accordion.Control>Components</Accordion.Control>
             <Accordion.Panel p={0}>
               <ListComponentToBindPopover
-                inputIndex={inputIndex}
-                onSelectItem={close}
+                onSelectItem={(componentToBind: string) => {
+                  onPick(componentToBind);
+                  close();
+                }}
               />
             </Accordion.Panel>
           </Accordion.Item>
@@ -63,20 +64,8 @@ export const ComponentToBindActionsPopover = ({ inputIndex }: any) => {
   );
 };
 
-const ListItem = ({
-  component,
-  children,
-  level = 0,
-  inputIndex,
-  onSelectItem,
-}: any) => {
-  const [isClicked, setIsClicked] = useState(false);
-  const {
-    setHighlightedComponentId,
-    setComponentToBind,
-    selectedComponentId,
-    setPickingComponentToBindTo,
-  } = useEditorStore();
+const ListItem = ({ component, children, level = 0, onSelectItem }: any) => {
+  const { setHighlightedComponentId } = useEditorStore();
 
   const icon = structureMapper[component.name as string]?.icon;
 
@@ -96,27 +85,16 @@ const ListItem = ({
           w="100%"
           onClick={(e) => {
             e.stopPropagation();
-            setHighlightedComponentId(component.id);
-            setComponentToBind(component.id);
-            setPickingComponentToBindTo({
-              componentId: selectedComponentId!,
-              trigger: "onClick",
-              bindedId: selectedComponentId ?? "",
-              index: inputIndex,
-            });
-            setIsClicked(true);
-            onSelectItem();
+            onSelectItem(component.id);
+            setHighlightedComponentId("");
           }}
           onMouseEnter={(e) => {
             e.stopPropagation();
             setHighlightedComponentId(component.id);
-            setIsClicked(false);
           }}
           onMouseLeave={(e) => {
             e.stopPropagation();
-            if (!isClicked) {
-              setHighlightedComponentId(null);
-            }
+            setHighlightedComponentId(null);
           }}
         >
           <Group spacing={4} noWrap w="100%">
@@ -138,20 +116,13 @@ const ListItem = ({
   );
 };
 
-const ListItemWrapper = ({
-  component,
-  children,
-  level,
-  inputIndex,
-  onSelectItem,
-}: any) => {
+const ListItemWrapper = ({ component, children, level, onSelectItem }: any) => {
   return (
     <SortableTreeItem component={component}>
       <List.Item key={component.id} w="100%">
         <ListItem
           component={component}
           level={level}
-          inputIndex={inputIndex}
           onSelectItem={onSelectItem}
         >
           {(component.children ?? [])?.length > 0 && (
@@ -173,7 +144,7 @@ const ListItemWrapper = ({
   );
 };
 
-const ListComponentToBindPopover = ({ inputIndex, onSelectItem }: any) => {
+const ListComponentToBindPopover = ({ onSelectItem }: any) => {
   const editorTree = useEditorStore((state) => state.tree);
 
   const renderList = (component: Component, level: number = 0) => {
@@ -186,7 +157,6 @@ const ListComponentToBindPopover = ({ inputIndex, onSelectItem }: any) => {
         key={component.id}
         component={component}
         level={level}
-        inputIndex={inputIndex}
         onSelectItem={onSelectItem}
       >
         {component.children?.map((child) => {

@@ -51,6 +51,7 @@ export type ComponentToBind = {
   param?: string;
   bindedId?: string;
   index?: number;
+  onPick?: (props: any) => void;
 };
 
 export type FeatureToBind = {
@@ -176,7 +177,13 @@ export const useEditorStore = create<EditorState>()(
           set({ pickingComponentToBindTo }),
         setFeatureToBind: (featureToBind) => set({ featureToBind }),
         setFeatureToBindTo: (featureToBindTo) => set({ featureToBindTo }),
-        setComponentToBind: (componentToBind) => set({ componentToBind }),
+        setComponentToBind: (componentToBind) => {
+          set((state) => {
+            state.pickingComponentToBindTo?.onPick &&
+              state.pickingComponentToBindTo?.onPick(componentToBind);
+            return { componentToBind };
+          });
+        },
         setCopiedComponent: (copiedComponent) => set({ copiedComponent }),
         setTheme: (theme) => set({ theme }),
         setIframeWindow: (iframeWindow) => set({ iframeWindow }),

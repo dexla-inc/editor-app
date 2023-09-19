@@ -12,7 +12,6 @@ import { ChangeStateAction } from "@/utils/actions";
 import { getComponentById } from "@/utils/editor";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEffect } from "react";
 import { ComponentToBindInput } from "@/components/ComponentToBindInput";
 
 type Props = {
@@ -34,12 +33,8 @@ export const ChangeStateActionForm = ({ id }: Props) => {
   const setPickingComponentToBindTo = useEditorStore(
     (state) => state.setPickingComponentToBindTo,
   );
-  const componentToBind = useEditorStore((state) => state.componentToBind);
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
-  );
-  const pickingComponentToBindTo = useEditorStore(
-    (state) => state.pickingComponentToBindTo,
   );
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
@@ -72,25 +67,18 @@ export const ChangeStateActionForm = ({ id }: Props) => {
     }
   };
 
-  useEffect(() => {
-    if (componentToBind && pickingComponentToBindTo) {
-      if (pickingComponentToBindTo.componentId === component?.id) {
-        form.setFieldValue("componentId", componentToBind);
-
-        setPickingComponentToBindTo(undefined);
-        setComponentToBind(undefined);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [component?.id, componentToBind, pickingComponentToBindTo]);
-
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
         <ComponentToBindInput
           {...form.getInputProps("componentId")}
           componentId={component?.id}
-          triggerTo={action.trigger}
+          onPick={(componentToBind: string) => {
+            form.setFieldValue("componentId", componentToBind);
+
+            setPickingComponentToBindTo(undefined);
+            setComponentToBind(undefined);
+          }}
         />
         <Select
           size="xs"
