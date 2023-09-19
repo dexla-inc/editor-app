@@ -12,7 +12,8 @@ export const ComponentToBindInput = ({
   placeholder = "",
   label = "Component to bind",
 }: any) => {
-  const { setPickingComponentToBindTo } = useEditorStore();
+  const { setPickingComponentToBindTo, setHighlightedComponentId } =
+    useEditorStore();
 
   const onBindComponent = () => {
     setPickingComponentToBindTo({
@@ -28,6 +29,12 @@ export const ComponentToBindInput = ({
       placeholder={placeholder}
       label={label}
       value={value}
+      onFocus={(e) => {
+        setHighlightedComponentId(e.target.value);
+      }}
+      onBlur={() => {
+        setHighlightedComponentId(null);
+      }}
       rightSection={
         <>
           <ComponentToBindActionsPopover inputIndex={index} onPick={onPick} />

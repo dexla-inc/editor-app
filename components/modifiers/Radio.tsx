@@ -56,7 +56,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: defaultRadioValues,
   });
-  console.log({ selectedComponent });
+
   useEffect(() => {
     if (selectedComponent?.id) {
       const data = pick(selectedComponent.props!, [
