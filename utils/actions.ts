@@ -770,7 +770,13 @@ export const reloadComponentAction = ({
 
 export type BindDataActionParams = ActionParams & { action: BindDataAction };
 
-export const bindDataAction = ({ action }: BindDataActionParams) => {};
+export const bindDataAction = ({ action }: BindDataActionParams) => {
+  const selectedComponentId = useEditorStore.getState().selectedComponentId;
+  const updateTreeComponentChildren =
+    useEditorStore.getState().updateTreeComponentChildren;
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const storeData = useEditorStore.getState().storeData;
+};
 
 export const actionMapper = {
   alert: {
