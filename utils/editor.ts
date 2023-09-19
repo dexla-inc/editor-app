@@ -54,7 +54,7 @@ export function arrayMove<T>(array: T[], from: number, to: number): T[] {
   newArray.splice(
     to < 0 ? newArray.length + to : to,
     0,
-    newArray.splice(from, 1)[0]
+    newArray.splice(from, 1)[0],
   );
 
   return newArray;
@@ -70,7 +70,7 @@ export const getAllActions = (treeRoot: Component): Action[] => {
         actions.push(...(node.actions ?? []));
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 
   return actions;
@@ -82,14 +82,14 @@ export const replaceIdsDeeply = (treeRoot: Component) => {
     (node) => {
       node.id = nanoid();
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 };
 
 export const traverseComponents = (
   components: Component[],
   theme: MantineThemeExtended,
-  pages: PageResponse[]
+  pages: PageResponse[],
 ): Component[] => {
   return components
     .filter((c) => !!c.name)
@@ -105,7 +105,7 @@ export const traverseComponents = (
               [key]: true,
             };
           },
-          {}
+          {},
         );
 
         tableData = {
@@ -133,7 +133,7 @@ export const traverseComponents = (
         newComponent.children = traverseComponents(
           component.children,
           theme,
-          pages
+          pages,
         );
       }
 
@@ -144,7 +144,7 @@ export const traverseComponents = (
 export const getEditorTreeFromPageStructure = (
   tree: { rows: Row[] },
   theme: MantineThemeExtended,
-  pages: PageResponse[]
+  pages: PageResponse[],
 ) => {
   const editorTree: EditorTree = {
     name: "Initial State",
@@ -193,13 +193,13 @@ export const getEditorTreeFromPageStructure = (
 export const getEditorTreeFromTemplateData = (
   tree: { template: { name: string; data: any } },
   theme: MantineThemeExtended,
-  pages: PageResponse[]
+  pages: PageResponse[],
 ) => {
   // @ts-ignore
   const editorTree: EditorTree = templatesMapper[tree.template.name](
     tree.template.data,
     theme,
-    pages
+    pages,
   );
   return editorTree;
 };
@@ -207,7 +207,7 @@ export const getEditorTreeFromTemplateData = (
 export const getNewComponents = (
   tree: { rows: Row[] },
   theme: MantineThemeExtended,
-  pages: PageResponse[]
+  pages: PageResponse[],
 ): Component => {
   return {
     id: nanoid(),
@@ -239,7 +239,7 @@ export const getNewComponents = (
 
 export const addRowsToExistingTree = (
   rows: Row[],
-  existingTree: EditorTree
+  existingTree: EditorTree,
 ) => {
   // Traverse the rows to get the components
   const newComponents: Component[] = rows.flatMap((row: Row) => row.components);
@@ -265,7 +265,7 @@ export const addRowsToExistingTree = (
 
 export const getComponentById = (
   treeRoot: Component,
-  id: string
+  id: string,
 ): Component | null => {
   let found: Component | null = null;
 
@@ -277,14 +277,14 @@ export const getComponentById = (
         context.break();
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 
   return found;
 };
 
 export const getComponentBeingAddedId = (
-  treeRoot: Component
+  treeRoot: Component,
 ): string | null => {
   let id = null;
 
@@ -296,7 +296,7 @@ export const getComponentBeingAddedId = (
         context.break();
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 
   return id;
@@ -321,7 +321,7 @@ export const updateTreeComponent = (
   id: string,
   props: any,
   state: string = "default",
-  language: string = "default"
+  language: string = "default",
 ) => {
   const textFields = pickBy(props, pickTranslatableFields);
   const stylingFields = omit(props, translatableFields);
@@ -349,14 +349,14 @@ export const updateTreeComponent = (
         context.break();
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 };
 
 export const updateTreeComponentChildren = (
   treeRoot: Component,
   id: string,
-  children: Component[]
+  children: Component[],
 ) => {
   crawl(
     treeRoot,
@@ -366,14 +366,14 @@ export const updateTreeComponentChildren = (
         context.break();
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 };
 
 export const updateTreeComponentActions = (
   treeRoot: Component,
   id: string,
-  actions: Action[]
+  actions: Action[],
 ) => {
   crawl(
     treeRoot,
@@ -383,14 +383,14 @@ export const updateTreeComponentActions = (
         context.break();
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 };
 
 export const updateTreeComponentDescription = (
   treeRoot: Component,
   id: string,
-  description: string
+  description: string,
 ) => {
   crawl(
     treeRoot,
@@ -400,7 +400,7 @@ export const updateTreeComponentDescription = (
         context.break();
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 };
 
@@ -412,7 +412,7 @@ export const resetAllData = (treeRoot: Component) => {
         node.props.data = undefined;
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 };
 
@@ -427,7 +427,7 @@ export const checkIfIsChild = (treeRoot: Component, childId: string) => {
         context.break();
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 
   return isChild;
@@ -453,7 +453,7 @@ const checkIfIsChildDeep = (treeRoot: Component, childId: string): boolean => {
 export const checkIfIsDirectAncestor = (
   treeRoot: Component,
   childId: string,
-  possibleAncestorId: string
+  possibleAncestorId: string,
 ) => {
   let possibleAncestorDepth = null;
   let childDepth = 0;
@@ -470,7 +470,7 @@ export const checkIfIsDirectAncestor = (
         context.break();
       }
     },
-    { order: "pre" }
+    { order: "pre" },
   );
 
   return (
@@ -480,7 +480,7 @@ export const checkIfIsDirectAncestor = (
 
 export const getAllParentsWithExampleData = (
   treeRoot: Component,
-  childId: string
+  childId: string,
 ): Component[] => {
   const parentsWithExampleData: any[] = [];
   crawl(
@@ -489,14 +489,14 @@ export const getAllParentsWithExampleData = (
       const isDirectAncestor = checkIfIsDirectAncestor(
         treeRoot,
         childId,
-        node.id!
+        node.id!,
       );
 
       if (isDirectAncestor && !isEmpty(node.props?.exampleData?.value)) {
         parentsWithExampleData.push(node);
       }
     },
-    { order: "pre" }
+    { order: "pre" },
   );
 
   return parentsWithExampleData;
@@ -506,7 +506,7 @@ export const moveComponentToDifferentParent = (
   treeRoot: Component,
   id: string,
   dropTarget: DropTarget,
-  newParentId: string
+  newParentId: string,
 ) => {
   const _componentToAdd = getComponentById(treeRoot, id) as Component;
   const componentToAdd = cloneDeep(_componentToAdd);
@@ -518,7 +518,7 @@ export const moveComponentToDifferentParent = (
       if (node.id === newParentId) {
         if (dropTarget.edge === "left" || dropTarget.edge === "top") {
           const dropIndex = node.children?.findIndex(
-            (c) => c.id === dropTarget.id
+            (c) => c.id === dropTarget.id,
           );
           node.children?.splice(Math.max(dropIndex || 0, 0), 0, componentToAdd);
         } else if (
@@ -531,26 +531,26 @@ export const moveComponentToDifferentParent = (
           }
 
           const dropIndex = node.children.findIndex(
-            (c) => c.id === dropTarget.id
+            (c) => c.id === dropTarget.id,
           );
           node.children.splice(
             Math.min((dropIndex || 0) + 1, node.children.length),
             0,
-            componentToAdd
+            componentToAdd,
           );
         }
 
         context.break();
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 };
 
 export const moveComponent = (
   treeRoot: Component,
   id: string,
-  dropTarget: DropTarget
+  dropTarget: DropTarget,
 ) => {
   crawl(
     treeRoot,
@@ -582,13 +582,13 @@ export const moveComponent = (
         context.break();
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 };
 
 export const getComponentParent = (
   treeRoot: Component,
-  id: string
+  id: string,
 ): Component | null => {
   let parent: Component | null = null;
   crawl(
@@ -599,7 +599,7 @@ export const getComponentParent = (
         context.break();
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 
   return parent;
@@ -607,7 +607,7 @@ export const getComponentParent = (
 
 export const getAllComponentsByName = (
   treeRoot: Component,
-  componentName: string
+  componentName: string,
 ): Component[] => {
   const components: Component[] = [];
 
@@ -618,7 +618,21 @@ export const getAllComponentsByName = (
         components.push(node);
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
+  );
+
+  return components;
+};
+
+export const getAllChildrenComponents = (treeRoot: Component): Component[] => {
+  const components: Component[] = [];
+
+  crawl(
+    treeRoot,
+    (node) => {
+      components.push(node);
+    },
+    { order: "bfs" },
   );
 
   return components;
@@ -627,7 +641,7 @@ export const getAllComponentsByName = (
 export const removeComponentFromParent = (
   treeRoot: Component,
   id: string,
-  parentId: string
+  parentId: string,
 ) => {
   crawl(
     treeRoot,
@@ -638,7 +652,7 @@ export const removeComponentFromParent = (
         context.break();
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 };
 
@@ -652,7 +666,7 @@ export const resetContentWrapperWidth = (treeRoot: Component) => {
         context.break();
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 };
 
@@ -669,7 +683,7 @@ export const removeComponent = (treeRoot: Component, id: string) => {
         context.break();
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 };
 
@@ -683,7 +697,7 @@ export const addComponent = (
   treeRoot: Component,
   componentToAdd: Component,
   dropTarget: DropTarget,
-  dropIndex?: number
+  dropIndex?: number,
 ): string => {
   const copy = cloneDeep(componentToAdd);
   replaceIdsDeeply(copy);
@@ -739,7 +753,7 @@ export const addComponent = (
         }
       }
     },
-    { order: "bfs" }
+    { order: "bfs" },
   );
 
   return copy.id as string;
@@ -759,7 +773,7 @@ export type ComponentRect = {
 export function leftOfRectangle(
   rect: DOMRect,
   left = rect.left,
-  top = rect.top
+  top = rect.top,
 ): DOMRect {
   const newRect = rect.toJSON();
   newRect.x = left;
@@ -770,7 +784,7 @@ export function leftOfRectangle(
 export function rightOfRectangle(
   rect: DOMRect,
   right = rect.right,
-  top = rect.top
+  top = rect.top,
 ): DOMRect {
   const newRect = rect.toJSON();
   newRect.x = right;
@@ -781,7 +795,7 @@ export function rightOfRectangle(
 export function topOfRectangle(
   rect: DOMRect,
   left = rect.left,
-  top = rect.top
+  top = rect.top,
 ): DOMRect {
   const newRect = rect.toJSON();
   newRect.x = left + newRect.width * 0.5;
@@ -792,7 +806,7 @@ export function topOfRectangle(
 export function bottomOfRectangle(
   rect: DOMRect,
   left = rect.left,
-  bottom = rect.bottom
+  bottom = rect.bottom,
 ): DOMRect {
   const newRect = rect.toJSON();
   newRect.x = left + newRect.width * 0.5;
@@ -803,7 +817,7 @@ export function bottomOfRectangle(
 export function centerOfRectangle(
   rect: DOMRect,
   left = rect.left,
-  top = rect.top
+  top = rect.top,
 ): DOMRect {
   const newRect = rect.toJSON();
   newRect.x = left + newRect.width * 0.5;
@@ -822,7 +836,7 @@ export const getClosestEdge = (
   left: number,
   right: number,
   top: number,
-  bottom: number
+  bottom: number,
 ) => {
   const all = { left, right, top, bottom, center: Infinity };
   const closest = Math.min(...Object.values(all));
@@ -840,7 +854,7 @@ export const debouncedTreeComponentChildrenUpdate = debounce(
     const selectedComponentId = useEditorStore.getState().selectedComponentId;
     updateTreeComponentChildren(selectedComponentId as string, value);
   },
-  300
+  300,
 );
 
 export const debouncedTreeComponentPropsUpdate = debounce(
@@ -851,7 +865,7 @@ export const debouncedTreeComponentPropsUpdate = debounce(
       [field]: value,
     });
   },
-  300
+  300,
 );
 
 export const debouncedTreeComponentStyleUpdate = debounce(
@@ -862,7 +876,7 @@ export const debouncedTreeComponentStyleUpdate = debounce(
       style: { [field]: value },
     });
   },
-  300
+  300,
 );
 
 export const debouncedTreeUpdate = debounce((...params: any[]) => {

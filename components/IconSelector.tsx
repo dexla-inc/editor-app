@@ -17,9 +17,9 @@ export const IconSelector = ({
       <Text size="xs" fw={500}>
         {topLabel}
       </Text>
-      <Flex gap="md">
+      <Flex gap="md" align="center">
         <IconModal onIconSelect={onIconSelect} />
-        {/* <Icon name={selectedIcon} /> */}
+        {selectedIcon}
       </Flex>
     </Box>
   );
