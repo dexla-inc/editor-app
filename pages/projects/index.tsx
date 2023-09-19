@@ -7,7 +7,6 @@ import { ProjectResponse, getProjects } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
-  Button,
   Container,
   Flex,
   Grid,
@@ -48,20 +47,13 @@ export default function Projects() {
     setProjects(result.results);
   }, [search]);
 
-  const handleHealthCheck = async () => {
-    const result = await fetch(
-      "https://dev-api-editor-app.azurewebsites.net/v1/healthchecks",
-    );
-    console.log(result.status);
-  };
-
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);
 
   const handleDeleteProject = (id: string) => {
     setProjects((prevProjects) =>
-      prevProjects.filter((project) => project.id !== id),
+      prevProjects.filter((project) => project.id !== id)
     );
   };
 
@@ -87,7 +79,6 @@ export default function Projects() {
                 description="Type what you want to build and customise"
               ></IconTitleDescriptionButton>
             </Link>
-            <Button onClick={handleHealthCheck}>Check Health</Button>
           </Flex>
           {projects && (
             <TextInput
