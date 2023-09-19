@@ -11,6 +11,7 @@ export const jsonStructure = (props?: any): Component => {
     name: "RadioItem",
     description: "Radio Item",
     props: {
+      value: "change-me",
       style: {
         borderRadius: px(theme.radius.md),
       },
@@ -64,7 +65,7 @@ export const jsonStructure = (props?: any): Component => {
             description: "Text",
             children: [],
             props: {
-              children: "Radio 2",
+              children: "New Radio Item",
               color: "Black.6",
               size: "sm",
               style: {
