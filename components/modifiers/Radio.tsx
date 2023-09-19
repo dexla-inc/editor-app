@@ -23,7 +23,7 @@ import {
 import { useForm } from "@mantine/form";
 import { IconPlus, IconRadio } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
-import { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 
 export const icon = IconRadio;
 export const label = "Radio";
@@ -56,12 +56,11 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: defaultRadioValues,
   });
-
+  console.log({ selectedComponent });
   useEffect(() => {
     if (selectedComponent?.id) {
       const data = pick(selectedComponent.props!, [
         "style",
-        "children",
         "label",
         "size",
         "withAsterisk",
@@ -69,8 +68,8 @@ export const Modifier = withModifier(({ selectedComponent }) => {
       ]);
 
       form.setValues({
-        children: data.children?.length
-          ? data.children
+        children: selectedComponent.children?.length
+          ? selectedComponent.children
           : defaultRadioValues.children,
         size: data.size ?? defaultRadioValues.size,
         label: data.label ?? defaultRadioValues.label,
@@ -173,30 +172,36 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             </Button>
           </Flex>
 
-          {form.values.children.map((child, index) => (
-            <Box
-              key={index}
-              py="md"
-              sx={{
-                borderBottom: "1px solid " + theme.colors.gray[3],
-              }}
-            >
-              <Flex justify="space-between">
-                <Text size="sm">Item {index + 1}</Text>
-                <ActionIcon onClick={() => deleteRadioItem(index)}>
-                  <Icon name={ICON_DELETE} color="red" />
-                </ActionIcon>
-              </Flex>
-              <TextInput
-                label="Value"
-                size="xs"
-                value={child.props?.value}
-                onChange={(e) =>
-                  updateRadioItem(index, "value", e.target.value)
-                }
-              />
-            </Box>
-          ))}
+          {form.values.children.reduce((acc, child, index) => {
+            if (["RadioItem", "RadioItemComplex"].includes(child.name)) {
+              acc.push(
+                <Box
+                  key={index}
+                  py="md"
+                  sx={{
+                    borderBottom: "1px solid " + theme.colors.gray[3],
+                  }}
+                >
+                  <Flex justify="space-between">
+                    <Text size="sm">Item {index + 1}</Text>
+                    <ActionIcon onClick={() => deleteRadioItem(index)}>
+                      <Icon name={ICON_DELETE} color="red" />
+                    </ActionIcon>
+                  </Flex>
+                  <TextInput
+                    label="Value"
+                    size="xs"
+                    value={child.props?.value}
+                    onChange={(e) =>
+                      updateRadioItem(index, "value", e.target.value)
+                    }
+                  />
+                </Box>,
+              );
+            }
+
+            return acc;
+          }, [] as any[])}
         </Stack>
       </Stack>
     </form>
