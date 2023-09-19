@@ -27,7 +27,7 @@ const RadioItemComponent = ({
   } = component.props as any;
 
   const [_checked, setChecked] = useState<boolean>(
-    isPreviewMode ? checked : false
+    isPreviewMode ? checked : false,
   );
 
   const defaultTriggers = isPreviewMode

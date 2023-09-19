@@ -7,7 +7,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 type QueryStringsFormProps = {
   queryStringState: [
     QueryStringListItem[],
-    Dispatch<SetStateAction<QueryStringListItem[]>>
+    Dispatch<SetStateAction<QueryStringListItem[]>>,
   ];
   readOnlyKeys?: boolean;
 };

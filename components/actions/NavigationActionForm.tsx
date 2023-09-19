@@ -54,7 +54,7 @@ export const NavigationActionForm = ({ id }: Props) => {
       Object.entries(pageQueryStrings).map(([key, value]) => ({
         key,
         value,
-      }))
+      })),
     );
   }, [pageQueryStrings]);
 
@@ -66,7 +66,7 @@ export const NavigationActionForm = ({ id }: Props) => {
         acc[item.key] = item.value;
         return acc;
       },
-      {}
+      {},
     );
 
     try {

@@ -195,12 +195,12 @@ export const Modifier = withModifier(({ selectedComponent }) => {
               form.setFieldValue(
                 "borderStyle",
                 // @ts-ignore
-                form.values[`border${startCase(value)}Style`]
+                form.values[`border${startCase(value)}Style`],
               );
               form.setFieldValue(
                 "borderWidth",
                 // @ts-ignore
-                form.values[`border${startCase(value)}Width`]
+                form.values[`border${startCase(value)}Width`],
               );
             }
           }}
@@ -448,7 +448,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                   onChange={(value) => {
                     form.setFieldValue(
                       "borderBottomLeftRadius",
-                      value as string
+                      value as string,
                     );
                     debouncedTreeUpdate(selectedComponent?.id as string, {
                       style: { borderBottomLeftRadius: value },
@@ -461,7 +461,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                   onChange={(value) => {
                     form.setFieldValue(
                       "borderBottomRightRadius",
-                      value as string
+                      value as string,
                     );
                     debouncedTreeUpdate(selectedComponent?.id as string, {
                       style: { borderBottomRightRadius: value },

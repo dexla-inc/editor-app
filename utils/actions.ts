@@ -21,7 +21,7 @@ import {
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
-import { Component } from "@/utils/editor";
+import { Component, getComponentById } from "@/utils/editor";
 import { flattenKeysWithRoot } from "@/utils/flattenKeys";
 import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
@@ -241,6 +241,15 @@ export const navigationAction = ({
 
 export const goToUrlAction = ({ action }: GoToUrlParams) => {
   const { url, openInNewTab } = action;
+
+  if (url.startsWith("dataPath_")) {
+    const { tree: editorTree } = useEditorStore.getState();
+    const path = url.split(`dataPath_`)[1];
+    const componentId = path.split(".")[0];
+    const component = getComponentById(editorTree.root, componentId);
+    console.log({ component, path });
+  }
+
   if (openInNewTab) {
     window.open(url, "_blank");
   } else {

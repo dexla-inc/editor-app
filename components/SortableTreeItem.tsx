@@ -20,7 +20,7 @@ export const SortableTreeItem = ({
   const theme = useMantineTheme();
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
+    (state) => state.selectedComponentId,
   );
 
   const onDrop = useOnDrop();

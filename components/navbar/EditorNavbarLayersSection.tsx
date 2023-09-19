@@ -35,10 +35,10 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   const editorTree = useEditorStore((state) => state.tree);
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
+    (state) => state.selectedComponentId,
   );
   const setSelectedComponentId = useEditorStore(
-    (state) => state.setSelectedComponentId
+    (state) => state.setSelectedComponentId,
   );
   const [opened, { toggle, open }] = useDisclosure(false);
   const [clickedManualToggle, setClickedManualToggle] = useState(false);
@@ -53,7 +53,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   });
 
   const updateTreeComponentDescription = useEditorStore(
-    (state) => state.updateTreeComponentDescription
+    (state) => state.updateTreeComponentDescription,
   );
 
   const form = useForm({
@@ -85,7 +85,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
         ? checkIfIsDirectAncestor(
             editorTree.root,
             selectedComponentId,
-            component.id
+            component.id,
           )
         : false;
 

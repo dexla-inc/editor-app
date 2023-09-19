@@ -1,5 +1,5 @@
 import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
-import { Stack, Textarea } from "@mantine/core";
+import { Checkbox, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconBoxModel } from "@tabler/icons-react";
 import { useEffect } from "react";
@@ -11,21 +11,24 @@ export const label = "Modal";
 
 export const defaultModalValues = {
   title: "Modal Title",
+  forceHide: false,
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: {
       title: defaultModalValues.title,
+      forceHide: defaultModalValues.forceHide,
     },
   });
 
   useEffect(() => {
     if (selectedComponent?.id) {
-      const data = pick(selectedComponent.props!, ["title"]);
+      const data = pick(selectedComponent.props!, ["title", "forceHide"]);
 
       form.setValues({
         title: data.title ?? defaultModalValues.title,
+        forceHide: data.forceHide ?? defaultModalValues.forceHide,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
@@ -43,6 +46,15 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           onChange={(e) => {
             form.setFieldValue("title", e.target.value);
             debouncedTreeComponentPropsUpdate("title", e.target.value);
+          }}
+        />
+        <Checkbox
+          size="xs"
+          label="Force Hide"
+          {...form.getInputProps("forceHide", { type: "checkbox" })}
+          onChange={(e) => {
+            form.setFieldValue("forceHide", e.target.checked);
+            debouncedTreeComponentPropsUpdate("forceHide", e.target.checked);
           }}
         />
       </Stack>

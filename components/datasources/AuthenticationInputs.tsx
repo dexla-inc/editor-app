@@ -10,7 +10,7 @@ type EndpointDropdown = {
 
 export function filterAndMapEndpoints(
   endpoints: Array<Endpoint> | undefined,
-  methodType: string
+  methodType: string,
 ): EndpointDropdown {
   if (!endpoints) {
     return [];
@@ -33,7 +33,7 @@ export type ExampleResponseDropdown = {
 };
 
 export function mapEndpointExampleResponse(
-  exampleJsonResponse: string
+  exampleJsonResponse: string,
 ): ExampleResponseDropdown[] | undefined {
   const exampleJson = JSON.parse(exampleJsonResponse);
 
@@ -44,14 +44,14 @@ export function mapEndpointExampleResponse(
       label: e,
     }))
     .sort((a, b) =>
-      a.label.localeCompare(b.label)
+      a.label.localeCompare(b.label),
     ) as ExampleResponseDropdown[];
 }
 
 export function validateTokenProperty(
   name: string,
   value: string | undefined,
-  relatedId: string | undefined
+  relatedId: string | undefined,
 ) {
   return relatedId && !value ? `${name} token property is required` : null;
 }
@@ -62,7 +62,7 @@ export async function patchDataSourceWithParams(
   endpointId: string,
   endpointType: string,
   token?: string | undefined,
-  secondaryToken?: string | undefined
+  secondaryToken?: string | undefined,
 ) {
   const patchParams = [
     {
@@ -92,7 +92,7 @@ export async function patchDataSourceWithParams(
     projectId,
     dataSourceId,
     endpointId,
-    patchParams
+    patchParams,
   );
 }
 
@@ -102,7 +102,7 @@ export const setEndpoint = (
   setEndpointId: EndpointSetter,
   endpoint: { value: string; label: string } | undefined,
   value: string | null,
-  setEndpointLabel?: EndpointSetter
+  setEndpointLabel?: EndpointSetter,
 ) => {
   setEndpointId(value);
   setEndpointLabel && setEndpointLabel(endpoint?.label as string);
@@ -110,7 +110,7 @@ export const setEndpoint = (
 
 export const getAuthEndpoint = (
   endpointType: string,
-  endpoints: Endpoint[] | undefined
+  endpoints: Endpoint[] | undefined,
 ) => {
   return endpoints?.find((d) => d.authentication.endpointType === endpointType);
 };
@@ -131,17 +131,17 @@ export type AuthenticationApiKeyParams = {
 export const setExampleResponseObject = (
   postEndpoints: EndpointDropdown,
   setExampleResponse: (
-    exampleResponse: ExampleResponseDropdown[] | undefined
+    exampleResponse: ExampleResponseDropdown[] | undefined,
   ) => void,
-  value: string | undefined
+  value: string | undefined,
 ) => {
   const selectedEndpoint = postEndpoints.find(
-    (option) => option.value === value
+    (option) => option.value === value,
   );
 
   if (selectedEndpoint?.exampleresponse) {
     const result = mapEndpointExampleResponse(
-      selectedEndpoint?.exampleresponse
+      selectedEndpoint?.exampleresponse,
     );
     setExampleResponse(result);
   }
@@ -150,10 +150,10 @@ export const setExampleResponseObject = (
 export const setRequestBodyObject = (
   postEndpoints: EndpointDropdown,
   setRequestBody: (requestBody: RequestBody[] | undefined) => void,
-  value: string | undefined
+  value: string | undefined,
 ) => {
   const selectedEndpoint = postEndpoints.find(
-    (option) => option.value === value
+    (option) => option.value === value,
   );
 
   if (selectedEndpoint?.requestbody) {

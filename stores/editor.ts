@@ -90,10 +90,10 @@ export type EditorState = {
   setFeatureToBindTo: (featuretoBindTo?: FeatureToBind) => void;
   setFeatureToBind: (featureToBind?: string) => void;
   setPickingComponentToBindTo: (
-    pickingComponentToBindTo?: ComponentToBind
+    pickingComponentToBindTo?: ComponentToBind,
   ) => void;
   setPickingComponentToBindFrom: (
-    pickingComponentToBindFrom?: ComponentToBind
+    pickingComponentToBindFrom?: ComponentToBind,
   ) => void;
   setComponentToBind: (componentToBind?: string) => void;
   addOnMountActionsRan: (action: string) => void;
@@ -106,7 +106,7 @@ export type EditorState = {
   setCurrentTargetId: (currentTargetId?: string) => void;
   setTree: (
     tree: EditorTree,
-    options?: { onLoad?: boolean; action?: string }
+    options?: { onLoad?: boolean; action?: string },
   ) => void;
   resetTree: () => void;
   setCurrentProjectId: (currentProjectId: string) => void;
@@ -115,20 +115,20 @@ export type EditorState = {
   updateTreeComponent: (
     componentId: string,
     props: any,
-    save?: boolean
+    save?: boolean,
   ) => void;
   updateTreeComponentChildren: (
     componentId: string,
-    children: Component[]
+    children: Component[],
   ) => void;
   updateTreeComponentActions: (componentId: string, actions: Action[]) => void;
   updateTreeComponentDescription: (
     componentId: string,
-    description: string
+    description: string,
   ) => void;
   setTreeComponentCurrentState: (
     componentId: string,
-    currentState: string
+    currentState: string,
   ) => void;
   setSelectedComponentId: (selectedComponentId?: string) => void;
   clearSelection: () => void;
@@ -165,7 +165,7 @@ export const useEditorStore = create<EditorState>()(
           set((state) => ({
             ...state,
             onMountActionsRan: state.onMountActionsRan.filter(
-              (action) => action !== onMountAction
+              (action) => action !== onMountAction,
             ),
           })),
         resetOnMountActionsRan: () => set({ onMountActionsRan: [] }),
@@ -190,7 +190,7 @@ export const useEditorStore = create<EditorState>()(
                 encodeSchema(JSON.stringify(tree)),
                 state.currentProjectId ?? "",
                 state.currentPageId ?? "",
-                state.setIsSaving
+                state.setIsSaving,
               );
             }
 
@@ -222,14 +222,14 @@ export const useEditorStore = create<EditorState>()(
               componentId,
               props,
               currentState,
-              currentLanguage
+              currentLanguage,
             );
             if (save) {
               debouncedUpdatePageState(
                 encodeSchema(JSON.stringify(copy)),
                 prev.currentProjectId ?? "",
                 prev.currentPageId ?? "",
-                prev.setIsSaving
+                prev.setIsSaving,
               );
             }
 
@@ -253,7 +253,7 @@ export const useEditorStore = create<EditorState>()(
               encodeSchema(JSON.stringify(copy)),
               state.currentProjectId ?? "",
               state.currentPageId ?? "",
-              state.setIsSaving
+              state.setIsSaving,
             );
 
             const component = getComponentById(copy.root, componentId);
@@ -276,7 +276,7 @@ export const useEditorStore = create<EditorState>()(
               encodeSchema(JSON.stringify(copy)),
               state.currentProjectId ?? "",
               state.currentPageId ?? "",
-              state.setIsSaving
+              state.setIsSaving,
             );
 
             const component = getComponentById(copy.root, componentId);
@@ -299,7 +299,7 @@ export const useEditorStore = create<EditorState>()(
               encodeSchema(JSON.stringify(copy)),
               state.currentProjectId ?? "",
               state.currentPageId ?? "",
-              state.setIsSaving
+              state.setIsSaving,
             );
 
             return {
@@ -309,7 +309,7 @@ export const useEditorStore = create<EditorState>()(
         },
         setTreeComponentCurrentState: (
           componentId,
-          currentState = "default"
+          currentState = "default",
         ) => {
           set((prev) => {
             return {
@@ -346,12 +346,12 @@ export const useEditorStore = create<EditorState>()(
         equality(currentState, pastState) {
           return isEqual(currentState.tree, pastState.tree);
         },
-      }
+      },
     ),
-    { name: "Editor store" }
-  )
+    { name: "Editor store" },
+  ),
 );
 
 export const useTemporalStore = <T>(
-  selector: (state: TemporalState<Partial<EditorState>>) => T
+  selector: (state: TemporalState<Partial<EditorState>>) => T,
 ) => useStore(useEditorStore.temporal, selector);
