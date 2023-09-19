@@ -7,7 +7,7 @@ import {
   Marker,
   useLoadScript,
 } from "@react-google-maps/api";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -20,7 +20,8 @@ type GoogleMapProps = {
   style?: { width?: string; height?: string; [key: string]: any };
   apiKey: string;
   language?: string;
-  zoom?: number;
+  zoom: number;
+  center: { lat: number; lng: number };
 };
 
 export type Position = {
@@ -32,7 +33,6 @@ const LOADING_TEXT = <Text>Enter API key and refresh the page...</Text>;
 export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
   const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
   const [map, setMap] = useState<any | null>(null);
-  const [forceRender, setForceRender] = useState(false);
 
   const {
     markers,
@@ -41,8 +41,12 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
     apiKey,
     language,
     zoom,
+    center,
     ...componentProps
   } = component.props as GoogleMapProps;
+
+  const [internalZoom, setInternalZoom] = useState<number>(zoom);
+  const MAP_SCRIPT_DELAY_DURATION = 800;
 
   const { width, height, ...googleStyles } = style;
   const containerStyle = { width, height };
@@ -63,34 +67,42 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
     }
   };
 
-  const handleOnLoad = (loadedMap: any) => {
-    const bounds = new google.maps.LatLngBounds();
-    markers.forEach(({ position }: Position) => bounds.extend(position));
-    loadedMap.fitBounds(bounds);
-  };
+  const onLoad = useCallback(
+    (map: google.maps.Map) => {
+      const bounds = new window.google.maps.LatLngBounds(center);
+      markers.forEach(({ position }: Position) => bounds.extend(position));
+      map.fitBounds(bounds);
 
-  useEffect(
-    () => {
-      if (apiKey && map) {
-        handleOnLoad(map);
-      }
+      setMap(map);
+
+      setInternalZoom(internalZoom);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [apiKey, map, markers],
+    [map, center, apiKey, markers],
   );
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (map) {
+        map.setZoom(internalZoom);
+      }
+    }, MAP_SCRIPT_DELAY_DURATION);
+  }, [internalZoom, map]);
+
+  const unMount = useCallback((map: any) => {
+    setMap(null);
+  }, []);
 
   if (!isLoaded || !apiKey) {
     return LOADING_TEXT;
   }
 
-  console.log(zoom);
-
   return (
     <GoogleMap
       key={apiKey}
-      onLoad={handleOnLoad}
-      onUnmount={() => setMap(null)}
-      zoom={zoom as number}
+      center={center}
+      onLoad={onLoad}
+      onUnmount={unMount}
+      zoom={internalZoom}
       onClick={() => setActiveMarkerId(null)}
       mapContainerStyle={containerStyle}
       {...componentProps}
