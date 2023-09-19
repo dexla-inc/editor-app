@@ -15,7 +15,7 @@ const TextComponent = ({ renderTree, component, ...props }: Props) => {
   const [isEditable, setIsEditable] = useState(false);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
+    (state) => state.updateTreeComponent,
   );
   const {
     children,
@@ -23,6 +23,7 @@ const TextComponent = ({ renderTree, component, ...props }: Props) => {
     triggers,
     repeatedIndex,
     dataPath,
+    hideIfDataIsEmpty,
     ...componentProps
   } = component.props as any;
 
@@ -43,11 +44,15 @@ const TextComponent = ({ renderTree, component, ...props }: Props) => {
     }
   };
 
-  let value = isPreviewMode ? data?.value ?? children : children;
+  let value = isPreviewMode
+    ? data?.value ?? hideIfDataIsEmpty
+      ? ""
+      : children
+    : children;
 
   if (isPreviewMode && typeof repeatedIndex !== "undefined" && dataPath) {
     const path = dataPath.replaceAll("[0]", `[${repeatedIndex}]`);
-    value = get(data?.base ?? {}, path) ?? children;
+    value = get(data?.base ?? {}, path) ?? hideIfDataIsEmpty ? "" : children;
   }
 
   return (

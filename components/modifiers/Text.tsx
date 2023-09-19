@@ -2,7 +2,7 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { UnitInput } from "@/components/UnitInput";
 import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
-import { Group, Select, Stack, Textarea } from "@mantine/core";
+import { Checkbox, Group, Select, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTextSize } from "@tabler/icons-react";
 import { useEffect } from "react";
@@ -19,6 +19,7 @@ export const defaultInputValues = {
   color: "Black.6",
   lineHeight: "",
   letterSpacing: "",
+  hideIfDataIsEmpty: false,
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
@@ -34,6 +35,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         "color",
         "size",
         "weight",
+        "hideIfDataIsEmpty",
       ]);
 
       form.setValues({
@@ -41,6 +43,8 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         color: data.color ?? defaultInputValues.color,
         size: data.size ?? defaultInputValues.size,
         weight: data.weight ?? defaultInputValues.weight,
+        hideIfDataIsEmpty:
+          data.hideIfDataIsEmpty ?? defaultInputValues.hideIfDataIsEmpty,
         ...data.style,
       });
     }
@@ -59,6 +63,18 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           onChange={(e) => {
             form.setFieldValue("value", e.target.value);
             debouncedTreeComponentPropsUpdate("children", e.target.value);
+          }}
+        />
+        <Checkbox
+          size="xs"
+          label="Hide text with data is empty"
+          {...form.getInputProps("hideIfDataIsEmpty", { type: "checkbox" })}
+          onChange={(e) => {
+            form.setFieldValue("hideIfDataIsEmpty", e.target.checked);
+            debouncedTreeComponentPropsUpdate(
+              "hideIfDataIsEmpty",
+              e.target.checked,
+            );
           }}
         />
         <Group noWrap>

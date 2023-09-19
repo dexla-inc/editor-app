@@ -16,13 +16,13 @@ export const Modal = ({
   ...props
 }: Props) => {
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
+    (state) => state.selectedComponentId,
   );
   const theme = useEditorStore((state) => state.theme);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
+    (state) => state.updateTreeComponent,
   );
 
   const {
@@ -30,6 +30,7 @@ export const Modal = ({
     title,
     opened: propOpened,
     style,
+    forceHide,
     ...componentProps
   } = component.props as any;
 
@@ -56,8 +57,9 @@ export const Modal = ({
       opened={
         isPreviewMode
           ? opened
-          : selectedComponentId === component.id ||
-            checkIfIsChild(component, selectedComponentId as string)
+          : (selectedComponentId === component.id ||
+              checkIfIsChild(component, selectedComponentId as string)) &&
+            !forceHide
       }
       onClose={isPreviewMode ? handleClose : () => {}}
       title={title}

@@ -142,10 +142,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
 
   useEffect(() => {
     const getEndpoint = async () => {
-      const { results } = await getDataSourceEndpoints(
-        projectId,
-        //originalAction?.action.datasource.id
-      );
+      const { results } = await getDataSourceEndpoints(projectId);
 
       const _endpoint = results.find(
         // @ts-ignore
@@ -168,7 +165,6 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
 
     if (
       // @ts-ignore
-      originalAction?.action?.datasource?.id &&
       form.values.binds?.length === 0
     ) {
       getEndpoint();
