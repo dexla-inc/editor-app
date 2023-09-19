@@ -100,7 +100,9 @@ export const NavigationActionForm = ({ id }: Props) => {
           })}
           {...form.getInputProps("pageId")}
         />
-        <QueryStringsForm queryStringState={queryStringState} readOnlyKeys />
+        {!!queryStringState[0].length && (
+          <QueryStringsForm queryStringState={queryStringState} readOnlyKeys />
+        )}
         <ActionButtons
           actionId={id}
           componentActions={componentActions}

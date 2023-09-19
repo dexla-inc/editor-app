@@ -3,6 +3,8 @@ import { QueryStringListItem } from "@/requests/pages/types";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Flex, Group, Text, TextInput } from "@mantine/core";
 import { Dispatch, SetStateAction, useState } from "react";
+import { ComponentToBindInput } from "@/components/ComponentToBindInput";
+import { useEditorStore } from "@/stores/editor";
 
 type QueryStringsFormProps = {
   queryStringState: [
@@ -19,6 +21,12 @@ export const QueryStringsForm = ({
   const [queryKey, setQueryKey] = useState("");
   const [queryValue, setQueryValue] = useState("");
   const [queryStrings, setQueryStrings] = queryStringState;
+
+  const {
+    selectedComponentId,
+    setPickingComponentToBindTo,
+    setComponentToBind,
+  } = useEditorStore();
 
   return (
     <>
@@ -64,18 +72,37 @@ export const QueryStringsForm = ({
                 }}
                 style={{ width: "50%" }}
               />
-              <TextInput
-                placeholder="value"
-                value={value}
-                onChange={(event) => {
-                  setQueryStrings((prev: QueryStringListItem[]) => {
-                    const nPrev = [...prev];
-                    nPrev[index].value = event.target.value;
-                    return nPrev;
-                  });
-                }}
-                style={{ width: "50%" }}
-              />
+              {readOnlyKeys ? (
+                <ComponentToBindInput
+                  value={value}
+                  placeholder="value"
+                  label=""
+                  componentId={selectedComponentId}
+                  onPick={(componentToBindId: string) => {
+                    setQueryStrings((prev: QueryStringListItem[]) => {
+                      const nPrev = [...prev];
+                      nPrev[index].value = componentToBindId;
+                      return nPrev;
+                    });
+
+                    setPickingComponentToBindTo(undefined);
+                    setComponentToBind(undefined);
+                  }}
+                />
+              ) : (
+                <TextInput
+                  placeholder="value"
+                  value={value}
+                  onChange={(event) => {
+                    setQueryStrings((prev: QueryStringListItem[]) => {
+                      const nPrev = [...prev];
+                      nPrev[index].value = event.target.value;
+                      return nPrev;
+                    });
+                  }}
+                  style={{ width: "50%" }}
+                />
+              )}
 
               <Icon
                 name={ICON_DELETE}

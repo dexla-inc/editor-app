@@ -7,29 +7,31 @@ import { useEditorStore } from "@/stores/editor";
 export const ComponentToBindInput = ({
   value,
   componentId,
-  triggerTo,
   index,
+  onPick,
+  placeholder = "",
+  label = "Component to bind",
 }: any) => {
   const { setPickingComponentToBindTo } = useEditorStore();
+
+  const onBindComponent = () => {
+    setPickingComponentToBindTo({
+      componentId: componentId,
+      trigger: "",
+      onPick,
+    });
+  };
 
   return (
     <TextInput
       size="xs"
-      label="Component to bind"
+      placeholder={placeholder}
+      label={label}
       value={value}
       rightSection={
         <>
-          <ComponentToBindActionsPopover inputIndex={index} />
-          <ActionIcon
-            onClick={() => {
-              setPickingComponentToBindTo({
-                componentId: componentId,
-                trigger: triggerTo,
-                bindedId: value ?? "",
-                ...(index ?? { index }),
-              });
-            }}
-          >
+          <ComponentToBindActionsPopover inputIndex={index} onPick={onPick} />
+          <ActionIcon onClick={onBindComponent}>
             <IconCurrentLocation size={ICON_SIZE} />
           </ActionIcon>
         </>

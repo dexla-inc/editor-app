@@ -23,7 +23,6 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTrash } from "@tabler/icons-react";
-import { useEffect } from "react";
 import { Icon } from "@/components/Icon";
 import { ComponentToBindInput } from "@/components/ComponentToBindInput";
 
@@ -45,12 +44,7 @@ export const TogglePropsActionForm = ({ id }: Props) => {
     editorTree,
     selectedComponentId,
   });
-  const {
-    setPickingComponentToBindTo,
-    componentToBind,
-    setComponentToBind,
-    pickingComponentToBindTo,
-  } = useEditorStore();
+  const { setPickingComponentToBindTo, setComponentToBind } = useEditorStore();
   const component = getComponentById(editorTree.root, selectedComponentId!);
 
   const form = useForm<FormValues>({
@@ -80,21 +74,6 @@ export const TogglePropsActionForm = ({ id }: Props) => {
       handleLoadingStop({ stopLoading, success: false });
     }
   };
-
-  useEffect(() => {
-    if (componentToBind && pickingComponentToBindTo) {
-      if (pickingComponentToBindTo.componentId === component?.id) {
-        form.setFieldValue(
-          `conditionRules.${pickingComponentToBindTo.index}.componentId`,
-          componentToBind,
-        );
-
-        setPickingComponentToBindTo(undefined);
-        setComponentToBind(undefined);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [component?.id, componentToBind, pickingComponentToBindTo]);
 
   const conditionOptions =
     component?.name === "Select"
@@ -174,7 +153,15 @@ export const TogglePropsActionForm = ({ id }: Props) => {
                 index={i}
                 value={componentId}
                 componentId={component?.id}
-                triggerTo={action.trigger}
+                onPick={(componentToBind: string) => {
+                  form.setFieldValue(
+                    `conditionRules.${i}.componentId`,
+                    componentToBind,
+                  );
+
+                  setPickingComponentToBindTo(undefined);
+                  setComponentToBind(undefined);
+                }}
               />
             </div>
           );
