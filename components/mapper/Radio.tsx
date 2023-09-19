@@ -56,7 +56,6 @@ const RadioComponent = ({
                     : false,
                   triggers: {
                     onChange: (val: string) => {
-                      console.log("eita");
                       setValue(val);
                     },
                   },

@@ -1,5 +1,4 @@
 import { Icon } from "@/components/Icon";
-import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
@@ -31,20 +30,18 @@ export const label = "Radio";
 
 const editorStore = useEditorStore.getState();
 
-const createRadioItem = (label: string, value: string) => {
+const createRadioItem = (value: string) => {
   const radioItem = structureMapper["RadioItem"].structure({
     theme: editorStore.theme,
     props: {
-      label: label,
-      value: value,
-      icon: "",
+      value,
     },
   });
   return radioItem;
 };
 
-const radioItem1 = createRadioItem("Radio 1", "value1");
-const radioItem2 = createRadioItem("Radio 2", "value2");
+const radioItem1 = createRadioItem("value1");
+const radioItem2 = createRadioItem("value2");
 
 export const defaultRadioValues = {
   children: [radioItem1, radioItem2],
@@ -90,7 +87,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
 
   const addRadioItem = () => {
     const count = form.values.children.length + 1;
-    const newRadioItem = createRadioItem("Label " + count, "value" + count);
+    const newRadioItem = createRadioItem("value" + count);
     const updatedChildren = [...form.values.children, newRadioItem];
     form.setValues({ ...form.values, children: updatedChildren });
     debouncedTreeComponentChildrenUpdate(updatedChildren);
@@ -191,27 +188,12 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                 </ActionIcon>
               </Flex>
               <TextInput
-                label="Label"
-                size="xs"
-                value={child.props?.label}
-                onChange={(e) =>
-                  updateRadioItem(index, "label", e.target.value)
-                }
-              />
-              <TextInput
                 label="Value"
                 size="xs"
                 value={child.props?.value}
                 onChange={(e) =>
                   updateRadioItem(index, "value", e.target.value)
                 }
-              />
-              <IconSelector
-                topLabel="Icon"
-                selectedIcon={child.props?.icon}
-                onIconSelect={(value: string) => {
-                  updateRadioItem(index, "icon", value);
-                }}
               />
             </Box>
           ))}

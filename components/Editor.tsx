@@ -51,11 +51,11 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const theme = useMantineTheme();
   const { undo, redo } = useTemporalStore((state) => state);
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
+    (state) => state.selectedComponentId,
   );
   const copiedComponent = useEditorStore((state) => state.copiedComponent);
   const setCopiedComponent = useEditorStore(
-    (state) => state.setCopiedComponent
+    (state) => state.setCopiedComponent,
   );
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
@@ -98,7 +98,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const copySelectedComponent = useCallback(() => {
     if (!isPreviewMode && selectedComponentId) {
       setCopiedComponent(
-        getComponentById(editorTree.root, selectedComponentId!)!
+        getComponentById(editorTree.root, selectedComponentId!)!,
       );
     }
   }, [editorTree.root, isPreviewMode, selectedComponentId, setCopiedComponent]);
@@ -281,7 +281,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
           onError,
           onOpen,
           onClose,
-          "LAYOUT"
+          "LAYOUT",
         );
       }
     };
@@ -310,7 +310,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
           const tree = getEditorTreeFromTemplateData(
             json as any,
             editorTheme,
-            pages
+            pages,
           );
 
           setEditorTree(tree);
