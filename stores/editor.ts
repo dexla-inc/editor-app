@@ -145,7 +145,9 @@ export type EditorState = {
   highlightedComponentId?: string | null;
 };
 
-const debouncedUpdatePageState = debounce(updatePageState, 2000);
+const noop = () => {};
+
+const debouncedUpdatePageState = debounce(updatePageState ?? noop, 2000);
 
 // creates a store with undo/redo capability
 export const useEditorStore = create<EditorState>()(

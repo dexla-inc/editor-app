@@ -227,7 +227,7 @@ export const navigationAction = ({
   const { isLive } = useEditorStore.getState();
   const projectId = router.query.id as string;
   let url = isLive
-    ? `/live/${projectId}/${action.pageId}`
+    ? `/${action.pageId}`
     : `/projects/${projectId}/editor/${action.pageId}`;
 
   if (action.queryStrings && Object.keys(action.queryStrings).length) {

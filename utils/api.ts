@@ -1,22 +1,22 @@
 import { PatchParams } from "@/requests/types";
 import { createClient } from "@propelauth/javascript";
 
-const authClient = createClient({
-  authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
-  enableBackgroundTokenRefresh: true,
-});
-
 type FetchType = {
   url: string;
   method?: string;
   body?: object;
   headers?: object;
   isStream?: boolean;
+  bypassAuth?: boolean;
 };
 
 export const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export async function getAuthToken() {
+  const authClient = createClient({
+    authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
+    enableBackgroundTokenRefresh: true,
+  });
   const authInfo = await authClient.getAuthenticationInfoOrNull();
   return authInfo?.accessToken;
 }
@@ -27,11 +27,19 @@ async function doFetch<Type>({
   body,
   headers = {},
   isStream,
+  bypassAuth = false,
 }: FetchType): Promise<Type | ReadableStream<Uint8Array> | null> {
   return new Promise(async (resolve, reject) => {
     let response = null;
     try {
-      const authInfo = await authClient.getAuthenticationInfoOrNull();
+      let authInfo = null;
+      if (!bypassAuth) {
+        const authClient = createClient({
+          authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
+          enableBackgroundTokenRefresh: true,
+        });
+        authInfo = await authClient.getAuthenticationInfoOrNull();
+      }
 
       response = await fetch(`${baseURL}${url}`, {
         method,
@@ -39,7 +47,9 @@ async function doFetch<Type>({
           ...(isStream
             ? { "Content-Type": "application/octet-stream" }
             : { "Content-Type": "application/json" }),
-          Authorization: `Bearer ${authInfo?.accessToken}`,
+          ...(authInfo
+            ? { Authorization: `Bearer ${authInfo?.accessToken}` }
+            : {}),
           ...headers,
         },
         ...(body ? { body: JSON.stringify(body) } : {}),
@@ -70,20 +80,22 @@ async function doFetch<Type>({
 export async function get<Type>(
   url: FetchType["url"],
   headers?: object,
-  isStream?: boolean
+  isStream?: boolean,
+  bypassAuth?: boolean,
 ): Promise<Type | ReadableStream<Uint8Array> | null> {
   return doFetch<Type | ReadableStream<Uint8Array> | null>({
     url,
     method: "GET",
     headers,
     isStream,
+    bypassAuth,
   });
 }
 
 export async function put<Type>(
   url: FetchType["url"],
   body: FetchType["body"],
-  isStream?: boolean
+  isStream?: boolean,
 ): Promise<Type | ReadableStream<Uint8Array> | null> {
   return doFetch<Type | ReadableStream<Uint8Array> | null>({
     url,
@@ -96,7 +108,7 @@ export async function put<Type>(
 export async function post<Type>(
   url: FetchType["url"],
   body: FetchType["body"],
-  isStream?: boolean
+  isStream?: boolean,
 ): Promise<Type | ReadableStream<Uint8Array> | null> {
   return doFetch<Type | ReadableStream<Uint8Array> | null>({
     url,
@@ -108,7 +120,7 @@ export async function post<Type>(
 
 export async function del<Type>(
   url: FetchType["url"],
-  isStream?: boolean
+  isStream?: boolean,
 ): Promise<Type | ReadableStream<Uint8Array> | null> {
   return doFetch<Type | ReadableStream<Uint8Array> | null>({
     url,
@@ -120,7 +132,7 @@ export async function del<Type>(
 export async function patch<Type>(
   url: FetchType["url"],
   body: PatchParams[],
-  isStream?: boolean
+  isStream?: boolean,
 ): Promise<Type | ReadableStream<Uint8Array> | null> {
   return doFetch<Type | ReadableStream<Uint8Array> | null>({
     url,

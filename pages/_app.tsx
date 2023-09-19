@@ -16,7 +16,7 @@ import {
 import { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import Head from "next/head";
-import { useState } from "react";
+import { Fragment, PropsWithChildren, useEffect, useState } from "react";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -38,8 +38,43 @@ export const theme: MantineTheme = {
   primaryColor: "teal",
 };
 
+const AuthProvider = ({
+  children,
+  isLive,
+}: PropsWithChildren<{ isLive: boolean }>) => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) return null;
+
+  if (isLive) {
+    return <Fragment>{children}</Fragment>;
+  }
+
+  return (
+    <RequiredAuthProvider
+      authUrl={process.env.NEXT_PUBLIC_AUTH_URL as string}
+      displayWhileLoading={<LoadingOverlay visible overlayBlur={2} />}
+      displayIfLoggedOut={
+        <RedirectToLogin
+          postLoginRedirectUrl={
+            process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL as string
+          }
+        />
+      }
+    >
+      {children}
+    </RequiredAuthProvider>
+  );
+};
+
 export default function App(props: AppProps) {
-  const { Component, pageProps } = props;
+  const { Component, pageProps, router } = props;
+  // @ts-ignore
+  const isLive = router?.state?.pathname === "/[page]";
 
   const [queryClient] = useState(
     () =>
@@ -49,7 +84,7 @@ export default function App(props: AppProps) {
             refetchOnWindowFocus: false,
           },
         },
-      })
+      }),
   );
 
   return (
@@ -59,17 +94,7 @@ export default function App(props: AppProps) {
       theme={theme}
       emotionCache={cache}
     >
-      <RequiredAuthProvider
-        authUrl={process.env.NEXT_PUBLIC_AUTH_URL as string}
-        displayWhileLoading={<LoadingOverlay visible overlayBlur={2} />}
-        displayIfLoggedOut={
-          <RedirectToLogin
-            postLoginRedirectUrl={
-              process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL as string
-            }
-          />
-        }
-      >
+      <AuthProvider isLive={isLive}>
         <Head>
           <title>Editor</title>
           <meta name="description" content="Dexla Editor" />
@@ -108,7 +133,7 @@ export default function App(props: AppProps) {
             </Hydrate>
           </QueryClientProvider>
         </main>
-      </RequiredAuthProvider>
+      </AuthProvider>
     </MantineProvider>
   );
 }

@@ -3,12 +3,27 @@ import { useEditorStore } from "@/stores/editor";
 import { GetServerSidePropsContext } from "next";
 import { useEffect } from "react";
 
+function isMatchingUrl(url: string): boolean {
+  const pattern = /^.*\.dexla\.io$/;
+
+  // Use the test() method of the regular expression to check if the URL matches the pattern
+  return pattern.test(url);
+}
+
 export const getServerSideProps = async ({
+  req,
   query,
 }: GetServerSidePropsContext) => {
+  const url = req.headers.host;
+
+  let id = query.id ?? "";
+  if (isMatchingUrl(url!) || url?.endsWith(".localhost:3000")) {
+    id = url?.split(".")[0] as string;
+  }
+
   return {
     props: {
-      id: query.id,
+      id,
       page: query.page,
     },
   };
