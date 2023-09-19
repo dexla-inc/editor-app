@@ -64,10 +64,6 @@ export type FeatureToBind = {
   index?: number;
 };
 
-export type StoreData = {
-  data?: any;
-};
-
 export type EditorState = {
   tree: EditorTree;
   currentProjectId?: string;
@@ -93,8 +89,6 @@ export type EditorState = {
   copiedAction?: Action[];
   featureToBind?: string;
   featureToBindTo?: FeatureToBind;
-  storeData?: StoreData;
-  setStoreData: (storeData?: StoreData) => void;
   setFeatureToBindTo: (featuretoBindTo?: FeatureToBind) => void;
   setFeatureToBind: (featureToBind?: string) => void;
   setPickingComponentToBindTo: (
@@ -185,7 +179,6 @@ export const useEditorStore = create<EditorState>()(
           set({ pickingComponentToBindFrom }),
         setPickingComponentToBindTo: (pickingComponentToBindTo) =>
           set({ pickingComponentToBindTo }),
-        setStoreData: (storeData) => set({ storeData }),
         setFeatureToBind: (featureToBind) => set({ featureToBind }),
         setFeatureToBindTo: (featureToBindTo) => set({ featureToBindTo }),
         setComponentToBind: (componentToBind) => {

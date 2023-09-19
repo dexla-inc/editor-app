@@ -15,6 +15,7 @@ import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 import { PreviousStepActionForm } from "@/components/actions/PreviousStepActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
+import { theme } from "@/pages/_app";
 import {
   getDataSourceAuth,
   getDataSourceEndpoints,
@@ -590,8 +591,6 @@ export const apiCallAction = async ({
   ...rest
 }: APICallActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  const setStoreData = useEditorStore.getState().setStoreData;
-  const storeData = useEditorStore.getState().storeData;
 
   try {
     const iframeWindow = useEditorStore.getState().iframeWindow;
@@ -702,7 +701,6 @@ export const apiCallAction = async ({
     }
 
     const responseJson = await response.json();
-    setStoreData({ data: responseJson });
 
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
