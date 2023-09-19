@@ -1,5 +1,5 @@
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { Component, getAllChildrenComponents } from "@/utils/editor";
 import { Radio as MantineRadio, RadioProps } from "@mantine/core";
 import { memo, useEffect, useState } from "react";
 import { useEditorStore } from "@/stores/editor";
@@ -37,6 +37,10 @@ const RadioItemComponent = ({
     setTreeComponentCurrentState(
       component.id!,
       checked ? "checked" : "default",
+    );
+    const allChildren = getAllChildrenComponents(component);
+    allChildren.forEach((c) =>
+      setTreeComponentCurrentState(c.id!, checked ? "checked" : "default"),
     );
   }, [setTreeComponentCurrentState, checked, component.id]);
 
