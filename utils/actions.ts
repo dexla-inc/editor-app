@@ -1,4 +1,5 @@
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
+import { BindDataActionForm } from "@/components/actions/BindDataActionForm";
 import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
 import { ChangeStateActionForm } from "@/components/actions/ChangeStateActionForm";
 import { CloseModalActionForm } from "@/components/actions/CloseModalActionForm";
@@ -188,6 +189,11 @@ export interface PreviousStepAction extends BaseAction {
   activeStep: number;
 }
 
+export interface BindDataAction extends BaseAction {
+  name: "bindData";
+  componentId: string;
+}
+
 export type Action = {
   id: string;
   trigger: ActionTrigger;
@@ -207,7 +213,8 @@ export type Action = {
     | ReloadComponentAction
     | ToggleNavbarAction
     | NextStepAction
-    | PreviousStepAction;
+    | PreviousStepAction
+    | BindDataAction;
   sequentialTo?: string;
 };
 
@@ -603,6 +610,8 @@ export const apiCallAction = async ({
   ...rest
 }: APICallActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const setStoreData = useEditorStore.getState().setStoreData;
+  const storeData = useEditorStore.getState().storeData;
 
   try {
     const iframeWindow = useEditorStore.getState().iframeWindow;
@@ -713,6 +722,7 @@ export const apiCallAction = async ({
     }
 
     const responseJson = await response.json();
+    setStoreData({ data: responseJson });
 
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
@@ -792,6 +802,10 @@ export const reloadComponentAction = ({
   updateTreeComponent(action.componentId, { key: nanoid() }, false);
 };
 
+export type BindDataActionParams = ActionParams & { action: BindDataAction };
+
+export const bindDataAction = ({ action }: BindDataActionParams) => {};
+
 export const actionMapper = {
   alert: {
     action: debugAction,
@@ -860,5 +874,9 @@ export const actionMapper = {
   previousStep: {
     action: goToPreviousStepAction,
     form: PreviousStepActionForm,
+  },
+  bindData: {
+    action: bindDataAction,
+    form: BindDataActionForm,
   },
 };
