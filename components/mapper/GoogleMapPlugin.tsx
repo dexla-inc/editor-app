@@ -33,7 +33,6 @@ const LOADING_TEXT = <Text>Enter API key and refresh the page...</Text>;
 export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
   const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
   const [map, setMap] = useState<any | null>(null);
-  const [forceRender, setForceRender] = useState(false);
 
   const {
     markers,
@@ -97,8 +96,6 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
   if (!isLoaded || !apiKey) {
     return LOADING_TEXT;
   }
-
-  console.log(zoom);
 
   return (
     <GoogleMap
