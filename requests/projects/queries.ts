@@ -1,6 +1,7 @@
 import { get } from "@/utils/api";
 import { UserRoles } from "@/utils/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
+import { SuccessResponse } from "../datasources/types";
 
 export type RegionTypes = "FRANCE_CENTRAL" | "US_CENTRAL" | "UK_SOUTH";
 
@@ -43,6 +44,15 @@ export const getProject = async (projectId: string) => {
     `/projects/${projectId}`,
     {},
   )) as ProjectResponse;
+
+  return response;
+};
+
+export const deploy = async (projectId: string, flag: boolean) => {
+  const response = (await get<SuccessResponse>(
+    `/projects/${projectId}/deploy?flag=${flag}`,
+    {},
+  )) as SuccessResponse;
 
   return response;
 };
