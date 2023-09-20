@@ -1,34 +1,32 @@
-import { PagingParams } from "@/requests/types";
-import { TeamStatus, UserRoles } from "@/utils/dashboardTypes";
-
-export type TeamResponse = {
-  id: string;
-  projectId?: string | undefined;
-  companyId?: string | undefined;
-  usersName: string;
-  email?: string | undefined;
-  accessLevel: UserRoles;
-  status: TeamStatus;
+export type LanguageResponse = {
+  default: LanguageInfo;
+  languages: LanguageInfo[];
 };
 
-export type TeamListResponse = {
-  results: TeamResponse[];
+export type LanguageInfo = {
+  description: string;
+  code: Iso6391Codes;
 };
 
-export interface TeamParams extends PagingParams {
-  projectId?: string;
-  companyId?: string;
-  status?: TeamStatus;
+export type LanguageCodes = {
+  languages: Record<Iso6391Codes, string>;
+};
+
+export type LanguageParams = {
+  default: string;
+  languages: string[];
+};
+
+export enum Iso6391Codes {
+  EN,
+  FR,
+  DE,
+  ES,
+  IT,
+  NL,
+  PL,
+  PT,
+  SV,
+  TR,
+  ZH,
 }
-
-export type InviteTeamParams = {
-  projectId?: string;
-  companyId?: string;
-  email: string;
-  accessLevel: UserRoles;
-};
-
-export type AcceptInviteParams = {
-  id: string;
-  status: Extract<TeamStatus, "ACCEPTED" | "REJECTED">;
-};
