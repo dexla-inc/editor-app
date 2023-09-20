@@ -810,6 +810,7 @@ export type Modifiers =
   | "checkbox"
   | "table"
   | "radio"
+  | "radioItem"
   | "drawer"
   | "buttonIcon"
   | "mapSettings";
@@ -1049,7 +1050,14 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <RadioItem component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["background", "spacing", "size", "border"],
+    modifiers: [
+      "radioItem",
+      "background",
+      "spacing",
+      "size",
+      "border",
+      "position",
+    ],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

@@ -1,4 +1,3 @@
-import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { Stack, TextInput } from "@mantine/core";
@@ -11,8 +10,7 @@ export const icon = IconRadio;
 export const label = "Radio";
 
 export const defaultRadioValues = {
-  label: "",
-  withAsterisk: false,
+  value: "",
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
@@ -22,11 +20,10 @@ export const Modifier = withModifier(({ selectedComponent }) => {
 
   useEffect(() => {
     if (selectedComponent?.id) {
-      const data = pick(selectedComponent.props!, ["label", "withAsterisk"]);
+      const data = pick(selectedComponent.props!, ["value"]);
 
       form.setValues({
-        label: data.label ?? defaultRadioValues.label,
-        withAsterisk: data.withAsterisk ?? defaultRadioValues.withAsterisk,
+        value: data.value ?? defaultRadioValues.value,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
@@ -37,24 +34,12 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     <form>
       <Stack spacing="xs">
         <TextInput
-          label="Title"
+          label="Value"
           size="xs"
-          {...form.getInputProps("label")}
+          {...form.getInputProps("value")}
           onChange={(e) => {
-            form.setFieldValue("label", e.target.value);
-            debouncedTreeComponentPropsUpdate("label", e.target.value);
-          }}
-        />
-
-        <SwitchSelector
-          topLabel="Required"
-          {...form.getInputProps("withAsterisk")}
-          onChange={(event) => {
-            form.setFieldValue("withAsterisk", event.currentTarget.checked);
-            debouncedTreeComponentPropsUpdate(
-              "withAsterisk",
-              event.currentTarget.checked,
-            );
+            form.setFieldValue("value", e.target.value);
+            debouncedTreeComponentPropsUpdate("value", e.target.value);
           }}
         />
       </Stack>
