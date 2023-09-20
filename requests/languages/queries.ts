@@ -1,4 +1,4 @@
-import { LanguageCodes, LanguageResponse } from "@/requests/teams/types";
+import { LanguageCodes, LanguageResponse } from "@/requests/languages/types";
 import { get } from "@/utils/api";
 
 export const getLanguages = async (projectId: string) => {

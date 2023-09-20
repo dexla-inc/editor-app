@@ -2,7 +2,7 @@ import {
   Iso6391Codes,
   LanguageParams,
   LanguageResponse,
-} from "@/requests/teams/types";
+} from "@/requests/languages/types";
 import { del, post } from "@/utils/api";
 
 export const saveLanguages = async (
