@@ -7,6 +7,7 @@ import {
 } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { get } from "@/utils/api";
+import { getWithoutAuth } from "@/utils/api_noauth";
 import { buildQueryString } from "@/utils/dashboardTypes";
 
 export const getDataSources = async (
@@ -17,7 +18,7 @@ export const getDataSources = async (
 
   url += buildQueryString({ type, search, offset, limit });
 
-  const response = (await get<PagingResponse<DataSourceResponse>>(
+  const response = (await getWithoutAuth<PagingResponse<DataSourceResponse>>(
     url,
     {},
   )) as PagingResponse<DataSourceResponse>;
@@ -47,7 +48,7 @@ export const getDataSourceEndpoints = async (
     limit,
   });
 
-  const response = (await get<PagingResponse<Endpoint>>(
+  const response = (await getWithoutAuth<PagingResponse<Endpoint>>(
     url,
     {},
   )) as PagingResponse<Endpoint>;
@@ -58,7 +59,7 @@ export const getDataSourceEndpoints = async (
 export const getDataSource = async (projectId: string, id: string) => {
   let url = `/projects/${projectId}/datasources/${id}`;
 
-  const response = (await get<DataSourceResponse>(
+  const response = (await getWithoutAuth<DataSourceResponse>(
     url,
     {},
   )) as DataSourceResponse;
@@ -69,7 +70,7 @@ export const getDataSource = async (projectId: string, id: string) => {
 export const getDataSourceAuth = async (projectId: string, id: string) => {
   let url = `/projects/${projectId}/datasources/${id}/auth`;
 
-  const response = (await get<DataSourceAuthResponse>(
+  const response = (await getWithoutAuth<DataSourceAuthResponse>(
     url,
     {},
   )) as DataSourceAuthResponse;
