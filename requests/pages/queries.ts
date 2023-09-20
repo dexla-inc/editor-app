@@ -3,36 +3,30 @@ import {
   PageParams,
   PageResponse,
 } from "@/requests/pages/types";
-import { get } from "@/utils/api";
+import { getWithoutAuth } from "@/utils/apiNoAuth";
 import { buildQueryString } from "@/utils/dashboardTypes";
 
 export const getPageList = async (projectId: string, params?: PageParams) => {
   let url = `/projects/${projectId}/pages`;
   url += buildQueryString({ ...params });
 
-  const response = (await get<PageListResponse>(
+  const response = (await getWithoutAuth<PageListResponse>(
     url,
-    {},
-    false,
-    true,
   )) as PageListResponse;
 
   return response;
 };
 
 export const getPage = async (projectId: string, pageId: string) => {
-  const response = (await get<PageResponse>(
+  const response = (await getWithoutAuth<PageResponse>(
     `/projects/${projectId}/pages/${pageId}`,
-    {},
-    false,
-    true,
   )) as PageResponse;
 
   return response;
 };
 
 export const getPageBySlug = async (projectId: string, slug: string) => {
-  const response = (await get<PageResponse>(
+  const response = (await getWithoutAuth<PageResponse>(
     `/projects/${projectId}/pages/${slug}/slug`,
   )) as PageResponse;
 
