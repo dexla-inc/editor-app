@@ -30,3 +30,11 @@ export const getPage = async (projectId: string, pageId: string) => {
 
   return response;
 };
+
+export const getPageBySlug = async (projectId: string, slug: string) => {
+  const response = (await get<PageResponse>(
+    `/projects/${projectId}/pages/${slug}/slug`,
+  )) as PageResponse;
+
+  return response;
+};
