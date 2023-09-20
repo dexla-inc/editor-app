@@ -7,7 +7,7 @@ import {
 } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { get } from "@/utils/api";
-import { getWithoutAuth } from "@/utils/api_noauth";
+import { getWithoutAuth } from "@/utils/apiNoAuth";
 import { buildQueryString } from "@/utils/dashboardTypes";
 
 export const getDataSources = async (

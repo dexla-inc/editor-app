@@ -3,7 +3,7 @@ import {
   PageParams,
   PageResponse,
 } from "@/requests/pages/types";
-import { getWithoutAuth } from "@/utils/api_noauth";
+import { getWithoutAuth } from "@/utils/apiNoAuth";
 import { buildQueryString } from "@/utils/dashboardTypes";
 
 export const getPageList = async (projectId: string, params?: PageParams) => {
