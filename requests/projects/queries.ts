@@ -20,6 +20,8 @@ export type ProjectResponse = {
   accessLevel: UserRoles;
   isOwner: boolean;
   deployed: boolean;
+  domain: string;
+  subDomain: string;
 };
 
 type ProjectListResponse = {
