@@ -34,6 +34,9 @@ export const getPage = async (projectId: string, pageId: string) => {
 export const getPageBySlug = async (projectId: string, slug: string) => {
   const response = (await get<PageResponse>(
     `/projects/${projectId}/pages/${slug}/slug`,
+    {},
+    false,
+    true,
   )) as PageResponse;
 
   return response;

@@ -1,4 +1,5 @@
 import { Live } from "@/components/Live";
+import { getPageBySlug } from "@/requests/pages/queries";
 import { useEditorStore } from "@/stores/editor";
 import { GetServerSidePropsContext } from "next";
 import { useEffect } from "react";
@@ -21,10 +22,13 @@ export const getServerSideProps = async ({
     id = url?.split(".")[0] as string;
   }
 
+  const page = await getPageBySlug(id as string, query.page as string);
+  console.log({ page });
+
   return {
     props: {
       id,
-      page: query.page,
+      page: page.id,
     },
   };
 };
