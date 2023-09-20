@@ -56,3 +56,12 @@ export const deploy = async (projectId: string, flag: boolean) => {
 
   return response;
 };
+
+export const getByDomain = async (domain: string) => {
+  const response = (await get<ProjectResponse>(
+    `/projects/${domain}/id`,
+    {},
+  )) as ProjectResponse;
+
+  return response;
+};
