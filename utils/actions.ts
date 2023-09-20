@@ -15,7 +15,6 @@ import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 import { PreviousStepActionForm } from "@/components/actions/PreviousStepActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
-import { theme } from "@/pages/_app";
 import {
   getDataSourceAuth,
   getDataSourceEndpoints,
@@ -27,12 +26,14 @@ import {
   Component,
   getAllComponentsByName,
   getComponentById,
+  getComponentParent,
 } from "@/utils/editor";
 import { flattenKeysWithRoot } from "@/utils/flattenKeys";
 import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
+import { Options } from "@/components/modifiers/GoogleMap";
 
 const triggers = [
   "onClick",
@@ -63,6 +64,7 @@ export const actions = [
   { name: "apiCall", group: "API & Data" },
   { name: "bindResponse", group: "API & Data" },
   { name: "bindPlaceData", group: "API & Data" },
+  { name: "bindPlaceGeometry", group: "API & Data" },
   { name: "login", group: "API & Data" },
   { name: "goToUrl", group: "Navigation" },
   { name: "navigateToPage", group: "Navigation" },
@@ -196,6 +198,11 @@ export interface BindPlaceDataAction extends BaseAction {
   componentId: string;
 }
 
+export interface BindPlaceGeometryAction extends BaseAction {
+  name: "bindPlaceGeometry";
+  componentId: string;
+}
+
 export type Action = {
   id: string;
   trigger: ActionTrigger;
@@ -216,7 +223,8 @@ export type Action = {
     | ToggleNavbarAction
     | NextStepAction
     | PreviousStepAction
-    | BindPlaceDataAction;
+    | BindPlaceDataAction
+    | BindPlaceGeometryAction;
   sequentialTo?: string;
 };
 
@@ -372,7 +380,7 @@ export const togglePropsAction = ({
       {
         style: { display: "none" },
       },
-      false,
+      false
     );
   });
 
@@ -381,23 +389,23 @@ export const togglePropsAction = ({
     {
       style: { display: "flex" },
     },
-    false,
+    false
   );
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const { updateTreeComponent, tree: editorTree } = useEditorStore.getState();
   const selectedComponent = editorTree.root.children?.find(
-    (tree) => tree.name === "Navbar",
+    (tree) => tree.name === "Navbar"
   );
   const buttonComponent = selectedComponent?.children?.find(
-    (tree) => tree.description === "Button to toggle Navbar",
+    (tree) => tree.description === "Button to toggle Navbar"
   );
   const linksComponent = selectedComponent?.children?.find(
-    (tree) => tree.description === "Container for navigation links",
+    (tree) => tree.description === "Container for navigation links"
   );
   const buttonIcon = buttonComponent?.children?.reduce(
     (obj, tree) => ({ ...obj, ...tree }),
-    {} as Component,
+    {} as Component
   );
 
   const isExpanded = selectedComponent?.props?.style.width !== "100px";
@@ -520,7 +528,7 @@ export const loginAction = async ({
                 [key]: value,
               };
             },
-            {} as any,
+            {} as any
           )
         : undefined;
 
@@ -541,7 +549,7 @@ export const loginAction = async ({
 
     const dataSourceAuthConfig = await getDataSourceAuth(
       projectId,
-      endpoint?.dataSourceId!,
+      endpoint?.dataSourceId!
     );
 
     const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
@@ -552,7 +560,7 @@ export const loginAction = async ({
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess",
+        (action: Action) => action.trigger === "onSuccess"
       )!;
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
       onSuccessActionMapped.action({
@@ -567,7 +575,7 @@ export const loginAction = async ({
     if (onError && onError.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError",
+        (action: Action) => action.trigger === "onError"
       )!;
       const onErrorActionMapped = actionMapper[onError.action.name];
       onErrorActionMapped.action({
@@ -597,7 +605,7 @@ function getElementValue(value: string, iframeWindow: any): string {
 
 function getQueryElementValue(value: string, iframeWindow: any): string {
   const el = iframeWindow?.document.querySelector(
-    `input#${value.split("queryString_pass_")[1]}`,
+    `input#${value.split("queryString_pass_")[1]}`
   ) as HTMLInputElement;
   return el?.value ?? "";
 }
@@ -622,11 +630,11 @@ export const apiCallAction = async ({
       {
         // @ts-ignore
         loading: component.actions.find(
-          (a: { id: string }) => a.id === actionId,
+          (a: { id: string }) => a.id === actionId
           // @ts-ignore
         ).action.showLoader,
       },
-      false,
+      false
     );
 
     // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
@@ -688,7 +696,7 @@ export const apiCallAction = async ({
                 [key]: value,
               };
             },
-            {} as any,
+            {} as any
           )
         : undefined;
 
@@ -726,7 +734,7 @@ export const apiCallAction = async ({
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess",
+        (action: Action) => action.trigger === "onSuccess"
       )!;
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
       onSuccessActionMapped.action({
@@ -743,7 +751,7 @@ export const apiCallAction = async ({
     if (onError && onError.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError",
+        (action: Action) => action.trigger === "onError"
       )!;
       const onErrorActionMapped = actionMapper[onError.action.name];
       onErrorActionMapped.action({
@@ -781,7 +789,7 @@ export const bindResponseToComponentAction = ({
             ? bind.value.split("root[0].")[1]
             : bind.value.split("root.")[1],
         },
-        false,
+        false
       );
     }
   });
@@ -806,6 +814,10 @@ export type BindPlaceDataActionParams = ActionParams & {
   action: BindPlaceDataAction;
 };
 
+export type BindPlaceGeometryActionParams = ActionParams & {
+  action: BindPlaceGeometryAction;
+};
+
 export const bindPlaceDataAction = ({
   action,
   data,
@@ -813,10 +825,11 @@ export const bindPlaceDataAction = ({
   const editorTree = useEditorStore.getState().tree;
   const component = getComponentById(
     editorTree.root,
-    action.componentId,
+    action.componentId
   ) as Component;
   const updateTreeComponentChildren =
     useEditorStore.getState().updateTreeComponentChildren;
+
   if (data !== undefined) {
     const predictions: { description: string; place_id: string }[] =
       data.predictions.map((item: Record<string, any>) => {
@@ -826,10 +839,11 @@ export const bindPlaceDataAction = ({
         };
       });
     const newPredictions = predictions.map((pred) => {
+      const predId = nanoid();
       const child = {
         id: nanoid(),
         name: "Text",
-        description: "Search Address",
+        description: "Search Address In Map",
         props: {
           children: pred.description,
           place_Id: pred.place_id,
@@ -842,7 +856,7 @@ export const bindPlaceDataAction = ({
         },
         actions: [
           {
-            id: nanoid(),
+            id: predId,
             trigger: "onClick",
             action: {
               name: "apiCall",
@@ -851,11 +865,17 @@ export const bindPlaceDataAction = ({
               binds: {
                 "Accept-Language": "en",
                 place_id: pred.place_id,
-                key: "AIzaSyCS8ncCNBG7tNRPOdFbdx7fh3Or5qpIpZM",
+                key: "",
                 fields: "geometry,formatted_address,address_components",
                 sessiontoken: "dev",
               },
             },
+          },
+          {
+            id: nanoid(),
+            trigger: "onSuccess",
+            sequentialTo: predId,
+            action: { name: "bindPlaceGeometry" },
           },
         ],
         blockDroppingChildrenInside: true,
@@ -864,6 +884,45 @@ export const bindPlaceDataAction = ({
     });
     updateTreeComponentChildren(component.id!, newPredictions);
   } else updateTreeComponentChildren(component.id!, []);
+};
+
+export const bindPlaceGeometryAction = ({
+  data: { result },
+}: BindPlaceGeometryActionParams) => {
+  const editorTree = useEditorStore.getState().tree;
+  const updateTreeComponentChildren =
+    useEditorStore.getState().updateTreeComponentChildren;
+  const searchResults = getAllComponentsByName(editorTree.root, "Text").filter(
+    (component) => component.description === "Search Address In Map"
+  );
+  const parent = getComponentParent(
+    editorTree.root,
+    searchResults[0].id!
+  ) as Component;
+
+  const {
+    formatted_address,
+    geometry: { location },
+  } = result;
+  const child = {
+    id: nanoid(),
+    name: "GoogleMap",
+    description: "GoogleMap",
+    props: {
+      style: {
+        width: "100%",
+        height: "500px",
+      },
+      center: location,
+      apiKey: "",
+      zoom: 3,
+      language: "en",
+      markers: [{ id: nanoid(), name: formatted_address, position: location }],
+      options: { mapTypeId: "SATELITE", styles: [] } as Options,
+    },
+    blockDroppingChildrenInside: true,
+  } as Component;
+  updateTreeComponentChildren(parent.id!, [child]);
 };
 
 export const actionMapper = {
@@ -937,6 +996,10 @@ export const actionMapper = {
   },
   bindPlaceData: {
     action: bindPlaceDataAction,
+    form: BindPlaceDataActionForm,
+  },
+  bindPlaceGeometry: {
+    action: bindPlaceGeometryAction,
     form: BindPlaceDataActionForm,
   },
 };
