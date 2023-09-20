@@ -7,7 +7,6 @@ import { ProjectResponse, getProjects } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
-  Button,
   Container,
   Flex,
   Grid,
@@ -30,7 +29,7 @@ export default function Projects() {
   const theme = useMantineTheme();
   const authInfo = useAuthInfo();
   const { user } = authInfo || {};
-  const { isLoading, setIsLoading, startLoading, stopLoading } = useAppStore();
+  const { startLoading } = useAppStore();
   const router = useRouter();
 
   const goToEditor = async (projectId: string, pageId: string) => {
@@ -47,13 +46,6 @@ export default function Projects() {
     const result = await getProjects(search);
     setProjects(result.results);
   }, [search]);
-
-  const handleHealthCheck = async () => {
-    const result = await fetch(
-      "https://dev-api-editor-app.azurewebsites.net/v1/healthchecks",
-    );
-    console.log(result.status);
-  };
 
   useEffect(() => {
     fetchProjects();
@@ -87,7 +79,6 @@ export default function Projects() {
                 description="Type what you want to build and customise"
               ></IconTitleDescriptionButton>
             </Link>
-            <Button onClick={handleHealthCheck}>Check Health</Button>
           </Flex>
           {projects && (
             <TextInput
