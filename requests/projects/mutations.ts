@@ -15,14 +15,16 @@ export type ProjectResponse = {
 };
 
 export type ProjectUpdateParams = {
-  friendlyName: string;
+  friendlyName?: string;
   region?: RegionTypes;
+  domain?: string;
+  subDomain?: string;
 };
 
 export const createProject = async (params: ProjectParams) => {
   const response = (await post<ProjectResponse>(
     `/projects`,
-    params
+    params,
   )) as ProjectResponse;
 
   return response;
@@ -30,11 +32,11 @@ export const createProject = async (params: ProjectParams) => {
 
 export const updateProject = async (
   id: string,
-  params: ProjectUpdateParams
+  params: ProjectUpdateParams,
 ) => {
   const response = (await put<ProjectResponse>(
     `/projects/${id}`,
-    params
+    params,
   )) as ProjectResponse;
 
   return response;

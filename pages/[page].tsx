@@ -1,13 +1,14 @@
 import { Live } from "@/components/Live";
 import { getPageBySlug } from "@/requests/pages/queries";
+import { PageResponse } from "@/requests/pages/types";
+import { getByDomain } from "@/requests/projects/queries";
 import { useEditorStore } from "@/stores/editor";
 import { GetServerSidePropsContext } from "next";
+import Head from "next/head";
 import { useEffect } from "react";
 
 function isMatchingUrl(url: string): boolean {
   const pattern = /^.*\.dexla\.io$/;
-
-  // Use the test() method of the regular expression to check if the URL matches the pattern
   return pattern.test(url);
 }
 
@@ -17,25 +18,27 @@ export const getServerSideProps = async ({
 }: GetServerSidePropsContext) => {
   const url = req.headers.host;
 
-  let id = query.id ?? "";
+  let id = "";
   if (isMatchingUrl(url!) || url?.endsWith(".localhost:3000")) {
     id = url?.split(".")[0] as string;
+  } else {
+    const project = await getByDomain(url!);
+    id = project.id;
   }
 
   const page = await getPageBySlug(id as string, query.page as string);
-  console.log({ page });
 
   return {
     props: {
       id,
-      page: page.id,
+      page,
     },
   };
 };
 
 type Props = {
   id: string;
-  page: string;
+  page: PageResponse;
 };
 
 export default function LivePage({ id, page }: Props) {
@@ -47,20 +50,28 @@ export default function LivePage({ id, page }: Props) {
   const setIsLive = useEditorStore((state) => state.setIsLive);
 
   useEffect(() => {
-    if (id && page) {
+    if (id && page?.id) {
       setCurrentProjectId(id);
-      setCurrentPageId(page);
+      setCurrentPageId(page.id);
       setPreviewMode(true);
       setIsLive(true);
     }
   }, [
     id,
-    page,
+    page?.id,
     setCurrentPageId,
     setCurrentProjectId,
     setPreviewMode,
     setIsLive,
   ]);
 
-  return <Live key={page} pageId={page} projectId={id} />;
+  return (
+    <>
+      <Head>
+        <title>{page?.title}</title>
+        <meta name="description" content={page.title} />
+      </Head>
+      <Live key={page?.id} pageId={page?.id} projectId={id} />;
+    </>
+  );
 }

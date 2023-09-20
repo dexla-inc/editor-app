@@ -2,6 +2,7 @@ import { get } from "@/utils/api";
 import { UserRoles } from "@/utils/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
 import { SuccessResponse } from "../datasources/types";
+import { getWithoutAuth } from "@/utils/apiNoAuth";
 
 export type RegionTypes = "FRANCE_CENTRAL" | "US_CENTRAL" | "UK_SOUTH";
 
@@ -60,9 +61,8 @@ export const deploy = async (projectId: string, flag: boolean) => {
 };
 
 export const getByDomain = async (domain: string) => {
-  const response = (await get<ProjectResponse>(
+  const response = (await getWithoutAuth<ProjectResponse>(
     `/projects/${domain}/id`,
-    {},
   )) as ProjectResponse;
 
   return response;

@@ -96,7 +96,7 @@ export default function App(props: AppProps) {
     >
       <AuthProvider isLive={isLive}>
         <Head>
-          <title>Editor</title>
+          <title>{isLive ? "App" : "Editor"}</title>
           <meta name="description" content="Dexla Editor" />
           <meta
             name="viewport"

@@ -1,111 +1,73 @@
-import { InformationAlert } from "@/components/Alerts";
-import { DnsRecord } from "@/components/settings/DnsRecord";
-import {
-  Button,
-  Container,
-  Flex,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-} from "@mantine/core";
-import { useState } from "react";
+import { updateProject } from "@/requests/projects/mutations";
+import { getProject } from "@/requests/projects/queries";
+import { useAppStore } from "@/stores/app";
+import { Button, Container, Stack, TextInput, Title } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useEffect } from "react";
 
 type Props = {
   projectId: string;
 };
 
 export default function DomainSettings({ projectId }: Props) {
-  const [defaultDomain, setDefaultDomain] = useState<string>("");
-  const [stagingUrl, setStagingUrl] = useState<string>("");
-  const [productionUrl, setProductionUrl] = useState<string>("");
-  const [dnsRecords, setDnsRecords] = useState<string>("");
+  const startLoading = useAppStore((state) => state.startLoading);
+  const stopLoading = useAppStore((state) => state.stopLoading);
 
-  const handleSave = async () => {
+  const form = useForm({
+    initialValues: {
+      domain: "",
+      subDomain: "",
+      friendlyName: "",
+    },
+  });
+
+  const handleSubmit = async (values: any) => {
     try {
-      // Placeholder for API calls or logic to save domain settings
-      console.log({
-        defaultDomain,
-        stagingUrl,
-        productionUrl,
-      });
-
-      // Placeholder for API calls or logic to generate DNS records
-      const generatedDnsRecords = "Generated DNS records will appear here";
-      setDnsRecords(generatedDnsRecords);
+      startLoading({ id: "domain", message: "Saving..." });
+      await updateProject(projectId, values);
+      stopLoading({ id: "domain", message: "Saved!" });
     } catch (error) {
       console.error(error);
+      stopLoading({
+        id: "domain",
+        message: "Somethign went wrong",
+        isError: true,
+      });
     }
   };
 
-  // test data
-  const sslData: DnsRecord = {
-    name: "_436450253fd7dae1646b4db4a9853cb6.igc",
-    type: "CNAME",
-    ttl: "1800",
-    value: "_b15f118f06ad6520eb098c23d1808cd4.bkngfjypgb.acm-validations.aws.",
-  };
+  useEffect(() => {
+    const fetch = async () => {
+      const project = await getProject(projectId);
+      form.setFieldValue("friendlyName", project.friendlyName);
+      form.setFieldValue("domain", project.domain ?? "");
+      form.setFieldValue("subDomain", project.subDomain ?? "");
+    };
 
-  const redirectData: DnsRecord = {
-    name: "igc",
-    type: "CNAME",
-    ttl: "1800",
-    value: "d1sjrl9u68o6wo.cloudfront.net.",
-  };
+    fetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId]);
 
   return (
     <Container py="xl">
       <Stack spacing="xl">
         <Title order={2}>Domain Settings</Title>
 
-        <Stack>
-          <Flex align="end" gap="xs">
-            <TextInput
-              label="Default Site Domain"
-              value={defaultDomain}
-              onChange={(e) => setDefaultDomain(e.currentTarget.value)}
-            />
-            <Text c="dimmed">.dexla.ai</Text>
-          </Flex>
-
-          <Title order={3}>Staging</Title>
-          <TextInput
-            label="Custom Staging URL"
-            value={stagingUrl}
-            onChange={(e) => setStagingUrl(e.currentTarget.value)}
-            placeholder="e.g. staging-app.dexla.com"
-          />
-
-          <Title order={3}>Production</Title>
-          <TextInput
-            label="Custom Production URL"
-            value={productionUrl}
-            onChange={(e) => setProductionUrl(e.currentTarget.value)}
-            placeholder="e.g. app.dexla.com"
-          />
-
-          <Button onClick={handleSave}>Save Changes</Button>
-        </Stack>
-
-        {dnsRecords && (
+        <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack>
-            <Title order={3}>SSL Certificate Validation</Title>
-            <InformationAlert
-              text="This record is used to secure your domain name by creating an SSL
-            certificate."
-            ></InformationAlert>
-
-            <DnsRecord dnsRecord={sslData}></DnsRecord>
-
-            <Title order={3}>Redirection</Title>
-            <InformationAlert
-              text=" This record is used to redirect your domain name to your dexla.ai
-            app."
-            ></InformationAlert>
-
-            <DnsRecord dnsRecord={redirectData}></DnsRecord>
+            <TextInput
+              label="Domain"
+              placeholder="Your custom domain"
+              {...form.getInputProps("domain")}
+            />
+            <TextInput
+              label="Subdomain"
+              placeholder="Your custom subdomain"
+              {...form.getInputProps("subDomain")}
+            />
+            <Button type="submit">Save</Button>
           </Stack>
-        )}
+        </form>
       </Stack>
     </Container>
   );

@@ -39,7 +39,7 @@ import { ErrorBoundary } from "react-error-boundary";
 const ToggleNavbarButton = () => {
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
   const setIsNavBarVisible = useEditorStore(
-    (state) => state.setIsNavBarVisible
+    (state) => state.setIsNavBarVisible,
   );
   const IconToggle = isNavBarVisible
     ? IconLayoutNavbarCollapse
@@ -59,7 +59,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const { resetTree, isPreviewMode, setPreviewMode, language, setLanguage } =
     useEditorStore((state) => state);
   const { undo, redo, pastStates, futureStates } = useTemporalStore(
-    (state) => state
+    (state) => state,
   );
 
   const router = useRouter();
@@ -149,7 +149,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                     Redo
                   </Button>
                 </Button.Group>
-                <ChangeHistoryPopover />{" "}
+                <ChangeHistoryPopover />
                 <EditorPreviewModeToggle
                   isPreviewMode={isPreviewMode}
                   setPreviewMode={setPreviewMode}
