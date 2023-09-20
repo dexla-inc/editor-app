@@ -15,7 +15,6 @@ import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 import { PreviousStepActionForm } from "@/components/actions/PreviousStepActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
-import { theme } from "@/pages/_app";
 import {
   getDataSourceAuth,
   getDataSourceEndpoints,
@@ -23,12 +22,18 @@ import {
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
-import { Component, getComponentById } from "@/utils/editor";
+import {
+  Component,
+  getAllComponentsByName,
+  getComponentById,
+  getComponentParent,
+} from "@/utils/editor";
 import { flattenKeysWithRoot } from "@/utils/flattenKeys";
 import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
+import { Options } from "@/components/modifiers/GoogleMap";
 
 const triggers = [
   "onClick",
@@ -59,6 +64,7 @@ export const actions = [
   { name: "apiCall", group: "API & Data" },
   { name: "bindResponse", group: "API & Data" },
   { name: "bindPlaceData", group: "API & Data" },
+  { name: "bindPlaceGeometry", group: "API & Data" },
   { name: "login", group: "API & Data" },
   { name: "goToUrl", group: "Navigation" },
   { name: "navigateToPage", group: "Navigation" },
@@ -187,6 +193,11 @@ export interface BindPlaceDataAction extends BaseAction {
   componentId: string;
 }
 
+export interface BindPlaceGeometryAction extends BaseAction {
+  name: "bindPlaceGeometry";
+  componentId: string;
+}
+
 export type Action = {
   id: string;
   trigger: ActionTrigger;
@@ -207,7 +218,8 @@ export type Action = {
     | ToggleNavbarAction
     | NextStepAction
     | PreviousStepAction
-    | BindPlaceDataAction;
+    | BindPlaceDataAction
+    | BindPlaceGeometryAction;
   sequentialTo?: string;
 };
 
@@ -772,6 +784,10 @@ export type BindPlaceDataActionParams = ActionParams & {
   action: BindPlaceDataAction;
 };
 
+export type BindPlaceGeometryActionParams = ActionParams & {
+  action: BindPlaceGeometryAction;
+};
+
 export const bindPlaceDataAction = ({
   action,
   data,
@@ -783,6 +799,7 @@ export const bindPlaceDataAction = ({
   ) as Component;
   const updateTreeComponentChildren =
     useEditorStore.getState().updateTreeComponentChildren;
+
   if (data !== undefined) {
     const predictions: { description: string; place_id: string }[] =
       data.predictions.map((item: Record<string, any>) => {
@@ -792,10 +809,11 @@ export const bindPlaceDataAction = ({
         };
       });
     const newPredictions = predictions.map((pred) => {
+      const predId = nanoid();
       const child = {
         id: nanoid(),
         name: "Text",
-        description: "Search Address",
+        description: "Search Address In Map",
         props: {
           children: pred.description,
           place_Id: pred.place_id,
@@ -808,7 +826,7 @@ export const bindPlaceDataAction = ({
         },
         actions: [
           {
-            id: nanoid(),
+            id: predId,
             trigger: "onClick",
             action: {
               name: "apiCall",
@@ -817,11 +835,17 @@ export const bindPlaceDataAction = ({
               binds: {
                 "Accept-Language": "en",
                 place_id: pred.place_id,
-                key: "AIzaSyCS8ncCNBG7tNRPOdFbdx7fh3Or5qpIpZM",
+                key: "",
                 fields: "geometry,formatted_address,address_components",
                 sessiontoken: "dev",
               },
             },
+          },
+          {
+            id: nanoid(),
+            trigger: "onSuccess",
+            sequentialTo: predId,
+            action: { name: "bindPlaceGeometry" },
           },
         ],
         blockDroppingChildrenInside: true,
@@ -830,6 +854,45 @@ export const bindPlaceDataAction = ({
     });
     updateTreeComponentChildren(component.id!, newPredictions);
   } else updateTreeComponentChildren(component.id!, []);
+};
+
+export const bindPlaceGeometryAction = ({
+  data: { result },
+}: BindPlaceGeometryActionParams) => {
+  const editorTree = useEditorStore.getState().tree;
+  const updateTreeComponentChildren =
+    useEditorStore.getState().updateTreeComponentChildren;
+  const searchResults = getAllComponentsByName(editorTree.root, "Text").filter(
+    (component) => component.description === "Search Address In Map",
+  );
+  const parent = getComponentParent(
+    editorTree.root,
+    searchResults[0].id!,
+  ) as Component;
+
+  const {
+    formatted_address,
+    geometry: { location },
+  } = result;
+  const child = {
+    id: nanoid(),
+    name: "GoogleMap",
+    description: "GoogleMap",
+    props: {
+      style: {
+        width: "100%",
+        height: "500px",
+      },
+      center: location,
+      apiKey: "",
+      zoom: 3,
+      language: "en",
+      markers: [{ id: nanoid(), name: formatted_address, position: location }],
+      options: { mapTypeId: "SATELITE", styles: [] } as Options,
+    },
+    blockDroppingChildrenInside: true,
+  } as Component;
+  updateTreeComponentChildren(parent.id!, [child]);
 };
 
 export const actionMapper = {
@@ -903,6 +966,10 @@ export const actionMapper = {
   },
   bindPlaceData: {
     action: bindPlaceDataAction,
+    form: BindPlaceDataActionForm,
+  },
+  bindPlaceGeometry: {
+    action: bindPlaceGeometryAction,
     form: BindPlaceDataActionForm,
   },
 };
