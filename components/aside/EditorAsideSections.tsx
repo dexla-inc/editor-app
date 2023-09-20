@@ -17,6 +17,7 @@ import * as LinkModifier from "@/components/modifiers/Link";
 import * as ModalModifier from "@/components/modifiers/Modal";
 import * as PositionModifier from "@/components/modifiers/Position";
 import * as RadioModifier from "@/components/modifiers/Radio";
+import * as RadioItemModifier from "@/components/modifiers/RadioItem";
 import * as SelectModifier from "@/components/modifiers/Select";
 import * as SizeModifier from "@/components/modifiers/Size";
 import * as SpacingModifier from "@/components/modifiers/Spacing";
@@ -67,6 +68,7 @@ const sectionMapper: SectionsMapper = {
   checkbox: CheckboxModifier,
   table: TableModifier,
   radio: RadioModifier,
+  radioItem: RadioItemModifier,
   drawer: DrawerModifier,
   buttonIcon: ButtonIconModifier,
   mapSettings: GoogleMapModifier,
