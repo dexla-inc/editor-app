@@ -25,10 +25,7 @@ const RadioItemComponent = ({
     ...componentProps
   } = component.props as any;
 
-  const setTreeComponentCurrentState = useEditorStore(
-    (state) => state.setTreeComponentCurrentState,
-  );
-
+  const { setTreeComponentCurrentState } = useEditorStore((state) => state);
   const [_checked, setChecked] = useState<boolean>(
     isPreviewMode ? checked : false,
   );
