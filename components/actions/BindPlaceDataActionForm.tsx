@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Select, Stack, TextInput } from "@mantine/core";
+import { Select, Stack } from "@mantine/core";
 import {
   handleLoadingStart,
   handleLoadingStop,
@@ -9,8 +9,6 @@ import {
 } from "./_BaseActionFunctions";
 import { BindPlaceDataAction } from "@/utils/actions";
 import { useForm } from "@mantine/form";
-import { IconCurrentLocation } from "@tabler/icons-react";
-import { ICON_SIZE } from "@/utils/config";
 import { ActionButtons } from "./ActionButtons";
 import { Component, getAllComponentsByName } from "@/utils/editor";
 
@@ -61,7 +59,7 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
         <Select
           size="xs"
           label="Component To Bind"
-          placeholder="Select a modal"
+          placeholder="Select a component"
           data={containers.map((container: Component) => {
             return {
               label: container.description ?? container.id,
