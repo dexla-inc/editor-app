@@ -58,6 +58,11 @@ export const jsonStructure = (props?: any): Component => {
               },
             },
             blockDroppingChildrenInside: true,
+            states: {
+              checked: {
+                name: "IconCircleDot",
+              },
+            },
           },
           {
             id: nanoid(),
