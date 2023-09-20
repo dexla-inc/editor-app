@@ -31,7 +31,7 @@ const regionTypes = (Object.keys(regionTypeLabels) as RegionTypes[]).map(
     value: regionType,
     label: regionTypeLabels[regionType],
     flag: regionTypeFlags[regionType],
-  })
+  }),
 );
 
 interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
@@ -42,7 +42,7 @@ interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
 
 export default function GeneralSettings({ projectId }: Props) {
   const [selectedRegion, setSelectedRegion] = useState<RegionTypes | undefined>(
-    undefined
+    undefined,
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const startLoading = useAppStore((state) => state.startLoading);
@@ -55,7 +55,7 @@ export default function GeneralSettings({ projectId }: Props) {
     },
     validate: {
       friendlyName: (value) =>
-        value.length > 50 ? "Description too long" : null,
+        (value?.length ?? 0) > 50 ? "Description too long" : null,
     },
   });
 
@@ -112,7 +112,7 @@ export default function GeneralSettings({ projectId }: Props) {
           <Text size="sm">{label}</Text>
         </Group>
       </Paper>
-    )
+    ),
   );
   RegionSelectItem.displayName = "RegionSelectItem";
 
