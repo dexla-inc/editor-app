@@ -18,6 +18,7 @@ export type ProjectResponse = {
   similarCompany: string;
   accessLevel: UserRoles;
   isOwner: boolean;
+  deployed: boolean;
 };
 
 type ProjectListResponse = {
@@ -27,11 +28,11 @@ type ProjectListResponse = {
 export const getProjects = async (
   search: string = "",
   offset: number = 0,
-  limit: number = 10
+  limit: number = 10,
 ) => {
   const response = (await get<ProjectListResponse>(
     `/projects?search=${search}&offset=${offset}&limit=${limit}`,
-    {}
+    {},
   )) as ProjectListResponse;
 
   return response;
@@ -40,7 +41,7 @@ export const getProjects = async (
 export const getProject = async (projectId: string) => {
   const response = (await get<ProjectResponse>(
     `/projects/${projectId}`,
-    {}
+    {},
   )) as ProjectResponse;
 
   return response;
