@@ -1,6 +1,5 @@
 import { IconSelector } from "@/components/IconSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
-import { theme } from "@/pages/_app";
 import { useEditorStore } from "@/stores/editor";
 import { debouncedTreeUpdate, getComponentById } from "@/utils/editor";
 import { Stack } from "@mantine/core";
@@ -22,13 +21,14 @@ type ColorMappings = {
 
 export const Modifier = () => {
   const editorTree = useEditorStore((state) => state.tree);
+  const theme = useEditorStore((state) => state.theme);
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
+    (state) => state.selectedComponentId,
   );
 
   const selectedComponent = getComponentById(
     editorTree.root,
-    selectedComponentId as string
+    selectedComponentId as string,
   );
 
   const componentProps = selectedComponent?.props || {};
@@ -61,13 +61,14 @@ export const Modifier = () => {
       Success: "green",
       Neutral: "gray",
       Black: "dark",
-      White: "white",
+      White: "White",
       Border: "dark",
     };
 
     color = colorMappings[color] || "transparent";
 
     const variant = parseInt(index);
+    console.log(theme.colors, { variant, color });
     const colorToRgb =
       color === "transparent"
         ? color

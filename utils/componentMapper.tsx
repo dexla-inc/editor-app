@@ -29,7 +29,6 @@ import { Pagination } from "@/components/mapper/Pagination";
 import { PopOver } from "@/components/mapper/PopOver";
 import { Radio } from "@/components/mapper/Radio";
 import { RadioItem } from "@/components/mapper/RadioItem";
-import { RadioItemComplex } from "@/components/mapper/RadioItemComplex";
 import { Rating } from "@/components/mapper/Rating";
 import { Select } from "@/components/mapper/Select";
 import { Stepper } from "@/components/mapper/Stepper";
@@ -1049,18 +1048,6 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       // @ts-ignore
       <RadioItem component={props.component} renderTree={props.renderTree} />
-    ),
-    modifiers: ["background", "spacing", "size", "border"],
-    actionTriggers: ["onMount"],
-    sequentialTriggers: ["onSuccess", "onError"],
-  },
-  RadioItemComplex: {
-    Component: (props: { component: Component; renderTree: any }) => (
-      // @ts-ignore
-      <RadioItemComplex
-        component={props.component}
-        renderTree={props.renderTree}
-      />
     ),
     modifiers: ["background", "spacing", "size", "border"],
     actionTriggers: ["onMount"],
