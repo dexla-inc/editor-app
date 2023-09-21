@@ -1,9 +1,9 @@
 import { Live } from "@/components/Live";
 import { getPageBySlug } from "@/requests/pages/queries";
 import { PageResponse } from "@/requests/pages/types";
-import { getByDomain } from "@/requests/projects/queries";
+import { getByDomain, getProject } from "@/requests/projects/queries";
 import { useEditorStore } from "@/stores/editor";
-import { GetServerSidePropsContext } from "next";
+import { GetServerSidePropsContext, GetStaticPropsResult } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
 
@@ -12,28 +12,62 @@ function isMatchingUrl(url: string): boolean {
   return pattern.test(url);
 }
 
+function buildBaseUrl(project: any, url: string): string {
+  if (project.id) {
+    return project.subDomain
+      ? `${project.subDomain}.${project.domain}`
+      : project.domain;
+  }
+  return url;
+}
+
+async function fetchProjectByUrl(url: string): Promise<any> {
+  if (url?.endsWith(".localhost:3000")) {
+    const id = url.split(".")[0];
+    return await getProject(id);
+  }
+  return await getByDomain(url);
+}
+
 export const getServerSideProps = async ({
   req,
   query,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host;
 
+  let shouldRedirect = false;
   let id = "";
-  if (isMatchingUrl(url!) || url?.endsWith(".localhost:3000")) {
+  let project;
+  if (url?.endsWith(".localhost:3000") || isMatchingUrl(url!)) {
     id = url?.split(".")[0] as string;
-  } else {
-    const project = await getByDomain(url!);
-    id = project.id;
+    project = await getProject(id);
+  }
+  if (!project?.id) {
+    project = await getByDomain(url!);
+    shouldRedirect = project.domain ? true : false;
+    id = id ?? project.id;
   }
 
+  const baseUrl = buildBaseUrl(project, url!);
   const page = await getPageBySlug(id as string, query.page as string);
 
-  return {
+  var result: GetStaticPropsResult<Props> = {
     props: {
       id,
       page,
     },
   };
+
+  if (shouldRedirect) {
+    result = {
+      redirect: {
+        destination: `https://${baseUrl}${req.url}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return result;
 };
 
 type Props = {
