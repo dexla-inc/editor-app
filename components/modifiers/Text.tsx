@@ -1,7 +1,10 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { UnitInput } from "@/components/UnitInput";
-import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
+import {
+  debouncedTreeComponentPropsUpdate,
+  debouncedTreeUpdate,
+} from "@/utils/editor";
 import { Checkbox, Group, Select, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTextSize } from "@tabler/icons-react";
@@ -19,6 +22,7 @@ export const defaultInputValues = {
   color: "Black.6",
   lineHeight: "",
   letterSpacing: "",
+  align: "left",
   hideIfDataIsEmpty: false,
 };
 
@@ -43,6 +47,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         color: data.color ?? defaultInputValues.color,
         size: data.size ?? defaultInputValues.size,
         weight: data.weight ?? defaultInputValues.weight,
+        align: data.style.textAlign ?? defaultInputValues.align,
         hideIfDataIsEmpty:
           data.hideIfDataIsEmpty ?? defaultInputValues.hideIfDataIsEmpty,
         ...data.style,
@@ -123,14 +128,32 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             }}
           />
         </Group>
-        <ThemeColorSelector
-          label="Color"
-          {...form.getInputProps("color")}
-          onChange={(value: string) => {
-            form.setFieldValue("color", value);
-            debouncedTreeComponentPropsUpdate("color", value);
-          }}
-        />
+        <Group noWrap>
+          <Select
+            label="Align"
+            size="xs"
+            data={[
+              { label: "Left", value: "left" },
+              { label: "Center", value: "center" },
+              { label: "Right", value: "right" },
+            ]}
+            {...form.getInputProps("align")}
+            onChange={(value) => {
+              form.setFieldValue("align", value as string);
+              debouncedTreeUpdate(selectedComponent?.id as string, {
+                style: { textAlign: value },
+              });
+            }}
+          />
+          <ThemeColorSelector
+            label="Color"
+            {...form.getInputProps("color")}
+            onChange={(value: string) => {
+              form.setFieldValue("color", value);
+              debouncedTreeComponentPropsUpdate("color", value);
+            }}
+          />
+        </Group>
       </Stack>
     </form>
   );

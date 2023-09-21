@@ -21,7 +21,11 @@ import {
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
-import { Component, getComponentById } from "@/utils/editor";
+import {
+  Component,
+  getAllComponentsByName,
+  getComponentById,
+} from "@/utils/editor";
 import { flattenKeysWithRoot } from "@/utils/flattenKeys";
 import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
@@ -342,16 +346,47 @@ export const togglePropsAction = ({
   action,
   event,
 }: TogglePropsActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  action.conditionRules.map((item) => {
+  const { updateTreeComponent, tree } = useEditorStore.getState();
+  let componentId = "";
+  action.conditionRules.forEach((item) => {
+    if (item.condition === event) {
+      componentId = item.componentId;
+    }
+
     updateTreeComponent(
       item.componentId,
       {
-        style: { display: item.condition === event ? "flex" : "none" },
+        style: { display: "none" },
       },
       false,
     );
   });
+
+  updateTreeComponent(
+    componentId,
+    {
+      style: { display: "flex" },
+    },
+    false,
+  );
+
+  // const toShowComponent = getComponentById(tree.root, componentId);
+  // if (toShowComponent) {
+  //   getAllComponentsByName(toShowComponent, "RadioItem").forEach(
+  //     (radioItem) => {
+  //       if (radioItem.props?.checked) {
+  //         updateTreeComponent(
+  //           radioItem.id!,
+  //           {
+  //             checked: false,
+  //           },
+  //           false,
+  //         );
+  //         console.log(radioItem.id!);
+  //       }
+  //     },
+  //   );
+  // }
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const { updateTreeComponent, tree: editorTree } = useEditorStore.getState();
