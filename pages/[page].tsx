@@ -23,10 +23,12 @@ export const getServerSideProps = async ({
     id = url?.split(".")[0] as string;
   } else {
     const project = await getByDomain(url!);
+    console.log({ project });
     id = project.id;
   }
 
   const page = await getPageBySlug(id as string, query.page as string);
+  console.log({ id, page, url });
 
   return {
     props: {
