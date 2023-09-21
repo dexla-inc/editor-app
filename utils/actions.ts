@@ -15,6 +15,7 @@ import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 import { PreviousStepActionForm } from "@/components/actions/PreviousStepActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
+import { Options } from "@/components/modifiers/GoogleMap";
 import {
   getDataSourceAuth,
   getDataSourceEndpoints,
@@ -33,7 +34,6 @@ import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
-import { Options } from "@/components/modifiers/GoogleMap";
 
 const triggers = [
   "onClick",
@@ -149,7 +149,11 @@ export interface APICallAction extends BaseAction {
   endpoint: string;
   showLoader?: boolean;
   datasources: DataSourceResponse[];
-  binds?: { [key: string]: any };
+  binds?: {
+    header: { [key: string]: any };
+    parameter: { [key: string]: any };
+    body: { [key: string]: any };
+  };
 }
 
 export interface LoginAction extends Omit<APICallAction, "name"> {
@@ -370,24 +374,24 @@ export const togglePropsAction = ({
       {
         style: { display: item.condition === event ? "flex" : "none" },
       },
-      false
+      false,
     );
   });
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const { updateTreeComponent, tree: editorTree } = useEditorStore.getState();
   const selectedComponent = editorTree.root.children?.find(
-    (tree) => tree.name === "Navbar"
+    (tree) => tree.name === "Navbar",
   );
   const buttonComponent = selectedComponent?.children?.find(
-    (tree) => tree.description === "Button to toggle Navbar"
+    (tree) => tree.description === "Button to toggle Navbar",
   );
   const linksComponent = selectedComponent?.children?.find(
-    (tree) => tree.description === "Container for navigation links"
+    (tree) => tree.description === "Container for navigation links",
   );
   const buttonIcon = buttonComponent?.children?.reduce(
     (obj, tree) => ({ ...obj, ...tree }),
-    {} as Component
+    {} as Component,
   );
 
   const isExpanded = selectedComponent?.props?.style.width !== "100px";
@@ -498,7 +502,7 @@ export const loginAction = async ({
                 [key]: value,
               };
             },
-            {} as any
+            {} as any,
           )
         : undefined;
 
@@ -519,7 +523,7 @@ export const loginAction = async ({
 
     const dataSourceAuthConfig = await getDataSourceAuth(
       projectId,
-      endpoint?.dataSourceId!
+      endpoint?.dataSourceId!,
     );
 
     const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
@@ -530,7 +534,7 @@ export const loginAction = async ({
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess"
+        (action: Action) => action.trigger === "onSuccess",
       )!;
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
       onSuccessActionMapped.action({
@@ -545,7 +549,7 @@ export const loginAction = async ({
     if (onError && onError.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError"
+        (action: Action) => action.trigger === "onError",
       )!;
       const onErrorActionMapped = actionMapper[onError.action.name];
       onErrorActionMapped.action({
@@ -575,7 +579,7 @@ function getElementValue(value: string, iframeWindow: any): string {
 
 function getQueryElementValue(value: string, iframeWindow: any): string {
   const el = iframeWindow?.document.querySelector(
-    `input#${value.split("queryString_pass_")[1]}`
+    `input#${value.split("queryString_pass_")[1]}`,
   ) as HTMLInputElement;
   return el?.value ?? "";
 }
@@ -600,11 +604,11 @@ export const apiCallAction = async ({
       {
         // @ts-ignore
         loading: component.actions.find(
-          (a: { id: string }) => a.id === actionId
+          (a: { id: string }) => a.id === actionId,
           // @ts-ignore
         ).action.showLoader,
       },
-      false
+      false,
     );
 
     // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
@@ -618,6 +622,7 @@ export const apiCallAction = async ({
     const keys = Object.keys(action.binds ?? {});
 
     const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
+    console.log("action.binds", action.binds);
 
     const url =
       keys.length > 0
@@ -666,7 +671,7 @@ export const apiCallAction = async ({
                 [key]: value,
               };
             },
-            {} as any
+            {} as any,
           )
         : undefined;
 
@@ -704,7 +709,7 @@ export const apiCallAction = async ({
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess"
+        (action: Action) => action.trigger === "onSuccess",
       )!;
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
       onSuccessActionMapped.action({
@@ -721,7 +726,7 @@ export const apiCallAction = async ({
     if (onError && onError.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError"
+        (action: Action) => action.trigger === "onError",
       )!;
       const onErrorActionMapped = actionMapper[onError.action.name];
       onErrorActionMapped.action({
@@ -759,7 +764,7 @@ export const bindResponseToComponentAction = ({
             ? bind.value.split("root[0].")[1]
             : bind.value.split("root.")[1],
         },
-        false
+        false,
       );
     }
   });
@@ -795,7 +800,7 @@ export const bindPlaceDataAction = ({
   const editorTree = useEditorStore.getState().tree;
   const component = getComponentById(
     editorTree.root,
-    action.componentId
+    action.componentId,
   ) as Component;
   const updateTreeComponentChildren =
     useEditorStore.getState().updateTreeComponentChildren;
@@ -863,11 +868,11 @@ export const bindPlaceGeometryAction = ({
   const updateTreeComponentChildren =
     useEditorStore.getState().updateTreeComponentChildren;
   const searchResults = getAllComponentsByName(editorTree.root, "Text").filter(
-    (component) => component.description === "Search Address In Map"
+    (component) => component.description === "Search Address In Map",
   );
   const parent = getComponentParent(
     editorTree.root,
-    searchResults[0].id!
+    searchResults[0].id!,
   ) as Component;
 
   const {

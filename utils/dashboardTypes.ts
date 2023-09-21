@@ -187,3 +187,5 @@ export type TeamStatus = "PENDING" | "INVITED" | "ACCEPTED" | "REJECTED";
 export function toSpaced(name: string) {
   return name.replace(/([A-Z])/g, " $1").trim();
 }
+
+export type ApiType = "header" | "parameter" | "body";
