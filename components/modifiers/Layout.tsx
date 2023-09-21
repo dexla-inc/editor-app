@@ -1,10 +1,8 @@
 import { UnitInput } from "@/components/UnitInput";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
-import { useEditorStore } from "@/stores/editor";
 import {
   debouncedTreeComponentStyleUpdate,
   debouncedTreeUpdate,
-  getComponentById,
 } from "@/utils/editor";
 import { Group, SegmentedControl, Select, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -21,6 +19,8 @@ import {
   IconLayoutDistributeVertical,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import { withModifier } from "@/hoc/withModifier";
+import { pick } from "next/dist/lib/pick";
 
 export const icon = IconLayout2;
 export const label = "Layout";
@@ -36,49 +36,38 @@ export const defaultLayoutValues = {
   position: "relative",
 };
 
-export const Modifier = () => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
-  );
-
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string,
-  );
-
-  const componentProps = selectedComponent?.props || {};
-
+export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: defaultLayoutValues,
   });
 
   const [displayType, setDisplayType] = useState(
-    componentProps?.style?.display ?? defaultLayoutValues.display,
+    selectedComponent?.props?.style?.display ?? defaultLayoutValues.display,
   );
 
   useEffect(() => {
-    if (selectedComponentId) {
-      const { style = {} } = componentProps;
+    if (selectedComponent?.id) {
+      const data = pick(selectedComponent.props!, ["style"]);
 
       form.setValues({
-        display: style?.display ?? defaultLayoutValues.display,
-        position: style.position ?? defaultLayoutValues.position,
-        flexWrap: style.flexWrap ?? defaultLayoutValues.flexWrap,
-        flexDirection: style.flexDirection ?? defaultLayoutValues.flexDirection,
-        rowGap: style.rowGap ?? defaultLayoutValues.rowGap,
-        columnGap: style.columnGap ?? defaultLayoutValues.columnGap,
-        alignItems: style.alignItems ?? defaultLayoutValues.alignItems,
+        display: data.style?.display ?? defaultLayoutValues.display,
+        position: data.style.position ?? defaultLayoutValues.position,
+        flexWrap: data.style.flexWrap ?? defaultLayoutValues.flexWrap,
+        flexDirection:
+          data.style.flexDirection ?? defaultLayoutValues.flexDirection,
+        rowGap: data.style.rowGap ?? defaultLayoutValues.rowGap,
+        columnGap: data.style.columnGap ?? defaultLayoutValues.columnGap,
+        alignItems: data.style.alignItems ?? defaultLayoutValues.alignItems,
         justifyContent:
-          style.justifyContent ?? defaultLayoutValues.justifyContent,
+          data.style.justifyContent ?? defaultLayoutValues.justifyContent,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponent?.id]);
 
   return (
-    <form key={selectedComponentId}>
+    <form key={selectedComponent?.id}>
       <Stack spacing="xs">
         <Select
           label="Display"
@@ -113,7 +102,7 @@ export const Modifier = () => {
                 {...form.getInputProps("flexDirection")}
                 onChange={(value) => {
                   form.setFieldValue("flexDirection", value as string);
-                  debouncedTreeUpdate(selectedComponentId as string, {
+                  debouncedTreeUpdate(selectedComponent?.id as string, {
                     style: { flexDirection: value },
                   });
                 }}
@@ -126,7 +115,7 @@ export const Modifier = () => {
                   {...form.getInputProps("rowGap")}
                   onChange={(value) => {
                     form.setFieldValue("rowGap", value as string);
-                    debouncedTreeUpdate(selectedComponentId as string, {
+                    debouncedTreeUpdate(selectedComponent?.id as string, {
                       style: { rowGap: value },
                     });
                   }}
@@ -136,7 +125,7 @@ export const Modifier = () => {
                   {...form.getInputProps("columnGap")}
                   onChange={(value) => {
                     form.setFieldValue("columnGap", value as string);
-                    debouncedTreeUpdate(selectedComponentId as string, {
+                    debouncedTreeUpdate(selectedComponent?.id as string, {
                       style: { columnGap: value },
                     });
                   }}
@@ -198,7 +187,7 @@ export const Modifier = () => {
                 {...form.getInputProps("alignItems")}
                 onChange={(value) => {
                   form.setFieldValue("alignItems", value as string);
-                  debouncedTreeUpdate(selectedComponentId as string, {
+                  debouncedTreeUpdate(selectedComponent?.id as string, {
                     style: { alignItems: value },
                   });
                 }}
@@ -268,7 +257,7 @@ export const Modifier = () => {
                 {...form.getInputProps("justifyContent")}
                 onChange={(value) => {
                   form.setFieldValue("justifyContent", value as string);
-                  debouncedTreeUpdate(selectedComponentId as string, {
+                  debouncedTreeUpdate(selectedComponent?.id as string, {
                     style: { justifyContent: value },
                   });
                 }}
@@ -285,7 +274,7 @@ export const Modifier = () => {
               {...form.getInputProps("flexWrap")}
               onChange={(value) => {
                 form.setFieldValue("flexWrap", value as string);
-                debouncedTreeUpdate(selectedComponentId as string, {
+                debouncedTreeUpdate(selectedComponent?.id as string, {
                   style: { flexWrap: value },
                 });
               }}
@@ -295,4 +284,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});
