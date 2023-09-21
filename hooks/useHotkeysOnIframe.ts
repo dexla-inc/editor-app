@@ -12,13 +12,13 @@ export { getHotkeyHandler };
 export type HotkeyItem = [
   string,
   (event: KeyboardEvent) => void,
-  HotkeyItemOptions?
+  HotkeyItemOptions?,
 ];
 
 function shouldFireEvent(
   event: KeyboardEvent,
   tagsToIgnore: string[],
-  triggerOnContentEditable = false
+  triggerOnContentEditable = false,
 ) {
   if (event.target instanceof HTMLElement) {
     if (triggerOnContentEditable) {
@@ -37,7 +37,7 @@ function shouldFireEvent(
 export function useHotkeysOnIframe(
   hotkeys: HotkeyItem[],
   tagsToIgnore: string[] = ["INPUT", "TEXTAREA", "SELECT"],
-  triggerOnContentEditable = false
+  triggerOnContentEditable = false,
 ) {
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
@@ -55,18 +55,18 @@ export function useHotkeysOnIframe(
 
             handler(event);
           }
-        }
+        },
       );
     };
 
     iframeWindow?.document.documentElement.addEventListener(
       "keydown",
-      keydownListener
+      keydownListener,
     );
     return () =>
       iframeWindow?.document.documentElement.removeEventListener(
         "keydown",
-        keydownListener
+        keydownListener,
       );
   }, [
     hotkeys,
