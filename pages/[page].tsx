@@ -38,24 +38,24 @@ export const getServerSideProps = async ({
   let shouldRedirect = false;
   let id = "";
   let project;
-  if (url?.endsWith(".localhost:3000")) {
+
+  const hasMatchedUrl = isMatchingUrl(url!);
+  if (url?.endsWith(".localhost:3000") || hasMatchedUrl) {
     id = url?.split(".")[0] as string;
     project = await getProject(id);
-  } else if (isMatchingUrl(url!)) {
-    id = url?.split(".")[0] as string;
-    project = await getProject(id);
-    shouldRedirect = project.domain ? true : false;
-    // Don't think we need this else
+
+    if (hasMatchedUrl) {
+      shouldRedirect = project.domain ? true : false;
+    }
   } else {
     project = await getByDomain(url!);
-    shouldRedirect = project.domain ? true : false;
-    id = id ?? project.id;
+    id = project.id ?? id;
   }
 
   const baseUrl = buildBaseUrl(project, url!);
   const page = await getPageBySlug(id as string, query.page as string);
 
-  var result: GetStaticPropsResult<Props> = {
+  var result: GetStaticPropsResult<TGetStaticProps> = {
     props: {
       id,
       page,
@@ -66,7 +66,7 @@ export const getServerSideProps = async ({
     result = {
       redirect: {
         destination: `https://${baseUrl}${req.url}`,
-        permanent: false,
+        permanent: true,
       },
     };
   }
@@ -74,12 +74,12 @@ export const getServerSideProps = async ({
   return result;
 };
 
-type Props = {
+type TGetStaticProps = {
   id: string;
   page: PageResponse;
 };
 
-export default function LivePage({ id, page }: Props) {
+export default function LivePage({ id, page }: TGetStaticProps) {
   const setCurrentProjectId = useEditorStore(
     (state) => state.setCurrentProjectId,
   );
