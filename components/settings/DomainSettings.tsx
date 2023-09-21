@@ -1,10 +1,18 @@
 import { updateProject } from "@/requests/projects/mutations";
 import { getProject } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
-import { addDomainToVercel } from "@/utils/domains";
-import { Button, Container, Stack, TextInput, Title } from "@mantine/core";
+import {
+  Button,
+  Container,
+  Stack,
+  Table,
+  Text,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { InformationAlert, SuccessAlert } from "../Alerts";
 
 type Props = {
   projectId: string;
@@ -13,6 +21,7 @@ type Props = {
 export default function DomainSettings({ projectId }: Props) {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
+  const [verificationStatus, setVerificationStatus] = useState("");
 
   const form = useForm({
     initialValues: {
@@ -29,7 +38,7 @@ export default function DomainSettings({ projectId }: Props) {
         ? `${values.subDomain}.${values.domain}`
         : values.domain;
 
-      const response = await fetch(`/api/domain/addToVercel`, {
+      await fetch(`/api/domain/addToVercel`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -39,11 +48,14 @@ export default function DomainSettings({ projectId }: Props) {
         }),
       });
 
-      const json = await response.json();
-      console.log({ response: json });
-
       await updateProject(projectId, values);
       stopLoading({ id: "domain", message: "Saved!" });
+
+      const verifyResponse = await fetch(
+        `/api/domain/verify?domain=${fullDomain}`,
+      );
+      const verifyJson = await verifyResponse.json();
+      setVerificationStatus(verifyJson.status);
     } catch (error) {
       console.error(error);
       stopLoading({
@@ -70,7 +82,7 @@ export default function DomainSettings({ projectId }: Props) {
           `/api/domain/verify?domain=${fullDomain}`,
         );
         const json = await verifyResponse.json();
-        console.log({ verifyResponse: json });
+        setVerificationStatus(json.status);
       } catch (error) {
         console.log({ error });
       }
@@ -84,6 +96,43 @@ export default function DomainSettings({ projectId }: Props) {
     <Container py="xl">
       <Stack spacing="xl">
         <Title order={2}>Domain Settings</Title>
+
+        {form.values.domain && verificationStatus !== "Valid Configuration" && (
+          <InformationAlert title="Domain Configuration" isHtml>
+            <Text>Please, add the folowing to your DNS configuration:</Text>
+            <Table>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Name</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {form.values.subDomain ? (
+                  <tr>
+                    <td>CNAME</td>
+                    <td>{form.values.subDomain}</td>
+                    <td>cname.vercel-dns.com</td>
+                  </tr>
+                ) : (
+                  <tr>
+                    <td>A</td>
+                    <td>@</td>
+                    <td>76.76.21.21</td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </InformationAlert>
+        )}
+
+        {form.values.domain && verificationStatus === "Valid Configuration" && (
+          <SuccessAlert
+            title="Domain Configuration"
+            text="Your domain is already configured."
+          />
+        )}
 
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack>
