@@ -83,7 +83,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
     ) {
       const copy = cloneDeep(editorTree);
       const component = getComponentById(copy.root, selectedComponentId);
-      removeComponent(copy.root, selectedComponentId as string);
+      removeComponent(copy.root, selectedComponentId);
       setEditorTree(copy, { action: `Removed ${component?.name}` });
       clearSelection();
     }
