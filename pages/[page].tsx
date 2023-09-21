@@ -21,14 +21,6 @@ function buildBaseUrl(project: any, url: string): string {
   return url;
 }
 
-async function fetchProjectByUrl(url: string): Promise<any> {
-  if (url?.endsWith(".localhost:3000")) {
-    const id = url.split(".")[0];
-    return await getProject(id);
-  }
-  return await getByDomain(url);
-}
-
 export const getServerSideProps = async ({
   req,
   query,
