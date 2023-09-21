@@ -38,11 +38,15 @@ export const getServerSideProps = async ({
   let shouldRedirect = false;
   let id = "";
   let project;
-  if (url?.endsWith(".localhost:3000") || isMatchingUrl(url!)) {
+  if (url?.endsWith(".localhost:3000")) {
     id = url?.split(".")[0] as string;
     project = await getProject(id);
-  }
-  if (!project?.id) {
+  } else if (isMatchingUrl(url!)) {
+    id = url?.split(".")[0] as string;
+    project = await getProject(id);
+    shouldRedirect = project.domain ? true : false;
+    // Don't think we need this else
+  } else {
     project = await getByDomain(url!);
     shouldRedirect = project.domain ? true : false;
     id = id ?? project.id;
