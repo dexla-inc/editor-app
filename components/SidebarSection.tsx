@@ -29,12 +29,7 @@ export function SidebarSection({
   onClick,
 }: PropsWithChildren<SidebarSectionProps>) {
   const theme = useMantineTheme();
-  const [opened, setOpened] = useState(false);
-
-  useEffect(() => {
-    initiallyOpened && setOpened(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const [opened, setOpened] = useState(initiallyOpened || false);
 
   const handleSectionClick = () => {
     setOpened((o) => !o);
