@@ -73,8 +73,8 @@ import * as NavbarStructure from "@/components/mapper/structure/Navbar";
 import * as NotImplemented from "@/components/mapper/structure/NotImplemented";
 import * as PaginationStructure from "@/components/mapper/structure/Pagination";
 import * as PopOverStructure from "@/components/mapper/structure/PopOver";
-import * as RadioGroupStructure from "@/components/mapper/structure/Radio";
-import * as RadioComplexGroupStructure from "@/components/mapper/structure/RadioComplex";
+import * as RadioGroupStructure from "@/components/mapper/structure/RadioGroup";
+import * as RadioComplexGroupStructure from "@/components/mapper/structure/RadioGroupComplex";
 import * as RadioItemComplexStructure from "@/components/mapper/structure/RadioItemComplex";
 import * as RadioItemStructure from "@/components/mapper/structure/RadioItem";
 import * as RatingStructure from "@/components/mapper/structure/Rating";
@@ -109,6 +109,9 @@ import {
   IconChartRadar,
   IconCheckbox,
   IconCircleDot,
+  IconCircleDotFilled,
+  IconCircles,
+  IconCirclesFilled,
   IconClick,
   IconContainer,
   IconCursorText,
@@ -131,7 +134,6 @@ import {
   IconPhoto,
   IconPhotoSearch,
   IconPictureInPicture,
-  IconPlaystationCircle,
   IconRowInsertBottom,
   IconRowInsertTop,
   IconSelect,
@@ -262,10 +264,10 @@ export const structureMapper: StructureMapper = {
     Draggable: () => (
       <DraggableComponent
         id="RadioItem"
-        icon={<IconPlaystationCircle size={LARGE_ICON_SIZE} />}
+        icon={<IconCircleDot size={LARGE_ICON_SIZE} />}
       />
     ),
-    icon: <IconPlaystationCircle size={ICON_SIZE} />,
+    icon: <IconCircleDot size={ICON_SIZE} />,
   },
   RadioItemComplex: {
     structure: (props: any) => RadioItemComplexStructure.jsonStructure(props),
@@ -273,32 +275,32 @@ export const structureMapper: StructureMapper = {
     Draggable: () => (
       <DraggableComponent
         id="RadioItemComplex"
-        icon={<IconPlaystationCircle size={LARGE_ICON_SIZE} />}
+        icon={<IconCircleDotFilled size={LARGE_ICON_SIZE} />}
       />
     ),
-    icon: <IconPlaystationCircle size={ICON_SIZE} />,
+    icon: <IconCircleDotFilled size={ICON_SIZE} />,
   },
-  Radio: {
+  RadioGroup: {
     structure: (props: any) => RadioGroupStructure.jsonStructure(props),
     Draggable: () => (
       <DraggableComponent
-        id="Radio"
-        icon={<IconPlaystationCircle size={LARGE_ICON_SIZE} />}
+        id="RadioGroup"
+        icon={<IconCircles size={LARGE_ICON_SIZE} />}
       />
     ),
     category: "Input",
-    icon: <IconPlaystationCircle size={ICON_SIZE} />,
+    icon: <IconCircles size={ICON_SIZE} />,
   },
-  RadioComplex: {
+  RadioGroupComplex: {
     structure: (props: any) => RadioComplexGroupStructure.jsonStructure(props),
     Draggable: () => (
       <DraggableComponent
-        id="RadioComplex"
-        icon={<IconPlaystationCircle size={LARGE_ICON_SIZE} />}
+        id="RadioGroupComplex"
+        icon={<IconCirclesFilled size={LARGE_ICON_SIZE} />}
       />
     ),
     category: "Input",
-    icon: <IconPlaystationCircle size={ICON_SIZE} />,
+    icon: <IconCirclesFilled size={ICON_SIZE} />,
   },
   Checkbox: {
     structure: (props: any) => CheckboxStructure.jsonStructure(props),
