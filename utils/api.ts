@@ -1,22 +1,22 @@
 import { PatchParams } from "@/requests/types";
 import { createClient } from "@propelauth/javascript";
 
+const authClient = createClient({
+  authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
+  enableBackgroundTokenRefresh: false,
+});
+
 type FetchType = {
   url: string;
   method?: string;
   body?: object;
   headers?: object;
   isStream?: boolean;
-  bypassAuth?: boolean;
 };
 
 export const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export async function getAuthToken() {
-  const authClient = createClient({
-    authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
-    enableBackgroundTokenRefresh: true,
-  });
   const authInfo = await authClient.getAuthenticationInfoOrNull();
   return authInfo?.accessToken;
 }
@@ -27,19 +27,11 @@ async function doFetch<Type>({
   body,
   headers = {},
   isStream,
-  bypassAuth = false,
 }: FetchType): Promise<Type | ReadableStream<Uint8Array> | null> {
   return new Promise(async (resolve, reject) => {
     let response = null;
     try {
-      let authInfo = null;
-      if (!bypassAuth) {
-        const authClient = createClient({
-          authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
-          enableBackgroundTokenRefresh: true,
-        });
-        authInfo = await authClient.getAuthenticationInfoOrNull();
-      }
+      const authInfo = await authClient.getAuthenticationInfoOrNull();
 
       response = await fetch(`${baseURL}${url}`, {
         method,
@@ -81,14 +73,12 @@ export async function get<Type>(
   url: FetchType["url"],
   headers?: object,
   isStream?: boolean,
-  bypassAuth?: boolean,
 ): Promise<Type | ReadableStream<Uint8Array> | null> {
   return doFetch<Type | ReadableStream<Uint8Array> | null>({
     url,
     method: "GET",
     headers,
     isStream,
-    bypassAuth,
   });
 }
 
