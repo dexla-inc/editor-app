@@ -1,5 +1,5 @@
 import { Live } from "@/components/Live";
-import { getPageBySlug } from "@/requests/pages/queries";
+import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries";
 import { PageResponse } from "@/requests/pages/types";
 import { getByDomain } from "@/requests/projects/queries";
 import { useEditorStore } from "@/stores/editor";
@@ -27,7 +27,9 @@ export const getServerSideProps = async ({
     id = project.id;
   }
 
-  const page = await getPageBySlug(id as string, query.page as string);
+  const page = await getMostRecentDeploymentByPage(id as string, {
+    slug: query.page as string,
+  });
   console.log({ id, page, url });
 
   return {

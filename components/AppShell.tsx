@@ -22,6 +22,7 @@ import { AIChatHistoryButton } from "@/components/AIChatHistoryButton";
 import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { GenerateAIButton } from "@/components/GenerateAIButton";
+import { DeployButton } from "@/components/DeployButton";
 import { getPageList } from "@/requests/pages/queries";
 import { PageListResponse } from "@/requests/pages/types";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
@@ -153,6 +154,12 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                 <EditorPreviewModeToggle
                   isPreviewMode={isPreviewMode}
                   setPreviewMode={setPreviewMode}
+                />
+                <DeployButton
+                  projectId={projectId}
+                  page={pageResponse.data?.results?.find(
+                    (p) => p.id === currentPageId,
+                  )}
                 />
               </Flex>
             </>
