@@ -1,7 +1,10 @@
 import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 import { SizeSelector } from "@/components/SizeSelector";
 import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
-import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
+import {
+  debouncedTreeComponentPropsUpdate,
+  debouncedTreeUpdate,
+} from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconSelect } from "@tabler/icons-react";
@@ -19,7 +22,9 @@ export const defaultSelectValues = {
   label: "A label",
   icon: "",
   withAsterisk: false,
-  labelSpacing: "0",
+  labelSize: "sm",
+  labelWeight: "normal",
+  labelAlign: "left",
   data: [
     { label: "Option 1", value: "option-1" },
     { label: "Option 2", value: "option-2" },
@@ -39,6 +44,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     if (selectedComponent?.id) {
       const data = pick(selectedComponent.props!, [
         "style",
+        "styles",
         "label",
         "size",
         "placeholder",
@@ -56,9 +62,11 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         label: data.label ?? defaultSelectValues.label,
         icon: data.icon ?? defaultSelectValues.icon,
         withAsterisk: data.withAsterisk ?? defaultSelectValues.withAsterisk,
-        labelProps:
-          data.labelProps?.style?.marginBottom ??
-          defaultSelectValues.labelSpacing,
+        labelSize: data.labelProps.size ?? defaultSelectValues.labelSize,
+        labelWeight:
+          data.styles?.label.fontWeight ?? defaultSelectValues.labelWeight,
+        labelAlign:
+          data.styles?.label.textAlign ?? defaultSelectValues.labelAlign,
         data: data.data ?? defaultSelectValues.data,
         ...data.style,
       });
@@ -108,12 +116,55 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         />
 
         <SizeSelector
-          label="Label Spacing"
-          {...form.getInputProps("labelProps")}
+          {...form.getInputProps("labelSize")}
           onChange={(value) => {
-            setFieldValue("labelProps", value as string);
+            form.setFieldValue("labelSize", value as string);
+            debouncedTreeUpdate(selectedComponent?.id as string, {
+              labelProps: { size: value },
+            });
           }}
         />
+
+        <Select
+          label="Label Align"
+          size="xs"
+          data={[
+            { label: "Left", value: "left" },
+            { label: "Center", value: "center" },
+            { label: "Right", value: "right" },
+          ]}
+          {...form.getInputProps("labelAlign")}
+          onChange={(value) => {
+            form.setFieldValue("labelAlign", value as string);
+            debouncedTreeUpdate(selectedComponent?.id as string, {
+              styles: { label: { textAlign: value } },
+            });
+          }}
+        />
+
+        <Select
+          label="Label Weight"
+          size="xs"
+          data={[
+            { label: "Normal", value: "normal" },
+            { label: "Bold", value: "bold" },
+          ]}
+          {...form.getInputProps("labelWeight")}
+          onChange={(value) => {
+            form.setFieldValue("labelWeight", value as string);
+            debouncedTreeUpdate(selectedComponent?.id as string, {
+              styles: { label: { fontWeight: value } },
+            });
+          }}
+        />
+
+        {/*<SizeSelector*/}
+        {/*  label="Label Spacing"*/}
+        {/*  {...form.getInputProps("labelProps")}*/}
+        {/*  onChange={(value) => {*/}
+        {/*    setFieldValue("labelProps", value as string);*/}
+        {/*  }}*/}
+        {/*/>*/}
         <SelectOptionsForm
           getValue={() => form.getInputProps("data").value}
           setFieldValue={setFieldValue}

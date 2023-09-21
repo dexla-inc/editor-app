@@ -4,6 +4,7 @@ import { Loader, Select as MantineSelect, SelectProps } from "@mantine/core";
 import get from "lodash.get";
 import isEmpty from "lodash.isempty";
 import { memo } from "react";
+import merge from "lodash.merge";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -24,6 +25,7 @@ const SelectComponent = ({
     dataPath,
     triggers,
     loading,
+    styles,
     ...componentProps
   } = component.props as any;
 
@@ -46,6 +48,7 @@ const SelectComponent = ({
 
   return (
     <MantineSelect
+      styles={merge({ label: { width: "100%" } }, styles)}
       {...props}
       {...componentProps}
       {...triggers}

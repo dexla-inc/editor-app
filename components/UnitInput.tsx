@@ -37,7 +37,7 @@ export const UnitInput = ({
   ];
 
   const [splitValue, splitUnit] = splitValueAndUnit(
-    fetchedValue.toString()
+    fetchedValue.toString(),
   ) ?? [0, "auto"];
 
   const [value, setValue] = useState<number | "auto">();
@@ -134,7 +134,6 @@ export const UnitInput = ({
         size="xs"
         hideControls
         value={(value ?? splitValue) as number}
-        autoFocus={unit !== "auto"}
         onChange={(val: number) => {
           handleChange(val.toString());
         }}
