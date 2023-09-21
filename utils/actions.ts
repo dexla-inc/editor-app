@@ -374,24 +374,6 @@ export const togglePropsAction = ({
     },
     false,
   );
-
-  // const toShowComponent = getComponentById(tree.root, componentId);
-  // if (toShowComponent) {
-  //   getAllComponentsByName(toShowComponent, "RadioItem").forEach(
-  //     (radioItem) => {
-  //       if (radioItem.props?.checked) {
-  //         updateTreeComponent(
-  //           radioItem.id!,
-  //           {
-  //             checked: false,
-  //           },
-  //           false,
-  //         );
-  //         console.log(radioItem.id!);
-  //       }
-  //     },
-  //   );
-  // }
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const { updateTreeComponent, tree: editorTree } = useEditorStore.getState();
