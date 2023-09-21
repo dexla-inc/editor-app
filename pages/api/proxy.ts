@@ -1,4 +1,3 @@
-// pages/api/proxy.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(

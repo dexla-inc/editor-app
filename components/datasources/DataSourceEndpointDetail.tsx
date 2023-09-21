@@ -14,6 +14,7 @@ import {
 import { MethodTypes } from "@/requests/types";
 import { useAppStore } from "@/stores/app";
 import { ICON_DELETE } from "@/utils/config";
+import { ApiType } from "@/utils/dashboardTypes";
 import {
   ActionIcon,
   Button,
@@ -60,8 +61,6 @@ type Defaults = {
   parameter: Parameter;
   body: RequestBody;
 };
-
-type ApiType = "header" | "parameter" | "body";
 
 const defaultConfig: { [K in keyof Defaults as ApiType]: Defaults[K] } = {
   header: {
