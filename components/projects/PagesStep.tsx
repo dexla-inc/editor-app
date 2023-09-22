@@ -106,7 +106,7 @@ export default function PagesStep({
       onError,
       onOpen,
       onCloseOverride,
-      pages.join(),
+      pages.join()
     );
   };
 
@@ -153,7 +153,7 @@ export default function PagesStep({
           authenticatedOnly: false,
         } as PageBody;
       }) as PageBody[],
-      projectId,
+      projectId
     );
   };
 
