@@ -1,5 +1,6 @@
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
+import { defaultBorderValues } from "@/components/modifiers/Border";
 
 export const jsonStructure = (props?: any): Component => {
   return {
@@ -8,6 +9,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Button with icon only",
     props: {
       style: {
+        ...defaultBorderValues,
         width: "auto",
         height: "auto",
         display: "flex",

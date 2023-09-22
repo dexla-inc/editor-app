@@ -3,6 +3,7 @@ import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
+  const { labelSize, ...defaultValues } = defaultSelectValues;
   return {
     id: nanoid(),
     name: "Select",
@@ -13,7 +14,8 @@ export const jsonStructure = (props?: any): Component => {
         height: "auto",
         flexDirection: "column",
       },
-      ...defaultSelectValues,
+      labelProps: { size: labelSize },
+      ...defaultValues,
       ...(props.props || {}),
     },
     blockDroppingChildrenInside: true,

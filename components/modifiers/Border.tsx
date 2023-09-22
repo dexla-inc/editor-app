@@ -85,8 +85,8 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           style.borderBottomStyle ?? defaultBorderValues.borderBottomStyle,
         borderLeftStyle:
           style.borderLeftStyle ?? defaultBorderValues.borderLeftStyle,
-        borderColor: style.borderTopColor
-          ? getThemeColor(theme, style.borderTopColor)
+        borderColor: style.borderColor
+          ? getThemeColor(theme, style.borderColor)
           : defaultBorderValues.borderTopColor,
         borderTopColor: style.borderTopColor
           ? getThemeColor(theme, style.borderTopColor)
