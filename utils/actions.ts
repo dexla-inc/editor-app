@@ -135,8 +135,13 @@ export interface OpenToastAction extends BaseAction {
 
 export interface ChangeStateAction extends BaseAction {
   name: "changeState";
-  componentId: string;
-  state?: string;
+  // componentId: string;
+  // state?: string;
+  conditionRules: Array<{
+    condition: string;
+    componentId: string;
+    state: string;
+  }>;
 }
 
 export interface APICallAction extends BaseAction {
@@ -369,24 +374,6 @@ export const togglePropsAction = ({
     },
     false,
   );
-
-  // const toShowComponent = getComponentById(tree.root, componentId);
-  // if (toShowComponent) {
-  //   getAllComponentsByName(toShowComponent, "RadioItem").forEach(
-  //     (radioItem) => {
-  //       if (radioItem.props?.checked) {
-  //         updateTreeComponent(
-  //           radioItem.id!,
-  //           {
-  //             checked: false,
-  //           },
-  //           false,
-  //         );
-  //         console.log(radioItem.id!);
-  //       }
-  //     },
-  //   );
-  // }
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const { updateTreeComponent, tree: editorTree } = useEditorStore.getState();
@@ -423,10 +410,22 @@ export const openToastAction = ({ action }: OpenToastActionParams) => {
   showNotification({ title: action.title, message: action.message });
 };
 
-export const changeStateAction = ({ action }: ChangeStateActionParams) => {
-  const setTreeComponentCurrentState =
-    useEditorStore.getState().setTreeComponentCurrentState;
-  setTreeComponentCurrentState(action.componentId, action.state ?? "default");
+export const changeStateAction = ({
+  action,
+  event,
+}: ChangeStateActionParams) => {
+  const { setTreeComponentCurrentState } = useEditorStore.getState();
+  const skipPreviousList: string[] = [];
+  action.conditionRules.forEach((item) => {
+    if (!skipPreviousList.includes(item.componentId)) {
+      if (item.condition === event || item.condition === "") {
+        setTreeComponentCurrentState(item.componentId, item.state);
+        skipPreviousList.push(item.componentId);
+      } else {
+        setTreeComponentCurrentState(item.componentId, "hidden");
+      }
+    }
+  });
 };
 
 export type APICallActionParams = ActionParams & {

@@ -52,7 +52,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     <form>
       <Stack spacing="xs">
         <TextInput
-          label="Title"
+          label="Label"
           size="xs"
           {...form.getInputProps("label")}
           onChange={(e) => {
@@ -61,30 +61,8 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           }}
         />
         <Group noWrap>
-          <SwitchSelector
-            topLabel="Required"
-            {...form.getInputProps("withAsterisk")}
-            onChange={(event) => {
-              form.setFieldValue("withAsterisk", event.currentTarget.checked);
-              debouncedTreeComponentPropsUpdate(
-                "withAsterisk",
-                event.currentTarget.checked,
-              );
-            }}
-          />
-          <SizeSelector
-            {...form.getInputProps("size")}
-            onChange={(value) => {
-              form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponent?.id as string, {
-                labelProps: { size: value },
-              });
-            }}
-          />
-        </Group>
-        <Group noWrap>
           <Select
-            label="Align"
+            label="Label Align"
             size="xs"
             data={[
               { label: "Left", value: "left" },
@@ -100,7 +78,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             }}
           />
           <Select
-            label="Weight"
+            label="Label Weight"
             size="xs"
             data={[
               { label: "Normal", value: "normal" },
@@ -112,6 +90,29 @@ export const Modifier = withModifier(({ selectedComponent }) => {
               debouncedTreeUpdate(selectedComponent?.id as string, {
                 styles: { label: { fontWeight: value } },
               });
+            }}
+          />
+        </Group>
+        <Group noWrap>
+          <SizeSelector
+            label="Label Size"
+            {...form.getInputProps("size")}
+            onChange={(value) => {
+              form.setFieldValue("size", value as string);
+              debouncedTreeUpdate(selectedComponent?.id as string, {
+                labelProps: { size: value },
+              });
+            }}
+          />
+          <SwitchSelector
+            topLabel="Required"
+            {...form.getInputProps("withAsterisk")}
+            onChange={(event) => {
+              form.setFieldValue("withAsterisk", event.currentTarget.checked);
+              debouncedTreeComponentPropsUpdate(
+                "withAsterisk",
+                event.currentTarget.checked,
+              );
             }}
           />
         </Group>
