@@ -44,6 +44,7 @@ export const IFrame = ({ children, isLive, ...props }: Props) => {
   });
 
   useEffect(() => {
+    console.log({ userTheme });
     if (userTheme.isFetched) {
       setTheme({
         ...theme,

@@ -6,7 +6,9 @@ export const getTheme = async (projectId: string, websiteUrl?: string) => {
   const response = (await get<ThemeResponse>(
     `/projects/${projectId}/themes` +
       (websiteUrl ? `?websiteUrl=${websiteUrl}` : ""),
-    {}
+    {},
+    false,
+    false,
   )) as ThemeResponse;
 
   return response;

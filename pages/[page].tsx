@@ -7,7 +7,7 @@ import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
 
-function isMatchingUrl(url: string): boolean {
+export function isMatchingUrl(url: string): boolean {
   const pattern = /^.*\.dexla\.io$/;
   return pattern.test(url);
 }
@@ -23,14 +23,12 @@ export const getServerSideProps = async ({
     id = url?.split(".")[0] as string;
   } else {
     const project = await getByDomain(url!);
-    console.log({ project });
     id = project.id;
   }
 
   const page = await getMostRecentDeploymentByPage(id as string, {
     slug: query.page as string,
   });
-  console.log({ id, page, url });
 
   return {
     props: {

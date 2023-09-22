@@ -1,3 +1,4 @@
+import { getByDomain } from "@/requests/projects/queries";
 import { cache } from "@/utils/emotionCache";
 import {
   DEFAULT_THEME,
@@ -17,6 +18,8 @@ import { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import Head from "next/head";
 import { Fragment, PropsWithChildren, useEffect, useState } from "react";
+import { isMatchingUrl } from "./[page]";
+import { useRouter } from "next/router";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -38,15 +41,37 @@ export const theme: MantineTheme = {
   primaryColor: "teal",
 };
 
-const AuthProvider = ({
-  children,
-  isLive,
-}: PropsWithChildren<{ isLive: boolean }>) => {
+const AuthProvider = ({ children }: PropsWithChildren) => {
+  const router = useRouter();
   const [isClient, setIsClient] = useState(false);
+  const [isLive, setIsLive] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    const chekcIfIsLive = async () => {
+      // @ts-ignore
+      if (router?.state?.pathname === "/[page]") {
+        setIsLive(true);
+      } else {
+        let id = "";
+        const url = window?.location.host;
+        if (isMatchingUrl(url!) || url?.endsWith(".localhost:3000")) {
+          id = url?.split(".")[0] as string;
+        } else {
+          const project = await getByDomain(url!);
+          id = project.id;
+        }
+
+        if (id) {
+          setIsLive(true);
+        }
+      }
+
+      setIsClient(true);
+    };
+
+    chekcIfIsLive();
+    // @ts-ignore
+  }, [router?.state?.pathname]);
 
   if (!isClient) return null;
 
@@ -72,9 +97,7 @@ const AuthProvider = ({
 };
 
 export default function App(props: AppProps) {
-  const { Component, pageProps, router } = props;
-  // @ts-ignore
-  const isLive = router?.state?.pathname === "/[page]";
+  const { Component, pageProps } = props;
 
   const [queryClient] = useState(
     () =>
@@ -94,9 +117,9 @@ export default function App(props: AppProps) {
       theme={theme}
       emotionCache={cache}
     >
-      <AuthProvider isLive={isLive}>
+      <AuthProvider>
         <Head>
-          <title>{isLive ? "App" : "Editor"}</title>
+          <title>Editor</title>
           <meta name="description" content="Dexla Editor" />
           <meta
             name="viewport"
