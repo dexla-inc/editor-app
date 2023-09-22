@@ -1,8 +1,10 @@
 import { createDeployment } from "@/requests/deployments/mutations";
+import { getProject } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
 import { ICON_SIZE } from "@/utils/config";
 import { Button } from "@mantine/core";
 import { IconLink } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
 
 type Props = {
   projectId: string;
@@ -13,6 +15,7 @@ export const DeployButton = ({ projectId, page }: Props) => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const isLoading = useAppStore((state) => state.isLoading);
+  const [customDomain, setCustomDomain] = useState("");
 
   const handleDeploy = async () => {
     try {
@@ -36,6 +39,23 @@ export const DeployButton = ({ projectId, page }: Props) => {
     }
   };
 
+  useEffect(() => {
+    const fetchProject = async () => {
+      const project = await getProject(projectId);
+
+      const fullDomain = project.subDomain
+        ? `${project.subDomain}.${project.domain}`
+        : project.domain;
+
+      if (fullDomain) {
+        setCustomDomain(fullDomain);
+      }
+    };
+
+    fetchProject();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId]);
+
   return (
     <Button.Group>
       <Button loading={isLoading} disabled={isLoading} onClick={handleDeploy}>
@@ -45,10 +65,10 @@ export const DeployButton = ({ projectId, page }: Props) => {
         onClick={() => {
           const domain = window?.location?.hostname ?? "";
           const isLocalhost = domain.startsWith("localhost");
-          const deployLink = `${
-            isLocalhost ? "http" : "https"
-          }://${projectId}.${
-            isLocalhost ? `${domain}:3000` : domain
+          const deployLink = `${isLocalhost ? "http" : "https"}://${
+            isLocalhost
+              ? `${projectId}.${`${domain}:3000`}`
+              : customDomain ?? domain
           }/${page?.slug}`;
           window?.open(deployLink, "_blank");
         }}
