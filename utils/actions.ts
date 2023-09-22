@@ -1,4 +1,5 @@
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
+import { BindPlaceDataActionForm } from "@/components/actions/BindPlaceDataActionForm";
 import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
 import { ChangeStateActionForm } from "@/components/actions/ChangeStateActionForm";
 import { CloseModalActionForm } from "@/components/actions/CloseModalActionForm";
@@ -14,6 +15,8 @@ import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 import { PreviousStepActionForm } from "@/components/actions/PreviousStepActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
+import { Position } from "@/components/mapper/GoogleMapPlugin";
+import { Options } from "@/components/modifiers/GoogleMap";
 import {
   getDataSourceAuth,
   getDataSourceEndpoints,
@@ -25,6 +28,7 @@ import {
   Component,
   getAllComponentsByName,
   getComponentById,
+  getComponentParent,
 } from "@/utils/editor";
 import { flattenKeysWithRoot } from "@/utils/flattenKeys";
 import { showNotification } from "@mantine/notifications";
@@ -60,6 +64,8 @@ const triggers = [
 export const actions = [
   { name: "apiCall", group: "API & Data" },
   { name: "bindResponse", group: "API & Data" },
+  { name: "bindPlaceData", group: "API & Data" },
+  { name: "bindPlaceGeometry", group: "API & Data" },
   { name: "login", group: "API & Data" },
   { name: "goToUrl", group: "Navigation" },
   { name: "navigateToPage", group: "Navigation" },
@@ -149,7 +155,11 @@ export interface APICallAction extends BaseAction {
   endpoint: string;
   showLoader?: boolean;
   datasources: DataSourceResponse[];
-  binds?: { [key: string]: any };
+  binds?: {
+    header: { [key: string]: any };
+    parameter: { [key: string]: any };
+    body: { [key: string]: any };
+  };
 }
 
 export interface LoginAction extends Omit<APICallAction, "name"> {
@@ -188,6 +198,16 @@ export interface PreviousStepAction extends BaseAction {
   activeStep: number;
 }
 
+export interface BindPlaceDataAction extends BaseAction {
+  name: "bindPlaceData";
+  componentId: string;
+}
+
+export interface BindPlaceGeometryAction extends BaseAction {
+  name: "bindPlaceGeometry";
+  componentId: string;
+}
+
 export type Action = {
   id: string;
   trigger: ActionTrigger;
@@ -207,7 +227,9 @@ export type Action = {
     | ReloadComponentAction
     | ToggleNavbarAction
     | NextStepAction
-    | PreviousStepAction;
+    | PreviousStepAction
+    | BindPlaceDataAction
+    | BindPlaceGeometryAction;
   sequentialTo?: string;
 };
 
@@ -372,7 +394,7 @@ export const togglePropsAction = ({
     {
       style: { display: "flex" },
     },
-    false,
+    false
   );
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
@@ -464,7 +486,7 @@ export const loginAction = async ({
 
     const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
     const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
-    const keys = Object.keys(action.binds ?? {});
+    const keys = Object.keys(action.binds?.parameter ?? {});
 
     const url =
       keys.length > 0
@@ -472,7 +494,7 @@ export const loginAction = async ({
             key.startsWith("type_key_")
               ? (key = key.split(`type_Key_`)[1])
               : key;
-            let value = action.binds?.[key] as string;
+            let value = action.binds?.parameter[key] as string;
 
             if (value?.startsWith(`valueOf_`)) {
               const el = iframeWindow?.document.querySelector(`
@@ -491,9 +513,9 @@ export const loginAction = async ({
 
     const body =
       endpoint?.methodType === "POST"
-        ? Object.keys(action.binds ?? {}).reduce(
+        ? Object.keys(action.binds?.body ?? {}).reduce(
             (body: string, key: string) => {
-              let value = action.binds?.[key] as string;
+              let value = action.binds?.body[key] as string;
 
               if (value.startsWith(`valueOf_`)) {
                 const el = iframeWindow?.document.querySelector(`
@@ -628,7 +650,7 @@ export const apiCallAction = async ({
     }
     const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
 
-    const keys = Object.keys(action.binds ?? {});
+    const keys = Object.keys(action.binds?.parameter ?? {});
 
     const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
 
@@ -639,7 +661,7 @@ export const apiCallAction = async ({
               ? (key = key.split(`type_key_`)[1])
               : key;
             // @ts-ignore
-            let value = action.binds[key] as string;
+            let value = action.binds?.parameter[key] as string;
 
             if (value.startsWith(`valueOf_`)) {
               value = getElementValue(value, iframeWindow);
@@ -661,7 +683,7 @@ export const apiCallAction = async ({
 
     const body =
       endpoint?.methodType === "POST"
-        ? Object.keys(action.binds ?? {}).reduce(
+        ? Object.keys(action.binds?.body ?? {}).reduce(
             (body: string, key: string) => {
               // @ts-ignore
               let value = action.binds[key] as string;
@@ -723,6 +745,7 @@ export const apiCallAction = async ({
       onSuccessActionMapped.action({
         // @ts-ignore
         action: onSuccessAction.action,
+        binds: action.binds,
         router,
         ...rest,
         data: responseJson,
@@ -790,6 +813,132 @@ export const reloadComponentAction = ({
 
   removeOnMountActionsRan(action.onMountActionId ?? "");
   updateTreeComponent(action.componentId, { key: nanoid() }, false);
+};
+
+export type BindPlaceDataActionParams = ActionParams & {
+  action: BindPlaceDataAction;
+};
+
+export type BindPlaceGeometryActionParams = ActionParams & {
+  action: BindPlaceGeometryAction;
+};
+
+export const bindPlaceDataAction = ({
+  action,
+  data,
+}: BindPlaceDataActionParams) => {
+  const editorTree = useEditorStore.getState().tree;
+  const component = getComponentById(
+    editorTree.root,
+    action.componentId,
+  ) as Component;
+  const updateTreeComponentChildren =
+    useEditorStore.getState().updateTreeComponentChildren;
+
+  if (data !== undefined) {
+    const predictions: { description: string; place_id: string }[] =
+      data.predictions.map((item: Record<string, any>) => {
+        return {
+          description: item.description as string,
+          place_id: item.place_id as string,
+        };
+      });
+    const newPredictions = predictions.map((pred) => {
+      const predId = nanoid();
+      const child = {
+        id: nanoid(),
+        name: "Text",
+        description: "Search Address In Map",
+        props: {
+          children: pred.description,
+          place_Id: pred.place_id,
+          sx: {
+            "&:hover": {
+              backgroundColor: `black.9`,
+            },
+            cursor: "pointer",
+          },
+        },
+        actions: [
+          {
+            id: predId,
+            trigger: "onClick",
+            action: {
+              name: "apiCall",
+              showLoader: true,
+              endpoint: "ff9f1ab9b7ea4b458485653809250239",
+              binds: {
+                header: {
+                  "Accept-Language": "en",
+                },
+                parameter: {
+                  place_id: pred.place_id,
+                  key: "AIzaSyCS8ncCNBG7tNRPOdFbdx7fh3Or5qpIpZM",
+                  fields: "geometry,formatted_address,address_components",
+                  sessiontoken: "dev",
+                },
+                body: {},
+              },
+            },
+          },
+          {
+            id: nanoid(),
+            trigger: "onSuccess",
+            sequentialTo: predId,
+            action: { name: "bindPlaceGeometry" },
+          },
+        ],
+        blockDroppingChildrenInside: true,
+      };
+      return child as Component;
+    });
+    updateTreeComponentChildren(component.id!, newPredictions);
+  } else updateTreeComponentChildren(component.id!, []);
+};
+
+export const bindPlaceGeometryAction = ({
+  data: { result },
+}: BindPlaceGeometryActionParams) => {
+  const editorTree = useEditorStore.getState().tree;
+  const updateTreeComponentChildren =
+    useEditorStore.getState().updateTreeComponentChildren;
+  const searchResults = getAllComponentsByName(editorTree.root, "Text").filter(
+    (component) => component.description === "Search Address In Map",
+  );
+  const parent = getComponentParent(
+    editorTree.root,
+    searchResults[0].id!,
+  ) as Component;
+
+  const {
+    formatted_address,
+    geometry: { location },
+  } = result;
+  const child = {
+    id: nanoid(),
+    name: "GoogleMap",
+    description: "GoogleMap",
+    props: {
+      style: {
+        width: "100%",
+        height: "500px",
+      },
+      center: location as Position,
+      apiKey: "AIzaSyCS8ncCNBG7tNRPOdFbdx7fh3Or5qpIpZM",
+      zoom: 10,
+      language: "en",
+      markers: [
+        {
+          id: nanoid(),
+          name: formatted_address,
+          position: location as Position,
+        },
+      ],
+      options: { mapTypeId: "SATELITE", styles: [] } as Options,
+    },
+    blockDroppingChildrenInside: true,
+  } as Component;
+  updateTreeComponentChildren(parent.id!, [child]);
 };
 
 export const actionMapper = {
@@ -860,5 +1009,13 @@ export const actionMapper = {
   previousStep: {
     action: goToPreviousStepAction,
     form: PreviousStepActionForm,
+  },
+  bindPlaceData: {
+    action: bindPlaceDataAction,
+    form: BindPlaceDataActionForm,
+  },
+  bindPlaceGeometry: {
+    action: bindPlaceGeometryAction,
+    form: BindPlaceDataActionForm,
   },
 };

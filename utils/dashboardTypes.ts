@@ -198,3 +198,7 @@ export function convertToPatchParams<T extends Record<string, any>>(
     value: obj[key],
   }));
 }
+
+export type ApiType = "header" | "parameter" | "body";
+
+export type ApiType = "header" | "parameter" | "body";

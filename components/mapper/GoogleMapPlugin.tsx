@@ -77,7 +77,8 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
 
       setInternalZoom(internalZoom);
     },
-    [map, center, apiKey, markers],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [map, center, apiKey, markers]
   );
 
   useEffect(() => {
@@ -115,7 +116,8 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
           <Marker
             key={id}
             position={position}
-            onClick={() => handleActiveMarker(id)}
+            onMouseOver={() => handleActiveMarker(id)}
+            onMouseOut={() => setActiveMarkerId(null)}
           >
             {activeMarkerId === id && (
               <InfoWindow onCloseClick={() => setActiveMarkerId(null)}>
