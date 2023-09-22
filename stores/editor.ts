@@ -4,6 +4,7 @@ import { PageResponse } from "@/requests/pages/types";
 import { Logo } from "@/requests/themes/types";
 import { Action } from "@/utils/actions";
 import { encodeSchema } from "@/utils/compression";
+import { ApiType } from "@/utils/dashboardTypes";
 import {
   Component,
   EditorTree,
@@ -49,9 +50,9 @@ export type ComponentToBind = {
   trigger: string;
   endpointId?: string;
   param?: string;
+  paramType?: ApiType;
   bindedId?: string;
   index?: number;
-  onPick?: (props: any) => void;
 };
 
 export type FeatureToBind = {
@@ -60,8 +61,13 @@ export type FeatureToBind = {
   trigger: string;
   endpointId?: string;
   param?: string;
+  paramType?: ApiType;
   bindedId?: string;
   index?: number;
+};
+
+export type Variables = {
+  key: string;
 };
 
 export type EditorState = {
@@ -146,9 +152,7 @@ export type EditorState = {
   highlightedComponentId?: string | null;
 };
 
-const noop = () => {};
-
-const debouncedUpdatePageState = debounce(updatePageState ?? noop, 2000);
+const debouncedUpdatePageState = debounce(updatePageState, 2000);
 
 // creates a store with undo/redo capability
 export const useEditorStore = create<EditorState>()(
@@ -181,13 +185,7 @@ export const useEditorStore = create<EditorState>()(
           set({ pickingComponentToBindTo }),
         setFeatureToBind: (featureToBind) => set({ featureToBind }),
         setFeatureToBindTo: (featureToBindTo) => set({ featureToBindTo }),
-        setComponentToBind: (componentToBind) => {
-          set((state) => {
-            state.pickingComponentToBindTo?.onPick &&
-              state.pickingComponentToBindTo?.onPick(componentToBind);
-            return { componentToBind };
-          });
-        },
+        setComponentToBind: (componentToBind) => set({ componentToBind }),
         setCopiedComponent: (copiedComponent) => set({ copiedComponent }),
         setTheme: (theme) => set({ theme }),
         setIframeWindow: (iframeWindow) => set({ iframeWindow }),
