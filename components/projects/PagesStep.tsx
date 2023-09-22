@@ -209,6 +209,7 @@ export default function PagesStep({
   // Ensure stream pages only happens once
   useEffect(() => {
     if (pages.length === 0) refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const createManyPages = async (projectId: string) => {
