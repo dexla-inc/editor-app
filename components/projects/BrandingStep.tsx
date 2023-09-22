@@ -142,6 +142,7 @@ export default function BrandingStep({
         primaryColor: "Primary",
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userTheme.isFetched, setTheme, themeResponse]);
 
   const form = useForm({

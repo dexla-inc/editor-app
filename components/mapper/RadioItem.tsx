@@ -39,6 +39,7 @@ const RadioItemComponent = ({
     allChildren.forEach((c) =>
       setTreeComponentCurrentState(c.id!, checked ? "checked" : "default"),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setTreeComponentCurrentState, checked, component.id]);
 
   const defaultTriggers = isPreviewMode

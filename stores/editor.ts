@@ -53,6 +53,7 @@ export type ComponentToBind = {
   paramType?: ApiType;
   bindedId?: string;
   index?: number;
+  onPick?: (props: any) => void;
 };
 
 export type FeatureToBind = {
