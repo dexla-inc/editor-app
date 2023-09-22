@@ -129,7 +129,7 @@ export type Split<S extends string, D extends string> = string extends S
 
 export function replaceBrackets(
   basePath: string,
-  replacements: Record<string, string> | undefined
+  replacements: Record<string, string> | undefined,
 ): string {
   const safeReplacements = replacements || {};
   return basePath.replace(/\[([^\]]+)\]/g, (_, placeholder) => {
@@ -190,7 +190,7 @@ export function toSpaced(name: string) {
 }
 
 export function convertToPatchParams<T extends Record<string, any>>(
-  obj: T
+  obj: T,
 ): PatchParams[] {
   return Object.keys(obj).map((key) => ({
     op: "replace",
@@ -198,5 +198,7 @@ export function convertToPatchParams<T extends Record<string, any>>(
     value: obj[key],
   }));
 }
+
+export type ApiType = "header" | "parameter" | "body";
 
 export type ApiType = "header" | "parameter" | "body";
