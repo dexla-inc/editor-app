@@ -26,7 +26,7 @@ export const TestUserLogin = ({
     setTestLogin({ ...testLoginValues, [name]: value });
   };
   const [userLoggedIn, setUserLoggedIn] = useState<boolean | undefined>(
-    undefined
+    undefined,
   );
 
   const [dataSourceAuthConfig, setDataSourceAuthConfig] =
@@ -42,16 +42,15 @@ export const TestUserLogin = ({
   }, [projectId, dataSourceId]);
 
   const handleLoginClick = async () => {
-    const response = await fetch(
-      url ?? dataSourceAuthConfig?.accessTokenUrl ?? "",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(testLoginValues),
-      }
-    );
+    const loginUrl = dataSourceAuthConfig?.accessTokenUrl ?? "";
+
+    const response = await fetch(loginUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(testLoginValues),
+    });
 
     const responseJson = await response.json();
 
@@ -60,7 +59,7 @@ export const TestUserLogin = ({
         "Failed to log in:",
         response.status,
         response.statusText,
-        responseJson.message
+        responseJson.message,
       );
       setUserLoggedIn(false);
       return;
