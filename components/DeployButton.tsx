@@ -1,4 +1,5 @@
 import { createDeployment } from "@/requests/deployments/mutations";
+import { getMostRecentDeployment } from "@/requests/deployments/queries";
 import { getProject } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
 import { ICON_SIZE } from "@/utils/config";
@@ -16,6 +17,7 @@ export const DeployButton = ({ projectId, page }: Props) => {
   const stopLoading = useAppStore((state) => state.stopLoading);
   const isLoading = useAppStore((state) => state.isLoading);
   const [customDomain, setCustomDomain] = useState("");
+  const [hasDeployed, setHasDeployed] = useState(false);
 
   const handleDeploy = async () => {
     try {
@@ -25,6 +27,7 @@ export const DeployButton = ({ projectId, page }: Props) => {
         message: "Deploying your app...",
       });
       await createDeployment(projectId, { forceProduction: false });
+      setHasDeployed(true);
       stopLoading({
         id: "deploy",
         title: "Deployed",
@@ -42,6 +45,7 @@ export const DeployButton = ({ projectId, page }: Props) => {
   useEffect(() => {
     const fetchProject = async () => {
       const project = await getProject(projectId);
+      const deployments = await getMostRecentDeployment(projectId);
 
       const fullDomain = project.subDomain
         ? `${project.subDomain}.${project.domain}`
@@ -49,6 +53,10 @@ export const DeployButton = ({ projectId, page }: Props) => {
 
       if (fullDomain) {
         setCustomDomain(fullDomain);
+      }
+
+      if (deployments.id) {
+        setHasDeployed(true);
       }
     };
 
@@ -62,6 +70,9 @@ export const DeployButton = ({ projectId, page }: Props) => {
         Deploy
       </Button>
       <Button
+        color="indigo"
+        loading={isLoading}
+        disabled={!hasDeployed || isLoading}
         onClick={() => {
           const domain = window?.location?.hostname ?? "";
           const isLocalhost = domain.startsWith("localhost");
@@ -69,7 +80,7 @@ export const DeployButton = ({ projectId, page }: Props) => {
             isLocalhost
               ? `${projectId}.${`${domain}:3000`}`
               : customDomain ?? domain
-          }/${page?.slug}`;
+          }/${page?.slug === "/" ? "" : page?.slug}`;
           window?.open(deployLink, "_blank");
         }}
       >
