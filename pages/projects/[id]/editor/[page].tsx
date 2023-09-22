@@ -1,4 +1,7 @@
-import { Editor } from "@/components/Editor";
+import dynamic from "next/dynamic";
+const Editor = dynamic(() =>
+  import("@/components/Editor").then((mod) => mod.Editor),
+);
 import { useEditorStore } from "@/stores/editor";
 import { GetServerSidePropsContext } from "next";
 import { useEffect } from "react";
@@ -21,7 +24,7 @@ type Props = {
 
 export default function PageEditor({ id, page }: Props) {
   const setCurrentProjectId = useEditorStore(
-    (state) => state.setCurrentProjectId
+    (state) => state.setCurrentProjectId,
   );
   const setCurrentPageId = useEditorStore((state) => state.setCurrentPageId);
 

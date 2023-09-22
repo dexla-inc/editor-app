@@ -18,6 +18,7 @@ import isEmpty from "lodash.isempty";
 
 export type Component = {
   id?: string;
+  parentComponentId?: string;
   name: string;
   description?: string;
   title?: string;
@@ -759,78 +760,7 @@ export const addComponent = (
   return copy.id as string;
 };
 
-export type ComponentRect = {
-  width: number;
-  height: number;
-  top: number;
-  left: number;
-  right: number;
-  bottom: number;
-  x: number;
-  y: number;
-};
-
-export function leftOfRectangle(
-  rect: DOMRect,
-  left = rect.left,
-  top = rect.top,
-): DOMRect {
-  const newRect = rect.toJSON();
-  newRect.x = left;
-  newRect.y = top + newRect.height * 0.5;
-  return new DOMRect(newRect.x, newRect.y, newRect.width, newRect.height);
-}
-
-export function rightOfRectangle(
-  rect: DOMRect,
-  right = rect.right,
-  top = rect.top,
-): DOMRect {
-  const newRect = rect.toJSON();
-  newRect.x = right;
-  newRect.y = top + newRect.height * 0.5;
-  return new DOMRect(newRect.x, newRect.y, newRect.width, newRect.height);
-}
-
-export function topOfRectangle(
-  rect: DOMRect,
-  left = rect.left,
-  top = rect.top,
-): DOMRect {
-  const newRect = rect.toJSON();
-  newRect.x = left + newRect.width * 0.5;
-  newRect.y = top;
-  return new DOMRect(newRect.x, newRect.y, newRect.width, newRect.height);
-}
-
-export function bottomOfRectangle(
-  rect: DOMRect,
-  left = rect.left,
-  bottom = rect.bottom,
-): DOMRect {
-  const newRect = rect.toJSON();
-  newRect.x = left + newRect.width * 0.5;
-  newRect.y = bottom;
-  return new DOMRect(newRect.x, newRect.y, newRect.width, newRect.height);
-}
-
-export function centerOfRectangle(
-  rect: DOMRect,
-  left = rect.left,
-  top = rect.top,
-): DOMRect {
-  const newRect = rect.toJSON();
-  newRect.x = left + newRect.width * 0.5;
-  newRect.y = top + newRect.height * 0.5;
-
-  return new DOMRect(newRect.x, newRect.y, newRect.width, newRect.height);
-}
-
 export type Edge = "left" | "right" | "top" | "bottom" | "center";
-
-export function distanceBetween(p1: DOMRect, p2: DOMRect) {
-  return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
-}
 
 export const getClosestEdge = (
   left: number,
@@ -846,16 +776,6 @@ export const getClosestEdge = (
 
   return { edge: closestKey, value: all[closestKey as Edge] };
 };
-
-export const debouncedTreeComponentChildrenUpdate = debounce(
-  (value: Component[]) => {
-    const updateTreeComponentChildren =
-      useEditorStore.getState().updateTreeComponentChildren;
-    const selectedComponentId = useEditorStore.getState().selectedComponentId;
-    updateTreeComponentChildren(selectedComponentId as string, value);
-  },
-  300,
-);
 
 export const debouncedTreeComponentPropsUpdate = debounce(
   (field: string, value: any) => {

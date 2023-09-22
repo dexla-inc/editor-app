@@ -32,7 +32,13 @@ import {
 } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { Router, useRouter } from "next/router";
-import { Fragment, PropsWithChildren, cloneElement, useEffect } from "react";
+import {
+  Fragment,
+  PropsWithChildren,
+  cloneElement,
+  useEffect,
+  useMemo,
+} from "react";
 import merge from "lodash.merge";
 
 type Props = {
@@ -45,7 +51,6 @@ const bidingComponentsWhitelist = {
   from: ["Input", "Select"],
   to: ["Text", "Title", "Table", "Container", "Image", "Select"],
 };
-const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
 // Whitelist certain props that can be passed down
 const styleWhitelist = [
   "borderTopLeftRadius",
@@ -76,79 +81,90 @@ export const DroppableDraggable = ({
   const router = useRouter();
   const { hovered, ref } = useHover();
   const theme = useMantineTheme();
-  const editorTheme = useEditorStore((state) => state.theme);
-  const editorTree = useEditorStore((state) => state.tree);
-  const setEditorTree = useEditorStore((state) => state.setTree);
-  const iframeWindow = useEditorStore((state) => state.iframeWindow);
-  const currentTargetId = useEditorStore((state) => state.currentTargetId);
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-  const onMountActionsRan = useEditorStore((state) => state.onMountActionsRan);
-  const addOnMountActionsRan = useEditorStore(
-    (state) => state.addOnMountActionsRan,
-  );
-  const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind,
-  );
-  const pickingComponentToBindFrom = useEditorStore(
-    (state) => state.pickingComponentToBindFrom,
-  );
-  const pickingComponentToBindTo = useEditorStore(
-    (state) => state.pickingComponentToBindTo,
-  );
-  const setSelectedComponentId = useEditorStore(
-    (state) => state.setSelectedComponentId,
-  );
-  const setTreeComponentCurrentState = useEditorStore(
-    (state) => state.setTreeComponentCurrentState,
-  );
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
-  );
-  const currentTreeComponentsStates = useEditorStore(
-    (state) => state.currentTreeComponentsStates,
-  );
-  const language = useEditorStore((state) => state.language);
-  const highlightedComponentId = useEditorStore(
-    (state) => state.highlightedComponentId,
-  );
+
+  const {
+    theme: editorTheme,
+    tree: editorTree,
+    setTree: setEditorTree,
+    iframeWindow,
+    currentTargetId,
+    isPreviewMode,
+    onMountActionsRan,
+    addOnMountActionsRan,
+    setComponentToBind,
+    pickingComponentToBindFrom,
+    pickingComponentToBindTo,
+    setSelectedComponentId,
+    setTreeComponentCurrentState,
+    selectedComponentId,
+    currentTreeComponentsStates,
+    language,
+    highlightedComponentId,
+  } = useEditorStore();
 
   const actions: Action[] = component.actions ?? [];
-  const onMountAction: Action | undefined = actions.find(
-    (action: Action) => action.trigger === "onMount",
-  );
 
-  const onSuccessActions: Action[] = actions.filter(
-    (action: Action) => action.trigger === "onSuccess",
-  );
+  const { onMountAction, onSuccessActions, onErrorActions, nonDefaultActions } =
+    actions.reduce(
+      (acc, action) => {
+        let isDefaultAction = false;
+        if (action.trigger === "onMount") {
+          acc.onMountAction = action;
+          isDefaultAction = true;
+        }
+        if (action.trigger === "onSuccess") {
+          acc.onSuccessActions.push(action);
+          isDefaultAction = true;
+        }
+        if (action.trigger === "onError") {
+          acc.onErrorActions.push(action);
+          isDefaultAction = true;
+        }
 
-  const onErrorActions: Action[] = actions.filter(
-    (action: Action) => action.trigger === "onError",
-  );
+        if (!isDefaultAction) {
+          acc.nonDefaultActions.push(action);
+        }
 
-  const triggers = actions.reduce(
-    (acc, action: Action) => {
-      if (nonDefaultActionTriggers.includes(action.trigger)) {
         return acc;
-      }
+      },
+      {
+        onSuccessActions: [],
+        onErrorActions: [],
+        nonDefaultActions: [],
+      } as {
+        onMountAction?: Action;
+        onSuccessActions: Action[];
+        onErrorActions: Action[];
+        nonDefaultActions: Action[];
+      },
+    );
 
-      return {
-        ...acc,
-        [action.trigger]: (e: any) =>
-          actionMapper[action.action.name].action({
-            // @ts-ignore
-            action: action.action,
-            actionId: action.id,
-            router: router as Router,
-            event: e,
-            onSuccess: onSuccessActions.find(
-              (sa) => sa.sequentialTo === action.id,
-            ),
-            onError: onErrorActions.find((ea) => ea.sequentialTo === action.id),
-            component,
-          }),
-      };
-    },
-    {} as Record<ActionTrigger, any>,
+  const triggers = useMemo(
+    () =>
+      nonDefaultActions.reduce(
+        (acc, action: Action) => {
+          return {
+            ...acc,
+            [action.trigger]: (e: any) =>
+              actionMapper[action.action?.name].action({
+                // @ts-ignore
+                action: action.action,
+                actionId: action.id,
+                router: router as Router,
+                event: e,
+                onSuccess: onSuccessActions.find(
+                  (sa) => sa.sequentialTo === action.id,
+                ),
+                onError: onErrorActions.find(
+                  (ea) => ea.sequentialTo === action.id,
+                ),
+                component,
+              }),
+          };
+        },
+        {} as Record<ActionTrigger, any>,
+      ),
+    [nonDefaultActions, onSuccessActions, onErrorActions, component, router],
   );
 
   useEffect(() => {
@@ -158,7 +174,7 @@ export const DroppableDraggable = ({
       !onMountActionsRan.includes(onMountAction.id)
     ) {
       addOnMountActionsRan(onMountAction.id);
-      actionMapper[onMountAction.action.name].action({
+      actionMapper[onMountAction.action?.name].action({
         // @ts-ignore
         action: onMountAction.action,
         actionId: onMountAction.id,
@@ -175,7 +191,10 @@ export const DroppableDraggable = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPreviewMode, onMountAction, onMountActionsRan, component]);
 
-  const parent = getComponentParent(editorTree.root, id);
+  const parent = useMemo(
+    () => getComponentParent(editorTree.root, id),
+    [editorTree.root, id],
+  );
 
   const onDragStart = useOnDragStart();
   const onDrop = useOnDrop();
@@ -299,12 +318,8 @@ export const DroppableDraggable = ({
       id={id}
       pos="relative"
       sx={{
-        width: component.props?.style?.width
-          ? component.props?.style?.width
-          : "auto",
-        height: component.props?.style?.height
-          ? component.props?.style?.height
-          : "auto",
+        width: component.props?.style?.width ?? "auto",
+        height: component.props?.style?.height ?? "auto",
         "&:before": {
           ...(!isPreviewMode ? shadows : {}),
           content: '""',
