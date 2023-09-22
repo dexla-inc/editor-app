@@ -1,9 +1,8 @@
 import { ThemeResponse } from "@/requests/themes/types";
-import { get } from "@/utils/api";
+import { getWithoutAuth } from "@/utils/apiNoAuth";
 
-// This saves theme from BrandFetch in back end
 export const getTheme = async (projectId: string) => {
-  const response = (await get<ThemeResponse>(
+  const response = (await getWithoutAuth<ThemeResponse>(
     `/projects/${projectId}/themes`,
   )) as ThemeResponse;
 
