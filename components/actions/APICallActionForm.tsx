@@ -192,7 +192,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   useEffect(() => {
     if (featureToBindTo) {
       form.setFieldValue(
-        `binds.typeKey_${featureToBindTo.key}`,
+        `binds.${featureToBindTo.paramType}.typeKey_${featureToBindTo.key}`,
         `queryString_pass_${featureToBindTo.value}`,
       );
       queries.setFieldValue("param", featureToBindTo.param as string);
@@ -261,7 +261,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     if (componentToBind && pickingComponentToBindFrom) {
       if (pickingComponentToBindFrom.componentId === component?.id) {
         form.setFieldValue(
-          `binds.${pickingComponentToBindFrom.param}`,
+          `binds.${pickingComponentToBindFrom.paramType}.${pickingComponentToBindFrom.param}`,
           `valueOf_${componentToBind}`,
         );
 
@@ -376,7 +376,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                   {items.map((param) => {
                     let additionalProps = {};
                     if (
-                      items.name === "Authorization" &&
+                      param.name === "Authorization" &&
                       param.type === "BEARER"
                     ) {
                       const token = accessToken();
@@ -420,6 +420,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                                     trigger: action.trigger,
                                     endpointId: selectedEndpoint.id,
                                     param: param.name,
+                                    paramType: type,
                                     bindedId:
                                       form.values.binds?.[type][param.name] ??
                                       "",
@@ -485,6 +486,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                                           trigger: action.trigger,
                                           endpointId: selectedEndpoint.id,
                                           param: param.name,
+                                          paramType: type,
                                           bindedId:
                                             form.values.binds?.[type][
                                               param.name

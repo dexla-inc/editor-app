@@ -15,6 +15,7 @@ import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 import { PreviousStepActionForm } from "@/components/actions/PreviousStepActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
+import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { Options } from "@/components/modifiers/GoogleMap";
 import {
   getDataSourceAuth,
@@ -485,7 +486,7 @@ export const loginAction = async ({
 
     const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
     const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
-    const keys = Object.keys(action.binds ?? {});
+    const keys = Object.keys(action.binds?.parameter ?? {});
 
     const url =
       keys.length > 0
@@ -493,7 +494,7 @@ export const loginAction = async ({
             key.startsWith("type_key_")
               ? (key = key.split(`type_Key_`)[1])
               : key;
-            let value = action.binds?.[key] as string;
+            let value = action.binds?.parameter[key] as string;
 
             if (value?.startsWith(`valueOf_`)) {
               const el = iframeWindow?.document.querySelector(`
@@ -512,9 +513,9 @@ export const loginAction = async ({
 
     const body =
       endpoint?.methodType === "POST"
-        ? Object.keys(action.binds ?? {}).reduce(
+        ? Object.keys(action.binds?.body ?? {}).reduce(
             (body: string, key: string) => {
-              let value = action.binds?.[key] as string;
+              let value = action.binds?.body[key] as string;
 
               if (value.startsWith(`valueOf_`)) {
                 const el = iframeWindow?.document.querySelector(`
@@ -649,10 +650,9 @@ export const apiCallAction = async ({
     }
     const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
 
-    const keys = Object.keys(action.binds ?? {});
+    const keys = Object.keys(action.binds?.parameter ?? {});
 
     const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
-    console.log("action.binds", action.binds);
 
     const url =
       keys.length > 0
@@ -661,7 +661,7 @@ export const apiCallAction = async ({
               ? (key = key.split(`type_key_`)[1])
               : key;
             // @ts-ignore
-            let value = action.binds[key] as string;
+            let value = action.binds?.parameter[key] as string;
 
             if (value.startsWith(`valueOf_`)) {
               value = getElementValue(value, iframeWindow);
@@ -683,7 +683,7 @@ export const apiCallAction = async ({
 
     const body =
       endpoint?.methodType === "POST"
-        ? Object.keys(action.binds ?? {}).reduce(
+        ? Object.keys(action.binds?.body ?? {}).reduce(
             (body: string, key: string) => {
               // @ts-ignore
               let value = action.binds[key] as string;
@@ -868,11 +868,16 @@ export const bindPlaceDataAction = ({
               showLoader: true,
               endpoint: "ff9f1ab9b7ea4b458485653809250239",
               binds: {
-                "Accept-Language": "en",
-                place_id: pred.place_id,
-                key: "",
-                fields: "geometry,formatted_address,address_components",
-                sessiontoken: "dev",
+                header: {
+                  "Accept-Language": "en",
+                },
+                parameter: {
+                  place_id: pred.place_id,
+                  key: "AIzaSyCS8ncCNBG7tNRPOdFbdx7fh3Or5qpIpZM",
+                  fields: "geometry,formatted_address,address_components",
+                  sessiontoken: "dev",
+                },
+                body: {},
               },
             },
           },
@@ -918,11 +923,17 @@ export const bindPlaceGeometryAction = ({
         width: "100%",
         height: "500px",
       },
-      center: location,
-      apiKey: "",
-      zoom: 3,
+      center: location as Position,
+      apiKey: "AIzaSyCS8ncCNBG7tNRPOdFbdx7fh3Or5qpIpZM",
+      zoom: 10,
       language: "en",
-      markers: [{ id: nanoid(), name: formatted_address, position: location }],
+      markers: [
+        {
+          id: nanoid(),
+          name: formatted_address,
+          position: location as Position,
+        },
+      ],
       options: { mapTypeId: "SATELITE", styles: [] } as Options,
     },
     blockDroppingChildrenInside: true,
