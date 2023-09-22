@@ -8,8 +8,10 @@ export type SaveThemeProps = {
 
 export async function saveTheme(
   projectId: string,
-  params: ThemeResponse
+  params: ThemeResponse,
+  websiteUrl?: string,
 ): Promise<ThemeResponse>;
+
 export async function saveTheme({
   params,
   projectId,
@@ -17,7 +19,8 @@ export async function saveTheme({
 
 export async function saveTheme(
   projectIdOrProps: string | SaveThemeProps,
-  params?: ThemeResponse
+  params?: ThemeResponse,
+  websiteUrl?: string,
 ): Promise<ThemeResponse> {
   let projectId;
 
@@ -30,8 +33,9 @@ export async function saveTheme(
   }
 
   const response = (await post<ThemeResponse>(
-    `/projects/${projectId}/themes`,
-    params
+    `/projects/${projectId}/themes` +
+      (websiteUrl ? `?websiteUrl=${websiteUrl}` : ""),
+    params,
   )) as ThemeResponse;
   return response;
 }

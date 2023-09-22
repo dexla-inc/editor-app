@@ -52,11 +52,11 @@ type BrandingParams = {
 function updateThemeResponseColor(
   themeResponse: ThemeResponse,
   colorIndex: number,
-  updatedColor: Color
+  updatedColor: Color,
 ): ThemeResponse {
   // Deep clone the themeResponse object
   const updatedThemeResponse: ThemeResponse = JSON.parse(
-    JSON.stringify(themeResponse)
+    JSON.stringify(themeResponse),
   );
 
   // Update the color
@@ -67,11 +67,11 @@ function updateThemeResponseColor(
 
 function updateThemeResponseFontFamily(
   themeResponse: ThemeResponse,
-  fontFamily: string
+  fontFamily: string,
 ): ThemeResponse {
   // Deep clone the themeResponse object
   const updatedThemeResponse: ThemeResponse = JSON.parse(
-    JSON.stringify(themeResponse)
+    JSON.stringify(themeResponse),
   );
 
   // Update the fontFamily for all fonts
@@ -197,7 +197,7 @@ export default function BrandingStep({
         message: "Wait while we get your brand",
       });
 
-      const theme = await getTheme(projectId, websiteUrl);
+      const theme = await saveTheme(projectId, {} as ThemeResponse, websiteUrl);
 
       setThemeResponse(theme);
 
@@ -274,7 +274,7 @@ export default function BrandingStep({
                           return updateThemeResponseColor(
                             prevThemeResponse,
                             index,
-                            updatedColor
+                            updatedColor,
                           );
                         });
                       }}
@@ -303,7 +303,7 @@ export default function BrandingStep({
                 onChange={(value) => {
                   const updatedThemeResponse = updateThemeResponseFontFamily(
                     themeResponse,
-                    value as string
+                    value as string,
                   );
                   setThemeResponse(updatedThemeResponse);
                 }}
