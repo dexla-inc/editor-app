@@ -1,7 +1,13 @@
 import { InformationAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
 import { Icon } from "@/components/Icon";
+import {
+  createDataSource,
+  createDataSourceEndpoint,
+} from "@/requests/datasources/mutations";
 import { createPageList, createPages } from "@/requests/pages/mutations";
+import { PageBody } from "@/requests/pages/types";
+import { createVariable } from "@/requests/variables/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
@@ -23,14 +29,8 @@ import {
 import { IconCircleCheck, IconPlus, IconSparkles } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
 import { SetStateAction, useEffect, useRef } from "react";
-import NextButton from "../NextButton";
 import slugify from "slugify";
-import { PageBody } from "@/requests/pages/types";
-import {
-  createDataSource,
-  createDataSourceEndpoint,
-} from "@/requests/datasources/mutations";
-import { createVariable } from "@/requests/variables/mutations";
+import NextButton from "../NextButton";
 
 export const getServerSideProps = async ({
   query,
