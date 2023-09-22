@@ -1,6 +1,7 @@
-import { updateProject } from "@/requests/projects/mutations";
+import { patchProject } from "@/requests/projects/mutations";
 import { getProject } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
+import { convertToPatchParams } from "@/utils/dashboardTypes";
 import {
   Button,
   Container,
@@ -18,20 +19,24 @@ type Props = {
   projectId: string;
 };
 
+type FormProps = {
+  domain: string;
+  subDomain: string;
+};
+
 export default function DomainSettings({ projectId }: Props) {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const [verificationStatus, setVerificationStatus] = useState("");
 
-  const form = useForm({
+  const form = useForm<FormProps>({
     initialValues: {
       domain: "",
       subDomain: "",
-      friendlyName: "",
     },
   });
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: FormProps) => {
     try {
       startLoading({ id: "domain", message: "Saving..." });
       const fullDomain = values.subDomain
@@ -48,7 +53,9 @@ export default function DomainSettings({ projectId }: Props) {
         }),
       });
 
-      await updateProject(projectId, values);
+      const patchParams = convertToPatchParams<FormProps>(values);
+
+      await patchProject(projectId, patchParams);
       stopLoading({ id: "domain", message: "Saved!" });
 
       const verifyResponse = await fetch(
@@ -69,7 +76,6 @@ export default function DomainSettings({ projectId }: Props) {
   useEffect(() => {
     const fetchProject = async () => {
       const project = await getProject(projectId);
-      form.setFieldValue("friendlyName", project.friendlyName);
       form.setFieldValue("domain", project.domain ?? "");
       form.setFieldValue("subDomain", project.subDomain ?? "");
 

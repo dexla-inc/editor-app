@@ -1,10 +1,14 @@
 import {
   ProjectUpdateParams,
-  updateProject,
+  patchProject,
 } from "@/requests/projects/mutations";
 import { RegionTypes, getProject } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
-import { regionTypeFlags, regionTypeLabels } from "@/utils/dashboardTypes";
+import {
+  convertToPatchParams,
+  regionTypeFlags,
+  regionTypeLabels,
+} from "@/utils/dashboardTypes";
 import {
   Avatar,
   Button,
@@ -70,7 +74,9 @@ export default function GeneralSettings({ projectId }: Props) {
 
       form.validate();
 
-      await updateProject(projectId, values);
+      const patchParams = convertToPatchParams<ProjectUpdateParams>(values);
+      console.log(patchParams);
+      await patchProject(projectId, patchParams);
 
       stopLoading({
         id: "updating-project",

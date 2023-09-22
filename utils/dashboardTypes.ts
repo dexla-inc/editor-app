@@ -1,5 +1,6 @@
 import { DataSourceResponse } from "@/requests/datasources/types";
 import { RegionTypes } from "@/requests/projects/queries";
+import { PatchParams } from "@/requests/types";
 import { DexlaNotificationProps } from "@/stores/app";
 
 export type NavbarTypes = "editor" | "company" | "project";
@@ -186,4 +187,14 @@ export type TeamStatus = "PENDING" | "INVITED" | "ACCEPTED" | "REJECTED";
 
 export function toSpaced(name: string) {
   return name.replace(/([A-Z])/g, " $1").trim();
+}
+
+export function convertToPatchParams<T extends Record<string, any>>(
+  obj: T,
+): PatchParams[] {
+  return Object.keys(obj).map((key) => ({
+    op: "replace",
+    path: `/${key}`,
+    value: obj[key],
+  }));
 }

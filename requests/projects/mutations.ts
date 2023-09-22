@@ -1,5 +1,6 @@
 import { RegionTypes } from "@/requests/projects/queries";
-import { del, post, put } from "@/utils/api";
+import { PatchParams } from "@/requests/types";
+import { del, patch, post } from "@/utils/api";
 import { ProjectTypes } from "@/utils/projectTypes";
 
 export interface ProjectParams extends ProjectUpdateParams {
@@ -30,11 +31,8 @@ export const createProject = async (params: ProjectParams) => {
   return response;
 };
 
-export const updateProject = async (
-  id: string,
-  params: ProjectUpdateParams,
-) => {
-  const response = (await put<ProjectResponse>(
+export const patchProject = async (id: string, params: PatchParams[]) => {
+  const response = (await patch<ProjectResponse>(
     `/projects/${id}`,
     params,
   )) as ProjectResponse;
