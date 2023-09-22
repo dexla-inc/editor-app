@@ -473,11 +473,15 @@ export const DataSourceEndpointDetail = ({
 
         {state.headers.map((item, index) => (
           <Flex key={index} align="center" gap="md">
-            <Select
-              data={["string", "number", "boolean", "datetime"]}
+            <TextInput
               value={item.type}
-              onChange={(value) =>
-                handleArrayChange(index, "type", value, "header")
+              onChange={(event) =>
+                handleArrayChange(
+                  index,
+                  "type",
+                  event.currentTarget.value,
+                  "header",
+                )
               }
               sx={{ width: 110 }}
             />
@@ -627,9 +631,10 @@ export const DataSourceEndpointDetail = ({
             </Tooltip>
           </Flex>
         ))}
-        <Tabs defaultValue="example" py="md">
+        <Tabs defaultValue="example" py="md" keepMounted={false}>
           <Tabs.List>
             <Tabs.Tab value="example">Example Response</Tabs.Tab>
+            <Tabs.Tab value="error">Error Response</Tabs.Tab>
             <Tabs.Tab value="actual" disabled>
               Actual Response
             </Tabs.Tab>
@@ -638,14 +643,26 @@ export const DataSourceEndpointDetail = ({
             <Editor
               height={endpoint.exampleResponse ? "250px" : "100px"}
               defaultLanguage="json"
-              value={
-                state.exampleResponse ? JSON.parse(state.exampleResponse) : ""
-              }
+              value={state.exampleResponse}
               onChange={(value) => {
-                debouncedInputChange(
-                  "exampleResponse",
-                  JSON.stringify(value) as string,
-                );
+                debouncedInputChange("exampleResponse", value);
+              }}
+              options={{
+                wordWrap: "on",
+                scrollBeyondLastLine: false,
+                minimap: {
+                  enabled: false,
+                },
+              }}
+            />
+          </Tabs.Panel>
+          <Tabs.Panel value="error" pt="xs">
+            <Editor
+              height={endpoint.errorExampleResponse ? "250px" : "100px"}
+              defaultLanguage="json"
+              value={state.errorExampleResponse}
+              onChange={(value) => {
+                debouncedInputChange("errorExampleResponse", value);
               }}
               options={{
                 wordWrap: "on",

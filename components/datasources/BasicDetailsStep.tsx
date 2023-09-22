@@ -63,10 +63,19 @@ export default function BasicDetailsStep({
     },
   });
 
+  function handleNextStep(authScheme: AuthenticationSchemes | undefined) {
+    if (authScheme === "NONE") {
+      nextStep();
+      nextStep();
+    } else {
+      nextStep();
+    }
+  }
+
   const onSubmit = async (values: DataSourceParams) => {
     try {
       if (areValuesEqual<DataSourceParams>(values, dataSource)) {
-        nextStep();
+        handleNextStep(values.authenticationScheme);
         return;
       }
 
@@ -91,12 +100,7 @@ export default function BasicDetailsStep({
 
       setDataSource(result);
 
-      if (values.authenticationScheme === "NONE") {
-        nextStep();
-        nextStep();
-      } else {
-        nextStep();
-      }
+      handleNextStep(values.authenticationScheme);
 
       stopLoading({
         id: "creating",
