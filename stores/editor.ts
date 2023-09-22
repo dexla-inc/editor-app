@@ -4,7 +4,6 @@ import { PageResponse } from "@/requests/pages/types";
 import { Logo } from "@/requests/themes/types";
 import { Action } from "@/utils/actions";
 import { encodeSchema } from "@/utils/compression";
-import { ApiType } from "@/utils/dashboardTypes";
 import {
   Component,
   EditorTree,
@@ -77,10 +76,10 @@ export type EditorState = {
   sequentialTo?: string;
   setSequentialTo: (sequentialTo?: string) => void;
   setPickingComponentToBindTo: (
-    pickingComponentToBindTo?: ComponentToBind
+    pickingComponentToBindTo?: ComponentToBind,
   ) => void;
   setPickingComponentToBindFrom: (
-    pickingComponentToBindFrom?: ComponentToBind
+    pickingComponentToBindFrom?: ComponentToBind,
   ) => void;
   setComponentToBind: (componentToBind?: string) => void;
   addOnMountActionsRan: (action: string) => void;
@@ -93,7 +92,7 @@ export type EditorState = {
   setCurrentTargetId: (currentTargetId?: string) => void;
   setTree: (
     tree: EditorTree,
-    options?: { onLoad?: boolean; action?: string }
+    options?: { onLoad?: boolean; action?: string },
   ) => void;
   resetTree: () => void;
   setCurrentProjectId: (currentProjectId: string) => void;
@@ -102,24 +101,24 @@ export type EditorState = {
   updateTreeComponent: (
     componentId: string,
     props: any,
-    save?: boolean
+    save?: boolean,
   ) => void;
   updateTreeComponentChildren: (
     componentId: string,
-    children: Component[]
+    children: Component[],
   ) => void;
   updateTreeComponentActions: (componentId: string, actions: Action[]) => void;
   updateTreeComponentDescription: (
     componentId: string,
-    description: string
+    description: string,
   ) => void;
   updateTreeComponentAttrs: (
     componentIds: string[],
-    attrs: Partial<Component>
+    attrs: Partial<Component>,
   ) => void;
   setTreeComponentCurrentState: (
     componentId: string,
-    currentState: string
+    currentState: string,
   ) => void;
   setSelectedComponentId: (selectedComponentId?: string) => void;
   clearSelection: () => void;
@@ -155,37 +154,37 @@ export const useEditorStore = create<EditorState>()(
               onMountActionsRan: state.onMountActionsRan.concat(onMountAction),
             }),
             false,
-            "editor/addOnMountActionsRan"
+            "editor/addOnMountActionsRan",
           ),
         removeOnMountActionsRan: (onMountAction) =>
           set(
             (state) => ({
               ...state,
               onMountActionsRan: state.onMountActionsRan.filter(
-                (action) => action !== onMountAction
+                (action) => action !== onMountAction,
               ),
             }),
             false,
-            "editor/removeOnMountActionsRan"
+            "editor/removeOnMountActionsRan",
           ),
         resetOnMountActionsRan: () =>
           set(
             { onMountActionsRan: [] },
             false,
-            "editor/resetOnMountActionsRan"
+            "editor/resetOnMountActionsRan",
           ),
         setPages: (pages) => set({ pages }, false, "editor/setPages"),
         setPickingComponentToBindFrom: (pickingComponentToBindFrom) =>
           set(
             { pickingComponentToBindFrom },
             false,
-            "editor/setPickingComponentToBindFrom"
+            "editor/setPickingComponentToBindFrom",
           ),
         setPickingComponentToBindTo: (pickingComponentToBindTo) =>
           set(
             { pickingComponentToBindTo },
             false,
-            "editor/setPickingComponentToBindTo"
+            "editor/setPickingComponentToBindTo",
           ),
         setSequentialTo: (sequentialTo) =>
           set({ sequentialTo }, false, "editor/setSequentialTo"),
@@ -218,7 +217,7 @@ export const useEditorStore = create<EditorState>()(
                   encodeSchema(JSON.stringify(tree)),
                   state.currentProjectId ?? "",
                   state.currentPageId ?? "",
-                  state.setIsSaving
+                  state.setIsSaving,
                 );
               }
 
@@ -231,7 +230,7 @@ export const useEditorStore = create<EditorState>()(
               };
             },
             false,
-            "editor/setTree"
+            "editor/setTree",
           );
         },
         resetTree: () => {
@@ -241,7 +240,7 @@ export const useEditorStore = create<EditorState>()(
               tree: { ...emptyEditorTree, timestamp },
             },
             false,
-            "editor/resetTree"
+            "editor/resetTree",
           );
         },
         // any props change
@@ -258,14 +257,14 @@ export const useEditorStore = create<EditorState>()(
                 componentId,
                 props,
                 currentState,
-                currentLanguage
+                currentLanguage,
               );
               if (save) {
                 debouncedUpdatePageState(
                   encodeSchema(JSON.stringify(copy)),
                   prev.currentProjectId ?? "",
                   prev.currentPageId ?? "",
-                  prev.setIsSaving
+                  prev.setIsSaving,
                 );
               }
 
@@ -280,7 +279,7 @@ export const useEditorStore = create<EditorState>()(
               };
             },
             false,
-            "editor/updateTreeComponent"
+            "editor/updateTreeComponent",
           );
         },
         // anything out of .props that changes .children[]
@@ -293,7 +292,7 @@ export const useEditorStore = create<EditorState>()(
                 encodeSchema(JSON.stringify(copy)),
                 state.currentProjectId ?? "",
                 state.currentPageId ?? "",
-                state.setIsSaving
+                state.setIsSaving,
               );
 
               const component = getComponentById(copy.root, componentId);
@@ -307,7 +306,7 @@ export const useEditorStore = create<EditorState>()(
               };
             },
             false,
-            "editor/updateTreeComponentChildren"
+            "editor/updateTreeComponentChildren",
           );
         },
         // any action change
@@ -320,7 +319,7 @@ export const useEditorStore = create<EditorState>()(
                 encodeSchema(JSON.stringify(copy)),
                 state.currentProjectId ?? "",
                 state.currentPageId ?? "",
-                state.setIsSaving
+                state.setIsSaving,
               );
 
               const component = getComponentById(copy.root, componentId);
@@ -334,7 +333,7 @@ export const useEditorStore = create<EditorState>()(
               };
             },
             false,
-            "editor/updateTreeComponentActions"
+            "editor/updateTreeComponentActions",
           );
         },
         updateTreeComponentDescription: (componentId, description) => {
@@ -345,13 +344,13 @@ export const useEditorStore = create<EditorState>()(
               updateTreeComponentDescription(
                 copy.root,
                 componentId,
-                description
+                description,
               );
               debouncedUpdatePageState(
                 encodeSchema(JSON.stringify(copy)),
                 state.currentProjectId ?? "",
                 state.currentPageId ?? "",
-                state.setIsSaving
+                state.setIsSaving,
               );
 
               return {
@@ -359,12 +358,12 @@ export const useEditorStore = create<EditorState>()(
               };
             },
             false,
-            "editor/updateTreeComponentDescription"
+            "editor/updateTreeComponentDescription",
           );
         },
         updateTreeComponentAttrs: (
           componentIds: string[],
-          attrs: Partial<Component>
+          attrs: Partial<Component>,
         ) => {
           set(
             (state) => {
@@ -375,7 +374,7 @@ export const useEditorStore = create<EditorState>()(
                 encodeSchema(JSON.stringify(copy)),
                 state.currentProjectId ?? "",
                 state.currentPageId ?? "",
-                state.setIsSaving
+                state.setIsSaving,
               );
 
               return {
@@ -383,12 +382,12 @@ export const useEditorStore = create<EditorState>()(
               };
             },
             false,
-            "editor/updateTreeComponentAttrs"
+            "editor/updateTreeComponentAttrs",
           );
         },
         setTreeComponentCurrentState: (
           componentId,
-          currentState = "default"
+          currentState = "default",
         ) => {
           set(
             (prev) => {
@@ -400,7 +399,7 @@ export const useEditorStore = create<EditorState>()(
               };
             },
             false,
-            "editor/setTreeComponentCurrentState"
+            "editor/setTreeComponentCurrentState",
           );
         },
         setCurrentProjectId: (currentProjectId) =>
@@ -415,7 +414,7 @@ export const useEditorStore = create<EditorState>()(
           set(
             { selectedComponentId: "content-wrapper" },
             false,
-            "editor/clearSelection"
+            "editor/clearSelection",
           ),
         setIsSaving: (isSaving) =>
           set({ isSaving }, false, "editor/setIsSaving"),
@@ -426,14 +425,14 @@ export const useEditorStore = create<EditorState>()(
           set(
             { isPreviewMode: value, currentTreeComponentsStates: {} },
             false,
-            "editor/setPreviewMode"
+            "editor/setPreviewMode",
           ),
         setIsLive: (value) => set({ isLive: value }, false, "editor/setIsLive"),
         setIsNavBarVisible: () =>
           set(
             (state) => ({ isNavBarVisible: !state.isNavBarVisible }),
             false,
-            "editor/setIsNavBarVisible"
+            "editor/setIsNavBarVisible",
           ),
         setCopiedAction: (copiedAction) =>
           set({ copiedAction }, false, "editor/setCopiedAction"),
@@ -443,7 +442,7 @@ export const useEditorStore = create<EditorState>()(
           set(
             { highlightedComponentId: componentId },
             false,
-            "editor/setHighlightedComponentId"
+            "editor/setHighlightedComponentId",
           ),
       }),
       {
@@ -455,12 +454,12 @@ export const useEditorStore = create<EditorState>()(
         equality(currentState, pastState) {
           return isEqual(currentState.tree, pastState.tree);
         },
-      }
+      },
     ),
-    { name: "Editor store" }
-  )
+    { name: "Editor store" },
+  ),
 );
 
 export const useTemporalStore = <T>(
-  selector: (state: TemporalState<Partial<EditorState>>) => T
+  selector: (state: TemporalState<Partial<EditorState>>) => T,
 ) => useStore(useEditorStore.temporal, selector);
