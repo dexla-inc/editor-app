@@ -20,9 +20,9 @@ import Link from "next/link";
 
 import { AIChatHistoryButton } from "@/components/AIChatHistoryButton";
 import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
+import { DeployButton } from "@/components/DeployButton";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { GenerateAIButton } from "@/components/GenerateAIButton";
-import { DeployButton } from "@/components/DeployButton";
 import { getPageList } from "@/requests/pages/queries";
 import { PageListResponse } from "@/requests/pages/types";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
@@ -138,17 +138,13 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                     variant="default"
                     onClick={() => undo()}
                     disabled={pastStates.length < 2}
-                  >
-                    Undo
-                  </Button>
+                  ></Button>
                   <Button
                     leftIcon={<IconArrowForwardUp size={ICON_SIZE} />}
                     variant="default"
                     onClick={() => redo()}
                     disabled={futureStates.length === 0}
-                  >
-                    Redo
-                  </Button>
+                  ></Button>
                 </Button.Group>
                 <ChangeHistoryPopover />
                 <EditorPreviewModeToggle
