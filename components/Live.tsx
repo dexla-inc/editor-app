@@ -3,13 +3,13 @@
 import { Droppable } from "@/components/Droppable";
 import { DroppableDraggable } from "@/components/DroppableDraggable";
 import { IFrame } from "@/components/IFrame";
-import { getPage } from "@/requests/pages/queries";
+import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
 import { Component } from "@/utils/editor";
-import { Box, Paper, useMantineTheme } from "@mantine/core";
+import { Box, Paper } from "@mantine/core";
 import { useEffect } from "react";
 
 type Props = {
@@ -18,18 +18,16 @@ type Props = {
 };
 
 export const Live = ({ projectId, pageId }: Props) => {
-  const theme = useMantineTheme();
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
-  const pages = useEditorStore((state) => state.pages);
-  const startLoading = useAppStore((state) => state.startLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
 
   useEffect(() => {
     const getPageData = async () => {
       setIsLoading(true);
-      const page = await getPage(projectId, pageId);
+      const page = await getMostRecentDeploymentByPage(projectId as string, {
+        pageId,
+      });
       if (page.pageState) {
         const decodedSchema = decodeSchema(page.pageState);
         setEditorTree(JSON.parse(decodedSchema), {
@@ -44,16 +42,7 @@ export const Live = ({ projectId, pageId }: Props) => {
       getPageData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    projectId,
-    pageId,
-    setEditorTree,
-    startLoading,
-    stopLoading,
-    setIsLoading,
-    pages,
-    theme,
-  ]);
+  }, [projectId, pageId, setEditorTree, setIsLoading]);
 
   const renderTree = (component: Component) => {
     if (component.id === "root") {
