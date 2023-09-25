@@ -91,6 +91,7 @@ import * as BarChartStructure from "@/components/mapper/structure/charts/BarChar
 import * as LineChartStructure from "@/components/mapper/structure/charts/LineChart";
 import * as PieChartStructure from "@/components/mapper/structure/charts/PieChart";
 import * as RadarChartStructure from "@/components/mapper/structure/charts/RadarChart";
+import * as FileButtonStructure from "@/components/mapper/structure/FileButton";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 
@@ -118,6 +119,7 @@ import {
   IconExclamationMark,
   IconFile,
   IconFileText,
+  IconFileUpload,
   IconForms,
   IconHeading,
   IconJewishStar,
@@ -144,6 +146,7 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 import { FileWithPath } from "file-selector";
+import { FileButton } from "@/components/mapper/FileButton";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -191,6 +194,17 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Data Display",
     icon: <IconMapPin size={ICON_SIZE} />,
+  },
+  FileButton: {
+    structure: (props: any) => FileButtonStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="FileButton"
+        icon={<IconFileUpload size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconFileUpload size={ICON_SIZE} />,
   },
   Input: {
     structure: (props: any) => InputStructure.jsonStructure(props),
@@ -815,7 +829,8 @@ export type Modifiers =
   | "radioItem"
   | "drawer"
   | "buttonIcon"
-  | "mapSettings";
+  | "mapSettings"
+  | "fileButton";
 
 export type ComponentDefinition = {
   Component: any;
@@ -989,7 +1004,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Table
         key={`${JSON.stringify(
-          props.component?.props?.config ?? {},
+          props.component?.props?.config ?? {}
         )}-${JSON.stringify(props.component?.props?.headers ?? {})}`}
         component={props.component}
         renderTree={props.renderTree}
@@ -1023,6 +1038,15 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  FileButton: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      // @ts-ignore
+      <FileButton component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["fileButton", "spacing", "size", "border"],
+    actionTriggers: ["onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Checkbox: {
