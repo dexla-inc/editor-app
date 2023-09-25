@@ -41,6 +41,8 @@ async function doFetch<Type>({
         authInfo = await authClient.getAuthenticationInfoOrNull();
       }
 
+      const isFormData = body instanceof FormData;
+
       response = await fetch(`${baseURL}${url}`, {
         method,
         headers: {
@@ -52,7 +54,7 @@ async function doFetch<Type>({
             : {}),
           ...headers,
         },
-        ...(body ? { body: JSON.stringify(body) } : {}),
+        ...(body ? { body: isFormData ? body : JSON.stringify(body) } : {}),
       });
 
       if (isStream) {
