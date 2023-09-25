@@ -56,6 +56,7 @@ export const NavigationActionForm = ({ id }: Props) => {
         value,
       })),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageQueryStrings]);
 
   const onSubmit = (values: FormValues) => {
