@@ -27,10 +27,10 @@ export const defaultTheme: MantineTheme = {
 type Props = {
   onClick?: () => void;
   isLive?: boolean;
+  projectId: string;
 } & BoxProps;
 
-export const IFrame = ({ children, isLive, ...props }: Props) => {
-  const router = useRouter();
+export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
 
@@ -39,12 +39,11 @@ export const IFrame = ({ children, isLive, ...props }: Props) => {
 
   const userTheme = useQuery({
     queryKey: ["theme"],
-    queryFn: () => getTheme(router.query.id as string),
-    enabled: !!router.query.id,
+    queryFn: () => getTheme(projectId),
+    enabled: !!projectId,
   });
 
   useEffect(() => {
-    console.log({ userTheme });
     if (userTheme.isFetched) {
       setTheme({
         ...theme,

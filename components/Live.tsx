@@ -105,7 +105,9 @@ export const Live = ({ projectId, pageId }: Props) => {
       }}
       p={0}
     >
-      <IFrame isLive>{renderTree(editorTree.root)}</IFrame>
+      <IFrame projectId={projectId} isLive>
+        {renderTree(editorTree.root)}
+      </IFrame>
     </Box>
   ) : null;
 };
