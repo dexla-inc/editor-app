@@ -1,4 +1,8 @@
-import { ChatHistoryMessage, StreamTypes } from "@/requests/ai/types";
+import {
+  AIRequestTypes,
+  ChatHistoryMessage,
+  EventSourceParams,
+} from "@/requests/ai/types";
 import { PagingResponse } from "@/requests/types";
 import { baseURL, get, getAuthToken } from "@/utils/api";
 import {
@@ -38,7 +42,7 @@ export const postPageEventSource = async (
   onerror?: (err: any) => number | null | undefined | void,
   onopen?: (response: Response) => Promise<void>,
   onclose?: () => void,
-  type?: StreamTypes | undefined,
+  type?: AIRequestTypes | undefined,
   description?: string | undefined,
 ) => {
   const token = await getAuthToken();
@@ -63,15 +67,9 @@ export const postPageEventSource = async (
   });
 };
 
-type EventSourceParams = {
-  type: StreamTypes;
-  pageName?: string;
-  description?: string;
-};
-
 export const postEventSource = async (
   projectId: string,
-  params?: EventSourceParams,
+  params: EventSourceParams,
   onmessage?: (ev: EventSourceMessage) => void,
   onerror?: (err: any) => number | null | undefined | void,
   onopen?: (response: Response) => Promise<void>,
