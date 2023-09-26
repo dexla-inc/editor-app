@@ -23,9 +23,9 @@ export type SwaggerParams = { swaggerUrl: string };
 
 export type DataSourceParams = {
   name?: string;
+  baseUrl?: string;
   authenticationScheme?: AuthenticationSchemes;
   environment?: string;
-  baseUrl?: string;
   swaggerUrl?: string;
   authValue?: string;
 };
@@ -141,3 +141,26 @@ export type DataSourceAuthResponse = {
   refreshTokenProperty?: string;
   expiryTokenProperty?: string;
 };
+
+export type ApiFromAI = Pick<
+  DataSourceResponse,
+  "name" | "baseUrl" | "authenticationScheme"
+> & {
+  apiDocsUrl?: string;
+  apiAuthTokenDocsUrl?: string;
+  endpoints: ApiEndpointFromAI[];
+};
+
+export type ApiEndpointFromAI = Pick<
+  Endpoint,
+  | "relativeUrl"
+  | "methodType"
+  | "mediaType"
+  | "headers"
+  | "parameters"
+  | "requestBody"
+  | "exampleResponse"
+  | "errorExampleResponse"
+  | "withCredentials"
+  | "isServerRequest"
+> & {};

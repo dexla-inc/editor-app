@@ -1,7 +1,16 @@
 import { AIRequestTypes } from "@/requests/ai/types";
+import { PageResponse } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
-import { useEditorStore } from "@/stores/editor";
+import { MantineThemeExtended, useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
+import {
+  Component,
+  EditorTree,
+  addComponent,
+  getComponentBeingAddedId,
+  getEditorTreeFromPageStructure,
+  getNewComponents,
+} from "@/utils/editor";
 import {
   createHandlers,
   descriptionPlaceholderMapping,
@@ -20,8 +29,73 @@ import {
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSparkles } from "@tabler/icons-react";
+import cloneDeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
+
+type ComponentGenerationProps = {
+  componentBeingAddedId: MutableRefObject<string | undefined>;
+  theme: MantineThemeExtended;
+  updateTreeComponentChildren: (
+    componentId: string,
+    children: Component[],
+  ) => void;
+  setTree: (
+    tree: EditorTree,
+    options?: { onLoad?: boolean; action?: string },
+  ) => void;
+  pages: PageResponse[];
+  tree: EditorTree;
+};
+
+type LayoutGenerationProps = {
+  theme: MantineThemeExtended;
+  pages: PageResponse[];
+  tree: EditorTree;
+  setTree: (
+    tree: EditorTree,
+    options?: { onLoad?: boolean; action?: string },
+  ) => void;
+};
+
+const handleComponentGeneration = (params: ComponentGenerationProps) => {
+  return function (tomlData: any) {
+    const {
+      componentBeingAddedId,
+      theme,
+      updateTreeComponentChildren,
+      setTree,
+      pages,
+      tree,
+    } = params;
+
+    const newComponents = getNewComponents(tomlData, theme, pages);
+
+    const id = getComponentBeingAddedId(tree.root);
+
+    if (!id) {
+      const copy = cloneDeep(tree);
+      addComponent(copy.root, newComponents, {
+        id: "content-wrapper",
+        edge: "bottom",
+      });
+      setTree(copy, { action: `Added ${newComponents.name}` });
+    } else {
+      componentBeingAddedId.current = id;
+      updateTreeComponentChildren(id, newComponents.children!);
+    }
+  };
+};
+
+const handleLayoutGeneration = (params: LayoutGenerationProps) => {
+  return function (tomlData: any) {
+    const { theme, pages, setTree } = params;
+
+    const tree = getEditorTreeFromPageStructure(tomlData, theme, pages);
+
+    setTree(tree, { action: `Layout changed` });
+  };
+};
 
 type GenerateAIButtonProps = {
   projectId: string;
@@ -48,7 +122,6 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
   const router = useRouter();
   const currentPageId = router.query.page as string;
   const pageTitle = pages?.find((p) => p.id === currentPageId)?.title;
-
   const componentBeingAddedId = useRef<string>();
   const setTree = useEditorStore((state) => state.setTree);
   const updateTreeComponent = useEditorStore(
@@ -60,11 +133,6 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
   const tree = useEditorStore((state) => state.tree);
   const theme = useEditorStore((state) => state.theme);
   const [stream, setStream] = useState<string>("");
-
-  const handleTypeChange = (value: AIRequestTypes) => {
-    setType(value);
-    setDescriptionPlaceholder(descriptionPlaceholderMapping[value]);
-  };
 
   const { onMessage, onError, onOpen, onClose } = createHandlers({
     setStream,
@@ -89,16 +157,34 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
   });
 
   useEffect(() => {
-    processTOMLStream({
-      type,
-      stream,
-      componentBeingAddedId,
-      theme,
-      updateTreeComponentChildren,
-      setTree,
-      pages,
-      tree,
-    });
+    switch (type) {
+      case "COMPONENT":
+        processTOMLStream({
+          stream,
+          handler: handleComponentGeneration({
+            componentBeingAddedId,
+            theme,
+            updateTreeComponentChildren,
+            tree,
+            setTree,
+            pages,
+          }),
+        });
+
+        break;
+      case "LAYOUT":
+        processTOMLStream({
+          stream,
+          handler: handleLayoutGeneration({
+            theme,
+            tree,
+            setTree,
+            pages,
+          }),
+        });
+
+        break;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stream, type]);
 
@@ -124,6 +210,11 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
 
       onSubmit(form.values);
     }
+  };
+
+  const handleTypeChange = (value: AIRequestTypes) => {
+    setType(value);
+    setDescriptionPlaceholder(descriptionPlaceholderMapping[value]);
   };
 
   return (
