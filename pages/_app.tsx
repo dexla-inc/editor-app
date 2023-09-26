@@ -20,6 +20,7 @@ import Head from "next/head";
 import { Fragment, PropsWithChildren, useEffect, useState } from "react";
 import { isMatchingUrl } from "./[page]";
 import { useRouter } from "next/router";
+import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -42,36 +43,7 @@ export const theme: MantineTheme = {
 };
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
-  const router = useRouter();
-  const [isClient, setIsClient] = useState(false);
-  const [isLive, setIsLive] = useState(false);
-
-  useEffect(() => {
-    const chekcIfIsLive = async () => {
-      // @ts-ignore
-      if (router?.state?.pathname === "/[page]") {
-        setIsLive(true);
-      } else {
-        let id = "";
-        const url = window?.location.host;
-        if (isMatchingUrl(url!) || url?.endsWith(".localhost:3000")) {
-          id = url?.split(".")[0] as string;
-        } else {
-          const project = await getByDomain(url!);
-          id = project.id;
-        }
-
-        if (id) {
-          setIsLive(true);
-        }
-      }
-
-      setIsClient(true);
-    };
-
-    chekcIfIsLive();
-    // @ts-ignore
-  }, [router?.state?.pathname]);
+  const { isClient, isLive } = useCheckIfIsLive();
 
   if (!isClient) return null;
 
@@ -98,9 +70,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
-  const router = useRouter();
-  const isLive = router.pathname === "/[page]";
-
+  const { isLive } = useCheckIfIsLive();
   const [queryClient] = useState(
     () =>
       new QueryClient({
