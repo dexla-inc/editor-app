@@ -9,12 +9,12 @@ import { structureMapper } from "@/utils/componentMapper";
 import { templatesMapper } from "@/utils/templatesMapper";
 import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
-import merge from "lodash.merge";
-import { nanoid } from "nanoid";
-import crawl from "tree-crawl";
-import { omit } from "next/dist/shared/lib/router/utils/omit";
-import pickBy from "lodash.pickby";
 import isEmpty from "lodash.isempty";
+import merge from "lodash.merge";
+import pickBy from "lodash.pickby";
+import { nanoid } from "nanoid";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
+import crawl from "tree-crawl";
 
 export type Component = {
   id?: string;
@@ -231,7 +231,10 @@ export const getNewComponents = (
             padding: "20px",
           },
         },
-        children: traverseComponents(row.components, theme, pages),
+        children:
+          row.components && row.components.length > 0
+            ? traverseComponents(row.components, theme, pages)
+            : [],
       };
     }),
   };
