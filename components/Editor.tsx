@@ -453,7 +453,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
             }}
             p={0}
           >
-            <IFrame onClick={clearSelection}>
+            <IFrame onClick={clearSelection} projectId={projectId}>
               {renderTree(editorTree.root)}
             </IFrame>
           </Box>
