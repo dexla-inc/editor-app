@@ -87,6 +87,7 @@ export const createHandlers = (config: HandlerProps) => {
 
   const onMessage = (event: EventSourceMessage) => {
     try {
+      console.log(event.data);
       setStream((state) => {
         try {
           if (state === undefined) {
@@ -187,7 +188,6 @@ export const processTOMLStream = (params: ProcessTOMLStreamProps) => {
   switch (type) {
     case "COMPONENT":
       const componentJson = TOML.parse(stream) as unknown as { rows: Row[] };
-      console.log(stream);
       const newComponents = getNewComponents(
         componentJson as { rows: Row[] },
         theme,
@@ -237,7 +237,7 @@ export const handleRequestContentStream = async (
   onclose: () => void,
 ) => {
   startLoading({
-    id: "page-generation",
+    id: "ai-generation",
     title: `Generating ${
       descriptionPlaceholderMapping[params.type].replaceText
     }`,
