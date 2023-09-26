@@ -1,4 +1,10 @@
-export type StreamTypes = "PAGE" | "COMPONENT" | "LAYOUT" | "DESIGN" | "DATA";
+export type StreamTypes =
+  | "PAGE"
+  | "COMPONENT"
+  | "LAYOUT"
+  | "DESIGN"
+  | "DATA"
+  | "API";
 type AIRoleTypes = "USER" | "ASSISTANT";
 
 export type ChatHistoryMessage = {
