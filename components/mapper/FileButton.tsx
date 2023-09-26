@@ -13,7 +13,8 @@ type Props = {
 } & FileButtonProps;
 
 export const FileButton = ({ renderTree, component, ...props }: Props) => {
-  const { name, accept, triggers, ...componentProps } = component.props ?? {};
+  const { name, accept, multiple, triggers, ...componentProps } =
+    component.props ?? {};
 
   const router = useRouter();
   const projectId = router.query.id as string;
@@ -25,7 +26,7 @@ export const FileButton = ({ renderTree, component, ...props }: Props) => {
         {...componentProps}
         {...props}
         // {...triggers}
-        onChange={(e) => uploadFile(projectId, e as File)}
+        onChange={(e) => uploadFile(projectId, e as File, multiple)}
       >
         {(props) => <Button {...props}>{name}</Button>}
       </MantineFileButton>

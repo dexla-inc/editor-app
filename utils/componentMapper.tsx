@@ -148,6 +148,8 @@ import {
 import { FileWithPath } from "file-selector";
 import { FileButton } from "@/components/mapper/FileButton";
 import { useEditorStore } from "@/stores/editor";
+import { uploadFile } from "@/requests/storage/mutations";
+import { useRouter } from "next/router";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -1025,19 +1027,25 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   FileUpload: {
-    Component: (props: { component: Component; renderTree: any }) => (
-      <FileUpload
-        component={props.component}
-        renderTree={props.renderTree}
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-        onDrop={(files: FileWithPath[]): void => {
-          console.log("Function not implemented.");
-        }}
-        activateOnClick={false}
-      />
-    ),
-    modifiers: ["spacing", "size", "border"],
+    Component: (props: { component: Component; renderTree: any }) => {
+      const router = useRouter();
+      const projectId = router.query.id as string;
+      return (
+        <FileUpload
+          component={props.component}
+          renderTree={props.renderTree}
+          // eslint-disable-next-line react/no-children-prop
+          children={props.component.children as any}
+          onDrop={(files: FileWithPath[]): void => {
+            uploadFile(projectId, files[0], props.component.props?.multiple);
+          }}
+          activateOnClick={false}
+          dragEventsBubbling={false}
+          activateOnDrag={true}
+        />
+      );
+    },
+    modifiers: ["fileButton", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

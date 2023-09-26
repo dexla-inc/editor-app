@@ -14,7 +14,7 @@ export const defaultValues = {
 };
 
 export const icon = IconFileUpload;
-export const label = "File Button";
+export const label = "File";
 
 export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
@@ -53,47 +53,77 @@ export const Modifier = withModifier(({ selectedComponent }) => {
 
   return (
     <form>
-      <Stack spacing="xs">
-        <TextInput
-          size="xs"
-          label="Name"
-          name="name"
-          {...form.getInputProps("name")}
-          onChange={(e) => handleChange(e)}
-        />
-        <TextInput
-          size="xs"
-          label="Accept"
-          name="accept"
-          {...form.getInputProps("accept")}
-          onChange={(e) => handleChange(e)}
-        />
-        <Switch
-          size="xs"
-          checked={form.values.multiple}
-          {...form.getInputProps("multiple")}
-          label="Multiple"
-          onChange={(e) => {
-            form.setFieldValue("multiple", e.currentTarget.checked);
-            debouncedTreeComponentPropsUpdate(
-              "multiple",
-              e.currentTarget.checked,
-            );
-          }}
-        />
-        <Switch
-          size="xs"
-          checked={form.values.disabled}
-          label="Disabled"
-          onChange={(e) => {
-            form.setFieldValue("disabled", e.currentTarget.checked);
-            debouncedTreeComponentPropsUpdate(
-              "disabled",
-              e.currentTarget.checked,
-            );
-          }}
-        />
-      </Stack>
+      {selectedComponent?.name === "FileUpload" ? (
+        <Stack spacing="xs">
+          <Switch
+            size="xs"
+            checked={form.values.multiple}
+            {...form.getInputProps("multiple")}
+            label="Multiple"
+            onChange={(e) => {
+              form.setFieldValue("multiple", e.currentTarget.checked);
+              debouncedTreeComponentPropsUpdate(
+                "multiple",
+                e.currentTarget.checked,
+              );
+            }}
+          />
+          <Switch
+            size="xs"
+            checked={form.values.disabled}
+            label="Disabled"
+            onChange={(e) => {
+              form.setFieldValue("disabled", e.currentTarget.checked);
+              debouncedTreeComponentPropsUpdate(
+                "disabled",
+                e.currentTarget.checked,
+              );
+            }}
+          />
+        </Stack>
+      ) : (
+        <Stack spacing="xs">
+          <TextInput
+            size="xs"
+            label="Name"
+            name="name"
+            {...form.getInputProps("name")}
+            onChange={(e) => handleChange(e)}
+          />
+          <TextInput
+            size="xs"
+            label="Accept"
+            name="accept"
+            {...form.getInputProps("accept")}
+            onChange={(e) => handleChange(e)}
+          />
+          <Switch
+            size="xs"
+            checked={form.values.multiple}
+            {...form.getInputProps("multiple")}
+            label="Multiple"
+            onChange={(e) => {
+              form.setFieldValue("multiple", e.currentTarget.checked);
+              debouncedTreeComponentPropsUpdate(
+                "multiple",
+                e.currentTarget.checked,
+              );
+            }}
+          />
+          <Switch
+            size="xs"
+            checked={form.values.disabled}
+            label="Disabled"
+            onChange={(e) => {
+              form.setFieldValue("disabled", e.currentTarget.checked);
+              debouncedTreeComponentPropsUpdate(
+                "disabled",
+                e.currentTarget.checked,
+              );
+            }}
+          />
+        </Stack>
+      )}
     </form>
   );
 });
