@@ -80,7 +80,11 @@ export const UnitInput = ({
         if (val === "%" || val === "vh" || val === "vw") {
           setValue(100);
         } else if (val === "px") {
-          setValue(value);
+          if (value === undefined) {
+            setValue(0 as number);
+          } else {
+            setValue(value === "auto" ? 0 : value);
+          }
         } else if (value === "auto" || val === "auto") {
           setValue("auto");
           setTextValue("auto");
