@@ -1,20 +1,8 @@
 import { postEventSource } from "@/requests/ai/queries";
 import { AIRequestTypes, EventSourceParams } from "@/requests/ai/types";
-import { PageResponse } from "@/requests/pages/types";
 import { DexlaNotificationProps } from "@/stores/app";
-import { MantineThemeExtended } from "@/stores/editor";
-import {
-  Component,
-  EditorTree,
-  Row,
-  addComponent,
-  getComponentBeingAddedId,
-  getEditorTreeFromPageStructure,
-  getNewComponents,
-} from "@/utils/editor";
 import TOML from "@iarna/toml";
 import { EventSourceMessage } from "@microsoft/fetch-event-source";
-import cloneDeep from "lodash.clonedeep";
 import { Dispatch, MutableRefObject, SetStateAction } from "react";
 
 type DescriptionPlaceHolderType = {
@@ -62,26 +50,41 @@ export const descriptionPlaceholderMapping: Record<
   },
 };
 
-type HandlerProps = {
+type BaseHandlerProps = {
   setStream: Dispatch<SetStateAction<string>>;
-  type: AIRequestTypes;
+  stopLoading: (state: DexlaNotificationProps) => void;
+  setIsLoading: (isLoading: boolean) => void;
+};
+
+type ComponentOrLayoutProps = {
+  type: "COMPONENT" | "LAYOUT";
   componentBeingAddedId: MutableRefObject<string | undefined>;
   updateTreeComponent: (
     componentId: string,
     props: any,
     save?: boolean,
   ) => void;
-  stopLoading: (state: DexlaNotificationProps) => void;
-  setIsLoading: (isLoading: boolean) => void;
 };
+
+type OtherProps = {
+  type: Exclude<AIRequestTypes, "COMPONENT" | "LAYOUT">;
+  componentBeingAddedId?: MutableRefObject<string | undefined>;
+  updateTreeComponent?: (
+    componentId: string,
+    props: any,
+    save?: boolean,
+  ) => void;
+};
+
+type HandlerProps = BaseHandlerProps & (ComponentOrLayoutProps | OtherProps);
 
 export const createHandlers = (config: HandlerProps) => {
   const {
     setStream,
     type,
-    componentBeingAddedId,
     stopLoading,
     setIsLoading,
+    componentBeingAddedId,
     updateTreeComponent,
   } = config;
 
@@ -128,10 +131,12 @@ export const createHandlers = (config: HandlerProps) => {
         return;
       }
 
-      if (componentBeingAddedId.current) {
-        updateTreeComponent(componentBeingAddedId.current, {
-          isBeingAdded: false,
-        });
+      if (type === "COMPONENT" || type === "LAYOUT") {
+        if (componentBeingAddedId.current) {
+          updateTreeComponent(componentBeingAddedId.current, {
+            isBeingAdded: false,
+          });
+        }
       }
       setStream("");
       stopLoading({
@@ -154,77 +159,18 @@ export const createHandlers = (config: HandlerProps) => {
   return { onMessage, onError, onOpen, onClose };
 };
 
-type ProcessTOMLStreamProps = {
-  type: AIRequestTypes;
+type ProcessTOMLStreamProps<T> = {
   stream: string;
-  componentBeingAddedId: MutableRefObject<string | undefined>;
-  theme: MantineThemeExtended;
-  updateTreeComponentChildren: (
-    componentId: string,
-    children: Component[],
-  ) => void;
-  setTree: (
-    tree: EditorTree,
-    options?: { onLoad?: boolean; action?: string },
-  ) => void;
-  pages: PageResponse[];
-  tree: EditorTree;
+  handler: (toml: T) => void;
 };
 
-export const processTOMLStream = (params: ProcessTOMLStreamProps) => {
-  const {
-    type,
-    stream,
-    componentBeingAddedId,
-    updateTreeComponentChildren,
-    tree: editorTree,
-    setTree,
-    theme,
-    pages,
-  } = params;
+export const processTOMLStream = <T>(params: ProcessTOMLStreamProps<T>) => {
+  const { stream, handler } = params;
 
   if (!stream || stream.endsWith("___DONE___")) return;
 
-  switch (type) {
-    case "COMPONENT":
-      const componentJson = TOML.parse(stream) as unknown as { rows: Row[] };
-      const newComponents = getNewComponents(
-        componentJson as { rows: Row[] },
-        theme,
-        pages,
-      );
-
-      const id = getComponentBeingAddedId(editorTree.root);
-
-      if (!id) {
-        const copy = cloneDeep(editorTree);
-
-        addComponent(copy.root, newComponents, {
-          id: "content-wrapper",
-          edge: "bottom",
-        });
-
-        setTree(copy, { action: `Added ${newComponents.name}` });
-      } else {
-        componentBeingAddedId.current = id;
-        updateTreeComponentChildren(id, newComponents.children!);
-      }
-      break;
-    case "LAYOUT":
-      const layoutJson = TOML.parse(stream) as unknown as { rows: Row[] };
-
-      const tree = getEditorTreeFromPageStructure(
-        layoutJson as { rows: Row[] },
-        theme,
-        pages,
-      );
-
-      setTree(tree, { action: `Layout changed` });
-      break;
-    default:
-      console.log(type + " not implemented yet");
-      break;
-  }
+  const toml = TOML.parse(stream) as unknown as T;
+  handler(toml);
 };
 
 export const handleRequestContentStream = async (
