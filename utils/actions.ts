@@ -22,6 +22,8 @@ import {
   getDataSourceEndpoints,
 } from "@/requests/datasources/queries";
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
+import { uploadFile } from "@/requests/storage/mutations";
+import { getFile } from "@/requests/storage/queries";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import {
@@ -81,6 +83,7 @@ export const actions = [
   { name: "openToast", group: "Feedback" },
   { name: "reloadComponent", group: "Feedback" },
   { name: "copyToClipboard", group: "Utilities & Tools" },
+  { name: "uploadFile", group: "Utilities & Tools" },
 ];
 
 type ActionTriggerAll = (typeof triggers)[number];
@@ -205,6 +208,11 @@ export interface BindPlaceDataAction extends BaseAction {
 
 export interface BindPlaceGeometryAction extends BaseAction {
   name: "bindPlaceGeometry";
+  componentId: string;
+}
+
+export interface UploadFileAction extends BaseAction {
+  name: "uploadFile";
   componentId: string;
 }
 
@@ -394,7 +402,7 @@ export const togglePropsAction = ({
     {
       style: { display: "flex" },
     },
-    false
+    false,
   );
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
@@ -823,6 +831,10 @@ export type BindPlaceGeometryActionParams = ActionParams & {
   action: BindPlaceGeometryAction;
 };
 
+export type UploadFileActionParams = ActionParams & {
+  action: UploadFileAction;
+};
+
 export const bindPlaceDataAction = ({
   action,
   data,
@@ -941,6 +953,17 @@ export const bindPlaceGeometryAction = ({
   updateTreeComponentChildren(parent.id!, [child]);
 };
 
+export const UploadFileAction = ({
+  action,
+  router,
+}: UploadFileActionParams) => {
+  const projectId = router.query.id as string;
+
+  // const data = getFile(projectId, "file");
+  // uploadFile(projectId, fil)
+  console.log(action.componentId);
+};
+
 export const actionMapper = {
   alert: {
     action: debugAction,
@@ -1016,6 +1039,10 @@ export const actionMapper = {
   },
   bindPlaceGeometry: {
     action: bindPlaceGeometryAction,
+    form: BindPlaceDataActionForm,
+  },
+  uploadFile: {
+    action: UploadFileAction,
     form: BindPlaceDataActionForm,
   },
 };

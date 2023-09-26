@@ -21,8 +21,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     initialValues: defaultValues,
   });
 
-  console.log(form.values);
-
   useEffect(() => {
     if (selectedComponent?.id) {
       const data = pick(selectedComponent.props!, [
@@ -51,6 +49,8 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     debouncedTreeComponentPropsUpdate(name, value);
   };
 
+  console.log(form.values);
+
   return (
     <form>
       <Stack spacing="xs">
@@ -77,7 +77,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             form.setFieldValue("multiple", e.currentTarget.checked);
             debouncedTreeComponentPropsUpdate(
               "multiple",
-              e.currentTarget.checked
+              e.currentTarget.checked,
             );
           }}
         />
@@ -89,7 +89,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             form.setFieldValue("disabled", e.currentTarget.checked);
             debouncedTreeComponentPropsUpdate(
               "disabled",
-              e.currentTarget.checked
+              e.currentTarget.checked,
             );
           }}
         />

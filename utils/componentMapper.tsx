@@ -147,6 +147,7 @@ import {
 } from "@tabler/icons-react";
 import { FileWithPath } from "file-selector";
 import { FileButton } from "@/components/mapper/FileButton";
+import { useEditorStore } from "@/stores/editor";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -1004,7 +1005,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Table
         key={`${JSON.stringify(
-          props.component?.props?.config ?? {}
+          props.component?.props?.config ?? {},
         )}-${JSON.stringify(props.component?.props?.headers ?? {})}`}
         component={props.component}
         renderTree={props.renderTree}
@@ -1043,7 +1044,15 @@ export const componentMapper: ComponentMapper = {
   FileButton: {
     Component: (props: { component: Component; renderTree: any }) => (
       // @ts-ignore
-      <FileButton component={props.component} renderTree={props.renderTree} />
+      <FileButton
+        onChange={(files) => {
+          const updateTreeComponent =
+            useEditorStore.getState().updateTreeComponent;
+          updateTreeComponent(props.component.id!, files);
+        }}
+        component={props.component}
+        renderTree={props.renderTree}
+      />
     ),
     modifiers: ["fileButton", "spacing", "size", "border"],
     actionTriggers: ["onChange"],
