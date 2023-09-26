@@ -1,4 +1,4 @@
-export type StreamTypes =
+export type AIRequestTypes =
   | "PAGE"
   | "COMPONENT"
   | "LAYOUT"
@@ -12,5 +12,11 @@ export type ChatHistoryMessage = {
   role: AIRoleTypes;
   content: string;
   created: number;
-  requestType: StreamTypes;
+  requestType: AIRequestTypes;
+};
+
+export type EventSourceParams = {
+  type: AIRequestTypes;
+  pageName?: string;
+  description?: string;
 };
