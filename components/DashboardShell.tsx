@@ -23,10 +23,6 @@ import { Icon } from "@/components/Icon";
 import NavigationAvatarFooter from "@/components/NavigationAvatarFooter";
 import { useEditorStore } from "@/stores/editor";
 import { useLogoutFunction } from "@propelauth/react";
-import {
-  IconLayoutNavbarCollapse,
-  IconLayoutNavbarExpand,
-} from "@tabler/icons-react";
 import { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -34,23 +30,6 @@ export interface ShellProps extends AppShellProps {
   navbarType?: NavbarTypes;
   user?: User | null | undefined;
 }
-
-const ToggleNavbarButton = () => {
-  const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
-  const setIsNavBarVisible = useEditorStore(
-    (state) => state.setIsNavBarVisible
-  );
-  const IconToggle = isNavBarVisible
-    ? IconLayoutNavbarCollapse
-    : IconLayoutNavbarExpand;
-
-  return (
-    <IconToggle
-      onClick={setIsNavBarVisible}
-      style={{ transform: "rotate(-90deg)", cursor: "pointer" }}
-    />
-  );
-};
 
 export const DashboardShell = ({ children, aside, user }: ShellProps) => {
   // This state needs to move to the parent component

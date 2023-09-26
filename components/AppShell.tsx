@@ -13,7 +13,6 @@ import {
   Button,
   Flex,
   Header,
-  LoadingOverlay,
   Select,
 } from "@mantine/core";
 import Link from "next/link";
@@ -23,6 +22,7 @@ import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
 import { DeployButton } from "@/components/DeployButton";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { GenerateAIButton } from "@/components/GenerateAIButton";
+import { LogicFlowButton } from "@/components/LogicFlowButton";
 import { getPageList } from "@/requests/pages/queries";
 import { PageListResponse } from "@/requests/pages/types";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
@@ -34,7 +34,6 @@ import {
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 const ToggleNavbarButton = () => {
@@ -55,8 +54,6 @@ const ToggleNavbarButton = () => {
 };
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
-  // This state needs to move to the parent component
-  const [isLoading, setIsLoading] = useState(false);
   const { resetTree, isPreviewMode, setPreviewMode, language, setLanguage } =
     useEditorStore((state) => state);
   const { undo, redo, pastStates, futureStates } = useTemporalStore(
@@ -132,6 +129,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               <Flex gap="md" sx={{ width: "33.33%" }} justify="end">
                 <AIChatHistoryButton projectId={projectId} />
                 <GenerateAIButton projectId={projectId} />
+                <LogicFlowButton projectId={projectId} pageId={currentPageId} />
                 <Button.Group>
                   <Button
                     leftIcon={<IconArrowBackUp size={ICON_SIZE} />}
@@ -195,7 +193,6 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
       >
         {children}
       </ErrorBoundary>
-      <LoadingOverlay visible={isLoading} />
     </AppShell>
   );
 };

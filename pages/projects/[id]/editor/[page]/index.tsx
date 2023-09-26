@@ -21,7 +21,7 @@ type Props = {
 
 export default function PageEditor({ id, page }: Props) {
   const setCurrentProjectId = useEditorStore(
-    (state) => state.setCurrentProjectId
+    (state) => state.setCurrentProjectId,
   );
   const setCurrentPageId = useEditorStore((state) => state.setCurrentPageId);
 
