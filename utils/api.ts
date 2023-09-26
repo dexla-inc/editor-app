@@ -46,13 +46,12 @@ async function doFetch<Type>({
       if (isStream) {
         contentType = "application/octet-stream";
       } else if (!isFormData) {
-        // Check if not FormData
         contentType = "application/json";
       }
       response = await fetch(`${baseURL}${url}`, {
         method,
         headers: {
-          ...(contentType ? { "Content-Type": contentType } : {}), // Only add if contentType is set
+          ...(contentType ? { "Content-Type": contentType } : {}),
           ...(authInfo
             ? { Authorization: `Bearer ${authInfo.accessToken}` }
             : {}),

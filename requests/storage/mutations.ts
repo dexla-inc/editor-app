@@ -1,3 +1,7 @@
+import {
+  UploadMultipleResponse,
+  UploadResponse,
+} from "@/requests/storage/types";
 import { post } from "@/utils/api";
 
 export const uploadFile = async (
@@ -10,7 +14,10 @@ export const uploadFile = async (
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = (await post<any>(url, formData)) as any;
+  const response = (await post<UploadMultipleResponse | UploadResponse>(
+    url,
+    formData,
+  )) as UploadMultipleResponse | UploadResponse;
 
   return response;
 };
