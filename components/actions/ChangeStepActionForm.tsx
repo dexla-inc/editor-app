@@ -7,8 +7,7 @@ import {
   useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
-import { useEditorStore } from "@/stores/editor";
-import { PreviousStepAction } from "@/utils/actions";
+import { ChangeStepAction } from "@/utils/actions";
 import {
   Component,
   getAllComponentsByName,
@@ -16,23 +15,30 @@ import {
 } from "@/utils/editor";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useEditorStore } from "@/stores/editor";
 import { useEffect } from "react";
 
 type Props = {
   id: string;
 };
 
-type FormValues = Omit<PreviousStepAction, "name">;
+type FormValues = Omit<ChangeStepAction, "name">;
 
-export const PreviousStepActionForm = ({ id }: Props) => {
+const controls = [
+  { label: "Previous", value: "previous" },
+  { label: "Next", value: "next" },
+];
+
+export const ChangeStepActionForm = ({ id }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
   const { editorTree, selectedComponentId, updateTreeComponentActions } =
     useEditorStores();
-  const { componentActions, action } = useActionData<PreviousStepAction>({
+  const { componentActions, action } = useActionData<ChangeStepAction>({
     actionId: id,
     editorTree,
     selectedComponentId,
   });
+
   const setPickingComponentToBindTo = useEditorStore(
     (state) => state.setPickingComponentToBindTo,
   );
@@ -49,7 +55,7 @@ export const PreviousStepActionForm = ({ id }: Props) => {
   const form = useForm<FormValues>({
     initialValues: {
       stepperId: action.action.stepperId,
-      activeStep: action.action.activeStep ?? 1,
+      control: action.action.control ?? "next",
     },
   });
 
@@ -57,13 +63,13 @@ export const PreviousStepActionForm = ({ id }: Props) => {
     handleLoadingStart({ startLoading });
 
     try {
-      updateActionInTree<PreviousStepAction>({
+      updateActionInTree<ChangeStepAction>({
         selectedComponentId: selectedComponentId!,
         componentActions,
         id,
         updateValues: {
-          stepperId: values.stepperId ?? "",
-          activeStep: action.action.activeStep ?? 1,
+          stepperId: values.stepperId,
+          control: values.control,
         },
         updateTreeComponentActions,
       });
@@ -92,8 +98,9 @@ export const PreviousStepActionForm = ({ id }: Props) => {
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
         <Select
+          required
           size="xs"
-          label="Stepper to go to previous step"
+          label="Stepper to change step"
           placeholder="Select a stepper"
           data={steppers.map((stepper: Component) => {
             return {
@@ -102,6 +109,19 @@ export const PreviousStepActionForm = ({ id }: Props) => {
             };
           })}
           {...form.getInputProps("stepperId")}
+        />
+        <Select
+          required
+          size="xs"
+          label="Control"
+          placeholder="Select a control"
+          data={controls.map((control) => {
+            return {
+              label: control.label,
+              value: control.value,
+            };
+          })}
+          {...form.getInputProps("control")}
         />
         <ActionButtons
           actionId={action.id}

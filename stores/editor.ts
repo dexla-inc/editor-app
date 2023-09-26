@@ -231,7 +231,7 @@ export const useEditorStore = create<EditorState>()(
               copy.root,
               componentId,
               props,
-              currentState,
+              "default",
               currentLanguage,
             );
             if (save) {
@@ -247,7 +247,7 @@ export const useEditorStore = create<EditorState>()(
 
             return {
               tree: {
-                ...copy,
+                ...cloneDeep(copy),
                 name: `Edited ${component?.name}`,
                 timestamp: Date.now(),
               },

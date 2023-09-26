@@ -21,7 +21,7 @@ export const Stepper = ({ renderTree, component, ...props }: Props) => {
   const [active, setActive] = useState(activeStep ?? 1);
 
   const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
+    (state) => state.updateTreeComponent,
   );
 
   useEffect(() => {
@@ -36,6 +36,13 @@ export const Stepper = ({ renderTree, component, ...props }: Props) => {
     updateTreeComponent(component.id!, { activeStep: stepIndex }, false);
   };
 
+  const header = component.children?.find(
+    (child) => child.name === "StepperHeader",
+  );
+  const steppers = component.children?.find(
+    (child) => child.name === "StepperContent",
+  );
+
   return (
     <MantineStepper
       {...props}
@@ -44,14 +51,20 @@ export const Stepper = ({ renderTree, component, ...props }: Props) => {
       breakpoint={breakpoint}
       {...componentProps}
       {...triggers}
+      styles={{
+        stepIcon: { display: "none" },
+        separator: { display: "none" },
+        step: { width: `calc(100% / ${steppers?.children?.length})` },
+        stepBody: { width: "100%", marginLeft: 0 },
+      }}
     >
-      {component.children &&
-        component.children.map((child: Component, index: number) => {
+      {steppers?.children &&
+        steppers.children.map((child: Component, index: number) => {
           return (
             <MantineStepper.Step
               key={index}
-              label={child.props?.label}
-              description={child.props?.description}
+              label={header?.children && renderTree(header.children[index])}
+              icon={<></>}
             >
               {child.children &&
                 child.children.map((grandChild: Component) => {

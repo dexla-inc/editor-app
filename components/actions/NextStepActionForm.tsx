@@ -34,14 +34,14 @@ export const NextStepActionForm = ({ id }: Props) => {
     selectedComponentId,
   });
   const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo
+    (state) => state.setPickingComponentToBindTo,
   );
   const componentToBind = useEditorStore((state) => state.componentToBind);
   const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind
+    (state) => state.setComponentToBind,
   );
   const pickingComponentToBindTo = useEditorStore(
-    (state) => state.pickingComponentToBindTo
+    (state) => state.pickingComponentToBindTo,
   );
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
@@ -97,7 +97,7 @@ export const NextStepActionForm = ({ id }: Props) => {
           placeholder="Select a stepper"
           data={steppers.map((stepper: Component) => {
             return {
-              label: stepper.props?.description ?? stepper.id,
+              label: stepper.description ?? stepper.id,
               value: stepper.id!,
             };
           })}

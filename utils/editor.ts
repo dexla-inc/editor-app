@@ -86,6 +86,27 @@ export const replaceIdsDeeply = (treeRoot: Component) => {
   );
 };
 
+export const testCrawl = (treeRoot: Component, onChange: any) => {
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.name.toLowerCase() === "input") {
+        const currOnChange = node?.props?.triggers?.onChange ?? false;
+        node.props = merge(node.props, {
+          triggers: {
+            onChange: (e: any) => {
+              currOnChange && currOnChange(e);
+              onChange(e);
+            },
+          },
+        });
+        console.log("->", node?.props);
+      }
+    },
+    { order: "bfs" },
+  );
+};
+
 export const traverseComponents = (
   components: Component[],
   theme: MantineThemeExtended,

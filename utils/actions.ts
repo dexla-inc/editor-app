@@ -12,6 +12,7 @@ import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm"
 import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
 import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
+import { ChangeStepActionForm } from "@/components/actions/ChangeStepActionForm";
 import { PreviousStepActionForm } from "@/components/actions/PreviousStepActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
@@ -73,6 +74,7 @@ export const actions = [
   { name: "navigateToPage", group: "Navigation" },
   { name: "nextStep", group: "Navigation" },
   { name: "previousStep", group: "Navigation" },
+  { name: "changeStep", group: "Navigation" },
   { name: "openDrawer", group: "Modal & Overlays" },
   { name: "openModal", group: "Modal & Overlays" },
   { name: "closeModal", group: "Modal & Overlays" },
@@ -144,8 +146,6 @@ export interface OpenToastAction extends BaseAction {
 
 export interface ChangeStateAction extends BaseAction {
   name: "changeState";
-  // componentId: string;
-  // state?: string;
   conditionRules: Array<{
     condition: string;
     componentId: string;
@@ -200,6 +200,11 @@ export interface PreviousStepAction extends BaseAction {
   stepperId: string;
   activeStep: number;
 }
+export interface ChangeStepAction extends BaseAction {
+  name: "changeStep";
+  stepperId: string;
+  control: "previous" | "next";
+}
 
 export interface BindPlaceDataAction extends BaseAction {
   name: "bindPlaceData";
@@ -236,6 +241,7 @@ export type Action = {
     | ToggleNavbarAction
     | NextStepAction
     | PreviousStepAction
+    | ChangeStepAction
     | BindPlaceDataAction
     | BindPlaceGeometryAction;
   sequentialTo?: string;
@@ -339,6 +345,9 @@ export type NextStepActionParams = ActionParams & {
 export type PreviousStepActionParams = ActionParams & {
   action: PreviousStepAction;
 };
+export type ChangeStepActionParams = ActionParams & {
+  action: ChangeStepAction;
+};
 
 export const openModalAction = ({ action }: OpenModalActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
@@ -376,6 +385,23 @@ export const goToPreviousStepAction = ({
   const step = Math.max(1, action.activeStep - 1);
 
   updateTreeComponent(action.stepperId, { activeStep: step }, false);
+};
+
+export const changeStepAction = ({ action }: ChangeStepActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+
+  let { activeStep } = getComponentById(
+    useEditorStore.getState().tree.root,
+    action.stepperId,
+  )?.props!;
+
+  if (action.control === "previous") {
+    activeStep -= 1;
+  } else {
+    activeStep += 1;
+  }
+
+  updateTreeComponent(action.stepperId, { activeStep }, false);
 };
 export const togglePropsAction = ({
   action,
@@ -1032,6 +1058,10 @@ export const actionMapper = {
   previousStep: {
     action: goToPreviousStepAction,
     form: PreviousStepActionForm,
+  },
+  changeStep: {
+    action: changeStepAction,
+    form: ChangeStepActionForm,
   },
   bindPlaceData: {
     action: bindPlaceDataAction,
