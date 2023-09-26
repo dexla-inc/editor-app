@@ -98,6 +98,8 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
+  const router = useRouter();
+  const isLive = router.pathname === "/[page]";
 
   const [queryClient] = useState(
     () =>
@@ -145,6 +147,17 @@ export default function App(props: AppProps) {
                     maxHeight: "100vh",
                     minHeight: "100vh",
                     background: "white",
+                    // For WebKit browsers (e.g., Chrome, Safari)
+                    "::-webkit-scrollbar": {
+                      width: isLive && "0px",
+                      height: isLive && "0px",
+                    },
+
+                    // For Firefox
+                    scrollbarWidth: isLive && "none",
+
+                    // For IE and Edge
+                    "-ms-overflow-style": isLive && "none",
                   },
 
                   html: {
