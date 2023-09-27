@@ -1,70 +1,114 @@
+import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
-import { Flex, Popover, Text, Textarea } from "@mantine/core";
-import { useRef, useState } from "react";
-import { Icon } from "./Icon";
+import { Flex, Popover, Text } from "@mantine/core";
+import { RichTextEditor } from "@mantine/tiptap";
+import Highlight from "@tiptap/extension-highlight";
+import Placeholder from "@tiptap/extension-placeholder";
+import { useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { useState } from "react";
 
-interface PrefixItem {
-  aiPrefix: string;
+const getFilteredItems = (featureItems: FeatureItem[], input: string) => {
+  return featureItems.filter((item) =>
+    item.name.toLowerCase().includes(input.toLowerCase()),
+  );
+};
+
+type FeatureItem = {
+  name: string;
   icon: string;
-}
+};
 
-interface Props {
-  items: PrefixItem[];
-}
+const items: FeatureItem[] = [
+  {
+    name: "API",
+    icon: "IconDatabase",
+  },
+  {
+    name: "Components",
+    icon: "IconComponents",
+  },
+  {
+    name: "Layout",
+    icon: "IconLayout",
+  },
+  {
+    name: "Page",
+    icon: "IconFileDescription",
+  },
+];
 
-export const AIPrefixTextarea = ({ items }: Props) => {
-  const [value, setValue] = useState<string>("");
-  const [showPrefix, setShowPrefix] = useState<boolean>(false);
-  const ref = useRef<HTMLTextAreaElement>(null);
+export const AITextarea = () => {
+  const [showFeatures, setFeature] = useState<boolean>(false);
   const theme = useEditorStore((state) => state.theme);
 
-  const filteredItems = items.filter((item) =>
-    item.aiPrefix.toLowerCase().includes(value.toLowerCase()),
-  );
+  const filteredItems = getFilteredItems(items, "");
 
-  const handleInputChange = (inputValue: string) => {
-    setValue(inputValue);
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Highlight.configure({ multicolor: true }),
+      Placeholder.configure({
+        placeholder: "I want to Add / Change / Remove...",
+      }),
+    ],
+    content: "",
+    onUpdate: ({ editor }) => {
+      const inputText = editor.getText();
 
-    // Find if the inputValue matches any aiPrefix (case-insensitive)
-    const exactMatch = items.find(
-      (item) => item.aiPrefix.toLowerCase() === inputValue.toLowerCase(),
-    );
+      let featureNameLength = 0;
 
-    // If an exact match is found, update the inputValue to match the exact case from items
-    if (exactMatch) {
-      setValue(exactMatch.aiPrefix);
-      return;
-    }
+      const hasMatch = items.find((item) => {
+        featureNameLength = item.name.length;
+        const endSubstringOfInput = inputText
+          .slice(-featureNameLength)
+          .toLowerCase();
+        return item.name.toLowerCase() === endSubstringOfInput;
+      });
 
-    // Show the popover if there are filtered items or if the Textarea is empty
-    setShowPrefix(filteredItems.length > 0 || inputValue.trim() === "");
-  };
+      if (hasMatch) {
+        const highlightedContent = `${inputText.substring(
+          0,
+          inputText.length - featureNameLength,
+        )}<mark style="background-color: #12b886;">${hasMatch.name}</mark>`;
+
+        editor.commands.setContent(highlightedContent);
+      }
+
+      editor.commands.unsetMark("highlight");
+
+      const filtered = getFilteredItems(items, inputText);
+
+      setFeature(inputText.trim() === "" || filtered.length > 0);
+    },
+    onBlur: ({ editor }) => {
+      const inputValue = editor.getText();
+      const filtered = getFilteredItems(items, inputValue);
+      setFeature(inputValue.trim() === "" || filtered.length > 0);
+    },
+    onFocus: ({ editor }) => {
+      const inputValue = editor.getText();
+      const filtered = getFilteredItems(items, inputValue);
+      setFeature(inputValue.trim() === "" || filtered.length > 0);
+    },
+  });
 
   return (
     <Popover
-      opened={showPrefix}
-      position="bottom"
+      opened={showFeatures}
       width={250}
-      onClose={() => setShowPrefix(false)}
+      onClose={() => setFeature(false)}
     >
       <Popover.Target>
-        <Textarea
-          ref={ref}
-          value={value}
-          onFocus={() => setShowPrefix(true)}
-          onBlur={() => {
-            if (value.trim() !== "") {
-              setShowPrefix(false);
-            }
-          }}
-          onChange={(e) => handleInputChange(e.target.value)}
-        />
+        <RichTextEditor editor={editor}>
+          <RichTextEditor.Content />
+        </RichTextEditor>
       </Popover.Target>
-      {showPrefix && ref.current && (
+      {showFeatures && (
         <Popover.Dropdown p={0}>
-          {filteredItems.map((item, index) => (
+          {filteredItems.map((item) => (
             <Flex
-              key={index}
+              key={item.name}
               p="xs"
               gap={6}
               align="center"
@@ -74,13 +118,13 @@ export const AIPrefixTextarea = ({ items }: Props) => {
                   backgroundColor: theme.colors.gray[1],
                 },
               }}
-              onMouseDown={() => {
-                setValue(`${item.aiPrefix} `);
-                setShowPrefix(false);
+              onClick={() => {
+                editor?.commands.setContent(`${item.name} `, false);
+                setFeature(false);
               }}
             >
               <Icon name={item.icon} style={{ color: theme.colors.teal[6] }} />
-              <Text>{item.aiPrefix}</Text>
+              <Text>{item.name}</Text>
             </Flex>
           ))}
         </Popover.Dropdown>

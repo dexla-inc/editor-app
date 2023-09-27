@@ -33,7 +33,7 @@ import { IconSparkles } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { AIPrefixTextarea } from "./AITextArea";
+import { AITextarea } from "./AITextArea";
 import { Icon } from "./Icon";
 
 type ComponentGenerationProps = {
@@ -229,29 +229,14 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
         <IconSparkles size={ICON_SIZE} />
       </ActionIcon>
       <Modal
-        size="xl"
+        size="sm"
         opened={openedAIModal}
         onClose={closeModal}
         title="Generate AI Content"
       >
         <form onSubmit={form.onSubmit(onSubmit)}>
           <Stack>
-            <AIPrefixTextarea
-              items={[
-                {
-                  aiPrefix: "API",
-                  icon: "IconSparkles",
-                },
-                {
-                  aiPrefix: "Component",
-                  icon: "IconDatabase",
-                },
-                {
-                  aiPrefix: "Layout",
-                  icon: "IconLayout",
-                },
-              ]}
-            />
+            <AITextarea />
             <Popover opened={opened} onChange={setOpened}>
               <Popover.Target>
                 <Textarea
