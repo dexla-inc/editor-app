@@ -243,22 +243,17 @@ export const jsonStructure = (props?: any): Component => {
                                 height: "auto",
                                 padding: px(theme.spacing.sm),
                               },
+                              styles: {
+                                label: {
+                                  color: "rgba(179, 179, 179, 1)",
+                                },
+                              },
+                              textColor: "Black.2",
                               variant: "default",
                               children: "Previous",
                               leftIcon: "IconArrowLeft",
                             },
                             blockDroppingChildrenInside: true,
-                            actions: [
-                              {
-                                id: nanoid(),
-                                trigger: "onClick",
-                                action: {
-                                  name: "changeStep",
-                                  stepperId,
-                                  control: "previous",
-                                },
-                              },
-                            ],
                           },
                           {
                             id: nanoid(),

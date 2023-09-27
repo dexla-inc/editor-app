@@ -390,14 +390,27 @@ export const goToPreviousStepAction = ({
 export const changeStepAction = ({ action }: ChangeStepActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
-  let { activeStep } = getComponentById(
+  const component = getComponentById(
     useEditorStore.getState().tree.root,
     action.stepperId,
-  )?.props!;
+  );
 
-  if (action.control === "previous") {
+  if (!component) {
+    return;
+  }
+
+  let { activeStep } = component.props!;
+
+  const steppers = component.children?.find(
+    (child: Component) => child.name === "StepperContent",
+  );
+
+  if (action.control === "previous" && activeStep > 0) {
     activeStep -= 1;
-  } else {
+  } else if (
+    action.control === "next" &&
+    activeStep < steppers!.children!.length
+  ) {
     activeStep += 1;
   }
 

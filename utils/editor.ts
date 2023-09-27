@@ -4,7 +4,11 @@ import {
   emptyEditorTree,
   useEditorStore,
 } from "@/stores/editor";
-import { Action } from "@/utils/actions";
+import {
+  Action,
+  ChangeStepAction,
+  ChangeStepActionParams,
+} from "@/utils/actions";
 import { structureMapper } from "@/utils/componentMapper";
 import { templatesMapper } from "@/utils/templatesMapper";
 import cloneDeep from "lodash.clonedeep";
@@ -77,10 +81,26 @@ export const getAllActions = (treeRoot: Component): Action[] => {
 };
 
 export const replaceIdsDeeply = (treeRoot: Component) => {
+  let stepperId = "";
+
   crawl(
     treeRoot,
     (node) => {
-      node.id = nanoid();
+      const newId = nanoid();
+
+      if (node.name === "Stepper") {
+        stepperId = newId;
+      }
+
+      node.id = newId;
+      const changeStepActionIndex = (node.actions || []).findIndex(
+        (action) => action.action.name === "changeStep",
+      );
+      if (changeStepActionIndex > -1) {
+        (
+          node.actions![changeStepActionIndex].action as ChangeStepAction
+        ).stepperId = stepperId;
+      }
     },
     { order: "bfs" },
   );
@@ -100,7 +120,7 @@ export const testCrawl = (treeRoot: Component, onChange: any) => {
             },
           },
         });
-        console.log("->", node?.props);
+        //console.log("->", node?.props);
       }
     },
     { order: "bfs" },

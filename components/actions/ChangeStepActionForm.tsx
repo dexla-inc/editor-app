@@ -39,19 +39,6 @@ export const ChangeStepActionForm = ({ id }: Props) => {
     selectedComponentId,
   });
 
-  const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo,
-  );
-  const componentToBind = useEditorStore((state) => state.componentToBind);
-  const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind,
-  );
-  const pickingComponentToBindTo = useEditorStore(
-    (state) => state.pickingComponentToBindTo,
-  );
-
-  const component = getComponentById(editorTree.root, selectedComponentId!);
-
   const form = useForm<FormValues>({
     initialValues: {
       stepperId: action.action.stepperId,
@@ -80,19 +67,9 @@ export const ChangeStepActionForm = ({ id }: Props) => {
     }
   };
 
-  useEffect(() => {
-    if (componentToBind && pickingComponentToBindTo) {
-      if (pickingComponentToBindTo.componentId === component?.id) {
-        form.setFieldValue("componentId", componentToBind);
-
-        setPickingComponentToBindTo(undefined);
-        setComponentToBind(undefined);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [component?.id, componentToBind, pickingComponentToBindTo]);
-
   const steppers = getAllComponentsByName(editorTree.root, "Stepper");
+
+  console.log({ action, steppers });
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
