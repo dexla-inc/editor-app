@@ -16,6 +16,7 @@ export const icon = IconSelect;
 export const label = "Select";
 
 export const defaultSelectValues = {
+  name: "Select",
   size: "sm",
   placeholder: "Select",
   type: "text",
@@ -43,6 +44,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   useEffect(() => {
     if (selectedComponent?.id) {
       const data = pick(selectedComponent.props!, [
+        "name",
         "style",
         "styles",
         "label",
@@ -56,6 +58,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
       ]);
 
       form.setValues({
+        name: data.name ?? defaultSelectValues.name,
         size: data.size ?? defaultSelectValues.size,
         placeholder: data.placeholder ?? defaultSelectValues.placeholder,
         type: data.type ?? defaultSelectValues.type,
@@ -83,6 +86,15 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
+        <TextInput
+          label="Name"
+          size="xs"
+          {...form.getInputProps("name")}
+          onChange={(e) => {
+            form.setFieldValue("name", e.target.value);
+            debouncedTreeComponentPropsUpdate("name", e.target.value);
+          }}
+        />
         <Group noWrap>
           <TextInput
             label="Label"

@@ -106,11 +106,16 @@ export const replaceIdsDeeply = (treeRoot: Component) => {
   );
 };
 
-export const testCrawl = (treeRoot: Component, onChange: any) => {
+// TODO: put Select field here
+const inputFields = ["input", "checkbox", "textarea"];
+export const updateInputFieldsWithFormData = (
+  treeRoot: Component,
+  onChange: any,
+) => {
   crawl(
     treeRoot,
     (node, context) => {
-      if (node.name.toLowerCase() === "input") {
+      if (inputFields.includes(node.name.toLowerCase())) {
         const currOnChange = node?.props?.triggers?.onChange ?? false;
         node.props = merge(node.props, {
           triggers: {
@@ -120,7 +125,6 @@ export const testCrawl = (treeRoot: Component, onChange: any) => {
             },
           },
         });
-        //console.log("->", node?.props);
       }
     },
     { order: "bfs" },

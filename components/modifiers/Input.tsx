@@ -22,6 +22,7 @@ export const defaultInputValues = {
   icon: "",
   withAsterisk: false,
   labelSpacing: "0",
+  name: "Input",
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
@@ -40,6 +41,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         "icon",
         "withAsterisk",
         "labelProps",
+        "name",
       ]);
 
       form.setValues({
@@ -48,6 +50,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         type: data.type ?? defaultInputValues.type,
         label: data.label ?? defaultInputValues.label,
         icon: data.icon ?? defaultInputValues.icon,
+        name: data.name ?? defaultInputValues.name,
         withAsterisk: data.withAsterisk ?? defaultInputValues.withAsterisk,
         labelProps:
           data.labelProps?.style?.marginBottom ??
@@ -62,6 +65,15 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
+        <TextInput
+          label="Name"
+          size="xs"
+          {...form.getInputProps("name")}
+          onChange={(e) => {
+            form.setFieldValue("name", e.target.value);
+            debouncedTreeComponentPropsUpdate("name", e.target.value);
+          }}
+        />
         <TextInput
           label="Label"
           size="xs"
@@ -104,7 +116,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             form.setFieldValue("withAsterisk", event.currentTarget.checked);
             debouncedTreeComponentPropsUpdate(
               "withAsterisk",
-              event.currentTarget.checked
+              event.currentTarget.checked,
             );
           }}
         />

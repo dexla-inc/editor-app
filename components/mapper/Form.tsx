@@ -1,5 +1,5 @@
 import { isSame } from "@/utils/componentComparison";
-import { Component, testCrawl } from "@/utils/editor";
+import { Component, updateInputFieldsWithFormData } from "@/utils/editor";
 import { FlexProps, Flex as MantineFlex } from "@mantine/core";
 import { FormEvent, memo } from "react";
 import { useForm } from "@mantine/form";
@@ -23,7 +23,7 @@ const FormComponent = ({ renderTree, component, ...props }: Props) => {
   const onChangeField = (e: any) => {
     form.setFieldValue(e.target.name, e.target.value);
   };
-  console.log(form.values);
+
   return (
     <MantineFlex
       {...props}
@@ -35,7 +35,7 @@ const FormComponent = ({ renderTree, component, ...props }: Props) => {
     >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => {
-            testCrawl(child, onChangeField);
+            updateInputFieldsWithFormData(child, onChangeField);
             return renderTree({
               ...child!,
               props: { ...child.props, ...triggers },
