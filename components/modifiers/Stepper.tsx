@@ -1,7 +1,9 @@
 import { withModifier } from "@/hoc/withModifier";
 import {
+  Component,
   debouncedTreeComponentChildrenUpdate,
   debouncedTreeUpdate,
+  getComponentById,
 } from "@/utils/editor";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -11,7 +13,6 @@ import { useEffect } from "react";
 import { UnitInput } from "@/components/UnitInput";
 import { structureMapper } from "@/utils/componentMapper";
 import { useEditorStore } from "@/stores/editor";
-import { add } from "husky";
 
 export const icon = IconArrowAutofitContent;
 export const label = "Stepper";
@@ -22,38 +23,54 @@ export const defaultStepperValues = {
 };
 
 const editorStore = useEditorStore.getState();
-const createStepper = () => {
+const createStepper = () => (stepperId: string) => {
   return structureMapper["StepperStep"].structure({
     theme: editorStore.theme,
+    stepperId,
   });
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
+  const editorTree = useEditorStore((state) => state.tree);
   const form = useForm({
     initialValues: defaultStepperValues,
   });
-
-  const steppers = selectedComponent?.children?.find(
-    (child) => child.name === "StepperContent",
-  )?.children;
 
   useEffect(() => {
     if (selectedComponent?.id) {
       const data = pick(selectedComponent.props!, ["activeStep"]);
 
       form.setValues({
-        activeStep: data.activeStep ?? defaultStepperValues.activeStep,
-        numberOfSteps: steppers?.length ?? defaultStepperValues.numberOfSteps,
+        activeStep: String(data.activeStep) ?? defaultStepperValues.activeStep,
+        numberOfSteps:
+          selectedComponent.children?.length ??
+          defaultStepperValues.numberOfSteps,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
 
-  const addStepperStep = () => {
-    const newStepperStep = createStepper();
-    const updatedChildren = [...(steppers ?? []), newStepperStep];
+  const addStepperStep = (stepper: Component) => {
+    const newStepperStep = createStepper()(selectedComponent?.id!);
+    const updatedChildren = [
+      ...Array.from(stepper?.children ?? []),
+      newStepperStep,
+    ];
     debouncedTreeComponentChildrenUpdate(updatedChildren);
+  };
+
+  const removeStepperStep = (stepper: Component, newSize: string) => {
+    const updatedChildren = stepper?.children?.slice(0, Number(newSize));
+    debouncedTreeComponentChildrenUpdate(updatedChildren!);
+
+    if (form.values.activeStep === newSize) {
+      const newActiveStep = String(Number(newSize) - 1);
+      form.setFieldValue("activeStep", newActiveStep);
+      debouncedTreeUpdate(selectedComponent?.id as string, {
+        activeStep: newActiveStep,
+      });
+    }
   };
 
   return (
@@ -80,11 +97,14 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           label="Number of Steps"
           {...form.getInputProps("numberOfSteps")}
           onChange={(value) => {
+            const stepper = getComponentById(
+              editorTree.root,
+              selectedComponent?.id!,
+            );
             if (Number(value) > Number(form.values.numberOfSteps)) {
-              addStepperStep();
+              addStepperStep(stepper!);
             } else {
-              const updatedChildren = steppers?.slice(0, Number(value));
-              debouncedTreeComponentChildrenUpdate(updatedChildren!);
+              removeStepperStep(stepper!, value);
             }
             form.setFieldValue("numberOfSteps", Number(value));
           }}

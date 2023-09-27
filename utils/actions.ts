@@ -358,6 +358,7 @@ export const changeStepAction = ({ action }: ChangeStepActionParams) => {
   }
 
   let { activeStep } = component.props!;
+  activeStep = Number(activeStep);
 
   if (action.control === "previous" && activeStep > 0) {
     activeStep -= 1;
