@@ -1,5 +1,5 @@
 import { DashboardShell } from "@/components/DashboardShell";
-import DataSourceNewInitialView from "@/components/settings/DataSourceNewInitialView";
+import DataSourceAddAPIWithAI from "@/components/settings/DataSourceAddAPIWithAI";
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
 import { Tabs } from "@mantine/core";
@@ -20,7 +20,7 @@ export default function Settings() {
         <SettingsTabs />
 
         <Tabs.Panel value="datasources" pt="xs">
-          <DataSourceNewInitialView />
+          <DataSourceAddAPIWithAI />
         </Tabs.Panel>
       </Tabs>
     </DashboardShell>
