@@ -1,0 +1,11 @@
+mark.feature-highlight {
+  background-color: #12b886 !important;
+  padding: 2px;
+  border-radius: 2px;
+}
+
+mark.action-highlight {
+  background-color: #ffd43b !important;
+  padding: 2px;
+  border-radius: 2px;
+}

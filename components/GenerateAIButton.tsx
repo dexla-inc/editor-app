@@ -2,7 +2,7 @@ import { AIRequestTypes } from "@/requests/ai/types";
 import { PageResponse } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
 import { MantineThemeExtended, useEditorStore } from "@/stores/editor";
-import { ICON_MEDIUM_SIZE, ICON_SIZE } from "@/utils/config";
+import { ICON_SIZE } from "@/utils/config";
 import {
   Component,
   EditorTree,
@@ -17,16 +17,7 @@ import {
   handleRequestContentStream,
   processTOMLStream,
 } from "@/utils/streamingAI";
-import {
-  ActionIcon,
-  Button,
-  Flex,
-  Modal,
-  Popover,
-  Stack,
-  Text,
-  Textarea,
-} from "@mantine/core";
+import { ActionIcon, Button, Modal, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSparkles } from "@tabler/icons-react";
@@ -34,7 +25,6 @@ import cloneDeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { AITextarea } from "./AITextArea";
-import { Icon } from "./Icon";
 
 type ComponentGenerationProps = {
   componentBeingAddedId: MutableRefObject<string | undefined>;
@@ -215,8 +205,6 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
     }
   };
 
-  const [opened, setOpened] = useState(false);
-
   return (
     <>
       <ActionIcon
@@ -229,48 +217,20 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
         <IconSparkles size={ICON_SIZE} />
       </ActionIcon>
       <Modal
-        size="sm"
+        size="md"
         opened={openedAIModal}
         onClose={closeModal}
         title="Generate AI Content"
       >
         <form onSubmit={form.onSubmit(onSubmit)}>
-          <Stack>
-            <AITextarea />
-            <Popover opened={opened} onChange={setOpened}>
-              <Popover.Target>
-                <Textarea
-                  label="Description"
-                  description={descriptionPlaceholder.description}
-                  placeholder={descriptionPlaceholder.placeholder}
-                  required
-                  value={description}
-                  onChange={(event) => {
-                    form.setFieldValue(
-                      "description",
-                      event.currentTarget.value as string,
-                    );
-                    setDescription(event.currentTarget.value);
-                  }}
-                  autosize
-                  onKeyDown={handleKeyDown}
-                  onFocus={() => setOpened(true)}
-                />
-              </Popover.Target>
-
-              <Popover.Dropdown bg="black">
-                <Flex align="center" gap="xs">
-                  <Icon
-                    name="IconArrowRight"
-                    color={theme.colors.teal[6]}
-                    size={ICON_MEDIUM_SIZE}
-                    style={{ height: "25px" }}
-                  />
-                  <Text color="white">Dropdown</Text>
-                </Flex>
-              </Popover.Dropdown>
-            </Popover>
-
+          <Stack pb={150}>
+            <AITextarea
+              value={description}
+              onChange={(value) => {
+                form.setFieldValue("description", value);
+                setDescription(value);
+              }}
+            />
             <Button
               leftIcon={<IconSparkles size={ICON_SIZE} />}
               type="submit"
@@ -280,6 +240,30 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
               Generate
             </Button>
           </Stack>
+          {/* <List
+              spacing="xs"
+              size="sm"
+              center
+              icon={
+                <ThemeIcon color="teal" size={24} radius="xl">
+                  <Icon name="IconCircleCheck" />
+                </ThemeIcon>
+              }
+            >
+              <List.Item>Components</List.Item>
+              <List.Item>API</List.Item>
+              <List.Item>Layout</List.Item>
+              <List.Item>aa</List.Item>
+              <List.Item
+                icon={
+                  <ThemeIcon color="blue" size={24} radius="xl">
+                    <Icon name="IconCircleDashed" />
+                  </ThemeIcon>
+                }
+              >
+                aaa
+              </List.Item>
+            </List> */}
         </form>
       </Modal>
     </>

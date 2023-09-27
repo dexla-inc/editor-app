@@ -2,93 +2,82 @@ import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
 import { Flex, Popover, Text } from "@mantine/core";
 import { RichTextEditor } from "@mantine/tiptap";
-import Highlight from "@tiptap/extension-highlight";
+import { Highlight, HighlightOptions } from "@tiptap/extension-highlight";
 import Placeholder from "@tiptap/extension-placeholder";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useState } from "react";
+import classes from "./AITextArea.module.css";
 
-const getFilteredItems = (featureItems: FeatureItem[], input: string) => {
-  return featureItems.filter((item) =>
-    item.name.toLowerCase().includes(input.toLowerCase()),
-  );
+type Props = {
+  value: string;
+  onChange: (value: string) => void;
 };
 
-type FeatureItem = {
-  name: string;
-  icon: string;
-};
+const FeatureHighlight = Highlight.extend<HighlightOptions>({
+  name: "featureHighlight",
+});
 
-const items: FeatureItem[] = [
-  {
-    name: "API",
-    icon: "IconDatabase",
-  },
-  {
-    name: "Components",
-    icon: "IconComponents",
-  },
-  {
-    name: "Layout",
-    icon: "IconLayout",
-  },
-  {
-    name: "Page",
-    icon: "IconFileDescription",
-  },
-];
+const ActionHighlight = Highlight.extend<HighlightOptions>({
+  name: "actionHighlight",
+});
 
-export const AITextarea = () => {
+export const AITextarea = ({ value, onChange }: Props) => {
   const [showFeatures, setFeature] = useState<boolean>(false);
   const theme = useEditorStore((state) => state.theme);
 
-  const filteredItems = getFilteredItems(items, "");
+  const filteredItems = getFilteredItems(featureItems, "");
 
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Highlight.configure({ multicolor: true }),
+      FeatureHighlight.configure({
+        multicolor: true,
+        HTMLAttributes: {
+          class: classes["feature-highlight"],
+        },
+      }),
+      ActionHighlight.configure({
+        multicolor: true,
+        HTMLAttributes: {
+          class: classes["action-highlight"],
+        },
+      }),
       Placeholder.configure({
         placeholder: "I want to Add / Change / Remove...",
       }),
     ],
-    content: "",
     onUpdate: ({ editor }) => {
       const inputText = editor.getText();
 
-      let featureNameLength = 0;
+      clearPreviousHighlights(editor);
 
-      const hasMatch = items.find((item) => {
-        featureNameLength = item.name.length;
-        const endSubstringOfInput = inputText
-          .slice(-featureNameLength)
-          .toLowerCase();
-        return item.name.toLowerCase() === endSubstringOfInput;
-      });
+      const matchedFeatureItem = findMatchingItem(featureItems, inputText);
+      const matchedActionItem = findMatchingItem(actionItems, inputText);
 
-      if (hasMatch) {
-        const highlightedContent = `${inputText.substring(
-          0,
-          inputText.length - featureNameLength,
-        )}<mark style="background-color: #12b886;">${hasMatch.name}</mark>`;
+      applyHighlightIfMatched(
+        matchedFeatureItem,
+        "featureHighlight",
+        editor,
+        inputText,
+      );
+      applyHighlightIfMatched(
+        matchedActionItem,
+        "actionHighlight",
+        editor,
+        inputText,
+      );
 
-        editor.commands.setContent(highlightedContent);
-      }
-
-      editor.commands.unsetMark("highlight");
-
-      const filtered = getFilteredItems(items, inputText);
-
-      setFeature(inputText.trim() === "" || filtered.length > 0);
+      const filteredFeatures = getFilteredItems(featureItems, inputText);
+      const isShowingFeatures =
+        inputText.trim() === "" || filteredFeatures.length > 0;
+      setFeature(isShowingFeatures);
+      onChange(inputText);
     },
-    onBlur: ({ editor }) => {
-      const inputValue = editor.getText();
-      const filtered = getFilteredItems(items, inputValue);
-      setFeature(inputValue.trim() === "" || filtered.length > 0);
-    },
+
     onFocus: ({ editor }) => {
       const inputValue = editor.getText();
-      const filtered = getFilteredItems(items, inputValue);
+      const filtered = getFilteredItems(featureItems, inputValue);
       setFeature(inputValue.trim() === "" || filtered.length > 0);
     },
   });
@@ -132,3 +121,89 @@ export const AITextarea = () => {
     </Popover>
   );
 };
+
+const getFilteredItems = (featureItems: Item[], input: string) => {
+  return featureItems.filter((item) =>
+    item.name.toLowerCase().includes(input.toLowerCase()),
+  );
+};
+
+type Item = {
+  name: string;
+  icon: string;
+};
+
+const featureItems: Item[] = [
+  {
+    name: "API",
+    icon: "IconDatabase",
+  },
+  {
+    name: "Components",
+    icon: "IconComponents",
+  },
+  {
+    name: "Layout",
+    icon: "IconLayout",
+  },
+  {
+    name: "Page",
+    icon: "IconFileDescription",
+  },
+];
+
+const actionItems: Item[] = [
+  {
+    name: "Add",
+    icon: "IconPlus",
+  },
+  {
+    name: "Change",
+    icon: "IconEdit",
+  },
+  {
+    name: "Remove",
+    icon: "IconTrash",
+  },
+];
+
+// Clear previously set highlights
+function clearPreviousHighlights(editor: any): void {
+  editor.commands.unsetMark("actionHighlight");
+  editor.commands.unsetMark("featureHighlight");
+}
+
+// Find the item that matches the end of the input text
+function findMatchingItem(items: any[], inputText: string): any | undefined {
+  return items.find((item) => {
+    const itemNameAtEnd = inputText.slice(-item.name.length).toLowerCase();
+    return item.name.toLowerCase() === itemNameAtEnd;
+  });
+}
+
+// Highlight matched item in the editor
+function applyHighlightIfMatched(
+  matchedItem: any | undefined,
+  highlightType: string,
+  editor: any,
+  inputText: string,
+): void {
+  if (matchedItem) {
+    const from = inputText.length - matchedItem.name.length;
+    const to = inputText.length + 1;
+    const currentTextInRange = inputText.slice(from, to - 1);
+
+    if (currentTextInRange !== matchedItem.name) {
+      const spaceBeforeName = from !== 0 ? " " : "";
+      const textToInsert = spaceBeforeName + matchedItem.name;
+      const highlightMark = editor.schema.marks[highlightType];
+
+      const textNode = editor.state.schema.text(textToInsert);
+      const transaction = editor.state.tr
+        .replaceWith(from, to, textNode)
+        .addMark(from + 1, to + 1, highlightMark.create());
+
+      editor.view.dispatch(transaction);
+    }
+  }
+}
