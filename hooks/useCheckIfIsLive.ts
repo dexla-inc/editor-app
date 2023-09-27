@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 
 export const useCheckIfIsLive = () => {
   const router = useRouter();
-  const [isClient, setIsClient] = useState(false);
   const [isLive, setIsLive] = useState(false);
 
   useEffect(() => {
@@ -27,13 +26,12 @@ export const useCheckIfIsLive = () => {
           setIsLive(true);
         }
       }
-
-      setIsClient(true);
     };
 
     chekcIfIsLive();
-    // @ts-ignore
-  }, [router?.state?.pathname]);
+    // Disabling the lint here because we only want to do the check once on the parent
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  return { isLive, isClient };
+  return isLive;
 };

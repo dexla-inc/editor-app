@@ -16,7 +16,7 @@ import {
 import { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import Head from "next/head";
-import { Fragment, PropsWithChildren, useState } from "react";
+import { Fragment, PropsWithChildren, useEffect, useState } from "react";
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
 
 // If loading a variable font, you don't need to specify the font weight
@@ -39,8 +39,15 @@ export const theme: MantineTheme = {
   primaryColor: "teal",
 };
 
-const AuthProvider = ({ children }: PropsWithChildren) => {
-  const { isClient, isLive } = useCheckIfIsLive();
+const AuthProvider = ({
+  children,
+  isLive,
+}: PropsWithChildren & { isLive: boolean }) => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   if (!isClient) return null;
 
@@ -67,7 +74,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
-  const { isLive } = useCheckIfIsLive();
+  const isLive = useCheckIfIsLive();
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -86,7 +93,7 @@ export default function App(props: AppProps) {
       theme={theme}
       emotionCache={cache}
     >
-      <AuthProvider>
+      <AuthProvider isLive={isLive}>
         <Head>
           <title>Editor</title>
           <meta name="description" content="Dexla Editor" />
