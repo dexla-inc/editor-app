@@ -8,6 +8,7 @@ import {
   useLoadScript,
 } from "@react-google-maps/api";
 import { useCallback, useEffect, useState } from "react";
+import { MantineSkeleton } from "./skeleton/Skeleton";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -22,6 +23,7 @@ type GoogleMapProps = {
   language?: string;
   zoom: number;
   center: { lat: number; lng: number };
+  [i: string]: any;
 };
 
 export type Position = {
@@ -42,6 +44,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
     language,
     zoom,
     center,
+    loading,
     ...componentProps
   } = component.props as GoogleMapProps;
 
@@ -56,6 +59,9 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
     googleMapsApiKey: apiKey,
     language: language,
   });
+
+  // Determine whether data is being fetch
+  const isDataFetching = loading ?? false;
 
   // Determine whether the maps API is loaded
   const isAlreadyLoaded = !!window.google;
@@ -78,7 +84,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
       setInternalZoom(internalZoom);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [map, center, apiKey, markers]
+    [map, center, apiKey, markers],
   );
 
   useEffect(() => {
@@ -95,6 +101,10 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
 
   if (!isLoaded || !apiKey) {
     return LOADING_TEXT;
+  }
+
+  if (isDataFetching) {
+    return <MantineSkeleton height={style.height ?? 500} />;
   }
 
   return (

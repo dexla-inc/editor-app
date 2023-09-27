@@ -1,7 +1,8 @@
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
-import { Flex as MantineFlex, FlexProps, LoadingOverlay } from "@mantine/core";
+import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import isEmpty from "lodash.isempty";
+import { MantineSkeleton } from "./skeleton/Skeleton";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -25,6 +26,12 @@ export const Container = ({ renderTree, component, ...props }: Props) => {
 
   const data = !isPreviewMode ? undefined : dataProp?.value ?? dataProp;
 
+  const isLoading = loading ?? false;
+
+  if (isLoading) {
+    return <MantineSkeleton height={style.height ?? 300} />;
+  }
+
   return (
     <MantineFlex
       {...props}
@@ -47,7 +54,7 @@ export const Container = ({ renderTree, component, ...props }: Props) => {
                     ...componentProps,
                     repeatedIndex,
                   },
-                })
+                }),
               )
             : children;
         })}
@@ -58,7 +65,7 @@ export const Container = ({ renderTree, component, ...props }: Props) => {
             renderTree({
               ...child,
               props: { ...child.props, ...componentProps },
-            })
+            }),
           )
         : children}
     </MantineFlex>

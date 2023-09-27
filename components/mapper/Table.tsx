@@ -7,6 +7,7 @@ import isEmpty from "lodash.isempty";
 import startCase from "lodash.startcase";
 import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
 import { memo } from "react";
+import { MantineSkeleton } from "./skeleton/Skeleton";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -83,6 +84,11 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
     enableColumnFilters: false,
     state: { isLoading: componentProps.loading },
   });
+
+  // check if data is being fetched
+  const isLoading = componentProps.loading ?? false;
+
+  if (isLoading) <MantineSkeleton height={style.height ?? 300} />;
 
   return (
     <MantineReactTable

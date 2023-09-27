@@ -4,6 +4,7 @@ import { Component } from "@/utils/editor";
 import { ImageProps, Image as MantineImage } from "@mantine/core";
 import get from "lodash.get";
 import { memo } from "react";
+import { MantineSkeleton } from "./skeleton/Skeleton";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -21,6 +22,7 @@ const ImageComponent = ({ component }: Props) => {
     data,
     repeatedIndex,
     dataPath,
+    loading,
     ...componentProps
   } = component.props as any;
 
@@ -30,6 +32,16 @@ const ImageComponent = ({ component }: Props) => {
     const path = dataPath.replaceAll("[0]", `[${repeatedIndex}]`);
     value = get(data?.base ?? {}, path) ?? src;
   }
+
+  // check if data is being fetched
+  const isLoading = loading ?? false;
+
+  if (isLoading)
+    <MantineSkeleton
+      height={height ?? "100px"}
+      width={height ?? "100px"}
+      radius={10}
+    />;
 
   return (
     <MantineImage

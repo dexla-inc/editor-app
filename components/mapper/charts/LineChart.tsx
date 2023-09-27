@@ -1,6 +1,7 @@
+import { Chart } from "@/components/mapper/charts/Chart";
 import { Component } from "@/utils/editor";
 import { Props as ApexChartsProps } from "react-apexcharts";
-import { Chart } from "@/components/mapper/charts/Chart";
+import { MantineSkeleton } from "../skeleton/Skeleton";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -8,5 +9,10 @@ type Props = {
 } & ApexChartsProps;
 
 export const LineChart = (props: Props) => {
+  const { loading } = props.component.props as any;
+  const isLoading = loading ?? false;
+  if (isLoading) {
+    return <MantineSkeleton height={300} />;
+  }
   return <Chart {...props} type="line" />;
 };
