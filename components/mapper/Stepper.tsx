@@ -1,5 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
-import { Component } from "@/utils/editor";
+import { Component, getAllChildrenComponents } from "@/utils/editor";
 import { Stepper as MantineStepper, StepperProps } from "@mantine/core";
 import { useEffect, useState } from "react";
 
@@ -19,22 +19,11 @@ export const Stepper = ({ renderTree, component, ...props }: Props) => {
   } = component.props as any;
 
   const [active, setActive] = useState(activeStep ?? 1);
+  const { setTreeComponentCurrentState } = useEditorStore((state) => state);
 
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,
   );
-
-  useEffect(() => {
-    // Reflect any external changes to the activeStep property
-    if (activeStep !== undefined && activeStep !== active) {
-      setActive(activeStep);
-    }
-  }, [activeStep, active]);
-
-  const handleStepClick = (stepIndex: number) => {
-    setActive(stepIndex);
-    updateTreeComponent(component.id!, { activeStep: stepIndex }, false);
-  };
 
   const header = component.children?.find(
     (child) => child.name === "StepperHeader",
@@ -42,6 +31,23 @@ export const Stepper = ({ renderTree, component, ...props }: Props) => {
   const steppers = component.children?.find(
     (child) => child.name === "StepperContent",
   );
+
+  useEffect(() => {
+    // Reflect any external changes to the activeStep property
+    setActive(activeStep);
+    header?.children?.forEach((child: Component, index: number) => {
+      const state = activeStep > index ? "checked" : "default";
+
+      setTreeComponentCurrentState(child.id!, state);
+      const allChildren = getAllChildrenComponents(child);
+      allChildren.forEach((c) => setTreeComponentCurrentState(c.id!, state));
+    });
+  }, [activeStep, active, setTreeComponentCurrentState, header?.children]);
+
+  const handleStepClick = (stepIndex: number) => {
+    setActive(stepIndex);
+    updateTreeComponent(component.id!, { activeStep: stepIndex }, false);
+  };
 
   return (
     <MantineStepper

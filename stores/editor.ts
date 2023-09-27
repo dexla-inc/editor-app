@@ -232,6 +232,7 @@ export const useEditorStore = create<EditorState>()(
               componentId,
               props,
               "default",
+              // currentState,
               currentLanguage,
             );
             if (save) {
