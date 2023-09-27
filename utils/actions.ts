@@ -22,7 +22,6 @@ import {
 } from "@/requests/datasources/queries";
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
 import { uploadFile } from "@/requests/storage/mutations";
-import { getFile } from "@/requests/storage/queries";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import {
@@ -360,15 +359,11 @@ export const changeStepAction = ({ action }: ChangeStepActionParams) => {
 
   let { activeStep } = component.props!;
 
-  const steppers = component.children?.find(
-    (child: Component) => child.name === "StepperContent",
-  );
-
   if (action.control === "previous" && activeStep > 0) {
     activeStep -= 1;
   } else if (
     action.control === "next" &&
-    activeStep < steppers!.children!.length
+    activeStep < component!.children!.length - 1
   ) {
     activeStep += 1;
   }

@@ -37,157 +37,62 @@ export const jsonStructure = (props?: any): Component => {
         children: [
           {
             id: nanoid(),
-            name: "StepperHeader",
-            description: "StepperHeader",
+            name: "StepperStep",
+            description: "StepperStep",
             children: [
               {
                 id: nanoid(),
-                name: "Container",
-                description: "StepperStepHead",
-                props: {
-                  style: {
-                    ...defaultLayoutValues,
-                  },
-                },
+                name: "StepperStepHeader",
+                description: "StepperStepHeader",
                 children: [
                   {
                     id: nanoid(),
-                    name: "Icon",
-                    description: "Icon",
-                    children: [],
+                    name: "Container",
+                    description: "Container",
                     props: {
-                      name: "IconArrowNarrowRight",
-                      width: "24px",
-                    },
-                    blockDroppingChildrenInside: true,
-                  },
-                  {
-                    id: nanoid(),
-                    name: "Text",
-                    description: "Text",
-                    children: [],
-                    props: {
-                      children: "First Step",
-                      color: `${theme.colors.Black ? "Black.6" : "dark"}`,
                       style: {
-                        fontSize: `${px(theme.fontSizes.sm)}px`,
-                        fontWeight: "normal",
-                        lineHeight: "110%",
-                        letterSpacing: "0px",
-                        width: "auto",
-                        height: "auto",
+                        ...defaultLayoutValues,
                       },
                     },
-                    blockDroppingChildrenInside: true,
+                    children: [
+                      {
+                        id: nanoid(),
+                        name: "Icon",
+                        description: "Icon",
+                        children: [],
+                        props: {
+                          name: "IconArrowNarrowRight",
+                          width: "24px",
+                        },
+                        blockDroppingChildrenInside: true,
+                      },
+                      {
+                        id: nanoid(),
+                        name: "Text",
+                        description: "Text",
+                        children: [],
+                        props: {
+                          children: "First Step",
+                          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                          style: {
+                            fontSize: `${px(theme.fontSizes.sm)}px`,
+                            fontWeight: "normal",
+                            lineHeight: "110%",
+                            letterSpacing: "0px",
+                            width: "auto",
+                            height: "auto",
+                          },
+                        },
+                        blockDroppingChildrenInside: true,
+                      },
+                    ],
                   },
                 ],
               },
               {
                 id: nanoid(),
-                name: "Container",
-                description: "StepperStepHead",
-                props: {
-                  style: {
-                    display: "flex",
-                    flexDirection: "column",
-                    rowGap: "20px",
-                    columnGap: "20px",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  },
-                },
-                children: [
-                  {
-                    id: nanoid(),
-                    name: "Icon",
-                    description: "Icon",
-                    children: [],
-                    props: {
-                      name: "IconArrowNarrowRight",
-                      width: "24px",
-                    },
-                    blockDroppingChildrenInside: true,
-                  },
-                  {
-                    id: nanoid(),
-                    name: "Text",
-                    description: "Text",
-                    children: [],
-                    props: {
-                      children: "Second Step",
-                      color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-                      style: {
-                        fontSize: `${px(theme.fontSizes.sm)}px`,
-                        fontWeight: "normal",
-                        lineHeight: "110%",
-                        letterSpacing: "0px",
-                        width: "auto",
-                        height: "auto",
-                      },
-                    },
-                    blockDroppingChildrenInside: true,
-                  },
-                ],
-              },
-              {
-                id: nanoid(),
-                name: "Container",
-                description: "StepperStepHead",
-                props: {
-                  style: {
-                    display: "flex",
-                    flexDirection: "column",
-                    rowGap: "20px",
-                    columnGap: "20px",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  },
-                },
-                children: [
-                  {
-                    id: nanoid(),
-                    name: "Icon",
-                    description: "Icon",
-                    children: [],
-                    props: {
-                      name: "IconArrowNarrowRight",
-                      width: "24px",
-                    },
-                    blockDroppingChildrenInside: true,
-                  },
-                  {
-                    id: nanoid(),
-                    name: "Text",
-                    description: "Text",
-                    children: [],
-                    props: {
-                      children: "Third Step",
-                      color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-                      style: {
-                        fontSize: `${px(theme.fontSizes.sm)}px`,
-                        fontWeight: "normal",
-                        lineHeight: "110%",
-                        letterSpacing: "0px",
-                        width: "auto",
-                        height: "auto",
-                      },
-                    },
-                    blockDroppingChildrenInside: true,
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: nanoid(),
-            name: "StepperContent",
-            description: "StepperContent",
-            children: [
-              {
-                id: nanoid(),
-                name: "StepperStep",
-                description: "StepperStep",
-                props: { style: { ...defaultLayoutValues } },
+                name: "StepperStepContent",
+                description: "StepperStepContent",
                 children: [
                   {
                     id: nanoid(),
@@ -287,11 +192,66 @@ export const jsonStructure = (props?: any): Component => {
                   },
                 ],
               },
+            ],
+          },
+          {
+            id: nanoid(),
+            name: "StepperStep",
+            description: "StepperStep",
+            children: [
               {
                 id: nanoid(),
-                name: "StepperStep",
-                description: "StepperStep",
-                props: { style: { ...defaultLayoutValues } },
+                name: "StepperStepHeader",
+                description: "StepperStepHeader",
+                children: [
+                  {
+                    id: nanoid(),
+                    name: "Container",
+                    description: "Container",
+                    props: {
+                      style: {
+                        ...defaultLayoutValues,
+                      },
+                    },
+                    children: [
+                      {
+                        id: nanoid(),
+                        name: "Icon",
+                        description: "Icon",
+                        children: [],
+                        props: {
+                          name: "IconArrowNarrowRight",
+                          width: "24px",
+                        },
+                        blockDroppingChildrenInside: true,
+                      },
+                      {
+                        id: nanoid(),
+                        name: "Text",
+                        description: "Text",
+                        children: [],
+                        props: {
+                          children: "Second Step",
+                          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                          style: {
+                            fontSize: `${px(theme.fontSizes.sm)}px`,
+                            fontWeight: "normal",
+                            lineHeight: "110%",
+                            letterSpacing: "0px",
+                            width: "auto",
+                            height: "auto",
+                          },
+                        },
+                        blockDroppingChildrenInside: true,
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                id: nanoid(),
+                name: "StepperStepContent",
+                description: "StepperStepContent",
                 children: [
                   {
                     id: nanoid(),
@@ -347,6 +307,7 @@ export const jsonStructure = (props?: any): Component => {
                                 height: "auto",
                                 padding: px(theme.spacing.sm),
                               },
+                              textColor: "Black.2",
                               variant: "default",
                               children: "Previous",
                               leftIcon: "IconArrowLeft",
@@ -396,11 +357,66 @@ export const jsonStructure = (props?: any): Component => {
                   },
                 ],
               },
+            ],
+          },
+          {
+            id: nanoid(),
+            name: "StepperStep",
+            description: "StepperStep",
+            children: [
               {
                 id: nanoid(),
-                name: "StepperStep",
-                description: "StepperStep",
-                props: { style: { ...defaultLayoutValues } },
+                name: "StepperStepHeader",
+                description: "StepperStepHeader",
+                children: [
+                  {
+                    id: nanoid(),
+                    name: "Container",
+                    description: "Container",
+                    props: {
+                      style: {
+                        ...defaultLayoutValues,
+                      },
+                    },
+                    children: [
+                      {
+                        id: nanoid(),
+                        name: "Icon",
+                        description: "Icon",
+                        children: [],
+                        props: {
+                          name: "IconArrowNarrowRight",
+                          width: "24px",
+                        },
+                        blockDroppingChildrenInside: true,
+                      },
+                      {
+                        id: nanoid(),
+                        name: "Text",
+                        description: "Text",
+                        children: [],
+                        props: {
+                          children: "Third Step",
+                          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                          style: {
+                            fontSize: `${px(theme.fontSizes.sm)}px`,
+                            fontWeight: "normal",
+                            lineHeight: "110%",
+                            letterSpacing: "0px",
+                            width: "auto",
+                            height: "auto",
+                          },
+                        },
+                        blockDroppingChildrenInside: true,
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                id: nanoid(),
+                name: "StepperStepContent",
+                description: "StepperStepContent",
                 children: [
                   {
                     id: nanoid(),
@@ -456,6 +472,7 @@ export const jsonStructure = (props?: any): Component => {
                                 height: "auto",
                                 padding: px(theme.spacing.sm),
                               },
+                              textColor: "Black.2",
                               variant: "default",
                               children: "Previous",
                               leftIcon: "IconArrowLeft",
@@ -492,8 +509,9 @@ export const jsonStructure = (props?: any): Component => {
                                 id: nanoid(),
                                 trigger: "onClick",
                                 action: {
-                                  name: "alert",
-                                  message: "next",
+                                  name: "changeStep",
+                                  stepperId,
+                                  control: "next",
                                 },
                               },
                             ],
