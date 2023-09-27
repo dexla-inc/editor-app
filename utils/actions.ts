@@ -7,13 +7,11 @@ import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { LoginActionForm } from "@/components/actions/LoginActionForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
-import { NextStepActionForm } from "@/components/actions/NextStepActionForm";
 import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm";
 import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
 import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 import { ChangeStepActionForm } from "@/components/actions/ChangeStepActionForm";
-import { PreviousStepActionForm } from "@/components/actions/PreviousStepActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
 import { Position } from "@/components/mapper/GoogleMapPlugin";
@@ -72,8 +70,6 @@ export const actions = [
   { name: "login", group: "API & Data" },
   { name: "goToUrl", group: "Navigation" },
   { name: "navigateToPage", group: "Navigation" },
-  { name: "nextStep", group: "Navigation" },
-  { name: "previousStep", group: "Navigation" },
   { name: "changeStep", group: "Navigation" },
   { name: "openDrawer", group: "Modal & Overlays" },
   { name: "openModal", group: "Modal & Overlays" },
@@ -189,17 +185,6 @@ export interface ToggleNavbarAction extends BaseAction {
   name: "toggleNavbar";
 }
 
-export interface NextStepAction extends BaseAction {
-  name: "nextStep";
-  stepperId: string;
-  activeStep: number;
-}
-
-export interface PreviousStepAction extends BaseAction {
-  name: "previousStep";
-  stepperId: string;
-  activeStep: number;
-}
 export interface ChangeStepAction extends BaseAction {
   name: "changeStep";
   stepperId: string;
@@ -239,8 +224,6 @@ export type Action = {
     | ChangeStateAction
     | ReloadComponentAction
     | ToggleNavbarAction
-    | NextStepAction
-    | PreviousStepAction
     | ChangeStepAction
     | BindPlaceDataAction
     | BindPlaceGeometryAction;
@@ -339,12 +322,6 @@ export type ChangeStateActionParams = ActionParams & {
 export type ToggleNavbarActionParams = ActionParams & {
   action: ToggleNavbarAction;
 };
-export type NextStepActionParams = ActionParams & {
-  action: NextStepAction;
-};
-export type PreviousStepActionParams = ActionParams & {
-  action: PreviousStepAction;
-};
 export type ChangeStepActionParams = ActionParams & {
   action: ChangeStepAction;
 };
@@ -367,24 +344,6 @@ export const openDrawerAction = ({ action }: OpenDrawerActionParams) => {
 export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   updateTreeComponent(action.popOverId, { opened: true }, false);
-};
-
-export const goToNextStepAction = ({ action }: NextStepActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-
-  const step = action.activeStep + 1;
-
-  updateTreeComponent(action.stepperId, { activeStep: step }, false);
-};
-
-export const goToPreviousStepAction = ({
-  action,
-}: PreviousStepActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-
-  const step = Math.max(1, action.activeStep - 1);
-
-  updateTreeComponent(action.stepperId, { activeStep: step }, false);
 };
 
 export const changeStepAction = ({ action }: ChangeStepActionParams) => {
@@ -1063,14 +1022,6 @@ export const actionMapper = {
   toggleNavbar: {
     action: toggleNavbarAction,
     form: TogglePropsActionForm,
-  },
-  nextStep: {
-    action: goToNextStepAction,
-    form: NextStepActionForm,
-  },
-  previousStep: {
-    action: goToPreviousStepAction,
-    form: PreviousStepActionForm,
   },
   changeStep: {
     action: changeStepAction,
