@@ -1,4 +1,3 @@
-import { getByDomain } from "@/requests/projects/queries";
 import { cache } from "@/utils/emotionCache";
 import {
   DEFAULT_THEME,
@@ -17,9 +16,7 @@ import {
 import { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import Head from "next/head";
-import { Fragment, PropsWithChildren, useEffect, useState } from "react";
-import { isMatchingUrl } from "./[page]";
-import { useRouter } from "next/router";
+import { Fragment, PropsWithChildren, useState } from "react";
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
 
 // If loading a variable font, you don't need to specify the font weight
