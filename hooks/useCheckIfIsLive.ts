@@ -29,9 +29,8 @@ export const useCheckIfIsLive = () => {
     };
 
     chekcIfIsLive();
-    // Disabling the lint here because we only want to do the check once on the parent
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // @ts-ignore
+  }, [router?.state?.pathname]);
 
   return isLive;
 };
