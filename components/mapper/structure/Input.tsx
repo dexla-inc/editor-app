@@ -8,7 +8,6 @@ export const jsonStructure = (props?: any): Component => {
     name: "Input",
     description: "Input",
     props: {
-      name: "Input",
       style: {
         width: "100%",
         height: "auto",
