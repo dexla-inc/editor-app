@@ -2,7 +2,7 @@ import { AIRequestTypes } from "@/requests/ai/types";
 import { PageResponse } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
 import { MantineThemeExtended, useEditorStore } from "@/stores/editor";
-import { ICON_SIZE } from "@/utils/config";
+import { ICON_MEDIUM_SIZE, ICON_SIZE } from "@/utils/config";
 import {
   Component,
   EditorTree,
@@ -20,10 +20,11 @@ import {
 import {
   ActionIcon,
   Button,
-  Group,
+  Flex,
   Modal,
-  Radio,
+  Popover,
   Stack,
+  Text,
   Textarea,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -32,6 +33,8 @@ import { IconSparkles } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { AIPrefixTextarea } from "./AITextArea";
+import { Icon } from "./Icon";
 
 type ComponentGenerationProps = {
   componentBeingAddedId: MutableRefObject<string | undefined>;
@@ -212,10 +215,7 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
     }
   };
 
-  const handleTypeChange = (value: AIRequestTypes) => {
-    setType(value);
-    setDescriptionPlaceholder(descriptionPlaceholderMapping[value]);
-  };
+  const [opened, setOpened] = useState(false);
 
   return (
     <>
@@ -236,56 +236,56 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
       >
         <form onSubmit={form.onSubmit(onSubmit)}>
           <Stack>
-            <Radio.Group
-              value={type}
-              onChange={(value) => {
-                form.setFieldValue("type", value as AIRequestTypes);
-                handleTypeChange(value as AIRequestTypes);
-              }}
-              label="What do you want to generate?"
-              description="Select the type of content you want to generate"
-            >
-              <Group mt="xs" spacing="xl" py="sm">
-                <Radio
-                  value="COMPONENT"
-                  label="Component"
-                  description="Add / change one component"
-                />
-                <Radio
-                  value="LAYOUT"
-                  label="Layout"
-                  description="Change the entire page"
-                />
-                <Radio
-                  value="DESIGN"
-                  label="Design"
-                  description="Change theme"
-                  disabled
-                />
-                <Radio
-                  value="DATA"
-                  label="Data"
-                  description="Connect components to data"
-                  disabled
-                />
-              </Group>
-            </Radio.Group>
-            <Textarea
-              label="Description"
-              description={descriptionPlaceholder.description}
-              placeholder={descriptionPlaceholder.placeholder}
-              required
-              value={description}
-              onChange={(event) => {
-                form.setFieldValue(
-                  "description",
-                  event.currentTarget.value as string,
-                );
-                setDescription(event.currentTarget.value);
-              }}
-              autosize
-              onKeyDown={handleKeyDown}
+            <AIPrefixTextarea
+              items={[
+                {
+                  aiPrefix: "API",
+                  icon: "IconSparkles",
+                },
+                {
+                  aiPrefix: "Component",
+                  icon: "IconDatabase",
+                },
+                {
+                  aiPrefix: "Layout",
+                  icon: "IconLayout",
+                },
+              ]}
             />
+            <Popover opened={opened} onChange={setOpened}>
+              <Popover.Target>
+                <Textarea
+                  label="Description"
+                  description={descriptionPlaceholder.description}
+                  placeholder={descriptionPlaceholder.placeholder}
+                  required
+                  value={description}
+                  onChange={(event) => {
+                    form.setFieldValue(
+                      "description",
+                      event.currentTarget.value as string,
+                    );
+                    setDescription(event.currentTarget.value);
+                  }}
+                  autosize
+                  onKeyDown={handleKeyDown}
+                  onFocus={() => setOpened(true)}
+                />
+              </Popover.Target>
+
+              <Popover.Dropdown bg="black">
+                <Flex align="center" gap="xs">
+                  <Icon
+                    name="IconArrowRight"
+                    color={theme.colors.teal[6]}
+                    size={ICON_MEDIUM_SIZE}
+                    style={{ height: "25px" }}
+                  />
+                  <Text color="white">Dropdown</Text>
+                </Flex>
+              </Popover.Dropdown>
+            </Popover>
+
             <Button
               leftIcon={<IconSparkles size={ICON_SIZE} />}
               type="submit"
