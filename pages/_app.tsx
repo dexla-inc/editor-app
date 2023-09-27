@@ -131,7 +131,7 @@ export default function App(props: AppProps) {
                     scrollbarWidth: isLive && "none",
 
                     // For IE and Edge
-                    "-ms-overflow-style": isLive && "none",
+                    msOverflowStyle: isLive && "none",
                   },
 
                   html: {

@@ -1,18 +1,16 @@
-import { Skeleton, SkeletonProps } from "@mantine/core";
+import { Component } from "@/utils/editor";
+import { Flex, Group, Skeleton, SkeletonProps } from "@mantine/core";
 
-export const PieChart = (props: SkeletonProps) => (
-  <Skeleton circle {...props} />
-);
+export const style = {
+  justify: "center",
+  align: "center",
+  p: "20px",
+};
 
-export const Chart = ({ width, height, ...props }: SkeletonProps) => {
-  const { variant, radius, ...rest } = props;
+export const MantineSkeleton = (props: SkeletonProps) => {
   return (
-    <Skeleton
-      height={height}
-      width={width}
-      radius={radius}
-      variant={variant}
-      {...rest}
-    />
+    <Flex {...style}>
+      <Skeleton {...props} />
+    </Flex>
   );
 };

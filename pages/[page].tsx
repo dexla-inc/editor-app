@@ -73,7 +73,7 @@ export default function LivePage({ id, page }: Props) {
         <title>{page?.title}</title>
         <meta name="description" content={page.title} />
       </Head>
-      <Live key={page?.id} pageId={page?.id} projectId={id} />;
+      <Live key={page?.id} pageId={page?.id} projectId={id} />
     </>
   );
 }
