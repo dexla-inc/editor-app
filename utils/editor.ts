@@ -364,6 +364,23 @@ const pickTranslatableFields = (value: string, key: string) => {
   return value !== "" && translatableFields.includes(key);
 };
 
+export const updateTreeComponentAttrs = (
+  treeRoot: Component,
+  ids: string[],
+  attrs: Partial<Component>,
+) => {
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (ids.includes(node.id!)) {
+        merge(node, attrs);
+        context.break();
+      }
+    },
+    { order: "bfs" },
+  );
+};
+
 export const updateTreeComponent = (
   treeRoot: Component,
   id: string,

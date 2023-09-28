@@ -147,7 +147,6 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 import { FileWithPath } from "file-selector";
-import { StepperStep } from "@/components/mapper/StepperStep";
 import { FileButton } from "@/components/mapper/FileButton";
 import { useEditorStore } from "@/stores/editor";
 import { uploadFile } from "@/requests/storage/mutations";

@@ -19,7 +19,7 @@ export const Stepper = ({ renderTree, component, ...props }: Props) => {
   } = component.props as any;
 
   const [active, setActive] = useState(activeStep ?? 1);
-  const { setTreeComponentCurrentState } = useEditorStore((state) => state);
+  const { setTreeComponentCurrentState } = useEditorStore();
 
   useEffect(() => {
     // Reflect any external changes to the activeStep property
@@ -36,7 +36,7 @@ export const Stepper = ({ renderTree, component, ...props }: Props) => {
         }
       });
     });
-  }, [activeStep, active, setTreeComponentCurrentState, component?.children]);
+  }, [activeStep, setTreeComponentCurrentState, component?.children]);
 
   return (
     <MantineStepper
