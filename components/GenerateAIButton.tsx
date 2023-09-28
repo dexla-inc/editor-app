@@ -24,7 +24,7 @@ import { IconSparkles } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { AITextarea } from "./AITextArea";
+import { AITextArea } from "./AITextArea";
 
 type ComponentGenerationProps = {
   componentBeingAddedId: MutableRefObject<string | undefined>;
@@ -224,12 +224,30 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
       >
         <form onSubmit={form.onSubmit(onSubmit)}>
           <Stack pb={150}>
-            <AITextarea
+            <AITextArea
               value={description}
               onChange={(value) => {
                 form.setFieldValue("description", value);
                 setDescription(value);
               }}
+              items={[
+                {
+                  name: "API",
+                  icon: "IconDatabase",
+                },
+                {
+                  name: "Components",
+                  icon: "IconComponents",
+                },
+                {
+                  name: "Layout",
+                  icon: "IconLayout",
+                },
+                {
+                  name: "Page",
+                  icon: "IconFileDescription",
+                },
+              ]}
             />
             <Button
               leftIcon={<IconSparkles size={ICON_SIZE} />}

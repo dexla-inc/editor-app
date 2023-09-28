@@ -71,6 +71,7 @@ export type Endpoint = {
   dataSourceId: string;
   baseUrl: string | undefined;
   relativeUrl: string;
+  url: string | null;
   methodType: MethodTypes;
   description: string | null;
   mediaType: MediaTypes;
@@ -163,4 +164,6 @@ export type ApiEndpointFromAI = Pick<
   | "errorExampleResponse"
   | "withCredentials"
   | "isServerRequest"
-> & {};
+> & {
+  url?: string | null;
+};

@@ -90,7 +90,11 @@ export const createHandlers = (config: HandlerProps) => {
 
   const onMessage = (event: EventSourceMessage) => {
     try {
-      console.log(event.data);
+      if (event.data.includes("```toml")) {
+        console.warn("Ignoring data block containing ```toml");
+        return;
+      }
+
       setStream((state) => {
         try {
           if (state === undefined) {
@@ -164,13 +168,37 @@ type ProcessTOMLStreamProps<T> = {
   handler: (toml: T) => void;
 };
 
+// export const processTOMLStream = <T>(params: ProcessTOMLStreamProps<T>) => {
+//   const { stream, handler } = params;
+
+//   if (!stream || stream.endsWith("___DONE___")) return;
+//   console.log("processTOMLStream", stream);
+
+//   const toml = TOML.parse(stream) as unknown as T;
+//   handler(toml);
+// };
+
+let tomlBuffer = ""; // Buffer to hold incoming TOML data
+
 export const processTOMLStream = <T>(params: ProcessTOMLStreamProps<T>) => {
   const { stream, handler } = params;
 
-  if (!stream || stream.endsWith("___DONE___")) return;
+  if (!stream || stream.endsWith("___DONE___")) {
+    // Clear the buffer if we're done
+    tomlBuffer = "";
+    return;
+  }
 
-  const toml = TOML.parse(stream) as unknown as T;
-  handler(toml);
+  tomlBuffer += stream;
+  console.log("processTOMLStream", tomlBuffer);
+  try {
+    const toml = TOML.parse(tomlBuffer) as unknown as T;
+    tomlBuffer = "";
+    handler(toml);
+  } catch (error) {
+    // If parsing fails, keep the data in the buffer and wait for more data to come in
+    console.error("TOML parsing failed, waiting for more data.", error);
+  }
 };
 
 export const handleRequestContentStream = async (
