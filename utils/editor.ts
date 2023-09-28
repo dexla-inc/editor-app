@@ -350,7 +350,7 @@ export const getComponentBeingAddedId = (
   return id;
 };
 
-const translatableFields = [
+const translatableFieldsKeys = [
   "children",
   "label",
   "title",
@@ -360,8 +360,27 @@ const translatableFields = [
   "tooltip",
 ];
 
+const styleFieldsKeys = [
+  "styles",
+  "style",
+  "sx",
+  "size",
+  "bg",
+  "color",
+  "variant",
+  "textColor",
+  "leftIcon",
+  "icon",
+  "orientation",
+  "weight",
+];
+
 const pickTranslatableFields = (value: string, key: string) => {
-  return value !== "" && translatableFields.includes(key);
+  return value !== "" && translatableFieldsKeys.includes(key);
+};
+
+const pickStyleFields = (value: string, key: string) => {
+  return value !== "" && styleFieldsKeys.includes(key);
 };
 
 export const updateTreeComponentAttrs = (
@@ -388,28 +407,34 @@ export const updateTreeComponent = (
   state: string = "default",
   language: string = "default",
 ) => {
-  const textFields = pickBy(props, pickTranslatableFields);
-  const stylingFields = omit(props, translatableFields);
+  const translatableFields = pickBy(props, pickTranslatableFields);
+  const styleFields = pickBy(props, pickStyleFields);
+  const alwaysDefaultFields = omit(props, [
+    ...translatableFieldsKeys,
+    ...styleFieldsKeys,
+  ]);
 
   crawl(
     treeRoot,
     (node, context) => {
       if (node.id === id) {
         if (language === "default") {
-          node.props = merge(node.props, textFields);
+          node.props = merge(node.props, translatableFields);
         } else {
           node.languages = merge(node.languages, {
-            [language]: textFields,
+            [language]: translatableFields,
           });
         }
 
         if (state === "default") {
-          node.props = merge(node.props, stylingFields);
+          node.props = merge(node.props, styleFields);
         } else {
           node.states = merge(node.states, {
-            [state]: stylingFields,
+            [state]: styleFields,
           });
         }
+
+        node.props = merge(node.props, alwaysDefaultFields);
 
         context.break();
       }
