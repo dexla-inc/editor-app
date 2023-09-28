@@ -48,6 +48,8 @@ const triggers = [
   "onSubmit",
   "onInvalid",
   "onReset",
+  "onMouseOver",
+  "onMouseOut",
   // table actions
   "onRowClick",
   "onRowHover",
@@ -72,7 +74,8 @@ export const actions = [
   { name: "openDrawer", group: "Modal & Overlays" },
   { name: "openModal", group: "Modal & Overlays" },
   { name: "closeModal", group: "Modal & Overlays" },
-  { name: "openPopover", group: "Modal & Overlays" },
+  { name: "openPopOver", group: "Modal & Overlays" },
+  { name: "closePopOver", group: "Modal & Overlays" },
   { name: "toggleVisibility", group: "Style & Props" },
   { name: "alert", group: "Feedback" },
   { name: "changeState", group: "Feedback" },
@@ -338,12 +341,17 @@ export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
   updateTreeComponent(action.popOverId, { opened: true }, false);
 };
 
+export const closePopOverAction = ({ action }: OpenPopOverActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  updateTreeComponent(action.popOverId, { opened: false }, false);
+};
+
 export const changeStepAction = ({ action }: ChangeStepActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
   const component = getComponentById(
     useEditorStore.getState().tree.root,
-    action.stepperId
+    action.stepperId,
   );
 
   if (!component) {
@@ -380,7 +388,7 @@ export const togglePropsAction = ({
       {
         style: { display: "none" },
       },
-      false
+      false,
     );
   });
 
@@ -389,23 +397,23 @@ export const togglePropsAction = ({
     {
       style: { display: "flex" },
     },
-    false
+    false,
   );
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const { updateTreeComponent, tree: editorTree } = useEditorStore.getState();
   const selectedComponent = editorTree.root.children?.find(
-    (tree) => tree.name === "Navbar"
+    (tree) => tree.name === "Navbar",
   );
   const buttonComponent = selectedComponent?.children?.find(
-    (tree) => tree.description === "Button to toggle Navbar"
+    (tree) => tree.description === "Button to toggle Navbar",
   );
   const linksComponent = selectedComponent?.children?.find(
-    (tree) => tree.description === "Container for navigation links"
+    (tree) => tree.description === "Container for navigation links",
   );
   const buttonIcon = buttonComponent?.children?.reduce(
     (obj, tree) => ({ ...obj, ...tree }),
-    {} as Component
+    {} as Component,
   );
 
   const isExpanded = selectedComponent?.props?.style.width !== "100px";
@@ -528,7 +536,7 @@ export const loginAction = async ({
                 [key]: value,
               };
             },
-            {} as any
+            {} as any,
           )
         : undefined;
 
@@ -549,7 +557,7 @@ export const loginAction = async ({
 
     const dataSourceAuthConfig = await getDataSourceAuth(
       projectId,
-      endpoint?.dataSourceId!
+      endpoint?.dataSourceId!,
     );
 
     const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
@@ -560,7 +568,7 @@ export const loginAction = async ({
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess"
+        (action: Action) => action.trigger === "onSuccess",
       )!;
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
       onSuccessActionMapped.action({
@@ -575,7 +583,7 @@ export const loginAction = async ({
     if (onError && onError.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError"
+        (action: Action) => action.trigger === "onError",
       )!;
       const onErrorActionMapped = actionMapper[onError.action.name];
       onErrorActionMapped.action({
@@ -605,7 +613,7 @@ function getElementValue(value: string, iframeWindow: any): string {
 
 function getQueryElementValue(value: string, iframeWindow: any): string {
   const el = iframeWindow?.document.querySelector(
-    `input#${value.split("queryString_pass_")[1]}`
+    `input#${value.split("queryString_pass_")[1]}`,
   ) as HTMLInputElement;
   return el?.value ?? "";
 }
@@ -630,11 +638,11 @@ export const apiCallAction = async ({
       {
         // @ts-ignore
         loading: component.actions.find(
-          (a: { id: string }) => a.id === actionId
+          (a: { id: string }) => a.id === actionId,
           // @ts-ignore
         ).action.showLoader,
       },
-      false
+      false,
     );
 
     // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
@@ -696,7 +704,7 @@ export const apiCallAction = async ({
                 [key]: value,
               };
             },
-            {} as any
+            {} as any,
           )
         : undefined;
 
@@ -734,7 +742,7 @@ export const apiCallAction = async ({
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess"
+        (action: Action) => action.trigger === "onSuccess",
       )!;
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
       onSuccessActionMapped.action({
@@ -751,7 +759,7 @@ export const apiCallAction = async ({
     if (onError && onError.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError"
+        (action: Action) => action.trigger === "onError",
       )!;
       const onErrorActionMapped = actionMapper[onError.action.name];
       onErrorActionMapped.action({
@@ -789,7 +797,7 @@ export const bindResponseToComponentAction = ({
             ? bind.value.split("root[0].")[1]
             : bind.value.split("root.")[1],
         },
-        false
+        false,
       );
     }
   });
@@ -825,7 +833,7 @@ export const bindPlaceDataAction = ({
   const editorTree = useEditorStore.getState().tree;
   const component = getComponentById(
     editorTree.root,
-    action.componentId
+    action.componentId,
   ) as Component;
   const updateTreeComponentChildren =
     useEditorStore.getState().updateTreeComponentChildren;
@@ -898,11 +906,11 @@ export const bindPlaceGeometryAction = ({
   const updateTreeComponentChildren =
     useEditorStore.getState().updateTreeComponentChildren;
   const searchResults = getAllComponentsByName(editorTree.root, "Text").filter(
-    (component) => component.description === "Search Address In Map"
+    (component) => component.description === "Search Address In Map",
   );
   const parent = getComponentParent(
     editorTree.root,
-    searchResults[0].id!
+    searchResults[0].id!,
   ) as Component;
 
   const {
@@ -975,6 +983,10 @@ export const actionMapper = {
   },
   openPopOver: {
     action: openPopOverAction,
+    form: OpenPopOverActionForm,
+  },
+  closePopOver: {
+    action: closePopOverAction,
     form: OpenPopOverActionForm,
   },
   openToast: {

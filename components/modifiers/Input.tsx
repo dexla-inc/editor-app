@@ -1,15 +1,14 @@
-import { Icon } from "@/components/Icon";
 import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
+import { withModifier } from "@/hoc/withModifier";
 import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
 import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
-import { useEffect } from "react";
-import { withModifier } from "@/hoc/withModifier";
 import { pick } from "next/dist/lib/pick";
+import { useEffect } from "react";
 
 export const icon = IconForms;
 export const label = "Input";
@@ -19,7 +18,7 @@ export const defaultInputValues = {
   placeholder: "Input",
   type: "text",
   label: "",
-  icon: "",
+  icon: { props: { name: "" } },
   withAsterisk: false,
   labelSpacing: "0",
   name: "Input",
@@ -132,10 +131,11 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         />
         <IconSelector
           topLabel="Icon"
-          selectedIcon={form.values.icon}
+          selectedIcon={form.values.icon.props.name}
           onIconSelect={(iconName: string) => {
-            form.setFieldValue("icon", iconName);
-            debouncedTreeComponentPropsUpdate("icon", <Icon name={iconName} />);
+            const icon = { props: { name: iconName } };
+            form.setFieldValue("icon.props.name", iconName);
+            debouncedTreeComponentPropsUpdate("icon", icon);
           }}
         />
       </Stack>

@@ -1,17 +1,14 @@
 import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
-import {
-  debouncedTreeComponentPropsUpdate,
-  updateTreeComponent,
-} from "@/utils/editor";
+import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
-import { useEffect } from "react";
 import { pick } from "next/dist/lib/pick";
-import { withModifier } from "@/hoc/withModifier";
+import { useEffect } from "react";
 
 export const icon = IconClick;
 export const label = "Button";
@@ -24,6 +21,7 @@ export const defaultInputValues = {
   color: "Primary.6",
   textColor: "White.0",
   leftIcon: "",
+  justify: "center",
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
@@ -133,6 +131,26 @@ export const Modifier = withModifier(({ selectedComponent }) => {
               styles: {
                 label: { color: _value },
               },
+            });
+          }}
+        />
+        <Select
+          label="Justify"
+          size="xs"
+          data={[
+            { label: "Center", value: "center" },
+            { label: "Flex-start", value: "flex-start" },
+            { label: "Flex-end", value: "flex-end" },
+            { label: "Space-around", value: "space-around" },
+            { label: "Space-between", value: "space-between" },
+          ]}
+          {...form.getInputProps("justify")}
+          onChange={(value) => {
+            form.setFieldValue("justify", value as string);
+            debouncedTreeComponentPropsUpdate("style", {
+              ...selectedComponent?.props?.style,
+              display: "flex",
+              justifyContent: value as string,
             });
           }}
         />
