@@ -59,6 +59,7 @@ import * as ContainerStructure from "@/components/mapper/structure/Container";
 import * as DateInputStructure from "@/components/mapper/structure/DateInput";
 import * as DividerStructure from "@/components/mapper/structure/Divider";
 import * as DrawerStructure from "@/components/mapper/structure/Drawer";
+import * as FileButtonStructure from "@/components/mapper/structure/FileButton";
 import * as FileUploadStructure from "@/components/mapper/structure/FileUpload";
 import * as FormStructure from "@/components/mapper/structure/Form";
 import * as MapStructure from "@/components/mapper/structure/GoogleMap";
@@ -75,8 +76,8 @@ import * as PaginationStructure from "@/components/mapper/structure/Pagination";
 import * as PopOverStructure from "@/components/mapper/structure/PopOver";
 import * as RadioGroupStructure from "@/components/mapper/structure/RadioGroup";
 import * as RadioComplexGroupStructure from "@/components/mapper/structure/RadioGroupComplex";
-import * as RadioItemComplexStructure from "@/components/mapper/structure/RadioItemComplex";
 import * as RadioItemStructure from "@/components/mapper/structure/RadioItem";
+import * as RadioItemComplexStructure from "@/components/mapper/structure/RadioItemComplex";
 import * as RatingStructure from "@/components/mapper/structure/Rating";
 import * as SelectStructure from "@/components/mapper/structure/Select";
 import * as StepperStructure from "@/components/mapper/structure/Stepper";
@@ -92,10 +93,12 @@ import * as BarChartStructure from "@/components/mapper/structure/charts/BarChar
 import * as LineChartStructure from "@/components/mapper/structure/charts/LineChart";
 import * as PieChartStructure from "@/components/mapper/structure/charts/PieChart";
 import * as RadarChartStructure from "@/components/mapper/structure/charts/RadarChart";
-import * as FileButtonStructure from "@/components/mapper/structure/FileButton";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 
+import { FileButton } from "@/components/mapper/FileButton";
+import { uploadFile } from "@/requests/storage/mutations";
+import { useEditorStore } from "@/stores/editor";
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import {
   IconArrowAutofitContent,
@@ -147,9 +150,6 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 import { FileWithPath } from "file-selector";
-import { FileButton } from "@/components/mapper/FileButton";
-import { useEditorStore } from "@/stores/editor";
-import { uploadFile } from "@/requests/storage/mutations";
 import { useRouter } from "next/router";
 
 export type ComponentCategoryType =
@@ -922,7 +922,7 @@ export const componentMapper: ComponentMapper = {
       "border",
       "boxShadow",
     ],
-    actionTriggers: ["onMount", "onClick"],
+    actionTriggers: ["onMount", "onClick", "onMouseOver", "onMouseOut"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Select: {
@@ -1384,7 +1384,7 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <PopOver component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["border"],
+    modifiers: ["position", "border"],
     actionTriggers: ["onMount", "onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
