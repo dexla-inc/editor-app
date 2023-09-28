@@ -1,9 +1,9 @@
+import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
 import { isSame } from "@/utils/componentComparison";
 import { Component, updateInputFieldsWithFormData } from "@/utils/editor";
 import { FlexProps, Flex as MantineFlex } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { FormEvent, memo } from "react";
-import { MantineSkeleton } from "./skeleton/Skeleton";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -22,9 +22,7 @@ const FormComponent = ({ renderTree, component, ...props }: Props) => {
     return triggers.onSubmit(e);
   };
 
-  const isLoading = loading ?? false;
-
-  if (isLoading) {
+  if (loading) {
     return (
       <MantineSkeleton
         height={componentProps.style.height ?? 500}

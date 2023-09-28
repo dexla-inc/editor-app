@@ -1,3 +1,4 @@
+import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { componentMapper } from "@/utils/componentMapper";
@@ -5,7 +6,6 @@ import { Component, checkIfIsChild } from "@/utils/editor";
 import { Popover as MantinePopOver, PopoverProps } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { memo, useEffect } from "react";
-import { MantineSkeleton } from "./skeleton/Skeleton";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -37,9 +37,6 @@ const PopOverComponent = ({
     ...componentProps
   } = component.props as any;
 
-  // check if data is being fetched
-  const isLoading = loading ?? false;
-
   let targetComponent: Component | null = null;
   const [opened, { open, close }] = useDisclosure(propOpened);
   const childrenWithoutTarget = (children || component.children).reduce(
@@ -69,7 +66,7 @@ const PopOverComponent = ({
     : selectedComponentId === component.id ||
       checkIfIsChild(component, selectedComponentId as string);
 
-  if (isLoading)
+  if (loading)
     <MantineSkeleton height={style.height ?? 700} width={style.width ?? 500} />;
 
   return (

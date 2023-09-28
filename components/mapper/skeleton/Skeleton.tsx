@@ -1,5 +1,4 @@
-import { Component } from "@/utils/editor";
-import { Flex, Group, Skeleton, SkeletonProps } from "@mantine/core";
+import { Flex, Skeleton, SkeletonProps } from "@mantine/core";
 
 export const style = {
   justify: "center",

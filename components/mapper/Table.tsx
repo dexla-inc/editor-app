@@ -1,3 +1,4 @@
+import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
@@ -7,7 +8,6 @@ import isEmpty from "lodash.isempty";
 import startCase from "lodash.startcase";
 import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
 import { memo } from "react";
-import { MantineSkeleton } from "./skeleton/Skeleton";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -85,10 +85,7 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
     state: { isLoading: componentProps.loading },
   });
 
-  // check if data is being fetched
-  const isLoading = componentProps.loading ?? false;
-
-  if (isLoading) <MantineSkeleton height={style.height ?? 300} />;
+  if (componentProps.loading) <MantineSkeleton height={style.height ?? 300} />;
 
   return (
     <MantineReactTable
