@@ -22,11 +22,15 @@ export const QueryStringsForm = ({
   const [queryValue, setQueryValue] = useState("");
   const [queryStrings, setQueryStrings] = queryStringState;
 
-  const {
-    selectedComponentId,
-    setPickingComponentToBindTo,
-    setComponentToBind,
-  } = useEditorStore();
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo,
+  );
 
   return (
     <>

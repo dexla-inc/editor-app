@@ -57,8 +57,11 @@ const ToggleNavbarButton = () => {
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   // This state needs to move to the parent component
   const [isLoading, setIsLoading] = useState(false);
-  const { resetTree, isPreviewMode, setPreviewMode, language, setLanguage } =
-    useEditorStore((state) => state);
+  const resetTree = useEditorStore((state) => state.resetTree);
+  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const setPreviewMode = useEditorStore((state) => state.setPreviewMode);
+  const language = useEditorStore((state) => state.language);
+  const setLanguage = useEditorStore((state) => state.setLanguage);
   const { undo, redo, pastStates, futureStates } = useTemporalStore(
     (state) => state,
   );

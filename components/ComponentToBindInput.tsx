@@ -12,8 +12,12 @@ export const ComponentToBindInput = ({
   placeholder = "",
   label = "Component to bind",
 }: any) => {
-  const { setPickingComponentToBindTo, setHighlightedComponentId } =
-    useEditorStore();
+  const setHighlightedComponentId = useEditorStore(
+    (state) => state.setHighlightedComponentId,
+  );
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo,
+  );
 
   const onBindComponent = () => {
     setPickingComponentToBindTo({
