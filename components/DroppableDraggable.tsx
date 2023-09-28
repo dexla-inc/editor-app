@@ -32,8 +32,15 @@ import {
 } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { Router, useRouter } from "next/router";
-import { Fragment, PropsWithChildren, cloneElement, useEffect } from "react";
+import {
+  Fragment,
+  PropsWithChildren,
+  cloneElement,
+  useEffect,
+  useMemo,
+} from "react";
 import merge from "lodash.merge";
+import { filter } from "domutils";
 
 type Props = {
   id: string;
@@ -112,6 +119,8 @@ export const DroppableDraggable = ({
     (state) => state.highlightedComponentId,
   );
 
+  console.log({ component, children });
+
   const actions: Action[] = component.actions ?? [];
   const onMountAction: Action | undefined = actions.find(
     (action: Action) => action.trigger === "onMount",
@@ -175,7 +184,10 @@ export const DroppableDraggable = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPreviewMode, onMountAction, onMountActionsRan, component]);
 
-  const parent = getComponentParent(editorTree.root, id);
+  const parent = useMemo(
+    () => getComponentParent(editorTree.root, id),
+    [editorTree.root, id],
+  );
 
   const onDragStart = useOnDragStart();
   const onDrop = useOnDrop();
@@ -266,32 +278,33 @@ export const DroppableDraggable = ({
     }
   };
 
-  const isWidthPercentage = component.props?.style?.width?.endsWith("%");
-  const isHeightPercentage = component.props?.style?.height?.endsWith("%");
-
   const propsWithOverwrites = merge(
     {},
     component.props,
     component.languages?.[language],
     component.states?.[currentState],
-    {
-      style: {
-        width: isWidthPercentage ? "100%" : component.props?.style?.width,
-        height: isHeightPercentage ? "100%" : component.props?.style?.height,
-        position: "static",
-      },
-      disabled:
-        component.props?.disabled ??
-        (currentState === "disabled" && !!component.states?.disabled),
-      triggers: isPreviewMode
-        ? {
-            ...triggers,
-            onMouseEnter: triggers?.onHover ?? hoverStateFunc,
-            onMouseLeave: leaveHoverStateFunc,
-          }
-        : {},
-    },
   );
+
+  const isWidthPercentage = propsWithOverwrites?.style?.width?.endsWith("%");
+  const isHeightPercentage = propsWithOverwrites?.style?.height?.endsWith("%");
+
+  merge(propsWithOverwrites, {
+    style: {
+      width: isWidthPercentage ? "100%" : propsWithOverwrites.style?.width,
+      height: isHeightPercentage ? "100%" : propsWithOverwrites.style?.height,
+      position: "static",
+    },
+    disabled:
+      component.props?.disabled ??
+      (currentState === "disabled" && !!component.states?.disabled),
+    triggers: isPreviewMode
+      ? {
+          ...triggers,
+          onMouseEnter: triggers?.onHover ?? hoverStateFunc,
+          onMouseLeave: leaveHoverStateFunc,
+        }
+      : {},
+  });
 
   return (
     <Box
@@ -299,12 +312,8 @@ export const DroppableDraggable = ({
       id={id}
       pos="relative"
       sx={{
-        width: component.props?.style?.width
-          ? component.props?.style?.width
-          : "auto",
-        height: component.props?.style?.height
-          ? component.props?.style?.height
-          : "auto",
+        width: propsWithOverwrites.style.width ?? "auto",
+        height: propsWithOverwrites.style.height ?? "auto",
         "&:before": {
           ...(!isPreviewMode ? shadows : {}),
           content: '""',
