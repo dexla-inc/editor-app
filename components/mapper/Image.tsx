@@ -1,10 +1,10 @@
+import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { ImageProps, Image as MantineImage } from "@mantine/core";
 import get from "lodash.get";
 import { memo } from "react";
-import { MantineSkeleton } from "./skeleton/Skeleton";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -33,10 +33,7 @@ const ImageComponent = ({ component }: Props) => {
     value = get(data?.base ?? {}, path) ?? src;
   }
 
-  // check if data is being fetched
-  const isLoading = loading ?? false;
-
-  if (isLoading)
+  if (loading)
     <MantineSkeleton
       height={height ?? "100px"}
       width={height ?? "100px"}

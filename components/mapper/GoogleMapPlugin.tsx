@@ -1,3 +1,4 @@
+import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
 import { MarkerItem, Options } from "@/components/modifiers/GoogleMap";
 import { Component } from "@/utils/editor";
 import { BoxProps, Text } from "@mantine/core";
@@ -8,7 +9,6 @@ import {
   useLoadScript,
 } from "@react-google-maps/api";
 import { useCallback, useEffect, useState } from "react";
-import { MantineSkeleton } from "./skeleton/Skeleton";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -60,9 +60,6 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
     language: language,
   });
 
-  // Determine whether data is being fetch
-  const isDataFetching = loading ?? false;
-
   // Determine whether the maps API is loaded
   const isAlreadyLoaded = !!window.google;
   const isLoaded = isAlreadyLoaded || loadScript.isLoaded;
@@ -103,7 +100,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
     return LOADING_TEXT;
   }
 
-  if (isDataFetching) {
+  if (loading) {
     return <MantineSkeleton height={style.height ?? 500} />;
   }
 

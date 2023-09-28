@@ -1,8 +1,8 @@
+import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import isEmpty from "lodash.isempty";
-import { MantineSkeleton } from "./skeleton/Skeleton";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -26,9 +26,7 @@ export const Container = ({ renderTree, component, ...props }: Props) => {
 
   const data = !isPreviewMode ? undefined : dataProp?.value ?? dataProp;
 
-  const isLoading = loading ?? false;
-
-  if (isLoading) {
+  if (loading) {
     return <MantineSkeleton height={style.height ?? 300} />;
   }
 
