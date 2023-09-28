@@ -427,14 +427,12 @@ export const updateTreeComponent = (
         }
 
         if (state === "default") {
-          node.props = merge(node.props, styleFields);
+          node.props = merge(node.props, styleFields, alwaysDefaultFields);
         } else {
           node.states = merge(node.states, {
             [state]: styleFields,
           });
         }
-
-        node.props = merge(node.props, alwaysDefaultFields);
 
         context.break();
       }
