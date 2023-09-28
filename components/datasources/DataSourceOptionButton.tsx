@@ -1,4 +1,11 @@
-import { Paper, Stack, Text, Title, UnstyledButton } from "@mantine/core";
+import {
+  Paper,
+  Stack,
+  Text,
+  Title,
+  UnstyledButton,
+  useMantineTheme,
+} from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -17,17 +24,26 @@ export default function MantineStyledButton({
   caption,
   href,
 }: Props) {
+  const theme = useMantineTheme();
   return (
     <UnstyledButton
       component={Link}
       href={href}
-      style={{
+      sx={{
         display: "flex",
         flex: 1,
         cursor: "pointer",
       }}
     >
-      <Paper p="xl" radius="sm" shadow="xs" sx={{ width: "100%" }}>
+      <Paper
+        p="xl"
+        radius="sm"
+        shadow="xs"
+        sx={{
+          width: "100%",
+          "&:hover": { backgroundColor: theme.colors.gray[1] },
+        }}
+      >
         <Stack align="center">
           {logoUrl && (
             <Image src={logoUrl} alt={title} width={200} height={200} />

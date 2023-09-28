@@ -15,7 +15,7 @@ export const SettingsTabHeader = ({ name }: { name: string }) => {
       >
         Back
       </Button>
-      <Title order={3}>{name}</Title>
+      {name && name !== "undefined" && <Title order={3}>{name}</Title>}
     </Flex>
   );
 };

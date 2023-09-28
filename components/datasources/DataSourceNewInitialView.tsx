@@ -1,4 +1,4 @@
-import MantineStyledButton from "@/components/settings/DataSourceOptionButton";
+import MantineStyledButton from "@/components/datasources/DataSourceOptionButton";
 import { Container, Flex, Title } from "@mantine/core";
 import { useRouter } from "next/router";
 

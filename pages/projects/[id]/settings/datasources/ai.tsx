@@ -1,5 +1,5 @@
 import { DashboardShell } from "@/components/DashboardShell";
-import DataSourceAddAPIWithAI from "@/components/settings/DataSourceAddAPIWithAI";
+import DataSourceAddAPIWithAI from "@/components/datasources/DataSourceAddAPIWithAI";
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
 import { Tabs } from "@mantine/core";
@@ -11,7 +11,7 @@ export default function Settings() {
   const { user } = authInfo || {};
   const router = useRouter();
 
-  const name = router.query.name as string;
+  const { id, name } = router.query as { id: string; name: string };
 
   return (
     <DashboardShell user={user}>
@@ -20,7 +20,7 @@ export default function Settings() {
         <SettingsTabs />
 
         <Tabs.Panel value="datasources" pt="xs">
-          <DataSourceAddAPIWithAI />
+          <DataSourceAddAPIWithAI projectId={id} />
         </Tabs.Panel>
       </Tabs>
     </DashboardShell>

@@ -17,6 +17,6 @@ export type ChatHistoryMessage = {
 
 export type EventSourceParams = {
   type: AIRequestTypes;
+  description: string;
   pageName?: string;
-  description?: string;
 };

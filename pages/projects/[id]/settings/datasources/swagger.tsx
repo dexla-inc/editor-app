@@ -1,5 +1,5 @@
 import { DashboardShell } from "@/components/DashboardShell";
-import DataSourceAddSwagger from "@/components/settings/DataSourceAddSwagger";
+import DataSourceAddSwagger from "@/components/datasources/DataSourceAddSwagger";
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
 import { Tabs } from "@mantine/core";

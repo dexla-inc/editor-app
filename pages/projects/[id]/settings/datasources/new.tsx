@@ -1,5 +1,5 @@
 import { DashboardShell } from "@/components/DashboardShell";
-import DataSourceNewInitialView from "@/components/settings/DataSourceNewInitialView";
+import DataSourceNewInitialView from "@/components/datasources/DataSourceNewInitialView";
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
 import { Tabs } from "@mantine/core";

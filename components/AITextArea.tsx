@@ -1,3 +1,4 @@
+import classes from "@/components/AITextArea.module.css";
 import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
 import { Flex, Popover, Text } from "@mantine/core";
@@ -7,11 +8,11 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useState } from "react";
-import classes from "./AITextArea.module.css";
 
 type Props = {
   value: string;
   onChange: (value: string) => void;
+  items: AITextAreaItem[];
 };
 
 const FeatureHighlight = Highlight.extend<HighlightOptions>({
@@ -22,11 +23,11 @@ const ActionHighlight = Highlight.extend<HighlightOptions>({
   name: "actionHighlight",
 });
 
-export const AITextarea = ({ value, onChange }: Props) => {
+export const AITextArea = ({ value, onChange, items }: Props) => {
   const [showFeatures, setFeature] = useState<boolean>(false);
   const theme = useEditorStore((state) => state.theme);
 
-  const filteredItems = getFilteredItems(featureItems, "");
+  const filteredItems = getFilteredItems(items, "");
 
   const editor = useEditor({
     extensions: [
@@ -52,7 +53,7 @@ export const AITextarea = ({ value, onChange }: Props) => {
 
       clearPreviousHighlights(editor);
 
-      const matchedFeatureItem = findMatchingItem(featureItems, inputText);
+      const matchedFeatureItem = findMatchingItem(items, inputText);
       const matchedActionItem = findMatchingItem(actionItems, inputText);
 
       applyHighlightIfMatched(
@@ -68,7 +69,7 @@ export const AITextarea = ({ value, onChange }: Props) => {
         inputText,
       );
 
-      const filteredFeatures = getFilteredItems(featureItems, inputText);
+      const filteredFeatures = getFilteredItems(items, inputText);
       const isShowingFeatures =
         inputText.trim() === "" || filteredFeatures.length > 0;
       setFeature(isShowingFeatures);
@@ -77,7 +78,7 @@ export const AITextarea = ({ value, onChange }: Props) => {
 
     onFocus: ({ editor }) => {
       const inputValue = editor.getText();
-      const filtered = getFilteredItems(featureItems, inputValue);
+      const filtered = getFilteredItems(items, inputValue);
       setFeature(inputValue.trim() === "" || filtered.length > 0);
     },
   });
@@ -122,37 +123,18 @@ export const AITextarea = ({ value, onChange }: Props) => {
   );
 };
 
-const getFilteredItems = (featureItems: Item[], input: string) => {
+const getFilteredItems = (featureItems: AITextAreaItem[], input: string) => {
   return featureItems.filter((item) =>
     item.name.toLowerCase().includes(input.toLowerCase()),
   );
 };
 
-type Item = {
+export type AITextAreaItem = {
   name: string;
   icon: string;
 };
 
-const featureItems: Item[] = [
-  {
-    name: "API",
-    icon: "IconDatabase",
-  },
-  {
-    name: "Components",
-    icon: "IconComponents",
-  },
-  {
-    name: "Layout",
-    icon: "IconLayout",
-  },
-  {
-    name: "Page",
-    icon: "IconFileDescription",
-  },
-];
-
-const actionItems: Item[] = [
+const actionItems: AITextAreaItem[] = [
   {
     name: "Add",
     icon: "IconPlus",
