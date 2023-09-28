@@ -11,6 +11,7 @@ import {
   getComponentById,
   updateTreeComponent,
   updateTreeComponentActions,
+  updateTreeComponentAttrs,
   updateTreeComponentChildren,
   updateTreeComponentDescription,
 } from "@/utils/editor";
@@ -135,6 +136,10 @@ export type EditorState = {
     componentId: string,
     description: string,
   ) => void;
+  updateTreeComponentAttrs: (
+    componentIds: string[],
+    attrs: Partial<Component>,
+  ) => void;
   setTreeComponentCurrentState: (
     componentId: string,
     currentState: string,
@@ -247,7 +252,7 @@ export const useEditorStore = create<EditorState>()(
 
             return {
               tree: {
-                ...copy,
+                ...cloneDeep(copy),
                 name: `Edited ${component?.name}`,
                 timestamp: Date.now(),
               },
@@ -305,6 +310,26 @@ export const useEditorStore = create<EditorState>()(
             const copy = cloneDeep(state.tree);
 
             updateTreeComponentDescription(copy.root, componentId, description);
+            debouncedUpdatePageState(
+              encodeSchema(JSON.stringify(copy)),
+              state.currentProjectId ?? "",
+              state.currentPageId ?? "",
+              state.setIsSaving,
+            );
+
+            return {
+              tree: copy,
+            };
+          });
+        },
+        updateTreeComponentAttrs: (
+          componentIds: string[],
+          attrs: Partial<Component>,
+        ) => {
+          set((state) => {
+            const copy = cloneDeep(state.tree);
+
+            updateTreeComponentAttrs(copy.root, componentIds, attrs);
             debouncedUpdatePageState(
               encodeSchema(JSON.stringify(copy)),
               state.currentProjectId ?? "",

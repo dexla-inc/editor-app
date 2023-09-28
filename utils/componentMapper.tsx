@@ -80,6 +80,7 @@ import * as RadioItemStructure from "@/components/mapper/structure/RadioItem";
 import * as RatingStructure from "@/components/mapper/structure/Rating";
 import * as SelectStructure from "@/components/mapper/structure/Select";
 import * as StepperStructure from "@/components/mapper/structure/Stepper";
+import * as StepperStepStructure from "@/components/mapper/structure/StepperStep";
 import * as SwitchStructure from "@/components/mapper/structure/Switch";
 import * as TableStructure from "@/components/mapper/structure/Table";
 import * as TabsStructure from "@/components/mapper/structure/Tabs";
@@ -601,6 +602,11 @@ export const structureMapper: StructureMapper = {
     category: "Navigation",
     icon: <IconArrowAutofitContent size={ICON_SIZE} />,
   },
+  StepperStep: {
+    structure: (props: any) => StepperStepStructure.jsonStructure(props),
+    category: "Navigation",
+    icon: <IconArrowAutofitContent size={ICON_SIZE} />,
+  },
   Menu: {
     structure: (props: any) => MenuStructure.jsonStructure(props),
     Draggable: () => (
@@ -830,6 +836,7 @@ export type Modifiers =
   | "table"
   | "radio"
   | "radioItem"
+  | "stepper"
   | "drawer"
   | "buttonIcon"
   | "mapSettings"
@@ -897,7 +904,7 @@ export const componentMapper: ComponentMapper = {
         active={1}
       />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["stepper", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

@@ -2,7 +2,10 @@ import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { useEditorStore } from "@/stores/editor";
-import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
+import {
+  debouncedTreeComponentPropsUpdate,
+  updateTreeComponent,
+} from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
@@ -24,7 +27,7 @@ export const defaultInputValues = {
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
-  const theme = useEditorStore((state) => state.theme);
+  const { theme, updateTreeComponent } = useEditorStore((state) => state);
 
   const form = useForm({
     initialValues: defaultInputValues,
@@ -119,12 +122,14 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           {...form.getInputProps("textColor")}
           onChange={(value: string) => {
             form.setFieldValue("textColor", value);
-            debouncedTreeComponentPropsUpdate("textColor", value);
             const [color, index] = value.split(".");
             // @ts-ignore
             const _value = theme.colors[color][index];
-            debouncedTreeComponentPropsUpdate("styles", {
-              label: { color: _value },
+            updateTreeComponent(selectedComponent?.id!, {
+              textColor: value,
+              styles: {
+                label: { color: _value },
+              },
             });
           }}
         />

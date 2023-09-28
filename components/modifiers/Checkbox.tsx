@@ -12,6 +12,7 @@ export const icon = IconCheckbox;
 export const label = "Checkbox";
 
 export const defaultInputValues = {
+  name: "Checkbox",
   label: "A label",
   checked: false,
   size: "sm",
@@ -27,6 +28,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   useEffect(() => {
     if (selectedComponent?.id) {
       const data = pick(selectedComponent.props!, [
+        "name",
         "style",
         "label",
         "size",
@@ -36,6 +38,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
       ]);
 
       form.setValues({
+        name: data.name ?? defaultInputValues.name,
         size: data.size ?? defaultInputValues.size,
         label: data.label ?? defaultInputValues.label,
         withAsterisk: data.withAsterisk ?? defaultInputValues.withAsterisk,
@@ -54,6 +57,15 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     <form>
       <Stack spacing="xs">
         <TextInput
+          label="Name"
+          size="xs"
+          {...form.getInputProps("name")}
+          onChange={(e) => {
+            form.setFieldValue("name", e.target.value);
+            debouncedTreeComponentPropsUpdate("name", e.target.value);
+          }}
+        />
+        <TextInput
           label="Label"
           size="xs"
           {...form.getInputProps("label")}
@@ -70,7 +82,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             form.setFieldValue("checked", e.currentTarget.checked);
             debouncedTreeComponentPropsUpdate(
               "checked",
-              e.currentTarget.checked
+              e.currentTarget.checked,
             );
           }}
         />
@@ -88,7 +100,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             form.setFieldValue("withAsterisk", event.currentTarget.checked);
             debouncedTreeComponentPropsUpdate(
               "withAsterisk",
-              event.currentTarget.checked
+              event.currentTarget.checked,
             );
           }}
         />
