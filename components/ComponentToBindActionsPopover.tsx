@@ -65,7 +65,9 @@ export const ComponentToBindActionsPopover = ({ onPick }: any) => {
 };
 
 const ListItem = ({ component, children, level = 0, onSelectItem }: any) => {
-  const { setHighlightedComponentId } = useEditorStore();
+  const setHighlightedComponentId = useEditorStore(
+    (state) => state.setHighlightedComponentId,
+  );
 
   const icon = structureMapper[component.name as string]?.icon;
 

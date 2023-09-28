@@ -44,7 +44,12 @@ export const TogglePropsActionForm = ({ id }: Props) => {
     editorTree,
     selectedComponentId,
   });
-  const { setPickingComponentToBindTo, setComponentToBind } = useEditorStore();
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo,
+  );
   const component = getComponentById(editorTree.root, selectedComponentId!);
 
   const form = useForm<FormValues>({

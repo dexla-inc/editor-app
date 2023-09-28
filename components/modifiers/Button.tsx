@@ -27,7 +27,10 @@ export const defaultInputValues = {
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
-  const { theme, updateTreeComponent } = useEditorStore((state) => state);
+  const updateTreeComponent = useEditorStore(
+    (state) => state.updateTreeComponent,
+  );
+  const theme = useEditorStore((state) => state.theme);
 
   const form = useForm({
     initialValues: defaultInputValues,

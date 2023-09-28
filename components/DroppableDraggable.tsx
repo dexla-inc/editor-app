@@ -119,8 +119,6 @@ export const DroppableDraggable = ({
     (state) => state.highlightedComponentId,
   );
 
-  console.log({ component, children });
-
   const actions: Action[] = component.actions ?? [];
   const onMountAction: Action | undefined = actions.find(
     (action: Action) => action.trigger === "onMount",

@@ -19,7 +19,9 @@ export const Stepper = ({ renderTree, component, ...props }: Props) => {
   } = component.props as any;
 
   const [active, setActive] = useState(activeStep ?? 1);
-  const { setTreeComponentCurrentState } = useEditorStore();
+  const setTreeComponentCurrentState = useEditorStore(
+    (state) => state.setTreeComponentCurrentState,
+  );
 
   useEffect(() => {
     // Reflect any external changes to the activeStep property
