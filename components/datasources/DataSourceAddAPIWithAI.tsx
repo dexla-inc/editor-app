@@ -1,5 +1,5 @@
-import { AITextArea } from "@/components/AITextArea";
 import { Icon } from "@/components/Icon";
+import { AITextArea } from "@/components/ai/AITextArea";
 import ApiInfoForm from "@/components/datasources/ApiInfoForm";
 import { ApiFromAI } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
