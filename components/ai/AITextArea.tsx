@@ -1,4 +1,4 @@
-import classes from "@/components/AITextArea.module.css";
+import classes from "@/components/ai/AITextArea.module.css";
 import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
 import { Flex, Popover, Text } from "@mantine/core";

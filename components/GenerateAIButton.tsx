@@ -1,3 +1,4 @@
+import { AITextArea } from "@/components/ai/AITextArea";
 import { AIRequestTypes } from "@/requests/ai/types";
 import { PageResponse } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
@@ -24,7 +25,6 @@ import { IconSparkles } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { AITextArea } from "./AITextArea";
 
 type ComponentGenerationProps = {
   componentBeingAddedId: MutableRefObject<string | undefined>;

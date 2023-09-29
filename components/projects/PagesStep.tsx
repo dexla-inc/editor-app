@@ -30,7 +30,6 @@ import {
   IconPlus,
   IconSparkles,
 } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { SetStateAction, useEffect, useState } from "react";
@@ -62,7 +61,6 @@ export default function PagesStep({
   initialPageFetchDone,
   setInitialPageFetchDone,
 }: PagesStepProps) {
-  console.log(setInitialPageFetchDone);
   const router = useRouter();
   const resetTree = useEditorStore((state) => state.resetTree);
   const [count, setCount] = useState(5);
@@ -90,6 +88,12 @@ export default function PagesStep({
     setIsLoading,
   });
 
+  const onCloseOverride = async () => {
+    console.log("Closing stream");
+    await onClose();
+    setInitialPageFetchDone(true);
+  };
+
   const fetchPageData = async (pageCount: number) => {
     setIsLoading(true);
 
@@ -101,7 +105,7 @@ export default function PagesStep({
       onMessage,
       onError,
       onOpen,
-      onClose,
+      onCloseOverride,
       pages.join(),
     );
   };
@@ -109,10 +113,11 @@ export default function PagesStep({
   const handlePageNamesGeneration = () => {
     return function (json: any) {
       const newPages = Object.values(json) as string[];
-      if (count === 5) setPages(newPages);
+      if (!initialPageFetchDone) setPages(newPages);
       else setPages((oldPages) => [...oldPages, ...newPages]);
     };
   };
+  // if first time and pages.length is less than 5 then set pages
 
   useEffect(() => {
     processTOMLStream({
@@ -122,25 +127,13 @@ export default function PagesStep({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stream, type]);
 
-  const { error, data, refetch } = useQuery(
-    ["pageStream", projectId, pages, count],
-    () => fetchPageData(count),
-    {
-      enabled: false,
-    },
-  );
-
   // Ensure stream pages only happens once
   useEffect(() => {
-    if (setInitialPageFetchDone)
-      if (count === 1 || !initialPageFetchDone) {
-        refetch();
-        if (count !== 1) {
-          setInitialPageFetchDone(true);
-        }
-      }
+    if (!initialPageFetchDone) {
+      fetchPageData(count);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [count]);
+  }, []);
 
   const createManyPages = async (projectId: string) => {
     resetTree();
@@ -247,7 +240,7 @@ export default function PagesStep({
               variant="light"
               leftIcon={<IconPlus size={ICON_SIZE} />}
               onClick={() => {
-                setCount(1);
+                fetchPageData(1);
               }}
               loading={isLoading}
             >

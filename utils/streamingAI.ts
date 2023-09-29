@@ -137,7 +137,6 @@ export const createHandlers = (config: HandlerProps) => {
     try {
       if (type === "PAGE") {
         setStream("");
-        return;
       }
 
       if (type === "COMPONENT" || type === "LAYOUT") {

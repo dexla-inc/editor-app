@@ -23,6 +23,7 @@ export default function New() {
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [pages, setPages] = useState<string[]>([]);
   const [themeResponse, setThemeResponse] = useState<ThemeResponse>();
+  const [initialPageFetchDone, setInitialPageFetchDone] = useState(false);
 
   return (
     <DashboardShell>
@@ -66,13 +67,11 @@ export default function New() {
             <Stepper.Step label="Pages" description="Generate your page names">
               <PagesStep
                 prevStep={prevStep}
-                isLoading={isLoading}
-                setIsLoading={setIsLoading}
-                startLoading={startLoading}
-                stopLoading={stopLoading}
                 projectId={projectId}
                 pages={pages}
                 setPages={setPages}
+                initialPageFetchDone={initialPageFetchDone}
+                setInitialPageFetchDone={setInitialPageFetchDone}
               ></PagesStep>
             </Stepper.Step>
           </Stepper>
