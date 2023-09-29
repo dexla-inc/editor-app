@@ -61,7 +61,7 @@ export const GoToUrlForm = ({ id }: Props) => {
 
   const allParentsWithExampleData = getAllParentsWithExampleData(
     editorTree.root,
-    selectedComponentId!
+    selectedComponentId!,
   );
 
   const parentData = allParentsWithExampleData.reduce(
@@ -71,7 +71,7 @@ export const GoToUrlForm = ({ id }: Props) => {
         [parent.id!]: parent.props?.exampleData.value,
       };
     },
-    {}
+    {},
   );
 
   const openInNewTabInputProps = form.getInputProps("openInNewTab");
@@ -94,7 +94,6 @@ export const GoToUrlForm = ({ id }: Props) => {
             <DataPicker
               data={{ ...parentData, ...exampleData }}
               onSelectValue={(selected) => {
-                console.log({ selected });
                 form.setFieldValue("url", `dataPath_${selected}`);
               }}
             />

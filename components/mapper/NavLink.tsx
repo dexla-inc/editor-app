@@ -4,6 +4,8 @@ import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import { useRouter } from "next/router";
 import { isSame } from "@/utils/componentComparison";
 import { memo } from "react";
+import { useEditorStore } from "@/stores/editor";
+import merge from "lodash.merge";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -11,22 +13,41 @@ type Props = {
 } & NavLinkProps;
 
 const NavLinkComponent = ({ renderTree, component, ...props }: Props) => {
-  const { children, isNested, pageId, triggers, icon, ...componentProps } =
-    component.props as any;
+  const theme = useEditorStore((state) => state.theme);
+
+  const {
+    children,
+    isNested,
+    pageId,
+    triggers,
+    icon,
+    color = "",
+    ...componentProps
+  } = component.props as any;
+
+  const [section, index] = color.split(".");
+  const colorSection = theme.colors[section];
+  const textColor = colorSection?.[index] ?? "#000";
 
   const router = useRouter();
-  const curentPageId = router.query.page as string;
-  const active = curentPageId === pageId;
+  const currentPageId = router.query.page as string;
+  const active = currentPageId === pageId;
+
+  merge(componentProps, { style: { color: textColor } });
 
   return (
     <MantineNavLink
-      icon={<Icon name={icon} />}
+      icon={<Icon name={icon} size={20} />}
       rightSection={isNested ? <Icon name="IconChevronRight" /> : null}
       active={active}
       {...props}
       {...componentProps}
       {...triggers}
-    />
+    >
+      {component.children && component.children.length > 0
+        ? component.children?.map((child) => renderTree(child))
+        : children}
+    </MantineNavLink>
   );
 };
 

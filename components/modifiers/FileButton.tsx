@@ -49,8 +49,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     debouncedTreeComponentPropsUpdate(name, value);
   };
 
-  console.log(form.values);
-
   return (
     <form>
       {selectedComponent?.name === "FileUpload" ? (

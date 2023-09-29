@@ -28,6 +28,7 @@ import * as StepperModifier from "@/components/modifiers/Stepper";
 import * as TableModifier from "@/components/modifiers/Table";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TitleModifier from "@/components/modifiers/Title";
+import * as NavLinkModifier from "@/components/modifiers/NavLink";
 import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper } from "@/utils/actions";
 import { Modifiers, componentMapper } from "@/utils/componentMapper";
@@ -78,6 +79,7 @@ const sectionMapper: SectionsMapper = {
   stepper: StepperModifier,
   fileButton: FileButtonModifier,
   popOver: PopOverModifier,
+  navLink: NavLinkModifier,
 };
 
 type Tab = "design" | "actions";

@@ -4,6 +4,7 @@ import { PageResponse } from "@/requests/pages/types";
 import { MantineThemeExtended } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
+import merge from "lodash.merge";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = (props.theme ?? defaultTheme) as MantineThemeExtended;
@@ -33,22 +34,24 @@ export const jsonStructure = (props?: any): Component => {
     name: "Navbar",
     description: "Navbar",
     props: {
-      style: {
-        width: "260px",
-        height: "auto",
-        minHeight: "100vh",
-        borderRightWidth: "1px",
-        borderRightStyle: "solid",
-        borderRightColor: "#CCCCCC",
-        display: "flex",
-        flexDirection: "column",
-        flexGrow: "1",
-        gap: "0px",
-        top: 0,
-        left: 0,
-        background: isDarkTheme ? theme.colors.dark[6] : "#fff",
-      },
-      ...(props.props || {}),
+      ...merge({
+        style: {
+          width: "260px",
+          height: "auto",
+          minHeight: "100vh",
+          borderRightWidth: "1px",
+          borderRightStyle: "solid",
+          borderRightColor: "#CCCCCC",
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: "1",
+          gap: "0px",
+          top: 0,
+          left: 0,
+          background: isDarkTheme ? theme.colors.dark[6] : "#fff",
+        },
+        ...props.props,
+      }),
     },
     fixedPosition: { position: "left", target: "root" },
     children: [
@@ -66,7 +69,6 @@ export const jsonStructure = (props?: any): Component => {
             cursor: "pointer",
             zIndex: 10,
           },
-          variant: "default",
           radius: "xl",
         },
         actions: [
@@ -160,14 +162,7 @@ export const jsonStructure = (props?: any): Component => {
                   color: isDarkTheme
                     ? theme.colors.gray[5]
                     : theme.colors.dark[9],
-                },
-                sx: {
                   borderRadius: "3px",
-                  "&:hover, [data-active]": {
-                    backgroundColor: `${
-                      isDarkTheme ? theme.colors.dark[4] : theme.colors.gray[0]
-                    } !important`,
-                  },
                 },
               },
               actions: [

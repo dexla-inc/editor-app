@@ -841,7 +841,8 @@ export type Modifiers =
   | "buttonIcon"
   | "mapSettings"
   | "fileButton"
-  | "popOver";
+  | "popOver"
+  | "navLink";
 
 export type ComponentDefinition = {
   Component: any;
@@ -1005,7 +1006,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <NavLink component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["background", "spacing", "size", "border"],
+    modifiers: ["navLink", "background", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
