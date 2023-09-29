@@ -71,7 +71,7 @@ export type Endpoint = {
   dataSourceId: string;
   baseUrl: string | undefined;
   relativeUrl: string;
-  url: string | null;
+  url?: string | null;
   methodType: MethodTypes;
   description: string | null;
   mediaType: MediaTypes;
