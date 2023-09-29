@@ -1,4 +1,4 @@
-import { postEventSource } from "@/requests/ai/queries";
+import { getPagesEventSource, postEventSource } from "@/requests/ai/queries";
 import { AIRequestTypes, EventSourceParams } from "@/requests/ai/types";
 import { DexlaNotificationProps } from "@/stores/app";
 import TOML from "@iarna/toml";
@@ -47,6 +47,11 @@ export const descriptionPlaceholderMapping: Record<
     description: "Describe the API you want to generate or change",
     placeholder: "Create a new API endpoint for the user's transactions...",
     replaceText: "API",
+  },
+  PAGE_NAMES: {
+    description: "",
+    placeholder: "",
+    replaceText: "Page names",
   },
 };
 
@@ -168,16 +173,6 @@ type ProcessTOMLStreamProps<T> = {
   handler: (toml: T) => void;
 };
 
-// export const processTOMLStream = <T>(params: ProcessTOMLStreamProps<T>) => {
-//   const { stream, handler } = params;
-
-//   if (!stream || stream.endsWith("___DONE___")) return;
-//   console.log("processTOMLStream", stream);
-
-//   const toml = TOML.parse(stream) as unknown as T;
-//   handler(toml);
-// };
-
 let tomlBuffer = ""; // Buffer to hold incoming TOML data
 
 export const processTOMLStream = <T>(params: ProcessTOMLStreamProps<T>) => {
@@ -192,9 +187,9 @@ export const processTOMLStream = <T>(params: ProcessTOMLStreamProps<T>) => {
   tomlBuffer += stream;
   console.log("processTOMLStream", tomlBuffer);
   try {
-    const toml = TOML.parse(tomlBuffer) as unknown as T;
+    const json = TOML.parse(tomlBuffer) as unknown as T;
     tomlBuffer = "";
-    handler(toml);
+    handler(json);
   } catch (error) {
     // If parsing fails, keep the data in the buffer and wait for more data to come in
     console.error("TOML parsing failed, waiting for more data.", error);
@@ -221,4 +216,33 @@ export const handleRequestContentStream = async (
   });
 
   await postEventSource(projectId, params, onmessage, onerror, onopen, onclose);
+};
+
+// This needs consolidation with handleRequestContentStream in the back end
+export const handleRequestGetStream = async (
+  projectId: string,
+  count: number = 5,
+  type: AIRequestTypes,
+  startLoading: (state: DexlaNotificationProps) => void,
+  onmessage: (ev: EventSourceMessage) => void,
+  onerror: (err: any) => number | null | undefined | void,
+  onopen: (response: Response) => Promise<void>,
+  onclose: () => void,
+  excludedCsv?: string,
+) => {
+  startLoading({
+    id: "ai-generation",
+    title: `Generating ${descriptionPlaceholderMapping[type].replaceText}`,
+    message: `AI is generating your ${descriptionPlaceholderMapping[type].replaceText}`,
+  });
+
+  await getPagesEventSource(
+    projectId,
+    count,
+    excludedCsv,
+    onmessage,
+    onerror,
+    onopen,
+    onclose,
+  );
 };
