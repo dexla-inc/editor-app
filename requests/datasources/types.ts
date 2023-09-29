@@ -79,6 +79,7 @@ export type Endpoint = {
   headers: Header[];
   parameters: Parameter[];
   requestBody: RequestBody[];
+  body?: string;
   exampleResponse: string;
   errorExampleResponse: string;
   authentication: AuthenticationEndpoint;
@@ -120,7 +121,14 @@ export type ExampleResponse = {
   description: string | null;
 };
 
-export type ParameterTypes = "string" | "number" | "boolean" | "datetime";
+export type ParameterTypes =
+  | "string"
+  | "number"
+  | "boolean"
+  | "datetime"
+  | "object"
+  | "array"
+  | "file";
 export type ParameterLocations = "Query" | "Path" | "Header" | "Cookie";
 export type AuthenticationSchemes = "NONE" | "BEARER" | "BASIC" | "API_KEY";
 
@@ -160,6 +168,7 @@ export type ApiEndpointFromAI = Pick<
   | "headers"
   | "parameters"
   | "requestBody"
+  | "body"
   | "exampleResponse"
   | "errorExampleResponse"
   | "withCredentials"
