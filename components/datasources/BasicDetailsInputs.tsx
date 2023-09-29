@@ -30,6 +30,7 @@ export function validateName(value: string | undefined) {
 
 type Props<T extends DataSourceParams | ApiFromAI> = {
   form: UseFormReturnType<T>;
+  authenticationScheme?: AuthenticationSchemes | null;
   setAuthenticationScheme?: (
     authenticationScheme: AuthenticationSchemes,
   ) => void;
