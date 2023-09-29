@@ -72,6 +72,7 @@ export const actions = [
   { name: "navigateToPage", group: "Navigation" },
   { name: "changeStep", group: "Navigation" },
   { name: "openDrawer", group: "Modal & Overlays" },
+  { name: "closeDrawer", group: "Modal & Overlays" },
   { name: "openModal", group: "Modal & Overlays" },
   { name: "closeModal", group: "Modal & Overlays" },
   { name: "openPopOver", group: "Modal & Overlays" },
@@ -334,6 +335,11 @@ export const closeModalAction = ({ action }: OpenModalActionParams) => {
 export const openDrawerAction = ({ action }: OpenDrawerActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   updateTreeComponent(action.drawerId, { opened: true }, false);
+};
+
+export const closeDrawerAction = ({ action }: OpenDrawerActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  updateTreeComponent(action.drawerId, { opened: false }, false);
 };
 
 export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
@@ -979,6 +985,10 @@ export const actionMapper = {
   },
   openDrawer: {
     action: openDrawerAction,
+    form: OpenDrawerActionForm,
+  },
+  closeDrawer: {
+    action: closeDrawerAction,
     form: OpenDrawerActionForm,
   },
   openPopOver: {

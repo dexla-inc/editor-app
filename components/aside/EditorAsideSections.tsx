@@ -9,24 +9,25 @@ import * as CheckboxModifier from "@/components/modifiers/Checkbox";
 import * as DividerModifier from "@/components/modifiers/Divider";
 import * as DrawerModifier from "@/components/modifiers/Drawer";
 import * as EffectsModifier from "@/components/modifiers/Effects";
+import * as FileButtonModifier from "@/components/modifiers/FileButton";
+import * as GoogleMapModifier from "@/components/modifiers/GoogleMap";
 import * as IconModifier from "@/components/modifiers/Icon";
 import * as ImageModifier from "@/components/modifiers/Image";
 import * as InputModifier from "@/components/modifiers/Input";
 import * as LayoutModifier from "@/components/modifiers/Layout";
 import * as LinkModifier from "@/components/modifiers/Link";
 import * as ModalModifier from "@/components/modifiers/Modal";
+import * as PopOverModifier from "@/components/modifiers/PopOver";
 import * as PositionModifier from "@/components/modifiers/Position";
 import * as RadioModifier from "@/components/modifiers/Radio";
 import * as RadioItemModifier from "@/components/modifiers/RadioItem";
-import * as StepperModifier from "@/components/modifiers/Stepper";
 import * as SelectModifier from "@/components/modifiers/Select";
 import * as SizeModifier from "@/components/modifiers/Size";
 import * as SpacingModifier from "@/components/modifiers/Spacing";
+import * as StepperModifier from "@/components/modifiers/Stepper";
 import * as TableModifier from "@/components/modifiers/Table";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TitleModifier from "@/components/modifiers/Title";
-import * as FileButtonModifier from "@/components/modifiers/FileButton";
-import * as GoogleMapModifier from "@/components/modifiers/GoogleMap";
 import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper } from "@/utils/actions";
 import { Modifiers, componentMapper } from "@/utils/componentMapper";
@@ -76,6 +77,7 @@ const sectionMapper: SectionsMapper = {
   mapSettings: GoogleMapModifier,
   stepper: StepperModifier,
   fileButton: FileButtonModifier,
+  popOver: PopOverModifier,
 };
 
 type Tab = "design" | "actions";

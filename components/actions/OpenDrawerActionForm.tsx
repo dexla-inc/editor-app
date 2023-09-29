@@ -59,7 +59,11 @@ export const OpenDrawerActionForm = ({ id }: Props) => {
       <Stack spacing="xs">
         <Select
           size="xs"
-          label="Drawer to Open"
+          label={
+            action.action.name === "openDrawer"
+              ? "Drawer to Open"
+              : "Drawer to Close"
+          }
           placeholder="Select a drawer"
           data={drawers.map((drawer: Component) => {
             return {

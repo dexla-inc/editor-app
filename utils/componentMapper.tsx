@@ -840,7 +840,8 @@ export type Modifiers =
   | "drawer"
   | "buttonIcon"
   | "mapSettings"
-  | "fileButton";
+  | "fileButton"
+  | "popOver";
 
 export type ComponentDefinition = {
   Component: any;
@@ -922,7 +923,13 @@ export const componentMapper: ComponentMapper = {
       "border",
       "boxShadow",
     ],
-    actionTriggers: ["onMount", "onClick", "onMouseOver", "onMouseOut"],
+    actionTriggers: [
+      "onMount",
+      "onClick",
+      "onHover",
+      "onMouseOver",
+      "onMouseOut",
+    ],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Select: {
@@ -1384,7 +1391,7 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <PopOver component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["position", "border"],
+    modifiers: ["popOver", "border"],
     actionTriggers: ["onMount", "onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
