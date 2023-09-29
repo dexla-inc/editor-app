@@ -63,7 +63,7 @@ export const useDroppable = ({
 
   const onDragOverSetEdge = useCallback(
     useMemoizedDebounce(() => {
-      if (!clientX || !clientY) return;
+      if (!clientX || !clientY || !rect) return;
 
       if (!component?.blockDroppingChildrenInside) {
         const centerX = rect.left + rect.width / 2;
