@@ -45,13 +45,15 @@ export const DeployButton = ({ projectId, page }: Props) => {
   const openDeployLink = () => {
     const hostName = window?.location?.hostname ?? "";
 
-    const domain = hostName.endsWith("dexla.ai")
-      ? hostName.replace("dexla.ai", "dexla.io")
-      : "";
+    const domain = hostName ?? "";
 
     const isLocalhost = domain.startsWith("localhost");
 
-    const baseDomain = isLocalhost ? `${domain}:3000` : customDomain ?? domain;
+    const baseDomain = isLocalhost
+      ? `${domain}:3000`
+      : customDomain
+      ? customDomain
+      : "dexla.io";
 
     const deployLink = new URL(
       `${isLocalhost ? "http" : "https"}://${projectId}.${baseDomain}/${
@@ -61,12 +63,12 @@ export const DeployButton = ({ projectId, page }: Props) => {
 
     // Validity check
     if (
-      deployLink.href.startsWith("http") ||
-      deployLink.href.startsWith("https")
+      deployLink.origin.startsWith("http") ||
+      deployLink.origin.startsWith("https")
     ) {
-      window?.open(deployLink.href, "_blank");
+      window?.open(deployLink.origin, "_blank");
     } else {
-      console.error(`Invalid URL: ${deployLink.href}`);
+      console.error(`Invalid URL: ${deployLink.origin}`);
     }
   };
 
