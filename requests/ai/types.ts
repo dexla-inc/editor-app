@@ -4,7 +4,9 @@ export type AIRequestTypes =
   | "LAYOUT"
   | "DESIGN"
   | "DATA"
-  | "API";
+  | "API"
+  | "PAGE_NAMES";
+
 type AIRoleTypes = "USER" | "ASSISTANT";
 
 export type ChatHistoryMessage = {
