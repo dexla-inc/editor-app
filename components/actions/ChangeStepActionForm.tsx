@@ -69,8 +69,6 @@ export const ChangeStepActionForm = ({ id }: Props) => {
 
   const steppers = getAllComponentsByName(editorTree.root, "Stepper");
 
-  console.log({ action, steppers });
-
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">

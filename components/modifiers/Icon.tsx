@@ -68,7 +68,6 @@ export const Modifier = () => {
     color = colorMappings[color] || "transparent";
 
     const variant = parseInt(index);
-    console.log(theme.colors, { variant, color });
     const colorToRgb =
       color === "transparent"
         ? color

@@ -360,14 +360,15 @@ export const DroppableDraggable = ({
       </ComponentWrapper>
       {!isPreviewMode &&
         !isContentWrapper &&
-        !handlerBlacklist.includes(component.name) && (
+        !handlerBlacklist.includes(component.name) &&
+        isSelected && (
           <Box
             pos="absolute"
             h={36}
             top={-36}
             sx={{
               zIndex: 90,
-              display: isSelected ? "block" : "none",
+              // display: isSelected ? "block" : "none",
               background: theme.colors.teal[6],
               borderTopLeftRadius: theme.radius.sm,
               borderTopRightRadius: theme.radius.sm,
