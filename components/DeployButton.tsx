@@ -66,12 +66,18 @@ export const DeployButton = ({ projectId, page }: Props) => {
 
   return (
     <Button.Group>
-      <Button loading={isLoading} disabled={isLoading} onClick={handleDeploy}>
+      <Button
+        loading={isLoading}
+        loaderPosition="center"
+        disabled={isLoading}
+        onClick={handleDeploy}
+      >
         Deploy
       </Button>
       <Button
         color="indigo"
         loading={isLoading}
+        loaderPosition="center"
         disabled={!hasDeployed || isLoading}
         onClick={() => {
           const domain = window?.location?.hostname ?? "";

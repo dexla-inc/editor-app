@@ -1,29 +1,43 @@
-import { LogicFlow } from "@/components/LogicFlow";
-import { LogicFlowShell } from "@/components/LogicFlowShell";
+import { LogicFlow } from "@/components/logic-flow/LogicFlow";
+import { LogicFlowShell } from "@/components/logic-flow/LogicFlowShell";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
+import { decodeSchema } from "@/utils/compression";
 import { ASIDE_WIDTH, HEADER_HEIGHT } from "@/utils/config";
 import { Box, useMantineTheme } from "@mantine/core";
+import { LogicFlow as LogicFlowType } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import { useEffect, useRef } from "react";
 
 export const getServerSideProps = async ({
   query,
 }: GetServerSidePropsContext) => {
+  const flowId = query.flow as string;
+
+  const url = `${process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL}/api/logic-flows/${flowId}`;
+  const response = await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  const logicFlow = await response.json();
+
   return {
     props: {
       id: query.id,
-      page: query.page,
+      pageId: query.page,
+      flow: logicFlow,
     },
   };
 };
 
 type Props = {
   id: string;
-  page: string;
+  pageId: string;
+  flow: LogicFlowType;
 };
 
-export default function LogicFlowPage({ id, page }: Props) {
+export default function LogicFlowsPage({ id, pageId, flow }: Props) {
   const theme = useMantineTheme();
   const reactFlowWrapper = useRef(null);
   const setCurrentProjectId = useEditorStore(
@@ -31,13 +45,21 @@ export default function LogicFlowPage({ id, page }: Props) {
   );
   const setCurrentPageId = useEditorStore((state) => state.setCurrentPageId);
   const selectedFlowNode = useFlowStore((state) => state.selectedNode);
+  const restoreFlow = useFlowStore((state) => state.restoreFlow);
 
   useEffect(() => {
-    if (id && page) {
+    if (id && pageId) {
       setCurrentProjectId(id);
-      setCurrentPageId(page);
+      setCurrentPageId(pageId);
     }
-  }, [id, page, setCurrentPageId, setCurrentProjectId]);
+  }, [id, pageId, setCurrentPageId, setCurrentProjectId]);
+
+  useEffect(() => {
+    if (flow?.data) {
+      const data = JSON.parse(decodeSchema(flow.data as string));
+      restoreFlow(data as any);
+    }
+  }, [flow?.data, restoreFlow]);
 
   return (
     <LogicFlowShell>

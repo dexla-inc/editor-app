@@ -24,6 +24,7 @@
     "@mantine/prism": "^6.0.20",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@monaco-editor/react": "^4.5.2",
+    "@prisma/client": "5.3.1",
     "@propelauth/react": "^2.0.10",
     "@react-google-maps/api": "^2.19.2",
     "@tabler/icons-react": "^2.34.0",
@@ -33,7 +34,7 @@
     "@types/react-dom": "18.2.7",
     "add": "^2.0.6",
     "apexcharts": "^3.41.0",
-    "dayjs": "^1.11.9",
+    "dayjs": "^1.11.10",
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
     "js-cookie": "^3.0.5",
@@ -78,6 +79,7 @@
     "husky": "^8.0.0",
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.3",
+    "prisma": "^5.3.1",
     "tsc-files": "^1.1.4"
   }
 }

@@ -11,7 +11,7 @@ export const LogicFlowButton = ({ projectId, pageId }: Props) => {
     <Button
       component={Link}
       variant="default"
-      href={`/projects/${projectId}/editor/${pageId}/flow`}
+      href={`/projects/${projectId}/editor/${pageId}/flows`}
     >
       Logic flow
     </Button>

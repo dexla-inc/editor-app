@@ -14,6 +14,7 @@ import {
   NodeAddChange,
   ReactFlowInstance,
 } from "reactflow";
+import { nanoid } from "nanoid";
 
 export type FlowData = {
   edges: Edge[];
@@ -50,6 +51,8 @@ export type FlowState = {
   nodes: Node[];
   edges: Edge[];
   pinnedPreviewNodeId?: string;
+  shouldShowFormModal?: boolean;
+  currentFlowId?: string;
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
@@ -63,16 +66,36 @@ export type FlowState = {
   setIsRunning: (isRunning: boolean) => void;
   getNodeById: (id?: string) => Partial<Node>;
   setPinnedPreview: (pinnedPreviewNodeId?: string) => void;
+  setCurrentFlowId: (currentFlowId?: string) => void;
+  setShowFormModal: (shouldShowFormModal?: boolean, flowId?: string) => void;
 };
 
 const edgeProps = {
   type: "smoothstep",
 };
 
+export const initialNodes = [
+  {
+    id: "start-node",
+    type: "startNode",
+    data: {
+      label: "Start",
+      description: "The starting point of a flow",
+      inputs: [],
+      outputs: [{ id: nanoid(), name: "Initial Trigger" }],
+      isNotEditable: true,
+    },
+    position: { x: 0, y: 0 },
+  },
+] as Node[];
+
+export const initialEdges = [] as Edge[];
+
 export const useFlowStore = create<FlowState>((set, get) => ({
   isDragging: false,
   isRestored: false,
   isRunning: false,
+  shouldShowFormModal: false,
   nodes: [],
   edges: [],
   onNodesChange: (changes: NodeChange[]) => {
@@ -136,7 +159,10 @@ export const useFlowStore = create<FlowState>((set, get) => ({
   },
   resetFlow: () => {
     set({
-      nodes: [],
+      nodes: applyNodeChanges<NodeAddChange>(
+        initialNodes.map((node) => ({ item: node, type: "add" })),
+        [],
+      ),
       edges: [],
       isRestored: false,
       isRunning: false,
@@ -208,5 +234,11 @@ export const useFlowStore = create<FlowState>((set, get) => ({
   },
   setPinnedPreview: (pinnedPreviewNodeId?: string) => {
     set({ pinnedPreviewNodeId });
+  },
+  setCurrentFlowId: (currentFlowId?: string) => {
+    set({ currentFlowId });
+  },
+  setShowFormModal: (shouldShowFormModal?: boolean, currentFlowId?: string) => {
+    set({ shouldShowFormModal, ...(currentFlowId ? { currentFlowId } : {}) });
   },
 }));

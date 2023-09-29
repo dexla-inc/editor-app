@@ -3,6 +3,7 @@ import React, { useCallback, useEffect } from "react";
 import ReactFlow, { Background, Controls, Node } from "reactflow";
 import { FlowState, useFlowStore } from "@/stores/flow";
 import { nanoid } from "nanoid";
+import { nodes as nodeTypes } from "@/utils/nodes";
 
 const selector = (state: FlowState) => ({
   nodes: state.nodes,
@@ -103,7 +104,7 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
       onEdgesChange={onEdgesChange}
       onDragOver={onDragOver}
       onDrop={onDrop}
-      // nodeTypes={nodeTypes}
+      nodeTypes={nodeTypes}
       fitView
     >
       <Controls showInteractive={false} />

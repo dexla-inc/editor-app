@@ -8,12 +8,15 @@ import {
   Box,
   Button,
   Flex,
+  Group,
   Header,
 } from "@mantine/core";
 import Link from "next/link";
 
 import { useEditorStore } from "@/stores/editor";
 import { ErrorBoundary } from "react-error-boundary";
+import { useFlowStore } from "@/stores/flow";
+import { LogicFlowFormModal } from "@/components/logic-flow/LogicFlowFormModal";
 
 export interface ShellProps extends AppShellProps {
   navbarType?: NavbarTypes;
@@ -23,6 +26,7 @@ export const LogicFlowShell = ({ children, aside }: ShellProps) => {
   const projectId = useEditorStore((state) => state.currentProjectId);
   const pageId = useEditorStore((state) => state.currentPageId);
   const resetTree = useEditorStore((state) => state.resetTree);
+  const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
 
   return (
     <AppShell
@@ -39,13 +43,18 @@ export const LogicFlowShell = ({ children, aside }: ShellProps) => {
             <Link href="/">
               <Logo />
             </Link>
-            <Button
-              component={Link}
-              variant="default"
-              href={`/projects/${projectId}/editor/${pageId}`}
-            >
-              Go back to Editor
-            </Button>
+            <Group>
+              <Button onClick={() => setShowFormModal(true)}>
+                Create logic flow
+              </Button>
+              <Button
+                component={Link}
+                variant="default"
+                href={`/projects/${projectId}/editor/${pageId}`}
+              >
+                Go back to Editor
+              </Button>
+            </Group>
           </Flex>
         </Header>
       }
@@ -81,6 +90,7 @@ export const LogicFlowShell = ({ children, aside }: ShellProps) => {
       >
         {children}
       </ErrorBoundary>
+      <LogicFlowFormModal />
     </AppShell>
   );
 };
