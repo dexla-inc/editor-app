@@ -5,7 +5,8 @@ import {
   DropTarget,
   getComponentById,
 } from "@/utils/editor";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
+import { useMemoizedDebounce } from "@/hooks/useMemoizedDebounce";
 
 export const useDroppable = ({
   id,
@@ -20,7 +21,7 @@ export const useDroppable = ({
 }) => {
   const editorTree = useEditorStore((state) => state.tree);
   const setCurrentTargetId = useEditorStore(
-    (state) => state.setCurrentTargetId
+    (state) => state.setCurrentTargetId,
   );
   const [edge, setEdge] = useState<Edge>();
 
@@ -37,42 +38,58 @@ export const useDroppable = ({
       onDrop?.(activeId!, dropTarget);
       setCurrentTargetId(undefined);
     },
-    [activeId, id, setCurrentTargetId, edge, onDrop]
+    [activeId, id, setCurrentTargetId, edge, onDrop],
   );
 
-  const handleDragOver = useCallback(
-    (event: React.DragEvent) => {
-      event.preventDefault();
-      event.stopPropagation();
+  const [clientX, setClientX] = useState<number>();
+  const [clientY, setClientY] = useState<number>();
 
-      const mouseX = event.clientX;
-      const mouseY = event.clientY;
-      const w = currentWindow ?? window;
-      const rect = w.document.getElementById(id)?.getBoundingClientRect()!;
+  const handleDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
+
+    setClientX(mouseX);
+    setClientY(mouseY);
+  };
+
+  const w = currentWindow ?? window;
+  const rect = useMemo(
+    () => w.document.getElementById(id)?.getBoundingClientRect()!,
+    [id, w],
+  );
+
+  const onDragOverSetEdge = useCallback(
+    useMemoizedDebounce(() => {
+      if (!clientX || !clientY) return;
 
       if (!component?.blockDroppingChildrenInside) {
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
 
-        const distX = Math.abs(centerX - mouseX);
-        const distY = Math.abs(centerY - mouseY);
+        const distX = Math.abs(centerX - clientX);
+        const distY = Math.abs(centerY - clientY);
 
         if (distX < rect.width / 4 && distY < rect.height / 4) {
           return setEdge("center");
         }
       }
 
-      const leftDist = mouseX - rect.left;
-      const rightDist = rect.right - mouseX;
-      const topDist = mouseY - rect.top;
-      const bottomDist = rect.bottom - mouseY;
+      const leftDist = clientX - rect.left;
+      const rightDist = rect.right - clientX;
+      const topDist = clientY - rect.top;
+      const bottomDist = rect.bottom - clientY;
 
       const { edge } = getClosestEdge(leftDist, rightDist, topDist, bottomDist);
 
       setEdge(edge as Edge);
-    },
-    [id, currentWindow]
+    }, 100),
+    [clientX, clientY, component?.blockDroppingChildrenInside, rect],
   );
+
+  useEffect(onDragOverSetEdge, [onDragOverSetEdge]);
 
   const handleDragEnter = useCallback(
     (event: any) => {
@@ -80,7 +97,7 @@ export const useDroppable = ({
       event.stopPropagation();
       setCurrentTargetId(id);
     },
-    [id, setCurrentTargetId]
+    [id, setCurrentTargetId],
   );
 
   // TODO: Handle isOver differently to have better ux as currently
