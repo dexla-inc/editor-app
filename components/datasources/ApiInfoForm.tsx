@@ -1,13 +1,13 @@
+import { Icon } from "@/components/Icon";
 import {
   validateBaseUrl,
   validateName,
 } from "@/components/datasources/BasicDetailsInputs";
+import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
 import { ApiFromAI } from "@/requests/datasources/types";
 import { Button, Flex, Select, Stack, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import Link from "next/link";
-import { Icon } from "../Icon";
-import { DataSourceEndpoint } from "./DataSourceEndpoint";
 
 type Props = {
   api: ApiFromAI;
