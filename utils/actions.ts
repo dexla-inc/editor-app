@@ -64,9 +64,9 @@ const triggers = [
 export const actions = [
   { name: "apiCall", group: "API & Data" },
   { name: "bindResponse", group: "API & Data" },
-  { name: "bindPlaceData", group: "API & Data" },
-  { name: "bindPlaceGeometry", group: "API & Data" },
   { name: "login", group: "API & Data" },
+  { name: "bindPlaceData", group: "Third-Party Plugins" },
+  { name: "bindPlaceGeometry", group: "Third-Party Plugins" },
   { name: "goToUrl", group: "Navigation" },
   { name: "navigateToPage", group: "Navigation" },
   { name: "changeStep", group: "Navigation" },
