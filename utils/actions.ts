@@ -49,8 +49,6 @@ const triggers = [
   "onSubmit",
   "onInvalid",
   "onReset",
-  "onMouseOver",
-  "onMouseOut",
   // table actions
   "onRowClick",
   "onRowHover",
