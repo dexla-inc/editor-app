@@ -1,6 +1,7 @@
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { BindPlaceDataActionForm } from "@/components/actions/BindPlaceDataActionForm";
 import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
+import { ChangeLanguageActionForm } from "@/components/actions/ChangeLanguageActionForm";
 import { ChangeStateActionForm } from "@/components/actions/ChangeStateActionForm";
 import { ChangeStepActionForm } from "@/components/actions/ChangeStepActionForm";
 import { CloseModalActionForm } from "@/components/actions/CloseModalActionForm";
@@ -83,6 +84,7 @@ export const actions = [
   { name: "openToast", group: "Feedback" },
   { name: "reloadComponent", group: "Feedback" },
   { name: "copyToClipboard", group: "Utilities & Tools" },
+  { name: "changeLanguage", group: "Utilities & Tools" },
 ];
 
 type ActionTriggerAll = (typeof triggers)[number];
@@ -202,6 +204,11 @@ export interface BindPlaceGeometryAction extends BaseAction {
   componentId: string;
 }
 
+export interface ChangeLanguageAction extends BaseAction {
+  name: "changeLanguage";
+  language: "default" | "french";
+}
+
 export type Action = {
   id: string;
   trigger: ActionTrigger;
@@ -222,7 +229,8 @@ export type Action = {
     | ToggleNavbarAction
     | ChangeStepAction
     | BindPlaceDataAction
-    | BindPlaceGeometryAction;
+    | BindPlaceGeometryAction
+    | ChangeLanguageAction;
   sequentialTo?: string;
 };
 
@@ -320,6 +328,21 @@ export type ToggleNavbarActionParams = ActionParams & {
 };
 export type ChangeStepActionParams = ActionParams & {
   action: ChangeStepAction;
+};
+export type ReloadComponentActionParams = ActionParams & {
+  action: ReloadComponentAction;
+};
+
+export type BindPlaceDataActionParams = ActionParams & {
+  action: BindPlaceDataAction;
+};
+
+export type BindPlaceGeometryActionParams = ActionParams & {
+  action: BindPlaceGeometryAction;
+};
+
+export type ChangeLanguageActionParams = ActionParams & {
+  action: ChangeLanguageAction;
 };
 
 export const openModalAction = ({ action }: OpenModalActionParams) => {
@@ -809,10 +832,6 @@ export const bindResponseToComponentAction = ({
   });
 };
 
-export type ReloadComponentActionParams = ActionParams & {
-  action: ReloadComponentAction;
-};
-
 export const reloadComponentAction = ({
   action,
 }: ReloadComponentActionParams) => {
@@ -822,14 +841,6 @@ export const reloadComponentAction = ({
 
   removeOnMountActionsRan(action.onMountActionId ?? "");
   updateTreeComponent(action.componentId, { key: nanoid() }, false);
-};
-
-export type BindPlaceDataActionParams = ActionParams & {
-  action: BindPlaceDataAction;
-};
-
-export type BindPlaceGeometryActionParams = ActionParams & {
-  action: BindPlaceGeometryAction;
 };
 
 export const bindPlaceDataAction = ({
@@ -950,6 +961,13 @@ export const bindPlaceGeometryAction = ({
   updateTreeComponentChildren(parent.id!, [child]);
 };
 
+export const changeLanguageAction = ({
+  action,
+}: ChangeLanguageActionParams) => {
+  const { setLanguage } = useEditorStore.getState();
+  setLanguage(action.language);
+};
+
 export const actionMapper = {
   alert: {
     action: debugAction,
@@ -1030,5 +1048,9 @@ export const actionMapper = {
   bindPlaceGeometry: {
     action: bindPlaceGeometryAction,
     form: BindPlaceDataActionForm,
+  },
+  changeLanguage: {
+    action: changeLanguageAction,
+    form: ChangeLanguageActionForm,
   },
 };
