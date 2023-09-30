@@ -923,13 +923,7 @@ export const componentMapper: ComponentMapper = {
       "border",
       "boxShadow",
     ],
-    actionTriggers: [
-      "onMount",
-      "onClick",
-      "onHover",
-      "onMouseOver",
-      "onMouseOut",
-    ],
+    actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Select: {
