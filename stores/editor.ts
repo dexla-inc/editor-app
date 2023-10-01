@@ -365,7 +365,8 @@ export const useEditorStore = create<EditorState>()(
         isPreviewMode: false,
         isLive: false,
         isNavBarVisible: true,
-        setPreviewMode: (value) => set({ isPreviewMode: value }),
+        setPreviewMode: (value) =>
+          set({ isPreviewMode: value, currentTreeComponentsStates: {} }),
         setIsLive: (value) => set({ isLive: value }),
         setIsNavBarVisible: () =>
           set((state) => ({ isNavBarVisible: !state.isNavBarVisible })),

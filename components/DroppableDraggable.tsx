@@ -40,7 +40,6 @@ import {
   useMemo,
 } from "react";
 import merge from "lodash.merge";
-import { filter } from "domutils";
 
 type Props = {
   id: string;
@@ -71,6 +70,7 @@ const styleWhitelist = [
   "marginBottom",
   "marginLeft",
   "marginRight",
+  "zIndex",
 ];
 const handlerBlacklist = ["Modal"];
 
@@ -81,7 +81,6 @@ export const DroppableDraggable = ({
   customComponentModal,
 }: PropsWithChildren<Props>) => {
   const router = useRouter();
-  const { hovered, ref } = useHover();
   const theme = useMantineTheme();
   const editorTheme = useEditorStore((state) => state.theme);
   const editorTree = useEditorStore((state) => state.tree);
@@ -241,7 +240,7 @@ export const DroppableDraggable = ({
               background: edge === "center" ? theme.colors.teal[6] : "none",
               opacity: edge === "center" ? 0.4 : 1,
             }
-          : isSelected || hovered
+          : isSelected
           ? { boxShadow: baseShadow }
           : {});
 
@@ -306,7 +305,6 @@ export const DroppableDraggable = ({
 
   return (
     <Box
-      ref={isPreviewMode ? undefined : ref}
       id={id}
       pos="relative"
       sx={{
@@ -322,6 +320,9 @@ export const DroppableDraggable = ({
           width: "100%",
           height: "100%",
           zIndex: 80,
+        },
+        "&:hover": {
+          ...(!isPreviewMode ? { boxShadow: baseShadow } : {}),
         },
       }}
       onClick={(e) => {

@@ -1,5 +1,5 @@
 import { Icon } from "@/components/Icon";
-import { Component } from "@/utils/editor";
+import { Component, getColorFromTheme } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import { useRouter } from "next/router";
 import { isSame } from "@/utils/componentComparison";
@@ -15,6 +15,15 @@ type Props = {
 const NavLinkComponent = ({ renderTree, component, ...props }: Props) => {
   const theme = useEditorStore((state) => state.theme);
 
+  const router = useRouter();
+  const currentPageId = router.query.page as string;
+  const active = currentPageId === component?.props?.pageId;
+
+  const activeProps = {};
+  if (active) {
+    merge(activeProps, component?.states?.Active);
+  }
+
   const {
     children,
     isNested,
@@ -22,18 +31,14 @@ const NavLinkComponent = ({ renderTree, component, ...props }: Props) => {
     triggers,
     icon,
     color = "",
+    bg = "",
     ...componentProps
-  } = component.props as any;
+  } = merge({}, component.props, activeProps) as any;
 
-  const [section, index] = color.split(".");
-  const colorSection = theme.colors[section];
-  const textColor = colorSection?.[index] ?? "#000";
+  const textColor = getColorFromTheme(theme, color) ?? "#000";
+  const backgroundColor = getColorFromTheme(theme, bg) ?? "transparent";
 
-  const router = useRouter();
-  const currentPageId = router.query.page as string;
-  const active = currentPageId === pageId;
-
-  merge(componentProps, { style: { color: textColor } });
+  merge(componentProps, { style: { color: textColor, backgroundColor } });
 
   return (
     <MantineNavLink
@@ -43,6 +48,16 @@ const NavLinkComponent = ({ renderTree, component, ...props }: Props) => {
       {...props}
       {...componentProps}
       {...triggers}
+      styles={{
+        ...(!icon && { icon: { marginRight: 0 } }),
+        children: { paddingLeft: 0 },
+        root: {
+          padding: 0,
+          "&:hover": {
+            backgroundColor: "unset",
+          },
+        },
+      }}
     >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))
