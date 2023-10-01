@@ -972,3 +972,15 @@ export const debouncedTreeUpdate = debounce((...params: any[]) => {
   // @ts-ignore
   updateTreeComponent(...params);
 }, 300);
+
+export const getColorFromTheme = (
+  theme: MantineThemeExtended,
+  colorName: string,
+) => {
+  if (colorName === "transparent") {
+    return "transparent";
+  }
+  const [section, index] = colorName.split(".");
+  const colorSection = theme.colors[section];
+  return colorSection?.[Number(index)];
+};

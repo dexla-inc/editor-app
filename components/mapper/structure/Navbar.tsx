@@ -48,48 +48,13 @@ export const jsonStructure = (props?: any): Component => {
           gap: "0px",
           top: 0,
           left: 0,
-          background: isDarkTheme ? theme.colors.dark[6] : "#fff",
+          backgroundColor: isDarkTheme ? theme.colors.dark[6] : "#fff",
         },
         ...props.props,
       }),
     },
     fixedPosition: { position: "left", target: "root" },
     children: [
-      {
-        id: nanoid(),
-        name: "ButtonIcon",
-        description: "Button to toggle Navbar",
-        props: {
-          style: {
-            position: "absolute",
-            right: "-5%",
-            top: "20px",
-            width: "auto",
-            height: "auto",
-            cursor: "pointer",
-            zIndex: 10,
-          },
-          radius: "xl",
-        },
-        actions: [
-          {
-            id: nanoid(),
-            trigger: "onClick",
-            action: { name: "toggleNavbar" },
-          },
-        ],
-        blockDroppingChildrenInside: true,
-        children: [
-          {
-            id: nanoid(),
-            name: "Icon",
-            description: "Icon",
-            props: {
-              name: "IconChevronLeft",
-            },
-          },
-        ],
-      },
       {
         id: nanoid(),
         name: "Container",
@@ -106,7 +71,8 @@ export const jsonStructure = (props?: any): Component => {
             borderBottomColor: isDarkTheme
               ? theme.colors.gray[5]
               : theme.colors.gray[3],
-            margin: "0 10px",
+            marginLeft: "10px",
+            marginRight: "10px",
           },
         },
         children: [
@@ -126,6 +92,41 @@ export const jsonStructure = (props?: any): Component => {
             children: [],
             blockDroppingChildrenInside: true,
           },
+          {
+            id: nanoid(),
+            name: "ButtonIcon",
+            description: "Button to toggle Navbar",
+            props: {
+              style: {
+                position: "absolute",
+                top: "20px",
+                right: "-20px",
+                width: "auto",
+                height: "auto",
+                cursor: "pointer",
+                zIndex: 10,
+              },
+              radius: "xl",
+            },
+            actions: [
+              {
+                id: nanoid(),
+                trigger: "onClick",
+                action: { name: "changeState", conditionRules: [] },
+              },
+            ],
+            blockDroppingChildrenInside: true,
+            children: [
+              {
+                id: nanoid(),
+                name: "Icon",
+                description: "Icon",
+                props: {
+                  name: "IconChevronLeft",
+                },
+              },
+            ],
+          },
         ],
       },
       {
@@ -139,7 +140,10 @@ export const jsonStructure = (props?: any): Component => {
             flexGrow: "1",
             height: "auto",
             minHeight: "100vh",
-            padding: "20px 10px",
+            paddingTop: "20px",
+            paddingBottom: "20px",
+            paddingLeft: "10px",
+            paddingRight: "10px",
           },
         },
         children: pages
