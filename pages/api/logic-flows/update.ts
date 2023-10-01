@@ -10,7 +10,7 @@ export default async function handler(
       throw new Error("Invalid method");
     }
 
-    const body = JSON.parse(req.body);
+    const body = req.body;
 
     if (!body.id) {
       throw new Error("Missing id");

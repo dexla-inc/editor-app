@@ -58,6 +58,9 @@ export default function LogicFlowsPage({ id, page }: Props) {
     mutationFn: async (values: any) => {
       return await fetch(`/api/logic-flows/create`, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(values),
       });
     },
@@ -71,6 +74,9 @@ export default function LogicFlowsPage({ id, page }: Props) {
     mutationFn: async (id: string) => {
       return await fetch(`/api/logic-flows/delete`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ id }),
       });
     },

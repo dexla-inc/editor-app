@@ -239,6 +239,6 @@ export const useFlowStore = create<FlowState>((set, get) => ({
     set({ currentFlowId });
   },
   setShowFormModal: (shouldShowFormModal?: boolean, currentFlowId?: string) => {
-    set({ shouldShowFormModal, ...(currentFlowId ? { currentFlowId } : {}) });
+    set({ shouldShowFormModal, currentFlowId: currentFlowId ?? undefined });
   },
 }));

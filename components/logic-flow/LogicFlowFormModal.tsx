@@ -23,6 +23,9 @@ export const LogicFlowFormModal = () => {
     mutationFn: async (values: any) => {
       return await fetch(`/api/logic-flows/update`, {
         method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ ...values, id: currentFlowId }),
       });
     },
@@ -51,6 +54,9 @@ export const LogicFlowFormModal = () => {
 
       return await fetch(`/api/logic-flows/create`, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           ...values,
           data: encodeSchema(JSON.stringify(newFlow)),
@@ -134,6 +140,11 @@ export const LogicFlowFormModal = () => {
       };
 
       getLogicFLow();
+    } else {
+      form.setValues({
+        name: "",
+        isGlobal: false,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFlowId]);

@@ -6,7 +6,7 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    const body = JSON.parse(req.body);
+    const body = req.body;
     if (req.method !== "POST") {
       throw new Error("Method not allowed");
     }
