@@ -853,6 +853,10 @@ export const bindPlaceDataAction = ({
   const updateTreeComponentChildren =
     useEditorStore.getState().updateTreeComponentChildren;
 
+  const googleMap = component.children?.filter(
+    (child) => child.name === "GoogleMap",
+  )[0];
+
   if (data !== undefined) {
     const predictions: { description: string; place_id: string }[] =
       data.predictions.map((item: Record<string, any>) => {
@@ -910,7 +914,10 @@ export const bindPlaceDataAction = ({
       };
       return child as Component;
     });
-    updateTreeComponentChildren(component.id!, newPredictions);
+    updateTreeComponentChildren(component.id!, [
+      ...newPredictions,
+      googleMap as Component,
+    ]);
   } else updateTreeComponentChildren(component.id!, []);
 };
 
@@ -918,8 +925,8 @@ export const bindPlaceGeometryAction = ({
   data: { result },
 }: BindPlaceGeometryActionParams) => {
   const editorTree = useEditorStore.getState().tree;
-  const updateTreeComponentChildren =
-    useEditorStore.getState().updateTreeComponentChildren;
+  const { updateTreeComponentChildren, updateTreeComponent } =
+    useEditorStore.getState();
   const searchResults = getAllComponentsByName(editorTree.root, "Text").filter(
     (component) => component.description === "Search Address In Map",
   );
@@ -928,6 +935,7 @@ export const bindPlaceGeometryAction = ({
     searchResults[0].id!,
   ) as Component;
 
+  const ancestor = getComponentParent(editorTree.root, parent.id!) as Component;
   const {
     formatted_address,
     geometry: { location },
@@ -956,6 +964,11 @@ export const bindPlaceGeometryAction = ({
     },
     blockDroppingChildrenInside: true,
   } as Component;
+  updateTreeComponent(
+    ancestor.children![0].id!,
+    { value: formatted_address },
+    true,
+  );
   updateTreeComponentChildren(parent.id!, [child]);
 };
 

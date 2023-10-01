@@ -9,7 +9,7 @@ import {
   TextInputProps,
 } from "@mantine/core";
 import debounce from "lodash.debounce";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -18,13 +18,18 @@ type Props = {
   TextInputProps;
 
 const InputComponent = ({ renderTree, component, ...props }: Props) => {
-  const { children, icon, triggers, loading, ...componentProps } =
+  const { children, icon, triggers, value, loading, ...componentProps } =
     component.props as any;
   const { name: iconName } = icon && icon!.props!;
+  const [inputValue, setInputValue] = useState(value);
 
   const debouncedOnChange = debounce((e) => {
     triggers?.onChange(e);
   }, 400);
+
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
 
   const type = (componentProps.type as string) || "text";
   return (
@@ -37,7 +42,7 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
           {...props}
           {...componentProps}
           min={1}
-          value={componentProps.value || 1}
+          value={props.value || value || 1}
           onChange={triggers?.onChange ? debouncedOnChange : undefined}
         >
           {component.children && component.children.length > 0
@@ -51,7 +56,11 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
           styles={{ root: { display: "block !important" } }}
           {...props}
           {...componentProps}
-          onChange={triggers?.onChange ? debouncedOnChange : undefined}
+          value={inputValue}
+          onChange={(e) => {
+            setInputValue(e.target.value);
+            triggers?.onChange ? debouncedOnChange(e) : undefined;
+          }}
           rightSection={loading ? <Loader size="xs" /> : null}
         >
           {component.children && component.children.length > 0
