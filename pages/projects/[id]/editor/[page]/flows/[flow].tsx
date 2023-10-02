@@ -29,7 +29,6 @@ import {
   useMutation,
   useQuery,
 } from "@tanstack/react-query";
-import isEmpty from "lodash.isempty";
 import isEqual from "lodash.isequal";
 import startCase from "lodash.startcase";
 import { GetServerSidePropsContext } from "next";
@@ -174,41 +173,28 @@ export default function LogicFlowsPage({ id, pageId, flowId }: Props) {
     id,
   ]);
 
-  const form = useForm();
-
-  const hasFormDataChanges = useCallback(() => {
-    if (!flow?.data) return false;
-    const data = JSON.parse(decodeSchema(flow?.data as string));
-    if ((data?.nodes ?? [])?.length === 0) return false;
-
-    const previousNodeState = data?.nodes?.find(
-      (node: any) => node.id === selectedNode?.id,
-    );
-    const equal = isEqual(
-      selectedNode?.data?.form,
-      previousNodeState?.data?.form,
-    );
-
-    return !equal;
-  }, [flow?.data, selectedNode?.data?.form, selectedNode?.id]);
+  const form = useForm({
+    initialValues: {
+      label: selectedNode?.data.label ?? "",
+    },
+  });
 
   useEffect(() => {
-    if (
-      (selectedNode && hasFormDataChanges()) ||
-      (selectedNode && isEmpty(form.values))
-    ) {
-      form.setValues(selectedNode.data.form);
-    } else if (previousSelectedNode?.id !== selectedNode?.id) {
-      form.reset();
+    if (selectedNode && previousSelectedNode?.id !== selectedNode?.id) {
+      form.setValues({
+        ...selectedNode.data.form,
+        label: selectedNode.data.label,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasFormDataChanges, selectedNode, previousSelectedNode]);
+  }, [selectedNode, previousSelectedNode]);
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async ({ label, ...values }: any) => {
     const isConditionalNode = selectedNode?.type === "conditionalNode";
     updateNodeData({
       id: selectedNode?.id,
       data: {
+        label,
         form: values,
         ...(isConditionalNode ? { outputs: values.outputs } : {}),
       },
@@ -277,6 +263,13 @@ export default function LogicFlowsPage({ id, pageId, flowId }: Props) {
                     Edit {startCase(selectedNode.data?.label)} Node
                   </Text>
                   <form onSubmit={form.onSubmit(onSubmit)}>
+                    <TextInput
+                      size="xs"
+                      label="Label"
+                      placeholder="Label"
+                      {...form.getInputProps("label")}
+                      mb="sm"
+                    />
                     <NodeForm
                       key={selectedNode?.id}
                       form={form}

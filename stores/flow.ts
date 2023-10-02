@@ -69,7 +69,7 @@ export type FlowState = {
   setShowFormModal: (shouldShowFormModal?: boolean, flowId?: string) => void;
 };
 
-const edgeProps = {
+const edgeProps: Partial<Edge> = {
   type: "smoothstep",
 };
 

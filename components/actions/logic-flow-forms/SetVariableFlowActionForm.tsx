@@ -50,8 +50,6 @@ export const SetVariableFlowActionForm = ({ form }: Props) => {
     }
   }, [page?.pageState, setTree]);
 
-  useEffect(() => {}, []);
-
   return (
     <Stack spacing="xs">
       <Select
@@ -81,7 +79,12 @@ export const SetVariableFlowActionForm = ({ form }: Props) => {
         }}
         {...form.getInputProps("value")}
       />
-      <VariablesButton pageId={pageId} projectId={projectId} />
+      <VariablesButton
+        size="xs"
+        mt="xs"
+        pageId={pageId}
+        projectId={projectId}
+      />
       <Button
         type="submit"
         size="xs"

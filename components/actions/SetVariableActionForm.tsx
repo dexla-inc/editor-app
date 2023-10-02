@@ -104,7 +104,7 @@ export const SetVariableActionForm = ({ id }: Props) => {
           }}
           {...form.getInputProps("value")}
         />
-        <VariablesButton pageId={pageId} projectId={projectId} />
+        <VariablesButton size="xs" pageId={pageId} projectId={projectId} />
         <ActionButtons
           actionId={action.id}
           componentActions={componentActions}

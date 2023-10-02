@@ -34,16 +34,19 @@ interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
 
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
-  ({ label, description, ...others }: ItemProps, ref) => (
-    <div ref={ref} {...others}>
-      <Group noWrap>
-        <Text size="sm">{label}</Text>
-        <Text size="xs" color="dimmed">
-          {description}
-        </Text>
-      </Group>
-    </div>
-  ),
+  ({ label, description, ...others }: ItemProps, ref) => {
+    return (
+      <div ref={ref} {...others}>
+        <Stack spacing={0}>
+          <Text size="sm">{label}</Text>
+          {/* @ts-ignore */}
+          <Text size="xs" color={others.selected ? "white" : "dimmed"}>
+            {description}
+          </Text>
+        </Stack>
+      </div>
+    );
+  },
 );
 
 export const OutputForm = ({ form, node }: OutputFormProps) => {
@@ -74,32 +77,31 @@ export const OutputForm = ({ form, node }: OutputFormProps) => {
         return (
           <Stack key={item.id}>
             {index > 0 && <Divider my="md" />}
-            <Group mt="xs" position="apart" noWrap>
+            <Stack mt="xs">
               <TextInput
-                size="sm"
+                size="xs"
                 placeholder="Name"
                 label="Name"
-                maw="48%"
                 {...form.getInputProps(`outputs.${index}.name`)}
               />
               <Select
-                size="sm"
+                size="xs"
                 label="Condition"
                 placeholder="Pick one"
                 itemComponent={SelectItem}
                 maxDropdownHeight={500}
-                maw="48%"
+                withinPortal
                 data={triggerConditions.map((tc) => ({
                   label: startCase(tc),
                   value: tc,
-                  desctiption: getDescriptionFromTriggerCondition(tc),
+                  description: getDescriptionFromTriggerCondition(tc),
                 }))}
                 {...form.getInputProps(`outputs.${index}.triggerCondition`)}
               />
-            </Group>
+            </Stack>
             {item.triggerCondition && item.triggerCondition !== "none" && (
               <TextInput
-                size="sm"
+                size="xs"
                 placeholder="Condition value"
                 w="100%"
                 {...form.getInputProps(
