@@ -1,3 +1,5 @@
+import { PagingParams } from "@/requests/types";
+
 export type VariableParams = {
   name: string;
   type: FrontEndTypes;
@@ -24,4 +26,9 @@ export const VariableTypesOptions = Object.keys(VariableTypes).map((key) => ({
 
 export type VariableResponse = VariableParams & {
   id: string;
+};
+
+export type VariablePagingParams = PagingParams & {
+  pageId?: string;
+  isGlobal: boolean;
 };
