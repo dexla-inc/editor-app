@@ -29,9 +29,13 @@ export const VariableList = ({ projectId, pageId }: Props) => {
   const { data: variables, refetch } = useQuery({
     queryKey: ["variables", projectId, pageId],
     queryFn: async () => {
-      const response = await listVariables(projectId, {
-        search: filter,
-      });
+      const response = await listVariables(
+        projectId,
+        // @ts-ignore
+        {
+          search: filter,
+        },
+      );
       return response;
     },
     enabled: !!projectId && !!pageId,
