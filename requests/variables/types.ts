@@ -17,6 +17,11 @@ export const VariableTypes: Record<FrontEndTypes, string> = {
   ARRAY: "Array",
 };
 
+export const VariableTypesOptions = Object.keys(VariableTypes).map((key) => ({
+  label: VariableTypes[key as FrontEndTypes],
+  value: key,
+}));
+
 export type VariableResponse = VariableParams & {
   id: string;
 };

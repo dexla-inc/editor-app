@@ -11,9 +11,8 @@ import {
   AppShellProps,
   Box,
   Button,
-  Flex,
+  Group,
   Header,
-  LoadingOverlay,
   Select,
 } from "@mantine/core";
 import Link from "next/link";
@@ -23,6 +22,7 @@ import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
 import { DeployButton } from "@/components/DeployButton";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { GenerateAIButton } from "@/components/GenerateAIButton";
+import { LogicFlowButton } from "@/components/logic-flow/LogicFlowButton";
 import { getPageList } from "@/requests/pages/queries";
 import { PageListResponse } from "@/requests/pages/types";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
@@ -34,8 +34,8 @@ import {
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { VariablesButton } from "@/components/variables/VariablesButton";
 
 const ToggleNavbarButton = () => {
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
@@ -55,13 +55,8 @@ const ToggleNavbarButton = () => {
 };
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
-  // This state needs to move to the parent component
-  const [isLoading, setIsLoading] = useState(false);
-  const resetTree = useEditorStore((state) => state.resetTree);
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-  const setPreviewMode = useEditorStore((state) => state.setPreviewMode);
-  const language = useEditorStore((state) => state.language);
-  const setLanguage = useEditorStore((state) => state.setLanguage);
+  const { resetTree, isPreviewMode, setPreviewMode, language, setLanguage } =
+    useEditorStore((state) => state);
   const { undo, redo, pastStates, futureStates } = useTemporalStore(
     (state) => state,
   );
@@ -75,94 +70,69 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
     queryFn: () => getPageList(projectId),
   });
 
-  const pages =
-    (pageResponse.data?.results?.map((r) => ({
-      value: r.id,
-      label: r.title,
-    })) as ReadonlyArray<any>) || [];
-
-  const goToEditor = (pageId: string) => {
-    router.push(`/projects/${projectId}/editor/${pageId}`);
-  };
-
   return (
     <AppShell
       fixed
       padding={0}
       header={
         <Header height={HEADER_HEIGHT} sx={{ zIndex: 110 }}>
-          <Flex h={HEADER_HEIGHT} px="lg" align="center">
-            <Flex sx={{ width: "33%" }} align="center" gap={10}>
+          <Group h={HEADER_HEIGHT} px="lg" align="center" position="apart">
+            <Group>
               <Link href="/">
                 <Logo />
               </Link>
               <ToggleNavbarButton />
-            </Flex>
-            <>
-              <Flex gap={20}>
-                <Select
-                  label="Page"
-                  value={currentPageId}
-                  onChange={goToEditor}
-                  data={pages}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "10px",
-                    whiteSpace: "nowrap",
-                  }}
-                />
-                <Select
-                  label="Language"
-                  value={language}
-                  onChange={setLanguage}
-                  data={[
-                    { value: "default", label: "English" },
-                    { value: "french", label: "French" },
-                  ]}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "10px",
-                    width: "33.33%",
-                    whiteSpace: "nowrap",
-                  }}
-                />
-              </Flex>
+            </Group>
 
-              <Flex gap="md" sx={{ width: "33.33%" }} justify="end">
-                <AIChatHistoryButton projectId={projectId} />
-                <GenerateAIButton projectId={projectId} />
-                <Button.Group>
-                  <Button
-                    leftIcon={<IconArrowBackUp size={ICON_SIZE} />}
-                    variant="default"
-                    onClick={() => undo()}
-                    disabled={pastStates.length < 2}
-                  ></Button>
-                  <Button
-                    leftIcon={<IconArrowForwardUp size={ICON_SIZE} />}
-                    variant="default"
-                    onClick={() => redo()}
-                    disabled={futureStates.length === 0}
-                  ></Button>
-                </Button.Group>
-                <ChangeHistoryPopover />
-                <EditorPreviewModeToggle
-                  isPreviewMode={isPreviewMode}
-                  setPreviewMode={setPreviewMode}
+            <Group noWrap position="right">
+              <Select
+                label="Language"
+                value={language}
+                onChange={setLanguage}
+                data={[
+                  { value: "default", label: "English" },
+                  { value: "french", label: "French" },
+                ]}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "10px",
+                  width: "33.33%",
+                  whiteSpace: "nowrap",
+                }}
+              />
+              <AIChatHistoryButton projectId={projectId} />
+              <GenerateAIButton projectId={projectId} />
+              <LogicFlowButton projectId={projectId} pageId={currentPageId} />
+              <VariablesButton projectId={projectId} pageId={currentPageId} />
+              <Button.Group>
+                <Button
+                  leftIcon={<IconArrowBackUp size={ICON_SIZE} />}
+                  variant="default"
+                  onClick={() => undo()}
+                  disabled={pastStates.length < 2}
                 />
-                <DeployButton
-                  projectId={projectId}
-                  page={pageResponse.data?.results?.find(
-                    (p) => p.id === currentPageId,
-                  )}
+                <Button
+                  leftIcon={<IconArrowForwardUp size={ICON_SIZE} />}
+                  variant="default"
+                  onClick={() => redo()}
+                  disabled={futureStates.length === 0}
                 />
-              </Flex>
-            </>
-          </Flex>
+              </Button.Group>
+              <ChangeHistoryPopover />
+              <EditorPreviewModeToggle
+                isPreviewMode={isPreviewMode}
+                setPreviewMode={setPreviewMode}
+              />
+              <DeployButton
+                projectId={projectId}
+                page={pageResponse.data?.results?.find(
+                  (p) => p.id === currentPageId,
+                )}
+              />
+            </Group>
+          </Group>
         </Header>
       }
       navbar={navbar}
@@ -198,7 +168,6 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
       >
         {children}
       </ErrorBoundary>
-      <LoadingOverlay visible={isLoading} />
     </AppShell>
   );
 };

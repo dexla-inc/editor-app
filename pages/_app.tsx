@@ -17,6 +17,7 @@ import { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import Head from "next/head";
 import { Fragment, PropsWithChildren, useEffect, useState } from "react";
+import { ReactFlowProvider } from "reactflow";
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
 
 // If loading a variable font, you don't need to specify the font weight
@@ -139,7 +140,9 @@ export default function App(props: AppProps) {
                   },
                 }}
               />
-              <Component {...pageProps} />
+              <ReactFlowProvider>
+                <Component {...pageProps} />
+              </ReactFlowProvider>
             </Hydrate>
           </QueryClientProvider>
         </main>

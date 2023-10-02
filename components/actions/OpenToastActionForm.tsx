@@ -60,18 +60,18 @@ export const OpenToastActionForm = ({ id }: Props) => {
           placeholder="Notification title"
           label="Title"
           {...form.getInputProps("title")}
-        ></TextInput>
+        />
         <TextInput
           size="xs"
           placeholder="Notification message"
           label="Message"
           {...form.getInputProps("message")}
-        ></TextInput>
+        />
         <ActionButtons
           actionId={action.id}
           componentActions={componentActions}
           selectedComponentId={selectedComponentId}
-        ></ActionButtons>
+        />
       </Stack>
     </form>
   );

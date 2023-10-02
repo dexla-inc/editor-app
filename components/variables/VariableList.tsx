@@ -1,0 +1,121 @@
+import { deleteVariable } from "@/requests/variables/mutations";
+import { listVariables } from "@/requests/variables/queries";
+import {
+  ActionIcon,
+  Group,
+  Modal,
+  ScrollArea,
+  Stack,
+  Table,
+  TextInput,
+} from "@mantine/core";
+import { useDebouncedState, useDisclosure } from "@mantine/hooks";
+import { IconEdit, IconSearch, IconX } from "@tabler/icons-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { VariableForm } from "./VariableForm";
+
+type Props = {
+  projectId: string;
+  pageId: string;
+};
+
+export const VariableList = ({ projectId, pageId }: Props) => {
+  const [opened, modal] = useDisclosure(false);
+  const [filter, setFilter] = useDebouncedState("", 250);
+  const [variableToEdit, setVariableToEdit] = useState(undefined);
+  const client = useQueryClient();
+
+  const { data: variables, refetch } = useQuery({
+    queryKey: ["variables", projectId, pageId],
+    queryFn: async () => {
+      const response = await listVariables(projectId, {
+        search: filter,
+      });
+      return response;
+    },
+    enabled: !!projectId && !!pageId,
+  });
+
+  const deleteVariableMutation = useMutation({
+    mutationKey: ["variables", projectId, pageId],
+    mutationFn: async (id: string) => {
+      const response = await deleteVariable(projectId, id);
+      return response;
+    },
+    onSettled: () => {
+      client.refetchQueries(["variables", projectId, pageId]);
+    },
+  });
+
+  const rows = (variables?.results ?? [])?.map((variable: any) => (
+    <tr key={variable.id}>
+      <td>{variable.name}</td>
+      <td>{variable.type}</td>
+      <td>{variable.defaultValue}</td>
+      <td>{variable.value}</td>
+      <td>{variable.isGlobal ? "True" : "False"}</td>
+      <td>
+        <Group>
+          <ActionIcon
+            size="xs"
+            onClick={() => {
+              setVariableToEdit(variable.id);
+              modal.open();
+            }}
+          >
+            <IconEdit />
+          </ActionIcon>
+          <ActionIcon
+            size="xs"
+            onClick={() => deleteVariableMutation.mutate(variable.id)}
+          >
+            <IconX />
+          </ActionIcon>
+        </Group>
+      </td>
+    </tr>
+  ));
+
+  useEffect(() => {
+    refetch();
+  }, [filter, refetch]);
+
+  return (
+    <>
+      <ScrollArea h={300}>
+        <Stack>
+          <TextInput
+            placeholder="Search"
+            mb="xs"
+            icon={<IconSearch size={14} />}
+            defaultValue={filter}
+            onChange={(event) => {
+              setFilter(event.currentTarget.value);
+            }}
+          />
+          <Table striped highlightOnHover withBorder withColumnBorders>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Default Value</th>
+                <th>Current Value</th>
+                <th>Is Global</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>{rows}</tbody>
+          </Table>
+        </Stack>
+      </ScrollArea>
+      <Modal title="Edit Variable" opened={opened} onClose={modal.close}>
+        <VariableForm
+          projectId={projectId}
+          pageId={pageId}
+          variableId={variableToEdit}
+        />
+      </Modal>
+    </>
+  );
+};
