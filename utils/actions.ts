@@ -39,8 +39,8 @@ import { nanoid } from "nanoid";
 import { Router } from "next/router";
 import { executeFlow } from "./logicFlows";
 import { updateVariable } from "@/requests/variables/mutations";
-import { VariableParams } from "@/requests/variables/types";
 import { SetVariableActionForm } from "@/components/actions/SetVariableActionForm";
+import { SetVariableFlowActionForm } from "@/components/actions/logic-flow-forms/SetVariableFlowActionForm";
 
 const triggers = [
   "onClick",
@@ -465,6 +465,7 @@ export const setVariableAction = async ({
   action,
 }: SetVariableActionParams) => {
   const projectId = useEditorStore.getState().currentProjectId;
+  console.log({ UEH: action });
   const variable = JSON.parse(action.variable);
   updateVariable(projectId!, variable.id, { ...variable, value: action.value });
 };
@@ -996,6 +997,7 @@ export const actionMapper = {
   setVariable: {
     action: setVariableAction,
     form: SetVariableActionForm,
+    flowForm: SetVariableFlowActionForm,
   },
   navigateToPage: {
     action: navigationAction,

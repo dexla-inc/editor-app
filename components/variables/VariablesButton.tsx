@@ -23,7 +23,7 @@ export const VariablesButton = ({ projectId, pageId }: Props) => {
         opened={opened}
         onClose={modal.close}
         centered
-        size="lg"
+        size="auto"
       >
         <SegmentedControl
           size="sm"
@@ -36,7 +36,7 @@ export const VariablesButton = ({ projectId, pageId }: Props) => {
           ]}
         />
         {mode === "create" && (
-          <Stack mt="xl">
+          <Stack mt="xl" miw="700px">
             <VariableForm projectId={projectId} pageId={pageId} />
           </Stack>
         )}

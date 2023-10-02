@@ -9,10 +9,13 @@ import {
 } from "@/components/actions/_BaseActionFunctions";
 import { listVariables } from "@/requests/variables/queries";
 import { SetVariableAction } from "@/utils/actions";
-import { Select, Stack, TextInput } from "@mantine/core";
+import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { useEditorStore } from "@/stores/editor";
+import { VariablesButton } from "../variables/VariablesButton";
 
 type Props = {
   id: string;
@@ -25,6 +28,7 @@ export const SetVariableActionForm = ({ id }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
   const { editorTree, selectedComponentId, updateTreeComponentActions } =
     useEditorStores();
+  const { setPickingComponentToBindFrom } = useEditorStore();
 
   const { componentActions, action } = useActionData<SetVariableAction>({
     actionId: id,
@@ -90,12 +94,17 @@ export const SetVariableActionForm = ({ id }: Props) => {
           })}
           {...form.getInputProps("variable")}
         />
-        <TextInput
-          size="xs"
-          placeholder="Value"
+        <ComponentToBindFromInput
+          placeholder="value"
           label="Value"
+          componentId={selectedComponentId}
+          onPick={(componentToBindId: string) => {
+            setPickingComponentToBindFrom(undefined);
+            form.setFieldValue("value", `valueOf_${componentToBindId}`);
+          }}
           {...form.getInputProps("value")}
         />
+        <VariablesButton pageId={pageId} projectId={projectId} />
         <ActionButtons
           actionId={action.id}
           componentActions={componentActions}
