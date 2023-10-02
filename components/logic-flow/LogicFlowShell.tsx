@@ -22,7 +22,7 @@ import { LogicFlowFormModal } from "@/components/logic-flow/LogicFlowFormModal";
 import { LogicFlow } from "@prisma/client";
 
 export interface ShellProps extends AppShellProps {
-  flow: LogicFlow;
+  flow?: LogicFlow;
 }
 
 export const LogicFlowShell = ({

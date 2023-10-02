@@ -6,7 +6,7 @@ import { FlowData, useFlowStore } from "@/stores/flow";
 import { decodeSchema, encodeSchema } from "@/utils/compression";
 import { ASIDE_WIDTH, HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
 import { matchQuery } from "@/utils/filter";
-import { PossibleNodes, nodes, nodesData } from "@/utils/nodes";
+import { PossibleNodes, nodes, nodesData } from "@/utils/logicFlows";
 import { prisma } from "@/utils/prisma";
 import { removeKeysRecursive } from "@/utils/removeKeys";
 import {

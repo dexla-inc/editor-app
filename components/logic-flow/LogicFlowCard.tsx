@@ -13,7 +13,7 @@ import {
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useRouter } from "next/router";
-import { nodesData } from "@/utils/nodes";
+import { nodesData } from "@/utils/logicFlows";
 import { IconCopy, IconDots, IconEdit, IconTrashX } from "@tabler/icons-react";
 import { LogicFlow } from "@prisma/client";
 import { Edge, Node } from "reactflow";

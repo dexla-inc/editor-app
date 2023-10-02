@@ -1,5 +1,5 @@
 import { Card, Group, Stack, Text, useMantineTheme } from "@mantine/core";
-import { nodesData } from "@/utils/nodes";
+import { nodesData } from "@/utils/logicFlows";
 import { useDragStart } from "@/hooks/logic-flow/useDragStart";
 import { nanoid } from "nanoid";
 

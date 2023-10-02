@@ -5,7 +5,7 @@ import React, { MutableRefObject, useCallback } from "react";
 import ReactFlow, { Background, Controls, Node } from "reactflow";
 import { FlowState, useFlowStore } from "@/stores/flow";
 import { nanoid } from "nanoid";
-import { nodes as nodeTypes } from "@/utils/nodes";
+import { nodes as nodeTypes } from "@/utils/logicFlows";
 
 const selector = (state: FlowState) => ({
   nodes: state.nodes,

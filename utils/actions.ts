@@ -15,6 +15,7 @@ import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 import { PreviousStepActionForm } from "@/components/actions/PreviousStepActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
+import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
 import { OpenToastFlowActionForm } from "@/components/actions/logic-flow-forms/OpenToastFlowActionForm";
 import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { Options } from "@/components/modifiers/GoogleMap";
@@ -36,6 +37,7 @@ import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
+import { executeFlow } from "./logicFlows";
 
 const triggers = [
   "onClick",
@@ -82,6 +84,7 @@ export const actions = [
   { name: "openToast", group: "Feedback" },
   { name: "reloadComponent", group: "Feedback" },
   { name: "copyToClipboard", group: "Utilities & Tools" },
+  { name: "triggerLogicFlow", group: "Utilities & Tools" },
 ];
 
 type ActionTriggerAll = (typeof triggers)[number];
@@ -122,6 +125,11 @@ export interface OpenModalAction extends BaseAction {
 export interface OpenDrawerAction extends BaseAction {
   name: "openDrawer";
   drawerId: string;
+}
+
+export interface TriggerLogicFlowAction extends BaseAction {
+  name: "triggerLogicFlow";
+  logicFlowId: string;
 }
 
 export interface OpenPopOverAction extends BaseAction {
@@ -230,7 +238,8 @@ export type Action = {
     | NextStepAction
     | PreviousStepAction
     | BindPlaceDataAction
-    | BindPlaceGeometryAction;
+    | BindPlaceGeometryAction
+    | TriggerLogicFlowAction;
   sequentialTo?: string;
 };
 
@@ -306,6 +315,10 @@ export type OpenModalActionParams = ActionParams & {
 
 export type OpenDrawerActionParams = ActionParams & {
   action: OpenDrawerAction;
+};
+
+export type TriggerLogicFlowActionParams = ActionParams & {
+  action: TriggerLogicFlowAction;
 };
 
 export type OpenPopOverActionParams = ActionParams & {
@@ -429,8 +442,14 @@ export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   updateTreeComponent(selectedComponent?.id!, { style: { width } });
 };
 
-export const openToastAction = ({ action }: OpenToastActionParams) => {
+export const openToastAction = async ({ action }: OpenToastActionParams) => {
   showNotification({ title: action.title, message: action.message });
+};
+
+export const triggerLogicFlowAction = (
+  params: TriggerLogicFlowActionParams,
+) => {
+  executeFlow(params.action.logicFlowId, params);
 };
 
 export const changeStateAction = ({
@@ -568,6 +587,7 @@ export const loginAction = async ({
       const onSuccessAction: Action = actions.find(
         (action: Action) => action.trigger === "onSuccess",
       )!;
+      // @ts-ignore
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
       onSuccessActionMapped.action({
         // @ts-ignore
@@ -583,6 +603,7 @@ export const loginAction = async ({
       const onErrorAction: Action = actions.find(
         (action: Action) => action.trigger === "onError",
       )!;
+      // @ts-ignore
       const onErrorActionMapped = actionMapper[onError.action.name];
       onErrorActionMapped.action({
         // @ts-ignore
@@ -742,6 +763,7 @@ export const apiCallAction = async ({
       const onSuccessAction: Action = actions.find(
         (action: Action) => action.trigger === "onSuccess",
       )!;
+      // @ts-ignore
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
       onSuccessActionMapped.action({
         // @ts-ignore
@@ -759,6 +781,7 @@ export const apiCallAction = async ({
       const onErrorAction: Action = actions.find(
         (action: Action) => action.trigger === "onError",
       )!;
+      // @ts-ignore
       const onErrorActionMapped = actionMapper[onError.action.name];
       onErrorActionMapped.action({
         // @ts-ignore
@@ -978,6 +1001,10 @@ export const actionMapper = {
   openDrawer: {
     action: openDrawerAction,
     form: OpenDrawerActionForm,
+  },
+  triggerLogicFlow: {
+    action: triggerLogicFlowAction,
+    form: TriggerLogicFlowActionForm,
   },
   openPopOver: {
     action: openPopOverAction,
