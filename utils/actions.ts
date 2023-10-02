@@ -38,6 +38,9 @@ import get from "lodash.get";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
 import { executeFlow } from "./logicFlows";
+import { updateVariable } from "@/requests/variables/mutations";
+import { VariableParams } from "@/requests/variables/types";
+import { SetVariableActionForm } from "@/components/actions/SetVariableActionForm";
 
 const triggers = [
   "onClick",
@@ -65,6 +68,7 @@ const triggers = [
 ] as const;
 
 export const actions = [
+  { name: "setVariable", group: "API & Data" },
   { name: "apiCall", group: "API & Data" },
   { name: "bindResponse", group: "API & Data" },
   { name: "bindPlaceData", group: "API & Data" },
@@ -98,6 +102,12 @@ export type SequentialTrigger = Extract<
 export interface BaseAction {
   name: string;
   data?: any;
+}
+
+export interface SetVariableAction extends BaseAction {
+  name: "setVariable";
+  variable: string;
+  value?: any;
 }
 
 export interface NavigationAction extends BaseAction {
@@ -221,6 +231,7 @@ export type Action = {
   id: string;
   trigger: ActionTrigger;
   action:
+    | SetVariableAction
     | NavigationAction
     | AlertAction
     | APICallAction
@@ -307,6 +318,10 @@ export type DebugActionParams = ActionParams & {
 
 export const debugAction = ({ action }: DebugActionParams) => {
   alert(action.message);
+};
+
+export type SetVariableActionParams = ActionParams & {
+  action: SetVariableAction;
 };
 
 export type OpenModalActionParams = ActionParams & {
@@ -444,6 +459,14 @@ export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
 
 export const openToastAction = async ({ action }: OpenToastActionParams) => {
   showNotification({ title: action.title, message: action.message });
+};
+
+export const setVariableAction = async ({
+  action,
+}: SetVariableActionParams) => {
+  const projectId = useEditorStore.getState().currentProjectId;
+  const variable = JSON.parse(action.variable);
+  updateVariable(projectId!, variable.id, { ...variable, value: action.value });
 };
 
 export const triggerLogicFlowAction = (
@@ -969,6 +992,10 @@ export const actionMapper = {
   alert: {
     action: debugAction,
     form: DebugActionForm,
+  },
+  setVariable: {
+    action: setVariableAction,
+    form: SetVariableActionForm,
   },
   navigateToPage: {
     action: navigationAction,
