@@ -465,7 +465,6 @@ export const setVariableAction = async ({
   action,
 }: SetVariableActionParams) => {
   const projectId = useEditorStore.getState().currentProjectId;
-  console.log({ UEH: action });
   const variable = JSON.parse(action.variable);
   updateVariable(projectId!, variable.id, { ...variable, value: action.value });
 };

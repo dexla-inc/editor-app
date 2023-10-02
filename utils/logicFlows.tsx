@@ -1,17 +1,26 @@
 import { Edge, Node, NodeProps } from "reactflow";
 import * as StartNodeExports from "@/components/logic-flow/nodes/StartNode";
 import * as ActionNodeExports from "@/components/logic-flow/nodes/ActionNode";
+import * as ConditionalNodeExports from "@/components/logic-flow/nodes/ConditionalNode";
 import { computeNodeMapper } from "@/components/logic-flow/nodes/compute";
 import { LogicFlow } from "@prisma/client";
 import { decodeSchema } from "@/utils/compression";
 import { FlowData } from "@/stores/flow";
+import { checkIfValid } from "@/utils/triggerConditions";
+import { NodeOutput } from "@/components/logic-flow/nodes/CustomNode";
 
 const { StartNode, data: startNodeData, ...startNode } = StartNodeExports;
 const { ActionNode, data: actionNodeData, ...actionNode } = ActionNodeExports;
+const {
+  ConditionalNode,
+  data: conditionalNodeData,
+  ...conditionalNode
+} = ConditionalNodeExports;
 
 export const nodesData = {
   startNode: { data: startNodeData, ...startNode },
   actionNode: { data: actionNodeData, ...actionNode },
+  conditionalNode: { data: conditionalNodeData, ...conditionalNode },
 };
 
 export type PossibleNodes = keyof typeof nodesData;
@@ -21,6 +30,7 @@ export const nodes: {
 } = {
   startNode: StartNode,
   actionNode: ActionNode,
+  conditionalNode: ConditionalNode,
 };
 
 const run = async (state: FlowData, params: any) => {
@@ -91,8 +101,24 @@ const run = async (state: FlowData, params: any) => {
           ) as Node;
 
           queue.push(outputingNode);
-          const compute = computeNodeMapper[current!.type!];
-          await compute?.(current, params);
+
+          const out = outputingNode?.data.outputs.find(
+            (o: NodeOutput) => o.id === edge.sourceHandle,
+          );
+
+          let isValid = true;
+          if (out?.triggerCondition && out?.triggerCondition !== "none") {
+            isValid = checkIfValid({
+              data: outputingNode?.data,
+              condition: out.triggerCondition,
+              conditionValue: out.triggerConditionValue,
+            });
+          }
+
+          if (isValid) {
+            const compute = computeNodeMapper[current!.type!];
+            await compute?.(current, params, out);
+          }
 
           outputs.push({
             sourceId: outputingNode.id,

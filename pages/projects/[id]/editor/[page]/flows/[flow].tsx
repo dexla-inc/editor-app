@@ -205,7 +205,14 @@ export default function LogicFlowsPage({ id, pageId, flowId }: Props) {
   }, [hasFormDataChanges, selectedNode, previousSelectedNode]);
 
   const onSubmit = async (values: any) => {
-    updateNodeData({ id: selectedNode?.id, data: { form: values } });
+    const isConditionalNode = selectedNode?.type === "conditionalNode";
+    updateNodeData({
+      id: selectedNode?.id,
+      data: {
+        form: values,
+        ...(isConditionalNode ? { outputs: values.outputs } : {}),
+      },
+    });
     updateNodeInternals(selectedNode?.id!);
   };
 

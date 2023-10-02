@@ -47,7 +47,6 @@ export type FlowState = {
   selectedNode?: Partial<Node>;
   isDragging: boolean;
   isRestored: boolean;
-  isRunning: boolean;
   isUpdating: boolean;
   flowInstance?: ReactFlowInstance;
   nodes: Node[];
@@ -65,7 +64,6 @@ export type FlowState = {
   setIsUpdating: (isUpdating: boolean) => void;
   setSelectedNode: (selectedNode?: Partial<Node>) => void;
   updateNodeData: (node: Partial<Node>) => Promise<Node[]>;
-  setIsRunning: (isRunning: boolean) => void;
   getNodeById: (id?: string) => Partial<Node>;
   setCurrentFlowId: (currentFlowId?: string) => void;
   setShowFormModal: (shouldShowFormModal?: boolean, flowId?: string) => void;
@@ -95,7 +93,6 @@ export const initialEdges = [] as Edge[];
 export const useFlowStore = create<FlowState>((set, get) => ({
   isDragging: false,
   isRestored: false,
-  isRunning: false,
   isUpdating: false,
   shouldShowFormModal: false,
   nodes: [],
@@ -176,7 +173,6 @@ export const useFlowStore = create<FlowState>((set, get) => ({
         [],
       ),
       isRestored: false,
-      isRunning: false,
       isDragging: false,
       selectedNode: undefined,
       flowInstance: undefined,
@@ -221,17 +217,6 @@ export const useFlowStore = create<FlowState>((set, get) => ({
     set({ nodes });
 
     return Promise.resolve(nodes);
-  },
-  setIsRunning: (isRunning: boolean) => {
-    set({
-      isRunning,
-      edges: get().edges.map((edge) => {
-        return {
-          ...edge,
-          animated: isRunning,
-        };
-      }),
-    });
   },
   getNodeById: (id?: string) => {
     return get().nodes.find((n) => n.id === id) as Partial<Node>;
