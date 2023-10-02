@@ -19,14 +19,14 @@ export const DeployButton = ({ projectId, page }: Props) => {
   const [customDomain, setCustomDomain] = useState("");
   const [hasDeployed, setHasDeployed] = useState(false);
 
-  const handleDeploy = async () => {
+  const handleDeploy = async (forceProduction: boolean) => {
     try {
       startLoading({
         id: "deploy",
         title: "Deploying",
         message: "Deploying your app...",
       });
-      await createDeployment(projectId, { forceProduction: false });
+      await createDeployment(projectId, { forceProduction: forceProduction });
       setHasDeployed(true);
       stopLoading({
         id: "deploy",
@@ -100,7 +100,7 @@ export const DeployButton = ({ projectId, page }: Props) => {
         loading={isLoading}
         loaderPosition="center"
         disabled={isLoading}
-        onClick={handleDeploy}
+        onClick={() => handleDeploy(true)}
       >
         Deploy
       </Button>
