@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && yarn prisma generate",
+    "build": "yarn prisma generate && next build",
     "start": "next start",
     "lint": "lint-staged",
     "prepare": "husky install"
