@@ -14,7 +14,6 @@ export const data: StartNodeData = {
   description: "The starting point of a flow",
   inputs: [],
   outputs: [{ id: nanoid(), name: "Initial Trigger" }],
-  isNotEditable: true,
 };
 
 export const NodeAvatar = (props: any) => {

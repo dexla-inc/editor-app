@@ -82,7 +82,6 @@ export const initialNodes = [
       description: "The starting point of a flow",
       inputs: [],
       outputs: [{ id: nanoid(), name: "Initial Trigger" }],
-      isNotEditable: true,
     },
     position: { x: 0, y: 0 },
   },
