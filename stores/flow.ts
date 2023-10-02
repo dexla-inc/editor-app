@@ -13,6 +13,7 @@ import {
   applyEdgeChanges,
   NodeAddChange,
   ReactFlowInstance,
+  EdgeAddChange,
 } from "reactflow";
 import { nanoid } from "nanoid";
 
@@ -47,10 +48,10 @@ export type FlowState = {
   isDragging: boolean;
   isRestored: boolean;
   isRunning: boolean;
+  isUpdating: boolean;
   flowInstance?: ReactFlowInstance;
   nodes: Node[];
   edges: Edge[];
-  pinnedPreviewNodeId?: string;
   shouldShowFormModal?: boolean;
   currentFlowId?: string;
   onNodesChange: OnNodesChange;
@@ -61,11 +62,11 @@ export type FlowState = {
   restoreFlow: (state: FlowData) => void;
   resetFlow: () => void;
   setIsDragging: (isDragging: boolean) => void;
+  setIsUpdating: (isUpdating: boolean) => void;
   setSelectedNode: (selectedNode?: Partial<Node>) => void;
   updateNodeData: (node: Partial<Node>) => Promise<Node[]>;
   setIsRunning: (isRunning: boolean) => void;
   getNodeById: (id?: string) => Partial<Node>;
-  setPinnedPreview: (pinnedPreviewNodeId?: string) => void;
   setCurrentFlowId: (currentFlowId?: string) => void;
   setShowFormModal: (shouldShowFormModal?: boolean, flowId?: string) => void;
 };
@@ -95,6 +96,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
   isDragging: false,
   isRestored: false,
   isRunning: false,
+  isUpdating: false,
   shouldShowFormModal: false,
   nodes: [],
   edges: [],
@@ -152,8 +154,14 @@ export const useFlowStore = create<FlowState>((set, get) => ({
   },
   restoreFlow: (state: FlowData) => {
     set({
-      nodes: state.nodes,
-      edges: state.edges,
+      nodes: applyNodeChanges<NodeAddChange>(
+        state.nodes.map((node) => ({ item: node, type: "add" })),
+        [],
+      ),
+      edges: applyEdgeChanges<EdgeAddChange>(
+        state.edges.map((edge) => ({ item: edge, type: "add" })),
+        [],
+      ),
       isRestored: true,
     });
   },
@@ -163,17 +171,22 @@ export const useFlowStore = create<FlowState>((set, get) => ({
         initialNodes.map((node) => ({ item: node, type: "add" })),
         [],
       ),
-      edges: [],
+      edges: applyEdgeChanges<EdgeAddChange>(
+        initialEdges.map((edge) => ({ item: edge, type: "add" })),
+        [],
+      ),
       isRestored: false,
       isRunning: false,
       isDragging: false,
       selectedNode: undefined,
-      pinnedPreviewNodeId: undefined,
       flowInstance: undefined,
     });
   },
   setIsDragging: (isDragging) => {
     set({ isDragging });
+  },
+  setIsUpdating: (isUpdating) => {
+    set({ isUpdating });
   },
   setSelectedNode: (selectedNode?: Partial<Node>) => {
     set({ selectedNode: selectedNode ?? undefined });
@@ -181,11 +194,6 @@ export const useFlowStore = create<FlowState>((set, get) => ({
   updateNodeData: async (node: Partial<Node>): Promise<Node[]> => {
     const state = get();
     const dependencies = getDependecies(node as Node, state);
-    const previousStateForCurrentNode = state.nodes.find(
-      (n) => n.id === node.id,
-    );
-    const isChangingCache =
-      previousStateForCurrentNode?.data.shouldCache !== node.data.shouldCache;
 
     const nodes = state.nodes.map((n) => {
       if (node.id === n.id) {
@@ -198,15 +206,11 @@ export const useFlowStore = create<FlowState>((set, get) => ({
         };
       }
 
-      if (
-        !!dependencies.find((dep) => dep.node.id === n.id) &&
-        isChangingCache
-      ) {
+      if (!!dependencies.find((dep) => dep.node.id === n.id)) {
         return {
           ...n,
           data: {
             ...n.data,
-            shouldCache: node.data.shouldCache,
           },
         };
       }
@@ -231,9 +235,6 @@ export const useFlowStore = create<FlowState>((set, get) => ({
   },
   getNodeById: (id?: string) => {
     return get().nodes.find((n) => n.id === id) as Partial<Node>;
-  },
-  setPinnedPreview: (pinnedPreviewNodeId?: string) => {
-    set({ pinnedPreviewNodeId });
   },
   setCurrentFlowId: (currentFlowId?: string) => {
     set({ currentFlowId });

@@ -40,6 +40,8 @@ export default function LogicFlowsPage({ id, page }: Props) {
   const setCurrentPageId = useEditorStore((state) => state.setCurrentPageId);
   const selectedFlowNode = useFlowStore((state) => state.selectedNode);
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
+  const resetFlow = useFlowStore((state) => state.resetFlow);
+
   const client = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ["logic-flows", id, page],
@@ -91,8 +93,9 @@ export default function LogicFlowsPage({ id, page }: Props) {
     if (id && page) {
       setCurrentProjectId(id);
       setCurrentPageId(page);
+      resetFlow();
     }
-  }, [id, page, setCurrentPageId, setCurrentProjectId]);
+  }, [id, page, setCurrentPageId, setCurrentProjectId, resetFlow]);
 
   return (
     <LogicFlowShell>

@@ -1,5 +1,7 @@
+// The comment below force next to refresh the editor state every time we change something in the code
+// @refresh reset
 import "reactflow/dist/style.css";
-import React, { useCallback, useEffect } from "react";
+import React, { MutableRefObject, useCallback } from "react";
 import ReactFlow, { Background, Controls, Node } from "reactflow";
 import { FlowState, useFlowStore } from "@/stores/flow";
 import { nanoid } from "nanoid";
@@ -15,11 +17,10 @@ const selector = (state: FlowState) => ({
   setFlowInstance: state.setFlowInstance,
   flowInstance: state.flowInstance,
   setIsDragging: state.setIsDragging,
-  resetFlow: state.resetFlow,
 });
 
 type FlowProps = {
-  wrapperRef: HTMLDivElement | null;
+  wrapperRef: MutableRefObject<HTMLDivElement | null>;
 };
 
 export const LogicFlow = ({ wrapperRef }: FlowProps) => {
@@ -33,7 +34,6 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
     setFlowInstance,
     onAddNode,
     setIsDragging,
-    resetFlow,
   } = useFlowStore(selector);
 
   const onDragOver = useCallback((event: any) => {
@@ -45,7 +45,7 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
     (event: any) => {
       event.preventDefault();
 
-      const reactFlowBounds = wrapperRef?.getBoundingClientRect();
+      const reactFlowBounds = wrapperRef.current?.getBoundingClientRect();
       const { type, data, id } = JSON.parse(
         event.dataTransfer.getData("application/reactflow"),
       );
@@ -83,10 +83,6 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
     },
     [flowInstance, onAddNode, wrapperRef],
   );
-
-  useEffect(() => {
-    resetFlow();
-  }, [resetFlow]);
 
   return (
     <ReactFlow

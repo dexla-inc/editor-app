@@ -1,15 +1,17 @@
 import { Logo } from "@/components/Logo";
 
 import { ASIDE_WIDTH, HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
-import { NavbarTypes } from "@/utils/dashboardTypes";
 import {
+  Anchor,
   AppShell,
   AppShellProps,
   Box,
+  Breadcrumbs,
   Button,
   Flex,
   Group,
   Header,
+  Text,
 } from "@mantine/core";
 import Link from "next/link";
 
@@ -17,12 +19,18 @@ import { useEditorStore } from "@/stores/editor";
 import { ErrorBoundary } from "react-error-boundary";
 import { useFlowStore } from "@/stores/flow";
 import { LogicFlowFormModal } from "@/components/logic-flow/LogicFlowFormModal";
+import { LogicFlow } from "@prisma/client";
 
 export interface ShellProps extends AppShellProps {
-  navbarType?: NavbarTypes;
+  flow: LogicFlow;
 }
 
-export const LogicFlowShell = ({ children, aside }: ShellProps) => {
+export const LogicFlowShell = ({
+  children,
+  navbar,
+  aside,
+  flow,
+}: ShellProps) => {
   const projectId = useEditorStore((state) => state.currentProjectId);
   const pageId = useEditorStore((state) => state.currentPageId);
   const resetTree = useEditorStore((state) => state.resetTree);
@@ -40,9 +48,26 @@ export const LogicFlowShell = ({ children, aside }: ShellProps) => {
             align="center"
             justify="space-between"
           >
-            <Link href="/">
-              <Logo />
-            </Link>
+            <Group>
+              <Link href="/">
+                <Logo />
+              </Link>
+              {flow && (
+                <Breadcrumbs>
+                  <Anchor
+                    size="sm"
+                    color="dark"
+                    component={Link}
+                    href={`/projects/${projectId}/editor/${pageId}/flows`}
+                  >
+                    Fows
+                  </Anchor>
+                  <Text size="xs" color="dimmed">
+                    {flow.name}
+                  </Text>
+                </Breadcrumbs>
+              )}
+            </Group>
             <Group>
               <Button onClick={() => setShowFormModal(true)}>
                 Create logic flow
@@ -59,6 +84,7 @@ export const LogicFlowShell = ({ children, aside }: ShellProps) => {
         </Header>
       }
       aside={aside}
+      navbar={navbar}
       styles={{
         main: {
           minHeight: "100vh",

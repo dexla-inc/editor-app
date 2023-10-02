@@ -16,13 +16,12 @@ export default async function handler(
       throw new Error("Missing id");
     }
 
-    const { id, ...data } = body;
-
+    const { id, ...rest } = body;
     const updatedFlow = await prisma.logicFlow.update({
       where: {
         id: id as string,
       },
-      data,
+      data: rest,
     });
 
     res.status(200).json(updatedFlow);

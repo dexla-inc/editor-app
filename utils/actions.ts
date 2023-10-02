@@ -15,6 +15,7 @@ import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 import { PreviousStepActionForm } from "@/components/actions/PreviousStepActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
+import { OpenToastFlowActionForm } from "@/components/actions/logic-flow-forms/OpenToastFlowActionForm";
 import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { Options } from "@/components/modifiers/GoogleMap";
 import {
@@ -394,7 +395,7 @@ export const togglePropsAction = ({
     {
       style: { display: "flex" },
     },
-    false
+    false,
   );
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
@@ -985,6 +986,7 @@ export const actionMapper = {
   openToast: {
     action: openToastAction,
     form: OpenToastActionForm,
+    flowForm: OpenToastFlowActionForm,
   },
   changeState: {
     action: changeStateAction,

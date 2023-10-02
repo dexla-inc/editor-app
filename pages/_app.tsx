@@ -20,6 +20,7 @@ import Head from "next/head";
 import { Fragment, PropsWithChildren, useEffect, useState } from "react";
 import { isMatchingUrl } from "./[page]";
 import { useRouter } from "next/router";
+import { ReactFlowProvider } from "reactflow";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -152,7 +153,9 @@ export default function App(props: AppProps) {
                   },
                 }}
               />
-              <Component {...pageProps} />
+              <ReactFlowProvider>
+                <Component {...pageProps} />
+              </ReactFlowProvider>
             </Hydrate>
           </QueryClientProvider>
         </main>

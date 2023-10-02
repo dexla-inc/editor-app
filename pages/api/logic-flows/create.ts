@@ -1,3 +1,4 @@
+import { encodeSchema } from "@/utils/compression";
 import { prisma } from "@/utils/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
 

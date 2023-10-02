@@ -22,8 +22,7 @@ export type NodeData = {
   description: string;
   inputs: NodeInput[];
   outputs: NodeOutput[];
-  isNotEditable?: boolean;
-  preview?: string;
+  form?: any;
 };
 
 export interface CustomNodeProps extends NodeProps<NodeData> {
@@ -42,11 +41,13 @@ export const CustomNode = (node: CustomNodeProps) => {
 
   return (
     <Card
-      withBorder
       p="sm"
       onDoubleClick={selectNode}
       sx={{
-        borderColor: selected ? theme.colors.gray[7] : theme.colors.gray[3],
+        border: "1px solid",
+        borderColor: selected
+          ? theme.colors[theme.primaryColor][6]
+          : theme.colors.gray[3],
         minWidth: "100px",
 
         "&:hover": {
