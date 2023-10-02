@@ -21,7 +21,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useDebouncedState } from "@mantine/hooks";
+import { useDebouncedState, usePrevious } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
 import {
   QueryClient,
@@ -85,8 +85,9 @@ export default function LogicFlowsPage({ id, pageId, flowId }: Props) {
     edges: state.edges,
   }));
   const updateNodeInternals = useUpdateNodeInternals();
+  const previousSelectedNode = usePrevious(selectedNode);
 
-  const { data: flow, isLoading } = useQuery({
+  const { data: flow } = useQuery({
     queryKey: ["logic-flow", id, pageId],
     queryFn: async () => {
       const response = await fetch(`/api/logic-flows/${flowId}`);
@@ -197,9 +198,11 @@ export default function LogicFlowsPage({ id, pageId, flowId }: Props) {
       (selectedNode && isEmpty(form.values))
     ) {
       form.setValues(selectedNode.data.form);
+    } else if (previousSelectedNode?.id !== selectedNode?.id) {
+      form.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasFormDataChanges, selectedNode]);
+  }, [hasFormDataChanges, selectedNode, previousSelectedNode]);
 
   const onSubmit = async (values: any) => {
     updateNodeData({ id: selectedNode?.id, data: { form: values } });
@@ -267,7 +270,11 @@ export default function LogicFlowsPage({ id, pageId, flowId }: Props) {
                     Edit {startCase(selectedNode.data?.label)} Node
                   </Text>
                   <form onSubmit={form.onSubmit(onSubmit)}>
-                    <NodeForm form={form} data={selectedNode.data} />
+                    <NodeForm
+                      key={selectedNode?.id}
+                      form={form}
+                      data={selectedNode.data}
+                    />
                   </form>
                 </Stack>
               )}
