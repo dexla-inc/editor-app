@@ -23,9 +23,9 @@ export type SwaggerParams = { swaggerUrl: string };
 
 export type DataSourceParams = {
   name?: string;
+  baseUrl?: string;
   authenticationScheme?: AuthenticationSchemes;
   environment?: string;
-  baseUrl?: string;
   swaggerUrl?: string;
   authValue?: string;
 };
@@ -71,6 +71,7 @@ export type Endpoint = {
   dataSourceId: string;
   baseUrl: string | undefined;
   relativeUrl: string;
+  url?: string | null;
   methodType: MethodTypes;
   description: string | null;
   mediaType: MediaTypes;
@@ -78,6 +79,7 @@ export type Endpoint = {
   headers: Header[];
   parameters: Parameter[];
   requestBody: RequestBody[];
+  body?: string;
   exampleResponse: string;
   errorExampleResponse: string;
   authentication: AuthenticationEndpoint;
@@ -119,7 +121,14 @@ export type ExampleResponse = {
   description: string | null;
 };
 
-export type ParameterTypes = "string" | "number" | "boolean" | "datetime";
+export type ParameterTypes =
+  | "string"
+  | "number"
+  | "boolean"
+  | "datetime"
+  | "object"
+  | "array"
+  | "file";
 export type ParameterLocations = "Query" | "Path" | "Header" | "Cookie";
 export type AuthenticationSchemes = "NONE" | "BEARER" | "BASIC" | "API_KEY";
 
@@ -140,4 +149,30 @@ export type DataSourceAuthResponse = {
   accessTokenProperty?: string;
   refreshTokenProperty?: string;
   expiryTokenProperty?: string;
+};
+
+export type ApiFromAI = Pick<
+  DataSourceResponse,
+  "name" | "baseUrl" | "authenticationScheme"
+> & {
+  apiDocsUrl?: string;
+  apiAuthTokenDocsUrl?: string;
+  endpoints: ApiEndpointFromAI[];
+};
+
+export type ApiEndpointFromAI = Pick<
+  Endpoint,
+  | "relativeUrl"
+  | "methodType"
+  | "mediaType"
+  | "headers"
+  | "parameters"
+  | "requestBody"
+  | "body"
+  | "exampleResponse"
+  | "errorExampleResponse"
+  | "withCredentials"
+  | "isServerRequest"
+> & {
+  url?: string | null;
 };

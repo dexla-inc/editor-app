@@ -4,17 +4,21 @@ import {
   emptyEditorTree,
   useEditorStore,
 } from "@/stores/editor";
-import { Action } from "@/utils/actions";
+import {
+  Action,
+  ChangeStepAction,
+  ChangeStepActionParams,
+} from "@/utils/actions";
 import { structureMapper } from "@/utils/componentMapper";
 import { templatesMapper } from "@/utils/templatesMapper";
 import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
-import merge from "lodash.merge";
-import { nanoid } from "nanoid";
-import crawl from "tree-crawl";
-import { omit } from "next/dist/shared/lib/router/utils/omit";
-import pickBy from "lodash.pickby";
 import isEmpty from "lodash.isempty";
+import merge from "lodash.merge";
+import pickBy from "lodash.pickby";
+import { nanoid } from "nanoid";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
+import crawl from "tree-crawl";
 
 export type Component = {
   id?: string;
@@ -77,10 +81,51 @@ export const getAllActions = (treeRoot: Component): Action[] => {
 };
 
 export const replaceIdsDeeply = (treeRoot: Component) => {
+  let stepperId = "";
+
   crawl(
     treeRoot,
     (node) => {
-      node.id = nanoid();
+      const newId = nanoid();
+
+      if (node.name === "Stepper") {
+        stepperId = newId;
+      }
+
+      node.id = newId;
+      const changeStepActionIndex = (node.actions || []).findIndex(
+        (action) => action.action.name === "changeStep",
+      );
+      if (changeStepActionIndex > -1) {
+        (
+          node.actions![changeStepActionIndex].action as ChangeStepAction
+        ).stepperId = stepperId;
+      }
+    },
+    { order: "bfs" },
+  );
+};
+
+// TODO: put Select field here
+const inputFields = ["input", "checkbox", "textarea"];
+export const updateInputFieldsWithFormData = (
+  treeRoot: Component,
+  onChange: any,
+) => {
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (inputFields.includes(node.name.toLowerCase())) {
+        const currOnChange = node?.props?.triggers?.onChange ?? false;
+        node.props = merge(node.props, {
+          triggers: {
+            onChange: (e: any) => {
+              currOnChange && currOnChange(e);
+              onChange(e);
+            },
+          },
+        });
+      }
     },
     { order: "bfs" },
   );
@@ -231,7 +276,10 @@ export const getNewComponents = (
             padding: "20px",
           },
         },
-        children: traverseComponents(row.components, theme, pages),
+        children:
+          row.components && row.components.length > 0
+            ? traverseComponents(row.components, theme, pages)
+            : [],
       };
     }),
   };
@@ -302,7 +350,7 @@ export const getComponentBeingAddedId = (
   return id;
 };
 
-const translatableFields = [
+const translatableFieldsKeys = [
   "children",
   "label",
   "title",
@@ -312,8 +360,44 @@ const translatableFields = [
   "tooltip",
 ];
 
+const styleFieldsKeys = [
+  "styles",
+  "style",
+  "sx",
+  "size",
+  "bg",
+  "color",
+  "variant",
+  "textColor",
+  "leftIcon",
+  "icon",
+  "orientation",
+  "weight",
+];
+
 const pickTranslatableFields = (value: string, key: string) => {
-  return value !== "" && translatableFields.includes(key);
+  return value !== "" && translatableFieldsKeys.includes(key);
+};
+
+const pickStyleFields = (value: string, key: string) => {
+  return value !== "" && styleFieldsKeys.includes(key);
+};
+
+export const updateTreeComponentAttrs = (
+  treeRoot: Component,
+  ids: string[],
+  attrs: Partial<Component>,
+) => {
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (ids.includes(node.id!)) {
+        merge(node, attrs);
+        context.break();
+      }
+    },
+    { order: "bfs" },
+  );
 };
 
 export const updateTreeComponent = (
@@ -323,26 +407,30 @@ export const updateTreeComponent = (
   state: string = "default",
   language: string = "default",
 ) => {
-  const textFields = pickBy(props, pickTranslatableFields);
-  const stylingFields = omit(props, translatableFields);
+  const translatableFields = pickBy(props, pickTranslatableFields);
+  const styleFields = pickBy(props, pickStyleFields);
+  const alwaysDefaultFields = omit(props, [
+    ...translatableFieldsKeys,
+    ...styleFieldsKeys,
+  ]);
 
   crawl(
     treeRoot,
     (node, context) => {
       if (node.id === id) {
         if (language === "default") {
-          node.props = merge(node.props, textFields);
+          node.props = merge(node.props, translatableFields);
         } else {
           node.languages = merge(node.languages, {
-            [language]: textFields,
+            [language]: translatableFields,
           });
         }
 
         if (state === "default") {
-          node.props = merge(node.props, stylingFields);
+          node.props = merge(node.props, styleFields, alwaysDefaultFields);
         } else {
           node.states = merge(node.states, {
-            [state]: stylingFields,
+            [state]: styleFields,
           });
         }
 
@@ -884,3 +972,15 @@ export const debouncedTreeUpdate = debounce((...params: any[]) => {
   // @ts-ignore
   updateTreeComponent(...params);
 }, 300);
+
+export const getColorFromTheme = (
+  theme: MantineThemeExtended,
+  colorName: string,
+) => {
+  if (colorName === "transparent") {
+    return "transparent";
+  }
+  const [section, index] = colorName.split(".");
+  const colorSection = theme.colors[section];
+  return colorSection?.[Number(index)];
+};

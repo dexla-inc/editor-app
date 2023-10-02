@@ -1,15 +1,14 @@
-import { Icon } from "@/components/Icon";
 import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
+import { withModifier } from "@/hoc/withModifier";
 import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
 import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
-import { useEffect } from "react";
-import { withModifier } from "@/hoc/withModifier";
 import { pick } from "next/dist/lib/pick";
+import { useEffect } from "react";
 
 export const icon = IconForms;
 export const label = "Input";
@@ -19,9 +18,10 @@ export const defaultInputValues = {
   placeholder: "Input",
   type: "text",
   label: "",
-  icon: "",
+  icon: { props: { name: "" } },
   withAsterisk: false,
   labelSpacing: "0",
+  name: "Input",
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
@@ -40,6 +40,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         "icon",
         "withAsterisk",
         "labelProps",
+        "name",
       ]);
 
       form.setValues({
@@ -48,6 +49,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         type: data.type ?? defaultInputValues.type,
         label: data.label ?? defaultInputValues.label,
         icon: data.icon ?? defaultInputValues.icon,
+        name: data.name ?? defaultInputValues.name,
         withAsterisk: data.withAsterisk ?? defaultInputValues.withAsterisk,
         labelProps:
           data.labelProps?.style?.marginBottom ??
@@ -62,6 +64,15 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
+        <TextInput
+          label="Name"
+          size="xs"
+          {...form.getInputProps("name")}
+          onChange={(e) => {
+            form.setFieldValue("name", e.target.value);
+            debouncedTreeComponentPropsUpdate("name", e.target.value);
+          }}
+        />
         <TextInput
           label="Label"
           size="xs"
@@ -104,7 +115,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             form.setFieldValue("withAsterisk", event.currentTarget.checked);
             debouncedTreeComponentPropsUpdate(
               "withAsterisk",
-              event.currentTarget.checked
+              event.currentTarget.checked,
             );
           }}
         />
@@ -120,10 +131,14 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         />
         <IconSelector
           topLabel="Icon"
-          selectedIcon={form.values.icon}
+          selectedIcon={form.values.icon.props.name}
           onIconSelect={(iconName: string) => {
-            form.setFieldValue("icon", iconName);
-            debouncedTreeComponentPropsUpdate("icon", <Icon name={iconName} />);
+            const icon = { props: { name: iconName } };
+            form.setFieldValue("icon", icon);
+            debouncedTreeComponentPropsUpdate("style", {
+              ...selectedComponent?.props?.style,
+              icon,
+            });
           }}
         />
       </Stack>

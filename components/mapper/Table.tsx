@@ -1,3 +1,4 @@
+import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
@@ -83,6 +84,8 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
     enableColumnFilters: false,
     state: { isLoading: componentProps.loading },
   });
+
+  if (componentProps.loading) <MantineSkeleton height={style.height ?? 300} />;
 
   return (
     <MantineReactTable

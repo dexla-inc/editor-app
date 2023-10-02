@@ -1,4 +1,8 @@
-import { ChatHistoryMessage, StreamTypes } from "@/requests/ai/types";
+import {
+  AIRequestTypes,
+  ChatHistoryMessage,
+  EventSourceParams,
+} from "@/requests/ai/types";
 import { PagingResponse } from "@/requests/types";
 import { baseURL, get, getAuthToken } from "@/utils/api";
 import {
@@ -13,7 +17,7 @@ export const getPagesEventSource = async (
   onmessage?: (ev: EventSourceMessage) => void,
   onerror?: (err: any) => number | null | undefined | void,
   onopen?: (response: Response) => Promise<void>,
-  onclose?: () => void
+  onclose?: () => void,
 ) => {
   const token = await getAuthToken();
   const url = `${baseURL}/projects/${projectId}/automations/pages?count=${count}&excluded=${excludedCsv}`;
@@ -38,8 +42,8 @@ export const postPageEventSource = async (
   onerror?: (err: any) => number | null | undefined | void,
   onopen?: (response: Response) => Promise<void>,
   onclose?: () => void,
-  type?: StreamTypes | undefined,
-  description?: string | undefined
+  type?: AIRequestTypes | undefined,
+  description?: string | undefined,
 ) => {
   const token = await getAuthToken();
   let url = `${baseURL}/projects/${projectId}/automations/content`;
@@ -63,11 +67,37 @@ export const postPageEventSource = async (
   });
 };
 
+export const postEventSource = async (
+  projectId: string,
+  params: EventSourceParams,
+  onmessage?: (ev: EventSourceMessage) => void,
+  onerror?: (err: any) => number | null | undefined | void,
+  onopen?: (response: Response) => Promise<void>,
+  onclose?: () => void,
+) => {
+  const token = await getAuthToken();
+  let url = `${baseURL}/projects/${projectId}/automations/content`;
+
+  await fetchEventSource(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "text/event-stream",
+      Authorization: "Bearer " + token,
+    },
+    body: JSON.stringify(params),
+    onerror: onerror,
+    onmessage: onmessage,
+    onopen: onopen,
+    onclose: onclose,
+  });
+};
+
 export const getChatHistoryList = async (projectId: string) => {
   let url = `/projects/${projectId}/automations/history`;
 
   const response = (await get<PagingResponse<ChatHistoryMessage>>(
-    url
+    url,
   )) as PagingResponse<ChatHistoryMessage>;
 
   return response;

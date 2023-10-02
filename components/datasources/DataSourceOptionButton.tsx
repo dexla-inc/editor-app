@@ -1,0 +1,62 @@
+import {
+  Paper,
+  Stack,
+  Text,
+  Title,
+  UnstyledButton,
+  useMantineTheme,
+} from "@mantine/core";
+import Image from "next/image";
+import Link from "next/link";
+
+type Props = {
+  title: string;
+  logoUrl: string;
+  description: string;
+  caption: string;
+  href: string;
+};
+
+export default function MantineStyledButton({
+  title,
+  logoUrl,
+  description,
+  caption,
+  href,
+}: Props) {
+  const theme = useMantineTheme();
+  return (
+    <UnstyledButton
+      component={Link}
+      href={href}
+      sx={{
+        display: "flex",
+        flex: 1,
+        cursor: "pointer",
+      }}
+    >
+      <Paper
+        p="xl"
+        radius="sm"
+        shadow="xs"
+        sx={{
+          width: "100%",
+          "&:hover": { backgroundColor: theme.colors.gray[1] },
+        }}
+      >
+        <Stack align="center">
+          {logoUrl && (
+            <Image src={logoUrl} alt={title} width={200} height={200} />
+          )}
+          <Title>{title}</Title>
+          <Stack spacing={0} align="center">
+            <Text>{description}</Text>
+            <Text size="sm" c="dimmed">
+              {caption}
+            </Text>
+          </Stack>
+        </Stack>
+      </Paper>
+    </UnstyledButton>
+  );
+}

@@ -42,6 +42,36 @@ export const DeployButton = ({ projectId, page }: Props) => {
     }
   };
 
+  const openDeployLink = () => {
+    const hostName = window?.location?.hostname ?? "";
+
+    const domain = hostName ?? "";
+
+    const isLocalhost = domain.startsWith("localhost");
+
+    const baseDomain = isLocalhost
+      ? `${domain}:3000`
+      : customDomain
+      ? customDomain
+      : "dexla.io";
+
+    const deployLink = new URL(
+      `${isLocalhost ? "http" : "https"}://${projectId}.${baseDomain}/${
+        page?.slug === "/" ? "" : page?.slug
+      }`,
+    );
+
+    // Validity check
+    if (
+      deployLink.origin.startsWith("http") ||
+      deployLink.origin.startsWith("https")
+    ) {
+      window?.open(deployLink.origin, "_blank");
+    } else {
+      console.error(`Invalid URL: ${deployLink.origin}`);
+    }
+  };
+
   useEffect(() => {
     const fetchProject = async () => {
       const project = await getProject(projectId);
@@ -79,16 +109,7 @@ export const DeployButton = ({ projectId, page }: Props) => {
         loading={isLoading}
         loaderPosition="center"
         disabled={!hasDeployed || isLoading}
-        onClick={() => {
-          const domain = window?.location?.hostname ?? "";
-          const isLocalhost = domain.startsWith("localhost");
-          const deployLink = `${isLocalhost ? "http" : "https"}://${
-            isLocalhost
-              ? `${projectId}.${`${domain}:3000`}`
-              : customDomain ?? domain
-          }/${page?.slug === "/" ? "" : page?.slug}`;
-          window?.open(deployLink, "_blank");
-        }}
+        onClick={openDeployLink}
       >
         <IconLink size={ICON_SIZE} />
       </Button>

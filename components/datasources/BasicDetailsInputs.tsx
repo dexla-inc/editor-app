@@ -1,6 +1,8 @@
 import {
+  ApiFromAI,
   AuthenticationSchemes,
   DataSourceParams,
+  EnvironmentTypes,
 } from "@/requests/datasources/types";
 import { isWebsite } from "@/utils/dashboardTypes";
 import { Select, TextInput } from "@mantine/core";
@@ -26,16 +28,18 @@ export function validateName(value: string | undefined) {
   }
 }
 
-export const BasicDetailsInputs = ({
+type Props<T extends DataSourceParams | ApiFromAI> = {
+  form: UseFormReturnType<T>;
+  authenticationScheme?: AuthenticationSchemes | null;
+  setAuthenticationScheme?: (
+    authenticationScheme: AuthenticationSchemes,
+  ) => void;
+};
+
+export const BasicDetailsInputs = <T extends DataSourceParams | ApiFromAI>({
   form,
   setAuthenticationScheme,
-}: {
-  form: UseFormReturnType<DataSourceParams>;
-  authenticationScheme?: AuthenticationSchemes | null;
-  setAuthenticationScheme: (
-    authenticationScheme: AuthenticationSchemes | null,
-  ) => void;
-}) => {
+}: Props<T>) => {
   return (
     <>
       <TextInput
@@ -54,28 +58,17 @@ export const BasicDetailsInputs = ({
         label="Environment"
         description="The environment of your API."
         placeholder="Select environment"
-        data={[
-          { value: "Staging", label: "Staging" },
-          { value: "Production", label: "Production" },
-        ]}
+        data={environmentOptions}
         {...form.getInputProps("environment")}
       />
       <Select
         label="Authentication Scheme"
         description="The scheme used to authenticate endpoints"
         placeholder="Select an authentication scheme"
-        data={[
-          { value: "NONE", label: "None" },
-          { value: "BEARER", label: "Bearer" },
-          { value: "BASIC", label: "Basic" },
-          { value: "API_KEY", label: "API Key" },
-        ]}
+        data={authSchemeOptions}
         {...form.getInputProps("authenticationScheme")}
         onChange={(value) => {
-          form.setFieldValue(
-            "authenticationScheme",
-            value as AuthenticationSchemes,
-          );
+          form.setFieldValue("authenticationScheme", value as any);
           setAuthenticationScheme &&
             setAuthenticationScheme(value as AuthenticationSchemes);
         }}
@@ -83,3 +76,25 @@ export const BasicDetailsInputs = ({
     </>
   );
 };
+
+type EnvironmentOption = {
+  value: Exclude<EnvironmentTypes, "None">;
+  label: string;
+};
+
+export const environmentOptions: EnvironmentOption[] = [
+  { value: "Staging", label: "Staging" },
+  { value: "Production", label: "Production" },
+];
+
+type AuthSchemeOption = {
+  value: AuthenticationSchemes;
+  label: string;
+};
+
+export const authSchemeOptions: AuthSchemeOption[] = [
+  { value: "NONE", label: "None" },
+  { value: "BEARER", label: "Bearer" },
+  { value: "BASIC", label: "Basic" },
+  { value: "API_KEY", label: "API Key" },
+];

@@ -59,6 +59,7 @@ import * as ContainerStructure from "@/components/mapper/structure/Container";
 import * as DateInputStructure from "@/components/mapper/structure/DateInput";
 import * as DividerStructure from "@/components/mapper/structure/Divider";
 import * as DrawerStructure from "@/components/mapper/structure/Drawer";
+import * as FileButtonStructure from "@/components/mapper/structure/FileButton";
 import * as FileUploadStructure from "@/components/mapper/structure/FileUpload";
 import * as FormStructure from "@/components/mapper/structure/Form";
 import * as MapStructure from "@/components/mapper/structure/GoogleMap";
@@ -75,11 +76,12 @@ import * as PaginationStructure from "@/components/mapper/structure/Pagination";
 import * as PopOverStructure from "@/components/mapper/structure/PopOver";
 import * as RadioGroupStructure from "@/components/mapper/structure/RadioGroup";
 import * as RadioComplexGroupStructure from "@/components/mapper/structure/RadioGroupComplex";
-import * as RadioItemComplexStructure from "@/components/mapper/structure/RadioItemComplex";
 import * as RadioItemStructure from "@/components/mapper/structure/RadioItem";
+import * as RadioItemComplexStructure from "@/components/mapper/structure/RadioItemComplex";
 import * as RatingStructure from "@/components/mapper/structure/Rating";
 import * as SelectStructure from "@/components/mapper/structure/Select";
 import * as StepperStructure from "@/components/mapper/structure/Stepper";
+import * as StepperStepStructure from "@/components/mapper/structure/StepperStep";
 import * as SwitchStructure from "@/components/mapper/structure/Switch";
 import * as TableStructure from "@/components/mapper/structure/Table";
 import * as TabsStructure from "@/components/mapper/structure/Tabs";
@@ -94,6 +96,9 @@ import * as RadarChartStructure from "@/components/mapper/structure/charts/Radar
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 
+import { FileButton } from "@/components/mapper/FileButton";
+import { uploadFile } from "@/requests/storage/mutations";
+import { useEditorStore } from "@/stores/editor";
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import {
   IconArrowAutofitContent,
@@ -118,6 +123,7 @@ import {
   IconExclamationMark,
   IconFile,
   IconFileText,
+  IconFileUpload,
   IconForms,
   IconHeading,
   IconJewishStar,
@@ -144,6 +150,7 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 import { FileWithPath } from "file-selector";
+import { useRouter } from "next/router";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -191,6 +198,17 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Data Display",
     icon: <IconMapPin size={ICON_SIZE} />,
+  },
+  FileButton: {
+    structure: (props: any) => FileButtonStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="FileButton"
+        icon={<IconFileUpload size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconFileUpload size={ICON_SIZE} />,
   },
   Input: {
     structure: (props: any) => InputStructure.jsonStructure(props),
@@ -584,6 +602,11 @@ export const structureMapper: StructureMapper = {
     category: "Navigation",
     icon: <IconArrowAutofitContent size={ICON_SIZE} />,
   },
+  StepperStep: {
+    structure: (props: any) => StepperStepStructure.jsonStructure(props),
+    category: "Navigation",
+    icon: <IconArrowAutofitContent size={ICON_SIZE} />,
+  },
   Menu: {
     structure: (props: any) => MenuStructure.jsonStructure(props),
     Draggable: () => (
@@ -813,9 +836,13 @@ export type Modifiers =
   | "table"
   | "radio"
   | "radioItem"
+  | "stepper"
   | "drawer"
   | "buttonIcon"
-  | "mapSettings";
+  | "mapSettings"
+  | "fileButton"
+  | "popOver"
+  | "navLink";
 
 export type ComponentDefinition = {
   Component: any;
@@ -879,7 +906,7 @@ export const componentMapper: ComponentMapper = {
         active={1}
       />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["stepper", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -897,7 +924,7 @@ export const componentMapper: ComponentMapper = {
       "border",
       "boxShadow",
     ],
-    actionTriggers: ["onMount", "onClick"],
+    actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Select: {
@@ -973,7 +1000,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <NavLink component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["background", "spacing", "size", "border"],
+    modifiers: ["navLink", "background", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1009,20 +1036,43 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   FileUpload: {
+    Component: (props: { component: Component; renderTree: any }) => {
+      const router = useRouter();
+      const projectId = router.query.id as string;
+      return (
+        <FileUpload
+          component={props.component}
+          renderTree={props.renderTree}
+          // eslint-disable-next-line react/no-children-prop
+          children={props.component.children as any}
+          onDrop={(files: FileWithPath[]): void => {
+            uploadFile(projectId, files[0], props.component.props?.multiple);
+          }}
+          activateOnClick={false}
+          dragEventsBubbling={false}
+          activateOnDrag={true}
+        />
+      );
+    },
+    modifiers: ["fileButton", "spacing", "size", "border"],
+    actionTriggers: ["onMount", "onChange"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  FileButton: {
     Component: (props: { component: Component; renderTree: any }) => (
-      <FileUpload
+      // @ts-ignore
+      <FileButton
+        onChange={(files) => {
+          const updateTreeComponent =
+            useEditorStore.getState().updateTreeComponent;
+          updateTreeComponent(props.component.id!, files);
+        }}
         component={props.component}
         renderTree={props.renderTree}
-        // eslint-disable-next-line react/no-children-prop
-        children={props.component.children as any}
-        onDrop={(files: FileWithPath[]): void => {
-          console.log("Function not implemented.");
-        }}
-        activateOnClick={false}
       />
     ),
-    modifiers: ["spacing", "size", "border"],
-    actionTriggers: ["onMount", "onChange"],
+    modifiers: ["fileButton", "spacing", "size", "border"],
+    actionTriggers: ["onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Checkbox: {
@@ -1336,7 +1386,7 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <PopOver component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["border"],
+    modifiers: ["popOver", "border"],
     actionTriggers: ["onMount", "onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

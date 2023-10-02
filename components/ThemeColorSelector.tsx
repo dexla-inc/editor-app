@@ -36,7 +36,7 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
         {label}
       </Group>
     );
-  }
+  },
 );
 
 type SelectedColorProps = {
@@ -52,7 +52,7 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
   const excludeColors = new Set([
     "blue",
     "cyan",
-    "dark",
+    // "dark",
     "grape",
     "gray",
     "green",
@@ -78,7 +78,7 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
             label: `${color}-${index}`,
             value: `${color}.${index}`,
           };
-        })
+        }),
       );
     }, []);
 

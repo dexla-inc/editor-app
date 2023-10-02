@@ -16,13 +16,22 @@ const ButtonIconComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, triggers, ...componentProps } = component.props as any;
 
   return (
-    <MantineActionIcon {...props} {...componentProps} {...triggers}>
+    <MantineActionIcon
+      {...props}
+      {...componentProps}
+      {...triggers}
+      sx={{
+        "&:hover": {
+          backgroundColor: "unset",
+        },
+      }}
+    >
       {component.children && component.children.length > 0
         ? component.children?.map((child) =>
             renderTree({
               ...child,
               props: { ...child.props, ...triggers },
-            })
+            }),
           )
         : children}
     </MantineActionIcon>

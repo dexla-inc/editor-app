@@ -11,6 +11,7 @@ import {
   getComponentById,
   updateTreeComponent,
   updateTreeComponentActions,
+  updateTreeComponentAttrs,
   updateTreeComponentChildren,
   updateTreeComponentDescription,
 } from "@/utils/editor";
@@ -135,6 +136,10 @@ export type EditorState = {
     componentId: string,
     description: string,
   ) => void;
+  updateTreeComponentAttrs: (
+    componentIds: string[],
+    attrs: Partial<Component>,
+  ) => void;
   setTreeComponentCurrentState: (
     componentId: string,
     currentState: string,
@@ -247,7 +252,7 @@ export const useEditorStore = create<EditorState>()(
 
             return {
               tree: {
-                ...copy,
+                ...cloneDeep(copy),
                 name: `Edited ${component?.name}`,
                 timestamp: Date.now(),
               },
@@ -317,6 +322,26 @@ export const useEditorStore = create<EditorState>()(
             };
           });
         },
+        updateTreeComponentAttrs: (
+          componentIds: string[],
+          attrs: Partial<Component>,
+        ) => {
+          set((state) => {
+            const copy = cloneDeep(state.tree);
+
+            updateTreeComponentAttrs(copy.root, componentIds, attrs);
+            debouncedUpdatePageState(
+              encodeSchema(JSON.stringify(copy)),
+              state.currentProjectId ?? "",
+              state.currentPageId ?? "",
+              state.setIsSaving,
+            );
+
+            return {
+              tree: copy,
+            };
+          });
+        },
         setTreeComponentCurrentState: (
           componentId,
           currentState = "default",
@@ -340,7 +365,8 @@ export const useEditorStore = create<EditorState>()(
         isPreviewMode: false,
         isLive: false,
         isNavBarVisible: true,
-        setPreviewMode: (value) => set({ isPreviewMode: value }),
+        setPreviewMode: (value) =>
+          set({ isPreviewMode: value, currentTreeComponentsStates: {} }),
         setIsLive: (value) => set({ isLive: value }),
         setIsNavBarVisible: () =>
           set((state) => ({ isNavBarVisible: !state.isNavBarVisible })),

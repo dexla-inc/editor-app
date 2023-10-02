@@ -75,7 +75,6 @@ export default function GeneralSettings({ projectId }: Props) {
       form.validate();
 
       const patchParams = convertToPatchParams<ProjectUpdateParams>(values);
-      console.log(patchParams);
       await patchProject(projectId, patchParams);
 
       stopLoading({

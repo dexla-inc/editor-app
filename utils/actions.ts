@@ -1,18 +1,18 @@
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { BindPlaceDataActionForm } from "@/components/actions/BindPlaceDataActionForm";
 import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
+import { ChangeLanguageActionForm } from "@/components/actions/ChangeLanguageActionForm";
 import { ChangeStateActionForm } from "@/components/actions/ChangeStateActionForm";
+import { ChangeStepActionForm } from "@/components/actions/ChangeStepActionForm";
 import { CloseModalActionForm } from "@/components/actions/CloseModalActionForm";
 import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { LoginActionForm } from "@/components/actions/LoginActionForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
-import { NextStepActionForm } from "@/components/actions/NextStepActionForm";
 import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm";
 import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
 import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
-import { PreviousStepActionForm } from "@/components/actions/PreviousStepActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
@@ -71,17 +71,18 @@ export const actions = [
   { name: "setVariable", group: "API & Data" },
   { name: "apiCall", group: "API & Data" },
   { name: "bindResponse", group: "API & Data" },
-  { name: "bindPlaceData", group: "API & Data" },
-  { name: "bindPlaceGeometry", group: "API & Data" },
   { name: "login", group: "API & Data" },
+  { name: "bindPlaceData", group: "Third-Party Plugins" },
+  { name: "bindPlaceGeometry", group: "Third-Party Plugins" },
   { name: "goToUrl", group: "Navigation" },
   { name: "navigateToPage", group: "Navigation" },
-  { name: "nextStep", group: "Navigation" },
-  { name: "previousStep", group: "Navigation" },
+  { name: "changeStep", group: "Navigation" },
   { name: "openDrawer", group: "Modal & Overlays" },
+  { name: "closeDrawer", group: "Modal & Overlays" },
   { name: "openModal", group: "Modal & Overlays" },
   { name: "closeModal", group: "Modal & Overlays" },
-  { name: "openPopover", group: "Modal & Overlays" },
+  { name: "openPopOver", group: "Modal & Overlays" },
+  { name: "closePopOver", group: "Modal & Overlays" },
   { name: "toggleVisibility", group: "Style & Props" },
   { name: "alert", group: "Feedback" },
   { name: "changeState", group: "Feedback" },
@@ -89,6 +90,7 @@ export const actions = [
   { name: "reloadComponent", group: "Feedback" },
   { name: "copyToClipboard", group: "Utilities & Tools" },
   { name: "triggerLogicFlow", group: "Utilities & Tools" },
+  { name: "changeLanguage", group: "Utilities & Tools" },
 ];
 
 type ActionTriggerAll = (typeof triggers)[number];
@@ -160,8 +162,6 @@ export interface OpenToastAction extends BaseAction {
 
 export interface ChangeStateAction extends BaseAction {
   name: "changeState";
-  // componentId: string;
-  // state?: string;
   conditionRules: Array<{
     condition: string;
     componentId: string;
@@ -205,16 +205,10 @@ export interface ToggleNavbarAction extends BaseAction {
   name: "toggleNavbar";
 }
 
-export interface NextStepAction extends BaseAction {
-  name: "nextStep";
+export interface ChangeStepAction extends BaseAction {
+  name: "changeStep";
   stepperId: string;
-  activeStep: number;
-}
-
-export interface PreviousStepAction extends BaseAction {
-  name: "previousStep";
-  stepperId: string;
-  activeStep: number;
+  control: "previous" | "next";
 }
 
 export interface BindPlaceDataAction extends BaseAction {
@@ -225,6 +219,11 @@ export interface BindPlaceDataAction extends BaseAction {
 export interface BindPlaceGeometryAction extends BaseAction {
   name: "bindPlaceGeometry";
   componentId: string;
+}
+
+export interface ChangeLanguageAction extends BaseAction {
+  name: "changeLanguage";
+  language: "default" | "french";
 }
 
 export type Action = {
@@ -246,11 +245,11 @@ export type Action = {
     | ChangeStateAction
     | ReloadComponentAction
     | ToggleNavbarAction
-    | NextStepAction
-    | PreviousStepAction
+    | ChangeStepAction
     | BindPlaceDataAction
     | BindPlaceGeometryAction
-    | TriggerLogicFlowAction;
+    | TriggerLogicFlowAction
+    | ChangeLanguageAction;
   sequentialTo?: string;
 };
 
@@ -354,11 +353,23 @@ export type ChangeStateActionParams = ActionParams & {
 export type ToggleNavbarActionParams = ActionParams & {
   action: ToggleNavbarAction;
 };
-export type NextStepActionParams = ActionParams & {
-  action: NextStepAction;
+export type ChangeStepActionParams = ActionParams & {
+  action: ChangeStepAction;
 };
-export type PreviousStepActionParams = ActionParams & {
-  action: PreviousStepAction;
+export type ReloadComponentActionParams = ActionParams & {
+  action: ReloadComponentAction;
+};
+
+export type BindPlaceDataActionParams = ActionParams & {
+  action: BindPlaceDataAction;
+};
+
+export type BindPlaceGeometryActionParams = ActionParams & {
+  action: BindPlaceGeometryAction;
+};
+
+export type ChangeLanguageActionParams = ActionParams & {
+  action: ChangeLanguageAction;
 };
 
 export const openModalAction = ({ action }: OpenModalActionParams) => {
@@ -376,27 +387,46 @@ export const openDrawerAction = ({ action }: OpenDrawerActionParams) => {
   updateTreeComponent(action.drawerId, { opened: true }, false);
 };
 
+export const closeDrawerAction = ({ action }: OpenDrawerActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  updateTreeComponent(action.drawerId, { opened: false }, false);
+};
+
 export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   updateTreeComponent(action.popOverId, { opened: true }, false);
 };
 
-export const goToNextStepAction = ({ action }: NextStepActionParams) => {
+export const closePopOverAction = ({ action }: OpenPopOverActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-
-  const step = action.activeStep + 1;
-
-  updateTreeComponent(action.stepperId, { activeStep: step }, false);
+  updateTreeComponent(action.popOverId, { opened: false }, false);
 };
 
-export const goToPreviousStepAction = ({
-  action,
-}: PreviousStepActionParams) => {
+export const changeStepAction = ({ action }: ChangeStepActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
-  const step = Math.max(1, action.activeStep - 1);
+  const component = getComponentById(
+    useEditorStore.getState().tree.root,
+    action.stepperId,
+  );
 
-  updateTreeComponent(action.stepperId, { activeStep: step }, false);
+  if (!component) {
+    return;
+  }
+
+  let { activeStep } = component.props!;
+  activeStep = Number(activeStep);
+
+  if (action.control === "previous" && activeStep > 0) {
+    activeStep -= 1;
+  } else if (
+    action.control === "next" &&
+    activeStep < component!.children!.length - 1
+  ) {
+    activeStep += 1;
+  }
+
+  updateTreeComponent(action.stepperId, { activeStep }, false);
 };
 export const togglePropsAction = ({
   action,
@@ -847,10 +877,6 @@ export const bindResponseToComponentAction = ({
   });
 };
 
-export type ReloadComponentActionParams = ActionParams & {
-  action: ReloadComponentAction;
-};
-
 export const reloadComponentAction = ({
   action,
 }: ReloadComponentActionParams) => {
@@ -860,14 +886,6 @@ export const reloadComponentAction = ({
 
   removeOnMountActionsRan(action.onMountActionId ?? "");
   updateTreeComponent(action.componentId, { key: nanoid() }, false);
-};
-
-export type BindPlaceDataActionParams = ActionParams & {
-  action: BindPlaceDataAction;
-};
-
-export type BindPlaceGeometryActionParams = ActionParams & {
-  action: BindPlaceGeometryAction;
 };
 
 export const bindPlaceDataAction = ({
@@ -881,6 +899,10 @@ export const bindPlaceDataAction = ({
   ) as Component;
   const updateTreeComponentChildren =
     useEditorStore.getState().updateTreeComponentChildren;
+
+  const googleMap = component.children?.filter(
+    (child) => child.name === "GoogleMap",
+  )[0];
 
   if (data !== undefined) {
     const predictions: { description: string; place_id: string }[] =
@@ -939,7 +961,10 @@ export const bindPlaceDataAction = ({
       };
       return child as Component;
     });
-    updateTreeComponentChildren(component.id!, newPredictions);
+    updateTreeComponentChildren(component.id!, [
+      ...newPredictions,
+      googleMap as Component,
+    ]);
   } else updateTreeComponentChildren(component.id!, []);
 };
 
@@ -947,8 +972,8 @@ export const bindPlaceGeometryAction = ({
   data: { result },
 }: BindPlaceGeometryActionParams) => {
   const editorTree = useEditorStore.getState().tree;
-  const updateTreeComponentChildren =
-    useEditorStore.getState().updateTreeComponentChildren;
+  const { updateTreeComponentChildren, updateTreeComponent } =
+    useEditorStore.getState();
   const searchResults = getAllComponentsByName(editorTree.root, "Text").filter(
     (component) => component.description === "Search Address In Map",
   );
@@ -957,6 +982,7 @@ export const bindPlaceGeometryAction = ({
     searchResults[0].id!,
   ) as Component;
 
+  const ancestor = getComponentParent(editorTree.root, parent.id!) as Component;
   const {
     formatted_address,
     geometry: { location },
@@ -985,7 +1011,19 @@ export const bindPlaceGeometryAction = ({
     },
     blockDroppingChildrenInside: true,
   } as Component;
+  updateTreeComponent(
+    ancestor.children![0].id!,
+    { value: formatted_address },
+    true,
+  );
   updateTreeComponentChildren(parent.id!, [child]);
+};
+
+export const changeLanguageAction = ({
+  action,
+}: ChangeLanguageActionParams) => {
+  const { setLanguage } = useEditorStore.getState();
+  setLanguage(action.language);
 };
 
 export const actionMapper = {
@@ -1034,8 +1072,16 @@ export const actionMapper = {
     action: triggerLogicFlowAction,
     form: TriggerLogicFlowActionForm,
   },
+  closeDrawer: {
+    action: closeDrawerAction,
+    form: OpenDrawerActionForm,
+  },
   openPopOver: {
     action: openPopOverAction,
+    form: OpenPopOverActionForm,
+  },
+  closePopOver: {
+    action: closePopOverAction,
     form: OpenPopOverActionForm,
   },
   openToast: {
@@ -1059,13 +1105,9 @@ export const actionMapper = {
     action: toggleNavbarAction,
     form: TogglePropsActionForm,
   },
-  nextStep: {
-    action: goToNextStepAction,
-    form: NextStepActionForm,
-  },
-  previousStep: {
-    action: goToPreviousStepAction,
-    form: PreviousStepActionForm,
+  changeStep: {
+    action: changeStepAction,
+    form: ChangeStepActionForm,
   },
   bindPlaceData: {
     action: bindPlaceDataAction,
@@ -1074,5 +1116,9 @@ export const actionMapper = {
   bindPlaceGeometry: {
     action: bindPlaceGeometryAction,
     form: BindPlaceDataActionForm,
+  },
+  changeLanguage: {
+    action: changeLanguageAction,
+    form: ChangeLanguageActionForm,
   },
 };

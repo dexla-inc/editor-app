@@ -1,3 +1,4 @@
+import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
@@ -21,6 +22,7 @@ const ImageComponent = ({ component }: Props) => {
     data,
     repeatedIndex,
     dataPath,
+    loading,
     ...componentProps
   } = component.props as any;
 
@@ -30,6 +32,13 @@ const ImageComponent = ({ component }: Props) => {
     const path = dataPath.replaceAll("[0]", `[${repeatedIndex}]`);
     value = get(data?.base ?? {}, path) ?? src;
   }
+
+  if (loading)
+    <MantineSkeleton
+      height={height ?? "100px"}
+      width={height ?? "100px"}
+      radius={10}
+    />;
 
   return (
     <MantineImage

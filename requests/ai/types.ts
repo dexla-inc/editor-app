@@ -1,4 +1,12 @@
-export type StreamTypes = "PAGE" | "COMPONENT" | "LAYOUT" | "DESIGN" | "DATA";
+export type AIRequestTypes =
+  | "PAGE"
+  | "COMPONENT"
+  | "LAYOUT"
+  | "DESIGN"
+  | "DATA"
+  | "API"
+  | "PAGE_NAMES";
+
 type AIRoleTypes = "USER" | "ASSISTANT";
 
 export type ChatHistoryMessage = {
@@ -6,5 +14,11 @@ export type ChatHistoryMessage = {
   role: AIRoleTypes;
   content: string;
   created: number;
-  requestType: StreamTypes;
+  requestType: AIRequestTypes;
+};
+
+export type EventSourceParams = {
+  type: AIRequestTypes;
+  description: string;
+  pageName?: string;
 };

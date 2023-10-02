@@ -1,16 +1,17 @@
 import { InformationAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
 import { Icon } from "@/components/Icon";
-import { getPagesEventSource } from "@/requests/ai/queries";
 import { createPages } from "@/requests/pages/mutations";
 import { PageBody } from "@/requests/pages/types";
+import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
+import { PreviousStepperClickEvent } from "@/utils/dashboardTypes";
 import {
-  LoadingStore,
-  PreviousStepperClickEvent,
-} from "@/utils/dashboardTypes";
-import TOML from "@iarna/toml";
+  createHandlers,
+  handleRequestGetStream,
+  processTOMLStream,
+} from "@/utils/streamingAI";
 import {
   ActionIcon,
   Anchor,
@@ -20,18 +21,15 @@ import {
   Group,
   List,
   Stack,
-  Text,
   TextInput,
   ThemeIcon,
 } from "@mantine/core";
-import { EventSourceMessage } from "@microsoft/fetch-event-source";
 import {
   IconCircleCheck,
   IconDatabase,
   IconPlus,
   IconSparkles,
 } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { SetStateAction, useEffect, useState } from "react";
@@ -47,28 +45,25 @@ export const getServerSideProps = async ({
   };
 };
 
-export interface PagesStepProps
-  extends LoadingStore,
-    PreviousStepperClickEvent {
+export interface PagesStepProps extends PreviousStepperClickEvent {
   projectId: string;
   pages: string[];
   setPages: (value: SetStateAction<string[]>) => void;
+  initialPageFetchDone: boolean;
+  setInitialPageFetchDone: (value: SetStateAction<boolean>) => void;
 }
 
 export default function PagesStep({
   prevStep,
-  isLoading,
-  setIsLoading,
-  startLoading,
-  stopLoading,
   projectId,
   pages,
   setPages,
+  initialPageFetchDone,
+  setInitialPageFetchDone,
 }: PagesStepProps) {
   const router = useRouter();
   const resetTree = useEditorStore((state) => state.resetTree);
   const [count, setCount] = useState(5);
-  const [streamCancelled, setStreamCancelled] = useState(false);
   const updatePage = (index: number, value: string) => {
     const updatedPages = [...pages];
     updatedPages[index] = value;
@@ -79,142 +74,70 @@ export default function PagesStep({
     setPages((oldPages) => [...oldPages, ""]);
   };
 
+  const type = "PAGE" as const;
+  const [stream, setStream] = useState<string>("");
+  const isLoading = useAppStore((state) => state.isLoading);
+  const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const stopLoading = useAppStore((state) => state.stopLoading);
+  const startLoading = useAppStore((state) => state.startLoading);
+
+  const { onMessage, onError, onOpen, onClose } = createHandlers({
+    setStream,
+    type,
+    stopLoading,
+    setIsLoading,
+  });
+
+  const onCloseOverride = async () => {
+    console.log("Closing stream");
+    await onClose();
+    setInitialPageFetchDone(true);
+  };
+
+  const fetchPageData = async (pageCount: number) => {
+    setIsLoading(true);
+
+    return await handleRequestGetStream(
+      projectId,
+      pageCount,
+      type,
+      startLoading,
+      onMessage,
+      onError,
+      onOpen,
+      onCloseOverride,
+      pages.join(),
+    );
+  };
+
+  const handlePageNamesGeneration = () => {
+    return function (json: any) {
+      const newPages = Object.values(json) as string[];
+      if (!initialPageFetchDone) setPages(newPages);
+      else setPages((oldPages) => [...oldPages, ...newPages]);
+    };
+  };
+  // if first time and pages.length is less than 5 then set pages
+
   useEffect(() => {
-    if (streamCancelled) {
-      onClose();
-      stopLoading({
-        id: "pages-stream",
-        title: "Successfully cancelled",
-        message: "Action has been cancelled",
-        isError: true,
-      });
-      setIsLoading && setIsLoading(false);
-    }
+    processTOMLStream({
+      stream,
+      handler: handlePageNamesGeneration(),
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [streamCancelled]);
-
-  const onMessage = (event: EventSourceMessage) => {
-    try {
-      if (event.data !== "___DONE___") {
-        const json = TOML.parse(event.data);
-        const newPages = Object.values(json) as string[];
-        setPages((oldPages) => [...oldPages, ...newPages]);
-      }
-    } catch (error: any) {
-      // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
-      console.error(error);
-      stopLoading({
-        id: "pages-stream",
-        title: "There was a problem",
-        message: error,
-        isError: true,
-      });
-      setIsLoading && setIsLoading(false);
-    }
-
-    if (event.data === "___DONE___") {
-      stopLoading({
-        id: "pages-stream",
-        title: "Successfully generated",
-        message: "Page names have been generated",
-        isError: false,
-      });
-      setIsLoading && setIsLoading(false);
-    }
-  };
-
-  const onError = (err: any) => {
-    stopLoading({
-      id: "pages-stream",
-      title: "There was a problem",
-      message: err,
-      isError: true,
-    });
-    setIsLoading && setIsLoading(false);
-  };
-
-  const onOpen = async (response: Response) => {
-    // handle open
-  };
-
-  const onClose = async () => {
-    // send cancellation token to api
-  };
-
-  function cancelStream() {
-    setStreamCancelled(true);
-  }
-
-  const fetchPageStream = async () => {
-    const plural = count === 1 ? "" : "s";
-    setIsLoading && setIsLoading(true);
-    startLoading({
-      id: "pages-stream",
-      title: `Generating Page Name${plural}`,
-      message: (
-        <Stack spacing="sm">
-          <Text> Wait while AI generates the names of your pages</Text>
-          <Button color="red" onClick={cancelStream} sx={{ width: "90px" }}>
-            Cancel
-          </Button>
-        </Stack>
-      ),
-    });
-
-    return await getPagesEventSource(
-      projectId,
-      count,
-      pages.join(),
-      onMessage,
-      onError,
-      onOpen,
-      onClose,
-    );
-  };
-
-  const fetchPage = async () => {
-    setIsLoading && setIsLoading(true);
-    startLoading({
-      id: "pages-stream",
-      title: `Generating Page Name`,
-      message: (
-        <Stack spacing="sm">
-          <Text>Wait while AI generates a page name</Text>
-          <Button color="red" onClick={cancelStream} sx={{ width: "90px" }}>
-            Cancel
-          </Button>
-        </Stack>
-      ),
-    });
-
-    return await getPagesEventSource(
-      projectId,
-      1,
-      pages.join(),
-      onMessage,
-      onError,
-      onOpen,
-      onClose,
-    );
-  };
-
-  const { error, data, refetch } = useQuery(
-    ["pageStream", projectId, pages, count],
-    fetchPageStream,
-    {
-      enabled: false,
-    },
-  );
+  }, [stream, type]);
 
   // Ensure stream pages only happens once
   useEffect(() => {
-    if (pages.length === 0) refetch();
+    if (!initialPageFetchDone) {
+      fetchPageData(count);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const createManyPages = async (projectId: string) => {
     resetTree();
-    setIsLoading && setIsLoading(true);
+    setIsLoading(true);
     startLoading({
       id: "creating-pages",
       title: "Creating Pages",
@@ -317,7 +240,7 @@ export default function PagesStep({
               variant="light"
               leftIcon={<IconPlus size={ICON_SIZE} />}
               onClick={() => {
-                fetchPage();
+                fetchPageData(1);
               }}
               loading={isLoading}
             >

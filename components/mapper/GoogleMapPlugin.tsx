@@ -1,3 +1,4 @@
+import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
 import { MarkerItem, Options } from "@/components/modifiers/GoogleMap";
 import { Component } from "@/utils/editor";
 import { BoxProps, Text } from "@mantine/core";
@@ -22,6 +23,7 @@ type GoogleMapProps = {
   language?: string;
   zoom: number;
   center: { lat: number; lng: number };
+  [i: string]: any;
 };
 
 export type Position = {
@@ -42,6 +44,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
     language,
     zoom,
     center,
+    loading,
     ...componentProps
   } = component.props as GoogleMapProps;
 
@@ -78,7 +81,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
       setInternalZoom(internalZoom);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [map, center, apiKey, markers]
+    [map, center, apiKey, markers],
   );
 
   useEffect(() => {
@@ -95,6 +98,10 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
 
   if (!isLoaded || !apiKey) {
     return LOADING_TEXT;
+  }
+
+  if (loading) {
+    return <MantineSkeleton height={style.height ?? 500} />;
   }
 
   return (

@@ -1,4 +1,3 @@
-import { getByDomain } from "@/requests/projects/queries";
 import { cache } from "@/utils/emotionCache";
 import {
   DEFAULT_THEME,
@@ -18,9 +17,8 @@ import { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import Head from "next/head";
 import { Fragment, PropsWithChildren, useEffect, useState } from "react";
-import { isMatchingUrl } from "./[page]";
-import { useRouter } from "next/router";
 import { ReactFlowProvider } from "reactflow";
+import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -42,37 +40,15 @@ export const theme: MantineTheme = {
   primaryColor: "teal",
 };
 
-const AuthProvider = ({ children }: PropsWithChildren) => {
-  const router = useRouter();
+const AuthProvider = ({
+  children,
+  isLive,
+}: PropsWithChildren & { isLive: boolean }) => {
   const [isClient, setIsClient] = useState(false);
-  const [isLive, setIsLive] = useState(false);
 
   useEffect(() => {
-    const chekcIfIsLive = async () => {
-      // @ts-ignore
-      if (router?.state?.pathname === "/[page]") {
-        setIsLive(true);
-      } else {
-        let id = "";
-        const url = window?.location.host;
-        if (isMatchingUrl(url!) || url?.endsWith(".localhost:3000")) {
-          id = url?.split(".")[0] as string;
-        } else {
-          const project = await getByDomain(url!);
-          id = project.id;
-        }
-
-        if (id) {
-          setIsLive(true);
-        }
-      }
-
-      setIsClient(true);
-    };
-
-    chekcIfIsLive();
-    // @ts-ignore
-  }, [router?.state?.pathname]);
+    setIsClient(true);
+  }, []);
 
   if (!isClient) return null;
 
@@ -99,7 +75,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
-
+  const isLive = useCheckIfIsLive();
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -118,7 +94,7 @@ export default function App(props: AppProps) {
       theme={theme}
       emotionCache={cache}
     >
-      <AuthProvider>
+      <AuthProvider isLive={isLive}>
         <Head>
           <title>Editor</title>
           <meta name="description" content="Dexla Editor" />
@@ -146,6 +122,17 @@ export default function App(props: AppProps) {
                     maxHeight: "100vh",
                     minHeight: "100vh",
                     background: "white",
+                    // For WebKit browsers (e.g., Chrome, Safari)
+                    "::-webkit-scrollbar": {
+                      width: isLive && "0px",
+                      height: isLive && "0px",
+                    },
+
+                    // For Firefox
+                    scrollbarWidth: isLive && "none",
+
+                    // For IE and Edge
+                    msOverflowStyle: isLive && "none",
                   },
 
                   html: {

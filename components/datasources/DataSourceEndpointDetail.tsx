@@ -5,9 +5,11 @@ import {
   updateDataSourceEndpoint,
 } from "@/requests/datasources/mutations";
 import {
+  ApiEndpointFromAI,
   Endpoint,
   EndpointParams,
   Header,
+  MediaTypes,
   Parameter,
   RequestBody,
 } from "@/requests/datasources/types";
@@ -20,6 +22,7 @@ import {
   Button,
   Flex,
   Group,
+  SegmentedControl,
   Select,
   Stack,
   Switch,
@@ -42,6 +45,14 @@ const MethodTypeArray: MethodTypes[] = [
   "PUT",
   "DELETE",
   "PATCH",
+];
+
+const MediaTypeArray: MediaTypes[] = [
+  "application/json",
+  "application/x-www-form-urlencoded",
+  "application/graphql",
+  "text/event-stream",
+  "application/octet-stream",
 ];
 const MethodTypesWithRequestBody: MethodTypes[] = ["POST", "PATCH", "PUT"];
 
@@ -97,6 +108,7 @@ type Action =
       type: "SET_FIELD";
       payload: { field: keyof EndpointParams; value: any };
     }
+  | { type: "RESET"; payload: ApiEndpointFromAI }
   | {
       type: "ADD_NEW";
       payload: {
@@ -138,21 +150,45 @@ export const DataSourceEndpointDetail = ({
   const stopLoading = useAppStore((state) => state.stopLoading);
   const isLoading = useAppStore((state) => state.isLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
-  const [displayIsServerRequestWarning, setDisplayIsServerRequestWarning] =
-    useState(false);
+  const [warningMessage, setWarningMessage] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("example");
+  const [activeBodyType, setActiveBodyType] = useState<"raw" | "fields">("raw");
 
   const theme = useMantineTheme();
   const queryClient = useQueryClient();
 
+  useEffect(() => {
+    // Reset the state by dispatching an action or directly setting it
+    dispatch({
+      type: "RESET",
+      payload: {
+        url: endpoint.url ?? null,
+        relativeUrl: endpoint.relativeUrl ?? null,
+        methodType: endpoint.methodType ?? null,
+        mediaType: endpoint.mediaType ?? null,
+        headers: endpoint.headers ?? [],
+        parameters: endpoint.parameters ?? [],
+        requestBody: endpoint.requestBody ?? [],
+        body: endpoint.body,
+        exampleResponse: endpoint.exampleResponse ?? null,
+        errorExampleResponse: endpoint.errorExampleResponse ?? null,
+        withCredentials: endpoint.withCredentials ?? null,
+        isServerRequest: endpoint.isServerRequest ?? null,
+      },
+    });
+  }, [endpoint]); // The effect runs whenever `endpoint` changes
+
   const initialState: EndpointParams = {
     description: endpoint.description ?? null,
     methodType: endpoint.methodType ?? "GET",
+    url: endpoint.url ?? "",
     relativeUrl: endpoint.relativeUrl ?? "",
     headers: endpoint.headers ?? [],
     parameters: endpoint.parameters ?? [],
     requestBody: MethodTypesWithRequestBody.includes(endpoint.methodType)
       ? endpoint.requestBody
       : [],
+    body: endpoint.body ?? "",
     mediaType: endpoint.mediaType ?? "application/json",
     withCredentials: endpoint.withCredentials ?? null,
     authenticationScheme: endpoint.authenticationScheme ?? "NONE",
@@ -197,6 +233,8 @@ export const DataSourceEndpointDetail = ({
         itemToUpdate[payload.field] = payload.value;
 
         return { ...state, [updateKey]: updatedArray };
+      case "RESET":
+        return { ...state, ...payload };
       default:
         return state;
     }
@@ -339,21 +377,29 @@ export const DataSourceEndpointDetail = ({
       });
       const {
         methodType,
-        relativeUrl,
         headers,
         mediaType,
         withCredentials,
         parameters,
+        requestBody,
+        body: body,
       } = state;
 
-      let apiUrl = `${baseUrl}/${relativeUrl}`;
+      let { url, relativeUrl } = state;
+
+      baseUrl = baseUrl.replace(/\/+$/, "");
+      relativeUrl = relativeUrl.replace(/^\/+/, "");
+      let apiUrl = url ?? `${baseUrl}/${relativeUrl}`;
 
       // Add query parameters if any
       if (parameters && parameters.length > 0) {
         const urlParams = new URLSearchParams();
         for (const param of parameters) {
-          if (param.value !== null && param.location === "Query") {
-            urlParams.append(param.name, param.value.toString());
+          if (
+            param.value !== null &&
+            param.location.toLowerCase() === "query".toLowerCase()
+          ) {
+            urlParams.append(param.name, param.value?.toString());
           }
         }
         apiUrl = `${apiUrl}?${urlParams.toString()}`;
@@ -362,6 +408,7 @@ export const DataSourceEndpointDetail = ({
       // Prepare request headers
       const requestHeaders: Record<string, string> = {
         "Content-Type": mediaType,
+        Accept: "*/*",
       };
 
       for (const header of headers) {
@@ -375,25 +422,49 @@ export const DataSourceEndpointDetail = ({
         ? `/api/proxy?targetUrl=${encodeURIComponent(apiUrl)}`
         : apiUrl;
 
+      //console.log(fetchUrl, methodType, requestHeaders, body);
+
       const response = await fetch(fetchUrl, {
         method: methodType,
         headers: requestHeaders,
         ...(withCredentials ? { credentials: "include" } : {}),
+        ...(body ? { body: body } : {}),
       });
 
-      if (!response.status.toString().startsWith("20")) {
+      if (response.status.toString().startsWith("50")) {
+        const result = await response.json();
+        console.error(result);
         throw new Error(
           `Failed to fetch, status: ${response.status}, text: ${response.statusText}`,
         );
       }
 
-      const result = await response.json();
+      if (response.status.toString().startsWith("4")) {
+        if (response.status === 401) {
+          setWarningMessage(
+            "This endpoint requires authentication. Please add authentication to your request.",
+          );
+        }
+        setActiveTab("error");
+        const result = await response.json();
+        let exampleResult = result;
+        const errorExampleResponse = JSON.stringify(exampleResult, null, 2);
+        console.log(response.status);
+        handleInputChange("errorExampleResponse", errorExampleResponse);
+      } else {
+        // If the result is an array, limit it to the first 10 items
+        const result = await response.json();
+        let exampleResult = result;
+        if (Array.isArray(result)) {
+          exampleResult = result.slice(0, 10);
+        }
 
-      handleInputChange(
-        "exampleResponse",
-        JSON.stringify(JSON.stringify(result, null, 2)),
-      );
-      setDisplayIsServerRequestWarning(false);
+        const exampleResponse = JSON.stringify(exampleResult, null, 2);
+
+        handleInputChange("exampleResponse", exampleResponse);
+        setActiveTab("example");
+        setWarningMessage(null);
+      }
       stopLoading({
         id: "testing",
         title: "API Endpoint Tested",
@@ -401,13 +472,15 @@ export const DataSourceEndpointDetail = ({
       });
     } catch (error: any) {
       console.log(error);
-      if (!state.isServerRequest) {
-        setDisplayIsServerRequestWarning(true);
+      if (!state.isServerRequest && !warningMessage) {
+        setWarningMessage(
+          "Does this API endpoint need to be made through a server? If so turn on 'Make request through server' and try again.",
+        );
       }
       stopLoading({
-        id: "tested",
+        id: "testing",
         title: "API Endpoint Failed",
-        message: error,
+        message: error.message,
         isError: true,
       });
     } finally {
@@ -431,17 +504,29 @@ export const DataSourceEndpointDetail = ({
         spacing="xs"
         sx={{ borderBottom: "1px solid " + theme.colors.gray[3] }}
       >
-        <TextInput
-          label="Description"
-          placeholder="Add a new user"
-          value={state.description || ""}
-          onChange={(event) => {
-            handleInputChange(
-              "description",
-              event.currentTarget.value as string,
-            );
-          }}
-        />
+        <Flex gap="md">
+          <TextInput
+            label="Description"
+            placeholder="Add a new user"
+            value={state.description || ""}
+            onChange={(event) => {
+              handleInputChange(
+                "description",
+                event.currentTarget.value as string,
+              );
+            }}
+            sx={{ flexGrow: 1 }}
+          />
+          <Select
+            label="Media Type"
+            placeholder="application/json"
+            data={MediaTypeArray}
+            value={state.mediaType || "application/json"}
+            onChange={(value) => {
+              handleInputChange("mediaType", value as MediaTypes);
+            }}
+          ></Select>
+        </Flex>
         <Flex gap="md">
           <Select
             label="Method Type"
@@ -456,7 +541,11 @@ export const DataSourceEndpointDetail = ({
           <TextInput
             label="Relative URL"
             placeholder="v1/user"
-            value={state.relativeUrl}
+            value={
+              state.relativeUrl && state.relativeUrl.includes("/")
+                ? state.relativeUrl.replace(/^\/+/, "")
+                : state.relativeUrl
+            }
             onChange={(event) => {
               handleInputChange(
                 "relativeUrl",
@@ -472,18 +561,18 @@ export const DataSourceEndpointDetail = ({
 
         {state.headers.map((item, index) => (
           <Flex key={index} align="center" gap="md">
-            <TextInput
-              value={item.type}
+            {/* <TextInput
+              value={toCorrectHeaderCasing(item.type)}
               onChange={(event) =>
                 handleArrayChange(
                   index,
                   "type",
                   event.currentTarget.value,
-                  "header",
+                  "header"
                 )
               }
               sx={{ width: 110 }}
-            />
+            /> */}
             <TextInput
               size="sm"
               placeholder="name"
@@ -500,7 +589,7 @@ export const DataSourceEndpointDetail = ({
             ></TextInput>
             <TextInput
               placeholder={valuePlaceholder}
-              value={item.value || ""}
+              value={item.value}
               onChange={(event) =>
                 handleArrayChange(
                   index,
@@ -529,10 +618,20 @@ export const DataSourceEndpointDetail = ({
         {state.parameters.map((item, index) => (
           <Flex key={index} align="center" gap="md">
             <Select
-              data={["Query", "Path", "Header", "Cookie"]}
+              data={[
+                { label: "Query", value: "query" },
+                { label: "Path", value: "path" },
+                { label: "Header", value: "header" },
+                { label: "Cookie", value: "cookie" },
+              ]}
               value={item.location}
               onChange={(value) =>
-                handleArrayChange(index, "location", value, "parameter")
+                handleArrayChange(
+                  index,
+                  "location",
+                  value?.toLowerCase(),
+                  "parameter",
+                )
               }
               sx={{ width: 110 }}
             />
@@ -553,7 +652,7 @@ export const DataSourceEndpointDetail = ({
             ></TextInput>
             <TextInput
               placeholder={valuePlaceholder}
-              value={item.value || ""}
+              value={item.value}
               onChange={(event) =>
                 handleArrayChange(
                   index,
@@ -578,59 +677,102 @@ export const DataSourceEndpointDetail = ({
         ))}
 
         {showRequestBody && (
-          <AddNewSection apiType="body" handleAddNew={handleAddNew} />
+          <>
+            <AddNewSection
+              apiType="body"
+              handleAddNew={handleAddNew}
+              bodyType={activeBodyType}
+            />
+
+            <SegmentedControl
+              value={activeBodyType}
+              onChange={(value) => setActiveBodyType(value as "raw" | "fields")}
+              data={[
+                { label: "Raw Body", value: "raw" },
+                { label: "Fields", value: "fields" },
+              ]}
+              sx={{ maxWidth: "200px" }}
+            />
+            {activeBodyType === "raw" && (
+              <Editor
+                height={endpoint.body ? "250px" : "100px"}
+                defaultLanguage="json"
+                value={state.body}
+                onChange={(value) => {
+                  debouncedInputChange("body", value);
+                }}
+                options={{
+                  wordWrap: "on",
+                  scrollBeyondLastLine: false,
+                  minimap: {
+                    enabled: false,
+                  },
+                }}
+              />
+            )}
+            {activeBodyType === "fields" &&
+              state.requestBody &&
+              state.requestBody.map((item, index) => (
+                <Flex key={index} align="center" gap="md">
+                  <Select
+                    data={[
+                      "string",
+                      "number",
+                      "boolean",
+                      "datetime",
+                      "object",
+                      "array",
+                      "file",
+                    ]}
+                    value={item.type}
+                    onChange={(value) =>
+                      handleArrayChange(index, "type", value, "body")
+                    }
+                    sx={{ width: 110 }}
+                  />
+                  <TextInput
+                    size="sm"
+                    placeholder="name"
+                    value={item.name}
+                    onChange={(event) =>
+                      handleArrayChange(
+                        index,
+                        "name",
+                        event.currentTarget.value,
+                        "body",
+                      )
+                    }
+                    required
+                  ></TextInput>
+                  <TextInput
+                    placeholder={valuePlaceholder}
+                    value={item.value}
+                    onChange={(event) =>
+                      handleArrayChange(
+                        index,
+                        "value",
+                        event.currentTarget.value,
+                        "body",
+                      )
+                    }
+                    sx={{ flexGrow: 1 }}
+                  />
+                  <Tooltip label="Delete">
+                    <ActionIcon
+                      variant="filled"
+                      radius="xl"
+                      color="red"
+                      onClick={() => handleDelete(index, "body")}
+                    >
+                      <Icon name={ICON_DELETE} />
+                    </ActionIcon>
+                  </Tooltip>
+                </Flex>
+              ))}
+          </>
         )}
 
-        {state.requestBody.map((item, index) => (
-          <Flex key={index} align="center" gap="md">
-            <Select
-              data={["string", "number", "boolean", "datetime"]}
-              value={item.type}
-              onChange={(value) =>
-                handleArrayChange(index, "type", value, "body")
-              }
-              sx={{ width: 110 }}
-            />
-            <TextInput
-              size="sm"
-              placeholder="name"
-              value={item.name}
-              onChange={(event) =>
-                handleArrayChange(
-                  index,
-                  "name",
-                  event.currentTarget.value,
-                  "body",
-                )
-              }
-              required
-            ></TextInput>
-            <TextInput
-              placeholder={valuePlaceholder}
-              value={item.value || ""}
-              onChange={(event) =>
-                handleArrayChange(
-                  index,
-                  "value",
-                  event.currentTarget.value,
-                  "body",
-                )
-              }
-              sx={{ flexGrow: 1 }}
-            />
-            <Tooltip label="Delete">
-              <ActionIcon
-                variant="filled"
-                radius="xl"
-                color="red"
-                onClick={() => handleDelete(index, "body")}
-              >
-                <Icon name={ICON_DELETE} />
-              </ActionIcon>
-            </Tooltip>
-          </Flex>
-        ))}
-        <Tabs defaultValue="example" py="md" keepMounted={false}>
+        <Tabs value={activeTab} py="md" keepMounted={false}>
           <Tabs.List>
             <Tabs.Tab value="example">Example Response</Tabs.Tab>
             <Tabs.Tab value="error">Error Response</Tabs.Tab>
@@ -694,11 +836,8 @@ export const DataSourceEndpointDetail = ({
             );
           }}
         />
-        {displayIsServerRequestWarning && (
-          <WarningAlert
-            title="API Failed"
-            text="Does this API endpoint need to be made through a server? If so turn on 'Make request through server' and try again."
-          ></WarningAlert>
+        {warningMessage && (
+          <WarningAlert title="API Failed" text={warningMessage}></WarningAlert>
         )}
         <Group mt="xl">
           <Button
@@ -734,9 +873,14 @@ export const DataSourceEndpointDetail = ({
 type AddNewSectionProps = {
   apiType: ApiType;
   handleAddNew: (apiType: ApiType) => void;
+  bodyType?: "raw" | "fields";
 };
 
-const AddNewSection = ({ apiType, handleAddNew }: AddNewSectionProps) => (
+const AddNewSection = ({
+  apiType,
+  handleAddNew,
+  bodyType,
+}: AddNewSectionProps) => (
   <Flex align="center" gap="sm">
     <Tooltip label={`Add new ${apiType}`}>
       <ActionIcon
@@ -744,10 +888,12 @@ const AddNewSection = ({ apiType, handleAddNew }: AddNewSectionProps) => (
         radius="xl"
         color="indigo"
         onClick={() => handleAddNew(apiType)}
+        disabled={bodyType === "raw"}
       >
         <Icon name="IconPlus" />
       </ActionIcon>
     </Tooltip>
+
     <Title order={6}>{getTitle({ apiType })}</Title>
   </Flex>
 );

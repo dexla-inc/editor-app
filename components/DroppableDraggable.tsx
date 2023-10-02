@@ -32,7 +32,13 @@ import {
 } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { Router, useRouter } from "next/router";
-import { Fragment, PropsWithChildren, cloneElement, useEffect } from "react";
+import {
+  Fragment,
+  PropsWithChildren,
+  cloneElement,
+  useEffect,
+  useMemo,
+} from "react";
 import merge from "lodash.merge";
 
 type Props = {
@@ -64,6 +70,7 @@ const styleWhitelist = [
   "marginBottom",
   "marginLeft",
   "marginRight",
+  "zIndex",
 ];
 const handlerBlacklist = ["Modal"];
 
@@ -74,7 +81,6 @@ export const DroppableDraggable = ({
   customComponentModal,
 }: PropsWithChildren<Props>) => {
   const router = useRouter();
-  const { hovered, ref } = useHover();
   const theme = useMantineTheme();
   const editorTheme = useEditorStore((state) => state.theme);
   const editorTree = useEditorStore((state) => state.tree);
@@ -175,7 +181,10 @@ export const DroppableDraggable = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPreviewMode, onMountAction, onMountActionsRan, component]);
 
-  const parent = getComponentParent(editorTree.root, id);
+  const parent = useMemo(
+    () => getComponentParent(editorTree.root, id),
+    [editorTree.root, id],
+  );
 
   const onDragStart = useOnDragStart();
   const onDrop = useOnDrop();
@@ -231,7 +240,7 @@ export const DroppableDraggable = ({
               background: edge === "center" ? theme.colors.teal[6] : "none",
               opacity: edge === "center" ? 0.4 : 1,
             }
-          : isSelected || hovered
+          : isSelected
           ? { boxShadow: baseShadow }
           : {});
 
@@ -266,45 +275,41 @@ export const DroppableDraggable = ({
     }
   };
 
-  const isWidthPercentage = component.props?.style?.width?.endsWith("%");
-  const isHeightPercentage = component.props?.style?.height?.endsWith("%");
-
   const propsWithOverwrites = merge(
     {},
     component.props,
     component.languages?.[language],
     component.states?.[currentState],
-    {
-      style: {
-        width: isWidthPercentage ? "100%" : component.props?.style?.width,
-        height: isHeightPercentage ? "100%" : component.props?.style?.height,
-        position: "static",
-      },
-      disabled:
-        component.props?.disabled ??
-        (currentState === "disabled" && !!component.states?.disabled),
-      triggers: isPreviewMode
-        ? {
-            ...triggers,
-            onMouseEnter: triggers?.onHover ?? hoverStateFunc,
-            onMouseLeave: leaveHoverStateFunc,
-          }
-        : {},
-    },
   );
+
+  const isWidthPercentage = propsWithOverwrites?.style?.width?.endsWith("%");
+  const isHeightPercentage = propsWithOverwrites?.style?.height?.endsWith("%");
+
+  merge(propsWithOverwrites, {
+    style: {
+      width: isWidthPercentage ? "100%" : propsWithOverwrites.style?.width,
+      height: isHeightPercentage ? "100%" : propsWithOverwrites.style?.height,
+      position: "static",
+    },
+    disabled:
+      component.props?.disabled ??
+      (currentState === "disabled" && !!component.states?.disabled),
+    triggers: isPreviewMode
+      ? {
+          ...triggers,
+          onMouseEnter: triggers?.onHover ?? hoverStateFunc,
+          onMouseLeave: leaveHoverStateFunc,
+        }
+      : {},
+  });
 
   return (
     <Box
-      ref={isPreviewMode ? undefined : ref}
       id={id}
       pos="relative"
       sx={{
-        width: component.props?.style?.width
-          ? component.props?.style?.width
-          : "auto",
-        height: component.props?.style?.height
-          ? component.props?.style?.height
-          : "auto",
+        width: propsWithOverwrites.style.width ?? "auto",
+        height: propsWithOverwrites.style.height ?? "auto",
         "&:before": {
           ...(!isPreviewMode ? shadows : {}),
           content: '""',
@@ -315,6 +320,9 @@ export const DroppableDraggable = ({
           width: "100%",
           height: "100%",
           zIndex: 80,
+        },
+        "&:hover": {
+          ...(!isPreviewMode ? { boxShadow: baseShadow } : {}),
         },
       }}
       onClick={(e) => {
@@ -353,14 +361,15 @@ export const DroppableDraggable = ({
       </ComponentWrapper>
       {!isPreviewMode &&
         !isContentWrapper &&
-        !handlerBlacklist.includes(component.name) && (
+        !handlerBlacklist.includes(component.name) &&
+        isSelected && (
           <Box
             pos="absolute"
             h={36}
             top={-36}
             sx={{
               zIndex: 90,
-              display: isSelected ? "block" : "none",
+              // display: isSelected ? "block" : "none",
               background: theme.colors.teal[6],
               borderTopLeftRadius: theme.radius.sm,
               borderTopRightRadius: theme.radius.sm,

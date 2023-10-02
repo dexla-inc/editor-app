@@ -10,7 +10,6 @@ import {
   MantineTheme,
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -101,9 +100,9 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
       ref={setContentRef as any}
       component="iframe"
       style={{
-        overflow: "visible",
+        overflow: isLive ? "hidden" : "visible",
         border: "none",
-        width: isLive ? "100vw" : "100%",
+        width: "100%",
         height: isLive ? "100vh" : `calc(100vh - ${HEADER_HEIGHT}px)`,
       }}
       {...props}

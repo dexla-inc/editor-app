@@ -4,7 +4,7 @@ import { StepperStepProps } from "@/utils/dashboardTypes";
 import { Container, Stack, Title } from "@mantine/core";
 import { useState } from "react";
 
-export default function DataSourceNewSettings() {
+export default function DataSourceAddSwagger() {
   const [activeStep, setActiveStep] = useState(0);
 
   const nextStep = () =>

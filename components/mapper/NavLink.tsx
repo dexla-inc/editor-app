@@ -1,9 +1,11 @@
 import { Icon } from "@/components/Icon";
-import { Component } from "@/utils/editor";
+import { Component, getColorFromTheme } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import { useRouter } from "next/router";
 import { isSame } from "@/utils/componentComparison";
 import { memo } from "react";
+import { useEditorStore } from "@/stores/editor";
+import merge from "lodash.merge";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -11,22 +13,56 @@ type Props = {
 } & NavLinkProps;
 
 const NavLinkComponent = ({ renderTree, component, ...props }: Props) => {
-  const { children, isNested, pageId, triggers, icon, ...componentProps } =
-    component.props as any;
+  const theme = useEditorStore((state) => state.theme);
 
   const router = useRouter();
-  const curentPageId = router.query.page as string;
-  const active = curentPageId === pageId;
+  const currentPageId = router.query.page as string;
+  const active = currentPageId === component?.props?.pageId;
+
+  const activeProps = {};
+  if (active) {
+    merge(activeProps, component?.states?.Active);
+  }
+
+  const {
+    children,
+    isNested,
+    pageId,
+    triggers,
+    icon,
+    color = "",
+    bg = "",
+    ...componentProps
+  } = merge({}, component.props, activeProps) as any;
+
+  const textColor = getColorFromTheme(theme, color) ?? "#000";
+  const backgroundColor = getColorFromTheme(theme, bg) ?? "transparent";
+
+  merge(componentProps, { style: { color: textColor, backgroundColor } });
 
   return (
     <MantineNavLink
-      icon={<Icon name={icon} />}
+      icon={<Icon name={icon} size={20} />}
       rightSection={isNested ? <Icon name="IconChevronRight" /> : null}
       active={active}
       {...props}
       {...componentProps}
       {...triggers}
-    />
+      styles={{
+        ...(!icon && { icon: { marginRight: 0 } }),
+        children: { paddingLeft: 0 },
+        root: {
+          padding: 0,
+          "&:hover": {
+            backgroundColor: "unset",
+          },
+        },
+      }}
+    >
+      {component.children && component.children.length > 0
+        ? component.children?.map((child) => renderTree(child))
+        : children}
+    </MantineNavLink>
   );
 };
 

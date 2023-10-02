@@ -55,7 +55,6 @@ export default function DataSourceSettings({ projectId }: Props) {
     <Container py="xl">
       <Stack spacing="xl">
         <Title order={2}>Data Source Settings</Title>
-
         <Flex>
           <Link
             href="/projects/[id]/settings/datasources/new"

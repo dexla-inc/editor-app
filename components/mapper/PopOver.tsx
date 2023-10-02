@@ -1,14 +1,11 @@
+import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
+import { isSame } from "@/utils/componentComparison";
+import { componentMapper } from "@/utils/componentMapper";
 import { Component, checkIfIsChild } from "@/utils/editor";
-import {
-  PopoverProps,
-  Popover as MantinePopOver,
-  Popover,
-} from "@mantine/core";
+import { Popover as MantinePopOver, PopoverProps } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { memo, useEffect } from "react";
-import { componentMapper } from "@/utils/componentMapper";
-import { isSame } from "@/utils/componentComparison";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -22,11 +19,11 @@ const PopOverComponent = ({
   ...props
 }: Props) => {
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
+    (state) => state.selectedComponentId,
   );
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
+    (state) => state.updateTreeComponent,
   );
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
 
@@ -36,6 +33,7 @@ const PopOverComponent = ({
     opened: propOpened,
     style,
     targetId,
+    loading,
     ...componentProps
   } = component.props as any;
 
@@ -49,7 +47,7 @@ const PopOverComponent = ({
       }
       return acc.concat(item);
     },
-    []
+    [],
   );
 
   const handleClose = () => {
@@ -67,6 +65,9 @@ const PopOverComponent = ({
     ? opened
     : selectedComponentId === component.id ||
       checkIfIsChild(component, selectedComponentId as string);
+
+  if (loading)
+    <MantineSkeleton height={style.height ?? 700} width={style.width ?? 500} />;
 
   return (
     <MantinePopOver

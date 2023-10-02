@@ -59,7 +59,11 @@ export const OpenPopOverActionForm = ({ id }: Props) => {
       <Stack spacing="xs">
         <Select
           size="xs"
-          label="PopOver to Open"
+          label={
+            action.action.name === "openPopOver"
+              ? "PopOver to Open"
+              : "PopOver to Close"
+          }
           placeholder="Select a popOver"
           data={popOvers.map((popOver: Component) => {
             return {

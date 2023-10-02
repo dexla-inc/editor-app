@@ -1,6 +1,8 @@
+import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { Component, updateInputFieldsWithFormData } from "@/utils/editor";
 import { FlexProps, Flex as MantineFlex } from "@mantine/core";
+import { useForm } from "@mantine/form";
 import { FormEvent, memo } from "react";
 
 type Props = {
@@ -10,12 +12,27 @@ type Props = {
 } & FlexProps;
 
 const FormComponent = ({ renderTree, component, ...props }: Props) => {
-  const { children, triggers, ...componentProps } = component.props as any;
+  const { children, triggers, loading, ...componentProps } =
+    component.props as any;
   const { onSubmit, ...otherTriggers } = triggers;
+  const form = useForm();
 
   const onSubmitCustom = (e: FormEvent<any>) => {
     e.preventDefault();
     return triggers.onSubmit(e);
+  };
+
+  if (loading) {
+    return (
+      <MantineSkeleton
+        height={componentProps.style.height ?? 500}
+        radius={10}
+      />
+    );
+  }
+
+  const onChangeField = (e: any) => {
+    form.setFieldValue(e.target.name, e.target.value);
   };
 
   return (
@@ -28,12 +45,13 @@ const FormComponent = ({ renderTree, component, ...props }: Props) => {
       {...otherTriggers}
     >
       {component.children && component.children.length > 0
-        ? component.children?.map((child) =>
-            renderTree({
-              ...child,
+        ? component.children?.map((child) => {
+            updateInputFieldsWithFormData(child, onChangeField);
+            return renderTree({
+              ...child!,
               props: { ...child.props, ...triggers },
-            })
-          )
+            });
+          })
         : children}
     </MantineFlex>
   );

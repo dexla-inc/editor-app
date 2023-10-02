@@ -20,20 +20,23 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
 };
 
 export const ChangeHistoryPopover: FC = () => {
-  const currentState = useEditorStore((state) => state);
+  const currentState = useEditorStore();
   const { changeHistory, pastStates } = useTemporalStore((state) => ({
     changeHistory: [
       ...state.pastStates,
       currentState,
       ...state.futureStates,
-    ].reduce((acc, { tree }, index) => {
-      return index === 0
-        ? acc
-        : acc.concat({
-            name: tree?.name,
-            timestamp: tree?.timestamp,
-          });
-    }, [] as Array<{ name?: string; timestamp?: number }>),
+    ].reduce(
+      (acc, { tree }, index) => {
+        return index === 0
+          ? acc
+          : acc.concat({
+              name: tree?.name,
+              timestamp: tree?.timestamp,
+            });
+      },
+      [] as Array<{ name?: string; timestamp?: number }>,
+    ),
     pastStates: state.pastStates,
   }));
   const [opened, { close, open }] = useDisclosure(false);
@@ -84,7 +87,7 @@ export const ChangeHistoryPopover: FC = () => {
                       {" "}
                       (
                       {convertTimestampToTimeTaken(
-                        item.timestamp || Date.now()
+                        item.timestamp || Date.now(),
                       )}
                       )
                     </Text>

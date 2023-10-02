@@ -41,22 +41,28 @@ type DataSourceEndpointProps = {
   projectId: string;
   baseUrl: string;
   endpoint: Endpoint;
-  location: "editor" | "datasource";
+  location?: "editor" | "datasource";
   dataSourceId?: string | undefined;
+  opened?: boolean;
+  setOpened?: (opened: boolean) => void;
 };
 
 export const DataSourceEndpoint = ({
   baseUrl,
   projectId,
   endpoint,
-  location,
+  location = "datasource",
   dataSourceId,
+  opened: externalOpened,
+  setOpened: externalSetOpened,
 }: DataSourceEndpointProps) => {
-  const [opened, toggleOpened] = useState<boolean>(false);
   const router = useRouter();
+  const [internalOpened, setInternalOpened] = useState<boolean>(false);
+  const isOpened = externalOpened ?? internalOpened;
+  const setOpened = externalSetOpened ?? setInternalOpened;
 
-  const open = () => {
-    toggleOpened(opened ? false : true);
+  const toggle = () => {
+    setOpened(isOpened ? false : true);
   };
 
   const actualDataSourceId =
@@ -64,7 +70,7 @@ export const DataSourceEndpoint = ({
 
   return (
     <Box>
-      <UnstyledButton onClick={open} sx={{ width: "100%" }}>
+      <UnstyledButton onClick={toggle} sx={{ width: "100%" }}>
         <Group
           position="apart"
           sx={{
@@ -100,14 +106,14 @@ export const DataSourceEndpoint = ({
               <Text truncate>{endpoint.description}</Text>
             )}
           </Flex>
-          {opened ? (
+          {isOpened ? (
             <IconChevronDown size={ICON_SIZE} />
           ) : (
             <IconChevronRight size={ICON_SIZE} />
           )}
         </Group>
       </UnstyledButton>
-      {opened && (
+      {isOpened && (
         <DataSourceEndpointDetail
           baseUrl={baseUrl}
           endpoint={endpoint}
