@@ -35,6 +35,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
+import { VariablesButton } from "@/components/variables/VariablesButton";
 
 const ToggleNavbarButton = () => {
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
@@ -104,6 +105,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               <AIChatHistoryButton projectId={projectId} />
               <GenerateAIButton projectId={projectId} />
               <LogicFlowButton projectId={projectId} pageId={currentPageId} />
+              <VariablesButton projectId={projectId} pageId={currentPageId} />
               <Button.Group>
                 <Button
                   leftIcon={<IconArrowBackUp size={ICON_SIZE} />}
