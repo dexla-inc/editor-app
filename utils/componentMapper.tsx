@@ -842,7 +842,9 @@ export type Modifiers =
   | "mapSettings"
   | "fileButton"
   | "popOver"
-  | "navLink";
+  | "navLink"
+  | "accordionItem"
+  | "switch";
 
 export type ComponentDefinition = {
   Component: any;
@@ -1093,7 +1095,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["switch", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1233,7 +1235,7 @@ export const componentMapper: ComponentMapper = {
         value="first"
       />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["accordionItem", "spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

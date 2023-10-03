@@ -7,8 +7,8 @@ import { Action, actionMapper, ActionTrigger } from "@/utils/actions";
 import { structureMapper } from "@/utils/componentMapper";
 import { DROP_INDICATOR_WIDTH, ICON_SIZE } from "@/utils/config";
 import {
-  Component,
   addComponent,
+  Component,
   getComponentIndex,
   getComponentParent,
   removeComponentFromParent,
@@ -23,7 +23,6 @@ import {
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
-import { useHover } from "@mantine/hooks";
 import {
   IconArrowUp,
   IconBoxMargin,
@@ -31,15 +30,15 @@ import {
   IconNewSection,
 } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
+import merge from "lodash.merge";
 import { Router, useRouter } from "next/router";
 import {
+  cloneElement,
   Fragment,
   PropsWithChildren,
-  cloneElement,
   useEffect,
   useMemo,
 } from "react";
-import merge from "lodash.merge";
 
 type Props = {
   id: string;
@@ -375,7 +374,15 @@ export const DroppableDraggable = ({
               borderTopRightRadius: theme.radius.sm,
             }}
           >
-            <Group py={4} px={8} h={36} noWrap spacing="xs" align="center">
+            <Group
+              py={4}
+              px={8}
+              h={36}
+              w={250}
+              noWrap
+              spacing="xs"
+              align="center"
+            >
               {!component.fixedPosition && (
                 <UnstyledButton
                   sx={{ cursor: "move", alignItems: "center", display: "flex" }}
