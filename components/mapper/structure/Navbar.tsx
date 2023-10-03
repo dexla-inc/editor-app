@@ -71,8 +71,6 @@ export const jsonStructure = (props?: any): Component => {
             borderBottomColor: isDarkTheme
               ? theme.colors.gray[5]
               : theme.colors.gray[3],
-            marginLeft: "10px",
-            marginRight: "10px",
           },
         },
         children: [
@@ -163,6 +161,8 @@ export const jsonStructure = (props?: any): Component => {
                   height: "auto",
                   display: "flex",
                   alignItems: "center",
+                  paddingTop: "10px",
+                  paddingBottom: "10px",
                   color: isDarkTheme
                     ? theme.colors.gray[5]
                     : theme.colors.dark[9],
