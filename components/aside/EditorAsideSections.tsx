@@ -1,5 +1,5 @@
 import { SidebarSection } from "@/components/SidebarSection";
-import { ActionsForm } from "@/components/actions/ActionsForm";
+import { ActionsFlow } from "@/components/actions/ActionsFlow";
 import * as AccordionItemModifier from "@/components/modifiers/AccordionItem";
 import * as BackgroundModifier from "@/components/modifiers/Background";
 import * as BorderModifier from "@/components/modifiers/Border";
@@ -247,14 +247,7 @@ export const EditorAsideSections = () => {
             {designSections}
           </Stack>
         )}
-        {tab === "actions" && (
-          <Stack>
-            <Box px="md">
-              <ActionsForm />
-            </Box>
-            {actionsSections}
-          </Stack>
-        )}
+        {tab === "actions" && <ActionsFlow actionsSections={actionsSections} />}
       </Stack>
     </Stack>
   );
