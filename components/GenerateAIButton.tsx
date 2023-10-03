@@ -8,6 +8,7 @@ import {
   Component,
   EditorTree,
   addComponent,
+  debouncedTreeComponentStyleUpdate,
   getComponentBeingAddedId,
   getEditorTreeFromPageStructure,
   getNewComponents,
@@ -149,12 +150,18 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
         console.error("No selected component id");
         return;
       }
-      const selectedComponent: CssModifer = {
-        modifiers: json.css,
-        selectedComponentId: selectedComponentId,
-      };
 
-      setModifier(selectedComponent);
+      Object.keys(json.css).map((key) => {
+        console.log(key, json.css[key]);
+        debouncedTreeComponentStyleUpdate(key, json.css[key]);
+      });
+
+      // const selectedComponent: CssModifer = {
+      //   modifiers: json.css,
+      //   selectedComponentId: selectedComponentId,
+      // };
+
+      // setModifier(selectedComponent);
     };
   };
 

@@ -1,24 +1,18 @@
 import { UnitInput } from "@/components/UnitInput";
+import { withModifier } from "@/hoc/withModifier";
+import { requiredModifiers } from "@/utils/componentMapper";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconResize } from "@tabler/icons-react";
 import { useEffect } from "react";
-import { withModifier } from "@/hoc/withModifier";
 
 export const icon = IconResize;
 export const label = "Size";
 
 export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
-    initialValues: {
-      width: "",
-      height: "",
-      minWidth: "",
-      minHeight: "",
-      maxWidth: "",
-      maxHeight: "",
-    },
+    initialValues: { ...requiredModifiers.size },
   });
 
   useEffect(() => {
