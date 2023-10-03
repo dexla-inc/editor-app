@@ -97,7 +97,6 @@ import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 
 import { FileButton } from "@/components/mapper/FileButton";
-import { MarkerItem, Styler } from "@/components/modifiers/GoogleMap";
 import { uploadFile } from "@/requests/storage/mutations";
 import { useEditorStore } from "@/stores/editor";
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
@@ -1055,10 +1054,10 @@ export const requiredModifiers: RequiredModifiers = {
     },
     options: {
       mapTypeId: "SATELITE",
-      styles: [] as Styler[],
+      styles: [],
     },
     zoom: 10,
-    markers: [] as Array<MarkerItem>,
+    markers: [],
   },
   fileButton: {
     name: "Upload Button",
