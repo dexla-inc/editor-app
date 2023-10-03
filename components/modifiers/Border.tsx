@@ -26,25 +26,7 @@ import { useEffect } from "react";
 export const icon = IconBorderStyle;
 export const label = "Border";
 
-export const defaultBorderValues = {
-  borderTopStyle: "none",
-  borderRightStyle: "none",
-  borderBottomStyle: "none",
-  borderLeftStyle: "none",
-  borderTopWidth: "0px",
-  borderRightWidth: "0px",
-  borderBottomWidth: "0px",
-  borderLeftWidth: "0px",
-  borderTopColor: "Border.6",
-  borderRightColor: "Border.6",
-  borderBottomColor: "Border.6",
-  borderLeftColor: "Border.6",
-  borderRadius: "0px",
-  borderTopLeftRadius: "0px",
-  borderTopRightRadius: "0px",
-  borderBottomLeftRadius: "0px",
-  borderBottomRightRadius: "0px",
-};
+export const defaultBorderValues = requiredModifiers.border;
 
 const getThemeColor = (theme: any, hex: string) => {
   return Object.keys(theme.colors).reduce((themeColor: string, key: string) => {
@@ -62,13 +44,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useEditorStore((state) => state.theme);
   const form = useForm({
     initialValues: {
-      ...requiredModifiers.border,
-      showBorder: "all",
-      showRadius: "radius-all",
-      borderStyle: "none",
-      borderRadius: "0px",
-      borderWidth: "0px",
-      borderColor: "Border.6",
+      ...defaultBorderValues,
     },
   });
 
