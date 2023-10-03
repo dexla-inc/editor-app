@@ -1,5 +1,6 @@
 import { SpacingControl } from "@/components/modifiers/SpacingControl";
 import { useEditorStore } from "@/stores/editor";
+import { requiredModifiers } from "@/utils/componentMapper";
 import { getComponentById } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -12,27 +13,29 @@ export const label = "Spacing";
 export const Modifier = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
+    (state) => state.selectedComponentId,
   );
 
   const selectedComponent = getComponentById(
     editorTree.root,
-    selectedComponentId as string
+    selectedComponentId as string,
   );
 
   const componentProps = selectedComponent?.props || {};
   const { style = {} } = componentProps;
+  const spacing = requiredModifiers.spacing;
+
   const initialValues = {
-    padding: style.padding ?? "0px",
-    paddingTop: style.paddingTop ?? undefined,
-    paddingBottom: style.paddingBottom ?? undefined,
-    paddingLeft: style.paddingLeft ?? undefined,
-    paddingRight: style.paddingRight ?? undefined,
-    margin: style.margin ?? "0px",
-    marginTop: style.marginTop ?? undefined,
-    marginBottom: style.marginBottom ?? undefined,
-    marginLeft: style.marginLeft ?? undefined,
-    marginRight: style.marginRight ?? undefined,
+    padding: style.padding ?? spacing.padding,
+    paddingTop: style.paddingTop ?? spacing.paddingTop,
+    paddingBottom: style.paddingBottom ?? spacing.paddingBottom,
+    paddingLeft: style.paddingLeft ?? spacing.paddingLeft,
+    paddingRight: style.paddingRight ?? spacing.paddingRight,
+    margin: style.margin ?? spacing.margin,
+    marginTop: style.marginTop ?? spacing.marginTop,
+    marginBottom: style.marginBottom ?? spacing.marginBottom,
+    marginLeft: style.marginLeft ?? spacing.marginLeft,
+    marginRight: style.marginRight ?? spacing.marginRight,
   };
 
   const form = useForm({

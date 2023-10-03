@@ -1,3 +1,4 @@
+import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -19,16 +20,15 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconMapPin, IconPlus, IconTrash } from "@tabler/icons-react";
-import { Position } from "@/components/mapper/GoogleMapPlugin";
-import { useEffect, useState } from "react";
-import { pick } from "next/dist/lib/pick";
 import { nanoid } from "nanoid";
+import { pick } from "next/dist/lib/pick";
+import { useEffect, useState } from "react";
 
 export const icon = IconMapPin;
 export const label = "Map Settings";
 
 export type MarkerItem = { id: string; name: string } & Position;
-type Styler = Record<string, string | Record<string, any>[]>;
+export type Styler = Record<string, string | Record<string, any>[]>;
 export type Options = { mapTypeId: string; styles: Styler[] };
 
 export const defaultMapValues = {
