@@ -2,7 +2,7 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
-import { requiredModifiers } from "@/utils/componentMapper";
+import { requiredModifiers } from "@/utils/defaults";
 import {
   debouncedTreeComponentPropsUpdate,
   debouncedTreeUpdate,

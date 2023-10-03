@@ -1,6 +1,6 @@
 import { SpacingControl } from "@/components/modifiers/SpacingControl";
 import { useEditorStore } from "@/stores/editor";
-import { requiredModifiers } from "@/utils/componentMapper";
+import { requiredModifiers } from "@/utils/defaults";
 import { getComponentById } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
