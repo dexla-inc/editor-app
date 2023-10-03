@@ -492,18 +492,6 @@ export const updateTreeComponentDescription = (
   );
 };
 
-export const resetAllData = (treeRoot: Component) => {
-  crawl(
-    treeRoot,
-    (node) => {
-      if (node.props?.data) {
-        node.props.data = undefined;
-      }
-    },
-    { order: "bfs" },
-  );
-};
-
 export const checkIfIsChild = (treeRoot: Component, childId: string) => {
   let isChild = false;
 
