@@ -70,7 +70,7 @@ export function useHotkeysOnIframe(
       );
   }, [
     hotkeys,
-    iframeWindow?.document.documentElement,
+    iframeWindow?.document?.documentElement,
     tagsToIgnore,
     triggerOnContentEditable,
   ]);

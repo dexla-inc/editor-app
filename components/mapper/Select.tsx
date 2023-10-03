@@ -61,11 +61,7 @@ const SelectComponent = ({
         };
       })}
       rightSection={loading ? <Loader size="xs" /> : null}
-    >
-      {component.children && component.children.length > 0
-        ? component.children?.map((child) => renderTree(child))
-        : children}
-    </MantineSelect>
+    />
   );
 };
 
