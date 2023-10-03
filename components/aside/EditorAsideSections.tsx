@@ -1,5 +1,6 @@
 import { SidebarSection } from "@/components/SidebarSection";
 import { ActionsForm } from "@/components/actions/ActionsForm";
+import * as AccordionItemModifier from "@/components/modifiers/AccordionItem";
 import * as BackgroundModifier from "@/components/modifiers/Background";
 import * as BorderModifier from "@/components/modifiers/Border";
 import * as BoxShadowModifier from "@/components/modifiers/BoxShadow";
@@ -17,6 +18,7 @@ import * as InputModifier from "@/components/modifiers/Input";
 import * as LayoutModifier from "@/components/modifiers/Layout";
 import * as LinkModifier from "@/components/modifiers/Link";
 import * as ModalModifier from "@/components/modifiers/Modal";
+import * as NavLinkModifier from "@/components/modifiers/NavLink";
 import * as PopOverModifier from "@/components/modifiers/PopOver";
 import * as PositionModifier from "@/components/modifiers/Position";
 import * as RadioModifier from "@/components/modifiers/Radio";
@@ -25,10 +27,10 @@ import * as SelectModifier from "@/components/modifiers/Select";
 import * as SizeModifier from "@/components/modifiers/Size";
 import * as SpacingModifier from "@/components/modifiers/Spacing";
 import * as StepperModifier from "@/components/modifiers/Stepper";
+import * as SwitchModifier from "@/components/modifiers/Switch";
 import * as TableModifier from "@/components/modifiers/Table";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TitleModifier from "@/components/modifiers/Title";
-import * as NavLinkModifier from "@/components/modifiers/NavLink";
 import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper } from "@/utils/actions";
 import { Modifiers, componentMapper } from "@/utils/componentMapper";
@@ -80,6 +82,8 @@ const sectionMapper: SectionsMapper = {
   fileButton: FileButtonModifier,
   popOver: PopOverModifier,
   navLink: NavLinkModifier,
+  accordionItem: AccordionItemModifier,
+  switch: SwitchModifier,
 };
 
 type Tab = "design" | "actions";
