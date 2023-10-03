@@ -848,10 +848,7 @@ export type Modifiers =
   | "switch";
 
 type RequiredModifiers = {
-  [K in Modifiers]: Record<
-    string,
-    string | number | boolean | object | undefined
-  >;
+  [K in Modifiers]: Record<string, any>;
 };
 
 export const requiredModifiers: RequiredModifiers = {
@@ -901,6 +898,11 @@ export const requiredModifiers: RequiredModifiers = {
     borderTopRightRadius: "0px",
     borderBottomLeftRadius: "0px",
     borderBottomRightRadius: "0px",
+    showBorder: "all",
+    showRadius: "radius-all",
+    borderStyle: "none",
+    borderWidth: "0px",
+    borderColor: "Border.6",
   },
   layout: {
     display: "flex",
