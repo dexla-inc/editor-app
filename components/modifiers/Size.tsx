@@ -1,6 +1,6 @@
 import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
-import { requiredModifiers } from "@/utils/componentMapper";
+import { requiredModifiers } from "@/utils/defaults";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";

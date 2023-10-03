@@ -3,7 +3,7 @@ import { UnitInput } from "@/components/UnitInput";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
-import { requiredModifiers } from "@/utils/componentMapper";
+import { requiredModifiers } from "@/utils/defaults";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { Group, SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
