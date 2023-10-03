@@ -1,4 +1,4 @@
-import { createVariable, updateVariable } from "@/requests/variables/mutations";
+import { createVariable } from "@/requests/variables/mutations";
 import { getVariable } from "@/requests/variables/queries";
 import { VariableTypesOptions } from "@/requests/variables/types";
 import {
@@ -52,20 +52,6 @@ export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
     },
   });
 
-  const updateVariablesMutation = useMutation({
-    mutationKey: ["variable", variableId],
-    mutationFn: async (values: any) => {
-      const response = await updateVariable(projectId, variableId!, {
-        ...values,
-        pageId,
-      });
-      return response;
-    },
-    onSettled: () => {
-      client.refetchQueries(["variables", projectId, pageId]);
-    },
-  });
-
   const form = useForm<VariablesFormValues>({
     initialValues: {
       name: "",
@@ -77,17 +63,10 @@ export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
 
   const onSubmit = async (values: VariablesFormValues) => {
     try {
-      if (variableId) {
-        updateVariablesMutation.mutate({
-          ...values,
-          pageId,
-        });
-      } else {
-        createVariablesMutation.mutate({
-          ...values,
-          pageId,
-        });
-      }
+      createVariablesMutation.mutate({
+        ...values,
+        pageId,
+      });
     } catch (error) {
       console.log({ error });
     }
@@ -129,14 +108,8 @@ export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
 
         <Button
           type="submit"
-          loading={
-            createVariablesMutation.isLoading ||
-            updateVariablesMutation.isLoading
-          }
-          disabled={
-            createVariablesMutation.isLoading ||
-            updateVariablesMutation.isLoading
-          }
+          loading={createVariablesMutation.isLoading}
+          disabled={createVariablesMutation.isLoading}
         >
           {variableId ? "Edit" : "Create"} Variable
         </Button>

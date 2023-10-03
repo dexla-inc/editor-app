@@ -2,11 +2,13 @@ import { deleteVariable } from "@/requests/variables/mutations";
 import { listVariables } from "@/requests/variables/queries";
 import {
   ActionIcon,
+  Center,
   Group,
   Modal,
   ScrollArea,
   Stack,
   Table,
+  Text,
   TextInput,
 } from "@mantine/core";
 import { useDebouncedState, useDisclosure } from "@mantine/hooks";
@@ -88,30 +90,41 @@ export const VariableList = ({ projectId, pageId }: Props) => {
   return (
     <>
       <ScrollArea h={300}>
-        <Stack>
-          <TextInput
-            placeholder="Search"
-            mb="xs"
-            icon={<IconSearch size={14} />}
-            defaultValue={filter}
-            onChange={(event) => {
-              setFilter(event.currentTarget.value);
-            }}
-          />
-          <Table striped highlightOnHover withBorder withColumnBorders>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Default Value</th>
-                <th>Current Value</th>
-                <th>Is Global</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>{rows}</tbody>
-          </Table>
-        </Stack>
+        {rows.length > 0 && (
+          <Stack>
+            <TextInput
+              placeholder="Search"
+              mb="xs"
+              icon={<IconSearch size={14} />}
+              defaultValue={filter}
+              onChange={(event) => {
+                setFilter(event.currentTarget.value);
+              }}
+            />
+            <Table striped highlightOnHover withBorder withColumnBorders>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Default Value</th>
+                  <th>Current Value</th>
+                  <th>Is Global</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>{rows}</tbody>
+            </Table>
+          </Stack>
+        )}
+        {rows.length === 0 && (
+          <Stack w="700px">
+            <Center>
+              <Text color="dimmed" size="xs">
+                No variables here yet
+              </Text>
+            </Center>
+          </Stack>
+        )}
       </ScrollArea>
       <Modal title="Edit Variable" opened={opened} onClose={modal.close}>
         <VariableForm

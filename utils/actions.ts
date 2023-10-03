@@ -38,9 +38,10 @@ import get from "lodash.get";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
 import { executeFlow } from "./logicFlows";
-import { updateVariable } from "@/requests/variables/mutations";
+import { createVariable, updateVariable } from "@/requests/variables/mutations";
 import { SetVariableActionForm } from "@/components/actions/SetVariableActionForm";
 import { SetVariableFlowActionForm } from "@/components/actions/logic-flow-forms/SetVariableFlowActionForm";
+import { FrontEndTypes } from "@/requests/variables/types";
 
 const triggers = [
   "onClick",
@@ -810,6 +811,16 @@ export const apiCallAction = async ({
     }
 
     const responseJson = await response.json();
+    const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}`;
+    const varValue = JSON.stringify(responseJson);
+    await createVariable(projectId, {
+      name: varName,
+      value: varValue,
+      type: "OBJECT" as FrontEndTypes,
+      isGlobal: false,
+      pageId: router.query.page as string,
+      defaultValue: varValue,
+    });
 
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
