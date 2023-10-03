@@ -1,5 +1,6 @@
 import classes from "@/components/ai/AITextArea.module.css";
 import { Icon } from "@/components/Icon";
+import { AIRequestTypes } from "@/requests/ai/types";
 import { useEditorStore } from "@/stores/editor";
 import { Flex, Popover, Text } from "@mantine/core";
 import { RichTextEditor } from "@mantine/tiptap";
@@ -12,6 +13,7 @@ import { useState } from "react";
 type Props = {
   value: string;
   onChange: (value: string) => void;
+  onTypeChange?: (type: AIRequestTypes) => void;
   items: AITextAreaItem[];
 };
 
@@ -19,11 +21,11 @@ const FeatureHighlight = Highlight.extend<HighlightOptions>({
   name: "featureHighlight",
 });
 
-const ActionHighlight = Highlight.extend<HighlightOptions>({
-  name: "actionHighlight",
-});
+// const ActionHighlight = Highlight.extend<HighlightOptions>({
+//   name: "actionHighlight",
+// });
 
-export const AITextArea = ({ value, onChange, items }: Props) => {
+export const AITextArea = ({ value, onChange, onTypeChange, items }: Props) => {
   const [showFeatures, setFeature] = useState<boolean>(false);
   const theme = useEditorStore((state) => state.theme);
 
@@ -38,23 +40,21 @@ export const AITextArea = ({ value, onChange, items }: Props) => {
           class: classes["feature-highlight"],
         },
       }),
-      ActionHighlight.configure({
-        multicolor: true,
-        HTMLAttributes: {
-          class: classes["action-highlight"],
-        },
-      }),
+      // ActionHighlight.configure({
+      //   multicolor: true,
+      //   HTMLAttributes: {
+      //     class: classes["action-highlight"],
+      //   },
+      // }),
       Placeholder.configure({
-        placeholder: "I want to Add / Change / Remove...",
+        placeholder: "I want to ...",
       }),
     ],
     onUpdate: ({ editor }) => {
       const inputText = editor.getText();
-
       clearPreviousHighlights(editor);
 
       const matchedFeatureItem = findMatchingItem(items, inputText);
-      const matchedActionItem = findMatchingItem(actionItems, inputText);
 
       applyHighlightIfMatched(
         matchedFeatureItem,
@@ -62,12 +62,8 @@ export const AITextArea = ({ value, onChange, items }: Props) => {
         editor,
         inputText,
       );
-      applyHighlightIfMatched(
-        matchedActionItem,
-        "actionHighlight",
-        editor,
-        inputText,
-      );
+      if (matchedFeatureItem && onTypeChange)
+        onTypeChange(matchedFeatureItem.type);
 
       const filteredFeatures = getFilteredItems(items, inputText);
       const isShowingFeatures =
@@ -75,7 +71,6 @@ export const AITextArea = ({ value, onChange, items }: Props) => {
       setFeature(isShowingFeatures);
       onChange(inputText);
     },
-
     onFocus: ({ editor }) => {
       const inputValue = editor.getText();
       const filtered = getFilteredItems(items, inputValue);
@@ -109,8 +104,20 @@ export const AITextArea = ({ value, onChange, items }: Props) => {
                 },
               }}
               onClick={() => {
-                editor?.commands.setContent(`${item.name} `, false);
+                const newText = `${item.name} `;
+                editor?.commands.setContent(newText, false);
                 setFeature(false);
+                onTypeChange && onTypeChange(item.type);
+                applyHighlightIfMatched(
+                  {
+                    name: item.name,
+                    type: item.type,
+                    icon: item.icon,
+                  },
+                  "featureHighlight",
+                  editor,
+                  newText,
+                );
               }}
             >
               <Icon name={item.icon} style={{ color: theme.colors.teal[6] }} />
@@ -132,26 +139,27 @@ const getFilteredItems = (featureItems: AITextAreaItem[], input: string) => {
 export type AITextAreaItem = {
   name: string;
   icon: string;
+  type: AIRequestTypes;
 };
 
-const actionItems: AITextAreaItem[] = [
-  {
-    name: "Add",
-    icon: "IconPlus",
-  },
-  {
-    name: "Change",
-    icon: "IconEdit",
-  },
-  {
-    name: "Remove",
-    icon: "IconTrash",
-  },
-];
+// const actionItems: AITextAreaItem[] = [
+//   {
+//     name: "Add",
+//     icon: "IconPlus",
+//   },
+//   {
+//     name: "Change",
+//     icon: "IconEdit",
+//   },
+//   {
+//     name: "Remove",
+//     icon: "IconTrash",
+//   },
+// ];
 
 // Clear previously set highlights
 function clearPreviousHighlights(editor: any): void {
-  editor.commands.unsetMark("actionHighlight");
+  //editor.commands.unsetMark("actionHighlight");
   editor.commands.unsetMark("featureHighlight");
 }
 

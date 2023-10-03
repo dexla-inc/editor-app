@@ -14,7 +14,6 @@ import {
 } from "@/utils/editor";
 import {
   createHandlers,
-  descriptionPlaceholderMapping,
   handleRequestContentStream,
   processTOMLStream,
 } from "@/utils/streamingAI";
@@ -101,12 +100,19 @@ type DescriptionPlaceHolderType = {
   replaceText: string;
 };
 
+type CssModiferAIResponse = {
+  css: Record<string, string | number>;
+};
+
+type CssModifer = {
+  modifiers: Record<string, string | number>;
+  selectedComponentId: string;
+};
+
 export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
   const [openedAIModal, { open, close }] = useDisclosure(false);
-  const [type, setType] = useState<AIRequestTypes>("COMPONENT");
+  const [type, setType] = useState<AIRequestTypes>("CSS_MODIFIER");
   const [description, setDescription] = useState("");
-  const [descriptionPlaceholder, setDescriptionPlaceholder] =
-    useState<DescriptionPlaceHolderType>(descriptionPlaceholderMapping[type]);
   const isLoading = useAppStore((state) => state.isLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
@@ -125,26 +131,46 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
   );
   const tree = useEditorStore((state) => state.tree);
   const theme = useEditorStore((state) => state.theme);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
   const [stream, setStream] = useState<string>("");
+  const [modifier, setModifier] = useState<CssModifer>();
 
   const { onMessage, onError, onOpen, onClose } = createHandlers({
     setStream,
-    type,
-    componentBeingAddedId,
-    updateTreeComponent,
     setIsLoading,
     stopLoading,
   });
 
+  const handleCssGeneration = () => {
+    return function (json: CssModiferAIResponse) {
+      if (!selectedComponentId || selectedComponentId === "content-wrapper") {
+        console.error("No selected component id");
+        return;
+      }
+      const selectedComponent: CssModifer = {
+        modifiers: json.css,
+        selectedComponentId: selectedComponentId,
+      };
+
+      setModifier(selectedComponent);
+    };
+  };
+
+  useEffect(() => {
+    console.log(modifier);
+  }, [modifier]);
+
   const closeModal = () => {
     close();
     setDescription("");
-    setType("COMPONENT");
+    setType("CSS_MODIFIER");
   };
 
   const form = useForm({
     initialValues: {
-      type: "COMPONENT",
+      type: type,
       description: "",
     },
   });
@@ -177,13 +203,32 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
         });
 
         break;
+      case "CSS_MODIFIER":
+        processTOMLStream<CssModiferAIResponse>({
+          stream,
+          handler: handleCssGeneration(),
+        });
+
+        break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stream, type]);
+  }, [stream]);
 
   const onSubmit = async (values: any) => {
     setIsLoading(true);
     closeModal();
+
+    const onCloseOverride = async () => {
+      if (type === "COMPONENT" || type === "LAYOUT") {
+        if (componentBeingAddedId.current) {
+          updateTreeComponent(componentBeingAddedId.current, {
+            isBeingAdded: false,
+          });
+        }
+      }
+
+      await onClose();
+    };
 
     await handleRequestContentStream(
       projectId,
@@ -192,18 +237,18 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
       onMessage,
       onError,
       onOpen,
-      onClose,
+      onCloseOverride,
     );
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Check if Enter key was pressed without Shift key
-    if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
-      event.preventDefault();
+  // const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  //   // Check if Enter key was pressed without Shift key
+  //   if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+  //     event.preventDefault();
 
-      onSubmit(form.values);
-    }
-  };
+  //     onSubmit(form.values);
+  //   }
+  // };
 
   return (
     <>
@@ -223,29 +268,41 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
         title="Generate AI Content"
       >
         <form onSubmit={form.onSubmit(onSubmit)}>
-          <Stack pb={150}>
+          <Stack pb={180}>
             <AITextArea
               value={description}
               onChange={(value) => {
                 form.setFieldValue("description", value);
                 setDescription(value);
               }}
+              onTypeChange={(newType) => {
+                setType(newType);
+              }}
               items={[
                 {
-                  name: "API",
-                  icon: "IconDatabase",
-                },
-                {
-                  name: "Components",
+                  name: "Add components",
                   icon: "IconComponents",
+                  type: "COMPONENT",
                 },
                 {
-                  name: "Layout",
+                  name: "Change styling",
+                  icon: "IconPalette",
+                  type: "CSS_MODIFIER",
+                },
+                {
+                  name: "Add an API",
+                  icon: "IconDatabase",
+                  type: "API",
+                },
+                {
+                  name: "Change layout",
                   icon: "IconLayout",
+                  type: "LAYOUT",
                 },
                 {
-                  name: "Page",
+                  name: "Add a page",
                   icon: "IconFileDescription",
+                  type: "PAGE_NAMES",
                 },
               ]}
             />
@@ -258,30 +315,6 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
               Generate
             </Button>
           </Stack>
-          {/* <List
-              spacing="xs"
-              size="sm"
-              center
-              icon={
-                <ThemeIcon color="teal" size={24} radius="xl">
-                  <Icon name="IconCircleCheck" />
-                </ThemeIcon>
-              }
-            >
-              <List.Item>Components</List.Item>
-              <List.Item>API</List.Item>
-              <List.Item>Layout</List.Item>
-              <List.Item>aa</List.Item>
-              <List.Item
-                icon={
-                  <ThemeIcon color="blue" size={24} radius="xl">
-                    <Icon name="IconCircleDashed" />
-                  </ThemeIcon>
-                }
-              >
-                aaa
-              </List.Item>
-            </List> */}
         </form>
       </Modal>
     </>

@@ -5,7 +5,8 @@ export type AIRequestTypes =
   | "DESIGN"
   | "DATA"
   | "API"
-  | "PAGE_NAMES";
+  | "PAGE_NAMES"
+  | "CSS_MODIFIER";
 
 type AIRoleTypes = "USER" | "ASSISTANT";
 

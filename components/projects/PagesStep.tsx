@@ -83,13 +83,11 @@ export default function PagesStep({
 
   const { onMessage, onError, onOpen, onClose } = createHandlers({
     setStream,
-    type,
     stopLoading,
     setIsLoading,
   });
 
   const onCloseOverride = async () => {
-    console.log("Closing stream");
     await onClose();
     setInitialPageFetchDone(true);
   };
@@ -106,7 +104,7 @@ export default function PagesStep({
       onError,
       onOpen,
       onCloseOverride,
-      pages.join()
+      pages.join(),
     );
   };
 
@@ -153,7 +151,7 @@ export default function PagesStep({
           authenticatedOnly: false,
         } as PageBody;
       }) as PageBody[],
-      projectId
+      projectId,
     );
   };
 
