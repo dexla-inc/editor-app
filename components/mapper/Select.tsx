@@ -1,6 +1,11 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { Loader, Select as MantineSelect, SelectProps } from "@mantine/core";
+import {
+  Loader,
+  Select as MantineSelect,
+  SelectItem,
+  SelectProps,
+} from "@mantine/core";
 import get from "lodash.get";
 import { memo } from "react";
 import merge from "lodash.merge";
@@ -52,7 +57,7 @@ const SelectComponent = ({
       {...triggers}
       withinPortal={false}
       maxDropdownHeight={120}
-      data={(data as Array<any>).map((d: any) => {
+      data={(data as SelectItem[]).map((d: any) => {
         return {
           label: d.label ?? d[keys[1]],
           value: d.value ?? d[keys[0]],
