@@ -1,6 +1,13 @@
+import {
+  createLogicFlow,
+  patchLogicFlow,
+} from "@/requests/logicflows/mutations";
+import { getLogicFlow } from "@/requests/logicflows/queries";
+import { LogicFlowParams } from "@/requests/logicflows/types";
 import { useAppStore } from "@/stores/app";
 import { initialEdges, initialNodes, useFlowStore } from "@/stores/flow";
 import { encodeSchema } from "@/utils/compression";
+import { convertToPatchParams } from "@/utils/dashboardTypes";
 import { Button, Checkbox, Modal, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -21,13 +28,13 @@ export const LogicFlowFormModal = () => {
   const updateFlow = useMutation({
     mutationKey: ["logic-flow", currentFlowId],
     mutationFn: async (values: any) => {
-      return await fetch(`/api/logic-flows/update`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...values, id: currentFlowId }),
-      });
+      const patchParams =
+        convertToPatchParams<Partial<LogicFlowParams>>(values);
+      return await patchLogicFlow(
+        router.query.id as string,
+        currentFlowId as string,
+        patchParams,
+      );
     },
     onSettled: async () => {
       await client.refetchQueries([
@@ -52,17 +59,10 @@ export const LogicFlowFormModal = () => {
         nodes: initialNodes,
       };
 
-      return await fetch(`/api/logic-flows/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...values,
-          data: encodeSchema(JSON.stringify(newFlow)),
-          projectId: router.query.id,
-          pageId: router.query.page,
-        }),
+      return createLogicFlow(router.query.id as string, {
+        ...values,
+        data: encodeSchema(JSON.stringify(newFlow)),
+        pageId: router.query.page,
       });
     },
     onSettled: async (data) => {
@@ -73,9 +73,7 @@ export const LogicFlowFormModal = () => {
       ]);
       setShowFormModal(false);
 
-      const json = await data?.json();
-
-      if (!json.id) {
+      if (!data?.id) {
         stopLoading({
           id: "logic-flows",
           title: "Oops",
@@ -90,7 +88,7 @@ export const LogicFlowFormModal = () => {
         });
 
         router.push(
-          `/projects/${router.query.id}/editor/${router.query.page}/flows/${json.id}`,
+          `/projects/${router.query.id}/editor/${router.query.page}/flows/${data.id}`,
         );
       }
     },
@@ -130,8 +128,10 @@ export const LogicFlowFormModal = () => {
   useEffect(() => {
     if (currentFlowId) {
       const getLogicFLow = async () => {
-        const response = await fetch(`/api/logic-flows/${currentFlowId}`);
-        const flow = await response.json();
+        const flow = await getLogicFlow(
+          router.query.id as string,
+          currentFlowId,
+        );
 
         form.setValues({
           name: flow.name,
@@ -147,7 +147,7 @@ export const LogicFlowFormModal = () => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFlowId]);
+  }, [router.query.id, currentFlowId]);
 
   return (
     <Modal

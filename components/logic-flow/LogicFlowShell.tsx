@@ -19,10 +19,10 @@ import { useEditorStore } from "@/stores/editor";
 import { ErrorBoundary } from "react-error-boundary";
 import { useFlowStore } from "@/stores/flow";
 import { LogicFlowFormModal } from "@/components/logic-flow/LogicFlowFormModal";
-import { LogicFlow } from "@prisma/client";
+import { LogicFlowResponse } from "@/requests/logicflows/types";
 
 export interface ShellProps extends AppShellProps {
-  flow?: LogicFlow;
+  flow?: LogicFlowResponse;
 }
 
 export const LogicFlowShell = ({

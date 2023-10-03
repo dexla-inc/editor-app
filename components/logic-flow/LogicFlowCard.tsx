@@ -15,14 +15,14 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { useRouter } from "next/router";
 import { nodesData } from "@/utils/logicFlows";
 import { IconCopy, IconDots, IconEdit, IconTrashX } from "@tabler/icons-react";
-import { LogicFlow } from "@prisma/client";
 import { Edge, Node } from "reactflow";
 import { decodeSchema } from "@/utils/compression";
+import { LogicFlowResponse } from "@/requests/logicflows/types";
 
 dayjs.extend(relativeTime);
 
 type FlowCardProps = {
-  flow: Partial<LogicFlow>;
+  flow: Partial<LogicFlowResponse>;
   onDelete?: () => void;
   onDuplicate?: () => void;
   onEdit?: () => void;

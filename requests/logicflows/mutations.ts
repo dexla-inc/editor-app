@@ -4,7 +4,7 @@ import {
 } from "@/requests/logicflows/types";
 import { PatchParams } from "@/requests/types";
 import { del, patch, post } from "@/utils/api";
-import { SuccessResponse } from "../datasources/types";
+import { SuccessResponse } from "@/requests/datasources/types";
 
 export const createLogicFlow = async (
   projectId: string,
@@ -20,7 +20,7 @@ export const createLogicFlow = async (
   return response;
 };
 
-export const patchVariable = async (
+export const patchLogicFlow = async (
   projectId: string,
   id: string,
   params: PatchParams[],
@@ -35,7 +35,7 @@ export const patchVariable = async (
   return response;
 };
 
-export const deleteVariable = async (projectId: string, id: string) => {
+export const deleteLogicFlow = async (projectId: string, id: string) => {
   let url = `/projects/${projectId}/logicflows/${id}`;
 
   const response = (await del<SuccessResponse>(url)) as SuccessResponse;

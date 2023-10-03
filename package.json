@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "yarn prisma generate && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "lint-staged",
     "prepare": "husky install"
@@ -25,7 +25,6 @@
     "@mantine/tiptap": "6.0.21",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@monaco-editor/react": "^4.5.2",
-    "@prisma/client": "5.3.1",
     "@propelauth/react": "^2.0.10",
     "@react-google-maps/api": "^2.19.2",
     "@tabler/icons-react": "^2.35.0",
@@ -39,7 +38,6 @@
     "@types/node": "20.6.0",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
-    "add": "^2.0.6",
     "apexcharts": "^3.41.0",
     "dayjs": "^1.11.10",
     "eslint": "8.49.0",
@@ -86,7 +84,6 @@
     "husky": "^8.0.0",
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.3",
-    "prisma": "^5.3.1",
     "tsc-files": "^1.1.4"
   }
 }

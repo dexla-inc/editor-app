@@ -9,9 +9,11 @@ export type LogicFlowParams = {
 
 export type LogicFlowPagingParams = PagingParams & {
   pageId?: string;
-  isGlobal: boolean;
+  isGlobal?: boolean;
 };
 
 export type LogicFlowResponse = LogicFlowParams & {
   id: string;
+  createdAt: number;
+  updatedAt: number;
 };

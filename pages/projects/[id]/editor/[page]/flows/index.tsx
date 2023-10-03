@@ -1,7 +1,14 @@
 import { LogicFlowCard } from "@/components/logic-flow/LogicFlowCard";
 import { LogicFlowShell } from "@/components/logic-flow/LogicFlowShell";
+import {
+  createLogicFlow,
+  deleteLogicFlow,
+} from "@/requests/logicflows/mutations";
+import { listLogicFlows } from "@/requests/logicflows/queries";
+import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
-import { useFlowStore } from "@/stores/flow";
+import { initialEdges, initialNodes, useFlowStore } from "@/stores/flow";
+import { encodeSchema } from "@/utils/compression";
 import { ASIDE_WIDTH, HEADER_HEIGHT } from "@/utils/config";
 import {
   Box,
@@ -11,7 +18,6 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
-import { LogicFlow } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import { useEffect } from "react";
@@ -46,11 +52,8 @@ export default function LogicFlowsPage({ id, page }: Props) {
   const { data, isLoading } = useQuery({
     queryKey: ["logic-flows", id, page],
     queryFn: async () => {
-      const response = await fetch(
-        `/api/logic-flows?projectId=${id}&pageId=${page}`,
-      );
-      const json = await response.json();
-      return json ?? [];
+      const response = await listLogicFlows(id, { pageId: page });
+      return response.results ?? [];
     },
     enabled: !!id && !!page,
   });
@@ -58,13 +61,7 @@ export default function LogicFlowsPage({ id, page }: Props) {
   const duplicateFlow = useMutation({
     mutationKey: ["logic-flow"],
     mutationFn: async (values: any) => {
-      return await fetch(`/api/logic-flows/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
+      return createLogicFlow(id as string, values);
     },
     onSettled: async () => {
       await client.refetchQueries(["logic-flows", id, page]);
@@ -73,21 +70,15 @@ export default function LogicFlowsPage({ id, page }: Props) {
 
   const deleteFlow = useMutation({
     mutationKey: ["logic-flow"],
-    mutationFn: async (id: string) => {
-      return await fetch(`/api/logic-flows/delete`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id }),
-      });
+    mutationFn: async (flowId: string) => {
+      return await deleteLogicFlow(id, flowId);
     },
     onSettled: async () => {
       await client.refetchQueries(["logic-flows", id, page]);
     },
   });
 
-  const logicFlows = (data ?? []) as LogicFlow[];
+  const logicFlows = (data ?? []) as LogicFlowResponse[];
 
   useEffect(() => {
     if (id && page) {
@@ -124,7 +115,7 @@ export default function LogicFlowsPage({ id, page }: Props) {
           </Box>
         )}
         <Group>
-          {logicFlows?.map((flow: LogicFlow) => {
+          {logicFlows?.map((flow: LogicFlowResponse) => {
             return (
               <LogicFlowCard
                 key={flow.id}
@@ -139,7 +130,6 @@ export default function LogicFlowsPage({ id, page }: Props) {
                   await duplicateFlow.mutate({
                     name: flow.name!,
                     data: flow.data,
-                    projectId: flow.projectId,
                     pageId: flow.pageId,
                     isGlobal: flow.isGlobal ?? false,
                   });

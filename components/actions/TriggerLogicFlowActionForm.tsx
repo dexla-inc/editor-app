@@ -7,10 +7,11 @@ import {
   useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
+import { listLogicFlows } from "@/requests/logicflows/queries";
+import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { TriggerLogicFlowAction } from "@/utils/actions";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { LogicFlow } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
@@ -29,11 +30,8 @@ export const TriggerLogicFlowActionForm = ({ id }: Props) => {
   const { data: flows } = useQuery({
     queryKey: ["logic-flows", projectId, pageId],
     queryFn: async () => {
-      const response = await fetch(
-        `/api/logic-flows?projectId=${projectId}&pageId=${pageId}`,
-      );
-      const json = await response.json();
-      return json ?? [];
+      const response = await listLogicFlows(projectId, { pageId });
+      return response.results ?? [];
     },
     enabled: !!projectId && !!pageId,
   });
@@ -77,7 +75,7 @@ export const TriggerLogicFlowActionForm = ({ id }: Props) => {
           size="xs"
           label="Logic Flow to trigger"
           placeholder="Select a flow"
-          data={(flows ?? [])?.map((flow: LogicFlow) => {
+          data={(flows ?? [])?.map((flow: LogicFlowResponse) => {
             return {
               label: flow.name,
               value: flow.id,

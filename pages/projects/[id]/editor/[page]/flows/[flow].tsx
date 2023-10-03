@@ -1,13 +1,16 @@
 import { FlowNode } from "@/components/logic-flow/FlowNode";
 import { LogicFlow } from "@/components/logic-flow/LogicFlow";
 import { LogicFlowShell } from "@/components/logic-flow/LogicFlowShell";
+import { patchLogicFlow } from "@/requests/logicflows/mutations";
+import { getLogicFlow } from "@/requests/logicflows/queries";
+import { LogicFlowParams } from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
 import { FlowData, useFlowStore } from "@/stores/flow";
 import { decodeSchema, encodeSchema } from "@/utils/compression";
 import { ASIDE_WIDTH, HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
+import { convertToPatchParams } from "@/utils/dashboardTypes";
 import { matchQuery } from "@/utils/filter";
 import { PossibleNodes, nodes, nodesData } from "@/utils/logicFlows";
-import { prisma } from "@/utils/prisma";
 import { removeKeysRecursive } from "@/utils/removeKeys";
 import {
   Aside,
@@ -42,9 +45,7 @@ export const getServerSideProps = async ({
   const flowId = query.flow as string;
 
   await queryClient.prefetchQuery(["logic-flow", flowId], async () => {
-    return await prisma.logicFlow.findFirst({
-      where: { id: flowId as string },
-    });
+    return await getLogicFlow(query.id! as string, flowId);
   });
 
   return {
@@ -89,9 +90,7 @@ export default function LogicFlowsPage({ id, pageId, flowId }: Props) {
   const { data: flow } = useQuery({
     queryKey: ["logic-flow", id, pageId],
     queryFn: async () => {
-      const response = await fetch(`/api/logic-flows/${flowId}`);
-      const json = await response.json();
-      return json;
+      return await getLogicFlow(id, flowId);
     },
     enabled: !!flowId,
   });
@@ -100,16 +99,15 @@ export default function LogicFlowsPage({ id, pageId, flowId }: Props) {
     mutationKey: ["logic-flow", flow?.id],
     mutationFn: async ({ values }: any) => {
       setIsUpdating(true);
-      const response = await fetch(`/api/logic-flows/update`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          data: encodeSchema(JSON.stringify(values.data)),
-          id: flow?.id,
-        }),
+      const patchParams = convertToPatchParams<Partial<LogicFlowParams>>({
+        data: encodeSchema(JSON.stringify(values.data)),
       });
+      const response = await patchLogicFlow(
+        id,
+        flow?.id as string,
+        patchParams,
+      );
+
       setIsUpdating(false);
 
       return response;

@@ -3,11 +3,12 @@ import * as StartNodeExports from "@/components/logic-flow/nodes/StartNode";
 import * as ActionNodeExports from "@/components/logic-flow/nodes/ActionNode";
 import * as ConditionalNodeExports from "@/components/logic-flow/nodes/ConditionalNode";
 import { computeNodeMapper } from "@/components/logic-flow/nodes/compute";
-import { LogicFlow } from "@prisma/client";
 import { decodeSchema } from "@/utils/compression";
 import { FlowData } from "@/stores/flow";
 import { checkIfValid } from "@/utils/triggerConditions";
 import { NodeOutput } from "@/components/logic-flow/nodes/CustomNode";
+import { LogicFlowResponse } from "@/requests/logicflows/types";
+import { getLogicFlow } from "@/requests/logicflows/queries";
 
 const { StartNode, data: startNodeData, ...startNode } = StartNodeExports;
 const { ActionNode, data: actionNodeData, ...actionNode } = ActionNodeExports;
@@ -141,8 +142,10 @@ const run = async (state: FlowData, params: any) => {
 
 export const executeFlow = async (flowId: string, params: any) => {
   try {
-    const response = await fetch(`/api/logic-flows/${flowId}`);
-    const flow: LogicFlow = await response.json();
+    const flow: LogicFlowResponse = await getLogicFlow(
+      params.router.query.id,
+      flowId,
+    );
     const flowData: FlowData = JSON.parse(decodeSchema(flow.data as string));
     await run(flowData, params);
   } catch (error) {
