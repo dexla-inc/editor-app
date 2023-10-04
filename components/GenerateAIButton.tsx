@@ -1,3 +1,4 @@
+import { Icon } from "@/components/Icon";
 import { AITextArea } from "@/components/ai/AITextArea";
 import { AIRequestTypes } from "@/requests/ai/types";
 import { PageResponse } from "@/requests/pages/types";
@@ -35,7 +36,6 @@ import { IconSparkles } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { Icon } from "./Icon";
 
 type ComponentGenerationProps = {
   componentBeingAddedId: MutableRefObject<string | undefined>;
@@ -62,54 +62,9 @@ type LayoutGenerationProps = {
   ) => void;
 };
 
-const handleComponentGeneration = (params: ComponentGenerationProps) => {
-  return function (tomlData: any) {
-    const {
-      componentBeingAddedId,
-      theme,
-      updateTreeComponentChildren,
-      setTree,
-      pages,
-      tree,
-    } = params;
-
-    const newComponents = getNewComponents(tomlData, theme, pages);
-
-    const id = getComponentBeingAddedId(tree.root);
-
-    if (!id) {
-      const copy = cloneDeep(tree);
-      addComponent(copy.root, newComponents, {
-        id: "content-wrapper",
-        edge: "bottom",
-      });
-      setTree(copy, { action: `Added ${newComponents.name}` });
-    } else {
-      componentBeingAddedId.current = id;
-      updateTreeComponentChildren(id, newComponents.children!);
-    }
-  };
-};
-
-const handleLayoutGeneration = (params: LayoutGenerationProps) => {
-  return function (tomlData: any) {
-    const { theme, pages, setTree } = params;
-
-    const tree = getEditorTreeFromPageStructure(tomlData, theme, pages);
-
-    setTree(tree, { action: `Layout changed` });
-  };
-};
-
 type GenerateAIButtonProps = {
   projectId: string;
   pageTitle?: string | undefined;
-};
-
-type DescriptionPlaceHolderType = {
-  description: string;
-  placeholder: string;
-  replaceText: string;
 };
 
 type CssModiferAIResponse = {
@@ -155,6 +110,45 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
     stopLoading,
   });
 
+  const handleComponentGeneration = (params: ComponentGenerationProps) => {
+    return function (tomlData: any) {
+      const {
+        componentBeingAddedId,
+        theme,
+        updateTreeComponentChildren,
+        setTree,
+        pages,
+        tree,
+      } = params;
+
+      const newComponents = getNewComponents(tomlData, theme, pages);
+
+      const id = getComponentBeingAddedId(tree.root);
+
+      if (!id) {
+        const copy = cloneDeep(tree);
+        addComponent(copy.root, newComponents, {
+          id: "content-wrapper",
+          edge: "bottom",
+        });
+        setTree(copy, { action: `Added ${newComponents.name}` });
+      } else {
+        componentBeingAddedId.current = id;
+        updateTreeComponentChildren(id, newComponents.children!);
+      }
+    };
+  };
+
+  const handleLayoutGeneration = (params: LayoutGenerationProps) => {
+    return function (tomlData: any) {
+      const { theme, pages, setTree } = params;
+
+      const tree = getEditorTreeFromPageStructure(tomlData, theme, pages);
+
+      setTree(tree, { action: `Layout changed` });
+    };
+  };
+
   const handleCssGeneration = () => {
     return function (json: CssModiferAIResponse) {
       if (!selectedComponentId || selectedComponentId === "content-wrapper") {
@@ -162,8 +156,9 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
         return;
       }
 
-      Object.keys(json.css).map((key) => {
-        console.log(key, json.css[key]);
+      const cssKeys = Object.keys(json.css);
+
+      cssKeys.map((key) => {
         debouncedTreeComponentStyleUpdate(key, json.css[key]);
       });
 
@@ -176,14 +171,9 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
     };
   };
 
-  useEffect(() => {
-    console.log(modifier);
-  }, [modifier]);
-
   const closeModal = () => {
     close();
     setDescription("");
-    setType("CSS_MODIFIER");
   };
 
   const form = useForm({
