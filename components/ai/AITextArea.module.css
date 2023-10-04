@@ -9,3 +9,7 @@ mark.action-highlight {
   padding: 2px;
   border-radius: 2px;
 }
+
+.rich-text-editor-content {
+  min-height: 100px;
+}
