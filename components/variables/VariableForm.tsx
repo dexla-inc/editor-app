@@ -2,15 +2,15 @@ import { createVariable } from "@/requests/variables/mutations";
 import { getVariable } from "@/requests/variables/queries";
 import { VariableTypesOptions } from "@/requests/variables/types";
 import {
+  Button,
+  Checkbox,
+  Select,
   Stack,
   TextInput,
-  Select,
   Textarea,
-  Checkbox,
-  Button,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 type VariablesFormValues = {
@@ -106,12 +106,8 @@ export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
           {...form.getInputProps("isGlobal", { type: "checkbox" })}
         />
 
-        <Button
-          type="submit"
-          loading={createVariablesMutation.isLoading}
-          disabled={createVariablesMutation.isLoading}
-        >
-          {variableId ? "Edit" : "Create"} Variable
+        <Button type="submit" loading={createVariablesMutation.isLoading}>
+          {variableId ? "Save" : "Create"} Variable
         </Button>
       </Stack>
     </form>

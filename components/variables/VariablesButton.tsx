@@ -1,3 +1,4 @@
+import { VariableForm } from "@/components/variables/VariableForm";
 import {
   Button,
   ButtonProps,
@@ -7,7 +8,6 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
-import { VariableForm } from "@/components/variables/VariableForm";
 import { VariableList } from "./VariableList";
 
 type Props = ButtonProps & {
@@ -29,7 +29,7 @@ export const VariablesButton = ({ projectId, pageId, ...rest }: Props) => {
         opened={opened}
         onClose={modal.close}
         centered
-        size="auto"
+        size="lg"
       >
         <SegmentedControl
           size="sm"
@@ -37,12 +37,12 @@ export const VariablesButton = ({ projectId, pageId, ...rest }: Props) => {
           fullWidth
           onChange={setMode}
           data={[
-            { label: "List", value: "list" },
+            { label: "Existing", value: "list" },
             { label: "Create", value: "create" },
           ]}
         />
         {mode === "create" && (
-          <Stack mt="xl" miw="700px">
+          <Stack mt="xl">
             <VariableForm projectId={projectId} pageId={pageId} />
           </Stack>
         )}

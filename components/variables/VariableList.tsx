@@ -90,17 +90,17 @@ export const VariableList = ({ projectId, pageId }: Props) => {
   return (
     <>
       <ScrollArea h={300}>
+        <TextInput
+          placeholder="Search"
+          mb="xs"
+          icon={<IconSearch size={14} />}
+          defaultValue={filter}
+          onChange={(event) => {
+            setFilter(event.currentTarget.value);
+          }}
+        />
         {rows.length > 0 && (
           <Stack>
-            <TextInput
-              placeholder="Search"
-              mb="xs"
-              icon={<IconSearch size={14} />}
-              defaultValue={filter}
-              onChange={(event) => {
-                setFilter(event.currentTarget.value);
-              }}
-            />
             <Table striped highlightOnHover withBorder withColumnBorders>
               <thead>
                 <tr>
@@ -117,7 +117,7 @@ export const VariableList = ({ projectId, pageId }: Props) => {
           </Stack>
         )}
         {rows.length === 0 && (
-          <Stack w="700px">
+          <Stack>
             <Center>
               <Text color="dimmed" size="xs">
                 No variables here yet
