@@ -47,6 +47,7 @@ import { getVariable } from "@/requests/variables/queries";
 import { BindVariableToComponentFlowActionForm } from "@/components/actions/logic-flow-forms/BindVariableToComponentFlowActionForm";
 import { APICallFlowActionForm } from "@/components/actions/logic-flow-forms/APICallFlowActionForm";
 import { OpenModalFlowActionForm } from "@/components/actions/logic-flow-forms/OpenModalFlowActionForm";
+import { OpenDrawerFlowActionForm } from "@/components/actions/logic-flow-forms/OpenDrawerFlowActionForm";
 
 const triggers = [
   "onClick",
@@ -1137,6 +1138,7 @@ export const actionMapper = {
   openDrawer: {
     action: openDrawerAction,
     form: OpenDrawerActionForm,
+    flowForm: OpenDrawerFlowActionForm,
   },
   triggerLogicFlow: {
     action: triggerLogicFlowAction,
