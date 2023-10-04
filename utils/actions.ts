@@ -787,7 +787,7 @@ export const apiCallAction = async ({
         ? Object.keys(action.binds?.body ?? {}).reduce(
             (body: string, key: string) => {
               // @ts-ignore
-              let value = action.binds[key] as string;
+              let value = action.binds.body[key] as string;
 
               if (value.startsWith(`valueOf_`)) {
                 value = getElementValue(value, iframeWindow);
