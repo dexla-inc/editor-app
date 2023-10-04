@@ -1,3 +1,5 @@
+import { transpile } from "typescript";
+
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { BindPlaceDataActionForm } from "@/components/actions/BindPlaceDataActionForm";
 import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
@@ -24,6 +26,7 @@ import { OpenDrawerFlowActionForm } from "@/components/actions/logic-flow-forms/
 import { OpenModalFlowActionForm } from "@/components/actions/logic-flow-forms/OpenModalFlowActionForm";
 import { OpenToastFlowActionForm } from "@/components/actions/logic-flow-forms/OpenToastFlowActionForm";
 import { SetVariableFlowActionForm } from "@/components/actions/logic-flow-forms/SetVariableFlowActionForm";
+import { CustomJavascriptActionForm } from "@/components/actions/CustomJavascriptActionForm";
 import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { Options } from "@/components/modifiers/GoogleMap";
 import {
@@ -99,6 +102,7 @@ export const actions = [
   { name: "copyToClipboard", group: "Utilities & Tools" },
   { name: "triggerLogicFlow", group: "Utilities & Tools" },
   { name: "changeLanguage", group: "Utilities & Tools" },
+  { name: "customJavascript", group: "Utilities & Tools" },
 ];
 
 type ActionTriggerAll = (typeof triggers)[number];
@@ -242,6 +246,11 @@ export interface ChangeLanguageAction extends BaseAction {
   language: "default" | "french";
 }
 
+export interface CustomJavascriptAction extends BaseAction {
+  name: "customJavascript";
+  code: string;
+}
+
 export type Action = {
   id: string;
   trigger: ActionTrigger;
@@ -318,7 +327,6 @@ export const goToUrlAction = ({ action }: GoToUrlParams) => {
     const path = url.split(`dataPath_`)[1];
     const componentId = path.split(".")[0];
     const component = getComponentById(editorTree.root, componentId);
-    console.log({ component, path });
   }
 
   if (openInNewTab) {
@@ -1090,6 +1098,12 @@ export const changeLanguageAction = ({
   setLanguage(action.language);
 };
 
+// IMPORTANT: do not delete the variable data as it is used in the eval
+export const customJavascriptAction = ({ action, data }: any) => {
+  const codeTranspiled = transpile(action.code);
+  return eval(codeTranspiled);
+};
+
 export const actionMapper = {
   alert: {
     action: debugAction,
@@ -1192,5 +1206,9 @@ export const actionMapper = {
   changeLanguage: {
     action: changeLanguageAction,
     form: ChangeLanguageActionForm,
+  },
+  customJavascript: {
+    action: customJavascriptAction,
+    form: CustomJavascriptActionForm,
   },
 };

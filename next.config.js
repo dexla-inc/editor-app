@@ -7,6 +7,12 @@ const nextConfig = {
     },
   },
   transpilePackages: ["@tabler/icons-react"],
+  webpack: (config) => {
+    // Exclude parsing of large, unchanging dependencies like moment.js
+    config.module.noParse = [require.resolve("typescript/lib/typescript.js")];
+
+    return config;
+  },
 };
 
 module.exports = nextConfig;
