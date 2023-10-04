@@ -186,7 +186,7 @@ export const BindVariableToComponentActionForm = ({ id }: Props) => {
           componentActions={componentActions}
           selectedComponentId={selectedComponentId}
           optionalRemoveAction={removeAction}
-        ></ActionButtons>
+        />
       </Stack>
     </form>
   );

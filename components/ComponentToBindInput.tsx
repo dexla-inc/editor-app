@@ -1,8 +1,14 @@
 import { ComponentToBindActionsPopover } from "@/components/ComponentToBindActionsPopover";
-import { ActionIcon, TextInput } from "@mantine/core";
+import { ActionIcon, TextInput, TextInputProps } from "@mantine/core";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { ICON_SIZE } from "@/utils/config";
 import { useEditorStore } from "@/stores/editor";
+
+type Props = TextInputProps & {
+  componentId?: string;
+  index?: number;
+  onPick: (value: string) => void;
+};
 
 export const ComponentToBindInput = ({
   value,
@@ -11,7 +17,8 @@ export const ComponentToBindInput = ({
   onPick,
   placeholder = "",
   label = "Component to bind",
-}: any) => {
+  ...rest
+}: Props) => {
   const setHighlightedComponentId = useEditorStore(
     (state) => state.setHighlightedComponentId,
   );
@@ -20,11 +27,13 @@ export const ComponentToBindInput = ({
   );
 
   const onBindComponent = () => {
-    setPickingComponentToBindTo({
-      componentId: componentId,
-      trigger: "",
-      onPick,
-    });
+    if (componentId) {
+      setPickingComponentToBindTo({
+        componentId: componentId,
+        trigger: "",
+        onPick,
+      });
+    }
   };
 
   return (
@@ -51,6 +60,7 @@ export const ComponentToBindInput = ({
         input: { paddingRight: "3.65rem" },
         rightSection: { width: "3.65rem" },
       }}
+      {...rest}
     />
   );
 };

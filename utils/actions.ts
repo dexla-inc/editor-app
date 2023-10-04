@@ -44,6 +44,7 @@ import { SetVariableFlowActionForm } from "@/components/actions/logic-flow-forms
 import { FrontEndTypes } from "@/requests/variables/types";
 import { BindVariableToComponentActionForm } from "@/components/actions/BindVariableToComponentActionForm";
 import { getVariable } from "@/requests/variables/queries";
+import { BindVariableToComponentFlowActionForm } from "@/components/actions/logic-flow-forms/BindVariableToComponentFlowActionForm";
 
 const triggers = [
   "onClick",
@@ -1111,6 +1112,7 @@ export const actionMapper = {
   bindVariable: {
     action: bindVariableToComponentAction,
     form: BindVariableToComponentActionForm,
+    flowForm: BindVariableToComponentFlowActionForm,
   },
   goToUrl: {
     action: goToUrlAction,
