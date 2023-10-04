@@ -100,6 +100,7 @@ import { FileButton } from "@/components/mapper/FileButton";
 import { uploadFile } from "@/requests/storage/mutations";
 import { useEditorStore } from "@/stores/editor";
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
+import { Modifiers } from "@/utils/modifiers";
 import {
   IconArrowAutofitContent,
   IconBoxModel,
@@ -812,39 +813,6 @@ export const structureMapper: StructureMapper = {
     icon: <IconLayoutSidebarLeftCollapse size={ICON_SIZE} />,
   },
 };
-
-export type Modifiers =
-  | "spacing"
-  | "size"
-  | "text"
-  | "border"
-  | "layout"
-  | "position"
-  | "background"
-  | "input"
-  | "button"
-  | "title"
-  | "image"
-  | "link"
-  | "icon"
-  | "divider"
-  | "select"
-  | "effects"
-  | "modal"
-  | "boxShadow"
-  | "checkbox"
-  | "table"
-  | "radio"
-  | "radioItem"
-  | "stepper"
-  | "drawer"
-  | "buttonIcon"
-  | "mapSettings"
-  | "fileButton"
-  | "popOver"
-  | "navLink"
-  | "accordionItem"
-  | "switch";
 
 export type ComponentDefinition = {
   Component: any;

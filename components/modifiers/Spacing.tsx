@@ -1,7 +1,7 @@
 import { SpacingControl } from "@/components/modifiers/SpacingControl";
 import { useEditorStore } from "@/stores/editor";
-import { requiredModifiers } from "@/utils/defaults";
 import { getComponentById } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconBoxModel2 } from "@tabler/icons-react";

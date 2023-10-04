@@ -1,7 +1,7 @@
 import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
-import { requiredModifiers } from "@/utils/defaults";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconResize } from "@tabler/icons-react";
