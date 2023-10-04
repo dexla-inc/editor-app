@@ -32,7 +32,7 @@ import {
   getComponentById,
   getComponentParent,
 } from "@/utils/editor";
-import { flattenKeysWithRoot } from "@/utils/flattenKeys";
+import { flattenKeys, flattenKeysWithRoot } from "@/utils/flattenKeys";
 import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
 import { nanoid } from "nanoid";
@@ -42,6 +42,8 @@ import { createVariable, updateVariable } from "@/requests/variables/mutations";
 import { SetVariableActionForm } from "@/components/actions/SetVariableActionForm";
 import { SetVariableFlowActionForm } from "@/components/actions/logic-flow-forms/SetVariableFlowActionForm";
 import { FrontEndTypes } from "@/requests/variables/types";
+import { BindVariableToComponentActionForm } from "@/components/actions/BindVariableToComponentActionForm";
+import { getVariable } from "@/requests/variables/queries";
 
 const triggers = [
   "onClick",
@@ -72,6 +74,7 @@ export const actions = [
   { name: "setVariable", group: "API & Data" },
   { name: "apiCall", group: "API & Data" },
   { name: "bindResponse", group: "API & Data" },
+  { name: "bindVariable", group: "API & Data" },
   { name: "login", group: "API & Data" },
   { name: "bindPlaceData", group: "Third-Party Plugins" },
   { name: "bindPlaceGeometry", group: "Third-Party Plugins" },
@@ -196,6 +199,14 @@ export interface BindResponseToComponentAction extends BaseAction {
   }[];
 }
 
+export interface BindVariableToComponentAction extends BaseAction {
+  name: "bindVariable";
+  component: string;
+  variable: string;
+  variableType: string;
+  path: string;
+}
+
 export interface ReloadComponentAction extends BaseAction {
   name: "reloadComponent";
   componentId: string;
@@ -250,7 +261,8 @@ export type Action = {
     | BindPlaceDataAction
     | BindPlaceGeometryAction
     | TriggerLogicFlowAction
-    | ChangeLanguageAction;
+    | ChangeLanguageAction
+    | BindVariableToComponentAction;
   sequentialTo?: string;
 };
 
@@ -888,6 +900,43 @@ export const bindResponseToComponentAction = ({
   });
 };
 
+export type BindVariableToComponentActionParams = ActionParams & {
+  action: BindVariableToComponentAction;
+};
+
+export const bindVariableToComponentAction = async ({
+  action,
+}: BindVariableToComponentActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const currentProjectId = useEditorStore.getState().currentProjectId;
+
+  if (action.component && action.variable) {
+    const variable = await getVariable(currentProjectId!, action.variable);
+
+    let value = variable.value;
+    if (variable.type === "OBJECT") {
+      const dataFlatten = flattenKeys(JSON.parse(variable.value ?? "{}"));
+
+      value = get(dataFlatten, action.path);
+    }
+
+    updateTreeComponent(
+      action.component,
+      {
+        data: {
+          value,
+          base:
+            variable.type === "OBJECT"
+              ? JSON.parse(variable.value ?? "{}")
+              : undefined,
+        },
+        dataPath: action.path,
+      },
+      false,
+    );
+  }
+};
+
 export const reloadComponentAction = ({
   action,
 }: ReloadComponentActionParams) => {
@@ -1058,6 +1107,10 @@ export const actionMapper = {
   bindResponse: {
     action: bindResponseToComponentAction,
     form: BindResponseToComponentActionForm,
+  },
+  bindVariable: {
+    action: bindVariableToComponentAction,
+    form: BindVariableToComponentActionForm,
   },
   goToUrl: {
     action: goToUrlAction,
