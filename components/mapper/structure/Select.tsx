@@ -10,9 +10,8 @@ export const jsonStructure = (props?: any): Component => {
     description: "Select",
     props: {
       style: {
-        width: "100%",
+        width: "auto",
         height: "auto",
-        flexDirection: "column",
       },
       labelProps: { size: labelSize },
       ...defaultValues,
