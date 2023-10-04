@@ -827,16 +827,6 @@ export const apiCallAction = async ({
     }
 
     const responseJson = await response.json();
-    const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}`;
-    const varValue = JSON.stringify(responseJson);
-    await createVariable(projectId, {
-      name: varName,
-      value: varValue,
-      type: "OBJECT" as FrontEndTypes,
-      isGlobal: false,
-      pageId: router.query.page as string,
-      defaultValue: varValue,
-    });
 
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
@@ -854,6 +844,17 @@ export const apiCallAction = async ({
         data: responseJson,
       });
     }
+
+    const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}`;
+    const varValue = JSON.stringify(responseJson);
+    createVariable(projectId, {
+      name: varName,
+      value: varValue,
+      type: "OBJECT" as FrontEndTypes,
+      isGlobal: false,
+      pageId: router.query.page as string,
+      defaultValue: varValue,
+    });
   } catch (error) {
     console.log({ error });
     if (onError && onError.sequentialTo === actionId) {

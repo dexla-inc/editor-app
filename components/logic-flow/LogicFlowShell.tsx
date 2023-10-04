@@ -20,6 +20,7 @@ import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { ErrorBoundary } from "react-error-boundary";
+import { VariablesButton } from "../variables/VariablesButton";
 
 export interface ShellProps extends AppShellProps {
   flow?: LogicFlowResponse;
@@ -72,6 +73,7 @@ export const LogicFlowShell = ({
               <Button onClick={() => setShowFormModal(true)}>
                 Create Logic Flow
               </Button>
+              <VariablesButton pageId={pageId!} projectId={projectId!} />
               <Button
                 component={Link}
                 variant="default"
