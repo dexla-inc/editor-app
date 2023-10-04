@@ -15,16 +15,27 @@ import {
 } from "@/utils/editor";
 import {
   createHandlers,
+  descriptionPlaceholderMapping,
   handleRequestContentStream,
   processTOMLStream,
 } from "@/utils/streamingAI";
-import { ActionIcon, Button, Modal, Stack } from "@mantine/core";
+import {
+  ActionIcon,
+  Badge,
+  Button,
+  Flex,
+  Modal,
+  Select,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSparkles } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { Icon } from "./Icon";
 
 type ComponentGenerationProps = {
   componentBeingAddedId: MutableRefObject<string | undefined>;
@@ -269,15 +280,50 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
         <IconSparkles size={ICON_SIZE} />
       </ActionIcon>
       <Modal
-        size="md"
+        size="lg"
         opened={openedAIModal}
         onClose={closeModal}
-        title="Generate AI Content"
+        title="What would you like to automate?"
       >
         <form onSubmit={form.onSubmit(onSubmit)}>
-          <Stack pb={180}>
+          <Stack pb={60}>
+            <Flex align="center">
+              <Text size="sm" italic c="dimmed">
+                You can change design by pasting in CSS or add new components
+                and APIs.
+              </Text>
+              <Select
+                value={type}
+                onChange={(value) => setType(value as AIRequestTypes)}
+                data={[
+                  {
+                    label: "Change styling",
+                    value: "CSS_MODIFIER",
+                  },
+                  {
+                    label: "Add components",
+                    value: "COMPONENT",
+                  },
+                  {
+                    label: "Add an API",
+                    value: "API",
+                  },
+                  {
+                    label: "Change layout",
+                    value: "LAYOUT",
+                  },
+                  {
+                    label: "Add a page",
+                    value: "PAGE_NAMES",
+                  },
+                ]}
+              ></Select>
+            </Flex>
             <AITextArea
-              value={description}
+              placeholder={
+                descriptionPlaceholderMapping[type as AIRequestTypes]
+                  .placeholder
+              }
               onChange={(value) => {
                 form.setFieldValue("description", value);
                 setDescription(value);
@@ -313,14 +359,25 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
                 },
               ]}
             />
-            <Button
-              leftIcon={<IconSparkles size={ICON_SIZE} />}
-              type="submit"
-              disabled={isLoading}
-              loading={isLoading}
-            >
-              Generate
-            </Button>
+            <Flex align="center" justify="space-between">
+              <Badge
+                size="lg"
+                color="indigo"
+                leftSection={
+                  <Icon name="IconSparkles" style={{ marginTop: "6px" }} />
+                }
+              >
+                Powered by AI
+              </Badge>
+              <Button
+                leftIcon={<Icon name="IconSparkles" />}
+                type="submit"
+                disabled={isLoading}
+                loading={isLoading}
+              >
+                Generate
+              </Button>
+            </Flex>
           </Stack>
         </form>
       </Modal>

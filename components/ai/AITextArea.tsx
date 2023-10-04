@@ -6,15 +6,15 @@ import { Flex, Popover, Text } from "@mantine/core";
 import { RichTextEditor } from "@mantine/tiptap";
 import { Highlight, HighlightOptions } from "@tiptap/extension-highlight";
 import Placeholder from "@tiptap/extension-placeholder";
-import { useEditor } from "@tiptap/react";
+import { Editor, Extensions } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
-  value: string;
   onChange: (value: string) => void;
   onTypeChange?: (type: AIRequestTypes) => void;
   items: AITextAreaItem[];
+  placeholder: string;
 };
 
 const FeatureHighlight = Highlight.extend<HighlightOptions>({
@@ -25,58 +25,74 @@ const FeatureHighlight = Highlight.extend<HighlightOptions>({
 //   name: "actionHighlight",
 // });
 
-export const AITextArea = ({ value, onChange, onTypeChange, items }: Props) => {
+export const AITextArea = ({
+  onChange,
+  onTypeChange,
+  items,
+  placeholder,
+}: Props) => {
   const [showFeatures, setFeature] = useState<boolean>(false);
+  const [editor, setEditor] = useState<Editor>();
   const theme = useEditorStore((state) => state.theme);
 
   const filteredItems = getFilteredItems(items, "");
+  const extensions = [
+    StarterKit,
+    FeatureHighlight.configure({
+      multicolor: true,
+      HTMLAttributes: {
+        class: classes["feature-highlight"],
+      },
+    }),
+    // ActionHighlight.configure({
+    //   multicolor: true,
+    //   HTMLAttributes: {
+    //     class: classes["action-highlight"],
+    //   },
+    // }),
+    Placeholder.configure({
+      placeholder: placeholder,
+    }),
+  ] as Extensions;
 
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      FeatureHighlight.configure({
-        multicolor: true,
-        HTMLAttributes: {
-          class: classes["feature-highlight"],
-        },
-      }),
-      // ActionHighlight.configure({
-      //   multicolor: true,
-      //   HTMLAttributes: {
-      //     class: classes["action-highlight"],
-      //   },
-      // }),
-      Placeholder.configure({
-        placeholder: "I want to ...",
-      }),
-    ],
-    onUpdate: ({ editor }) => {
-      const inputText = editor.getText();
-      clearPreviousHighlights(editor);
-
-      const matchedFeatureItem = findMatchingItem(items, inputText);
-
-      applyHighlightIfMatched(
-        matchedFeatureItem,
-        "featureHighlight",
-        editor,
-        inputText,
-      );
-      if (matchedFeatureItem && onTypeChange)
-        onTypeChange(matchedFeatureItem.type);
-
-      const filteredFeatures = getFilteredItems(items, inputText);
-      const isShowingFeatures =
-        inputText.trim() === "" || filteredFeatures.length > 0;
-      setFeature(isShowingFeatures);
-      onChange(inputText);
+  const editorProps = {
+    attributes: {
+      class: classes["rich-text-editor-content"],
     },
-    onFocus: ({ editor }) => {
-      const inputValue = editor.getText();
-      const filtered = getFilteredItems(items, inputValue);
-      setFeature(inputValue.trim() === "" || filtered.length > 0);
-    },
-  });
+  } as any;
+
+  const handleEditorUpdate = ({ editor }: { editor: any }) => {
+    const inputText = editor.getText();
+    clearPreviousHighlights(editor);
+
+    const matchedFeatureItem = findMatchingItem(items, inputText);
+
+    applyHighlightIfMatched(
+      matchedFeatureItem,
+      "featureHighlight",
+      editor,
+      inputText,
+    );
+
+    if (matchedFeatureItem && onTypeChange)
+      onTypeChange(matchedFeatureItem.type);
+
+    const filteredFeatures = getFilteredItems(items, inputText);
+    const isShowingFeatures =
+      inputText.trim() === "" || filteredFeatures.length > 0;
+    setFeature(isShowingFeatures);
+    onChange(inputText);
+  };
+
+  useEffect(() => {
+    const editor = new Editor({
+      editorProps: editorProps,
+      extensions: extensions,
+      onUpdate: handleEditorUpdate,
+    });
+    setEditor(editor);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placeholder]);
 
   return (
     <Popover
@@ -85,7 +101,7 @@ export const AITextArea = ({ value, onChange, onTypeChange, items }: Props) => {
       onClose={() => setFeature(false)}
     >
       <Popover.Target>
-        <RichTextEditor editor={editor}>
+        <RichTextEditor editor={editor as Editor}>
           <RichTextEditor.Content />
         </RichTextEditor>
       </Popover.Target>

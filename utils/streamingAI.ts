@@ -55,7 +55,8 @@ export const descriptionPlaceholderMapping: Record<
   },
   CSS_MODIFIER: {
     description: "",
-    placeholder: "",
+    placeholder:
+      "display: flex; width: 220px; padding-bottom: 0px; flex-direction: column; align-items: flex-start; gap: 16px; flex-shrink: 0; align-self: stretch;",
     replaceText: "CSS modifier",
   },
 };

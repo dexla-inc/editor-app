@@ -1,10 +1,12 @@
 import { Icon } from "@/components/Icon";
 import { AITextArea } from "@/components/ai/AITextArea";
 import ApiInfoForm from "@/components/datasources/ApiInfoForm";
+import { AIRequestTypes } from "@/requests/ai/types";
 import { ApiFromAI } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
 import {
   createHandlers,
+  descriptionPlaceholderMapping,
   handleRequestContentStream,
   processTOMLStream,
 } from "@/utils/streamingAI";
@@ -17,7 +19,7 @@ type Props = {
 
 export default function DataSourceAddAPIWithAI({ projectId }: Props) {
   // Generate the AI here, parse it and set the Api with API Endpoints
-  const type = "API" as const;
+  const [type, setType] = useState<AIRequestTypes>("API");
   const [stream, setStream] = useState<string>("");
   const isLoading = useAppStore((state) => state.isLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
@@ -66,10 +68,12 @@ export default function DataSourceAddAPIWithAI({ projectId }: Props) {
       <Stack spacing="xl">
         <Title order={2}>Data Source Settings</Title>
         <AITextArea
-          value={description}
           onChange={(value) => {
             setDescription(value);
           }}
+          placeholder={
+            descriptionPlaceholderMapping[type as AIRequestTypes].placeholder
+          }
           items={[
             {
               name: "API",
