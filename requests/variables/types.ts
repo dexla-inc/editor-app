@@ -5,7 +5,7 @@ export type VariableParams = {
   type: FrontEndTypes;
   defaultValue: string;
   value?: string;
-  isGlobal: boolean;
+  isGlobal?: boolean;
   pageId: string;
 };
 
@@ -30,5 +30,5 @@ export type VariableResponse = VariableParams & {
 
 export type VariablePagingParams = PagingParams & {
   pageId?: string;
-  isGlobal: boolean;
+  isGlobal?: boolean;
 };

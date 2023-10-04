@@ -36,6 +36,7 @@ export const VariableList = ({ projectId, pageId }: Props) => {
         // @ts-ignore
         {
           search: filter,
+          pageId,
         },
       );
       return response;

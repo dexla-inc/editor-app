@@ -128,9 +128,6 @@ export const LogicFlowFormModal = () => {
       });
     }
   };
-  useEffect(() => {
-    console.log(isLoading);
-  }, [isLoading]);
 
   useEffect(() => {
     if (currentFlowId) {

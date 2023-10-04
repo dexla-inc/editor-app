@@ -42,7 +42,7 @@ export const SetVariableActionForm = ({ id }: Props) => {
   const { data: variables } = useQuery({
     queryKey: ["variables", projectId, pageId],
     queryFn: async () => {
-      const response = await listVariables(projectId);
+      const response = await listVariables(projectId, { pageId });
       return response;
     },
     enabled: !!projectId && !!pageId,

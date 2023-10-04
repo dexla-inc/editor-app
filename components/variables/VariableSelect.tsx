@@ -16,7 +16,7 @@ export const VariableSelect = ({ onPick, ...props }: Props) => {
   const { data: variables } = useQuery({
     queryKey: ["variables", projectId, pageId],
     queryFn: async () => {
-      return await listVariables(projectId);
+      return await listVariables(projectId, { pageId });
     },
     enabled: !!projectId && !!pageId,
   });
