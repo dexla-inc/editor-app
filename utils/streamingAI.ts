@@ -3,7 +3,7 @@ import { AIRequestTypes, EventSourceParams } from "@/requests/ai/types";
 import { DexlaNotificationProps } from "@/stores/app";
 import TOML from "@iarna/toml";
 import { EventSourceMessage } from "@microsoft/fetch-event-source";
-import { Dispatch, MutableRefObject, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 type DescriptionPlaceHolderType = {
   description: string;
@@ -53,45 +53,21 @@ export const descriptionPlaceholderMapping: Record<
     placeholder: "",
     replaceText: "Page names",
   },
+  CSS_MODIFIER: {
+    description: "",
+    placeholder: "",
+    replaceText: "CSS modifier",
+  },
 };
 
-type BaseHandlerProps = {
+type HandlerProps = {
   setStream: Dispatch<SetStateAction<string>>;
   stopLoading: (state: DexlaNotificationProps) => void;
   setIsLoading: (isLoading: boolean) => void;
 };
 
-type ComponentOrLayoutProps = {
-  type: "COMPONENT" | "LAYOUT";
-  componentBeingAddedId: MutableRefObject<string | undefined>;
-  updateTreeComponent: (
-    componentId: string,
-    props: any,
-    save?: boolean,
-  ) => void;
-};
-
-type OtherProps = {
-  type: Exclude<AIRequestTypes, "COMPONENT" | "LAYOUT">;
-  componentBeingAddedId?: MutableRefObject<string | undefined>;
-  updateTreeComponent?: (
-    componentId: string,
-    props: any,
-    save?: boolean,
-  ) => void;
-};
-
-type HandlerProps = BaseHandlerProps & (ComponentOrLayoutProps | OtherProps);
-
 export const createHandlers = (config: HandlerProps) => {
-  const {
-    setStream,
-    type,
-    stopLoading,
-    setIsLoading,
-    componentBeingAddedId,
-    updateTreeComponent,
-  } = config;
+  const { setStream, stopLoading, setIsLoading } = config;
 
   const onMessage = (event: EventSourceMessage) => {
     try {
@@ -135,28 +111,17 @@ export const createHandlers = (config: HandlerProps) => {
 
   const onClose = async () => {
     try {
-      if (type === "PAGE") {
-        setStream("");
-      }
-
-      if (type === "COMPONENT" || type === "LAYOUT") {
-        if (componentBeingAddedId.current) {
-          updateTreeComponent(componentBeingAddedId.current, {
-            isBeingAdded: false,
-          });
-        }
-      }
       setStream("");
       stopLoading({
         id: "ai-generation",
-        title: `${descriptionPlaceholderMapping[type].replaceText} Generated`,
-        message: `Here's your ${descriptionPlaceholderMapping[type].replaceText}. We hope you like it`,
+        title: "Finished Generating",
+        message: "We hope you like it", //`Here's your ${descriptionPlaceholderMapping[type].replaceText}. We hope you like it`,
       });
     } catch (error) {
       stopLoading({
         id: "ai-generation",
-        title: `${descriptionPlaceholderMapping[type].replaceText} Failed`,
-        message: `There was a problem generating your ${descriptionPlaceholderMapping[type].replaceText}`,
+        title: "AI Generation Failed", //`${descriptionPlaceholderMapping[type].replaceText} Failed`,
+        message: "There was a problem generating.", //`There was a problem generating your ${descriptionPlaceholderMapping[type].replaceText}`,
         isError: true,
       });
     } finally {

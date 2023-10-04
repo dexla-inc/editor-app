@@ -1,7 +1,9 @@
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { UnitInput } from "@/components/UnitInput";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
+import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
+import { requiredModifiers } from "@/utils/defaults";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { Group, SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -20,30 +22,11 @@ import {
 } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
 import { useEffect } from "react";
-import { withModifier } from "@/hoc/withModifier";
 
 export const icon = IconBorderStyle;
 export const label = "Border";
 
-export const defaultBorderValues = {
-  borderTopStyle: "none",
-  borderRightStyle: "none",
-  borderBottomStyle: "none",
-  borderLeftStyle: "none",
-  borderTopWidth: "0px",
-  borderRightWidth: "0px",
-  borderBottomWidth: "0px",
-  borderLeftWidth: "0px",
-  borderTopColor: "Border.6",
-  borderRightColor: "Border.6",
-  borderBottomColor: "Border.6",
-  borderLeftColor: "Border.6",
-  borderRadius: "0px",
-  borderTopLeftRadius: "0px",
-  borderTopRightRadius: "0px",
-  borderBottomLeftRadius: "0px",
-  borderBottomRightRadius: "0px",
-};
+export const defaultBorderValues = requiredModifiers.border;
 
 const getThemeColor = (theme: any, hex: string) => {
   return Object.keys(theme.colors).reduce((themeColor: string, key: string) => {
@@ -62,12 +45,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: {
       ...defaultBorderValues,
-      showBorder: "all",
-      showRadius: "radius-all",
-      borderStyle: "none",
-      borderRadius: "0px",
-      borderWidth: "0px",
-      borderColor: "Border.6",
     },
   });
 

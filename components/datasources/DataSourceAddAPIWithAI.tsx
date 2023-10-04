@@ -29,7 +29,6 @@ export default function DataSourceAddAPIWithAI({ projectId }: Props) {
 
   const { onMessage, onError, onOpen, onClose } = createHandlers({
     setStream,
-    type,
     stopLoading,
     setIsLoading,
   });
@@ -75,10 +74,12 @@ export default function DataSourceAddAPIWithAI({ projectId }: Props) {
             {
               name: "API",
               icon: "IconApi",
+              type: "API",
             },
             {
               name: "API Endpoint",
               icon: "IconApiApp",
+              type: "API",
             },
           ]}
         />
