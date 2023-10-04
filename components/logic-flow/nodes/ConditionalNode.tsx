@@ -1,15 +1,15 @@
-import { NodeProps } from "reactflow";
-import { CustomNode, NodeData } from "@/components/logic-flow/nodes/CustomNode";
-import { IconArrowFork } from "@tabler/icons-react";
-import { UseFormReturnType } from "@mantine/form";
-import { useEffect } from "react";
-import { nanoid } from "nanoid";
-import { Button, Select, Stack } from "@mantine/core";
-import { listVariables } from "@/requests/variables/queries";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/router";
 import { OutputForm } from "@/components/logic-flow/OutputForm";
+import { CustomNode, NodeData } from "@/components/logic-flow/nodes/CustomNode";
+import { listVariables } from "@/requests/variables/queries";
 import { useFlowStore } from "@/stores/flow";
+import { Button, Select, Stack } from "@mantine/core";
+import { UseFormReturnType } from "@mantine/form";
+import { IconArrowFork } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
+import { nanoid } from "nanoid";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { NodeProps } from "reactflow";
 
 type FormValues = {
   value?: string;
@@ -24,7 +24,7 @@ export const ConditionalNode = (node: NodeProps<ConditionalNodeData>) => {
 
 export const data: ConditionalNodeData = {
   label: "Conditional",
-  description: "Execute other nodes conditionally",
+  description: "Execute actions conditionally",
   inputs: [{ id: nanoid(), name: "Input" }],
   outputs: [{ id: nanoid(), name: "First Condition" }],
 };

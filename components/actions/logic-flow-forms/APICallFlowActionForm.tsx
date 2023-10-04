@@ -1,3 +1,4 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { colors } from "@/components/datasources/DataSourceEndpoint";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import {
@@ -5,10 +6,13 @@ import {
   getDataSources,
 } from "@/requests/datasources/queries";
 import { Endpoint } from "@/requests/datasources/types";
+import { getPage } from "@/requests/pages/queries";
 import { MethodTypes } from "@/requests/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
+import { useFlowStore } from "@/stores/flow";
 import { APICallAction, LoginAction } from "@/utils/actions";
+import { decodeSchema } from "@/utils/compression";
 import { ApiType } from "@/utils/dashboardTypes";
 import {
   Box,
@@ -24,10 +28,6 @@ import { UseFormReturnType } from "@mantine/form";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import React, { forwardRef, useEffect, useState } from "react";
-import { getPage } from "@/requests/pages/queries";
-import { decodeSchema } from "@/utils/compression";
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { useFlowStore } from "@/stores/flow";
 
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, any>(
@@ -261,13 +261,7 @@ export const APICallFlowActionForm = ({
             ))}
           </Stack>
         )}
-        <Button
-          type="submit"
-          size="xs"
-          loading={isUpdating}
-          loaderPosition="center"
-          disabled={isUpdating}
-        >
+        <Button type="submit" size="xs" loading={isUpdating}>
           Save
         </Button>
       </Stack>

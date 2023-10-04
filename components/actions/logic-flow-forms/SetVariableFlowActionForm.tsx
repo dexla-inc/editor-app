@@ -1,16 +1,16 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { VariablesButton } from "@/components/variables/VariablesButton";
+import { getPage } from "@/requests/pages/queries";
 import { listVariables } from "@/requests/variables/queries";
+import { useEditorStore } from "@/stores/editor";
+import { useFlowStore } from "@/stores/flow";
 import { SetVariableAction } from "@/utils/actions";
+import { decodeSchema } from "@/utils/compression";
 import { Button, Select, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { useEditorStore } from "@/stores/editor";
-import { useFlowStore } from "@/stores/flow";
-import { getPage } from "@/requests/pages/queries";
 import { useEffect } from "react";
-import { decodeSchema } from "@/utils/compression";
-import { VariablesButton } from "@/components/variables/VariablesButton";
 
 type Props = {
   form: UseFormReturnType<FormValues>;
@@ -85,13 +85,7 @@ export const SetVariableFlowActionForm = ({ form }: Props) => {
         pageId={pageId}
         projectId={projectId}
       />
-      <Button
-        type="submit"
-        size="xs"
-        loading={isUpdating}
-        loaderPosition="center"
-        disabled={isUpdating}
-      >
+      <Button type="submit" size="xs" loading={isUpdating}>
         Save
       </Button>
     </Stack>

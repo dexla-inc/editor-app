@@ -54,13 +54,7 @@ export const OpenDrawerFlowActionForm = ({ form }: Props) => {
         {...form.getInputProps("drawerId")}
       />
 
-      <Button
-        type="submit"
-        size="xs"
-        loading={isUpdating}
-        loaderPosition="center"
-        disabled={isUpdating}
-      >
+      <Button type="submit" size="xs" loading={isUpdating}>
         Save
       </Button>
     </Stack>

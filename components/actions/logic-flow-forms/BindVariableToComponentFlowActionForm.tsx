@@ -1,18 +1,18 @@
+import { ComponentToBindInput } from "@/components/ComponentToBindInput";
+import { DataPicker } from "@/components/DataPicker";
+import { VariableSelect } from "@/components/variables/VariableSelect";
+import { getPage } from "@/requests/pages/queries";
+import { getVariable } from "@/requests/variables/queries";
+import { VariableResponse } from "@/requests/variables/types";
 import { useEditorStore } from "@/stores/editor";
+import { useFlowStore } from "@/stores/flow";
 import { BindVariableToComponentAction } from "@/utils/actions";
+import { decodeSchema } from "@/utils/compression";
 import { Button, Loader, Stack, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { useEffect } from "react";
-import { VariableSelect } from "@/components/variables/VariableSelect";
-import { VariableResponse } from "@/requests/variables/types";
-import { getVariable } from "@/requests/variables/queries";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { DataPicker } from "@/components/DataPicker";
-import { ComponentToBindInput } from "@/components/ComponentToBindInput";
-import { decodeSchema } from "@/utils/compression";
-import { getPage } from "@/requests/pages/queries";
-import { useFlowStore } from "@/stores/flow";
+import { useEffect } from "react";
 
 type Props = {
   form: UseFormReturnType<FormValues>;
@@ -111,13 +111,7 @@ export const BindVariableToComponentFlowActionForm = ({ form }: Props) => {
         />
       )}
 
-      <Button
-        type="submit"
-        size="xs"
-        loading={isUpdating}
-        loaderPosition="center"
-        disabled={isUpdating}
-      >
+      <Button type="submit" size="xs" loading={isUpdating}>
         Save
       </Button>
     </Stack>

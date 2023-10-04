@@ -42,7 +42,7 @@ export const CustomNode = (node: CustomNodeProps) => {
   return (
     <Card
       p="sm"
-      onDoubleClick={selectNode}
+      onClick={selectNode}
       sx={{
         border: "1px solid",
         borderColor: selected

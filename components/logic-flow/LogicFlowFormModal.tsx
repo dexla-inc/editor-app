@@ -24,6 +24,8 @@ export const LogicFlowFormModal = () => {
   const currentFlowId = useFlowStore((state) => state.currentFlowId);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
+  const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const isLoading = useAppStore((state) => state.isLoading);
 
   const updateFlow = useMutation({
     mutationKey: ["logic-flow", currentFlowId],
@@ -48,6 +50,7 @@ export const LogicFlowFormModal = () => {
         title: "Logic flow saved",
         message: "Logic flow saved successfully",
       });
+      setIsLoading(false);
     },
   });
 
@@ -103,6 +106,7 @@ export const LogicFlowFormModal = () => {
 
   const onSubmit = async (values: any) => {
     try {
+      setIsLoading(true);
       startLoading({
         id: "logic-flows",
         title: "Saving logic flow",
@@ -124,6 +128,9 @@ export const LogicFlowFormModal = () => {
       });
     }
   };
+  useEffect(() => {
+    console.log(isLoading);
+  }, [isLoading]);
 
   useEffect(() => {
     if (currentFlowId) {
@@ -170,7 +177,9 @@ export const LogicFlowFormModal = () => {
             label="Is Global"
             {...form.getInputProps("isGlobal", { type: "checkbox" })}
           />
-          <Button type="submit">{currentFlowId ? "Save" : "Create"}</Button>
+          <Button type="submit" loading={isLoading}>
+            {currentFlowId ? "Save" : "Create"}
+          </Button>
         </Stack>
       </form>
     </Modal>

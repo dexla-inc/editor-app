@@ -1,6 +1,7 @@
 import { InformationAlert } from "@/components/Alerts";
 import { Button, Stack } from "@mantine/core";
 import Link from "next/link";
+import { Icon } from "../Icon";
 
 type EmptyDatasourcesPlaceholderProps = {
   projectId: string;
@@ -15,6 +16,8 @@ export default function EmptyDatasourcesPlaceholder({
       <Button
         component={Link}
         href={`/projects/${projectId}/settings/datasources/new`}
+        target="_blank"
+        leftIcon={<Icon name="IconExternalLink" />}
       >
         Set up
       </Button>

@@ -244,7 +244,7 @@ export default function LogicFlowsPage({ id, pageId, flowId }: Props) {
               {!selectedNode && (
                 <Center>
                   <Text size="sm" color="dimmed">
-                    Double click a node to select it
+                    Click a node to select it
                   </Text>
                 </Center>
               )}

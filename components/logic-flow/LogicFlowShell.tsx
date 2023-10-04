@@ -15,11 +15,11 @@ import {
 } from "@mantine/core";
 import Link from "next/link";
 
-import { useEditorStore } from "@/stores/editor";
-import { ErrorBoundary } from "react-error-boundary";
-import { useFlowStore } from "@/stores/flow";
 import { LogicFlowFormModal } from "@/components/logic-flow/LogicFlowFormModal";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
+import { useEditorStore } from "@/stores/editor";
+import { useFlowStore } from "@/stores/flow";
+import { ErrorBoundary } from "react-error-boundary";
 
 export interface ShellProps extends AppShellProps {
   flow?: LogicFlowResponse;
@@ -60,7 +60,7 @@ export const LogicFlowShell = ({
                     component={Link}
                     href={`/projects/${projectId}/editor/${pageId}/flows`}
                   >
-                    Fows
+                    Logic Flows
                   </Anchor>
                   <Text size="xs" color="dimmed">
                     {flow.name}
@@ -70,14 +70,14 @@ export const LogicFlowShell = ({
             </Group>
             <Group>
               <Button onClick={() => setShowFormModal(true)}>
-                Create logic flow
+                Create Logic Flow
               </Button>
               <Button
                 component={Link}
                 variant="default"
                 href={`/projects/${projectId}/editor/${pageId}`}
               >
-                Go back to Editor
+                Back to Editor
               </Button>
             </Group>
           </Flex>

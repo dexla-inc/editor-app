@@ -1,6 +1,7 @@
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { BindPlaceDataActionForm } from "@/components/actions/BindPlaceDataActionForm";
 import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
+import { BindVariableToComponentActionForm } from "@/components/actions/BindVariableToComponentActionForm";
 import { ChangeLanguageActionForm } from "@/components/actions/ChangeLanguageActionForm";
 import { ChangeStateActionForm } from "@/components/actions/ChangeStateActionForm";
 import { ChangeStepActionForm } from "@/components/actions/ChangeStepActionForm";
@@ -14,9 +15,15 @@ import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
 import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
+import { SetVariableActionForm } from "@/components/actions/SetVariableActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
+import { APICallFlowActionForm } from "@/components/actions/logic-flow-forms/APICallFlowActionForm";
+import { BindVariableToComponentFlowActionForm } from "@/components/actions/logic-flow-forms/BindVariableToComponentFlowActionForm";
+import { OpenDrawerFlowActionForm } from "@/components/actions/logic-flow-forms/OpenDrawerFlowActionForm";
+import { OpenModalFlowActionForm } from "@/components/actions/logic-flow-forms/OpenModalFlowActionForm";
 import { OpenToastFlowActionForm } from "@/components/actions/logic-flow-forms/OpenToastFlowActionForm";
+import { SetVariableFlowActionForm } from "@/components/actions/logic-flow-forms/SetVariableFlowActionForm";
 import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { Options } from "@/components/modifiers/GoogleMap";
 import {
@@ -24,6 +31,9 @@ import {
   getDataSourceEndpoints,
 } from "@/requests/datasources/queries";
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
+import { createVariable, updateVariable } from "@/requests/variables/mutations";
+import { getVariable } from "@/requests/variables/queries";
+import { FrontEndTypes } from "@/requests/variables/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import {
@@ -38,16 +48,6 @@ import get from "lodash.get";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
 import { executeFlow } from "./logicFlows";
-import { createVariable, updateVariable } from "@/requests/variables/mutations";
-import { SetVariableActionForm } from "@/components/actions/SetVariableActionForm";
-import { SetVariableFlowActionForm } from "@/components/actions/logic-flow-forms/SetVariableFlowActionForm";
-import { FrontEndTypes } from "@/requests/variables/types";
-import { BindVariableToComponentActionForm } from "@/components/actions/BindVariableToComponentActionForm";
-import { getVariable } from "@/requests/variables/queries";
-import { BindVariableToComponentFlowActionForm } from "@/components/actions/logic-flow-forms/BindVariableToComponentFlowActionForm";
-import { APICallFlowActionForm } from "@/components/actions/logic-flow-forms/APICallFlowActionForm";
-import { OpenModalFlowActionForm } from "@/components/actions/logic-flow-forms/OpenModalFlowActionForm";
-import { OpenDrawerFlowActionForm } from "@/components/actions/logic-flow-forms/OpenDrawerFlowActionForm";
 
 const triggers = [
   "onClick",
@@ -75,11 +75,11 @@ const triggers = [
 ] as const;
 
 export const actions = [
-  { name: "setVariable", group: "API & Data" },
   { name: "apiCall", group: "API & Data" },
   { name: "bindResponse", group: "API & Data" },
   { name: "bindVariable", group: "API & Data" },
   { name: "login", group: "API & Data" },
+  { name: "setVariable", group: "API & Data" },
   { name: "bindPlaceData", group: "Third-Party Plugins" },
   { name: "bindPlaceGeometry", group: "Third-Party Plugins" },
   { name: "goToUrl", group: "Navigation" },
