@@ -14,6 +14,7 @@ import {
   getEditorTreeFromPageStructure,
   getNewComponents,
 } from "@/utils/editor";
+import { isKeyOfAISupportedModifiers } from "@/utils/modifiers";
 import {
   createHandlers,
   descriptionPlaceholderMapping,
@@ -36,6 +37,7 @@ import { IconSparkles } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { ErrorAlert } from "./Alerts";
 
 type ComponentGenerationProps = {
   componentBeingAddedId: MutableRefObject<string | undefined>;
@@ -102,7 +104,6 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
     (state) => state.selectedComponentId,
   );
   const [stream, setStream] = useState<string>("");
-  const [modifier, setModifier] = useState<CssModifer>();
 
   const { onMessage, onError, onOpen, onClose } = createHandlers({
     setStream,
@@ -158,16 +159,15 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
 
       const cssKeys = Object.keys(json.css);
 
-      cssKeys.map((key) => {
-        debouncedTreeComponentStyleUpdate(key, json.css[key]);
+      cssKeys.forEach((key) => {
+        const keyExists = isKeyOfAISupportedModifiers(key);
+
+        if (keyExists) {
+          debouncedTreeComponentStyleUpdate(key, json.css[key]);
+        } else {
+          console.error(`Tell Tom! Unsupported key: ${key}`);
+        }
       });
-
-      // const selectedComponent: CssModifer = {
-      //   modifiers: json.css,
-      //   selectedComponentId: selectedComponentId,
-      // };
-
-      // setModifier(selectedComponent);
     };
   };
 
@@ -309,6 +309,13 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
                 ]}
               ></Select>
             </Flex>
+            {selectedComponentId === "content-wrapper" &&
+              type === "CSS_MODIFIER" && (
+                <ErrorAlert
+                  title="Error"
+                  text="Select a component first"
+                ></ErrorAlert>
+              )}
             <AITextArea
               placeholder={
                 descriptionPlaceholderMapping[type as AIRequestTypes]

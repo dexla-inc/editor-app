@@ -754,7 +754,7 @@ export const apiCallAction = async ({
     const keys = Object.keys(action.binds?.parameter ?? {});
 
     const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
-
+    console.log(apiUrl);
     const url =
       keys.length > 0
         ? keys.reduce((url: string, key: string) => {
