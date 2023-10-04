@@ -33,8 +33,9 @@ import * as TextModifier from "@/components/modifiers/Text";
 import * as TitleModifier from "@/components/modifiers/Title";
 import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper } from "@/utils/actions";
-import { Modifiers, componentMapper } from "@/utils/componentMapper";
+import { componentMapper } from "@/utils/componentMapper";
 import { getComponentById } from "@/utils/editor";
+import { Modifiers } from "@/utils/modifiers";
 import {
   Box,
   Center,

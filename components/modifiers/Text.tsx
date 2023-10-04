@@ -2,11 +2,11 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
-import { requiredModifiers } from "@/utils/defaults";
 import {
   debouncedTreeComponentPropsUpdate,
   debouncedTreeUpdate,
 } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Checkbox, Group, Select, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTextSize } from "@tabler/icons-react";

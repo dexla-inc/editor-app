@@ -1,4 +1,35 @@
-import { Modifiers } from "@/utils/componentMapper";
+export type Modifiers =
+  | "spacing"
+  | "size"
+  | "text"
+  | "border"
+  | "layout"
+  | "position"
+  | "background"
+  | "input"
+  | "button"
+  | "title"
+  | "image"
+  | "link"
+  | "icon"
+  | "divider"
+  | "select"
+  | "effects"
+  | "modal"
+  | "boxShadow"
+  | "checkbox"
+  | "table"
+  | "radio"
+  | "radioItem"
+  | "stepper"
+  | "drawer"
+  | "buttonIcon"
+  | "mapSettings"
+  | "fileButton"
+  | "popOver"
+  | "navLink"
+  | "accordionItem"
+  | "switch";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
