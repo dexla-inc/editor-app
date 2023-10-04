@@ -346,6 +346,9 @@ type AISupportedModifiers = {
   blur: string;
   spread: string;
   boxShadowColor: string;
+  flexGrow: number;
+  flexShrink: number;
+  flexBasis: string;
 };
 
 const keysOfAISupportedModifiers: (keyof AISupportedModifiers)[] = [
