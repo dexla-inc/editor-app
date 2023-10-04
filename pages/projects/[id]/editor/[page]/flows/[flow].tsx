@@ -189,6 +189,9 @@ export default function LogicFlowsPage({ id, pageId, flowId }: Props) {
 
   const onSubmit = async ({ label, ...values }: any) => {
     const isConditionalNode = selectedNode?.type === "conditionalNode";
+
+    console.log({ values });
+
     updateNodeData({
       id: selectedNode?.id,
       data: {

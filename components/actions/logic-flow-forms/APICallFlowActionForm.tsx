@@ -67,6 +67,7 @@ export const APICallFlowActionForm = ({
 }: Props) => {
   const { setComponentToBind, setTree } = useEditorStore();
   const isUpdating = useFlowStore((state) => state.isUpdating);
+  const selectedNode = useFlowStore((state) => state.selectedNode);
   const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
     undefined,
   );
@@ -227,6 +228,8 @@ export const APICallFlowActionForm = ({
                     }
                   }
 
+                  const field = `binds.${type}.${param.name}`;
+
                   return (
                     <Stack key={param.name}>
                       <ComponentToBindFromInput
@@ -252,7 +255,15 @@ export const APICallFlowActionForm = ({
                         autoComplete="off"
                         data-lpignore="true"
                         data-form-type="other"
-                        {...form.getInputProps(`binds.${type}.${param.name}`)}
+                        {...form.getInputProps(field)}
+                        // @ts-ignore
+                        value={form.values[field] ?? undefined}
+                        onChange={(e) => {
+                          form.setValues({
+                            ...form.values,
+                            [field]: e.currentTarget.value,
+                          });
+                        }}
                       />
                     </Stack>
                   );
