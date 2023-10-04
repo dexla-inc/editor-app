@@ -19,6 +19,7 @@ import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
 import { SetVariableActionForm } from "@/components/actions/SetVariableActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
+import { CustomJavascriptActionForm } from "@/components/actions/CustomJavascriptActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
 import { APICallFlowActionForm } from "@/components/actions/logic-flow-forms/APICallFlowActionForm";
 import { BindVariableToComponentFlowActionForm } from "@/components/actions/logic-flow-forms/BindVariableToComponentFlowActionForm";
@@ -26,7 +27,7 @@ import { OpenDrawerFlowActionForm } from "@/components/actions/logic-flow-forms/
 import { OpenModalFlowActionForm } from "@/components/actions/logic-flow-forms/OpenModalFlowActionForm";
 import { OpenToastFlowActionForm } from "@/components/actions/logic-flow-forms/OpenToastFlowActionForm";
 import { SetVariableFlowActionForm } from "@/components/actions/logic-flow-forms/SetVariableFlowActionForm";
-import { CustomJavascriptActionForm } from "@/components/actions/CustomJavascriptActionForm";
+import { CustomJavascriptFlowActionForm } from "@/components/actions/logic-flow-forms/CustomJavascriptFlowActionForm";
 import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { Options } from "@/components/modifiers/GoogleMap";
 import {
@@ -1210,5 +1211,6 @@ export const actionMapper = {
   customJavascript: {
     action: customJavascriptAction,
     form: CustomJavascriptActionForm,
+    flowForm: CustomJavascriptFlowActionForm,
   },
 };
