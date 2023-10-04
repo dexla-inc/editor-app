@@ -81,11 +81,9 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
   const { editorTree, selectedComponentId, updateTreeComponentActions } =
     useEditorStores();
-  const {
-    componentActions,
-    action: baseAction,
-    action,
-  } = useActionData<LoginAction | APICallAction>({
+  const { componentActions, action } = useActionData<
+    LoginAction | APICallAction
+  >({
     actionId: id,
     editorTree,
     selectedComponentId,
@@ -529,16 +527,14 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
             actionId={id}
             componentActions={componentActions}
             selectedComponentId={selectedComponentId}
-          ></ActionButtons>
+          />
         </Stack>
       </form>
       <ActionsForm sequentialTo={id} />
     </>
   ) : (
     <Stack>
-      <EmptyDatasourcesPlaceholder
-        projectId={projectId}
-      ></EmptyDatasourcesPlaceholder>
+      <EmptyDatasourcesPlaceholder projectId={projectId} />
       <Button size="xs" type="button" variant="default" onClick={removeAction}>
         Remove
       </Button>

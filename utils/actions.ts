@@ -45,6 +45,7 @@ import { FrontEndTypes } from "@/requests/variables/types";
 import { BindVariableToComponentActionForm } from "@/components/actions/BindVariableToComponentActionForm";
 import { getVariable } from "@/requests/variables/queries";
 import { BindVariableToComponentFlowActionForm } from "@/components/actions/logic-flow-forms/BindVariableToComponentFlowActionForm";
+import { APICallFlowActionForm } from "@/components/actions/logic-flow-forms/APICallFlowActionForm";
 
 const triggers = [
   "onClick",
@@ -1104,6 +1105,7 @@ export const actionMapper = {
   apiCall: {
     action: apiCallAction,
     form: APICallActionForm,
+    flowForm: APICallFlowActionForm,
   },
   bindResponse: {
     action: bindResponseToComponentAction,
