@@ -1,4 +1,3 @@
-import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
@@ -23,7 +22,6 @@ type SidebarSectionProps = {
   onClick?: (id: string) => void;
   isAction?: boolean;
   removeAction?: (id: string) => void;
-  name?: string;
 };
 
 export function SidebarSection({
@@ -35,19 +33,13 @@ export function SidebarSection({
   onClick,
   isAction,
   removeAction,
-  name,
 }: PropsWithChildren<SidebarSectionProps>) {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(initiallyOpened || false);
-  const { setSequentialTo } = useEditorStore.getState();
-  const whiteList = ["apiCall", "reloadComponent"];
 
   const handleSectionClick = () => {
     setOpened((o) => !o);
     onClick && onClick(id);
-    !opened && name && whiteList.includes(name)
-      ? setSequentialTo(id)
-      : setSequentialTo(undefined);
   };
 
   return (

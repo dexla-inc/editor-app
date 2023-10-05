@@ -1,16 +1,17 @@
 import { useEditorStore } from "@/stores/editor";
 import { Action, SequentialTrigger, actions } from "@/utils/actions";
 import { componentMapper } from "@/utils/componentMapper";
+import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
-import { Button, Select, Stack } from "@mantine/core";
+import { ActionIcon, Button, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import startCase from "lodash.startcase";
 import { nanoid } from "nanoid";
+import { Icon } from "../Icon";
 
 type ActionProps = {
   sequentialTo?: string;
   close?: () => void;
-  open?: () => void;
 };
 
 export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
@@ -20,6 +21,7 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
     updateTreeComponentActions,
     copiedAction,
     setCopiedAction,
+    setSequentialTo,
   } = useEditorStore.getState();
 
   const form = useForm({
@@ -60,6 +62,11 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
     setCopiedAction(undefined);
   };
 
+  const handleClose = () => {
+    close && close();
+    setSequentialTo(undefined);
+  };
+
   const onSubmit = (values: any) => {
     updateTreeComponentActions(
       selectedComponentId!,
@@ -79,7 +86,16 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack spacing="xs">
+      <Stack spacing="xs" sx={{ position: "relative" }}>
+        <ActionIcon
+          onClick={handleClose}
+          color="gray"
+          variant="light"
+          radius="xl"
+          sx={{ position: "absolute", top: "-5px", right: "0px", zIndex: 30 }}
+        >
+          <Icon name="IconX" size={ICON_SIZE} />
+        </ActionIcon>
         <Select
           size="xs"
           placeholder="Select a trigger"
@@ -106,7 +122,7 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
           {...form.getInputProps("action")}
         />
         <Button size="xs" type="submit" mt="xs" variant="light">
-          Add {isSequential ? `sequential action` : `action`}
+          Save {isSequential ? `sequential action` : `action`}
         </Button>
         {isCopiedAction &&
           componentActions.every((action) =>

@@ -125,6 +125,7 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
           <ActionButtons
             actionId={action.id}
             componentActions={componentActions}
+            canAddSequential={true}
           ></ActionButtons>
         </Stack>
       </form>

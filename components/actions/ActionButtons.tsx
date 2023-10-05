@@ -9,15 +9,17 @@ type Props = {
   actionId: string;
   componentActions: Action[];
   optionalRemoveAction?: () => void;
+  canAddSequential?: boolean;
 };
 
 export const ActionButtons = ({
   actionId,
   componentActions,
   optionalRemoveAction: removeAction,
+  canAddSequential = false,
 }: Props) => {
   const [copied, { open, close }] = useDisclosure(false);
-  const { setCopiedAction } = useEditorStore.getState();
+  const { setCopiedAction, setSequentialTo } = useEditorStore.getState();
   const filteredComponentActions = componentActions.filter((a: Action) => {
     return a.id === actionId || a.sequentialTo === actionId;
   });
@@ -26,6 +28,8 @@ export const ActionButtons = ({
     setCopiedAction(filteredComponentActions);
     open();
   };
+
+  const addSequentialAction = () => setSequentialTo(actionId);
 
   useEffect(() => {
     const timeout = setTimeout(() => copied && close(), 2000);
@@ -42,6 +46,18 @@ export const ActionButtons = ({
       >
         Save
       </Button>
+      {canAddSequential && (
+        <Button
+          size="xs"
+          type="button"
+          onClick={addSequentialAction}
+          variant="light"
+          mt="xs"
+          leftIcon={<Icon name="IconPlus"></Icon>}
+        >
+          Add Sequential Action
+        </Button>
+      )}
       <Button
         size="xs"
         type="button"

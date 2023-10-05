@@ -209,7 +209,6 @@ export const EditorAsideSections = () => {
           ...baseItem,
           id: action.id,
           label: `${startCase(action.trigger)}: ${startCase(actionName)}`,
-          name: actionName,
         }
       : undefined;
 

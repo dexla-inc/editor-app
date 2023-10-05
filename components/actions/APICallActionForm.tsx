@@ -522,7 +522,11 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
               text={`add ${feature.toLowerCase()} to page`}
             />
           )}
-          <ActionButtons actionId={id} componentActions={componentActions} />
+          <ActionButtons
+            actionId={id}
+            componentActions={componentActions}
+            canAddSequential={true}
+          />
         </Stack>
       </form>
     </>
