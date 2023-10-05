@@ -11,7 +11,6 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -31,26 +30,22 @@ export const ColorSelector = ({
   mantineTheme,
   deleteColor,
 }: Props) => {
-  const [hex, setHex] = useState(fetchedHex);
+  const hexToHexa = fetchedHex.length === 7 ? fetchedHex + "ff" : fetchedHex;
+  const [hexa, setHexa] = useState(hexToHexa);
   const [friendlyName, setFriendlyName] = useState(fetchedFriendlyName);
-
-  const debouncedFriendlyName = debounce(
-    (query) => setFriendlyName(query),
-    400
-  );
-  const debouncedHex = debounce((query) => setHex(query), 400);
 
   useEffect(() => {
     if (onValueChange) {
-      onValueChange({ friendlyName, hex });
+      onValueChange({ friendlyName, hex: hexa });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [friendlyName, hex]);
+  }, [friendlyName, hexa]);
 
   useEffect(() => {
-    setHex(fetchedHex);
+    setHexa(hexa);
     setFriendlyName(fetchedFriendlyName);
-  }, [fetchedHex, fetchedFriendlyName]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Flex align="center">
@@ -58,7 +53,7 @@ export const ColorSelector = ({
         <Popover.Target>
           <Tooltip label="Click to change color">
             <ColorSwatch
-              color={hex}
+              color={hexa}
               size={36}
               radius="0px"
               withShadow={false}
@@ -73,15 +68,19 @@ export const ColorSelector = ({
           </Tooltip>
         </Popover.Target>
         <Popover.Dropdown>
-          <ColorPicker format="hex" value={hex} onChange={debouncedHex} />
-          <Input value={hex} mt="sm" onChange={(e) => setHex(e.target.value)} />
+          <ColorPicker format="hexa" value={hexa} onChange={setHexa} />
+          <Input
+            value={hexa}
+            mt="sm"
+            onChange={(e) => setHexa(e.target.value)}
+          />
         </Popover.Dropdown>
         <Tooltip label="Click to edit name">
           <TextInput
             style={{ width: "100%", borderLeft: "0px" }}
             radius="0px 4px 4px 0px"
             defaultValue={friendlyName}
-            onChange={(event) => debouncedFriendlyName(event.target.value)}
+            onChange={(event) => setFriendlyName(event.target.value)}
             rightSection={
               !isDefault && (
                 <ActionIcon onClick={deleteColor} color="gray">
