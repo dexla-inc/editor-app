@@ -123,14 +123,8 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           {...form.getInputProps("textColor")}
           onChange={(value: string) => {
             form.setFieldValue("textColor", value);
-            const [color, index] = value.split(".");
-            // @ts-ignore
-            const _value = theme.colors[color][index];
             updateTreeComponent(selectedComponent?.id!, {
               textColor: value,
-              styles: {
-                label: { color: _value },
-              },
             });
           }}
         />

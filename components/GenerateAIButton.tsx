@@ -14,6 +14,8 @@ import {
   getEditorTreeFromPageStructure,
   getNewComponents,
   debouncedTreeUpdate,
+  getComponentById,
+  componentStyleMapper,
 } from "@/utils/editor";
 import { isKeyOfAISupportedModifiers } from "@/utils/modifiers";
 import {
@@ -205,9 +207,12 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
         {} as Record<string, string | number>,
       );
 
-      debouncedTreeUpdate(selectedComponentId, {
-        style,
-      });
+      const component = getComponentById(tree.root, selectedComponentId);
+
+      debouncedTreeUpdate(
+        selectedComponentId,
+        componentStyleMapper(component?.name!, { style }),
+      );
     };
   };
 

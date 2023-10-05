@@ -1,14 +1,11 @@
+import { CSSProperties } from "react";
 import { PageResponse } from "@/requests/pages/types";
 import {
   MantineThemeExtended,
   emptyEditorTree,
   useEditorStore,
 } from "@/stores/editor";
-import {
-  Action,
-  ChangeStepAction,
-  ChangeStepActionParams,
-} from "@/utils/actions";
+import { Action, ChangeStepAction } from "@/utils/actions";
 import { structureMapper } from "@/utils/componentMapper";
 import { templatesMapper } from "@/utils/templatesMapper";
 import cloneDeep from "lodash.clonedeep";
@@ -963,12 +960,31 @@ export const debouncedTreeUpdate = debounce((...params: any[]) => {
 
 export const getColorFromTheme = (
   theme: MantineThemeExtended,
-  colorName: string,
+  colorName = "",
 ) => {
   if (colorName === "transparent") {
     return "transparent";
   }
   const [section, index] = colorName.split(".");
   const colorSection = theme.colors[section];
-  return colorSection?.[Number(index)];
+  return index !== undefined && colorSection
+    ? colorSection[Number(index)]
+    : section;
+};
+
+export const componentStyleMapper = (
+  componentName: string,
+  { style }: { style: CSSProperties },
+) => {
+  const { background, backgroundColor, color, ...rest } = style;
+  let result = merge({}, { style: rest });
+
+  if (componentName === "Button") {
+    result = merge(result, {
+      color: background ?? backgroundColor,
+      textColor: color,
+    });
+  }
+
+  return result;
 };

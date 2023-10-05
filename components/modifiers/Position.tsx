@@ -1,11 +1,25 @@
 import { UnitInput } from "@/components/UnitInput";
 import { debouncedTreeUpdate } from "@/utils/editor";
-import { Flex, NumberInput, Select, Stack } from "@mantine/core";
+import {
+  Flex,
+  NumberInput,
+  SegmentedControl,
+  Select,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconLayout } from "@tabler/icons-react";
+import {
+  IconAlignBoxBottomCenter,
+  IconAlignBoxCenterMiddle,
+  IconAlignBoxLeftMiddle,
+  IconAlignBoxRightMiddle,
+  IconLayout,
+} from "@tabler/icons-react";
 import { useEffect } from "react";
 import { withModifier } from "@/hoc/withModifier";
 import { pick } from "next/dist/lib/pick";
+import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 
 export const icon = IconLayout;
 export const label = "Position";
@@ -17,6 +31,7 @@ export const defaultPositionValues = {
   bottom: "auto",
   left: "auto",
   zIndex: 0,
+  alignSelf: "center",
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
@@ -35,6 +50,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         bottom: data.style.bottom ?? defaultPositionValues.bottom,
         left: data.style.left ?? defaultPositionValues.left,
         zIndex: data.style.zIndex ?? defaultPositionValues.zIndex,
+        alignSelf: data.style.alignSelf ?? defaultPositionValues.alignSelf,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
@@ -124,6 +140,69 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             }}
           />
         </Stack>
+        {["relative"].includes(form.values.position) && (
+          <Stack spacing={2}>
+            <Text size="xs" fw={500}>
+              Align Self
+            </Text>
+            <SegmentedControl
+              size="xs"
+              data={[
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Start"
+                      icon={<IconAlignBoxLeftMiddle size={14} />}
+                    />
+                  ),
+                  value: "start",
+                },
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Center"
+                      icon={<IconAlignBoxCenterMiddle size={14} />}
+                    />
+                  ),
+                  value: "center",
+                },
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="End"
+                      icon={<IconAlignBoxRightMiddle size={14} />}
+                    />
+                  ),
+                  value: "end",
+                },
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Stretch"
+                      icon={<IconAlignBoxBottomCenter size={14} />}
+                    />
+                  ),
+                  value: "stretch",
+                },
+              ]}
+              styles={{
+                label: {
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                },
+              }}
+              {...form.getInputProps("alignSelf")}
+              onChange={(value) => {
+                form.setFieldValue("alignSelf", value as string);
+                debouncedTreeUpdate(selectedComponent?.id as string, {
+                  style: { alignSelf: value },
+                });
+              }}
+            />
+          </Stack>
+        )}
       </Stack>
     </form>
   );

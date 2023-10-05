@@ -329,7 +329,8 @@ type AISupportedModifiers = {
   bottom: string;
   left: string;
   zIndex: number;
-  background: string; // maps to bg
+  background: string;
+  backgroundColor: string;
   backgroundImage: string;
   placeholder: string;
   label: string;
@@ -412,6 +413,7 @@ const keysOfAISupportedModifiers: (keyof AISupportedModifiers)[] = [
   "left",
   "zIndex",
   "background",
+  "backgroundColor",
   "backgroundImage",
   "placeholder",
   "label",

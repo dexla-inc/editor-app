@@ -70,6 +70,7 @@ const styleWhitelist = [
   "marginLeft",
   "marginRight",
   "zIndex",
+  "alignSelf",
 ];
 const handlerBlacklist = ["Modal"];
 

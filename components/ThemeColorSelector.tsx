@@ -52,7 +52,7 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
   const excludeColors = new Set([
     "blue",
     "cyan",
-    // "dark",
+    "dark",
     "grape",
     "gray",
     "green",
