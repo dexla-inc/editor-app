@@ -12,15 +12,15 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
   const Config = () => {
     const editorTree = useEditorStore((state) => state.tree);
     const selectedComponentId = useEditorStore(
-      (state) => state.selectedComponentId
+      (state) => state.selectedComponentId,
     );
     const language = useEditorStore((state) => state.language);
     const currentTreeComponentsStates = useEditorStore(
-      (state) => state.currentTreeComponentsStates
+      (state) => state.currentTreeComponentsStates,
     );
 
     const selectedComponent = cloneDeep(
-      getComponentById(editorTree.root, selectedComponentId as string)
+      getComponentById(editorTree.root, selectedComponentId as string),
     );
 
     const currentState =
@@ -30,11 +30,11 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
       merge(
         selectedComponent?.props,
         selectedComponent?.languages?.[language],
-        selectedComponent?.states?.[currentState]
+        selectedComponent?.states?.[currentState],
       );
       return selectedComponent;
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComponent?.id, currentState, language]);
+    }, [selectedComponent, currentState, language]);
 
     return (
       <Modifier
