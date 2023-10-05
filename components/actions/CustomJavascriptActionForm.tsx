@@ -1,5 +1,5 @@
 import { ActionButtons } from "@/components/actions/ActionButtons";
-import Editor from "@monaco-editor/react";
+import { ActionsForm } from "@/components/actions/ActionsForm";
 import {
   handleLoadingStart,
   handleLoadingStop,
@@ -11,10 +11,10 @@ import {
 import { CustomJavascriptAction } from "@/utils/actions";
 import { Button, Card, Flex, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import Editor from "@monaco-editor/react";
 import { IconPlayerPlayFilled } from "@tabler/icons-react";
 import { useState } from "react";
 import { transpile } from "typescript";
-import { ActionsForm } from "@/components/actions/ActionsForm";
 
 type Props = {
   id: string;
@@ -114,7 +114,6 @@ export const CustomJavascriptActionForm = ({ id }: Props) => {
           <ActionButtons
             actionId={action.id}
             componentActions={componentActions}
-            selectedComponentId={selectedComponentId}
           ></ActionButtons>
         </Stack>
       </form>
