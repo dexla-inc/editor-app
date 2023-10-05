@@ -72,7 +72,6 @@ export const CloseModalActionForm = ({ id }: Props) => {
         <ActionButtons
           actionId={id}
           componentActions={componentActions}
-          selectedComponentId={selectedComponentId}
         ></ActionButtons>
       </Stack>
     </form>

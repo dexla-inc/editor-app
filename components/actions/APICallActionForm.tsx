@@ -1,5 +1,4 @@
 import { ActionButtons } from "@/components/actions/ActionButtons";
-import { ActionsForm } from "@/components/actions/ActionsForm";
 import {
   handleLoadingStart,
   handleLoadingStop,
@@ -526,11 +525,10 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
           <ActionButtons
             actionId={id}
             componentActions={componentActions}
-            selectedComponentId={selectedComponentId}
+            canAddSequential={true}
           />
         </Stack>
       </form>
-      <ActionsForm sequentialTo={id} />
     </>
   ) : (
     <Stack>

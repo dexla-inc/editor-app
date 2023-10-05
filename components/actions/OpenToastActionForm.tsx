@@ -70,7 +70,6 @@ export const OpenToastActionForm = ({ id }: Props) => {
         <ActionButtons
           actionId={action.id}
           componentActions={componentActions}
-          selectedComponentId={selectedComponentId}
         />
       </Stack>
     </form>

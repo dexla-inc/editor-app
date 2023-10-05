@@ -72,7 +72,6 @@ export const OpenModalActionForm = ({ id }: Props) => {
         <ActionButtons
           actionId={action.id}
           componentActions={componentActions}
-          selectedComponentId={selectedComponentId}
         ></ActionButtons>
       </Stack>
     </form>

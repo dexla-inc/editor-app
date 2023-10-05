@@ -978,7 +978,15 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Icon component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["icon", "background", "spacing", "size", "border", "position"],
+    modifiers: [
+      "icon",
+      "background",
+      "spacing",
+      "size",
+      "effects",
+      "border",
+      "position",
+    ],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1321,7 +1329,14 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["buttonIcon", "spacing", "size", "border", "position"],
+    modifiers: [
+      "buttonIcon",
+      "spacing",
+      "size",
+      "effects",
+      "border",
+      "position",
+    ],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

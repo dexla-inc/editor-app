@@ -204,7 +204,6 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
         <ActionButtons
           actionId={id}
           componentActions={componentActions}
-          selectedComponentId={selectedComponentId}
           optionalRemoveAction={removeAction}
         ></ActionButtons>
       </Stack>

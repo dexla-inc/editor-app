@@ -8,15 +8,9 @@ import {
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { ChangeStepAction } from "@/utils/actions";
-import {
-  Component,
-  getAllComponentsByName,
-  getComponentById,
-} from "@/utils/editor";
+import { Component, getAllComponentsByName } from "@/utils/editor";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEditorStore } from "@/stores/editor";
-import { useEffect } from "react";
 
 type Props = {
   id: string;
@@ -101,7 +95,6 @@ export const ChangeStepActionForm = ({ id }: Props) => {
         <ActionButtons
           actionId={action.id}
           componentActions={componentActions}
-          selectedComponentId={selectedComponentId}
         ></ActionButtons>
       </Stack>
     </form>

@@ -1,4 +1,4 @@
-import { ActionsForm } from "@/components/actions/ActionsForm";
+import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
   handleLoadingStop,
@@ -8,12 +8,11 @@ import {
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
-import { Action, ReloadComponentAction } from "@/utils/actions";
+import { ReloadComponentAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
-import { ActionIcon, Button, Stack, TextInput } from "@mantine/core";
+import { ActionIcon, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { useEffect } from "react";
 
@@ -34,24 +33,17 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
   });
 
   const pickingComponentToBindTo = useEditorStore(
-    (state) => state.pickingComponentToBindTo
+    (state) => state.pickingComponentToBindTo,
   );
   const componentToBind = useEditorStore((state) => state.componentToBind);
   const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind
+    (state) => state.setComponentToBind,
   );
-
-  const setCopiedAction = useEditorStore((state) => state.setCopiedAction);
-  const [copied, { open, close }] = useDisclosure(false);
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo
+    (state) => state.setPickingComponentToBindTo,
   );
-
-  const filteredComponentActions = componentActions.filter((a: Action) => {
-    return a.id === action.id || a.sequentialTo === action.id;
-  });
 
   const reloadAction = action.action as ReloadComponentAction;
 
@@ -83,25 +75,6 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
     }
   };
 
-  const removeAction = () => {
-    updateTreeComponentActions(
-      selectedComponentId!,
-      componentActions.filter((a: Action) => {
-        return a.id !== action.id && a.sequentialTo !== action.id;
-      })
-    );
-  };
-
-  const copyAction = () => {
-    setCopiedAction(filteredComponentActions);
-    open();
-  };
-
-  useEffect(() => {
-    const timeout = setTimeout(() => copied && close(), 2000);
-    return () => clearTimeout(timeout);
-  });
-
   useEffect(() => {
     if (pickingComponentToBindTo) {
       if (
@@ -111,10 +84,10 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
         form.setFieldValue("componentId", componentToBind);
         const _componentToBind = getComponentById(
           editorTree.root,
-          componentToBind
+          componentToBind,
         );
         const onMountAction = _componentToBind?.actions?.find(
-          (action) => action.trigger === "onMount"
+          (action) => action.trigger === "onMount",
         );
 
         form.setFieldValue("onMountActionId", onMountAction?.id);
@@ -149,29 +122,13 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
             }
             autoComplete="off"
           />
-          <Button size="xs" type="submit">
-            Save
-          </Button>
-          <Button
-            size="xs"
-            type="button"
-            variant="light"
-            color="pink"
-            onClick={copyAction}
-          >
-            {copied ? "Copied" : "Copy"}
-          </Button>
-          <Button
-            size="xs"
-            type="button"
-            variant="default"
-            onClick={removeAction}
-          >
-            Remove
-          </Button>
+          <ActionButtons
+            actionId={action.id}
+            componentActions={componentActions}
+            canAddSequential={true}
+          ></ActionButtons>
         </Stack>
       </form>
-      <ActionsForm sequentialTo={action.id} />
     </>
   );
 };

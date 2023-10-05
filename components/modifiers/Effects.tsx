@@ -1,10 +1,9 @@
-import { useEditorStore } from "@/stores/editor";
-import { debouncedTreeUpdate, getComponentById } from "@/utils/editor";
+import { withModifier } from "@/hoc/withModifier";
+import { debouncedTreeUpdate } from "@/utils/editor";
 import { NumberInput, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTransform } from "@tabler/icons-react";
 import { useEffect } from "react";
-import { withModifier } from "@/hoc/withModifier";
 
 export const icon = IconTransform;
 export const label = "Effects";
@@ -90,6 +89,10 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           label="Opacity"
           size="xs"
           {...form.getInputProps("opacity")}
+          precision={1}
+          step={0.1}
+          min={0}
+          max={1}
           onChange={(value) => {
             form.setFieldValue("opacity", value as number);
             debouncedTreeUpdate(selectedComponent?.id as string, {

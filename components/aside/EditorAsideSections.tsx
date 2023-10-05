@@ -1,5 +1,5 @@
 import { SidebarSection } from "@/components/SidebarSection";
-import { ActionsForm } from "@/components/actions/ActionsForm";
+import { ActionsFlow } from "@/components/actions/ActionsFlow";
 import * as AccordionItemModifier from "@/components/modifiers/AccordionItem";
 import * as BackgroundModifier from "@/components/modifiers/Background";
 import * as BorderModifier from "@/components/modifiers/Border";
@@ -45,7 +45,7 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { IconBolt } from "@tabler/icons-react";
+import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
 import { useState } from "react";
 
@@ -97,9 +97,8 @@ export const EditorAsideSections = () => {
   const setTreeComponentCurrentState = useEditorStore(
     (state) => state.setTreeComponentCurrentState,
   );
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent,
-  );
+  const { updateTreeComponent, updateTreeComponentActions, setCopiedAction } =
+    useEditorStore.getState();
   const currentTreeComponentsStates = useEditorStore(
     (state) => state.currentTreeComponentsStates,
   );
@@ -124,6 +123,8 @@ export const EditorAsideSections = () => {
     editorTree.root,
     selectedComponentId as string,
   );
+
+  const componentActions = component?.actions ?? [];
   const mappedComponent = componentMapper[component?.name as string];
 
   const sections = mappedComponent?.modifiers?.map((id) => {
@@ -147,36 +148,82 @@ export const EditorAsideSections = () => {
     </SidebarSection>
   ));
 
-  const actionsSections = (component?.actions ?? [])?.map((action: Action) => {
+  const getActionsBySequentialToOrId = (id: string) => {
+    return componentActions.filter(
+      (a: Action) => a.id === id || a.sequentialTo === id,
+    );
+  };
+
+  const copyAction = (id: string) => {
+    setCopiedAction(getActionsBySequentialToOrId(id));
+  };
+
+  const removeAction = (id: string) => {
+    const updatedActions = componentActions.filter(
+      (a: Action) => a.id !== id && a.sequentialTo !== id,
+    );
+    updateTreeComponentActions(selectedComponentId!, updatedActions);
+  };
+
+  const baseItem = {
+    isAction: true,
+    removeAction,
+    copyAction,
+  };
+
+  const renderSequentialActions = (action: Action) => {
+    return getActionsBySequentialToOrId(action.id).map(
+      (sequentialAction: Action) => {
+        const sequentialActionName = sequentialAction.action.name;
+        const Component = actionMapper[sequentialActionName]?.form;
+
+        const item = {
+          ...baseItem,
+          id: sequentialAction.id,
+          label: `${startCase(sequentialAction.trigger)}: ${startCase(
+            sequentialAction.action.name,
+          )}`,
+        };
+
+        return (
+          sequentialAction.sequentialTo === action.id && (
+            <SidebarSection
+              icon={IconArrowBadgeRight}
+              {...item}
+              key={item.label}
+            >
+              <Component id={sequentialAction.id} />
+            </SidebarSection>
+          )
+        );
+      },
+    );
+  };
+
+  const actionsSections = componentActions.map((action: Action) => {
     const isSequential = !!action.sequentialTo;
-    const sequentialToAction = isSequential
-      ? (component?.actions ?? []).find(
-          (a: Action) => a.id === action.sequentialTo,
-        )
-      : undefined;
-
-    const item = {
-      id: action.id,
-      label: !!sequentialToAction
-        ? `${startCase(sequentialToAction.trigger)} → ${startCase(
-            action.trigger,
-          )}`
-        : startCase(action.trigger),
-      icon: IconBolt, // Need to add an icon property to a trigger
-      initiallyOpened: true,
-    };
-
     const actionName = action.action.name;
 
-    if (actionName) {
-      const Component = actionMapper[actionName]?.form;
+    const item = !isSequential
+      ? {
+          ...baseItem,
+          id: action.id,
+          label: `${startCase(action.trigger)}: ${startCase(actionName)}`,
+        }
+      : undefined;
 
-      return (
-        <SidebarSection {...item} key={item.label}>
+    if (!actionName) return undefined;
+
+    const Component = actionMapper[actionName]?.form;
+
+    return (
+      item && (
+        <SidebarSection icon={IconBolt} {...item} key={item.label}>
           <Component id={action.id} />
+          {renderSequentialActions(action)}
         </SidebarSection>
-      );
-    }
+      )
+    );
   });
 
   return (
@@ -247,14 +294,7 @@ export const EditorAsideSections = () => {
             {designSections}
           </Stack>
         )}
-        {tab === "actions" && (
-          <Stack>
-            <Box px="md">
-              <ActionsForm />
-            </Box>
-            {actionsSections}
-          </Stack>
-        )}
+        {tab === "actions" && <ActionsFlow actionsSections={actionsSections} />}
       </Stack>
     </Stack>
   );
