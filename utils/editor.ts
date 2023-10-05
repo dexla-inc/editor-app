@@ -977,12 +977,41 @@ export const componentStyleMapper = (
   { style }: { style: CSSProperties },
 ) => {
   const { background, backgroundColor, color, ...rest } = style;
-  let result = merge({}, { style: rest });
+  const result = merge({}, { style: rest });
 
   if (componentName === "Button") {
-    result = merge(result, {
+    merge(result, {
       color: background ?? backgroundColor,
       textColor: color,
+    });
+  }
+
+  if (
+    ["Container", "NavLink", "Icon", "RadioItem", "Navbar", "AppBar"].includes(
+      componentName,
+    )
+  ) {
+    merge(result, {
+      bg: background ?? backgroundColor,
+    });
+  }
+
+  if ("NavLink" === componentName) {
+    merge(result, {
+      align: rest.textAlign,
+      color,
+    });
+  }
+
+  if (
+    ["Text", "Checkbox", "Divider", "Button", "Select", "Input"].includes(
+      componentName,
+    )
+  ) {
+    merge(result, {
+      color,
+      size: rest.fontSize,
+      weight: rest.fontWeight,
     });
   }
 
