@@ -1,14 +1,12 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
-import { useEditorStore } from "@/stores/editor";
-import {
-  debouncedTreeComponentPropsUpdate,
-  getComponentById,
-} from "@/utils/editor";
+import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconDivide } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { withModifier } from "@/hoc/withModifier";
+import { pick } from "next/dist/lib/pick";
 
 export const icon = IconDivide;
 export const label = "Divider";
@@ -22,43 +20,32 @@ export const defaultInputValues = {
   variant: "solid",
 };
 
-export const Modifier = () => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string
-  );
-  const componentProps = selectedComponent?.props || {};
-
+export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: defaultInputValues,
   });
 
   useEffect(() => {
-    if (selectedComponentId) {
-      const {
-        style = {},
-        label,
-        labelPosition,
-        orientation,
-        size,
-        variant,
-      } = componentProps;
+    if (selectedComponent?.id) {
+      const data = pick(selectedComponent.props!, [
+        "style",
+        "label",
+        "labelPosition",
+        "orientation",
+        "size",
+        "variant",
+      ]);
       form.setValues({
-        label: label ?? defaultInputValues.label,
-        labelPosition: labelPosition ?? defaultInputValues.labelPosition,
-        orientation: orientation ?? defaultInputValues.orientation,
-        size: size ?? defaultInputValues.size,
-        variant: variant ?? defaultInputValues.variant,
-        ...style,
+        label: data.label ?? defaultInputValues.label,
+        labelPosition: data.labelPosition ?? defaultInputValues.labelPosition,
+        orientation: data.orientation ?? defaultInputValues.orientation,
+        size: data.size ?? defaultInputValues.size,
+        variant: data.variant ?? defaultInputValues.variant,
+        ...data.style,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponent]);
 
   return (
     <form>
@@ -131,4 +118,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});

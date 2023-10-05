@@ -1,10 +1,6 @@
 import { Position } from "@/components/mapper/GoogleMapPlugin";
-import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
-import {
-  debouncedTreeComponentPropsUpdate,
-  getComponentById,
-} from "@/utils/editor";
+import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import {
   ActionIcon,
   Box,
@@ -23,6 +19,7 @@ import { IconMapPin, IconPlus, IconTrash } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
 import { pick } from "next/dist/lib/pick";
 import { useEffect, useState } from "react";
+import { withModifier } from "@/hoc/withModifier";
 
 export const icon = IconMapPin;
 export const label = "Map Settings";
@@ -46,16 +43,7 @@ export const defaultMapValues = {
   markers: [] as Array<MarkerItem>,
 };
 
-export const Modifier = () => {
-  const { editorTree, selectedComponentId } = useEditorStore((state) => ({
-    editorTree: state.tree,
-    selectedComponentId: state.selectedComponentId,
-  }));
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string,
-  );
-
+export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: defaultMapValues,
   });
@@ -158,7 +146,7 @@ export const Modifier = () => {
   }, [form.values.apiKey]);
 
   return (
-    <form key={selectedComponentId}>
+    <form key={selectedComponent?.id}>
       <Stack spacing="xs">
         <TextInput
           size="xs"
@@ -363,4 +351,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});

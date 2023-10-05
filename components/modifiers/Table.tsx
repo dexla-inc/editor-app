@@ -9,23 +9,13 @@ import { IconTable } from "@tabler/icons-react";
 import get from "lodash.get";
 import isEmpty from "lodash.isempty";
 import { useEffect } from "react";
+import { withModifier } from "@/hoc/withModifier";
+import { pick } from "next/dist/lib/pick";
 
 export const icon = IconTable;
 export const label = "Table";
 
-export const Modifier = () => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string
-  );
-
-  const componentProps = selectedComponent?.props || {};
-
+export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
     initialValues: {
       data: "",
@@ -35,32 +25,32 @@ export const Modifier = () => {
   });
 
   useEffect(() => {
-    if (selectedComponentId) {
-      const {
-        data = {},
-        exampleData = {},
-        headers = {},
-        config = {},
-        dataPath,
-      } = componentProps;
+    if (selectedComponent?.id) {
+      const data = pick(selectedComponent.props!, [
+        "data",
+        "exampleData",
+        "dataPath",
+        "headers",
+        "config",
+      ]);
 
-      let _data = isEmpty(exampleData?.value ?? exampleData)
+      let _data = isEmpty(data.exampleData?.value ?? data.exampleData)
         ? data
-        : exampleData?.value ?? exampleData;
+        : data.exampleData?.value ?? data.exampleData;
 
-      if (dataPath) {
-        _data = get(_data, dataPath.replace("[0]", ""));
+      if (data.dataPath) {
+        _data = get(_data, data.dataPath.replace("[0]", ""));
       }
 
       form.setValues({
         data: JSON.stringify(_data, null, 2),
-        headers,
-        config,
+        headers: data.headers,
+        config: data.config,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId, componentProps.data, componentProps.exampleData]);
+  }, [selectedComponent]);
 
   return (
     <form>
@@ -162,7 +152,7 @@ export const Modifier = () => {
             try {
               debouncedTreeComponentPropsUpdate(
                 "data",
-                JSON.parse(e.target.value ?? "")
+                JSON.parse(e.target.value ?? ""),
               );
             } catch (error) {
               console.log(error);
@@ -172,4 +162,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});
