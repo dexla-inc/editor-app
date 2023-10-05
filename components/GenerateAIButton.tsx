@@ -13,6 +13,7 @@ import {
   getComponentBeingAddedId,
   getEditorTreeFromPageStructure,
   getNewComponents,
+  debouncedTreeUpdate,
 } from "@/utils/editor";
 import { isKeyOfAISupportedModifiers } from "@/utils/modifiers";
 import {
@@ -103,10 +104,43 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );
-  const [stream, setStream] = useState<string>("");
+  // const [stream, setStream] = useState<string>("");
+
+  const setStream: any = {
+    COMPONENT: (stream: string) => {
+      processTOMLStream({
+        stream,
+        handler: handleComponentGeneration({
+          componentBeingAddedId,
+          theme,
+          updateTreeComponentChildren,
+          tree,
+          setTree,
+          pages,
+        }),
+      });
+    },
+    LAYOUT: (stream: string) => {
+      processTOMLStream({
+        stream,
+        handler: handleLayoutGeneration({
+          theme,
+          tree,
+          setTree,
+          pages,
+        }),
+      });
+    },
+    CSS_MODIFIER: (stream: string) => {
+      processTOMLStream<CssModiferAIResponse>({
+        stream,
+        handler: handleCssGeneration(),
+      });
+    },
+  } as const;
 
   const { onMessage, onError, onOpen, onClose } = createHandlers({
-    setStream,
+    setStream: setStream[type],
     setIsLoading,
     stopLoading,
   });
@@ -157,16 +191,22 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
         return;
       }
 
-      const cssKeys = Object.keys(json.css);
+      const style = Object.entries(json.css).reduce(
+        (acc, [key, value]: [string, string | number]) => {
+          const keyExists = isKeyOfAISupportedModifiers(key);
 
-      cssKeys.forEach((key) => {
-        const keyExists = isKeyOfAISupportedModifiers(key);
+          if (keyExists) {
+            acc[key] = value;
+          } else {
+            console.error(`Tell Tom! Unsupported key: ${key}`);
+          }
+          return acc;
+        },
+        {} as Record<string, string | number>,
+      );
 
-        if (keyExists) {
-          debouncedTreeComponentStyleUpdate(key, json.css[key]);
-        } else {
-          console.error(`Tell Tom! Unsupported key: ${key}`);
-        }
+      debouncedTreeUpdate(selectedComponentId, {
+        style,
       });
     };
   };
@@ -182,45 +222,6 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
       description: "",
     },
   });
-
-  useEffect(() => {
-    switch (type) {
-      case "COMPONENT":
-        processTOMLStream({
-          stream,
-          handler: handleComponentGeneration({
-            componentBeingAddedId,
-            theme,
-            updateTreeComponentChildren,
-            tree,
-            setTree,
-            pages,
-          }),
-        });
-
-        break;
-      case "LAYOUT":
-        processTOMLStream({
-          stream,
-          handler: handleLayoutGeneration({
-            theme,
-            tree,
-            setTree,
-            pages,
-          }),
-        });
-
-        break;
-      case "CSS_MODIFIER":
-        processTOMLStream<CssModiferAIResponse>({
-          stream,
-          handler: handleCssGeneration(),
-        });
-
-        break;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stream]);
 
   const onSubmit = async (values: any) => {
     setIsLoading(true);
