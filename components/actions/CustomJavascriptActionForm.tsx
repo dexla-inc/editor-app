@@ -1,5 +1,4 @@
 import { ActionButtons } from "@/components/actions/ActionButtons";
-import { ActionsForm } from "@/components/actions/ActionsForm";
 import {
   handleLoadingStart,
   handleLoadingStop,
@@ -114,10 +113,10 @@ export const CustomJavascriptActionForm = ({ id }: Props) => {
           <ActionButtons
             actionId={action.id}
             componentActions={componentActions}
+            canAddSequential={true}
           ></ActionButtons>
         </Stack>
       </form>
-      <ActionsForm sequentialTo={id} />
     </>
   );
 };
