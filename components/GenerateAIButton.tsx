@@ -1,3 +1,4 @@
+import { Icon } from "@/components/Icon";
 import { AITextArea } from "@/components/ai/AITextArea";
 import { AIRequestTypes } from "@/requests/ai/types";
 import { PageResponse } from "@/requests/pages/types";
@@ -13,6 +14,7 @@ import {
   getEditorTreeFromPageStructure,
   getNewComponents,
 } from "@/utils/editor";
+import { isKeyOfAISupportedModifiers } from "@/utils/modifiers";
 import {
   createHandlers,
   descriptionPlaceholderMapping,
@@ -35,7 +37,7 @@ import { IconSparkles } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { Icon } from "./Icon";
+import { ErrorAlert } from "./Alerts";
 
 type ComponentGenerationProps = {
   componentBeingAddedId: MutableRefObject<string | undefined>;
@@ -62,54 +64,9 @@ type LayoutGenerationProps = {
   ) => void;
 };
 
-const handleComponentGeneration = (params: ComponentGenerationProps) => {
-  return function (tomlData: any) {
-    const {
-      componentBeingAddedId,
-      theme,
-      updateTreeComponentChildren,
-      setTree,
-      pages,
-      tree,
-    } = params;
-
-    const newComponents = getNewComponents(tomlData, theme, pages);
-
-    const id = getComponentBeingAddedId(tree.root);
-
-    if (!id) {
-      const copy = cloneDeep(tree);
-      addComponent(copy.root, newComponents, {
-        id: "content-wrapper",
-        edge: "bottom",
-      });
-      setTree(copy, { action: `Added ${newComponents.name}` });
-    } else {
-      componentBeingAddedId.current = id;
-      updateTreeComponentChildren(id, newComponents.children!);
-    }
-  };
-};
-
-const handleLayoutGeneration = (params: LayoutGenerationProps) => {
-  return function (tomlData: any) {
-    const { theme, pages, setTree } = params;
-
-    const tree = getEditorTreeFromPageStructure(tomlData, theme, pages);
-
-    setTree(tree, { action: `Layout changed` });
-  };
-};
-
 type GenerateAIButtonProps = {
   projectId: string;
   pageTitle?: string | undefined;
-};
-
-type DescriptionPlaceHolderType = {
-  description: string;
-  placeholder: string;
-  replaceText: string;
 };
 
 type CssModiferAIResponse = {
@@ -147,13 +104,51 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
     (state) => state.selectedComponentId,
   );
   const [stream, setStream] = useState<string>("");
-  const [modifier, setModifier] = useState<CssModifer>();
 
   const { onMessage, onError, onOpen, onClose } = createHandlers({
     setStream,
     setIsLoading,
     stopLoading,
   });
+
+  const handleComponentGeneration = (params: ComponentGenerationProps) => {
+    return function (tomlData: any) {
+      const {
+        componentBeingAddedId,
+        theme,
+        updateTreeComponentChildren,
+        setTree,
+        pages,
+        tree,
+      } = params;
+
+      const newComponents = getNewComponents(tomlData, theme, pages);
+
+      const id = getComponentBeingAddedId(tree.root);
+
+      if (!id) {
+        const copy = cloneDeep(tree);
+        addComponent(copy.root, newComponents, {
+          id: "content-wrapper",
+          edge: "bottom",
+        });
+        setTree(copy, { action: `Added ${newComponents.name}` });
+      } else {
+        componentBeingAddedId.current = id;
+        updateTreeComponentChildren(id, newComponents.children!);
+      }
+    };
+  };
+
+  const handleLayoutGeneration = (params: LayoutGenerationProps) => {
+    return function (tomlData: any) {
+      const { theme, pages, setTree } = params;
+
+      const tree = getEditorTreeFromPageStructure(tomlData, theme, pages);
+
+      setTree(tree, { action: `Layout changed` });
+    };
+  };
 
   const handleCssGeneration = () => {
     return function (json: CssModiferAIResponse) {
@@ -162,28 +157,23 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
         return;
       }
 
-      Object.keys(json.css).map((key) => {
-        console.log(key, json.css[key]);
-        debouncedTreeComponentStyleUpdate(key, json.css[key]);
+      const cssKeys = Object.keys(json.css);
+
+      cssKeys.forEach((key) => {
+        const keyExists = isKeyOfAISupportedModifiers(key);
+
+        if (keyExists) {
+          debouncedTreeComponentStyleUpdate(key, json.css[key]);
+        } else {
+          console.error(`Tell Tom! Unsupported key: ${key}`);
+        }
       });
-
-      // const selectedComponent: CssModifer = {
-      //   modifiers: json.css,
-      //   selectedComponentId: selectedComponentId,
-      // };
-
-      // setModifier(selectedComponent);
     };
   };
-
-  useEffect(() => {
-    console.log(modifier);
-  }, [modifier]);
 
   const closeModal = () => {
     close();
     setDescription("");
-    setType("CSS_MODIFIER");
   };
 
   const form = useForm({
@@ -319,6 +309,13 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
                 ]}
               ></Select>
             </Flex>
+            {selectedComponentId === "content-wrapper" &&
+              type === "CSS_MODIFIER" && (
+                <ErrorAlert
+                  title="Error"
+                  text="Select a component first"
+                ></ErrorAlert>
+              )}
             <AITextArea
               placeholder={
                 descriptionPlaceholderMapping[type as AIRequestTypes]

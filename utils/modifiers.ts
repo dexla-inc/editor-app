@@ -268,3 +268,170 @@ export const requiredModifiers: RequiredModifiers = {
     showLabel: true,
   },
 };
+
+type AISupportedModifiers = {
+  padding: string;
+  margin: string;
+  paddingTop?: string;
+  paddingBottom?: string;
+  paddingLeft?: string;
+  paddingRight?: string;
+  marginTop?: string;
+  marginBottom?: string;
+  marginLeft?: string;
+  marginRight?: string;
+  width: string;
+  height: string;
+  minWidth: string;
+  minHeight: string;
+  maxWidth: string;
+  maxHeight: string;
+  fontFamily: string;
+  fontStyle: string;
+  fontSize: string;
+  fontWeight: string;
+  lineHeight: string;
+  letterSpacing: string;
+  textAlign: string;
+  color: string;
+  borderTopStyle: string;
+  borderRightStyle: string;
+  borderBottomStyle: string;
+  borderLeftStyle: string;
+  borderTopWidth: string;
+  borderRightWidth: string;
+  borderBottomWidth: string;
+  borderLeftWidth: string;
+  borderTopColor: string;
+  borderRightColor: string;
+  borderBottomColor: string;
+  borderLeftColor: string;
+  borderRadius: string;
+  borderTopLeftRadius: string;
+  borderTopRightRadius: string;
+  borderBottomLeftRadius: string;
+  borderBottomRightRadius: string;
+  showBorder: string;
+  showRadius: string;
+  borderStyle: string;
+  borderWidth: string;
+  borderColor: string;
+  display: string;
+  flexWrap: string;
+  flexDirection: string;
+  rowGap: string;
+  columnGap: string;
+  alignItems: string;
+  justifyContent: string;
+  position: string;
+  top: string;
+  right: string;
+  bottom: string;
+  left: string;
+  zIndex: number;
+  background: string; // maps to bg
+  backgroundImage: string;
+  placeholder: string;
+  label: string;
+  src: string;
+  alt: string;
+  fit: string;
+  imagePosition: string;
+  cursor: string;
+  overflow: string;
+  opacity: number;
+  inset: string;
+  xOffset: string;
+  yOffset: string;
+  blur: string;
+  spread: string;
+  boxShadowColor: string;
+  flexGrow: number;
+  flexShrink: number;
+  flexBasis: string;
+};
+
+const keysOfAISupportedModifiers: (keyof AISupportedModifiers)[] = [
+  "padding",
+  "margin",
+  "paddingTop",
+  "paddingBottom",
+  "paddingLeft",
+  "paddingRight",
+  "marginTop",
+  "marginBottom",
+  "marginLeft",
+  "marginRight",
+  "width",
+  "height",
+  "minWidth",
+  "minHeight",
+  "maxWidth",
+  "maxHeight",
+  "fontFamily",
+  "fontStyle",
+  "fontSize",
+  "fontWeight",
+  "lineHeight",
+  "letterSpacing",
+  "textAlign",
+  "color",
+  "borderTopStyle",
+  "borderRightStyle",
+  "borderBottomStyle",
+  "borderLeftStyle",
+  "borderTopWidth",
+  "borderRightWidth",
+  "borderBottomWidth",
+  "borderLeftWidth",
+  "borderTopColor",
+  "borderRightColor",
+  "borderBottomColor",
+  "borderLeftColor",
+  "borderRadius",
+  "borderTopLeftRadius",
+  "borderTopRightRadius",
+  "borderBottomLeftRadius",
+  "borderBottomRightRadius",
+  "showBorder",
+  "showRadius",
+  "borderStyle",
+  "borderWidth",
+  "borderColor",
+  "display",
+  "flexWrap",
+  "flexDirection",
+  "rowGap",
+  "columnGap",
+  "alignItems",
+  "justifyContent",
+  "position",
+  "top",
+  "right",
+  "bottom",
+  "left",
+  "zIndex",
+  "background",
+  "backgroundImage",
+  "placeholder",
+  "label",
+  "src",
+  "alt",
+  "fit",
+  "imagePosition",
+  "cursor",
+  "overflow",
+  "opacity",
+  "inset",
+  "xOffset",
+  "yOffset",
+  "blur",
+  "spread",
+  "boxShadowColor",
+];
+
+export function isKeyOfAISupportedModifiers(
+  key: string,
+): key is keyof AISupportedModifiers {
+  return keysOfAISupportedModifiers.includes(key as keyof AISupportedModifiers);
+}

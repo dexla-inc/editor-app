@@ -72,7 +72,11 @@ export const createHandlers = (config: HandlerProps) => {
 
   const onMessage = (event: EventSourceMessage) => {
     try {
-      if (event.data.includes("```toml") || event.data.includes("```TOML")) {
+      if (
+        event.data.includes("```toml") ||
+        event.data.includes("```TOML") ||
+        event.data.includes("```")
+      ) {
         console.warn("Ignoring data block containing ```toml");
         return;
       }

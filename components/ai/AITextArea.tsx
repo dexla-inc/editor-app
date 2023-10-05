@@ -1,8 +1,5 @@
 import classes from "@/components/ai/AITextArea.module.css";
-import { Icon } from "@/components/Icon";
 import { AIRequestTypes } from "@/requests/ai/types";
-import { useEditorStore } from "@/stores/editor";
-import { Flex, Popover, Text } from "@mantine/core";
 import { RichTextEditor } from "@mantine/tiptap";
 import { Highlight, HighlightOptions } from "@tiptap/extension-highlight";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -31,11 +28,9 @@ export const AITextArea = ({
   items,
   placeholder,
 }: Props) => {
-  const [showFeatures, setFeature] = useState<boolean>(false);
+  //const [showFeatures, setFeature] = useState<boolean>(false);
   const [editor, setEditor] = useState<Editor>();
-  const theme = useEditorStore((state) => state.theme);
 
-  const filteredItems = getFilteredItems(items, "");
   const extensions = [
     StarterKit,
     FeatureHighlight.configure({
@@ -77,10 +72,6 @@ export const AITextArea = ({
     if (matchedFeatureItem && onTypeChange)
       onTypeChange(matchedFeatureItem.type);
 
-    const filteredFeatures = getFilteredItems(items, inputText);
-    const isShowingFeatures =
-      inputText.trim() === "" || filteredFeatures.length > 0;
-    setFeature(isShowingFeatures);
     onChange(inputText);
   };
 
@@ -95,60 +86,9 @@ export const AITextArea = ({
   }, [placeholder]);
 
   return (
-    <Popover
-      opened={showFeatures}
-      width={250}
-      onClose={() => setFeature(false)}
-    >
-      <Popover.Target>
-        <RichTextEditor editor={editor as Editor}>
-          <RichTextEditor.Content />
-        </RichTextEditor>
-      </Popover.Target>
-      {showFeatures && (
-        <Popover.Dropdown p={0}>
-          {filteredItems.map((item) => (
-            <Flex
-              key={item.name}
-              p="xs"
-              gap={6}
-              align="center"
-              sx={{
-                cursor: "pointer",
-                "&:hover": {
-                  backgroundColor: theme.colors.gray[1],
-                },
-              }}
-              onClick={() => {
-                const newText = `${item.name} `;
-                editor?.commands.setContent(newText, false);
-                setFeature(false);
-                onTypeChange && onTypeChange(item.type);
-                applyHighlightIfMatched(
-                  {
-                    name: item.name,
-                    type: item.type,
-                    icon: item.icon,
-                  },
-                  "featureHighlight",
-                  editor,
-                  newText,
-                );
-              }}
-            >
-              <Icon name={item.icon} style={{ color: theme.colors.teal[6] }} />
-              <Text>{item.name}</Text>
-            </Flex>
-          ))}
-        </Popover.Dropdown>
-      )}
-    </Popover>
-  );
-};
-
-const getFilteredItems = (featureItems: AITextAreaItem[], input: string) => {
-  return featureItems.filter((item) =>
-    item.name.toLowerCase().includes(input.toLowerCase()),
+    <RichTextEditor editor={editor as Editor}>
+      <RichTextEditor.Content />
+    </RichTextEditor>
   );
 };
 
