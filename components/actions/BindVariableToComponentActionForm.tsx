@@ -1,3 +1,4 @@
+import { DataPicker } from "@/components/DataPicker";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
@@ -7,20 +8,19 @@ import {
   useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
+import { VariableSelect } from "@/components/variables/VariableSelect";
+import { getVariable } from "@/requests/variables/queries";
+import { VariableResponse } from "@/requests/variables/types";
 import { useEditorStore } from "@/stores/editor";
-import { Action, BindVariableToComponentAction } from "@/utils/actions";
+import { BindVariableToComponentAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
 import { ActionIcon, Loader, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconCurrentLocation } from "@tabler/icons-react";
-import { useEffect } from "react";
-import { VariableSelect } from "@/components/variables/VariableSelect";
-import { VariableResponse } from "@/requests/variables/types";
-import { getVariable } from "@/requests/variables/queries";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { DataPicker } from "@/components/DataPicker";
+import { useEffect } from "react";
 
 type Props = {
   id: string;
@@ -93,15 +93,6 @@ export const BindVariableToComponentActionForm = ({ id }: Props) => {
     } catch (error) {
       handleLoadingStop({ stopLoading, success: false });
     }
-  };
-
-  const removeAction = () => {
-    updateTreeComponentActions(
-      selectedComponentId!,
-      componentActions.filter((a: Action) => {
-        return a.id !== id && a.sequentialTo !== id;
-      }),
-    );
   };
 
   useEffect(() => {
@@ -181,12 +172,7 @@ export const BindVariableToComponentActionForm = ({ id }: Props) => {
           />
         )}
 
-        <ActionButtons
-          actionId={id}
-          componentActions={componentActions}
-          selectedComponentId={selectedComponentId}
-          optionalRemoveAction={removeAction}
-        />
+        <ActionButtons actionId={id} componentActions={componentActions} />
       </Stack>
     </form>
   );

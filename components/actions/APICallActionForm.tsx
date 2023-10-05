@@ -1,5 +1,4 @@
 import { ActionButtons } from "@/components/actions/ActionButtons";
-import { ActionsForm } from "@/components/actions/ActionsForm";
 import {
   handleLoadingStart,
   handleLoadingStop,
@@ -523,14 +522,9 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
               text={`add ${feature.toLowerCase()} to page`}
             />
           )}
-          <ActionButtons
-            actionId={id}
-            componentActions={componentActions}
-            selectedComponentId={selectedComponentId}
-          />
+          <ActionButtons actionId={id} componentActions={componentActions} />
         </Stack>
       </form>
-      <ActionsForm sequentialTo={id} />
     </>
   ) : (
     <Stack>

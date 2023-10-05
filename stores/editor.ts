@@ -97,6 +97,8 @@ export type EditorState = {
   copiedAction?: Action[];
   featureToBind?: string;
   featureToBindTo?: FeatureToBind;
+  sequentialTo?: string;
+  setSequentialTo: (sequentialTo?: string) => void;
   setFeatureToBindTo: (featuretoBindTo?: FeatureToBind) => void;
   setFeatureToBind: (featureToBind?: string) => void;
   setPickingComponentToBindTo: (
@@ -214,6 +216,8 @@ export const useEditorStore = create<EditorState>()(
           set({ featureToBind }, false, "editor/setFeatureToBind"),
         setFeatureToBindTo: (featureToBindTo) =>
           set({ featureToBindTo }, false, "editor/setFeatureToBindTo"),
+        setSequentialTo: (sequentialTo) =>
+          set({ sequentialTo }, false, "editor/setSequentialTo"),
         setComponentToBind: (componentToBind) =>
           set({ componentToBind }, false, "editor/setComponentToBind"),
         setCopiedComponent: (copiedComponent) =>

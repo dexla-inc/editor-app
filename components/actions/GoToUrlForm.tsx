@@ -1,3 +1,4 @@
+import { DataPicker } from "@/components/DataPicker";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
@@ -8,14 +9,13 @@ import {
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { GoToUrlAction } from "@/utils/actions";
-import { Checkbox, Stack, TextInput } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { DataPicker } from "@/components/DataPicker";
 import {
   Component,
   getAllParentsWithExampleData,
   getComponentById,
 } from "@/utils/editor";
+import { Checkbox, Stack, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
 import isEmpty from "lodash.isempty";
 
 type Props = {
@@ -104,11 +104,7 @@ export const GoToUrlForm = ({ id }: Props) => {
           {...openInNewTabInputProps}
           checked={openInNewTabInputProps.value}
         />
-        <ActionButtons
-          actionId={id}
-          componentActions={componentActions}
-          selectedComponentId={selectedComponentId}
-        />
+        <ActionButtons actionId={id} componentActions={componentActions} />
       </Stack>
     </form>
   );

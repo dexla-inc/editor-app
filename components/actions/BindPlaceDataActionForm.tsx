@@ -1,4 +1,8 @@
+import { BindPlaceDataAction } from "@/utils/actions";
+import { Component, getAllComponentsByName } from "@/utils/editor";
 import { Select, Stack } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { ActionButtons } from "./ActionButtons";
 import {
   handleLoadingStart,
   handleLoadingStop,
@@ -7,10 +11,6 @@ import {
   useEditorStores,
   useLoadingState,
 } from "./_BaseActionFunctions";
-import { BindPlaceDataAction } from "@/utils/actions";
-import { useForm } from "@mantine/form";
-import { ActionButtons } from "./ActionButtons";
-import { Component, getAllComponentsByName } from "@/utils/editor";
 
 type Props = {
   id: string;
@@ -71,7 +71,6 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
         <ActionButtons
           actionId={action.id}
           componentActions={componentActions}
-          selectedComponentId={selectedComponentId}
         ></ActionButtons>
       </Stack>
     </form>

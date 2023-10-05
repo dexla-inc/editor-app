@@ -1,3 +1,4 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
@@ -8,13 +9,12 @@ import {
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { listVariables } from "@/requests/variables/queries";
+import { useEditorStore } from "@/stores/editor";
 import { SetVariableAction } from "@/utils/actions";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { useEditorStore } from "@/stores/editor";
 import { VariablesButton } from "../variables/VariablesButton";
 
 type Props = {
@@ -108,7 +108,6 @@ export const SetVariableActionForm = ({ id }: Props) => {
         <ActionButtons
           actionId={action.id}
           componentActions={componentActions}
-          selectedComponentId={selectedComponentId}
         />
       </Stack>
     </form>

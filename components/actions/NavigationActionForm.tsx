@@ -1,3 +1,4 @@
+import { QueryStringsForm } from "@/components/QueryStringsForm";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
@@ -7,13 +8,12 @@ import {
   useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
+import { QueryStringListItem } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
 import { NavigationAction } from "@/utils/actions";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { QueryStringsForm } from "@/components/QueryStringsForm";
 import { useEffect, useMemo, useState } from "react";
-import { QueryStringListItem } from "@/requests/pages/types";
 type Props = {
   id: string;
 };
@@ -107,7 +107,6 @@ export const NavigationActionForm = ({ id }: Props) => {
         <ActionButtons
           actionId={id}
           componentActions={componentActions}
-          selectedComponentId={selectedComponentId}
         ></ActionButtons>
       </Stack>
     </form>

@@ -1,7 +1,6 @@
 import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
 import { Action } from "@/utils/actions";
-import { ICON_DELETE } from "@/utils/config";
 import { Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
@@ -9,18 +8,16 @@ import { useEffect } from "react";
 type Props = {
   actionId: string;
   componentActions: Action[];
-  selectedComponentId: string | undefined;
   optionalRemoveAction?: () => void;
 };
 
 export const ActionButtons = ({
   actionId,
   componentActions,
-  selectedComponentId,
-  optionalRemoveAction,
+  optionalRemoveAction: removeAction,
 }: Props) => {
   const [copied, { open, close }] = useDisclosure(false);
-  const setCopiedAction = useEditorStore((state) => state.setCopiedAction);
+  const { setCopiedAction } = useEditorStore.getState();
   const filteredComponentActions = componentActions.filter((a: Action) => {
     return a.id === actionId || a.sequentialTo === actionId;
   });
@@ -29,21 +26,6 @@ export const ActionButtons = ({
     setCopiedAction(filteredComponentActions);
     open();
   };
-
-  const updateTreeComponentActions = useEditorStore(
-    (state) => state.updateTreeComponentActions,
-  );
-
-  const defaultRemoveAction = () => {
-    updateTreeComponentActions(
-      selectedComponentId!,
-      componentActions.filter((a: Action) => {
-        return a.id !== actionId && a.sequentialTo !== actionId;
-      }),
-    );
-  };
-
-  const removeAction = optionalRemoveAction || defaultRemoveAction;
 
   useEffect(() => {
     const timeout = setTimeout(() => copied && close(), 2000);
@@ -70,16 +52,18 @@ export const ActionButtons = ({
       >
         {copied ? "Copied" : "Copy"}
       </Button>
-      <Button
-        size="xs"
-        type="button"
-        variant="light"
-        onClick={removeAction}
-        color="red"
-        leftIcon={<Icon name={ICON_DELETE}></Icon>}
-      >
-        Remove
-      </Button>
+      {removeAction && (
+        <Button
+          size="xs"
+          type="button"
+          variant="light"
+          color="red"
+          onClick={removeAction}
+          leftIcon={<Icon name="IconTrash"></Icon>}
+        >
+          Remove
+        </Button>
+      )}
     </>
   );
 };

@@ -1,3 +1,5 @@
+import { ComponentToBindInput } from "@/components/ComponentToBindInput";
+import { Icon } from "@/components/Icon";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
@@ -23,8 +25,6 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTrash } from "@tabler/icons-react";
-import { Icon } from "@/components/Icon";
-import { ComponentToBindInput } from "@/components/ComponentToBindInput";
 
 type Props = {
   id: string;
@@ -178,7 +178,6 @@ export const TogglePropsActionForm = ({ id }: Props) => {
         <ActionButtons
           actionId={action.id}
           componentActions={componentActions}
-          selectedComponentId={selectedComponentId}
         ></ActionButtons>
       </Stack>
     </form>

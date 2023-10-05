@@ -1,15 +1,18 @@
+import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import {
+  ActionIcon,
   Box,
   Collapse,
   Group,
   Text,
   ThemeIcon,
+  Tooltip,
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
-import { IconChevronDown } from "@tabler/icons-react";
-import { PropsWithChildren, useEffect, useState } from "react";
+import { IconChevronDown, IconTrash } from "@tabler/icons-react";
+import { PropsWithChildren, useState } from "react";
 
 type SidebarSectionProps = {
   id: string;
@@ -18,6 +21,9 @@ type SidebarSectionProps = {
   initiallyOpened?: boolean;
   links?: { label: string; link: string }[];
   onClick?: (id: string) => void;
+  isAction?: boolean;
+  removeAction?: (id: string) => void;
+  name?: string;
 };
 
 export function SidebarSection({
@@ -27,23 +33,29 @@ export function SidebarSection({
   initiallyOpened,
   children,
   onClick,
+  isAction,
+  removeAction,
+  name,
 }: PropsWithChildren<SidebarSectionProps>) {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(initiallyOpened || false);
+  const { setSequentialTo } = useEditorStore.getState();
+  const whiteList = ["apiCall", "reloadComponent"];
 
   const handleSectionClick = () => {
     setOpened((o) => !o);
     onClick && onClick(id);
+    !opened && name && whiteList.includes(name)
+      ? setSequentialTo(id)
+      : setSequentialTo(undefined);
   };
 
   return (
     <>
-      <UnstyledButton
-        onClick={handleSectionClick}
+      <Group
+        spacing={5}
+        noWrap
         sx={{
-          fontWeight: 500,
-          display: "block",
-          width: "100%",
           padding: `${theme.spacing.xs} ${theme.spacing.md}`,
           color: theme.black,
 
@@ -53,27 +65,48 @@ export function SidebarSection({
           },
         }}
       >
-        <Group position="apart" spacing={0}>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <ThemeIcon color="teal" variant="light" size={30}>
-              <Icon size={ICON_SIZE} />
-            </ThemeIcon>
-            <Text size="xs" ml="md">
-              {label}
-            </Text>
-          </Box>
-          {children && (
-            <IconChevronDown
-              size={ICON_SIZE}
-              stroke={1.5}
-              style={{
-                transition: "transform 200ms ease",
-                transform: opened ? `none` : "rotate(-90deg)",
-              }}
-            />
-          )}
-        </Group>
-      </UnstyledButton>
+        <UnstyledButton
+          onClick={handleSectionClick}
+          sx={{
+            fontWeight: 500,
+            display: "block",
+            width: "100%",
+          }}
+        >
+          <Group position="apart" spacing={0} noWrap>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <ThemeIcon color="teal" variant="light" size={30}>
+                <Icon size={ICON_SIZE} />
+              </ThemeIcon>
+              <Text size="xs" ml="md">
+                {label}
+              </Text>
+            </Box>
+            {children && (
+              <IconChevronDown
+                size={ICON_SIZE}
+                stroke={1.5}
+                style={{
+                  transition: "transform 200ms ease",
+                  transform: opened ? `none` : "rotate(-90deg)",
+                }}
+              />
+            )}
+          </Group>
+        </UnstyledButton>
+        {isAction && (
+          <Tooltip label="Delete" withArrow color="red">
+            <ActionIcon
+              onClick={() => removeAction!(id)}
+              color="red"
+              variant="light"
+              radius="xl"
+            >
+              <IconTrash size={ICON_SIZE} />
+            </ActionIcon>
+          </Tooltip>
+        )}
+      </Group>
       {children ? (
         <Collapse in={opened}>
           <Box px="md">{children}</Box>
