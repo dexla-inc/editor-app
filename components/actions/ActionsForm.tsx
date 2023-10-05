@@ -79,7 +79,7 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
         },
       }),
     );
-
+    setSequentialTo(undefined);
     close && close();
     form.reset();
   };
