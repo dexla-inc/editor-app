@@ -11,12 +11,15 @@ import {
   IconAlignBoxCenterMiddle,
   IconAlignBoxLeftMiddle,
   IconAlignBoxRightMiddle,
+  IconCircleX,
   IconLayout2,
   IconLayoutAlignCenter,
   IconLayoutAlignLeft,
   IconLayoutAlignRight,
   IconLayoutDistributeHorizontal,
   IconLayoutDistributeVertical,
+  IconLayoutSidebarLeftCollapse,
+  IconLayoutSidebarLeftExpand,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { withModifier } from "@/hoc/withModifier";
@@ -34,6 +37,7 @@ export const defaultLayoutValues = {
   alignItems: "center",
   justifyContent: "center",
   position: "relative",
+  sizing: "0 0 auto",
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
@@ -58,6 +62,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         rowGap: data.style.rowGap ?? defaultLayoutValues.rowGap,
         columnGap: data.style.columnGap ?? defaultLayoutValues.columnGap,
         alignItems: data.style.alignItems ?? defaultLayoutValues.alignItems,
+        sizing: data.style.flex ?? defaultLayoutValues.sizing,
         justifyContent:
           data.style.justifyContent ?? defaultLayoutValues.justifyContent,
       });
@@ -259,6 +264,58 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                   form.setFieldValue("justifyContent", value as string);
                   debouncedTreeUpdate(selectedComponent?.id as string, {
                     style: { justifyContent: value },
+                  });
+                }}
+              />
+            </Stack>
+            <Stack spacing={2}>
+              <Text size="xs" fw={500}>
+                Sizing
+              </Text>
+              <SegmentedControl
+                size="xs"
+                data={[
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Grow"
+                        icon={<IconLayoutSidebarLeftExpand size={14} />}
+                      />
+                    ),
+                    value: "1 0 auto",
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Shrink"
+                        icon={<IconLayoutSidebarLeftCollapse size={14} />}
+                      />
+                    ),
+                    value: "0 1 auto",
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Auto"
+                        icon={<IconCircleX size={14} />}
+                      />
+                    ),
+                    value: "0 0 auto",
+                  },
+                ]}
+                styles={{
+                  label: {
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  },
+                }}
+                {...form.getInputProps("sizing")}
+                onChange={(value) => {
+                  form.setFieldValue("sizing", value as string);
+                  debouncedTreeUpdate(selectedComponent?.id as string, {
+                    style: { flex: value },
                   });
                 }}
               />
