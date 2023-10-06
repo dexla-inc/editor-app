@@ -52,6 +52,7 @@ import get from "lodash.get";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
 import { executeFlow } from "./logicFlows";
+import { GoToUrlFlowActionForm } from "@/components/actions/logic-flow-forms/GoToUrlFLowActionForm";
 
 const triggers = [
   "onClick",
@@ -318,20 +319,30 @@ export const navigationAction = ({
   router.push(url);
 };
 
-export const goToUrlAction = ({ action }: GoToUrlParams) => {
+export const goToUrlAction = async ({ action, component }: GoToUrlParams) => {
   const { url, openInNewTab } = action;
+  let value = url;
 
-  if (url.startsWith("dataPath_")) {
-    const { tree: editorTree } = useEditorStore.getState();
-    const path = url.split(`dataPath_`)[1];
-    const componentId = path.split(".")[0];
-    const component = getComponentById(editorTree.root, componentId);
+  if (url.startsWith("{") && url.endsWith("}")) {
+    const { currentProjectId } = useEditorStore.getState();
+    const variable = JSON.parse(url);
+    const variableResponse = await getVariable(currentProjectId!, variable.id);
+    const val = JSON.parse(
+      variableResponse?.value ?? variableResponse?.defaultValue ?? "{}",
+    );
+    if (typeof component?.props?.repeatedIndex !== "undefined") {
+      const path = (variable.path ?? "").replace(
+        "[0]",
+        `[${component?.props?.repeatedIndex}]`,
+      );
+      value = get(val ?? {}, path) ?? "";
+    }
   }
 
   if (openInNewTab) {
-    window.open(url, "_blank");
+    window.open(value, "_blank");
   } else {
-    window.location.href = url;
+    window.location.href = value;
   }
 };
 
@@ -1144,6 +1155,7 @@ export const actionMapper = {
   goToUrl: {
     action: goToUrlAction,
     form: GoToUrlForm,
+    flowForm: GoToUrlFlowActionForm,
   },
   login: {
     action: loginAction,

@@ -1,4 +1,3 @@
-import { DataPicker } from "@/components/DataPicker";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
@@ -9,14 +8,9 @@ import {
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { GoToUrlAction } from "@/utils/actions";
-import {
-  Component,
-  getAllParentsWithExampleData,
-  getComponentById,
-} from "@/utils/editor";
 import { Checkbox, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import isEmpty from "lodash.isempty";
+import { VariablePicker } from "@/components/VariablePicker";
 
 type Props = {
   id: string;
@@ -59,28 +53,7 @@ export const GoToUrlForm = ({ id }: Props) => {
     }
   };
 
-  const allParentsWithExampleData = getAllParentsWithExampleData(
-    editorTree.root,
-    selectedComponentId!,
-  );
-
-  const parentData = allParentsWithExampleData.reduce(
-    (acc: any, parent: Component) => {
-      return {
-        ...acc,
-        [parent.id!]: parent.props?.exampleData.value,
-      };
-    },
-    {},
-  );
-
   const openInNewTabInputProps = form.getInputProps("openInNewTab");
-  const component = getComponentById(editorTree.root, selectedComponentId!);
-  const exampleData = isEmpty(component?.props?.exampleData?.value)
-    ? {}
-    : {
-        [selectedComponentId!]: component?.props?.exampleData.value,
-      };
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
@@ -91,10 +64,9 @@ export const GoToUrlForm = ({ id }: Props) => {
           label="URL"
           {...form.getInputProps("url")}
           rightSection={
-            <DataPicker
-              data={{ ...parentData, ...exampleData }}
+            <VariablePicker
               onSelectValue={(selected) => {
-                form.setFieldValue("url", `dataPath_${selected}`);
+                form.setFieldValue("url", selected);
               }}
             />
           }
