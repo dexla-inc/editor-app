@@ -1,8 +1,6 @@
 import { ActionsForm } from "@/components/actions/ActionsForm";
-import { useEditorStore } from "@/stores/editor";
 import { Box, Button, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useEffect } from "react";
 
 type Props = {
   actionsSections: (JSX.Element | undefined)[];
@@ -21,14 +19,6 @@ export const ActionsFlow = ({ actionsSections }: Props) => {
 
 export const ActionsSequence = () => {
   const [addForm, { open, close }] = useDisclosure(false);
-  const sequentialTo = useEditorStore((state) => state.sequentialTo);
-  const isSequential = !!sequentialTo;
-
-  useEffect(
-    () => (isSequential ? open() : close()),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isSequential],
-  );
 
   return (
     <>
@@ -43,7 +33,7 @@ export const ActionsSequence = () => {
           Add Action
         </Button>
       )}
-      {addForm && <ActionsForm close={close} sequentialTo={sequentialTo} />}
+      {addForm && <ActionsForm close={close} />}
     </>
   );
 };

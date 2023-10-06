@@ -11,10 +11,11 @@ import { useEditorStore } from "@/stores/editor";
 import { ReloadComponentAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
-import { ActionIcon, Stack, TextInput } from "@mantine/core";
+import { ActionIcon, Divider, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { ActionsForm } from "./ActionsForm";
 
 type FormValues = Omit<ReloadComponentAction, "name">;
 
@@ -32,18 +33,15 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
     selectedComponentId,
   });
 
-  const pickingComponentToBindTo = useEditorStore(
-    (state) => state.pickingComponentToBindTo,
-  );
-  const componentToBind = useEditorStore((state) => state.componentToBind);
-  const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind,
-  );
+  const {
+    setPickingComponentToBindTo,
+    sequentialTo,
+    componentToBind,
+    setComponentToBind,
+    pickingComponentToBindTo,
+  } = useEditorStore();
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
-  const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo,
-  );
 
   const reloadAction = action.action as ReloadComponentAction;
 
@@ -129,6 +127,12 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
           ></ActionButtons>
         </Stack>
       </form>
+      {sequentialTo === id && (
+        <>
+          <Divider my="lg" label="Sequential Action" labelPosition="center" />
+          <ActionsForm sequentialTo={sequentialTo} />
+        </>
+      )}
     </>
   );
 };
