@@ -1,14 +1,12 @@
-import { useActionData } from "@/components/actions/_BaseActionFunctions";
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { ReloadComponentAction } from "@/utils/actions";
 import { decodeSchema } from "@/utils/compression";
-import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
-import { ActionIcon, Button, Stack, TextInput } from "@mantine/core";
+import { Button, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { IconCurrentLocation } from "@tabler/icons-react";
 import { useEffect } from "react";
 
 type FormValues = Omit<ReloadComponentAction, "name">;
@@ -18,14 +16,9 @@ type Props = {
   form: UseFormReturnType<FormValues>;
 };
 
-export const ReloadComponentFlowActionForm = ({ id, form }: Props) => {
+export const ReloadComponentFlowActionForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
   const { tree: editorTree, selectedComponentId, setTree } = useEditorStore();
-  const { action } = useActionData<ReloadComponentAction>({
-    actionId: id,
-    editorTree,
-    selectedComponentId,
-  });
 
   const pickingComponentToBindTo = useEditorStore(
     (state) => state.pickingComponentToBindTo,
@@ -75,24 +68,23 @@ export const ReloadComponentFlowActionForm = ({ id, form }: Props) => {
   return (
     <>
       <Stack spacing="xs">
-        <TextInput
+        <ComponentToBindFromInput
+          key={form.values.componentId}
+          onPick={(componentToBind: string) => {
+            form.setValues({ ...form.values, componentId: componentToBind });
+            setComponentToBind(undefined);
+          }}
           size="xs"
           label="Component to reload"
           {...form.getInputProps("componentId")}
-          rightSection={
-            <ActionIcon
-              onClick={() => {
-                setPickingComponentToBindTo({
-                  componentId: component?.id!,
-                  trigger: action.trigger,
-                  bindedId: form.values.componentId ?? "",
-                });
-              }}
-            >
-              <IconCurrentLocation size={ICON_SIZE} />
-            </ActionIcon>
-          }
-          autoComplete="off"
+          // @ts-ignore
+          value={componentToBind}
+          onChange={(e) => {
+            form.setValues({
+              ...form.values,
+              componentId: e.currentTarget.value,
+            });
+          }}
         />
 
         <Button type="submit" size="xs" loading={isUpdating}>
