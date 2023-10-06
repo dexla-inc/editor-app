@@ -27,7 +27,12 @@ export const Stepper = ({ renderTree, component, ...props }: Props) => {
     // Reflect any external changes to the activeStep property
     setActive(activeStep);
     component?.children?.forEach((step: Component, index: number) => {
-      const state = activeStep > index ? "checked" : "default";
+      const state =
+        activeStep === index
+          ? "Active"
+          : activeStep > index
+          ? "Complete"
+          : "default";
 
       step.children?.forEach((section: Component) => {
         if (section.name === "StepperStepHeader") {
