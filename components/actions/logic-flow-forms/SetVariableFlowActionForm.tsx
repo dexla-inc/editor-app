@@ -73,9 +73,18 @@ export const SetVariableFlowActionForm = ({ form }: Props) => {
       <ComponentToBindFromInput
         placeholder="value"
         label="Value"
-        onPick={(componentToBindId: string) => {
+        onPickComponent={(componentToBindId: string) => {
           setPickingComponentToBindFrom(undefined);
-          form.setFieldValue("value", `valueOf_${componentToBindId}`);
+          form.setValues({
+            ...form.values,
+            value: `valueOf_${componentToBindId}`,
+          });
+        }}
+        onPickVariable={(variable: string) => {
+          form.setValues({
+            ...form.values,
+            value: variable,
+          });
         }}
         {...form.getInputProps("value")}
       />

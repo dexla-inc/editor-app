@@ -98,9 +98,18 @@ export const SetVariableActionForm = ({ id }: Props) => {
           placeholder="value"
           label="Value"
           componentId={selectedComponentId}
-          onPick={(componentToBindId: string) => {
+          onPickComponent={(componentToBindId: string) => {
             setPickingComponentToBindFrom(undefined);
-            form.setFieldValue("value", `valueOf_${componentToBindId}`);
+            form.setValues({
+              ...form.values,
+              value: `valueOf_${componentToBindId}`,
+            });
+          }}
+          onPickVariable={(variable: string) => {
+            form.setValues({
+              ...form.values,
+              value: variable,
+            });
           }}
           {...form.getInputProps("value")}
         />
