@@ -60,8 +60,7 @@ type Props = {
 export const BindPlaceDataFlowActionForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
 
-  const { editorTree, selectedComponentId, updateTreeComponentActions } =
-    useEditorStores();
+  const { editorTree, selectedComponentId } = useEditorStores();
 
   const {
     setPickingComponentToBindFrom,
@@ -236,7 +235,7 @@ export const BindPlaceDataFlowActionForm = ({ form }: Props) => {
                   return (
                     <Stack key={param.name}>
                       <ComponentToBindFromInput
-                        onPick={(componentToBind: string) => {
+                        onPickComponent={(componentToBind: string) => {
                           form.setFieldValue(
                             `binds.${type}.${param.name}`,
                             `valueOf_${componentToBind}`,
