@@ -113,8 +113,6 @@ export const APICallFlowActionForm = ({
   useAuthStore((state) => state.refreshAccessToken);
   const accessToken = useAuthStore((state) => state.getAccessToken);
 
-  const showLoaderInputProps = form.getInputProps("showLoader");
-
   const { data: page } = useQuery({
     queryKey: ["page", projectId, pageId],
     queryFn: async () => {
@@ -180,11 +178,7 @@ export const APICallFlowActionForm = ({
           size="xs"
           label="Show Loader"
           labelPosition="left"
-          {...showLoaderInputProps}
-          checked={showLoaderInputProps.value}
-          onChange={(event) => {
-            showLoaderInputProps.onChange(event);
-          }}
+          {...form.getInputProps("showLoader", { type: "checkbox" })}
           sx={{ fontWeight: 500 }}
         />
         {selectedEndpoint && (

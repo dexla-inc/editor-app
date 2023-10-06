@@ -763,11 +763,7 @@ export const apiCallAction = async ({
     updateTreeComponent(
       component.id!,
       {
-        // @ts-ignore
-        loading: component.actions.find(
-          (a: { id: string }) => a.id === actionId,
-          // @ts-ignore
-        ).action.showLoader,
+        loading: action.showLoader,
       },
       false,
     );
