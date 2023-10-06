@@ -1,4 +1,3 @@
-import { DataPicker } from "@/components/DataPicker";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
@@ -8,9 +7,6 @@ import {
   useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
-import { VariableSelect } from "@/components/variables/VariableSelect";
-import { getVariable } from "@/requests/variables/queries";
-import { VariableResponse } from "@/requests/variables/types";
 import { useEditorStore } from "@/stores/editor";
 import { BindVariableToComponentAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
@@ -18,9 +14,8 @@ import { getComponentById } from "@/utils/editor";
 import { ActionIcon, Loader, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconCurrentLocation } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { VariablePicker } from "@/components/VariablePicker";
 
 type Props = {
   id: string;
@@ -29,7 +24,6 @@ type Props = {
 type FormValues = Omit<BindVariableToComponentAction, "name">;
 
 export const BindVariableToComponentActionForm = ({ id }: Props) => {
-  const router = useRouter();
   const { startLoading, stopLoading } = useLoadingState();
   const { editorTree, selectedComponentId, updateTreeComponentActions } =
     useEditorStores();
@@ -56,25 +50,7 @@ export const BindVariableToComponentActionForm = ({ id }: Props) => {
     initialValues: {
       component: action.action.component,
       variable: action.action.variable,
-      variableType: action.action.variableType,
-      path: action.action.path,
     },
-  });
-
-  const {
-    data: variable,
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["variable", form.values.variable],
-    queryFn: async () => {
-      const response = await getVariable(
-        router.query.id as string,
-        form.values.variable!,
-      );
-      return response;
-    },
-    enabled: !!form.values.variable,
   });
 
   const onSubmit = (values: FormValues) => {
@@ -109,12 +85,6 @@ export const BindVariableToComponentActionForm = ({ id }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [component?.id, componentToBind, pickingComponentToBindTo]);
 
-  useEffect(() => {
-    if (form?.values?.variable && form?.values?.variableType === "OBJECT") {
-      refetch();
-    }
-  }, [form?.values, refetch]);
-
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
@@ -137,40 +107,19 @@ export const BindVariableToComponentActionForm = ({ id }: Props) => {
           }
         />
 
-        <VariableSelect
+        <TextInput
+          size="xs"
+          placeholder="Select a variable"
+          label="Variable"
           {...form.getInputProps("variable")}
-          onPick={(variable: VariableResponse) => {
-            form.setFieldValue("variable", variable.id);
-            form.setFieldValue("variableType", variable.type);
-          }}
+          rightSection={
+            <VariablePicker
+              onSelectValue={(selected) => {
+                form.setFieldValue("variable", selected);
+              }}
+            />
+          }
         />
-
-        {form.values.variableType === "OBJECT" && (
-          <TextInput
-            size="xs"
-            placeholder="Enter path to value"
-            label="Path"
-            {...form.getInputProps("path")}
-            rightSection={
-              isLoading ? (
-                <Loader size="xs" />
-              ) : (
-                <DataPicker
-                  data={
-                    Array.isArray(JSON.parse(variable?.value ?? "{}"))
-                      ? JSON.parse(variable?.value ?? "{}").filter(
-                          (_: any, i: number) => i == 0,
-                        )
-                      : JSON.parse(variable?.value ?? "{}")
-                  }
-                  onSelectValue={(selected) => {
-                    form.setFieldValue("path", selected);
-                  }}
-                />
-              )
-            }
-          />
-        )}
 
         <ActionButtons actionId={id} componentActions={componentActions} />
       </Stack>

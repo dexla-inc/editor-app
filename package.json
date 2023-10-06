@@ -60,7 +60,6 @@
     "react-apexcharts": "^1.4.1",
     "react-dom": "18.2.0",
     "react-error-boundary": "^4.0.11",
-    "react-json-view": "^1.21.3",
     "react-type-animation": "^3.0.1",
     "reactflow": "^11.8.3",
     "slugify": "^1.6.6",

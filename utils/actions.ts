@@ -212,8 +212,6 @@ export interface BindVariableToComponentAction extends BaseAction {
   name: "bindVariable";
   component: string;
   variable: string;
-  variableType: string;
-  path: string;
 }
 
 export interface ReloadComponentAction extends BaseAction {
@@ -433,7 +431,7 @@ export const changeStepAction = ({ action }: ChangeStepActionParams) => {
 
   const component = getComponentById(
     useEditorStore.getState().tree.root,
-    action.stepperId
+    action.stepperId,
   );
 
   if (!component) {
@@ -470,7 +468,7 @@ export const togglePropsAction = ({
       {
         style: { display: "none" },
       },
-      false
+      false,
     );
   });
 
@@ -479,23 +477,23 @@ export const togglePropsAction = ({
     {
       style: { display: "flex" },
     },
-    false
+    false,
   );
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const { updateTreeComponent, tree: editorTree } = useEditorStore.getState();
   const selectedComponent = editorTree.root.children?.find(
-    (tree) => tree.name === "Navbar"
+    (tree) => tree.name === "Navbar",
   );
   const buttonComponent = selectedComponent?.children?.find(
-    (tree) => tree.description === "Button to toggle Navbar"
+    (tree) => tree.description === "Button to toggle Navbar",
   );
   const linksComponent = selectedComponent?.children?.find(
-    (tree) => tree.description === "Container for navigation links"
+    (tree) => tree.description === "Container for navigation links",
   );
   const buttonIcon = buttonComponent?.children?.reduce(
     (obj, tree) => ({ ...obj, ...tree }),
-    {} as Component
+    {} as Component,
   );
 
   const isExpanded = selectedComponent?.props?.style.width !== "100px";
@@ -526,7 +524,7 @@ export const setVariableAction = async ({
 };
 
 export const triggerLogicFlowAction = (
-  params: TriggerLogicFlowActionParams
+  params: TriggerLogicFlowActionParams,
 ) => {
   executeFlow(params.action.logicFlowId, params);
 };
@@ -632,7 +630,7 @@ export const loginAction = async ({
                 [key]: value,
               };
             },
-            {} as any
+            {} as any,
           )
         : undefined;
 
@@ -653,7 +651,7 @@ export const loginAction = async ({
 
     const dataSourceAuthConfig = await getDataSourceAuth(
       projectId,
-      endpoint?.dataSourceId!
+      endpoint?.dataSourceId!,
     );
 
     const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
@@ -664,7 +662,7 @@ export const loginAction = async ({
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess"
+        (action: Action) => action.trigger === "onSuccess",
       )!;
       // @ts-ignore
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
@@ -680,7 +678,7 @@ export const loginAction = async ({
     if (onError && onError.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError"
+        (action: Action) => action.trigger === "onError",
       )!;
       // @ts-ignore
       const onErrorActionMapped = actionMapper[onError.action.name];
@@ -711,7 +709,7 @@ function getElementValue(value: string, iframeWindow: any): string {
 
 function getQueryElementValue(value: string, iframeWindow: any): string {
   const el = iframeWindow?.document.querySelector(
-    `input#${value.split("queryString_pass_")[1]}`
+    `input#${value.split("queryString_pass_")[1]}`,
   ) as HTMLInputElement;
   return el?.value ?? "";
 }
@@ -736,11 +734,11 @@ export const apiCallAction = async ({
       {
         // @ts-ignore
         loading: component.actions.find(
-          (a: { id: string }) => a.id === actionId
+          (a: { id: string }) => a.id === actionId,
           // @ts-ignore
         ).action.showLoader,
       },
-      false
+      false,
     );
 
     // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
@@ -802,7 +800,7 @@ export const apiCallAction = async ({
                 [key]: value,
               };
             },
-            {} as any
+            {} as any,
           )
         : undefined;
 
@@ -840,7 +838,7 @@ export const apiCallAction = async ({
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess"
+        (action: Action) => action.trigger === "onSuccess",
       )!;
       // @ts-ignore
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
@@ -869,7 +867,7 @@ export const apiCallAction = async ({
     if (onError && onError.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError"
+        (action: Action) => action.trigger === "onError",
       )!;
       // @ts-ignore
       const onErrorActionMapped = actionMapper[onError.action.name];
@@ -908,7 +906,7 @@ export const bindResponseToComponentAction = ({
             ? bind.value.split("root[0].")[1]
             : bind.value.split("root.")[1],
         },
-        false
+        false,
       );
     }
   });
@@ -923,15 +921,24 @@ export const bindVariableToComponentAction = async ({
 }: BindVariableToComponentActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   const currentProjectId = useEditorStore.getState().currentProjectId;
+  let _var: string | { id: string; path: string } = action.variable;
+  if (action.variable.startsWith("{") && action.variable.endsWith("}")) {
+    _var = JSON.parse(action.variable);
+  }
 
-  if (action.component && action.variable) {
-    const variable = await getVariable(currentProjectId!, action.variable);
+  const isObject = typeof _var === "object";
+
+  if (action.component && _var) {
+    const variable = await getVariable(
+      currentProjectId!,
+      isObject ? (_var as any).id : _var,
+    );
 
     let value = variable.value;
-    if (variable.type === "OBJECT") {
+    if (isObject) {
       const dataFlatten = flattenKeys(JSON.parse(variable.value ?? "{}"));
 
-      value = get(dataFlatten, action.path);
+      value = get(dataFlatten, (_var as any).path);
     }
 
     updateTreeComponent(
@@ -944,9 +951,9 @@ export const bindVariableToComponentAction = async ({
               ? JSON.parse(variable.value ?? "{}")
               : undefined,
         },
-        dataPath: action.path,
+        dataPath: (_var as any)?.path ?? undefined,
       },
-      false
+      false,
     );
   }
 };
@@ -969,13 +976,13 @@ export const bindPlaceDataAction = ({
   const editorTree = useEditorStore.getState().tree;
   const component = getComponentById(
     editorTree.root,
-    action.componentId
+    action.componentId,
   ) as Component;
   const updateTreeComponentChildren =
     useEditorStore.getState().updateTreeComponentChildren;
 
   const googleMap = component.children?.filter(
-    (child) => child.name === "GoogleMap"
+    (child) => child.name === "GoogleMap",
   )[0];
 
   if (data !== undefined) {
@@ -1049,11 +1056,11 @@ export const bindPlaceGeometryAction = ({
   const { updateTreeComponentChildren, updateTreeComponent } =
     useEditorStore.getState();
   const searchResults = getAllComponentsByName(editorTree.root, "Text").filter(
-    (component) => component.description === "Search Address In Map"
+    (component) => component.description === "Search Address In Map",
   );
   const parent = getComponentParent(
     editorTree.root,
-    searchResults[0].id!
+    searchResults[0].id!,
   ) as Component;
 
   const ancestor = getComponentParent(editorTree.root, parent.id!) as Component;
@@ -1088,7 +1095,7 @@ export const bindPlaceGeometryAction = ({
   updateTreeComponent(
     ancestor.children![0].id!,
     { value: formatted_address },
-    true
+    true,
   );
   updateTreeComponentChildren(parent.id!, [child]);
 };

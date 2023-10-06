@@ -1,9 +1,7 @@
 import { ComponentToBindInput } from "@/components/ComponentToBindInput";
-import { DataPicker } from "@/components/DataPicker";
-import { VariableSelect } from "@/components/variables/VariableSelect";
+import { VariablePicker } from "@/components/VariablePicker";
 import { getPage } from "@/requests/pages/queries";
 import { getVariable } from "@/requests/variables/queries";
-import { VariableResponse } from "@/requests/variables/types";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { BindVariableToComponentAction } from "@/utils/actions";
@@ -27,28 +25,6 @@ export const BindVariableToComponentFlowActionForm = ({ form }: Props) => {
     useEditorStore();
   const projectId = router.query.id as string;
   const pageId = router.query.page as string;
-
-  const {
-    data: variable,
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["variable", form.values.variable],
-    queryFn: async () => {
-      const response = await getVariable(
-        router.query.id as string,
-        form.values.variable!,
-      );
-      return response;
-    },
-    enabled: !!form.values.variable,
-  });
-
-  useEffect(() => {
-    if (form?.values?.variable && form?.values?.variableType === "OBJECT") {
-      refetch();
-    }
-  }, [form?.values, refetch]);
 
   const { data: page } = useQuery({
     queryKey: ["page", projectId, pageId],
@@ -76,40 +52,19 @@ export const BindVariableToComponentFlowActionForm = ({ form }: Props) => {
         {...form.getInputProps("component")}
       />
 
-      <VariableSelect
+      <TextInput
+        size="xs"
+        placeholder="Select a variable"
+        label="Variable"
         {...form.getInputProps("variable")}
-        onPick={(variable: VariableResponse) => {
-          form.setFieldValue("variable", variable.id);
-          form.setFieldValue("variableType", variable.type);
-        }}
+        rightSection={
+          <VariablePicker
+            onSelectValue={(selected) => {
+              form.setFieldValue("variable", selected);
+            }}
+          />
+        }
       />
-
-      {form.values.variableType === "OBJECT" && (
-        <TextInput
-          size="xs"
-          placeholder="Enter path to value"
-          label="Path"
-          {...form.getInputProps("path")}
-          rightSection={
-            isLoading ? (
-              <Loader size="xs" />
-            ) : (
-              <DataPicker
-                data={
-                  Array.isArray(JSON.parse(variable?.value ?? "{}"))
-                    ? JSON.parse(variable?.value ?? "{}").filter(
-                        (_: any, i: number) => i == 0,
-                      )
-                    : JSON.parse(variable?.value ?? "{}")
-                }
-                onSelectValue={(selected) => {
-                  form.setFieldValue("path", selected);
-                }}
-              />
-            )
-          }
-        />
-      )}
 
       <Button type="submit" size="xs" loading={isUpdating}>
         Save

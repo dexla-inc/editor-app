@@ -2,7 +2,7 @@ import { ICON_SIZE } from "@/utils/config";
 import { ActionIcon, Popover, ScrollArea } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconDatabase } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { JSONSelector } from "@/components/JSONSelector";
 
 type Props = {
   data?: any;
@@ -10,18 +10,7 @@ type Props = {
 };
 
 export const DataPicker = (props: Props) => {
-  const [ReactJson, setReactJson] = useState();
   const [showJsonPicker, jsonPicker] = useDisclosure(false);
-
-  useEffect(() => {
-    // we need to dynamicaly import it as it doesn't support SSR
-    const loadJsonViewer = async () => {
-      const ReactJsonView = await import("react-json-view");
-      setReactJson(ReactJsonView as any);
-    };
-
-    loadJsonViewer();
-  }, []);
 
   return (
     <Popover
@@ -44,36 +33,15 @@ export const DataPicker = (props: Props) => {
           <IconDatabase size={ICON_SIZE} />
         </ActionIcon>
       </Popover.Target>
-      <Popover.Dropdown>
+      <Popover.Dropdown miw={300}>
         <ScrollArea h={250}>
-          {ReactJson && (
-            // @ts-ignore
-            <ReactJson.default
-              iconStyle="triangle"
-              enableClipboard={false}
-              displayDataTypes={false}
-              quotesOnKeys={false}
-              collapseStringsAfterLength={10}
-              src={props.data ?? {}}
-              onSelect={(selected: any) => {
-                props.onSelectValue?.(
-                  `${selected.namespace.reduce(
-                    (acc: string, item: string, index: number) => {
-                      return `${acc}${
-                        item === "0"
-                          ? "[0]"
-                          : index === 0
-                          ? `${item}`
-                          : `.${item}`
-                      }`;
-                    },
-                    ""
-                  )}.${selected.name}`
-                );
-                jsonPicker.close();
-              }}
-            />
-          )}
+          <JSONSelector
+            data={props.data ?? {}}
+            onSelectValue={(selected) => {
+              props.onSelectValue?.(selected.path);
+              jsonPicker.close();
+            }}
+          />
         </ScrollArea>
       </Popover.Dropdown>
     </Popover>
