@@ -5,7 +5,7 @@ import {
   emptyEditorTree,
   useEditorStore,
 } from "@/stores/editor";
-import { Action } from "@/utils/actions";
+import { Action, ChangeStepAction } from "@/utils/actions";
 import { structureMapper } from "@/utils/componentMapper";
 import { templatesMapper } from "@/utils/templatesMapper";
 import cloneDeep from "lodash.clonedeep";
@@ -60,6 +60,32 @@ export function arrayMove<T>(array: T[], from: number, to: number): T[] {
 
   return newArray;
 }
+
+export const replaceIdsDeeply = (treeRoot: Component) => {
+  let stepperId = "";
+
+  crawl(
+    treeRoot,
+    (node) => {
+      const newId = nanoid();
+
+      if (node.name === "Stepper") {
+        stepperId = newId;
+      }
+
+      node.id = newId;
+      const changeStepActionIndex = (node.actions || []).findIndex(
+        (action) => action.action.name === "changeStep",
+      );
+      if (changeStepActionIndex > -1) {
+        (
+          node.actions![changeStepActionIndex].action as ChangeStepAction
+        ).stepperId = stepperId;
+      }
+    },
+    { order: "bfs" },
+  );
+};
 
 // TODO: put Select field here
 const inputFields = ["input", "checkbox", "textarea"];
@@ -704,6 +730,7 @@ export const addComponent = (
   dropIndex?: number,
 ): string => {
   const copy = cloneDeep(componentToAdd);
+  replaceIdsDeeply(copy);
   const directChildren = ["Modal", "Drawer", "Toast"];
 
   crawl(
