@@ -29,9 +29,11 @@ import { ChangeStateActionFlowForm } from "@/components/actions/logic-flow-forms
 import { ChangeStepFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeStepFlowActionForm";
 import { CloseDrawerFlowActionForm } from "@/components/actions/logic-flow-forms/CloseDrawerFlowActionForm";
 import { CloseModalFlowActionForm } from "@/components/actions/logic-flow-forms/CloseModalFlowActionForm";
+import { ClosePopOverFlowActionForm } from "@/components/actions/logic-flow-forms/ClosePopOverFlowActionForm";
 import { CustomJavascriptFlowActionForm } from "@/components/actions/logic-flow-forms/CustomJavascriptFlowActionForm";
 import { DebugFlowActionForm } from "@/components/actions/logic-flow-forms/DebugFlowActionForm";
-import { GoToUrlFlowForm } from "@/components/actions/logic-flow-forms/GoToUrlFlowActionForm";
+
+import { GoToUrlFlowActionForm } from "@/components/actions/logic-flow-forms/GoToUrlFlowActionForm";
 import { LoginFlowActionForm } from "@/components/actions/logic-flow-forms/LoginFlowActionForm";
 import { NavigationFlowActionForm } from "@/components/actions/logic-flow-forms/NavigationFlowActionForm";
 import { OpenDrawerFlowActionForm } from "@/components/actions/logic-flow-forms/OpenDrawerFlowActionForm";
@@ -1187,7 +1189,7 @@ export const actionMapper = {
   goToUrl: {
     action: goToUrlAction,
     form: GoToUrlForm,
-    flowForm: GoToUrlFlowForm,
+    flowForm: GoToUrlFlowActionForm,
   },
   login: {
     action: loginAction,
