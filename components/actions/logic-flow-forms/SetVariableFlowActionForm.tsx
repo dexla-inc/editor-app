@@ -1,14 +1,12 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { VariablesButton } from "@/components/variables/VariablesButton";
-import { getPage } from "@/requests/pages/queries";
-import { listVariables } from "@/requests/variables/queries";
+import { useRequestProp } from "@/hooks/useRequestProp";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { SetVariableAction } from "@/utils/actions";
 import { decodeSchema } from "@/utils/compression";
 import { Button, Select, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
@@ -22,27 +20,10 @@ export const SetVariableFlowActionForm = ({ form }: Props) => {
   const router = useRouter();
   const isUpdating = useFlowStore((state) => state.isUpdating);
   const { setPickingComponentToBindFrom, setTree } = useEditorStore();
-
   const projectId = router.query.id as string;
   const pageId = router.query.page as string;
 
-  const { data: variables } = useQuery({
-    queryKey: ["variables", projectId, pageId],
-    queryFn: async () => {
-      const response = await listVariables(projectId, { pageId });
-      return response;
-    },
-    enabled: !!projectId && !!pageId,
-  });
-
-  const { data: page } = useQuery({
-    queryKey: ["page", projectId, pageId],
-    queryFn: async () => {
-      const page = await getPage(projectId, pageId);
-      return page;
-    },
-    enabled: !!projectId && !!pageId,
-  });
+  const { page, variables } = useRequestProp();
 
   useEffect(() => {
     if (page?.pageState) {
@@ -64,7 +45,7 @@ export const SetVariableFlowActionForm = ({ form }: Props) => {
         {...form.getInputProps("variable")}
         onChange={(value) => {
           const variable = JSON.stringify(
-            (variables?.results ?? []).find((v) => v.id === value),
+            (variables?.results ?? []).find((v) => v.id === value)
           );
           form.setFieldValue("variable", variable);
         }}
