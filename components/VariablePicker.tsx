@@ -68,7 +68,7 @@ export const VariablePicker = (props: Props) => {
                   <Group noWrap>
                     <ActionIcon
                       onClick={() => {
-                        props.onSelectValue?.(variable.id);
+                        props.onSelectValue?.(`var_${variable.id}`);
                         variablePicker.close();
                       }}
                     >
@@ -93,10 +93,10 @@ export const VariablePicker = (props: Props) => {
                       )}
                       onSelectValue={(selected) => {
                         props.onSelectValue?.(
-                          JSON.stringify({
+                          `var_${JSON.stringify({
                             id: variable.id,
                             path: selected.path,
-                          }),
+                          })}`,
                         );
                         variablePicker.close();
                       }}

@@ -322,20 +322,30 @@ export const navigationAction = ({
 export const goToUrlAction = async ({ action, component }: GoToUrlParams) => {
   const { url, openInNewTab } = action;
   let value = url;
-
-  if (url.startsWith("{") && url.endsWith("}")) {
+  if (url.startsWith("var_")) {
     const { currentProjectId } = useEditorStore.getState();
-    const variable = JSON.parse(url);
-    const variableResponse = await getVariable(currentProjectId!, variable.id);
-    const val = JSON.parse(
-      variableResponse?.value ?? variableResponse?.defaultValue ?? "{}",
+    value = url.split("var_")[1];
+    const isObj = value.startsWith("{") && value.endsWith("}");
+    const variableResponse = await getVariable(
+      currentProjectId!,
+      isObj ? JSON.parse(value).id : value,
     );
-    if (typeof component?.props?.repeatedIndex !== "undefined") {
-      const path = (variable.path ?? "").replace(
-        "[0]",
-        `[${component?.props?.repeatedIndex}]`,
+    if (variableResponse.type === "OBJECT") {
+      const variable = JSON.parse(value);
+      const val = JSON.parse(
+        variableResponse?.value ?? variableResponse?.defaultValue ?? "{}",
       );
-      value = get(val ?? {}, path) ?? "";
+      if (typeof component?.props?.repeatedIndex !== "undefined") {
+        const path = (variable.path ?? "").replace(
+          "[0]",
+          `[${component?.props?.repeatedIndex}]`,
+        );
+        value = get(val ?? {}, path) ?? "";
+      } else {
+        value = get(val ?? {}, variable.path ?? "") ?? "";
+      }
+    } else {
+      value = variableResponse?.value ?? variableResponse?.defaultValue ?? "";
     }
   }
 
@@ -718,6 +728,16 @@ function getElementValue(value: string, iframeWindow: any): string {
   return (el as HTMLInputElement)?.value ?? "";
 }
 
+async function getVariableValue(
+  value: string,
+  projectId: string,
+): Promise<string> {
+  const variable = JSON.parse(value);
+  const path = variable.path ?? "";
+  const varResponse = await getVariable(projectId, variable.id);
+  return varResponse.value ?? varResponse.defaultValue ?? "";
+}
+
 function getQueryElementValue(value: string, iframeWindow: any): string {
   const el = iframeWindow?.document.querySelector(
     `input#${value.split("queryString_pass_")[1]}`,
@@ -763,7 +783,6 @@ export const apiCallAction = async ({
     const keys = Object.keys(action.binds?.parameter ?? {});
 
     const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
-    console.log(apiUrl);
     const url =
       keys.length > 0
         ? keys.reduce((url: string, key: string) => {
@@ -932,9 +951,10 @@ export const bindVariableToComponentAction = async ({
 }: BindVariableToComponentActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   const currentProjectId = useEditorStore.getState().currentProjectId;
-  let _var: string | { id: string; path: string } = action.variable;
-  if (action.variable.startsWith("{") && action.variable.endsWith("}")) {
-    _var = JSON.parse(action.variable);
+  const actionVariable = action.variable.split(`var_`)[1];
+  let _var: string | { id: string; path: string } = actionVariable;
+  if (actionVariable.startsWith("{") && actionVariable.endsWith("}")) {
+    _var = JSON.parse(actionVariable);
   }
 
   const isObject = typeof _var === "object";

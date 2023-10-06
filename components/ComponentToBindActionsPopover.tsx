@@ -29,7 +29,7 @@ export const ComponentToBindActionsPopover = ({ onPick }: any) => {
       onClose={close}
     >
       <Popover.Target>
-        <ActionIcon onClick={toggle}>
+        <ActionIcon onClick={toggle} size="xs">
           <IconExternalLink size={ICON_SIZE} />
         </ActionIcon>
       </Popover.Target>

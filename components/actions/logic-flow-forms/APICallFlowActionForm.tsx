@@ -232,11 +232,18 @@ export const APICallFlowActionForm = ({
                   return (
                     <Stack key={param.name}>
                       <ComponentToBindFromInput
-                        onPick={(componentToBind: string) => {
-                          form.setFieldValue(
-                            `binds.${type}.${param.name}`,
-                            `valueOf_${componentToBind}`,
-                          );
+                        onPickComponent={(componentToBind: string) => {
+                          form.setValues({
+                            ...form.values,
+                            [`binds.${type}.${param.name}`]: `valueOf_${componentToBind}`,
+                          });
+                          setComponentToBind(undefined);
+                        }}
+                        onPickVariable={(variable: string) => {
+                          form.setValues({
+                            ...form.values,
+                            [`binds.${type}.${param.name}`]: variable,
+                          });
                           setComponentToBind(undefined);
                         }}
                         size="xs"
