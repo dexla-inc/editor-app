@@ -52,7 +52,7 @@ import get from "lodash.get";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
 import { executeFlow } from "./logicFlows";
-import { GoToUrlFlowActionForm } from "@/components/actions/logic-flow-forms/GoToUrlFLowActionForm";
+import { GoToUrlFlowActionForm } from "@/components/actions/logic-flow-forms/GoToUrlFlowActionForm";
 
 const triggers = [
   "onClick",
