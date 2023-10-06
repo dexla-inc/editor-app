@@ -61,22 +61,6 @@ export function arrayMove<T>(array: T[], from: number, to: number): T[] {
   return newArray;
 }
 
-export const getAllActions = (treeRoot: Component): Action[] => {
-  const actions: Action[] = [];
-
-  crawl(
-    treeRoot,
-    (node) => {
-      if ((node.actions?.length ?? 0) > 0) {
-        actions.push(...(node.actions ?? []));
-      }
-    },
-    { order: "bfs" },
-  );
-
-  return actions;
-};
-
 export const replaceIdsDeeply = (treeRoot: Component) => {
   let stepperId = "";
 
@@ -280,32 +264,6 @@ export const getNewComponents = (
       };
     }),
   };
-};
-
-export const addRowsToExistingTree = (
-  rows: Row[],
-  existingTree: EditorTree,
-) => {
-  // Traverse the rows to get the components
-  const newComponents: Component[] = rows.flatMap((row: Row) => row.components);
-
-  // Combine the new components with the existing tree's root children
-  const combinedChildren: Component[] = [
-    ...(existingTree.root.children || []),
-    ...newComponents,
-  ];
-
-  // Return a new editor tree with the combined children
-  const editorTree: EditorTree = {
-    name: "Initial State",
-    timestamp: Date.now(),
-    root: {
-      ...existingTree.root,
-      children: combinedChildren,
-    },
-  };
-
-  return editorTree;
 };
 
 export const getComponentById = (
@@ -583,7 +541,6 @@ export const moveComponentToDifferentParent = (
 ) => {
   const _componentToAdd = getComponentById(treeRoot, id) as Component;
   const componentToAdd = cloneDeep(_componentToAdd);
-  replaceIdsDeeply(componentToAdd);
 
   crawl(
     treeRoot,
@@ -832,78 +789,7 @@ export const addComponent = (
   return copy.id as string;
 };
 
-export type ComponentRect = {
-  width: number;
-  height: number;
-  top: number;
-  left: number;
-  right: number;
-  bottom: number;
-  x: number;
-  y: number;
-};
-
-export function leftOfRectangle(
-  rect: DOMRect,
-  left = rect.left,
-  top = rect.top,
-): DOMRect {
-  const newRect = rect.toJSON();
-  newRect.x = left;
-  newRect.y = top + newRect.height * 0.5;
-  return new DOMRect(newRect.x, newRect.y, newRect.width, newRect.height);
-}
-
-export function rightOfRectangle(
-  rect: DOMRect,
-  right = rect.right,
-  top = rect.top,
-): DOMRect {
-  const newRect = rect.toJSON();
-  newRect.x = right;
-  newRect.y = top + newRect.height * 0.5;
-  return new DOMRect(newRect.x, newRect.y, newRect.width, newRect.height);
-}
-
-export function topOfRectangle(
-  rect: DOMRect,
-  left = rect.left,
-  top = rect.top,
-): DOMRect {
-  const newRect = rect.toJSON();
-  newRect.x = left + newRect.width * 0.5;
-  newRect.y = top;
-  return new DOMRect(newRect.x, newRect.y, newRect.width, newRect.height);
-}
-
-export function bottomOfRectangle(
-  rect: DOMRect,
-  left = rect.left,
-  bottom = rect.bottom,
-): DOMRect {
-  const newRect = rect.toJSON();
-  newRect.x = left + newRect.width * 0.5;
-  newRect.y = bottom;
-  return new DOMRect(newRect.x, newRect.y, newRect.width, newRect.height);
-}
-
-export function centerOfRectangle(
-  rect: DOMRect,
-  left = rect.left,
-  top = rect.top,
-): DOMRect {
-  const newRect = rect.toJSON();
-  newRect.x = left + newRect.width * 0.5;
-  newRect.y = top + newRect.height * 0.5;
-
-  return new DOMRect(newRect.x, newRect.y, newRect.width, newRect.height);
-}
-
 export type Edge = "left" | "right" | "top" | "bottom" | "center";
-
-export function distanceBetween(p1: DOMRect, p2: DOMRect) {
-  return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
-}
 
 export const getClosestEdge = (
   left: number,

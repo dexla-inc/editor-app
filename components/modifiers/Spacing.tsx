@@ -25,19 +25,22 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     if (selectedComponent?.id) {
       const data = pick(selectedComponent.props!, ["style"]);
 
-      form.setValues({
-        // @ts-ignore
-        padding: data.style.padding ?? initialValues.padding,
-        paddingTop: data.style.paddingTop ?? initialValues.paddingTop,
-        paddingBottom: data.style.paddingBottom ?? initialValues.paddingBottom,
-        paddingLeft: data.style.paddingLeft ?? initialValues.paddingLeft,
-        paddingRight: data.style.paddingRight ?? initialValues.paddingRight,
-        margin: data.style.margin ?? initialValues.margin,
-        marginTop: data.style.marginTop ?? initialValues.marginTop,
-        marginBottom: data.style.marginBottom ?? initialValues.marginBottom,
-        marginLeft: data.style.marginLeft ?? initialValues.marginLeft,
-        marginRight: data.style.marginRight ?? initialValues.marginRight,
-      });
+      if (data.style) {
+        form.setValues({
+          // @ts-ignore
+          padding: data.style.padding ?? initialValues.padding,
+          paddingTop: data.style.paddingTop ?? initialValues.paddingTop,
+          paddingBottom:
+            data.style.paddingBottom ?? initialValues.paddingBottom,
+          paddingLeft: data.style.paddingLeft ?? initialValues.paddingLeft,
+          paddingRight: data.style.paddingRight ?? initialValues.paddingRight,
+          margin: data.style.margin ?? initialValues.margin,
+          marginTop: data.style.marginTop ?? initialValues.marginTop,
+          marginBottom: data.style.marginBottom ?? initialValues.marginBottom,
+          marginLeft: data.style.marginLeft ?? initialValues.marginLeft,
+          marginRight: data.style.marginRight ?? initialValues.marginRight,
+        });
+      }
 
       // Logic to set showPadding and showMargin values
       if (
