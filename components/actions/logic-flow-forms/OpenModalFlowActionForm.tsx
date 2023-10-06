@@ -1,4 +1,3 @@
-import { useActionData } from "@/components/actions/_BaseActionFunctions";
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
@@ -11,20 +10,14 @@ import { useEffect } from "react";
 
 type Props = {
   form: UseFormReturnType<FormValues>;
-  id: string;
+  actionName?: string;
 };
 
 type FormValues = Omit<OpenModalAction, "name">;
 
-export const OpenModalFlowActionForm = ({ form, id }: Props) => {
+export const OpenModalFlowActionForm = ({ form, actionName }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const { tree: editorTree, selectedComponentId, setTree } = useEditorStore();
-
-  const { action } = useActionData<OpenModalAction>({
-    actionId: id,
-    editorTree,
-    selectedComponentId,
-  });
+  const { tree: editorTree, setTree } = useEditorStore();
 
   const modals = getAllComponentsByName(editorTree.root, "Modal");
 
@@ -40,11 +33,7 @@ export const OpenModalFlowActionForm = ({ form, id }: Props) => {
     <Stack spacing="xs">
       <Select
         size="xs"
-        label={
-          action.action.name === "openModal"
-            ? "Modal to Open"
-            : "Modal to Close"
-        }
+        label={actionName === "closeModal" ? "Modal to Close" : "Modal to Open"}
         placeholder="Select a modal"
         data={modals.map((modal: Component) => {
           return {

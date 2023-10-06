@@ -1,4 +1,3 @@
-import { useActionData } from "@/components/actions/_BaseActionFunctions";
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
@@ -10,21 +9,16 @@ import { UseFormReturnType } from "@mantine/form";
 import { useEffect } from "react";
 
 type Props = {
-  id: string;
+  actionName?: string;
   form: UseFormReturnType<FormValues>;
 };
 
 type FormValues = Omit<OpenPopOverAction, "name">;
 
-export const OpenPopOverFlowActionForm = ({ id, form }: Props) => {
+export const OpenPopOverFlowActionForm = ({ actionName, form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
 
-  const { tree: editorTree, selectedComponentId, setTree } = useEditorStore();
-  const { action } = useActionData<OpenPopOverAction>({
-    actionId: id,
-    editorTree,
-    selectedComponentId,
-  });
+  const { tree: editorTree, setTree } = useEditorStore();
 
   const { page } = useRequestProp();
 
@@ -41,9 +35,7 @@ export const OpenPopOverFlowActionForm = ({ id, form }: Props) => {
       <Select
         size="xs"
         label={
-          action.action.name === "openPopOver"
-            ? "PopOver to Open"
-            : "PopOver to Close"
+          actionName === "closePopOver" ? "PopOver to Close" : "PopOver to Open"
         }
         placeholder="Select a popOver"
         data={popOvers.map((popOver: Component) => {

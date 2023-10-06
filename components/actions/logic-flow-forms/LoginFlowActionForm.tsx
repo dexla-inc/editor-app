@@ -1,6 +1,6 @@
+import { APICallFlowActionForm } from "@/components/actions/logic-flow-forms/APICallFlowActionForm";
 import { APICallAction, LoginAction } from "@/utils/actions";
 import { UseFormReturnType } from "@mantine/form";
-import { APICallFlowActionForm } from "./APICallFlowActionForm";
 
 type FormValues = Omit<APICallAction | LoginAction, "name" | "datasource">;
 

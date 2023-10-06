@@ -1,5 +1,4 @@
 import { QueryStringsForm } from "@/components/QueryStringsForm";
-import { useActionData } from "@/components/actions/_BaseActionFunctions";
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
@@ -10,31 +9,27 @@ import { UseFormReturnType } from "@mantine/form";
 import { useEffect, useMemo, useState } from "react";
 type Props = {
   form: UseFormReturnType<FormValues>;
-  id: string;
 };
 
 type FormValues = Omit<NavigationAction, "name">;
 
-export const NavigationFlowActionForm = ({ form, id }: Props) => {
+export const NavigationFlowActionForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
 
-  const { tree: editorTree, selectedComponentId, setTree } = useEditorStore();
-  const { action } = useActionData<NavigationAction>({
-    actionId: id,
-    editorTree,
-    selectedComponentId,
-  });
-  const pages = useEditorStore((state) => state.pages);
+  const { setTree } = useEditorStore();
 
+  const pages = useEditorStore((state) => state.pages);
+  const { page } = useRequestProp();
   const pageId = form.getInputProps("pageId").value;
 
   const pageQueryStrings = useMemo(() => {
-    if (action.action.pageId === pageId && action.action.queryStrings) {
-      return action.action.queryStrings;
+    if (page?.id === pageId && page?.queryStrings) {
+      return page.queryStrings;
     }
 
     return pages.find((page) => page.id === pageId)?.queryStrings ?? {};
-  }, [pages, pageId, action.action]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pages, pageId, page]);
 
   const queryStringState = useState<Array<{ key: string; value: string }>>([]);
 
@@ -47,8 +42,6 @@ export const NavigationFlowActionForm = ({ form, id }: Props) => {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageQueryStrings]);
-
-  const { page } = useRequestProp();
 
   useEffect(() => {
     if (page?.pageState) {

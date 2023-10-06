@@ -1,27 +1,24 @@
-import { useActionData } from "@/components/actions/_BaseActionFunctions";
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
-import { Action, BindResponseToComponentAction } from "@/utils/actions";
+import { BindResponseToComponentAction } from "@/utils/actions";
 import { decodeSchema } from "@/utils/compression";
-import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
 import { flattenKeysWithRoot } from "@/utils/flattenKeys";
-import { ActionIcon, Button, Stack, TextInput } from "@mantine/core";
+import { Button, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { IconCurrentLocation } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 type Props = {
   form: UseFormReturnType<FormValues>;
-  id: string;
 };
 
 type FormValues = Omit<BindResponseToComponentAction, "name">;
 
-export const BindResponseToComponentActionForm = ({ form, id }: Props) => {
+export const BindResponseToComponentFlowActionForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
   const router = useRouter();
   const projectId = router.query.id as string;
@@ -36,17 +33,7 @@ export const BindResponseToComponentActionForm = ({ form, id }: Props) => {
     componentToBind,
   } = useEditorStore();
 
-  const { componentActions, action } =
-    useActionData<BindResponseToComponentAction>({
-      actionId: id,
-      editorTree,
-      selectedComponentId,
-    });
-
   const component = getComponentById(editorTree.root, selectedComponentId!);
-  const originalAction = componentActions.find(
-    (a: Action) => a.id === action.sequentialTo,
-  );
 
   useEffect(() => {
     if (componentToBind && pickingComponentToBindTo) {
@@ -70,7 +57,7 @@ export const BindResponseToComponentActionForm = ({ form, id }: Props) => {
 
       const _endpoint = results.find(
         // @ts-ignore
-        (e) => e.id === originalAction?.action.endpoint,
+        (e) => e.id === form.values.endpoint,
       );
 
       if (_endpoint?.exampleResponse) {
@@ -94,7 +81,7 @@ export const BindResponseToComponentActionForm = ({ form, id }: Props) => {
       getEndpoint();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [originalAction, projectId, form]);
+  }, [projectId, form]);
 
   const { page } = useRequestProp();
 
@@ -107,28 +94,30 @@ export const BindResponseToComponentActionForm = ({ form, id }: Props) => {
   return (
     <Stack spacing="xs">
       {form.values.binds?.map((bind, index) => {
+        const field = `binds.${index}`;
         return (
-          <TextInput
+          <ComponentToBindFromInput
             key={bind.value}
+            onPick={(componentToBind: string) => {
+              form.setFieldValue(`binds.${index}`, {
+                ...form.getInputProps("bind"),
+                component: componentToBind,
+                value: bind,
+              });
+              setComponentToBind(undefined);
+            }}
             size="xs"
             label="Component to bind"
             description={`Binding to ${bind.value}`}
-            {...form.getInputProps(`binds.${index}.component`)}
-            rightSection={
-              <ActionIcon
-                onClick={() => {
-                  setPickingComponentToBindTo({
-                    componentId: component?.id!,
-                    trigger: action.trigger,
-                    bindedId: action.action.binds?.[index]?.component ?? "",
-                    param: bind.value,
-                    index: index,
-                  });
-                }}
-              >
-                <IconCurrentLocation size={ICON_SIZE} />
-              </ActionIcon>
-            }
+            {...form.getInputProps(bind.component)}
+            // @ts-ignore
+            value={bind}
+            onChange={(e) => {
+              form.setValues({
+                ...form.values,
+                [field]: e.currentTarget.value,
+              });
+            }}
           />
         );
       })}

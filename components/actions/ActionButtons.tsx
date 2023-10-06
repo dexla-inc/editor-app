@@ -19,7 +19,7 @@ export const ActionButtons = ({
   canAddSequential = false,
 }: Props) => {
   const [copied, { open, close }] = useDisclosure(false);
-  const { setCopiedAction, setSequentialTo } = useEditorStore.getState();
+  const { setCopiedAction, setSequentialTo } = useEditorStore();
   const filteredComponentActions = componentActions.filter((a: Action) => {
     return a.id === actionId || a.sequentialTo === actionId;
   });

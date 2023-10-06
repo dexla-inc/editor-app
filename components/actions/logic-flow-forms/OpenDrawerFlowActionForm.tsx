@@ -10,11 +10,12 @@ import { useEffect } from "react";
 
 type Props = {
   form: UseFormReturnType<FormValues>;
+  actionName?: string;
 };
 
 type FormValues = Omit<OpenDrawerAction, "name">;
 
-export const OpenDrawerFlowActionForm = ({ form }: Props) => {
+export const OpenDrawerFlowActionForm = ({ form, actionName }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
   const { setTree, tree: editorTree } = useEditorStore();
 
@@ -32,7 +33,9 @@ export const OpenDrawerFlowActionForm = ({ form }: Props) => {
     <Stack spacing="xs">
       <Select
         size="xs"
-        label="Drawer to Open"
+        label={
+          actionName === "closeDrawer" ? "Drawer to Close" : "Drawer to Open"
+        }
         placeholder="Select a drawer"
         data={drawers.map((drawer: Component) => {
           return {
