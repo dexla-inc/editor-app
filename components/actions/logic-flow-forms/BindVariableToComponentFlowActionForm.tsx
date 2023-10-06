@@ -1,5 +1,6 @@
 import { ComponentToBindInput } from "@/components/ComponentToBindInput";
 import { VariablePicker } from "@/components/VariablePicker";
+import { useRequestProp } from "@/hooks/useRequestProp";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { BindVariableToComponentAction } from "@/utils/actions";
@@ -19,16 +20,7 @@ export const BindVariableToComponentFlowActionForm = ({ form }: Props) => {
   const { setPickingComponentToBindTo, setComponentToBind, setTree } =
     useEditorStore();
 
-  const {
-    variableProp: { data: variable, isLoading, refetch },
-    page,
-  } = useRequestProp(form.values.variable);
-
-  useEffect(() => {
-    if (form?.values?.variable && form?.values?.variableType === "OBJECT") {
-      refetch();
-    }
-  }, [form?.values, refetch]);
+  const { page } = useRequestProp();
 
   useEffect(() => {
     if (page?.pageState) {
