@@ -1,4 +1,5 @@
-import { getPage } from "@/requests/pages/queries";
+import { useActionData } from "@/components/actions/_BaseActionFunctions";
+import { useRequestProp } from "@/hooks/useRequestProp";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { OpenModalAction } from "@/utils/actions";
@@ -6,32 +7,28 @@ import { decodeSchema } from "@/utils/compression";
 import { Component, getAllComponentsByName } from "@/utils/editor";
 import { Button, Select, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 type Props = {
   form: UseFormReturnType<FormValues>;
+  id: string;
 };
 
 type FormValues = Omit<OpenModalAction, "name">;
 
-export const OpenModalFlowActionForm = ({ form }: Props) => {
+export const OpenModalFlowActionForm = ({ form, id }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const { setTree, tree: editorTree } = useEditorStore();
-  const router = useRouter();
-  const projectId = router.query.id as string;
-  const pageId = router.query.page as string;
+  const { tree: editorTree, selectedComponentId, setTree } = useEditorStore();
+
+  const { action } = useActionData<OpenModalAction>({
+    actionId: id,
+    editorTree,
+    selectedComponentId,
+  });
 
   const modals = getAllComponentsByName(editorTree.root, "Modal");
 
-  const { data: page } = useQuery({
-    queryKey: ["page", projectId, pageId],
-    queryFn: async () => {
-      return await getPage(projectId, pageId);
-    },
-    enabled: !!projectId && !!pageId,
-  });
+  const { page } = useRequestProp();
 
   useEffect(() => {
     if (page?.pageState) {
@@ -43,7 +40,11 @@ export const OpenModalFlowActionForm = ({ form }: Props) => {
     <Stack spacing="xs">
       <Select
         size="xs"
-        label="Modal to Open"
+        label={
+          action.action.name === "openModal"
+            ? "Modal to Open"
+            : "Modal to Close"
+        }
         placeholder="Select a modal"
         data={modals.map((modal: Component) => {
           return {

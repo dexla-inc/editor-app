@@ -1,7 +1,6 @@
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
-import { OpenDrawerAction } from "@/utils/actions";
 import { decodeSchema } from "@/utils/compression";
 import { Component, getAllComponentsByName } from "@/utils/editor";
 import { Button, Select, Stack } from "@mantine/core";
@@ -12,13 +11,15 @@ type Props = {
   form: UseFormReturnType<FormValues>;
 };
 
-type FormValues = Omit<OpenDrawerAction, "name">;
+type FormValues = {
+  componentId: string;
+};
 
-export const OpenDrawerFlowActionForm = ({ form }: Props) => {
+export const BindPlaceDataFlowActionForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const { setTree, tree: editorTree } = useEditorStore();
+  const { tree: editorTree, setTree } = useEditorStore();
 
-  const drawers = getAllComponentsByName(editorTree.root, "Drawer");
+  const containers = getAllComponentsByName(editorTree.root, "Container");
 
   const { page } = useRequestProp();
 
@@ -32,15 +33,15 @@ export const OpenDrawerFlowActionForm = ({ form }: Props) => {
     <Stack spacing="xs">
       <Select
         size="xs"
-        label="Drawer to Open"
-        placeholder="Select a drawer"
-        data={drawers.map((drawer: Component) => {
+        label="Component To Bind"
+        placeholder="Select a component"
+        data={containers.map((container: Component) => {
           return {
-            label: drawer.props?.title ?? drawer.id,
-            value: drawer.id!,
+            label: container.description ?? container.id,
+            value: container.id!,
           };
         })}
-        {...form.getInputProps("drawerId")}
+        {...form.getInputProps("componentId")}
       />
 
       <Button type="submit" size="xs" loading={isUpdating}>

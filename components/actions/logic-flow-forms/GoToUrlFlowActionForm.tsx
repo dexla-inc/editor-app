@@ -1,8 +1,8 @@
+import { VariablePicker } from "@/components/VariablePicker";
+import { useFlowStore } from "@/stores/flow";
 import { GoToUrlAction } from "@/utils/actions";
 import { Button, Checkbox, Stack, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { VariablePicker } from "@/components/VariablePicker";
-import { useFlowStore } from "@/stores/flow";
 
 type Props = {
   id: string;

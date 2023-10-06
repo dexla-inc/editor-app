@@ -1,12 +1,9 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { colors } from "@/components/datasources/DataSourceEndpoint";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
-import {
-  getDataSourceEndpoints,
-  getDataSources,
-} from "@/requests/datasources/queries";
+import { useRequestProp } from "@/hooks/useRequestProp";
+import { getDataSourceEndpoints } from "@/requests/datasources/queries";
 import { Endpoint } from "@/requests/datasources/types";
-import { getPage } from "@/requests/pages/queries";
 import { MethodTypes } from "@/requests/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
@@ -25,7 +22,6 @@ import {
   Title,
 } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import React, { forwardRef, useEffect, useState } from "react";
 
@@ -51,7 +47,7 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
         {label}
       </Text>
     </Flex>
-  ),
+  )
 );
 
 type FormValues = Omit<APICallAction | LoginAction, "name" | "datasource">;
@@ -68,7 +64,7 @@ export const APICallFlowActionForm = ({
   const { setComponentToBind, setTree } = useEditorStore();
   const isUpdating = useFlowStore((state) => state.isUpdating);
   const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
-    undefined,
+    undefined
   );
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
@@ -76,13 +72,8 @@ export const APICallFlowActionForm = ({
 
   const router = useRouter();
   const projectId = router.query.id as string;
-  const pageId = router.query.page as string;
 
-  const dataSources = useQuery({
-    queryKey: ["datasources"],
-    queryFn: () => getDataSources(projectId, {}),
-    enabled: !!projectId,
-  });
+  const { dataSources, page } = useRequestProp();
 
   const isLogin = actionName === "login";
   useEffect(() => {
@@ -105,7 +96,7 @@ export const APICallFlowActionForm = ({
       (endpoints ?? [])?.length > 0
     ) {
       setSelectedEndpoint(
-        endpoints?.find((e) => e.id === form.values.endpoint),
+        endpoints?.find((e) => e.id === form.values.endpoint)
       );
     }
   }, [endpoints, form.values.endpoint, selectedEndpoint]);
@@ -113,13 +104,7 @@ export const APICallFlowActionForm = ({
   useAuthStore((state) => state.refreshAccessToken);
   const accessToken = useAuthStore((state) => state.getAccessToken);
 
-  const { data: page } = useQuery({
-    queryKey: ["page", projectId, pageId],
-    queryFn: async () => {
-      return await getPage(projectId, pageId);
-    },
-    enabled: !!projectId && !!pageId,
-  });
+  const showLoaderInputProps = form.getInputProps("showLoader");
 
   useEffect(() => {
     if (page?.pageState) {

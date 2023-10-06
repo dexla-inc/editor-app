@@ -1,9 +1,8 @@
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
-import { OpenDrawerAction } from "@/utils/actions";
+import { ChangeLanguageAction } from "@/utils/actions";
 import { decodeSchema } from "@/utils/compression";
-import { Component, getAllComponentsByName } from "@/utils/editor";
 import { Button, Select, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useEffect } from "react";
@@ -12,13 +11,12 @@ type Props = {
   form: UseFormReturnType<FormValues>;
 };
 
-type FormValues = Omit<OpenDrawerAction, "name">;
+type FormValues = Omit<ChangeLanguageAction, "name">;
 
-export const OpenDrawerFlowActionForm = ({ form }: Props) => {
+export const ChangeLanguageFlowActionForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const { setTree, tree: editorTree } = useEditorStore();
 
-  const drawers = getAllComponentsByName(editorTree.root, "Drawer");
+  const { setTree } = useEditorStore();
 
   const { page } = useRequestProp();
 
@@ -32,15 +30,13 @@ export const OpenDrawerFlowActionForm = ({ form }: Props) => {
     <Stack spacing="xs">
       <Select
         size="xs"
-        label="Drawer to Open"
-        placeholder="Select a drawer"
-        data={drawers.map((drawer: Component) => {
-          return {
-            label: drawer.props?.title ?? drawer.id,
-            value: drawer.id!,
-          };
-        })}
-        {...form.getInputProps("drawerId")}
+        label="Change language to"
+        placeholder="Select a language"
+        data={[
+          { value: "default", label: "English" },
+          { value: "french", label: "French" },
+        ]}
+        {...form.getInputProps("language")}
       />
 
       <Button type="submit" size="xs" loading={isUpdating}>

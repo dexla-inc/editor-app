@@ -1,15 +1,11 @@
 import { ComponentToBindInput } from "@/components/ComponentToBindInput";
 import { VariablePicker } from "@/components/VariablePicker";
-import { getPage } from "@/requests/pages/queries";
-import { getVariable } from "@/requests/variables/queries";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { BindVariableToComponentAction } from "@/utils/actions";
 import { decodeSchema } from "@/utils/compression";
-import { Button, Loader, Stack, TextInput } from "@mantine/core";
+import { Button, Stack, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 type Props = {
@@ -19,20 +15,20 @@ type Props = {
 type FormValues = Omit<BindVariableToComponentAction, "name">;
 
 export const BindVariableToComponentFlowActionForm = ({ form }: Props) => {
-  const router = useRouter();
   const isUpdating = useFlowStore((state) => state.isUpdating);
   const { setPickingComponentToBindTo, setComponentToBind, setTree } =
     useEditorStore();
-  const projectId = router.query.id as string;
-  const pageId = router.query.page as string;
 
-  const { data: page } = useQuery({
-    queryKey: ["page", projectId, pageId],
-    queryFn: async () => {
-      return await getPage(projectId, pageId);
-    },
-    enabled: !!projectId && !!pageId,
-  });
+  const {
+    variableProp: { data: variable, isLoading, refetch },
+    page,
+  } = useRequestProp(form.values.variable);
+
+  useEffect(() => {
+    if (form?.values?.variable && form?.values?.variableType === "OBJECT") {
+      refetch();
+    }
+  }, [form?.values, refetch]);
 
   useEffect(() => {
     if (page?.pageState) {

@@ -1,7 +1,8 @@
+import { useActionData } from "@/components/actions/_BaseActionFunctions";
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
-import { OpenDrawerAction } from "@/utils/actions";
+import { OpenPopOverAction } from "@/utils/actions";
 import { decodeSchema } from "@/utils/compression";
 import { Component, getAllComponentsByName } from "@/utils/editor";
 import { Button, Select, Stack } from "@mantine/core";
@@ -9,16 +10,21 @@ import { UseFormReturnType } from "@mantine/form";
 import { useEffect } from "react";
 
 type Props = {
+  id: string;
   form: UseFormReturnType<FormValues>;
 };
 
-type FormValues = Omit<OpenDrawerAction, "name">;
+type FormValues = Omit<OpenPopOverAction, "name">;
 
-export const OpenDrawerFlowActionForm = ({ form }: Props) => {
+export const OpenPopOverFlowActionForm = ({ id, form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const { setTree, tree: editorTree } = useEditorStore();
 
-  const drawers = getAllComponentsByName(editorTree.root, "Drawer");
+  const { tree: editorTree, selectedComponentId, setTree } = useEditorStore();
+  const { action } = useActionData<OpenPopOverAction>({
+    actionId: id,
+    editorTree,
+    selectedComponentId,
+  });
 
   const { page } = useRequestProp();
 
@@ -28,19 +34,25 @@ export const OpenDrawerFlowActionForm = ({ form }: Props) => {
     }
   }, [page?.pageState, setTree]);
 
+  const popOvers = getAllComponentsByName(editorTree.root, "PopOver");
+
   return (
     <Stack spacing="xs">
       <Select
         size="xs"
-        label="Drawer to Open"
-        placeholder="Select a drawer"
-        data={drawers.map((drawer: Component) => {
+        label={
+          action.action.name === "openPopOver"
+            ? "PopOver to Open"
+            : "PopOver to Close"
+        }
+        placeholder="Select a popOver"
+        data={popOvers.map((popOver: Component) => {
           return {
-            label: drawer.props?.title ?? drawer.id,
-            value: drawer.id!,
+            label: popOver.props?.title ?? popOver.id,
+            value: popOver.id!,
           };
         })}
-        {...form.getInputProps("drawerId")}
+        {...form.getInputProps("popOverId")}
       />
 
       <Button type="submit" size="xs" loading={isUpdating}>
