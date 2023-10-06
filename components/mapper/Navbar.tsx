@@ -1,5 +1,5 @@
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { Component, getColorFromTheme } from "@/utils/editor";
 import { BoxProps, Box as MantineBox } from "@mantine/core";
 import { memo } from "react";
 import { useEditorStore } from "@/stores/editor";
@@ -15,9 +15,7 @@ const NavbarComponent = ({ renderTree, component, ...props }: Props) => {
 
   const { children, bg = "", ...componentProps } = component.props as any;
 
-  const [color, index] = bg.split(".");
-  const colorSection = theme.colors[color];
-  const backgroundColor = colorSection?.[index] ?? "transparent";
+  const backgroundColor = getColorFromTheme(theme, bg);
 
   merge(componentProps, { style: { backgroundColor } });
 

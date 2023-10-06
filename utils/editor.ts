@@ -1,14 +1,11 @@
+import { CSSProperties } from "react";
 import { PageResponse } from "@/requests/pages/types";
 import {
   MantineThemeExtended,
   emptyEditorTree,
   useEditorStore,
 } from "@/stores/editor";
-import {
-  Action,
-  ChangeStepAction,
-  ChangeStepActionParams,
-} from "@/utils/actions";
+import { Action, ChangeStepAction } from "@/utils/actions";
 import { structureMapper } from "@/utils/componentMapper";
 import { templatesMapper } from "@/utils/templatesMapper";
 import cloneDeep from "lodash.clonedeep";
@@ -963,12 +960,60 @@ export const debouncedTreeUpdate = debounce((...params: any[]) => {
 
 export const getColorFromTheme = (
   theme: MantineThemeExtended,
-  colorName: string,
+  colorName = "",
 ) => {
   if (colorName === "transparent") {
     return "transparent";
   }
   const [section, index] = colorName.split(".");
   const colorSection = theme.colors[section];
-  return colorSection?.[Number(index)];
+  return index !== undefined && colorSection
+    ? colorSection[Number(index)]
+    : section;
+};
+
+export const componentStyleMapper = (
+  componentName: string,
+  { style }: { style: CSSProperties },
+) => {
+  const { background, backgroundColor, color, ...rest } = style;
+  const result = merge({}, { style: rest });
+
+  if (componentName === "Button") {
+    merge(result, {
+      color: background ?? backgroundColor,
+      textColor: color,
+    });
+  }
+
+  if (
+    ["Container", "NavLink", "Icon", "RadioItem", "Navbar", "AppBar"].includes(
+      componentName,
+    )
+  ) {
+    merge(result, {
+      bg: background ?? backgroundColor,
+    });
+  }
+
+  if ("NavLink" === componentName) {
+    merge(result, {
+      align: rest.textAlign,
+      color,
+    });
+  }
+
+  if (
+    ["Text", "Checkbox", "Divider", "Button", "Select", "Input"].includes(
+      componentName,
+    )
+  ) {
+    merge(result, {
+      color,
+      size: rest.fontSize,
+      weight: rest.fontWeight,
+    });
+  }
+
+  return result;
 };

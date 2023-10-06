@@ -69,6 +69,7 @@ type HandlerProps = {
 
 export const createHandlers = (config: HandlerProps) => {
   const { setStream, stopLoading, setIsLoading } = config;
+  let stream = "";
 
   const onMessage = (event: EventSourceMessage) => {
     try {
@@ -81,19 +82,14 @@ export const createHandlers = (config: HandlerProps) => {
         return;
       }
 
-      setStream((state) => {
-        try {
-          if (state === undefined) {
-            return event.data;
-          } else {
-            return `${state}
-              ${event.data}`;
-          }
-        } catch (error) {
-          console.error(error);
-          return state;
-        }
-      });
+      if (stream === "") {
+        stream = event.data;
+      } else {
+        stream = `${stream}
+          ${event.data}`;
+      }
+
+      setStream(stream);
     } catch (error) {
       // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
       console.error(error);
