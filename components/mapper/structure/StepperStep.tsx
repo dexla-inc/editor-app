@@ -24,72 +24,54 @@ export const jsonStructure = (props?: any): Component => {
             props: {
               style: {
                 ...defaultLayoutValues,
+                padding: "3px",
+                paddingTop: "3px",
+                paddingBottom: "3px",
+                paddingLeft: "3px",
+                paddingRight: "3px",
+                rowGap: "5px",
               },
             },
             children: [
               {
                 id: nanoid(),
-                name: "Container",
-                description: "Container",
+                name: "Text",
+                description: "Text",
+                children: [],
                 props: {
+                  children: "New Step",
+                  color: "Black.6",
                   style: {
-                    display: "flex",
-                    flexWrap: "wrap",
-                    flexDirection: "column",
-                    rowGap: "5px",
-                    columnGap: "20px",
-                    alignItems: "flex-start",
-                    justifyContent: "center",
-                    position: "relative",
-                    padding: "3px",
-                    paddingTop: "3px",
-                    paddingBottom: "3px",
-                    paddingLeft: "3px",
-                    paddingRight: "3px",
+                    fontSize: "14px",
+                    fontWeight: "normal",
+                    lineHeight: "110%",
+                    letterSpacing: "0px",
+                    width: "auto",
+                    height: "auto",
                   },
                 },
-                children: [
-                  {
-                    id: nanoid(),
-                    name: "Text",
-                    description: "Text",
-                    children: [],
-                    props: {
-                      children: "Asset Description",
-                      color: "Black.6",
-                      style: {
-                        fontSize: "14px",
-                        fontWeight: "normal",
-                        lineHeight: "110%",
-                        letterSpacing: "0px",
-                        width: "auto",
-                        height: "auto",
-                      },
-                    },
-                    blockDroppingChildrenInside: true,
+                blockDroppingChildrenInside: true,
+              },
+              {
+                id: nanoid(),
+                name: "Divider",
+                description: "Divider",
+                props: {
+                  style: {
+                    width: "100%",
+                    height: "auto",
                   },
-                  {
-                    id: nanoid(),
-                    name: "Divider",
-                    description: "Divider",
-                    props: {
-                      style: {
-                        width: "100%",
-                        height: "auto",
-                      },
-                      size: "lg",
-                    },
-                    blockDroppingChildrenInside: true,
-                    states: {
-                      Active: {
-                        color: "Success.5",
-                      },
-                      Complete: {
-                        color: "Success.5",
-                      },
-                    },
+                  size: "lg",
+                },
+                blockDroppingChildrenInside: true,
+                states: {
+                  Active: {
+                    color: "Success.5",
                   },
-                ],
+                  Complete: {
+                    color: "Success.5",
+                  },
+                },
               },
             ],
           },
@@ -154,7 +136,7 @@ export const jsonStructure = (props?: any): Component => {
                         height: "auto",
                         padding: px(theme.spacing.sm),
                       },
-                      textColor: "Black.2",
+                      textColor: "Black.9",
                       variant: "default",
                       children: "Previous",
                       leftIcon: "IconArrowLeft",
