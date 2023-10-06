@@ -43,15 +43,17 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     if (selectedComponent?.id) {
       const data = pick(selectedComponent.props!, ["style"]);
 
-      form.setValues({
-        position: data.style.position ?? defaultPositionValues.position,
-        top: data.style.top ?? defaultPositionValues.top,
-        right: data.style.right ?? defaultPositionValues.right,
-        bottom: data.style.bottom ?? defaultPositionValues.bottom,
-        left: data.style.left ?? defaultPositionValues.left,
-        zIndex: data.style.zIndex ?? defaultPositionValues.zIndex,
-        alignSelf: data.style.alignSelf ?? defaultPositionValues.alignSelf,
-      });
+      if (data.style) {
+        form.setValues({
+          position: data.style.position ?? defaultPositionValues.position,
+          top: data.style.top ?? defaultPositionValues.top,
+          right: data.style.right ?? defaultPositionValues.right,
+          bottom: data.style.bottom ?? defaultPositionValues.bottom,
+          left: data.style.left ?? defaultPositionValues.left,
+          zIndex: data.style.zIndex ?? defaultPositionValues.zIndex,
+          alignSelf: data.style.alignSelf ?? defaultPositionValues.alignSelf,
+        });
+      }
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
