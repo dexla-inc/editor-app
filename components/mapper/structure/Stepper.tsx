@@ -1,11 +1,7 @@
-import { defaultTheme } from "@/components/IFrame";
 import { Component } from "@/utils/editor";
-import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
-import { defaultLayoutValues } from "@/components/modifiers/Layout";
 
 export const jsonStructure = (props?: any): Component => {
-  const theme = props.theme ?? defaultTheme;
   const stepperId = nanoid();
 
   const stepperStructure = {
@@ -13,12 +9,18 @@ export const jsonStructure = (props?: any): Component => {
     name: "Container",
     description: "Stepper Container",
     props: {
+      bg: "White.0",
       style: {
         display: "flex",
         flexDirection: "column",
         gap: "20px",
         minHeight: "100px",
         width: "100%",
+        paddingRight: "20px",
+        padding: "20px",
+        paddingTop: "20px",
+        paddingBottom: "20px",
+        paddingLeft: "20px",
       },
     },
     children: [
@@ -51,39 +53,60 @@ export const jsonStructure = (props?: any): Component => {
                     description: "Container",
                     props: {
                       style: {
-                        ...defaultLayoutValues,
+                        display: "flex",
+                        flexWrap: "wrap",
+                        flexDirection: "column",
+                        rowGap: "5px",
+                        columnGap: "20px",
+                        alignItems: "flex-start",
+                        justifyContent: "center",
+                        position: "relative",
+                        height: "auto",
                       },
                     },
                     children: [
-                      {
-                        id: nanoid(),
-                        name: "Icon",
-                        description: "Icon",
-                        children: [],
-                        props: {
-                          name: "IconArrowNarrowRight",
-                          width: "24px",
-                        },
-                        blockDroppingChildrenInside: true,
-                      },
                       {
                         id: nanoid(),
                         name: "Text",
                         description: "Text",
                         children: [],
                         props: {
-                          children: "First Step",
-                          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                          children: "Address",
+                          color: "Black.6",
                           style: {
-                            fontSize: `${px(theme.fontSizes.sm)}px`,
+                            fontSize: "14px",
                             fontWeight: "normal",
                             lineHeight: "110%",
                             letterSpacing: "0px",
                             width: "auto",
                             height: "auto",
                           },
+                          size: "sm",
+                          weight: "normal",
                         },
                         blockDroppingChildrenInside: true,
+                      },
+                      {
+                        id: nanoid(),
+                        name: "Divider",
+                        description: "Divider",
+                        props: {
+                          style: {
+                            width: "100%",
+                            height: "auto",
+                          },
+                          size: "lg",
+                          color: "Neutral.7",
+                        },
+                        blockDroppingChildrenInside: true,
+                        states: {
+                          Active: {
+                            color: "Success.5",
+                          },
+                          Complete: {
+                            color: "Success.5",
+                          },
+                        },
                       },
                     ],
                   },
@@ -100,7 +123,14 @@ export const jsonStructure = (props?: any): Component => {
                     description: "Container",
                     props: {
                       style: {
-                        ...defaultLayoutValues,
+                        display: "flex",
+                        flexWrap: "wrap",
+                        flexDirection: "column",
+                        rowGap: "20px",
+                        columnGap: "20px",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        position: "relative",
                       },
                     },
                     children: [
@@ -111,9 +141,9 @@ export const jsonStructure = (props?: any): Component => {
                         children: [],
                         props: {
                           children: "First Step content",
-                          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                          color: "Black.6",
                           style: {
-                            fontSize: `${px(theme.fontSizes.sm)}px`,
+                            fontSize: "14px",
                             fontWeight: "normal",
                             lineHeight: "110%",
                             letterSpacing: "0px",
@@ -146,7 +176,7 @@ export const jsonStructure = (props?: any): Component => {
                               style: {
                                 width: "auto",
                                 height: "auto",
-                                padding: px(theme.spacing.sm),
+                                padding: 12,
                               },
                               styles: {
                                 label: {
@@ -168,7 +198,7 @@ export const jsonStructure = (props?: any): Component => {
                               style: {
                                 width: "auto",
                                 height: "auto",
-                                padding: px(theme.spacing.sm),
+                                padding: 12,
                               },
                               children: "Next",
                               rightIcon: "IconArrowRight",
@@ -210,31 +240,32 @@ export const jsonStructure = (props?: any): Component => {
                     description: "Container",
                     props: {
                       style: {
-                        ...defaultLayoutValues,
+                        display: "flex",
+                        flexWrap: "wrap",
+                        flexDirection: "column",
+                        rowGap: "5px",
+                        columnGap: "20px",
+                        alignItems: "flex-start",
+                        justifyContent: "center",
+                        position: "relative",
+                        padding: "3px",
+                        paddingTop: "3px",
+                        paddingBottom: "3px",
+                        paddingLeft: "3px",
+                        paddingRight: "3px",
                       },
                     },
                     children: [
-                      {
-                        id: nanoid(),
-                        name: "Icon",
-                        description: "Icon",
-                        children: [],
-                        props: {
-                          name: "IconArrowNarrowRight",
-                          width: "24px",
-                        },
-                        blockDroppingChildrenInside: true,
-                      },
                       {
                         id: nanoid(),
                         name: "Text",
                         description: "Text",
                         children: [],
                         props: {
-                          children: "Second Step",
-                          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                          children: "Asset Description",
+                          color: "Black.6",
                           style: {
-                            fontSize: `${px(theme.fontSizes.sm)}px`,
+                            fontSize: "14px",
                             fontWeight: "normal",
                             lineHeight: "110%",
                             letterSpacing: "0px",
@@ -243,6 +274,27 @@ export const jsonStructure = (props?: any): Component => {
                           },
                         },
                         blockDroppingChildrenInside: true,
+                      },
+                      {
+                        id: nanoid(),
+                        name: "Divider",
+                        description: "Divider",
+                        props: {
+                          style: {
+                            width: "100%",
+                            height: "auto",
+                          },
+                          size: "lg",
+                        },
+                        blockDroppingChildrenInside: true,
+                        states: {
+                          Active: {
+                            color: "Success.5",
+                          },
+                          Complete: {
+                            color: "Success.5",
+                          },
+                        },
                       },
                     ],
                   },
@@ -259,7 +311,14 @@ export const jsonStructure = (props?: any): Component => {
                     description: "Container",
                     props: {
                       style: {
-                        ...defaultLayoutValues,
+                        display: "flex",
+                        flexWrap: "wrap",
+                        flexDirection: "column",
+                        rowGap: "20px",
+                        columnGap: "20px",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        position: "relative",
                       },
                     },
                     children: [
@@ -270,9 +329,9 @@ export const jsonStructure = (props?: any): Component => {
                         children: [],
                         props: {
                           children: "Second Step content",
-                          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                          color: "Black.6",
                           style: {
-                            fontSize: `${px(theme.fontSizes.sm)}px`,
+                            fontSize: "14px",
                             fontWeight: "normal",
                             lineHeight: "110%",
                             letterSpacing: "0px",
@@ -305,7 +364,7 @@ export const jsonStructure = (props?: any): Component => {
                               style: {
                                 width: "auto",
                                 height: "auto",
-                                padding: px(theme.spacing.sm),
+                                padding: 12,
                               },
                               textColor: "Black.2",
                               variant: "default",
@@ -333,7 +392,7 @@ export const jsonStructure = (props?: any): Component => {
                               style: {
                                 width: "auto",
                                 height: "auto",
-                                padding: px(theme.spacing.sm),
+                                padding: 12,
                               },
                               children: "Next",
                               rightIcon: "IconArrowRight",
@@ -375,31 +434,27 @@ export const jsonStructure = (props?: any): Component => {
                     description: "Container",
                     props: {
                       style: {
-                        ...defaultLayoutValues,
+                        display: "flex",
+                        flexWrap: "wrap",
+                        flexDirection: "column",
+                        rowGap: "5px",
+                        columnGap: "20px",
+                        alignItems: "flex-start",
+                        justifyContent: "center",
+                        position: "relative",
                       },
                     },
                     children: [
-                      {
-                        id: nanoid(),
-                        name: "Icon",
-                        description: "Icon",
-                        children: [],
-                        props: {
-                          name: "IconArrowNarrowRight",
-                          width: "24px",
-                        },
-                        blockDroppingChildrenInside: true,
-                      },
                       {
                         id: nanoid(),
                         name: "Text",
                         description: "Text",
                         children: [],
                         props: {
-                          children: "Third Step",
-                          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                          children: "Additional Information",
+                          color: "Black.6",
                           style: {
-                            fontSize: `${px(theme.fontSizes.sm)}px`,
+                            fontSize: "14px",
                             fontWeight: "normal",
                             lineHeight: "110%",
                             letterSpacing: "0px",
@@ -408,6 +463,27 @@ export const jsonStructure = (props?: any): Component => {
                           },
                         },
                         blockDroppingChildrenInside: true,
+                      },
+                      {
+                        id: nanoid(),
+                        name: "Divider",
+                        description: "Divider",
+                        props: {
+                          style: {
+                            width: "100%",
+                            height: "auto",
+                          },
+                          size: "lg",
+                        },
+                        blockDroppingChildrenInside: true,
+                        states: {
+                          Active: {
+                            color: "Success.5",
+                          },
+                          Complete: {
+                            color: "Success.5",
+                          },
+                        },
                       },
                     ],
                   },
@@ -424,7 +500,14 @@ export const jsonStructure = (props?: any): Component => {
                     description: "Container",
                     props: {
                       style: {
-                        ...defaultLayoutValues,
+                        display: "flex",
+                        flexWrap: "wrap",
+                        flexDirection: "column",
+                        rowGap: "20px",
+                        columnGap: "20px",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        position: "relative",
                       },
                     },
                     children: [
@@ -435,9 +518,9 @@ export const jsonStructure = (props?: any): Component => {
                         children: [],
                         props: {
                           children: "Third Step content",
-                          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                          color: "Black.6",
                           style: {
-                            fontSize: `${px(theme.fontSizes.sm)}px`,
+                            fontSize: "14px",
                             fontWeight: "normal",
                             lineHeight: "110%",
                             letterSpacing: "0px",
@@ -470,7 +553,7 @@ export const jsonStructure = (props?: any): Component => {
                               style: {
                                 width: "auto",
                                 height: "auto",
-                                padding: px(theme.spacing.sm),
+                                padding: 12,
                               },
                               textColor: "Black.2",
                               variant: "default",
@@ -498,7 +581,7 @@ export const jsonStructure = (props?: any): Component => {
                               style: {
                                 width: "auto",
                                 height: "auto",
-                                padding: px(theme.spacing.sm),
+                                padding: 12,
                               },
                               children: "Next",
                               rightIcon: "IconArrowRight",
