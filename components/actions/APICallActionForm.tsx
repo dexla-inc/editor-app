@@ -20,11 +20,12 @@ import { useEditorStore } from "@/stores/editor";
 import { APICallAction, Action, LoginAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
 import { ApiType } from "@/utils/dashboardTypes";
-import { getAllComponentsByName, getComponentById } from "@/utils/editor";
+import { getComponentById } from "@/utils/editor";
 import {
   ActionIcon,
   Box,
   Button,
+  Divider,
   Flex,
   Popover,
   Select,
@@ -41,6 +42,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import React, { forwardRef, useEffect, useState } from "react";
 import { InformationAlert } from "../Alerts";
+import { ActionsForm } from "./ActionsForm";
 
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, any>(
@@ -88,16 +90,13 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     selectedComponentId,
   });
 
-  const setPickingComponentToBindFrom = useEditorStore(
-    (state) => state.setPickingComponentToBindFrom,
-  );
-  const componentToBind = useEditorStore((state) => state.componentToBind);
-  const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind,
-  );
-  const pickingComponentToBindFrom = useEditorStore(
-    (state) => state.pickingComponentToBindFrom,
-  );
+  const {
+    setPickingComponentToBindFrom,
+    sequentialTo,
+    componentToBind,
+    setComponentToBind,
+    pickingComponentToBindFrom,
+  } = useEditorStore();
 
   const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
     undefined,
@@ -116,7 +115,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   });
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
-  const containers = getAllComponentsByName(editorTree.root, "Container");
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -225,6 +223,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
         },
         updateTreeComponentActions,
       });
+
       handleLoadingStop({ stopLoading });
     } catch (error) {
       handleLoadingStop({ stopLoading, success: false });
@@ -530,6 +529,12 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
           />
         </Stack>
       </form>
+      {sequentialTo === id && (
+        <>
+          <Divider my="lg" label="Sequential Action" labelPosition="center" />
+          <ActionsForm sequentialTo={sequentialTo} />
+        </>
+      )}
     </>
   ) : (
     <Stack>

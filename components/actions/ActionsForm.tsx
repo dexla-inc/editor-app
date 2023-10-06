@@ -63,8 +63,7 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
   };
 
   const handleClose = () => {
-    close && close();
-    setSequentialTo(undefined);
+    isSequential ? setSequentialTo(undefined) : close && close();
   };
 
   const onSubmit = (values: any) => {
