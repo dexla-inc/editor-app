@@ -1,8 +1,4 @@
-import { BindPlaceDataAction } from "@/utils/actions";
-import { Component, getAllComponentsByName } from "@/utils/editor";
-import { Select, Stack } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { ActionButtons } from "./ActionButtons";
+import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
   handleLoadingStop,
@@ -10,14 +6,67 @@ import {
   useActionData,
   useEditorStores,
   useLoadingState,
-} from "./_BaseActionFunctions";
+} from "@/components/actions/_BaseActionFunctions";
+import { colors } from "@/components/datasources/DataSourceEndpoint";
+import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
+import {
+  getDataSourceEndpoints,
+  getDataSources,
+} from "@/requests/datasources/queries";
+import { Endpoint } from "@/requests/datasources/types";
+import { MethodTypes } from "@/requests/types";
+import { useEditorStore } from "@/stores/editor";
+import { Action, BindPlaceDataAction } from "@/utils/actions";
+import { ICON_SIZE } from "@/utils/config";
+import { ApiType } from "@/utils/dashboardTypes";
+import { getAllComponentsByName, getComponentById } from "@/utils/editor";
+import {
+  ActionIcon,
+  Box,
+  Button,
+  Flex,
+  Select,
+  Stack,
+  Switch,
+  Text,
+  TextInput,
+  Title,
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { IconCurrentLocation } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/router";
+import React, { forwardRef, useEffect, useState } from "react";
+
+// eslint-disable-next-line react/display-name
+const SelectItem = forwardRef<HTMLDivElement, any>(
+  ({ method, label, ...others }: any, ref) => (
+    <Flex ref={ref} gap="xs" {...others}>
+      <Box
+        p={2}
+        sx={{
+          fontSize: 8,
+          color: "white",
+          border: colors[method as MethodTypes].color + " 1px solid",
+          background: colors[method as MethodTypes].color,
+          borderRadius: "4px",
+          width: 38,
+          textAlign: "center",
+        }}
+      >
+        {method}
+      </Box>
+      <Text size="xs" truncate>
+        {label}
+      </Text>
+    </Flex>
+  ),
+);
+
+type FormValues = Omit<BindPlaceDataAction, "name" | "datasource">;
 
 type Props = {
   id: string;
-};
-
-type FormValues = {
-  componentId: string;
 };
 
 export const BindPlaceDataActionForm = ({ id }: Props) => {
@@ -30,22 +79,61 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
     selectedComponentId,
   });
 
+  const {
+    setPickingComponentToBindFrom,
+    componentToBind,
+    pickingComponentToBindFrom,
+    setComponentToBind,
+  } = useEditorStore();
+
+  const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
+    undefined,
+  );
+  const [selectedEndpoint, setSelectedEndpoint] = useState<
+    Endpoint | undefined
+  >(undefined);
+
+  const router = useRouter();
+  const projectId = router.query.id as string;
+
+  const dataSources = useQuery({
+    queryKey: ["datasources"],
+    queryFn: () => getDataSources(projectId, {}),
+    enabled: !!projectId,
+  });
+
+  const component = getComponentById(editorTree.root, selectedComponentId!);
   const containers = getAllComponentsByName(editorTree.root, "Container");
 
   const form = useForm<FormValues>({
     initialValues: {
-      componentId: action.action.componentId,
+      showLoader: action.action.showLoader ?? true,
+      endpoint: action.action.endpoint,
+      binds: {
+        header: action.action.binds?.header ?? {},
+        parameter: action.action.binds?.parameter ?? {},
+        body: action.action.binds?.body ?? {},
+      },
+      datasources: action.action.datasources,
+      componentId: action.action.componentId ?? "",
     },
   });
 
   const onSubmit = (values: FormValues) => {
-    handleLoadingStart({ startLoading });
     try {
+      handleLoadingStart({ startLoading });
+
       updateActionInTree<BindPlaceDataAction>({
         selectedComponentId: selectedComponentId!,
         componentActions,
         id,
-        updateValues: { componentId: values.componentId },
+        updateValues: {
+          endpoint: values.endpoint,
+          showLoader: values.showLoader,
+          datasources: dataSources.data!.results,
+          binds: values.binds,
+          componentId: values.componentId!,
+        },
         updateTreeComponentActions,
       });
       handleLoadingStop({ stopLoading });
@@ -53,26 +141,211 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
       handleLoadingStop({ stopLoading, success: false });
     }
   };
-  return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack spacing="xs">
-        <Select
-          size="xs"
-          label="Component To Bind"
-          placeholder="Select a component"
-          data={containers.map((container: Component) => {
-            return {
-              label: container.description ?? container.id,
-              value: container.id!,
-            };
-          })}
-          {...form.getInputProps("componentId")}
-        />
-        <ActionButtons
-          actionId={action.id}
-          componentActions={componentActions}
-        ></ActionButtons>
-      </Stack>
-    </form>
+
+  // For EmptyDatasourcesPlaceholder
+  const removeAction = () => {
+    updateTreeComponentActions(
+      selectedComponentId!,
+      componentActions.filter((a: Action) => {
+        return a.id !== id && a.sequentialTo !== id;
+      }),
+    );
+  };
+
+  useEffect(() => {
+    const getEndpoints = async () => {
+      const { results } = await getDataSourceEndpoints(projectId, {
+        authOnly: false,
+      });
+      setEndpoints(results);
+    };
+
+    if ((dataSources.data?.results ?? []).length > 0) {
+      getEndpoints();
+    }
+  }, [dataSources.data, projectId]);
+
+  useEffect(() => {
+    if (componentToBind && pickingComponentToBindFrom) {
+      if (pickingComponentToBindFrom.componentId === component?.id) {
+        form.setFieldValue(
+          `binds.${pickingComponentToBindFrom.paramType}.${pickingComponentToBindFrom.param}`,
+          `valueOf_${componentToBind}`,
+        );
+
+        setPickingComponentToBindFrom(undefined);
+        setComponentToBind(undefined);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [component?.id, componentToBind, pickingComponentToBindFrom]);
+
+  useEffect(() => {
+    if (
+      form.values.endpoint &&
+      !selectedEndpoint &&
+      (endpoints ?? [])?.length > 0
+    ) {
+      setSelectedEndpoint(
+        endpoints?.find((e) => e.id === form.values.endpoint),
+      );
+    }
+  }, [endpoints, form.values.endpoint, selectedEndpoint]);
+
+  const showLoaderInputProps = form.getInputProps("showLoader");
+
+  return endpoints && endpoints.length > 0 ? (
+    <>
+      <form onSubmit={form.onSubmit(onSubmit)}>
+        <Stack spacing="xs">
+          <Select
+            size="xs"
+            label="Component To Bind"
+            placeholder="Select a component"
+            data={containers.map((container) => {
+              return {
+                label: container.description ?? container.id,
+                value: container.id!,
+              };
+            })}
+            {...form.getInputProps("componentId")}
+          />
+
+          <Select
+            size="xs"
+            label="Get Geometry Endpoint"
+            placeholder="The endpoint to call"
+            searchable
+            clearable
+            data={
+              endpoints?.map((endpoint) => {
+                return {
+                  label: endpoint.relativeUrl,
+                  value: endpoint.id,
+                  method: endpoint.methodType,
+                };
+              }) ?? []
+            }
+            itemComponent={SelectItem}
+            {...form.getInputProps("endpoint")}
+            onChange={(selected) => {
+              form.setFieldValue("endpoint", selected!);
+              setSelectedEndpoint(endpoints?.find((e) => e.id === selected));
+            }}
+            icon={
+              <Flex gap="lg">
+                <Box
+                  p={2}
+                  sx={{
+                    fontSize: 8,
+                    color: "white",
+                    border:
+                      selectedEndpoint?.methodType &&
+                      colors[selectedEndpoint.methodType].color + " 1px solid",
+                    background:
+                      selectedEndpoint?.methodType &&
+                      colors[selectedEndpoint.methodType].color,
+                    borderRadius: "4px",
+                    width: 20,
+                    textAlign: "center",
+                  }}
+                >
+                  {selectedEndpoint?.methodType}
+                </Box>
+              </Flex>
+            }
+          />
+          <Switch
+            size="xs"
+            label="Show Loader"
+            labelPosition="left"
+            {...showLoaderInputProps}
+            checked={showLoaderInputProps.value}
+            onChange={(event) => {
+              showLoaderInputProps.onChange(event);
+            }}
+            sx={{ fontWeight: 500 }}
+          />
+          {selectedEndpoint && (
+            <Stack spacing={2}>
+              {[
+                {
+                  title: "Headers",
+                  type: "header" as ApiType,
+                  items: selectedEndpoint.headers,
+                },
+                {
+                  title: "Request Body",
+                  type: "body" as ApiType,
+                  items: selectedEndpoint.requestBody,
+                },
+                {
+                  title: "Query Strings",
+                  type: "parameter" as ApiType,
+                  items: selectedEndpoint.parameters,
+                },
+              ].map(({ title, type, items }) => (
+                <React.Fragment key={title}>
+                  {items.length > 0 && (
+                    <Title order={5} mt="md">
+                      {title}
+                    </Title>
+                  )}
+                  {items.map((param) => {
+                    if (param.name === "place_id") return null;
+                    return (
+                      <Stack key={param.name}>
+                        <TextInput
+                          size="xs"
+                          label={param.name}
+                          description={`${
+                            // @ts-ignore
+                            param.location ? `${param.location} - ` : ""
+                          }${param.type}`}
+                          type={param.type}
+                          rightSectionWidth="auto"
+                          rightSection={
+                            <Box sx={{ display: "flex" }}>
+                              <ActionIcon
+                                onClick={() => {
+                                  setPickingComponentToBindFrom({
+                                    componentId: component?.id!,
+                                    trigger: action.trigger,
+                                    endpointId: selectedEndpoint.id,
+                                    param: param.name,
+                                    paramType: type,
+                                    bindedId:
+                                      form.values.binds?.[type][param.name] ??
+                                      "",
+                                  });
+                                }}
+                              >
+                                <IconCurrentLocation size={ICON_SIZE} />
+                              </ActionIcon>
+                            </Box>
+                          }
+                          autoComplete="off"
+                          data-lpignore="true"
+                          data-form-type="other"
+                        />
+                      </Stack>
+                    );
+                  })}
+                </React.Fragment>
+              ))}
+            </Stack>
+          )}
+
+          <ActionButtons actionId={id} componentActions={componentActions} />
+        </Stack>
+      </form>
+    </>
+  ) : (
+    <Stack>
+      <EmptyDatasourcesPlaceholder projectId={projectId} />
+      <Button size="xs" type="button" variant="default" onClick={removeAction}>
+        Remove
+      </Button>
+    </Stack>
   );
 };

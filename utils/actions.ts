@@ -214,6 +214,17 @@ export interface LoginAction extends Omit<APICallAction, "name"> {
   name: "login";
 }
 
+export interface BindPlaceDataAction extends Omit<APICallAction, "name"> {
+  name: "bindPlaceData";
+  componentId?: string;
+}
+
+export interface BindPlaceGeometryAction extends BaseAction {
+  name: "bindPlaceGeometry";
+  componentId: string;
+  key?: string;
+}
+
 export interface BindResponseToComponentAction extends BaseAction {
   name: "bindResponse";
   data?: any;
@@ -244,16 +255,6 @@ export interface ChangeStepAction extends BaseAction {
   name: "changeStep";
   stepperId: string;
   control: "previous" | "next";
-}
-
-export interface BindPlaceDataAction extends BaseAction {
-  name: "bindPlaceData";
-  componentId: string;
-}
-
-export interface BindPlaceGeometryAction extends BaseAction {
-  name: "bindPlaceGeometry";
-  componentId: string;
 }
 
 export interface ChangeLanguageAction extends BaseAction {
@@ -1018,7 +1019,7 @@ export const bindPlaceDataAction = ({
   const editorTree = useEditorStore.getState().tree;
   const component = getComponentById(
     editorTree.root,
-    action.componentId
+    action.componentId!
   ) as Component;
   const updateTreeComponentChildren =
     useEditorStore.getState().updateTreeComponentChildren;
@@ -1058,26 +1059,25 @@ export const bindPlaceDataAction = ({
             action: {
               name: "apiCall",
               showLoader: true,
-              endpoint: "ff9f1ab9b7ea4b458485653809250239",
+              endpoint: action.endpoint,
               binds: {
-                header: {
-                  "Accept-Language": "en",
-                },
+                ...action.binds,
                 parameter: {
+                  ...action.binds?.parameter,
                   place_id: pred.place_id,
-                  key: "AIzaSyCS8ncCNBG7tNRPOdFbdx7fh3Or5qpIpZM",
-                  fields: "geometry,formatted_address,address_components",
-                  sessiontoken: "dev",
                 },
-                body: {},
               },
+              datasources: action.datasources,
             },
           },
           {
             id: nanoid(),
             trigger: "onSuccess",
             sequentialTo: predId,
-            action: { name: "bindPlaceGeometry" },
+            action: {
+              name: "bindPlaceGeometry",
+              key: action.binds?.parameter.key,
+            },
           },
         ],
         blockDroppingChildrenInside: true,
@@ -1093,6 +1093,7 @@ export const bindPlaceDataAction = ({
 
 export const bindPlaceGeometryAction = ({
   data: { result },
+  action: { key },
 }: BindPlaceGeometryActionParams) => {
   const editorTree = useEditorStore.getState().tree;
   const { updateTreeComponentChildren, updateTreeComponent } =
@@ -1120,7 +1121,7 @@ export const bindPlaceGeometryAction = ({
         height: "500px",
       },
       center: location as Position,
-      apiKey: "AIzaSyCS8ncCNBG7tNRPOdFbdx7fh3Or5qpIpZM",
+      apiKey: key,
       zoom: 10,
       language: "en",
       markers: [

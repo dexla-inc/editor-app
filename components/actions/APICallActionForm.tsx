@@ -20,7 +20,7 @@ import { useEditorStore } from "@/stores/editor";
 import { APICallAction, Action, LoginAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
 import { ApiType } from "@/utils/dashboardTypes";
-import { getComponentById } from "@/utils/editor";
+import { getAllComponentsByName, getComponentById } from "@/utils/editor";
 import {
   ActionIcon,
   Box,
@@ -116,6 +116,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   });
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
+  const containers = getAllComponentsByName(editorTree.root, "Container");
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -390,7 +391,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                             `binds.typeKey_${queries.values.selectedKey}`,
                           )
                         : form.getInputProps(`binds.${type}.${param.name}`);
-
+                    if (param.name === "place_id") return null;
                     return (
                       <Stack key={param.name}>
                         <TextInput
