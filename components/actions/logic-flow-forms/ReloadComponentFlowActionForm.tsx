@@ -70,7 +70,7 @@ export const ReloadComponentFlowActionForm = ({ form }: Props) => {
       <Stack spacing="xs">
         <ComponentToBindFromInput
           key={form.values.componentId}
-          onPick={(componentToBind: string) => {
+          onPickComponent={(componentToBind: string) => {
             form.setValues({ ...form.values, componentId: componentToBind });
             setComponentToBind(undefined);
           }}
