@@ -8,6 +8,7 @@ import {
   useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
+import { VariablesButton } from "@/components/variables/VariablesButton";
 import { listVariables } from "@/requests/variables/queries";
 import { useEditorStore } from "@/stores/editor";
 import { SetVariableAction } from "@/utils/actions";
@@ -15,7 +16,6 @@ import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { VariablesButton } from "../variables/VariablesButton";
 
 type Props = {
   id: string;

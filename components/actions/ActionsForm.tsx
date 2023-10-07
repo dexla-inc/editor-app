@@ -1,3 +1,4 @@
+import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
 import { Action, SequentialTrigger, actions } from "@/utils/actions";
 import { componentMapper } from "@/utils/componentMapper";
@@ -7,7 +8,6 @@ import { ActionIcon, Button, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import startCase from "lodash.startcase";
 import { nanoid } from "nanoid";
-import { Icon } from "../Icon";
 
 type ActionProps = {
   sequentialTo?: string;
