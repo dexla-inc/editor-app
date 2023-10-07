@@ -1,4 +1,5 @@
 import { ActionButtons } from "@/components/actions/ActionButtons";
+import { ActionsForm } from "@/components/actions/ActionsForm";
 import {
   handleLoadingStart,
   handleLoadingStop,
@@ -15,7 +16,6 @@ import { ActionIcon, Divider, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { useEffect } from "react";
-import { ActionsForm } from "./ActionsForm";
 
 type FormValues = Omit<ReloadComponentAction, "name">;
 

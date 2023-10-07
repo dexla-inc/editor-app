@@ -150,7 +150,6 @@ import {
   IconUser,
   IconUsers,
 } from "@tabler/icons-react";
-import { FileWithPath } from "file-selector";
 import { useRouter } from "next/router";
 
 export type ComponentCategoryType =
@@ -1023,8 +1022,8 @@ export const componentMapper: ComponentMapper = {
           renderTree={props.renderTree}
           // eslint-disable-next-line react/no-children-prop
           children={props.component.children as any}
-          onDrop={(files: FileWithPath[]): void => {
-            uploadFile(projectId, files[0], props.component.props?.multiple);
+          onDrop={(files): void => {
+            uploadFile(projectId, files, props.component.props?.multiple);
           }}
           activateOnClick={false}
           dragEventsBubbling={false}

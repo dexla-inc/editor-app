@@ -6,13 +6,14 @@ import { post } from "@/utils/api";
 
 export const uploadFile = async (
   projectId: string,
-  file: File,
+  file: File | File[],
   isMultiple: boolean = false,
 ) => {
   let url = `/projects/${projectId}/storage?isMultiple=${isMultiple}`;
 
   const formData = new FormData();
-  formData.append("file", file);
+  if (Array.isArray(file)) file.forEach((f) => formData.append("file", f));
+  else formData.append("file", file);
 
   const response = (await post<UploadMultipleResponse | UploadResponse>(
     url,
