@@ -79,7 +79,7 @@ export const ChangeStateActionFlowForm = ({ form }: Props) => {
           onClick={() => {
             form.setFieldValue(
               "conditionRules",
-              form.values.conditionRules.concat({
+              (form.values.conditionRules ?? []).concat({
                 componentId: "",
                 condition: "",
                 state: "",
@@ -93,7 +93,7 @@ export const ChangeStateActionFlowForm = ({ form }: Props) => {
           Add
         </Button>
       </Flex>
-      {form.values.conditionRules.map(
+      {(form.values.conditionRules ?? []).map(
         ({ componentId, condition, state }: any, i: number) => {
           return (
             <div

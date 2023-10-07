@@ -1,3 +1,4 @@
+import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
 import {
@@ -9,7 +10,6 @@ import { useForm } from "@mantine/form";
 import { IconRadio } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
-import { SizeSelector } from "@/components/SizeSelector";
 
 export const icon = IconRadio;
 export const label = "Radio";
@@ -19,6 +19,7 @@ export const defaultRadioValues = {
   size: "sm",
   weight: "normal",
   align: "left",
+  labelSpacing: "0",
   withAsterisk: false,
 };
 
@@ -42,6 +43,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         align: data.styles?.label.textAlign ?? defaultRadioValues.align,
         weight: data.styles?.label.fontWeight ?? defaultRadioValues.weight,
         withAsterisk: data.withAsterisk ?? defaultRadioValues.withAsterisk,
+        labelSpacing: data.labelProps?.mb ?? defaultRadioValues.labelSpacing,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
@@ -116,6 +118,16 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             }}
           />
         </Group>
+        <SizeSelector
+          label="Label Spacing"
+          {...form.getInputProps("labelSpacing")}
+          onChange={(value) => {
+            form.setFieldValue("labelSpacing", value as string);
+            debouncedTreeComponentPropsUpdate("labelProps", {
+              mb: value as string,
+            });
+          }}
+        />
       </Stack>
     </form>
   );

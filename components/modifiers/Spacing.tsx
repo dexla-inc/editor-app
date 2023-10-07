@@ -1,11 +1,11 @@
 import { SpacingControl } from "@/components/modifiers/SpacingControl";
+import { withModifier } from "@/hoc/withModifier";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconBoxModel2 } from "@tabler/icons-react";
-import { useEffect } from "react";
-import { withModifier } from "@/hoc/withModifier";
 import { pick } from "next/dist/lib/pick";
+import { useEffect } from "react";
 
 export const icon = IconBoxModel2;
 export const label = "Spacing";
@@ -40,29 +40,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           marginLeft: data.style.marginLeft ?? initialValues.marginLeft,
           marginRight: data.style.marginRight ?? initialValues.marginRight,
         });
-      }
-
-      // Logic to set showPadding and showMargin values
-      if (
-        initialValues.paddingTop !== undefined ||
-        initialValues.paddingBottom !== undefined ||
-        initialValues.paddingLeft !== undefined ||
-        initialValues.paddingRight !== undefined
-      ) {
-        form.setFieldValue("showPadding", "padding-sides");
-      } else {
-        form.setFieldValue("showPadding", "padding-all");
-      }
-
-      if (
-        initialValues.marginTop !== undefined ||
-        initialValues.marginBottom !== undefined ||
-        initialValues.marginLeft !== undefined ||
-        initialValues.marginRight !== undefined
-      ) {
-        form.setFieldValue("showMargin", "margin-sides");
-      } else {
-        form.setFieldValue("showMargin", "margin-all");
       }
     }
 
