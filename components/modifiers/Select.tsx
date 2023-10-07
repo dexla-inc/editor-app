@@ -1,16 +1,16 @@
 import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 import { SizeSelector } from "@/components/SizeSelector";
+import { withModifier } from "@/hoc/withModifier";
 import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
 import {
   debouncedTreeComponentPropsUpdate,
   debouncedTreeUpdate,
 } from "@/utils/editor";
-import { Group, Select, Stack, TextInput } from "@mantine/core";
+import { Group, Select, Stack, Switch, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconSelect } from "@tabler/icons-react";
-import { useEffect } from "react";
-import { withModifier } from "@/hoc/withModifier";
 import { pick } from "next/dist/lib/pick";
+import { useEffect } from "react";
 
 export const icon = IconSelect;
 export const label = "Select";
@@ -26,6 +26,8 @@ export const defaultSelectValues = {
   labelSize: "sm",
   labelWeight: "normal",
   labelAlign: "left",
+  labelSpacing: "0",
+  clearable: false,
   data: [
     { label: "Option 1", value: "option-1" },
     { label: "Option 2", value: "option-2" },
@@ -55,6 +57,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         "data",
         "withAsterisk",
         "labelProps",
+        "clearable",
       ]);
 
       form.setValues({
@@ -71,6 +74,8 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         labelAlign:
           data.styles?.label.textAlign ?? defaultSelectValues.labelAlign,
         data: data.data ?? defaultSelectValues.data,
+        labelProps: data.labelProps?.mb ?? defaultSelectValues.labelSpacing,
+        clearable: data.clearable ?? defaultSelectValues.clearable,
         ...data.style,
       });
     }
@@ -150,6 +155,22 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             }}
           />
         </Group>
+        <SizeSelector
+          label="Label Spacing"
+          {...form.getInputProps("labelProps")}
+          onChange={(value) => {
+            form.setFieldValue("labelProps", value as string);
+            debouncedTreeComponentPropsUpdate("labelProps", {
+              mb: value as string,
+            });
+          }}
+        />
+        <Switch
+          label="Clearable"
+          {...form.getInputProps("clearable")}
+          size="xs"
+          onChange={(e) => setFieldValue("clearable", e.currentTarget.checked)}
+        />
         <TextInput
           label="Placeholder"
           size="xs"

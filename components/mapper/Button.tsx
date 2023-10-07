@@ -1,9 +1,9 @@
 import { Icon } from "@/components/Icon";
+import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import { ReactElement, memo } from "react";
-import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -28,6 +28,7 @@ const ButtonComponent = ({
     loading,
     color,
     textColor,
+    style,
     ...componentProps
   } = component.props as any;
 
@@ -47,10 +48,14 @@ const ButtonComponent = ({
       {...(leftIcon && { leftIcon: <Icon name={leftIcon} /> })}
       {...(rightIcon && { rightIcon: <Icon name={rightIcon} /> })}
       {...defaultTriggers}
+      style={{
+        ...style,
+        backgroundColor,
+        color: labelTextColor,
+      }}
       {...props}
       {...componentProps}
       {...triggers}
-      style={{ backgroundColor, color: labelTextColor }}
     >
       {children}
     </MantineButton>

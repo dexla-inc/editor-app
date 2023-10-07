@@ -1,8 +1,8 @@
+import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getAllChildrenComponents } from "@/utils/editor";
 import { Radio as MantineRadio, RadioProps } from "@mantine/core";
 import { memo, useEffect, useState } from "react";
-import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   renderTree: (component: Component) => any;

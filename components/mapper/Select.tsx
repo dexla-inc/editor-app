@@ -7,8 +7,8 @@ import {
   SelectProps,
 } from "@mantine/core";
 import get from "lodash.get";
-import { memo } from "react";
 import merge from "lodash.merge";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;

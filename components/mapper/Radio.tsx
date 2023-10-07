@@ -1,8 +1,8 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Group, Radio as MantineRadio, RadioGroupProps } from "@mantine/core";
-import { memo, useState } from "react";
 import merge from "lodash.merge";
+import { memo, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -16,10 +16,15 @@ const RadioComponent = ({
   isPreviewMode,
   ...props
 }: Props) => {
-  const { children, value, triggers, styles, ...componentProps } =
+  const { children, value, triggers, styles, style, ...componentProps } =
     component.props as any;
 
   const [_value, setValue] = useState(value);
+  const defaultStyle = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  };
 
   const { onChange, ...otherTriggers } = triggers;
 
@@ -40,6 +45,10 @@ const RadioComponent = ({
     <MantineRadio.Group
       styles={merge({ label: { width: "100%" } }, styles)}
       {...props}
+      style={{
+        ...style,
+        ...defaultStyle,
+      }}
       {...defaultTriggers}
       {...componentProps}
       {...otherTriggers}
