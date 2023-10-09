@@ -151,7 +151,7 @@ export const DataSourceEndpointDetail = ({
   const isLoading = useAppStore((state) => state.isLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<string>("example");
+  const [activeTab, setActiveTab] = useState<string | null>("example");
   const [activeBodyType, setActiveBodyType] = useState<"raw" | "fields">("raw");
 
   const theme = useMantineTheme();
@@ -772,7 +772,12 @@ export const DataSourceEndpointDetail = ({
           </>
         )}
 
-        <Tabs value={activeTab} py="md" keepMounted={false}>
+        <Tabs
+          value={activeTab}
+          py="md"
+          keepMounted={false}
+          onTabChange={setActiveTab}
+        >
           <Tabs.List>
             <Tabs.Tab value="example">Example Response</Tabs.Tab>
             <Tabs.Tab value="error">Error Response</Tabs.Tab>

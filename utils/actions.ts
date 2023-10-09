@@ -68,6 +68,7 @@ import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
+import { readDataFromStream } from "@/utils/api";
 
 const triggers = [
   "onClick",
@@ -344,17 +345,17 @@ export const goToUrlAction = async ({ action, component }: GoToUrlParams) => {
     const isObj = value.startsWith("{") && value.endsWith("}");
     const variableResponse = await getVariable(
       currentProjectId!,
-      isObj ? JSON.parse(value).id : value
+      isObj ? JSON.parse(value).id : value,
     );
     if (variableResponse.type === "OBJECT") {
       const variable = JSON.parse(value);
       const val = JSON.parse(
-        variableResponse?.value ?? variableResponse?.defaultValue ?? "{}"
+        variableResponse?.value ?? variableResponse?.defaultValue ?? "{}",
       );
       if (typeof component?.props?.repeatedIndex !== "undefined") {
         const path = (variable.path ?? "").replace(
           "[0]",
-          `[${component?.props?.repeatedIndex}]`
+          `[${component?.props?.repeatedIndex}]`,
         );
         value = get(val ?? {}, path) ?? "";
       } else {
@@ -468,7 +469,7 @@ export const changeStepAction = ({ action }: ChangeStepActionParams) => {
 
   const component = getComponentById(
     useEditorStore.getState().tree.root,
-    action.stepperId
+    action.stepperId,
   );
 
   if (!component) {
@@ -505,7 +506,7 @@ export const togglePropsAction = ({
       {
         style: { display: "none" },
       },
-      false
+      false,
     );
   });
 
@@ -514,23 +515,23 @@ export const togglePropsAction = ({
     {
       style: { display: "flex" },
     },
-    false
+    false,
   );
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const { updateTreeComponent, tree: editorTree } = useEditorStore.getState();
   const selectedComponent = editorTree.root.children?.find(
-    (tree) => tree.name === "Navbar"
+    (tree) => tree.name === "Navbar",
   );
   const buttonComponent = selectedComponent?.children?.find(
-    (tree) => tree.description === "Button to toggle Navbar"
+    (tree) => tree.description === "Button to toggle Navbar",
   );
   const linksComponent = selectedComponent?.children?.find(
-    (tree) => tree.description === "Container for navigation links"
+    (tree) => tree.description === "Container for navigation links",
   );
   const buttonIcon = buttonComponent?.children?.reduce(
     (obj, tree) => ({ ...obj, ...tree }),
-    {} as Component
+    {} as Component,
   );
 
   const isExpanded = selectedComponent?.props?.style.width !== "100px";
@@ -548,8 +549,43 @@ export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   updateTreeComponent(selectedComponent?.id!, { style: { width } });
 };
 
+const getVariableValueFromVariableId = async (variableId = "") => {
+  const currentProjectId = useEditorStore.getState().currentProjectId;
+  const actionVariable = variableId.split(`var_`)[1];
+
+  if (!actionVariable) {
+    return variableId;
+  }
+
+  let _var: string | { id: string; path: string } = actionVariable;
+  if (actionVariable.startsWith("{") && actionVariable.endsWith("}")) {
+    _var = JSON.parse(actionVariable);
+  }
+
+  const isObject = typeof _var === "object";
+
+  if (_var) {
+    const variable = await getVariable(
+      currentProjectId!,
+      isObject ? (_var as any).id : _var,
+    );
+
+    let value = variable.value;
+    if (isObject) {
+      const dataFlatten = flattenKeys(JSON.parse(variable.value ?? "{}"));
+
+      value = get(dataFlatten, (_var as any).path);
+    }
+
+    return value;
+  }
+};
+
 export const openToastAction = async ({ action }: OpenToastActionParams) => {
-  showNotification({ title: action.title, message: action.message });
+  showNotification({
+    title: await getVariableValueFromVariableId(action.title),
+    message: await getVariableValueFromVariableId(action.message),
+  });
 };
 
 export const setVariableAction = async ({
@@ -561,7 +597,7 @@ export const setVariableAction = async ({
 };
 
 export const triggerLogicFlowAction = (
-  params: TriggerLogicFlowActionParams
+  params: TriggerLogicFlowActionParams,
 ) => {
   executeFlow(params.action.logicFlowId, params);
 };
@@ -605,20 +641,21 @@ export const loginAction = async ({
 }: LoginActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
-  try {
-    const iframeWindow = useEditorStore.getState().iframeWindow;
-    const projectId = router.query.id as string;
+  const iframeWindow = useEditorStore.getState().iframeWindow;
+  const projectId = router.query.id as string;
 
+  // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
+  // Can revisit later and create a cashing layer.
+  if (!cachedEndpoints) {
+    const { results } = await getDataSourceEndpoints(projectId);
+    cachedEndpoints = results;
+  }
+
+  const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
+
+  try {
     updateTreeComponent(component.id!, { loading: true }, false);
 
-    // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
-    // Can revisit later and create a cashing layer.
-    if (!cachedEndpoints) {
-      const { results } = await getDataSourceEndpoints(projectId);
-      cachedEndpoints = results;
-    }
-
-    const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
     const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
     const keys = Object.keys(action.binds?.parameter ?? {});
 
@@ -667,7 +704,7 @@ export const loginAction = async ({
                 [key]: value,
               };
             },
-            {} as any
+            {} as any,
           )
         : undefined;
 
@@ -688,7 +725,7 @@ export const loginAction = async ({
 
     const dataSourceAuthConfig = await getDataSourceAuth(
       projectId,
-      endpoint?.dataSourceId!
+      endpoint?.dataSourceId!,
     );
 
     const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
@@ -699,7 +736,7 @@ export const loginAction = async ({
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess"
+        (action: Action) => action.trigger === "onSuccess",
       )!;
       // @ts-ignore
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
@@ -711,11 +748,22 @@ export const loginAction = async ({
         data: responseJson,
       });
     }
+
+    const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}`;
+    const varValue = JSON.stringify(responseJson);
+    createVariable(projectId, {
+      name: varName,
+      value: varValue,
+      type: "OBJECT" as FrontEndTypes,
+      isGlobal: false,
+      pageId: router.query.page as string,
+      defaultValue: varValue,
+    });
   } catch (error) {
     if (onError && onError.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError"
+        (action: Action) => action.trigger === "onError",
       )!;
       // @ts-ignore
       const onErrorActionMapped = actionMapper[onError.action.name];
@@ -727,6 +775,17 @@ export const loginAction = async ({
         data: { value: (error as Error).message },
       });
     }
+
+    const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}-error`;
+    const varValue = JSON.stringify(error);
+    createVariable(projectId, {
+      name: varName,
+      value: varValue,
+      type: "OBJECT" as FrontEndTypes,
+      isGlobal: false,
+      pageId: router.query.page as string,
+      defaultValue: varValue,
+    });
   } finally {
     updateTreeComponent(component.id!, { loading: false }, false);
   }
@@ -746,7 +805,7 @@ function getElementValue(value: string, iframeWindow: any): string {
 
 async function getVariableValue(
   value: string,
-  projectId: string
+  projectId: string,
 ): Promise<string> {
   const variable = JSON.parse(value);
   const path = variable.path ?? "";
@@ -756,7 +815,7 @@ async function getVariableValue(
 
 function getQueryElementValue(value: string, iframeWindow: any): string {
   const el = iframeWindow?.document.querySelector(
-    `input#${value.split("queryString_pass_")[1]}`
+    `input#${value.split("queryString_pass_")[1]}`,
   ) as HTMLInputElement;
   return el?.value ?? "";
 }
@@ -772,25 +831,24 @@ export const apiCallAction = async ({
 }: APICallActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
-  try {
-    const iframeWindow = useEditorStore.getState().iframeWindow;
-    const projectId = router.query.id as string;
+  const iframeWindow = useEditorStore.getState().iframeWindow;
+  const projectId = router.query.id as string;
+  // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
+  // Can revisit later and create a cashing layer.
+  if (!cachedEndpoints) {
+    const { results } = await getDataSourceEndpoints(projectId);
+    cachedEndpoints = results;
+  }
+  const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
 
+  try {
     updateTreeComponent(
       component.id!,
       {
         loading: action.showLoader,
       },
-      false
+      false,
     );
-
-    // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
-    // Can revisit later and create a cashing layer.
-    if (!cachedEndpoints) {
-      const { results } = await getDataSourceEndpoints(projectId);
-      cachedEndpoints = results;
-    }
-    const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
 
     const keys = Object.keys(action.binds?.parameter ?? {});
 
@@ -842,7 +900,7 @@ export const apiCallAction = async ({
                 [key]: value,
               };
             },
-            {} as any
+            {} as any,
           )
         : undefined;
 
@@ -872,7 +930,9 @@ export const apiCallAction = async ({
     });
 
     if (!response.status.toString().startsWith("20")) {
-      throw new Error(response.statusText);
+      const error = await readDataFromStream(response.body);
+
+      throw new Error(error);
     }
 
     const responseJson = await response.json();
@@ -880,7 +940,7 @@ export const apiCallAction = async ({
     if (onSuccess && onSuccess.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess"
+        (action: Action) => action.trigger === "onSuccess",
       )!;
       // @ts-ignore
       const onSuccessActionMapped = actionMapper[onSuccess.action.name];
@@ -909,7 +969,7 @@ export const apiCallAction = async ({
     if (onError && onError.sequentialTo === actionId) {
       const actions = component.actions ?? [];
       const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError"
+        (action: Action) => action.trigger === "onError",
       )!;
       // @ts-ignore
       const onErrorActionMapped = actionMapper[onError.action.name];
@@ -918,9 +978,20 @@ export const apiCallAction = async ({
         action: onErrorAction.action,
         router,
         ...rest,
-        data: { value: (error as Error).message },
+        data: { value: JSON.parse((error as Error).message) },
       });
     }
+
+    const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}-error`;
+    const varValue = JSON.stringify(JSON.parse((error as Error).message));
+    createVariable(projectId, {
+      name: varName,
+      value: varValue,
+      type: "OBJECT" as FrontEndTypes,
+      isGlobal: false,
+      pageId: router.query.page as string,
+      defaultValue: varValue,
+    });
   } finally {
     updateTreeComponent(component.id!, { loading: false }, false);
   }
@@ -948,7 +1019,7 @@ export const bindResponseToComponentAction = ({
             ? bind.value.split("root[0].")[1]
             : bind.value.split("root.")[1],
         },
-        false
+        false,
       );
     }
   });
@@ -974,7 +1045,7 @@ export const bindVariableToComponentAction = async ({
   if (action.component && _var) {
     const variable = await getVariable(
       currentProjectId!,
-      isObject ? (_var as any).id : _var
+      isObject ? (_var as any).id : _var,
     );
 
     let value = variable.value;
@@ -996,7 +1067,7 @@ export const bindVariableToComponentAction = async ({
         },
         dataPath: (_var as any)?.path ?? undefined,
       },
-      false
+      false,
     );
   }
 };
@@ -1019,13 +1090,13 @@ export const bindPlaceDataAction = ({
   const editorTree = useEditorStore.getState().tree;
   const component = getComponentById(
     editorTree.root,
-    action.componentId!
+    action.componentId!,
   ) as Component;
   const updateTreeComponentChildren =
     useEditorStore.getState().updateTreeComponentChildren;
 
   const googleMap = component.children?.filter(
-    (child) => child.name === "GoogleMap"
+    (child) => child.name === "GoogleMap",
   )[0];
 
   if (data !== undefined) {
@@ -1099,11 +1170,11 @@ export const bindPlaceGeometryAction = ({
   const { updateTreeComponentChildren, updateTreeComponent } =
     useEditorStore.getState();
   const searchResults = getAllComponentsByName(editorTree.root, "Text").filter(
-    (component) => component.description === "Search Address In Map"
+    (component) => component.description === "Search Address In Map",
   );
   const parent = getComponentParent(
     editorTree.root,
-    searchResults[0].id!
+    searchResults[0].id!,
   ) as Component;
 
   const ancestor = getComponentParent(editorTree.root, parent.id!) as Component;
@@ -1138,7 +1209,7 @@ export const bindPlaceGeometryAction = ({
   updateTreeComponent(
     ancestor.children![0].id!,
     { value: formatted_address },
-    true
+    true,
   );
   updateTreeComponentChildren(parent.id!, [child]);
 };
