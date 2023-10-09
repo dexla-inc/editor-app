@@ -1,11 +1,11 @@
 import { useEditorStore } from "@/stores/editor";
 import {
+  DropTarget,
   Edge,
   getClosestEdge,
-  DropTarget,
   getComponentById,
 } from "@/utils/editor";
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 
 export const useDroppable = ({
   id,
@@ -22,7 +22,9 @@ export const useDroppable = ({
   const setCurrentTargetId = useEditorStore(
     (state) => state.setCurrentTargetId
   );
+  const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const [edge, setEdge] = useState<Edge>();
+  const [shouldHandleDragOver, setShouldHandleDragOver] = useState(false);
 
   const component = getComponentById(editorTree.root, id);
 
@@ -85,10 +87,14 @@ export const useDroppable = ({
 
   // TODO: Handle isOver differently to have better ux as currently
   // it remove the drop target even if hovering over a non droppable children
-  const handleDragLeave = useCallback((event: any) => {
-    event.preventDefault();
-    event.stopPropagation();
-  }, []);
+  const handleDragLeave = useCallback(
+    (event: any) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setShouldHandleDragOver(false);
+    },
+    [setShouldHandleDragOver]
+  );
 
   return {
     edge,
