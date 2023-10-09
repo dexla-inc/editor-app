@@ -146,3 +146,26 @@ export async function patch<Type>(
     isStream,
   });
 }
+
+export async function readDataFromStream(stream: any) {
+  const reader = stream.getReader();
+  let totalData = "";
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) {
+        break; // End of the stream
+      }
+
+      totalData += new TextDecoder("utf-8").decode(value); // Convert binary to string
+    }
+  } catch (error) {
+    console.error("Error reading stream:", error);
+  } finally {
+    reader.releaseLock();
+  }
+
+  return totalData;
+}

@@ -8,8 +8,12 @@ import {
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { OpenToastAction } from "@/utils/actions";
-import { Stack, TextInput } from "@mantine/core";
+import { Stack, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { ApiType } from "@/utils/dashboardTypes";
+import React from "react";
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   id: string;
@@ -18,6 +22,7 @@ type Props = {
 type FormValues = Omit<OpenToastAction, "name">;
 
 export const OpenToastActionForm = ({ id }: Props) => {
+  const { setComponentToBind } = useEditorStore();
   const { startLoading, stopLoading } = useLoadingState();
   const { editorTree, selectedComponentId, updateTreeComponentActions } =
     useEditorStores();
@@ -54,19 +59,50 @@ export const OpenToastActionForm = ({ id }: Props) => {
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
+      <Stack spacing={2}>
+        {[
+          {
+            title: "Title",
+            name: "title" as ApiType,
+          },
+          {
+            title: "Message",
+            name: "message" as ApiType,
+          },
+        ].map(({ title, name }) => {
+          return (
+            <React.Fragment key={title}>
+              <Title order={5} mt="md">
+                {title}
+              </Title>
+              <ComponentToBindFromInput
+                onPickComponent={(componentToBind: string) => {
+                  form.setValues({
+                    ...form.values,
+                    [name]: `valueOf_${componentToBind}`,
+                  });
+                  setComponentToBind(undefined);
+                }}
+                onPickVariable={(variable: string) => {
+                  console.log(variable);
+                  form.setValues({
+                    ...form.values,
+                    [name]: variable,
+                  });
+                  setComponentToBind(undefined);
+                }}
+                size="xs"
+                label={title}
+                autoComplete="off"
+                data-lpignore="true"
+                data-form-type="other"
+                {...form.getInputProps(name)}
+              />
+            </React.Fragment>
+          );
+        })}
+      </Stack>
       <Stack spacing="xs">
-        <TextInput
-          size="xs"
-          placeholder="Notification title"
-          label="Title"
-          {...form.getInputProps("title")}
-        />
-        <TextInput
-          size="xs"
-          placeholder="Notification message"
-          label="Message"
-          {...form.getInputProps("message")}
-        />
         <ActionButtons
           actionId={action.id}
           componentActions={componentActions}
