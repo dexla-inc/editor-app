@@ -6,6 +6,7 @@ import {
   getComponentById,
 } from "@/utils/editor";
 import { useState, useCallback, useEffect, useMemo } from "react";
+import { useMemoizedDebounce } from "@/hooks/useMemoizedDebounce";
 
 export const useDroppable = ({
   id,
@@ -22,9 +23,7 @@ export const useDroppable = ({
   const setCurrentTargetId = useEditorStore(
     (state) => state.setCurrentTargetId,
   );
-  const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const [edge, setEdge] = useState<Edge>();
-  const [shouldHandleDragOver, setShouldHandleDragOver] = useState(false);
 
   const component = getComponentById(editorTree.root, id);
 
@@ -42,35 +41,18 @@ export const useDroppable = ({
     [activeId, id, setCurrentTargetId, edge, onDrop],
   );
 
+  const [clientX, setClientX] = useState<number>();
+  const [clientY, setClientY] = useState<number>();
+
   const handleDragOver = (event: React.DragEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
-    const clientX = event.clientX;
-    const clientY = event.clientY;
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
 
-    if (!clientX || !clientY || !rect || currentTargetId !== id) return;
-
-    if (!component?.blockDroppingChildrenInside) {
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-
-      const distX = Math.abs(centerX - clientX);
-      const distY = Math.abs(centerY - clientY);
-
-      if (distX < rect.width / 4 && distY < rect.height / 4) {
-        return setEdge("center");
-      }
-    }
-
-    const leftDist = clientX - rect.left;
-    const rightDist = rect.right - clientX;
-    const topDist = clientY - rect.top;
-    const bottomDist = rect.bottom - clientY;
-
-    const { edge } = getClosestEdge(leftDist, rightDist, topDist, bottomDist);
-
-    setEdge(edge as Edge);
+    setClientX(mouseX);
+    setClientY(mouseY);
   };
 
   const w = currentWindow ?? window;
@@ -79,32 +61,51 @@ export const useDroppable = ({
     [id, w],
   );
 
+  const onDragOverSetEdge = useCallback(
+    useMemoizedDebounce(() => {
+      if (!clientX || !clientY || !rect) return;
+
+      if (!component?.blockDroppingChildrenInside) {
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const distX = Math.abs(centerX - clientX);
+        const distY = Math.abs(centerY - clientY);
+
+        if (distX < rect.width / 4 && distY < rect.height / 4) {
+          return setEdge("center");
+        }
+      }
+
+      const leftDist = clientX - rect.left;
+      const rightDist = rect.right - clientX;
+      const topDist = clientY - rect.top;
+      const bottomDist = rect.bottom - clientY;
+
+      const { edge } = getClosestEdge(leftDist, rightDist, topDist, bottomDist);
+
+      setEdge(edge as Edge);
+    }, 100),
+    [clientX, clientY, component?.blockDroppingChildrenInside, rect],
+  );
+
+  useEffect(onDragOverSetEdge, [onDragOverSetEdge]);
+
   const handleDragEnter = useCallback(
     (event: any) => {
       event.preventDefault();
       event.stopPropagation();
-      setShouldHandleDragOver(true);
+      setCurrentTargetId(id);
     },
-    [setShouldHandleDragOver],
+    [id, setCurrentTargetId],
   );
-
-  useEffect(() => {
-    if (shouldHandleDragOver) {
-      const timeout = setTimeout(() => setCurrentTargetId(id), 100);
-      return () => clearTimeout(timeout);
-    }
-  }, [setCurrentTargetId, id, shouldHandleDragOver]);
 
   // TODO: Handle isOver differently to have better ux as currently
   // it remove the drop target even if hovering over a non droppable children
-  const handleDragLeave = useCallback(
-    (event: any) => {
-      event.preventDefault();
-      event.stopPropagation();
-      setShouldHandleDragOver(false);
-    },
-    [setShouldHandleDragOver],
-  );
+  const handleDragLeave = useCallback((event: any) => {
+    event.preventDefault();
+    event.stopPropagation();
+  }, []);
 
   return {
     edge,
