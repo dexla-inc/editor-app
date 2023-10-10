@@ -1048,7 +1048,7 @@ export const componentMapper: ComponentMapper = {
         renderTree={props.renderTree}
       />
     ),
-    modifiers: ["fileButton", "spacing", "size", "border"],
+    modifiers: ["fileButton", "spacing", "size", "background", "border"],
     actionTriggers: ["onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
