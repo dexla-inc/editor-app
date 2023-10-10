@@ -1049,7 +1049,7 @@ export const bindVariableToComponentAction = async ({
     );
 
     let value = variable.value;
-    if (isObject) {
+    if (variable.type === "OBJECT") {
       const dataFlatten = flattenKeys(JSON.parse(variable.value ?? "{}"));
 
       value = get(dataFlatten, (_var as any).path);

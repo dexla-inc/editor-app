@@ -26,6 +26,59 @@ type ListItemProps = {
   onSelectValue?: (value: any) => void;
 } & CardProps;
 
+const findPathForKeyValue = (
+  obj: any,
+  key: string,
+  value: any,
+  currentPath: string = "",
+): string | null => {
+  for (const prop in obj) {
+    if (obj.hasOwnProperty(prop)) {
+      const newPath = currentPath
+        ? `${currentPath}.${isArrayIndex(prop) ? `[${prop}]` : prop}`
+        : isArrayIndex(prop)
+        ? `[${prop}]`
+        : prop;
+
+      if (prop === key && obj[prop] === value) {
+        return newPath;
+      } else if (typeof obj[prop] === "object" && obj[prop] !== null) {
+        const path = findPathForKeyValue(obj[prop], key, value, newPath);
+        if (path !== null) {
+          return path;
+        }
+      }
+    }
+  }
+
+  return null;
+};
+
+const isArrayIndex = (prop: string): boolean => {
+  // Check if prop is a non-negative integer (array index).
+  return /^\d+$/.test(prop);
+};
+
+const objToItems = (obj: any, root: any): Item[] => {
+  return Object.entries(obj).map(([key, value]) => {
+    let path = findPathForKeyValue(root, key, value);
+    if (Array.isArray(value) && !path?.includes("[")) {
+      path = `${path}[0]`;
+    }
+
+    return {
+      key,
+      value: JSON.stringify(value),
+      path: path ? path.replaceAll(".[", "[") : "",
+      type: typeof value,
+      children:
+        value && typeof value === "object"
+          ? objToItems(value, root)
+          : undefined,
+    };
+  });
+};
+
 const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
   const theme = useMantineTheme();
   const { ref, hovered } = useHover();
@@ -109,6 +162,7 @@ const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
                     e.preventDefault();
                     e.stopPropagation();
                     onSelectValue?.(item);
+                    console.log({ item });
                   }}
                 >
                   <IconCheck size={ICON_SIZE} />
@@ -156,56 +210,6 @@ const ListItemWrapper = ({ item, children, onSelectValue }: ListItemProps) => {
       </List.Item>
     </List>
   );
-};
-
-const findPathForKeyValue = (
-  obj: any,
-  key: string,
-  value: any,
-  currentPath: string = "",
-): string | null => {
-  for (const prop in obj) {
-    if (obj.hasOwnProperty(prop)) {
-      const newPath = currentPath
-        ? `${currentPath}.${isArrayIndex(prop) ? `[${prop}]` : prop}`
-        : isArrayIndex(prop)
-        ? `[${prop}]`
-        : prop;
-
-      if (prop === key && obj[prop] === value) {
-        return newPath;
-      } else if (typeof obj[prop] === "object" && obj[prop] !== null) {
-        const path = findPathForKeyValue(obj[prop], key, value, newPath);
-        if (path !== null) {
-          return path;
-        }
-      }
-    }
-  }
-
-  return null;
-};
-
-const isArrayIndex = (prop: string): boolean => {
-  // Check if prop is a non-negative integer (array index).
-  return /^\d+$/.test(prop);
-};
-
-const objToItems = (obj: any, root: any): Item[] => {
-  return Object.entries(obj).map(([key, value]) => {
-    const path = findPathForKeyValue(root, key, value);
-
-    return {
-      key,
-      value: JSON.stringify(value),
-      path: path ? path.replaceAll(".[", "[") : "",
-      type: typeof value,
-      children:
-        value && typeof value === "object"
-          ? objToItems(value, root)
-          : undefined,
-    };
-  });
 };
 
 type Props = {
