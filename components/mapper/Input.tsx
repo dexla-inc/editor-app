@@ -41,8 +41,8 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
           styles={{ root: { display: "block !important" } }}
           {...props}
           {...componentProps}
-          min={1}
-          value={props.value || value || 1}
+          min={0}
+          value={props.value || value || undefined}
           onChange={triggers?.onChange ? debouncedOnChange : undefined}
         >
           {component.children && component.children.length > 0

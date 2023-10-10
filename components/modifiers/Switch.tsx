@@ -43,7 +43,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         <Switch
           size="xs"
           checked={form.values.showLabel}
-          {...form.getInputProps("showLabel")}
           label="Show Label"
           onChange={(e) => {
             form.setFieldValue("showLabel", e.currentTarget.checked);
