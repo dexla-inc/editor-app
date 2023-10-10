@@ -47,7 +47,7 @@ import {
 } from "@mantine/core";
 import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -106,11 +106,6 @@ export const EditorAsideSections = () => {
 
   const isContentWrapperSelected = selectedComponentId === "content-wrapper";
 
-  const component = useMemo(
-    () => getComponentById(editorTree.root, selectedComponentId as string),
-    [editorTree.root, selectedComponentId],
-  );
-
   if (!selectedComponentId || isContentWrapperSelected) {
     return (
       <Box p="xl">
@@ -123,6 +118,11 @@ export const EditorAsideSections = () => {
       </Box>
     );
   }
+
+  const component = getComponentById(
+    editorTree.root,
+    selectedComponentId as string,
+  );
 
   const componentActions = component?.actions ?? [];
   const mappedComponent = componentMapper[component?.name as string];

@@ -26,10 +26,7 @@ export const useDroppable = ({
   const [edge, setEdge] = useState<Edge>();
   const [shouldHandleDragOver, setShouldHandleDragOver] = useState(false);
 
-  const component = useMemo(
-    () => getComponentById(editorTree.root, id),
-    [editorTree.root, id],
-  );
+  const component = getComponentById(editorTree.root, id);
 
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
