@@ -1,16 +1,12 @@
-import { useEditorStore } from "@/stores/editor";
-import {
-  debouncedTreeComponentPropsUpdate,
-  getComponentById,
-} from "@/utils/editor";
+import { withModifier } from "@/hoc/withModifier";
+import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { Divider, Stack, Switch, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTable } from "@tabler/icons-react";
 import get from "lodash.get";
 import isEmpty from "lodash.isempty";
-import { useEffect } from "react";
-import { withModifier } from "@/hoc/withModifier";
 import { pick } from "next/dist/lib/pick";
+import { useEffect } from "react";
 
 export const icon = IconTable;
 export const label = "Table";
@@ -57,7 +53,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
       <Stack spacing="xs">
         <Divider label="Headers" labelPosition="center" />
         {form.values.data &&
-          Object.keys(JSON.parse(form.values.data)[0]).map((key) => {
+          Object.keys(JSON.parse(form.values.data)[0] ?? {}).map((key) => {
             return (
               <Switch
                 size="xs"

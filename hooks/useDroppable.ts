@@ -5,7 +5,7 @@ import {
   DropTarget,
   getComponentById,
 } from "@/utils/editor";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 
 export const useDroppable = ({
   id,
@@ -20,11 +20,16 @@ export const useDroppable = ({
 }) => {
   const editorTree = useEditorStore((state) => state.tree);
   const setCurrentTargetId = useEditorStore(
-    (state) => state.setCurrentTargetId
+    (state) => state.setCurrentTargetId,
   );
+  const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const [edge, setEdge] = useState<Edge>();
+  const [shouldHandleDragOver, setShouldHandleDragOver] = useState(false);
 
-  const component = getComponentById(editorTree.root, id);
+  const component = useMemo(
+    () => getComponentById(editorTree.root, id),
+    [editorTree.root, id],
+  );
 
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
@@ -37,58 +42,72 @@ export const useDroppable = ({
       onDrop?.(activeId!, dropTarget);
       setCurrentTargetId(undefined);
     },
-    [activeId, id, setCurrentTargetId, edge, onDrop]
+    [activeId, id, setCurrentTargetId, edge, onDrop],
   );
 
-  const handleDragOver = useCallback(
-    (event: React.DragEvent) => {
-      event.preventDefault();
-      event.stopPropagation();
+  const handleDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
 
-      const mouseX = event.clientX;
-      const mouseY = event.clientY;
-      const w = currentWindow ?? window;
-      const rect = w.document.getElementById(id)?.getBoundingClientRect()!;
+    const clientX = event.clientX;
+    const clientY = event.clientY;
 
-      if (!component?.blockDroppingChildrenInside) {
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
+    if (!clientX || !clientY || !rect || currentTargetId !== id) return;
 
-        const distX = Math.abs(centerX - mouseX);
-        const distY = Math.abs(centerY - mouseY);
+    if (!component?.blockDroppingChildrenInside) {
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
 
-        if (distX < rect.width / 4 && distY < rect.height / 4) {
-          return setEdge("center");
-        }
+      const distX = Math.abs(centerX - clientX);
+      const distY = Math.abs(centerY - clientY);
+
+      if (distX < rect.width / 4 && distY < rect.height / 4) {
+        return setEdge("center");
       }
+    }
 
-      const leftDist = mouseX - rect.left;
-      const rightDist = rect.right - mouseX;
-      const topDist = mouseY - rect.top;
-      const bottomDist = rect.bottom - mouseY;
+    const leftDist = clientX - rect.left;
+    const rightDist = rect.right - clientX;
+    const topDist = clientY - rect.top;
+    const bottomDist = rect.bottom - clientY;
 
-      const { edge } = getClosestEdge(leftDist, rightDist, topDist, bottomDist);
+    const { edge } = getClosestEdge(leftDist, rightDist, topDist, bottomDist);
 
-      setEdge(edge as Edge);
-    },
-    [id, currentWindow]
+    setEdge(edge as Edge);
+  };
+
+  const w = currentWindow ?? window;
+  const rect = useMemo(
+    () => w.document.getElementById(id)?.getBoundingClientRect()!,
+    [id, w],
   );
 
   const handleDragEnter = useCallback(
     (event: any) => {
       event.preventDefault();
       event.stopPropagation();
-      setCurrentTargetId(id);
+      setShouldHandleDragOver(true);
     },
-    [id, setCurrentTargetId]
+    [setShouldHandleDragOver],
   );
+
+  useEffect(() => {
+    if (shouldHandleDragOver) {
+      const timeout = setTimeout(() => setCurrentTargetId(id), 100);
+      return () => clearTimeout(timeout);
+    }
+  }, [setCurrentTargetId, id, shouldHandleDragOver]);
 
   // TODO: Handle isOver differently to have better ux as currently
   // it remove the drop target even if hovering over a non droppable children
-  const handleDragLeave = useCallback((event: any) => {
-    event.preventDefault();
-    event.stopPropagation();
-  }, []);
+  const handleDragLeave = useCallback(
+    (event: any) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setShouldHandleDragOver(false);
+    },
+    [setShouldHandleDragOver],
+  );
 
   return {
     edge,

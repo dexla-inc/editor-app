@@ -3,8 +3,11 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
-import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
-import { Select, Stack, TextInput } from "@mantine/core";
+import {
+  debouncedTreeComponentPropsUpdate,
+  debouncedTreeUpdate,
+} from "@/utils/editor";
+import { Flex, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
@@ -21,6 +24,7 @@ export const defaultInputValues = {
   icon: { props: { name: "" } },
   withAsterisk: false,
   labelSpacing: "0",
+  labelWeight: "normal",
   name: "Input",
 };
 
@@ -41,6 +45,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         "withAsterisk",
         "labelProps",
         "name",
+        "labelWeight",
       ]);
 
       form.setValues({
@@ -51,9 +56,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         icon: data.icon ?? defaultInputValues.icon,
         name: data.name ?? defaultInputValues.name,
         withAsterisk: data.withAsterisk ?? defaultInputValues.withAsterisk,
-        labelProps:
-          data.labelProps?.style?.marginBottom ??
-          defaultInputValues.labelSpacing,
+        labelSpacing: data.labelProps?.mb ?? defaultInputValues.labelSpacing,
         ...data.style,
       });
     }
@@ -119,16 +122,33 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             );
           }}
         />
-        <SizeSelector
-          label="Label Spacing"
-          {...form.getInputProps("labelProps")}
-          onChange={(value) => {
-            form.setFieldValue("labelProps", value as string);
-            debouncedTreeComponentPropsUpdate("labelProps", {
-              mb: value as string,
-            });
-          }}
-        />
+        <Flex gap={3}>
+          <SizeSelector
+            label="Label Spacing"
+            {...form.getInputProps("labelSpacing")}
+            onChange={(value) => {
+              form.setFieldValue("labelSpacing", value as string);
+              debouncedTreeComponentPropsUpdate("labelProps", {
+                mb: value as string,
+              });
+            }}
+          />
+          <Select
+            label="Label Weight"
+            size="xs"
+            data={[
+              { label: "Normal", value: "normal" },
+              { label: "Bold", value: "bold" },
+            ]}
+            {...form.getInputProps("labelWeight")}
+            onChange={(value) => {
+              form.setFieldValue("labelWeight", value as string);
+              debouncedTreeUpdate(selectedComponent?.id as string, {
+                styles: { label: { fontWeight: value } },
+              });
+            }}
+          />
+        </Flex>
         <IconSelector
           topLabel="Icon"
           selectedIcon={form.values.icon.props.name}

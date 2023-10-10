@@ -937,7 +937,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Text component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["text", "spacing", "size"],
+    modifiers: ["text", "spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -945,7 +945,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Title component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["title", "spacing", "size"],
+    modifiers: ["title", "spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1313,7 +1313,15 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <Button component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["button", "spacing", "size", "border", "effects", "position"],
+    modifiers: [
+      "button",
+      "spacing",
+      "size",
+      "border",
+      "effects",
+      "position",
+      "boxShadow",
+    ],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
