@@ -88,8 +88,6 @@ const triggers = [
   "onRowHover",
   "onRowSelect",
   "onRowExpand",
-  "onPaginationChange",
-  "onRecordsPerPageChange",
   "onSort",
   "onFilterApplied",
   "onSuccess",
