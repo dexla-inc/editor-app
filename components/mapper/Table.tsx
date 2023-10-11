@@ -2,7 +2,7 @@ import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { Flex, Pagination, TableProps } from "@mantine/core";
+import { Flex, TableProps } from "@mantine/core";
 import get from "lodash.get";
 import isEmpty from "lodash.isempty";
 import startCase from "lodash.startcase";
