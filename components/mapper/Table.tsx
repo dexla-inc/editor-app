@@ -2,12 +2,13 @@ import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { TableProps } from "@mantine/core";
+import { Flex, Pagination, TableProps } from "@mantine/core";
 import get from "lodash.get";
 import isEmpty from "lodash.isempty";
 import startCase from "lodash.startcase";
 import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
 import { memo } from "react";
+import merge from "lodash.merge";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -75,8 +76,7 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
     enableRowNumbers: config?.numbers,
     enableGlobalFilter: config?.filter,
     enableTopToolbar: config?.filter,
-    enablePagination: config?.pagination,
-    enableBottomToolbar: config?.pagination,
+    enableBottomToolbar: false,
     enableColumnActions: false,
     enableDensityToggle: false,
     enableFullScreenToggle: false,
@@ -88,12 +88,21 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
   if (componentProps.loading) <MantineSkeleton height={style.height ?? 300} />;
 
   return (
-    <MantineReactTable
-      {...props}
-      {...componentProps}
-      style={{ ...style, width: "100%" }}
-      table={table}
-    />
+    <Flex direction="column">
+      <MantineReactTable
+        {...props}
+        {...componentProps}
+        style={{ ...style, width: "100%" }}
+        table={table}
+      />
+      {config?.pagination && (
+        <Flex py={10} justify="flex-end" gap={20} align="center">
+          {component.children && component.children.length > 0
+            ? component.children?.map((child) => renderTree(merge(child)))
+            : children}
+        </Flex>
+      )}
+    </Flex>
   );
 };
 
