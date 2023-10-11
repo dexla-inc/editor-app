@@ -91,6 +91,7 @@ const triggers = [
   "onRowSelect",
   "onRowExpand",
   "onPaginationChange",
+  "onRecordsPerPageChange",
   "onSort",
   "onFilterApplied",
   "onSuccess",
@@ -610,10 +611,13 @@ export const openToastAction = async ({ action }: OpenToastActionParams) => {
 
 export const setVariableAction = async ({
   action,
+  event,
 }: SetVariableActionParams) => {
+  let value = action.value || event.toString();
+
   const projectId = useEditorStore.getState().currentProjectId;
   const variable = JSON.parse(action.variable);
-  updateVariable(projectId!, variable.id, { ...variable, value: action.value });
+  updateVariable(projectId!, variable.id, { ...variable, value });
 };
 
 export const triggerLogicFlowAction = (
@@ -818,6 +822,17 @@ function getElementValue(value: string, iframeWindow: any): string {
 
   if (tag !== "input") {
     el = el?.getElementsByTagName("input")[0];
+  }
+
+  if (!el) {
+    const component = getComponentById(
+      useEditorStore.getState().tree.root,
+      _id,
+    );
+
+    if (component && component.props) {
+      return component.props.value.toString() ?? "";
+    }
   }
 
   return (el as HTMLInputElement)?.value ?? "";
@@ -1162,12 +1177,18 @@ export const bindVariableToComponentAction = async ({
 export const reloadComponentAction = ({
   action,
 }: ReloadComponentActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const editorTree = useEditorStore.getState().tree;
   const removeOnMountActionsRan =
     useEditorStore.getState().removeOnMountActionsRan;
+  const component = getComponentById(editorTree.root, action.componentId);
 
-  removeOnMountActionsRan(action.onMountActionId ?? "");
-  updateTreeComponent(action.componentId, { key: nanoid() }, false);
+  const onMountActionId = component?.actions?.find(
+    (a) => a.trigger === "onMount",
+  )?.id;
+
+  if (onMountActionId) {
+    removeOnMountActionsRan(onMountActionId);
+  }
 };
 
 export const bindPlaceDataAction = ({

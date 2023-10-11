@@ -1007,6 +1007,7 @@ export const componentMapper: ComponentMapper = {
       "onRowSelect",
       "onRowExpand",
       "onPaginationChange",
+      "onRecordsPerPageChange",
       "onSort",
       "onFilterApplied",
     ],

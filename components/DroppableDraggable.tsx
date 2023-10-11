@@ -48,7 +48,7 @@ type Props = {
 
 const bidingComponentsWhitelist = {
   from: ["Input", "Select"],
-  to: ["Text", "Title", "Table", "Container", "Image", "Select"],
+  to: ["Text", "Title", "Table", "Container", "Image", "Select", "Pagination"],
 };
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
 // Whitelist certain props that can be passed down
@@ -180,7 +180,7 @@ export const DroppableDraggable = ({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPreviewMode, onMountAction, onMountActionsRan, component]);
+  }, [isPreviewMode, onMountAction, onMountActionsRan]);
 
   const parent = useMemo(
     () => getComponentParent(editorTree.root, id),

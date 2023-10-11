@@ -5,6 +5,7 @@ import {
   PaginationProps,
 } from "@mantine/core";
 import { memo } from "react";
+import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -12,9 +13,26 @@ type Props = {
 } & PaginationProps;
 
 const PaginationComponent = ({ renderTree, component, ...props }: Props) => {
-  const componentProps = component.props as any;
+  const { triggers, ...componentProps } = component.props as any;
+  const updateTreeComponent = useEditorStore(
+    (state) => state.updateTreeComponent,
+  );
 
-  return <MantinePagination {...props} {...componentProps} />;
+  const { onChange, ...allTriggers } = triggers;
+
+  const customOnChange = (value: any) => {
+    updateTreeComponent(component.id!, { value });
+    onChange && onChange(value);
+  };
+
+  return (
+    <MantinePagination
+      {...props}
+      {...componentProps}
+      {...allTriggers}
+      onChange={customOnChange}
+    />
+  );
 };
 
 export const Pagination = memo(PaginationComponent, isSame);
