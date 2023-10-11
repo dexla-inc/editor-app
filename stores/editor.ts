@@ -57,17 +57,6 @@ export type ComponentToBind = {
   onPick?: (props: any) => void;
 };
 
-export type FeatureToBind = {
-  key: string;
-  value: string;
-  trigger: string;
-  endpointId?: string;
-  param?: string;
-  paramType?: ApiType;
-  bindedId?: string;
-  index?: number;
-};
-
 export type Variables = {
   key: string;
 };
@@ -95,12 +84,8 @@ export type EditorState = {
     [key: string]: string;
   };
   copiedAction?: Action[];
-  featureToBind?: string;
-  featureToBindTo?: FeatureToBind;
   sequentialTo?: string;
   setSequentialTo: (sequentialTo?: string) => void;
-  setFeatureToBindTo: (featuretoBindTo?: FeatureToBind) => void;
-  setFeatureToBind: (featureToBind?: string) => void;
   setPickingComponentToBindTo: (
     pickingComponentToBindTo?: ComponentToBind,
   ) => void;
@@ -212,10 +197,6 @@ export const useEditorStore = create<EditorState>()(
             false,
             "editor/setPickingComponentToBindTo",
           ),
-        setFeatureToBind: (featureToBind) =>
-          set({ featureToBind }, false, "editor/setFeatureToBind"),
-        setFeatureToBindTo: (featureToBindTo) =>
-          set({ featureToBindTo }, false, "editor/setFeatureToBindTo"),
         setSequentialTo: (sequentialTo) =>
           set({ sequentialTo }, false, "editor/setSequentialTo"),
         setComponentToBind: (componentToBind) =>
