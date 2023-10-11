@@ -964,9 +964,11 @@ export const apiCallAction = async ({
       });
     }
 
+    updateTreeComponent(component.id!, { loading: false }, false);
+
     const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}`;
     const varValue = JSON.stringify(responseJson);
-    createVariable(projectId, {
+    await createVariable(projectId, {
       name: varName,
       value: varValue,
       type: "OBJECT" as FrontEndTypes,
@@ -992,9 +994,10 @@ export const apiCallAction = async ({
       });
     }
 
+    updateTreeComponent(component.id!, { loading: false }, false);
     const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}-error`;
     const varValue = JSON.stringify(JSON.parse((error as Error).message));
-    createVariable(projectId, {
+    await createVariable(projectId, {
       name: varName,
       value: varValue,
       type: "OBJECT" as FrontEndTypes,
@@ -1002,8 +1005,6 @@ export const apiCallAction = async ({
       pageId: router.query.page as string,
       defaultValue: varValue,
     });
-  } finally {
-    updateTreeComponent(component.id!, { loading: false }, false);
   }
 };
 
@@ -1323,8 +1324,19 @@ export const transformVariableAction = async ({
   data,
 }: TransformVariableActionParams) => {
   const { currentProjectId, currentPageId } = useEditorStore.getState();
-  const codeTranspiled = transpile(action.value);
-  // TODO: Replace variable ref with actual value before eval
+  let codeTranspiled = transpile(action.value);
+  // Regex to find variable between /* var_<var-id> start */ and /* var_<var-id> end */
+  const variableRegex =
+    /\/\* var_(.*?) start \*\/(.*?)\/\* var_(.*?) end \*\//gs;
+  const variableMatches = codeTranspiled.matchAll(variableRegex);
+  for (const match of variableMatches) {
+    const variableId = match[1];
+    const variable = await getVariable(currentProjectId!, variableId);
+    codeTranspiled = codeTranspiled.replace(
+      match[0],
+      variable.value ?? variable.defaultValue ?? match[0],
+    );
+  }
   let result = eval(codeTranspiled);
   const isObject = typeof result === "object";
   if (isObject) {
@@ -1357,7 +1369,7 @@ export const actionMapper = {
   transformVariable: {
     action: transformVariableAction,
     // TODO: Create a proper form for action outside flow
-    form: TransformVariableFlowActionForm,
+    form: SetVariableActionForm,
     flowForm: TransformVariableFlowActionForm,
   },
   navigateToPage: {

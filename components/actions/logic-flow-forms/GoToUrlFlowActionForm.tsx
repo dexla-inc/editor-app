@@ -5,7 +5,6 @@ import { Button, Checkbox, Stack, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 
 type Props = {
-  id: string;
   form: UseFormReturnType<FormValues>;
 };
 
