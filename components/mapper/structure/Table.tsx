@@ -1,15 +1,11 @@
-import { defaultTheme } from "@/components/IFrame";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
-  const theme = props.theme ?? defaultTheme;
-
   return {
     id: nanoid(),
     name: "Table",
     description: "Table",
-    children: [],
     props: {
       striped: true,
       withBorder: true,
@@ -26,8 +22,34 @@ export const jsonStructure = (props?: any): Component => {
       style: {
         width: "100%",
       },
+
       ...(props.props || {}),
     },
+    children: [
+      {
+        id: nanoid(),
+        name: "Select",
+        description: "Select",
+        props: {
+          style: {},
+          defaultValue: 5,
+          data: [
+            { label: 5, value: 5 },
+            { label: 10, value: 10 },
+            { label: 15, value: 15 },
+          ],
+        },
+      },
+      {
+        id: nanoid(),
+        name: "Pagination",
+        description: "Pagination",
+        props: {
+          style: {},
+        },
+        children: [],
+      },
+    ],
     blockDroppingChildrenInside: true,
   };
 };
