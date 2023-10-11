@@ -69,6 +69,8 @@ import get from "lodash.get";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
 import { readDataFromStream } from "@/utils/api";
+import { TransformVariableFlowActionForm } from "@/components/actions/logic-flow-forms/TransformVariableFlowActionForm";
+import { BindVariableToChartFlowActionForm } from "@/components/actions/logic-flow-forms/BindVariableToChartFlowActionForm";
 
 const triggers = [
   "onClick",
@@ -99,8 +101,10 @@ export const actions = [
   { name: "apiCall", group: "API & Data" },
   { name: "bindResponse", group: "API & Data" },
   { name: "bindVariable", group: "API & Data" },
+  { name: "bindVariableToChart", group: "API & Data" },
   { name: "login", group: "API & Data" },
   { name: "setVariable", group: "API & Data" },
+  { name: "transformVariable", group: "API & Data" },
   { name: "bindPlaceData", group: "Third-Party Plugins" },
   { name: "bindPlaceGeometry", group: "Third-Party Plugins" },
   { name: "goToUrl", group: "Navigation" },
@@ -242,6 +246,13 @@ export interface BindVariableToComponentAction extends BaseAction {
   variable: string;
 }
 
+export interface BindVariableToChartAction extends BaseAction {
+  name: "bindVariableToChart";
+  component: string;
+  series: string;
+  labels: string;
+}
+
 export interface ReloadComponentAction extends BaseAction {
   name: "reloadComponent";
   componentId: string;
@@ -268,6 +279,13 @@ export interface CustomJavascriptAction extends BaseAction {
   code: string;
 }
 
+export interface TransformVariableAction extends BaseAction {
+  name: "transformVariable";
+  variableId: string;
+  variableName: string;
+  value: string;
+}
+
 export type Action = {
   id: string;
   trigger: ActionTrigger;
@@ -292,7 +310,9 @@ export type Action = {
     | BindPlaceGeometryAction
     | TriggerLogicFlowAction
     | ChangeLanguageAction
-    | BindVariableToComponentAction;
+    | BindVariableToComponentAction
+    | TransformVariableAction
+    | BindVariableToChartAction;
   sequentialTo?: string;
 };
 
@@ -803,16 +823,6 @@ function getElementValue(value: string, iframeWindow: any): string {
   return (el as HTMLInputElement)?.value ?? "";
 }
 
-async function getVariableValue(
-  value: string,
-  projectId: string,
-): Promise<string> {
-  const variable = JSON.parse(value);
-  const path = variable.path ?? "";
-  const varResponse = await getVariable(projectId, variable.id);
-  return varResponse.value ?? varResponse.defaultValue ?? "";
-}
-
 function getQueryElementValue(value: string, iframeWindow: any): string {
   const el = iframeWindow?.document.querySelector(
     `input#${value.split("queryString_pass_")[1]}`,
@@ -1025,6 +1035,83 @@ export const bindResponseToComponentAction = ({
   });
 };
 
+export type BindVariableToChartActionParams = ActionParams & {
+  action: BindVariableToChartAction;
+};
+
+export const bindVariableToChartAction = async ({
+  action,
+}: BindVariableToChartActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const currentProjectId = useEditorStore.getState().currentProjectId;
+  const seriesVariable = action.series.split(`var_`)[1];
+  let seriesVar: string | number[] = seriesVariable;
+  if (seriesVariable.startsWith("{") && seriesVariable.endsWith("}")) {
+    seriesVar = JSON.parse(seriesVariable);
+  }
+
+  const isSeriesObject = typeof seriesVar === "object";
+
+  const labelsVariable = action.labels.split(`var_`)[1];
+  let labelsVar: string | number[] = labelsVariable;
+  if (labelsVariable.startsWith("{") && labelsVariable.endsWith("}")) {
+    labelsVar = JSON.parse(labelsVariable);
+  }
+
+  const isLabelsObject = typeof labelsVar === "object";
+
+  if (action.component && seriesVar) {
+    const variableSeries = await getVariable(
+      currentProjectId!,
+      isSeriesObject ? (seriesVar as any).id : seriesVar,
+    );
+
+    let seriesValue = variableSeries.value;
+    if (variableSeries.type === "OBJECT") {
+      const dataFlatten = flattenKeys(JSON.parse(variableSeries.value ?? "{}"));
+
+      seriesValue = get(dataFlatten, (seriesVar as any).path);
+    }
+
+    const variableLabels = await getVariable(
+      currentProjectId!,
+      isLabelsObject ? (labelsVar as any).id : labelsVar,
+    );
+
+    let labelsValue = variableLabels.value;
+    if (variableLabels.type === "OBJECT") {
+      const dataFlatten = flattenKeys(JSON.parse(variableLabels.value ?? "{}"));
+
+      labelsValue = get(dataFlatten, (labelsVar as any).path);
+    }
+
+    updateTreeComponent(
+      action.component,
+      {
+        data: {
+          series: {
+            value: seriesValue,
+            base:
+              variableSeries.type === "OBJECT"
+                ? JSON.parse(variableSeries.value ?? "{}")
+                : undefined,
+            path: (seriesVar as any)?.path ?? undefined,
+          },
+          labels: {
+            value: labelsValue,
+            base:
+              variableLabels.type === "OBJECT"
+                ? JSON.parse(variableLabels.value ?? "{}")
+                : undefined,
+            path: (labelsVar as any)?.path ?? undefined,
+          },
+        },
+      },
+      false,
+    );
+  }
+};
+
 export type BindVariableToComponentActionParams = ActionParams & {
   action: BindVariableToComponentAction;
 };
@@ -1227,6 +1314,35 @@ export const customJavascriptAction = ({ action, data }: any) => {
   return eval(codeTranspiled);
 };
 
+export type TransformVariableActionParams = ActionParams & {
+  action: TransformVariableAction;
+};
+
+export const transformVariableAction = async ({
+  action,
+  data,
+}: TransformVariableActionParams) => {
+  const { currentProjectId, currentPageId } = useEditorStore.getState();
+  const codeTranspiled = transpile(action.value);
+  // TODO: Replace variable ref with actual value before eval
+  let result = eval(codeTranspiled);
+  const isObject = typeof result === "object";
+  if (isObject) {
+    result = JSON.stringify(result);
+  } else {
+    result = String(result);
+  }
+
+  await createVariable(currentProjectId!, {
+    name: action.variableName,
+    value: result,
+    type: isObject ? "OBJECT" : "TEXT",
+    isGlobal: false,
+    pageId: currentPageId!,
+    defaultValue: result,
+  });
+};
+
 export const actionMapper = {
   alert: {
     action: debugAction,
@@ -1237,6 +1353,12 @@ export const actionMapper = {
     action: setVariableAction,
     form: SetVariableActionForm,
     flowForm: SetVariableFlowActionForm,
+  },
+  transformVariable: {
+    action: transformVariableAction,
+    // TODO: Create a proper form for action outside flow
+    form: TransformVariableFlowActionForm,
+    flowForm: TransformVariableFlowActionForm,
   },
   navigateToPage: {
     action: navigationAction,
@@ -1257,6 +1379,12 @@ export const actionMapper = {
     action: bindVariableToComponentAction,
     form: BindVariableToComponentActionForm,
     flowForm: BindVariableToComponentFlowActionForm,
+  },
+  bindVariableToChart: {
+    action: bindVariableToChartAction,
+    // TODO: Create a proper form for action outside flow
+    form: BindVariableToComponentActionForm,
+    flowForm: BindVariableToChartFlowActionForm,
   },
   goToUrl: {
     action: goToUrlAction,
