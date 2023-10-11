@@ -1369,7 +1369,7 @@ export const actionMapper = {
   transformVariable: {
     action: transformVariableAction,
     // TODO: Create a proper form for action outside flow
-    form: TransformVariableFlowActionForm,
+    form: SetVariableActionForm,
     flowForm: TransformVariableFlowActionForm,
   },
   navigateToPage: {
