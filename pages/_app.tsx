@@ -1,3 +1,4 @@
+import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
 import { cache } from "@/utils/emotionCache";
 import {
   DEFAULT_THEME,
@@ -16,9 +17,9 @@ import {
 import { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import Head from "next/head";
+import Script from "next/script";
 import { Fragment, PropsWithChildren, useEffect, useState } from "react";
 import { ReactFlowProvider } from "reactflow";
-import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -104,7 +105,25 @@ export default function App(props: AppProps) {
           />
           <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         </Head>
+        {/* Google Tag Manager */}
+        <Script id="google-analytics">
+          {`
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-P3DVFXMS');
+        `}
+        </Script>
         <main className={inter.variable}>
+          <noscript>
+            <iframe
+              src="https://www.googletagmanager.com/ns.html?id=GTM-P3DVFXMS"
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            ></iframe>
+          </noscript>
           <QueryClientProvider client={queryClient}>
             <Hydrate state={pageProps.dehydratedState}>
               <Notifications />
