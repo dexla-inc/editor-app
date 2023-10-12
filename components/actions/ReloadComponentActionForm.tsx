@@ -14,7 +14,6 @@ import { ReloadComponentAction } from "@/utils/actions";
 import { getComponentById } from "@/utils/editor";
 import { Divider, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEffect } from "react";
 
 type FormValues = Omit<ReloadComponentAction, "name">;
 
@@ -32,15 +31,8 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
     selectedComponentId,
   });
 
-  const {
-    setPickingComponentToBindTo,
-    sequentialTo,
-    componentToBind,
-    setComponentToBind,
-    pickingComponentToBindTo,
-  } = useEditorStore();
-
-  const component = getComponentById(editorTree.root, selectedComponentId!);
+  const { setPickingComponentToBindTo, sequentialTo, setComponentToBind } =
+    useEditorStore();
 
   const reloadAction = action.action as ReloadComponentAction;
 
@@ -72,62 +64,25 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
     }
   };
 
-  useEffect(() => {
-    if (pickingComponentToBindTo) {
-      if (
-        componentToBind &&
-        pickingComponentToBindTo.componentId === component?.id
-      ) {
-        form.setFieldValue("componentId", componentToBind);
-        const _componentToBind = getComponentById(
-          editorTree.root,
-          componentToBind,
-        );
-        const onMountAction = _componentToBind?.actions?.find(
-          (action) => action.trigger === "onMount",
-        );
-
-        form.setFieldValue("onMountActionId", onMountAction?.id);
-
-        setPickingComponentToBindTo(undefined);
-        setComponentToBind(undefined);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [component?.id, componentToBind, pickingComponentToBindTo]);
-
   return (
     <>
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack spacing="xs">
           <ComponentToBindFromInput
             key={form.values.componentId}
+            componentId={selectedComponentId}
             onPickComponent={(componentToBind: string) => {
-              form.setValues({ ...form.values, componentId: componentToBind });
+              form.setFieldValue("componentId", componentToBind);
+
               setComponentToBind(undefined);
+              setPickingComponentToBindTo(undefined);
             }}
             onPickVariable={(variable: string) => {
-              form.setValues({
-                ...form.values,
-                componentId: variable,
-              });
-            }}
-            bindAttributes={{
-              componentId: component?.id!,
-              trigger: action.trigger,
-              bindedId: form.values.componentId ?? "",
+              form.setFieldValue("componentId", variable);
             }}
             size="xs"
             label="Component to reload"
             {...form.getInputProps("componentId")}
-            // @ts-ignore
-            value={componentToBind}
-            onChange={(e) => {
-              form.setValues({
-                ...form.values,
-                componentId: e.currentTarget.value,
-              });
-            }}
           />
           <ActionButtons
             actionId={action.id}

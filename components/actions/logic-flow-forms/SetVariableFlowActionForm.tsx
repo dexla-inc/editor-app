@@ -19,7 +19,8 @@ type FormValues = Omit<SetVariableAction, "name">;
 export const SetVariableFlowActionForm = ({ form }: Props) => {
   const router = useRouter();
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const { setPickingComponentToBindFrom, setTree } = useEditorStore();
+  const { setPickingComponentToBindTo, setTree, setComponentToBind } =
+    useEditorStore();
   const projectId = router.query.id as string;
   const pageId = router.query.page as string;
 
@@ -45,7 +46,7 @@ export const SetVariableFlowActionForm = ({ form }: Props) => {
         {...form.getInputProps("variable")}
         onChange={(value) => {
           const variable = JSON.stringify(
-            (variables?.results ?? []).find((v) => v.id === value)
+            (variables?.results ?? []).find((v) => v.id === value),
           );
           form.setFieldValue("variable", variable);
         }}
@@ -55,17 +56,12 @@ export const SetVariableFlowActionForm = ({ form }: Props) => {
         placeholder="value"
         label="Value"
         onPickComponent={(componentToBindId: string) => {
-          setPickingComponentToBindFrom(undefined);
-          form.setValues({
-            ...form.values,
-            value: `valueOf_${componentToBindId}`,
-          });
+          form.setFieldValue("value", `valueOf_${componentToBindId}`);
+          setComponentToBind(undefined);
+          setPickingComponentToBindTo(undefined);
         }}
         onPickVariable={(variable: string) => {
-          form.setValues({
-            ...form.values,
-            value: variable,
-          });
+          form.setFieldValue("value", variable);
         }}
         {...form.getInputProps("value")}
       />

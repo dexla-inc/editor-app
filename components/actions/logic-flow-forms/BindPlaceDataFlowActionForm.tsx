@@ -11,7 +11,7 @@ import { useFlowStore } from "@/stores/flow";
 import { BindPlaceDataAction } from "@/utils/actions";
 import { decodeSchema } from "@/utils/compression";
 import { ApiType } from "@/utils/dashboardTypes";
-import { getAllComponentsByName, getComponentById } from "@/utils/editor";
+import { getAllComponentsByName } from "@/utils/editor";
 import {
   Box,
   Button,
@@ -62,13 +62,7 @@ export const BindPlaceDataFlowActionForm = ({ form }: Props) => {
 
   const { editorTree, selectedComponentId } = useEditorStores();
 
-  const {
-    setPickingComponentToBindFrom,
-    componentToBind,
-    pickingComponentToBindFrom,
-    setComponentToBind,
-    setTree,
-  } = useEditorStore();
+  const { setComponentToBind, setTree } = useEditorStore();
 
   const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
     undefined,
@@ -82,7 +76,6 @@ export const BindPlaceDataFlowActionForm = ({ form }: Props) => {
 
   const { page, dataSources } = useRequestProp();
 
-  const component = getComponentById(editorTree.root, selectedComponentId!);
   const containers = getAllComponentsByName(editorTree.root, "Container");
 
   useEffect(() => {
@@ -97,21 +90,6 @@ export const BindPlaceDataFlowActionForm = ({ form }: Props) => {
       getEndpoints();
     }
   }, [dataSources.data, projectId]);
-
-  useEffect(() => {
-    if (componentToBind && pickingComponentToBindFrom) {
-      if (pickingComponentToBindFrom.componentId === component?.id) {
-        form.setFieldValue(
-          `binds.${pickingComponentToBindFrom.paramType}.${pickingComponentToBindFrom.param}`,
-          `valueOf_${componentToBind}`,
-        );
-
-        setPickingComponentToBindFrom(undefined);
-        setComponentToBind(undefined);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [component?.id, componentToBind, pickingComponentToBindFrom]);
 
   useEffect(() => {
     if (
@@ -243,11 +221,10 @@ export const BindPlaceDataFlowActionForm = ({ form }: Props) => {
                           setComponentToBind(undefined);
                         }}
                         onPickVariable={(variable: string) => {
-                          form.setValues({
-                            ...form.values,
-                            [`binds.${type}.${param.name}`]: variable,
-                          });
-                          setComponentToBind(undefined);
+                          form.setFieldValue(
+                            `binds.${type}.${param.name}`,
+                            variable,
+                          );
                         }}
                         size="xs"
                         label={param.name}
@@ -263,10 +240,7 @@ export const BindPlaceDataFlowActionForm = ({ form }: Props) => {
                         // @ts-ignore
                         value={form.values[field] ?? undefined}
                         onChange={(e) => {
-                          form.setValues({
-                            ...form.values,
-                            [field]: e.currentTarget.value,
-                          });
+                          form.setFieldValue(field, e.currentTarget.value);
                         }}
                       />
                     </Stack>

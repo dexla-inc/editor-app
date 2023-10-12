@@ -17,6 +17,9 @@ export const OpenToastFlowActionForm = ({ form }: Props) => {
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo,
+  );
   const isUpdating = useFlowStore((state) => state.isUpdating);
 
   return (
@@ -38,18 +41,13 @@ export const OpenToastFlowActionForm = ({ form }: Props) => {
             </Title>
             <ComponentToBindFromInput
               onPickComponent={(componentToBind: string) => {
-                form.setValues({
-                  ...form.values,
-                  [name]: `valueOf_${componentToBind}`,
-                });
+                form.setFieldValue(name, `valueOf_${componentToBind}`);
+
                 setComponentToBind(undefined);
+                setPickingComponentToBindTo(undefined);
               }}
               onPickVariable={(variable: string) => {
-                form.setValues({
-                  ...form.values,
-                  [name]: variable,
-                });
-                setComponentToBind(undefined);
+                form.setFieldValue(name, variable);
               }}
               size="xs"
               label={title}

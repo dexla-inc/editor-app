@@ -1,4 +1,3 @@
-import { ComponentToBindInput } from "@/components/ComponentToBindInput";
 import { VariablePicker } from "@/components/VariablePicker";
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { useEditorStore } from "@/stores/editor";
@@ -9,6 +8,7 @@ import { Component, getComponentById } from "@/utils/editor";
 import { Button, Stack, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useEffect, useState } from "react";
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
 type Props = {
   form: UseFormReturnType<FormValues>;
@@ -46,8 +46,8 @@ export const BindVariableToChartFlowActionForm = ({ form }: Props) => {
 
   return (
     <Stack spacing="xs">
-      <ComponentToBindInput
-        onPick={(componentToBind: string) => {
+      <ComponentToBindFromInput
+        onPickComponent={(componentToBind: string) => {
           form.setFieldValue("component", componentToBind);
 
           setPickingComponentToBindTo(undefined);

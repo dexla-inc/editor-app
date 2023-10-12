@@ -1,4 +1,3 @@
-import { ComponentToBindInput } from "@/components/ComponentToBindInput";
 import { Icon } from "@/components/Icon";
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { useEditorStore } from "@/stores/editor";
@@ -21,6 +20,7 @@ import { UseFormReturnType } from "@mantine/form";
 import { IconTrash } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useEffect } from "react";
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
 type Props = {
   form: UseFormReturnType<FormValues>;
@@ -148,11 +148,9 @@ export const ChangeStateActionFlowForm = ({ form }: Props) => {
                 styles={{ label: { width: "100%" } }}
               />
 
-              <ComponentToBindInput
-                index={i}
+              <ComponentToBindFromInput
                 value={componentId}
-                componentId={component?.id}
-                onPick={(componentToBind: string) => {
+                onPickComponent={(componentToBind: string) => {
                   form.setFieldValue(
                     `conditionRules.${i}.componentId`,
                     componentToBind,
