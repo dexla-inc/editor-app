@@ -175,7 +175,7 @@ export const EditorAsideSections = () => {
     return getActionsBySequentialToOrId(action.id).map(
       (sequentialAction: Action) => {
         const sequentialActionName = sequentialAction.action.name;
-        const Component = actionMapper[sequentialActionName]?.form;
+        const ActionForm = actionMapper[sequentialActionName]?.form;
 
         const item = {
           ...baseItem,
@@ -192,7 +192,7 @@ export const EditorAsideSections = () => {
               {...item}
               key={item.label}
             >
-              <Component id={sequentialAction.id} />
+              <ActionForm id={sequentialAction.id} />
             </SidebarSection>
           )
         );
@@ -214,12 +214,12 @@ export const EditorAsideSections = () => {
 
     if (!actionName) return undefined;
 
-    const Component = actionMapper[actionName]?.form;
+    const ActionForm = actionMapper[actionName]?.form;
 
     return (
       item && (
         <SidebarSection icon={IconBolt} {...item} key={item.label}>
-          <Component id={action.id} />
+          <ActionForm id={action.id} />
           {renderSequentialActions(action)}
         </SidebarSection>
       )

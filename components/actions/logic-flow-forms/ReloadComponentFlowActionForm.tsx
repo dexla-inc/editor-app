@@ -11,7 +11,6 @@ import { useEffect } from "react";
 type FormValues = Omit<ReloadComponentAction, "name">;
 
 type Props = {
-  id: string;
   form: UseFormReturnType<FormValues>;
 };
 
