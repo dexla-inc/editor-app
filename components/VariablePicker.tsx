@@ -36,7 +36,7 @@ export const VariablePicker = (props: Props) => {
 
   return (
     <Popover
-      position="top"
+      position="left"
       withArrow
       shadow="md"
       withinPortal
@@ -79,7 +79,6 @@ export const VariablePicker = (props: Props) => {
                 </Card>
               );
             }
-            const variableValue = (variable.value ?? "").split("_")[1];
 
             return (
               <Accordion.Item key={variable.id} value={variable.id}>
@@ -89,10 +88,9 @@ export const VariablePicker = (props: Props) => {
                 <Accordion.Panel p={0}>
                   <ScrollArea h={250} p="xs">
                     <JSONSelector
-                      data={
-                        variableValue ??
-                        JSON.parse(variable.defaultValue ?? "{}")
-                      }
+                      data={JSON.parse(
+                        variable.value ?? variable.defaultValue ?? "{}",
+                      )}
                       onSelectValue={(selected) => {
                         props.onSelectValue?.(
                           `var_${JSON.stringify({
