@@ -1,3 +1,4 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
@@ -10,12 +11,10 @@ import {
 import { getDataSourceEndpoints } from "@/requests/datasources/queries";
 import { useEditorStore } from "@/stores/editor";
 import { Action, BindResponseToComponentAction } from "@/utils/actions";
-import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
 import { flattenKeysWithRoot } from "@/utils/flattenKeys";
-import { ActionIcon, Stack, TextInput } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconCurrentLocation } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
@@ -176,28 +175,45 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
         {form.values.binds?.map((bind, index) => {
+          const field = `binds.${index}`;
           return (
-            <TextInput
+            <ComponentToBindFromInput
               key={bind.value}
+              index={index}
+              componentId={component?.id!}
+              bindAttributes={{
+                trigger: action.trigger,
+                param: bind.value,
+                bindedId: action.action.binds?.[index]?.component ?? "",
+              }}
+              onPickComponent={(componentToBind: string) => {
+                form.setFieldValue(`binds.${index}`, {
+                  ...form.getInputProps("bind"),
+                  component: componentToBind,
+                  value: bind,
+                });
+                setComponentToBind(undefined);
+              }}
+              onPickVariable={(variable: string) => {
+                form.setFieldValue(`binds.${index}`, {
+                  ...form.getInputProps("bind"),
+                  component: variable,
+                  value: bind,
+                });
+                setComponentToBind(undefined);
+              }}
               size="xs"
               label="Component to bind"
               description={`Binding to ${bind.value}`}
-              {...form.getInputProps(`binds.${index}.component`)}
-              rightSection={
-                <ActionIcon
-                  onClick={() => {
-                    setPickingComponentToBindTo({
-                      componentId: component?.id!,
-                      trigger: action.trigger,
-                      bindedId: action.action.binds?.[index]?.component ?? "",
-                      param: bind.value,
-                      index: index,
-                    });
-                  }}
-                >
-                  <IconCurrentLocation size={ICON_SIZE} />
-                </ActionIcon>
-              }
+              {...form.getInputProps(bind.component)}
+              // @ts-ignore
+              value={bind}
+              onChange={(e) => {
+                form.setValues({
+                  ...form.values,
+                  [field]: e.currentTarget.value,
+                });
+              }}
             />
           );
         })}

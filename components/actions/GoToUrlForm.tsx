@@ -1,3 +1,5 @@
+import { ComponentToBindActionsPopover } from "@/components/ComponentToBindActionsPopover";
+import { VariablePicker } from "@/components/VariablePicker";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
@@ -7,10 +9,10 @@ import {
   useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
+import { useEditorStore } from "@/stores/editor";
 import { GoToUrlAction } from "@/utils/actions";
-import { Checkbox, Stack, TextInput } from "@mantine/core";
+import { Checkbox, Flex, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { VariablePicker } from "@/components/VariablePicker";
 
 type Props = {
   id: string;
@@ -22,6 +24,7 @@ export const GoToUrlForm = ({ id }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
   const { editorTree, selectedComponentId, updateTreeComponentActions } =
     useEditorStores();
+  const { setComponentToBind } = useEditorStore();
   const { componentActions, action } = useActionData<GoToUrlAction>({
     actionId: id,
     editorTree,
@@ -64,12 +67,21 @@ export const GoToUrlForm = ({ id }: Props) => {
           label="URL"
           {...form.getInputProps("url")}
           rightSection={
-            <VariablePicker
-              onSelectValue={(selected) => {
-                form.setFieldValue("url", selected);
-              }}
-            />
+            <Flex px={5}>
+              <VariablePicker
+                onSelectValue={(selected) => {
+                  form.setFieldValue("url", selected);
+                }}
+              />
+              <ComponentToBindActionsPopover
+                onPick={(componentToBind: string) => {
+                  form.setFieldValue("url", componentToBind);
+                  setComponentToBind(undefined);
+                }}
+              />
+            </Flex>
           }
+          rightSectionWidth="auto"
         />
         <Checkbox
           label="Open in new tab"

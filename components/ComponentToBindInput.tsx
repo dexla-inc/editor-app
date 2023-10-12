@@ -1,13 +1,14 @@
 import { ComponentToBindActionsPopover } from "@/components/ComponentToBindActionsPopover";
+import { useEditorStore } from "@/stores/editor";
+import { ICON_SIZE } from "@/utils/config";
 import { ActionIcon, TextInput, TextInputProps } from "@mantine/core";
 import { IconCurrentLocation } from "@tabler/icons-react";
-import { ICON_SIZE } from "@/utils/config";
-import { useEditorStore } from "@/stores/editor";
 
 type Props = TextInputProps & {
   componentId?: string;
   index?: number;
   onPick: (value: string) => void;
+  bindAttributes?: Record<string, string>;
 };
 
 export const ComponentToBindInput = ({
@@ -17,6 +18,7 @@ export const ComponentToBindInput = ({
   onPick,
   placeholder = "",
   label = "Component to bind",
+  bindAttributes,
   ...rest
 }: Props) => {
   const setHighlightedComponentId = useEditorStore(
@@ -31,6 +33,7 @@ export const ComponentToBindInput = ({
       setPickingComponentToBindTo({
         componentId: componentId,
         trigger: "",
+        ...bindAttributes,
         onPick,
       });
     }
