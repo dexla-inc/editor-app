@@ -631,7 +631,7 @@ export const changeStateAction = ({
 }: ChangeStateActionParams) => {
   const { setTreeComponentCurrentState } = useEditorStore.getState();
   const skipPreviousList: string[] = [];
-  action.conditionRules.forEach((item) => {
+  (action.conditionRules || []).forEach((item) => {
     if (!skipPreviousList.includes(item.componentId)) {
       if (item.condition === event || item.condition === "") {
         setTreeComponentCurrentState(item.componentId, item.state);
