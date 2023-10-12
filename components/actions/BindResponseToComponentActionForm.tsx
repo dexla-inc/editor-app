@@ -35,15 +35,8 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
       editorTree,
       selectedComponentId,
     });
-  const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo,
-  );
-  const componentToBind = useEditorStore((state) => state.componentToBind);
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
-  );
-  const pickingComponentToBindTo = useEditorStore(
-    (state) => state.pickingComponentToBindTo,
   );
 
   const updateTreeComponent = useEditorStore(
@@ -124,22 +117,6 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
   };
 
   useEffect(() => {
-    if (componentToBind && pickingComponentToBindTo) {
-      if (pickingComponentToBindTo.componentId === component?.id) {
-        form.setFieldValue(`binds.${pickingComponentToBindTo.index ?? 0}`, {
-          ...(form.values.binds![pickingComponentToBindTo.index ?? 0] ?? {}),
-          component: componentToBind,
-          value: pickingComponentToBindTo.param,
-        });
-
-        setPickingComponentToBindTo(undefined);
-        setComponentToBind(undefined);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [component?.id, componentToBind, pickingComponentToBindTo]);
-
-  useEffect(() => {
     const getEndpoint = async () => {
       const { results } = await getDataSourceEndpoints(projectId);
 
@@ -179,13 +156,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
           return (
             <ComponentToBindFromInput
               key={bind.value}
-              index={index}
               componentId={component?.id!}
-              bindAttributes={{
-                trigger: action.trigger,
-                param: bind.value,
-                bindedId: action.action.binds?.[index]?.component ?? "",
-              }}
               onPickComponent={(componentToBind: string) => {
                 form.setFieldValue(`binds.${index}`, {
                   ...form.getInputProps("bind"),
@@ -200,7 +171,6 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
                   component: variable,
                   value: bind,
                 });
-                setComponentToBind(undefined);
               }}
               size="xs"
               label="Component to bind"
@@ -209,10 +179,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
               // @ts-ignore
               value={bind}
               onChange={(e) => {
-                form.setValues({
-                  ...form.values,
-                  [field]: e.currentTarget.value,
-                });
+                form.setFieldValue(field, e.currentTarget.value);
               }}
             />
           );

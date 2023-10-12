@@ -3,8 +3,8 @@ import { QueryStringListItem } from "@/requests/pages/types";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Flex, Group, Text, TextInput } from "@mantine/core";
 import { Dispatch, SetStateAction, useState } from "react";
-import { ComponentToBindInput } from "@/components/ComponentToBindInput";
 import { useEditorStore } from "@/stores/editor";
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
 type QueryStringsFormProps = {
   queryStringState: [
@@ -77,12 +77,12 @@ export const QueryStringsForm = ({
                 style={{ width: "50%" }}
               />
               {readOnlyKeys ? (
-                <ComponentToBindInput
+                <ComponentToBindFromInput
                   value={value}
                   placeholder="value"
                   label=""
                   componentId={selectedComponentId}
-                  onPick={(componentToBindId: string) => {
+                  onPickComponent={(componentToBindId: string) => {
                     setQueryStrings((prev: QueryStringListItem[]) => {
                       const nPrev = [...prev];
                       nPrev[index].value = componentToBindId;

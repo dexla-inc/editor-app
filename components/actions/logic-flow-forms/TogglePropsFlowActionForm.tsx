@@ -1,4 +1,3 @@
-import { ComponentToBindInput } from "@/components/ComponentToBindInput";
 import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
@@ -17,6 +16,7 @@ import {
 } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { IconTrash } from "@tabler/icons-react";
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
 type Props = {
   form: UseFormReturnType<FormValues>;
@@ -37,8 +37,6 @@ export const TogglePropsFlowActionForm = ({ form }: Props) => {
   } = useEditorStore();
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
-
-  const conditionRules = () => form.getInputProps("conditionRules").value;
 
   const conditionOptions =
     component?.name === "Select"
@@ -71,68 +69,68 @@ export const TogglePropsFlowActionForm = ({ form }: Props) => {
           Add
         </Button>
       </Flex>
-      {conditionRules().map(({ componentId, condition }: any, i: number) => {
-        return (
-          <div
-            key={i}
-            style={{
-              borderBottom: "1px solid " + theme.colors.gray[3],
-              paddingBottom: 20,
-            }}
-          >
-            {["Radio", "Select"].includes(component!.name) ? (
-              <Select
-                size="xs"
-                label={
-                  <Flex justify="space-between" align="center">
-                    Toggle when{" "}
-                    <ActionIcon
-                      onClick={() => {
-                        form.removeListItem("conditionRules", i);
-                      }}
-                    >
-                      <IconTrash size={ICON_SIZE} color="red" />
-                    </ActionIcon>
-                  </Flex>
-                }
-                placeholder="Select a condition"
-                data={(conditionOptions as SelectData) ?? []}
-                value={condition}
-                onChange={(val) => {
-                  form.setFieldValue(`conditionRules.${i}.condition`, val);
-                }}
-                styles={{ label: { width: "100%" } }}
-              />
-            ) : (
-              <TextInput
-                size="xs"
-                label="Toggle when"
-                value={condition}
-                onChange={(e) => {
-                  form.setFieldValue(
-                    `conditionRules.${i}.condition`,
-                    e.target.value,
-                  );
-                }}
-              />
-            )}
-            <ComponentToBindInput
-              index={i}
-              value={componentId}
-              componentId={component?.id}
-              onPick={(componentToBind: string) => {
-                form.setFieldValue(
-                  `conditionRules.${i}.componentId`,
-                  componentToBind,
-                );
-
-                setPickingComponentToBindTo(undefined);
-                setComponentToBind(undefined);
+      {(form.values.conditionRules ?? []).map(
+        ({ componentId, condition }: any, i: number) => {
+          return (
+            <div
+              key={i}
+              style={{
+                borderBottom: "1px solid " + theme.colors.gray[3],
+                paddingBottom: 20,
               }}
-            />
-          </div>
-        );
-      })}
+            >
+              {["Radio", "Select"].includes(component!.name) ? (
+                <Select
+                  size="xs"
+                  label={
+                    <Flex justify="space-between" align="center">
+                      Toggle when{" "}
+                      <ActionIcon
+                        onClick={() => {
+                          form.removeListItem("conditionRules", i);
+                        }}
+                      >
+                        <IconTrash size={ICON_SIZE} color="red" />
+                      </ActionIcon>
+                    </Flex>
+                  }
+                  placeholder="Select a condition"
+                  data={(conditionOptions as SelectData) ?? []}
+                  value={condition}
+                  onChange={(val) => {
+                    form.setFieldValue(`conditionRules.${i}.condition`, val);
+                  }}
+                  styles={{ label: { width: "100%" } }}
+                />
+              ) : (
+                <TextInput
+                  size="xs"
+                  label="Toggle when"
+                  value={condition}
+                  onChange={(e) => {
+                    form.setFieldValue(
+                      `conditionRules.${i}.condition`,
+                      e.target.value,
+                    );
+                  }}
+                />
+              )}
+              <ComponentToBindFromInput
+                value={componentId}
+                onPickComponent={(componentToBind: string) => {
+                  form.setFieldValue(
+                    `conditionRules.${i}.componentId`,
+                    componentToBind,
+                  );
+
+                  setPickingComponentToBindTo(undefined);
+                  setComponentToBind(undefined);
+                }}
+              />
+            </div>
+          );
+        },
+      )}
 
       <Button type="submit" size="xs" loading={isUpdating}>
         Save

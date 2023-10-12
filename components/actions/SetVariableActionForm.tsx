@@ -28,7 +28,7 @@ export const SetVariableActionForm = ({ id }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
   const { editorTree, selectedComponentId, updateTreeComponentActions } =
     useEditorStores();
-  const { setPickingComponentToBindFrom } = useEditorStore();
+  const { setPickingComponentToBindTo, setComponentToBind } = useEditorStore();
 
   const { componentActions, action } = useActionData<SetVariableAction>({
     actionId: id,
@@ -99,17 +99,13 @@ export const SetVariableActionForm = ({ id }: Props) => {
           label="Value"
           componentId={selectedComponentId}
           onPickComponent={(componentToBindId: string) => {
-            setPickingComponentToBindFrom(undefined);
-            form.setValues({
-              ...form.values,
-              value: `valueOf_${componentToBindId}`,
-            });
+            form.setFieldValue("value", `valueOf_${componentToBindId}`);
+
+            setComponentToBind(undefined);
+            setPickingComponentToBindTo(undefined);
           }}
           onPickVariable={(variable: string) => {
-            form.setValues({
-              ...form.values,
-              value: variable,
-            });
+            form.setFieldValue("value", variable);
           }}
           {...form.getInputProps("value")}
         />

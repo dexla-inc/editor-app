@@ -1,4 +1,3 @@
-import { ComponentToBindInput } from "@/components/ComponentToBindInput";
 import { VariablePicker } from "@/components/VariablePicker";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
@@ -11,10 +10,9 @@ import {
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
 import { BindVariableToComponentAction } from "@/utils/actions";
-import { getComponentById } from "@/utils/editor";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEffect } from "react";
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
 type Props = {
   id: string;
@@ -35,15 +33,9 @@ export const BindVariableToComponentActionForm = ({ id }: Props) => {
   const setPickingComponentToBindTo = useEditorStore(
     (state) => state.setPickingComponentToBindTo,
   );
-  const componentToBind = useEditorStore((state) => state.componentToBind);
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
-  const pickingComponentToBindTo = useEditorStore(
-    (state) => state.pickingComponentToBindTo,
-  );
-
-  const component = getComponentById(editorTree.root, selectedComponentId!);
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -70,34 +62,16 @@ export const BindVariableToComponentActionForm = ({ id }: Props) => {
     }
   };
 
-  useEffect(() => {
-    if (componentToBind && pickingComponentToBindTo) {
-      if (pickingComponentToBindTo.componentId === component?.id) {
-        form.setValues({
-          component: componentToBind,
-        });
-
-        setPickingComponentToBindTo(undefined);
-        setComponentToBind(undefined);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [component?.id, componentToBind, pickingComponentToBindTo]);
-
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
-        <ComponentToBindInput
-          onPick={(componentToBind: string) => {
+        <ComponentToBindFromInput
+          componentId={selectedComponentId}
+          onPickComponent={(componentToBind: string) => {
             form.setFieldValue("component", componentToBind);
 
             setPickingComponentToBindTo(undefined);
             setComponentToBind(undefined);
-          }}
-          bindAttributes={{
-            trigger: action.trigger,
-            componentId: component?.id!,
-            bindedId: action.action.component ?? "",
           }}
           {...form.getInputProps("component")}
         />

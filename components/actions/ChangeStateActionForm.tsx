@@ -1,4 +1,3 @@
-import { ComponentToBindInput } from "@/components/ComponentToBindInput";
 import { Icon } from "@/components/Icon";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
@@ -26,6 +25,7 @@ import {
 import { useForm } from "@mantine/form";
 import { IconTrash } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
 type Props = {
   id: string;
@@ -179,15 +179,10 @@ export const ChangeStateActionForm = ({ id }: Props) => {
                   styles={{ label: { width: "100%" } }}
                 />
 
-                <ComponentToBindInput
-                  index={i}
+                <ComponentToBindFromInput
                   value={componentId}
                   componentId={component?.id}
-                  bindAttributes={{
-                    trigger: action.trigger,
-                    bindedId: condition ?? "",
-                  }}
-                  onPick={(componentToBind: string) => {
+                  onPickComponent={(componentToBind: string) => {
                     form.setFieldValue(
                       `conditionRules.${i}.componentId`,
                       componentToBind,

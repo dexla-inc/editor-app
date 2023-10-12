@@ -76,12 +76,12 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
     selectedComponentId,
   });
 
-  const {
-    setPickingComponentToBindFrom,
-    componentToBind,
-    pickingComponentToBindFrom,
-    setComponentToBind,
-  } = useEditorStore();
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo,
+  );
 
   const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
     undefined,
@@ -161,21 +161,6 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
       getEndpoints();
     }
   }, [dataSources.data, projectId]);
-
-  useEffect(() => {
-    if (componentToBind && pickingComponentToBindFrom) {
-      if (pickingComponentToBindFrom.componentId === component?.id) {
-        form.setFieldValue(
-          `binds.${pickingComponentToBindFrom.paramType}.${pickingComponentToBindFrom.param}`,
-          `valueOf_${componentToBind}`,
-        );
-
-        setPickingComponentToBindFrom(undefined);
-        setComponentToBind(undefined);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [component?.id, componentToBind, pickingComponentToBindFrom]);
 
   useEffect(() => {
     if (
@@ -294,34 +279,25 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
                     return (
                       <Stack key={param.name}>
                         <ComponentToBindFromInput
-                          index={pickingComponentToBindFrom?.index}
                           componentId={component?.id!}
-                          bindAttributes={{
-                            trigger: action.trigger,
-                            endpointId: selectedEndpoint.id,
-                            paramType: type,
-                            param: param.name,
-                            bindedId:
-                              form.values.binds?.[type][param.name] ?? "",
-                          }}
                           onPickComponent={(componentToBind: string) => {
                             const value = componentToBind.startsWith(
                               "queryString_pass_",
                             )
                               ? componentToBind
                               : `valueOf_${componentToBind}`;
-                            form.setValues({
-                              ...form.values,
-                              [`binds.${type}.${param.name}`]: value,
-                            });
+                            form.setFieldValue(
+                              `binds.${type}.${param.name}`,
+                              value,
+                            );
+                            setPickingComponentToBindTo(undefined);
                             setComponentToBind(undefined);
                           }}
                           onPickVariable={(variable: string) => {
-                            form.setValues({
-                              ...form.values,
-                              [`binds.${type}.${param.name}`]: variable,
-                            });
-                            setComponentToBind(undefined);
+                            form.setFieldValue(
+                              `binds.${type}.${param.name}`,
+                              variable,
+                            );
                           }}
                           size="xs"
                           label={param.name}
@@ -338,14 +314,6 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
                           data-lpignore="true"
                           data-form-type="other"
                           {...form.getInputProps(field)}
-                          // @ts-ignore
-                          value={form.values[field] ?? undefined}
-                          onChange={(e) => {
-                            form.setValues({
-                              ...form.values,
-                              [field]: e.currentTarget.value,
-                            });
-                          }}
                         />
                       </Stack>
                     );
