@@ -48,17 +48,7 @@ export interface MantineThemeExtended extends MantineTheme {
 
 export type ComponentToBind = {
   componentId: string;
-  // trigger?: string;
-  // endpointId?: string;
-  // param?: string;
-  // paramType?: ApiType;
-  // bindedId?: string;
-  // index?: number;
   onPick?: (props: any) => void;
-};
-
-export type Variables = {
-  key: string;
 };
 
 export type EditorState = {
