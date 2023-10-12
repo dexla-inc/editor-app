@@ -33,6 +33,7 @@ import { ClosePopOverFlowActionForm } from "@/components/actions/logic-flow-form
 import { CustomJavascriptFlowActionForm } from "@/components/actions/logic-flow-forms/CustomJavascriptFlowActionForm";
 import { DebugFlowActionForm } from "@/components/actions/logic-flow-forms/DebugFlowActionForm";
 
+import { TransformVariableActionForm } from "@/components/actions/TransformVariableActionForm";
 import { BindVariableToChartFlowActionForm } from "@/components/actions/logic-flow-forms/BindVariableToChartFlowActionForm";
 import { GoToUrlFlowActionForm } from "@/components/actions/logic-flow-forms/GoToUrlFlowActionForm";
 import { LoginFlowActionForm } from "@/components/actions/logic-flow-forms/LoginFlowActionForm";
@@ -1388,7 +1389,7 @@ export const actionMapper = {
   transformVariable: {
     action: transformVariableAction,
     // TODO: Create a proper form for action outside flow
-    form: TransformVariableFlowActionForm,
+    form: TransformVariableActionForm,
     flowForm: TransformVariableFlowActionForm,
   },
   navigateToPage: {
