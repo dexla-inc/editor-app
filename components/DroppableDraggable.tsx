@@ -46,10 +46,6 @@ type Props = {
   customComponentModal?: any;
 } & BoxProps;
 
-const bidingComponentsWhitelist = {
-  from: ["Input", "Select"],
-  to: ["Text", "Title", "Table", "Container", "Image", "Select", "Pagination"],
-};
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
 // Whitelist certain props that can be passed down
 const styleWhitelist = [
@@ -203,47 +199,34 @@ export const DroppableDraggable = ({
   });
 
   const isPicking = pickingComponentToBindFrom || pickingComponentToBindTo;
+  const isSelected = selectedComponentId === id;
+  const isOver = currentTargetId === id;
+  const isHighlighted = highlightedComponentId === id;
 
-  const canBePickedAndUserIsPicking =
-    isPicking &&
-    bidingComponentsWhitelist[
-      pickingComponentToBindFrom ? "from" : "to"
-    ].includes(component.name);
+  const borderColor = isPicking ? "orange" : "teal";
 
-  const pickingData = pickingComponentToBindFrom ?? pickingComponentToBindTo;
+  const baseShadow = `0 0 0 1px ${theme.colors[borderColor][6]}`;
 
-  const isPicked = isPicking && pickingData?.componentId === id;
-
-  const isSelected = selectedComponentId === id && !isPreviewMode;
-  const isOver =
-    currentTargetId === id &&
-    !isPreviewMode &&
-    (isPicking ? canBePickedAndUserIsPicking : true);
-
-  const baseShadow = `0 0 0 1px ${theme.colors.teal[6]}`;
-
-  const shadows =
-    highlightedComponentId === component.id
-      ? { boxShadow: `0 0 0 1px ${theme.colors.orange[6]}` }
-      : !isPreviewMode &&
-        (isOver || isPicked
-          ? {
-              boxShadow:
-                edge === "top"
-                  ? `inset 0 ${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
-                  : edge === "bottom"
-                  ? `inset 0 -${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
-                  : edge === "left"
-                  ? `inset ${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
-                  : edge === "right"
-                  ? `inset -${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
-                  : baseShadow,
-              background: edge === "center" ? theme.colors.teal[6] : "none",
-              opacity: edge === "center" ? 0.4 : 1,
-            }
-          : isSelected
-          ? { boxShadow: baseShadow }
-          : {});
+  const shadows = isHighlighted
+    ? { boxShadow: `0 0 0 1px ${theme.colors.orange[6]}` }
+    : isOver
+    ? {
+        boxShadow:
+          edge === "top"
+            ? `inset 0 ${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+            : edge === "bottom"
+            ? `inset 0 -${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+            : edge === "left"
+            ? `inset ${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+            : edge === "right"
+            ? `inset -${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+            : baseShadow,
+        background: edge === "center" ? theme.colors.teal[6] : "none",
+        opacity: edge === "center" ? 0.4 : 1,
+      }
+    : isSelected
+    ? { boxShadow: baseShadow }
+    : {};
 
   const isContentWrapper = id === "content-wrapper";
   const haveNonRootParent = parent && parent.id !== "root";
@@ -327,16 +310,16 @@ export const DroppableDraggable = ({
         },
       }}
       onClick={(e) => {
+        e.stopPropagation();
+
         if (!isPreviewMode) {
           e.preventDefault();
-        }
-        e.stopPropagation();
-        if (isPicking && !isPreviewMode) {
-          if (canBePickedAndUserIsPicking) {
+
+          if (isPicking) {
             setComponentToBind(id);
+          } else {
+            setSelectedComponentId(id);
           }
-        } else if (!isPreviewMode) {
-          setSelectedComponentId(id);
         }
       }}
       {...filteredProps}
@@ -370,7 +353,6 @@ export const DroppableDraggable = ({
             top={-36}
             sx={{
               zIndex: 90,
-              // display: isSelected ? "block" : "none",
               background: theme.colors.teal[6],
               borderTopLeftRadius: theme.radius.sm,
               borderTopRightRadius: theme.radius.sm,

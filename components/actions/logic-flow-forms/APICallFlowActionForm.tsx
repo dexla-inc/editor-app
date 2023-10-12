@@ -47,7 +47,7 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
         {label}
       </Text>
     </Flex>
-  )
+  ),
 );
 
 type FormValues = Omit<APICallAction | LoginAction, "name" | "datasource">;
@@ -61,10 +61,11 @@ export const APICallFlowActionForm = ({
   form,
   actionName = "apiCall",
 }: Props) => {
-  const { setComponentToBind, setTree } = useEditorStore();
+  const { setComponentToBind, setPickingComponentToBindTo, setTree } =
+    useEditorStore();
   const isUpdating = useFlowStore((state) => state.isUpdating);
   const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
-    undefined
+    undefined,
   );
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
@@ -96,7 +97,7 @@ export const APICallFlowActionForm = ({
       (endpoints ?? [])?.length > 0
     ) {
       setSelectedEndpoint(
-        endpoints?.find((e) => e.id === form.values.endpoint)
+        endpoints?.find((e) => e.id === form.values.endpoint),
       );
     }
   }, [endpoints, form.values.endpoint, selectedEndpoint]);
@@ -212,18 +213,18 @@ export const APICallFlowActionForm = ({
                     <Stack key={param.name}>
                       <ComponentToBindFromInput
                         onPickComponent={(componentToBind: string) => {
-                          form.setValues({
-                            ...form.values,
-                            [`binds.${type}.${param.name}`]: `valueOf_${componentToBind}`,
-                          });
+                          form.setFieldValue(
+                            `binds.${type}.${param.name}`,
+                            `valueOf_${componentToBind}`,
+                          );
+                          setPickingComponentToBindTo(undefined);
                           setComponentToBind(undefined);
                         }}
                         onPickVariable={(variable: string) => {
-                          form.setValues({
-                            ...form.values,
-                            [`binds.${type}.${param.name}`]: variable,
-                          });
-                          setComponentToBind(undefined);
+                          form.setFieldValue(
+                            `binds.${type}.${param.name}`,
+                            variable,
+                          );
                         }}
                         size="xs"
                         label={param.name}
@@ -244,10 +245,7 @@ export const APICallFlowActionForm = ({
                         // @ts-ignore
                         value={form.values[field] ?? undefined}
                         onChange={(e) => {
-                          form.setValues({
-                            ...form.values,
-                            [field]: e.currentTarget.value,
-                          });
+                          form.setFieldValue(field, e.currentTarget.value);
                         }}
                       />
                     </Stack>

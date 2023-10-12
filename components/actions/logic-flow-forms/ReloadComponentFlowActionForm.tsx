@@ -30,15 +30,11 @@ export const ReloadComponentFlowActionForm = ({ form }: Props) => {
     <>
       <Stack spacing="xs">
         <ComponentToBindFromInput
-          key={form.values.componentId}
           onPickComponent={(componentToBind: string) => {
             form.setFieldValue("componentId", componentToBind);
           }}
           onPickVariable={(variable: string) => {
-            form.setValues({
-              ...form.values,
-              componentId: variable,
-            });
+            form.setFieldValue("componentId", variable);
           }}
           size="xs"
           label="Component to reload"

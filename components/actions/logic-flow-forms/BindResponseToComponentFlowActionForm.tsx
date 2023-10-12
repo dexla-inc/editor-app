@@ -5,7 +5,6 @@ import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { BindResponseToComponentAction } from "@/utils/actions";
 import { decodeSchema } from "@/utils/compression";
-import { getComponentById } from "@/utils/editor";
 import { flattenKeysWithRoot } from "@/utils/flattenKeys";
 import { Button, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
@@ -23,33 +22,8 @@ export const BindResponseToComponentFlowActionForm = ({ form }: Props) => {
   const router = useRouter();
   const projectId = router.query.id as string;
 
-  const {
-    tree: editorTree,
-    selectedComponentId,
-    setTree,
-    setComponentToBind,
-    pickingComponentToBindTo,
-    setPickingComponentToBindTo,
-    componentToBind,
-  } = useEditorStore();
-
-  const component = getComponentById(editorTree.root, selectedComponentId!);
-
-  useEffect(() => {
-    if (componentToBind && pickingComponentToBindTo) {
-      if (pickingComponentToBindTo.componentId === component?.id) {
-        form.setFieldValue(`binds.${pickingComponentToBindTo.index ?? 0}`, {
-          ...(form.values.binds![pickingComponentToBindTo.index ?? 0] ?? {}),
-          component: componentToBind,
-          value: pickingComponentToBindTo.param,
-        });
-
-        setPickingComponentToBindTo(undefined);
-        setComponentToBind(undefined);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [component?.id, componentToBind, pickingComponentToBindTo]);
+  const { setTree, setComponentToBind, setPickingComponentToBindTo } =
+    useEditorStore();
 
   useEffect(() => {
     const getEndpoint = async () => {
@@ -105,6 +79,7 @@ export const BindResponseToComponentFlowActionForm = ({ form }: Props) => {
                 value: bind,
               });
               setComponentToBind(undefined);
+              setPickingComponentToBindTo(undefined);
             }}
             onPickVariable={(variable: string) => {
               form.setFieldValue(`binds.${index}`, {
@@ -112,7 +87,6 @@ export const BindResponseToComponentFlowActionForm = ({ form }: Props) => {
                 component: variable,
                 value: bind,
               });
-              setComponentToBind(undefined);
             }}
             size="xs"
             label="Component to bind"
@@ -121,10 +95,7 @@ export const BindResponseToComponentFlowActionForm = ({ form }: Props) => {
             // @ts-ignore
             value={bind}
             onChange={(e) => {
-              form.setValues({
-                ...form.values,
-                [field]: e.currentTarget.value,
-              });
+              form.setFieldValue(field, e.currentTarget.value);
             }}
           />
         );

@@ -22,7 +22,7 @@ type Props = {
 type FormValues = Omit<OpenToastAction, "name">;
 
 export const OpenToastActionForm = ({ id }: Props) => {
-  const { setComponentToBind } = useEditorStore();
+  const { setComponentToBind, setPickingComponentToBindTo } = useEditorStore();
   const { startLoading, stopLoading } = useLoadingState();
   const { editorTree, selectedComponentId, updateTreeComponentActions } =
     useEditorStores();
@@ -76,20 +76,15 @@ export const OpenToastActionForm = ({ id }: Props) => {
                 {title}
               </Title>
               <ComponentToBindFromInput
+                componentId={selectedComponentId}
                 onPickComponent={(componentToBind: string) => {
-                  form.setValues({
-                    ...form.values,
-                    [name]: `valueOf_${componentToBind}`,
-                  });
+                  form.setFieldValue(name, `valueOf_${componentToBind}`);
+
+                  setPickingComponentToBindTo(undefined);
                   setComponentToBind(undefined);
                 }}
                 onPickVariable={(variable: string) => {
-                  console.log(variable);
-                  form.setValues({
-                    ...form.values,
-                    [name]: variable,
-                  });
-                  setComponentToBind(undefined);
+                  form.setFieldValue(name, variable);
                 }}
                 size="xs"
                 label={title}
