@@ -144,8 +144,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     }
   };
 
-  console.log(pickingComponentToBindFrom);
-
   // For EmptyDatasourcesPlaceholder
   const removeAction = () => {
     updateTreeComponentActions(
@@ -282,7 +280,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                   type: "parameter" as ApiType,
                   items: selectedEndpoint.parameters,
                 },
-              ].map(({ title, type, items }, index) => (
+              ].map(({ title, type, items }) => (
                 <React.Fragment key={title}>
                   {items.length > 0 && (
                     <Title order={5} mt="md">
@@ -308,9 +306,10 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                     return (
                       <Stack key={param.name}>
                         <ComponentToBindFromInput
-                          index={index}
+                          index={pickingComponentToBindFrom?.index}
                           componentId={component?.id!}
                           bindAttributes={{
+                            trigger: action.trigger,
                             endpointId: selectedEndpoint.id,
                             paramType: type,
                             param: param.name,

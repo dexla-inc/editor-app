@@ -161,6 +161,10 @@ export const TogglePropsActionForm = ({ id }: Props) => {
                 index={i}
                 value={componentId}
                 componentId={component?.id}
+                bindAttributes={{
+                  trigger: action.trigger,
+                  bindedId: condition ?? "",
+                }}
                 onPick={(componentToBind: string) => {
                   form.setFieldValue(
                     `conditionRules.${i}.componentId`,

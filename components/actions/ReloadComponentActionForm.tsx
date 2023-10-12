@@ -1,3 +1,4 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import { ActionsForm } from "@/components/actions/ActionsForm";
 import {
@@ -10,11 +11,9 @@ import {
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
 import { ReloadComponentAction } from "@/utils/actions";
-import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
-import { ActionIcon, Divider, Stack, TextInput } from "@mantine/core";
+import { Divider, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconCurrentLocation } from "@tabler/icons-react";
 import { useEffect } from "react";
 
 type FormValues = Omit<ReloadComponentAction, "name">;
@@ -101,24 +100,34 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
     <>
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack spacing="xs">
-          <TextInput
+          <ComponentToBindFromInput
+            key={form.values.componentId}
+            onPickComponent={(componentToBind: string) => {
+              form.setValues({ ...form.values, componentId: componentToBind });
+              setComponentToBind(undefined);
+            }}
+            onPickVariable={(variable: string) => {
+              form.setValues({
+                ...form.values,
+                componentId: variable,
+              });
+            }}
+            bindAttributes={{
+              componentId: component?.id!,
+              trigger: action.trigger,
+              bindedId: form.values.componentId ?? "",
+            }}
             size="xs"
             label="Component to reload"
             {...form.getInputProps("componentId")}
-            rightSection={
-              <ActionIcon
-                onClick={() => {
-                  setPickingComponentToBindTo({
-                    componentId: component?.id!,
-                    trigger: action.trigger,
-                    bindedId: form.values.componentId ?? "",
-                  });
-                }}
-              >
-                <IconCurrentLocation size={ICON_SIZE} />
-              </ActionIcon>
-            }
-            autoComplete="off"
+            // @ts-ignore
+            value={componentToBind}
+            onChange={(e) => {
+              form.setValues({
+                ...form.values,
+                componentId: e.currentTarget.value,
+              });
+            }}
           />
           <ActionButtons
             actionId={action.id}

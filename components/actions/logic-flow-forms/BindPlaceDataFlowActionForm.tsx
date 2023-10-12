@@ -242,6 +242,13 @@ export const BindPlaceDataFlowActionForm = ({ form }: Props) => {
                           );
                           setComponentToBind(undefined);
                         }}
+                        onPickVariable={(variable: string) => {
+                          form.setValues({
+                            ...form.values,
+                            [`binds.${type}.${param.name}`]: variable,
+                          });
+                          setComponentToBind(undefined);
+                        }}
                         size="xs"
                         label={param.name}
                         description={`${
