@@ -1,20 +1,23 @@
-import { IconExternalLink } from "@tabler/icons-react";
+import { SortableTreeItem } from "@/components/SortableTreeItem";
+import { useEditorStore } from "@/stores/editor";
+import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
+import { Component } from "@/utils/editor";
 import {
   Accordion,
   ActionIcon,
+  Button,
   Collapse,
   Flex,
   Group,
   List,
   Popover,
+  Stack,
   Text,
 } from "@mantine/core";
-import { useEditorStore } from "@/stores/editor";
-import { Component } from "@/utils/editor";
-import { SortableTreeItem } from "@/components/SortableTreeItem";
-import { structureMapper } from "@/utils/componentMapper";
 import { useDisclosure } from "@mantine/hooks";
+import { IconExternalLink } from "@tabler/icons-react";
+import { useRouter } from "next/router";
 
 export const ComponentToBindActionsPopover = ({ onPick }: any) => {
   const [opened, { close, toggle }] = useDisclosure(false);
@@ -45,6 +48,17 @@ export const ComponentToBindActionsPopover = ({ onPick }: any) => {
               <ListComponentToBindPopover
                 onSelectItem={(componentToBind: string) => {
                   onPick(componentToBind);
+                  close();
+                }}
+              />
+            </Accordion.Panel>
+          </Accordion.Item>
+          <Accordion.Item value="queryStrings">
+            <Accordion.Control>Query Strings</Accordion.Control>
+            <Accordion.Panel>
+              <QueryStringsListWrapper
+                onSelectItem={(componentToBind: string) => {
+                  onPick(`queryString_pass_${componentToBind}`);
                   close();
                 }}
               />
@@ -181,5 +195,36 @@ const ListComponentToBindPopover = ({ onSelectItem }: any) => {
     >
       {renderList(editorTree.root)}
     </List>
+  );
+};
+
+const QueryStringsListWrapper = ({ onSelectItem }: any) => {
+  const router = useRouter();
+  const pageId = router.query.page as string;
+  const currentPage = useEditorStore((state) =>
+    state.pages.find((page) => page.id === pageId),
+  );
+  const queries = currentPage?.queryStrings ?? {};
+
+  return (
+    <Stack spacing={0}>
+      {Object.keys(queries).map((query) => (
+        <Button
+          variant="subtle"
+          color="gray"
+          sx={{
+            display: "flex",
+            justifyContent: "flex-start",
+            fontWeight: "normal",
+          }}
+          key={query}
+          onClick={() => {
+            onSelectItem(queries[query]);
+          }}
+        >
+          {query}
+        </Button>
+      ))}
+    </Stack>
   );
 };

@@ -1,4 +1,3 @@
-import { InformationAlert } from "@/components/Alerts";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import { ActionsForm } from "@/components/actions/ActionsForm";
 import {
@@ -20,29 +19,24 @@ import { MethodTypes } from "@/requests/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import { APICallAction, Action, LoginAction } from "@/utils/actions";
-import { ICON_SIZE } from "@/utils/config";
 import { ApiType } from "@/utils/dashboardTypes";
 import { getComponentById } from "@/utils/editor";
 import {
-  ActionIcon,
   Box,
   Button,
   Divider,
   Flex,
-  Popover,
   Select,
   Stack,
   Switch,
   Text,
-  TextInput,
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { IconChevronDown, IconCurrentLocation } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import React, { forwardRef, useEffect, useState } from "react";
+import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
 
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, any>(
@@ -75,8 +69,6 @@ type Props = {
   actionName?: string;
   id: string;
 };
-
-type Feature = "Query Strings" | "Languages";
 
 export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
@@ -129,84 +121,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     },
   });
 
-  const currentPageId = router.query.page;
-  const currentPage = useEditorStore((state) =>
-    state.pages.find((page) => page.id === currentPageId),
-  );
-
-  const featureToBindTo = useEditorStore((state) => state.featureToBindTo);
-  const setFeatureToBindTo = useEditorStore(
-    (state) => state.setFeatureToBindTo,
-  );
-
-  const [selectedParam, setSelectedParam] = useState<string | undefined>(
-    undefined,
-  );
-  const [isFeaturesOpen, { toggle, close }] = useDisclosure(false);
-  const [feature, setFeature] = useState<Feature>(null!);
-  const [isFeaturesArrayEmpty, setIsFeaturesArrayEmpty] =
-    useState<boolean>(true);
-  const [isFeatureError, setIsFeatureError] = useState<boolean>(false);
-
-  const queries = useForm({
-    initialValues: {
-      featuresObj: {} as Record<string, string>,
-      keys: [] as string[],
-      selectedKey: "",
-      feature: ["Query Strings", "Languages"] as Feature[],
-      selectedValue: "",
-      param: "",
-    },
-  });
-
-  const handleFeature = (featureItem: Feature) => {
-    setFeature(featureItem);
-    const featureWithoutSpaces = featureItem.replace(/\s+/g, "");
-    const feature =
-      featureWithoutSpaces.charAt(0).toLowerCase() +
-      featureWithoutSpaces.slice(1);
-    if (currentPage) {
-      if (Object.keys(currentPage).includes(feature)) {
-        const currentPageFeatures = currentPage[feature];
-        const featuresArray = Object.keys(currentPageFeatures);
-        const isFeaturesArrayEmpty = featuresArray.length === 0;
-        setIsFeaturesArrayEmpty(isFeaturesArrayEmpty);
-        if (isFeaturesArrayEmpty) {
-          setIsFeatureError(true);
-          close();
-        }
-        if (currentPageFeatures !== undefined && !isFeaturesArrayEmpty) {
-          queries.setFieldValue("keys", featuresArray);
-          queries.setFieldValue("featuresObj", currentPageFeatures);
-        }
-      } else {
-        setIsFeatureError(true);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (featureToBindTo) {
-      form.setFieldValue(
-        `binds.${featureToBindTo.paramType}.typeKey_${featureToBindTo.key}`,
-        `queryString_pass_${featureToBindTo.value}`,
-      );
-      queries.setFieldValue("param", featureToBindTo.param as string);
-      setFeatureToBindTo(undefined);
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [featureToBindTo]);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      isFeatureError && setIsFeatureError(false);
-    }, 5000);
-
-    return () => clearTimeout(timeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [feature, isFeatureError]);
-
   const onSubmit = (values: FormValues) => {
     try {
       handleLoadingStart({ startLoading });
@@ -257,9 +171,12 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   useEffect(() => {
     if (componentToBind && pickingComponentToBindFrom) {
       if (pickingComponentToBindFrom.componentId === component?.id) {
+        const value = componentToBind.startsWith("queryString_pass_")
+          ? componentToBind
+          : `valueOf_${componentToBind}`;
         form.setFieldValue(
           `binds.${pickingComponentToBindFrom.paramType}.${pickingComponentToBindFrom.param}`,
-          `valueOf_${componentToBind}`,
+          value,
         );
 
         setPickingComponentToBindFrom(undefined);
@@ -384,16 +301,40 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                         };
                       }
                     }
-                    const itemProps =
-                      param.name === queries.values.param
-                        ? form.getInputProps(
-                            `binds.typeKey_${queries.values.selectedKey}`,
-                          )
-                        : form.getInputProps(`binds.${type}.${param.name}`);
-                    if (param.name === "place_id") return null;
+
+                    const field = `binds.${type}.${param.name}`;
                     return (
                       <Stack key={param.name}>
-                        <TextInput
+                        <ComponentToBindFromInput
+                          index={pickingComponentToBindFrom?.index}
+                          componentId={component?.id!}
+                          bindAttributes={{
+                            trigger: action.trigger,
+                            endpointId: selectedEndpoint.id,
+                            paramType: type,
+                            param: param.name,
+                            bindedId:
+                              form.values.binds?.[type][param.name] ?? "",
+                          }}
+                          onPickComponent={(componentToBind: string) => {
+                            const value = componentToBind.startsWith(
+                              "queryString_pass_",
+                            )
+                              ? componentToBind
+                              : `valueOf_${componentToBind}`;
+                            form.setValues({
+                              ...form.values,
+                              [`binds.${type}.${param.name}`]: value,
+                            });
+                            setComponentToBind(undefined);
+                          }}
+                          onPickVariable={(variable: string) => {
+                            form.setValues({
+                              ...form.values,
+                              [`binds.${type}.${param.name}`]: variable,
+                            });
+                            setComponentToBind(undefined);
+                          }}
                           size="xs"
                           label={param.name}
                           description={`${
@@ -405,110 +346,20 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                             ? // @ts-ignore
                               { required: param.required }
                             : {})}
-                          {...itemProps}
                           {...additionalProps}
-                          rightSectionWidth="auto"
-                          rightSection={
-                            <Box sx={{ display: "flex" }}>
-                              <ActionIcon
-                                onClick={() => {
-                                  setPickingComponentToBindFrom({
-                                    componentId: component?.id!,
-                                    trigger: action.trigger,
-                                    endpointId: selectedEndpoint.id,
-                                    param: param.name,
-                                    paramType: type,
-                                    bindedId:
-                                      form.values.binds?.[type][param.name] ??
-                                      "",
-                                  });
-                                }}
-                              >
-                                <IconCurrentLocation size={ICON_SIZE} />
-                              </ActionIcon>
-                              <ActionIcon
-                                onClick={() => {
-                                  setSelectedParam(param.name);
-                                  toggle();
-                                }}
-                              >
-                                <IconChevronDown size={ICON_SIZE} />
-                              </ActionIcon>
-                            </Box>
-                          }
                           autoComplete="off"
                           data-lpignore="true"
                           data-form-type="other"
+                          {...form.getInputProps(field)}
+                          // @ts-ignore
+                          value={form.values[field] ?? undefined}
+                          onChange={(e) => {
+                            form.setValues({
+                              ...form.values,
+                              [field]: e.currentTarget.value,
+                            });
+                          }}
                         />
-                        {isFeaturesOpen && param.name === selectedParam && (
-                          <Popover withArrow shadow="md" width="100%">
-                            <Popover.Target>
-                              <Stack
-                                spacing="xs"
-                                sx={{
-                                  backgroundColor: "white",
-                                  borderRadius: "5px",
-                                }}
-                              >
-                                {queries.values.feature.map((featureItem) => (
-                                  <Button
-                                    key={featureItem}
-                                    onClick={() => handleFeature(featureItem)}
-                                    size="xs"
-                                    variant="subtle"
-                                    color="gray"
-                                    sx={{
-                                      display: "flex",
-                                      justifyContent: "flex-start",
-                                    }}
-                                  >
-                                    {featureItem}
-                                  </Button>
-                                ))}
-                              </Stack>
-                            </Popover.Target>
-                            {!isFeaturesArrayEmpty && (
-                              <Popover.Dropdown>
-                                <Stack>
-                                  {queries.values.keys.map((value) => (
-                                    <Text
-                                      fz="sm"
-                                      sx={{ cursor: "pointer" }}
-                                      onClick={() => {
-                                        const featureValue =
-                                          queries.values.featuresObj[value];
-                                        setFeatureToBindTo({
-                                          key: value,
-                                          value: featureValue,
-                                          trigger: action.trigger,
-                                          endpointId: selectedEndpoint.id,
-                                          param: param.name,
-                                          paramType: type,
-                                          bindedId:
-                                            form.values.binds?.[type][
-                                              param.name
-                                            ] ?? "",
-                                        });
-                                        queries.setFieldValue(
-                                          "selectedKey",
-                                          value,
-                                        );
-                                        queries.setFieldValue(
-                                          "selectedValue",
-                                          featureValue,
-                                        );
-                                        close();
-                                      }}
-                                      key={value}
-                                    >
-                                      {value}
-                                    </Text>
-                                  ))}
-                                </Stack>
-                              </Popover.Dropdown>
-                            )}
-                          </Popover>
-                        )}
                       </Stack>
                     );
                   })}
@@ -516,12 +367,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
               ))}
             </Stack>
           )}
-          {isFeatureError && (
-            <InformationAlert
-              title="Empty strings!"
-              text={`add ${feature.toLowerCase()} to page`}
-            />
-          )}
+
           <ActionButtons
             actionId={id}
             componentActions={componentActions}

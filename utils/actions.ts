@@ -33,6 +33,8 @@ import { ClosePopOverFlowActionForm } from "@/components/actions/logic-flow-form
 import { CustomJavascriptFlowActionForm } from "@/components/actions/logic-flow-forms/CustomJavascriptFlowActionForm";
 import { DebugFlowActionForm } from "@/components/actions/logic-flow-forms/DebugFlowActionForm";
 
+import { TransformVariableActionForm } from "@/components/actions/TransformVariableActionForm";
+import { BindVariableToChartFlowActionForm } from "@/components/actions/logic-flow-forms/BindVariableToChartFlowActionForm";
 import { GoToUrlFlowActionForm } from "@/components/actions/logic-flow-forms/GoToUrlFlowActionForm";
 import { LoginFlowActionForm } from "@/components/actions/logic-flow-forms/LoginFlowActionForm";
 import { NavigationFlowActionForm } from "@/components/actions/logic-flow-forms/NavigationFlowActionForm";
@@ -43,6 +45,7 @@ import { OpenToastFlowActionForm } from "@/components/actions/logic-flow-forms/O
 import { ReloadComponentFlowActionForm } from "@/components/actions/logic-flow-forms/ReloadComponentFlowActionForm";
 import { SetVariableFlowActionForm } from "@/components/actions/logic-flow-forms/SetVariableFlowActionForm";
 import { TogglePropsFlowActionForm } from "@/components/actions/logic-flow-forms/TogglePropsFlowActionForm";
+import { TransformVariableFlowActionForm } from "@/components/actions/logic-flow-forms/TransformVariableFlowActionForm";
 import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components/actions/logic-flow-forms/TriggerLogicFlowActionForm";
 import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { Options } from "@/components/modifiers/GoogleMap";
@@ -56,6 +59,7 @@ import { getVariable } from "@/requests/variables/queries";
 import { FrontEndTypes } from "@/requests/variables/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
+import { readDataFromStream } from "@/utils/api";
 import {
   Component,
   getAllComponentsByName,
@@ -68,9 +72,6 @@ import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
-import { readDataFromStream } from "@/utils/api";
-import { TransformVariableFlowActionForm } from "@/components/actions/logic-flow-forms/TransformVariableFlowActionForm";
-import { BindVariableToChartFlowActionForm } from "@/components/actions/logic-flow-forms/BindVariableToChartFlowActionForm";
 
 const triggers = [
   "onClick",
@@ -90,7 +91,6 @@ const triggers = [
   "onRowHover",
   "onRowSelect",
   "onRowExpand",
-  "onPaginationChange",
   "onSort",
   "onFilterApplied",
   "onSuccess",
@@ -610,10 +610,13 @@ export const openToastAction = async ({ action }: OpenToastActionParams) => {
 
 export const setVariableAction = async ({
   action,
+  event,
 }: SetVariableActionParams) => {
+  let value = action.value || event.toString();
+
   const projectId = useEditorStore.getState().currentProjectId;
   const variable = JSON.parse(action.variable);
-  updateVariable(projectId!, variable.id, { ...variable, value: action.value });
+  updateVariable(projectId!, variable.id, { ...variable, value });
 };
 
 export const triggerLogicFlowAction = (
@@ -820,6 +823,17 @@ function getElementValue(value: string, iframeWindow: any): string {
     el = el?.getElementsByTagName("input")[0];
   }
 
+  if (!el) {
+    const component = getComponentById(
+      useEditorStore.getState().tree.root,
+      _id,
+    );
+
+    if (component && component.props) {
+      return component.props.value.toString() ?? "";
+    }
+  }
+
   return (el as HTMLInputElement)?.value ?? "";
 }
 
@@ -964,9 +978,11 @@ export const apiCallAction = async ({
       });
     }
 
+    updateTreeComponent(component.id!, { loading: false }, false);
+
     const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}`;
     const varValue = JSON.stringify(responseJson);
-    createVariable(projectId, {
+    await createVariable(projectId, {
       name: varName,
       value: varValue,
       type: "OBJECT" as FrontEndTypes,
@@ -992,9 +1008,10 @@ export const apiCallAction = async ({
       });
     }
 
+    updateTreeComponent(component.id!, { loading: false }, false);
     const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}-error`;
     const varValue = JSON.stringify(JSON.parse((error as Error).message));
-    createVariable(projectId, {
+    await createVariable(projectId, {
       name: varName,
       value: varValue,
       type: "OBJECT" as FrontEndTypes,
@@ -1002,8 +1019,6 @@ export const apiCallAction = async ({
       pageId: router.query.page as string,
       defaultValue: varValue,
     });
-  } finally {
-    updateTreeComponent(component.id!, { loading: false }, false);
   }
 };
 
@@ -1162,12 +1177,18 @@ export const bindVariableToComponentAction = async ({
 export const reloadComponentAction = ({
   action,
 }: ReloadComponentActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const editorTree = useEditorStore.getState().tree;
   const removeOnMountActionsRan =
     useEditorStore.getState().removeOnMountActionsRan;
+  const component = getComponentById(editorTree.root, action.componentId);
 
-  removeOnMountActionsRan(action.onMountActionId ?? "");
-  updateTreeComponent(action.componentId, { key: nanoid() }, false);
+  const onMountActionId = component?.actions?.find(
+    (a) => a.trigger === "onMount",
+  )?.id;
+
+  if (onMountActionId) {
+    removeOnMountActionsRan(onMountActionId);
+  }
 };
 
 export const bindPlaceDataAction = ({
@@ -1323,8 +1344,19 @@ export const transformVariableAction = async ({
   data,
 }: TransformVariableActionParams) => {
   const { currentProjectId, currentPageId } = useEditorStore.getState();
-  const codeTranspiled = transpile(action.value);
-  // TODO: Replace variable ref with actual value before eval
+  let codeTranspiled = transpile(action.value);
+  // Regex to find variable between /* var_<var-id> start */ and /* var_<var-id> end */
+  const variableRegex =
+    /\/\* var_(.*?) start \*\/(.*?)\/\* var_(.*?) end \*\//gs;
+  const variableMatches = codeTranspiled.matchAll(variableRegex);
+  for (const match of variableMatches) {
+    const variableId = match[1];
+    const variable = await getVariable(currentProjectId!, variableId);
+    codeTranspiled = codeTranspiled.replace(
+      match[0],
+      variable.value ?? variable.defaultValue ?? match[0],
+    );
+  }
   let result = eval(codeTranspiled);
   const isObject = typeof result === "object";
   if (isObject) {
@@ -1357,7 +1389,7 @@ export const actionMapper = {
   transformVariable: {
     action: transformVariableAction,
     // TODO: Create a proper form for action outside flow
-    form: TransformVariableFlowActionForm,
+    form: TransformVariableActionForm,
     flowForm: TransformVariableFlowActionForm,
   },
   navigateToPage: {

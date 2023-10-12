@@ -1,7 +1,6 @@
+import { defaultTheme } from "@/components/IFrame";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
-import { defaultTheme } from "@/components/IFrame";
-import { px } from "@mantine/core";
 
 export const jsonStructure = (props?: any): Component => {
   const radioGroupId = nanoid();
@@ -16,7 +15,6 @@ export const jsonStructure = (props?: any): Component => {
       label: "Select a radio",
       style: {
         width: "auto",
-        height: "auto",
       },
       ...(props.props || {}),
     },

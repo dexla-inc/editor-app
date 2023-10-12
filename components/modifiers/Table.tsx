@@ -1,23 +1,26 @@
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
-import { Divider, Stack, Switch, Textarea } from "@mantine/core";
+import { Divider, Stack, Switch, Textarea, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTable } from "@tabler/icons-react";
 import get from "lodash.get";
 import isEmpty from "lodash.isempty";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
+import merge from "lodash.merge";
 
 export const icon = IconTable;
 export const label = "Table";
 
+const initialValues = {
+  data: "",
+  headers: {},
+  config: {},
+};
+
 export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
-    initialValues: {
-      data: "",
-      headers: {},
-      config: {},
-    },
+    initialValues,
   });
 
   useEffect(() => {
@@ -38,15 +41,17 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         _data = get(_data, data.dataPath.replace("[0]", ""));
       }
 
-      form.setValues({
-        data: JSON.stringify(_data, null, 2),
-        headers: data.headers,
-        config: data.config,
-      });
+      form.setValues(
+        merge({}, initialValues, {
+          data: JSON.stringify(_data, null, 2),
+          headers: data.headers,
+          config: data.config,
+        }),
+      );
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+  }, [selectedComponent?.id]);
 
   return (
     <form>
@@ -59,7 +64,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                 size="xs"
                 key={key}
                 label={key}
-                checked={get(form.values.headers, key) ?? false}
+                checked={get(form.values.headers, key, false)}
                 onChange={(e) => {
                   const headers = {
                     ...form.values.headers,
@@ -75,7 +80,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         <Switch
           size="xs"
           label="Sorting"
-          checked={get(form.values.config, "sorting") ?? false}
+          checked={get(form.values.config, "sorting", false)}
           onChange={(e) => {
             const config = {
               ...form.values.config,
@@ -88,7 +93,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         <Switch
           size="xs"
           label="Select"
-          checked={get(form.values.config, "select") ?? false}
+          checked={get(form.values.config, "select", false)}
           onChange={(e) => {
             const config = {
               ...form.values.config,
@@ -101,7 +106,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         <Switch
           size="xs"
           label="Filter"
-          checked={get(form.values.config, "filter") ?? false}
+          checked={get(form.values.config, "filter", false)}
           onChange={(e) => {
             const config = {
               ...form.values.config,
@@ -114,7 +119,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         <Switch
           size="xs"
           label="Pagination"
-          checked={get(form.values.config, "pagination") ?? false}
+          checked={get(form.values.config, "pagination", false)}
           onChange={(e) => {
             const config = {
               ...form.values.config,
@@ -127,7 +132,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         <Switch
           size="xs"
           label="Numbers"
-          checked={get(form.values.config, "numbers") ?? false}
+          checked={get(form.values.config, "numbers", false)}
           onChange={(e) => {
             const config = {
               ...form.values.config,

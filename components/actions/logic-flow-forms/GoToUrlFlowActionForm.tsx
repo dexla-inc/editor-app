@@ -1,11 +1,12 @@
+import { ComponentToBindActionsPopover } from "@/components/ComponentToBindActionsPopover";
 import { VariablePicker } from "@/components/VariablePicker";
+import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { GoToUrlAction } from "@/utils/actions";
-import { Button, Checkbox, Stack, TextInput } from "@mantine/core";
+import { Button, Checkbox, Flex, Stack, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 
 type Props = {
-  id: string;
   form: UseFormReturnType<FormValues>;
 };
 
@@ -13,6 +14,7 @@ type FormValues = Omit<GoToUrlAction, "name">;
 
 export const GoToUrlFlowActionForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
+  const { setComponentToBind } = useEditorStore();
 
   return (
     <Stack>
@@ -22,12 +24,21 @@ export const GoToUrlFlowActionForm = ({ form }: Props) => {
         label="URL"
         {...form.getInputProps("url")}
         rightSection={
-          <VariablePicker
-            onSelectValue={(selected) => {
-              form.setFieldValue("url", selected);
-            }}
-          />
+          <Flex px={5}>
+            <VariablePicker
+              onSelectValue={(selected) => {
+                form.setFieldValue("url", selected);
+              }}
+            />
+            <ComponentToBindActionsPopover
+              onPick={(componentToBind: string) => {
+                form.setFieldValue("url", componentToBind);
+                setComponentToBind(undefined);
+              }}
+            />
+          </Flex>
         }
+        rightSectionWidth="auto"
       />
       <Checkbox
         label="Open in new tab"

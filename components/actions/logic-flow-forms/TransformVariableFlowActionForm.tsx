@@ -18,8 +18,12 @@ export const TransformVariableFlowActionForm = ({ form }: Props) => {
 
   const onClickRunCode = () => {
     const result = transpile(form.values.value);
-    const codeResult = eval(result);
-    console.log(codeResult);
+    try {
+      const codeResult = eval(result);
+      console.log(codeResult);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -30,9 +34,9 @@ export const TransformVariableFlowActionForm = ({ form }: Props) => {
           let value = form.values.value;
           if (value === "" || form.values.variableId !== variable.id) {
             // TODO: Use variable ref instead of current value
-            value = `const variable = ${
-              variable?.value ?? variable?.defaultValue ?? "var value"
-            }\nfunction getValue() {\n  return variable;\n}\ngetValue();`;
+            value = `const variable = /* var_${variable?.id} start */${
+              variable?.value ?? variable?.defaultValue ?? '"var value"'
+            }/* var_${variable?.id} end */\nfunction getValue() {\n  return variable;\n}\ngetValue();`;
           }
 
           form.setValues({

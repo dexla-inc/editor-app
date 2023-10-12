@@ -1,3 +1,5 @@
+import { ComponentToBindInput } from "@/components/ComponentToBindInput";
+import { VariablePicker } from "@/components/VariablePicker";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
@@ -9,13 +11,10 @@ import {
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
 import { BindVariableToComponentAction } from "@/utils/actions";
-import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
-import { ActionIcon, Loader, Stack, TextInput } from "@mantine/core";
+import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconCurrentLocation } from "@tabler/icons-react";
 import { useEffect } from "react";
-import { VariablePicker } from "@/components/VariablePicker";
 
 type Props = {
   id: string;
@@ -88,23 +87,19 @@ export const BindVariableToComponentActionForm = ({ id }: Props) => {
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
-        <TextInput
-          size="xs"
-          label="Component to bind"
-          {...form.getInputProps(`component`)}
-          rightSection={
-            <ActionIcon
-              onClick={() => {
-                setPickingComponentToBindTo({
-                  componentId: component?.id!,
-                  trigger: action.trigger,
-                  bindedId: action.action.component ?? "",
-                });
-              }}
-            >
-              <IconCurrentLocation size={ICON_SIZE} />
-            </ActionIcon>
-          }
+        <ComponentToBindInput
+          onPick={(componentToBind: string) => {
+            form.setFieldValue("component", componentToBind);
+
+            setPickingComponentToBindTo(undefined);
+            setComponentToBind(undefined);
+          }}
+          bindAttributes={{
+            trigger: action.trigger,
+            componentId: component?.id!,
+            bindedId: action.action.component ?? "",
+          }}
+          {...form.getInputProps("component")}
         />
 
         <TextInput

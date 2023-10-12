@@ -1,3 +1,4 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
@@ -17,11 +18,9 @@ import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { useEditorStore } from "@/stores/editor";
 import { Action, BindPlaceDataAction } from "@/utils/actions";
-import { ICON_SIZE } from "@/utils/config";
 import { ApiType } from "@/utils/dashboardTypes";
 import { getAllComponentsByName, getComponentById } from "@/utils/editor";
 import {
-  ActionIcon,
   Box,
   Button,
   Flex,
@@ -29,11 +28,9 @@ import {
   Stack,
   Switch,
   Text,
-  TextInput,
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconCurrentLocation } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import React, { forwardRef, useEffect, useState } from "react";
@@ -293,9 +290,39 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
                   )}
                   {items.map((param) => {
                     if (param.name === "place_id") return null;
+                    const field = `binds.${type}.${param.name}`;
                     return (
                       <Stack key={param.name}>
-                        <TextInput
+                        <ComponentToBindFromInput
+                          index={pickingComponentToBindFrom?.index}
+                          componentId={component?.id!}
+                          bindAttributes={{
+                            trigger: action.trigger,
+                            endpointId: selectedEndpoint.id,
+                            paramType: type,
+                            param: param.name,
+                            bindedId:
+                              form.values.binds?.[type][param.name] ?? "",
+                          }}
+                          onPickComponent={(componentToBind: string) => {
+                            const value = componentToBind.startsWith(
+                              "queryString_pass_",
+                            )
+                              ? componentToBind
+                              : `valueOf_${componentToBind}`;
+                            form.setValues({
+                              ...form.values,
+                              [`binds.${type}.${param.name}`]: value,
+                            });
+                            setComponentToBind(undefined);
+                          }}
+                          onPickVariable={(variable: string) => {
+                            form.setValues({
+                              ...form.values,
+                              [`binds.${type}.${param.name}`]: variable,
+                            });
+                            setComponentToBind(undefined);
+                          }}
                           size="xs"
                           label={param.name}
                           description={`${
@@ -303,30 +330,22 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
                             param.location ? `${param.location} - ` : ""
                           }${param.type}`}
                           type={param.type}
-                          rightSectionWidth="auto"
-                          rightSection={
-                            <Box sx={{ display: "flex" }}>
-                              <ActionIcon
-                                onClick={() => {
-                                  setPickingComponentToBindFrom({
-                                    componentId: component?.id!,
-                                    trigger: action.trigger,
-                                    endpointId: selectedEndpoint.id,
-                                    param: param.name,
-                                    paramType: type,
-                                    bindedId:
-                                      form.values.binds?.[type][param.name] ??
-                                      "",
-                                  });
-                                }}
-                              >
-                                <IconCurrentLocation size={ICON_SIZE} />
-                              </ActionIcon>
-                            </Box>
-                          }
+                          {...(param.name !== "Authorization"
+                            ? // @ts-ignore
+                              { required: param.required }
+                            : {})}
                           autoComplete="off"
                           data-lpignore="true"
                           data-form-type="other"
+                          {...form.getInputProps(field)}
+                          // @ts-ignore
+                          value={form.values[field] ?? undefined}
+                          onChange={(e) => {
+                            form.setValues({
+                              ...form.values,
+                              [field]: e.currentTarget.value,
+                            });
+                          }}
                         />
                       </Stack>
                     );

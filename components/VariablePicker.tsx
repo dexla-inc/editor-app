@@ -1,3 +1,5 @@
+import { JSONSelector } from "@/components/JSONSelector";
+import { listVariables } from "@/requests/variables/queries";
 import { ICON_SIZE } from "@/utils/config";
 import {
   Accordion,
@@ -11,8 +13,6 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCheck, IconDatabase } from "@tabler/icons-react";
-import { JSONSelector } from "@/components/JSONSelector";
-import { listVariables } from "@/requests/variables/queries";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
@@ -79,6 +79,7 @@ export const VariablePicker = (props: Props) => {
                 </Card>
               );
             }
+            const variableValue = (variable.value ?? "").split("_")[1];
 
             return (
               <Accordion.Item key={variable.id} value={variable.id}>
@@ -88,9 +89,10 @@ export const VariablePicker = (props: Props) => {
                 <Accordion.Panel p={0}>
                   <ScrollArea h={250} p="xs">
                     <JSONSelector
-                      data={JSON.parse(
-                        variable.value ?? variable.defaultValue ?? "{}",
-                      )}
+                      data={
+                        variableValue ??
+                        JSON.parse(variable.defaultValue ?? "{}")
+                      }
                       onSelectValue={(selected) => {
                         props.onSelectValue?.(
                           `var_${JSON.stringify({
