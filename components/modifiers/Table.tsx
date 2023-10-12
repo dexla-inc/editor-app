@@ -1,10 +1,9 @@
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
-import { Divider, Stack, Switch, Textarea, TextInput } from "@mantine/core";
+import { Divider, Stack, Switch, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTable } from "@tabler/icons-react";
 import get from "lodash.get";
-import isEmpty from "lodash.isempty";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
 import merge from "lodash.merge";
@@ -25,27 +24,34 @@ export const Modifier = withModifier(({ selectedComponent }) => {
 
   useEffect(() => {
     if (selectedComponent?.id) {
-      const data = pick(selectedComponent.props!, [
+      const {
+        data: dataProp,
+        dataPath,
+        headers,
+        config,
+        repeatedIndex,
+      } = pick(selectedComponent.props!, [
         "data",
-        "exampleData",
         "dataPath",
         "headers",
         "config",
+        "repeatedIndex",
       ]);
 
-      let _data = isEmpty(data.exampleData?.value ?? data.exampleData)
-        ? data
-        : data.exampleData?.value ?? data.exampleData;
+      let data = dataProp?.value;
 
-      if (data.dataPath) {
-        _data = get(_data, data.dataPath.replace("[0]", ""));
+      if (typeof repeatedIndex !== "undefined" && dataPath) {
+        const path = dataPath.replace("[0]", `[${repeatedIndex}]`);
+        data = get(dataProp?.base ?? {}, path) ?? data;
+      } else if (dataPath) {
+        data = get(dataProp?.base, dataPath.replace("[0]", ""));
       }
 
       form.setValues(
         merge({}, initialValues, {
-          data: JSON.stringify(_data, null, 2),
-          headers: data.headers,
-          config: data.config,
+          data: JSON.stringify(data, null, 2),
+          headers: headers,
+          config: config,
         }),
       );
     }
@@ -98,19 +104,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             const config = {
               ...form.values.config,
               select: e.currentTarget.checked,
-            };
-            form.setFieldValue("config", config);
-            debouncedTreeComponentPropsUpdate("config", config);
-          }}
-        />
-        <Switch
-          size="xs"
-          label="Filter"
-          checked={get(form.values.config, "filter", false)}
-          onChange={(e) => {
-            const config = {
-              ...form.values.config,
-              filter: e.currentTarget.checked,
             };
             form.setFieldValue("config", config);
             debouncedTreeComponentPropsUpdate("config", config);
