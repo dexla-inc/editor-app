@@ -105,8 +105,6 @@ export const APICallFlowActionForm = ({
   useAuthStore((state) => state.refreshAccessToken);
   const accessToken = useAuthStore((state) => state.getAccessToken);
 
-  const showLoaderInputProps = form.getInputProps("showLoader");
-
   useEffect(() => {
     if (page?.pageState) {
       setTree(JSON.parse(decodeSchema(page.pageState)));
@@ -213,18 +211,18 @@ export const APICallFlowActionForm = ({
                     <Stack key={param.name}>
                       <ComponentToBindFromInput
                         onPickComponent={(componentToBind: string) => {
-                          form.setFieldValue(
-                            `binds.${type}.${param.name}`,
-                            `valueOf_${componentToBind}`,
-                          );
+                          form.setValues({
+                            ...form.values,
+                            [field]: `valueOf_${componentToBind}`,
+                          });
                           setPickingComponentToBindTo(undefined);
                           setComponentToBind(undefined);
                         }}
                         onPickVariable={(variable: string) => {
-                          form.setFieldValue(
-                            `binds.${type}.${param.name}`,
-                            variable,
-                          );
+                          form.setValues({
+                            ...form.values,
+                            [field]: variable,
+                          });
                         }}
                         size="xs"
                         label={param.name}
@@ -245,7 +243,10 @@ export const APICallFlowActionForm = ({
                         // @ts-ignore
                         value={form.values[field] ?? undefined}
                         onChange={(e) => {
-                          form.setFieldValue(field, e.currentTarget.value);
+                          form.setValues({
+                            ...form.values,
+                            [field]: e.currentTarget.value,
+                          });
                         }}
                       />
                     </Stack>

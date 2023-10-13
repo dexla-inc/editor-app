@@ -1,6 +1,6 @@
 import { useFlowStore } from "@/stores/flow";
 import { OpenToastAction } from "@/utils/actions";
-import { Button, Stack, Title } from "@mantine/core";
+import { Button, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { ApiType } from "@/utils/dashboardTypes";
 import React from "react";
@@ -36,9 +36,6 @@ export const OpenToastFlowActionForm = ({ form }: Props) => {
       ].map(({ title, name }) => {
         return (
           <React.Fragment key={title}>
-            <Title order={5} mt="md">
-              {title}
-            </Title>
             <ComponentToBindFromInput
               onPickComponent={(componentToBind: string) => {
                 form.setFieldValue(name, `valueOf_${componentToBind}`);

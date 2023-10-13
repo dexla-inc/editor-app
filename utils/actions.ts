@@ -614,6 +614,10 @@ export const setVariableAction = async ({
 }: SetVariableActionParams) => {
   let value = action.value || event.toString();
 
+  if (value.startsWith("valueOf")) {
+    value = getElementValue(value, useEditorStore.getState().iframeWindow);
+  }
+
   const projectId = useEditorStore.getState().currentProjectId;
   const variable = JSON.parse(action.variable);
   updateVariable(projectId!, variable.id, { ...variable, value });
@@ -879,29 +883,51 @@ export const apiCallAction = async ({
     const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
     const url =
       keys.length > 0
-        ? keys.reduce((url: string, key: string) => {
-            key.startsWith("type_Key_")
-              ? (key = key.split(`type_key_`)[1])
-              : key;
-            // @ts-ignore
-            let value = action.binds?.parameter[key] as string;
+        ? await keys.reduce(
+            async (
+              urlPromise: Promise<string>,
+              key: string,
+            ): Promise<string> => {
+              const url = await urlPromise;
+              key.startsWith("type_Key_")
+                ? (key = key.split(`type_key_`)[1])
+                : key;
+              // @ts-ignore
+              let value = action.binds?.parameter[key] as string;
 
-            if (value.startsWith(`valueOf_`)) {
-              value = getElementValue(value, iframeWindow);
-            }
+              if (value.startsWith(`valueOf_`)) {
+                value = getElementValue(value, iframeWindow);
+              }
 
-            if (value?.startsWith(`queryString_pass_`)) {
-              value = getQueryElementValue(value, iframeWindow);
-            }
+              if (value.startsWith(`var_`)) {
+                const variable = value.split(`var_`)[1];
+                let _variable: string = variable;
+                if (variable.startsWith("{") && variable.endsWith("}")) {
+                  _variable = JSON.parse(variable);
+                }
 
-            if (!url.includes(`{${key}}`)) {
-              const _url = new URL(url);
-              _url.searchParams.append(key, value);
-              return _url.toString();
-            } else {
-              return url.replace(`{${key}}`, value);
-            }
-          }, apiUrl)
+                const isVariableObject = typeof _variable === "object";
+                const varResponse = await getVariable(
+                  projectId,
+                  isVariableObject ? (_variable as any).id : _variable,
+                );
+                value = varResponse.value ?? varResponse.defaultValue ?? "";
+              }
+
+              if (value?.startsWith(`queryString_pass_`)) {
+                value = getQueryElementValue(value, iframeWindow);
+              }
+
+              if (!url.includes(`{${key}}`)) {
+                const _url = new URL(url);
+                _url.searchParams.append(key, value);
+                return Promise.resolve(_url.toString());
+              } else {
+                return Promise.resolve(url.replace(`{${key}}`, value));
+              }
+            },
+            Promise.resolve(apiUrl),
+          )
         : apiUrl;
 
     const body =

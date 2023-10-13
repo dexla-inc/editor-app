@@ -9,7 +9,7 @@ import {
   TextInputProps,
 } from "@mantine/core";
 import debounce from "lodash.debounce";
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -23,9 +23,13 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
   const { name: iconName } = icon && icon!.props!;
   const [inputValue, setInputValue] = useState(value);
 
-  const debouncedOnChange = debounce((e) => {
-    triggers?.onChange(e);
-  }, 400);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedOnChange = useCallback(
+    debounce((e) => {
+      triggers?.onChange(e);
+    }, 400),
+    [debounce],
+  );
 
   useEffect(() => {
     setInputValue(value);
