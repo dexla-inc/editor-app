@@ -1,7 +1,6 @@
-import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
 import { isSame } from "@/utils/componentComparison";
 import { Component, updateInputFieldsWithFormData } from "@/utils/editor";
-import { FlexProps, Flex as MantineFlex } from "@mantine/core";
+import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { FormEvent, memo } from "react";
 
@@ -22,15 +21,6 @@ const FormComponent = ({ renderTree, component, ...props }: Props) => {
     return triggers.onSubmit(e);
   };
 
-  if (loading) {
-    return (
-      <MantineSkeleton
-        height={componentProps.style.height ?? 500}
-        radius={10}
-      />
-    );
-  }
-
   const onChangeField = (e: any) => {
     form.setFieldValue(e.target.name, e.target.value);
   };
@@ -43,6 +33,7 @@ const FormComponent = ({ renderTree, component, ...props }: Props) => {
       autoComplete={props.isPreviewMode ? "on" : "off"}
       onSubmit={onSubmitCustom}
       {...otherTriggers}
+      pos="relative"
     >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => {
@@ -53,6 +44,7 @@ const FormComponent = ({ renderTree, component, ...props }: Props) => {
             });
           })
         : children}
+      <LoadingOverlay visible={loading} zIndex={1000} radius="sm" />
     </MantineFlex>
   );
 };

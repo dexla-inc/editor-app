@@ -48,10 +48,15 @@ export const getDataSourceEndpoints = async (
     limit,
   });
 
-  const response = (await getWithoutAuth<PagingResponse<Endpoint>>(
-    url,
-    {},
-  )) as PagingResponse<Endpoint>;
+  const response = !authOnly
+    ? ((await getWithoutAuth<PagingResponse<Endpoint>>(
+        url,
+        {},
+      )) as PagingResponse<Endpoint>)
+    : ((await get<PagingResponse<Endpoint>>(
+        url,
+        {},
+      )) as PagingResponse<Endpoint>);
 
   return response;
 };

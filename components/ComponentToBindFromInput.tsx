@@ -7,30 +7,33 @@ import { IconCurrentLocation } from "@tabler/icons-react";
 
 type Props = TextInputProps & {
   componentId?: string;
+  bindAttributes?: Record<string, string>;
+  index?: number;
   onPickComponent?: (value: string) => void;
   onPickVariable?: (value: string) => void;
 };
 
 export const ComponentToBindFromInput = ({
   componentId,
+  index,
   onPickComponent,
   onPickVariable,
+  bindAttributes,
   placeholder = "",
   label = "Component to bind",
   ...rest
 }: Props) => {
-  const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo,
-  );
-  const setHighlightedComponentId = useEditorStore(
-    (state) => state.setHighlightedComponentId,
-  );
+  const { setPickingComponentToBindFrom, setHighlightedComponentId } =
+    useEditorStore();
 
   const onBindComponent = () => {
-    setPickingComponentToBindTo({
-      componentId: componentId || "",
-      onPick: onPickComponent,
-    });
+    if (componentId) {
+      setPickingComponentToBindFrom({
+        componentId,
+        ...bindAttributes,
+        onPick: onPickComponent,
+      });
+    }
   };
 
   return (
@@ -46,16 +49,14 @@ export const ComponentToBindFromInput = ({
       }}
       rightSection={
         <Group noWrap spacing={0}>
-          {onPickVariable && <VariablePicker onSelectValue={onPickVariable} />}
-          {onPickComponent && (
-            <>
-              <ComponentToBindActionsPopover onPick={onPickComponent} />
-
-              <ActionIcon onClick={onBindComponent} size="xs">
-                <IconCurrentLocation size={ICON_SIZE} />
-              </ActionIcon>
-            </>
-          )}
+          <VariablePicker onSelectValue={onPickVariable} />
+          <ComponentToBindActionsPopover
+            inputIndex={index}
+            onPick={onPickComponent}
+          />
+          <ActionIcon onClick={onBindComponent} size="xs">
+            <IconCurrentLocation size={ICON_SIZE} />
+          </ActionIcon>
         </Group>
       }
       styles={{

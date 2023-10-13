@@ -34,6 +34,17 @@ export const VariablePicker = (props: Props) => {
     enabled: !!projectId && !!pageId,
   });
 
+  function isStringifiedObject(str: any) {
+    try {
+      const parsed = JSON.parse(str);
+      return (
+        parsed !== null && typeof parsed === "object" && !Array.isArray(parsed)
+      );
+    } catch (e) {
+      return false;
+    }
+  }
+
   return (
     <Popover
       position="left"
@@ -79,6 +90,9 @@ export const VariablePicker = (props: Props) => {
                 </Card>
               );
             }
+            const revisedValue = isStringifiedObject(variable.value)
+              ? JSON.parse(variable.value ?? variable.defaultValue ?? "{}")
+              : variable.value ?? variable.defaultValue ?? {};
 
             return (
               <Accordion.Item key={variable.id} value={variable.id}>
@@ -88,9 +102,7 @@ export const VariablePicker = (props: Props) => {
                 <Accordion.Panel p={0}>
                   <ScrollArea h={250} p="xs">
                     <JSONSelector
-                      data={JSON.parse(
-                        variable.value ?? variable.defaultValue ?? "{}",
-                      )}
+                      data={revisedValue}
                       onSelectValue={(selected) => {
                         props.onSelectValue?.(
                           `var_${JSON.stringify({

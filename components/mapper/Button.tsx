@@ -47,6 +47,7 @@ const ButtonComponent = ({
     <MantineButton
       {...(leftIcon && { leftIcon: <Icon name={leftIcon} /> })}
       {...(rightIcon && { rightIcon: <Icon name={rightIcon} /> })}
+      loading={loading}
       {...defaultTriggers}
       style={{
         ...style,
