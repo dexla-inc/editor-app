@@ -29,6 +29,12 @@ const inter = Inter({
   display: "swap",
 });
 
+declare global {
+  interface Window {
+    dataLayer: Record<string, any>[];
+  }
+}
+
 const GTM_ID = "GTM-P3DVFXMS";
 
 export const theme: MantineTheme = {
@@ -59,6 +65,13 @@ const AuthProvider = ({
       };
 
       TagManager.initialize(tagManagerArgs);
+
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: "pageview",
+        page: window.location.pathname,
+        title: document.title,
+      });
     }
   }, [isClient]);
 
