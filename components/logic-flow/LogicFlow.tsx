@@ -1,11 +1,11 @@
 // The comment below force next to refresh the editor state every time we change something in the code
 // @refresh reset
-import "reactflow/dist/style.css";
-import React, { MutableRefObject, useCallback } from "react";
-import ReactFlow, { Background, Controls, Node } from "reactflow";
 import { FlowState, useFlowStore } from "@/stores/flow";
-import { nanoid } from "nanoid";
 import { nodes as nodeTypes } from "@/utils/logicFlows";
+import { nanoid } from "nanoid";
+import { MutableRefObject, useCallback } from "react";
+import ReactFlow, { Background, Controls, Node } from "reactflow";
+import "reactflow/dist/style.css";
 
 const selector = (state: FlowState) => ({
   nodes: state.nodes,
@@ -102,6 +102,7 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
       onDrop={onDrop}
       nodeTypes={nodeTypes}
       fitView
+      deleteKeyCode={["Backspace", "Delete"]}
     >
       <Controls showInteractive={false} />
       <Background />
