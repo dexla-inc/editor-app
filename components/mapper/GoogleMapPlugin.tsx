@@ -1,5 +1,5 @@
-import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
 import { MarkerItem, Options } from "@/components/modifiers/GoogleMap";
+import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { Component } from "@/utils/editor";
 import { BoxProps, Text } from "@mantine/core";
 import {
@@ -101,7 +101,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
   }
 
   if (loading) {
-    return <MantineSkeleton height={style.height ?? 500} />;
+    return <MantineSkeleton height={500} />;
   }
 
   return (
