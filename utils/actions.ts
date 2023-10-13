@@ -898,18 +898,8 @@ const getVariablesValue = async (
       value = getQueryElementValue(key, iframeWindow);
     }
 
-    try {
-      if (key.startsWith(`var_`)) {
-        const variableResponse = await getVariable(
-          projectId,
-          key.split("var_")[1],
-        );
-
-        value = variableResponse.value ?? "";
-      }
-    } catch (e) {
-      console.log("get variable error");
-      return Promise.resolve(result);
+    if (key.startsWith(`var_`)) {
+      value = (await getVariableValueFromVariableId(key)) as string;
     }
 
     if (value) {
