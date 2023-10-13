@@ -621,7 +621,7 @@ export const setVariableAction = async ({
 
   const projectId = useEditorStore.getState().currentProjectId;
   const variable = JSON.parse(action.variable);
-  updateVariable(projectId!, variable.id, { ...variable, value });
+  await updateVariable(projectId!, variable.id, { ...variable, value });
 };
 
 export const triggerLogicFlowAction = (
@@ -948,7 +948,7 @@ export const apiCallAction = async ({
       router,
       merge(action.binds?.body ?? {}, action.binds?.parameter ?? {}),
     );
-    console.log({ variableValues });
+
     const url =
       keys.length > 0
         ? keys.reduce((url: string, key: string) => {
