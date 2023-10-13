@@ -40,7 +40,7 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
 
   useEffect(() => {
     const sortingString = sorting
-      .map((item) => (!item.desc ? "-" : "") + item.id)
+      .map((item) => (!item.desc ? "" : "-") + item.id)
       .reverse()
       .join(",");
 
