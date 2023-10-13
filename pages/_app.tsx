@@ -65,13 +65,6 @@ const AuthProvider = ({
       };
 
       TagManager.initialize(tagManagerArgs);
-
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({
-        event: "pageview",
-        page: window.location.pathname,
-        title: document.title,
-      });
     }
   }, [isClient]);
 

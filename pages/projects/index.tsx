@@ -15,7 +15,7 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
-import { useAuthInfo } from "@propelauth/react";
+import { OrgMemberInfo, useAuthInfo } from "@propelauth/react";
 import { IconSearch, IconSparkles } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import Link from "next/link";
@@ -46,11 +46,6 @@ export default function Projects() {
     const result = await getProjects(search);
     setProjects(result.results);
   }, [search]);
-
-  useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
-
   const handleDeleteProject = (id: string) => {
     setProjects((prevProjects) =>
       prevProjects.filter((project) => project.id !== id),
@@ -59,6 +54,39 @@ export default function Projects() {
 
   const ownedProjects = projects.filter((project) => project.isOwner);
   const sharedProjects = projects.filter((project) => !project.isOwner);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    const org = authInfo.orgHelper?.getOrgs()[0] || ({} as OrgMemberInfo);
+
+    const intercomSettings = {
+      app_id: "co2c3gri",
+      email: user.email,
+      user_id: user.userId,
+      name: user.firstName + " " + user.lastName,
+      created_at: user.createdAt,
+      avatar: {
+        type: "avatar",
+        image_url: user.pictureUrl,
+      },
+      company: {
+        id: org.orgId,
+        name: org.orgName,
+        plan: "free",
+        monthly_spend: 0,
+      },
+    };
+
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(intercomSettings);
+  }, [user, authInfo]);
 
   return (
     <DashboardShell user={user}>
