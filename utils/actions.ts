@@ -72,6 +72,7 @@ import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
+import merge from "lodash.merge";
 
 const triggers = [
   "onClick",
@@ -864,7 +865,7 @@ function getElementValue(value: string, iframeWindow: any): string {
     );
 
     if (component && component.props) {
-      return component.props.value.toString() ?? "";
+      return component?.props?.value?.toString() ?? "";
     }
   }
 
@@ -878,6 +879,48 @@ function getQueryElementValue(value: string, iframeWindow: any): string {
   return el?.value ?? "";
 }
 
+const getVariablesValue = async (
+  router: Router,
+  objs: Record<string, string>,
+) => {
+  const projectId = router.query.id as string;
+
+  return await Object.values(objs).reduce(async (acc, key) => {
+    const result = await acc;
+    let value = "";
+    const iframeWindow = useEditorStore.getState().iframeWindow;
+
+    if (key.startsWith(`valueOf_`)) {
+      value = getElementValue(key, iframeWindow);
+    }
+
+    if (key?.startsWith(`queryString_pass_`)) {
+      value = getQueryElementValue(key, iframeWindow);
+    }
+
+    try {
+      if (key.startsWith(`var_`)) {
+        const variableResponse = await getVariable(
+          projectId,
+          key.split("var_")[1],
+        );
+
+        value = variableResponse.value ?? "";
+      }
+    } catch (e) {
+      console.log("get variable error");
+      return Promise.resolve(result);
+    }
+
+    if (value) {
+      // @ts-ignore
+      result[key] = value;
+    }
+
+    return Promise.resolve(result);
+  }, Promise.resolve({}));
+};
+
 export const apiCallAction = async ({
   actionId,
   action,
@@ -889,7 +932,6 @@ export const apiCallAction = async ({
 }: APICallActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
-  const iframeWindow = useEditorStore.getState().iframeWindow;
   const projectId = router.query.id as string;
   // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
   // Can revisit later and create a cashing layer.
@@ -911,53 +953,36 @@ export const apiCallAction = async ({
     const keys = Object.keys(action.binds?.parameter ?? {});
 
     const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
+
+    const variableValues = await getVariablesValue(
+      router,
+      merge(action.binds?.body ?? {}, action.binds?.parameter ?? {}),
+    );
+    console.log({ variableValues });
     const url =
       keys.length > 0
-        ? await keys.reduce(
-            async (
-              urlPromise: Promise<string>,
-              key: string,
-            ): Promise<string> => {
-              const url = await urlPromise;
-              key.startsWith("type_Key_")
-                ? (key = key.split(`type_key_`)[1])
-                : key;
-              // @ts-ignore
-              let value = action.binds?.parameter[key] as string;
+        ? keys.reduce((url: string, key: string) => {
+            key.startsWith("type_Key_")
+              ? (key = key.split(`type_key_`)[1])
+              : key;
+            // @ts-ignore
+            let value = action.binds?.parameter[key] as string;
 
-              if (value.startsWith(`valueOf_`)) {
-                value = getElementValue(value, iframeWindow);
-              }
+            if (!value) {
+              return url.toString();
+            }
 
-              if (value.startsWith(`var_`)) {
-                const variable = value.split(`var_`)[1];
-                let _variable: string = variable;
-                if (variable.startsWith("{") && variable.endsWith("}")) {
-                  _variable = JSON.parse(variable);
-                }
+            // @ts-ignore
+            value = variableValues[value] ?? "";
 
-                const isVariableObject = typeof _variable === "object";
-                const varResponse = await getVariable(
-                  projectId,
-                  isVariableObject ? (_variable as any).id : _variable,
-                );
-                value = varResponse.value ?? varResponse.defaultValue ?? "";
-              }
-
-              if (value?.startsWith(`queryString_pass_`)) {
-                value = getQueryElementValue(value, iframeWindow);
-              }
-
-              if (!url.includes(`{${key}}`)) {
-                const _url = new URL(url);
-                _url.searchParams.append(key, value);
-                return Promise.resolve(_url.toString());
-              } else {
-                return Promise.resolve(url.replace(`{${key}}`, value));
-              }
-            },
-            Promise.resolve(apiUrl),
-          )
+            if (!url.includes(`{${key}}`)) {
+              const _url = new URL(url);
+              _url.searchParams.append(key, value);
+              return _url.toString();
+            } else {
+              return url.replace(`{${key}}`, value);
+            }
+          }, apiUrl)
         : apiUrl;
 
     const body =
@@ -967,13 +992,12 @@ export const apiCallAction = async ({
               // @ts-ignore
               let value = action.binds.body[key] as string;
 
-              if (value.startsWith(`valueOf_`)) {
-                value = getElementValue(value, iframeWindow);
+              if (!value) {
+                return url.toString();
               }
 
-              if (value?.startsWith(`queryString_pass_`)) {
-                value = getQueryElementValue(value, iframeWindow);
-              }
+              // @ts-ignore
+              value = variableValues[value];
 
               return {
                 ...(body as any),

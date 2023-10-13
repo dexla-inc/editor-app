@@ -7,8 +7,12 @@ import get from "lodash.get";
 import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import startCase from "lodash.startcase";
-import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
-import { memo } from "react";
+import {
+  MantineReactTable,
+  MRT_SortingState,
+  useMantineReactTable,
+} from "mantine-react-table";
+import { memo, useEffect, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -26,8 +30,23 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
     style,
     dataPath,
     repeatedIndex,
+    triggers,
     ...componentProps
   } = component.props as any;
+
+  const { onSort, ...tableTriggers } = triggers ?? {};
+
+  const [sorting, setSorting] = useState<MRT_SortingState>([]);
+
+  useEffect(() => {
+    const sortingString = sorting
+      .map((item) => (!item.desc ? "-" : "") + item.id)
+      .reverse()
+      .join(",");
+
+    onSort && onSort(sortingString);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sorting]);
 
   let data = dataProp?.value;
 
@@ -75,7 +94,11 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
     enableFullScreenToggle: false,
     enableHiding: false,
     enableColumnFilters: false,
-    state: { isLoading: componentProps.loading },
+    state: { isLoading: componentProps.loading, sorting },
+    manualSorting: true,
+    manualPagination: true,
+    isMultiSortEvent: () => true,
+    onSortingChange: setSorting,
   });
 
   if (componentProps.loading) {
@@ -87,6 +110,7 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
       <MantineReactTable
         {...props}
         {...componentProps}
+        {...tableTriggers}
         style={{ ...style, width: "100%" }}
         table={table}
       />
