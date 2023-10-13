@@ -45,14 +45,12 @@ const TextComponent = ({ renderTree, component, ...props }: Props) => {
   };
 
   let value = isPreviewMode
-    ? data?.value ?? hideIfDataIsEmpty
-      ? ""
-      : children
+    ? data?.value ?? (hideIfDataIsEmpty ? "" : children)
     : children;
 
   if (isPreviewMode && typeof repeatedIndex !== "undefined" && dataPath) {
     const path = dataPath.replaceAll("[0]", `[${repeatedIndex}]`);
-    value = get(data?.base ?? {}, path) ?? hideIfDataIsEmpty ? "" : children;
+    value = get(data?.base ?? {}, path) ?? (hideIfDataIsEmpty ? "" : children);
   }
 
   return (
@@ -65,6 +63,7 @@ const TextComponent = ({ renderTree, component, ...props }: Props) => {
       {...componentProps}
       {...triggers}
       suppressContentEditableWarning
+      key={`${component.id}-${repeatedIndex}`}
     >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))

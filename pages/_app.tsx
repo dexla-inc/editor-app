@@ -19,6 +19,7 @@ import { Inter } from "next/font/google";
 import Head from "next/head";
 import Script from "next/script";
 import { Fragment, PropsWithChildren, useEffect, useState } from "react";
+import TagManager from "react-gtm-module";
 import { ReactFlowProvider } from "reactflow";
 
 // If loading a variable font, you don't need to specify the font weight
@@ -27,6 +28,14 @@ const inter = Inter({
   variable: "--font-inter",
   display: "swap",
 });
+
+declare global {
+  interface Window {
+    dataLayer: Record<string, any>[];
+  }
+}
+
+const GTM_ID = "GTM-P3DVFXMS";
 
 export const theme: MantineTheme = {
   ...DEFAULT_THEME,
@@ -49,7 +58,15 @@ const AuthProvider = ({
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
+
+    if (isClient) {
+      const tagManagerArgs = {
+        gtmId: GTM_ID,
+      };
+
+      TagManager.initialize(tagManagerArgs);
+    }
+  }, [isClient]);
 
   if (!isClient) return null;
 
@@ -106,65 +123,72 @@ export default function App(props: AppProps) {
           <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         </Head>
         {/* Google Tag Manager */}
-        <Script id="google-analytics">
-          {`
+        {!isLive && process.env.NODE_ENV !== "development" && (
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','GTM-P3DVFXMS');
+            })(window,document,'script','dataLayer','${GTM_ID}');
         `}
-        </Script>
-        <main className={inter.variable}>
-          <noscript>
-            <iframe
-              src="https://www.googletagmanager.com/ns.html?id=GTM-P3DVFXMS"
-              height="0"
-              width="0"
-              style={{ display: "none", visibility: "hidden" }}
-            ></iframe>
-          </noscript>
-          <QueryClientProvider client={queryClient}>
-            <Hydrate state={pageProps.dehydratedState}>
-              <Notifications />
-              <Global
-                styles={{
-                  "*, *::before, *::after": {
-                    boxSizing: "border-box",
-                  },
-
-                  body: {
-                    margin: 0,
-                    padding: 0,
-                    ...theme.fn.fontStyles(),
-                    lineHeight: theme.lineHeight,
-                    maxHeight: "100vh",
-                    minHeight: "100vh",
-                    background: "white",
-                    // For WebKit browsers (e.g., Chrome, Safari)
-                    "::-webkit-scrollbar": {
-                      width: isLive && "0px",
-                      height: isLive && "0px",
+          </Script>
+        )}
+        {/* End Google Tag Manager */}
+        <body>
+          {!isLive && process.env.NODE_ENV !== "development" && (
+            <noscript>
+              <iframe
+                src={`https://www.googletagmanager.com/ns.html?id='${GTM_ID}'`}
+                height="0"
+                width="0"
+                style={{ display: "none", visibility: "hidden" }}
+              ></iframe>
+            </noscript>
+          )}
+          <main className={inter.variable}>
+            <QueryClientProvider client={queryClient}>
+              <Hydrate state={pageProps.dehydratedState}>
+                <Notifications />
+                <Global
+                  styles={{
+                    "*, *::before, *::after": {
+                      boxSizing: "border-box",
                     },
 
-                    // For Firefox
-                    scrollbarWidth: isLive && "none",
+                    body: {
+                      margin: 0,
+                      padding: 0,
+                      ...theme.fn.fontStyles(),
+                      lineHeight: theme.lineHeight,
+                      maxHeight: "100vh",
+                      minHeight: "100vh",
+                      background: "white",
+                      // For WebKit browsers (e.g., Chrome, Safari)
+                      "::-webkit-scrollbar": {
+                        width: isLive && "0px",
+                        height: isLive && "0px",
+                      },
 
-                    // For IE and Edge
-                    msOverflowStyle: isLive && "none",
-                  },
+                      // For Firefox
+                      scrollbarWidth: isLive && "none",
 
-                  html: {
-                    maxHeight: "-webkit-fill-available",
-                  },
-                }}
-              />
-              <ReactFlowProvider>
-                <Component {...pageProps} />
-              </ReactFlowProvider>
-            </Hydrate>
-          </QueryClientProvider>
-        </main>
+                      // For IE and Edge
+                      msOverflowStyle: isLive && "none",
+                    },
+
+                    html: {
+                      maxHeight: "-webkit-fill-available",
+                    },
+                  }}
+                />
+                <ReactFlowProvider>
+                  <Component {...pageProps} />
+                </ReactFlowProvider>
+              </Hydrate>
+            </QueryClientProvider>
+          </main>
+        </body>
       </AuthProvider>
     </MantineProvider>
   );

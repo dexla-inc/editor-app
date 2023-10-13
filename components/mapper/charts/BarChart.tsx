@@ -1,5 +1,5 @@
 import { Chart } from "@/components/mapper/charts/Chart";
-import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
+import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { Component } from "@/utils/editor";
 import { Props as ApexChartsProps } from "react-apexcharts";
 

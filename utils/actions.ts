@@ -744,7 +744,19 @@ export const loginAction = async ({
       ...(!!body ? { body: JSON.stringify(body) } : {}),
     });
 
-    if (!response.status.toString().startsWith("20")) {
+    if (!response.status.toString().startsWith("20") || !response.ok) {
+      const responseJson = await response.json();
+      const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}-error`;
+      const varValue = JSON.stringify(responseJson);
+
+      await createVariable(projectId, {
+        name: varName,
+        value: varValue,
+        type: "OBJECT" as FrontEndTypes,
+        isGlobal: false,
+        pageId: router.query.page as string,
+        defaultValue: varValue,
+      });
       throw new Error(response.statusText);
     }
 
@@ -776,9 +788,26 @@ export const loginAction = async ({
       });
     }
 
+    if (onError && onError.sequentialTo === actionId) {
+      const actions = component.actions ?? [];
+      const onErrorAction: Action = actions.find(
+        (action: Action) => action.trigger === "onError",
+      )!;
+      // @ts-ignore
+      const onErrorActionMapped = actionMapper[onError.action.name];
+      onErrorActionMapped.action({
+        // @ts-ignore
+        action: onErrorAction.action,
+        router,
+        ...rest,
+        data: { value: responseJson },
+      });
+    }
+
     const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}`;
     const varValue = JSON.stringify(responseJson);
-    createVariable(projectId, {
+
+    await createVariable(projectId, {
       name: varName,
       value: varValue,
       type: "OBJECT" as FrontEndTypes,
@@ -803,9 +832,10 @@ export const loginAction = async ({
       });
     }
 
-    const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}-error`;
+    const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}-catchError`;
     const varValue = JSON.stringify(error);
-    createVariable(projectId, {
+
+    await createVariable(projectId, {
       name: varName,
       value: varValue,
       type: "OBJECT" as FrontEndTypes,

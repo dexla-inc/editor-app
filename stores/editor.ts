@@ -4,7 +4,6 @@ import { PageResponse } from "@/requests/pages/types";
 import { Logo } from "@/requests/themes/types";
 import { Action } from "@/utils/actions";
 import { encodeSchema } from "@/utils/compression";
-import { ApiType } from "@/utils/dashboardTypes";
 import {
   Component,
   EditorTree,

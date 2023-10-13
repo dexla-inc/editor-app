@@ -7,24 +7,24 @@ import { IconCurrentLocation } from "@tabler/icons-react";
 
 type Props = TextInputProps & {
   componentId?: string;
+  bindAttributes?: Record<string, string>;
+  index?: number;
   onPickComponent?: (value: string) => void;
   onPickVariable?: (value: string) => void;
 };
 
 export const ComponentToBindFromInput = ({
   componentId,
+  index,
   onPickComponent,
   onPickVariable,
+  bindAttributes,
   placeholder = "",
   label = "Component to bind",
   ...rest
 }: Props) => {
-  const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo,
-  );
-  const setHighlightedComponentId = useEditorStore(
-    (state) => state.setHighlightedComponentId,
-  );
+  const { setPickingComponentToBindTo, setHighlightedComponentId } =
+    useEditorStore();
 
   const onBindComponent = () => {
     setPickingComponentToBindTo({
