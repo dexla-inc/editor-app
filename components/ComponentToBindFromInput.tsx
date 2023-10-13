@@ -23,17 +23,14 @@ export const ComponentToBindFromInput = ({
   label = "Component to bind",
   ...rest
 }: Props) => {
-  const { setPickingComponentToBindFrom, setHighlightedComponentId } =
+  const { setPickingComponentToBindTo, setHighlightedComponentId } =
     useEditorStore();
 
   const onBindComponent = () => {
-    if (componentId) {
-      setPickingComponentToBindFrom({
-        componentId,
-        ...bindAttributes,
-        onPick: onPickComponent,
-      });
-    }
+    setPickingComponentToBindTo({
+      componentId: componentId || "",
+      onPick: onPickComponent,
+    });
   };
 
   return (
@@ -49,14 +46,16 @@ export const ComponentToBindFromInput = ({
       }}
       rightSection={
         <Group noWrap spacing={0}>
-          <VariablePicker onSelectValue={onPickVariable} />
-          <ComponentToBindActionsPopover
-            inputIndex={index}
-            onPick={onPickComponent}
-          />
-          <ActionIcon onClick={onBindComponent} size="xs">
-            <IconCurrentLocation size={ICON_SIZE} />
-          </ActionIcon>
+          {onPickVariable && <VariablePicker onSelectValue={onPickVariable} />}
+          {onPickComponent && (
+            <>
+              <ComponentToBindActionsPopover onPick={onPickComponent} />
+
+              <ActionIcon onClick={onBindComponent} size="xs">
+                <IconCurrentLocation size={ICON_SIZE} />
+              </ActionIcon>
+            </>
+          )}
         </Group>
       }
       styles={{
