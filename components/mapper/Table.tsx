@@ -1,14 +1,14 @@
-import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
+import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Flex, TableProps } from "@mantine/core";
 import get from "lodash.get";
 import isEmpty from "lodash.isempty";
+import merge from "lodash.merge";
 import startCase from "lodash.startcase";
 import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
 import { memo } from "react";
-import merge from "lodash.merge";
 
 type Props = {
   renderTree: (component: Component) => any;

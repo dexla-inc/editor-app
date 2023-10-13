@@ -1,4 +1,3 @@
-import { MantineSkeleton } from "@/components/mapper/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { componentMapper } from "@/utils/componentMapper";
@@ -65,9 +64,6 @@ const PopOverComponent = ({
     ? opened
     : selectedComponentId === component.id ||
       checkIfIsChild(component, selectedComponentId as string);
-
-  if (loading)
-    <MantineSkeleton height={style.height ?? 700} width={style.width ?? 500} />;
 
   return (
     <MantinePopOver
