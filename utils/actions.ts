@@ -613,11 +613,6 @@ export const setVariableAction = async ({
   action,
   event,
 }: SetVariableActionParams) => {
-  // if (!action || !event) {
-  //   console.error("action or event is undefined in setVariableAction");
-  //   return;
-  // }
-
   let value = action.value || event.toString();
 
   if (value.startsWith("valueOf")) {

@@ -34,9 +34,10 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
     ...componentProps
   } = component.props as any;
 
-  const { onSort, ...tableTriggers } = triggers ?? {};
+  const { onSort, onRowSelect, ...tableTriggers } = triggers ?? {};
 
   const [sorting, setSorting] = useState<MRT_SortingState>([]);
+  const [rowsSelected, setRowsSelected] = useState<any>([]);
 
   useEffect(() => {
     const sortingString = sorting
@@ -47,6 +48,11 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
     onSort && onSort(sortingString);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sorting]);
+
+  useEffect(() => {
+    onRowSelect && onRowSelect(Object.keys(rowsSelected));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rowsSelected]);
 
   let data = dataProp?.value;
 
@@ -94,11 +100,16 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
     enableFullScreenToggle: false,
     enableHiding: false,
     enableColumnFilters: false,
-    state: { isLoading: componentProps.loading, sorting },
+    state: {
+      isLoading: componentProps.loading,
+      sorting,
+      rowSelection: rowsSelected,
+    },
     manualSorting: true,
     manualPagination: true,
     isMultiSortEvent: () => true,
     onSortingChange: setSorting,
+    onRowSelectionChange: setRowsSelected,
   });
 
   if (componentProps.loading) {
