@@ -35,11 +35,16 @@ export const TestUserLogin = ({
   useEffect(() => {
     const fetchDataSourceAuthConfig = async () => {
       const config = await getDataSourceAuth(projectId, dataSourceId ?? "");
+
       setDataSourceAuthConfig(config);
     };
 
     fetchDataSourceAuthConfig();
   }, [projectId, dataSourceId]);
+
+  useEffect(() => {
+    console.log(dataSourceAuthConfig);
+  }, [dataSourceAuthConfig]);
 
   const handleLoginClick = async () => {
     const loginUrl = dataSourceAuthConfig?.accessTokenUrl ?? "";
@@ -76,6 +81,12 @@ export const TestUserLogin = ({
   return (
     <Stack spacing="xs" py="xl">
       <Title order={4}>Test Account Login</Title>
+      {!dataSourceAuthConfig?.accessTokenUrl && (
+        <ErrorAlert
+          title="Set up your login URL"
+          text="You need to set up your login URL in the data source settings before you can test your login."
+        />
+      )}
       {requestBody?.map((parameter) => (
         <TextInput
           key={parameter.name}

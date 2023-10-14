@@ -55,17 +55,8 @@ const AuthProvider = ({
   isLive,
 }: PropsWithChildren & { isLive: boolean }) => {
   const [isClient, setIsClient] = useState(false);
-
   useEffect(() => {
     setIsClient(true);
-
-    if (isClient) {
-      const tagManagerArgs = {
-        gtmId: GTM_ID,
-      };
-
-      TagManager.initialize(tagManagerArgs);
-    }
   }, [isClient]);
 
   if (!isClient) return null;
@@ -94,6 +85,23 @@ const AuthProvider = ({
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const isLive = useCheckIfIsLive();
+  const [loadTagManager, setLoadTagManager] = useState(false);
+
+  useEffect(() => {
+    console.log("loadTagManager", loadTagManager);
+
+    setLoadTagManager(!isLive && process.env.NODE_ENV !== "development");
+
+    if (loadTagManager) {
+      console.log("Initializing GTM");
+      const tagManagerArgs = {
+        gtmId: GTM_ID,
+      };
+
+      TagManager.initialize(tagManagerArgs);
+    }
+  }, [loadTagManager, isLive]);
+
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -123,7 +131,7 @@ export default function App(props: AppProps) {
           <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         </Head>
         {/* Google Tag Manager */}
-        {!isLive && process.env.NODE_ENV !== "development" && (
+        {loadTagManager && (
           <Script id="google-analytics" strategy="afterInteractive">
             {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -136,7 +144,7 @@ export default function App(props: AppProps) {
         )}
         {/* End Google Tag Manager */}
         <body>
-          {!isLive && process.env.NODE_ENV !== "development" && (
+          {loadTagManager && (
             <noscript>
               <iframe
                 src={`https://www.googletagmanager.com/ns.html?id='${GTM_ID}'`}

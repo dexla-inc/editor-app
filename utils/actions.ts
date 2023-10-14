@@ -70,9 +70,9 @@ import { flattenKeys, flattenKeysWithRoot } from "@/utils/flattenKeys";
 import { executeFlow } from "@/utils/logicFlows";
 import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
+import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
-import merge from "lodash.merge";
 
 const triggers = [
   "onClick",
@@ -613,6 +613,11 @@ export const setVariableAction = async ({
   action,
   event,
 }: SetVariableActionParams) => {
+  // if (!action || !event) {
+  //   console.error("action or event is undefined in setVariableAction");
+  //   return;
+  // }
+
   let value = action.value || event.toString();
 
   if (value.startsWith("valueOf")) {
@@ -648,207 +653,6 @@ export const changeStateAction = ({
   });
 };
 
-export type APICallActionParams = ActionParams & {
-  action: APICallAction;
-};
-
-export type LoginActionParams = ActionParams & {
-  action: LoginAction;
-};
-
-let cachedEndpoints: Endpoint[] | undefined;
-
-export const loginAction = async ({
-  actionId,
-  action,
-  router,
-  onSuccess,
-  onError,
-  component,
-  ...rest
-}: LoginActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-
-  const iframeWindow = useEditorStore.getState().iframeWindow;
-  const projectId = router.query.id as string;
-
-  // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
-  // Can revisit later and create a cashing layer.
-  if (!cachedEndpoints) {
-    const { results } = await getDataSourceEndpoints(projectId);
-    cachedEndpoints = results;
-  }
-
-  const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
-
-  try {
-    updateTreeComponent(component.id!, { loading: true }, false);
-
-    const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
-    const keys = Object.keys(action.binds?.parameter ?? {});
-
-    const url =
-      keys.length > 0
-        ? keys.reduce((url: string, key: string) => {
-            key.startsWith("type_key_")
-              ? (key = key.split(`type_Key_`)[1])
-              : key;
-            let value = action.binds?.parameter[key] as string;
-
-            if (value?.startsWith(`valueOf_`)) {
-              const el = iframeWindow?.document.querySelector(`
-          input#${value.split(`valueOf_`)[1]}
-          `) as HTMLInputElement;
-              value = el?.value ?? "";
-            }
-
-            if (value?.startsWith(`queryString_pass_`)) {
-              value = getQueryElementValue(value, iframeWindow);
-            }
-
-            return url.replace(`{${key}}`, value);
-          }, apiUrl)
-        : apiUrl;
-
-    const body =
-      endpoint?.methodType === "POST"
-        ? Object.keys(action.binds?.body ?? {}).reduce(
-            (body: string, key: string) => {
-              let value = action.binds?.body[key] as string;
-
-              if (value.startsWith(`valueOf_`)) {
-                const el = iframeWindow?.document.querySelector(`
-          input#${value.split(`valueOf_`)[1]}
-        `) as HTMLInputElement;
-                value = el?.value ?? "";
-              }
-
-              if (value?.startsWith(`queryString_pass_`)) {
-                value = getQueryElementValue(value, iframeWindow);
-              }
-
-              return {
-                ...(body as any),
-                [key]: value,
-              };
-            },
-            {} as any,
-          )
-        : undefined;
-
-    const response = await fetch(url, {
-      method: endpoint?.methodType,
-      headers: {
-        // Will need to build up headers from endpoint.headers in future
-        "Content-Type": endpoint?.mediaType ?? "application/json",
-      },
-      ...(!!body ? { body: JSON.stringify(body) } : {}),
-    });
-
-    if (!response.status.toString().startsWith("20") || !response.ok) {
-      const responseJson = await response.json();
-      const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}-error`;
-      const varValue = JSON.stringify(responseJson);
-
-      await createVariable(projectId, {
-        name: varName,
-        value: varValue,
-        type: "OBJECT" as FrontEndTypes,
-        isGlobal: false,
-        pageId: router.query.page as string,
-        defaultValue: varValue,
-      });
-      throw new Error(response.statusText);
-    }
-
-    const responseJson = await response.json();
-
-    const dataSourceAuthConfig = await getDataSourceAuth(
-      projectId,
-      endpoint?.dataSourceId!,
-    );
-
-    const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
-
-    const authStore = useAuthStore.getState();
-    authStore.setAuthTokens(mergedAuthConfig);
-
-    if (onSuccess && onSuccess.sequentialTo === actionId) {
-      const actions = component.actions ?? [];
-      const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess",
-      )!;
-      // @ts-ignore
-      const onSuccessActionMapped = actionMapper[onSuccess.action.name];
-      onSuccessActionMapped.action({
-        // @ts-ignore
-        action: onSuccessAction.action,
-        router,
-        ...rest,
-        data: responseJson,
-      });
-    }
-
-    if (onError && onError.sequentialTo === actionId) {
-      const actions = component.actions ?? [];
-      const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError",
-      )!;
-      // @ts-ignore
-      const onErrorActionMapped = actionMapper[onError.action.name];
-      onErrorActionMapped.action({
-        // @ts-ignore
-        action: onErrorAction.action,
-        router,
-        ...rest,
-        data: { value: responseJson },
-      });
-    }
-
-    const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}`;
-    const varValue = JSON.stringify(responseJson);
-
-    await createVariable(projectId, {
-      name: varName,
-      value: varValue,
-      type: "OBJECT" as FrontEndTypes,
-      isGlobal: false,
-      pageId: router.query.page as string,
-      defaultValue: varValue,
-    });
-  } catch (error) {
-    if (onError && onError.sequentialTo === actionId) {
-      const actions = component.actions ?? [];
-      const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError",
-      )!;
-      // @ts-ignore
-      const onErrorActionMapped = actionMapper[onError.action.name];
-      onErrorActionMapped.action({
-        // @ts-ignore
-        action: onErrorAction.action,
-        router,
-        ...rest,
-        data: { value: (error as Error).message },
-      });
-    }
-
-    const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}-catchError`;
-    const varValue = JSON.stringify(error);
-
-    await createVariable(projectId, {
-      name: varName,
-      value: varValue,
-      type: "OBJECT" as FrontEndTypes,
-      isGlobal: false,
-      pageId: router.query.page as string,
-      defaultValue: varValue,
-    });
-  } finally {
-    updateTreeComponent(component.id!, { loading: false }, false);
-  }
-};
-
 function getElementValue(value: string, iframeWindow: any): string {
   const _id = value.split("valueOf_")[1];
   let el = iframeWindow?.document.getElementById(_id);
@@ -879,12 +683,7 @@ function getQueryElementValue(value: string, iframeWindow: any): string {
   return el?.value ?? "";
 }
 
-const getVariablesValue = async (
-  router: Router,
-  objs: Record<string, string>,
-) => {
-  const projectId = router.query.id as string;
-
+const getVariablesValue = async (objs: Record<string, string>) => {
   return await Object.values(objs).reduce(async (acc, key) => {
     const result = await acc;
     let value = "";
@@ -911,7 +710,164 @@ const getVariablesValue = async (
   }, Promise.resolve({}));
 };
 
-export const apiCallAction = async ({
+export type APICallActionParams = ActionParams & {
+  action: APICallAction;
+};
+
+export type LoginActionParams = ActionParams & {
+  action: LoginAction;
+};
+
+let cachedEndpoints: Endpoint[] | undefined;
+
+const getCachedEndpoint = async (projectId: string) => {
+  if (!cachedEndpoints) {
+    const { results } = await getDataSourceEndpoints(projectId);
+    cachedEndpoints = results;
+  }
+  return cachedEndpoints;
+};
+
+const getUrl = (
+  keys: string[],
+  apiUrl: string,
+  action: any,
+  variableValues: any,
+) => {
+  return keys.length > 0
+    ? keys.reduce((url: string, key: string) => {
+        key.startsWith("type_Key_") ? (key = key.split(`type_key_`)[1]) : key;
+        let value = action.binds?.parameter[key] as string;
+
+        if (!value) {
+          return url.toString();
+        }
+
+        value = variableValues[value] ?? "";
+
+        if (!url.includes(`{${key}}`)) {
+          const _url = new URL(url);
+          _url.searchParams.append(key, value);
+          return _url.toString();
+        } else {
+          return url.replace(`{${key}}`, value);
+        }
+      }, apiUrl)
+    : apiUrl;
+};
+
+const getBody = (endpoint: any, action: any, variableValues: any) => {
+  return endpoint?.methodType === "POST"
+    ? Object.keys(action.binds?.body ?? {}).reduce((body: any, key: string) => {
+        let value = action.binds.body[key] as string;
+
+        if (!value) {
+          return body;
+        }
+
+        value = variableValues[value];
+        return { ...body, [key]: value };
+      }, {} as any)
+    : undefined;
+};
+
+const prepareRequestData = async (router: any, action: any) => {
+  const projectId = router.query.id as string;
+  const cachedEndpoints = await getCachedEndpoint(projectId);
+  const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
+
+  const keys = Object.keys(action.binds?.parameter ?? {});
+  const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
+  const variableValues = await getVariablesValue(
+    merge(action.binds?.body ?? {}, action.binds?.parameter ?? {}),
+  );
+
+  const url = getUrl(keys, apiUrl, action, variableValues);
+  const body = getBody(endpoint, action, variableValues);
+
+  return { endpoint, url, body };
+};
+
+const handleError = async (
+  error: any,
+  onError: any,
+  actionId: any,
+  router: any,
+  rest: any,
+  component: any,
+  endpoint: any,
+  actionMapper: any,
+  updateTreeComponent: any,
+) => {
+  console.log({ error });
+  if (onError && onError.sequentialTo === actionId) {
+    const actions = component.actions ?? [];
+    const onErrorAction = actions.find((a: Action) => a.trigger === "onError");
+    const onErrorActionMapped = actionMapper[onError.action.name];
+    onErrorActionMapped.action({
+      action: onErrorAction?.action,
+      router,
+      ...rest,
+      data: { value: JSON.parse(error.message) },
+    });
+  }
+
+  updateTreeComponent(component.id!, { loading: false }, false);
+
+  const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}-error`;
+  const varValue = JSON.stringify(JSON.parse(error.message));
+  await createVariable(router.query.id as string, {
+    name: varName,
+    value: varValue,
+    type: "OBJECT" as FrontEndTypes,
+    isGlobal: false,
+    pageId: router.query.page as string,
+    defaultValue: varValue,
+  });
+};
+
+const handleSuccess = async (
+  responseJson: any,
+  onSuccess: any,
+  actionId: any,
+  router: any,
+  rest: any,
+  component: any,
+  endpoint: any,
+  action: any,
+  actionMapper: any,
+  updateTreeComponent: any,
+) => {
+  if (onSuccess && onSuccess.sequentialTo === actionId) {
+    const actions = component.actions ?? [];
+    const onSuccessAction = actions.find(
+      (a: Action) => a.trigger === "onSuccess",
+    );
+    const onSuccessActionMapped = actionMapper[onSuccess.action.name];
+    onSuccessActionMapped.action({
+      action: onSuccessAction?.action,
+      binds: action.binds,
+      router,
+      ...rest,
+      data: responseJson,
+    });
+  }
+
+  updateTreeComponent(component.id!, { loading: false }, false);
+
+  const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}`;
+  const varValue = JSON.stringify(responseJson);
+  await createVariable(router.query.id as string, {
+    name: varName,
+    value: varValue,
+    type: "OBJECT" as FrontEndTypes,
+    isGlobal: false,
+    pageId: router.query.page as string,
+    defaultValue: varValue,
+  });
+};
+
+export const loginAction = async ({
   actionId,
   action,
   router,
@@ -919,17 +875,9 @@ export const apiCallAction = async ({
   onError,
   component,
   ...rest
-}: APICallActionParams) => {
+}: LoginActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-
-  const projectId = router.query.id as string;
-  // TODO: Storing in memory for now as the endpoints API call is slow. We only ever want to call it once.
-  // Can revisit later and create a cashing layer.
-  if (!cachedEndpoints) {
-    const { results } = await getDataSourceEndpoints(projectId);
-    cachedEndpoints = results;
-  }
-  const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
+  const { endpoint, url, body } = await prepareRequestData(router, action);
 
   try {
     updateTreeComponent(
@@ -940,66 +888,81 @@ export const apiCallAction = async ({
       false,
     );
 
-    const keys = Object.keys(action.binds?.parameter ?? {});
+    const response = await fetch(url, {
+      method: endpoint?.methodType,
+      headers: {
+        "Content-Type": endpoint?.mediaType ?? "application/json",
+      },
+      ...(!!body ? { body: JSON.stringify(body) } : {}),
+    });
 
-    const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
+    if (response.status.toString().startsWith("5")) {
+      const error = await readDataFromStream(response.body);
 
-    const variableValues = await getVariablesValue(
-      router,
-      merge(action.binds?.body ?? {}, action.binds?.parameter ?? {}),
+      throw new Error(error);
+    }
+
+    const responseJson = await response.json();
+
+    const projectId = router.query.id as string;
+
+    const dataSourceAuthConfig = await getDataSourceAuth(
+      projectId,
+      endpoint?.dataSourceId!,
     );
 
-    const url =
-      keys.length > 0
-        ? keys.reduce((url: string, key: string) => {
-            key.startsWith("type_Key_")
-              ? (key = key.split(`type_key_`)[1])
-              : key;
-            // @ts-ignore
-            let value = action.binds?.parameter[key] as string;
+    const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
 
-            if (!value) {
-              return url.toString();
-            }
+    const authStore = useAuthStore.getState();
+    authStore.setAuthTokens(mergedAuthConfig);
 
-            // @ts-ignore
-            value = variableValues[value] ?? "";
+    await handleSuccess(
+      responseJson,
+      onSuccess,
+      actionId,
+      router,
+      rest,
+      component,
+      endpoint,
+      action,
+      actionMapper,
+      updateTreeComponent,
+    );
+  } catch (error) {
+    await handleError(
+      error,
+      onError,
+      actionId,
+      router,
+      rest,
+      component,
+      endpoint,
+      actionMapper,
+      updateTreeComponent,
+    );
+  }
+};
 
-            if (!url.includes(`{${key}}`)) {
-              const _url = new URL(url);
-              _url.searchParams.append(key, value);
-              return _url.toString();
-            } else {
-              return url.replace(`{${key}}`, value);
-            }
-          }, apiUrl)
-        : apiUrl;
+export const apiCallAction = async ({
+  actionId,
+  action,
+  router,
+  onSuccess,
+  onError,
+  component,
+  ...rest
+}: APICallActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const { endpoint, url, body } = await prepareRequestData(router, action);
 
-    const body =
-      endpoint?.methodType === "POST"
-        ? Object.keys(action.binds?.body ?? {}).reduce(
-            (body: string, key: string) => {
-              // @ts-ignore
-              let value = action.binds.body[key] as string;
-
-              if (!value) {
-                return url.toString();
-              }
-
-              // @ts-ignore
-              value = variableValues[value];
-
-              return {
-                ...(body as any),
-                [key]: value,
-              };
-            },
-            {} as any,
-          )
-        : undefined;
-
-    // TODO: Need to add a binding for headers.
-    // We could then remove the auth code below and just build headers up instead
+  try {
+    updateTreeComponent(
+      component.id!,
+      {
+        loading: action.showLoader,
+      },
+      false,
+    );
 
     const authStore = useAuthStore.getState();
     authStore.refreshAccessToken();
@@ -1023,7 +986,7 @@ export const apiCallAction = async ({
       ...(!!body ? { body: JSON.stringify(body) } : {}),
     });
 
-    if (!response.status.toString().startsWith("20")) {
+    if (response.status.toString().startsWith("5")) {
       const error = await readDataFromStream(response.body);
 
       throw new Error(error);
@@ -1031,64 +994,30 @@ export const apiCallAction = async ({
 
     const responseJson = await response.json();
 
-    if (onSuccess && onSuccess.sequentialTo === actionId) {
-      const actions = component.actions ?? [];
-      const onSuccessAction: Action = actions.find(
-        (action: Action) => action.trigger === "onSuccess",
-      )!;
-      // @ts-ignore
-      const onSuccessActionMapped = actionMapper[onSuccess.action.name];
-      onSuccessActionMapped.action({
-        // @ts-ignore
-        action: onSuccessAction.action,
-        binds: action.binds,
-        router,
-        ...rest,
-        data: responseJson,
-      });
-    }
-
-    updateTreeComponent(component.id!, { loading: false }, false);
-
-    const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}`;
-    const varValue = JSON.stringify(responseJson);
-    await createVariable(projectId, {
-      name: varName,
-      value: varValue,
-      type: "OBJECT" as FrontEndTypes,
-      isGlobal: false,
-      pageId: router.query.page as string,
-      defaultValue: varValue,
-    });
+    await handleSuccess(
+      responseJson,
+      onSuccess,
+      actionId,
+      router,
+      rest,
+      component,
+      endpoint,
+      action,
+      actionMapper,
+      updateTreeComponent,
+    );
   } catch (error) {
-    console.log({ error });
-    if (onError && onError.sequentialTo === actionId) {
-      const actions = component.actions ?? [];
-      const onErrorAction: Action = actions.find(
-        (action: Action) => action.trigger === "onError",
-      )!;
-      // @ts-ignore
-      const onErrorActionMapped = actionMapper[onError.action.name];
-      onErrorActionMapped.action({
-        // @ts-ignore
-        action: onErrorAction.action,
-        router,
-        ...rest,
-        data: { value: JSON.parse((error as Error).message) },
-      });
-    }
-
-    updateTreeComponent(component.id!, { loading: false }, false);
-    const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}-error`;
-    const varValue = JSON.stringify(JSON.parse((error as Error).message));
-    await createVariable(projectId, {
-      name: varName,
-      value: varValue,
-      type: "OBJECT" as FrontEndTypes,
-      isGlobal: false,
-      pageId: router.query.page as string,
-      defaultValue: varValue,
-    });
+    await handleError(
+      error,
+      onError,
+      actionId,
+      router,
+      rest,
+      component,
+      endpoint,
+      actionMapper,
+      updateTreeComponent,
+    );
   }
 };
 
