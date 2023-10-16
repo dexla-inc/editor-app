@@ -14,7 +14,12 @@ import { useAppStore } from "@/stores/app";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
-import { ASIDE_WIDTH, HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
+import {
+  ASIDE_WIDTH,
+  HEADER_HEIGHT,
+  NAVBAR_MIN_WIDTH,
+  NAVBAR_WIDTH,
+} from "@/utils/config";
 import {
   Component,
   addComponent,
@@ -376,7 +381,9 @@ export const Editor = ({ projectId, pageId }: Props) => {
         navbar={
           !isPreviewMode && isNavBarVisible ? (
             <Navbar
-              width={{ base: NAVBAR_WIDTH }}
+              miw={{ base: NAVBAR_MIN_WIDTH }}
+              width={{ base: "auto" }}
+              maw={{ base: NAVBAR_WIDTH }}
               sx={{
                 height: `calc(100% - ${HEADER_HEIGHT}px)`,
               }}

@@ -1,6 +1,6 @@
 import { getTheme } from "@/requests/themes/queries";
 import { useEditorStore } from "@/stores/editor";
-import { HEADER_HEIGHT } from "@/utils/config";
+import { HEADER_HEIGHT, NAVBAR_MIN_WIDTH } from "@/utils/config";
 import createCache from "@emotion/cache";
 import {
   Box,
@@ -32,6 +32,7 @@ type Props = {
 export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
+  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
 
   const theme = useEditorStore((state) => state.theme);
   const setTheme = useEditorStore((state) => state.setTheme);
@@ -102,8 +103,9 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
       style={{
         overflow: isLive ? "hidden" : "visible",
         border: "none",
-        width: "100%",
+        width: isLive ? "100%" : `calc(100% - ${NAVBAR_MIN_WIDTH}px)`,
         height: isLive ? "100vh" : `calc(100vh - ${HEADER_HEIGHT}px)`,
+        marginLeft: isLive || isPreviewMode ? 0 : `${NAVBAR_MIN_WIDTH}px`,
       }}
       {...props}
       allow="clipboard-read; clipboard-write"
