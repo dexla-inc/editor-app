@@ -14,7 +14,7 @@ import { useAppStore } from "@/stores/app";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
-import { HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
+import { ASIDE_WIDTH, HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
 import {
   Component,
   addComponent,
@@ -392,7 +392,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
         aside={
           !isPreviewMode ? (
             <Aside
-              width={{ base: NAVBAR_WIDTH }}
+              width={{ base: ASIDE_WIDTH }}
               sx={{
                 height: `calc(100% - ${HEADER_HEIGHT}px)`,
               }}
