@@ -22,6 +22,7 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
     copiedAction,
     setCopiedAction,
     setSequentialTo,
+    setOpenAction,
   } = useEditorStore.getState();
 
   const form = useForm({
@@ -67,10 +68,11 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
   };
 
   const onSubmit = (values: any) => {
+    const id = nanoid();
     updateTreeComponentActions(
       selectedComponentId!,
       (component?.actions ?? []).concat({
-        id: nanoid(),
+        id,
         sequentialTo: sequentialTo,
         trigger: values.trigger,
         action: {
@@ -78,6 +80,7 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
         },
       }),
     );
+    setOpenAction({ actionId: id, componentId: selectedComponentId });
     isSequential ? setSequentialTo(undefined) : close && close();
     form.reset();
   };

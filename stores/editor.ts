@@ -50,6 +50,11 @@ export type ComponentToBind = {
   onPick?: (props: any) => void;
 };
 
+export type OpenAction = {
+  actionId?: string;
+  componentId?: string;
+};
+
 export type EditorState = {
   tree: EditorTree;
   currentProjectId?: string;
@@ -74,6 +79,8 @@ export type EditorState = {
   };
   copiedAction?: Action[];
   sequentialTo?: string;
+  openAction?: OpenAction;
+  setOpenAction: (openAction: OpenAction) => void;
   setSequentialTo: (sequentialTo?: string) => void;
   setPickingComponentToBindTo: (
     pickingComponentToBindTo?: ComponentToBind,
@@ -173,6 +180,8 @@ export const useEditorStore = create<EditorState>()(
             false,
             "editor/resetOnMountActionsRan",
           ),
+        setOpenAction: (openAction) =>
+          set({ openAction }, false, "editor/setOpenAction"),
         setPages: (pages) => set({ pages }, false, "editor/setPages"),
         setPickingComponentToBindFrom: (pickingComponentToBindFrom) =>
           set(

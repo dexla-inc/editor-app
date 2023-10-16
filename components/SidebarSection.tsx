@@ -1,3 +1,4 @@
+import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
@@ -37,9 +38,12 @@ export function SidebarSection({
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(initiallyOpened || false);
 
+  const { setOpenAction } = useEditorStore();
+
   const handleSectionClick = () => {
     setOpened((o) => !o);
     onClick && onClick(id);
+    setOpenAction({ actionId: undefined, componentId: undefined });
   };
 
   return (

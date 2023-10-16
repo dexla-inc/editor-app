@@ -47,7 +47,7 @@ import {
 } from "@mantine/core";
 import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -90,19 +90,26 @@ const sectionMapper: SectionsMapper = {
 type Tab = "design" | "actions";
 
 export const EditorAsideSections = () => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
-  );
-  const setTreeComponentCurrentState = useEditorStore(
-    (state) => state.setTreeComponentCurrentState,
-  );
-  const { updateTreeComponent, updateTreeComponentActions, setCopiedAction } =
-    useEditorStore.getState();
+  const {
+    updateTreeComponent,
+    updateTreeComponentActions,
+    setCopiedAction,
+    setTreeComponentCurrentState,
+    selectedComponentId,
+    tree: editorTree,
+    openAction,
+    setOpenAction,
+  } = useEditorStore();
   const currentTreeComponentsStates = useEditorStore(
     (state) => state.currentTreeComponentsStates,
   );
   const [tab, setTab] = useState<Tab>("design");
+
+  useEffect(() => {
+    selectedComponentId !== openAction?.componentId &&
+      setOpenAction({ actionId: undefined, componentId: undefined });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponentId]);
 
   const isContentWrapperSelected = selectedComponentId === "content-wrapper";
 
@@ -183,6 +190,7 @@ export const EditorAsideSections = () => {
           label: `${startCase(sequentialAction.trigger)}: ${startCase(
             sequentialAction.action.name,
           )}`,
+          initiallyOpened: openAction?.actionId === sequentialAction.id,
         };
 
         return (
@@ -209,6 +217,7 @@ export const EditorAsideSections = () => {
           ...baseItem,
           id: action.id,
           label: `${startCase(action.trigger)}: ${startCase(actionName)}`,
+          initiallyOpened: openAction?.actionId === action.id,
         }
       : undefined;
 
@@ -236,7 +245,10 @@ export const EditorAsideSections = () => {
             { label: "Design", value: "design" },
             { label: "Actions", value: "actions" },
           ]}
-          onChange={(value) => setTab(value as Tab)}
+          onChange={(value) => {
+            setTab(value as Tab);
+            setOpenAction({ actionId: undefined, componentId: undefined });
+          }}
           value={tab}
         />
       </Flex>
