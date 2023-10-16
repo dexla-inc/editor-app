@@ -23,6 +23,7 @@ type SidebarSectionProps = {
   onClick?: (id: string) => void;
   isAction?: boolean;
   removeAction?: (id: string) => void;
+  my?: number;
 };
 
 export function SidebarSection({
@@ -34,6 +35,7 @@ export function SidebarSection({
   onClick,
   isAction,
   removeAction,
+  my,
 }: PropsWithChildren<SidebarSectionProps>) {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(initiallyOpened || false);
@@ -49,6 +51,7 @@ export function SidebarSection({
   return (
     <>
       <Group
+        my={my}
         spacing={5}
         noWrap
         sx={{

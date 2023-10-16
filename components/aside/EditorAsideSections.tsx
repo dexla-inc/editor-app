@@ -191,6 +191,7 @@ export const EditorAsideSections = () => {
             sequentialAction.action.name,
           )}`,
           initiallyOpened: openAction?.actionId === sequentialAction.id,
+          my: 20,
         };
 
         return (
