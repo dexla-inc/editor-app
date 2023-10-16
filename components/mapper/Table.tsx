@@ -8,8 +8,8 @@ import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import startCase from "lodash.startcase";
 import {
-  MantineReactTable,
   MRT_SortingState,
+  MantineReactTable,
   useMantineReactTable,
 } from "mantine-react-table";
 import { memo, useEffect, useState } from "react";
@@ -113,7 +113,7 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
   });
 
   if (componentProps.loading) {
-    return <MantineSkeleton height={style.height ?? 300} />;
+    return <MantineSkeleton height={300} />;
   }
 
   return (
