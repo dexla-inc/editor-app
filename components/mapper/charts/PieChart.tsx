@@ -63,10 +63,10 @@ export const PieChart = (props: Props) => {
               },
             },
           },
-
           legend: {
             position: "bottom",
             horizontalAlign: "center",
+            offsetY: 8,
           },
           stroke: {
             show: true,
