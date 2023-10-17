@@ -4,9 +4,9 @@ import { Divider, Stack, Switch, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTable } from "@tabler/icons-react";
 import get from "lodash.get";
+import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
-import merge from "lodash.merge";
 
 export const icon = IconTable;
 export const label = "Table";

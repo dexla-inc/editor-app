@@ -20,11 +20,15 @@ export const jsonStructure = (props?: any): Component => {
         ],
       },
       headers: { position: true, mass: true, symbol: true, name: true },
-      config: { sorting: false, pagination: false },
+      config: {
+        numbers: true,
+        select: true,
+        pagination: true,
+        sorting: true,
+      },
       style: {
         width: "100%",
       },
-
       ...(props.props || {}),
     },
     children: [
