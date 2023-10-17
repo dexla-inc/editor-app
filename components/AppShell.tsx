@@ -53,7 +53,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
 
   const authInfo = useAuthInfo();
   const org = authInfo.orgHelper?.getOrgByName("Dexla")!;
-  const isDexlaAdmin = org.userAssignedRole === "DEXLA_ADMIN";
+  const isDexlaAdmin = org?.userAssignedRole === "DEXLA_ADMIN";
 
   console.log(org, isDexlaAdmin);
 

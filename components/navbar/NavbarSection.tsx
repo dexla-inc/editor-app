@@ -2,6 +2,8 @@ import { Sections } from "@/components/navbar/EditorNavbarSections";
 import { useEditorStore } from "@/stores/editor";
 import { HEADER_HEIGHT, ICON_SIZE } from "@/utils/config";
 import {
+  ActionIcon,
+  Flex,
   Group,
   Stack,
   ThemeIcon,
@@ -9,6 +11,7 @@ import {
   Tooltip,
   UnstyledButton,
 } from "@mantine/core";
+import { IconPinned, IconPinnedOff } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
 import { PropsWithChildren } from "react";
 
@@ -20,9 +23,12 @@ export const NavbarSection = ({
   children,
   sections,
 }: PropsWithChildren<Props>) => {
-  const { activeTab, setActiveTab } = useEditorStore();
+  const { activeTab, setActiveTab, pinTab, setPinTab } = useEditorStore();
+
+  const IconToggle = pinTab ? IconPinnedOff : IconPinned;
 
   const handleClick = (id: string) => {
+    if (pinTab) return;
     activeTab === id ? setActiveTab(undefined) : setActiveTab(id);
   };
 
@@ -65,7 +71,7 @@ export const NavbarSection = ({
         {sectionToRender}
       </Stack>
 
-      {activeTab && (
+      {(activeTab || pinTab) && (
         <Stack
           sx={{
             overflow: "hidden",
@@ -73,8 +79,11 @@ export const NavbarSection = ({
             scrollbarColor: "#888 transparent",
             msOverflowStyle: "-ms-autohiding-scrollbar",
             ":hover": { overflowY: "auto" },
-            "::-webkit-scrollbar": { width: "5px", borderRadius: "50%" },
-            "::-webkit-scrollbar-thumb": { backgroundColor: "#888" },
+            "::-webkit-scrollbar": { width: "5px", borderRadius: "10px" },
+            "::-webkit-scrollbar-thumb": {
+              backgroundColor: "#888",
+              borderRadius: "10px",
+            },
           }}
           w={250}
           h="100%"
@@ -82,9 +91,26 @@ export const NavbarSection = ({
           align="flex-start"
           pr={10}
         >
-          <Title align="center" w="100%" color="dark.4" order={4}>
-            {startCase(activeTab)}
-          </Title>
+          <Flex justify="space-between" w="100%">
+            <Title align="center" color="dark.4" order={4}>
+              {startCase(activeTab)}
+            </Title>
+            <Tooltip
+              label={pinTab ? "Unpin Tab" : "Pin Tab"}
+              fz={10}
+              position="top"
+              withArrow
+              withinPortal
+            >
+              <ActionIcon aria-label="PinTab">
+                <IconToggle
+                  onClick={() => setPinTab(!pinTab)}
+                  size={ICON_SIZE}
+                  color="gray"
+                />
+              </ActionIcon>
+            </Tooltip>
+          </Flex>
           {children}
         </Stack>
       )}
