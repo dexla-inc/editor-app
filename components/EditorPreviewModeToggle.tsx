@@ -20,7 +20,7 @@ export const EditorPreviewModeToggle = ({
   return (
     <Group position="center">
       <Switch
-        size="lg"
+        size="md"
         color={theme.colorScheme === "dark" ? "gray" : "teal"}
         onLabel={<IconBrush size={ICON_MEDIUM_SIZE} color={theme.white} />}
         offLabel={

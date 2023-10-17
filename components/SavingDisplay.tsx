@@ -28,20 +28,19 @@ export const SavingDisplay = forwardRef<HTMLDivElement, SavingDisplayProps>(
         sx={{
           border: theme.colors.gray[3] + " solid 1px",
           backgroundColor: theme.colors.gray[1],
-          width: 75,
+          width: 65,
           textAlign: "center",
-          padding: 4,
-          height: 34,
+          padding: 3,
           borderRadius: 4,
           cursor: "pointer",
         }}
       >
-        <Text color={isSavingDisplay[saving].color}>
+        <Text color={isSavingDisplay[saving].color} size="sm">
           {isSavingDisplay[saving].text}
         </Text>
       </Box>
     );
-  }
+  },
 );
 
 SavingDisplay.displayName = "SavingDisplay";

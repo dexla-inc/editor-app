@@ -152,18 +152,20 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
 
   return (
     <>
-      <ActionIcon
-        onClick={() => {
-          refreshChatHistory();
-          open();
-        }}
-        variant="filled"
-        color="indigo"
-        size="lg"
-        sx={{ borderRadius: "50%" }}
-      >
-        <IconBrandHipchat size={ICON_SIZE} />
-      </ActionIcon>
+      <Tooltip label="AI History" withArrow>
+        <ActionIcon
+          onClick={() => {
+            refreshChatHistory();
+            open();
+          }}
+          variant="filled"
+          color="indigo"
+          size="md"
+          radius="xl"
+        >
+          <IconBrandHipchat size={ICON_SIZE} />
+        </ActionIcon>
+      </Tooltip>
       <Modal size="90%" opened={opened} onClose={close} title="Chat History">
         <Stack>
           <Table>

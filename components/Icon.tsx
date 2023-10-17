@@ -1,6 +1,6 @@
 import { ICON_SIZE } from "@/utils/config";
-import * as Icons from "@tabler/icons-react";
 import { Box } from "@mantine/core";
+import * as Icons from "@tabler/icons-react";
 
 type Props = {
   name: string;
@@ -21,6 +21,9 @@ export const Icon = ({ name, size = ICON_SIZE, ...props }: Props) => {
       unstyled
       bg={props.bg}
       style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         width: props.style?.width,
         height: props.style?.height,
         borderRadius: props.style?.borderBottomLeftRadius,
