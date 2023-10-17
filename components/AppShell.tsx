@@ -7,6 +7,7 @@ import {
   NAVBAR_WIDTH,
 } from "@/utils/config";
 import {
+  ActionIcon,
   AppShell,
   AppShellProps,
   Box,
@@ -14,7 +15,9 @@ import {
   Group,
   Header,
   Select,
+  Tooltip,
 } from "@mantine/core";
+import { useAuthInfo } from "@propelauth/react";
 import Link from "next/link";
 
 import { AIChatHistoryButton } from "@/components/AIChatHistoryButton";
@@ -23,6 +26,7 @@ import { DeployButton } from "@/components/DeployButton";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { GenerateAIButton } from "@/components/GenerateAIButton";
 import { LogicFlowButton } from "@/components/logic-flow/LogicFlowButton";
+import { VariablesButton } from "@/components/variables/VariablesButton";
 import { getPageList } from "@/requests/pages/queries";
 import { PageListResponse } from "@/requests/pages/types";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
@@ -35,7 +39,6 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
-import { VariablesButton } from "@/components/variables/VariablesButton";
 
 const ToggleNavbarButton = () => {
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
@@ -70,6 +73,12 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
     queryFn: () => getPageList(projectId),
   });
 
+  const authInfo = useAuthInfo();
+  const org = authInfo.orgHelper?.getOrgByName("Dexla")!;
+  const isDexlaAdmin = org.userAssignedRole === "DEXLA_ADMIN";
+
+  console.log(org, isDexlaAdmin);
+
   return (
     <AppShell
       fixed
@@ -89,6 +98,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                 label="Language"
                 value={language}
                 onChange={setLanguage}
+                size="xs"
                 data={[
                   { value: "default", label: "English" },
                   { value: "french", label: "French" },
@@ -98,27 +108,35 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                   justifyContent: "center",
                   alignItems: "center",
                   gap: "10px",
-                  width: "33.33%",
                   whiteSpace: "nowrap",
+                  width: "160px",
                 }}
               />
-              <AIChatHistoryButton projectId={projectId} />
+              {isDexlaAdmin && <AIChatHistoryButton projectId={projectId} />}
               <GenerateAIButton projectId={projectId} />
               <LogicFlowButton projectId={projectId} pageId={currentPageId} />
               <VariablesButton projectId={projectId} pageId={currentPageId} />
               <Button.Group>
-                <Button
-                  leftIcon={<IconArrowBackUp size={ICON_SIZE} />}
-                  variant="default"
-                  onClick={() => undo()}
-                  disabled={pastStates.length < 2}
-                />
-                <Button
-                  leftIcon={<IconArrowForwardUp size={ICON_SIZE} />}
-                  variant="default"
-                  onClick={() => redo()}
-                  disabled={futureStates.length === 0}
-                />
+                <Tooltip label="Undo">
+                  <ActionIcon
+                    variant="default"
+                    onClick={() => undo()}
+                    disabled={pastStates.length < 2}
+                    radius={"4px 0px 0px 4px"}
+                  >
+                    <IconArrowBackUp size={ICON_SIZE} />
+                  </ActionIcon>
+                </Tooltip>
+                <Tooltip label="Redo">
+                  <ActionIcon
+                    variant="default"
+                    onClick={() => redo()}
+                    disabled={futureStates.length === 0}
+                    radius={"0px 4px 4px 0px"}
+                  >
+                    <IconArrowForwardUp size={ICON_SIZE} />
+                  </ActionIcon>
+                </Tooltip>
               </Button.Group>
               <ChangeHistoryPopover />
               <EditorPreviewModeToggle

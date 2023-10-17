@@ -1,5 +1,6 @@
-import { Button } from "@mantine/core";
+import { ActionIcon, Tooltip } from "@mantine/core";
 import Link from "next/link";
+import { Icon } from "../Icon";
 
 type Props = {
   pageId: string;
@@ -8,12 +9,16 @@ type Props = {
 
 export const LogicFlowButton = ({ projectId, pageId }: Props) => {
   return (
-    <Button
-      component={Link}
-      variant="default"
-      href={`/projects/${projectId}/editor/${pageId}/flows`}
-    >
-      Logic flow
-    </Button>
+    <Tooltip label="Logic Flows" withArrow>
+      <ActionIcon
+        component={Link}
+        href={`/projects/${projectId}/editor/${pageId}/flows`}
+        variant="filled"
+        color="orange"
+        radius="xl"
+      >
+        <Icon name="IconLogicBuffer" />
+      </ActionIcon>
+    </Tooltip>
   );
 };

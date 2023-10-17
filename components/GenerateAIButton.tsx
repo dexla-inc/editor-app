@@ -9,13 +9,12 @@ import {
   Component,
   EditorTree,
   addComponent,
-  debouncedTreeComponentStyleUpdate,
+  componentStyleMapper,
+  debouncedTreeUpdate,
   getComponentBeingAddedId,
+  getComponentById,
   getEditorTreeFromPageStructure,
   getNewComponents,
-  debouncedTreeUpdate,
-  getComponentById,
-  componentStyleMapper,
 } from "@/utils/editor";
 import { isKeyOfAISupportedModifiers } from "@/utils/modifiers";
 import {
@@ -33,13 +32,14 @@ import {
   Select,
   Stack,
   Text,
+  Tooltip,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSparkles } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { MutableRefObject, useRef, useState } from "react";
 import { ErrorAlert } from "./Alerts";
 
 type ComponentGenerationProps = {
@@ -74,11 +74,6 @@ type GenerateAIButtonProps = {
 
 type CssModiferAIResponse = {
   css: Record<string, string | number>;
-};
-
-type CssModifer = {
-  modifiers: Record<string, string | number>;
-  selectedComponentId: string;
 };
 
 export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
@@ -266,15 +261,17 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
 
   return (
     <>
-      <ActionIcon
-        onClick={open}
-        variant="filled"
-        color="teal"
-        size="lg"
-        sx={{ borderRadius: "50%" }}
-      >
-        <IconSparkles size={ICON_SIZE} />
-      </ActionIcon>
+      <Tooltip label="Generate AI" withArrow>
+        <ActionIcon
+          onClick={open}
+          variant="filled"
+          color="teal"
+          size="md"
+          radius="xl"
+        >
+          <IconSparkles size={ICON_SIZE} />
+        </ActionIcon>
+      </Tooltip>
       <Modal
         size="lg"
         opened={openedAIModal}

@@ -101,11 +101,13 @@ export const DeployButton = ({ projectId, page }: Props) => {
         loaderPosition="center"
         disabled={isLoading}
         onClick={() => handleDeploy(true)}
+        compact
       >
         Deploy
       </Button>
       <Button
         color="indigo"
+        compact
         loading={isLoading}
         loaderPosition="center"
         disabled={!hasDeployed || isLoading}
