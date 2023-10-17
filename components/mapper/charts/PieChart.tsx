@@ -34,7 +34,7 @@ export const PieChart = (props: Props) => {
             horizontalAlign: "center",
           },
           stroke: {
-            show: false,
+            show: true,
           },
           tooltip: {
             fillSeriesColor: false,
