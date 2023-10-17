@@ -271,6 +271,8 @@ export const DroppableDraggable = ({
 
   merge(propsWithOverwrites, {
     style: {
+      // setting the inner div width/height. If percentage, the inner div size is 100% and the actual size is propagated
+      // up to the parent element (the green border div)
       width: isWidthPercentage ? "100%" : propsWithOverwrites.style?.width,
       height: isHeightPercentage ? "100%" : propsWithOverwrites.style?.height,
       position: "static",
@@ -292,8 +294,8 @@ export const DroppableDraggable = ({
       id={id}
       pos="relative"
       sx={{
-        width: propsWithOverwrites.style.width ?? "auto",
-        height: propsWithOverwrites.style.height ?? "auto",
+        width: component?.props?.style?.width ?? "auto",
+        height: component?.props?.style?.height ?? "auto",
         "&:before": {
           ...(!isPreviewMode ? shadows : {}),
           content: '""',

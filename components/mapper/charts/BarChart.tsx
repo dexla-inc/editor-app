@@ -1,12 +1,13 @@
 import { Chart } from "@/components/mapper/charts/Chart";
 import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { Component } from "@/utils/editor";
-import { Props as ApexChartsProps } from "react-apexcharts";
+import merge from "lodash.merge";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-} & ApexChartsProps;
+  isPreviewMode: boolean;
+};
 
 export const BarChart = (props: Props) => {
   const { loading } = props.component.props as any;
@@ -15,5 +16,26 @@ export const BarChart = (props: Props) => {
     return <MantineSkeleton height={300} />;
   }
 
-  return <Chart {...props} type="bar" />;
+  const customProps = merge({}, props, {
+    component: {
+      props: {
+        options: {
+          legend: {
+            position: "top",
+            horizontalAlign: "right",
+          },
+          plotOptions: {
+            bar: {
+              borderRadius: 4,
+              columnWidth: "28%",
+              borderRadiusApplication: "end",
+              borderRadiusWhenStacked: "last",
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return <Chart {...customProps} />;
 };

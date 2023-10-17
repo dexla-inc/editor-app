@@ -1,12 +1,13 @@
 import { Chart } from "@/components/mapper/charts/Chart";
 import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { Component } from "@/utils/editor";
-import { Props as ApexChartsProps } from "react-apexcharts";
+import merge from "lodash.merge";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-} & ApexChartsProps;
+  isPreviewMode: boolean;
+};
 
 export const PieChart = (props: Props) => {
   const { loading } = props.component.props as any;
@@ -15,5 +16,33 @@ export const PieChart = (props: Props) => {
     return <MantineSkeleton circle height={300} />;
   }
 
-  return <Chart {...props} type="pie" />;
+  const customProps = merge({}, props, {
+    component: {
+      props: {
+        options: {
+          dataLabels: {
+            enabled: true,
+            dropShadow: {
+              enabled: false,
+            },
+          },
+          labels: {
+            show: true,
+          },
+          legend: {
+            position: "bottom",
+            horizontalAlign: "center",
+          },
+          stroke: {
+            show: false,
+          },
+          tooltip: {
+            fillSeriesColor: false,
+          },
+        },
+      },
+    },
+  });
+
+  return <Chart {...customProps} />;
 };

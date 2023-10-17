@@ -4,7 +4,6 @@ import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const chartProps = ChartStructure.jsonStructure(props).props;
-  const { options, ...rest } = props.props || {};
 
   return {
     id: nanoid(),
@@ -15,7 +14,6 @@ export const jsonStructure = (props?: any): Component => {
       ...chartProps,
       type: "line",
       options: {
-        ...chartProps?.options,
         xaxis: {
           categories: [
             "Jan",
@@ -29,9 +27,7 @@ export const jsonStructure = (props?: any): Component => {
             "Sep",
           ],
         },
-        ...(options || {}),
       },
-      ...(rest || {}),
     },
     blockDroppingChildrenInside: true,
   };
