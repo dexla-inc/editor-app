@@ -6,7 +6,6 @@ import merge from "lodash.merge";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-  isPreviewMode: boolean;
 };
 
 export const PieChart = (props: Props) => {

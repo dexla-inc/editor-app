@@ -5,7 +5,6 @@ import { Component } from "@/utils/editor";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-  isPreviewMode: boolean;
 };
 
 export const LineChart = (props: Props) => {

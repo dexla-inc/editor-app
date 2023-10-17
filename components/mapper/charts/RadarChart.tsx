@@ -7,7 +7,6 @@ import { useEditorStore } from "@/stores/editor";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-  isPreviewMode: boolean;
 };
 
 export const RadarChart = (props: Props) => {

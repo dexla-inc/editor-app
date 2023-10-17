@@ -12,7 +12,7 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-  isPreviewMode: boolean;
+  isPreviewMode?: boolean;
 };
 
 export const Chart = ({ renderTree, component, ...props }: Props) => {
