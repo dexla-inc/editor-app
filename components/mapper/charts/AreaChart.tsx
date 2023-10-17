@@ -1,12 +1,12 @@
 import { Chart } from "@/components/mapper/charts/Chart";
 import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { Component } from "@/utils/editor";
-import { Props as ApexChartsProps } from "react-apexcharts";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-} & ApexChartsProps;
+  isPreviewMode: boolean;
+};
 
 export const AreaChart = (props: Props) => {
   const { loading } = props.component.props as any;
@@ -15,5 +15,5 @@ export const AreaChart = (props: Props) => {
     return <MantineSkeleton height={300} />;
   }
 
-  return <Chart {...props} type="area" />;
+  return <Chart {...props} />;
 };
