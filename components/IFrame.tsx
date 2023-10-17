@@ -1,6 +1,6 @@
 import { getTheme } from "@/requests/themes/queries";
 import { useEditorStore } from "@/stores/editor";
-import { HEADER_HEIGHT, NAVBAR_MIN_WIDTH } from "@/utils/config";
+import { HEADER_HEIGHT, NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
 import createCache from "@emotion/cache";
 import {
   Box,
@@ -33,7 +33,7 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-  const setActiveTab = useEditorStore((state) => state.setActiveTab);
+  const { setActiveTab, pinTab } = useEditorStore();
 
   const theme = useEditorStore((state) => state.theme);
   const setTheme = useEditorStore((state) => state.setTheme);
@@ -100,7 +100,7 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
   return (
     <Box
       onMouseDown={() => {
-        setActiveTab(undefined);
+        !pinTab && setActiveTab(undefined);
       }}
       ref={setContentRef as any}
       component="iframe"
@@ -110,9 +110,16 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
         width:
           isLive || isPreviewMode
             ? "100%"
+            : pinTab
+            ? `calc(100% - ${NAVBAR_WIDTH}px)`
             : `calc(100% - ${NAVBAR_MIN_WIDTH}px)`,
         height: isLive ? "100vh" : `calc(100vh - ${HEADER_HEIGHT}px)`,
-        marginLeft: isLive || isPreviewMode ? 0 : `${NAVBAR_MIN_WIDTH}px`,
+        marginLeft:
+          isLive || isPreviewMode
+            ? 0
+            : pinTab
+            ? `${NAVBAR_WIDTH}px`
+            : `${NAVBAR_MIN_WIDTH}px`,
       }}
       {...props}
       allow="clipboard-read; clipboard-write"
