@@ -97,6 +97,34 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
     }
   }, [contentRef, setIframeWindow]);
 
+  const getContainerStyles = (
+    isLive: boolean | undefined,
+    isPreviewMode: boolean,
+    pinTab: boolean,
+  ) => {
+    const containerStyles = {
+      overflow: isLive ? "hidden" : "visible",
+      border: "none",
+      width: "100%",
+      height: isLive ? "100vh" : `calc(100vh - ${HEADER_HEIGHT}px)`,
+      marginLeft: 0 as string | number,
+    };
+
+    if (!isLive && !isPreviewMode) {
+      containerStyles.width = pinTab
+        ? `calc(100% - ${NAVBAR_WIDTH}px)`
+        : `calc(100% - ${NAVBAR_MIN_WIDTH}px)`;
+
+      containerStyles.marginLeft = pinTab
+        ? `${NAVBAR_WIDTH}px`
+        : `${NAVBAR_MIN_WIDTH}px`;
+    }
+
+    return containerStyles;
+  };
+
+  const styles = getContainerStyles(isLive, isPreviewMode, pinTab);
+
   return (
     <Box
       onMouseDown={() => {
@@ -104,23 +132,7 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
       }}
       ref={setContentRef as any}
       component="iframe"
-      style={{
-        overflow: isLive ? "hidden" : "visible",
-        border: "none",
-        width:
-          isLive || isPreviewMode
-            ? "100%"
-            : pinTab
-            ? `calc(100% - ${NAVBAR_WIDTH}px)`
-            : `calc(100% - ${NAVBAR_MIN_WIDTH}px)`,
-        height: isLive ? "100vh" : `calc(100vh - ${HEADER_HEIGHT}px)`,
-        marginLeft:
-          isLive || isPreviewMode
-            ? 0
-            : pinTab
-            ? `${NAVBAR_WIDTH}px`
-            : `${NAVBAR_MIN_WIDTH}px`,
-      }}
+      style={styles}
       {...props}
       allow="clipboard-read; clipboard-write"
     >
