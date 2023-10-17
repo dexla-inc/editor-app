@@ -12,10 +12,10 @@ export const jsonStructure = (props?: any): Component => {
     children: [],
     props: {
       ...chartProps,
-      type: "pie",
-      series: [44, 55, 13, 43, 22],
+      type: "donut",
+      series: [44, 55, 13],
       options: {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+        labels: ["Jan", "Feb", "Mar"],
       },
     },
     blockDroppingChildrenInside: true,

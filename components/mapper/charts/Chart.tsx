@@ -29,7 +29,7 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
   } = component.props as any;
 
   const theme = useEditorStore((state) => state.theme);
-  const isPie = type === "pie";
+  const isPie = type === "pie" || type === "donut";
 
   const customOptions: ApexOptions = merge(
     {},
@@ -64,16 +64,6 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
             type: "darken",
             value: 0.88,
           },
-        },
-      },
-      fill: {
-        opacity: 1,
-        gradient: {
-          type: "vertical",
-          shadeIntensity: 0,
-          opacityFrom: 0.4,
-          opacityTo: 0,
-          stops: [0, 100],
         },
       },
       stroke: {

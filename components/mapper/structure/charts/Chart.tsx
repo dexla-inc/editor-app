@@ -19,6 +19,14 @@ export const jsonStructure = (props?: any): Component => {
           name: "Desktops",
           data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
         },
+        {
+          name: "Tablets",
+          data: [73, 29, 108, 52, 97, 18, 126, 85, 11],
+        },
+        {
+          name: "Smartphones",
+          data: [63, 41, 134, 5, 38, 117, 77, 22, 91],
+        },
       ],
       options: {},
       ...(props.props || {}),
