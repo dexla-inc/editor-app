@@ -33,6 +33,7 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const setActiveTab = useEditorStore((state) => state.setActiveTab);
 
   const theme = useEditorStore((state) => state.theme);
   const setTheme = useEditorStore((state) => state.setTheme);
@@ -98,12 +99,18 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
 
   return (
     <Box
+      onMouseDown={() => {
+        setActiveTab(undefined);
+      }}
       ref={setContentRef as any}
       component="iframe"
       style={{
         overflow: isLive ? "hidden" : "visible",
         border: "none",
-        width: isLive ? "100%" : `calc(100% - ${NAVBAR_MIN_WIDTH}px)`,
+        width:
+          isLive || isPreviewMode
+            ? "100%"
+            : `calc(100% - ${NAVBAR_MIN_WIDTH}px)`,
         height: isLive ? "100vh" : `calc(100vh - ${HEADER_HEIGHT}px)`,
         marginLeft: isLive || isPreviewMode ? 0 : `${NAVBAR_MIN_WIDTH}px`,
       }}

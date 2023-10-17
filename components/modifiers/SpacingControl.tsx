@@ -38,7 +38,7 @@ export const SpacingControl = ({ type, form, selectedComponentId }: Props) => {
 
   const handleSideChange = (
     side: "Top" | "Bottom" | "Left" | "Right",
-    value: string
+    value: string,
   ) => {
     setTypeValue(`${type.toLowerCase()}${side}`, value);
     debouncedTreeUpdate(selectedComponentId as string, {
@@ -51,11 +51,11 @@ export const SpacingControl = ({ type, form, selectedComponentId }: Props) => {
       <Text size="0.75rem" weight={500}>
         {type}
       </Text>
-      <Flex align="center" gap="md" justify="space-between">
+      <Flex align="center" gap="sm" justify="space-between">
         <SegmentedControl
           fullWidth
-          size="sm"
-          w={100}
+          size="xs"
+          w="100%"
           data={[
             {
               label: <Icon name="IconSquare" size={14} />,
@@ -81,7 +81,7 @@ export const SpacingControl = ({ type, form, selectedComponentId }: Props) => {
               ["Top", "Bottom", "Left", "Right"].forEach((side) => {
                 handleSideChange(
                   side as "Top" | "Bottom" | "Left" | "Right",
-                  newSideValue
+                  newSideValue,
                 );
               });
             }
@@ -93,7 +93,6 @@ export const SpacingControl = ({ type, form, selectedComponentId }: Props) => {
           <UnitInput
             {...form.getInputProps(type.toLowerCase())}
             onChange={handleUnifiedChange}
-            w={125}
           />
         )}
       </Flex>

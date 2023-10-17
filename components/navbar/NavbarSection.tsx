@@ -1,40 +1,42 @@
 import { Sections } from "@/components/navbar/EditorNavbarSections";
+import { useEditorStore } from "@/stores/editor";
 import { HEADER_HEIGHT, ICON_SIZE } from "@/utils/config";
 import {
-  Collapse,
-  Divider,
   Group,
   Stack,
   ThemeIcon,
+  Title,
   Tooltip,
   UnstyledButton,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import startCase from "lodash.startcase";
-import { Dispatch, PropsWithChildren, SetStateAction } from "react";
+import { PropsWithChildren } from "react";
 
 type Props = {
   sections: Sections;
-  activeTab: string | null;
-  setActiveTab: Dispatch<SetStateAction<string | null>>;
 };
 
 export const NavbarSection = ({
   children,
   sections,
-  activeTab,
-  setActiveTab,
 }: PropsWithChildren<Props>) => {
-  const [opened, { open, close }] = useDisclosure(!!activeTab || false);
+  const { activeTab, setActiveTab } = useEditorStore();
 
-  const handleClick = (id: any) => {
-    setActiveTab(activeTab === id ? null : id);
-    activeTab === id ? close() : open();
+  const handleClick = (id: string) => {
+    activeTab === id ? setActiveTab(undefined) : setActiveTab(id);
   };
 
   const sectionToRender = sections.map(({ id, label, icon: Icon }) => {
     return (
-      <Tooltip fz={10} withArrow key={label} label={label}>
+      <Tooltip
+        withinPortal
+        position="right"
+        fz={10}
+        withArrow
+        key={label}
+        label={label}
+        zIndex={500}
+      >
         <UnstyledButton
           onClick={() => handleClick(id)}
           sx={{
@@ -57,32 +59,35 @@ export const NavbarSection = ({
       align="flex-start"
       noWrap
       px="xs"
-      h={`calc(90vh - ${HEADER_HEIGHT}px)`}
+      h={`calc(95vh - ${HEADER_HEIGHT}px)`}
     >
       <Stack pos="relative" h="100%" spacing="md">
         {sectionToRender}
       </Stack>
 
-      <Collapse in={opened}>
+      {activeTab && (
         <Stack
-          w={!!activeTab ? 220 : 0}
+          sx={{
+            overflow: "hidden",
+            scrollbarWidth: "thin",
+            scrollbarColor: "#888 transparent",
+            msOverflowStyle: "-ms-autohiding-scrollbar",
+            ":hover": { overflowY: "auto" },
+            "::-webkit-scrollbar": { width: "5px", borderRadius: "50%" },
+            "::-webkit-scrollbar-thumb": { backgroundColor: "#888" },
+          }}
+          w={250}
           h="100%"
           spacing="xs"
           align="flex-start"
-          pr={5}
+          pr={10}
         >
-          <Divider
-            my="sm"
-            color="gray"
-            size="xs"
-            w="100%"
-            labelPosition="center"
-            labelProps={{ size: "md", weight: "bold" }}
-            label={startCase(activeTab!)}
-          />
+          <Title align="center" w="100%" color="dark.4" order={4}>
+            {startCase(activeTab)}
+          </Title>
           {children}
         </Stack>
-      </Collapse>
+      )}
     </Group>
   );
 };
