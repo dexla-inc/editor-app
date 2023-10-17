@@ -30,32 +30,10 @@ import { VariablesButton } from "@/components/variables/VariablesButton";
 import { getPageList } from "@/requests/pages/queries";
 import { PageListResponse } from "@/requests/pages/types";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
-import {
-  IconArrowBackUp,
-  IconArrowForwardUp,
-  IconLayoutNavbarCollapse,
-  IconLayoutNavbarExpand,
-} from "@tabler/icons-react";
+import { IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
-
-const ToggleNavbarButton = () => {
-  const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
-  const setIsNavBarVisible = useEditorStore(
-    (state) => state.setIsNavBarVisible,
-  );
-  const IconToggle = isNavBarVisible
-    ? IconLayoutNavbarCollapse
-    : IconLayoutNavbarExpand;
-
-  return (
-    <IconToggle
-      onClick={setIsNavBarVisible}
-      style={{ transform: "rotate(-90deg)", cursor: "pointer" }}
-    />
-  );
-};
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const { resetTree, isPreviewMode, setPreviewMode, language, setLanguage } =
@@ -90,7 +68,6 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               <Link href="/">
                 <Logo />
               </Link>
-              <ToggleNavbarButton />
             </Group>
 
             <Group noWrap position="right">

@@ -69,6 +69,8 @@ export type EditorState = {
   isPreviewMode: boolean;
   isLive: boolean;
   isNavBarVisible: boolean;
+  activeTab?: string;
+  pinTab: boolean;
   pages: PageResponse[];
   onMountActionsRan: string[];
   pickingComponentToBindTo?: ComponentToBind;
@@ -80,6 +82,7 @@ export type EditorState = {
   copiedAction?: Action[];
   sequentialTo?: string;
   openAction?: OpenAction;
+
   setOpenAction: (openAction: OpenAction) => void;
   setSequentialTo: (sequentialTo?: string) => void;
   setPickingComponentToBindTo: (
@@ -133,6 +136,8 @@ export type EditorState = {
   setPreviewMode: (value: boolean) => void;
   setIsLive: (value: boolean) => void;
   setIsNavBarVisible: () => void;
+  setActiveTab: (activeTab?: string) => void;
+  setPinTab: (value: boolean) => void;
   setCopiedAction: (copiedAction?: Action[]) => void;
   // pasteAction: (componentId: string) => void;
   language: string;
@@ -430,6 +435,10 @@ export const useEditorStore = create<EditorState>()(
         isPreviewMode: false,
         isLive: false,
         isNavBarVisible: true,
+        pinTab: false,
+        setActiveTab: (activeTab) =>
+          set({ activeTab }, false, "editor/setActiveTab"),
+        setPinTab: (pinTab) => set({ pinTab }, false, "editor/setPinTab"),
         setPreviewMode: (value) =>
           set(
             { isPreviewMode: value, currentTreeComponentsStates: {} },

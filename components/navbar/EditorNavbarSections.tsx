@@ -3,6 +3,7 @@ import { EditorNavbarLayersSection } from "@/components/navbar/EditorNavbarLayer
 import { EditorNavbarPagesSection } from "@/components/navbar/EditorNavbarPagesSection";
 import { EditorNavbarThemesSection } from "@/components/navbar/EditorNavbarThemesSection";
 import { EditorSettingsSection } from "@/components/navbar/EditorSettingsSection";
+import { useEditorStore } from "@/stores/editor";
 import {
   IconBrush,
   IconFileInvoice,
@@ -10,8 +11,6 @@ import {
   IconSettings,
   IconStack2,
 } from "@tabler/icons-react";
-import { useRouter } from "next/router";
-import { useState } from "react";
 import { NavbarSection } from "./NavbarSection";
 
 type SectionId = "pages" | "layers" | "components" | "theme" | "settings";
@@ -62,18 +61,13 @@ export const sectionMapper: SectionsMapper = {
 };
 
 export const EditorNavbarSections = () => {
-  const [activeTab, setActiveTab] = useState<string | null>(null);
-  const router = useRouter();
+  const { activeTab } = useEditorStore();
 
   const item = sections.find((item) => item.id === activeTab);
 
   return (
     <>
-      <NavbarSection
-        sections={sections}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-      >
+      <NavbarSection sections={sections}>
         {item &&
           sectionMapper[item.id]({
             ...item,
