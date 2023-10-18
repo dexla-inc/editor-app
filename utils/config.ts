@@ -1,6 +1,6 @@
 export const HEADER_HEIGHT = 50;
 export const NAVBAR_MIN_WIDTH = 50;
-export const NAVBAR_WIDTH = 310;
+export const NAVBAR_WIDTH = 320;
 export const ASIDE_WIDTH = 240;
 export const ICON_SIZE = 16;
 export const ICON_MEDIUM_SIZE = 24;

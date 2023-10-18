@@ -128,7 +128,7 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
   return (
     <Box
       onMouseDown={() => {
-        !pinTab && setActiveTab(undefined);
+        setActiveTab(undefined);
       }}
       ref={setContentRef as any}
       component="iframe"
