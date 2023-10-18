@@ -55,6 +55,10 @@ export const VariableList = ({ projectId, pageId }: Props) => {
     },
   });
 
+  useEffect(() => {
+    refetch();
+  }, [filter, refetch]);
+
   const rows = (variables?.results ?? [])?.map((variable: any) => (
     <tr key={variable.id}>
       <td>{variable.name}</td>
@@ -83,10 +87,6 @@ export const VariableList = ({ projectId, pageId }: Props) => {
       </td>
     </tr>
   ));
-
-  useEffect(() => {
-    refetch();
-  }, [filter, refetch]);
 
   return (
     <>
@@ -117,7 +117,7 @@ export const VariableList = ({ projectId, pageId }: Props) => {
             </Table>
           </Stack>
         )}
-        {rows.length === 0 && (
+        {!rows.length && (
           <Stack>
             <Center>
               <Text color="dimmed" size="xs">

@@ -3,7 +3,7 @@ import { PagingParams } from "@/requests/types";
 export type VariableParams = {
   name: string;
   type: FrontEndTypes;
-  defaultValue: string;
+  defaultValue: string | null;
   value?: string;
   isGlobal?: boolean;
   pageId: string;

@@ -37,6 +37,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import React, { forwardRef, useEffect, useState } from "react";
 import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
+import { useVariable } from "@/hooks/useVariable";
+import { FrontEndTypes } from "@/requests/variables/types";
 
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, any>(
@@ -81,6 +83,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     editorTree,
     selectedComponentId,
   });
+  const { createVariablesMutation } = useVariable();
 
   const { sequentialTo, setComponentToBind, setPickingComponentToBindTo } =
     useEditorStore();
@@ -133,6 +136,14 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
         updateTreeComponentActions,
       });
 
+      createVariablesMutation.mutate({
+        name: `${selectedEndpoint?.methodType} ${selectedEndpoint?.relativeUrl}`,
+        defaultValue: selectedEndpoint?.exampleResponse,
+        type: "OBJECT" as FrontEndTypes,
+        isGlobal: false,
+        pageId: router.query.page,
+      });
+
       handleLoadingStop({ stopLoading });
     } catch (error) {
       handleLoadingStop({ stopLoading, success: false });
@@ -179,6 +190,8 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   const accessToken = useAuthStore((state) => state.getAccessToken);
 
   const showLoaderInputProps = form.getInputProps("showLoader");
+
+  console.log("--->", { selectedEndpoint });
 
   return endpoints && endpoints.length > 0 ? (
     <>

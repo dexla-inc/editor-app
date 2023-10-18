@@ -17,7 +17,7 @@ type Props = ButtonProps & {
   projectId: string;
 };
 
-export const VariablesButton = ({ projectId, pageId, ...rest }: Props) => {
+export const VariablesButton = ({ projectId, pageId }: Props) => {
   const [opened, modal] = useDisclosure(false);
   const [mode, setMode] = useState("list");
 
