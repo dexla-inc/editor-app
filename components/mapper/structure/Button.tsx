@@ -1,8 +1,8 @@
 import { defaultTheme } from "@/components/IFrame";
+import { defaultButtonValues } from "@/components/modifiers/Button";
 import { Component } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
-import { defaultBorderValues } from "@/components/modifiers/Border";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
@@ -14,7 +14,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Button",
     props: {
       style: {
-        ...defaultBorderValues,
+        ...defaultButtonValues,
         width: "auto",
         height: "auto",
         padding: px(theme.spacing.sm),

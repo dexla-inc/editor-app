@@ -13,7 +13,7 @@ import { useEffect } from "react";
 export const icon = IconClick;
 export const label = "Button";
 
-export const defaultInputValues = {
+export const defaultButtonValues = {
   value: "New Button",
   type: "button",
   variant: "filled",
@@ -31,7 +31,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useEditorStore((state) => state.theme);
 
   const form = useForm({
-    initialValues: defaultInputValues,
+    initialValues: defaultButtonValues,
   });
 
   useEffect(() => {
@@ -48,13 +48,13 @@ export const Modifier = withModifier(({ selectedComponent }) => {
       ]);
 
       form.setValues({
-        value: data.children ?? defaultInputValues.value,
-        type: data.type ?? defaultInputValues.type,
-        variant: data.variant ?? defaultInputValues.variant,
-        size: data.size ?? defaultInputValues.size,
-        color: data.color ?? defaultInputValues.color,
-        textColor: data.textColor ?? defaultInputValues.textColor,
-        icon: data.leftIcon ?? defaultInputValues.leftIcon,
+        value: data.children ?? defaultButtonValues.value,
+        type: data.type ?? defaultButtonValues.type,
+        variant: data.variant ?? defaultButtonValues.variant,
+        size: data.size ?? defaultButtonValues.size,
+        color: data.color ?? defaultButtonValues.color,
+        textColor: data.textColor ?? defaultButtonValues.textColor,
+        icon: data.leftIcon ?? defaultButtonValues.leftIcon,
         ...data.style,
       });
     }

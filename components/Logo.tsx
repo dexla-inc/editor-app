@@ -6,8 +6,8 @@ export function Logo() {
       <svg
         xmlns="http://www.w3.org/2000/svg"
         version="1.1"
-        height="50"
-        viewBox="0 0 2783.61846355365 3231.648776472988"
+        height="40"
+        viewBox="0 285 2783 3231"
       >
         <g transform="scale(11.5824388236494) translate(10, 10)">
           <defs id="SvgjsDefs2061"></defs>
