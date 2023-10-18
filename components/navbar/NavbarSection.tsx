@@ -13,8 +13,8 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import {
-  IconDirection,
-  IconDirectionsOff,
+  IconArrowsDiagonal2,
+  IconArrowsDiagonalMinimize,
   IconPinned,
   IconPinnedOff,
 } from "@tabler/icons-react";
@@ -43,7 +43,9 @@ export const NavbarSection = ({
   const pinnedItem = sections.find((item) => item.id === "layers");
 
   const IconToggle = pinTab ? IconPinnedOff : IconPinned;
-  const IconCollapse = isStructureCollapsed ? IconDirection : IconDirectionsOff;
+  const IconCollapse = isStructureCollapsed
+    ? IconArrowsDiagonal2
+    : IconArrowsDiagonalMinimize;
 
   const handleClick = (id: string) => {
     activeTab === id ? setActiveTab(undefined) : setActiveTab(id);
@@ -78,6 +80,45 @@ export const NavbarSection = ({
 
   const item = sections.find((section) => section.id === activeTab);
 
+  const actionButtons = (
+    <Flex>
+      <Tooltip
+        label={isStructureCollapsed ? "Expand All" : "Collapse All"}
+        fz="xs"
+        position="top"
+        withArrow
+        withinPortal
+      >
+        <ActionIcon aria-label="collapseTab">
+          <IconCollapse
+            style={{ transform: "rotate(45deg)" }}
+            onClick={() => setIsStructureCollapsed(!isStructureCollapsed)}
+            size={ICON_SIZE}
+            color="gray"
+          />
+        </ActionIcon>
+      </Tooltip>
+      <Tooltip
+        label={pinTab ? "Unpin Tab" : "Pin Tab"}
+        fz="xs"
+        position="top"
+        withArrow
+        withinPortal
+      >
+        <ActionIcon aria-label="PinTab">
+          <IconToggle
+            onClick={() => {
+              setPinTab(!pinTab);
+              setActiveTab(pinnedItem?.id);
+            }}
+            size={ICON_SIZE}
+            color="gray"
+          />
+        </ActionIcon>
+      </Tooltip>
+    </Flex>
+  );
+
   const itemTab = (
     <Stack
       sx={{
@@ -106,26 +147,7 @@ export const NavbarSection = ({
         <Title align="center" color="dark.4" order={4}>
           {startCase(item?.label)}
         </Title>
-        {activeTab === "layers" && (
-          <Tooltip
-            label={pinTab ? "Unpin Tab" : "Pin Tab"}
-            fz={10}
-            position="top"
-            withArrow
-            withinPortal
-          >
-            <ActionIcon aria-label="PinTab">
-              <IconToggle
-                onClick={() => {
-                  setPinTab(!pinTab);
-                  setActiveTab(undefined);
-                }}
-                size={ICON_SIZE}
-                color="gray"
-              />
-            </ActionIcon>
-          </Tooltip>
-        )}
+        {activeTab === "layers" && actionButtons}
       </Flex>
       <Stack align="flex-start" w="100%">
         {children}
@@ -153,48 +175,29 @@ export const NavbarSection = ({
         {activeTab && <Portal target="#navbar-sections">{itemTab}</Portal>}
       </Group>
       {pinTab && pinnedItem && (
-        <Stack w={250} h="100%" spacing="xs" align="flex-start">
+        <Stack
+          sx={{
+            overflowX: "hidden",
+            overflowY: "scroll",
+            scrollbarWidth: "thin",
+            scrollbarColor: "#888 transparent",
+            msOverflowStyle: "-ms-autohiding-scrollbar",
+            "::-webkit-scrollbar": { width: "5px", borderRadius: "10px" },
+            "::-webkit-scrollbar-thumb": {
+              backgroundColor: "#888",
+              borderRadius: "10px",
+            },
+          }}
+          w={250}
+          h="100%"
+          spacing="xs"
+          align="flex-start"
+        >
           <Flex justify="space-between" w="100%">
             <Title align="center" color="dark.4" order={4}>
               {startCase(pinnedItem?.label)}
             </Title>
-            <Flex>
-              <Tooltip
-                label={isStructureCollapsed ? "Expand All" : "Collapse All"}
-                fz="xs"
-                position="top"
-                withArrow
-                withinPortal
-              >
-                <ActionIcon aria-label="collapseTab">
-                  <IconCollapse
-                    onClick={() =>
-                      setIsStructureCollapsed(!isStructureCollapsed)
-                    }
-                    size={ICON_SIZE}
-                    color="gray"
-                  />
-                </ActionIcon>
-              </Tooltip>
-              <Tooltip
-                label={pinTab ? "Unpin Tab" : "Pin Tab"}
-                fz="xs"
-                position="top"
-                withArrow
-                withinPortal
-              >
-                <ActionIcon aria-label="PinTab">
-                  <IconToggle
-                    onClick={() => {
-                      setPinTab(!pinTab);
-                      setActiveTab(undefined);
-                    }}
-                    size={ICON_SIZE}
-                    color="gray"
-                  />
-                </ActionIcon>
-              </Tooltip>
-            </Flex>
+            {actionButtons}
           </Flex>
           {layers({ ...item })}
         </Stack>
