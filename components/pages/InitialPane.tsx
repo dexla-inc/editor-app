@@ -8,6 +8,7 @@ import {
   Stack,
   Text,
   TextInput,
+  Tooltip,
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
@@ -55,73 +56,77 @@ export default function InitialPane({
       <Stack spacing={0}>
         {pages.map((page) => {
           return (
-            <UnstyledButton
-              key={page.id}
-              component={Link}
-              href={`/projects/${projectId}/editor/${page.id}`}
-              onClick={() => {
-                resetTree();
-              }}
-            >
-              <Group
-                p="xs"
-                spacing="sm"
-                position="apart"
-                align="center"
-                sx={{
-                  borderRadius: theme.radius.md,
-                  textDecoration: "none",
-                  fontWeight: currentPage === page.id ? 500 : "normal",
-                  color:
-                    currentPage === page.id
-                      ? theme.black
-                      : theme.colors.gray[7],
-                  backgroundColor:
-                    currentPage === page.id ? theme.colors.gray[0] : undefined,
-
-                  "&:hover": {
-                    backgroundColor: theme.colors.gray[0],
-                    color: theme.black,
-                  },
+            <Tooltip key={page.id} label={page.title} fz="xs">
+              <UnstyledButton
+                component={Link}
+                href={`/projects/${projectId}/editor/${page.id}`}
+                onClick={() => {
+                  resetTree();
                 }}
               >
-                <Flex gap="xs" sx={{ maxWidth: 180 }}>
-                  <Flex style={{ flex: "0 0 auto" }}>
-                    {page.isHome ? (
-                      <IconHome
-                        size={ICON_SIZE}
-                        style={{ flex: "flex-grow" }}
-                      />
-                    ) : (
-                      <IconFileAnalytics size={ICON_SIZE} />
-                    )}
-                  </Flex>
-                  <Text size="xs" truncate>
-                    {page.title}{" "}
-                  </Text>
-                </Flex>
-                <UnstyledButton
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setPage(page);
-                  }}
-                  p={5}
+                <Group
+                  p="xs"
+                  spacing="sm"
+                  position="apart"
+                  align="center"
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    flexWrap: "nowrap",
                     borderRadius: theme.radius.md,
+                    textDecoration: "none",
+                    fontWeight: currentPage === page.id ? 500 : "normal",
+                    color:
+                      currentPage === page.id
+                        ? theme.black
+                        : theme.colors.gray[7],
+                    backgroundColor:
+                      currentPage === page.id
+                        ? theme.colors.gray[0]
+                        : undefined,
+
                     "&:hover": {
-                      backgroundColor: theme.colors.teal[5],
-                      color: theme.white,
+                      backgroundColor: theme.colors.gray[0],
+                      color: theme.black,
                     },
                   }}
                 >
-                  <IconSettings size={ICON_SIZE} />
-                </UnstyledButton>
-              </Group>
-            </UnstyledButton>
+                  <Flex gap="xs" sx={{ maxWidth: 180 }}>
+                    <Flex style={{ flex: "0 0 auto" }}>
+                      {page.isHome ? (
+                        <IconHome
+                          size={ICON_SIZE}
+                          style={{ flex: "flex-grow" }}
+                        />
+                      ) : (
+                        <IconFileAnalytics size={ICON_SIZE} />
+                      )}
+                    </Flex>
+                    <Text size="xs" truncate>
+                      {page.title}{" "}
+                    </Text>
+                  </Flex>
+                  <UnstyledButton
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setPage(page);
+                    }}
+                    p={5}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: theme.radius.md,
+                      "&:hover": {
+                        backgroundColor: theme.colors.teal[5],
+                        color: theme.white,
+                      },
+                    }}
+                  >
+                    <IconSettings size={ICON_SIZE} />
+                  </UnstyledButton>
+                </Group>
+              </UnstyledButton>
+            </Tooltip>
           );
         })}
       </Stack>
