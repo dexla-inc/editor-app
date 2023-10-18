@@ -5,6 +5,7 @@ import {
   ActionIcon,
   Flex,
   Group,
+  Portal,
   Stack,
   ThemeIcon,
   Title,
@@ -17,18 +18,22 @@ import { PropsWithChildren } from "react";
 
 type Props = {
   sections: Sections;
+  layers: any;
 };
 
 export const NavbarSection = ({
   children,
   sections,
+  layers,
 }: PropsWithChildren<Props>) => {
   const { activeTab, setActiveTab, pinTab, setPinTab } = useEditorStore();
+
+  const pinnedItem = sections.find((item) => item.id === "layers");
 
   const IconToggle = pinTab ? IconPinnedOff : IconPinned;
 
   const handleClick = (id: string) => {
-    if (pinTab) return;
+    // if (pinTab) return;
     activeTab === id ? setActiveTab(undefined) : setActiveTab(id);
   };
 
@@ -59,6 +64,64 @@ export const NavbarSection = ({
     );
   });
 
+  const item = sections.find((section) => section.id === activeTab);
+
+  const itemTab = (
+    <Stack
+      sx={{
+        overflowX: "hidden",
+        overflowY: "scroll",
+        scrollbarWidth: "thin",
+        scrollbarColor: "#888 transparent",
+        msOverflowStyle: "-ms-autohiding-scrollbar",
+        ":hover": { overflowY: "auto" },
+        "::-webkit-scrollbar": { width: "5px", borderRadius: "10px" },
+        "::-webkit-scrollbar-thumb": {
+          backgroundColor: "#888",
+          borderRadius: "10px",
+        },
+      }}
+      pos="fixed"
+      bg="white"
+      top={70}
+      p={10}
+      left={50}
+      w={250}
+      h="100%"
+      spacing="xs"
+      align="flex-start"
+    >
+      <Flex justify="space-between" w="100%">
+        <Title align="center" color="dark.4" order={4}>
+          {startCase(item?.label)}
+        </Title>
+        {activeTab === "layers" && (
+          <Tooltip
+            label={pinTab ? "Unpin Tab" : "Pin Tab"}
+            fz={10}
+            position="top"
+            withArrow
+            withinPortal
+          >
+            <ActionIcon aria-label="PinTab">
+              <IconToggle
+                onClick={() => {
+                  setPinTab(!pinTab);
+                  setActiveTab(undefined);
+                }}
+                size={ICON_SIZE}
+                color="gray"
+              />
+            </ActionIcon>
+          </Tooltip>
+        )}
+      </Flex>
+      <Stack align="flex-start" w="100%">
+        {children}
+      </Stack>
+    </Stack>
+  );
+
   return (
     <Group
       dir="column"
@@ -67,34 +130,24 @@ export const NavbarSection = ({
       px="xs"
       h={`calc(95vh - ${HEADER_HEIGHT}px)`}
     >
-      <Stack pos="relative" h="100%" spacing="md">
-        {sectionToRender}
-      </Stack>
-
-      {(activeTab || pinTab) && (
-        <Stack
-          sx={{
-            overflow: "hidden",
-            scrollbarWidth: "thin",
-            scrollbarColor: "#888 transparent",
-            msOverflowStyle: "-ms-autohiding-scrollbar",
-            ":hover": { overflowY: "auto" },
-            "::-webkit-scrollbar": { width: "5px", borderRadius: "10px" },
-            "::-webkit-scrollbar-thumb": {
-              backgroundColor: "#888",
-              borderRadius: "10px",
-            },
-          }}
-          w={250}
-          h="100%"
-          spacing="xs"
-          align="flex-start"
-          pr={10}
-        >
+      <Group
+        align="flex-start"
+        pos="relative"
+        sx={{ zIndex: 100 }}
+        id="navbar-sections"
+      >
+        <Stack h="100%" spacing="md">
+          {sectionToRender}
+        </Stack>
+        {activeTab && <Portal target="#navbar-sections">{itemTab}</Portal>}
+      </Group>
+      {pinTab && pinnedItem && (
+        <Stack w={250} h="100%" spacing="xs" align="flex-start">
           <Flex justify="space-between" w="100%">
             <Title align="center" color="dark.4" order={4}>
-              {startCase(activeTab)}
+              {startCase(pinnedItem?.label)}
             </Title>
+
             <Tooltip
               label={pinTab ? "Unpin Tab" : "Pin Tab"}
               fz="xs"
@@ -104,14 +157,17 @@ export const NavbarSection = ({
             >
               <ActionIcon aria-label="PinTab">
                 <IconToggle
-                  onClick={() => setPinTab(!pinTab)}
+                  onClick={() => {
+                    setPinTab(!pinTab);
+                    setActiveTab(undefined);
+                  }}
                   size={ICON_SIZE}
                   color="gray"
                 />
               </ActionIcon>
             </Tooltip>
           </Flex>
-          {children}
+          {layers({ ...item })}
         </Stack>
       )}
     </Group>

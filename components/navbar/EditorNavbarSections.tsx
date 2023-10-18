@@ -67,7 +67,7 @@ export const EditorNavbarSections = () => {
 
   return (
     <>
-      <NavbarSection sections={sections}>
+      <NavbarSection sections={sections} layers={sectionMapper.layers}>
         {item &&
           sectionMapper[item.id]({
             ...item,
