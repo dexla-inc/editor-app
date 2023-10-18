@@ -31,14 +31,16 @@ export const NavbarSection = ({
   sections,
   layers,
 }: PropsWithChildren<Props>) => {
-  const {
-    activeTab,
-    setActiveTab,
-    pinTab,
-    setPinTab,
-    isStructureCollapsed,
-    setIsStructureCollapsed,
-  } = useEditorStore();
+  const activeTab = useEditorStore((state) => state.activeTab);
+  const setActiveTab = useEditorStore((state) => state.setActiveTab);
+  const pinTab = useEditorStore((state) => state.pinTab);
+  const setPinTab = useEditorStore((state) => state.setPinTab);
+  const isStructureCollapsed = useEditorStore(
+    (state) => state.isStructureCollapsed,
+  );
+  const setIsStructureCollapsed = useEditorStore(
+    (state) => state.setIsStructureCollapsed,
+  );
 
   const pinnedItem = sections.find((item) => item.id === "layers");
 
