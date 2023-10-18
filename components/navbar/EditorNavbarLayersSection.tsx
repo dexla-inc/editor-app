@@ -40,7 +40,12 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
-  const [opened, { toggle, open, close }] = useDisclosure(false);
+  const { updateTreeComponentDescription, isStructureCollapsed, activeTab } =
+    useEditorStore();
+
+  const [opened, { toggle, open, close }] = useDisclosure(
+    isStructureCollapsed ? false : true,
+  );
   const [clickedManualToggle, setClickedManualToggle] = useState(false);
   const [editable, { toggle: toggleEdit, close: closeEdit }] =
     useDisclosure(false);
@@ -51,9 +56,6 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     id: `layer-${component.id}`,
     onDragStart,
   });
-
-  const { updateTreeComponentDescription, isStructureCollapsed } =
-    useEditorStore();
 
   const form = useForm({
     initialValues: {

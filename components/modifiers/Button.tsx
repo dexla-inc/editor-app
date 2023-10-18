@@ -53,8 +53,8 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         type: data.type ?? defaultButtonValues.type,
         variant: data.variant ?? defaultButtonValues.variant,
         size: data.size ?? defaultButtonValues.size,
-        color: data.style.color ?? defaultButtonValues.color,
-        textColor: data.style.textColor ?? defaultButtonValues.textColor,
+        color: data.color ?? defaultButtonValues.color,
+        textColor: data.textColor ?? defaultButtonValues.textColor,
         icon: data.leftIcon ?? defaultButtonValues.leftIcon,
       });
     }
@@ -115,10 +115,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           {...form.getInputProps("color")}
           onChange={(value: string) => {
             form.setFieldValue("color", value);
-            debouncedTreeComponentPropsUpdate("style", {
-              ...selectedComponent?.props?.style,
-              color: value,
-            });
+            debouncedTreeComponentPropsUpdate("color", value);
           }}
         />
         <ThemeColorSelector
@@ -126,10 +123,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           {...form.getInputProps("textColor")}
           onChange={(value: string) => {
             form.setFieldValue("textColor", value);
-            debouncedTreeComponentPropsUpdate("style", {
-              ...selectedComponent?.props?.style,
-              textColor: value,
-            });
+            debouncedTreeComponentPropsUpdate("textColor", value);
           }}
         />
         <Select
