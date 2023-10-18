@@ -1,6 +1,6 @@
 import { Sections } from "@/components/navbar/EditorNavbarSections";
 import { useEditorStore } from "@/stores/editor";
-import { HEADER_HEIGHT, ICON_SIZE } from "@/utils/config";
+import { HEADER_HEIGHT, ICON_SIZE, NAVBAR_MIN_WIDTH } from "@/utils/config";
 import {
   ActionIcon,
   Flex,
@@ -12,7 +12,12 @@ import {
   Tooltip,
   UnstyledButton,
 } from "@mantine/core";
-import { IconPinned, IconPinnedOff } from "@tabler/icons-react";
+import {
+  IconDirection,
+  IconDirectionsOff,
+  IconPinned,
+  IconPinnedOff,
+} from "@tabler/icons-react";
 import startCase from "lodash.startcase";
 import { PropsWithChildren } from "react";
 
@@ -26,14 +31,21 @@ export const NavbarSection = ({
   sections,
   layers,
 }: PropsWithChildren<Props>) => {
-  const { activeTab, setActiveTab, pinTab, setPinTab } = useEditorStore();
+  const {
+    activeTab,
+    setActiveTab,
+    pinTab,
+    setPinTab,
+    isStructureCollapsed,
+    setIsStructureCollapsed,
+  } = useEditorStore();
 
   const pinnedItem = sections.find((item) => item.id === "layers");
 
   const IconToggle = pinTab ? IconPinnedOff : IconPinned;
+  const IconCollapse = isStructureCollapsed ? IconDirection : IconDirectionsOff;
 
   const handleClick = (id: string) => {
-    // if (pinTab) return;
     activeTab === id ? setActiveTab(undefined) : setActiveTab(id);
   };
 
@@ -74,7 +86,6 @@ export const NavbarSection = ({
         scrollbarWidth: "thin",
         scrollbarColor: "#888 transparent",
         msOverflowStyle: "-ms-autohiding-scrollbar",
-        ":hover": { overflowY: "auto" },
         "::-webkit-scrollbar": { width: "5px", borderRadius: "10px" },
         "::-webkit-scrollbar-thumb": {
           backgroundColor: "#888",
@@ -83,9 +94,9 @@ export const NavbarSection = ({
       }}
       pos="fixed"
       bg="white"
-      top={70}
+      top={HEADER_HEIGHT}
       p={10}
-      left={50}
+      left={NAVBAR_MIN_WIDTH}
       w={250}
       h="100%"
       spacing="xs"
@@ -147,25 +158,43 @@ export const NavbarSection = ({
             <Title align="center" color="dark.4" order={4}>
               {startCase(pinnedItem?.label)}
             </Title>
-
-            <Tooltip
-              label={pinTab ? "Unpin Tab" : "Pin Tab"}
-              fz="xs"
-              position="top"
-              withArrow
-              withinPortal
-            >
-              <ActionIcon aria-label="PinTab">
-                <IconToggle
-                  onClick={() => {
-                    setPinTab(!pinTab);
-                    setActiveTab(undefined);
-                  }}
-                  size={ICON_SIZE}
-                  color="gray"
-                />
-              </ActionIcon>
-            </Tooltip>
+            <Flex>
+              <Tooltip
+                label={isStructureCollapsed ? "Expand All" : "Collapse All"}
+                fz="xs"
+                position="top"
+                withArrow
+                withinPortal
+              >
+                <ActionIcon aria-label="collapseTab">
+                  <IconCollapse
+                    onClick={() =>
+                      setIsStructureCollapsed(!isStructureCollapsed)
+                    }
+                    size={ICON_SIZE}
+                    color="gray"
+                  />
+                </ActionIcon>
+              </Tooltip>
+              <Tooltip
+                label={pinTab ? "Unpin Tab" : "Pin Tab"}
+                fz="xs"
+                position="top"
+                withArrow
+                withinPortal
+              >
+                <ActionIcon aria-label="PinTab">
+                  <IconToggle
+                    onClick={() => {
+                      setPinTab(!pinTab);
+                      setActiveTab(undefined);
+                    }}
+                    size={ICON_SIZE}
+                    color="gray"
+                  />
+                </ActionIcon>
+              </Tooltip>
+            </Flex>
           </Flex>
           {layers({ ...item })}
         </Stack>

@@ -123,7 +123,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
       sx={(theme) =>
         component.id !== "root"
           ? {
-              padding: "0 0 0 20px",
+              padding: "0 0 0 10px",
               "&:has(.is-drag-over)": {
                 borderLeft: `1px solid ${theme.colors.teal[6]}!important`,
               },
@@ -245,7 +245,10 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
 
 const ListItemWrapper = ({ component, children, level }: ListItemProps) => {
   return (
-    <SortableTreeItem component={component} style={{ marginBottom: "3px" }}>
+    <SortableTreeItem
+      component={component}
+      style={{ marginBottom: "3px", overflow: "hidden" }}
+    >
       <List.Item key={component.id} w="100%">
         <ListItem component={component} level={level}>
           {(component.children ?? [])?.length > 0 && (

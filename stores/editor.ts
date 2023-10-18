@@ -71,6 +71,7 @@ export type EditorState = {
   isNavBarVisible: boolean;
   activeTab?: string;
   pinTab: boolean;
+  isStructureCollapsed: boolean;
   pages: PageResponse[];
   onMountActionsRan: string[];
   pickingComponentToBindTo?: ComponentToBind;
@@ -138,6 +139,7 @@ export type EditorState = {
   setIsNavBarVisible: () => void;
   setActiveTab: (activeTab?: string) => void;
   setPinTab: (value: boolean) => void;
+  setIsStructureCollapsed: (value: boolean) => void;
   setCopiedAction: (copiedAction?: Action[]) => void;
   // pasteAction: (componentId: string) => void;
   language: string;
@@ -436,6 +438,7 @@ export const useEditorStore = create<EditorState>()(
         isLive: false,
         isNavBarVisible: true,
         pinTab: false,
+        isStructureCollapsed: false,
         setActiveTab: (activeTab) =>
           set({ activeTab }, false, "editor/setActiveTab"),
         setPinTab: (pinTab) => set({ pinTab }, false, "editor/setPinTab"),
@@ -446,6 +449,12 @@ export const useEditorStore = create<EditorState>()(
             "editor/setPreviewMode",
           ),
         setIsLive: (value) => set({ isLive: value }, false, "editor/setIsLive"),
+        setIsStructureCollapsed: (value) =>
+          set(
+            { isStructureCollapsed: value },
+            false,
+            "editor/setIsStructureCollapsed",
+          ),
         setIsNavBarVisible: () =>
           set(
             (state) => ({ isNavBarVisible: !state.isNavBarVisible }),
