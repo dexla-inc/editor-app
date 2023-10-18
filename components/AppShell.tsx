@@ -63,11 +63,13 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
       padding={0}
       header={
         <Header height={HEADER_HEIGHT} sx={{ zIndex: 110 }}>
-          <Group h={HEADER_HEIGHT} px="lg" align="center" position="apart">
+          <Group h={HEADER_HEIGHT} px="xs" align="center" position="apart">
             <Group>
-              <Link href="/">
-                <Logo />
-              </Link>
+              <Tooltip label="Back to dashboard" fz="xs">
+                <Link href="/">
+                  <Logo />
+                </Link>
+              </Tooltip>
             </Group>
 
             <Group noWrap position="right">
@@ -88,6 +90,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                   whiteSpace: "nowrap",
                   width: "160px",
                 }}
+                display="none"
               />
               {isDexlaAdmin && <AIChatHistoryButton projectId={projectId} />}
               <GenerateAIButton projectId={projectId} />

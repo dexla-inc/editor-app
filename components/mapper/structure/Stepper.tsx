@@ -9,7 +9,7 @@ export const jsonStructure = (props?: any): Component => {
     name: "Container",
     description: "Stepper Container",
     props: {
-      bg: "White.0",
+      bg: "White.6",
       style: {
         display: "flex",
         flexDirection: "column",

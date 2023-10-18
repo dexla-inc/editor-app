@@ -6,10 +6,10 @@ import { EditorSettingsSection } from "@/components/navbar/EditorSettingsSection
 import { useEditorStore } from "@/stores/editor";
 import {
   IconBrush,
+  IconComponents,
   IconFileInvoice,
   IconLayoutDashboard,
   IconSettings,
-  IconStack2,
 } from "@tabler/icons-react";
 import { NavbarSection } from "./NavbarSection";
 
@@ -17,20 +17,20 @@ type SectionId = "pages" | "layers" | "components" | "theme" | "settings";
 
 const sections = [
   {
-    id: "pages" as SectionId,
-    label: "Pages",
-    icon: IconFileInvoice,
-  },
-  {
     id: "layers" as SectionId,
     label: "Page Structure",
-    icon: IconStack2,
+    icon: IconLayoutDashboard,
     initiallyOpened: true,
   },
   {
     id: "components" as SectionId,
     label: "Components",
-    icon: IconLayoutDashboard,
+    icon: IconComponents,
+  },
+  {
+    id: "pages" as SectionId,
+    label: "Pages",
+    icon: IconFileInvoice,
   },
   {
     id: "theme" as SectionId,

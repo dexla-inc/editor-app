@@ -10,7 +10,7 @@ export const jsonStructure = (props?: any): Component => {
   return {
     id: nanoid(),
     name: "Container",
-    description: "Tabs Container",
+    description: "Accordion Container",
     props: {
       style: {
         marginTop: px(theme.spacing.xl),
