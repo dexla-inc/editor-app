@@ -21,7 +21,8 @@ const controls = [
 
 export const ChangeStepFlowActionForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const { tree: editorTree, setTree } = useEditorStore();
+  const setTree = useEditorStore((state) => state.setTree);
+  const editorTree = useEditorStore((state) => state.tree);
 
   const { page } = useRequestProp();
 

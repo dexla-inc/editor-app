@@ -6,12 +6,10 @@ import {
   handleLoadingStop,
   updateActionInTree,
   useActionData,
-  useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
 import { ReloadComponentAction } from "@/utils/actions";
-import { getComponentById } from "@/utils/editor";
 import { Divider, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
@@ -23,16 +21,26 @@ type Props = {
 
 export const ReloadComponentActionForm = ({ id }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
-  const { editorTree, selectedComponentId, updateTreeComponentActions } =
-    useEditorStores();
+  const editorTree = useEditorStore((state) => state.tree);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
+  const updateTreeComponentActions = useEditorStore(
+    (state) => state.updateTreeComponentActions,
+  );
   const { componentActions, action } = useActionData<ReloadComponentAction>({
     actionId: id,
     editorTree,
     selectedComponentId,
   });
 
-  const { setPickingComponentToBindTo, sequentialTo, setComponentToBind } =
-    useEditorStore();
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo,
+  );
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
+  const sequentialTo = useEditorStore((state) => state.sequentialTo);
 
   const reloadAction = action.action as ReloadComponentAction;
 

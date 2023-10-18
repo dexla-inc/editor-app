@@ -5,7 +5,6 @@ import {
   handleLoadingStop,
   updateActionInTree,
   useActionData,
-  useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
@@ -22,8 +21,13 @@ type FormValues = Omit<BindVariableToComponentAction, "name">;
 
 export const BindVariableToComponentActionForm = ({ id }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
-  const { editorTree, selectedComponentId, updateTreeComponentActions } =
-    useEditorStores();
+  const editorTree = useEditorStore((state) => state.tree);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
+  const updateTreeComponentActions = useEditorStore(
+    (state) => state.updateTreeComponentActions,
+  );
   const { componentActions, action } =
     useActionData<BindVariableToComponentAction>({
       actionId: id,

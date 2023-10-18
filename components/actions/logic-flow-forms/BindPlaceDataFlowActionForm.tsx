@@ -1,5 +1,4 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { useEditorStores } from "@/components/actions/_BaseActionFunctions";
 import { colors } from "@/components/datasources/DataSourceEndpoint";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import { useRequestProp } from "@/hooks/useRequestProp";
@@ -60,9 +59,11 @@ type Props = {
 export const BindPlaceDataFlowActionForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
 
-  const { editorTree, selectedComponentId } = useEditorStores();
-
-  const { setComponentToBind, setTree } = useEditorStore();
+  const editorTree = useEditorStore((state) => state.tree);
+  const setTree = useEditorStore((state) => state.setTree);
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
 
   const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
     undefined,

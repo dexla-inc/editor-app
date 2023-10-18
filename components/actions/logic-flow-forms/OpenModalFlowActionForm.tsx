@@ -17,7 +17,8 @@ type FormValues = Omit<OpenModalAction, "name">;
 
 export const OpenModalFlowActionForm = ({ form, actionName }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const { tree: editorTree, setTree } = useEditorStore();
+  const setTree = useEditorStore((state) => state.setTree);
+  const editorTree = useEditorStore((state) => state.tree);
 
   const modals = getAllComponentsByName(editorTree.root, "Modal");
 

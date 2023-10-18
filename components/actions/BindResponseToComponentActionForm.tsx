@@ -5,7 +5,6 @@ import {
   handleLoadingStop,
   updateActionInTree,
   useActionData,
-  useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries";
@@ -27,8 +26,13 @@ type FormValues = Omit<BindResponseToComponentAction, "name">;
 export const BindResponseToComponentActionForm = ({ id }: Props) => {
   const router = useRouter();
   const { startLoading, stopLoading } = useLoadingState();
-  const { editorTree, selectedComponentId, updateTreeComponentActions } =
-    useEditorStores();
+  const editorTree = useEditorStore((state) => state.tree);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
+  const updateTreeComponentActions = useEditorStore(
+    (state) => state.updateTreeComponentActions,
+  );
   const { componentActions, action } =
     useActionData<BindResponseToComponentAction>({
       actionId: id,

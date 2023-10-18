@@ -90,16 +90,22 @@ const sectionMapper: SectionsMapper = {
 type Tab = "design" | "actions";
 
 export const EditorAsideSections = () => {
-  const {
-    updateTreeComponent,
-    updateTreeComponentActions,
-    setCopiedAction,
-    setTreeComponentCurrentState,
-    selectedComponentId,
-    tree: editorTree,
-    openAction,
-    setOpenAction,
-  } = useEditorStore();
+  const updateTreeComponent = useEditorStore(
+    (state) => state.updateTreeComponent,
+  );
+  const updateTreeComponentActions = useEditorStore(
+    (state) => state.updateTreeComponentActions,
+  );
+  const setCopiedAction = useEditorStore((state) => state.setCopiedAction);
+  const setTreeComponentCurrentState = useEditorStore(
+    (state) => state.setTreeComponentCurrentState,
+  );
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
+  const editorTree = useEditorStore((state) => state.tree);
+  const openAction = useEditorStore((state) => state.openAction);
+  const setOpenAction = useEditorStore((state) => state.setOpenAction);
   const currentTreeComponentsStates = useEditorStore(
     (state) => state.currentTreeComponentsStates,
   );

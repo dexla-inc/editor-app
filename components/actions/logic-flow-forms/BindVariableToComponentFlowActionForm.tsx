@@ -17,8 +17,13 @@ type FormValues = Omit<BindVariableToComponentAction, "name">;
 
 export const BindVariableToComponentFlowActionForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const { setPickingComponentToBindTo, setComponentToBind, setTree } =
-    useEditorStore();
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo,
+  );
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
+  const setTree = useEditorStore((state) => state.setTree);
 
   const { page } = useRequestProp();
 

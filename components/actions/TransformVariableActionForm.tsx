@@ -4,7 +4,6 @@ import {
   handleLoadingStop,
   updateActionInTree,
   useActionData,
-  useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { VariableSelect } from "@/components/variables/VariableSelect";
@@ -14,6 +13,7 @@ import { useForm } from "@mantine/form";
 import Editor from "@monaco-editor/react";
 import { IconPlayerPlayFilled } from "@tabler/icons-react";
 import { transpile } from "typescript";
+import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   id: string;
@@ -30,8 +30,13 @@ const defaultValues = {
 
 export const TransformVariableActionForm = ({ id }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
-  const { editorTree, selectedComponentId, updateTreeComponentActions } =
-    useEditorStores();
+  const editorTree = useEditorStore((state) => state.tree);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
+  const updateTreeComponentActions = useEditorStore(
+    (state) => state.updateTreeComponentActions,
+  );
   const { componentActions, action } = useActionData<TransformVariableAction>({
     actionId: id,
     editorTree,

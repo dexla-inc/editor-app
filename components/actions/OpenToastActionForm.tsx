@@ -4,7 +4,6 @@ import {
   handleLoadingStop,
   updateActionInTree,
   useActionData,
-  useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { OpenToastAction } from "@/utils/actions";
@@ -22,10 +21,20 @@ type Props = {
 type FormValues = Omit<OpenToastAction, "name">;
 
 export const OpenToastActionForm = ({ id }: Props) => {
-  const { setComponentToBind, setPickingComponentToBindTo } = useEditorStore();
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo,
+  );
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
   const { startLoading, stopLoading } = useLoadingState();
-  const { editorTree, selectedComponentId, updateTreeComponentActions } =
-    useEditorStores();
+  const editorTree = useEditorStore((state) => state.tree);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
+  const updateTreeComponentActions = useEditorStore(
+    (state) => state.updateTreeComponentActions,
+  );
   const { componentActions, action } = useActionData<OpenToastAction>({
     actionId: id,
     editorTree,

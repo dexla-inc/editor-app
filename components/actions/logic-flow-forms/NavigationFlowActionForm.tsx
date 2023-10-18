@@ -16,7 +16,7 @@ type FormValues = Omit<NavigationAction, "name">;
 export const NavigationFlowActionForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
 
-  const { setTree } = useEditorStore();
+  const setTree = useEditorStore((state) => state.setTree);
 
   const pages = useEditorStore((state) => state.pages);
   const { page } = useRequestProp();

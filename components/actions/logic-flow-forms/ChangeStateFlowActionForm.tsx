@@ -33,7 +33,11 @@ type SelectData = Array<{ value: string; label: string }>;
 export const ChangeStateActionFlowForm = ({ form }: Props) => {
   const theme = useMantineTheme();
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const { tree: editorTree, selectedComponentId, setTree } = useEditorStore();
+  const setTree = useEditorStore((state) => state.setTree);
+  const editorTree = useEditorStore((state) => state.tree);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
 
   const { page } = useRequestProp();
 

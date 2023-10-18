@@ -29,12 +29,16 @@ type SelectData = Array<{ value: string; label: string }>;
 export const TogglePropsFlowActionForm = ({ form }: Props) => {
   const theme = useMantineTheme();
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const {
-    tree: editorTree,
-    selectedComponentId,
-    setComponentToBind,
-    setPickingComponentToBindTo,
-  } = useEditorStore();
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo,
+  );
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
+  const editorTree = useEditorStore((state) => state.tree);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
 

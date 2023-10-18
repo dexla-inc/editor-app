@@ -44,22 +44,6 @@ export const handleLoadingStop = ({
   });
 };
 
-export function useEditorStores(): {
-  editorTree: EditorTree;
-  selectedComponentId: string | undefined;
-  updateTreeComponentActions: (componentId: string, actions: Action[]) => void;
-} {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-  const updateTreeComponentActions = useEditorStore(
-    (state) => state.updateTreeComponentActions
-  );
-
-  return { editorTree, selectedComponentId, updateTreeComponentActions };
-}
-
 type UseSharedActionDataProps = {
   actionId: string;
   editorTree: EditorTree;
@@ -79,7 +63,7 @@ export function useActionData<T extends BaseAction>({
   const component = getComponentById(editorTree.root, selectedComponentId!);
   const componentActions = component?.actions ?? [];
   const action: Action = componentActions.find(
-    (a: Action) => a.id === actionId
+    (a: Action) => a.id === actionId,
   )!;
 
   return {
@@ -120,6 +104,6 @@ export const updateActionInTree = <T extends BaseAction>({
         };
       }
       return action;
-    })
+    }),
   );
 };

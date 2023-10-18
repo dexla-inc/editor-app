@@ -23,8 +23,12 @@ export const ComponentToBindFromInput = ({
   label = "Component to bind",
   ...rest
 }: Props) => {
-  const { setPickingComponentToBindTo, setHighlightedComponentId } =
-    useEditorStore();
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo,
+  );
+  const setHighlightedComponentId = useEditorStore(
+    (state) => state.setHighlightedComponentId,
+  );
 
   const onBindComponent = () => {
     setPickingComponentToBindTo({

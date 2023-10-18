@@ -29,7 +29,7 @@ export default function Projects() {
   const theme = useMantineTheme();
   const authInfo = useAuthInfo();
   const { user } = authInfo || {};
-  const { startLoading } = useAppStore();
+  const startLoading = useAppStore((state) => state.startLoading);
   const router = useRouter();
 
   const goToEditor = async (projectId: string, pageId: string) => {
