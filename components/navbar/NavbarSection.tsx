@@ -109,7 +109,7 @@ export const NavbarSection = ({
           <IconToggle
             onClick={() => {
               setPinTab(!pinTab);
-              setActiveTab(pinnedItem?.id);
+              pinTab ? setActiveTab(pinnedItem?.id) : setActiveTab(undefined);
             }}
             size={ICON_SIZE}
             color="gray"
