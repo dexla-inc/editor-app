@@ -13,9 +13,7 @@ export const LogicFlowButton = ({ projectId, pageId }: Props) => {
       <ActionIcon
         component={Link}
         href={`/projects/${projectId}/editor/${pageId}/flows`}
-        variant="filled"
-        color="orange"
-        radius="xl"
+        variant="default"
       >
         <Icon name="IconLogicBuffer" />
       </ActionIcon>

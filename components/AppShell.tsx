@@ -34,6 +34,7 @@ import { IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
+import { Icon } from "./Icon";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const { resetTree, isPreviewMode, setPreviewMode, language, setLanguage } =
@@ -70,7 +71,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               </Tooltip>
             </Group>
 
-            <Group noWrap position="right">
+            <Group noWrap position="right" spacing="xs">
               <Select
                 label="Language"
                 value={language}
@@ -121,6 +122,16 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                 isPreviewMode={isPreviewMode}
                 setPreviewMode={setPreviewMode}
               />
+              <Button
+                component={Link}
+                href={`/projects/${projectId}/settings/team`}
+                leftIcon={<Icon name="IconUserPlus" size={ICON_SIZE} />}
+                compact
+                variant="default"
+                target="_blank"
+              >
+                Invite
+              </Button>
               <DeployButton
                 projectId={projectId}
                 page={pageResponse.data?.results?.find(

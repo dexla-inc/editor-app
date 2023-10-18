@@ -262,13 +262,7 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
   return (
     <>
       <Tooltip label="Generate AI" withArrow fz="xs">
-        <ActionIcon
-          onClick={open}
-          variant="filled"
-          color="teal"
-          size="md"
-          radius="xl"
-        >
+        <ActionIcon onClick={open} variant="default">
           <IconSparkles size={ICON_SIZE} />
         </ActionIcon>
       </Tooltip>
