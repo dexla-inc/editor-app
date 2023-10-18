@@ -24,12 +24,7 @@ export const VariablesButton = ({ projectId, pageId }: Props) => {
   return (
     <>
       <Tooltip label="Variables" withArrow fz="xs">
-        <ActionIcon
-          onClick={modal.open}
-          variant="filled"
-          radius="xl"
-          color="grape"
-        >
+        <ActionIcon onClick={modal.open} variant="default">
           <Icon name="IconVariable" />
         </ActionIcon>
       </Tooltip>

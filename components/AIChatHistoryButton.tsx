@@ -158,10 +158,7 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
             refreshChatHistory();
             open();
           }}
-          variant="filled"
-          color="indigo"
-          size="md"
-          radius="xl"
+          variant="default"
         >
           <IconBrandHipchat size={ICON_SIZE} />
         </ActionIcon>

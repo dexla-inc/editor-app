@@ -6,6 +6,7 @@ import { ICON_SIZE } from "@/utils/config";
 import { Button, Tooltip } from "@mantine/core";
 import { IconLink } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import { Icon } from "./Icon";
 
 type Props = {
   projectId: string;
@@ -103,6 +104,7 @@ export const DeployButton = ({ projectId, page }: Props) => {
           disabled={isLoading}
           onClick={() => handleDeploy(true)}
           compact
+          leftIcon={<Icon name="IconRocket" />}
         >
           Deploy
         </Button>
