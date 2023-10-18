@@ -40,7 +40,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
-  const [opened, { toggle, open }] = useDisclosure(false);
+  const [opened, { toggle, open, close }] = useDisclosure(false);
   const [clickedManualToggle, setClickedManualToggle] = useState(false);
   const [editable, { toggle: toggleEdit, close: closeEdit }] =
     useDisclosure(false);
@@ -52,9 +52,8 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
     onDragStart,
   });
 
-  const updateTreeComponentDescription = useEditorStore(
-    (state) => state.updateTreeComponentDescription,
-  );
+  const { updateTreeComponentDescription, isStructureCollapsed } =
+    useEditorStore();
 
   const form = useForm({
     initialValues: {
@@ -108,6 +107,17 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
       editFieldRef?.current?.focus();
     }
   }, [editable]);
+
+  useEffect(() => {
+    if (isStructureCollapsed) {
+      close();
+      setClickedManualToggle(true);
+    } else {
+      open();
+      setClickedManualToggle(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isStructureCollapsed]);
 
   const icon = structureMapper[component.name as string]?.icon;
   const componentActions = component.actions;
