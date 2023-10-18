@@ -88,12 +88,9 @@ export default function App(props: AppProps) {
   const [loadTagManager, setLoadTagManager] = useState(false);
 
   useEffect(() => {
-    console.log("loadTagManager", loadTagManager);
-
     setLoadTagManager(!isLive && process.env.NODE_ENV !== "development");
 
     if (loadTagManager) {
-      console.log("Initializing GTM");
       const tagManagerArgs = {
         gtmId: GTM_ID,
       };

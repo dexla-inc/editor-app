@@ -738,6 +738,7 @@ export type ComponentDefinition = {
   modifiers: Modifiers[];
   actionTriggers: ActionTrigger[];
   sequentialTriggers: SequentialTrigger[];
+  // TODO: Add actions: Action[]. Filter all possible actions for a component
 };
 
 export type ComponentMapper = {
@@ -745,17 +746,6 @@ export type ComponentMapper = {
 };
 
 export const componentMapper: ComponentMapper = {
-  GoogleMap: {
-    Component: (props: { component: Component; renderTree: any }) => (
-      <GoogleMapPlugin
-        component={props.component}
-        renderTree={props.renderTree}
-      />
-    ),
-    modifiers: ["mapSettings", "size", "border"],
-    actionTriggers: ["onMount", "onClick"],
-    sequentialTriggers: ["onSuccess", "onError"],
-  },
   Avatar: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Avatar component={props.component} renderTree={props.renderTree} />
@@ -1291,6 +1281,17 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: ["popOver", "border"],
     actionTriggers: ["onMount", "onClose"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  GoogleMap: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <GoogleMapPlugin
+        component={props.component}
+        renderTree={props.renderTree}
+      />
+    ),
+    modifiers: ["mapSettings", "size", "border"],
+    actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
 };

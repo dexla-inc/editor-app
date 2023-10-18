@@ -33,7 +33,7 @@ async function doFetchWithoutAuth<Type>({
         resolve(json);
       }
     } catch (error) {
-      console.log({ error });
+      console.error({ error });
       reject(error);
     }
   });

@@ -322,7 +322,7 @@ export const DataSourceEndpointDetail = ({
         message: "The API endpoint was saved successfully",
       });
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
       stopLoading({
         id: "saving",
         title: "API Endpoint Failed",
@@ -422,8 +422,6 @@ export const DataSourceEndpointDetail = ({
         ? `/api/proxy?targetUrl=${encodeURIComponent(apiUrl)}`
         : apiUrl;
 
-      //console.log(fetchUrl, methodType, requestHeaders, body);
-
       const response = await fetch(fetchUrl, {
         method: methodType,
         headers: requestHeaders,
@@ -449,7 +447,7 @@ export const DataSourceEndpointDetail = ({
         const result = await response.json();
         let exampleResult = result;
         const errorExampleResponse = JSON.stringify(exampleResult, null, 2);
-        console.log(response.status);
+
         handleInputChange("errorExampleResponse", errorExampleResponse);
       } else {
         // If the result is an array, limit it to the first 10 items
@@ -471,7 +469,7 @@ export const DataSourceEndpointDetail = ({
         message: "The API endpoint works. Hit save to save the response.",
       });
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
       if (!state.isServerRequest && !warningMessage) {
         setWarningMessage(
           "Does this API endpoint need to be made through a server? If so turn on 'Make request through server' and try again.",

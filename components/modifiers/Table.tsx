@@ -149,7 +149,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                 JSON.parse(e.target.value ?? ""),
               );
             } catch (error) {
-              console.log(error);
+              console.error(error);
             }
           }}
         />

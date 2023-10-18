@@ -37,7 +37,7 @@ export const compute = async (node: Node, params: any) => {
     await actionMapper[action].action(actionData);
     return Promise.resolve();
   } catch (error) {
-    console.log({ error });
+    console.error({ error });
     return Promise.reject(error);
   }
 };

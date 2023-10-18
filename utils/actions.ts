@@ -98,34 +98,54 @@ const triggers = [
   "onError",
 ] as const;
 
-export const actions = [
-  { name: "apiCall", group: "API & Data" },
-  { name: "bindResponse", group: "API & Data" },
-  { name: "bindVariable", group: "API & Data" },
-  { name: "bindVariableToChart", group: "API & Data" },
-  { name: "login", group: "API & Data" },
-  { name: "setVariable", group: "API & Data" },
-  { name: "transformVariable", group: "API & Data" },
-  { name: "bindPlaceData", group: "Third-Party Plugins" },
-  { name: "bindPlaceGeometry", group: "Third-Party Plugins" },
-  { name: "goToUrl", group: "Navigation" },
-  { name: "navigateToPage", group: "Navigation" },
-  { name: "changeStep", group: "Navigation" },
-  { name: "openDrawer", group: "Modal & Overlays" },
-  { name: "closeDrawer", group: "Modal & Overlays" },
-  { name: "openModal", group: "Modal & Overlays" },
-  { name: "closeModal", group: "Modal & Overlays" },
-  { name: "openPopOver", group: "Modal & Overlays" },
-  { name: "closePopOver", group: "Modal & Overlays" },
+type ActionGroup =
+  | "API, Data & Logic"
+  | "Binding"
+  | "Navigation"
+  | "Modal & Overlays"
+  | "Style & Props"
+  | "Feedback"
+  | "Utilities & Tools"
+  | "Third-Party Plugins";
+
+type ActionInfo = {
+  name: string;
+  group: ActionGroup;
+  icon?: string;
+};
+
+export const actions: ActionInfo[] = [
+  { name: "apiCall", group: "API, Data & Logic", icon: "IconApi" },
+  { name: "login", group: "API, Data & Logic", icon: "IconLogin" },
+  { name: "triggerLogicFlow", group: "API, Data & Logic", icon: "IconFlow" },
+  { name: "reloadComponent", group: "API, Data & Logic", icon: "IconReload" },
+  { name: "bindResponse", group: "Binding" },
+  { name: "bindVariable", group: "Binding" }, // Merge bindVariable, transformVariable, setVariable and bindVariableToChart
+  { name: "bindVariableToChart", group: "Binding" }, // Merge bindVariable, transformVariable, setVariable and bindVariableToChart
+  { name: "setVariable", group: "Binding" }, // Merge bindVariable, transformVariable, setVariable and bindVariableToChart
+  { name: "transformVariable", group: "Binding" }, // Merge bindVariable, transformVariable, setVariable and bindVariableToChart
+  { name: "goToUrl", group: "Navigation", icon: "IconLink" },
+  { name: "navigateToPage", group: "Navigation", icon: "IconFileInvoice" },
+  { name: "changeStep", group: "Navigation", icon: "IconStatusChange" },
+  { name: "openDrawer", group: "Modal & Overlays" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
+  { name: "closeDrawer", group: "Modal & Overlays" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
+  { name: "openModal", group: "Modal & Overlays" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
+  { name: "closeModal", group: "Modal & Overlays" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
+  { name: "openPopOver", group: "Modal & Overlays" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
+  { name: "closePopOver", group: "Modal & Overlays" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
   { name: "toggleVisibility", group: "Style & Props" },
-  { name: "alert", group: "Feedback" },
-  { name: "changeState", group: "Feedback" },
-  { name: "openToast", group: "Feedback" },
-  { name: "reloadComponent", group: "Feedback" },
-  { name: "copyToClipboard", group: "Utilities & Tools" },
-  { name: "triggerLogicFlow", group: "Utilities & Tools" },
-  { name: "changeLanguage", group: "Utilities & Tools" },
-  { name: "customJavascript", group: "Utilities & Tools" },
+  { name: "alert", group: "Feedback", icon: "IconAlert" },
+  { name: "changeState", group: "Feedback", icon: "IconTransform" },
+  { name: "openToast", group: "Feedback" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
+  { name: "copyToClipboard", group: "Utilities & Tools", icon: "IconCopy" },
+  {
+    name: "changeLanguage",
+    group: "Utilities & Tools",
+    icon: "IconMessageLanguage",
+  },
+  { name: "customJavascript", group: "Utilities & Tools", icon: "IconCode" },
+  { name: "bindPlaceData", group: "Third-Party Plugins", icon: "IconMap" },
+  { name: "bindPlaceGeometry", group: "Third-Party Plugins", icon: "IconMap" },
 ];
 
 type ActionTriggerAll = (typeof triggers)[number];
@@ -794,7 +814,6 @@ const handleError = async (
   actionMapper: any,
   updateTreeComponent: any,
 ) => {
-  console.log({ error });
   if (onError && onError.sequentialTo === actionId) {
     const actions = component.actions ?? [];
     const onErrorAction = actions.find((a: Action) => a.trigger === "onError");

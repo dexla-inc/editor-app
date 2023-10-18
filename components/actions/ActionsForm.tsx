@@ -93,6 +93,7 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
           color="gray"
           variant="light"
           radius="xl"
+          size="sm"
           sx={{ position: "absolute", top: "-5px", right: "0px", zIndex: 30 }}
         >
           <Icon name="IconX" size={ICON_SIZE} />

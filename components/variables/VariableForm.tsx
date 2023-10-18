@@ -68,7 +68,7 @@ export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
         pageId,
       });
     } catch (error) {
-      console.log({ error });
+      console.error({ error });
     }
   };
 

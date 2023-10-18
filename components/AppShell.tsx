@@ -55,8 +55,6 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const org = authInfo.orgHelper?.getOrgByName("Dexla")!;
   const isDexlaAdmin = org?.userAssignedRole === "DEXLA_ADMIN";
 
-  console.log(org, isDexlaAdmin);
-
   return (
     <AppShell
       fixed

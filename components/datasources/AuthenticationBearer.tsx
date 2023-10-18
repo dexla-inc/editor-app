@@ -45,7 +45,7 @@ export interface BearerTokenAuthenticationProps extends DataSourceStepperProps {
   setUserEndpointLabel?: (userEndpointLabel: string | null) => void;
   exampleResponse: ExampleResponseDropdown[] | undefined;
   setExampleResponse: (
-    exampleResponse: ExampleResponseDropdown[] | undefined
+    exampleResponse: ExampleResponseDropdown[] | undefined,
   ) => void;
   expiryProperty?: string | null;
   setExpiryProperty?: (expiryProperty: string | null) => void;
@@ -110,7 +110,7 @@ export default function AuthenticationBearer({
       form.validate();
 
       if (Object.keys(form.errors).length > 0) {
-        console.log("Errors: " + form.errors);
+        console.error("Errors: " + form.errors);
         return;
       }
 
@@ -142,7 +142,7 @@ export default function AuthenticationBearer({
           loginEndpointId,
           "ACCESS",
           accessToken,
-          expiryProperty
+          expiryProperty,
         );
       }
 
@@ -152,7 +152,7 @@ export default function AuthenticationBearer({
           dataSource.id,
           refreshEndpointId,
           "REFRESH",
-          refreshToken
+          refreshToken,
         );
       }
 
@@ -161,7 +161,7 @@ export default function AuthenticationBearer({
           projectId,
           dataSource.id,
           userEndpointId,
-          "USER"
+          "USER",
         );
       }
 
@@ -174,7 +174,7 @@ export default function AuthenticationBearer({
       });
       setIsLoading && setIsLoading(false);
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
       stopLoading({
         id: "updating",
         title: "Data Source Failed",
@@ -195,12 +195,12 @@ export default function AuthenticationBearer({
       //setLoginEndpointObj(selectedEndpoint);
     } else {
       const selectedEndpoint = postEndpoints.find(
-        (option) => option.value === value
+        (option) => option.value === value,
       );
 
       if (selectedEndpoint?.exampleresponse) {
         const exampleResponse = mapEndpointExampleResponse(
-          selectedEndpoint.exampleresponse
+          selectedEndpoint.exampleresponse,
         );
 
         setExampleResponse(exampleResponse);
@@ -212,7 +212,7 @@ export default function AuthenticationBearer({
         setLoginEndpointId,
         selectedEndpoint,
         value,
-        setLoginEndpointLabel
+        setLoginEndpointLabel,
       );
     }
   };
@@ -224,13 +224,13 @@ export default function AuthenticationBearer({
       setExampleResponseObject(postEndpoints, setExampleResponse, value ?? "");
     } else {
       const selectedEndpoint = postEndpoints.find(
-        (option) => option.value === value
+        (option) => option.value === value,
       );
       setEndpoint(
         setRefreshEndpointId,
         selectedEndpoint,
         value,
-        setRefreshEndpointLabel
+        setRefreshEndpointLabel,
       );
       setRefreshToken && setRefreshToken("");
     }
@@ -243,13 +243,13 @@ export default function AuthenticationBearer({
       setExampleResponseObject(postEndpoints, setExampleResponse, value);
     } else {
       const selectedEndpoint = getEndpoints.find(
-        (option) => option.value === value
+        (option) => option.value === value,
       );
       setEndpoint(
         setUserEndpointId,
         selectedEndpoint,
         value,
-        setUserEndpointLabel
+        setUserEndpointLabel,
       );
     }
   };
@@ -267,18 +267,18 @@ export default function AuthenticationBearer({
       form.setFieldValue("accessToken", loginEndpoint?.authentication.tokenKey);
       form.setFieldValue(
         "expiryProperty",
-        loginEndpoint?.authentication.tokenSecondaryKey
+        loginEndpoint?.authentication.tokenSecondaryKey,
       );
 
       form.setFieldValue(
         "refreshToken",
-        refreshEndpoint?.authentication.tokenKey
+        refreshEndpoint?.authentication.tokenKey,
       );
 
       setRequestBodyObject(
         postEndpoints,
         setLoginRequestBody,
-        loginEndpoint?.id as string
+        loginEndpoint?.id as string,
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -287,7 +287,7 @@ export default function AuthenticationBearer({
   return (
     <form
       onSubmit={form.onSubmit(onSubmit)}
-      onError={(error) => console.log(error)}
+      onError={(error) => console.error(error)}
     >
       <Stack pb={fromPage ? "lg" : 100}>
         {dataSource?.swaggerUrl ? (
@@ -309,7 +309,7 @@ export default function AuthenticationBearer({
                 setRequestBodyObject(
                   postEndpoints,
                   setLoginRequestBody,
-                  value as string
+                  value as string,
                 );
               }}
             />

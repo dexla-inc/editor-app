@@ -25,13 +25,13 @@ export const CustomComponentModal = ({
   const queryClient = useQueryClient();
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
+    (state) => state.selectedComponentId,
   );
 
   const { mutate } = useMutation(createCustomComponent, {
     onSettled(_, err) {
       if (err) {
-        console.log(err);
+        console.error(err);
         showNotification({
           title: "Oops",
           message:
@@ -64,7 +64,7 @@ export const CustomComponentModal = ({
     customComponentModal.close();
     const component = getComponentById(
       editorTree.root,
-      selectedComponentId as string
+      selectedComponentId as string,
     );
 
     const copy = cloneDeep(component) as Component;

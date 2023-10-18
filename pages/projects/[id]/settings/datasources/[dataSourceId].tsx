@@ -126,7 +126,7 @@ export default function DataSourcePage() {
         message: "The data source was saved successfully",
       });
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
       stopLoading({
         id: "updating",
         title: "Data Source Failed",
@@ -163,7 +163,7 @@ export default function DataSourcePage() {
       });
       setIsLoading(false);
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
       stopLoading({
         id: "updating",
         title: "Data Source Failed",

@@ -38,7 +38,7 @@ export default function AuthenticationApiKey({
   const onSubmit = async (values: DataSourceParams) => {
     try {
       if (Object.keys(form.errors).length > 0) {
-        console.log("Errors: " + form.errors);
+        console.error("Errors: " + form.errors);
         return;
       }
 
@@ -69,7 +69,7 @@ export default function AuthenticationApiKey({
       });
       setIsLoading && setIsLoading(false);
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
       stopLoading({
         id: "updating",
         title: "Data Source Failed",
