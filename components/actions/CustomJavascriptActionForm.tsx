@@ -4,7 +4,6 @@ import {
   handleLoadingStop,
   updateActionInTree,
   useActionData,
-  useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { CustomJavascriptAction } from "@/utils/actions";
@@ -14,6 +13,7 @@ import Editor from "@monaco-editor/react";
 import { IconPlayerPlayFilled } from "@tabler/icons-react";
 import { useState } from "react";
 import { transpile } from "typescript";
+import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   id: string;
@@ -23,8 +23,13 @@ type FormValues = Omit<CustomJavascriptAction, "name">;
 
 export const CustomJavascriptActionForm = ({ id }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
-  const { editorTree, selectedComponentId, updateTreeComponentActions } =
-    useEditorStores();
+  const editorTree = useEditorStore((state) => state.tree);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
+  const updateTreeComponentActions = useEditorStore(
+    (state) => state.updateTreeComponentActions,
+  );
   const { componentActions, action } = useActionData<CustomJavascriptAction>({
     actionId: id,
     editorTree,

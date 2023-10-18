@@ -20,7 +20,13 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
 };
 
 export const ChangeHistoryPopover: FC = () => {
-  const currentState = useEditorStore();
+  const currentState = useEditorStore((state) => ({
+    isSaving: state.isSaving,
+    tree: {
+      name: state.tree.name,
+      timestamp: state.tree.timestamp,
+    },
+  }));
   const { changeHistory, pastStates } = useTemporalStore((state) => ({
     changeHistory: [
       ...state.pastStates,

@@ -18,12 +18,14 @@ type FormValues = Omit<BindVariableToChartAction, "name">;
 
 export const BindVariableToChartFlowActionForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const {
-    setPickingComponentToBindTo,
-    setComponentToBind,
-    setTree,
-    tree: editorTree,
-  } = useEditorStore();
+  const editorTree = useEditorStore((state) => state.tree);
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo,
+  );
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
+  const setTree = useEditorStore((state) => state.setTree);
   const [component, setComponent] = useState<Component | null>(null);
 
   const { page } = useRequestProp();

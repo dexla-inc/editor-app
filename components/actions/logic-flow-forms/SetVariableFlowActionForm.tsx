@@ -19,8 +19,13 @@ type FormValues = Omit<SetVariableAction, "name">;
 export const SetVariableFlowActionForm = ({ form }: Props) => {
   const router = useRouter();
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const { setPickingComponentToBindTo, setTree, setComponentToBind } =
-    useEditorStore();
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo,
+  );
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
+  const setTree = useEditorStore((state) => state.setTree);
   const projectId = router.query.id as string;
   const pageId = router.query.page as string;
 

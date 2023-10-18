@@ -14,7 +14,9 @@ type FormValues = Omit<GoToUrlAction, "name">;
 
 export const GoToUrlFlowActionForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const { setComponentToBind } = useEditorStore();
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
 
   return (
     <Stack>

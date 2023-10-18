@@ -40,7 +40,7 @@ export function SidebarSection({
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(initiallyOpened || false);
 
-  const { setOpenAction } = useEditorStore();
+  const setOpenAction = useEditorStore((state) => state.setOpenAction);
 
   const handleSectionClick = () => {
     setOpened((o) => !o);

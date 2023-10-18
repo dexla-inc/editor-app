@@ -33,7 +33,8 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-  const { setActiveTab, pinTab } = useEditorStore();
+  const setActiveTab = useEditorStore((state) => state.setActiveTab);
+  const pinTab = useEditorStore((state) => state.pinTab);
 
   const theme = useEditorStore((state) => state.theme);
   const setTheme = useEditorStore((state) => state.setTheme);

@@ -4,13 +4,13 @@ import {
   handleLoadingStop,
   updateActionInTree,
   useActionData,
-  useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { OpenPopOverAction } from "@/utils/actions";
 import { Component, getAllComponentsByName } from "@/utils/editor";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   id: string;
@@ -20,8 +20,13 @@ type FormValues = Omit<OpenPopOverAction, "name">;
 
 export const OpenPopOverActionForm = ({ id }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
-  const { editorTree, selectedComponentId, updateTreeComponentActions } =
-    useEditorStores();
+  const editorTree = useEditorStore((state) => state.tree);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
+  const updateTreeComponentActions = useEditorStore(
+    (state) => state.updateTreeComponentActions,
+  );
   const { componentActions, action } = useActionData<OpenPopOverAction>({
     actionId: id,
     editorTree,

@@ -5,7 +5,6 @@ import {
   handleLoadingStop,
   updateActionInTree,
   useActionData,
-  useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { colors } from "@/components/datasources/DataSourceEndpoint";
@@ -74,8 +73,13 @@ type Props = {
 
 export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
-  const { editorTree, selectedComponentId, updateTreeComponentActions } =
-    useEditorStores();
+  const editorTree = useEditorStore((state) => state.tree);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
+  const updateTreeComponentActions = useEditorStore(
+    (state) => state.updateTreeComponentActions,
+  );
   const { componentActions, action } = useActionData<
     LoginAction | APICallAction
   >({
@@ -85,8 +89,13 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   });
   const { createVariablesMutation } = useVariable();
 
-  const { sequentialTo, setComponentToBind, setPickingComponentToBindTo } =
-    useEditorStore();
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo,
+  );
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
+  const sequentialTo = useEditorStore((state) => state.sequentialTo);
 
   const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
     undefined,

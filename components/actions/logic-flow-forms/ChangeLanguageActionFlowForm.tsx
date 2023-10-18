@@ -16,7 +16,7 @@ type FormValues = Omit<ChangeLanguageAction, "name">;
 export const ChangeLanguageFlowActionForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
 
-  const { setTree } = useEditorStore();
+  const setTree = useEditorStore((state) => state.setTree);
 
   const { page } = useRequestProp();
 

@@ -61,8 +61,13 @@ export const APICallFlowActionForm = ({
   form,
   actionName = "apiCall",
 }: Props) => {
-  const { setComponentToBind, setPickingComponentToBindTo, setTree } =
-    useEditorStore();
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo,
+  );
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
+  const setTree = useEditorStore((state) => state.setTree);
   const isUpdating = useFlowStore((state) => state.isUpdating);
   const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
     undefined,

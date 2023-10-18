@@ -16,7 +16,7 @@ type Props = {
 
 export const ReloadComponentFlowActionForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const { setTree } = useEditorStore();
+  const setTree = useEditorStore((state) => state.setTree);
 
   const { page } = useRequestProp();
 

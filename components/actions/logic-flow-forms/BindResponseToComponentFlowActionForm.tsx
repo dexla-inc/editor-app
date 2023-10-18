@@ -22,8 +22,13 @@ export const BindResponseToComponentFlowActionForm = ({ form }: Props) => {
   const router = useRouter();
   const projectId = router.query.id as string;
 
-  const { setTree, setComponentToBind, setPickingComponentToBindTo } =
-    useEditorStore();
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo,
+  );
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
+  const setTree = useEditorStore((state) => state.setTree);
 
   useEffect(() => {
     const getEndpoint = async () => {

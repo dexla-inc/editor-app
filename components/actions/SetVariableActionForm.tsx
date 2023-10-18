@@ -5,7 +5,6 @@ import {
   handleLoadingStop,
   updateActionInTree,
   useActionData,
-  useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { VariablesButton } from "@/components/variables/VariablesButton";
@@ -26,9 +25,19 @@ type FormValues = Omit<SetVariableAction, "name">;
 export const SetVariableActionForm = ({ id }: Props) => {
   const router = useRouter();
   const { startLoading, stopLoading } = useLoadingState();
-  const { editorTree, selectedComponentId, updateTreeComponentActions } =
-    useEditorStores();
-  const { setPickingComponentToBindTo, setComponentToBind } = useEditorStore();
+  const editorTree = useEditorStore((state) => state.tree);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
+  const updateTreeComponentActions = useEditorStore(
+    (state) => state.updateTreeComponentActions,
+  );
+  const setPickingComponentToBindTo = useEditorStore(
+    (state) => state.setPickingComponentToBindTo,
+  );
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
 
   const { componentActions, action } = useActionData<SetVariableAction>({
     actionId: id,

@@ -4,7 +4,6 @@ import {
   handleLoadingStop,
   updateActionInTree,
   useActionData,
-  useEditorStores,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { listLogicFlows } from "@/requests/logicflows/queries";
@@ -14,6 +13,7 @@ import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
+import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   id: string;
@@ -36,8 +36,13 @@ export const TriggerLogicFlowActionForm = ({ id }: Props) => {
     enabled: !!projectId && !!pageId,
   });
 
-  const { editorTree, selectedComponentId, updateTreeComponentActions } =
-    useEditorStores();
+  const editorTree = useEditorStore((state) => state.tree);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
+  const updateTreeComponentActions = useEditorStore(
+    (state) => state.updateTreeComponentActions,
+  );
   const { componentActions, action } = useActionData<TriggerLogicFlowAction>({
     actionId: id,
     editorTree,

@@ -17,7 +17,8 @@ type FormValues = Omit<OpenDrawerAction, "name">;
 
 export const OpenDrawerFlowActionForm = ({ form, actionName }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const { setTree, tree: editorTree } = useEditorStore();
+  const setTree = useEditorStore((state) => state.setTree);
+  const editorTree = useEditorStore((state) => state.tree);
 
   const drawers = getAllComponentsByName(editorTree.root, "Drawer");
 
