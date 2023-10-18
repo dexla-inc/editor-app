@@ -40,8 +40,12 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
-  const { updateTreeComponentDescription, isStructureCollapsed, activeTab } =
-    useEditorStore();
+  const updateTreeComponentDescription = useEditorStore(
+    (state) => state.updateTreeComponentDescription,
+  );
+  const isStructureCollapsed = useEditorStore(
+    (state) => state.isStructureCollapsed,
+  );
 
   const [opened, { toggle, open, close }] = useDisclosure(
     isStructureCollapsed ? false : true,

@@ -61,7 +61,7 @@ export const sectionMapper: SectionsMapper = {
 };
 
 export const EditorNavbarSections = () => {
-  const { activeTab } = useEditorStore();
+  const activeTab = useEditorStore((state) => state.activeTab);
 
   const item = sections.find((item) => item.id === activeTab);
 
