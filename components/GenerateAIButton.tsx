@@ -261,7 +261,7 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
 
   return (
     <>
-      <Tooltip label="Generate AI" withArrow>
+      <Tooltip label="Generate AI" withArrow fz="xs">
         <ActionIcon
           onClick={open}
           variant="filled"

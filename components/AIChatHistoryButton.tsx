@@ -131,7 +131,7 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
                   : element.content}
               </Text>
             )}
-            <Tooltip label={tooltipText}>
+            <Tooltip label={tooltipText} fz="xs">
               <ActionIcon
                 variant="transparent"
                 onClick={(event) => {
@@ -152,7 +152,7 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
 
   return (
     <>
-      <Tooltip label="AI History" withArrow>
+      <Tooltip label="AI History" withArrow fz="xs">
         <ActionIcon
           onClick={() => {
             refreshChatHistory();

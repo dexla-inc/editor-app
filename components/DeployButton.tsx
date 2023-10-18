@@ -3,7 +3,7 @@ import { getMostRecentDeployment } from "@/requests/deployments/queries";
 import { getProject } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
 import { ICON_SIZE } from "@/utils/config";
-import { Button } from "@mantine/core";
+import { Button, Tooltip } from "@mantine/core";
 import { IconLink } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
@@ -96,25 +96,29 @@ export const DeployButton = ({ projectId, page }: Props) => {
 
   return (
     <Button.Group>
-      <Button
-        loading={isLoading}
-        loaderPosition="center"
-        disabled={isLoading}
-        onClick={() => handleDeploy(true)}
-        compact
-      >
-        Deploy
-      </Button>
-      <Button
-        color="indigo"
-        compact
-        loading={isLoading}
-        loaderPosition="center"
-        disabled={!hasDeployed || isLoading}
-        onClick={openDeployLink}
-      >
-        <IconLink size={ICON_SIZE} />
-      </Button>
+      <Tooltip label="Deploy" fz="xs">
+        <Button
+          loading={isLoading}
+          loaderPosition="center"
+          disabled={isLoading}
+          onClick={() => handleDeploy(true)}
+          compact
+        >
+          Deploy
+        </Button>
+      </Tooltip>
+      <Tooltip label="Preview" fz="xs">
+        <Button
+          color="indigo"
+          compact
+          loading={isLoading}
+          loaderPosition="center"
+          disabled={!hasDeployed || isLoading}
+          onClick={openDeployLink}
+        >
+          <IconLink size={ICON_SIZE} />
+        </Button>
+      </Tooltip>
     </Button.Group>
   );
 };

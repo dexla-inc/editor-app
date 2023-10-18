@@ -94,7 +94,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               <LogicFlowButton projectId={projectId} pageId={currentPageId} />
               <VariablesButton projectId={projectId} pageId={currentPageId} />
               <Button.Group>
-                <Tooltip label="Undo">
+                <Tooltip label="Undo" fz="xs">
                   <ActionIcon
                     variant="default"
                     onClick={() => undo()}
@@ -104,7 +104,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                     <IconArrowBackUp size={ICON_SIZE} />
                   </ActionIcon>
                 </Tooltip>
-                <Tooltip label="Redo">
+                <Tooltip label="Redo" fz="xs">
                   <ActionIcon
                     variant="default"
                     onClick={() => redo()}

@@ -23,7 +23,7 @@ export const VariablesButton = ({ projectId, pageId, ...rest }: Props) => {
 
   return (
     <>
-      <Tooltip label="Variables" withArrow>
+      <Tooltip label="Variables" withArrow fz="xs">
         <ActionIcon
           onClick={modal.open}
           variant="filled"

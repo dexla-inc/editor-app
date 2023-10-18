@@ -37,7 +37,7 @@ export const NavbarSection = ({
       <Tooltip
         withinPortal
         position="right"
-        fz={10}
+        fz="xs"
         withArrow
         key={label}
         label={label}
@@ -97,7 +97,7 @@ export const NavbarSection = ({
             </Title>
             <Tooltip
               label={pinTab ? "Unpin Tab" : "Pin Tab"}
-              fz={10}
+              fz="xs"
               position="top"
               withArrow
               withinPortal
