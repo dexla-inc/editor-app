@@ -68,7 +68,7 @@ export const EditorNavbarThemesSection = ({
   const { mutate } = useMutation(saveTheme, {
     onSettled(_, err) {
       if (err) {
-        console.log(err);
+        console.error(err);
       }
 
       queryClient.invalidateQueries(["theme"]);
@@ -114,7 +114,7 @@ export const EditorNavbarThemesSection = ({
         message: "The theme was saved successfully",
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       stopLoading({
         id: "saving-theme",
         title: "Saving Theme Failed",
@@ -148,13 +148,13 @@ export const EditorNavbarThemesSection = ({
                 onValueChange={(value) => {
                   form.setFieldValue(
                     `colors.${index}.friendlyName`,
-                    value.friendlyName
+                    value.friendlyName,
                   );
                   form.setFieldValue(`colors.${index}.hex`, value.hex);
                   if (!form.values.colors[index].isDefault) {
                     form.setFieldValue(
                       `colors.${index}.name`,
-                      value.friendlyName
+                      value.friendlyName,
                     );
                   }
                 }}
@@ -253,13 +253,13 @@ export const EditorNavbarThemesSection = ({
                           onChange={(value) =>
                             form.setFieldValue(
                               `responsiveBreakpoints.${index}.breakpoint`,
-                              value
+                              value,
                             )
                           }
                         />
                       </Flex>
                     </Flex>
-                  )
+                  ),
                 )}
             </Stack>
           </Box>

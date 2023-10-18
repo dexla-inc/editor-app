@@ -10,19 +10,25 @@ export const ActionsFlow = ({ actionsSections }: Props) => {
   return (
     <Stack>
       <Box px="md">
-        <ActionsSequence />
+        <ActionsSequence actionCount={actionsSections.length} />
       </Box>
       {actionsSections}
     </Stack>
   );
 };
 
-export const ActionsSequence = () => {
+type ActionsSequenceProps = {
+  actionCount: number;
+};
+
+export const ActionsSequence = ({ actionCount }: ActionsSequenceProps) => {
   const [addForm, { open, close }] = useDisclosure(false);
+
+  const showAddForm = addForm || actionCount === 0;
 
   return (
     <>
-      {!addForm && (
+      {!showAddForm && (
         <Button
           onClick={open}
           size="xs"
@@ -33,7 +39,7 @@ export const ActionsSequence = () => {
           Add Action
         </Button>
       )}
-      {addForm && <ActionsForm close={close} />}
+      {showAddForm && <ActionsForm close={close} />}
     </>
   );
 };

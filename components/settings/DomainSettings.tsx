@@ -90,7 +90,7 @@ export default function DomainSettings({ projectId }: Props) {
         const json = await verifyResponse.json();
         setVerificationStatus(json.status);
       } catch (error) {
-        console.log({ error });
+        console.error({ error });
       }
     };
 

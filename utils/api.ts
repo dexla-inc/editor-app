@@ -76,7 +76,7 @@ async function doFetch<Type>({
         resolve(json);
       }
     } catch (error) {
-      console.log({ error });
+      console.error({ error });
       reject(error);
     }
   });

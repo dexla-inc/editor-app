@@ -1,14 +1,14 @@
-import { Edge, Node, NodeProps } from "reactflow";
-import * as StartNodeExports from "@/components/logic-flow/nodes/StartNode";
 import * as ActionNodeExports from "@/components/logic-flow/nodes/ActionNode";
 import * as ConditionalNodeExports from "@/components/logic-flow/nodes/ConditionalNode";
-import { computeNodeMapper } from "@/components/logic-flow/nodes/compute";
-import { decodeSchema } from "@/utils/compression";
-import { FlowData } from "@/stores/flow";
-import { checkIfValid } from "@/utils/triggerConditions";
 import { NodeOutput } from "@/components/logic-flow/nodes/CustomNode";
-import { LogicFlowResponse } from "@/requests/logicflows/types";
+import * as StartNodeExports from "@/components/logic-flow/nodes/StartNode";
+import { computeNodeMapper } from "@/components/logic-flow/nodes/compute";
 import { getLogicFlow } from "@/requests/logicflows/queries";
+import { LogicFlowResponse } from "@/requests/logicflows/types";
+import { FlowData } from "@/stores/flow";
+import { decodeSchema } from "@/utils/compression";
+import { checkIfValid } from "@/utils/triggerConditions";
+import { Edge, Node, NodeProps } from "reactflow";
 
 const { StartNode, data: startNodeData, ...startNode } = StartNodeExports;
 const { ActionNode, data: actionNodeData, ...actionNode } = ActionNodeExports;
@@ -149,6 +149,6 @@ export const executeFlow = async (flowId: string, params: any) => {
     const flowData: FlowData = JSON.parse(decodeSchema(flow.data as string));
     await run(flowData, params);
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };

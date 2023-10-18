@@ -58,13 +58,6 @@ export interface DomainVerificationResponse {
 }
 
 export const addDomainToVercel = async (domain: string) => {
-  console.log({
-    domain,
-    projectId: process.env.PROJECT_ID_VERCEL,
-    temId: process.env.TEAM_ID_VERCEL,
-    token: process.env.AUTH_BEARER_TOKEN,
-  });
-
   return await fetch(
     `https://api.vercel.com/v9/projects/${process.env.PROJECT_ID_VERCEL}/domains?teamId=${process.env.TEAM_ID_VERCEL}`,
     {

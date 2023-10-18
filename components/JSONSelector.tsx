@@ -11,7 +11,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure, useHover } from "@mantine/hooks";
-import { IconChevronDown, IconCheck } from "@tabler/icons-react";
+import { IconCheck, IconChevronDown } from "@tabler/icons-react";
 
 type Item = {
   key: string;
@@ -162,7 +162,6 @@ const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
                     e.preventDefault();
                     e.stopPropagation();
                     onSelectValue?.(item);
-                    console.log({ item });
                   }}
                 >
                   <IconCheck size={ICON_SIZE} />

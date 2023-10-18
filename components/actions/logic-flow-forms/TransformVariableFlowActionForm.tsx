@@ -22,7 +22,7 @@ export const TransformVariableFlowActionForm = ({ form }: Props) => {
       const codeResult = eval(result);
       console.log(codeResult);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

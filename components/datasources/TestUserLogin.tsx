@@ -42,10 +42,6 @@ export const TestUserLogin = ({
     fetchDataSourceAuthConfig();
   }, [projectId, dataSourceId]);
 
-  useEffect(() => {
-    console.log(dataSourceAuthConfig);
-  }, [dataSourceAuthConfig]);
-
   const handleLoginClick = async () => {
     const loginUrl = dataSourceAuthConfig?.accessTokenUrl ?? "";
 
