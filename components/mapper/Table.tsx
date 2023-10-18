@@ -25,6 +25,7 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
   const {
     children,
     data: dataProp,
+    exampleData = {},
     headers = {},
     config = {},
     style,
@@ -54,16 +55,21 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowsSelected]);
 
-  let data = dataProp?.value;
+  let data = [];
 
-  if (isPreviewMode && typeof repeatedIndex !== "undefined" && dataPath) {
-    const path = dataPath.replace("[0]", `[${repeatedIndex}]`);
-    data = get(dataProp?.base ?? {}, path) ?? data;
+  if (isPreviewMode) {
+    data = dataProp?.value ?? dataProp ?? exampleData.value ?? exampleData;
+    if (dataPath) {
+      const path = dataPath.replaceAll("[0]", "");
+      data = get(dataProp, `base.${path}`, dataProp?.value ?? dataProp);
+    }
   } else if (dataPath) {
-    data = get(dataProp?.base, dataPath.replace("[0]", ""));
+    data = exampleData.value ?? exampleData;
+    const path = dataPath.replaceAll("[0]", "");
+    data = get(data, path, data);
   }
 
-  const dataSample = (data ?? [])?.[0];
+  const dataSample = ((data as any) ?? [])?.[0];
 
   const isAllHeadersHidden = Object.values(headers).every((val) => !val);
 

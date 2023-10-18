@@ -1,4 +1,3 @@
-import { createVariable } from "@/requests/variables/mutations";
 import { getVariable } from "@/requests/variables/queries";
 import { VariableTypesOptions } from "@/requests/variables/types";
 import {
@@ -10,8 +9,9 @@ import {
   Textarea,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useVariable } from "@/hooks/useVariable";
 
 type VariablesFormValues = {
   name: string;
@@ -27,30 +27,13 @@ type Props = {
 };
 
 export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
-  const client = useQueryClient();
-
   const { data: variable } = useQuery({
     queryKey: ["variable", variableId],
-    queryFn: async () => {
-      const response = await getVariable(projectId, variableId!);
-      return response;
-    },
+    queryFn: async () => getVariable(projectId, variableId!),
     enabled: !!variableId,
   });
 
-  const createVariablesMutation = useMutation({
-    mutationKey: ["variables", projectId, pageId],
-    mutationFn: async (values: any) => {
-      const response = await createVariable(projectId, {
-        ...values,
-        pageId,
-      });
-      return response;
-    },
-    onSettled: () => {
-      client.refetchQueries(["variables", projectId, pageId]);
-    },
-  });
+  const { createVariablesMutation } = useVariable();
 
   const form = useForm<VariablesFormValues>({
     initialValues: {
@@ -62,14 +45,9 @@ export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
   });
 
   const onSubmit = async (values: VariablesFormValues) => {
-    try {
-      createVariablesMutation.mutate({
-        ...values,
-        pageId,
-      });
-    } catch (error) {
-      console.error({ error });
-    }
+    createVariablesMutation.mutate({
+      ...values,
+    });
   };
 
   useEffect(() => {
@@ -77,7 +55,7 @@ export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
       form.setValues({
         name: variable.name,
         type: variable.type,
-        defaultValue: variable.defaultValue,
+        defaultValue: variable.defaultValue ?? "",
         isGlobal: variable.isGlobal,
       });
     }

@@ -1,11 +1,6 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import {
-  Loader,
-  Select as MantineSelect,
-  SelectItem,
-  SelectProps,
-} from "@mantine/core";
+import { Loader, Select as MantineSelect, SelectProps } from "@mantine/core";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import { memo } from "react";
@@ -33,16 +28,16 @@ const SelectComponent = ({
     ...componentProps
   } = component.props as any;
 
-  let data = {};
-
-  data = dataProp?.value ?? dataProp ?? exampleData.value ?? exampleData;
+  let data = [];
 
   if (isPreviewMode) {
+    data = dataProp?.value ?? dataProp ?? exampleData.value ?? exampleData;
     if (dataPath) {
       const path = dataPath.replaceAll("[0]", "");
       data = get(dataProp, `base.${path}`, dataProp?.value ?? dataProp);
     }
   } else if (dataPath) {
+    data = exampleData.value ?? exampleData ?? dataProp?.value ?? dataProp;
     const path = dataPath.replaceAll("[0]", "");
     data = get(data, path, data);
   }
@@ -57,7 +52,7 @@ const SelectComponent = ({
       {...triggers}
       withinPortal={false}
       maxDropdownHeight={120}
-      data={(data as SelectItem[]).map((d: any) => {
+      data={data.map((d: any) => {
         return {
           label: d.label ?? d[keys[1]],
           value: d.value ?? d[keys[0]],

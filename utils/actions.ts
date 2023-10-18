@@ -871,13 +871,14 @@ const handleSuccess = async (
 
   const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}`;
   const varValue = JSON.stringify(responseJson);
+
   await createVariable(router.query.id as string, {
     name: varName,
     value: varValue,
+    defaultValue: null,
     type: "OBJECT" as FrontEndTypes,
     isGlobal: false,
     pageId: router.query.page as string,
-    defaultValue: varValue,
   });
 };
 
@@ -1165,7 +1166,7 @@ export const bindVariableToComponentAction = async ({
 
     let value = variable.value;
     if (variable.type === "OBJECT") {
-      const dataFlatten = flattenKeys(JSON.parse(variable.value ?? "{}"));
+      const dataFlatten = flattenKeys(JSON.parse(variable.value || "{}"));
 
       value = get(dataFlatten, (_var as any).path);
     }
@@ -1177,7 +1178,14 @@ export const bindVariableToComponentAction = async ({
           value,
           base:
             variable.type === "OBJECT"
-              ? JSON.parse(variable.value ?? "{}")
+              ? JSON.parse(variable.value || "{}")
+              : undefined,
+        },
+        exampleData: {
+          value,
+          base:
+            variable.type === "OBJECT"
+              ? JSON.parse(variable.defaultValue || "{}")
               : undefined,
         },
         dataPath: (_var as any)?.path ?? undefined,
