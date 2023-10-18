@@ -26,9 +26,8 @@ const ButtonComponent = ({
     leftIcon,
     rightIcon,
     loading,
-    color,
-    textColor,
-    style,
+
+    style: { textColor, color, ...styles },
     ...componentProps
   } = component.props as any;
 
@@ -50,7 +49,7 @@ const ButtonComponent = ({
       loading={loading}
       {...defaultTriggers}
       style={{
-        ...style,
+        ...styles,
         backgroundColor,
         color: labelTextColor,
       }}
