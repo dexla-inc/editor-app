@@ -169,6 +169,7 @@ export default function App(props: AppProps) {
                       maxHeight: "100vh",
                       minHeight: "100vh",
                       background: "white",
+                      overflow: "hidden",
                       // For WebKit browsers (e.g., Chrome, Safari)
                       "::-webkit-scrollbar": {
                         width: isLive && "0px",
