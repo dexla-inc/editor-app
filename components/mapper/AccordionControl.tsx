@@ -1,8 +1,8 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import {
-  Accordion as MantineAccordion,
   AccordionControlProps,
+  Accordion as MantineAccordion,
 } from "@mantine/core";
 import { memo } from "react";
 

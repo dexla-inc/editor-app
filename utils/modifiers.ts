@@ -29,7 +29,8 @@ export type Modifiers =
   | "popOver"
   | "navLink"
   | "accordionItem"
-  | "switch";
+  | "switch"
+  | "accordion";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -267,6 +268,7 @@ export const requiredModifiers: RequiredModifiers = {
     label: "first",
     showLabel: true,
   },
+  accordion: { variant: "default" },
 };
 
 type AISupportedModifiers = {
