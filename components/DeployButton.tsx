@@ -111,7 +111,7 @@ export const DeployButton = ({ projectId, page }: Props) => {
       </Tooltip>
       <Tooltip label="Preview" fz="xs">
         <Button
-          color="indigo"
+          variant="default"
           compact
           loading={isLoading}
           loaderPosition="center"

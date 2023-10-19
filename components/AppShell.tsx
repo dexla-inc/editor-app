@@ -25,6 +25,7 @@ import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
 import { DeployButton } from "@/components/DeployButton";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { GenerateAIButton } from "@/components/GenerateAIButton";
+import { Icon } from "@/components/Icon";
 import { LogicFlowButton } from "@/components/logic-flow/LogicFlowButton";
 import { VariablesButton } from "@/components/variables/VariablesButton";
 import { getPageList } from "@/requests/pages/queries";
@@ -33,8 +34,8 @@ import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { Icon } from "./Icon";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const { resetTree, isPreviewMode, setPreviewMode, language, setLanguage } =
@@ -42,6 +43,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const { undo, redo, pastStates, futureStates } = useTemporalStore(
     (state) => state,
   );
+  const [test, setTest] = useState(false);
 
   const router = useRouter();
   const projectId = router.query.id as string;
