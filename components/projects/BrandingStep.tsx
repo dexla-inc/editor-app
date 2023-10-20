@@ -222,12 +222,12 @@ export default function BrandingStep({
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xl">
         <InformationAlert
-          title="Let's get started!"
-          text="Unlock the magic of AI! Answer a few questions and we'll tailor a unique experience just for you!"
+          title="Branding time!"
+          text="We will fetch your brand from your website. If you don’t have a website, you can skip this step."
         />
         <TextInput
           label="Website URL"
-          description="Enter the URL of your website so we can fetch your brand. e.g. https://evalio.io"
+          description="Enter the URL of your website so we can fetch your brand. e.g. https://dexla.ai"
           placeholder="https://www.dexla.ai"
           error={websiteUrlError}
           value={websiteUrl}
@@ -334,7 +334,9 @@ export default function BrandingStep({
         <Group position="apart">
           <BackButton onClick={prevStep}></BackButton>
           <Flex gap="lg" align="end">
-            <Anchor onClick={nextStep}>I don’t have a website, skip</Anchor>
+            {!themeResponse && (
+              <Anchor onClick={nextStep}>I don’t have a website, skip</Anchor>
+            )}
             <Button
               type="submit"
               variant="light"
