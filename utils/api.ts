@@ -21,6 +21,11 @@ export async function getAuthToken() {
   return authInfo?.accessToken;
 }
 
+export async function getBearerTokenHeaderValue() {
+  const accessToken = await getAuthToken();
+  return `Bearer ${accessToken}`;
+}
+
 async function doFetch<Type>({
   url,
   method,
@@ -32,13 +37,9 @@ async function doFetch<Type>({
   return new Promise(async (resolve, reject) => {
     let response = null;
     try {
-      let authInfo = null;
+      let bearerToken = null;
       if (!skipAuth) {
-        const authClient = createClient({
-          authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
-          enableBackgroundTokenRefresh: true,
-        });
-        authInfo = await authClient.getAuthenticationInfoOrNull();
+        bearerToken = await getBearerTokenHeaderValue();
       }
 
       console.log({ authInfo, body });
@@ -54,9 +55,7 @@ async function doFetch<Type>({
         method,
         headers: {
           ...(contentType ? { "Content-Type": contentType } : {}),
-          ...(authInfo
-            ? { Authorization: `Bearer ${authInfo.accessToken}` }
-            : {}),
+          ...(bearerToken ? { Authorization: bearerToken } : {}),
           ...headers,
         },
         ...(body ? { body: isFormData ? body : JSON.stringify(body) } : {}),

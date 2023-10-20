@@ -6,7 +6,10 @@ import { PageBody } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
-import { PreviousStepperClickEvent } from "@/utils/dashboardTypes";
+import {
+  NextStepperClickEvent,
+  PreviousStepperClickEvent,
+} from "@/utils/dashboardTypes";
 import {
   createHandlers,
   handleRequestGetStream,
@@ -14,7 +17,6 @@ import {
 } from "@/utils/streamingAI";
 import {
   ActionIcon,
-  Anchor,
   Button,
   Divider,
   Flex,
@@ -24,16 +26,12 @@ import {
   TextInput,
   ThemeIcon,
 } from "@mantine/core";
-import {
-  IconCircleCheck,
-  IconDatabase,
-  IconPlus,
-  IconSparkles,
-} from "@tabler/icons-react";
+import { IconCircleCheck, IconPlus, IconSparkles } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { SetStateAction, useEffect, useState } from "react";
 import slugify from "slugify";
+import NextButton from "../NextButton";
 
 export const getServerSideProps = async ({
   query,
@@ -45,21 +43,30 @@ export const getServerSideProps = async ({
   };
 };
 
-export interface PagesStepProps extends PreviousStepperClickEvent {
+export interface PagesStepProps
+  extends PreviousStepperClickEvent,
+    NextStepperClickEvent {
   projectId: string;
   pages: string[];
   setPages: (value: SetStateAction<string[]>) => void;
   initialPageFetchDone: boolean;
   setInitialPageFetchDone: (value: SetStateAction<boolean>) => void;
+  hasPagesCreated: boolean;
+  setHasPagesCreated: (value: boolean) => void;
+  setHomePageId: (value: string) => void;
 }
 
 export default function PagesStep({
   prevStep,
+  nextStep,
   projectId,
   pages,
   setPages,
   initialPageFetchDone,
   setInitialPageFetchDone,
+  hasPagesCreated,
+  setHasPagesCreated,
+  setHomePageId,
 }: PagesStepProps) {
   const router = useRouter();
   const resetTree = useEditorStore((state) => state.resetTree);
@@ -142,7 +149,7 @@ export default function PagesStep({
       message: "Wait while your pages are being created",
     });
 
-    return createPages(
+    const createdPages = await createPages(
       pages.map((page, index) => {
         return {
           title: page,
@@ -153,16 +160,15 @@ export default function PagesStep({
       }) as PageBody[],
       projectId,
     );
-  };
-
-  const createPagesThenGoToEditor = async (projectId: string) => {
-    const manyPages = await createManyPages(projectId);
-    router.push(`/projects/${projectId}/editor/${manyPages.homePageId}`);
-  };
-
-  const createPagesThenGoToDataSource = async (projectId: string) => {
-    await createManyPages(projectId);
-    router.push(`/projects/${projectId}/settings/datasources/new`);
+    setHomePageId(createdPages.homePageId);
+    setHasPagesCreated(true);
+    stopLoading({
+      id: "creating-pages",
+      title: "Pages Created",
+      message: "Your pages have been created",
+    });
+    setIsLoading(false);
+    return createdPages;
   };
 
   const deletePage = (pageToRemove: string) => {
@@ -241,6 +247,7 @@ export default function PagesStep({
                 fetchPageData(1);
               }}
               loading={isLoading}
+              disabled={hasPagesCreated}
             >
               Generate new page
             </Button>
@@ -249,7 +256,7 @@ export default function PagesStep({
               leftIcon={<IconPlus size={ICON_SIZE} />}
               onClick={() => addEmptyPage()}
               loading={isLoading}
-              disabled={pages.some((page) => page === "")}
+              disabled={pages.some((page) => page === "") || hasPagesCreated}
             >
               Add new page
             </Button>
@@ -259,21 +266,15 @@ export default function PagesStep({
       <Divider></Divider>
       <Group position="apart">
         <BackButton onClick={prevStep}></BackButton>
-        <Flex gap="lg" align="end">
-          {isLoading !== true && (
-            <Anchor onClick={() => createPagesThenGoToEditor(projectId)}>
-              Set up datasource later
-            </Anchor>
-          )}
-          <Button
-            onClick={() => createPagesThenGoToDataSource(projectId)}
-            loading={isLoading}
-            disabled={!hasPageNames}
-            leftIcon={<IconDatabase size={ICON_SIZE} />}
-          >
-            Set up a datasource
-          </Button>
-        </Flex>
+
+        <NextButton
+          onClick={async () => {
+            if (!hasPagesCreated) await createManyPages(projectId);
+            nextStep();
+          }}
+          isLoading={isLoading}
+          disabled={isLoading}
+        ></NextButton>
       </Group>
     </Stack>
   );

@@ -24,7 +24,7 @@ export default function ProjectStep({
   const form = useForm<ProjectParams>({
     initialValues: {
       description: "",
-      region: undefined,
+      region: "US_CENTRAL",
       type: "" as ProjectTypes,
       industry: "",
       friendlyName: "",
@@ -85,7 +85,7 @@ export default function ProjectStep({
         />
         <TextInput
           label="What do you do? *"
-          description="Your one-liner e.g. Professional property valuation reports produced by qualified experts, leveraging Evalio’s cutting edge AI valuation and automation software"
+          description="Your one-liner e.g. Providing Advanced Cybersecurity Measures to Defend Against Quantum Computing Threats"
           required
           withAsterisk={false}
           {...form.getInputProps("description")}
@@ -103,7 +103,7 @@ export default function ProjectStep({
 
         <TextInput
           label="What industry are you in? *"
-          description="e.g. PropTech"
+          description="e.g. Cyber Security"
           {...form.getInputProps("industry")}
         />
 

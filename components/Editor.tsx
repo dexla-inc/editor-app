@@ -429,7 +429,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
             pos="relative"
             onClick={clearSelection}
             style={{ minHeight: `calc(100vh - ${HEADER_HEIGHT}px)` }}
-            p={40}
+            ml={NAVBAR_MIN_WIDTH}
+            p={"40px 10px"}
           >
             <Paper
               shadow="xs"

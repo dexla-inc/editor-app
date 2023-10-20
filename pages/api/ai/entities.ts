@@ -1,12 +1,12 @@
-import { getEntitiesPrompt } from "@/utils/prompts";
+import { extractHeaders } from "@/pages/api/common";
 import { openai } from "@/utils/openai";
 import { prisma } from "@/utils/prisma";
-import { NextApiRequest, NextApiResponse } from "next";
-import { faker } from "@faker-js/faker";
-import sampleSize from "lodash.samplesize";
-import random from "lodash.random";
 import { ProjectTypes } from "@/utils/projectTypes";
-import { propelauth } from "@/utils/propelauth";
+import { getEntitiesPrompt } from "@/utils/prompts";
+import { faker } from "@faker-js/faker";
+import random from "lodash.random";
+import sampleSize from "lodash.samplesize";
+import { NextApiRequest, NextApiResponse } from "next";
 
 function callFakerFunction(funcString: string) {
   try {
@@ -27,10 +27,6 @@ export default async function handler(
     if (req.method !== "POST") {
       throw new Error("Invalid method");
     }
-
-    const authHeader = req.headers.authorization;
-    // const user = await propelauth.validateAccessTokenAndGetUser(authHeader);
-    // console.log({ user });
 
     const data: {
       appDescription: string;
@@ -177,14 +173,17 @@ export default async function handler(
       };
     }, {});
 
+    const headers = extractHeaders(req.headers);
+    // const bearerToken = await getBearerTokenHeaderValue();
     const projectsResponse = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/projects`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: authHeader as string,
-        },
+        headers,
+        // headers: {
+        //   "Content-Type": "application/json",
+        //   Authorization: bearerToken,
+        // },
         body: JSON.stringify({
           ...restData,
           type: "" as ProjectTypes,

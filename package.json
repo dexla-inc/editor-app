@@ -26,7 +26,7 @@
     "@mantine/tiptap": "6.0.21",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@monaco-editor/react": "^4.5.2",
-    "@prisma/client": "4.15.0",
+    "@prisma/client": "^5.4.2",
     "@propelauth/node": "^2.1.6",
     "@propelauth/react": "^2.0.10",
     "@react-google-maps/api": "^2.19.2",
