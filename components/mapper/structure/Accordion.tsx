@@ -13,10 +13,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Accordion Container",
     props: {
       style: {
-        paddingTop: px(theme.spacing.xl),
-        paddingBottom: px(theme.spacing.xl),
-        paddingLeft: px(theme.spacing.xl),
-        paddingRight: px(theme.spacing.xl),
+        padding: px(theme.spacing.xl),
         width: "100%",
         height: "auto",
         ...defaultBorderValues,
