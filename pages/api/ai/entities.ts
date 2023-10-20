@@ -174,12 +174,16 @@ export default async function handler(
     }, {});
 
     const headers = extractHeaders(req.headers);
-
+    // const bearerToken = await getBearerTokenHeaderValue();
     const projectsResponse = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/projects`,
       {
         method: "POST",
         headers,
+        // headers: {
+        //   "Content-Type": "application/json",
+        //   Authorization: bearerToken,
+        // },
         body: JSON.stringify({
           ...restData,
           type: "" as ProjectTypes,
