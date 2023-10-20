@@ -161,6 +161,14 @@ export const regionTypeFlags: Record<RegionTypes, string> = {
   FRANCE_CENTRAL: "/eu-flag.svg",
 };
 
+export const regionTypes = (Object.keys(regionTypeLabels) as RegionTypes[]).map(
+  (regionType) => ({
+    value: regionType,
+    label: regionTypeLabels[regionType],
+    flag: regionTypeFlags[regionType],
+  }),
+);
+
 export type AppTypes = "PAGE" | "TEMPLATE" | "PROJECT";
 
 export type InputTypes =

@@ -1,53 +1,29 @@
+import RegionSelect from "@/components/RegionSelect";
 import {
   ProjectUpdateParams,
   patchProject,
 } from "@/requests/projects/mutations";
 import { RegionTypes, getProject } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
+import { convertToPatchParams } from "@/utils/dashboardTypes";
 import {
-  convertToPatchParams,
-  regionTypeFlags,
-  regionTypeLabels,
-} from "@/utils/dashboardTypes";
-import {
-  Avatar,
   Button,
   Container,
   Flex,
-  Group,
   Loader,
-  Paper,
-  Select,
   Stack,
-  Text,
   TextInput,
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { forwardRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   projectId: string;
 };
 
-const regionTypes = (Object.keys(regionTypeLabels) as RegionTypes[]).map(
-  (regionType) => ({
-    value: regionType,
-    label: regionTypeLabels[regionType],
-    flag: regionTypeFlags[regionType],
-  }),
-);
-
-interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
-  value: string;
-  label: string;
-  flag: string;
-}
-
 export default function GeneralSettings({ projectId }: Props) {
-  const [selectedRegion, setSelectedRegion] = useState<RegionTypes | undefined>(
-    undefined,
-  );
+  const [selectedRegion, setSelectedRegion] = useState<RegionTypes>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
@@ -108,19 +84,6 @@ export default function GeneralSettings({ projectId }: Props) {
     setSelectedRegion(form.values.region as RegionTypes);
   }, [form.values.region]);
 
-  const RegionSelectItem = forwardRef<HTMLDivElement, ItemProps>(
-    ({ flag, label, ...others }: ItemProps, ref) => (
-      <Paper ref={ref} {...others}>
-        <Group noWrap>
-          <Avatar src={flag} size="sm" />
-
-          <Text size="sm">{label}</Text>
-        </Group>
-      </Paper>
-    ),
-  );
-  RegionSelectItem.displayName = "RegionSelectItem";
-
   return (
     <Container py="xl">
       <form onSubmit={form.onSubmit(onSubmit)}>
@@ -134,25 +97,15 @@ export default function GeneralSettings({ projectId }: Props) {
             sx={{ maxWidth: "400px" }}
             rightSection={isLoading && <Loader size="xs" />}
           />
-          <Select
-            label="Region"
-            {...form.getInputProps("region")}
-            data={regionTypes}
-            sx={{ maxWidth: "400px" }}
-            itemComponent={RegionSelectItem}
-            icon={
-              regionTypeFlags[selectedRegion as RegionTypes] && (
-                <Avatar
-                  src={regionTypeFlags[selectedRegion as RegionTypes]}
-                  size="sm"
-                />
-              )
-            }
+          <RegionSelect
+            value={selectedRegion}
             onChange={(value: RegionTypes) => {
+              console.log(value);
               form.setFieldValue("region", value);
               setSelectedRegion(value);
             }}
-          />
+            sx={{ maxWidth: "400px" }}
+          ></RegionSelect>
           <Flex>
             <Button type="submit" loading={isLoading} disabled={isLoading}>
               Save

@@ -1,7 +1,9 @@
 import { DashboardShell } from "@/components/DashboardShell";
 import BrandingStep from "@/components/projects/BrandingStep";
 import PagesStep from "@/components/projects/PagesStep";
+import ProjectInfoStep from "@/components/projects/ProjectInfoStep";
 import ProjectStep from "@/components/projects/ProjectStep";
+import { RegionTypes } from "@/requests/projects/queries";
 import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
 import { StepperDetailsType } from "@/utils/projectTypes";
@@ -21,9 +23,13 @@ export default function New() {
 
   const [projectId, setProjectId] = useState("");
   const [websiteUrl, setWebsiteUrl] = useState("");
-  const [pages, setPages] = useState<string[]>([]);
   const [themeResponse, setThemeResponse] = useState<ThemeResponse>();
+  const [pages, setPages] = useState<string[]>([]);
   const [initialPageFetchDone, setInitialPageFetchDone] = useState(false);
+  const [hasPagesCreated, setHasPagesCreated] = useState(false);
+  const [homePageId, setHomePageId] = useState("");
+  const [friendlyName, setFriendlyName] = useState("");
+  const [region, setRegion] = useState<RegionTypes>("US_CENTRAL");
 
   return (
     <DashboardShell>
@@ -67,13 +73,32 @@ export default function New() {
             <Stepper.Step label="Pages" description="Generate your page names">
               <PagesStep
                 prevStep={prevStep}
+                nextStep={nextStep}
                 projectId={projectId}
                 pages={pages}
                 setPages={setPages}
                 initialPageFetchDone={initialPageFetchDone}
                 setInitialPageFetchDone={setInitialPageFetchDone}
+                hasPagesCreated={hasPagesCreated}
+                setHasPagesCreated={setHasPagesCreated}
+                setHomePageId={setHomePageId}
               ></PagesStep>
             </Stepper.Step>
+            <Stepper.Completed>
+              <ProjectInfoStep
+                prevStep={prevStep}
+                projectId={projectId}
+                isLoading={isLoading}
+                setIsLoading={setIsLoading}
+                startLoading={startLoading}
+                stopLoading={stopLoading}
+                homePageId={homePageId}
+                friendlyName={friendlyName}
+                setFriendlyName={setFriendlyName}
+                region={region}
+                setRegion={setRegion}
+              ></ProjectInfoStep>
+            </Stepper.Completed>
           </Stepper>
         </Stack>
       </Container>
@@ -86,9 +111,12 @@ const stepperDetails: StepperDetailsType = {
     title: "Ready to create something Buck-tacular?",
   },
   1: {
-    title: "Here are your pages. It’s Buck-athon time!",
+    title: "Grab your Buck-ets, it's time to paint your brand!",
   },
   2: {
+    title: "Here are your pages. It’s Buck-athon time!",
+  },
+  3: {
     title: "Ready to be blown away? Because there’s a Buck-storm coming...",
   },
 };
