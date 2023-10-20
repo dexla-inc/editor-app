@@ -155,7 +155,12 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
               key: "iframe-canvas",
             })}
           >
-            <Box component={ScrollArea} offsetScrollbars id="iframe-content">
+            <Box
+              // @ts-ignore
+              component={!isLive ? ScrollArea : "div"}
+              offsetScrollbars
+              id="iframe-content"
+            >
               {children}
             </Box>
           </MantineProvider>,
