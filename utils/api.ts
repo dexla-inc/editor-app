@@ -41,6 +41,8 @@ async function doFetch<Type>({
         authInfo = await authClient.getAuthenticationInfoOrNull();
       }
 
+      console.log({ authInfo, body });
+
       const isFormData = body instanceof FormData;
       let contentType;
       if (isStream) {
@@ -69,6 +71,8 @@ async function doFetch<Type>({
       }
 
       const json = await response?.json?.();
+
+      console.log({ body, json });
 
       if (!response.status.toString().startsWith("20")) {
         reject(json?.message ?? "Something went wrong");
