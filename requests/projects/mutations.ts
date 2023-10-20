@@ -1,6 +1,12 @@
 import { RegionTypes } from "@/requests/projects/queries";
 import { PatchParams } from "@/requests/types";
-import { del, getBearerTokenHeaderValue, patch, post } from "@/utils/api";
+import {
+  del,
+  getAuthToken,
+  getBearerTokenHeaderValue,
+  patch,
+  post,
+} from "@/utils/api";
 import { ProjectTypes } from "@/utils/projectTypes";
 
 export interface ProjectParams extends ProjectUpdateParams {
@@ -32,17 +38,17 @@ export const createProject = async (params: ProjectParams) => {
 };
 
 export const createEntitiesAndProject = async (params: ProjectParams) => {
-  const bearerToken = await getBearerTokenHeaderValue();
+  const accessToken = await getAuthToken();
   const response = await fetch("/api/ai/entities", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: bearerToken,
     },
     body: JSON.stringify({
       ...params,
       appDescription: params.description,
       appIndustry: params.industry,
+      accessToken,
     }),
   });
 

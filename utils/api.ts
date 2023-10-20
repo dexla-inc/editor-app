@@ -42,8 +42,6 @@ async function doFetch<Type>({
         bearerToken = await getBearerTokenHeaderValue();
       }
 
-      console.log({ authInfo, body });
-
       const isFormData = body instanceof FormData;
       let contentType;
       if (isStream) {

@@ -1,4 +1,3 @@
-import { extractHeaders } from "@/pages/api/common";
 import { openai } from "@/utils/openai";
 import { prisma } from "@/utils/prisma";
 import { ProjectTypes } from "@/utils/projectTypes";
@@ -31,6 +30,7 @@ export default async function handler(
     const data: {
       appDescription: string;
       appIndustry: string;
+      accessToken: string;
     } = req.body;
 
     const { appDescription, appIndustry, ...restData } = data;
@@ -45,6 +45,8 @@ export default async function handler(
         },
       ],
     });
+
+    console.log({ token: data.accessToken });
 
     const message = response.choices[0].message;
     const content = JSON.parse(message.content ?? "{}");
@@ -173,17 +175,15 @@ export default async function handler(
       };
     }, {});
 
-    const headers = extractHeaders(req.headers);
     // const bearerToken = await getBearerTokenHeaderValue();
     const projectsResponse = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/projects`,
       {
         method: "POST",
-        headers,
-        // headers: {
-        //   "Content-Type": "application/json",
-        //   Authorization: bearerToken,
-        // },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${data.accessToken}`,
+        },
         body: JSON.stringify({
           ...restData,
           type: "" as ProjectTypes,
@@ -193,7 +193,7 @@ export default async function handler(
       },
     );
 
-    console.log({ projectsResponse, headers: req.headers });
+    console.log("AFTER");
     const _project = await projectsResponse.json();
     console.log({ _project });
 
