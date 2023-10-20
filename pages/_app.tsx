@@ -169,18 +169,24 @@ export default function App(props: AppProps) {
                       maxHeight: "100vh",
                       minHeight: "100vh",
                       background: "white",
-                      overflow: "hidden",
                       // For WebKit browsers (e.g., Chrome, Safari)
                       "::-webkit-scrollbar": {
-                        width: isLive && "0px",
+                        width: isLive ? "0px" : "8px",
                         height: isLive && "0px",
+                      },
+                      "::-webkit-scrollbar-thumb": {
+                        backgroundColor: !isLive && "#888",
+                        borderRadius: !isLive && "10px",
                       },
 
                       // For Firefox
-                      scrollbarWidth: isLive && "none",
+                      scrollbarWidth: isLive ? "none" : "thin",
+                      scrollbarColor: !isLive && "#888 transparent",
 
                       // For IE and Edge
-                      msOverflowStyle: isLive && "none",
+                      msOverflowStyle: isLive
+                        ? "none"
+                        : "-ms-autohiding-scrollbar",
                     },
 
                     html: {
