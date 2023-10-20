@@ -1,6 +1,9 @@
 import { InformationAlert } from "@/components/Alerts";
 import NextButton from "@/components/NextButton";
-import { ProjectParams, createProject } from "@/requests/projects/mutations";
+import {
+  ProjectParams,
+  createEntitiesAndProject,
+} from "@/requests/projects/mutations";
 import { LoadingStore, NextStepperClickEvent } from "@/utils/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
 import { Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
@@ -50,7 +53,9 @@ export default function ProjectStep({
 
       form.validate();
 
-      const project = await createProject(values);
+      const project = await createEntitiesAndProject(values);
+
+      if (!project || !project.id) throw new Error("Project not created");
 
       setProjectId(project.id);
 
