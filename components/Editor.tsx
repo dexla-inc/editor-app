@@ -54,7 +54,8 @@ type Props = {
 
 export const Editor = ({ projectId, pageId }: Props) => {
   const theme = useMantineTheme();
-  const { undo, redo } = useTemporalStore((state) => state);
+  const undo = useTemporalStore((state) => state.undo);
+  const redo = useTemporalStore((state) => state.redo);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );

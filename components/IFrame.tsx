@@ -85,23 +85,9 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
   let cssString = "";
 
   // Add styles depending on the `isLive` prop
-
   !isLive
     ? (cssString = `
-        overflow: visible; 
-        margin: 40px 10px; 
-        scrollbar-width: thin; 
-        scrollbar-color: #888 transparent; 
-        -ms-overflow-style: -ms-autohiding-scrollbar;
-        ::-webkit-scrollbar {
-          width: 5px;
-          border-radius: 10px;
-        };
-        ::-webkit-scrollbar-thumb {
-          background-color: #888;
-          border-radius: 10px;
-        };
-        height: calc(100vh - ${HEADER_HEIGHT}px)   
+        overflow: visible; margin: 40px 10px;    
     `)
     : (cssString = `margin: 0px;`);
 
