@@ -7,6 +7,7 @@ import get from "lodash.get";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
+import { InformationAlert, WarningAlert } from "@/components/Alerts";
 
 export const icon = IconTable;
 export const label = "Table";
@@ -26,19 +27,21 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     if (selectedComponent?.id) {
       const {
         data: dataProp,
+        exampleData,
         dataPath,
         headers,
         config,
         repeatedIndex,
       } = pick(selectedComponent.props!, [
         "data",
+        "exampleData",
         "dataPath",
         "headers",
         "config",
         "repeatedIndex",
       ]);
 
-      let data = dataProp?.value;
+      let data = dataProp?.value ?? exampleData?.value;
 
       if (typeof repeatedIndex !== "undefined" && dataPath) {
         const path = dataPath.replace("[0]", `[${repeatedIndex}]`);
@@ -58,6 +61,10 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent?.id]);
+
+  const isThereAnyConfigChecked =
+    get(form.values.config, "select", false) ||
+    get(form.values.config, "sorting", false);
 
   return (
     <form>
@@ -109,37 +116,15 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             debouncedTreeComponentPropsUpdate("config", config);
           }}
         />
-        <Switch
-          size="xs"
-          label="Pagination"
-          checked={get(form.values.config, "pagination", false)}
-          onChange={(e) => {
-            const config = {
-              ...form.values.config,
-              pagination: e.currentTarget.checked,
-            };
-            form.setFieldValue("config", config);
-            debouncedTreeComponentPropsUpdate("config", config);
-          }}
-        />
-        <Switch
-          size="xs"
-          label="Numbers"
-          checked={get(form.values.config, "numbers", false)}
-          onChange={(e) => {
-            const config = {
-              ...form.values.config,
-              numbers: e.currentTarget.checked,
-            };
-            form.setFieldValue("config", config);
-            debouncedTreeComponentPropsUpdate("config", config);
-          }}
-        />
+        {isThereAnyConfigChecked && (
+          <WarningAlert text="Ensure that you bind the action for the activated configurations" />
+        )}
         <Divider label="Data" labelPosition="center" />
         <Textarea
           autosize
           label="Data"
           size="xs"
+          maxLength={20}
           {...form.getInputProps("data")}
           onChange={(e) => {
             form.setFieldValue("data", e.target.value);

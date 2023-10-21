@@ -200,8 +200,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
 
   const showLoaderInputProps = form.getInputProps("showLoader");
 
-  console.log("--->", { selectedEndpoint });
-
   return endpoints && endpoints.length > 0 ? (
     <>
       <form onSubmit={form.onSubmit(onSubmit)}>
