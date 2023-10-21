@@ -4,6 +4,7 @@ import { Loader, Select as MantineSelect, SelectProps } from "@mantine/core";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import { memo } from "react";
+import cloneDeep from "lodash.clonedeep";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -31,7 +32,9 @@ const SelectComponent = ({
   let data = [];
 
   if (isPreviewMode) {
-    data = dataProp?.value ?? dataProp ?? exampleData.value ?? exampleData;
+    data = cloneDeep(
+      dataProp?.value ?? dataProp ?? exampleData.value ?? exampleData,
+    );
     if (dataPath) {
       const path = dataPath.replaceAll("[0]", "");
       data = get(dataProp, `base.${path}`, dataProp?.value ?? dataProp);
