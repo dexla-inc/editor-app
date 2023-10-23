@@ -31,6 +31,7 @@ import {
   RequestBody,
 } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_SIZE } from "@/utils/config";
 import {
   Box,
@@ -45,14 +46,12 @@ import {
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useAuthInfo } from "@propelauth/react";
 import { IconRefresh } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 export default function DataSourcePage() {
-  const authInfo = useAuthInfo();
-  const { user } = authInfo || {};
+  const user = usePropelAuthStore((state) => state.user);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const startLoading = useAppStore((state) => state.startLoading);

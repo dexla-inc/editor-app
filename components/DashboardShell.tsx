@@ -22,7 +22,7 @@ import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import NavigationAvatarFooter from "@/components/NavigationAvatarFooter";
 import { useEditorStore } from "@/stores/editor";
-import { useLogoutFunction } from "@propelauth/react";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -35,7 +35,7 @@ export const DashboardShell = ({ children, aside, user }: ShellProps) => {
   // This state needs to move to the parent component
   const [isLoading, setIsLoading] = useState(false);
   const resetTree = useEditorStore((state) => state.resetTree);
-  const logout = useLogoutFunction();
+  const logout = usePropelAuthStore((state) => state.logout);
 
   return (
     <AppShell
