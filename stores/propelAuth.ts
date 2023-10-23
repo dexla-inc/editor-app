@@ -1,13 +1,5 @@
 import { AuthenticationInfo, createClient } from "@propelauth/javascript";
-import {
-  OrgMemberInfo,
-  RedirectToLogin,
-  RequiredAuthProvider,
-  RequiredAuthProviderProps,
-  User,
-} from "@propelauth/react";
-import { UseAuthInfoProps } from "@propelauth/react/dist/types/useAuthInfo";
-import { RedirectToLoginProps } from "@propelauth/react/dist/types/useRedirectFunctions";
+import { OrgMemberInfo, User } from "@propelauth/react";
 import { create } from "zustand";
 
 type AuthState = {
@@ -18,8 +10,6 @@ type AuthState = {
   organisations?: OrgMemberInfo[];
   role?: string;
   logout: (redirectOnLogout: boolean) => Promise<void>;
-  RedirectToLogin: (props: RedirectToLoginProps) => JSX.Element;
-  RequiredAuthProvider: (props: RequiredAuthProviderProps) => JSX.Element;
 };
 
 const getAuthInfo = async () => {
@@ -40,8 +30,6 @@ export const usePropelAuthStore = create<AuthState>((set, get) => ({
   isDexlaAdmin: false,
   role: "",
   logout: async (redirectOnLogout: boolean) => {},
-  RedirectToLogin: RedirectToLogin,
-  RequiredAuthProvider: RequiredAuthProvider,
 }));
 
 // initializing store
