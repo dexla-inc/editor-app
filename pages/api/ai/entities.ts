@@ -46,8 +46,6 @@ export default async function handler(
       ],
     });
 
-    console.log({ token: data.accessToken });
-
     const message = response.choices[0].message;
     const content = JSON.parse(message.content ?? "{}");
 
@@ -175,7 +173,6 @@ export default async function handler(
       };
     }, {});
 
-    // const bearerToken = await getBearerTokenHeaderValue();
     const projectsResponse = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/projects`,
       {
@@ -193,9 +190,7 @@ export default async function handler(
       },
     );
 
-    console.log("AFTER");
     const _project = await projectsResponse.json();
-    console.log({ _project });
 
     await prisma.project.create({
       data: {

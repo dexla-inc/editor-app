@@ -1,8 +1,7 @@
 import { InformationAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
 import { Icon } from "@/components/Icon";
-import { createPages } from "@/requests/pages/mutations";
-import { PageBody } from "@/requests/pages/types";
+import { createPageList, createPages } from "@/requests/pages/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
@@ -10,11 +9,6 @@ import {
   NextStepperClickEvent,
   PreviousStepperClickEvent,
 } from "@/utils/dashboardTypes";
-import {
-  createHandlers,
-  handleRequestGetStream,
-  processTOMLStream,
-} from "@/utils/streamingAI";
 import {
   ActionIcon,
   Button,
@@ -28,10 +22,10 @@ import {
 } from "@mantine/core";
 import { IconCircleCheck, IconPlus, IconSparkles } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
-import { useRouter } from "next/router";
-import { SetStateAction, useEffect, useState } from "react";
-import slugify from "slugify";
+import { SetStateAction, useEffect, useRef } from "react";
 import NextButton from "../NextButton";
+import slugify from "slugify";
+import { PageBody } from "@/requests/pages/types";
 
 export const getServerSideProps = async ({
   query,
@@ -47,8 +41,10 @@ export interface PagesStepProps
   extends PreviousStepperClickEvent,
     NextStepperClickEvent {
   projectId: string;
-  pages: string[];
-  setPages: (value: SetStateAction<string[]>) => void;
+  pages: { name: string; description: string }[];
+  setPages: (
+    value: SetStateAction<{ name: string; description: string }[]>,
+  ) => void;
   initialPageFetchDone: boolean;
   setInitialPageFetchDone: (value: SetStateAction<boolean>) => void;
   hasPagesCreated: boolean;
@@ -68,27 +64,26 @@ export default function PagesStep({
   setHasPagesCreated,
   setHomePageId,
 }: PagesStepProps) {
-  const router = useRouter();
   const resetTree = useEditorStore((state) => state.resetTree);
-  const [count, setCount] = useState(5);
+  const initiallPageGeneration = useRef(false);
   const updatePage = (index: number, value: string) => {
     const updatedPages = [...pages];
-    updatedPages[index] = value;
+    updatedPages[index] = { name: value, description: "A simple page" };
     setPages(updatedPages);
   };
 
   const addEmptyPage = () => {
-    setPages((oldPages) => [...oldPages, ""]);
+    setPages((oldPages) => [...oldPages, { name: "", description: "" }]);
   };
 
-  const type = "PAGE" as const;
-  const [stream, setStream] = useState<string>("");
+  //const type = "PAGE" as const;
+  //const [stream, setStream] = useState<string>("");
   const isLoading = useAppStore((state) => state.isLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const startLoading = useAppStore((state) => state.startLoading);
 
-  const { onMessage, onError, onOpen, onClose } = createHandlers({
+  /* const { onMessage, onError, onOpen, onClose } = createHandlers({
     setStream,
     stopLoading,
     setIsLoading,
@@ -97,9 +92,9 @@ export default function PagesStep({
   const onCloseOverride = async () => {
     await onClose();
     setInitialPageFetchDone(true);
-  };
+  }; */
 
-  const fetchPageData = async (pageCount: number) => {
+  /* const fetchPageData = async (pageCount: number) => {
     setIsLoading(true);
 
     return await handleRequestGetStream(
@@ -113,18 +108,18 @@ export default function PagesStep({
       onCloseOverride,
       pages.join(),
     );
-  };
+  }; */
 
-  const handlePageNamesGeneration = () => {
+  /* const handlePageNamesGeneration = () => {
     return function (json: any) {
       const newPages = Object.values(json) as string[];
       if (!initialPageFetchDone) setPages(newPages);
       else setPages((oldPages) => [...oldPages, ...newPages]);
     };
-  };
+  }; */
   // if first time and pages.length is less than 5 then set pages
 
-  useEffect(() => {
+  /* useEffect(() => {
     processTOMLStream({
       stream,
       handler: handlePageNamesGeneration(),
@@ -135,10 +130,22 @@ export default function PagesStep({
   // Ensure stream pages only happens once
   useEffect(() => {
     if (!initialPageFetchDone) {
-      fetchPageData(count);
+      fetchPageData(5);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); */
+  useEffect(() => {
+    const handlePageNamesGeneration = async () => {
+      const pages = await createPageList(projectId);
+      console.log({ pages });
+      setPages(pages);
+    };
+
+    if (!initiallPageGeneration.current) {
+      handlePageNamesGeneration();
+      initiallPageGeneration.current = true;
+    }
+  }, [projectId, setPages]);
 
   const createManyPages = async (projectId: string) => {
     resetTree();
@@ -152,8 +159,9 @@ export default function PagesStep({
     const createdPages = await createPages(
       pages.map((page, index) => {
         return {
-          title: page,
-          slug: slugify(page),
+          title: page.name,
+          slug: slugify(page.name),
+          description: page.description,
           isHome: index === 0,
           authenticatedOnly: false,
         } as PageBody;
@@ -172,7 +180,7 @@ export default function PagesStep({
   };
 
   const deletePage = (pageToRemove: string) => {
-    setPages((pages) => pages.filter((page) => page !== pageToRemove));
+    setPages((pages) => pages.filter((page) => page.name !== pageToRemove));
   };
 
   const hasPageNames = pages.length > 0;
@@ -195,7 +203,7 @@ export default function PagesStep({
               </ThemeIcon>
             }
           >
-            {pages.map((page, index) => {
+            {pages.map(({ name: page }, index) => {
               return (
                 <List.Item key={index}>
                   <Flex align="center" gap="md">
@@ -244,7 +252,7 @@ export default function PagesStep({
               variant="light"
               leftIcon={<IconPlus size={ICON_SIZE} />}
               onClick={() => {
-                fetchPageData(1);
+                // fetchPageData(1);
               }}
               loading={isLoading}
               disabled={hasPagesCreated}
@@ -256,16 +264,18 @@ export default function PagesStep({
               leftIcon={<IconPlus size={ICON_SIZE} />}
               onClick={() => addEmptyPage()}
               loading={isLoading}
-              disabled={pages.some((page) => page === "") || hasPagesCreated}
+              disabled={
+                pages.some((page) => page.name === "") || hasPagesCreated
+              }
             >
               Add new page
             </Button>
           </>
         )}
       </Flex>
-      <Divider></Divider>
+      <Divider />
       <Group position="apart">
-        <BackButton onClick={prevStep}></BackButton>
+        <BackButton onClick={prevStep} />
 
         <NextButton
           onClick={async () => {
@@ -274,7 +284,7 @@ export default function PagesStep({
           }}
           isLoading={isLoading}
           disabled={isLoading}
-        ></NextButton>
+        />
       </Group>
     </Stack>
   );

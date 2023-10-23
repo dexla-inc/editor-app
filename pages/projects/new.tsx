@@ -24,7 +24,9 @@ export default function New() {
   const [projectId, setProjectId] = useState("");
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [themeResponse, setThemeResponse] = useState<ThemeResponse>();
-  const [pages, setPages] = useState<string[]>([]);
+  const [pages, setPages] = useState<{ name: string; description: string }[]>(
+    [],
+  );
   const [initialPageFetchDone, setInitialPageFetchDone] = useState(false);
   const [hasPagesCreated, setHasPagesCreated] = useState(false);
   const [homePageId, setHomePageId] = useState("");

@@ -85,10 +85,9 @@ export const createHandlers = (config: HandlerProps) => {
       if (stream === "") {
         stream = event.data;
       } else {
-        stream = `${stream}
-          ${event.data}`;
+        stream = `${stream}${event.data}`;
       }
-
+      console.log({ data: event.data, stream });
       setStream(stream);
     } catch (error) {
       // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
@@ -150,10 +149,12 @@ export const processTOMLStream = <T>(params: ProcessTOMLStreamProps<T>) => {
   }
 
   tomlBuffer += stream;
-  console.log("processTOMLStream", tomlBuffer);
+  // console.log("processTOMLStream", tomlBuffer);
+  console.log({ stream2: stream });
   try {
-    const json = TOML.parse(tomlBuffer) as unknown as T;
+    const json = JSON.parse(stream) as unknown as T;
     tomlBuffer = "";
+    console.log({ json });
     handler(json);
   } catch (error) {
     // If parsing fails, keep the data in the buffer and wait for more data to come in

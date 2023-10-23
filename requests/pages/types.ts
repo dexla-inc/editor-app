@@ -22,6 +22,7 @@ export type UpdatePageBody = {
   isHome: boolean;
   authenticatedOnly: boolean;
   authenticatedUserRole?: string;
+  description?: string;
   parentPageId?: string;
   hasNavigation: boolean;
   queryStrings?: Record<string, string>;
