@@ -1,8 +1,10 @@
-import { OrgMemberInfo, User, useLogoutFunction } from "@propelauth/react";
 import {
-  UseAuthInfoProps,
+  OrgMemberInfo,
+  User,
   useAuthInfo,
-} from "@propelauth/react/dist/types/useAuthInfo";
+  useLogoutFunction,
+} from "@propelauth/react";
+import { UseAuthInfoProps } from "@propelauth/react/dist/types/useAuthInfo";
 import { temporal } from "zundo";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
