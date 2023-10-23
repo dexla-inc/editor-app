@@ -23,6 +23,7 @@ export default function DashboardNavbar({
   const router = useRouter();
   const projectId = router.query.id as string;
   const user = usePropelAuthStore((state) => state.user);
+  console.log(user);
 
   return (
     <Navbar

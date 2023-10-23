@@ -31,7 +31,6 @@ import {
   RequestBody,
 } from "@/requests/datasources/types";
 import { useAppStore } from "@/stores/app";
-import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_SIZE } from "@/utils/config";
 import {
   Box,
@@ -51,7 +50,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 export default function DataSourcePage() {
-  const user = usePropelAuthStore((state) => state.user);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const startLoading = useAppStore((state) => state.startLoading);
@@ -193,7 +191,7 @@ export default function DataSourcePage() {
   }, [dataSourceId, id]);
 
   return (
-    <DashboardShell user={user}>
+    <DashboardShell>
       <SettingsTabHeader name={name} />
       <Tabs defaultValue="datasources" py="xs">
         <SettingsTabs />
