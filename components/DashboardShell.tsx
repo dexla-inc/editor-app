@@ -16,7 +16,7 @@ import {
   LoadingOverlay,
   Menu,
 } from "@mantine/core";
-import { User } from "@propelauth/react";
+
 import Link from "next/link";
 
 import { Icon } from "@/components/Icon";
@@ -28,14 +28,14 @@ import { ErrorBoundary } from "react-error-boundary";
 
 export interface ShellProps extends AppShellProps {
   navbarType?: NavbarTypes;
-  user?: User | null | undefined;
 }
 
-export const DashboardShell = ({ children, aside, user }: ShellProps) => {
+export const DashboardShell = ({ children, aside }: ShellProps) => {
   // This state needs to move to the parent component
   const [isLoading, setIsLoading] = useState(false);
   const resetTree = useEditorStore((state) => state.resetTree);
   const logout = usePropelAuthStore((state) => state.logout);
+  const user = usePropelAuthStore((state) => state.user);
 
   return (
     <AppShell

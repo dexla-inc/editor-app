@@ -4,7 +4,6 @@ import { usePropelAuthStore } from "@/stores/propelAuth";
 import { HEADER_HEIGHT, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
 import { NavbarTypes } from "@/utils/dashboardTypes";
 import { Box, Button, Menu, NavLink, Navbar, ScrollArea } from "@mantine/core";
-import { User } from "@propelauth/react";
 import { IconArrowLeft, IconLogout, IconSettings } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -12,18 +11,18 @@ import { useRouter } from "next/router";
 type DashboardNavbarProps = {
   isLoading?: boolean;
   setIsLoading: (isLoading: boolean) => void;
-  user: User | null | undefined;
+
   navbarType: NavbarTypes;
 };
 
 export default function DashboardNavbar({
   setIsLoading,
-  user,
   navbarType,
 }: DashboardNavbarProps) {
   const logout = usePropelAuthStore((state) => state.logout);
   const router = useRouter();
   const projectId = router.query.id as string;
+  const user = usePropelAuthStore((state) => state.user);
 
   return (
     <Navbar

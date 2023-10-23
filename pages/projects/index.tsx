@@ -90,7 +90,7 @@ export default function Projects() {
   }, [user, orgs]);
 
   return (
-    <DashboardShell user={user}>
+    <DashboardShell>
       <Container py="xl" size="lg">
         <Stack spacing="xl">
           <Title>Welcome back, {user?.firstName}</Title>
