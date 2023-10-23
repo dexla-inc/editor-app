@@ -11,7 +11,6 @@ import { create } from "zustand";
 
 type AuthState = {
   authInfo: AuthenticationInfo | null;
-  isAuthenticated: boolean;
   isDexlaAdmin: boolean;
   user: User;
   organisations?: OrgMemberInfo[];
@@ -19,6 +18,7 @@ type AuthState = {
   logout: (redirectOnLogout: boolean) => Promise<void>;
   RequiredAuthProvider: (props: RequiredAuthProviderProps) => JSX.Element;
   RedirectToLogin: (props: RedirectToLoginProps) => JSX.Element;
+  initializeAuth: () => Promise<void>;
 };
 
 export const usePropelAuthStore = create<AuthState>((set) => {
@@ -31,7 +31,7 @@ export const usePropelAuthStore = create<AuthState>((set) => {
     const logout = authClient.logout;
     set({
       authInfo,
-      isAuthenticated: !!authInfo?.user,
+
       user: authInfo?.user || ({} as User),
       organisations: authInfo?.orgHelper.getOrgs() || [],
       logout: logout,
@@ -43,11 +43,10 @@ export const usePropelAuthStore = create<AuthState>((set) => {
   };
 
   // Automatically invoke the internalGetAuthInfo when the store is created
-  internalGetAuthInfo();
+  // internalGetAuthInfo();
 
   return {
     authInfo: null,
-    isAuthenticated: false,
     user: {} as User,
     organisations: [],
     isDexlaAdmin: false,
@@ -55,5 +54,6 @@ export const usePropelAuthStore = create<AuthState>((set) => {
     logout: async (redirectOnLogout: boolean) => {},
     RequiredAuthProvider: RequiredAuthProvider,
     RedirectToLogin: RedirectToLogin,
+    initializeAuth: internalGetAuthInfo,
   };
 });
