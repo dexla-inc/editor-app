@@ -1,5 +1,12 @@
 import { AuthenticationInfo, createClient } from "@propelauth/javascript";
-import { OrgMemberInfo, User } from "@propelauth/react";
+import {
+  OrgMemberInfo,
+  RedirectToLogin,
+  RequiredAuthProvider,
+  RequiredAuthProviderProps,
+  User,
+} from "@propelauth/react";
+import { RedirectToLoginProps } from "@propelauth/react/dist/types/useRedirectFunctions";
 import { create } from "zustand";
 
 type AuthState = {
@@ -10,42 +17,43 @@ type AuthState = {
   organisations?: OrgMemberInfo[];
   role?: string;
   logout: (redirectOnLogout: boolean) => Promise<void>;
+  RequiredAuthProvider: (props: RequiredAuthProviderProps) => JSX.Element;
+  RedirectToLogin: (props: RedirectToLoginProps) => JSX.Element;
 };
 
-const getAuthInfo = async () => {
-  const authClient = createClient({
-    authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
-    enableBackgroundTokenRefresh: true,
-  });
-  const authInfo = await authClient.getAuthenticationInfoOrNull();
-  const logout = authClient.logout;
-  return { authInfo, logout };
-};
+export const usePropelAuthStore = create<AuthState>((set) => {
+  const internalGetAuthInfo = async () => {
+    const authClient = createClient({
+      authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
+      enableBackgroundTokenRefresh: true,
+    });
+    const authInfo = await authClient.getAuthenticationInfoOrNull();
+    const logout = authClient.logout;
+    set({
+      authInfo,
+      isAuthenticated: !!authInfo?.user,
+      user: authInfo?.user || ({} as User),
+      organisations: authInfo?.orgHelper.getOrgs() || [],
+      logout: logout,
+      isDexlaAdmin:
+        authInfo?.orgHelper.getOrgByName("Dexla")?.userAssignedRole ===
+        "DEXLA_ADMIN",
+      role: authInfo?.orgHelper.getOrgs()[0]?.userAssignedRole, // To change when we support multiple organizations
+    });
+  };
 
-export const usePropelAuthStore = create<AuthState>((set, get) => ({
-  authInfo: null,
-  isAuthenticated: false,
-  user: {} as User,
-  organisations: [],
-  isDexlaAdmin: false,
-  role: "",
-  logout: async (redirectOnLogout: boolean) => {},
-}));
+  // Automatically invoke the internalGetAuthInfo when the store is created
+  internalGetAuthInfo();
 
-// initializing store
-const initStore = async () => {
-  const { authInfo, logout } = await getAuthInfo();
-  usePropelAuthStore.setState({
-    authInfo,
-    user: authInfo?.user || ({} as User),
-    organisations: authInfo?.orgHelper.getOrgs() || [],
-    isAuthenticated: !!authInfo?.user,
-    logout: logout,
-    isDexlaAdmin:
-      authInfo?.orgHelper.getOrgByName("Dexla")?.userAssignedRole ===
-      "DEXLA_ADMIN",
-    role: authInfo?.orgHelper.getOrgByName("dexla")?.userAssignedRole,
-  });
-};
-
-initStore();
+  return {
+    authInfo: null,
+    isAuthenticated: false,
+    user: {} as User,
+    organisations: [],
+    isDexlaAdmin: false,
+    role: "",
+    logout: async (redirectOnLogout: boolean) => {},
+    RequiredAuthProvider: RequiredAuthProvider,
+    RedirectToLogin: RedirectToLogin,
+  };
+});
