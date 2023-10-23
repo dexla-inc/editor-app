@@ -16,6 +16,7 @@ import pickBy from "lodash.pickby";
 import { nanoid } from "nanoid";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import crawl from "tree-crawl";
+import { Tile } from "@/components/templates/dashboard";
 
 export type Component = {
   id?: string;
@@ -226,6 +227,24 @@ export const getEditorTreeFromTemplateData = (
     tree.template.data,
     theme,
     pages,
+  );
+  return editorTree;
+};
+
+export const getEditorTreeFromTemplateTileData = async (
+  tree: { template: { name: string; tiles: Tile[] } },
+  theme: MantineThemeExtended,
+  pages: PageResponse[],
+  projectId: string,
+  pageId: string,
+) => {
+  // @ts-ignore
+  const editorTree: EditorTree = await templatesMapper[tree.template.name](
+    tree.template,
+    theme,
+    pages,
+    projectId,
+    pageId,
   );
   return editorTree;
 };

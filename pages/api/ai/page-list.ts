@@ -13,7 +13,6 @@ export default async function handler(
     }
 
     const { projectId, accessToken } = req.body;
-    console.log({ projectId, accessToken });
     const project = await prisma.project.findFirstOrThrow({
       where: {
         id: projectId as string,
@@ -52,31 +51,6 @@ export default async function handler(
     const content = JSON.parse(message.content ?? "[]");
 
     return res.status(200).json(content);
-
-    /* const message = response.choices[0].message;
-    const content = JSON.parse(message.content ?? "[]"); */
-
-    /*  const pagesResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/projects/${projectId}/pages/many`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(
-          content.map((page: any, index: number) => ({
-            title: page.name,
-            slug: slugify(page),
-            isHome: index === 0,
-            authenticatedOnly: false,
-            description: page.description,
-          })),
-        ),
-      },
-    );
-
-    const pages = await pagesResponse.json(); */
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error });

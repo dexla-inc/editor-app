@@ -45,7 +45,7 @@ export const getPageGenerationPrompt = ({
     data: { label: string; placeholder: string };
   };
 
-  type StatTile {
+  type StatTile = {
     name: "stat"
     entityName: string
     data: {
@@ -58,16 +58,16 @@ export const getPageGenerationPrompt = ({
   // for cases where we need to list people
   // like a list of users, or a list of employees, for example
   // in those cases we would have a list of PersonTile
-  type PersonTile {
+  type PersonTile = {
     name: "person"
     data: {
-      avatar: 'faker.image.avatar'
-      name: 'faker.person.fullName'
-      subtitle: 'faker.internet.email'
+      avatar: string
+      name: string
+      subtitle: string
     }
   }
 
-  type LineChartTile {
+  type LineChartTile = {
     name: "lineChart"
     data: {
       series: { name: string; data: number[] }[]
@@ -134,13 +134,12 @@ export const getPageGenerationPrompt = ({
 
   type Template = DashboardTemplate | SignupTemplate | SigninTemplate | CRUDTemplate
 
-  type Page {
-    name: string
+  type Page = {
     template: Template
   }
 
   Use the entity name where you need the entity data, like 'entity.<entity-name>.<entity-data-key>'.
-  You can use faker.js to generate fake data. For example, faker.image.avatar will generate a random avatar image url.
+  If you want the amount of items for a given entity, use 'entity.<entity-name>.count'.
   The return must be in JSON format. Make sure it's valid JSON as we will be parsing it using JSON.parse.
     
   ENTITIES: ${entities}

@@ -26,6 +26,11 @@ import { SetStateAction, useEffect, useRef } from "react";
 import NextButton from "../NextButton";
 import slugify from "slugify";
 import { PageBody } from "@/requests/pages/types";
+import {
+  createDataSource,
+  createDataSourceEndpoint,
+} from "@/requests/datasources/mutations";
+import { createVariable } from "@/requests/variables/mutations";
 
 export const getServerSideProps = async ({
   query,
@@ -136,47 +141,137 @@ export default function PagesStep({
   }, []); */
   useEffect(() => {
     const handlePageNamesGeneration = async () => {
+      startLoading({
+        id: "creating-pages",
+        title: "Creating Pages",
+        message: "Wait while your pages are being created",
+      });
       const pages = await createPageList(projectId);
       console.log({ pages });
       setPages(pages);
+      stopLoading({
+        id: "creating-pages",
+        title: "Pages Created",
+        message: "Your pages have been created",
+      });
     };
 
     if (!initiallPageGeneration.current) {
       handlePageNamesGeneration();
       initiallPageGeneration.current = true;
     }
-  }, [projectId, setPages]);
+  }, [projectId, setPages, startLoading, stopLoading]);
 
   const createManyPages = async (projectId: string) => {
-    resetTree();
-    setIsLoading(true);
-    startLoading({
-      id: "creating-pages",
-      title: "Creating Pages",
-      message: "Wait while your pages are being created",
-    });
+    try {
+      resetTree();
+      setIsLoading(true);
+      startLoading({
+        id: "creating-pages",
+        title: "Creating Pages",
+        message: "Wait while your pages are being created",
+      });
 
-    const createdPages = await createPages(
-      pages.map((page, index) => {
-        return {
-          title: page.name,
-          slug: slugify(page.name),
-          description: page.description,
-          isHome: index === 0,
-          authenticatedOnly: false,
-        } as PageBody;
-      }) as PageBody[],
-      projectId,
-    );
-    setHomePageId(createdPages.homePageId);
-    setHasPagesCreated(true);
-    stopLoading({
-      id: "creating-pages",
-      title: "Pages Created",
-      message: "Your pages have been created",
-    });
-    setIsLoading(false);
-    return createdPages;
+      const createdPages = await createPages(
+        pages.map((page, index) => {
+          return {
+            title: page.name,
+            slug: slugify(page.name),
+            description: page.description,
+            isHome: index === 0,
+            authenticatedOnly: false,
+          } as PageBody;
+        }) as PageBody[],
+        projectId,
+      );
+
+      const baseUrl = "https://visnduvexezenksqpvmo.supabase.co/rest/v1/";
+
+      const dataSource = await createDataSource(projectId, "API", {
+        name: "Example API",
+        baseUrl,
+        environment: "staging",
+      });
+
+      const projectResponse = await fetch(`/api/project/${projectId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const projectData = await projectResponse.json();
+
+      const exampleResponse = JSON.stringify(projectData.data, null, 2);
+      await createDataSourceEndpoint(projectId, dataSource.id, {
+        dataSourceId: dataSource.id,
+        description: "Get Entity Data",
+        methodType: "GET",
+        relativeUrl: "Project",
+        headers: [
+          {
+            required: true,
+            name: "apikey",
+            type: "string",
+            description: "",
+            value:
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpc25kdXZleGV6ZW5rc3Fwdm1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTc3NzM3NjksImV4cCI6MjAxMzM0OTc2OX0.BtdpJTGNBGIEM84dwXL_4khMNA0EjBeXeg2RbrmtOLA",
+          },
+        ],
+        parameters: [
+          {
+            name: "id",
+            type: "string",
+            required: true,
+            description: "",
+            value: "eq.263f4aa3ce574cf3a8996f8f28c3b24a",
+            location: "Query",
+          },
+          {
+            name: "select",
+            type: "string",
+            required: true,
+            description: "",
+            value: "data",
+            location: "Query",
+          },
+        ],
+        requestBody: [],
+        mediaType: "application/json",
+        withCredentials: null,
+        authenticationScheme: "NONE",
+        exampleResponse,
+        errorExampleResponse: "",
+        isServerRequest: false,
+        baseUrl,
+      });
+
+      await createVariable(projectId, {
+        name: "GET Project Data",
+        type: "OBJECT",
+        value: JSON.stringify(exampleResponse),
+        defaultValue: JSON.stringify(exampleResponse),
+        isGlobal: true,
+        pageId: createdPages.homePageId,
+      });
+
+      setHomePageId(createdPages.homePageId);
+      setHasPagesCreated(true);
+      stopLoading({
+        id: "creating-pages",
+        title: "Pages Created",
+        message: "Your pages have been created",
+      });
+      setIsLoading(false);
+      return createdPages;
+    } catch (error) {
+      console.log({ error });
+      stopLoading({
+        id: "creating-pages",
+        title: "Error Creating Pages",
+        message: "There was an error creating your pages",
+      });
+    }
   };
 
   const deletePage = (pageToRemove: string) => {

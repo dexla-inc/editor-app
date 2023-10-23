@@ -3,6 +3,7 @@ import {
   PageParams,
   PageResponse,
 } from "@/requests/pages/types";
+import { getAuthToken } from "@/utils/api";
 import { getWithoutAuth } from "@/utils/apiNoAuth";
 import { buildQueryString } from "@/utils/dashboardTypes";
 
@@ -23,6 +24,24 @@ export const getPage = async (projectId: string, pageId: string) => {
   )) as PageResponse;
 
   return response;
+};
+
+export const getPageTemplate = async (projectId: string, pageId: string) => {
+  const accessToken = await getAuthToken();
+  const response = await fetch("/api/ai/page", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      pageId,
+      projectId,
+      accessToken,
+    }),
+  });
+
+  const json = await response.json();
+  return json as any;
 };
 
 export const getPageBySlug = async (projectId: string, slug: string) => {

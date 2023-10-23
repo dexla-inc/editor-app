@@ -9,7 +9,7 @@ import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import { postPageEventSource } from "@/requests/ai/queries";
-import { getPage } from "@/requests/pages/queries";
+import { getPage, getPageTemplate } from "@/requests/pages/queries";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
@@ -26,6 +26,7 @@ import {
   getComponentById,
   getComponentParent,
   getEditorTreeFromTemplateData,
+  getEditorTreeFromTemplateTileData,
   removeComponent,
 } from "@/utils/editor";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
@@ -221,7 +222,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
     ],
   ]);
 
-  const onMessage = (event: EventSourceMessage) => {
+  /* const onMessage = (event: EventSourceMessage) => {
     try {
       setStream((state) => {
         try {
@@ -260,7 +261,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
       title: "Page Generated",
       message: "Here's your page. We hope you like it",
     });
-  };
+  }; */
 
   useEffect(() => {
     const getPageData = async () => {
@@ -280,7 +281,23 @@ export const Editor = ({ projectId, pageId }: Props) => {
           message: "AI is generating your page",
         });
 
-        postPageEventSource(
+        const pageTemplate = await getPageTemplate(projectId, pageId);
+        const tree = await getEditorTreeFromTemplateTileData(
+          pageTemplate,
+          editorTheme,
+          pages,
+          projectId,
+          pageId,
+        );
+
+        setEditorTree(tree);
+        stopLoading({
+          id: "page-generation",
+          title: "Page Generated",
+          message: "Here's your page. We hope you like it",
+        });
+
+        /* postPageEventSource(
           projectId,
           page.title,
           onMessage,
@@ -288,7 +305,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
           onOpen,
           onClose,
           "LAYOUT",
-        );
+        ); */
       }
     };
 

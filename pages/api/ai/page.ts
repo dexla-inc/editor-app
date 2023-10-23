@@ -12,16 +12,38 @@ export default async function handler(
       throw new Error("Invalid method");
     }
 
-    const { pageId } = req.body;
-    // TODO: Integrate with C# backend
-    /*  const page = await prisma.page.findFirstOrThrow({
+    const { projectId, pageId, accessToken } = req.body;
+    const project = await prisma.project.findFirstOrThrow({
       where: {
-        id: pageId as string,
-      },
-      include: {
-        project: true,
+        id: projectId as string,
       },
     });
+
+    const pageResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/projects/${projectId}/pages/${pageId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    const page = await pageResponse.json();
+
+    const projectResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/projects/${projectId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    const _project = await projectResponse.json();
 
     const response = await openai.chat.completions.create({
       model: "gpt-4",
@@ -38,28 +60,20 @@ export default async function handler(
         {
           role: "user",
           content: getPageGenerationPrompt({
-            entities: JSON.stringify(page.project?.entities ?? []),
+            entities: JSON.stringify(project?.entities ?? []),
             pageName: page.name ?? "",
             pageDescription: page.description ?? "",
-            appDescription: page.project?.description ?? "",
-            appIndustry: page.project?.industry ?? "",
+            appDescription: _project?.description ?? "",
+            appIndustry: _project?.industry ?? "",
           }),
         },
       ],
     });
 
     const message = response.choices[0].message;
+    const content = JSON.parse(message.content ?? "{}");
 
-    const updatedPage = await prisma.page.update({
-      where: {
-        id: pageId as string,
-      },
-      data: {
-        state: message.content,
-      },
-    }); */
-
-    return res.status(200).json({});
+    return res.status(200).json(content);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error });
