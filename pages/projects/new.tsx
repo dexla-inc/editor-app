@@ -8,6 +8,7 @@ import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
 import { StepperDetailsType } from "@/utils/projectTypes";
 import { Container, Stack, Stepper, Title } from "@mantine/core";
+import { FileWithPath } from "@mantine/dropzone";
 import { useState } from "react";
 
 export default function New() {
@@ -30,6 +31,7 @@ export default function New() {
   const [homePageId, setHomePageId] = useState("");
   const [friendlyName, setFriendlyName] = useState("");
   const [region, setRegion] = useState<RegionTypes>("US_CENTRAL");
+  const [screenshots, setScreenshots] = useState<FileWithPath[]>([]);
 
   return (
     <DashboardShell>
@@ -52,7 +54,10 @@ export default function New() {
                 setIsLoading={setIsLoading}
                 startLoading={startLoading}
                 stopLoading={stopLoading}
+                projectId={projectId}
                 setProjectId={setProjectId}
+                screenshots={screenshots}
+                setScreenshots={setScreenshots}
               ></ProjectStep>
             </Stepper.Step>
             <Stepper.Step label="Branding" description="Personalise your app">

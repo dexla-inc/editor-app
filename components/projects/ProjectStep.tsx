@@ -1,13 +1,20 @@
 import { InformationAlert } from "@/components/Alerts";
 import NextButton from "@/components/NextButton";
+import ScreenshotUploader from "@/components/projects/ScreenshotUploader";
 import { ProjectParams, createProject } from "@/requests/projects/mutations";
+import { uploadFile } from "@/requests/storage/mutations";
 import { LoadingStore, NextStepperClickEvent } from "@/utils/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
 import { Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
+import { FileWithPath } from "@mantine/dropzone";
 import { useForm } from "@mantine/form";
+import { Dispatch, SetStateAction } from "react";
 
 interface ProjectStepProps extends LoadingStore, NextStepperClickEvent {
+  projectId: string;
   setProjectId: (id: string) => void;
+  screenshots: FileWithPath[];
+  setScreenshots: Dispatch<SetStateAction<FileWithPath[]>>;
 }
 
 export default function ProjectStep({
@@ -16,7 +23,10 @@ export default function ProjectStep({
   setIsLoading,
   startLoading,
   stopLoading,
+  projectId,
   setProjectId,
+  screenshots,
+  setScreenshots,
 }: ProjectStepProps) {
   const form = useForm<ProjectParams>({
     initialValues: {
@@ -51,8 +61,10 @@ export default function ProjectStep({
       form.validate();
 
       const project = await createProject(values);
-
+      console.log(project.id);
       setProjectId(project.id);
+      const storedScreenshots = await uploadFile(project.id, screenshots, true);
+      console.log(storedScreenshots);
 
       stopLoading({
         id: "creating-project",
@@ -60,7 +72,6 @@ export default function ProjectStep({
         message: "The project was created successfully",
       });
       setIsLoading && setIsLoading(false);
-      nextStep();
     } catch (error) {
       stopLoading({
         id: "creating-project",
@@ -101,6 +112,11 @@ export default function ProjectStep({
           description="e.g. Cyber Security"
           {...form.getInputProps("industry")}
         />
+
+        <ScreenshotUploader
+          screenshots={screenshots}
+          setScreenshots={setScreenshots}
+        ></ScreenshotUploader>
 
         <Divider></Divider>
         <Group position="right">
