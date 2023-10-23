@@ -325,7 +325,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
     theme,
   ]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (stream) {
       try {
         if (!stream.endsWith("___DONE___")) {
@@ -343,7 +343,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
         // console.log({ error });
       }
     }
-  }, [editorTheme, setEditorTree, stream, pages]);
+  }, [editorTheme, setEditorTree, stream, pages]); */
 
   const renderTree = (component: Component) => {
     if (component.id === "root") {

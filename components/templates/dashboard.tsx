@@ -52,8 +52,9 @@ export type StatTile = {
 // for cases where we need to list people
 // like a list of users, or a list of employees, for example
 // in those cases we would have a list of PersonTile
-type PersonTile = {
+export type PersonTile = {
   name: "person";
+  entityName: string;
   data: {
     avatar: string;
     name: string;
@@ -139,12 +140,37 @@ export const template = async (
       return tileContent;
     });
 
+  const people = data.tiles
+    .filter((tile: Tile) => tile.name === "person")
+    // @ts-ignore
+    .map((tile: PersonTile) => {
+      // @ts-ignore
+      const tileContent = tileMapper[tile.name](tile);
+      return { tileContent, entityName: tile.entityName };
+    });
+
+  const groupedPeople = data.tiles
+    .filter((tile: Tile) => tile.name === "person")
+    // @ts-ignore
+    .reduce((acc: { [key: string]: PersonTile[] }, curr: PersonTile) => {
+      console.log({ acc, curr });
+      if (!acc.hasOwnProperty(curr.entityName)) {
+        acc = {
+          ...acc,
+          [curr.entityName]: [],
+        };
+      }
+      acc[curr.entityName].push(curr);
+      return acc;
+    }, {});
+
   const navBar = structureMapper["Navbar"].structure({
     theme,
     pages,
   });
 
   const hasStats = stats.length > 0;
+  const hasPeople = people.length > 0;
 
   const datasources = await getDataSources(projectId, {});
   const dsId = datasources.results.find((ds) => ds.name === "Example API")?.id;
@@ -277,6 +303,140 @@ export const template = async (
       ],
       children: stats,
     };
+  }
+
+  let peopleData: any[] = [];
+  if (hasPeople) {
+    await Promise.all(
+      Object.keys(groupedPeople).map(async (key) => {
+        // @ts-ignore
+        const _people = people
+          .filter((p) => p.entityName === key)
+          .map((p) => p.tileContent);
+
+        const logicFlow = await createLogicFlow(projectId, {
+          name: `Get ${key} People`,
+          data: encodeSchema(
+            JSON.stringify({
+              nodes: [
+                {
+                  id: "k0LWIUG0iBxBZxk2p8h0f",
+                  type: "actionNode",
+                  position: {
+                    x: 170.5,
+                    y: 73.75,
+                  },
+                  data: {
+                    label: "Action",
+                    description: "Execute an action",
+                    inputs: [
+                      {
+                        id: "GpM6Ygq_77Saq1ZtZn9d8",
+                        name: "Input",
+                      },
+                    ],
+                    outputs: [
+                      {
+                        id: "rdpQCe1kfTsrYbwdFNtC7",
+                        name: "Output",
+                      },
+                    ],
+                    form: {
+                      action: "apiCall",
+                      endpoint: endpoint?.id,
+                      showLoader: true,
+                      "binds.parameter.id":
+                        "eq.263f4aa3ce574cf3a8996f8f28c3b24a",
+                      "binds.parameter.select": "data",
+                      "binds.header.apikey":
+                        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpc25kdXZleGV6ZW5rc3Fwdm1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTc3NzM3NjksImV4cCI6MjAxMzM0OTc2OX0.BtdpJTGNBGIEM84dwXL_4khMNA0EjBeXeg2RbrmtOLA",
+                    },
+                  },
+                  selected: true,
+                  dragging: false,
+                },
+                {
+                  id: "start-node",
+                  type: "startNode",
+                  data: {
+                    label: "Start",
+                    description: "The starting point of a flow",
+                    inputs: [],
+                    outputs: [
+                      {
+                        id: "SMAtDW56EE8uxf5FzwfsY",
+                        name: "Initial Trigger",
+                      },
+                    ],
+                  },
+                  position: {
+                    x: 0,
+                    y: 0,
+                  },
+                },
+              ],
+              edges: [
+                {
+                  source: "start-node",
+                  sourceHandle: "SMAtDW56EE8uxf5FzwfsY",
+                  target: "k0LWIUG0iBxBZxk2p8h0f",
+                  targetHandle: "GpM6Ygq_77Saq1ZtZn9d8",
+                  type: "smoothstep",
+                  id: "reactflow__edge-start-nodeSMAtDW56EE8uxf5FzwfsY-k0LWIUG0iBxBZxk2p8h0fGpM6Ygq_77Saq1ZtZn9d8",
+                },
+              ],
+            }),
+          ),
+          pageId: pageId,
+          isGlobal: false,
+        });
+
+        peopleData.push({
+          id: nanoid(),
+          name: "Container",
+          description: "People Container",
+          props: {
+            style: {
+              display: "flex",
+              flexDirection: "row",
+              rowGap: "20px",
+              columnGap: "20px",
+              alignItems: "stretch",
+              justifyContent: "flex-start",
+              position: "relative",
+              borderTopStyle: "none",
+              borderRightStyle: "none",
+              borderBottomStyle: "none",
+              borderLeftStyle: "none",
+              borderTopWidth: "0px",
+              borderRightWidth: "0px",
+              borderBottomWidth: "0px",
+              borderLeftWidth: "0px",
+              borderTopLeftRadius: "0px",
+              borderTopRightRadius: "0px",
+              borderBottomLeftRadius: "0px",
+              borderBottomRightRadius: "0px",
+              padding: "0px",
+              width: "auto",
+              height: "auto",
+              minHeight: "10px",
+              flexWrap: "wrap",
+            },
+          },
+          actions: [
+            {
+              id: nanoid(),
+              trigger: "onMount",
+              action: {
+                name: "triggerLogicFlow",
+                logicFlowId: logicFlow.id,
+              },
+            },
+          ],
+          children: _people,
+        });
+      }),
+    );
   }
 
   return {
@@ -586,7 +746,7 @@ export const template = async (
                   flexWrap: "wrap",
                 },
               },
-              children: [statsData].filter(Boolean),
+              children: [statsData, ...peopleData].filter(Boolean),
             },
           ],
         },
