@@ -475,7 +475,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
             onClick={clearSelection}
             style={{
               minHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
-              overflow: "visible",
+              height: "100%",
+              overflow: "hidden",
             }}
             p={0}
           >

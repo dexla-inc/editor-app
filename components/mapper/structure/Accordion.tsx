@@ -13,10 +13,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Accordion Container",
     props: {
       style: {
-        marginTop: px(theme.spacing.xl),
-        marginBottom: px(theme.spacing.xl),
-        marginLeft: px(theme.spacing.xl),
-        marginRight: px(theme.spacing.xl),
+        padding: px(theme.spacing.xl),
         width: "100%",
         height: "auto",
         ...defaultBorderValues,
@@ -29,6 +26,8 @@ export const jsonStructure = (props?: any): Component => {
         description: "Accordion",
         props: {
           defaultValue: "first",
+          variant: "separated",
+          icon: "IconPlus",
           style: {
             width: "100%",
             height: "auto",
@@ -65,11 +64,11 @@ export const jsonStructure = (props?: any): Component => {
                     description: "Accordion Text",
                     children: [],
                     props: {
-                      children: "First Item",
+                      children: "Lorem ipsum",
                       color: `${theme.colors.Black ? "Black.6" : "dark"}`,
                       style: {
                         fontSize: `${px(theme.fontSizes.sm)}px`,
-                        fontWeight: "normal",
+                        fontWeight: "bold",
                         lineHeight: "110%",
                         letterSpacing: "0px",
                         width: "auto",
@@ -97,12 +96,13 @@ export const jsonStructure = (props?: any): Component => {
                     description: "Accordion Text",
                     children: [],
                     props: {
-                      children: "First Item Text",
+                      children:
+                        "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugit, consequatur cupiditate expedita vero quas rerum eos voluptatem possimus, illo maiores quis! Tempora autem cum itaque dicta officiis vitae enim rerum magni in facilis ullam corporis sint praesentium, aspernatur sit doloremque? Suscipit veniam nobis corrupti, odio adipisci laborum neque! Rerum, amet.",
                       color: `${theme.colors.Black ? "Black.6" : "dark"}`,
                       style: {
                         fontSize: `${px(theme.fontSizes.sm)}px`,
                         fontWeight: "normal",
-                        lineHeight: "110%",
+                        lineHeight: "150%",
                         letterSpacing: "0px",
                         width: "auto",
                         height: "auto",
@@ -143,11 +143,11 @@ export const jsonStructure = (props?: any): Component => {
                     description: "Accordion Text",
                     children: [],
                     props: {
-                      children: "Second Item",
+                      children: "Dolor Sit",
                       color: `${theme.colors.Black ? "Black.6" : "dark"}`,
                       style: {
                         fontSize: `${px(theme.fontSizes.sm)}px`,
-                        fontWeight: "normal",
+                        fontWeight: "bold",
                         lineHeight: "110%",
                         letterSpacing: "0px",
                         width: "auto",
@@ -175,12 +175,13 @@ export const jsonStructure = (props?: any): Component => {
                     description: "Accordion Text",
                     children: [],
                     props: {
-                      children: "Second Item Text",
+                      children:
+                        "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugit, consequatur cupiditate expedita vero quas rerum eos voluptatem possimus, illo maiores quis! Tempora autem cum itaque dicta officiis vitae enim rerum magni in facilis ullam corporis sint praesentium, aspernatur sit doloremque? Suscipit veniam nobis corrupti, odio adipisci laborum neque! Rerum, amet.",
                       color: `${theme.colors.Black ? "Black.6" : "dark"}`,
                       style: {
                         fontSize: `${px(theme.fontSizes.sm)}px`,
                         fontWeight: "normal",
-                        lineHeight: "110%",
+                        lineHeight: "150%",
                         letterSpacing: "0px",
                         width: "auto",
                         height: "auto",

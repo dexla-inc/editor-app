@@ -114,6 +114,8 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
           size="xs"
           placeholder="Select an action"
           label="Action"
+          searchable
+          nothingFound="No actions found"
           data={actions.map((action) => {
             return {
               label: startCase(action.name),

@@ -1,6 +1,6 @@
 import { getTheme } from "@/requests/themes/queries";
 import { useEditorStore } from "@/stores/editor";
-import { HEADER_HEIGHT, NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
+import { NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
 import createCache from "@emotion/cache";
 import {
   Box,
@@ -8,6 +8,7 @@ import {
   DEFAULT_THEME,
   MantineProvider,
   MantineTheme,
+  ScrollArea,
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -81,11 +82,17 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
   const w = contentRef?.contentWindow;
   const mountNode = w?.document.body;
   const insertionTarget = w?.document.head;
-  if (!isLive) {
-    mountNode?.setAttribute("style", "overflow: visible; margin: 40px 10px");
-  } else {
-    mountNode?.setAttribute("style", "margin: 0px");
-  }
+
+  let cssString = "";
+
+  // Add styles depending on the `isLive` prop
+  !isLive
+    ? (cssString = `
+        overflow: visible; margin: 10px 0px 10px 10px;    
+    `)
+    : (cssString = `margin: 0px;`);
+
+  mountNode?.setAttribute("style", cssString);
 
   const styleTag = document.createElement("style");
   styleTag.textContent = `* { box-sizing: border-box; }`;
@@ -107,7 +114,7 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
       overflow: isLive ? "hidden" : "visible",
       border: "none",
       width: "100%",
-      height: isLive ? "100vh" : `calc(100vh - ${HEADER_HEIGHT}px)`,
+      height: isLive ? "100vh" : "100%",
       marginLeft: 0 as string | number,
     };
 
@@ -148,7 +155,14 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
               key: "iframe-canvas",
             })}
           >
-            <Box id="iframe-content">{children}</Box>
+            <Box
+              // @ts-ignore
+              component={!isLive ? ScrollArea : "div"}
+              offsetScrollbars
+              id="iframe-content"
+            >
+              {children}
+            </Box>
           </MantineProvider>,
           mountNode,
         )}

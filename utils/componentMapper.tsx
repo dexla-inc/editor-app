@@ -1097,7 +1097,7 @@ export const componentMapper: ComponentMapper = {
         defaultValue="first"
       />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["accordion", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onOpen", "onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

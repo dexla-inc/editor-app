@@ -34,6 +34,8 @@ export const VariablePicker = (props: Props) => {
     enabled: !!projectId && !!pageId,
   });
 
+  console.log({ variables });
+
   function isStringifiedObject(str: any) {
     try {
       const parsed = JSON.parse(str);
@@ -90,9 +92,12 @@ export const VariablePicker = (props: Props) => {
                 </Card>
               );
             }
-            const revisedValue = isStringifiedObject(variable.value)
-              ? JSON.parse(variable.value ?? variable.defaultValue ?? "{}")
-              : variable.value ?? variable.defaultValue ?? {};
+
+            const revisedValue = JSON.parse(
+              variable.value ?? variable.defaultValue ?? "{}",
+            );
+
+            console.log({ revisedValue, variable });
 
             return (
               <Accordion.Item key={variable.id} value={variable.id}>

@@ -139,6 +139,7 @@ export const NavbarSection = ({
       bg="white"
       top={HEADER_HEIGHT}
       p={10}
+      pb={80}
       left={NAVBAR_MIN_WIDTH}
       w={250}
       h="100%"
@@ -158,13 +159,7 @@ export const NavbarSection = ({
   );
 
   return (
-    <Group
-      dir="column"
-      align="flex-start"
-      noWrap
-      px="xs"
-      h={`calc(95vh - ${HEADER_HEIGHT}px)`}
-    >
+    <Group dir="column" align="flex-start" noWrap px="xs" h={`100%`}>
       <Group
         align="flex-start"
         pos="relative"

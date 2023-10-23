@@ -1,8 +1,8 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import {
-  Accordion as MantineAccordion,
   AccordionItemProps,
+  Accordion as MantineAccordion,
 } from "@mantine/core";
 import { memo } from "react";
 
@@ -12,7 +12,7 @@ type Props = {
 } & AccordionItemProps;
 
 const AccordionItemComponent = ({ renderTree, component, ...props }: Props) => {
-  const { children, ...componentProps } = component.props as any;
+  const { children, bg, ...componentProps } = component.props as any;
 
   return (
     <MantineAccordion.Item {...props} {...componentProps}>

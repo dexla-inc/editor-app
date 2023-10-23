@@ -249,8 +249,8 @@ export default function PagesStep({
       await createVariable(projectId, {
         name: "GET Project Data",
         type: "OBJECT",
-        value: JSON.stringify(exampleResponse),
-        defaultValue: JSON.stringify(exampleResponse),
+        value: exampleResponse,
+        defaultValue: exampleResponse,
         isGlobal: true,
         pageId: createdPages.homePageId,
       });
