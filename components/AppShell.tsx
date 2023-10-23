@@ -49,8 +49,6 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   });
 
   const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
-  const organisations = usePropelAuthStore((state) => state.organisations);
-  console.log(isDexlaAdmin);
 
   return (
     <AppShell
