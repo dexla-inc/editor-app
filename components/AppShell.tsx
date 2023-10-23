@@ -48,9 +48,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
     queryFn: () => getPageList(projectId),
   });
 
-  const checkIfDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
-
-  const isDexlaAdmin = checkIfDexlaAdmin();
+  const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
 
   return (
     <AppShell
