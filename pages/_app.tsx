@@ -1,4 +1,5 @@
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { cache } from "@/utils/emotionCache";
 import {
   DEFAULT_THEME,
@@ -8,7 +9,6 @@ import {
   MantineTheme,
 } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
-import { RedirectToLogin, RequiredAuthProvider } from "@propelauth/react";
 import {
   Hydrate,
   QueryClient,
@@ -58,6 +58,11 @@ const AuthProvider = ({
   useEffect(() => {
     setIsClient(true);
   }, [isClient]);
+
+  const RequiredAuthProvider = usePropelAuthStore(
+    (state) => state.RequiredAuthProvider,
+  );
+  const RedirectToLogin = usePropelAuthStore((state) => state.RedirectToLogin);
 
   if (!isClient) return null;
 
