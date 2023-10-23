@@ -42,8 +42,8 @@ const initStore = async () => {
     isAuthenticated: !!authInfo?.user,
     logout: logout,
     isDexlaAdmin:
-      authInfo?.orgHelper.getOrgByName("dexla")?.userAssignedRole ===
-      "DEXLA-ADMIN",
+      authInfo?.orgHelper.getOrgByName("Dexla")?.userAssignedRole ===
+      "DEXLA_ADMIN",
     role: authInfo?.orgHelper.getOrgByName("dexla")?.userAssignedRole,
   });
 };
