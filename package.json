@@ -54,7 +54,7 @@
     "lodash.startcase": "^4.4.0",
     "lodash.throttle": "^4.1.1",
     "lzutf8": "^0.6.3",
-    "mantine-react-table": "^1.2.1",
+    "mantine-react-table": "^1.3.3",
     "nanoid": "^5.0.1",
     "next": "13.4.19",
     "react": "18.2.0",

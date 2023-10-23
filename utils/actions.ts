@@ -1165,10 +1165,15 @@ export const bindVariableToComponentAction = async ({
     );
 
     let value = variable.value;
+    let defaultValue = variable.defaultValue;
     if (variable.type === "OBJECT") {
-      const dataFlatten = flattenKeys(JSON.parse(variable.value || "{}"));
+      const valueFlatten = flattenKeys(JSON.parse(variable.value || "{}"));
+      value = get(valueFlatten, (_var as any).path);
 
-      value = get(dataFlatten, (_var as any).path);
+      const defaultValueFlatten = flattenKeys(
+        JSON.parse(variable.defaultValue || "{}"),
+      );
+      defaultValue = get(defaultValueFlatten, (_var as any).path);
     }
 
     updateTreeComponent(
@@ -1182,12 +1187,20 @@ export const bindVariableToComponentAction = async ({
               : undefined,
         },
         exampleData: {
-          value,
+          value: defaultValue,
           base:
             variable.type === "OBJECT"
               ? JSON.parse(variable.defaultValue || "{}")
               : undefined,
         },
+        headers: value
+          ? Object.keys(value[0]).reduce((acc, key) => {
+              return {
+                ...acc,
+                [key]: typeof key === "string",
+              };
+            }, {})
+          : {},
         dataPath: (_var as any)?.path ?? undefined,
       },
       false,
