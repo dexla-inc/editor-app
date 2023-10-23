@@ -1,9 +1,10 @@
 import { Icon } from "@/components/Icon";
 import NavigationAvatarFooter from "@/components/NavigationAvatarFooter";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { HEADER_HEIGHT, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
 import { NavbarTypes } from "@/utils/dashboardTypes";
 import { Box, Button, Menu, NavLink, Navbar, ScrollArea } from "@mantine/core";
-import { User, useLogoutFunction } from "@propelauth/react";
+import { User } from "@propelauth/react";
 import { IconArrowLeft, IconLogout, IconSettings } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -20,7 +21,7 @@ export default function DashboardNavbar({
   user,
   navbarType,
 }: DashboardNavbarProps) {
-  const logout = useLogoutFunction();
+  const logout = usePropelAuthStore((state) => state.logout);
   const router = useRouter();
   const projectId = router.query.id as string;
 
@@ -66,7 +67,7 @@ export default function DashboardNavbar({
                   variant="subtle"
                   icon={<Icon name="IconDatabase" size={ICON_SIZE} />}
                   active={router.pathname.startsWith(
-                    "/projects/[id]/settings/datasources"
+                    "/projects/[id]/settings/datasources",
                   )}
                   py={12}
                 />

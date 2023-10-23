@@ -4,6 +4,7 @@ import { ProjectItem } from "@/components/projects/ProjectItem";
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
 import { ProjectResponse, getProjects } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
   Container,
@@ -14,7 +15,6 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
-import { OrgMemberInfo, useAuthInfo } from "@propelauth/react";
 import { IconSearch, IconSparkles } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import Link from "next/link";
@@ -26,8 +26,10 @@ export default function Projects() {
   const [search, setSearch] = useState<string>("");
   const debouncedSearch = debounce((query) => setSearch(query), 400);
   const theme = useMantineTheme();
-  const authInfo = useAuthInfo();
-  const { user } = authInfo || {};
+  const { user, orgs } = usePropelAuthStore((state) => ({
+    user: state.user,
+    orgs: state.organisations,
+  }));
   const startLoading = useAppStore((state) => state.startLoading);
   const router = useRouter();
 
@@ -63,7 +65,7 @@ export default function Projects() {
       return;
     }
 
-    const org = authInfo.orgHelper?.getOrgs()[0] || ({} as OrgMemberInfo);
+    const org = (orgs || [])[0];
 
     const intercomSettings = {
       app_id: "co2c3gri",
@@ -85,7 +87,7 @@ export default function Projects() {
 
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push(intercomSettings);
-  }, [user, authInfo]);
+  }, [user, orgs]);
 
   return (
     <DashboardShell user={user}>
