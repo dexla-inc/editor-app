@@ -9,6 +9,7 @@ import {
   getDataSourceEndpoints,
   getDataSources,
 } from "@/requests/datasources/queries";
+import { createVariable } from "@/requests/variables/mutations";
 
 type Button = {
   name: "button";
@@ -132,6 +133,15 @@ export const template = async (
   projectId: string,
   pageId: string,
 ) => {
+  const projectResponse = await fetch(`/api/project/${projectId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const projectData = await projectResponse.json();
+
   const stats = data.tiles
     .filter((tile: Tile) => tile.name === "stat")
     .map((tile: Tile) => {
@@ -314,6 +324,17 @@ export const template = async (
           .filter((p) => p.entityName === key)
           .map((p) => p.tileContent);
 
+        const ex = JSON.stringify(projectData.data[key], null, 2);
+
+        const _var = await createVariable(projectId, {
+          name: `GET ${key} Data`,
+          type: "OBJECT",
+          value: ex,
+          defaultValue: ex,
+          isGlobal: false,
+          pageId: pageId,
+        });
+
         const logicFlow = await createLogicFlow(projectId, {
           name: `Get ${key} People`,
           data: encodeSchema(
@@ -352,7 +373,7 @@ export const template = async (
                         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpc25kdXZleGV6ZW5rc3Fwdm1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTc3NzM3NjksImV4cCI6MjAxMzM0OTc2OX0.BtdpJTGNBGIEM84dwXL_4khMNA0EjBeXeg2RbrmtOLA",
                     },
                   },
-                  selected: true,
+                  selected: false,
                   dragging: false,
                 },
                 {
