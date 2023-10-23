@@ -30,7 +30,7 @@ export const useOnDrop = () => {
   const componentToAdd = useEditorStore((state) => state.componentToAdd);
   const setComponentToAdd = useEditorStore((state) => state.setComponentToAdd);
   const setSelectedComponentId = useEditorStore(
-    (state) => state.setSelectedComponentId
+    (state) => state.setSelectedComponentId,
   );
 
   const onDrop = useCallback(
@@ -47,7 +47,7 @@ export const useOnDrop = () => {
           copy,
           dropTarget,
           targetComponent,
-          componentToAdd
+          componentToAdd,
         );
       } else if (dropTarget.id !== "root") {
         action = `Moved ${activeComponent?.name}`;
@@ -65,13 +65,13 @@ export const useOnDrop = () => {
       handleComponentAddition,
       handleReorderingOrMoving,
       handleRootDrop,
-    ]
+    ],
   );
   function handleComponentAddition(
     copy: EditorTree,
     dropTarget: DropTarget,
     targetComponent: Component | null,
-    componentToAdd: Component
+    componentToAdd: Component,
   ) {
     const targetParent = getComponentParent(copy.root, dropTarget.id);
     if (!targetComponent?.blockDroppingChildrenInside) {
@@ -82,7 +82,7 @@ export const useOnDrop = () => {
           copy,
           newSelectedId,
           targetComponent,
-          dropTarget
+          dropTarget,
         );
       }
 
@@ -100,7 +100,7 @@ export const useOnDrop = () => {
           },
           ["right", "bottom"].includes(dropTarget.edge)
             ? dropTargetIndex + 1
-            : dropTargetIndex
+            : dropTargetIndex,
         );
         setSelectedComponentId(newSelectedId);
       }
@@ -111,8 +111,12 @@ export const useOnDrop = () => {
     copy: EditorTree,
     droppedId: string,
     targetComponent: Component | null,
-    dropTarget: DropTarget
+    dropTarget: DropTarget,
   ) {
+    if (dropTarget.id === "root") {
+      return;
+    }
+
     const activeParent = getComponentParent(copy.root, droppedId);
     const targetParent = getComponentParent(copy.root, dropTarget.id);
     if (
@@ -129,12 +133,12 @@ export const useOnDrop = () => {
         copy.root,
         droppedId,
         dropTarget,
-        newParentId as string
+        newParentId as string,
       );
       removeComponentFromParent(
         copy.root,
         droppedId,
-        activeParent!.id as string
+        activeParent!.id as string,
       );
     }
   }
@@ -142,13 +146,13 @@ export const useOnDrop = () => {
     copy: EditorTree,
     droppedId: string,
     activeComponent: Component | null,
-    dropTarget: DropTarget
+    dropTarget: DropTarget,
   ) {
     removeComponent(copy.root, droppedId);
     const newSelectedId = addComponent(
       copy.root,
       activeComponent as unknown as Component,
-      dropTarget
+      dropTarget,
     );
     setSelectedComponentId(newSelectedId);
   }
