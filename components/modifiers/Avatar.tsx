@@ -5,6 +5,7 @@ import { useForm } from "@mantine/form";
 import { IconUser } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
+import { SizeSelector } from "../SizeSelector";
 import { ThemeColorSelector } from "../ThemeColorSelector";
 
 const defaultAvatarValues = {
@@ -47,21 +48,13 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
 
-  const data: Record<string, string> = {
+  const variantOptions: Record<string, string> = {
     Default: "default",
     White: "white",
     Filled: "filled",
     Light: "light",
     Outline: "outline",
     Transparent: "transparent",
-  };
-
-  const avatarSize: Record<string, string> = {
-    xs: "xs",
-    sm: "sm",
-    md: "md",
-    lg: "lg",
-    xl: "xl",
   };
 
   return (
@@ -92,9 +85,9 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         <Select
           label="Variant"
           size="xs"
-          data={Object.keys(data).map((key) => ({
+          data={Object.keys(variantOptions).map((key) => ({
             label: key,
-            value: data[key],
+            value: variantOptions[key],
           }))}
           {...form.getInputProps("variant")}
           onChange={(value) => {
@@ -110,26 +103,16 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             debouncedTreeComponentPropsUpdate("color", value);
           }}
         />
-        <Select
+        <SizeSelector
           label="Size"
-          size="xs"
-          data={Object.keys(avatarSize).map((key) => ({
-            label: key,
-            value: avatarSize[key],
-          }))}
           {...form.getInputProps("size")}
           onChange={(value) => {
             form.setFieldValue("size", value as string);
             debouncedTreeComponentPropsUpdate("size", value);
           }}
         />
-        <Select
+        <SizeSelector
           label="Radius"
-          size="xs"
-          data={Object.keys(avatarSize).map((key) => ({
-            label: key,
-            value: avatarSize[key],
-          }))}
           {...form.getInputProps("radius")}
           onChange={(value) => {
             form.setFieldValue("radius", value as string);
