@@ -6,7 +6,11 @@ import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
-import { Component, checkIfIsDirectAncestor } from "@/utils/editor";
+import {
+  Component,
+  checkIfIsDirectAncestor,
+  debouncedTreeComponentDescriptionpdate,
+} from "@/utils/editor";
 import {
   ActionIcon,
   Card,
@@ -21,15 +25,13 @@ import {
 import { useForm } from "@mantine/form";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
-import debounce from "lodash.debounce";
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
 
 type ListItemProps = {
   component: Component;
-  level?: number;
 } & CardProps;
 
-const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
+const ListItem = ({ component, children }: ListItemProps) => {
   const theme = useMantineTheme();
   const { ref, hovered } = useHover();
   const editorTree = useEditorStore((state) => state.tree);
@@ -39,9 +41,6 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   );
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
-  );
-  const updateTreeComponentDescription = useEditorStore(
-    (state) => state.updateTreeComponentDescription,
   );
   const isStructureCollapsed = useEditorStore(
     (state) => state.isStructureCollapsed,
@@ -75,10 +74,6 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
 
   const canExpand = (component.children ?? [])?.length > 0;
   const isCurrentTarget = currentTargetId === `layer-${component.id}`;
-
-  const debouncedUpdate = debounce((value: string) => {
-    updateTreeComponentDescription(selectedComponentId as string, value);
-  }, 500);
 
   const handleKeyPress = (e: KeyboardEvent) => {
     if (e.key === "Enter" || e.key === "Escape") closeEdit();
@@ -222,7 +217,7 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
                 onChange={(e) => {
                   e.preventDefault();
                   form.setFieldValue("value", e.target.value);
-                  debouncedUpdate(e.target.value);
+                  debouncedTreeComponentDescriptionpdate(e.target.value);
                 }}
               />
             ) : (
@@ -259,14 +254,14 @@ const ListItem = ({ component, children, level = 0 }: ListItemProps) => {
   );
 };
 
-const ListItemWrapper = ({ component, children, level }: ListItemProps) => {
+const ListItemWrapper = ({ component, children }: ListItemProps) => {
   return (
     <SortableTreeItem
       component={component}
       style={{ marginBottom: "3px", overflow: "hidden" }}
     >
       <List.Item key={component.id} w="100%">
-        <ListItem component={component} level={level}>
+        <ListItem component={component}>
           {(component.children ?? [])?.length > 0 && (
             <List
               size="xs"
@@ -295,7 +290,7 @@ export const EditorNavbarLayersSection = () => {
     }
 
     return (
-      <ListItemWrapper key={component.id} component={component} level={level}>
+      <ListItemWrapper key={component.id} component={component}>
         {component.children?.map((child) => {
           return renderList(child, level + 1);
         })}
