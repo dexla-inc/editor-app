@@ -17,6 +17,11 @@ type SectionId = "pages" | "layers" | "components" | "theme" | "settings";
 
 const sections = [
   {
+    id: "pages" as SectionId,
+    label: "Pages",
+    icon: IconFileInvoice,
+  },
+  {
     id: "layers" as SectionId,
     label: "Page Structure",
     icon: IconLayoutDashboard,
@@ -26,11 +31,6 @@ const sections = [
     id: "components" as SectionId,
     label: "Components",
     icon: IconComponents,
-  },
-  {
-    id: "pages" as SectionId,
-    label: "Pages",
-    icon: IconFileInvoice,
   },
   {
     id: "theme" as SectionId,

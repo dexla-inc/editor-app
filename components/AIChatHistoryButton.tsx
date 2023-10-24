@@ -19,7 +19,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Prism } from "@mantine/prism";
-import { IconBrandHipchat, IconJson, IconToml } from "@tabler/icons-react";
+import { IconJson, IconToml } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -158,9 +158,10 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
             refreshChatHistory();
             open();
           }}
-          variant="default"
+          variant="light"
+          color="indigo"
         >
-          <IconBrandHipchat size={ICON_SIZE} />
+          <Icon name="IconHistory" />
         </ActionIcon>
       </Tooltip>
       <Modal size="90%" opened={opened} onClose={close} title="Chat History">
