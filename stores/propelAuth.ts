@@ -43,7 +43,7 @@ export const usePropelAuthStore = create<AuthState>((set) => {
   };
 
   // Automatically invoke the internalGetAuthInfo when the store is created
-  // internalGetAuthInfo();
+  internalGetAuthInfo();
 
   return {
     authInfo: null,
