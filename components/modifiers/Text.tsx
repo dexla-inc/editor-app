@@ -73,7 +73,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         />
         <Checkbox
           size="xs"
-          label="Hide text with data is empty"
+          label="Hide text when data is empty"
           {...form.getInputProps("hideIfDataIsEmpty", { type: "checkbox" })}
           onChange={(e) => {
             form.setFieldValue("hideIfDataIsEmpty", e.target.checked);

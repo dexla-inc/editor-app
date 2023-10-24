@@ -4,6 +4,7 @@ type PromptParams = {
   appDescription?: string;
   appIndustry?: string;
   entities?: string;
+  templates?: string;
 };
 
 export const getPageGenerationPrompt = ({
@@ -12,129 +13,12 @@ export const getPageGenerationPrompt = ({
   appDescription,
   appIndustry,
   entities,
+  templates,
 }: PromptParams) => `
   You are a Page Generator System (PGS). Given a list of entities, the page description, app description and app industry respond with the structure of the Page.
   The page structure of the response must match the Page Typescript type:
 
-  type Button = {
-    name: "button";
-    data: { label: string };
-  };
-
-  type Checkbox = { name: "checkbox"; data: { label: string } };
-
-  type Radio = { name: "radio"; data: { label: string } };
-
-  type Select = {
-    name: "select";
-    data: { label: string; placeholder: string };
-  };
-
-  type Input = {
-    name: "input";
-    data: { label: string; placeholder: string };
-  };
-
-  type Textarea = {
-    name: "textarea";
-    data: { label: string; placeholder: string };
-  };
-
-  type DateInput = {
-    name: "dateInput";
-    data: { label: string; placeholder: string };
-  };
-
-  type StatTile = {
-    name: "stat"
-    entityName: string
-    data: {
-      title: string
-      description: string
-      value: number
-    }
-  }
-
-  // for cases where we need to list people
-  // like a list of users, or a list of employees, for example
-  // in those cases we would have a list of PersonTile
-  type PersonTile = {
-    name: "person"
-    // this is important to group people by entity
-    entityName: string
-    data: {
-      avatar: string
-      name: string
-      subtitle: string
-    }
-  }
-
-  type LineChartTile = {
-    name: "lineChart"
-    data: {
-      series: { name: string; data: number[] }[]
-      xaxis: { categories: string[] }
-    }
-  }
-
-  // all tables will be searchable by default 
-  // so no need to include a search form
-  type TableTile = {
-    name: "table"
-    data: {
-      title: string
-      // data is required, as we will later use the keys as columns as values in the rows
-      data: { [key: string]: string }[]
-    }
-  }
-
-  type FormTile = {
-    name: "form"
-    fields: (
-      | Input
-      | DateInput
-      | Button
-      | Select
-      | Checkbox
-      | Radio
-      | Textarea
-    )[]
-    data: {
-      title: string
-    }
-  }
-
-  type Tile = StatTile | PersonTile | LineChartTile | TableTile | FormTile
-
-  type DashboardTemplate = {
-    name: "dashboard"
-    tiles: (
-      | StatTile
-      | PersonTile
-      | LineChartTile
-      | TableTile
-    )[]
-  }
-
-  type SignupTemplate = {
-    name: "signup"
-    tiles: [FormTile]
-  }
-
-  type SigninTemplate = {
-    name: "signin"
-    tiles: [FormTile]
-  }
-
-  type CRUDTemplate = {
-    name: "crud"
-    tiles: (
-      | TableTile
-      | FormTile
-    )[]
-  }
-
-  type Template = DashboardTemplate | SignupTemplate | SigninTemplate | CRUDTemplate
+  ${templates}
 
   type Page = {
     template: Template
@@ -144,8 +28,9 @@ export const getPageGenerationPrompt = ({
   If you want the amount of items for a given entity, use 'entity.<entity-name>.count'.
   Every data that you don't add yourself must be an entity data reference followig the pattern 'entity.<entity-name>.<entity-data-key>'.
   We will later on replace that reference with the updated entity data.
+  For charts (if there's any), include some fake data so we have something to work with.
   The return must be in JSON format. Make sure it's valid JSON as we will be parsing it using JSON.parse.
-  Don't prepend or append anything ,just return the JSON. Whatever you return will go straight through JSON.parse.
+  Don't prepend or append anything,just return the JSON. Whatever you return will go straight through JSON.parse.
     
   ENTITIES: ${entities}
   PAGE NAME: ${pageName}
@@ -212,7 +97,7 @@ export const getEntitiesPrompt = ({
   }
 
   The return must be in JSON format. Make sure it's valid JSON as we will be parsing it using JSON.parse.
-  Don't prepend or append anything ,just return the JSON. Whatever you return will go straight through JSON.parse.
+  Don't prepend or append anything,just return the JSON. Whatever you return will go straight through JSON.parse.
 
   APP DESCRIPTION: ${appDescription}
   APP INDUSTRY: ${appIndustry}

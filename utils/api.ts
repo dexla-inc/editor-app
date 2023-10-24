@@ -69,8 +69,6 @@ async function doFetch<Type>({
 
       const json = await response?.json?.();
 
-      console.log({ body, json });
-
       if (!response.status.toString().startsWith("20")) {
         reject(json?.message ?? "Something went wrong");
       } else {

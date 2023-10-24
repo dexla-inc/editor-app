@@ -96,7 +96,7 @@ export const updateInputFieldsWithFormData = (
 ) => {
   crawl(
     treeRoot,
-    (node, context) => {
+    (node) => {
       if (inputFields.includes(node.name.toLowerCase())) {
         const currOnChange = node?.props?.triggers?.onChange ?? false;
         node.props = merge(node.props, {
@@ -283,6 +283,59 @@ export const getNewComponents = (
       };
     }),
   };
+};
+
+export type TileType = {
+  node: Component;
+  name: string;
+};
+
+export const getTiles = (treeRoot: Component): TileType[] => {
+  let tiles: TileType[] = [];
+
+  crawl(
+    treeRoot,
+    (node) => {
+      const name = node.description?.replace(".tile", "");
+      if (
+        node.description?.endsWith(".tile") &&
+        !tiles.find((t) => t.name === name)
+      ) {
+        tiles.push({ name: node.description.replace(".tile", ""), node });
+      }
+    },
+    { order: "bfs" },
+  );
+
+  return tiles;
+};
+
+export const getTileData = (treeRoot: Component): { [key: string]: any } => {
+  let data: { [key: string]: any } = {};
+
+  crawl(
+    treeRoot,
+    (node) => {
+      if (node.description?.startsWith("tile.data.")) {
+        let type = "string";
+        if (node.description.endsWith("Chart")) {
+          type = `{
+            data: {
+              series: { name: string; data: number[] }[]
+              xaxis: { categories: string[] }
+            }
+          }`;
+        }
+        data = {
+          ...data,
+          [node.description.replace("tile.data.", "")]: type,
+        };
+      }
+    },
+    { order: "bfs" },
+  );
+
+  return data;
 };
 
 export const getComponentById = (

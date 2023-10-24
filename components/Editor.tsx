@@ -282,15 +282,31 @@ export const Editor = ({ projectId, pageId }: Props) => {
         });
 
         const pageTemplate = await getPageTemplate(projectId, pageId);
-        const tree = await getEditorTreeFromTemplateTileData(
+        const templateResponse = await fetch(
+          `/api/templates/${pageTemplate.template.name.replace(
+            "Template",
+            "",
+          )}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        const template = await templateResponse.json();
+        /* const tree = await getEditorTreeFromTemplateTileData(
           pageTemplate,
           editorTheme,
           pages,
           projectId,
           pageId,
-        );
+        ); */
 
-        setEditorTree(tree);
+        console.log({ pageTemplate, template });
+
+        setEditorTree(template.state);
         stopLoading({
           id: "page-generation",
           title: "Page Generated",

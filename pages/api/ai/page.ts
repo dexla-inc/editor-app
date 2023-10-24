@@ -45,6 +45,28 @@ export default async function handler(
 
     const _project = await projectResponse.json();
 
+    const templates = await prisma.template.findMany({
+      where: {
+        prompt: { not: null },
+      },
+    });
+
+    const templatesData = await templates.reduce(async (acc, template) => {
+      const tiles = await prisma.tile.findMany({
+        where: {
+          templateId: template.id,
+        },
+      });
+
+      return Promise.resolve(`
+        ${acc}
+        // ${template.name} tiles:
+        ${tiles.map((tile) => tile.prompt)}
+        // ${template.name} type:
+        ${template.prompt}
+      `);
+    }, "" as any);
+
     const response = await openai.chat.completions.create({
       model: "gpt-4",
       stream: false,
@@ -65,6 +87,10 @@ export default async function handler(
             pageDescription: page.description ?? "",
             appDescription: _project?.description ?? "",
             appIndustry: _project?.industry ?? "",
+            templates: `${templatesData}
+            
+            type Template = ${templates.map((t) => t.name).join(" | ")}
+            `,
           }),
         },
       ],
