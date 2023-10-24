@@ -30,7 +30,8 @@ export type Modifiers =
   | "navLink"
   | "accordionItem"
   | "switch"
-  | "accordion";
+  | "accordion"
+  | "avatar";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -269,6 +270,14 @@ export const requiredModifiers: RequiredModifiers = {
     showLabel: true,
   },
   accordion: { variant: "default" },
+  avatar: {
+    variant: "filled",
+    src: "",
+    radius: "",
+    size: "",
+    color: "Primary.6",
+    value: "",
+  },
 };
 
 type AISupportedModifiers = {
