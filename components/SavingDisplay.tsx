@@ -1,4 +1,4 @@
-import { Box, Text, useMantineTheme } from "@mantine/core";
+import { Box, Text } from "@mantine/core";
 import { forwardRef } from "react";
 
 type SavingDisplayProps = {
@@ -19,21 +19,20 @@ const isSavingDisplay = {
 export const SavingDisplay = forwardRef<HTMLDivElement, SavingDisplayProps>(
   ({ isSaving, ...props }: SavingDisplayProps, ref) => {
     const saving = isSaving ? "saving" : "saved";
-    const theme = useMantineTheme();
 
     return (
       <Box
         ref={ref}
         {...props}
-        sx={{
+        sx={(theme) => ({
           border: theme.colors.gray[3] + " solid 1px",
-          backgroundColor: theme.colors.gray[1],
+          backgroundColor: "white",
           width: 65,
           textAlign: "center",
-          padding: 3,
-          borderRadius: 4,
+          padding: 1,
+          borderRadius: theme.radius.sm,
           cursor: "pointer",
-        }}
+        })}
       >
         <Text color={isSavingDisplay[saving].color} size="sm">
           {isSavingDisplay[saving].text}
