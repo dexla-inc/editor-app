@@ -13,8 +13,12 @@ import {
   Textarea,
   Title,
   useMantineTheme,
+  Button,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { listVariables } from "@/requests/variables/queries";
+import { useRouter } from "next/router";
 
 const TAB_TEXT_SIZE = "xs";
 const ML = 10;
@@ -35,24 +39,58 @@ export default function BindingPopover({
   bindingType,
   opened,
 }: Props) {
-  const [type, setType] = useState<BindingType>(bindingType ?? "formula");
-  const [formulaLabel, setFormulaLabel] = useState<FormulaLabel>("Formula");
+  const [formulaLabel, setFormulaLabel] = useState("Formula");
   const [formulaEntry, setFormulaEntry] = useState<string>();
   const [currentValue, setCurrentValue] = useState<string>();
+  const [calculatedValue, setCalculatedValue] = useState<string>();
   const [tab, setTab] = useState<BindingTab>(bindingTab ?? "components");
   const theme = useMantineTheme();
 
+  const router = useRouter();
+  const projectId = router.query.id as string;
+  const pageId = router.query.page as string;
+
+  const { data: variables } = useQuery({
+    queryKey: ["variablesObj", projectId, pageId],
+    queryFn: () =>
+      listVariables(projectId, { pageId }).then(({ results }) => {
+        return results.reduce(
+          (acc, variable) => {
+            acc[variable.id] = variable;
+            return acc;
+          },
+          {} as Record<string, any>,
+        );
+      }),
+    enabled: !!projectId && !!pageId,
+  });
+
   useEffect(() => {
-    if (type === "formula") {
-      setFormulaLabel("Formula");
-    } else if (type === "js") {
-      setFormulaLabel("JavaScript");
+    try {
+      if (currentValue === "return variables") {
+        setCalculatedValue("undefined");
+      }
+      let newValue = eval(
+        `function autoRunJavascriptCode() { ${currentValue}}; autoRunJavascriptCode()`,
+      );
+      if (typeof newValue === "object" || Array.isArray(newValue)) {
+        try {
+          newValue = JSON.stringify(newValue);
+        } catch {}
+      }
+
+      setCalculatedValue(newValue);
+    } catch {
+      setCalculatedValue("undefined");
     }
-  }, [type]);
+  }, [currentValue]);
 
   return (
-    <Popover opened={opened}>
+    <Popover opened={opened} withinPortal position="left-end">
       <Popover.Target>
+        <Button size="xs">Test</Button>
+      </Popover.Target>
+      <Popover.Dropdown>
         <Stack
           w={500}
           bg={"#fff"}
@@ -66,11 +104,11 @@ export default function BindingPopover({
           <Title order={5}>Binder</Title>
           <Flex justify="space-between" align="center">
             <SegmentedControl
-              value={type}
-              onChange={(value) => setType(value as BindingType)}
+              value={formulaLabel}
+              onChange={setFormulaLabel}
               data={[
                 {
-                  value: "formula",
+                  value: "Formula",
                   label: (
                     <Center>
                       <Icon name="IconVariable" />
@@ -79,7 +117,7 @@ export default function BindingPopover({
                   ),
                 },
                 {
-                  value: "js",
+                  value: "JavaScript",
                   label: (
                     <Center>
                       <Icon name="IconCode" />
@@ -97,7 +135,7 @@ export default function BindingPopover({
             <Text size="sm" fw={500} pb={2}>
               {formulaLabel}
             </Text>
-            {type === "formula" ? (
+            {formulaLabel === "Formula" ? (
               <Textarea
                 value={formulaEntry}
                 onChange={(event) => setFormulaEntry(event.currentTarget.value)}
@@ -106,13 +144,16 @@ export default function BindingPopover({
               <CustomJavaScriptTextArea
                 language="typescript"
                 value={formulaEntry}
+                variables={variables}
+                onChange={setCurrentValue}
               />
             )}
           </Box>
           <TextInput
             label="Current Value"
-            value={currentValue === undefined ? "undefined" : currentValue}
-            onChange={(event) => setCurrentValue(event.currentTarget.value)}
+            value={calculatedValue}
+            readOnly
+            // onChange={(event) => setCurrentValue(event.currentTarget.value)}
             // Color does not change due to a bug which has been fixed in v7
             sx={{
               color: currentValue === undefined ? "grey" : "inherit",
@@ -185,7 +226,7 @@ export default function BindingPopover({
             </Stack>
           ) : null}
         </Stack>
-      </Popover.Target>
+      </Popover.Dropdown>
     </Popover>
   );
 }

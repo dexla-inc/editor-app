@@ -14,6 +14,7 @@ import Editor from "@monaco-editor/react";
 import { IconPlayerPlayFilled } from "@tabler/icons-react";
 import { transpile } from "typescript";
 import { useEditorStore } from "@/stores/editor";
+import BindingPopover from "@/components/BindingPopover";
 
 type Props = {
   id: string;
@@ -103,49 +104,75 @@ export const TransformVariableActionForm = ({ id }: Props) => {
           }}
           {...form.getInputProps("variableId")}
         />
-        {form.values.variableId && (
-          <Stack spacing="xs">
-            <Text size="xs" weight={500}>
-              Write Javascript to transform the selected variable
-            </Text>
-            <Button
-              color="indigo"
-              sx={{ marginRight: 0 }}
-              size="xs"
-              leftIcon={<IconPlayerPlayFilled size={8} />}
-              type="button"
-              onClick={onClickRunCode}
-            >
-              Run Code
-            </Button>
-            <Card style={{ overflow: "visible" }} withBorder radius="sm" px={0}>
-              <Editor
-                onValidate={() => {
-                  const suggestWidget = window.document.querySelector(
-                    ".editor-widget.suggest-widget",
-                  );
-                  if (suggestWidget) {
-                    suggestWidget.setAttribute(
-                      "style",
-                      `${suggestWidget.getAttribute(
-                        "style",
-                      )}; width: 100% !important; left: 0 !important;`,
-                    );
-                  }
-                }}
-                width="100%"
-                height="150px"
-                defaultLanguage="typescript"
-                {...form.getInputProps("value")}
-                options={{
-                  automaticLayout: true,
-                  minimap: { enabled: false },
-                  contextmenu: false,
-                }}
-              />
-            </Card>
-          </Stack>
-        )}
+        <Editor
+          onValidate={() => {
+            const suggestWidget = window.document.querySelector(
+              ".editor-widget.suggest-widget",
+            );
+            if (suggestWidget) {
+              suggestWidget.setAttribute(
+                "style",
+                `${suggestWidget.getAttribute(
+                  "style",
+                )}; width: 100% !important; left: 0 !important;`,
+              );
+            }
+          }}
+          width="100%"
+          height="150px"
+          defaultLanguage="typescript"
+          {...form.getInputProps("value")}
+          options={{
+            automaticLayout: true,
+            minimap: { enabled: false },
+            contextmenu: false,
+          }}
+        />
+        {/*{form.values.variableId && (*/}
+        {/*  <Stack spacing="xs">*/}
+        {/*    <Text size="xs" weight={500}>*/}
+        {/*      Write Javascript to transform the selected variable*/}
+        {/*    </Text>*/}
+        {/*    <Button*/}
+        {/*      color="indigo"*/}
+        {/*      sx={{ marginRight: 0 }}*/}
+        {/*      size="xs"*/}
+        {/*      leftIcon={<IconPlayerPlayFilled size={8} />}*/}
+        {/*      type="button"*/}
+        {/*      onClick={onClickRunCode}*/}
+        {/*    >*/}
+        {/*      Run Code*/}
+        {/*    </Button>*/}
+        {/*    <Card style={{ overflow: "visible" }} withBorder radius="sm" px={0}>*/}
+        {/*      <Editor*/}
+        {/*        onValidate={() => {*/}
+        {/*          const suggestWidget = window.document.querySelector(*/}
+        {/*            ".editor-widget.suggest-widget",*/}
+        {/*          );*/}
+        {/*          if (suggestWidget) {*/}
+        {/*            suggestWidget.setAttribute(*/}
+        {/*              "style",*/}
+        {/*              `${suggestWidget.getAttribute(*/}
+        {/*                "style",*/}
+        {/*              )}; width: 100% !important; left: 0 !important;`,*/}
+        {/*            );*/}
+        {/*          }*/}
+        {/*        }}*/}
+        {/*        width="100%"*/}
+        {/*        height="150px"*/}
+        {/*        defaultLanguage="typescript"*/}
+        {/*        {...form.getInputProps("value")}*/}
+        {/*        options={{*/}
+        {/*          automaticLayout: true,*/}
+        {/*          minimap: { enabled: false },*/}
+        {/*          contextmenu: false,*/}
+        {/*        }}*/}
+        {/*      />*/}
+        {/*    </Card>*/}
+        {/*  </Stack>*/}
+        {/*)}*/}
+
+        <BindingPopover opened={true} />
 
         <ActionButtons
           actionId={action.id}
