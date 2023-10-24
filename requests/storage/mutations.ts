@@ -3,10 +3,11 @@ import {
   UploadResponse,
 } from "@/requests/storage/types";
 import { post } from "@/utils/api";
+import { FileWithPath } from "@mantine/dropzone";
 
 export const uploadFile = async (
   projectId: string,
-  file: File | File[],
+  file: File | File[] | FileWithPath | FileWithPath[],
   isMultiple: boolean = false,
 ) => {
   let url = `/projects/${projectId}/storage?isMultiple=${isMultiple}`;
