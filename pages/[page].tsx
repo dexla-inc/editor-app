@@ -3,7 +3,6 @@ import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries";
 import { PageResponse } from "@/requests/pages/types";
 import { getByDomain } from "@/requests/projects/queries";
 import { useEditorStore } from "@/stores/editor";
-import { usePropelAuthStore } from "@/stores/propelAuth";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
@@ -51,14 +50,6 @@ export default function LivePage({ id, page }: Props) {
   const setCurrentPageId = useEditorStore((state) => state.setCurrentPageId);
   const setPreviewMode = useEditorStore((state) => state.setPreviewMode);
   const setIsLive = useEditorStore((state) => state.setIsLive);
-  const isLive = useEditorStore((state) => state.isLive);
-  const initializeAuth = usePropelAuthStore((state) => state.initializeAuth);
-
-  useEffect(() => {
-    if (!isLive) {
-      initializeAuth();
-    }
-  }, [isLive, initializeAuth]);
 
   useEffect(() => {
     if (id && page?.id) {
