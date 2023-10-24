@@ -369,7 +369,7 @@ export const DroppableDraggable = ({
                   />
                 </UnstyledButton>
               )}
-              <Text color="white" size="xs" pr={haveNonRootParent ? 0 : "xs"}>
+              <Text color="white" size="xs" pr={haveNonRootParent ? 8 : "xs"}>
                 {(component.description || "").length > 20
                   ? `${component.description?.substring(0, 20)}...`
                   : component.description}
