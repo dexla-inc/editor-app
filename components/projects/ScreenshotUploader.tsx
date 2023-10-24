@@ -21,6 +21,9 @@ export default function ScreenshotUploader({
         key={index}
         src={imageUrl}
         imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+        width={220}
+        height={140}
+        fit="contain"
       />
     );
   });
@@ -41,7 +44,7 @@ export default function ScreenshotUploader({
     <Stack spacing="xl">
       <Box>
         <Text fw={500} size="sm">
-          Do you have screenshots of your designs or designs you like?
+          Do you have designs or design inspiration?
         </Text>
         <Text size="xs" color="gray">
           Export designs from Figma, Sketch, Adobe XD, etc. Or take screenshots
@@ -49,7 +52,7 @@ export default function ScreenshotUploader({
         </Text>
 
         <Dropzone onDrop={onDropHandler} accept={IMAGE_MIME_TYPE} mt={2}>
-          <Text align="center">Drop screenshots here</Text>
+          <Text align="center">Drop here</Text>
           <Text size="xs" color="gray" align="center">
             {IMAGE_MIME_TYPE.join(", ")}
           </Text>

@@ -1,8 +1,14 @@
 import { InformationAlert } from "@/components/Alerts";
 import NextButton from "@/components/NextButton";
 import ScreenshotUploader from "@/components/projects/ScreenshotUploader";
-import { ProjectParams, createProject } from "@/requests/projects/mutations";
+import {
+  ProjectParams,
+  createProject,
+  patchProject,
+} from "@/requests/projects/mutations";
 import { uploadFile } from "@/requests/storage/mutations";
+import { UploadMultipleResponse } from "@/requests/storage/types";
+import { PatchParams } from "@/requests/types";
 import { LoadingStore, NextStepperClickEvent } from "@/utils/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
 import { Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
@@ -60,11 +66,28 @@ export default function ProjectStep({
 
       form.validate();
 
-      const project = await createProject(values);
-      console.log(project.id);
+      let project = await createProject(values);
       setProjectId(project.id);
-      const storedScreenshots = await uploadFile(project.id, screenshots, true);
-      console.log(storedScreenshots);
+
+      projectId = project.id;
+
+      const storedScreenshots = (await uploadFile(
+        projectId,
+        screenshots,
+        true,
+      )) as UploadMultipleResponse;
+
+      const urls = storedScreenshots.files.map((file) => file.url);
+
+      const patchParams = [
+        {
+          op: "replace",
+          path: "/screenshots",
+          value: urls,
+        },
+      ] as PatchParams[];
+
+      project = await patchProject(projectId, patchParams);
 
       stopLoading({
         id: "creating-project",
@@ -72,6 +95,7 @@ export default function ProjectStep({
         message: "The project was created successfully",
       });
       setIsLoading && setIsLoading(false);
+      nextStep();
     } catch (error) {
       stopLoading({
         id: "creating-project",
@@ -91,7 +115,7 @@ export default function ProjectStep({
         />
         <TextInput
           label="What do you do? *"
-          description="Your one-liner e.g. Providing Advanced Cybersecurity Measures to Defend Against Quantum Computing Threats"
+          description="Your one-liner e.g. Transforming Drone and Satellite Data into Actionable Business Insights"
           required
           withAsterisk={false}
           {...form.getInputProps("description")}
@@ -109,7 +133,7 @@ export default function ProjectStep({
 
         <TextInput
           label="What industry are you in? *"
-          description="e.g. Cyber Security"
+          description="e.g. Big Data"
           {...form.getInputProps("industry")}
         />
 
