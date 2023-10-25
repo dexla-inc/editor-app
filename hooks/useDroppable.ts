@@ -20,9 +20,10 @@ export const useDroppable = ({
 }) => {
   const editorTree = useEditorStore((state) => state.tree);
   const setCurrentTargetId = useEditorStore(
-    (state) => state.setCurrentTargetId
+    (state) => state.setCurrentTargetId,
   );
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
+  const setActiveTab = useEditorStore((state) => state.setActiveTab);
   const [edge, setEdge] = useState<Edge>();
   const [shouldHandleDragOver, setShouldHandleDragOver] = useState(false);
 
@@ -39,7 +40,7 @@ export const useDroppable = ({
       onDrop?.(activeId!, dropTarget);
       setCurrentTargetId(undefined);
     },
-    [activeId, id, setCurrentTargetId, edge, onDrop]
+    [activeId, id, setCurrentTargetId, edge, onDrop],
   );
 
   const handleDragOver = useCallback(
@@ -73,7 +74,8 @@ export const useDroppable = ({
 
       setEdge(edge as Edge);
     },
-    [id, currentWindow]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [id, currentWindow],
   );
 
   const handleDragEnter = useCallback(
@@ -81,8 +83,9 @@ export const useDroppable = ({
       event.preventDefault();
       event.stopPropagation();
       setCurrentTargetId(id);
+      setActiveTab(undefined);
     },
-    [id, setCurrentTargetId]
+    [id, setCurrentTargetId, setActiveTab],
   );
 
   // TODO: Handle isOver differently to have better ux as currently
@@ -93,7 +96,7 @@ export const useDroppable = ({
       event.stopPropagation();
       setShouldHandleDragOver(false);
     },
-    [setShouldHandleDragOver]
+    [setShouldHandleDragOver],
   );
 
   return {
