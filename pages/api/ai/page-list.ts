@@ -20,7 +20,7 @@ export default async function handler(
     });
 
     const projectResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/projects/${projectId}`,
+      `${process.env.NEXT_PUBLIC_APPS_BASE_URL}/projects/${projectId}`,
       {
         method: "GET",
         headers: {
@@ -29,6 +29,8 @@ export default async function handler(
         },
       },
     );
+
+    console.log({ projectResponse });
 
     const _project = await projectResponse.json();
 

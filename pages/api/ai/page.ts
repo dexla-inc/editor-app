@@ -20,7 +20,7 @@ export default async function handler(
     });
 
     const pageResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/projects/${projectId}/pages/${pageId}`,
+      `${process.env.NEXT_PUBLIC_APPS_BASE_URL}/projects/${projectId}/pages/${pageId}`,
       {
         method: "GET",
         headers: {
@@ -33,7 +33,7 @@ export default async function handler(
     const page = await pageResponse.json();
 
     const projectResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/projects/${projectId}`,
+      `${process.env.NEXT_PUBLIC_APPS_BASE_URL}/projects/${projectId}`,
       {
         method: "GET",
         headers: {
