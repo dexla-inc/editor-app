@@ -1,9 +1,9 @@
-import { Component } from "@/utils/editor";
-import get from "lodash.get";
-import dynamic from "next/dynamic";
-import merge from "lodash.merge";
 import { useEditorStore } from "@/stores/editor";
+import { Component } from "@/utils/editor";
 import { ApexOptions } from "apexcharts";
+import get from "lodash.get";
+import merge from "lodash.merge";
+import dynamic from "next/dynamic";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
@@ -29,7 +29,8 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
   } = component.props as any;
 
   const theme = useEditorStore((state) => state.theme);
-  const isPie = type === "pie" || type === "donut";
+  const isPieOrRadial =
+    type === "pie" || type === "donut" || type === "radialBar";
 
   const customOptions: ApexOptions = merge(
     {},
@@ -121,7 +122,7 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
   );
 
   let dataSeries = series;
-  let dataLabels = isPie ? options?.labels : options?.xaxis?.categories;
+  let dataLabels = isPieOrRadial ? options?.labels : options?.xaxis?.categories;
 
   if (props.isPreviewMode) {
     dataSeries = data?.series?.value ?? series;
@@ -145,7 +146,9 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
 
   const opts = {
     ...customOptions,
-    ...(isPie ? { labels: dataLabels } : { xaxis: { categories: dataLabels } }),
+    ...(isPieOrRadial
+      ? { labels: dataLabels }
+      : { xaxis: { categories: dataLabels } }),
   };
 
   return (
