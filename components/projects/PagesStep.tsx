@@ -1,6 +1,7 @@
 import { InformationAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
 import { Icon } from "@/components/Icon";
+import NextButton from "@/components/NextButton";
 import {
   createDataSource,
   createDataSourceEndpoint,
@@ -30,7 +31,6 @@ import { IconCircleCheck, IconPlus, IconSparkles } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
 import { SetStateAction, useEffect, useRef } from "react";
 import slugify from "slugify";
-import NextButton from "../NextButton";
 
 export const getServerSideProps = async ({
   query,
