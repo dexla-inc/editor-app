@@ -100,6 +100,7 @@ import {
   IconBrandChrome,
   IconBread,
   IconCalendar,
+  IconChartArcs,
   IconChartAreaLine,
   IconChartBar,
   IconChartDonut,
@@ -611,10 +612,6 @@ export const structureMapper: StructureMapper = {
   //   structure: (props: any) => NotImplemented.jsonStructure(props),
   //   category: "Chart",
   // },
-  // RadialBarChart: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   category: "Chart",
-  // },
   // MixBarChart: {
   //   structure: (props: any) => NotImplemented.jsonStructure(props),
   //   category: "Chart",
@@ -684,7 +681,7 @@ export const structureMapper: StructureMapper = {
     Draggable: () => (
       <DraggableComponent
         id="RadialChart"
-        icon={<IconChartDonut size={LARGE_ICON_SIZE} />}
+        icon={<IconChartArcs size={LARGE_ICON_SIZE} />}
       />
     ),
     category: "Chart",
