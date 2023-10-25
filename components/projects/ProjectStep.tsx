@@ -1,11 +1,11 @@
 import { InformationAlert } from "@/components/Alerts";
 import NextButton from "@/components/NextButton";
-import ScreenshotUploader from "@/components/projects/ScreenshotUploader";
 import {
   ProjectParams,
-  createProject,
+  createEntitiesAndProject,
   patchProject,
 } from "@/requests/projects/mutations";
+import ScreenshotUploader from "@/components/projects/ScreenshotUploader";
 import { uploadFile } from "@/requests/storage/mutations";
 import { UploadMultipleResponse } from "@/requests/storage/types";
 import { PatchParams } from "@/requests/types";
@@ -15,6 +15,7 @@ import { Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
 import { FileWithPath } from "@mantine/dropzone";
 import { useForm } from "@mantine/form";
 import { Dispatch, SetStateAction } from "react";
+import { Lekton } from "next/font/google";
 
 interface ProjectStepProps extends LoadingStore, NextStepperClickEvent {
   projectId: string;
@@ -66,28 +67,33 @@ export default function ProjectStep({
 
       form.validate();
 
-      let project = await createProject(values);
+      let project = await createEntitiesAndProject(values);
+
+      if (!project || !project.id) throw new Error("Project not created");
+
       setProjectId(project.id);
 
       projectId = project.id;
 
-      const storedScreenshots = (await uploadFile(
-        projectId,
-        screenshots,
-        true,
-      )) as UploadMultipleResponse;
+      if (screenshots.length > 0) {
+        const storedScreenshots = (await uploadFile(
+          projectId,
+          screenshots,
+          true,
+        )) as UploadMultipleResponse;
 
-      const urls = storedScreenshots.files.map((file) => file.url);
+        const urls = storedScreenshots.files.map((file) => file.url);
 
-      const patchParams = [
-        {
-          op: "replace",
-          path: "/screenshots",
-          value: urls,
-        },
-      ] as PatchParams[];
+        const patchParams = [
+          {
+            op: "replace",
+            path: "/screenshots",
+            value: urls,
+          },
+        ] as PatchParams[];
 
-      project = await patchProject(projectId, patchParams);
+        project = await patchProject(projectId, patchParams);
+      }
 
       stopLoading({
         id: "creating-project",
@@ -101,6 +107,7 @@ export default function ProjectStep({
         id: "creating-project",
         title: "Project Failed",
         message: "Validation failed",
+        isError: true,
       });
       setIsLoading && setIsLoading(false);
     }

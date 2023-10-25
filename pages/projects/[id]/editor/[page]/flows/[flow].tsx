@@ -124,6 +124,7 @@ export default function LogicFlowsPage({ id, pageId, flowId }: Props) {
   useEffect(() => {
     if (flow?.data) {
       const data = JSON.parse(decodeSchema(flow.data as string));
+      console.log("DATA", data);
       restoreFlow(data as any);
     }
   }, [flow?.data, restoreFlow]);

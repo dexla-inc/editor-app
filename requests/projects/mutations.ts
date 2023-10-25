@@ -1,6 +1,6 @@
 import { RegionTypes } from "@/requests/projects/queries";
 import { PatchParams } from "@/requests/types";
-import { del, patch, post } from "@/utils/api";
+import { del, getAuthToken, patch, post } from "@/utils/api";
 import { ProjectTypes } from "@/utils/projectTypes";
 
 export interface ProjectParams extends ProjectUpdateParams {
@@ -29,6 +29,25 @@ export const createProject = async (params: ProjectParams) => {
   )) as ProjectResponse;
 
   return response;
+};
+
+export const createEntitiesAndProject = async (params: ProjectParams) => {
+  const accessToken = await getAuthToken();
+  const response = await fetch("/api/ai/entities", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      ...params,
+      appDescription: params.description,
+      appIndustry: params.industry,
+      accessToken,
+    }),
+  });
+
+  const json = await response.json();
+  return json as ProjectResponse;
 };
 
 export const patchProject = async (id: string, params: PatchParams[]) => {

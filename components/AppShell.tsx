@@ -19,6 +19,7 @@ import {
 import { useAuthInfo } from "@propelauth/react";
 import Link from "next/link";
 
+import { SaveTemplateButton } from "@/components/SaveTemplateButton";
 import { AIChatHistoryButton } from "@/components/AIChatHistoryButton";
 import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
 import { DeployButton } from "@/components/DeployButton";
@@ -86,6 +87,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                 }}
                 display="none"
               />
+              {isDexlaAdmin && <SaveTemplateButton />}
               {isDexlaAdmin && <AIChatHistoryButton projectId={projectId} />}
               <GenerateAIButton projectId={projectId} />
               <LogicFlowButton projectId={projectId} pageId={currentPageId} />

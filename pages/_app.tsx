@@ -160,7 +160,6 @@ export default function App(props: AppProps) {
                     "*, *::before, *::after": {
                       boxSizing: "border-box",
                     },
-
                     body: {
                       margin: 0,
                       padding: 0,

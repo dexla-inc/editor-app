@@ -8,8 +8,7 @@ import { IFrame } from "@/components/IFrame";
 import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
-import { postPageEventSource } from "@/requests/ai/queries";
-import { getPage } from "@/requests/pages/queries";
+import { getPage, getPageTemplate } from "@/requests/pages/queries";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
@@ -25,11 +24,9 @@ import {
   addComponent,
   getComponentById,
   getComponentParent,
-  getEditorTreeFromTemplateData,
   removeComponent,
 } from "@/utils/editor";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import TOML from "@iarna/toml";
 import {
   Aside,
   Box,
@@ -43,7 +40,6 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure, useHotkeys } from "@mantine/hooks";
-import { EventSourceMessage } from "@microsoft/fetch-event-source";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -66,7 +62,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
-  const editorTheme = useEditorStore((state) => state.theme);
   const pages = useEditorStore((state) => state.pages);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
@@ -74,8 +69,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const stopLoading = useAppStore((state) => state.stopLoading);
   const isLoading = useAppStore((state) => state.isLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
-  const isStreaming = useRef<boolean>(false);
-  const [stream, setStream] = useState<string>();
+  const isGettingPageData = useRef<boolean>(false);
   const [canvasRef] = useAutoAnimate();
   const [isCustomComponentModalOpen, customComponentModal] =
     useDisclosure(false);
@@ -221,47 +215,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
     ],
   ]);
 
-  const onMessage = (event: EventSourceMessage) => {
-    try {
-      setStream((state) => {
-        try {
-          if (state === undefined) {
-            return event.data;
-          } else {
-            return `${state}
-              ${event.data}`;
-          }
-        } catch (error) {
-          return state;
-        }
-      });
-    } catch (error) {
-      // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
-      console.error(error);
-    }
-  };
-
-  const onError = (err: any) => {
-    stopLoading({
-      id: "page-generation",
-      title: "There was a problem",
-      message: err,
-      isError: true,
-    });
-  };
-
-  const onOpen = async (response: Response) => {
-    // handle open
-  };
-
-  const onClose = async () => {
-    stopLoading({
-      id: "page-generation",
-      title: "Page Generated",
-      message: "Here's your page. We hope you like it",
-    });
-  };
-
   useEffect(() => {
     const getPageData = async () => {
       setIsLoading(true);
@@ -280,20 +233,37 @@ export const Editor = ({ projectId, pageId }: Props) => {
           message: "AI is generating your page",
         });
 
-        postPageEventSource(
-          projectId,
-          page.title,
-          onMessage,
-          onError,
-          onOpen,
-          onClose,
-          "LAYOUT",
+        const aiPageTemplate = await getPageTemplate(projectId, pageId);
+        const templateResponse = await fetch(
+          `/api/templates/${aiPageTemplate.template.name.replace(
+            "Template",
+            "",
+          )}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
         );
+
+        const template = await templateResponse.json();
+
+        // TODO: Replace tiles from template state with tiles from aiPageTemplate
+        const aiTiles = aiPageTemplate.template.tiles;
+        console.log({ aiPageTemplate, template, aiTiles });
+
+        setEditorTree(template.state);
+        stopLoading({
+          id: "page-generation",
+          title: "Page Generated",
+          message: "Here's your page. We hope you like it",
+        });
       }
     };
 
-    if (projectId && pageId && !isStreaming.current) {
-      (isStreaming as any).current = true;
+    if (projectId && pageId && !isGettingPageData.current) {
+      (isGettingPageData as any).current = true;
       getPageData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -307,27 +277,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
     pages,
     theme,
   ]);
-
-  useEffect(() => {
-    if (stream) {
-      try {
-        if (!stream.endsWith("___DONE___")) {
-          const json = TOML.parse(stream);
-          const tree = getEditorTreeFromTemplateData(
-            json as any,
-            editorTheme,
-            pages,
-          );
-
-          setEditorTree(tree);
-        }
-      } catch (error) {
-        // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
-        // console.log({ error });
-      }
-    }
-  }, [editorTheme, setEditorTree, stream, pages]);
-
   const renderTree = (component: Component) => {
     if (component.id === "root") {
       return (
@@ -424,7 +373,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
             },
           }}
         />
-        {isLoading && !stream && editorTree.root.children?.length === 0 && (
+        {isLoading && editorTree.root.children?.length === 0 && (
           <Box
             pos="relative"
             onClick={clearSelection}

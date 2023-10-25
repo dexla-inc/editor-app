@@ -20,14 +20,17 @@ export const getPagesEventSource = async (
   onclose?: () => void,
 ) => {
   const token = await getAuthToken();
-  const url = `${baseURL}/projects/${projectId}/automations/pages?count=${count}&excluded=${excludedCsv}`;
 
-  await fetchEventSource(url, {
-    method: "GET",
+  await fetchEventSource("/api/ai/page-list", {
+    method: "POST",
     headers: {
-      "Content-Type": "text/event-stream",
-      Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+      Accept: "text/event-stream",
     },
+    body: JSON.stringify({
+      projectId,
+      accessToken: token,
+    }),
     onerror: onerror,
     onmessage: onmessage,
     onopen: onopen,

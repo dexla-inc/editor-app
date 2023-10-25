@@ -16,6 +16,7 @@ import pickBy from "lodash.pickby";
 import { nanoid } from "nanoid";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import crawl from "tree-crawl";
+import { Tile } from "@/components/templates/dashboard";
 
 export type Component = {
   id?: string;
@@ -95,7 +96,7 @@ export const updateInputFieldsWithFormData = (
 ) => {
   crawl(
     treeRoot,
-    (node, context) => {
+    (node) => {
       if (inputFields.includes(node.name.toLowerCase())) {
         const currOnChange = node?.props?.triggers?.onChange ?? false;
         node.props = merge(node.props, {
@@ -230,6 +231,24 @@ export const getEditorTreeFromTemplateData = (
   return editorTree;
 };
 
+export const getEditorTreeFromTemplateTileData = async (
+  tree: { template: { name: string; tiles: Tile[] } },
+  theme: MantineThemeExtended,
+  pages: PageResponse[],
+  projectId: string,
+  pageId: string,
+) => {
+  // @ts-ignore
+  const editorTree: EditorTree = await templatesMapper[tree.template.name](
+    tree.template,
+    theme,
+    pages,
+    projectId,
+    pageId,
+  );
+  return editorTree;
+};
+
 export const getNewComponents = (
   tree: { rows: Row[] },
   theme: MantineThemeExtended,
@@ -264,6 +283,59 @@ export const getNewComponents = (
       };
     }),
   };
+};
+
+export type TileType = {
+  node: Component;
+  name: string;
+};
+
+export const getTiles = (treeRoot: Component): TileType[] => {
+  let tiles: TileType[] = [];
+
+  crawl(
+    treeRoot,
+    (node) => {
+      const name = node.description?.replace(".tile", "");
+      if (
+        node.description?.endsWith(".tile") &&
+        !tiles.find((t) => t.name === name)
+      ) {
+        tiles.push({ name: node.description.replace(".tile", ""), node });
+      }
+    },
+    { order: "bfs" },
+  );
+
+  return tiles;
+};
+
+export const getTileData = (treeRoot: Component): { [key: string]: any } => {
+  let data: { [key: string]: any } = {};
+
+  crawl(
+    treeRoot,
+    (node) => {
+      if (node.description?.startsWith("tile.data.")) {
+        let type = "string";
+        if (node.description.endsWith("Chart")) {
+          type = `{
+            data: {
+              series: { name: string; data: number[] }[]
+              xaxis: { categories: string[] }
+            }
+          }`;
+        }
+        data = {
+          ...data,
+          [node.description.replace("tile.data.", "")]: type,
+        };
+      }
+    },
+    { order: "bfs" },
+  );
+
+  return data;
 };
 
 export const getComponentById = (
@@ -845,6 +917,16 @@ export const debouncedTreeUpdate = debounce((...params: any[]) => {
   // @ts-ignore
   updateTreeComponent(...params);
 }, 300);
+
+export const debouncedTreeComponentDescriptionpdate = debounce(
+  (value: string) => {
+    const updateTreeComponentDescription =
+      useEditorStore.getState().updateTreeComponentDescription;
+    const selectedComponentId = useEditorStore.getState().selectedComponentId;
+    updateTreeComponentDescription(selectedComponentId!, value);
+  },
+  300,
+);
 
 export const getColorFromTheme = (
   theme: MantineThemeExtended,

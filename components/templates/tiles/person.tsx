@@ -1,0 +1,97 @@
+import { nanoid } from "nanoid";
+import { PersonTile } from "../dashboard";
+
+export const tile = (tile: PersonTile) => {
+  return {
+    id: nanoid(),
+    name: "Container",
+    description: "Container",
+    props: {
+      style: {
+        display: "flex",
+        flexDirection: "column",
+        rowGap: "10px",
+        columnGap: "10px",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
+        borderTopStyle: "solid",
+        borderRightStyle: "solid",
+        borderBottomStyle: "solid",
+        borderLeftStyle: "solid",
+        borderTopWidth: "1px",
+        borderRightWidth: "1px",
+        borderBottomWidth: "1px",
+        borderLeftWidth: "1px",
+        borderTopColor: "#CCCCCC",
+        borderRightColor: "#CCCCCC",
+        borderBottomColor: "#CCCCCC",
+        borderLeftColor: "#CCCCCC",
+        borderTopLeftRadius: "10px",
+        borderTopRightRadius: "10px",
+        borderBottomLeftRadius: "10px",
+        borderBottomRightRadius: "10px",
+        padding: "20px",
+        width: "auto",
+        height: "auto",
+        minHeight: "10px",
+        borderStyle: "solid",
+        borderWidth: "1px",
+        borderColor: "#CCCCCC",
+      },
+      bg: "White.0",
+    },
+    children: [
+      {
+        id: nanoid(),
+        name: "Avatar",
+        description: "Avatar",
+        children: [],
+        props: {
+          color: "Primary",
+          radius: "xl",
+          src: tile.data.avatar,
+        },
+        blockDroppingChildrenInside: true,
+      },
+      {
+        id: nanoid(),
+        name: "Title",
+        description: "Title",
+        children: [],
+        props: {
+          children: tile.data.name,
+          color: "Black.6",
+          order: 6,
+          style: {
+            fontWeight: "bold",
+            fontSize: "1.125rem",
+            lineHeight: 1.45,
+            width: "auto",
+            height: "auto",
+          },
+        },
+        blockDroppingChildrenInside: true,
+      },
+      {
+        id: nanoid(),
+        name: "Text",
+        description: "Text",
+        children: [],
+        props: {
+          children: tile.data.subtitle,
+          color: `Black.2`,
+          size: "md",
+          weight: "normal",
+          style: {
+            lineHeight: "110%",
+            letterSpacing: "0px",
+            width: "auto",
+            height: "auto",
+          },
+        },
+        blockDroppingChildrenInside: true,
+      },
+    ],
+  };
+};
