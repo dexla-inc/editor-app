@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/userConfig";
 import {
   DropTarget,
   Edge,
@@ -6,7 +7,6 @@ import {
   getComponentById,
 } from "@/utils/editor";
 import { useCallback, useState } from "react";
-import { useUserConfigStore } from "@/stores/userConfig";
 
 export const useDroppable = ({
   id,
