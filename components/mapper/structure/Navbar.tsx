@@ -38,9 +38,6 @@ export const jsonStructure = (props?: any): Component => {
         style: {
           width: "260px",
           height: "100vh",
-          // borderRightWidth: "1px",
-          // borderRightStyle: "solid",
-          // borderRightColor: "#CCCCCC",
           display: "flex",
           flexDirection: "column",
           flexWrap: "nowrap",
