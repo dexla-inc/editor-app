@@ -30,6 +30,7 @@ export const ComponentToBindActionsPopover = ({ onPick }: any) => {
       shadow="md"
       opened={opened}
       onClose={close}
+      withinPortal
     >
       <Popover.Target>
         <ActionIcon onClick={toggle} size="xs">

@@ -3,14 +3,25 @@ import NextButton from "@/components/NextButton";
 import {
   ProjectParams,
   createEntitiesAndProject,
+  patchProject,
 } from "@/requests/projects/mutations";
+import ScreenshotUploader from "@/components/projects/ScreenshotUploader";
+import { uploadFile } from "@/requests/storage/mutations";
+import { UploadMultipleResponse } from "@/requests/storage/types";
+import { PatchParams } from "@/requests/types";
 import { LoadingStore, NextStepperClickEvent } from "@/utils/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
 import { Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
+import { FileWithPath } from "@mantine/dropzone";
 import { useForm } from "@mantine/form";
+import { Dispatch, SetStateAction } from "react";
+import { Lekton } from "next/font/google";
 
 interface ProjectStepProps extends LoadingStore, NextStepperClickEvent {
+  projectId: string;
   setProjectId: (id: string) => void;
+  screenshots: FileWithPath[];
+  setScreenshots: Dispatch<SetStateAction<FileWithPath[]>>;
 }
 
 export default function ProjectStep({
@@ -19,7 +30,10 @@ export default function ProjectStep({
   setIsLoading,
   startLoading,
   stopLoading,
+  projectId,
   setProjectId,
+  screenshots,
+  setScreenshots,
 }: ProjectStepProps) {
   const form = useForm<ProjectParams>({
     initialValues: {
@@ -53,11 +67,31 @@ export default function ProjectStep({
 
       form.validate();
 
-      const project = await createEntitiesAndProject(values);
+      let project = await createEntitiesAndProject(values);
 
       if (!project || !project.id) throw new Error("Project not created");
 
       setProjectId(project.id);
+
+      projectId = project.id;
+
+      const storedScreenshots = (await uploadFile(
+        projectId,
+        screenshots,
+        true,
+      )) as UploadMultipleResponse;
+
+      const urls = storedScreenshots.files.map((file) => file.url);
+
+      const patchParams = [
+        {
+          op: "replace",
+          path: "/screenshots",
+          value: urls,
+        },
+      ] as PatchParams[];
+
+      project = await patchProject(projectId, patchParams);
 
       stopLoading({
         id: "creating-project",
@@ -85,7 +119,7 @@ export default function ProjectStep({
         />
         <TextInput
           label="What do you do? *"
-          description="Your one-liner e.g. Providing Advanced Cybersecurity Measures to Defend Against Quantum Computing Threats"
+          description="Your one-liner e.g. Transforming Drone and Satellite Data into Actionable Business Insights"
           required
           withAsterisk={false}
           {...form.getInputProps("description")}
@@ -103,9 +137,14 @@ export default function ProjectStep({
 
         <TextInput
           label="What industry are you in? *"
-          description="e.g. Cyber Security"
+          description="e.g. Big Data"
           {...form.getInputProps("industry")}
         />
+
+        <ScreenshotUploader
+          screenshots={screenshots}
+          setScreenshots={setScreenshots}
+        ></ScreenshotUploader>
 
         <Divider></Divider>
         <Group position="right">

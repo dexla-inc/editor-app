@@ -21,5 +21,5 @@ export type MethodTypes = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 export type PatchParams = {
   op: string;
   path: string;
-  value: string;
+  value: any;
 };

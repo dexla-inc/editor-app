@@ -40,6 +40,7 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
     <>
       {type === "number" ? (
         <MantineNumberInput
+          autoComplete={false}
           id={component.id}
           icon={iconName ? <Icon name={iconName} /> : null}
           styles={{ root: { display: "block !important" } }}

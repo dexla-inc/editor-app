@@ -15,7 +15,7 @@ export const LogicFlowButton = ({ projectId, pageId }: Props) => {
         href={`/projects/${projectId}/editor/${pageId}/flows`}
         variant="default"
       >
-        <Icon name="IconLogicBuffer" />
+        <Icon name="IconGitBranch" />
       </ActionIcon>
     </Tooltip>
   );

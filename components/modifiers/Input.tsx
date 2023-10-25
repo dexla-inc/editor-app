@@ -154,11 +154,8 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           selectedIcon={form.values.icon.props.name}
           onIconSelect={(iconName: string) => {
             const icon = { props: { name: iconName } };
-            form.setFieldValue("icon", icon);
-            debouncedTreeComponentPropsUpdate("style", {
-              ...selectedComponent?.props?.style,
-              icon,
-            });
+            form.setFieldValue("icon.props.name", iconName);
+            debouncedTreeComponentPropsUpdate("icon", icon);
           }}
         />
       </Stack>

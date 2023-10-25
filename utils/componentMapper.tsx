@@ -750,7 +750,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Avatar component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["avatar", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

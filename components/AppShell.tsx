@@ -7,7 +7,6 @@ import {
   NAVBAR_WIDTH,
 } from "@/utils/config";
 import {
-  ActionIcon,
   AppShell,
   AppShellProps,
   Box,
@@ -31,20 +30,14 @@ import { LogicFlowButton } from "@/components/logic-flow/LogicFlowButton";
 import { VariablesButton } from "@/components/variables/VariablesButton";
 import { getPageList } from "@/requests/pages/queries";
 import { PageListResponse } from "@/requests/pages/types";
-import { useEditorStore, useTemporalStore } from "@/stores/editor";
-import { IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
+import { useEditorStore } from "@/stores/editor";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const { resetTree, isPreviewMode, setPreviewMode, language, setLanguage } =
     useEditorStore((state) => state);
-  const { undo, redo, pastStates, futureStates } = useTemporalStore(
-    (state) => state,
-  );
-  const [test, setTest] = useState(false);
 
   const router = useRouter();
   const projectId = router.query.id as string;
@@ -99,28 +92,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               <GenerateAIButton projectId={projectId} />
               <LogicFlowButton projectId={projectId} pageId={currentPageId} />
               <VariablesButton projectId={projectId} pageId={currentPageId} />
-              <Button.Group>
-                <Tooltip label="Undo" fz="xs">
-                  <ActionIcon
-                    variant="default"
-                    onClick={() => undo()}
-                    disabled={pastStates.length < 2}
-                    radius={"4px 0px 0px 4px"}
-                  >
-                    <IconArrowBackUp size={ICON_SIZE} />
-                  </ActionIcon>
-                </Tooltip>
-                <Tooltip label="Redo" fz="xs">
-                  <ActionIcon
-                    variant="default"
-                    onClick={() => redo()}
-                    disabled={futureStates.length === 0}
-                    radius={"0px 4px 4px 0px"}
-                  >
-                    <IconArrowForwardUp size={ICON_SIZE} />
-                  </ActionIcon>
-                </Tooltip>
-              </Button.Group>
+
               <ChangeHistoryPopover />
               <EditorPreviewModeToggle
                 isPreviewMode={isPreviewMode}

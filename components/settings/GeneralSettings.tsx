@@ -100,7 +100,6 @@ export default function GeneralSettings({ projectId }: Props) {
           <RegionSelect
             value={selectedRegion}
             onChange={(value: RegionTypes) => {
-              console.log(value);
               form.setFieldValue("region", value);
               setSelectedRegion(value);
             }}

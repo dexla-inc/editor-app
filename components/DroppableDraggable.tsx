@@ -27,7 +27,7 @@ import {
   IconArrowUp,
   IconBoxMargin,
   IconGripVertical,
-  IconNewSection,
+  IconPlus,
 } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import merge from "lodash.merge";
@@ -49,10 +49,6 @@ type Props = {
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
 // Whitelist certain props that can be passed down
 const styleWhitelist = [
-  "borderTopLeftRadius",
-  "borderTopRightRadius",
-  "borderBottomLeftRadius",
-  "borderBottomRightRadius",
   "position",
   "top",
   "left",
@@ -351,8 +347,8 @@ export const DroppableDraggable = ({
         isSelected && (
           <Box
             pos="absolute"
-            h={36}
-            top={-36}
+            h={24}
+            top={-24}
             sx={{
               zIndex: 90,
               background: theme.colors.teal[6],
@@ -360,15 +356,7 @@ export const DroppableDraggable = ({
               borderTopRightRadius: theme.radius.sm,
             }}
           >
-            <Group
-              py={4}
-              px={8}
-              h={36}
-              w={250}
-              noWrap
-              spacing="xs"
-              align="center"
-            >
+            <Group px={4} h={24} noWrap spacing={2} align="center">
               {!component.fixedPosition && (
                 <UnstyledButton
                   sx={{ cursor: "move", alignItems: "center", display: "flex" }}
@@ -381,11 +369,14 @@ export const DroppableDraggable = ({
                   />
                 </UnstyledButton>
               )}
-              <Text color="white" size="xs" pr={haveNonRootParent ? 0 : "xs"}>
-                {component.description}
+              <Text color="white" size="xs" pr={haveNonRootParent ? 8 : "xs"}>
+                {(component.description || "").length > 20
+                  ? `${component.description?.substring(0, 20)}...`
+                  : component.description}
               </Text>
               {haveNonRootParent && (
                 <ActionIcon
+                  size="xs"
                   variant="transparent"
                   onClick={(e) => {
                     e.preventDefault();
@@ -401,6 +392,7 @@ export const DroppableDraggable = ({
                 </ActionIcon>
               )}
               <ActionIcon
+                size="xs"
                 variant="transparent"
                 onClick={(e) => {
                   e.preventDefault();
@@ -408,13 +400,10 @@ export const DroppableDraggable = ({
                   customComponentModal?.open();
                 }}
               >
-                <IconNewSection
-                  size={ICON_SIZE}
-                  color="white"
-                  strokeWidth={1.5}
-                />
+                <IconPlus size={ICON_SIZE} color="white" strokeWidth={1.5} />
               </ActionIcon>
               <ActionIcon
+                size="xs"
                 variant="transparent"
                 onClick={() => {
                   const container = structureMapper["Container"].structure({

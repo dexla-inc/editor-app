@@ -2,6 +2,7 @@ import { SidebarSection } from "@/components/SidebarSection";
 import { ActionsFlow } from "@/components/actions/ActionsFlow";
 import * as AccordionModifier from "@/components/modifiers/Accordion";
 import * as AccordionItemModifier from "@/components/modifiers/AccordionItem";
+import * as AvatarModifier from "@/components/modifiers/Avatar";
 import * as BackgroundModifier from "@/components/modifiers/Background";
 import * as BorderModifier from "@/components/modifiers/Border";
 import * as BoxShadowModifier from "@/components/modifiers/BoxShadow";
@@ -87,6 +88,7 @@ const sectionMapper: SectionsMapper = {
   accordionItem: AccordionItemModifier,
   switch: SwitchModifier,
   accordion: AccordionModifier,
+  avatar: AvatarModifier,
 };
 
 type Tab = "design" | "actions";
