@@ -318,7 +318,7 @@ export const getTileData = (treeRoot: Component): { [key: string]: any } => {
     (node) => {
       if (node.description?.startsWith("tile.data.")) {
         let type = "string";
-        if (node.description.endsWith("Chart")) {
+        if (node.name.endsWith("Chart")) {
           type = `{
             data: {
               series: { name: string; data: number[] }[]
@@ -326,6 +326,15 @@ export const getTileData = (treeRoot: Component): { [key: string]: any } => {
             }
           }`;
         }
+
+        if (node.name === "Table") {
+          type = `{
+            data: {
+              value: { [key: string]: any }[]
+            }
+          }`;
+        }
+
         data = {
           ...data,
           [node.description.replace("tile.data.", "")]: type,

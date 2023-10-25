@@ -70,8 +70,10 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
     }
   } else {
     data = exampleData.value ?? exampleData;
-    const path = dataPath.replaceAll("[0]", "");
-    data = get(data, path, data);
+    if (dataPath) {
+      const path = dataPath.replaceAll("[0]", "");
+      data = get(data, path, data);
+    }
   }
 
   const dataSample = ((data as any) ?? [])?.[0];
