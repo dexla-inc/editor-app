@@ -11,6 +11,7 @@ type PieChart = {
   name: "PieChart";
   props: { series: number[]; options: { labels: string[] } };
 };
+type RadialChart = { name: "RadialChart" } & Omit<PieChart, "name">;
 type RadarChart = { name: "RadarChart"; props: ChartProps & XAxisProps };
 type BarChart = { name: "BarChart"; props: ChartProps & XAxisProps };
 type LineChart = { name: "LineChart"; props: ChartProps & XAxisProps };
@@ -53,7 +54,13 @@ type Form = {
   )[];
 };
 
-type Chart = PieChart | RadarChart | BarChart | LineChart | AreaChart;
+type Chart =
+  | PieChart
+  | RadarChart
+  | BarChart
+  | LineChart
+  | AreaChart
+  | RadialChart;
 
 type Card = {
   type: "Chart" | "Form" | "Table";
@@ -145,7 +152,7 @@ export const template = (data: Data, theme: any, pages: any) => {
     let tableData = {};
     if (isTable && (card.component as any)?.props?.data?.length > 0) {
       const headers = Object.keys(
-        (card.component as any)?.props?.data[0]
+        (card.component as any)?.props?.data[0],
       ).reduce((acc, key) => {
         return {
           ...acc,

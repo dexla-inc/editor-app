@@ -84,10 +84,12 @@ import * as BarChartStructure from "@/components/mapper/structure/charts/BarChar
 import * as LineChartStructure from "@/components/mapper/structure/charts/LineChart";
 import * as PieChartStructure from "@/components/mapper/structure/charts/PieChart";
 import * as RadarChartStructure from "@/components/mapper/structure/charts/RadarChart";
+import * as RadialChartStructure from "@/components/mapper/structure/charts/RadialChart";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 
 import { FileButton } from "@/components/mapper/FileButton";
+import { RadialChart } from "@/components/mapper/charts/RadialChart";
 import { uploadFile } from "@/requests/storage/mutations";
 import { useEditorStore } from "@/stores/editor";
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
@@ -100,6 +102,7 @@ import {
   IconCalendar,
   IconChartAreaLine,
   IconChartBar,
+  IconChartDonut,
   IconChartLine,
   IconChartPie,
   IconChartRadar,
@@ -676,6 +679,17 @@ export const structureMapper: StructureMapper = {
     category: "Chart",
     icon: <IconChartRadar size={ICON_SIZE} />,
   },
+  RadialChart: {
+    structure: (props: any) => RadialChartStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="RadialChart"
+        icon={<IconChartDonut size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Chart",
+    icon: <IconChartDonut size={ICON_SIZE} />,
+  },
   Alert: {
     structure: (props: any) => AlertStructure.jsonStructure(props),
     Draggable: () => (
@@ -1204,6 +1218,14 @@ export const componentMapper: ComponentMapper = {
   RadarChart: {
     Component: (props: { component: Component; renderTree: any }) => (
       <RadarChart component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size", "border"],
+    actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  RadialChart: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <RadialChart component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount"],
