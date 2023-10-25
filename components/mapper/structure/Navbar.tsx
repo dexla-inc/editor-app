@@ -3,8 +3,8 @@ import { defaultImageValues } from "@/components/modifiers/Image";
 import { PageResponse } from "@/requests/pages/types";
 import { MantineThemeExtended } from "@/stores/editor";
 import { Component } from "@/utils/editor";
-import { nanoid } from "nanoid";
 import merge from "lodash.merge";
+import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = (props.theme ?? defaultTheme) as MantineThemeExtended;
@@ -37,17 +37,15 @@ export const jsonStructure = (props?: any): Component => {
       ...merge({
         style: {
           width: "260px",
-          height: "auto",
-          minHeight: "100vh",
-          borderRightWidth: "1px",
-          borderRightStyle: "solid",
-          borderRightColor: "#CCCCCC",
+          height: "100vh",
+          // borderRightWidth: "1px",
+          // borderRightStyle: "solid",
+          // borderRightColor: "#CCCCCC",
           display: "flex",
           flexDirection: "column",
+          flexWrap: "nowrap",
           flexGrow: "1",
           gap: "0px",
-          top: 0,
-          left: 0,
           backgroundColor: isDarkTheme ? theme.colors.dark[6] : "#fff",
         },
         ...props.props,
@@ -130,58 +128,180 @@ export const jsonStructure = (props?: any): Component => {
       {
         id: nanoid(),
         name: "Container",
-        description: "Container for navigation links",
+        description: "Container for Pages and Avatar",
         props: {
           style: {
             display: "flex",
             flexDirection: "column",
-            flexGrow: "1",
-            height: "auto",
-            minHeight: "100vh",
+            justifyContent: "space-between",
+            flexGrow: 1,
+            height: "100%",
+            // minHeight: "100vh",
             paddingTop: "20px",
             paddingBottom: "20px",
             paddingLeft: "10px",
             paddingRight: "10px",
           },
         },
-        children: pages
-          .filter((page: PageResponse) => page.hasNavigation)
-          .map((page: PageResponse) => {
-            return {
-              id: nanoid(),
-              name: "NavLink",
-              description: "Navbar Item",
-              props: {
-                icon: "IconHome",
-                label: page.title,
-                isNested: !!page.parentPageId,
-                pageId: page.id,
-                style: {
-                  width: "100%",
-                  height: "auto",
-                  display: "flex",
-                  alignItems: "center",
-                  paddingTop: "10px",
-                  paddingBottom: "10px",
-                  color: isDarkTheme
-                    ? theme.colors.gray[5]
-                    : theme.colors.dark[9],
-                  borderRadius: "3px",
-                },
+        children: [
+          {
+            id: nanoid(),
+            name: "Container",
+            description: "Container for navigation links",
+            props: {
+              style: {
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: "1",
+                height: "auto",
               },
-              actions: [
-                {
+            },
+            children: pages
+              .filter((page: PageResponse) => page.hasNavigation)
+              .map((page: PageResponse) => {
+                return {
                   id: nanoid(),
-                  trigger: "onClick",
-                  action: {
-                    name: "navigateToPage",
+                  name: "NavLink",
+                  description: "Navbar Item",
+                  props: {
+                    label: page.title,
+                    isNested: !!page.parentPageId,
                     pageId: page.id,
+                    style: {
+                      width: "100%",
+                      height: "auto",
+                      display: "flex",
+                      alignItems: "center",
+                      paddingTop: "10px",
+                      paddingBottom: "10px",
+                      color: isDarkTheme
+                        ? theme.colors.gray[5]
+                        : theme.colors.dark[9],
+                      borderRadius: "3px",
+                    },
+                  },
+                  actions: [
+                    {
+                      id: nanoid(),
+                      trigger: "onClick",
+                      action: {
+                        name: "navigateToPage",
+                        pageId: page.id,
+                      },
+                    },
+                  ],
+                  children: [],
+                  states: {
+                    Active: {
+                      bg: "transparent",
+                      color: "Primary.6",
+                    },
+                    hover: {
+                      bg: "transparent",
+                      color: "Primary.4",
+                    },
+                  },
+                };
+              }),
+          },
+          {
+            id: nanoid(),
+            name: "Container",
+            description: "Footer",
+            props: {
+              style: { display: "flex", flexDirection: "column", gap: "10px" },
+            },
+            children: [
+              {
+                id: nanoid(),
+                name: "NavLink",
+                description: "Navbar Item",
+                props: {
+                  label: "Documentation",
+                  isNested: false,
+                  style: {
+                    width: "100%",
+                    height: "auto",
+                    display: "flex",
+                    alignItems: "center",
+                    paddingTop: "10px",
+                    paddingBottom: "10px",
+                    color: isDarkTheme
+                      ? theme.colors.gray[5]
+                      : theme.colors.dark[9],
+                    borderRadius: "3px",
                   },
                 },
-              ],
-              children: [],
-            };
-          }),
+                actions: [
+                  {
+                    id: nanoid(),
+                    trigger: "onClick",
+                    action: {
+                      name: "goToUrl",
+                      url: "",
+                      openInNewTab: true,
+                    },
+                  },
+                ],
+                children: [],
+                states: {
+                  Active: {
+                    bg: "transparent",
+                    color: "Primary.6",
+                  },
+                  hover: {
+                    bg: "transparent",
+                    color: "Primary.4",
+                  },
+                },
+              },
+              {
+                id: nanoid(),
+                name: "Container",
+                description: "Container for Avatar",
+                props: {
+                  style: {
+                    display: "flex",
+                    gap: "10px",
+                    alignItems: "center",
+                    cursor: "pointer",
+                  },
+                },
+                children: [
+                  {
+                    id: nanoid(),
+                    name: "Avatar",
+                    description: "Avatar",
+                    props: {
+                      radius: "xl",
+                      children: "JD",
+                    },
+                    children: [],
+                    actions: [],
+                    blockDroppingChildrenInside: true,
+                  },
+                  {
+                    id: nanoid(),
+                    name: "Text",
+                    description: "Name",
+                    props: {
+                      children: "John Doe",
+                      color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                      size: "md",
+                      weight: "bold",
+                      style: {
+                        lineHeight: "110%",
+                        letterSpacing: "0px",
+                        width: "auto",
+                        height: "auto",
+                      },
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
     ],
   };
