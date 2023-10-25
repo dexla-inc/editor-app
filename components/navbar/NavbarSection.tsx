@@ -171,7 +171,7 @@ export const NavbarSection = ({
         </Stack>
         {activeTab && <Portal target="#navbar-sections">{itemTab}</Portal>}
       </Group>
-      {pinTab && pinnedItem && (
+      {!activeTab && pinTab && pinnedItem && (
         <Stack
           sx={{
             overflowX: "hidden",

@@ -45,6 +45,7 @@ const ListItem = ({ component, children }: ListItemProps) => {
   const isStructureCollapsed = useEditorStore(
     (state) => state.isStructureCollapsed,
   );
+  const activeTab = useEditorStore((state) => state.activeTab);
 
   const [opened, { toggle, open, close }] = useDisclosure(
     isStructureCollapsed ? false : true,
@@ -101,7 +102,10 @@ const ListItem = ({ component, children }: ListItemProps) => {
 
   useEffect(() => {
     setClickedManualToggle(false);
-  }, [selectedComponentId]);
+    if (component.id === selectedComponentId)
+      ref.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponentId, activeTab]);
   useEffect(onDragEnter, [onDragEnter]);
   useEffect(() => {
     if (editable) {
