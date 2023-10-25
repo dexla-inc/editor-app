@@ -63,8 +63,6 @@ export default function PagesStep({
   projectId,
   pages,
   setPages,
-  initialPageFetchDone,
-  setInitialPageFetchDone,
   hasPagesCreated,
   setHasPagesCreated,
   setHomePageId,
@@ -81,64 +79,11 @@ export default function PagesStep({
     setPages((oldPages) => [...oldPages, { name: "", description: "" }]);
   };
 
-  //const type = "PAGE" as const;
-  //const [stream, setStream] = useState<string>("");
   const isLoading = useAppStore((state) => state.isLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const startLoading = useAppStore((state) => state.startLoading);
 
-  /* const { onMessage, onError, onOpen, onClose } = createHandlers({
-    setStream,
-    stopLoading,
-    setIsLoading,
-  });
-
-  const onCloseOverride = async () => {
-    await onClose();
-    setInitialPageFetchDone(true);
-  }; */
-
-  /* const fetchPageData = async (pageCount: number) => {
-    setIsLoading(true);
-
-    return await handleRequestGetStream(
-      projectId,
-      pageCount,
-      type,
-      startLoading,
-      onMessage,
-      onError,
-      onOpen,
-      onCloseOverride,
-      pages.join(),
-    );
-  }; */
-
-  /* const handlePageNamesGeneration = () => {
-    return function (json: any) {
-      const newPages = Object.values(json) as string[];
-      if (!initialPageFetchDone) setPages(newPages);
-      else setPages((oldPages) => [...oldPages, ...newPages]);
-    };
-  }; */
-  // if first time and pages.length is less than 5 then set pages
-
-  /* useEffect(() => {
-    processTOMLStream({
-      stream,
-      handler: handlePageNamesGeneration(),
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stream, type]);
-
-  // Ensure stream pages only happens once
-  useEffect(() => {
-    if (!initialPageFetchDone) {
-      fetchPageData(5);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); */
   useEffect(() => {
     const handlePageNamesGeneration = async () => {
       startLoading({
@@ -335,7 +280,9 @@ export default function PagesStep({
           <Button
             variant="light"
             leftIcon={<IconSparkles size={ICON_SIZE} />}
-            //onClick={() => stream(5)}
+            onClick={() => {
+              // TODO: Generate page names
+            }}
             loading={isLoading}
             disabled={isLoading || hasPageNames}
           >
@@ -347,7 +294,7 @@ export default function PagesStep({
               variant="light"
               leftIcon={<IconPlus size={ICON_SIZE} />}
               onClick={() => {
-                // fetchPageData(1);
+                // TODO: Generate new page
               }}
               loading={isLoading}
               disabled={hasPagesCreated}
