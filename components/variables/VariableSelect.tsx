@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 
 type Props = Omit<SelectProps, "data"> & {
   onPick?: (variable: VariableResponse) => void;
+  required?: boolean;
 };
 
 export const VariableSelect = ({ onPick, ...props }: Props) => {

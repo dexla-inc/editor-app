@@ -28,19 +28,26 @@ export type BindingTab = "components" | "variables" | "datasources" | "browser";
 
 type Props = {
   bindingTab?: BindingTab;
-  bindingType?: BindingType;
+  bindingType: any;
   opened: boolean;
+  onTogglePopover: any;
+  onChangeBindingType: any;
+  onChangeJavascriptCode: any;
+  javascriptCode: string;
 };
 
 export default function BindingPopover({
   bindingTab,
   bindingType,
   opened,
+  onTogglePopover,
+  onChangeBindingType,
+  onChangeJavascriptCode,
+  javascriptCode,
 }: Props) {
-  const [formulaLabel, setFormulaLabel] = useState("Formula");
-  const [formulaEntry, setFormulaEntry] = useState<string>("return ");
+  const [formulaEntry, setFormulaEntry] = useState<string>();
   const [currentValue, setCurrentValue] = useState<string>();
-  const [calculatedValue, setCalculatedValue] = useState<string>();
+  const [newValue, setNewValue] = useState<string>();
   const [tab, setTab] = useState<BindingTab>(bindingTab ?? "components");
   const theme = useMantineTheme();
 
@@ -54,10 +61,11 @@ export default function BindingPopover({
       listVariables(projectId, { pageId }).then(({ results }) => {
         return results.reduce(
           (acc, variable) => {
-            acc[variable.id] = variable;
+            acc.list[variable.id] = variable;
+            acc[variable.id] = variable.value ?? variable.defaultValue;
             return acc;
           },
-          {} as Record<string, any>,
+          { list: {} } as Record<string, any>,
         );
       }),
     enabled: !!projectId && !!pageId,
@@ -65,11 +73,11 @@ export default function BindingPopover({
 
   useEffect(() => {
     try {
-      if (currentValue === "return variables") {
-        setCalculatedValue("undefined");
+      if (javascriptCode === "return variables") {
+        setNewValue("undefined");
       }
       let newValue = eval(
-        `function autoRunJavascriptCode() { ${currentValue}}; autoRunJavascriptCode()`,
+        `function autoRunJavascriptCode() { ${javascriptCode}}; autoRunJavascriptCode()`,
       );
       if (typeof newValue === "object" || Array.isArray(newValue)) {
         try {
@@ -77,16 +85,23 @@ export default function BindingPopover({
         } catch {}
       }
 
-      setCalculatedValue(newValue);
+      setNewValue(newValue);
     } catch {
-      setCalculatedValue("undefined");
+      setNewValue("undefined");
     }
-  }, [currentValue]);
+  }, [javascriptCode, variables]);
 
   return (
-    <Popover opened={opened} withinPortal position="left-end">
+    <Popover
+      opened={opened}
+      withinPortal
+      position="left-end"
+      arrowPosition="center"
+    >
       <Popover.Target>
-        <Button size="xs">Test</Button>
+        <Button size="xs" onClick={onTogglePopover}>
+          Binder
+        </Button>
       </Popover.Target>
       <Popover.Dropdown>
         <Stack
@@ -102,8 +117,8 @@ export default function BindingPopover({
           <Title order={5}>Binder</Title>
           <Flex justify="space-between" align="center">
             <SegmentedControl
-              value={formulaLabel}
-              onChange={setFormulaLabel}
+              value={bindingType}
+              onChange={onChangeBindingType}
               data={[
                 {
                   value: "Formula",
@@ -131,9 +146,9 @@ export default function BindingPopover({
           </Flex>{" "}
           <Box>
             <Text size="sm" fw={500} pb={2}>
-              {formulaLabel}
+              {bindingType}
             </Text>
-            {formulaLabel === "Formula" ? (
+            {bindingType === "Formula" ? (
               <Textarea
                 value={formulaEntry}
                 onChange={(event) => setFormulaEntry(event.currentTarget.value)}
@@ -141,15 +156,15 @@ export default function BindingPopover({
             ) : (
               <CustomJavaScriptTextArea
                 language="typescript"
-                value={formulaEntry}
-                variables={variables}
-                onChange={setCurrentValue}
+                value={javascriptCode}
+                variables={variables?.list}
+                onChange={onChangeJavascriptCode}
               />
             )}
           </Box>
           <TextInput
             label="Current Value"
-            value={calculatedValue}
+            value={newValue}
             readOnly
             // onChange={(event) => setCurrentValue(event.currentTarget.value)}
             // Color does not change due to a bug which has been fixed in v7
