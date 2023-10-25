@@ -38,7 +38,7 @@ export function CustomJavaScriptTextArea({
       height="150px"
       defaultLanguage={defaultLanguage ?? "javascript"}
       onChange={onChange}
-      value={value}
+      value={value ?? "return "}
       options={{
         automaticLayout: true,
         minimap: { enabled: false },
