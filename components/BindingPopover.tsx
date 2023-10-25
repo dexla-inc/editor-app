@@ -26,8 +26,6 @@ const ML = 10;
 export type BindingType = "formula" | "js";
 export type BindingTab = "components" | "variables" | "datasources" | "browser";
 
-type FormulaLabel = "Formula" | "JavaScript";
-
 type Props = {
   bindingTab?: BindingTab;
   bindingType?: BindingType;
@@ -40,7 +38,7 @@ export default function BindingPopover({
   opened,
 }: Props) {
   const [formulaLabel, setFormulaLabel] = useState("Formula");
-  const [formulaEntry, setFormulaEntry] = useState<string>();
+  const [formulaEntry, setFormulaEntry] = useState<string>("return ");
   const [currentValue, setCurrentValue] = useState<string>();
   const [calculatedValue, setCalculatedValue] = useState<string>();
   const [tab, setTab] = useState<BindingTab>(bindingTab ?? "components");
