@@ -13,6 +13,13 @@ const nextConfig = {
 
     return config;
   },
+  images: {
+    domains: [
+      "lh3.googleusercontent.com",
+      "img.propelauth.com",
+      "avatars.githubusercontent.com",
+    ],
+  },
 };
 
 module.exports = nextConfig;

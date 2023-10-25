@@ -1,7 +1,6 @@
 import { DashboardShell } from "@/components/DashboardShell";
 import IconTitleDescriptionButton from "@/components/projects/NewProjectButton";
 import { ProjectItem } from "@/components/projects/ProjectItem";
-import TeamInvitations from "@/components/settings/TeamInvitations";
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
 import { ProjectResponse, getProjects } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
@@ -117,7 +116,7 @@ export default function Projects() {
               }}
             />
           )}
-          <TeamInvitations />
+          {/* <TeamInvitations /> */}
           {ownedProjects.length > 0 && (
             <>
               {ownedProjects.length > 0 && sharedProjects.length > 0 && (

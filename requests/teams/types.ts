@@ -11,6 +11,17 @@ export type TeamResponse = {
   status: TeamStatus;
 };
 
+export type UserResponse = {
+  email: string;
+  firstName: string;
+  lastName: string;
+  pictureUrl: string;
+  createdAt: number;
+  lastCreatedAt: number;
+  emailConfirmed: boolean;
+  enabled: boolean;
+};
+
 export type TeamListResponse = {
   results: TeamResponse[];
 };

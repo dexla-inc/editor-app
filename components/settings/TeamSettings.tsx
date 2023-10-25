@@ -1,15 +1,10 @@
-import { WarningAlert } from "@/components/Alerts";
 import { Icon } from "@/components/Icon";
 import { inviteTeam } from "@/requests/teams/mutations";
-import { acceptInvite, getTeamsList } from "@/requests/teams/queries";
-import {
-  AcceptInviteParams,
-  InviteTeamParams,
-  TeamResponse,
-} from "@/requests/teams/types";
+import { getTeamsList } from "@/requests/teams/queries";
+import { InviteTeamParams, UserResponse } from "@/requests/teams/types";
 import { useAppStore } from "@/stores/app";
-import { ICON_SIZE } from "@/utils/config";
-import { TeamStatus, UserRoles } from "@/utils/dashboardTypes";
+import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
+import { UserRoles } from "@/utils/dashboardTypes";
 import {
   Button,
   Container,
@@ -18,9 +13,11 @@ import {
   Select,
   Stack,
   Table,
-  Text,
+  TextInput,
   Title,
 } from "@mantine/core";
+import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -28,10 +25,7 @@ type Props = {
 };
 
 export default function TeamSettings({ projectId }: Props) {
-  const [teamList, setTeamList] = useState<TeamResponse[]>([]);
-  const [pendingInviteList, setPendingInviteList] = useState<TeamResponse[]>(
-    [],
-  );
+  const [teamList, setTeamList] = useState<UserResponse[]>([]);
   const [email, setEmail] = useState<string>("");
   const [userRole, setUserRole] = useState<UserRoles>("MEMBER");
   const [isLoading, setIsLoading] = useState(false);
@@ -45,13 +39,9 @@ export default function TeamSettings({ projectId }: Props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [teamResponse, invitedResponse] = await Promise.all([
-          getTeamsList(),
-          getTeamsList({ status: "INVITED" }),
-        ]);
+        const users = await getTeamsList();
 
-        setTeamList(teamResponse.results);
-        setPendingInviteList(invitedResponse.results);
+        setTeamList(users.results);
       } catch (error) {
         console.error(error);
       }
@@ -72,8 +62,9 @@ export default function TeamSettings({ projectId }: Props) {
         accessLevel: userRole,
         projectId: projectId,
       };
-      const response = await inviteTeam(params);
-      setTeamList([...teamList, response]);
+
+      await inviteTeam(params);
+
       closeInviteModal();
       stopLoading({
         id: "inviting-user",
@@ -92,61 +83,16 @@ export default function TeamSettings({ projectId }: Props) {
     }
   };
 
-  const handleAcceptOrRejectInvite = async (
-    id: string,
-    status: Extract<TeamStatus, "ACCEPTED" | "REJECTED">,
-  ) => {
-    const params: AcceptInviteParams = { id, status };
-    const response = await acceptInvite(params);
-
-    const updatedTeamList = teamList.filter(
-      (team) => team.usersName !== response.usersName,
-    );
-    setTeamList([...updatedTeamList, response]);
-    setPendingInviteList([]);
-  };
-
   return (
     <Container py="xl">
       <Stack spacing="xl">
-        {pendingInviteList.length > 0 && (
-          <>
-            <Title order={3}>Pending Invitations</Title>
-            {pendingInviteList.map((invitation, index) => (
-              <WarningAlert title="Pending Invitations" isHtml key={index}>
-                <Stack>
-                  <Text>
-                    You have a pending invitation for this project. Click accept
-                    to edit with your team.
-                  </Text>
-                  <Flex gap="md">
-                    <Button
-                      onClick={() =>
-                        handleAcceptOrRejectInvite(invitation.id, "ACCEPTED")
-                      }
-                    >
-                      Accept
-                    </Button>
-                    <Button
-                      onClick={() =>
-                        handleAcceptOrRejectInvite(invitation.id, "REJECTED")
-                      }
-                      color="red"
-                    >
-                      Reject
-                    </Button>
-                  </Flex>
-                </Stack>
-              </WarningAlert>
-            ))}
-          </>
-        )}
-
         <Flex justify="space-between">
           <Title order={2}>Team Settings</Title>
           <Button
             onClick={openInviteModal}
             leftIcon={<Icon name="IconPlus" size={ICON_SIZE}></Icon>}
+            color="indigo"
+            compact
           >
             Invite User
           </Button>
@@ -154,19 +100,59 @@ export default function TeamSettings({ projectId }: Props) {
         <Table>
           <thead>
             <tr>
-              <th>User Name</th>
+              <th style={{ width: LARGE_ICON_SIZE }}></th>
+              <th>Name</th>
               <th>Email</th>
-              <th>Access Level</th>
-              <th>Status</th>
+              <th>Email Confirmed</th>
+              <th>Enabled</th>
+              <th>Created At</th>
             </tr>
           </thead>
           <tbody>
-            {teamList.map((team, index) => (
+            {teamList.map((user, index) => (
               <tr key={index}>
-                <td>{team.usersName}</td>
-                <td>{team.email}</td>
-                <td>{team.accessLevel}</td>
-                <td>{team.status}</td>
+                <td>
+                  <Image
+                    src={user.pictureUrl}
+                    alt={user.firstName + " photo"}
+                    width={LARGE_ICON_SIZE}
+                    height={LARGE_ICON_SIZE}
+                    style={{
+                      borderRadius: "50%",
+                    }}
+                  />
+                </td>
+                <td>{user.firstName + " " + user.lastName}</td>
+                <td>{user.email}</td>
+                <td>
+                  {user.emailConfirmed ? (
+                    <IconCircleCheck
+                      name="IconCircleCheck"
+                      size={LARGE_ICON_SIZE}
+                      style={{ color: "green" }}
+                    />
+                  ) : (
+                    <IconCircleX
+                      name="IconCircleX"
+                      size={LARGE_ICON_SIZE}
+                      style={{ color: "red" }}
+                    />
+                  )}
+                </td>
+                <td>
+                  {user.enabled ? (
+                    <IconCircleCheck
+                      size={LARGE_ICON_SIZE}
+                      style={{ color: "green" }}
+                    />
+                  ) : (
+                    <IconCircleX
+                      size={LARGE_ICON_SIZE}
+                      style={{ color: "red" }}
+                    />
+                  )}
+                </td>
+                <td>{new Date(user.createdAt * 1000).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>
@@ -178,44 +164,26 @@ export default function TeamSettings({ projectId }: Props) {
         title="Invite User"
       >
         <Stack mb={80}>
-          <Select
+          <TextInput
             label="Email"
             placeholder="Enter email address"
-            data={[
-              {
-                value: "reinaldo@dexla.ai",
-                label: "reinaldo@dexla.ai",
-              },
-              {
-                value: "marcelo@dexla.ai",
-                label: "marcelo@dexla.ai",
-              },
-              {
-                value: "tom@dexla.ai",
-                label: "tom@dexla.ai",
-              },
-              {
-                value: "williams@dexla.ai",
-                label: "williams@dexla.ai",
-              },
-              {
-                value: "jade@dexla.ai",
-                label: "jade@dexla.ai",
-              },
-            ]}
             value={email}
-            onChange={(value: string) => setEmail(value)}
-          />
+            onChange={(event) => setEmail(event.currentTarget.value)}
+          ></TextInput>
           <Select
             label="Role"
             data={[
               {
-                value: "MEMBER",
-                label: "Member",
+                value: "OWNER",
+                label: "Owner",
               },
               {
                 value: "ADMIN",
                 label: "Admin",
+              },
+              {
+                value: "MEMBER",
+                label: "Member",
               },
               {
                 value: "GUEST",
@@ -230,6 +198,7 @@ export default function TeamSettings({ projectId }: Props) {
             onClick={handleInvite}
             loading={isLoading}
             disabled={isLoading || email === ""}
+            compact
           >
             Invite User
           </Button>
