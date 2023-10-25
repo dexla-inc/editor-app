@@ -250,7 +250,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
         const template = await templateResponse.json();
 
         // TODO: Replace tiles from template state with tiles from aiPageTemplate
-        console.log({ aiPageTemplate, template });
+        const aiTiles = aiPageTemplate.template.tiles;
+        console.log({ aiPageTemplate, template, aiTiles });
 
         setEditorTree(template.state);
         stopLoading({

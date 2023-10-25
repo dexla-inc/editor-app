@@ -68,7 +68,6 @@ export default function ProjectStep({
       form.validate();
 
       let project = await createEntitiesAndProject(values);
-      console.log({ project });
 
       if (!project || !project.id) throw new Error("Project not created");
 
@@ -76,25 +75,25 @@ export default function ProjectStep({
 
       projectId = project.id;
 
-      const storedScreenshots = (await uploadFile(
-        projectId,
-        screenshots,
-        true,
-      )) as UploadMultipleResponse;
+      if (screenshots.length > 0) {
+        const storedScreenshots = (await uploadFile(
+          projectId,
+          screenshots,
+          true,
+        )) as UploadMultipleResponse;
 
-      const urls = storedScreenshots.files.map((file) => file.url);
+        const urls = storedScreenshots.files.map((file) => file.url);
 
-      const patchParams = [
-        {
-          op: "replace",
-          path: "/screenshots",
-          value: urls,
-        },
-      ] as PatchParams[];
+        const patchParams = [
+          {
+            op: "replace",
+            path: "/screenshots",
+            value: urls,
+          },
+        ] as PatchParams[];
 
-      project = await patchProject(projectId, patchParams);
-
-      console.log("AGAIN", { project });
+        project = await patchProject(projectId, patchParams);
+      }
 
       stopLoading({
         id: "creating-project",

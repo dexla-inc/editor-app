@@ -30,8 +30,6 @@ export default async function handler(
       },
     );
 
-    console.log({ projectResponse });
-
     const _project = await projectResponse.json();
 
     const response = await openai.chat.completions.create({
