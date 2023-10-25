@@ -50,8 +50,6 @@ export interface PagesStepProps
   setPages: (
     value: SetStateAction<{ name: string; description: string }[]>,
   ) => void;
-  initialPageFetchDone: boolean;
-  setInitialPageFetchDone: (value: SetStateAction<boolean>) => void;
   hasPagesCreated: boolean;
   setHasPagesCreated: (value: boolean) => void;
   setHomePageId: (value: string) => void;

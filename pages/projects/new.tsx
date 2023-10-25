@@ -28,7 +28,6 @@ export default function New() {
   const [pages, setPages] = useState<{ name: string; description: string }[]>(
     [],
   );
-  const [initialPageFetchDone, setInitialPageFetchDone] = useState(false);
   const [hasPagesCreated, setHasPagesCreated] = useState(false);
   const [homePageId, setHomePageId] = useState("");
   const [friendlyName, setFriendlyName] = useState("");
@@ -60,7 +59,7 @@ export default function New() {
                 setProjectId={setProjectId}
                 screenshots={screenshots}
                 setScreenshots={setScreenshots}
-              ></ProjectStep>
+              />
             </Stepper.Step>
             <Stepper.Step label="Branding" description="Personalise your app">
               <BrandingStep
@@ -75,7 +74,7 @@ export default function New() {
                 setWebsiteUrl={setWebsiteUrl}
                 themeResponse={themeResponse}
                 setThemeResponse={setThemeResponse}
-              ></BrandingStep>
+              />
             </Stepper.Step>
             <Stepper.Step label="Pages" description="Generate your page names">
               <PagesStep
@@ -84,12 +83,10 @@ export default function New() {
                 projectId={projectId}
                 pages={pages}
                 setPages={setPages}
-                initialPageFetchDone={initialPageFetchDone}
-                setInitialPageFetchDone={setInitialPageFetchDone}
                 hasPagesCreated={hasPagesCreated}
                 setHasPagesCreated={setHasPagesCreated}
                 setHomePageId={setHomePageId}
-              ></PagesStep>
+              />
             </Stepper.Step>
             <Stepper.Completed>
               <ProjectInfoStep
@@ -104,7 +101,7 @@ export default function New() {
                 setFriendlyName={setFriendlyName}
                 region={region}
                 setRegion={setRegion}
-              ></ProjectInfoStep>
+              />
             </Stepper.Completed>
           </Stepper>
         </Stack>

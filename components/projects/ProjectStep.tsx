@@ -68,6 +68,7 @@ export default function ProjectStep({
       form.validate();
 
       let project = await createEntitiesAndProject(values);
+      console.log({ project });
 
       if (!project || !project.id) throw new Error("Project not created");
 
@@ -93,6 +94,8 @@ export default function ProjectStep({
 
       project = await patchProject(projectId, patchParams);
 
+      console.log("AGAIN", { project });
+
       stopLoading({
         id: "creating-project",
         title: "Project Created",
@@ -105,6 +108,7 @@ export default function ProjectStep({
         id: "creating-project",
         title: "Project Failed",
         message: "Validation failed",
+        isError: true,
       });
       setIsLoading && setIsLoading(false);
     }

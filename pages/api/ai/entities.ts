@@ -174,7 +174,7 @@ export default async function handler(
     }, {});
 
     const projectsResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_APPS_BASE_URL}/projects`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/projects`,
       {
         method: "POST",
         headers: {

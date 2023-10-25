@@ -1,12 +1,6 @@
 import { RegionTypes } from "@/requests/projects/queries";
 import { PatchParams } from "@/requests/types";
-import {
-  del,
-  getAuthToken,
-  getBearerTokenHeaderValue,
-  patch,
-  post,
-} from "@/utils/api";
+import { del, getAuthToken, patch, post } from "@/utils/api";
 import { ProjectTypes } from "@/utils/projectTypes";
 
 export interface ProjectParams extends ProjectUpdateParams {

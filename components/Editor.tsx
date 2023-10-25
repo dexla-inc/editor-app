@@ -233,9 +233,9 @@ export const Editor = ({ projectId, pageId }: Props) => {
           message: "AI is generating your page",
         });
 
-        const pageTemplate = await getPageTemplate(projectId, pageId);
+        const aiPageTemplate = await getPageTemplate(projectId, pageId);
         const templateResponse = await fetch(
-          `/api/templates/${pageTemplate.template.name.replace(
+          `/api/templates/${aiPageTemplate.template.name.replace(
             "Template",
             "",
           )}`,
@@ -249,7 +249,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
         const template = await templateResponse.json();
 
-        console.log({ pageTemplate, template });
+        // TODO: Replace tiles from template state with tiles from aiPageTemplate
+        console.log({ aiPageTemplate, template });
 
         setEditorTree(template.state);
         stopLoading({
