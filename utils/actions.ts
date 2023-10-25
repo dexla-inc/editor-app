@@ -17,7 +17,6 @@ import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
 import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
-import { SetVariableActionForm } from "@/components/actions/SetVariableActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
 import { APICallFlowActionForm } from "@/components/actions/logic-flow-forms/APICallFlowActionForm";
@@ -43,7 +42,6 @@ import { OpenModalFlowActionForm } from "@/components/actions/logic-flow-forms/O
 import { OpenPopOverFlowActionForm } from "@/components/actions/logic-flow-forms/OpenPopOverFlowActionForm";
 import { OpenToastFlowActionForm } from "@/components/actions/logic-flow-forms/OpenToastFlowActionForm";
 import { ReloadComponentFlowActionForm } from "@/components/actions/logic-flow-forms/ReloadComponentFlowActionForm";
-import { SetVariableFlowActionForm } from "@/components/actions/logic-flow-forms/SetVariableFlowActionForm";
 import { TogglePropsFlowActionForm } from "@/components/actions/logic-flow-forms/TogglePropsFlowActionForm";
 import { ChangeVariableFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeVariableFlowActionForm";
 import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components/actions/logic-flow-forms/TriggerLogicFlowActionForm";
@@ -54,7 +52,7 @@ import {
   getDataSourceEndpoints,
 } from "@/requests/datasources/queries";
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
-import { createVariable, updateVariable } from "@/requests/variables/mutations";
+import { createVariable } from "@/requests/variables/mutations";
 import { getVariable, listVariables } from "@/requests/variables/queries";
 import { FrontEndTypes } from "@/requests/variables/types";
 import { useAuthStore } from "@/stores/auth";
@@ -120,10 +118,9 @@ export const actions: ActionInfo[] = [
   { name: "triggerLogicFlow", group: "API, Data & Logic", icon: "IconFlow" },
   { name: "reloadComponent", group: "API, Data & Logic", icon: "IconReload" },
   { name: "bindResponse", group: "Binding" },
-  { name: "bindVariable", group: "Binding" }, // Merge bindVariable, changeVariable, setVariable and bindVariableToChart
-  { name: "bindVariableToChart", group: "Binding" }, // Merge bindVariable, changeVariable, setVariable and bindVariableToChart
-  { name: "setVariable", group: "Binding" }, // Merge bindVariable, changeVariable, setVariable and bindVariableToChart
-  { name: "changeVariable", group: "Binding" }, // Merge bindVariable, changeVariable, setVariable and bindVariableToChart
+  { name: "bindVariable", group: "Binding" }, // Merge bindVariable, changeVariable and bindVariableToChart
+  { name: "bindVariableToChart", group: "Binding" }, // Merge bindVariable, changeVariable and bindVariableToChart
+  { name: "changeVariable", group: "Binding" },
   { name: "goToUrl", group: "Navigation", icon: "IconLink" },
   { name: "navigateToPage", group: "Navigation", icon: "IconFileInvoice" },
   { name: "changeStep", group: "Navigation", icon: "IconStatusChange" },
@@ -159,12 +156,6 @@ export type SequentialTrigger = Extract<
 export interface BaseAction {
   name: string;
   data?: any;
-}
-
-export interface SetVariableAction extends BaseAction {
-  name: "setVariable";
-  variable: string;
-  value?: any;
 }
 
 export interface NavigationAction extends BaseAction {
@@ -313,7 +304,6 @@ export type Action = {
   id: string;
   trigger: ActionTrigger;
   action:
-    | SetVariableAction
     | NavigationAction
     | AlertAction
     | APICallAction
@@ -422,10 +412,6 @@ export type DebugActionParams = ActionParams & {
 
 export const debugAction = ({ action }: DebugActionParams) => {
   alert(action.message);
-};
-
-export type SetVariableActionParams = ActionParams & {
-  action: SetVariableAction;
 };
 
 export type OpenModalActionParams = ActionParams & {
@@ -629,21 +615,6 @@ export const openToastAction = async ({ action }: OpenToastActionParams) => {
     title: await getVariableValueFromVariableId(action.title),
     message: await getVariableValueFromVariableId(action.message),
   });
-};
-
-export const setVariableAction = async ({
-  action,
-  event,
-}: SetVariableActionParams) => {
-  let value = action.value || event.toString();
-
-  if (value.startsWith("valueOf")) {
-    value = getElementValue(value, useEditorStore.getState().iframeWindow);
-  }
-
-  const projectId = useEditorStore.getState().currentProjectId;
-  const variable = JSON.parse(action.variable);
-  await updateVariable(projectId!, variable.id, { ...variable, value });
 };
 
 export const triggerLogicFlowAction = (
@@ -1439,11 +1410,6 @@ export const actionMapper = {
     action: debugAction,
     form: DebugActionForm,
     flowForm: DebugFlowActionForm,
-  },
-  setVariable: {
-    action: setVariableAction,
-    form: SetVariableActionForm,
-    flowForm: SetVariableFlowActionForm,
   },
   changeVariable: {
     action: changeVariableAction,
