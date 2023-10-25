@@ -41,7 +41,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure, useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 type Props = {
   projectId: string;
@@ -115,15 +115,26 @@ export const Editor = ({ projectId, pageId }: Props) => {
     selectedComponentId,
   ]);
 
+  const determinePasteTarget = (selectedId: string | undefined) => {
+    if (!selectedId) return "content-wrapper";
+    if (selectedId === "root") return "content-wrapper";
+    return selectedId as string;
+  };
+
   const pasteCopiedComponent = useCallback(() => {
-    if (copiedComponent && !isPreviewMode && selectedComponentId) {
-      const copy = cloneDeep(editorTree);
-      addComponent(copy.root, copiedComponent, {
-        id: getComponentParent(copy.root, copiedComponent.id!)!.id as string,
-        edge: "right",
-      });
-      setEditorTree(copy, { action: `Pasted ${copiedComponent.name}` });
+    if (!copiedComponent || isPreviewMode) {
+      return; // Early exit if conditions aren't met
     }
+
+    const copy = cloneDeep(editorTree);
+    const targetId = determinePasteTarget(selectedComponentId);
+
+    addComponent(copy.root, copiedComponent, {
+      id: getComponentParent(copy.root, targetId)!.id as string,
+      edge: "right",
+    });
+
+    setEditorTree(copy, { action: `Pasted ${copiedComponent.name}` });
   }, [
     copiedComponent,
     editorTree,
