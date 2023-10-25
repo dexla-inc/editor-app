@@ -1,17 +1,18 @@
 import {
   AcceptInviteParams,
-  TeamListResponse,
-  TeamParams,
   TeamResponse,
+  UserResponse,
 } from "@/requests/teams/types";
+import { PagingResponse } from "@/requests/types";
 import { get } from "@/utils/api";
-import { buildQueryString } from "@/utils/dashboardTypes";
 
-export const getTeamsList = async (params?: TeamParams) => {
+export const getTeamsList = async () => {
   let url = `/teams`;
-  url += buildQueryString({ ...params });
 
-  const response = (await get<TeamListResponse>(url, {})) as TeamListResponse;
+  const response = (await get<PagingResponse<UserResponse>>(
+    url,
+    {},
+  )) as PagingResponse<UserResponse>;
 
   return response;
 };
