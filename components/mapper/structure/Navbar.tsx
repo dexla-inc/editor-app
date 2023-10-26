@@ -19,12 +19,53 @@ export const jsonStructure = (props?: any): Component => {
     },
   ]) as PageResponse[];
 
+  const topPages = [
+    { id: nanoid(), title: "Home", icon: "IconHome", isNested: false },
+    {
+      id: nanoid(),
+      title: "Dashboard",
+      icon: "IconLayoutDashboard",
+      isNested: false,
+    },
+    {
+      id: nanoid(),
+      title: "Notifications",
+      icon: "IconSpeakerphone",
+      isNested: false,
+    },
+  ];
+
+  const middlePages = [
+    { id: nanoid(), title: "Audience", icon: "IconUser", isNested: false },
+    { id: nanoid(), title: "Campaigns", icon: "IconFolder", isNested: true },
+    { id: nanoid(), title: "Messages", icon: "IconMessage", isNested: true },
+    {
+      id: nanoid(),
+      title: "Discounts",
+      icon: "IconDiscountCheck",
+      isNested: false,
+    },
+    {
+      id: nanoid(),
+      title: "Performance",
+      icon: "IconBrandGoogleAnalytics",
+      isNested: false,
+    },
+    { id: nanoid(), title: "Billing", icon: "IconBook2", isNested: false },
+  ];
+
+  const bottomPages = [
+    { id: nanoid(), title: "Help", icon: "IconHelp", isNested: false },
+    { id: nanoid(), title: "Settings", icon: "IconSettings", isNested: false },
+  ];
+
   const darkLogo = theme.logos?.find((logo) => logo.type === "DARK");
   const lightLogo = theme.logos?.find((logo) => logo.type === "LIGHT");
 
   const logoUrl =
     darkLogo?.url ||
     lightLogo?.url ||
+    "https://dexlastatesdev.blob.core.windows.net/editor/1e176c4b3b784ddd98e161a9b4d0a48c_fakeLogo.svg" ||
     "https://www.kadencewp.com/wp-content/uploads/2020/10/alogo-4.svg";
 
   const isDarkTheme = lightLogo ? true : false;
@@ -37,13 +78,16 @@ export const jsonStructure = (props?: any): Component => {
       ...merge({
         style: {
           width: "260px",
-          height: "100vh",
+          minHeight: "100vh",
+          height: "fit-content",
           display: "flex",
           flexDirection: "column",
           flexWrap: "nowrap",
           flexGrow: "1",
           gap: "0px",
-          backgroundColor: isDarkTheme ? theme.colors.dark[6] : "#fff",
+          position: "sticky",
+          top: "0px",
+          backgroundColor: isDarkTheme ? theme.colors.dark[6] : "#f2f2f2",
         },
         ...props.props,
       }),
@@ -53,12 +97,12 @@ export const jsonStructure = (props?: any): Component => {
       {
         id: nanoid(),
         name: "Container",
-        description: "Container for Image and Icon",
+        description: "Container for Logo and Brand",
         props: {
           style: {
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
+            gap: "10px",
             alignItems: "center",
             padding: "20px",
             borderBottomStyle: "solid",
@@ -84,6 +128,54 @@ export const jsonStructure = (props?: any): Component => {
             },
             children: [],
             blockDroppingChildrenInside: true,
+          },
+          {
+            id: nanoid(),
+            name: "Container",
+            description: "User Details",
+            props: {
+              style: {
+                display: "flex",
+                flexDirection: "column",
+                gap: "5px",
+              },
+            },
+            children: [
+              {
+                id: nanoid(),
+                name: "Text",
+                description: "Username",
+                props: {
+                  children: "JohnDoe14",
+                  color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                  size: "md",
+                  weight: "bold",
+                  style: {
+                    lineHeight: "110%",
+                    letterSpacing: "0px",
+                    width: "auto",
+                    height: "auto",
+                  },
+                },
+              },
+              {
+                id: nanoid(),
+                name: "Text",
+                description: "Plan",
+                props: {
+                  children: "Premium",
+                  color: "gray.5",
+                  size: "xs",
+                  weight: "normal",
+                  style: {
+                    lineHeight: "110%",
+                    letterSpacing: "0px",
+                    width: "auto",
+                    height: "auto",
+                  },
+                },
+              },
+            ],
           },
           {
             id: nanoid(),
@@ -132,8 +224,8 @@ export const jsonStructure = (props?: any): Component => {
             flexDirection: "column",
             justifyContent: "space-between",
             flexGrow: 1,
+            gap: "40px",
             height: "100%",
-            // minHeight: "100vh",
             paddingTop: "20px",
             paddingBottom: "20px",
             paddingLeft: "10px",
@@ -149,28 +241,37 @@ export const jsonStructure = (props?: any): Component => {
               style: {
                 display: "flex",
                 flexDirection: "column",
-                flexGrow: "1",
                 height: "auto",
+                gap: "20px",
               },
             },
-            children: pages
-              .filter((page: PageResponse) => page.hasNavigation)
-              .map((page: PageResponse) => {
-                return {
-                  id: nanoid(),
+            children: [
+              {
+                id: nanoid(),
+                name: "Container",
+                description: "Container for NavLinks",
+                props: {
+                  style: {
+                    display: "flex",
+                    flexDirection: "column",
+                    flexGrow: "1",
+                    height: "auto",
+                  },
+                },
+                children: topPages.map((page) => ({
+                  id: page.id,
                   name: "NavLink",
                   description: "Navbar Item",
                   props: {
+                    icon: page.icon,
                     label: page.title,
-                    isNested: !!page.parentPageId,
-                    pageId: page.id,
+                    isNested: page.isNested,
                     style: {
                       width: "100%",
                       height: "auto",
                       display: "flex",
                       alignItems: "center",
-                      paddingTop: "10px",
-                      paddingBottom: "10px",
+                      padding: "10px",
                       color: isDarkTheme
                         ? theme.colors.gray[5]
                         : theme.colors.dark[9],
@@ -190,16 +291,80 @@ export const jsonStructure = (props?: any): Component => {
                   children: [],
                   states: {
                     Active: {
-                      bg: "transparent",
-                      color: "Primary.6",
+                      bg: "Neutral.0",
+                      style: {
+                        borderRadius: theme.spacing.sm,
+                      },
                     },
                     hover: {
-                      bg: "transparent",
-                      color: "Primary.4",
+                      bg: "Neutral.5",
+                      style: {
+                        borderRadius: theme.spacing.sm,
+                      },
                     },
                   },
-                };
-              }),
+                })),
+              },
+              {
+                id: nanoid(),
+                name: "Container",
+                description: "Container for NavLinks",
+                props: {
+                  style: {
+                    display: "flex",
+                    flexDirection: "column",
+                    flexGrow: "1",
+                    height: "auto",
+                  },
+                },
+                children: middlePages.map((page) => ({
+                  id: page.id,
+                  name: "NavLink",
+                  description: "Navbar Item",
+                  props: {
+                    icon: page.icon,
+                    label: page.title,
+                    isNested: page.isNested,
+                    style: {
+                      width: "100%",
+                      height: "auto",
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "10px",
+                      color: isDarkTheme
+                        ? theme.colors.gray[5]
+                        : theme.colors.dark[9],
+                      borderRadius: "3px",
+                    },
+                  },
+                  actions: [
+                    {
+                      id: nanoid(),
+                      trigger: "onClick",
+                      action: {
+                        name: "navigateToPage",
+                        pageId: page.id,
+                      },
+                    },
+                  ],
+                  children: [],
+                  states: {
+                    Active: {
+                      bg: "Neutral.0",
+                      style: {
+                        borderRadius: theme.spacing.sm,
+                      },
+                    },
+                    hover: {
+                      bg: "Neutral.5",
+                      style: {
+                        borderRadius: theme.spacing.sm,
+                      },
+                    },
+                  },
+                })),
+              },
+            ],
           },
           {
             id: nanoid(),
@@ -211,46 +376,60 @@ export const jsonStructure = (props?: any): Component => {
             children: [
               {
                 id: nanoid(),
-                name: "NavLink",
-                description: "Navbar Item",
+                name: "Container",
+                description: "Container for NavLinks",
                 props: {
-                  label: "Documentation",
-                  isNested: false,
                   style: {
-                    width: "100%",
-                    height: "auto",
                     display: "flex",
-                    alignItems: "center",
-                    paddingTop: "10px",
-                    paddingBottom: "10px",
-                    color: isDarkTheme
-                      ? theme.colors.gray[5]
-                      : theme.colors.dark[9],
-                    borderRadius: "3px",
+                    flexDirection: "column",
                   },
                 },
-                actions: [
-                  {
-                    id: nanoid(),
-                    trigger: "onClick",
-                    action: {
-                      name: "goToUrl",
-                      url: "",
-                      openInNewTab: true,
+                children: bottomPages.map((page) => ({
+                  id: page.id,
+                  name: "NavLink",
+                  description: "Navbar Item",
+                  props: {
+                    icon: page.icon,
+                    label: page.title,
+                    isNested: page.isNested,
+                    style: {
+                      width: "100%",
+                      height: "auto",
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "10px",
+                      color: isDarkTheme
+                        ? theme.colors.gray[5]
+                        : theme.colors.dark[9],
+                      borderRadius: "3px",
                     },
                   },
-                ],
-                children: [],
-                states: {
-                  Active: {
-                    bg: "transparent",
-                    color: "Primary.6",
+                  actions: [
+                    {
+                      id: nanoid(),
+                      trigger: "onClick",
+                      action: {
+                        name: "navigateToPage",
+                        pageId: page.id,
+                      },
+                    },
+                  ],
+                  children: [],
+                  states: {
+                    Active: {
+                      bg: "Neutral.0",
+                      style: {
+                        borderRadius: theme.spacing.sm,
+                      },
+                    },
+                    hover: {
+                      bg: "Neutral.5",
+                      style: {
+                        borderRadius: theme.spacing.sm,
+                      },
+                    },
                   },
-                  hover: {
-                    bg: "transparent",
-                    color: "Primary.4",
-                  },
-                },
+                })),
               },
               {
                 id: nanoid(),
@@ -271,7 +450,7 @@ export const jsonStructure = (props?: any): Component => {
                     description: "Avatar",
                     props: {
                       radius: "xl",
-                      children: "JD",
+                      src: "https://dexlastatesdev.blob.core.windows.net/editor/1e176c4b3b784ddd98e161a9b4d0a48c_profile.png",
                     },
                     children: [],
                     actions: [],
@@ -279,20 +458,51 @@ export const jsonStructure = (props?: any): Component => {
                   },
                   {
                     id: nanoid(),
-                    name: "Text",
-                    description: "Name",
+                    name: "Container",
+                    description: "Profile Details",
                     props: {
-                      children: "John Doe",
-                      color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-                      size: "md",
-                      weight: "bold",
                       style: {
-                        lineHeight: "110%",
-                        letterSpacing: "0px",
-                        width: "auto",
-                        height: "auto",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "5px",
                       },
                     },
+                    children: [
+                      {
+                        id: nanoid(),
+                        name: "Text",
+                        description: "Name",
+                        props: {
+                          children: "John Doe",
+                          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                          size: "md",
+                          weight: "bold",
+                          style: {
+                            lineHeight: "110%",
+                            letterSpacing: "0px",
+                            width: "auto",
+                            height: "auto",
+                          },
+                        },
+                      },
+                      {
+                        id: nanoid(),
+                        name: "Text",
+                        description: "Email",
+                        props: {
+                          children: "johnDoe14@gmail.com",
+                          color: "gray.5",
+                          size: "xs",
+                          weight: "normal",
+                          style: {
+                            lineHeight: "110%",
+                            letterSpacing: "0px",
+                            width: "auto",
+                            height: "auto",
+                          },
+                        },
+                      },
+                    ],
                   },
                 ],
               },

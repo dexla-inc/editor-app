@@ -195,7 +195,7 @@ export const template = (data: Data, theme: any, pages: any) => {
       id: "root",
       name: "Container",
       description: "Root Container",
-      props: { style: { width: "100%" } },
+      props: { style: { width: "100%", position: "relative" } },
       children: [
         navBar,
         {

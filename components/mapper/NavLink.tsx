@@ -1,11 +1,11 @@
 import { Icon } from "@/components/Icon";
+import { useEditorStore } from "@/stores/editor";
+import { isSame } from "@/utils/componentComparison";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
-import { useRouter } from "next/router";
-import { isSame } from "@/utils/componentComparison";
-import { memo } from "react";
-import { useEditorStore } from "@/stores/editor";
 import merge from "lodash.merge";
+import { useRouter } from "next/router";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
