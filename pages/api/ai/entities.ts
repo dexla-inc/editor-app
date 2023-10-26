@@ -44,6 +44,27 @@ export default async function handler(
 
     const { appDescription, appIndustry, ...restData } = data;
 
+    const projectsResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/projects`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${data.accessToken}`,
+        },
+        body: JSON.stringify({
+          ...restData,
+          type: "" as ProjectTypes,
+          description: appDescription,
+          industry: appIndustry,
+        }),
+      },
+    );
+
+    const _project = await projectsResponse.json();
+
+    console.log(_project);
+
     const response = await openai.chat.completions.create({
       model: "gpt-4",
       stream: false,
@@ -196,30 +217,6 @@ export default async function handler(
         }),
       };
     }, {});
-
-    const projectsResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/projects`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${data.accessToken}`,
-        },
-        body: JSON.stringify({
-          ...restData,
-          type: "" as ProjectTypes,
-          description: appDescription,
-          industry: appIndustry,
-        }),
-      },
-    );
-
-    console.log(
-      "Entities API duration: " + timer.getElapsedMilliseconds(),
-      "Event Complete: projectsResponse",
-    );
-
-    const _project = await projectsResponse.json();
 
     await prisma.project.create({
       data: {

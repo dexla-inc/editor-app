@@ -27,8 +27,10 @@ export const getPageGenerationPrompt = ({
   Use the entity name where you need the entity data, like 'entity.<entity-name>.<entity-data-key>'.
   If you want the amount of items for a given entity, use 'entity.<entity-name>.count'.
   Every data that you don't add yourself must be an entity data reference followig the pattern 'entity.<entity-name>.<entity-data-key>'.
+  If you need the data from multiple instances of an entity, follow the pattern 'entity.<entity-name>[<index>].<entity-data-key>'.
   We will later on replace that reference with the updated entity data.
-  For charts (if there's any), include some fake data so we have something to work with.
+  For charts and tables (if there's any), include some fake data instead of the entity data so we have something to work with.
+  For charts, the name of a series must always be created by you instead of referencing entity data
   The return must be in JSON format. Make sure it's valid JSON as we will be parsing it using JSON.parse.
   Don't prepend or append anything,just return the JSON. Whatever you return will go straight through JSON.parse.
     
