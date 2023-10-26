@@ -3,12 +3,14 @@ import { inviteTeam } from "@/requests/teams/mutations";
 import { getTeamsList } from "@/requests/teams/queries";
 import { InviteTeamParams, UserResponse } from "@/requests/teams/types";
 import { useAppStore } from "@/stores/app";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { UserRoles } from "@/utils/dashboardTypes";
 import {
   Button,
   Container,
   Flex,
+  LoadingOverlay,
   Modal,
   Select,
   Stack,
@@ -35,19 +37,24 @@ export default function TeamSettings({ projectId }: Props) {
 
   const openInviteModal = () => setInviteModalOpen(true);
   const closeInviteModal = () => setInviteModalOpen(false);
+  const company = usePropelAuthStore((state) => state.activeCompany);
+  const companyId = usePropelAuthStore((state) => state.activeCompanyId);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const users = await getTeamsList();
+        setIsLoading(true);
+        const users = await getTeamsList(companyId);
 
         setTeamList(users.results);
+        setIsLoading(false);
       } catch (error) {
         console.error(error);
       }
     };
+
     fetchData();
-  }, []);
+  }, [companyId]);
 
   const handleInvite = async () => {
     try {
@@ -60,7 +67,7 @@ export default function TeamSettings({ projectId }: Props) {
       const params: InviteTeamParams = {
         email,
         accessLevel: userRole,
-        projectId: projectId,
+        companyId: company.orgId,
       };
 
       await inviteTeam(params);
@@ -87,14 +94,14 @@ export default function TeamSettings({ projectId }: Props) {
     <Container py="xl">
       <Stack spacing="xl">
         <Flex justify="space-between">
-          <Title order={2}>Team Settings</Title>
+          <Title order={3}>Members</Title>
           <Button
             onClick={openInviteModal}
             leftIcon={<Icon name="IconPlus" size={ICON_SIZE}></Icon>}
             color="indigo"
             compact
           >
-            Invite User
+            Invite Member
           </Button>
         </Flex>
         <Table>
@@ -103,7 +110,7 @@ export default function TeamSettings({ projectId }: Props) {
               <th style={{ width: LARGE_ICON_SIZE }}></th>
               <th>Name</th>
               <th>Email</th>
-              <th>Email Confirmed</th>
+              <th>Role</th>
               <th>Enabled</th>
               <th>Created At</th>
             </tr>
@@ -124,21 +131,7 @@ export default function TeamSettings({ projectId }: Props) {
                 </td>
                 <td>{user.firstName + " " + user.lastName}</td>
                 <td>{user.email}</td>
-                <td>
-                  {user.emailConfirmed ? (
-                    <IconCircleCheck
-                      name="IconCircleCheck"
-                      size={LARGE_ICON_SIZE}
-                      style={{ color: "green" }}
-                    />
-                  ) : (
-                    <IconCircleX
-                      name="IconCircleX"
-                      size={LARGE_ICON_SIZE}
-                      style={{ color: "red" }}
-                    />
-                  )}
-                </td>
+                <td></td>
                 <td>
                   {user.enabled ? (
                     <IconCircleCheck
@@ -157,6 +150,8 @@ export default function TeamSettings({ projectId }: Props) {
             ))}
           </tbody>
         </Table>
+        {/* Change this over to use a table skeleton */}
+        <LoadingOverlay visible={isLoading} zIndex={1000} radius="sm" />
       </Stack>
       <Modal
         opened={isInviteModalOpen}
@@ -198,7 +193,6 @@ export default function TeamSettings({ projectId }: Props) {
             onClick={handleInvite}
             loading={isLoading}
             disabled={isLoading || email === ""}
-            compact
           >
             Invite User
           </Button>

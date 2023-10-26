@@ -1,22 +1,24 @@
 import { useEditorStore } from "@/stores/editor";
-import { AuthenticationInfo, createClient } from "@propelauth/javascript";
+import { createClient } from "@propelauth/javascript";
 import { OrgMemberInfo, User } from "@propelauth/react";
 import { create } from "zustand";
 
 type AuthState = {
-  authInfo: AuthenticationInfo | null;
-  isDexlaAdmin: boolean;
+  accessToken: string;
   user: User;
-  organisations?: OrgMemberInfo[];
-  role?: string;
+  companies: OrgMemberInfo[];
   logout: (redirectOnLogout: boolean) => Promise<void>;
+  setActiveCompany: (companyId: string) => void;
+  activeCompany: OrgMemberInfo;
+  activeCompanyId: string;
   initializeAuth: () => Promise<void>;
+  isDexlaAdmin: boolean;
 };
 
-export const usePropelAuthStore = create<AuthState>((set) => {
+export const usePropelAuthStore = create<AuthState>((set, get): AuthState => {
   const { isLive } = useEditorStore.getState();
 
-  const internalGetAuthInfo = async () => {
+  const initializeAuthAsync = async () => {
     if (!isLive) {
       const authClient = createClient({
         authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
@@ -25,29 +27,35 @@ export const usePropelAuthStore = create<AuthState>((set) => {
       const authInfo = await authClient.getAuthenticationInfoOrNull();
       const logout = authClient.logout;
       set({
-        authInfo,
-
+        accessToken: authInfo?.accessToken || "",
         user: authInfo?.user || ({} as User),
-        organisations: authInfo?.orgHelper.getOrgs() || [],
+        companies: authInfo?.orgHelper.getOrgs() || [],
+        activeCompany: authInfo?.orgHelper.getOrgs()[0],
         logout: logout,
-        isDexlaAdmin:
-          authInfo?.orgHelper.getOrgByName("Dexla")?.userAssignedRole ===
-          "DEXLA_ADMIN",
-        role: authInfo?.orgHelper.getOrgs()[0]?.userAssignedRole, // To change when we support multiple organizations
       });
     }
   };
 
   // Automatically invoke the internalGetAuthInfo when the store is created
-  internalGetAuthInfo();
+  initializeAuthAsync();
 
   return {
-    authInfo: null,
+    accessToken: "",
     user: {} as User,
-    organisations: [],
-    isDexlaAdmin: false,
-    role: "",
+    companies: [],
     logout: async (redirectOnLogout: boolean) => {},
-    initializeAuth: internalGetAuthInfo,
+    activeCompany: {} as OrgMemberInfo,
+    activeCompanyId: "",
+    initializeAuth: initializeAuthAsync,
+    isDexlaAdmin: false,
+    setActiveCompany: (companyId: string) => {
+      const matchingCompany = get().companies.find(
+        (company) => company.orgId === companyId,
+      );
+      if (matchingCompany) {
+        set({ activeCompany: matchingCompany });
+        set({ activeCompanyId: matchingCompany.orgId });
+      }
+    },
   };
 });

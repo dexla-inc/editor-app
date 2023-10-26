@@ -26,9 +26,9 @@ export default function Projects() {
   const [search, setSearch] = useState<string>("");
   const debouncedSearch = debounce((query) => setSearch(query), 400);
   const theme = useMantineTheme();
-  const { user, orgs } = usePropelAuthStore((state) => ({
+  const { user, company } = usePropelAuthStore((state) => ({
     user: state.user,
-    orgs: state.organisations,
+    company: state.activeCompany,
   }));
   const startLoading = useAppStore((state) => state.startLoading);
   const router = useRouter();
@@ -44,9 +44,10 @@ export default function Projects() {
   };
 
   const fetchProjects = useCallback(async () => {
-    const result = await getProjects(search);
+    const result = await getProjects(company.orgId, search);
+
     setProjects(result.results);
-  }, [search]);
+  }, [search, company]);
   const handleDeleteProject = (id: string) => {
     setProjects((prevProjects) =>
       prevProjects.filter((project) => project.id !== id),
@@ -65,8 +66,6 @@ export default function Projects() {
       return;
     }
 
-    const org = (orgs || [])[0];
-
     const intercomSettings = {
       app_id: "co2c3gri",
       email: user.email,
@@ -78,8 +77,8 @@ export default function Projects() {
         image_url: user.pictureUrl,
       },
       company: {
-        id: org.orgId,
-        name: org.orgName,
+        id: company.orgId,
+        name: company.orgName,
         plan: "free",
         monthly_spend: 0,
       },
@@ -87,7 +86,7 @@ export default function Projects() {
 
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push(intercomSettings);
-  }, [user, orgs]);
+  }, [user, company]);
 
   return (
     <DashboardShell>
@@ -96,7 +95,7 @@ export default function Projects() {
           <Title>Welcome back, {user?.firstName}</Title>
 
           <Flex>
-            <Link href="/projects/new">
+            <Link href={`/projects/new?company=${company.orgId}`}>
               <IconTitleDescriptionButton
                 icon={
                   <IconSparkles

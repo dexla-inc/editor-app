@@ -1,11 +1,11 @@
 import { InformationAlert } from "@/components/Alerts";
 import NextButton from "@/components/NextButton";
+import ScreenshotUploader from "@/components/projects/ScreenshotUploader";
 import {
   ProjectParams,
   createEntitiesAndProject,
   patchProject,
 } from "@/requests/projects/mutations";
-import ScreenshotUploader from "@/components/projects/ScreenshotUploader";
 import { uploadFile } from "@/requests/storage/mutations";
 import { UploadMultipleResponse } from "@/requests/storage/types";
 import { PatchParams } from "@/requests/types";
@@ -15,9 +15,9 @@ import { Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
 import { FileWithPath } from "@mantine/dropzone";
 import { useForm } from "@mantine/form";
 import { Dispatch, SetStateAction } from "react";
-import { Lekton } from "next/font/google";
 
 interface ProjectStepProps extends LoadingStore, NextStepperClickEvent {
+  companyId: string;
   projectId: string;
   setProjectId: (id: string) => void;
   screenshots: FileWithPath[];
@@ -25,6 +25,7 @@ interface ProjectStepProps extends LoadingStore, NextStepperClickEvent {
 }
 
 export default function ProjectStep({
+  companyId,
   nextStep,
   isLoading,
   setIsLoading,
@@ -37,6 +38,7 @@ export default function ProjectStep({
 }: ProjectStepProps) {
   const form = useForm<ProjectParams>({
     initialValues: {
+      companyId: companyId,
       description: "",
       region: "US_CENTRAL",
       type: "" as ProjectTypes,
