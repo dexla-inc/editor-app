@@ -17,7 +17,6 @@ import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
 import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
-import { SetVariableActionForm } from "@/components/actions/SetVariableActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
 import { APICallFlowActionForm } from "@/components/actions/logic-flow-forms/APICallFlowActionForm";
@@ -33,7 +32,7 @@ import { ClosePopOverFlowActionForm } from "@/components/actions/logic-flow-form
 import { CustomJavascriptFlowActionForm } from "@/components/actions/logic-flow-forms/CustomJavascriptFlowActionForm";
 import { DebugFlowActionForm } from "@/components/actions/logic-flow-forms/DebugFlowActionForm";
 
-import { TransformVariableActionForm } from "@/components/actions/TransformVariableActionForm";
+import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableActionForm";
 import { BindVariableToChartFlowActionForm } from "@/components/actions/logic-flow-forms/BindVariableToChartFlowActionForm";
 import { GoToUrlFlowActionForm } from "@/components/actions/logic-flow-forms/GoToUrlFlowActionForm";
 import { LoginFlowActionForm } from "@/components/actions/logic-flow-forms/LoginFlowActionForm";
@@ -43,9 +42,8 @@ import { OpenModalFlowActionForm } from "@/components/actions/logic-flow-forms/O
 import { OpenPopOverFlowActionForm } from "@/components/actions/logic-flow-forms/OpenPopOverFlowActionForm";
 import { OpenToastFlowActionForm } from "@/components/actions/logic-flow-forms/OpenToastFlowActionForm";
 import { ReloadComponentFlowActionForm } from "@/components/actions/logic-flow-forms/ReloadComponentFlowActionForm";
-import { SetVariableFlowActionForm } from "@/components/actions/logic-flow-forms/SetVariableFlowActionForm";
 import { TogglePropsFlowActionForm } from "@/components/actions/logic-flow-forms/TogglePropsFlowActionForm";
-import { TransformVariableFlowActionForm } from "@/components/actions/logic-flow-forms/TransformVariableFlowActionForm";
+import { ChangeVariableFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeVariableFlowActionForm";
 import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components/actions/logic-flow-forms/TriggerLogicFlowActionForm";
 import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { Options } from "@/components/modifiers/GoogleMap";
@@ -54,8 +52,8 @@ import {
   getDataSourceEndpoints,
 } from "@/requests/datasources/queries";
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
-import { createVariable, updateVariable } from "@/requests/variables/mutations";
-import { getVariable } from "@/requests/variables/queries";
+import { createVariable } from "@/requests/variables/mutations";
+import { getVariable, listVariables } from "@/requests/variables/queries";
 import { FrontEndTypes } from "@/requests/variables/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
@@ -120,10 +118,9 @@ export const actions: ActionInfo[] = [
   { name: "triggerLogicFlow", group: "API, Data & Logic", icon: "IconFlow" },
   { name: "reloadComponent", group: "API, Data & Logic", icon: "IconReload" },
   { name: "bindResponse", group: "Binding" },
-  { name: "bindVariable", group: "Binding" }, // Merge bindVariable, transformVariable, setVariable and bindVariableToChart
-  { name: "bindVariableToChart", group: "Binding" }, // Merge bindVariable, transformVariable, setVariable and bindVariableToChart
-  { name: "setVariable", group: "Binding" }, // Merge bindVariable, transformVariable, setVariable and bindVariableToChart
-  { name: "transformVariable", group: "Binding" }, // Merge bindVariable, transformVariable, setVariable and bindVariableToChart
+  { name: "bindVariable", group: "Binding" }, // Merge bindVariable, changeVariable and bindVariableToChart
+  { name: "bindVariableToChart", group: "Binding" }, // Merge bindVariable, changeVariable and bindVariableToChart
+  { name: "changeVariable", group: "Binding" },
   { name: "goToUrl", group: "Navigation", icon: "IconLink" },
   { name: "navigateToPage", group: "Navigation", icon: "IconFileInvoice" },
   { name: "changeStep", group: "Navigation", icon: "IconStatusChange" },
@@ -159,12 +156,6 @@ export type SequentialTrigger = Extract<
 export interface BaseAction {
   name: string;
   data?: any;
-}
-
-export interface SetVariableAction extends BaseAction {
-  name: "setVariable";
-  variable: string;
-  value?: any;
 }
 
 export interface NavigationAction extends BaseAction {
@@ -300,18 +291,19 @@ export interface CustomJavascriptAction extends BaseAction {
   code: string;
 }
 
-export interface TransformVariableAction extends BaseAction {
-  name: "transformVariable";
+export interface ChangeVariableAction extends BaseAction {
+  name: "changeVariable";
   variableId: string;
-  variableName: string;
-  value: string;
+  bindingType: string;
+  javascriptCode: string;
+  formulaCondition: string;
+  formulaValue: string;
 }
 
 export type Action = {
   id: string;
   trigger: ActionTrigger;
   action:
-    | SetVariableAction
     | NavigationAction
     | AlertAction
     | APICallAction
@@ -332,7 +324,7 @@ export type Action = {
     | TriggerLogicFlowAction
     | ChangeLanguageAction
     | BindVariableToComponentAction
-    | TransformVariableAction
+    | ChangeVariableAction
     | BindVariableToChartAction;
   sequentialTo?: string;
 };
@@ -420,10 +412,6 @@ export type DebugActionParams = ActionParams & {
 
 export const debugAction = ({ action }: DebugActionParams) => {
   alert(action.message);
-};
-
-export type SetVariableActionParams = ActionParams & {
-  action: SetVariableAction;
 };
 
 export type OpenModalActionParams = ActionParams & {
@@ -627,21 +615,6 @@ export const openToastAction = async ({ action }: OpenToastActionParams) => {
     title: await getVariableValueFromVariableId(action.title),
     message: await getVariableValueFromVariableId(action.message),
   });
-};
-
-export const setVariableAction = async ({
-  action,
-  event,
-}: SetVariableActionParams) => {
-  let value = action.value || event.toString();
-
-  if (value.startsWith("valueOf")) {
-    value = getElementValue(value, useEditorStore.getState().iframeWindow);
-  }
-
-  const projectId = useEditorStore.getState().currentProjectId;
-  const variable = JSON.parse(action.variable);
-  await updateVariable(projectId!, variable.id, { ...variable, value });
 };
 
 export const triggerLogicFlowAction = (
@@ -1369,44 +1342,67 @@ export const customJavascriptAction = ({ action, data }: any) => {
   return eval(codeTranspiled);
 };
 
-export type TransformVariableActionParams = ActionParams & {
-  action: TransformVariableAction;
+export type ChangeVariableActionParams = ActionParams & {
+  action: ChangeVariableAction;
 };
 
-export const transformVariableAction = async ({
+export const changeVariableAction = async ({
   action,
-  data,
-}: TransformVariableActionParams) => {
+}: ChangeVariableActionParams) => {
   const { currentProjectId, currentPageId } = useEditorStore.getState();
-  let codeTranspiled = transpile(action.value);
-  // Regex to find variable between /* var_<var-id> start */ and /* var_<var-id> end */
-  const variableRegex =
-    /\/\* var_(.*?) start \*\/(.*?)\/\* var_(.*?) end \*\//gs;
-  const variableMatches = codeTranspiled.matchAll(variableRegex);
-  for (const match of variableMatches) {
-    const variableId = match[1];
-    const variable = await getVariable(currentProjectId!, variableId);
-    codeTranspiled = codeTranspiled.replace(
-      match[0],
-      variable.value ?? variable.defaultValue ?? match[0],
-    );
-  }
-  let result = eval(codeTranspiled);
-  const isObject = typeof result === "object";
-  if (isObject) {
-    result = JSON.stringify(result);
-  } else {
-    result = String(result);
-  }
+  let isPreviewValueObject = false;
+  let isPreviewValueArray = false;
 
-  await createVariable(currentProjectId!, {
-    name: action.variableName,
-    value: result,
-    type: isObject ? "OBJECT" : "TEXT",
-    isGlobal: false,
-    pageId: currentPageId!,
-    defaultValue: result,
-  });
+  if (action.bindingType === "JavaScript") {
+    const variables = await listVariables(currentProjectId!, {
+      pageId: currentPageId!,
+    }).then(({ results }) => {
+      return results.reduce(
+        (acc, variable) => {
+          acc.list[variable.id] = variable;
+          acc[variable.id] = variable.value ?? variable.defaultValue;
+          return acc;
+        },
+        { list: {} } as Record<string, any>,
+      );
+    });
+
+    try {
+      if (action.javascriptCode === "return variables") {
+        return;
+      }
+      let previewNewValue = eval(
+        `function autoRunJavascriptCode() { ${action.javascriptCode}}; autoRunJavascriptCode()`,
+      );
+
+      isPreviewValueObject = typeof previewNewValue === "object";
+      isPreviewValueArray = Array.isArray(previewNewValue);
+
+      if (isPreviewValueObject || isPreviewValueArray) {
+        try {
+          previewNewValue = JSON.stringify(previewNewValue);
+        } catch {}
+      }
+
+      const variable = variables.list[action.variableId];
+
+      await createVariable(currentProjectId!, {
+        name: variable.name,
+        value: previewNewValue,
+        type:
+          typeof previewNewValue === "object"
+            ? "OBJECT"
+            : isPreviewValueArray
+            ? "ARRAY"
+            : "TEXT",
+        isGlobal: false,
+        pageId: currentPageId!,
+        defaultValue: previewNewValue,
+      });
+    } catch {
+      return;
+    }
+  }
 };
 
 export const actionMapper = {
@@ -1415,16 +1411,11 @@ export const actionMapper = {
     form: DebugActionForm,
     flowForm: DebugFlowActionForm,
   },
-  setVariable: {
-    action: setVariableAction,
-    form: SetVariableActionForm,
-    flowForm: SetVariableFlowActionForm,
-  },
-  transformVariable: {
-    action: transformVariableAction,
+  changeVariable: {
+    action: changeVariableAction,
     // TODO: Create a proper form for action outside flow
-    form: TransformVariableActionForm,
-    flowForm: TransformVariableFlowActionForm,
+    form: ChangeVariableActionForm,
+    flowForm: ChangeVariableFlowActionForm,
   },
   navigateToPage: {
     action: navigationAction,
