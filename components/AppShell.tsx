@@ -59,7 +59,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
           <Group h={HEADER_HEIGHT} px="xs" align="center" position="apart">
             <Group>
               <Tooltip label="Back to dashboard" fz="xs">
-                <Link href="/">
+                <Link href="/projects">
                   <Logo />
                 </Link>
               </Tooltip>

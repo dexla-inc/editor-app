@@ -42,7 +42,7 @@ export const DashboardShell = ({ children, aside }: ShellProps) => {
             align="center"
             justify="space-between"
           >
-            <Link href="/">
+            <Link href="/projects">
               <Logo />
             </Link>
           </Flex>

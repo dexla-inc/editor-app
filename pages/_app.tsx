@@ -1,4 +1,5 @@
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { cache } from "@/utils/emotionCache";
 import {
   DEFAULT_THEME,
@@ -87,6 +88,13 @@ export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const isLive = useCheckIfIsLive();
   const [loadTagManager, setLoadTagManager] = useState(false);
+
+  const initializeAuth = usePropelAuthStore((state) => state.initializeAuth);
+
+  useEffect(() => {
+    initializeAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     setLoadTagManager(!isLive && process.env.NODE_ENV !== "development");
