@@ -25,6 +25,7 @@ import {
   getComponentById,
   getComponentParent,
   removeComponent,
+  replaceTilesData,
 } from "@/utils/editor";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import {
@@ -262,9 +263,10 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
         // TODO: Replace tiles from template state with tiles from aiPageTemplate
         const aiTiles = aiPageTemplate.template.tiles;
-        console.log({ aiPageTemplate, template, aiTiles });
+        const treeState = replaceTilesData(template.state, aiTiles.template);
+        console.log({ aiPageTemplate, template, aiTiles, treeState });
 
-        setEditorTree(template.state);
+        setEditorTree(treeState);
         stopLoading({
           id: "page-generation",
           title: "Page Generated",

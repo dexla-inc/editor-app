@@ -32,14 +32,15 @@ export const SaveTemplateButton = () => {
         const id = camelcase(
           `${tile.node.description?.replace(".tile", "")}Tile`,
         );
-        const types = `
+        const prompt = `
+          // create precisely ${tile.count} of this tile
           type ${id} = {
             name: "${id}"
             data: ${JSON.stringify(data, null, 2)}
           }
         `;
 
-        return { id, tile, types };
+        return { id, tile, prompt };
       });
 
       const templateResponse = await fetch("/api/templates/upsert", {
@@ -74,7 +75,7 @@ export const SaveTemplateButton = () => {
               id: `${templateData.id}-${tile.id}`,
               name: tile.id,
               state: tile.tile.node,
-              prompt: tile.types,
+              prompt: tile.prompt,
               templateId: templateData.id,
             };
           }),

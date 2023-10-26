@@ -288,6 +288,7 @@ export const getNewComponents = (
 export type TileType = {
   node: Component;
   name: string;
+  count: number;
 };
 
 export const getTiles = (treeRoot: Component): TileType[] => {
@@ -301,7 +302,15 @@ export const getTiles = (treeRoot: Component): TileType[] => {
         node.description?.endsWith(".tile") &&
         !tiles.find((t) => t.name === name)
       ) {
-        tiles.push({ name: node.description.replace(".tile", ""), node });
+        tiles.push({ name: name as string, node, count: 1 });
+      } else {
+        tiles = tiles.map((t) => {
+          if (t.name === name) {
+            return { ...t, count: t.count + 1 } as TileType;
+          }
+
+          return t as TileType;
+        });
       }
     },
     { order: "bfs" },
@@ -318,10 +327,14 @@ export const getTileData = (treeRoot: Component): { [key: string]: any } => {
     (node) => {
       if (node.description?.startsWith("tile.data.")) {
         let type = "string";
+        // TODO: Handle unique types of charts, like PieChart that needs different data
         if (node.name.endsWith("Chart")) {
           type = `{
             data: {
-              series: { name: string; data: number[] }[]
+              series: { 
+                name: string; 
+                data: number[] 
+              }[]
               xaxis: { categories: string[] }
             }
           }`;
@@ -345,6 +358,45 @@ export const getTileData = (treeRoot: Component): { [key: string]: any } => {
   );
 
   return data;
+};
+
+// recursively replace all tile.data with the actual tile data
+const replaceTileData = (node: Component, tile: any) => {
+  if (node.description?.startsWith("tile.data.")) {
+    const key = node.description?.replace("tile.data.", "");
+    const val = tile[key];
+    console.log({ val });
+    // @ts-ignore
+    node.props.data = { value: val };
+  }
+
+  if (node.children) {
+    node.children?.map((child) => replaceTileData(child, tile)) ?? [];
+  }
+};
+
+export const replaceTilesData = (
+  tree: EditorTree,
+  tiles: any[],
+): EditorTree => {
+  let copy = cloneDeep(tree);
+  crawl(
+    copy.root,
+    (node) => {
+      if (node.description?.endsWith(".tile")) {
+        const tile = tiles.find(
+          (t) => t.name === node.description?.replace(".tile", ""),
+        );
+
+        // @ts-ignore
+        node.children =
+          node.children?.map((child) => replaceTileData(child, tile)) ?? [];
+      }
+    },
+    { order: "bfs" },
+  );
+
+  return copy;
 };
 
 export const getComponentById = (
