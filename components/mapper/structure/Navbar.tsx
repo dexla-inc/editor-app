@@ -284,7 +284,7 @@ export const jsonStructure = (props?: any): Component => {
                       trigger: "onClick",
                       action: {
                         name: "navigateToPage",
-                        pageId: page.id,
+                        pageId: "",
                       },
                     },
                   ],
@@ -343,7 +343,7 @@ export const jsonStructure = (props?: any): Component => {
                       trigger: "onClick",
                       action: {
                         name: "navigateToPage",
-                        pageId: page.id,
+                        pageId: "",
                       },
                     },
                   ],
@@ -410,7 +410,7 @@ export const jsonStructure = (props?: any): Component => {
                       trigger: "onClick",
                       action: {
                         name: "navigateToPage",
-                        pageId: page.id,
+                        pageId: "",
                       },
                     },
                   ],
