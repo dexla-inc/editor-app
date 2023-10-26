@@ -1,3 +1,4 @@
+import { GenerateStylesAIButton } from "@/components/GenerateStylesAIButton";
 import { SidebarSection } from "@/components/SidebarSection";
 import { ActionsFlow } from "@/components/actions/ActionsFlow";
 import * as AccordionModifier from "@/components/modifiers/Accordion";
@@ -266,6 +267,8 @@ export const EditorAsideSections = () => {
       <Stack key={selectedComponentId} spacing="xs">
         {tab === "design" && (
           <Stack>
+            <GenerateStylesAIButton />
+
             <Select
               px="md"
               value={currentState}

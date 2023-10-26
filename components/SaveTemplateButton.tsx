@@ -3,7 +3,7 @@ import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import { getTileData, getTiles } from "@/utils/editor";
-import { Tooltip, ActionIcon } from "@mantine/core";
+import { ActionIcon, Tooltip } from "@mantine/core";
 import { IconTemplate } from "@tabler/icons-react";
 import camelcase from "lodash.camelcase";
 import { useRouter } from "next/router";
@@ -99,7 +99,7 @@ export const SaveTemplateButton = () => {
 
   return (
     <Tooltip label="Save Template" withArrow fz="xs">
-      <ActionIcon onClick={saveTemplate} variant="default">
+      <ActionIcon onClick={saveTemplate} variant="light" color="indigo">
         <IconTemplate size={ICON_SIZE} />
       </ActionIcon>
     </Tooltip>
