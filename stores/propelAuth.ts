@@ -15,10 +15,25 @@ type AuthState = {
   isDexlaAdmin: boolean;
 };
 
-export const usePropelAuthStore = create<AuthState>((set, get): AuthState => {
-  const { isLive } = useEditorStore.getState();
-
-  const initializeAuthAsync = async () => {
+export const usePropelAuthStore = create<AuthState>((set, get) => ({
+  accessToken: "",
+  user: {} as User,
+  companies: [],
+  activeCompanyId: "",
+  isDexlaAdmin: false,
+  activeCompany: {} as OrgMemberInfo,
+  logout: async (redirectOnLogout: boolean) => {},
+  setActiveCompany: (companyId: string) => {
+    const matchingCompany = get().companies.find(
+      (company) => company.orgId === companyId,
+    );
+    if (matchingCompany) {
+      set({ activeCompany: matchingCompany });
+      set({ activeCompanyId: matchingCompany.orgId });
+    }
+  },
+  initializeAuth: async () => {
+    const { isLive } = useEditorStore.getState();
     if (!isLive) {
       const authClient = createClient({
         authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
@@ -26,36 +41,73 @@ export const usePropelAuthStore = create<AuthState>((set, get): AuthState => {
       });
       const authInfo = await authClient.getAuthenticationInfoOrNull();
       const logout = authClient.logout;
+
+      const companies = authInfo?.orgHelper.getOrgs() || [];
+      const activeCompany = companies[0];
+
       set({
         accessToken: authInfo?.accessToken || "",
         user: authInfo?.user || ({} as User),
         companies: authInfo?.orgHelper.getOrgs() || [],
-        activeCompany: authInfo?.orgHelper.getOrgs()[0],
+        activeCompany,
+        activeCompanyId: activeCompany?.orgId || "",
         logout: logout,
+        isDexlaAdmin:
+          activeCompany.userAssignedRole?.includes("DEXLA_ADMIN") || false,
       });
     }
-  };
+  },
+}));
 
-  // Automatically invoke the internalGetAuthInfo when the store is created
-  initializeAuthAsync();
+// export const usePropelAuthStore = create<AuthState>((set, get): AuthState => {
+//   const { isLive } = useEditorStore.getState();
 
-  return {
-    accessToken: "",
-    user: {} as User,
-    companies: [],
-    logout: async (redirectOnLogout: boolean) => {},
-    activeCompany: {} as OrgMemberInfo,
-    activeCompanyId: "",
-    initializeAuth: initializeAuthAsync,
-    isDexlaAdmin: false,
-    setActiveCompany: (companyId: string) => {
-      const matchingCompany = get().companies.find(
-        (company) => company.orgId === companyId,
-      );
-      if (matchingCompany) {
-        set({ activeCompany: matchingCompany });
-        set({ activeCompanyId: matchingCompany.orgId });
-      }
-    },
-  };
-});
+//   const initializeAuthAsync = async () => {
+//     if (!isLive) {
+//       const authClient = createClient({
+//         authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
+//         enableBackgroundTokenRefresh: true,
+//       });
+//       const authInfo = await authClient.getAuthenticationInfoOrNull();
+//       const logout = authClient.logout;
+
+//       const storedCompanyId = localStorage.getItem("activeCompanyId");
+//       const companies = authInfo?.orgHelper.getOrgs() || [];
+//       const activeCompany = storedCompanyId
+//         ? companies.find((c) => c.orgId === storedCompanyId)
+//         : companies[0];
+
+//       set({
+//         accessToken: authInfo?.accessToken || "",
+//         user: authInfo?.user || ({} as User),
+//         companies: authInfo?.orgHelper.getOrgs() || [],
+//         activeCompany,
+//         activeCompanyId: activeCompany?.orgId || "",
+//         logout: logout,
+//       });
+//     }
+//   };
+
+//   // Automatically invoke the internalGetAuthInfo when the store is created
+//   initializeAuthAsync();
+
+//   return {
+//     accessToken: "",
+//     user: {} as User,
+//     companies: [],
+//     logout: async (redirectOnLogout: boolean) => {},
+//     activeCompany: {} as OrgMemberInfo,
+//     activeCompanyId: "",
+//     initializeAuth: initializeAuthAsync,
+//     isDexlaAdmin: false,
+//     setActiveCompany: (companyId: string) => {
+//       const matchingCompany = get().companies.find(
+//         (company) => company.orgId === companyId,
+//       );
+//       if (matchingCompany) {
+//         set({ activeCompany: matchingCompany });
+//         set({ activeCompanyId: matchingCompany.orgId });
+//       }
+//     },
+//   };
+// });

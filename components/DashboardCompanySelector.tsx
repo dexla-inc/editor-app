@@ -2,13 +2,21 @@ import { Menu, Stack } from "@mantine/core";
 
 import DashboardCompanySelectorPopover from "@/components/DashboardCompanySelectorPopover";
 import { usePropelAuthStore } from "@/stores/propelAuth";
+import { useEffect } from "react";
 
 export const DashboardCompanySelector = () => {
+  const initializeAuth = usePropelAuthStore((state) => state.initializeAuth);
+
   const companies = usePropelAuthStore((state) => state.companies);
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
   const setActiveCompany = usePropelAuthStore(
     (state) => state.setActiveCompany,
   );
+
+  useEffect(() => {
+    initializeAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Menu withArrow>

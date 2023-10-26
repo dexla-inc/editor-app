@@ -55,6 +55,7 @@ const AuthProvider = ({
   isLive,
 }: PropsWithChildren & { isLive: boolean }) => {
   const [isClient, setIsClient] = useState(false);
+
   useEffect(() => {
     setIsClient(true);
   }, [isClient]);

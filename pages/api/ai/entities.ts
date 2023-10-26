@@ -190,6 +190,8 @@ export default async function handler(
       },
     );
 
+    console.log(projectsResponse);
+
     const _project = await projectsResponse.json();
 
     await prisma.project.create({
