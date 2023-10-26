@@ -1,13 +1,6 @@
 import { Icon } from "@/components/Icon";
 import { ICON_SIZE } from "@/utils/config";
-import {
-  Avatar,
-  Box,
-  Flex,
-  Text,
-  UnstyledButton,
-  useMantineTheme,
-} from "@mantine/core";
+import { Avatar, Box, Flex, Stack, Text, UnstyledButton } from "@mantine/core";
 import { forwardRef } from "react";
 
 type NavigationAvatarFooterProps = {
@@ -21,31 +14,34 @@ const NavigationAvatarFooter = forwardRef<
   HTMLDivElement,
   NavigationAvatarFooterProps
 >((props, ref) => {
-  const theme = useMantineTheme();
-  const isDarkTheme = theme.colorScheme === "dark";
-
   return (
     <Box
       ref={ref}
-      sx={{
+      sx={(theme) => ({
         margin: "0 auto",
-        width: "95%",
-      }}
+        borderTop: "1px solid " + theme.colors.gray[2],
+      })}
       {...props}
     >
       <UnstyledButton
-        sx={{
+        sx={(theme) => ({
           display: "block",
           width: "100%",
           borderRadius: theme.radius.sm,
-          color: isDarkTheme ? theme.colors.gray[4] : theme.colors.dark[8],
+          color:
+            theme.colorScheme === "dark"
+              ? theme.colors.gray[4]
+              : theme.colors.dark[8],
 
           "&:hover": {
-            backgroundColor: isDarkTheme
-              ? theme.colors.dark[4]
-              : theme.colors.gray[0],
+            backgroundColor:
+              theme.colorScheme === "dark"
+                ? theme.colors.dark[4]
+                : theme.colors.gray[0],
           },
-        }}
+        })}
+        px="sm"
+        py={4}
       >
         {(props.firstName ||
           props.lastName ||
@@ -53,17 +49,19 @@ const NavigationAvatarFooter = forwardRef<
           props.pictureUrl) && (
           <Flex py="xs" align="center" gap="xs">
             <Avatar src={props?.pictureUrl} radius="xl" />
-            <Box sx={{ flex: 1 }}>
-              {props?.firstName && props.lastName && (
-                <Text size="sm" weight={500} sx={{ whiteSpace: "nowrap" }}>
-                  {`${props?.firstName} ${props?.lastName}`}
+            <Flex justify="space-between" w="100%">
+              <Stack spacing={0} maw={145}>
+                {props?.firstName && props.lastName && (
+                  <Text size="sm" weight={500} sx={{ whiteSpace: "nowrap" }}>
+                    {`${props?.firstName} ${props?.lastName}`}
+                  </Text>
+                )}
+                <Text color="dimmed" size="xs" truncate>
+                  {props?.email}
                 </Text>
-              )}
-              <Text color="dimmed" size="xs">
-                {props?.email}
-              </Text>
-            </Box>
-            <Flex>{<Icon name="IconChevronDown" size={ICON_SIZE} />}</Flex>
+              </Stack>
+              <Flex>{<Icon name="IconChevronDown" size={ICON_SIZE} />}</Flex>
+            </Flex>
           </Flex>
         )}
       </UnstyledButton>

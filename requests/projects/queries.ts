@@ -30,12 +30,13 @@ type ProjectListResponse = {
 };
 
 export const getProjects = async (
+  companyId: string,
   search: string = "",
   offset: number = 0,
   limit: number = 10,
 ) => {
   const response = (await get<ProjectListResponse>(
-    `/projects?search=${search}&offset=${offset}&limit=${limit}`,
+    `/projects?companyId=${companyId}&search=${search}&offset=${offset}&limit=${limit}`,
     {},
   )) as ProjectListResponse;
 

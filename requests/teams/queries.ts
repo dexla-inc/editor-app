@@ -6,8 +6,8 @@ import {
 import { PagingResponse } from "@/requests/types";
 import { get } from "@/utils/api";
 
-export const getTeamsList = async () => {
-  let url = `/teams`;
+export const getTeamsList = async (companyId: string) => {
+  let url = `/teams/${companyId}`;
 
   const response = (await get<PagingResponse<UserResponse>>(
     url,
