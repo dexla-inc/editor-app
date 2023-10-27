@@ -379,6 +379,8 @@ const replaceTileData = (node: Component, tile: any, entities: object) => {
   if (node.children) {
     node.children?.map((child) => replaceTileData(child, tile, entities)) ?? [];
   }
+
+  return node;
 };
 
 export const replaceTilesData = (
@@ -386,7 +388,7 @@ export const replaceTilesData = (
   tiles: any[],
   entities: object,
 ): EditorTree => {
-  /* crawl(
+  crawl(
     tree.root,
     (node) => {
       if (node.description?.endsWith(".tile")) {
@@ -401,7 +403,7 @@ export const replaceTilesData = (
       }
     },
     { order: "bfs" },
-  ); */
+  );
 
   return tree;
 };
