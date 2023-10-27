@@ -372,6 +372,20 @@ const replaceTileData = (node: Component, tile: any, entities: object) => {
       node.props.children = val;
     }
 
+    if (node.name.endsWith("Chart")) {
+      try {
+        const data = typeof val === "string" ? JSON.parse(val).data : val.data;
+        console.log({ data });
+        // @ts-ignore
+        node.props = {
+          ...node.props,
+          ...data,
+        };
+      } catch (error) {
+        // do nothing
+      }
+    }
+
     // @ts-ignore
     node.props.data = { value: val };
   }
