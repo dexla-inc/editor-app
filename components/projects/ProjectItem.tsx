@@ -3,6 +3,7 @@ import { getPageList } from "@/requests/pages/queries";
 import { PageResponse } from "@/requests/pages/types";
 import { deleteProject } from "@/requests/projects/mutations";
 import { ProjectResponse } from "@/requests/projects/queries";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_DELETE, ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { regionTypeFlags } from "@/utils/dashboardTypes";
 import {
@@ -49,6 +50,10 @@ export function ProjectItem({
   const [pagesLoading] = useState(false);
   const [opened, setOpened] = useState(false);
   const [settingsOpened, setSettingsOpened] = useState(false);
+  const { isDexlaAdmin, company } = usePropelAuthStore((state) => ({
+    isDexlaAdmin: state.isDexlaAdmin,
+    company: state.activeCompany,
+  }));
 
   const goToEditorHomePage = async () => {
     const pages = await getPageList(project.id);
@@ -195,6 +200,16 @@ export function ProjectItem({
                   </Menu.Item>
                 </Box>
               </Collapse>
+              {isDexlaAdmin && (
+                <Menu.Item
+                  icon={<Icon name="IconRefresh" />}
+                  color="indigo"
+                  component={Link}
+                  href={`/projects/new?company=${company.orgId}&projectId=${project.id}&step=2`}
+                >
+                  Generate Pages Again
+                </Menu.Item>
+              )}
               <Menu.Item
                 icon={<Icon name={ICON_DELETE} />}
                 color="red"
