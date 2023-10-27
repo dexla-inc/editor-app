@@ -4,6 +4,7 @@ import { usePropelAuthStore } from "@/stores/propelAuth";
 import { HEADER_HEIGHT, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
 import { NavbarTypes } from "@/utils/dashboardTypes";
 import { Box, Button, Menu, NavLink, Navbar, ScrollArea } from "@mantine/core";
+import { useLogoutFunction } from "@propelauth/react";
 import { IconArrowLeft, IconLogout, IconSettings } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -19,7 +20,7 @@ export default function DashboardNavbar({
   setIsLoading,
   navbarType,
 }: DashboardNavbarProps) {
-  const logout = usePropelAuthStore((state) => state.logout);
+  const logoutFn = useLogoutFunction();
   const router = useRouter();
   const projectId = router.query.id as string;
   const user = usePropelAuthStore((state) => state.user);
@@ -95,7 +96,7 @@ export default function DashboardNavbar({
               color="red"
               onClick={() => {
                 setIsLoading(true);
-                logout(true);
+                logoutFn(true);
               }}
             >
               Logout
