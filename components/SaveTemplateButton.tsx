@@ -34,6 +34,7 @@ export const SaveTemplateButton = () => {
         );
         const prompt = `
           // create precisely ${tile.count} variations of this tile
+          // each one should be unique and have different data values respecting the type below
           type ${id} = {
             name: "${id}"
             data: ${JSON.stringify(data, null, 2)}
