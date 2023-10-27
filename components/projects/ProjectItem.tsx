@@ -207,7 +207,7 @@ export function ProjectItem({
                   component={Link}
                   href={`/projects/new?company=${company.orgId}&projectId=${project.id}&step=2`}
                 >
-                  Generate Pages Again
+                  Regenerate Pages
                 </Menu.Item>
               )}
               <Menu.Item
