@@ -1,10 +1,18 @@
 import { UnitInput } from "@/components/UnitInput";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
+import { withModifier } from "@/hoc/withModifier";
 import {
   debouncedTreeComponentStyleUpdate,
   debouncedTreeUpdate,
 } from "@/utils/editor";
-import { Group, SegmentedControl, Select, Stack, Text } from "@mantine/core";
+import {
+  Group,
+  NumberInput,
+  SegmentedControl,
+  Select,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconAlignBoxBottomCenter,
@@ -18,12 +26,12 @@ import {
   IconLayoutAlignRight,
   IconLayoutDistributeHorizontal,
   IconLayoutDistributeVertical,
+  IconLayoutKanban,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarLeftExpand,
 } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
-import { withModifier } from "@/hoc/withModifier";
 import { pick } from "next/dist/lib/pick";
+import { useEffect, useState } from "react";
 
 export const icon = IconLayout2;
 export const label = "Layout";
@@ -48,6 +56,20 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   const [displayType, setDisplayType] = useState(
     selectedComponent?.props?.style?.display ?? defaultLayoutValues.display,
   );
+  const [customFlexInputVisible, setCustomFlexInputVisible] = useState(() => {
+    const initialSizing = selectedComponent?.props?.style?.sizing;
+    return (
+      initialSizing !== "1 0 auto" &&
+      initialSizing !== "0 1 auto" &&
+      initialSizing !== "0 0 auto"
+    );
+  });
+
+  useEffect(() => {
+    console.log(customFlexInputVisible);
+  }, [customFlexInputVisible]);
+
+  const [grow, shrink, basis] = form.values.sizing.split(" ");
 
   useEffect(() => {
     if (selectedComponent?.id) {
@@ -302,6 +324,15 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                     ),
                     value: "0 0 auto",
                   },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Auto"
+                        icon={<IconLayoutKanban size={14} />}
+                      />
+                    ),
+                    value: "1 1 auto",
+                  },
                 ]}
                 styles={{
                   label: {
@@ -317,9 +348,64 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                   debouncedTreeUpdate(selectedComponent?.id as string, {
                     style: { flex: value },
                   });
+                  if (value === "1 1 auto") {
+                    setCustomFlexInputVisible(true);
+                  } else {
+                    setCustomFlexInputVisible(false);
+                  }
                 }}
               />
             </Stack>
+            {customFlexInputVisible && (
+              <Stack
+                spacing={2}
+                p="xs"
+                bg="gray.1"
+                sx={(theme) => ({
+                  borderRadius: theme.radius.sm,
+                  border: "1px solid " + theme.colors.gray[2],
+                })}
+              >
+                <NumberInput
+                  label="Grow"
+                  size="xs"
+                  value={parseInt(grow)}
+                  onChange={(value) => {
+                    const [grow, shrink, basis] = form.values.sizing.split(" ");
+                    const sizing = `${value} ${shrink} ${basis}`;
+                    form.setFieldValue("sizing", sizing);
+                    debouncedTreeUpdate(selectedComponent?.id as string, {
+                      style: { flex: sizing },
+                    });
+                  }}
+                />
+                <NumberInput
+                  label="Shrink"
+                  size="xs"
+                  value={parseInt(shrink)}
+                  onChange={(value) => {
+                    const [grow, shrink, basis] = form.values.sizing.split(" ");
+                    const sizing = `${grow} ${value} ${basis}`;
+                    form.setFieldValue("sizing", sizing);
+                    debouncedTreeUpdate(selectedComponent?.id as string, {
+                      style: { flex: sizing },
+                    });
+                  }}
+                />
+                <UnitInput
+                  label="Basis"
+                  onChange={(value) => {
+                    const [grow, shrink, basis] = form.values.sizing.split(" ");
+                    const sizing = `${grow} ${shrink} ${value}`;
+                    form.setFieldValue("sizing", sizing);
+                    debouncedTreeUpdate(selectedComponent?.id as string, {
+                      style: { flex: sizing },
+                    });
+                  }}
+                />
+              </Stack>
+            )}
+
             <Select
               label="Wrap"
               size="xs"

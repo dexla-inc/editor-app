@@ -30,10 +30,16 @@ export const usePropelAuthStore = create<AuthState>()(
         const matchingCompany = get().companies.find(
           (company) => company.orgId === companyId,
         );
+
         if (matchingCompany) {
           set({ activeCompany: matchingCompany });
           set({ activeCompanyId: matchingCompany.orgId });
           set({ userPermissions: matchingCompany.userPermissions || [] });
+          set({
+            isDexlaAdmin:
+              matchingCompany.userAssignedRole?.includes("DEXLA_ADMIN") ||
+              false,
+          });
         }
       },
       initializeAuth: async () => {
@@ -59,6 +65,7 @@ export const usePropelAuthStore = create<AuthState>()(
             activeCompanyId: activeCompanyId || activeCompany?.orgId || "",
             isDexlaAdmin:
               activeCompany?.userAssignedRole?.includes("DEXLA_ADMIN") || false,
+            //isDexlaAdmin: activeCompany?.orgName.includes("DEXLA") || false,
           });
         }
       },
