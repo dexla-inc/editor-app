@@ -33,7 +33,7 @@ export const SaveTemplateButton = () => {
           `${tile.node.description?.replace(".tile", "")}Tile`,
         );
         const prompt = `
-          // create precisely ${tile.count} of this tile
+          // create precisely ${tile.count} variations of this tile
           type ${id} = {
             name: "${id}"
             data: ${JSON.stringify(data, null, 2)}
