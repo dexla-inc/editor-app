@@ -4,12 +4,13 @@ import { Menu, Stack, Text } from "@mantine/core";
 import { Icon } from "@/components/Icon";
 import NavigationAvatarFooter from "@/components/NavigationAvatarFooter";
 import { usePropelAuthStore } from "@/stores/propelAuth";
+import { useLogoutFunction } from "@propelauth/react";
 import { useState } from "react";
 
 export const DashboardUserMenu = () => {
   const [isLoading, setIsLoading] = useState(false);
   const user = usePropelAuthStore((state) => state.user);
-  const logout = usePropelAuthStore((state) => state.logout);
+  const logoutFn = useLogoutFunction();
 
   return (
     <Menu withArrow>
@@ -32,7 +33,7 @@ export const DashboardUserMenu = () => {
             color="red"
             onClick={() => {
               setIsLoading(true);
-              logout(true);
+              logoutFn(true);
             }}
           >
             Logout

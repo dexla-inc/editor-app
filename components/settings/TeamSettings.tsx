@@ -5,7 +5,7 @@ import { InviteTeamParams, UserResponse } from "@/requests/teams/types";
 import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
-import { UserRoles } from "@/utils/dashboardTypes";
+import { UserRoles, snakeToSpacedText } from "@/utils/dashboardTypes";
 import {
   Button,
   Container,
@@ -37,8 +37,14 @@ export default function TeamSettings({ projectId }: Props) {
 
   const openInviteModal = () => setInviteModalOpen(true);
   const closeInviteModal = () => setInviteModalOpen(false);
-  const company = usePropelAuthStore((state) => state.activeCompany);
-  const companyId = usePropelAuthStore((state) => state.activeCompanyId);
+
+  const { company, companyId, userPermissions } = usePropelAuthStore(
+    (state) => ({
+      company: state.activeCompany,
+      companyId: state.activeCompanyId,
+      userPermissions: state.userPermissions,
+    }),
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -95,14 +101,16 @@ export default function TeamSettings({ projectId }: Props) {
       <Stack spacing="xl">
         <Flex justify="space-between">
           <Title order={3}>Members</Title>
-          <Button
-            onClick={openInviteModal}
-            leftIcon={<Icon name="IconPlus" size={ICON_SIZE}></Icon>}
-            color="indigo"
-            compact
-          >
-            Invite Member
-          </Button>
+          {userPermissions.includes("propelauth::can_invite") && (
+            <Button
+              onClick={openInviteModal}
+              leftIcon={<Icon name="IconPlus" size={ICON_SIZE}></Icon>}
+              color="indigo"
+              compact
+            >
+              Invite Member
+            </Button>
+          )}
         </Flex>
         <Table>
           <thead>
@@ -131,7 +139,7 @@ export default function TeamSettings({ projectId }: Props) {
                 </td>
                 <td>{user.firstName + " " + user.lastName}</td>
                 <td>{user.email}</td>
-                <td></td>
+                <td>{snakeToSpacedText(user.accessLevel)}</td>
                 <td>
                   {user.enabled ? (
                     <IconCircleCheck

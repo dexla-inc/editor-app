@@ -20,6 +20,10 @@ export type UserResponse = {
   lastCreatedAt: number;
   emailConfirmed: boolean;
   enabled: boolean;
+  accessLevel: UserRoles;
+  canInvite: boolean;
+  canChangeRoles: boolean;
+  canRemoveUsers: boolean;
 };
 
 export type TeamListResponse = {
