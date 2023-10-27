@@ -49,6 +49,7 @@ export default async function handler(
 
     const message = response.choices[0].message;
     const content = JSON.parse(message.content ?? "[]");
+    console.log("PAGE LIST", content);
 
     return res.status(200).json(content);
   } catch (error) {

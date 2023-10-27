@@ -83,6 +83,7 @@ export default async function handler(
 
     const message = response.choices[0].message;
     const content = JSON.parse(message.content ?? "{}");
+    console.log("ENTITIES", content);
 
     const projectData = Object.keys(content.entities).reduce((acc, key) => {
       const entity = content.entities[key];
