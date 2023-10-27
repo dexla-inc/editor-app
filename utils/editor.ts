@@ -386,7 +386,7 @@ export const replaceTilesData = (
   tiles: any[],
   entities: object,
 ): EditorTree => {
-  crawl(
+  /* crawl(
     tree.root,
     (node) => {
       if (node.description?.endsWith(".tile")) {
@@ -401,7 +401,7 @@ export const replaceTilesData = (
       }
     },
     { order: "bfs" },
-  );
+  ); */
 
   return tree;
 };
