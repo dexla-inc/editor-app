@@ -7,6 +7,9 @@ export const DashboardNavLinks = () => {
 
   return (
     <Stack>
+      <Text size="xs" color="dimmed" px="md">
+        Work
+      </Text>
       <DashboardNavLink
         label="Projects"
         icon="IconPresentation"

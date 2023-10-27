@@ -38,7 +38,7 @@ export const label = "Layout";
 
 export const defaultLayoutValues = {
   display: "flex",
-  flexWrap: "wrap",
+  flexWrap: "nowrap",
   flexDirection: "column",
   rowGap: "20px",
   columnGap: "20px",

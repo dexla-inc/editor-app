@@ -49,6 +49,7 @@ export const usePropelAuthStore = create<AuthState>()(
             authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
             enableBackgroundTokenRefresh: true,
           });
+
           const authInfo = await authClient.getAuthenticationInfoOrNull();
 
           const companies = authInfo?.orgHelper.getOrgs() || [];
