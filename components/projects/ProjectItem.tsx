@@ -12,6 +12,7 @@ import {
   Col,
   Collapse,
   Flex,
+  Loader,
   MantineTheme,
   Menu,
   NavLink,
@@ -35,7 +36,7 @@ type ProjectItemProps = {
   theme: MantineTheme;
   buttonHoverStyles: any;
   goToEditor: (projectId: string, pageId: string) => Promise<void>;
-  onDeleteProject: (id: string) => void;
+  onDeleteProject?: (id: string) => void;
 };
 
 export function ProjectItem({
@@ -50,6 +51,7 @@ export function ProjectItem({
   const [pagesLoading] = useState(false);
   const [opened, setOpened] = useState(false);
   const [settingsOpened, setSettingsOpened] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { isDexlaAdmin, company } = usePropelAuthStore((state) => ({
     isDexlaAdmin: state.isDexlaAdmin,
     company: state.activeCompany,
@@ -70,8 +72,9 @@ export function ProjectItem({
   };
 
   const deleteProjectFn = async () => {
+    setIsLoading(true);
     await deleteProject(project.id);
-    onDeleteProject(project.id);
+    onDeleteProject && onDeleteProject(project.id);
     setPages([]);
   };
 
@@ -121,10 +124,20 @@ export function ProjectItem({
               <UnstyledButton
                 sx={{
                   borderRadius: theme.radius.sm,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                   ...buttonHoverStyles(theme),
                 }}
               >
-                <IconDots size={LARGE_ICON_SIZE} color={theme.colors.teal[5]} />
+                {isLoading ? (
+                  <Loader size="sm" />
+                ) : (
+                  <IconDots
+                    size={LARGE_ICON_SIZE}
+                    color={theme.colors.teal[5]}
+                  />
+                )}
               </UnstyledButton>
             </Menu.Target>
             <Menu.Dropdown>
@@ -210,13 +223,15 @@ export function ProjectItem({
                   Regenerate Pages
                 </Menu.Item>
               )}
-              <Menu.Item
-                icon={<Icon name={ICON_DELETE} />}
-                color="red"
-                onClick={deleteProjectFn}
-              >
-                Delete
-              </Menu.Item>
+              {onDeleteProject && (
+                <Menu.Item
+                  icon={<Icon name={ICON_DELETE} />}
+                  color="red"
+                  onClick={deleteProjectFn}
+                >
+                  Delete
+                </Menu.Item>
+              )}
             </Menu.Dropdown>
           </Menu>
         </Flex>

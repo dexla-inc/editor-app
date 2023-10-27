@@ -2,7 +2,8 @@ import { DashboardShell } from "@/components/DashboardShell";
 import IconTitleDescriptionButton from "@/components/projects/NewProjectButton";
 import { ProjectItem } from "@/components/projects/ProjectItem";
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
-import { ProjectResponse, getProjects } from "@/requests/projects/queries";
+import { deleteProject } from "@/requests/projects/mutations";
+import { ProjectListResponse, getProjects } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
@@ -16,13 +17,14 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { IconSearch, IconSparkles } from "@tabler/icons-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import debounce from "lodash.debounce";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Projects() {
-  const [projects, setProjects] = useState<ProjectResponse[]>([]);
+  //const [projects, setProjects] = useState<ProjectResponse[]>([]);
   const [search, setSearch] = useState<string>("");
   const debouncedSearch = debounce((query) => setSearch(query), 400);
   const theme = useMantineTheme();
@@ -43,24 +45,45 @@ export default function Projects() {
     router.push(`/projects/${projectId}/editor/${pageId}`);
   };
 
-  const fetchProjects = useCallback(async () => {
-    const result = await getProjects(company.orgId, search);
+  // const fetchProjects = useCallback(async () => {
+  //   const result = await getProjects(company.orgId, search);
 
-    setProjects(result.results);
-  }, [search, company]);
+  //   setProjects(result.results);
+  // }, [search, company]);
 
-  const handleDeleteProject = (id: string) => {
-    setProjects((prevProjects) =>
-      prevProjects.filter((project) => project.id !== id),
-    );
+  // const handleDeleteProject = (id: string) => {
+  //   setProjects((prevProjects) =>
+  //     prevProjects.filter((project) => project.id !== id),
+  //   );
+  // };
+
+  const projectsQuery = useQuery<ProjectListResponse, Error>({
+    queryKey: ["projects", company.orgId, search],
+    queryFn: () => getProjects(company.orgId, search),
+  });
+
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation(deleteProject, {
+    onSettled(_, err) {
+      if (err) {
+        console.error(err);
+      }
+
+      queryClient.invalidateQueries(["projects"]);
+    },
+  });
+
+  const refreshProjects = () => {
+    projectsQuery.refetch();
   };
 
-  const ownedProjects = projects.filter((project) => project.isOwner);
-  const sharedProjects = projects.filter((project) => !project.isOwner);
-
-  useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+  const ownedProjects = projectsQuery.data?.results.filter(
+    (project) => project.isOwner,
+  );
+  const sharedProjects = projectsQuery.data?.results.filter(
+    (project) => !project.isOwner,
+  );
 
   useEffect(() => {
     if (!user) {
@@ -109,7 +132,7 @@ export default function Projects() {
               ></IconTitleDescriptionButton>
             </Link>
           </Flex>
-          {projects && (
+          {projectsQuery.data?.results && (
             <TextInput
               placeholder="Search a project"
               icon={<IconSearch size={ICON_SIZE} />}
@@ -119,11 +142,13 @@ export default function Projects() {
             />
           )}
           {/* <TeamInvitations /> */}
-          {ownedProjects.length > 0 && (
+          {ownedProjects && ownedProjects.length > 0 && (
             <>
-              {ownedProjects.length > 0 && sharedProjects.length > 0 && (
-                <Title order={4}>My Projects</Title>
-              )}
+              {ownedProjects.length > 0 &&
+                sharedProjects &&
+                sharedProjects.length > 0 && (
+                  <Title order={4}>My Projects</Title>
+                )}
               <Grid>
                 {ownedProjects.map((project) => (
                   <ProjectItem
@@ -132,26 +157,26 @@ export default function Projects() {
                     theme={theme}
                     buttonHoverStyles={buttonHoverStyles}
                     goToEditor={goToEditor}
-                    onDeleteProject={handleDeleteProject}
+                    onDeleteProject={mutate}
                   />
                 ))}
               </Grid>
             </>
           )}
-          {sharedProjects.length > 0 && (
+          {sharedProjects && sharedProjects.length > 0 && (
             <>
               <Title order={4}>Shared With Me</Title>
               <Grid>
-                {sharedProjects.map((project) => (
-                  <ProjectItem
-                    key={project.id}
-                    project={project}
-                    theme={theme}
-                    buttonHoverStyles={buttonHoverStyles}
-                    goToEditor={goToEditor}
-                    onDeleteProject={handleDeleteProject}
-                  />
-                ))}
+                {sharedProjects &&
+                  sharedProjects.map((project) => (
+                    <ProjectItem
+                      key={project.id}
+                      project={project}
+                      theme={theme}
+                      buttonHoverStyles={buttonHoverStyles}
+                      goToEditor={goToEditor}
+                    />
+                  ))}
               </Grid>
             </>
           )}

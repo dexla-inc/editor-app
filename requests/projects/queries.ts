@@ -25,7 +25,7 @@ export type ProjectResponse = {
   subDomain: string;
 };
 
-type ProjectListResponse = {
+export type ProjectListResponse = {
   results: ProjectResponse[];
 };
 
