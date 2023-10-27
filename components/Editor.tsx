@@ -261,10 +261,23 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
         const template = await templateResponse.json();
 
+        const projectResponse = await fetch(`/api/project/${projectId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const project = await projectResponse.json();
+
         // TODO: Replace tiles from template state with tiles from aiPageTemplate
         const aiTiles = aiPageTemplate.template.tiles;
-        const treeState = replaceTilesData(template.state, aiTiles.template);
-        console.log({ aiPageTemplate, template, aiTiles, treeState });
+        console.log({ aiPageTemplate, template, aiTiles, data: project?.data });
+        const treeState = replaceTilesData(
+          template.state,
+          aiTiles,
+          project?.data,
+        );
 
         setEditorTree(treeState);
         stopLoading({

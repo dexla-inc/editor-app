@@ -361,42 +361,49 @@ export const getTileData = (treeRoot: Component): { [key: string]: any } => {
 };
 
 // recursively replace all tile.data with the actual tile data
-const replaceTileData = (node: Component, tile: any) => {
+const replaceTileData = (node: Component, tile: any, entities: object) => {
   if (node.description?.startsWith("tile.data.")) {
     const key = node.description?.replace("tile.data.", "");
-    const val = tile[key];
-    console.log({ val });
+    const val = tile.data[key];
+    console.log({ tile, key, val, entities });
+
+    if (node.name === "Text" || node.name === "Title") {
+      // @ts-ignore
+      node.props.children = val;
+    }
+
     // @ts-ignore
     node.props.data = { value: val };
   }
 
   if (node.children) {
-    node.children?.map((child) => replaceTileData(child, tile)) ?? [];
+    node.children?.map((child) => replaceTileData(child, tile, entities)) ?? [];
   }
 };
 
 export const replaceTilesData = (
   tree: EditorTree,
   tiles: any[],
+  entities: object,
 ): EditorTree => {
-  let copy = cloneDeep(tree);
   crawl(
-    copy.root,
+    tree.root,
     (node) => {
       if (node.description?.endsWith(".tile")) {
-        const tile = tiles.find(
-          (t) => t.name === node.description?.replace(".tile", ""),
-        );
+        const name = node.description?.replace(".tile", "");
+        const tile = tiles.find((t) => t.name === `${name}Tile`);
 
         // @ts-ignore
         node.children =
-          node.children?.map((child) => replaceTileData(child, tile)) ?? [];
+          node.children?.map((child) =>
+            replaceTileData(child, tile, entities as object),
+          ) ?? [];
       }
     },
     { order: "bfs" },
   );
 
-  return copy;
+  return tree;
 };
 
 export const getComponentById = (
