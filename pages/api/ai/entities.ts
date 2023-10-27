@@ -2,6 +2,7 @@ import { openai } from "@/utils/openai";
 import { prisma } from "@/utils/prisma";
 import { ProjectTypes } from "@/utils/projectTypes";
 import { getEntitiesPrompt } from "@/utils/prompts";
+import { Stopwatch } from "@/utils/stopwatch";
 import { faker } from "@faker-js/faker";
 import random from "lodash.random";
 import sampleSize from "lodash.samplesize";
@@ -26,11 +27,19 @@ export default async function handler(
     if (req.method !== "POST") {
       throw new Error("Invalid method");
     }
+    // start a timer
+    const timer = Stopwatch.StartNew();
+
+    console.log(
+      "Entities API duration: " + timer.getElapsedMilliseconds(),
+      "Event Complete: Stopwatch.StartNew()",
+    );
 
     const data: {
       appDescription: string;
       appIndustry: string;
       accessToken: string;
+      timer: Stopwatch;
     } = req.body;
 
     const { appDescription, appIndustry, ...restData } = data;
@@ -45,6 +54,11 @@ export default async function handler(
         },
       ],
     });
+
+    console.log(
+      "Entities API duration: " + timer.getElapsedMilliseconds(),
+      "Event Complete: getEntitiesPrompt",
+    );
 
     const message = response.choices[0].message;
     const content = JSON.parse(message.content ?? "{}");
@@ -98,6 +112,11 @@ export default async function handler(
           .map(() => callFakerFuncs(entity)),
       };
     }, {});
+
+    console.log(
+      "Entities API duration: " + timer.getElapsedMilliseconds(),
+      "Event Complete: callFakerFuncs",
+    );
 
     const transformEntityReferences = (_data: any): any => {
       const getEntityValue = (val: any) => {
@@ -161,6 +180,11 @@ export default async function handler(
       }, {});
     };
 
+    console.log(
+      "Entities API duration: " + timer.getElapsedMilliseconds(),
+      "Event Complete: transformEntityReferences",
+    );
+
     const transformedData = Object.keys(projectData).reduce((acc, key) => {
       // @ts-ignore
       const entityData = projectData[key];
@@ -190,7 +214,10 @@ export default async function handler(
       },
     );
 
-    console.log(projectsResponse);
+    console.log(
+      "Entities API duration: " + timer.getElapsedMilliseconds(),
+      "Event Complete: projectsResponse",
+    );
 
     const _project = await projectsResponse.json();
 
@@ -201,6 +228,11 @@ export default async function handler(
         data: transformedData,
       },
     });
+
+    console.log(
+      "Entities API duration: " + timer.getElapsedMilliseconds(),
+      "Entities API Finished:  await prisma.project.create({",
+    );
 
     return res.status(200).json(_project);
   } catch (error) {

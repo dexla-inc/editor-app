@@ -48,6 +48,7 @@ export default function Projects() {
 
     setProjects(result.results);
   }, [search, company]);
+
   const handleDeleteProject = (id: string) => {
     setProjects((prevProjects) =>
       prevProjects.filter((project) => project.id !== id),
