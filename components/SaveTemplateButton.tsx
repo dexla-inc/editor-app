@@ -54,6 +54,7 @@ export const SaveTemplateButton = () => {
           name: camelcase(page.title),
           state: editorTree,
           type: page.queryStrings?.type,
+          tags: page.queryStrings?.tags,
           prompt: `
           type ${camelcase(page.title)}Template = {
             name: "${camelcase(page.title)}Template"
