@@ -1,5 +1,5 @@
 import { transpile } from "typescript";
-
+import { createBrowserHistory } from "history";
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { BindPlaceDataActionForm } from "@/components/actions/BindPlaceDataActionForm";
 import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
@@ -1353,14 +1353,17 @@ export const changeVariableAction = async ({
   let isPreviewValueObject = false;
   let isPreviewValueArray = false;
 
+  const browser = createBrowserHistory();
+
   if (action.bindingType === "JavaScript") {
     const variables = await listVariables(currentProjectId!, {
       pageId: currentPageId!,
     }).then(({ results }) => {
       return results.reduce(
         (acc, variable) => {
+          const value = variable.value ?? variable.defaultValue;
           acc.list[variable.id] = variable;
-          acc[variable.id] = variable.value ?? variable.defaultValue;
+          acc[variable.id] = value ? JSON.parse(value) : value;
           return acc;
         },
         { list: {} } as Record<string, any>,
@@ -1378,26 +1381,29 @@ export const changeVariableAction = async ({
       isPreviewValueObject = typeof previewNewValue === "object";
       isPreviewValueArray = Array.isArray(previewNewValue);
 
-      if (isPreviewValueObject || isPreviewValueArray) {
-        try {
-          previewNewValue = JSON.stringify(previewNewValue);
-        } catch {}
+      if (typeof previewNewValue !== "string") {
+        previewNewValue = JSON.stringify(previewNewValue);
       }
 
       const variable = variables.list[action.variableId];
 
       await createVariable(currentProjectId!, {
         name: variable.name,
-        value: previewNewValue,
-        type:
-          typeof previewNewValue === "object"
-            ? "OBJECT"
-            : isPreviewValueArray
-            ? "ARRAY"
-            : "TEXT",
+        value:
+          typeof previewNewValue === "string"
+            ? previewNewValue
+            : JSON.stringify(previewNewValue),
+        type: isPreviewValueObject
+          ? "OBJECT"
+          : isPreviewValueArray
+          ? "ARRAY"
+          : "TEXT",
         isGlobal: false,
         pageId: currentPageId!,
-        defaultValue: previewNewValue,
+        defaultValue:
+          typeof previewNewValue === "string"
+            ? previewNewValue
+            : JSON.stringify(previewNewValue),
       });
     } catch {
       return;
