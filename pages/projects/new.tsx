@@ -7,6 +7,7 @@ import { getPageList } from "@/requests/pages/queries";
 import { RegionTypes, getProject } from "@/requests/projects/queries";
 import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { StepperDetailsType } from "@/utils/projectTypes";
 import { Container, Stack, Stepper, Title } from "@mantine/core";
 import { FileWithPath } from "@mantine/dropzone";
@@ -18,6 +19,8 @@ export default function New() {
   const [isLoading, setIsLoading] = useState(false);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
+
+  const activeCompany = usePropelAuthStore((state) => state.activeCompany);
 
   const nextStep = () =>
     setActiveStep((current) => (current < 3 ? current + 1 : current));
@@ -35,7 +38,7 @@ export default function New() {
   );
   const [hasPagesCreated, setHasPagesCreated] = useState(false);
   const [homePageId, setHomePageId] = useState("");
-  const [friendlyName, setFriendlyName] = useState("");
+  const [friendlyName, setFriendlyName] = useState(activeCompany.orgName);
   const [region, setRegion] = useState<RegionTypes>("US_CENTRAL");
 
   const router = useRouter();
