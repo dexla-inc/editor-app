@@ -24,10 +24,10 @@ export const getPageGenerationPrompt = ({
     template: Template
   }
 
-  The entities are just as a reference so you know which type of data could be there in the page, but you should use your own data.
-  The data inside Chart tiles must always be valida jso as we will be parsing them too.
+  The entities are just as a reference so you know which type of data could be there in the page, but yuu should use your own data.
+  The data inside Chart tiles must always be valid json as we will be parsing them too.
   The return must be in JSON format. Make sure it's valid JSON as we will be parsing it using JSON.parse.
-  Don't prepend or append anything,just return the JSON. Whatever you return will go straight through JSON.parse.
+  Don't prepend or append anything, just return the JSON. Whatever you return will go straight through JSON.parse.
     
   ENTITIES: ${entities}
   PAGE NAME: ${pageName}
