@@ -7,6 +7,7 @@ type JsProps = {
   language: "javascript" | "typescript" | "json";
   value?: string;
   variables?: Record<string, any>;
+  components?: Record<string, any>;
   onChange?: any;
   selectedItem?: any;
 };
@@ -17,6 +18,7 @@ export function CustomJavaScriptTextArea({
   language: defaultLanguage,
   value = "",
   variables = {},
+  components = {},
   onChange,
   selectedItem,
 }: JsProps) {
@@ -95,6 +97,11 @@ export function CustomJavaScriptTextArea({
                     label: `browser[${key}]`,
                     kind: monaco.languages.CompletionItemKind.Variable,
                     insertText: `browser['${key}']`,
+                  })),
+                  ...Object.entries(components).map(([id, component]) => ({
+                    label: `components[${component.description}]`,
+                    kind: monaco.languages.CompletionItemKind.Variable,
+                    insertText: `components[/* ${component.description} */'${id}']`,
                   })),
                 ],
               };
