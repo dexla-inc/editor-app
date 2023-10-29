@@ -57,6 +57,7 @@ export default function BindingPopover({
   const [selectedItem, setSelectedItem] = useState<string>();
   const [newValue, setNewValue] = useState<string>();
   const [tab, setTab] = useState<BindingTab>(bindingTab ?? "components");
+  const [filterKeyword, setFilterKeyword] = useState<string>("");
   const theme = useMantineTheme();
 
   const browser = useRouter();
@@ -102,6 +103,7 @@ export default function BindingPopover({
   ]).reduce(
     (acc, component) => {
       const value = component?.props?.value;
+      component.name = component.description!;
       acc.list[component?.id!] = component;
       acc[component?.id!] = value ? JSON.parse(value) : value;
       return acc;
@@ -260,11 +262,14 @@ export default function BindingPopover({
             size="xs"
             placeholder="Search"
             icon={<Icon name="IconSearch" />}
+            value={filterKeyword}
+            onChange={(event) => setFilterKeyword(event.currentTarget.value)}
           />
           {tab === "components" ? (
             <Stack>
               <ScrollArea.Autosize mah={300}>
                 <ObjectDetails
+                  filterKeyword={filterKeyword}
                   variables={Object.values(inputComponents?.list)}
                   onItemSelection={(item: string) => {
                     setSelectedItem(
@@ -278,6 +283,7 @@ export default function BindingPopover({
             <Stack>
               <ScrollArea.Autosize mah={300}>
                 <ObjectDetails
+                  filterKeyword={filterKeyword}
                   variables={Object.values(variables?.list)}
                   onItemSelection={(item: string) => {
                     try {
@@ -302,6 +308,7 @@ export default function BindingPopover({
             <Stack>
               <ScrollArea.Autosize mah={300}>
                 <ObjectDetails
+                  filterKeyword={filterKeyword}
                   variables={browserList}
                   onItemSelection={(item: string) => {
                     try {
