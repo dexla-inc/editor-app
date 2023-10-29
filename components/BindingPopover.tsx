@@ -23,6 +23,8 @@ import { listVariables } from "@/requests/variables/queries";
 import { useRouter } from "next/router";
 import { ObjectDetails } from "@/components/PropsListing";
 import { pick } from "next/dist/lib/pick";
+import { getAllComponentsByName } from "@/utils/editor";
+import { useEditorStore } from "@/stores/editor";
 
 const TAB_TEXT_SIZE = "xs";
 const ML = 10;
@@ -49,6 +51,7 @@ export default function BindingPopover({
   onChangeJavascriptCode,
   javascriptCode,
 }: Props) {
+  const editorTree = useEditorStore((state) => state.tree);
   const [formulaEntry, setFormulaEntry] = useState<string>();
   const [currentValue, setCurrentValue] = useState<string>();
   const [selectedItem, setSelectedItem] = useState<string>();
@@ -88,6 +91,23 @@ export default function BindingPopover({
       }),
     enabled: !!projectId && !!pageId,
   });
+
+  const inputComponents = getAllComponentsByName(editorTree.root, [
+    "Input",
+    "Select",
+    "Checkbox",
+    "RadioGroup",
+    "Switch",
+    "Textarea",
+  ]).reduce(
+    (acc, component) => {
+      const value = component?.props?.value;
+      acc.list[component?.id!] = component;
+      acc[component?.id!] = value ? JSON.parse(value) : value;
+      return acc;
+    },
+    { list: {} } as Record<string, any>,
+  );
 
   useEffect(() => {
     try {
@@ -170,6 +190,7 @@ export default function BindingPopover({
                 language="typescript"
                 value={javascriptCode}
                 variables={variables?.list}
+                components={inputComponents.list}
                 onChange={onChangeJavascriptCode}
                 selectedItem={selectedItem}
               />
@@ -241,29 +262,38 @@ export default function BindingPopover({
             icon={<Icon name="IconSearch" />}
           />
           {tab === "components" ? (
-            <Stack>Create a tree for the components</Stack>
-          ) : tab === "variables" ? (
-            <Stack w="100%">
+            <Stack>
               <ScrollArea.Autosize mah={300}>
-                <List listStyleType="none" withPadding={false}>
-                  <ObjectDetails
-                    variables={Object.values(variables?.list)}
-                    onItemSelection={(item: string) => {
-                      try {
-                        const parsed = JSON.parse(item);
-                        setSelectedItem(
-                          `variables[/* ${variables?.list[parsed.id].name} */'${
-                            parsed.id
-                          }']${parsed.path}`,
-                        );
-                      } catch {
-                        setSelectedItem(
-                          `variables[/* ${variables?.list[item].name} */'${item}']`,
-                        );
-                      }
-                    }}
-                  />
-                </List>
+                <ObjectDetails
+                  variables={Object.values(inputComponents?.list)}
+                  onItemSelection={(item: string) => {
+                    setSelectedItem(
+                      `components[/* ${inputComponents?.list[item].description} */'${item}']`,
+                    );
+                  }}
+                />
+              </ScrollArea.Autosize>
+            </Stack>
+          ) : tab === "variables" ? (
+            <Stack>
+              <ScrollArea.Autosize mah={300}>
+                <ObjectDetails
+                  variables={Object.values(variables?.list)}
+                  onItemSelection={(item: string) => {
+                    try {
+                      const parsed = JSON.parse(item);
+                      setSelectedItem(
+                        `variables[/* ${variables?.list[parsed.id].name} */'${
+                          parsed.id
+                        }']${parsed.path}`,
+                      );
+                    } catch {
+                      setSelectedItem(
+                        `variables[/* ${variables?.list[item].name} */'${item}']`,
+                      );
+                    }
+                  }}
+                />
               </ScrollArea.Autosize>
             </Stack>
           ) : tab === "datasources" ? (
@@ -271,21 +301,17 @@ export default function BindingPopover({
           ) : tab === "browser" ? (
             <Stack>
               <ScrollArea.Autosize mah={300}>
-                <List listStyleType="none" withPadding={false}>
-                  <ObjectDetails
-                    variables={browserList}
-                    onItemSelection={(item: string) => {
-                      try {
-                        const parsed = JSON.parse(item);
-                        setSelectedItem(
-                          `browser['${parsed.id}'].${parsed.path}`,
-                        );
-                      } catch {
-                        setSelectedItem(`browser['${item}']`);
-                      }
-                    }}
-                  />
-                </List>
+                <ObjectDetails
+                  variables={browserList}
+                  onItemSelection={(item: string) => {
+                    try {
+                      const parsed = JSON.parse(item);
+                      setSelectedItem(`browser['${parsed.id}'].${parsed.path}`);
+                    } catch {
+                      setSelectedItem(`browser['${item}']`);
+                    }
+                  }}
+                />
               </ScrollArea.Autosize>
             </Stack>
           ) : null}

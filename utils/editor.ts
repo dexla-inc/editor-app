@@ -720,14 +720,18 @@ export const getComponentParent = (
 
 export const getAllComponentsByName = (
   treeRoot: Component,
-  componentName: string,
+  componentName: string | string[],
 ): Component[] => {
   const components: Component[] = [];
+
+  if (!Array.isArray(componentName)) {
+    componentName = [componentName];
+  }
 
   crawl(
     treeRoot,
     (node) => {
-      if (node.name === componentName) {
+      if (componentName.includes(node.name)) {
         components.push(node);
       }
     },
