@@ -67,15 +67,15 @@ export const ChangeHistoryPopover: FC = () => {
   const theme = useMantineTheme();
 
   const handlePageStateChange = (
-    func: (steps?: number | undefined) => void,
+    operation: (steps?: number | undefined) => void,
   ) => {
-    func();
-    const prev = useEditorStore.getState();
+    operation();
+    const retrievedPageState = useEditorStore.getState();
     debouncedUpdatePageState(
-      encodeSchema(JSON.stringify(prev.tree)),
-      prev.currentProjectId ?? "",
-      prev.currentPageId ?? "",
-      prev.setIsSaving,
+      encodeSchema(JSON.stringify(retrievedPageState.tree)),
+      retrievedPageState.currentProjectId ?? "",
+      retrievedPageState.currentPageId ?? "",
+      retrievedPageState.setIsSaving,
     );
   };
 
