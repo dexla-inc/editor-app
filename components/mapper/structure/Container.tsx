@@ -2,7 +2,6 @@ import { defaultTheme } from "@/components/IFrame";
 import { defaultBorderValues } from "@/components/modifiers/Border";
 import { defaultLayoutValues } from "@/components/modifiers/Layout";
 import { Component } from "@/utils/editor";
-import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -18,10 +17,9 @@ export const jsonStructure = (props?: any): Component => {
       style: {
         ...defaultLayoutValues,
         ...defaultBorderValues,
-        padding: `${px(theme.spacing.lg)}px`,
         width: "100%",
         height: "auto",
-        minHeight: "10px",
+        minHeight: "50px",
         ...(style || {}),
       },
     },
