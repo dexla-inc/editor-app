@@ -10,6 +10,28 @@ import {
   fetchEventSource,
 } from "@microsoft/fetch-event-source";
 
+export const postEventSourceComponents = async (
+  projectId: string,
+  params: EventSourceParams,
+  onmessage?: (ev: EventSourceMessage) => void,
+  onerror?: (err: any) => number | null | undefined | void,
+  onopen?: (response: Response) => Promise<void>,
+  onclose?: () => void,
+) => {
+  await fetchEventSource("/api/ai/components", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "text/event-stream",
+    },
+    body: JSON.stringify(params),
+    onerror: onerror,
+    onmessage: onmessage,
+    onopen: onopen,
+    onclose: onclose,
+  });
+};
+
 export const getPagesEventSource = async (
   projectId: string,
   count: number = 5,

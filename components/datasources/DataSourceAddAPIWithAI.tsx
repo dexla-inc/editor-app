@@ -35,7 +35,7 @@ export default function DataSourceAddAPIWithAI({ projectId }: Props) {
     setIsLoading,
   });
 
-  const handleAIGeneration = async () => {
+  const triggerAIGeneration = async () => {
     setIsLoading(true);
 
     await handleRequestContentStream(
@@ -49,7 +49,7 @@ export default function DataSourceAddAPIWithAI({ projectId }: Props) {
     );
   };
 
-  const handleApiGeneration = () => {
+  const apiGenerationHandler = () => {
     return function (tomlData: any) {
       setApi(tomlData.api as ApiFromAI);
     };
@@ -58,7 +58,7 @@ export default function DataSourceAddAPIWithAI({ projectId }: Props) {
   useEffect(() => {
     processTOMLStream<ApiFromAI>({
       stream,
-      handler: handleApiGeneration(),
+      handler: apiGenerationHandler(),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stream, type]);
@@ -90,7 +90,7 @@ export default function DataSourceAddAPIWithAI({ projectId }: Props) {
         <Button
           variant="light"
           leftIcon={<Icon name="IconSparkles" />}
-          onClick={() => handleAIGeneration()}
+          onClick={() => triggerAIGeneration()}
           loading={isLoading}
         >
           Generate
