@@ -219,10 +219,10 @@ export const jsonStructure = (props?: any): Component => {
               name: "NavLink",
               description: "Navbar Item",
               props: {
-                icon: page.id ?? "IconLayoutDashboard",
+                icon: page.icon ?? "IconLayoutDashboard",
                 label: page.title,
                 isNested: !!page.parentPageId,
-                pageId: page.id,
+
                 style: {
                   width: "100%",
                   height: "auto",
