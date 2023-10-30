@@ -933,11 +933,11 @@ export const addComponent = (
             if (dropTarget.edge === "left" || dropTarget.edge === "top") {
               const index = dropIndex ?? context.index - 1;
               node.children.splice(index, 0, copy);
-            } else if (
-              ["right", "bottom", "center"].includes(dropTarget.edge)
-            ) {
+            } else if (["right", "bottom"].includes(dropTarget.edge)) {
               const index = dropIndex ?? context.index + 1;
               node.children.splice(index, 0, copy);
+            } else if (dropTarget.edge === "center") {
+              node.children = [...(node.children || []), copy];
             }
           }
 
