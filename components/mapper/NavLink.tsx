@@ -43,6 +43,7 @@ const NavLinkComponent = ({ renderTree, component, ...props }: Props) => {
   return (
     <MantineNavLink
       icon={<Icon name={icon} size={20} />}
+      childrenOffset={isNested ? 20 : 0}
       rightSection={isNested ? <Icon name="IconChevronRight" /> : null}
       active={active}
       {...props}

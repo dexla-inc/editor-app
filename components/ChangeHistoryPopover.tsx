@@ -1,5 +1,10 @@
 import { SavingDisplay } from "@/components/SavingDisplay";
-import { useEditorStore, useTemporalStore } from "@/stores/editor";
+import {
+  debouncedUpdatePageState,
+  useEditorStore,
+  useTemporalStore,
+} from "@/stores/editor";
+import { encodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
@@ -61,6 +66,19 @@ export const ChangeHistoryPopover: FC = () => {
   const [opened, { close, open }] = useDisclosure(false);
   const theme = useMantineTheme();
 
+  const handlePageStateChange = (
+    func: (steps?: number | undefined) => void,
+  ) => {
+    func();
+    const prev = useEditorStore.getState();
+    debouncedUpdatePageState(
+      encodeSchema(JSON.stringify(prev.tree)),
+      prev.currentProjectId ?? "",
+      prev.currentPageId ?? "",
+      prev.setIsSaving,
+    );
+  };
+
   return (
     <Flex
       align="center"
@@ -76,7 +94,7 @@ export const ChangeHistoryPopover: FC = () => {
         <Tooltip label="Undo" fz="xs">
           <ActionIcon
             variant="default"
-            onClick={() => undo()}
+            onClick={() => handlePageStateChange(undo)}
             disabled={pastStates.length < 2}
             radius={"4px 0px 0px 4px"}
             size="sm"
@@ -87,7 +105,7 @@ export const ChangeHistoryPopover: FC = () => {
         <Tooltip label="Redo" fz="xs">
           <ActionIcon
             variant="default"
-            onClick={() => redo()}
+            onClick={() => handlePageStateChange(redo)}
             disabled={futureStates.length === 0}
             radius={"0px 4px 4px 0px"}
             size="sm"
