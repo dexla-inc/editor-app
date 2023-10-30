@@ -89,6 +89,8 @@ import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 
 import { FileButton } from "@/components/mapper/FileButton";
+import { TabsList } from "@/components/mapper/TabsList";
+import { TabsPanel } from "@/components/mapper/TabsPanel";
 import { RadialChart } from "@/components/mapper/charts/RadialChart";
 import { uploadFile } from "@/requests/storage/mutations";
 import { useEditorStore } from "@/stores/editor";
@@ -1092,6 +1094,33 @@ export const componentMapper: ComponentMapper = {
         // eslint-disable-next-line react/no-children-prop
         children={props.component.children as any}
         value="first"
+      />
+    ),
+    modifiers: ["spacing", "size", "border"],
+    actionTriggers: ["onMount", "onClick"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  TabsList: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <TabsList
+        component={props.component}
+        renderTree={props.renderTree}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+      />
+    ),
+    modifiers: ["spacing", "size", "border"],
+    actionTriggers: ["onMount", "onClick"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  TabsPanel: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <TabsPanel
+        component={props.component}
+        renderTree={props.renderTree}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+        value={props.component.props?.value as any}
       />
     ),
     modifiers: ["spacing", "size", "border"],
