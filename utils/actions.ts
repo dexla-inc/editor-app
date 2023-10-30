@@ -1385,6 +1385,7 @@ export const changeVariableAction = async ({
           const value = variable.value ?? variable.defaultValue;
           acc.list[variable.id] = variable;
           acc[variable.id] = value ? JSON.parse(value) : value;
+          acc[variable.name] = value ? JSON.parse(value) : value;
           return acc;
         },
         { list: {} } as Record<string, any>,
