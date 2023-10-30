@@ -85,6 +85,7 @@ export default function BindingPopover({
             const value = variable.value ?? variable.defaultValue;
             acc.list[variable.id] = variable;
             acc[variable.id] = value ? JSON.parse(value) : value;
+            acc[variable.name] = value ? JSON.parse(value) : value;
             return acc;
           },
           { list: {} } as Record<string, any>,
@@ -288,10 +289,13 @@ export default function BindingPopover({
                   onItemSelection={(item: string) => {
                     try {
                       const parsed = JSON.parse(item);
+                      const pathStartsWithBracket = parsed.path.startsWith("[")
+                        ? ""
+                        : ".";
                       setSelectedItem(
                         `variables[/* ${variables?.list[parsed.id].name} */'${
                           parsed.id
-                        }']${parsed.path}`,
+                        }']${pathStartsWithBracket}${parsed.path}`,
                       );
                     } catch {
                       setSelectedItem(
