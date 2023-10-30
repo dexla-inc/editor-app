@@ -19,7 +19,6 @@ export const jsonStructure = (props?: any): Component => {
         padding: px(theme.spacing.xl),
         width: columnsToWidth,
         height: "auto",
-        backgroundColor: "white",
       },
       ...(props.props || {}),
     },

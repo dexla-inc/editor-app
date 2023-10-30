@@ -197,6 +197,15 @@ export function toSpaced(name: string) {
   return name.replace(/([A-Z])/g, " $1").trim();
 }
 
+export function snakeToSpacedText(text: string): string {
+  return text
+    .split("_") // Split the string by underscores
+    .map(
+      (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(), // Capitalize the first letter and make the rest lowercase
+    )
+    .join(" "); // Join the words with spaces
+}
+
 export function convertToPatchParams<T extends Record<string, any>>(
   obj: T,
 ): PatchParams[] {

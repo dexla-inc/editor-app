@@ -288,6 +288,7 @@ export const getNewComponents = (
 export type TileType = {
   node: Component;
   name: string;
+  count: number;
 };
 
 export const getTiles = (treeRoot: Component): TileType[] => {
@@ -301,7 +302,15 @@ export const getTiles = (treeRoot: Component): TileType[] => {
         node.description?.endsWith(".tile") &&
         !tiles.find((t) => t.name === name)
       ) {
-        tiles.push({ name: node.description.replace(".tile", ""), node });
+        tiles.push({ name: name as string, node, count: 1 });
+      } else {
+        tiles = tiles.map((t) => {
+          if (t.name === name) {
+            return { ...t, count: t.count + 1 } as TileType;
+          }
+
+          return t as TileType;
+        });
       }
     },
     { order: "bfs" },
@@ -318,10 +327,14 @@ export const getTileData = (treeRoot: Component): { [key: string]: any } => {
     (node) => {
       if (node.description?.startsWith("tile.data.")) {
         let type = "string";
+        // TODO: Handle unique types of charts, like PieChart that needs different data
         if (node.name.endsWith("Chart")) {
           type = `{
             data: {
-              series: { name: string; data: number[] }[]
+              series: { 
+                name: string; 
+                data: number[] 
+              }[]
               xaxis: { categories: string[] }
             }
           }`;
@@ -345,6 +358,68 @@ export const getTileData = (treeRoot: Component): { [key: string]: any } => {
   );
 
   return data;
+};
+
+// recursively replace all tile.data with the actual tile data
+const replaceTileData = (node: Component, tile: any, entities: object) => {
+  if (node.description?.startsWith("tile.data.")) {
+    const key = node.description?.replace("tile.data.", "");
+    const val = tile.data[key];
+    console.log({ tile, key, val, entities });
+
+    if (node.name === "Text" || node.name === "Title") {
+      // @ts-ignore
+      node.props.children = val;
+    }
+
+    if (node.name.endsWith("Chart")) {
+      try {
+        const data = typeof val === "string" ? JSON.parse(val).data : val.data;
+        console.log({ data });
+        // @ts-ignore
+        node.props = {
+          ...node.props,
+          ...data,
+        };
+      } catch (error) {
+        // do nothing
+      }
+    }
+
+    // @ts-ignore
+    node.props.data = { value: val };
+  }
+
+  if (node.children) {
+    node.children?.map((child) => replaceTileData(child, tile, entities)) ?? [];
+  }
+
+  return node;
+};
+
+export const replaceTilesData = (
+  tree: EditorTree,
+  tiles: any[],
+  entities: object,
+): EditorTree => {
+  crawl(
+    tree.root,
+    (node) => {
+      if (node.description?.endsWith(".tile")) {
+        const name = node.description?.replace(".tile", "");
+        const tile = tiles.find((t) => t.name === `${name}Tile`);
+
+        // @ts-ignore
+        node.children =
+          node.children?.map((child) =>
+            replaceTileData(child, tile, entities as object),
+          ) ?? [];
+      }
+    },
+    { order: "bfs" },
+  );
+
+  return tree;
 };
 
 export const getComponentById = (
@@ -720,14 +795,18 @@ export const getComponentParent = (
 
 export const getAllComponentsByName = (
   treeRoot: Component,
-  componentName: string,
+  componentName: string | string[],
 ): Component[] => {
   const components: Component[] = [];
+
+  if (!Array.isArray(componentName)) {
+    componentName = [componentName];
+  }
 
   crawl(
     treeRoot,
     (node) => {
-      if (node.name === componentName) {
+      if (componentName.includes(node.name)) {
         components.push(node);
       }
     },

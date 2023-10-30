@@ -28,6 +28,7 @@ model Template {
   state  Json?
   prompt String?
   type   String?
+  tags   String?
   tiles  Tile[]
 
   updatedAt DateTime @updatedAt

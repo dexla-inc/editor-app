@@ -21,6 +21,7 @@ import { IconSearch } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { GenerateComponentsAIButton } from "../GenerateComponentsAIButton";
 
 type DraggableComponentData = {
   id: string;
@@ -76,6 +77,7 @@ export const EditorNavbarComponentsSection = () => {
           },
         ]}
       />
+      <GenerateComponentsAIButton />
       <TextInput
         onChange={(e) => setQuery(e.target.value)}
         value={query}

@@ -14,11 +14,17 @@ import {
   Title,
   useMantineTheme,
   Button,
+  List,
+  ScrollArea,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listVariables } from "@/requests/variables/queries";
 import { useRouter } from "next/router";
+import { ObjectDetails } from "@/components/PropsListing";
+import { pick } from "next/dist/lib/pick";
+import { getAllComponentsByName } from "@/utils/editor";
+import { useEditorStore } from "@/stores/editor";
 
 const TAB_TEXT_SIZE = "xs";
 const ML = 10;
@@ -45,24 +51,41 @@ export default function BindingPopover({
   onChangeJavascriptCode,
   javascriptCode,
 }: Props) {
+  const editorTree = useEditorStore((state) => state.tree);
   const [formulaEntry, setFormulaEntry] = useState<string>();
   const [currentValue, setCurrentValue] = useState<string>();
+  const [selectedItem, setSelectedItem] = useState<string>();
   const [newValue, setNewValue] = useState<string>();
   const [tab, setTab] = useState<BindingTab>(bindingTab ?? "components");
+  const [filterKeyword, setFilterKeyword] = useState<string>("");
   const theme = useMantineTheme();
 
-  const router = useRouter();
-  const projectId = router.query.id as string;
-  const pageId = router.query.page as string;
+  const browser = useRouter();
+  const projectId = browser.query.id as string;
+  const pageId = browser.query.page as string;
 
-  const { data: variables } = useQuery({
+  const browserList = Object.entries(
+    pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
+  ).map(([key, value]) => {
+    const isObject = typeof value === "object";
+    return {
+      id: key,
+      name: key,
+      value: isObject ? JSON.stringify(value) : value,
+      type: isObject ? "OBJECT" : "STRING",
+    };
+  });
+
+  const { data: variables, isLoading: isVariablesReqLoading } = useQuery({
     queryKey: ["variablesObj", projectId, pageId],
     queryFn: () =>
       listVariables(projectId, { pageId }).then(({ results }) => {
         return results.reduce(
           (acc, variable) => {
+            const value = variable.value ?? variable.defaultValue;
             acc.list[variable.id] = variable;
-            acc[variable.id] = variable.value ?? variable.defaultValue;
+            acc[variable.id] = value ? JSON.parse(value) : value;
+            acc[variable.name] = value ? JSON.parse(value) : value;
             return acc;
           },
           { list: {} } as Record<string, any>,
@@ -70,6 +93,24 @@ export default function BindingPopover({
       }),
     enabled: !!projectId && !!pageId,
   });
+
+  const inputComponents = getAllComponentsByName(editorTree.root, [
+    "Input",
+    "Select",
+    "Checkbox",
+    "RadioGroup",
+    "Switch",
+    "Textarea",
+  ]).reduce(
+    (acc, component) => {
+      const value = component?.props?.value;
+      component.name = component.description!;
+      acc.list[component?.id!] = component;
+      acc[component?.id!] = value ? JSON.parse(value) : value;
+      return acc;
+    },
+    { list: {} } as Record<string, any>,
+  );
 
   useEffect(() => {
     try {
@@ -79,13 +120,7 @@ export default function BindingPopover({
       let newValue = eval(
         `function autoRunJavascriptCode() { ${javascriptCode}}; autoRunJavascriptCode()`,
       );
-      if (typeof newValue === "object" || Array.isArray(newValue)) {
-        try {
-          newValue = JSON.stringify(newValue);
-        } catch {}
-      }
-
-      setNewValue(newValue);
+      setNewValue(JSON.stringify(newValue));
     } catch {
       setNewValue("undefined");
     }
@@ -103,7 +138,7 @@ export default function BindingPopover({
           Binder
         </Button>
       </Popover.Target>
-      <Popover.Dropdown>
+      <Popover.Dropdown sx={{ maxHeight: "98%" }}>
         <Stack
           w={500}
           bg={"#fff"}
@@ -158,7 +193,9 @@ export default function BindingPopover({
                 language="typescript"
                 value={javascriptCode}
                 variables={variables?.list}
+                components={inputComponents.list}
                 onChange={onChangeJavascriptCode}
+                selectedItem={selectedItem}
               />
             )}
           </Box>
@@ -226,16 +263,67 @@ export default function BindingPopover({
             size="xs"
             placeholder="Search"
             icon={<Icon name="IconSearch" />}
+            value={filterKeyword}
+            onChange={(event) => setFilterKeyword(event.currentTarget.value)}
           />
           {tab === "components" ? (
-            <Stack>Create a tree for the components</Stack>
+            <Stack>
+              <ScrollArea.Autosize mah={300}>
+                <ObjectDetails
+                  filterKeyword={filterKeyword}
+                  variables={Object.values(inputComponents?.list)}
+                  onItemSelection={(item: string) => {
+                    setSelectedItem(
+                      `components[/* ${inputComponents?.list[item].description} */'${item}']`,
+                    );
+                  }}
+                />
+              </ScrollArea.Autosize>
+            </Stack>
           ) : tab === "variables" ? (
-            <Stack>Create a tree for variables</Stack>
+            <Stack>
+              <ScrollArea.Autosize mah={300}>
+                <ObjectDetails
+                  filterKeyword={filterKeyword}
+                  variables={Object.values(variables?.list)}
+                  onItemSelection={(item: string) => {
+                    try {
+                      const parsed = JSON.parse(item);
+                      const pathStartsWithBracket = parsed.path.startsWith("[")
+                        ? ""
+                        : ".";
+                      setSelectedItem(
+                        `variables[/* ${variables?.list[parsed.id].name} */'${
+                          parsed.id
+                        }']${pathStartsWithBracket}${parsed.path}`,
+                      );
+                    } catch {
+                      setSelectedItem(
+                        `variables[/* ${variables?.list[item].name} */'${item}']`,
+                      );
+                    }
+                  }}
+                />
+              </ScrollArea.Autosize>
+            </Stack>
           ) : tab === "datasources" ? (
             <Stack>Create a tree for datasources</Stack>
           ) : tab === "browser" ? (
             <Stack>
-              Create a tree for browser info like path, domain, query, etc.
+              <ScrollArea.Autosize mah={300}>
+                <ObjectDetails
+                  filterKeyword={filterKeyword}
+                  variables={browserList}
+                  onItemSelection={(item: string) => {
+                    try {
+                      const parsed = JSON.parse(item);
+                      setSelectedItem(`browser['${parsed.id}'].${parsed.path}`);
+                    } catch {
+                      setSelectedItem(`browser['${item}']`);
+                    }
+                  }}
+                />
+              </ScrollArea.Autosize>
             </Stack>
           ) : null}
         </Stack>

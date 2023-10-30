@@ -45,14 +45,11 @@ import {
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useAuthInfo } from "@propelauth/react";
 import { IconRefresh } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 export default function DataSourcePage() {
-  const authInfo = useAuthInfo();
-  const { user } = authInfo || {};
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const startLoading = useAppStore((state) => state.startLoading);
@@ -194,7 +191,7 @@ export default function DataSourcePage() {
   }, [dataSourceId, id]);
 
   return (
-    <DashboardShell user={user}>
+    <DashboardShell>
       <SettingsTabHeader name={name} />
       <Tabs defaultValue="datasources" py="xs">
         <SettingsTabs />

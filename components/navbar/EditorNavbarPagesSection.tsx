@@ -28,7 +28,7 @@ export const EditorNavbarPagesSection = () => {
   }, [projectId, getPages]);
 
   return (
-    <Stack spacing="xs">
+    <Stack spacing="xs" w="100%">
       {page === undefined ? (
         <InitialPane
           projectId={projectId}

@@ -1,9 +1,10 @@
 import { Icon } from "@/components/Icon";
 import NavigationAvatarFooter from "@/components/NavigationAvatarFooter";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { HEADER_HEIGHT, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
 import { NavbarTypes } from "@/utils/dashboardTypes";
 import { Box, Button, Menu, NavLink, Navbar, ScrollArea } from "@mantine/core";
-import { User, useLogoutFunction } from "@propelauth/react";
+import { useLogoutFunction } from "@propelauth/react";
 import { IconArrowLeft, IconLogout, IconSettings } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -11,18 +12,18 @@ import { useRouter } from "next/router";
 type DashboardNavbarProps = {
   isLoading?: boolean;
   setIsLoading: (isLoading: boolean) => void;
-  user: User | null | undefined;
+
   navbarType: NavbarTypes;
 };
 
 export default function DashboardNavbar({
   setIsLoading,
-  user,
   navbarType,
 }: DashboardNavbarProps) {
-  const logout = useLogoutFunction();
+  const logoutFn = useLogoutFunction();
   const router = useRouter();
   const projectId = router.query.id as string;
+  const user = usePropelAuthStore((state) => state.user);
 
   return (
     <Navbar
@@ -66,7 +67,7 @@ export default function DashboardNavbar({
                   variant="subtle"
                   icon={<Icon name="IconDatabase" size={ICON_SIZE} />}
                   active={router.pathname.startsWith(
-                    "/projects/[id]/settings/datasources"
+                    "/projects/[id]/settings/datasources",
                   )}
                   py={12}
                 />
@@ -95,7 +96,7 @@ export default function DashboardNavbar({
               color="red"
               onClick={() => {
                 setIsLoading(true);
-                logout(true);
+                logoutFn(true);
               }}
             >
               Logout

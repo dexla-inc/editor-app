@@ -3,13 +3,16 @@ import BrandingStep from "@/components/projects/BrandingStep";
 import PagesStep from "@/components/projects/PagesStep";
 import ProjectInfoStep from "@/components/projects/ProjectInfoStep";
 import ProjectStep from "@/components/projects/ProjectStep";
-import { RegionTypes } from "@/requests/projects/queries";
+import { getPageList } from "@/requests/pages/queries";
+import { RegionTypes, getProject } from "@/requests/projects/queries";
 import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { StepperDetailsType } from "@/utils/projectTypes";
 import { Container, Stack, Stepper, Title } from "@mantine/core";
 import { FileWithPath } from "@mantine/dropzone";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export default function New() {
   const [activeStep, setActiveStep] = useState(0);
@@ -17,12 +20,17 @@ export default function New() {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
 
+  const activeCompany = usePropelAuthStore((state) => state.activeCompany);
+
   const nextStep = () =>
     setActiveStep((current) => (current < 3 ? current + 1 : current));
   const prevStep = () =>
     setActiveStep((current) => (current > 0 ? current - 1 : current));
 
   const [projectId, setProjectId] = useState("");
+  const [description, setDescription] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [screenshots, setScreenshots] = useState<FileWithPath[]>([]);
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [themeResponse, setThemeResponse] = useState<ThemeResponse>();
   const [pages, setPages] = useState<{ name: string; description: string }[]>(
@@ -30,9 +38,45 @@ export default function New() {
   );
   const [hasPagesCreated, setHasPagesCreated] = useState(false);
   const [homePageId, setHomePageId] = useState("");
-  const [friendlyName, setFriendlyName] = useState("");
+  const [friendlyName, setFriendlyName] = useState(activeCompany.orgName);
   const [region, setRegion] = useState<RegionTypes>("US_CENTRAL");
-  const [screenshots, setScreenshots] = useState<FileWithPath[]>([]);
+
+  const router = useRouter();
+  const company = router.query.company as string;
+  const projectIdFromQuery = router.query.projectId;
+  const stepFromQuery = router.query.step;
+
+  useEffect(() => {
+    if (projectIdFromQuery) {
+      setProjectId(projectIdFromQuery as string);
+
+      const fetchProject = async () => {
+        const project = await getProject(projectIdFromQuery as string);
+        console.log(project);
+        setDescription(project.description);
+        setIndustry(project.industry);
+        setFriendlyName(project.friendlyName);
+        setRegion(project.region.type);
+      };
+
+      const fetchPages = async () => {
+        const pages = await getPageList(projectIdFromQuery as string);
+        console.log(projectIdFromQuery, pages);
+        const pageList = pages.results.map((page) => ({
+          name: page.name,
+          description: page.description as string,
+        }));
+
+        setPages(pageList);
+        if (stepFromQuery) {
+          setActiveStep(parseInt(stepFromQuery as string));
+        }
+      };
+
+      fetchProject();
+      fetchPages();
+    }
+  }, [projectIdFromQuery, stepFromQuery]);
 
   return (
     <DashboardShell>
@@ -50,6 +94,7 @@ export default function New() {
               description="Define your project scope"
             >
               <ProjectStep
+                companyId={company}
                 nextStep={nextStep}
                 isLoading={isLoading}
                 setIsLoading={setIsLoading}
@@ -57,6 +102,10 @@ export default function New() {
                 stopLoading={stopLoading}
                 projectId={projectId}
                 setProjectId={setProjectId}
+                description={description}
+                setDescription={setDescription}
+                industry={industry}
+                setIndustry={setIndustry}
                 screenshots={screenshots}
                 setScreenshots={setScreenshots}
               />

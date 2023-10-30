@@ -50,7 +50,7 @@ export const LogicFlowShell = ({
             justify="space-between"
           >
             <Group>
-              <Link href="/">
+              <Link href="/projects">
                 <Logo />
               </Link>
               {flow && (

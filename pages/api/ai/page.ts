@@ -58,8 +58,10 @@ export default async function handler(
         },
       });
 
+      const prev = await acc;
+
       return Promise.resolve(`
-        ${acc}
+        ${prev}
         // ${template.name} tiles:
         ${tiles.map((tile) => tile.prompt)}
         // ${template.name} type:
@@ -98,6 +100,7 @@ export default async function handler(
 
     const message = response.choices[0].message;
     const content = JSON.parse(message.content ?? "{}");
+    console.log("PAGE", content);
 
     return res.status(200).json(content);
   } catch (error) {

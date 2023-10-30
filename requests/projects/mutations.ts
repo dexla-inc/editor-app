@@ -4,6 +4,7 @@ import { del, getAuthToken, patch, post } from "@/utils/api";
 import { ProjectTypes } from "@/utils/projectTypes";
 
 export interface ProjectParams extends ProjectUpdateParams {
+  companyId: string;
   description: string;
   type: ProjectTypes;
   industry?: string;

@@ -1,11 +1,6 @@
 import { Logo } from "@/components/Logo";
 
-import {
-  ASIDE_WIDTH,
-  HEADER_HEIGHT,
-  ICON_SIZE,
-  NAVBAR_WIDTH,
-} from "@/utils/config";
+import { ASIDE_WIDTH, HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
 import { NavbarTypes } from "@/utils/dashboardTypes";
 import {
   AppShell,
@@ -14,28 +9,26 @@ import {
   Flex,
   Header,
   LoadingOverlay,
-  Menu,
+  Navbar,
 } from "@mantine/core";
-import { User } from "@propelauth/react";
+
 import Link from "next/link";
 
-import { Icon } from "@/components/Icon";
-import NavigationAvatarFooter from "@/components/NavigationAvatarFooter";
+import { DashboardCompanySelector } from "@/components/DashboardCompanySelector";
+import { DashboardNavLinks } from "@/components/DashboardNavLinks";
+import { DashboardUserMenu } from "@/components/DashboardUserMenu";
 import { useEditorStore } from "@/stores/editor";
-import { useLogoutFunction } from "@propelauth/react";
 import { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 export interface ShellProps extends AppShellProps {
   navbarType?: NavbarTypes;
-  user?: User | null | undefined;
 }
 
-export const DashboardShell = ({ children, aside, user }: ShellProps) => {
+export const DashboardShell = ({ children, aside }: ShellProps) => {
   // This state needs to move to the parent component
   const [isLoading, setIsLoading] = useState(false);
   const resetTree = useEditorStore((state) => state.resetTree);
-  const logout = useLogoutFunction();
 
   return (
     <AppShell
@@ -49,42 +42,24 @@ export const DashboardShell = ({ children, aside, user }: ShellProps) => {
             align="center"
             justify="space-between"
           >
-            <Link href="/">
+            <Link href="/projects">
               <Logo />
             </Link>
-            <Flex>
-              <Menu withArrow>
-                <Menu.Target>
-                  <NavigationAvatarFooter
-                    firstName={user?.firstName}
-                    lastName={user?.lastName}
-                    email={user?.email}
-                    pictureUrl={user?.pictureUrl}
-                  />
-                </Menu.Target>
-                <Menu.Dropdown>
-                  <Menu.Label>Account</Menu.Label>
-                  <Menu.Item
-                    icon={<Icon name="IconSettings" size={ICON_SIZE} />}
-                    disabled
-                  >
-                    Settings
-                  </Menu.Item>
-                  <Menu.Item
-                    icon={<Icon name="IconLogout" size={ICON_SIZE} />}
-                    color="red"
-                    onClick={() => {
-                      setIsLoading(true);
-                      logout(true);
-                    }}
-                  >
-                    Logout
-                  </Menu.Item>
-                </Menu.Dropdown>
-              </Menu>
-            </Flex>
           </Flex>
         </Header>
+      }
+      navbar={
+        <Navbar height="auto" width={{ base: 240 }}>
+          <Navbar.Section>
+            <DashboardCompanySelector></DashboardCompanySelector>
+          </Navbar.Section>
+          <Navbar.Section grow mt="md">
+            <DashboardNavLinks></DashboardNavLinks>
+          </Navbar.Section>
+          <Navbar.Section>
+            <DashboardUserMenu></DashboardUserMenu>
+          </Navbar.Section>
+        </Navbar>
       }
       aside={aside}
       styles={{

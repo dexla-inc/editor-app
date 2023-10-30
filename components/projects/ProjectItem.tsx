@@ -3,6 +3,7 @@ import { getPageList } from "@/requests/pages/queries";
 import { PageResponse } from "@/requests/pages/types";
 import { deleteProject } from "@/requests/projects/mutations";
 import { ProjectResponse } from "@/requests/projects/queries";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_DELETE, ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { regionTypeFlags } from "@/utils/dashboardTypes";
 import {
@@ -11,6 +12,7 @@ import {
   Col,
   Collapse,
   Flex,
+  Loader,
   MantineTheme,
   Menu,
   NavLink,
@@ -34,7 +36,7 @@ type ProjectItemProps = {
   theme: MantineTheme;
   buttonHoverStyles: any;
   goToEditor: (projectId: string, pageId: string) => Promise<void>;
-  onDeleteProject: (id: string) => void;
+  onDeleteProject?: (id: string) => void;
 };
 
 export function ProjectItem({
@@ -49,6 +51,11 @@ export function ProjectItem({
   const [pagesLoading] = useState(false);
   const [opened, setOpened] = useState(false);
   const [settingsOpened, setSettingsOpened] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { isDexlaAdmin, company } = usePropelAuthStore((state) => ({
+    isDexlaAdmin: state.isDexlaAdmin,
+    company: state.activeCompany,
+  }));
 
   const goToEditorHomePage = async () => {
     const pages = await getPageList(project.id);
@@ -65,8 +72,9 @@ export function ProjectItem({
   };
 
   const deleteProjectFn = async () => {
+    setIsLoading(true);
     await deleteProject(project.id);
-    onDeleteProject(project.id);
+    onDeleteProject && onDeleteProject(project.id);
     setPages([]);
   };
 
@@ -116,10 +124,20 @@ export function ProjectItem({
               <UnstyledButton
                 sx={{
                   borderRadius: theme.radius.sm,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                   ...buttonHoverStyles(theme),
                 }}
               >
-                <IconDots size={LARGE_ICON_SIZE} color={theme.colors.teal[5]} />
+                {isLoading ? (
+                  <Loader size="sm" />
+                ) : (
+                  <IconDots
+                    size={LARGE_ICON_SIZE}
+                    color={theme.colors.teal[5]}
+                  />
+                )}
               </UnstyledButton>
             </Menu.Target>
             <Menu.Dropdown>
@@ -187,13 +205,6 @@ export function ProjectItem({
                     Datasource
                   </Menu.Item>
                   <Menu.Item
-                    icon={<Icon name="IconUser" size={ICON_SIZE} />}
-                    component={Link}
-                    href={`/projects/${project.id}/settings/team?name=${project.friendlyName}`}
-                  >
-                    Team
-                  </Menu.Item>
-                  <Menu.Item
                     icon={<Icon name="IconWorldWww" size={ICON_SIZE} />}
                     component={Link}
                     href={`/projects/${project.id}/settings/domain?name=${project.friendlyName}`}
@@ -202,13 +213,25 @@ export function ProjectItem({
                   </Menu.Item>
                 </Box>
               </Collapse>
-              <Menu.Item
-                icon={<Icon name={ICON_DELETE} />}
-                color="red"
-                onClick={deleteProjectFn}
-              >
-                Delete
-              </Menu.Item>
+              {isDexlaAdmin && (
+                <Menu.Item
+                  icon={<Icon name="IconRefresh" />}
+                  color="indigo"
+                  component={Link}
+                  href={`/projects/new?company=${company.orgId}&projectId=${project.id}&step=2`}
+                >
+                  Regenerate Pages
+                </Menu.Item>
+              )}
+              {onDeleteProject && (
+                <Menu.Item
+                  icon={<Icon name={ICON_DELETE} />}
+                  color="red"
+                  onClick={deleteProjectFn}
+                >
+                  Delete
+                </Menu.Item>
+              )}
             </Menu.Dropdown>
           </Menu>
         </Flex>

@@ -1,10 +1,18 @@
 import { UnitInput } from "@/components/UnitInput";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
+import { withModifier } from "@/hoc/withModifier";
 import {
   debouncedTreeComponentStyleUpdate,
   debouncedTreeUpdate,
 } from "@/utils/editor";
-import { Group, SegmentedControl, Select, Stack, Text } from "@mantine/core";
+import {
+  Group,
+  NumberInput,
+  SegmentedControl,
+  Select,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconAlignBoxBottomCenter,
@@ -18,26 +26,31 @@ import {
   IconLayoutAlignRight,
   IconLayoutDistributeHorizontal,
   IconLayoutDistributeVertical,
+  IconLayoutKanban,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarLeftExpand,
 } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
-import { withModifier } from "@/hoc/withModifier";
 import { pick } from "next/dist/lib/pick";
+import { useEffect, useState } from "react";
 
 export const icon = IconLayout2;
 export const label = "Layout";
 
+let GROW_FLEX_DEFAULT = "1 0 auto";
+let SHRINK_FLEX_DEFAULT = "0 1 auto";
+let AUTO_FLEX_DEFAULT = "0 0 auto";
+let CUSTOM_FLEX_DEFAULT = "1 1 auto";
+
 export const defaultLayoutValues = {
   display: "flex",
-  flexWrap: "wrap",
+  flexWrap: "nowrap",
   flexDirection: "column",
   rowGap: "20px",
   columnGap: "20px",
   alignItems: "center",
   justifyContent: "center",
   position: "relative",
-  sizing: "0 0 auto",
+  flex: SHRINK_FLEX_DEFAULT,
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
@@ -48,6 +61,9 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   const [displayType, setDisplayType] = useState(
     selectedComponent?.props?.style?.display ?? defaultLayoutValues.display,
   );
+  const [customFlexInputVisible, setCustomFlexInputVisible] = useState(false);
+
+  const [grow, shrink, basis] = form.values.flex.split(" ");
 
   useEffect(() => {
     if (selectedComponent?.id) {
@@ -62,10 +78,17 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         rowGap: data.style.rowGap ?? defaultLayoutValues.rowGap,
         columnGap: data.style.columnGap ?? defaultLayoutValues.columnGap,
         alignItems: data.style.alignItems ?? defaultLayoutValues.alignItems,
-        sizing: data.style.flex ?? defaultLayoutValues.sizing,
+        flex: data.style.flex ?? defaultLayoutValues.flex,
         justifyContent:
           data.style.justifyContent ?? defaultLayoutValues.justifyContent,
       });
+
+      const isCustomFlex =
+        data.style.flex !== GROW_FLEX_DEFAULT &&
+        data.style.flex !== SHRINK_FLEX_DEFAULT &&
+        data.style.flex !== AUTO_FLEX_DEFAULT;
+
+      setCustomFlexInputVisible(isCustomFlex);
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -278,20 +301,20 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                   {
                     label: (
                       <StylingPaneItemIcon
-                        label="Grow"
-                        icon={<IconLayoutSidebarLeftExpand size={14} />}
-                      />
-                    ),
-                    value: "1 0 auto",
-                  },
-                  {
-                    label: (
-                      <StylingPaneItemIcon
                         label="Shrink"
                         icon={<IconLayoutSidebarLeftCollapse size={14} />}
                       />
                     ),
-                    value: "0 1 auto",
+                    value: SHRINK_FLEX_DEFAULT,
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Grow"
+                        icon={<IconLayoutSidebarLeftExpand size={14} />}
+                      />
+                    ),
+                    value: GROW_FLEX_DEFAULT,
                   },
                   {
                     label: (
@@ -300,7 +323,21 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                         icon={<IconCircleX size={14} />}
                       />
                     ),
-                    value: "0 0 auto",
+                    value: AUTO_FLEX_DEFAULT,
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Custom"
+                        icon={<IconLayoutKanban size={14} />}
+                      />
+                    ),
+                    value:
+                      form.values.flex === GROW_FLEX_DEFAULT ||
+                      form.values.flex === SHRINK_FLEX_DEFAULT ||
+                      form.values.flex === AUTO_FLEX_DEFAULT
+                        ? CUSTOM_FLEX_DEFAULT
+                        : form.values.flex,
                   },
                 ]}
                 styles={{
@@ -311,15 +348,65 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                     height: "100%",
                   },
                 }}
-                {...form.getInputProps("sizing")}
+                {...form.getInputProps("flex")}
                 onChange={(value) => {
-                  form.setFieldValue("sizing", value as string);
+                  form.setFieldValue("flex", value as string);
                   debouncedTreeUpdate(selectedComponent?.id as string, {
                     style: { flex: value },
                   });
                 }}
               />
             </Stack>
+            {customFlexInputVisible && (
+              <Stack
+                spacing={2}
+                p="xs"
+                bg="gray.1"
+                sx={(theme) => ({
+                  borderRadius: theme.radius.sm,
+                  border: "1px solid " + theme.colors.gray[2],
+                })}
+              >
+                <NumberInput
+                  label="Grow"
+                  size="xs"
+                  value={parseInt(grow)}
+                  onChange={(value) => {
+                    const [grow, shrink, basis] = form.values.flex.split(" ");
+                    const flex = `${value} ${shrink} ${basis}`;
+                    form.setFieldValue("flex", flex);
+                    debouncedTreeUpdate(selectedComponent?.id as string, {
+                      style: { flex: flex },
+                    });
+                  }}
+                />
+                <NumberInput
+                  label="Shrink"
+                  size="xs"
+                  value={parseInt(shrink)}
+                  onChange={(value) => {
+                    const [grow, shrink, basis] = form.values.flex.split(" ");
+                    const flex = `${grow} ${value} ${basis}`;
+                    form.setFieldValue("flex", flex);
+                    debouncedTreeUpdate(selectedComponent?.id as string, {
+                      style: { flex: flex },
+                    });
+                  }}
+                />
+                <UnitInput
+                  label="Basis"
+                  onChange={(value) => {
+                    const [grow, shrink, basis] = form.values.flex.split(" ");
+                    const flex = `${grow} ${shrink} ${value}`;
+                    form.setFieldValue("flex", flex);
+                    debouncedTreeUpdate(selectedComponent?.id as string, {
+                      style: { flex: flex },
+                    });
+                  }}
+                />
+              </Stack>
+            )}
+
             <Select
               label="Wrap"
               size="xs"

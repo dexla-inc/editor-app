@@ -3,7 +3,7 @@ import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import { getTileData, getTiles } from "@/utils/editor";
-import { Tooltip, ActionIcon } from "@mantine/core";
+import { ActionIcon, Tooltip } from "@mantine/core";
 import { IconTemplate } from "@tabler/icons-react";
 import camelcase from "lodash.camelcase";
 import { useRouter } from "next/router";
@@ -32,14 +32,16 @@ export const SaveTemplateButton = () => {
         const id = camelcase(
           `${tile.node.description?.replace(".tile", "")}Tile`,
         );
-        const types = `
+        const prompt = `
+          // create precisely ${tile.count} variations of this tile
+          // each one should be unique and have different data values respecting the type below
           type ${id} = {
             name: "${id}"
             data: ${JSON.stringify(data, null, 2)}
           }
         `;
 
-        return { id, tile, types };
+        return { id, tile, prompt };
       });
 
       const templateResponse = await fetch("/api/templates/upsert", {
@@ -52,6 +54,7 @@ export const SaveTemplateButton = () => {
           name: camelcase(page.title),
           state: editorTree,
           type: page.queryStrings?.type,
+          tags: page.queryStrings?.tags,
           prompt: `
           type ${camelcase(page.title)}Template = {
             name: "${camelcase(page.title)}Template"
@@ -74,7 +77,7 @@ export const SaveTemplateButton = () => {
               id: `${templateData.id}-${tile.id}`,
               name: tile.id,
               state: tile.tile.node,
-              prompt: tile.types,
+              prompt: tile.prompt,
               templateId: templateData.id,
             };
           }),
@@ -99,7 +102,7 @@ export const SaveTemplateButton = () => {
 
   return (
     <Tooltip label="Save Template" withArrow fz="xs">
-      <ActionIcon onClick={saveTemplate} variant="default">
+      <ActionIcon onClick={saveTemplate} variant="light" color="indigo">
         <IconTemplate size={ICON_SIZE} />
       </ActionIcon>
     </Tooltip>

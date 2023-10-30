@@ -29,7 +29,7 @@ import {
 } from "@mantine/core";
 import { IconCircleCheck, IconPlus, IconSparkles } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
-import { SetStateAction, useEffect, useRef } from "react";
+import { SetStateAction, useRef } from "react";
 import slugify from "slugify";
 
 export const getServerSideProps = async ({
@@ -82,28 +82,29 @@ export default function PagesStep({
   const stopLoading = useAppStore((state) => state.stopLoading);
   const startLoading = useAppStore((state) => state.startLoading);
 
-  useEffect(() => {
-    const handlePageNamesGeneration = async () => {
-      startLoading({
-        id: "creating-pages",
-        title: "Creating Pages",
-        message: "Wait while your pages are being created",
-      });
-      const pages = await createPageList(projectId);
-      console.log({ pages });
-      setPages(pages);
-      stopLoading({
-        id: "creating-pages",
-        title: "Pages Created",
-        message: "Your pages have been created",
-      });
-    };
+  const handlePageNamesGeneration = async () => {
+    startLoading({
+      id: "creating-pages",
+      title: "Creating Pages",
+      message: "Wait while your pages are being created",
+    });
+    const pages = await createPageList(projectId);
 
-    if (!initiallPageGeneration.current) {
-      handlePageNamesGeneration();
-      initiallPageGeneration.current = true;
-    }
-  }, [projectId, setPages, startLoading, stopLoading]);
+    setPages(pages);
+    stopLoading({
+      id: "creating-pages",
+      title: "Pages Created",
+      message: "Your pages have been created",
+    });
+  };
+
+  // useEffect(() => {
+
+  //   if (!initiallPageGeneration.current) {
+  //     handlePageNamesGeneration();
+  //     initiallPageGeneration.current = true;
+  //   }
+  // }, [projectId, setPages, startLoading, stopLoading]);
 
   const createManyPages = async (projectId: string) => {
     try {
@@ -229,7 +230,7 @@ export default function PagesStep({
         <>
           <InformationAlert
             title="Generated Page Names"
-            text="Feel free to change the page names if they aren't quite right or app some new ones before generating your app."
+            text="Feel free to change the page names if they aren't quite right add some new ones before generating your app."
           />
           <List
             spacing="xs"
@@ -270,7 +271,7 @@ export default function PagesStep({
       {!hasPageNames && (
         <InformationAlert
           title="Generate Your Page Names"
-          text="Click on the button below to generate page names for your project"
+          text="Click on the button below to generate pages and functionality each page will have for your project"
         />
       )}
       <Flex gap="lg">
@@ -278,9 +279,7 @@ export default function PagesStep({
           <Button
             variant="light"
             leftIcon={<IconSparkles size={ICON_SIZE} />}
-            onClick={() => {
-              // TODO: Generate page names
-            }}
+            onClick={handlePageNamesGeneration}
             loading={isLoading}
             disabled={isLoading || hasPageNames}
           >

@@ -16,21 +16,21 @@ import {
   Select,
   Tooltip,
 } from "@mantine/core";
-import { useAuthInfo } from "@propelauth/react";
 import Link from "next/link";
 
-import { SaveTemplateButton } from "@/components/SaveTemplateButton";
 import { AIChatHistoryButton } from "@/components/AIChatHistoryButton";
 import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
 import { DeployButton } from "@/components/DeployButton";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { GenerateAIButton } from "@/components/GenerateAIButton";
 import { Icon } from "@/components/Icon";
+import { SaveTemplateButton } from "@/components/SaveTemplateButton";
 import { LogicFlowButton } from "@/components/logic-flow/LogicFlowButton";
 import { VariablesButton } from "@/components/variables/VariablesButton";
 import { getPageList } from "@/requests/pages/queries";
 import { PageListResponse } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
@@ -48,9 +48,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
     queryFn: () => getPageList(projectId),
   });
 
-  const authInfo = useAuthInfo();
-  const org = authInfo.orgHelper?.getOrgByName("Dexla")!;
-  const isDexlaAdmin = org?.userAssignedRole === "DEXLA_ADMIN";
+  const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
 
   return (
     <AppShell
@@ -61,7 +59,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
           <Group h={HEADER_HEIGHT} px="xs" align="center" position="apart">
             <Group>
               <Tooltip label="Back to dashboard" fz="xs">
-                <Link href="/">
+                <Link href="/projects">
                   <Logo />
                 </Link>
               </Tooltip>

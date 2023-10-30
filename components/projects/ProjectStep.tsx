@@ -1,30 +1,35 @@
 import { InformationAlert } from "@/components/Alerts";
 import NextButton from "@/components/NextButton";
+import ScreenshotUploader from "@/components/projects/ScreenshotUploader";
 import {
   ProjectParams,
   createEntitiesAndProject,
   patchProject,
 } from "@/requests/projects/mutations";
-import ScreenshotUploader from "@/components/projects/ScreenshotUploader";
 import { uploadFile } from "@/requests/storage/mutations";
 import { UploadMultipleResponse } from "@/requests/storage/types";
 import { PatchParams } from "@/requests/types";
 import { LoadingStore, NextStepperClickEvent } from "@/utils/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
-import { Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
+import { Divider, Group, Stack, TextInput } from "@mantine/core";
 import { FileWithPath } from "@mantine/dropzone";
 import { useForm } from "@mantine/form";
 import { Dispatch, SetStateAction } from "react";
-import { Lekton } from "next/font/google";
 
 interface ProjectStepProps extends LoadingStore, NextStepperClickEvent {
+  companyId: string;
   projectId: string;
   setProjectId: (id: string) => void;
+  description: string;
+  setDescription: (description: string) => void;
+  industry: string;
+  setIndustry: (industry: string) => void;
   screenshots: FileWithPath[];
   setScreenshots: Dispatch<SetStateAction<FileWithPath[]>>;
 }
 
 export default function ProjectStep({
+  companyId,
   nextStep,
   isLoading,
   setIsLoading,
@@ -32,11 +37,16 @@ export default function ProjectStep({
   stopLoading,
   projectId,
   setProjectId,
+  description,
+  setDescription,
+  industry,
+  setIndustry,
   screenshots,
   setScreenshots,
 }: ProjectStepProps) {
   const form = useForm<ProjectParams>({
     initialValues: {
+      companyId: companyId,
       description: "",
       region: "US_CENTRAL",
       type: "" as ProjectTypes,
@@ -61,8 +71,9 @@ export default function ProjectStep({
       setIsLoading && setIsLoading(true);
       startLoading({
         id: "creating-project",
-        title: "Creating Project",
-        message: "Wait while your project is being created",
+        title: "AI is thinking...",
+        message:
+          "Thinking about your app, this step usually takes around 45 seconds...",
       });
 
       form.validate();
@@ -97,9 +108,10 @@ export default function ProjectStep({
 
       stopLoading({
         id: "creating-project",
-        title: "Project Created",
-        message: "The project was created successfully",
+        title: "Thinking complete!",
+        message: "I have an idea of what your app should look like.",
       });
+
       setIsLoading && setIsLoading(false);
       nextStep();
     } catch (error) {
@@ -125,23 +137,21 @@ export default function ProjectStep({
           description="Your one-liner e.g. Transforming Drone and Satellite Data into Actionable Business Insights"
           required
           withAsterisk={false}
-          {...form.getInputProps("description")}
+          value={description}
+          onChange={(event) => {
+            form.setFieldValue("description", event.currentTarget.value);
+            setDescription(event.currentTarget.value);
+          }}
         />
-
-        {form.values.type === "SIMILAR" && (
-          <Flex direction="column">
-            <TextInput
-              label="Similar Company Name *"
-              placeholder="e.g. ABC Company"
-              {...form.getInputProps("similarCompany")}
-            />
-          </Flex>
-        )}
 
         <TextInput
           label="What industry are you in? *"
           description="e.g. Big Data"
-          {...form.getInputProps("industry")}
+          value={industry}
+          onChange={(event) => {
+            form.setFieldValue("industry", event.currentTarget.value);
+            setIndustry(event.currentTarget.value);
+          }}
         />
 
         <ScreenshotUploader
