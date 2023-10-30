@@ -345,109 +345,162 @@ export const DroppableDraggable = ({
         !isContentWrapper &&
         !handlerBlacklist.includes(component.name) &&
         isSelected && (
-          <Box
-            pos="absolute"
-            h={24}
-            top={-24}
-            sx={{
-              zIndex: 90,
-              background: theme.colors.teal[6],
-              borderTopLeftRadius: theme.radius.sm,
-              borderTopRightRadius: theme.radius.sm,
-            }}
-          >
-            <Group px={4} h={24} noWrap spacing={2} align="center">
-              {!component.fixedPosition && (
-                <UnstyledButton
-                  sx={{ cursor: "move", alignItems: "center", display: "flex" }}
-                  {...draggable}
-                >
-                  <IconGripVertical
-                    size={ICON_SIZE}
-                    color="white"
-                    strokeWidth={1.5}
-                  />
-                </UnstyledButton>
-              )}
-              <Text color="white" size="xs" pr={haveNonRootParent ? 8 : "xs"}>
-                {(component.description || "").length > 20
-                  ? `${component.description?.substring(0, 20)}...`
-                  : component.description}
-              </Text>
-              {haveNonRootParent && (
+          <>
+            <Box
+              pos="absolute"
+              h={24}
+              top={-24}
+              sx={{
+                zIndex: 90,
+                background: theme.colors.teal[6],
+                borderTopLeftRadius: theme.radius.sm,
+                borderTopRightRadius: theme.radius.sm,
+              }}
+            >
+              <Group px={4} h={24} noWrap spacing={2} align="center">
+                {!component.fixedPosition && (
+                  <UnstyledButton
+                    sx={{
+                      cursor: "move",
+                      alignItems: "center",
+                      display: "flex",
+                    }}
+                    {...draggable}
+                  >
+                    <IconGripVertical
+                      size={ICON_SIZE}
+                      color="white"
+                      strokeWidth={1.5}
+                    />
+                  </UnstyledButton>
+                )}
+                <Text color="white" size="xs" pr={haveNonRootParent ? 8 : "xs"}>
+                  {(component.description || "").length > 20
+                    ? `${component.description?.substring(0, 20)}...`
+                    : component.description}
+                </Text>
+                {haveNonRootParent && (
+                  <ActionIcon
+                    size="xs"
+                    variant="transparent"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setSelectedComponentId(parent.id as string);
+                    }}
+                  >
+                    <IconArrowUp
+                      size={ICON_SIZE}
+                      color="white"
+                      strokeWidth={1.5}
+                    />
+                  </ActionIcon>
+                )}
                 <ActionIcon
                   size="xs"
                   variant="transparent"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setSelectedComponentId(parent.id as string);
+                    customComponentModal?.open();
                   }}
                 >
-                  <IconArrowUp
+                  <IconPlus size={ICON_SIZE} color="white" strokeWidth={1.5} />
+                </ActionIcon>
+                <ActionIcon
+                  size="xs"
+                  variant="transparent"
+                  onClick={() => {
+                    const container = structureMapper["Container"].structure({
+                      theme: editorTheme,
+                    });
+
+                    if (container.props && container.props.style) {
+                      container.props.style = {
+                        ...container.props.style,
+                        width: "auto",
+                        padding: "0px",
+                      };
+                    }
+
+                    const copy = cloneDeep(editorTree);
+                    const containerId = addComponent(
+                      copy.root,
+                      container,
+                      {
+                        id: parent?.id!,
+                        edge: "left",
+                      },
+                      getComponentIndex(parent!, id),
+                    );
+
+                    addComponent(copy.root, component, {
+                      id: containerId,
+                      edge: "left",
+                    });
+
+                    removeComponentFromParent(copy.root, id, parent?.id!);
+                    setEditorTree(copy, {
+                      action: `Wrapped ${component.name} with a Container`,
+                    });
+                  }}
+                >
+                  <IconBoxMargin
                     size={ICON_SIZE}
                     color="white"
                     strokeWidth={1.5}
                   />
                 </ActionIcon>
-              )}
-              <ActionIcon
-                size="xs"
-                variant="transparent"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  customComponentModal?.open();
-                }}
-              >
-                <IconPlus size={ICON_SIZE} color="white" strokeWidth={1.5} />
-              </ActionIcon>
-              <ActionIcon
-                size="xs"
-                variant="transparent"
-                onClick={() => {
+              </Group>
+            </Box>
+            <Box
+              pos="absolute"
+              mih={24}
+              h={24}
+              w="100px"
+              bottom={-25}
+              sx={{
+                zIndex: 90,
+                background: theme.colors.gray[4],
+                padding: "4px",
+                borderBottomLeftRadius: theme.radius.sm,
+                borderBottomRightRadius: theme.radius.sm,
+                left: "50%",
+                transform: "translate(-50%)",
+                "&:hover": {
+                  background: theme.colors.gray[3],
+                },
+              }}
+            >
+              <UnstyledButton
+                onClick={async () => {
                   const container = structureMapper["Container"].structure({
                     theme: editorTheme,
                   });
 
-                  if (container.props && container.props.style) {
-                    container.props.style = {
-                      ...container.props.style,
-                      width: "auto",
-                      padding: "0px",
-                    };
-                  }
-
                   const copy = cloneDeep(editorTree);
-                  const containerId = addComponent(
+                  const newSelectedId = addComponent(
                     copy.root,
                     container,
                     {
-                      id: parent?.id!,
-                      edge: "left",
+                      id: parent!.id as string,
+                      edge: "bottom",
                     },
-                    getComponentIndex(parent!, id),
+                    getComponentIndex(parent!, id) + 1,
                   );
 
-                  addComponent(copy.root, component, {
-                    id: containerId,
-                    edge: "left",
+                  await setEditorTree(copy, {
+                    action: `Added ${component.name}`,
                   });
-
-                  removeComponentFromParent(copy.root, id, parent?.id!);
-                  setEditorTree(copy, {
-                    action: `Wrapped ${component.name} with a Container`,
-                  });
+                  setSelectedComponentId(newSelectedId);
                 }}
               >
-                <IconBoxMargin
-                  size={ICON_SIZE}
-                  color="white"
-                  strokeWidth={1.5}
-                />
-              </ActionIcon>
-            </Group>
-          </Box>
+                <Text size="xs" align="center">
+                  + Add Container
+                </Text>
+              </UnstyledButton>
+            </Box>
+          </>
         )}
     </Box>
   );
