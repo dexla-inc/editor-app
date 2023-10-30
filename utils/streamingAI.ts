@@ -1,4 +1,8 @@
-import { getPagesEventSource, postEventSource } from "@/requests/ai/queries";
+import {
+  getPagesEventSource,
+  postEventSource,
+  postEventSourceComponents,
+} from "@/requests/ai/queries";
 import { AIRequestTypes, EventSourceParams } from "@/requests/ai/types";
 import { DexlaNotificationProps } from "@/stores/app";
 import TOML from "@iarna/toml";
@@ -85,9 +89,10 @@ export const createHandlers = (config: HandlerProps) => {
       if (stream === "") {
         stream = event.data;
       } else {
-        stream = `${stream}${event.data}`;
+        // Must be on separate lines to create a new line to parse TOML
+        stream = `${stream}
+        ${event.data}`;
       }
-      console.log({ data: event.data, stream });
       setStream(stream);
     } catch (error) {
       // Do nothing as we expect the stream to not be parsable every time since it can just be halfway through
@@ -149,12 +154,12 @@ export const processTOMLStream = <T>(params: ProcessTOMLStreamProps<T>) => {
   }
 
   tomlBuffer += stream;
-  // console.log("processTOMLStream", tomlBuffer);
-  console.log({ stream2: stream });
+
   try {
-    const json = JSON.parse(stream) as unknown as T;
+    const json = TOML.parse(stream) as unknown as T;
+
     tomlBuffer = "";
-    console.log({ json });
+
     handler(json);
   } catch (error) {
     // If parsing fails, keep the data in the buffer and wait for more data to come in
@@ -206,6 +211,35 @@ export const handleRequestGetStream = async (
     projectId,
     count,
     excludedCsv,
+    onmessage,
+    onerror,
+    onopen,
+    onclose,
+  );
+};
+
+export const handleComponentsContentStream = async (
+  projectId: string,
+  params: EventSourceParams,
+  startLoading: (state: DexlaNotificationProps) => void,
+  onmessage: (ev: EventSourceMessage) => void,
+  onerror: (err: any) => number | null | undefined | void,
+  onopen: (response: Response) => Promise<void>,
+  onclose: () => void,
+) => {
+  startLoading({
+    id: "ai-generation",
+    title: `Generating ${
+      descriptionPlaceholderMapping[params.type].replaceText
+    }`,
+    message: `AI is generating your ${
+      descriptionPlaceholderMapping[params.type].replaceText
+    }`,
+  });
+
+  await postEventSourceComponents(
+    projectId,
+    params,
     onmessage,
     onerror,
     onopen,

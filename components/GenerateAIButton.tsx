@@ -354,13 +354,7 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
               ]}
             />
             <Flex align="center" justify="space-between">
-              <Badge
-                size="lg"
-                color="indigo"
-                leftSection={
-                  <Icon name="IconSparkles" style={{ marginTop: "6px" }} />
-                }
-              >
+              <Badge color="indigo" leftSection={<Icon name="IconSparkles" />}>
                 Powered by AI
               </Badge>
               <Button

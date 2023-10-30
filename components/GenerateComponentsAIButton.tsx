@@ -7,6 +7,7 @@ import { MantineThemeExtended, useEditorStore } from "@/stores/editor";
 import {
   Component,
   EditorTree,
+  Row,
   addComponent,
   getComponentBeingAddedId,
   getNewComponents,
@@ -30,7 +31,7 @@ import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
-import { MutableRefObject, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 type ComponentGenerationProps = {
   componentBeingAddedId: MutableRefObject<string | undefined>;
@@ -57,8 +58,6 @@ export const GenerateComponentsAIButton = () => {
   const pages = useEditorStore((state) => state.pages);
   const router = useRouter();
   const projectId = router.query.id as string;
-  const currentPageId = router.query.page as string;
-  const pageTitle = pages?.find((p) => p.id === currentPageId)?.title;
   const componentBeingAddedId = useRef<string>();
   const setTree = useEditorStore((state) => state.setTree);
   const updateTreeComponent = useEditorStore(
@@ -73,29 +72,20 @@ export const GenerateComponentsAIButton = () => {
     (state) => state.selectedComponentId,
   );
 
-  const setStream: any = {
-    COMPONENT: (stream: string) => {
-      processTOMLStream({
-        stream,
-        handler: handleComponentGeneration({
-          componentBeingAddedId,
-          theme,
-          updateTreeComponentChildren,
-          tree,
-          setTree,
-          pages,
-        }),
-      });
-    },
-  } as const;
+  const closeModal = () => {
+    close();
+    setDescription("");
+  };
+
+  const [stream, setStream] = useState<string>("");
 
   const { onMessage, onError, onOpen, onClose } = createHandlers({
-    setStream: setStream[type],
+    setStream,
     setIsLoading,
     stopLoading,
   });
 
-  const handleComponentGeneration = (params: ComponentGenerationProps) => {
+  const componentGenerationHandler = (params: ComponentGenerationProps) => {
     return function (tomlData: any) {
       const {
         componentBeingAddedId,
@@ -124,10 +114,20 @@ export const GenerateComponentsAIButton = () => {
     };
   };
 
-  const closeModal = () => {
-    close();
-    setDescription("");
-  };
+  useEffect(() => {
+    processTOMLStream<Row[]>({
+      stream,
+      handler: componentGenerationHandler({
+        componentBeingAddedId,
+        theme,
+        updateTreeComponentChildren,
+        tree,
+        setTree,
+        pages,
+      }),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stream, type]);
 
   const form = useForm({
     initialValues: {
@@ -152,7 +152,7 @@ export const GenerateComponentsAIButton = () => {
 
     await handleRequestContentStream(
       projectId,
-      { type, pageName: pageTitle, description: values.description },
+      { type, description: description },
       startLoading,
       onMessage,
       onError,
@@ -185,7 +185,7 @@ export const GenerateComponentsAIButton = () => {
             <Flex align="center">
               <Text size="sm" italic c="dimmed">
                 You can build layouts for your components using AI. (e.g. Add
-                two buttons apart from each other with test below saying
+                two buttons apart from each other with text below saying
                 Welcome!)
               </Text>
             </Flex>
@@ -210,13 +210,7 @@ export const GenerateComponentsAIButton = () => {
               ]}
             />
             <Flex align="center" justify="space-between">
-              <Badge
-                size="lg"
-                color="indigo"
-                leftSection={
-                  <Icon name="IconSparkles" style={{ marginTop: "6px" }} />
-                }
-              >
+              <Badge color="indigo" leftSection={<Icon name="IconSparkles" />}>
                 Powered by AI
               </Badge>
               <Button
