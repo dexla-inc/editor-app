@@ -1,4 +1,3 @@
-import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
@@ -7,56 +6,53 @@ import {
   debouncedTreeComponentPropsUpdate,
   debouncedTreeUpdate,
 } from "@/utils/editor";
-import { Flex, Select, Stack, TextInput } from "@mantine/core";
+import { requiredModifiers } from "@/utils/modifiers";
+import { Flex, Select, Stack, Switch, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconForms } from "@tabler/icons-react";
+import { IconTextSize } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
 
-export const icon = IconForms;
-export const label = "Input";
+export const icon = IconTextSize;
+export const label = "Textaarea";
 
-export const defaultInputValues = {
-  size: "sm",
-  placeholder: "Input",
-  type: "text",
-  label: "",
-  icon: { props: { name: "" } },
-  withAsterisk: false,
-  labelSpacing: "0",
-  labelWeight: "normal",
-  name: "Input",
+export const defaultTextareaValues = {
+  value: "New Text",
+  size: "md",
+  weight: "normal",
+  color: "Black.6",
+  lineHeight: "",
+  letterSpacing: "",
+  align: "left",
+  hideIfDataIsEmpty: false,
+  autosize: false,
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
-    initialValues: defaultInputValues,
+    initialValues: { ...requiredModifiers.text },
   });
 
   useEffect(() => {
     if (selectedComponent?.id) {
       const data = pick(selectedComponent.props!, [
+        "children",
         "style",
-        "label",
+        "color",
         "size",
-        "placeholder",
-        "type",
-        "icon",
-        "withAsterisk",
-        "labelProps",
-        "name",
-        "labelWeight",
+        "weight",
+        "hideIfDataIsEmpty",
       ]);
 
       form.setValues({
-        size: data.size ?? defaultInputValues.size,
-        placeholder: data.placeholder ?? defaultInputValues.placeholder,
-        type: data.type ?? defaultInputValues.type,
-        label: data.label ?? defaultInputValues.label,
-        icon: data.icon ?? defaultInputValues.icon,
-        name: data.name ?? defaultInputValues.name,
-        withAsterisk: data.withAsterisk ?? defaultInputValues.withAsterisk,
-        labelSpacing: data.labelProps?.mb ?? defaultInputValues.labelSpacing,
+        value: data.children ?? defaultTextareaValues.value,
+        color: data.color ?? defaultTextareaValues.color,
+        size: data.size ?? defaultTextareaValues.size,
+        weight: data.weight ?? defaultTextareaValues.weight,
+        align: data.style.textAlign ?? defaultTextareaValues.align,
+        autosize: data.style.autosize ?? defaultTextareaValues.autosize,
+        hideIfDataIsEmpty:
+          data.hideIfDataIsEmpty ?? defaultTextareaValues.hideIfDataIsEmpty,
         ...data.style,
       });
     }
@@ -149,15 +145,25 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             }}
           />
         </Flex>
-        <IconSelector
-          topLabel="Icon"
-          selectedIcon={form.values.icon.props.name}
-          onIconSelect={(iconName: string) => {
-            const icon = { props: { name: iconName } };
-            form.setFieldValue("icon.props.name", iconName);
-            debouncedTreeComponentPropsUpdate("icon", icon);
-          }}
-        />
+        <Stack spacing={2}>
+          <Text size="xs" fw={500}>
+            Autosize
+          </Text>
+          <Switch
+            {...form.getInputProps("autosize")}
+            size="xs"
+            onChange={(e) => {
+              form.setFieldValue(
+                "autosize",
+                e.currentTarget.checked as boolean,
+              );
+              debouncedTreeComponentPropsUpdate(
+                "autosize",
+                e.currentTarget.checked,
+              );
+            }}
+          />
+        </Stack>
       </Stack>
     </form>
   );

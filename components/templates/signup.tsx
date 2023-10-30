@@ -65,7 +65,7 @@ export const template = (data: Data, theme: MantineThemeExtended) => {
               display: "flex",
               flexDirection: "column",
               boxSizing: "border-box",
-              minHeight: "50px",
+              minHeight: "20px",
             },
           },
           children: [

@@ -16,7 +16,6 @@ export const jsonStructure = (props?: any): Component => {
     description: "Breadcrumb",
     props: {
       style: {
-        padding: px(theme.spacing.xl),
         width: columnsToWidth,
         height: "auto",
       },
