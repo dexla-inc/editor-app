@@ -1,7 +1,12 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { Textarea as MantineTextarea, TextareaProps } from "@mantine/core";
-import { memo } from "react";
+import {
+  Loader,
+  Textarea as MantineTextarea,
+  TextareaProps,
+} from "@mantine/core";
+import debounce from "lodash.debounce";
+import { memo, useCallback, useEffect, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -9,10 +14,35 @@ type Props = {
 } & TextareaProps;
 
 const TextareaComponent = ({ renderTree, component, ...props }: Props) => {
-  const { children, ...componentProps } = component.props as any;
+  const { children, triggers, value, loading, ...componentProps } =
+    component.props as any;
+  const [inputValue, setInputValue] = useState(value);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedOnChange = useCallback(
+    debounce((e) => {
+      triggers?.onChange(e);
+    }, 400),
+    [debounce],
+  );
+
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
 
   return (
-    <MantineTextarea {...props} {...componentProps}>
+    <MantineTextarea
+      id={component.id}
+      styles={{ root: { display: "block !important" } }}
+      {...props}
+      {...componentProps}
+      value={inputValue}
+      onChange={(e) => {
+        setInputValue(e.target.value);
+        triggers?.onChange ? debouncedOnChange(e) : undefined;
+      }}
+      rightSection={loading ? <Loader size="xs" /> : null}
+    >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))
         : children}

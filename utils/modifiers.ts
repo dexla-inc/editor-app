@@ -31,7 +31,8 @@ export type Modifiers =
   | "accordionItem"
   | "switch"
   | "accordion"
-  | "avatar";
+  | "avatar"
+  | "textarea";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -121,6 +122,15 @@ export const requiredModifiers: RequiredModifiers = {
     withAsterisk: false,
     labelSpacing: "0",
     name: "Input",
+  },
+  textarea: {
+    size: "sm",
+    placeholder: "Textarea",
+    label: "",
+    icon: { props: { name: "" } },
+    withAsterisk: false,
+    labelSpacing: "0",
+    name: "Textarea",
   },
   button: {
     value: "New Button",

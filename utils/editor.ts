@@ -1,4 +1,4 @@
-import { CSSProperties } from "react";
+import { Tile } from "@/components/templates/dashboard";
 import { PageResponse } from "@/requests/pages/types";
 import {
   MantineThemeExtended,
@@ -15,8 +15,8 @@ import merge from "lodash.merge";
 import pickBy from "lodash.pickby";
 import { nanoid } from "nanoid";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
+import { CSSProperties } from "react";
 import crawl from "tree-crawl";
-import { Tile } from "@/components/templates/dashboard";
 
 export type Component = {
   id?: string;
@@ -189,7 +189,7 @@ export const getEditorTreeFromPageStructure = (
               display: "flex",
               flexDirection: "column",
               boxSizing: "border-box",
-              minHeight: "50px",
+              minHeight: "20px",
             },
           },
           children: tree.rows.map((row: Row) => {

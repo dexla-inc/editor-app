@@ -1,15 +1,15 @@
 import { defaultBorderValues } from "@/components/modifiers/Border";
-import { structureMapper } from "@/utils/componentMapper";
-import { px } from "@mantine/core";
-import { nanoid } from "nanoid";
-import { tileMapper } from "./tiles";
-import { createLogicFlow } from "@/requests/logicflows/mutations";
-import { encodeSchema } from "@/utils/compression";
 import {
   getDataSourceEndpoints,
   getDataSources,
 } from "@/requests/datasources/queries";
+import { createLogicFlow } from "@/requests/logicflows/mutations";
 import { createVariable } from "@/requests/variables/mutations";
+import { structureMapper } from "@/utils/componentMapper";
+import { encodeSchema } from "@/utils/compression";
+import { px } from "@mantine/core";
+import { nanoid } from "nanoid";
+import { tileMapper } from "./tiles";
 
 type Button = {
   name: "button";
@@ -478,7 +478,7 @@ export const template = async (
               display: "flex",
               flexDirection: "column",
               boxSizing: "border-box",
-              minHeight: "50px",
+              minHeight: "20px",
             },
           },
           children: [

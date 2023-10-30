@@ -208,7 +208,7 @@ export const template = (data: Data, theme: any, pages: any) => {
               display: "flex",
               flexDirection: "column",
               boxSizing: "border-box",
-              minHeight: "50px",
+              minHeight: "20px",
             },
           },
           children: [

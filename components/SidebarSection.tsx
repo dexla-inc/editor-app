@@ -51,11 +51,8 @@ export function SidebarSection({
   return (
     <>
       <Group
-        my={my}
-        spacing={5}
         noWrap
         sx={{
-          padding: `${theme.spacing.xs} ${theme.spacing.md}`,
           color: theme.black,
 
           "&:hover": {
@@ -70,6 +67,7 @@ export function SidebarSection({
             fontWeight: 500,
             display: "block",
             width: "100%",
+            padding: `${theme.spacing.xs} ${theme.spacing.md}`,
           }}
         >
           <Group position="apart" spacing={0} noWrap>

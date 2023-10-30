@@ -6,7 +6,7 @@ import {
   debouncedTreeComponentPropsUpdate,
   debouncedTreeUpdate,
 } from "@/utils/editor";
-import { Group, Select, Stack, Switch, TextInput } from "@mantine/core";
+import { Group, Select, Stack, Switch, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconSelect } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
@@ -92,25 +92,17 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     <form>
       <Stack spacing="xs">
         <TextInput
-          label="Name"
+          label="Label"
           size="xs"
-          {...form.getInputProps("name")}
+          {...form.getInputProps("label")}
           onChange={(e) => {
-            form.setFieldValue("name", e.target.value);
-            debouncedTreeComponentPropsUpdate("name", e.target.value);
+            setFieldValue("label", e.target.value);
           }}
         />
+
         <Group noWrap>
-          <TextInput
-            label="Label"
-            size="xs"
-            {...form.getInputProps("label")}
-            onChange={(e) => {
-              setFieldValue("label", e.target.value);
-            }}
-          />
           <SizeSelector
-            label="Label Size"
+            label="Size"
             {...form.getInputProps("labelSize")}
             onChange={(value) => {
               form.setFieldValue("labelSize", value as string);
@@ -119,11 +111,8 @@ export const Modifier = withModifier(({ selectedComponent }) => {
               });
             }}
           />
-        </Group>
-
-        <Group noWrap>
           <Select
-            label="Label Align"
+            label="Align"
             size="xs"
             data={[
               { label: "Left", value: "left" },
@@ -138,9 +127,10 @@ export const Modifier = withModifier(({ selectedComponent }) => {
               });
             }}
           />
-
+        </Group>
+        <Group noWrap>
           <Select
-            label="Label Weight"
+            label="Weight"
             size="xs"
             data={[
               { label: "Normal", value: "normal" },
@@ -154,23 +144,38 @@ export const Modifier = withModifier(({ selectedComponent }) => {
               });
             }}
           />
+          <SizeSelector
+            label="Spacing"
+            {...form.getInputProps("labelProps")}
+            onChange={(value) => {
+              form.setFieldValue("labelProps", value as string);
+              debouncedTreeComponentPropsUpdate("labelProps", {
+                mb: value as string,
+              });
+            }}
+          />
         </Group>
-        <SizeSelector
-          label="Label Spacing"
-          {...form.getInputProps("labelProps")}
-          onChange={(value) => {
-            form.setFieldValue("labelProps", value as string);
-            debouncedTreeComponentPropsUpdate("labelProps", {
-              mb: value as string,
-            });
+        <TextInput
+          label="Name"
+          size="xs"
+          {...form.getInputProps("name")}
+          onChange={(e) => {
+            form.setFieldValue("name", e.target.value);
+            debouncedTreeComponentPropsUpdate("name", e.target.value);
           }}
         />
-        <Switch
-          label="Clearable"
-          {...form.getInputProps("clearable")}
-          size="xs"
-          onChange={(e) => setFieldValue("clearable", e.currentTarget.checked)}
-        />
+        <Stack spacing={2}>
+          <Text size="xs" fw={500}>
+            Clearable
+          </Text>
+          <Switch
+            {...form.getInputProps("clearable")}
+            size="xs"
+            onChange={(e) =>
+              setFieldValue("clearable", e.currentTarget.checked)
+            }
+          />
+        </Stack>
         <TextInput
           label="Placeholder"
           size="xs"

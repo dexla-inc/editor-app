@@ -11,8 +11,9 @@ export const jsonStructure = (props?: any): Component => {
     description: "Switch",
     props: {
       label: "Switch Label",
+      showLabel: true,
       style: {
-        width: "100%",
+        width: "auto",
         height: "auto",
       },
       ...(props.props || {}),

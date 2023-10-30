@@ -19,7 +19,7 @@ export const jsonStructure = (props?: any): Component => {
         ...defaultBorderValues,
         width: "100%",
         height: "auto",
-        minHeight: "50px",
+        minHeight: "20px",
         ...(style || {}),
       },
     },
