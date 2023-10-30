@@ -1,5 +1,6 @@
 import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
+import { NavigationAction } from "@/utils/actions";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
@@ -17,7 +18,11 @@ const NavLinkComponent = ({ renderTree, component, ...props }: Props) => {
 
   const router = useRouter();
   const currentPageId = router.query.page as string;
-  const active = currentPageId === component?.props?.pageId;
+  const activePageId = (
+    component.actions?.find((action) => action.action.name === "navigateToPage")
+      ?.action as NavigationAction
+  )?.pageId;
+  const active = currentPageId === activePageId;
 
   const activeProps = {};
   if (active) {
