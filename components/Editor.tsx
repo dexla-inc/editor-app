@@ -75,7 +75,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
     (state) => state.setSelectedComponentId,
   );
   const setIsLoading = useAppStore((state) => state.setIsLoading);
-  const pinTab = useUserConfigStore((state) => state.isTabPinned);
+  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const isGettingPageData = useRef<boolean>(false);
   const [canvasRef] = useAutoAnimate();
   const [isCustomComponentModalOpen, customComponentModal] =
@@ -378,10 +378,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
                 height: `calc(100% - ${HEADER_HEIGHT}px)`,
               }}
             >
-              <Navbar.Section grow component={ScrollArea}>
-                <Box py="sm">
-                  <EditorNavbarSections />
-                </Box>
+              <Navbar.Section grow component={ScrollArea} py="sm">
+                <EditorNavbarSections />
               </Navbar.Section>
             </Navbar>
           ) : undefined
@@ -418,7 +416,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
             pos="relative"
             onClick={clearSelection}
             style={{ minHeight: `calc(100vh - ${HEADER_HEIGHT}px)` }}
-            ml={pinTab ? NAVBAR_WIDTH : NAVBAR_MIN_WIDTH}
+            ml={isTabPinned ? NAVBAR_WIDTH : NAVBAR_MIN_WIDTH}
             p={"40px 10px"}
           >
             <Paper

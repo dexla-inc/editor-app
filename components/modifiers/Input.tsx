@@ -151,7 +151,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         </Flex>
         <IconSelector
           topLabel="Icon"
-          selectedIcon={form.values.icon.props.name}
+          selectedIcon={form.values.icon?.props?.name}
           onIconSelect={(iconName: string) => {
             const icon = { props: { name: iconName } };
             form.setFieldValue("icon.props.name", iconName);

@@ -185,7 +185,6 @@ const ListItem = ({ component, children }: ListItemProps) => {
                 setClickedManualToggle(true);
               }}
               sx={{
-                visibility: canExpand ? "visible" : "hidden",
                 pointerEvents: canExpand ? "all" : "none",
                 width: canExpand ? "auto" : 0,
                 minWidth: canExpand ? "auto" : 0,
@@ -261,10 +260,7 @@ const ListItem = ({ component, children }: ListItemProps) => {
 
 const ListItemWrapper = ({ component, children }: ListItemProps) => {
   return (
-    <SortableTreeItem
-      component={component}
-      style={{ marginBottom: "3px", overflow: "hidden" }}
-    >
+    <SortableTreeItem component={component} style={{ marginBottom: "3px" }}>
       <List.Item key={component.id} w="100%">
         <ListItem component={component}>
           {(component.children ?? [])?.length > 0 && (
