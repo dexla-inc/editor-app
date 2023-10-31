@@ -66,14 +66,12 @@ export const EditorNavbarSections = () => {
   const item = sections.find((item) => item.id === activeTab);
 
   return (
-    <>
-      <NavbarSection sections={sections} layers={sectionMapper.layers}>
-        {item &&
-          sectionMapper[item.id]({
-            ...item,
-            isActive: item.id === activeTab,
-          })}
-      </NavbarSection>
-    </>
+    <NavbarSection sections={sections}>
+      {item &&
+        sectionMapper[item.id]({
+          ...item,
+          isActive: item.id === activeTab,
+        })}
+    </NavbarSection>
   );
 };

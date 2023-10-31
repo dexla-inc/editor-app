@@ -36,7 +36,7 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
-  const pinTab = useUserConfigStore((state) => state.isTabPinned);
+  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
   const theme = useEditorStore((state) => state.theme);
   const setTheme = useEditorStore((state) => state.setTheme);
@@ -109,7 +109,7 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
   const getContainerStyles = (
     isLive: boolean | undefined,
     isPreviewMode: boolean,
-    pinTab: boolean,
+    isTabPinned: boolean,
   ) => {
     const containerStyles = {
       overflow: isLive ? "hidden" : "visible",
@@ -120,11 +120,11 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
     };
 
     if (!isLive && !isPreviewMode) {
-      containerStyles.width = pinTab
+      containerStyles.width = isTabPinned
         ? `calc(100% - ${NAVBAR_WIDTH}px)`
         : `calc(100% - ${NAVBAR_MIN_WIDTH}px)`;
 
-      containerStyles.marginLeft = pinTab
+      containerStyles.marginLeft = isTabPinned
         ? `${NAVBAR_WIDTH}px`
         : `${NAVBAR_MIN_WIDTH}px`;
     }
@@ -132,12 +132,16 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
     return containerStyles;
   };
 
-  const styles = getContainerStyles(isLive, isPreviewMode, pinTab);
+  const styles = getContainerStyles(isLive, isPreviewMode, isTabPinned);
 
   return (
     <Box
       onMouseDown={() => {
-        setActiveTab(undefined);
+        if (isTabPinned) {
+          setActiveTab("layers");
+        } else {
+          setActiveTab(undefined);
+        }
       }}
       ref={setContentRef as any}
       component="iframe"

@@ -56,7 +56,7 @@ import {
 } from "@mantine/core";
 import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -128,6 +128,11 @@ export const EditorAsideSections = () => {
   );
   const [tab, setTab] = useState<Tab>("design");
 
+  const component = useMemo(
+    () => getComponentById(editorTree.root, selectedComponentId as string),
+    [editorTree.root, selectedComponentId],
+  );
+
   useEffect(() => {
     selectedComponentId !== openAction?.componentId &&
       setOpenAction({ actionId: undefined, componentId: undefined });
@@ -148,11 +153,6 @@ export const EditorAsideSections = () => {
       </Box>
     );
   }
-
-  const component = getComponentById(
-    editorTree.root,
-    selectedComponentId as string,
-  );
 
   const componentActions = component?.actions ?? [];
   const mappedComponent = componentMapper[component?.name as string];

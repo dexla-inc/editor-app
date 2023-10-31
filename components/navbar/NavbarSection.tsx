@@ -7,6 +7,7 @@ import {
   Flex,
   Group,
   Portal,
+  ScrollArea,
   Stack,
   ThemeIcon,
   Title,
@@ -20,21 +21,19 @@ import {
   IconPinnedOff,
 } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 
 type Props = {
   sections: Sections;
-  layers: any;
 };
 
 export const NavbarSection = ({
   children,
   sections,
-  layers,
 }: PropsWithChildren<Props>) => {
   const activeTab = useEditorStore((state) => state.activeTab);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
-  const pinTab = useUserConfigStore((state) => state.isTabPinned);
+  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const setPinTab = useUserConfigStore((state) => state.setIsTabPinned);
   const isStructureCollapsed = useEditorStore(
     (state) => state.isStructureCollapsed,
@@ -43,18 +42,28 @@ export const NavbarSection = ({
     (state) => state.setIsStructureCollapsed,
   );
 
-  const pinnedItem = sections.find((item) => item.id === "layers");
-
-  const IconToggle = pinTab ? IconPinnedOff : IconPinned;
+  const IconToggle = isTabPinned ? IconPinnedOff : IconPinned;
   const IconCollapse = isStructureCollapsed
     ? IconArrowsDiagonal2
     : IconArrowsDiagonalMinimize;
 
-  const handleClick = (id: string) => {
-    activeTab === id ? setActiveTab(undefined) : setActiveTab(id);
-  };
+  useEffect(() => {
+    isTabPinned && setActiveTab("layers");
+  }, [isTabPinned]);
+
+  const currentSection = sections.find((section) => section.id === activeTab);
 
   const sectionToRender = sections.map(({ id, label, icon: Icon }) => {
+    const handleSectionClick = () => {
+      if (isTabPinned && activeTab === id) {
+        setActiveTab("layers");
+      } else if (activeTab === id) {
+        setActiveTab(undefined);
+      } else {
+        setActiveTab(id);
+      }
+    };
+
     return (
       <Tooltip
         withinPortal
@@ -66,7 +75,7 @@ export const NavbarSection = ({
         zIndex={500}
       >
         <UnstyledButton
-          onClick={() => handleClick(id)}
+          onClick={handleSectionClick}
           sx={{
             fontWeight: 500,
             display: "block",
@@ -80,8 +89,6 @@ export const NavbarSection = ({
       </Tooltip>
     );
   });
-
-  const item = sections.find((section) => section.id === activeTab);
 
   const actionButtons = (
     <Flex>
@@ -102,7 +109,7 @@ export const NavbarSection = ({
         </ActionIcon>
       </Tooltip>
       <Tooltip
-        label={pinTab ? "Unpin Tab" : "Pin Tab"}
+        label={isTabPinned ? "Unpin Tab" : "Pin Tab"}
         fz="xs"
         position="top"
         withArrow
@@ -111,8 +118,7 @@ export const NavbarSection = ({
         <ActionIcon aria-label="PinTab">
           <IconToggle
             onClick={() => {
-              setPinTab(!pinTab);
-              pinTab ? setActiveTab(pinnedItem?.id) : setActiveTab(undefined);
+              setPinTab(!isTabPinned);
             }}
             size={ICON_SIZE}
             color="gray"
@@ -124,44 +130,32 @@ export const NavbarSection = ({
 
   const itemTab = (
     <Stack
-      sx={{
-        overflowX: "hidden",
-        overflowY: "scroll",
-        scrollbarWidth: "thin",
-        scrollbarColor: "#888 transparent",
-        msOverflowStyle: "-ms-autohiding-scrollbar",
-        "::-webkit-scrollbar": { width: "5px", borderRadius: "10px" },
-        "::-webkit-scrollbar-thumb": {
-          backgroundColor: "#888",
-          borderRadius: "10px",
-        },
-      }}
       pos="fixed"
       bg="white"
       top={HEADER_HEIGHT}
-      p={10}
-      pb={80}
       left={NAVBAR_MIN_WIDTH}
       w={250}
       h="100%"
-      spacing="xs"
       align="flex-start"
     >
-      <Flex justify="space-between" w="100%">
-        <Title align="center" color="dark.4" order={4}>
-          {startCase(item?.label)}
-        </Title>
-        {activeTab === "layers" && actionButtons}
-      </Flex>
-      <Stack align="flex-start" w="100%">
-        {children}
-      </Stack>
+      <ScrollArea p={10} pb={80}>
+        <Flex justify="space-between" w="100%">
+          <Title align="center" color="dark.4" order={4}>
+            {startCase(currentSection?.label)}
+          </Title>
+          {activeTab === "layers" && actionButtons}
+        </Flex>
+        <Stack align="flex-start" w="100%">
+          {children}
+        </Stack>
+      </ScrollArea>
     </Stack>
   );
 
   return (
-    <Group dir="column" align="flex-start" noWrap px="xs" h={`100%`}>
+    <Group dir="column" align="flex-start" noWrap px="xs">
       <Group
+        h={`100%`}
         align="flex-start"
         pos="relative"
         sx={{ zIndex: 100 }}
@@ -170,36 +164,10 @@ export const NavbarSection = ({
         <Stack h="100%" spacing="md">
           {sectionToRender}
         </Stack>
-        {activeTab && <Portal target="#navbar-sections">{itemTab}</Portal>}
+        {(activeTab || (isTabPinned && activeTab === "layers")) && (
+          <Portal target="#navbar-sections">{itemTab}</Portal>
+        )}
       </Group>
-      {!activeTab && pinTab && pinnedItem && (
-        <Stack
-          sx={{
-            overflowX: "hidden",
-            overflowY: "scroll",
-            scrollbarWidth: "thin",
-            scrollbarColor: "#888 transparent",
-            msOverflowStyle: "-ms-autohiding-scrollbar",
-            "::-webkit-scrollbar": { width: "5px", borderRadius: "10px" },
-            "::-webkit-scrollbar-thumb": {
-              backgroundColor: "#888",
-              borderRadius: "10px",
-            },
-          }}
-          w={250}
-          h="100%"
-          spacing="xs"
-          align="flex-start"
-        >
-          <Flex justify="space-between" w="100%">
-            <Title align="center" color="dark.4" order={4}>
-              {startCase(pinnedItem?.label)}
-            </Title>
-            {actionButtons}
-          </Flex>
-          {layers({ ...item })}
-        </Stack>
-      )}
     </Group>
   );
 };

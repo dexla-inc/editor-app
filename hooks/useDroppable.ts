@@ -6,6 +6,7 @@ import {
   getComponentById,
 } from "@/utils/editor";
 import { useCallback, useState } from "react";
+import { useUserConfigStore } from "@/stores/userConfig";
 
 export const useDroppable = ({
   id,
@@ -22,10 +23,10 @@ export const useDroppable = ({
   const setCurrentTargetId = useEditorStore(
     (state) => state.setCurrentTargetId,
   );
-  const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
+  const activeTab = useEditorStore((state) => state.activeTab);
+  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const [edge, setEdge] = useState<Edge>();
-  const [shouldHandleDragOver, setShouldHandleDragOver] = useState(false);
 
   const component = getComponentById(editorTree.root, id);
 
@@ -83,21 +84,19 @@ export const useDroppable = ({
       event.preventDefault();
       event.stopPropagation();
       setCurrentTargetId(id);
-      setActiveTab(undefined);
+      if (!(activeTab === "layers" && isTabPinned)) {
+        setActiveTab(undefined);
+      }
     },
-    [id, setCurrentTargetId, setActiveTab],
+    [id, setCurrentTargetId, setActiveTab, activeTab, isTabPinned],
   );
 
   // TODO: Handle isOver differently to have better ux as currently
   // it remove the drop target even if hovering over a non droppable children
-  const handleDragLeave = useCallback(
-    (event: any) => {
-      event.preventDefault();
-      event.stopPropagation();
-      setShouldHandleDragOver(false);
-    },
-    [setShouldHandleDragOver],
-  );
+  const handleDragLeave = useCallback((event: any) => {
+    event.preventDefault();
+    event.stopPropagation();
+  }, []);
 
   return {
     edge,
