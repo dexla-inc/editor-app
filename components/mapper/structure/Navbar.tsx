@@ -89,7 +89,7 @@ export const jsonStructure = (props?: any): Component => {
             description: "Image",
             props: {
               style: {
-                width: "auto",
+                width: "34px",
                 maxWidth: "180px",
                 height: "34px",
                 ...defaultImageValues,
@@ -349,6 +349,7 @@ export const jsonStructure = (props?: any): Component => {
                     props: {
                       radius: "xl",
                       src: "https://dexlastatesdev.blob.core.windows.net/editor/1e176c4b3b784ddd98e161a9b4d0a48c_profile.png",
+                      style: { width: "40px", height: "40px" },
                     },
                     children: [],
                     actions: [],
