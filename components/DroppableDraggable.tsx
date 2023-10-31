@@ -308,9 +308,8 @@ export const DroppableDraggable = ({
         },
       }}
       onClick={(e) => {
-        e.stopPropagation();
-
         if (!isPreviewMode) {
+          e.stopPropagation();
           e.preventDefault();
 
           if (isPicking) {
