@@ -1,5 +1,6 @@
 import { getTheme } from "@/requests/themes/queries";
 import { useEditorStore } from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/user";
 import { NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
 import createCache from "@emotion/cache";
 import {
@@ -35,7 +36,7 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
-  const pinTab = useEditorStore((state) => state.pinTab);
+  const pinTab = useUserConfigStore((state) => state.isTabPinned);
 
   const theme = useEditorStore((state) => state.theme);
   const setTheme = useEditorStore((state) => state.setTheme);

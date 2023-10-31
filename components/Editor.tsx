@@ -11,6 +11,7 @@ import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import { getPage, getPageTemplate } from "@/requests/pages/queries";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/user";
 import { componentMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
 import {
@@ -74,6 +75,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
     (state) => state.setSelectedComponentId,
   );
   const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const pinTab = useUserConfigStore((state) => state.isTabPinned);
   const isGettingPageData = useRef<boolean>(false);
   const [canvasRef] = useAutoAnimate();
   const [isCustomComponentModalOpen, customComponentModal] =
@@ -416,7 +418,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
             pos="relative"
             onClick={clearSelection}
             style={{ minHeight: `calc(100vh - ${HEADER_HEIGHT}px)` }}
-            ml={NAVBAR_MIN_WIDTH}
+            ml={pinTab ? NAVBAR_WIDTH : NAVBAR_MIN_WIDTH}
             p={"40px 10px"}
           >
             <Paper

@@ -1,5 +1,6 @@
 import { Sections } from "@/components/navbar/EditorNavbarSections";
 import { useEditorStore } from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/user";
 import { HEADER_HEIGHT, ICON_SIZE, NAVBAR_MIN_WIDTH } from "@/utils/config";
 import {
   ActionIcon,
@@ -33,8 +34,8 @@ export const NavbarSection = ({
 }: PropsWithChildren<Props>) => {
   const activeTab = useEditorStore((state) => state.activeTab);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
-  const pinTab = useEditorStore((state) => state.pinTab);
-  const setPinTab = useEditorStore((state) => state.setPinTab);
+  const pinTab = useUserConfigStore((state) => state.isTabPinned);
+  const setPinTab = useUserConfigStore((state) => state.setIsTabPinned);
   const isStructureCollapsed = useEditorStore(
     (state) => state.isStructureCollapsed,
   );

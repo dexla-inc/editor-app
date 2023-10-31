@@ -70,7 +70,6 @@ export type EditorState = {
   isLive: boolean;
   isNavBarVisible: boolean;
   activeTab?: string;
-  pinTab: boolean;
   isStructureCollapsed: boolean;
   pages: PageResponse[];
   onMountActionsRan: string[];
@@ -138,7 +137,6 @@ export type EditorState = {
   setIsLive: (value: boolean) => void;
   setIsNavBarVisible: () => void;
   setActiveTab: (activeTab?: string) => void;
-  setPinTab: (value: boolean) => void;
   setIsStructureCollapsed: (value: boolean) => void;
   setCopiedAction: (copiedAction?: Action[]) => void;
   // pasteAction: (componentId: string) => void;
@@ -437,11 +435,9 @@ export const useEditorStore = create<EditorState>()(
         isPreviewMode: false,
         isLive: false,
         isNavBarVisible: true,
-        pinTab: false,
         isStructureCollapsed: false,
         setActiveTab: (activeTab) =>
           set({ activeTab }, false, "editor/setActiveTab"),
-        setPinTab: (pinTab) => set({ pinTab }, false, "editor/setPinTab"),
         setPreviewMode: (value) =>
           set(
             { isPreviewMode: value, currentTreeComponentsStates: {} },
