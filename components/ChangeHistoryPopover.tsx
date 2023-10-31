@@ -70,12 +70,12 @@ export const ChangeHistoryPopover: FC = () => {
     operation: (steps?: number | undefined) => void,
   ) => {
     operation();
-    const retrievedPageState = useEditorStore.getState();
+    const currentState = useEditorStore.getState();
     debouncedUpdatePageState(
-      encodeSchema(JSON.stringify(retrievedPageState.tree)),
-      retrievedPageState.currentProjectId ?? "",
-      retrievedPageState.currentPageId ?? "",
-      retrievedPageState.setIsSaving,
+      encodeSchema(JSON.stringify(currentState.tree)),
+      currentState.currentProjectId ?? "",
+      currentState.currentPageId ?? "",
+      currentState.setIsSaving,
     );
   };
 

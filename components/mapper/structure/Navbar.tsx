@@ -47,8 +47,7 @@ export const jsonStructure = (props?: any): Component => {
       ...merge({
         style: {
           width: "260px",
-          minHeight: "100vh",
-          height: "fit-content",
+          height: "100vh",
           display: "flex",
           flexDirection: "column",
           flexWrap: "nowrap",
@@ -56,7 +55,7 @@ export const jsonStructure = (props?: any): Component => {
           gap: "0px",
           position: "sticky",
           top: "0px",
-          backgroundColor: isDarkTheme ? theme.colors.dark[6] : "#f2f2f2",
+          backgroundColor: isDarkTheme ? theme.colors.dark[6] : "Border.6",
         },
         ...props.props,
       }),
@@ -116,7 +115,9 @@ export const jsonStructure = (props?: any): Component => {
                 description: "Username",
                 props: {
                   children: "JohnDoe14",
-                  color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                  color: `${
+                    theme.colors.Black ? "Black.6" : theme.colors.dark[6]
+                  }`,
                   size: "md",
                   weight: "bold",
                   style: {
@@ -222,7 +223,6 @@ export const jsonStructure = (props?: any): Component => {
                 icon: page.icon ?? "IconLayoutDashboard",
                 label: page.title,
                 isNested: !!page.parentPageId,
-
                 style: {
                   width: "100%",
                   height: "auto",
@@ -370,7 +370,11 @@ export const jsonStructure = (props?: any): Component => {
                         description: "Name",
                         props: {
                           children: "John Doe",
-                          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                          color: `${
+                            theme.colors.Black
+                              ? "Black.6"
+                              : theme.colors.dark[6]
+                          }`,
                           size: "md",
                           weight: "bold",
                           style: {
