@@ -18,7 +18,7 @@ type Props = {
   TextInputProps;
 
 const InputComponent = ({ renderTree, component, ...props }: Props) => {
-  const { children, icon, triggers, value, loading, ...componentProps } =
+  const { children, icon, triggers, value, loading, style, ...componentProps } =
     component.props as any;
   const { name: iconName } = icon && icon!.props!;
   const [inputValue, setInputValue] = useState(value);
@@ -58,7 +58,23 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
         <MantineInput
           id={component.id}
           icon={iconName ? <Icon name={iconName} /> : null}
-          styles={{ root: { display: "block !important" } }}
+          styles={{
+            root: {
+              display: "block !important",
+              width: "-webkit-fill-available",
+              height: "-webkit-fill-available",
+            },
+            wrapper: {
+              width: "-webkit-fill-available",
+              height: "-webkit-fill-available",
+            },
+            input: {
+              minHeight: "auto",
+              ...style,
+              width: "-webkit-fill-available",
+              height: "-webkit-fill-available",
+            },
+          }}
           {...props}
           {...componentProps}
           value={inputValue}

@@ -26,6 +26,7 @@ import {
   getComponentParent,
   removeComponent,
   replaceTilesData,
+  getComponentIndex,
 } from "@/utils/editor";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import {
@@ -69,6 +70,9 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const isLoading = useAppStore((state) => state.isLoading);
+  const setSelectedComponentId = useEditorStore(
+    (state) => state.setSelectedComponentId,
+  );
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isGettingPageData = useRef<boolean>(false);
   const [canvasRef] = useAutoAnimate();
@@ -122,20 +126,27 @@ export const Editor = ({ projectId, pageId }: Props) => {
     return selectedId as string;
   };
 
-  const pasteCopiedComponent = useCallback(() => {
+  const pasteCopiedComponent = useCallback(async () => {
     if (!copiedComponent || isPreviewMode) {
       return; // Early exit if conditions aren't met
     }
 
     const copy = cloneDeep(editorTree);
     const targetId = determinePasteTarget(selectedComponentId);
+    const parentComponent = getComponentParent(copy.root, targetId);
 
-    addComponent(copy.root, copiedComponent, {
-      id: getComponentParent(copy.root, targetId)!.id as string,
-      edge: "right",
-    });
+    const newSelectedId = addComponent(
+      copy.root,
+      copiedComponent,
+      {
+        id: parentComponent!.id as string,
+        edge: "right",
+      },
+      getComponentIndex(parentComponent!, selectedComponentId!) + 1,
+    );
 
-    setEditorTree(copy, { action: `Pasted ${copiedComponent.name}` });
+    await setEditorTree(copy, { action: `Pasted ${copiedComponent.name}` });
+    setSelectedComponentId(newSelectedId);
   }, [
     copiedComponent,
     editorTree,
