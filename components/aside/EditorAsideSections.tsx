@@ -7,6 +7,7 @@ import * as AvatarModifier from "@/components/modifiers/Avatar";
 import * as BackgroundModifier from "@/components/modifiers/Background";
 import * as BorderModifier from "@/components/modifiers/Border";
 import * as BoxShadowModifier from "@/components/modifiers/BoxShadow";
+import * as BreadcrumbModifier from "@/components/modifiers/Breadcrumb";
 import * as ButtonModifier from "@/components/modifiers/Button";
 import * as ButtonIconModifier from "@/components/modifiers/ButtonIcon";
 import * as CheckboxModifier from "@/components/modifiers/Checkbox";
@@ -92,6 +93,7 @@ const sectionMapper: SectionsMapper = {
   accordion: AccordionModifier,
   avatar: AvatarModifier,
   textarea: TextareaModifier,
+  breadcrumb: BreadcrumbModifier,
 };
 
 type Tab = "design" | "actions";

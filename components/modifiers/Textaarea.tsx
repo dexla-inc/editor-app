@@ -9,11 +9,11 @@ import {
 import { requiredModifiers } from "@/utils/modifiers";
 import { Flex, Select, Stack, Switch, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconTextSize } from "@tabler/icons-react";
+import { IconTextPlus } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
 
-export const icon = IconTextSize;
+export const icon = IconTextPlus;
 export const label = "Textaarea";
 
 export const defaultTextareaValues = {
