@@ -7,7 +7,6 @@ import {
   Flex,
   Group,
   Portal,
-  ScrollArea,
   Stack,
   ThemeIcon,
   Title,
@@ -130,25 +129,38 @@ export const NavbarSection = ({
 
   const itemTab = (
     <Stack
+      sx={{
+        overflowX: "hidden",
+        overflowY: "scroll",
+        scrollbarWidth: "thin",
+        scrollbarColor: "#888 transparent",
+        msOverflowStyle: "-ms-autohiding-scrollbar",
+        "::-webkit-scrollbar": { width: "5px", borderRadius: "10px" },
+        "::-webkit-scrollbar-thumb": {
+          backgroundColor: "#888",
+          borderRadius: "10px",
+        },
+      }}
       pos="fixed"
       bg="white"
       top={HEADER_HEIGHT}
+      p={10}
+      pb={80}
       left={NAVBAR_MIN_WIDTH}
       w={250}
       h="100%"
+      spacing="xs"
       align="flex-start"
     >
-      <ScrollArea p={10} pb={80}>
-        <Flex justify="space-between" w="100%">
-          <Title align="center" color="dark.4" order={4}>
-            {startCase(currentSection?.label)}
-          </Title>
-          {activeTab === "layers" && actionButtons}
-        </Flex>
-        <Stack align="flex-start" w="100%">
-          {children}
-        </Stack>
-      </ScrollArea>
+      <Flex justify="space-between" w="100%">
+        <Title align="center" color="dark.4" order={4}>
+          {startCase(currentSection?.label)}
+        </Title>
+        {activeTab === "layers" && actionButtons}
+      </Flex>
+      <Stack align="flex-start" w="100%">
+        {children}
+      </Stack>
     </Stack>
   );
 
