@@ -269,8 +269,8 @@ export const DroppableDraggable = ({
     style: {
       // setting the inner div width/height. If percentage, the inner div size is 100% and the actual size is propagated
       // up to the parent element (the green border div)
-      width: isWidthPercentage ? "100%" : propsWithOverwrites.style?.width,
-      height: isHeightPercentage ? "100%" : propsWithOverwrites.style?.height,
+      width: "-webkit-fill-available",
+      height: "-webkit-fill-available",
       position: "static",
     },
     disabled:
@@ -472,14 +472,14 @@ export const DroppableDraggable = ({
               bottom={-25}
               sx={{
                 zIndex: 90,
-                background: theme.colors.gray[4],
+                background: theme.colors.gray[1],
                 padding: "4px",
                 borderBottomLeftRadius: theme.radius.sm,
                 borderBottomRightRadius: theme.radius.sm,
                 left: "50%",
                 transform: "translate(-50%)",
                 "&:hover": {
-                  background: theme.colors.gray[3],
+                  background: theme.colors.gray[2],
                 },
               }}
             >
