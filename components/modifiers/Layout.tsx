@@ -15,20 +15,18 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
-  IconAlignBoxBottomCenter,
-  IconAlignBoxCenterMiddle,
-  IconAlignBoxLeftMiddle,
-  IconAlignBoxRightMiddle,
+  IconArrowsDiff,
+  IconArrowsHorizontal,
   IconCircleX,
+  IconFileHorizontal,
   IconLayout2,
+  IconLayoutAlignBottom,
   IconLayoutAlignCenter,
   IconLayoutAlignLeft,
   IconLayoutAlignRight,
   IconLayoutDistributeHorizontal,
   IconLayoutDistributeVertical,
-  IconLayoutKanban,
-  IconLayoutSidebarLeftCollapse,
-  IconLayoutSidebarLeftExpand,
+  IconLayoutList,
 } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
 import { useEffect, useState } from "react";
@@ -47,8 +45,8 @@ export const defaultLayoutValues = {
   flexDirection: "column",
   rowGap: "20px",
   columnGap: "20px",
-  alignItems: "center",
-  justifyContent: "center",
+  alignItems: "stretch",
+  justifyContent: "flex-start",
   position: "relative",
   flex: SHRINK_FLEX_DEFAULT,
 };
@@ -170,8 +168,17 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                   {
                     label: (
                       <StylingPaneItemIcon
+                        label="Stretch"
+                        icon={<IconLayoutDistributeHorizontal size={14} />}
+                      />
+                    ),
+                    value: "stretch",
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
                         label="Start"
-                        icon={<IconAlignBoxLeftMiddle size={14} />}
+                        icon={<IconLayoutAlignLeft size={14} />}
                       />
                     ),
                     value: "flex-start",
@@ -180,7 +187,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                     label: (
                       <StylingPaneItemIcon
                         label="Center"
-                        icon={<IconAlignBoxCenterMiddle size={14} />}
+                        icon={<IconLayoutAlignCenter size={14} />}
                       />
                     ),
                     value: "center",
@@ -189,7 +196,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                     label: (
                       <StylingPaneItemIcon
                         label="End"
-                        icon={<IconAlignBoxRightMiddle size={14} />}
+                        icon={<IconLayoutAlignRight size={14} />}
                       />
                     ),
                     value: "flex-end",
@@ -197,11 +204,11 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                   {
                     label: (
                       <StylingPaneItemIcon
-                        label="Stretch"
-                        icon={<IconAlignBoxBottomCenter size={14} />}
+                        label="Baseline"
+                        icon={<IconLayoutAlignBottom size={14} />}
                       />
                     ),
-                    value: "stretch",
+                    value: "baseline",
                   },
                 ]}
                 styles={{
@@ -259,7 +266,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                     label: (
                       <StylingPaneItemIcon
                         label="Space Between"
-                        icon={<IconLayoutDistributeHorizontal size={14} />}
+                        icon={<IconLayoutList size={14} />}
                       />
                     ),
                     value: "space-between",
@@ -302,7 +309,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                     label: (
                       <StylingPaneItemIcon
                         label="Shrink"
-                        icon={<IconLayoutSidebarLeftCollapse size={14} />}
+                        icon={<IconArrowsDiff size={14} />}
                       />
                     ),
                     value: SHRINK_FLEX_DEFAULT,
@@ -311,7 +318,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                     label: (
                       <StylingPaneItemIcon
                         label="Grow"
-                        icon={<IconLayoutSidebarLeftExpand size={14} />}
+                        icon={<IconArrowsHorizontal size={14} />}
                       />
                     ),
                     value: GROW_FLEX_DEFAULT,
@@ -329,7 +336,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                     label: (
                       <StylingPaneItemIcon
                         label="Custom"
-                        icon={<IconLayoutKanban size={14} />}
+                        icon={<IconFileHorizontal size={14} />}
                       />
                     ),
                     value:
