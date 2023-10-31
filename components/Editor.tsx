@@ -11,7 +11,7 @@ import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import { getPage, getPageTemplate } from "@/requests/pages/queries";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
-import { useUserConfigStore } from "@/stores/user";
+import { useUserConfigStore } from "@/stores/userConfig";
 import { componentMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
 import {

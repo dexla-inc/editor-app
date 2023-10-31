@@ -1,6 +1,6 @@
 import { getTheme } from "@/requests/themes/queries";
 import { useEditorStore } from "@/stores/editor";
-import { useUserConfigStore } from "@/stores/user";
+import { useUserConfigStore } from "@/stores/userConfig";
 import { NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
 import createCache from "@emotion/cache";
 import {

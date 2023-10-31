@@ -1,6 +1,6 @@
 import { Sections } from "@/components/navbar/EditorNavbarSections";
 import { useEditorStore } from "@/stores/editor";
-import { useUserConfigStore } from "@/stores/user";
+import { useUserConfigStore } from "@/stores/userConfig";
 import { HEADER_HEIGHT, ICON_SIZE, NAVBAR_MIN_WIDTH } from "@/utils/config";
 import {
   ActionIcon,
