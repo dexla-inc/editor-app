@@ -1,11 +1,12 @@
 import { Icon } from "@/components/Icon";
+import { useEditorStore } from "@/stores/editor";
+import { NavigationAction } from "@/utils/actions";
+import { isSame } from "@/utils/componentComparison";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
-import { useRouter } from "next/router";
-import { isSame } from "@/utils/componentComparison";
-import { memo } from "react";
-import { useEditorStore } from "@/stores/editor";
 import merge from "lodash.merge";
+import { useRouter } from "next/router";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -17,7 +18,11 @@ const NavLinkComponent = ({ renderTree, component, ...props }: Props) => {
 
   const router = useRouter();
   const currentPageId = router.query.page as string;
-  const active = currentPageId === component?.props?.pageId;
+  const activePageId = (
+    component.actions?.find((action) => action.action.name === "navigateToPage")
+      ?.action as NavigationAction
+  )?.pageId;
+  const active = currentPageId === activePageId;
 
   const activeProps = {};
   if (active) {
@@ -43,6 +48,7 @@ const NavLinkComponent = ({ renderTree, component, ...props }: Props) => {
   return (
     <MantineNavLink
       icon={<Icon name={icon} size={20} />}
+      childrenOffset={isNested ? 20 : 0}
       rightSection={isNested ? <Icon name="IconChevronRight" /> : null}
       active={active}
       {...props}

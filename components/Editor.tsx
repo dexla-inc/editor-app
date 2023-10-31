@@ -23,10 +23,10 @@ import {
   Component,
   addComponent,
   getComponentById,
+  getComponentIndex,
   getComponentParent,
   removeComponent,
   replaceTilesData,
-  getComponentIndex,
 } from "@/utils/editor";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import {
@@ -147,6 +147,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
     await setEditorTree(copy, { action: `Pasted ${copiedComponent.name}` });
     setSelectedComponentId(newSelectedId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     copiedComponent,
     editorTree,
