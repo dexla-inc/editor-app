@@ -32,7 +32,8 @@ export type Modifiers =
   | "switch"
   | "accordion"
   | "avatar"
-  | "textarea";
+  | "textarea"
+  | "breadcrumb";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -287,6 +288,9 @@ export const requiredModifiers: RequiredModifiers = {
     size: "",
     color: "Primary.6",
     value: "",
+  },
+  breadcrumb: {
+    separator: "/",
   },
 };
 
