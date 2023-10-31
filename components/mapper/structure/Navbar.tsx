@@ -55,7 +55,9 @@ export const jsonStructure = (props?: any): Component => {
           gap: "0px",
           position: "sticky",
           top: "0px",
-          backgroundColor: isDarkTheme ? theme.colors.dark[6] : "Border.6",
+          backgroundColor: isDarkTheme
+            ? theme.colors.dark[6]
+            : theme.colors.gray[1],
         },
         ...props.props,
       }),
@@ -134,7 +136,7 @@ export const jsonStructure = (props?: any): Component => {
                 description: "Plan",
                 props: {
                   children: "Premium",
-                  color: "gray.5",
+                  color: "Black.3",
                   size: "xs",
                   weight: "normal",
                   style: {
