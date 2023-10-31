@@ -32,7 +32,11 @@ import * as SizeModifier from "@/components/modifiers/Size";
 import * as SpacingModifier from "@/components/modifiers/Spacing";
 import * as StepperModifier from "@/components/modifiers/Stepper";
 import * as SwitchModifier from "@/components/modifiers/Switch";
+import * as TabModifier from "@/components/modifiers/Tab";
 import * as TableModifier from "@/components/modifiers/Table";
+import * as TabsModifier from "@/components/modifiers/Tabs";
+import * as TabsListModifier from "@/components/modifiers/TabsList";
+import * as TabsPanelModifier from "@/components/modifiers/TabsPanel";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TextareaModifier from "@/components/modifiers/Textaarea";
 import * as TitleModifier from "@/components/modifiers/Title";
@@ -94,6 +98,10 @@ const sectionMapper: SectionsMapper = {
   avatar: AvatarModifier,
   textarea: TextareaModifier,
   breadcrumb: BreadcrumbModifier,
+  tabs: TabsModifier,
+  tab: TabModifier,
+  tabsPanel: TabsPanelModifier,
+  tabsList: TabsListModifier,
 };
 
 type Tab = "design" | "actions";

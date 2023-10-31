@@ -262,15 +262,12 @@ export const DroppableDraggable = ({
     component.states?.[currentState],
   );
 
-  const isWidthPercentage = propsWithOverwrites?.style?.width?.endsWith("%");
-  const isHeightPercentage = propsWithOverwrites?.style?.height?.endsWith("%");
-
   merge(propsWithOverwrites, {
     style: {
       // setting the inner div width/height. If percentage, the inner div size is 100% and the actual size is propagated
       // up to the parent element (the green border div)
-      width: isWidthPercentage ? "100%" : propsWithOverwrites.style?.width,
-      height: isHeightPercentage ? "100%" : propsWithOverwrites.style?.height,
+      width: "-webkit-fill-available",
+      height: "-webkit-fill-available",
       position: "static",
     },
     disabled:

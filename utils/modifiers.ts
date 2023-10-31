@@ -33,7 +33,11 @@ export type Modifiers =
   | "accordion"
   | "avatar"
   | "textarea"
-  | "breadcrumb";
+  | "breadcrumb"
+  | "tabs"
+  | "tab"
+  | "tabsPanel"
+  | "tabsList";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -292,6 +296,19 @@ export const requiredModifiers: RequiredModifiers = {
   breadcrumb: {
     separator: "/",
   },
+  tabs: {
+    defaultValue: "first",
+    variant: "default",
+    orientation: "horizontal",
+    radius: "sm",
+    color: "Primary.6",
+  },
+  tab: {
+    value: "first",
+    icon: null,
+  },
+  tabsPanel: { value: "first" },
+  tabsList: { position: "left" },
 };
 
 type AISupportedModifiers = {
