@@ -33,7 +33,7 @@ export const jsonStructure = (props?: any): Component => {
         paddingLeft: "0px",
         paddingRight: "0px",
       },
-      bg: "White.0",
+      bg: "White.6",
       isInsideGroup: true,
       checked: false,
       triggers: {},
@@ -143,7 +143,7 @@ export const jsonStructure = (props?: any): Component => {
                 borderBottomLeftRadius: "50px",
                 borderBottomRightRadius: "50px",
               },
-              bg: "White.0",
+              bg: "White.6",
             },
             blockDroppingChildrenInside: true,
             states: {

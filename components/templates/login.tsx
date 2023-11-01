@@ -155,7 +155,7 @@ export const template = (data: Data, theme: MantineThemeExtended) => {
                       borderWidth: "1px",
                       borderColor: "rgba(230, 230, 230, 1)",
                     },
-                    bg: "White.0",
+                    bg: "White.6",
                   },
                   children: [
                     {
@@ -230,7 +230,7 @@ export const template = (data: Data, theme: MantineThemeExtended) => {
                               paddingLeft: "20px",
                               paddingRight: "20px",
                             },
-                            textColor: "White.0",
+                            textColor: "White.6",
                             children:
                               data.button.text ??
                               (Array.isArray(data.button)

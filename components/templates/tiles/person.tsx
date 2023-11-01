@@ -39,7 +39,7 @@ export const tile = (tile: PersonTile) => {
         borderWidth: "1px",
         borderColor: "#CCCCCC",
       },
-      bg: "White.0",
+      bg: "White.6",
     },
     children: [
       {

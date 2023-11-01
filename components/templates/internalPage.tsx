@@ -112,7 +112,7 @@ const getCard = (card: Card, cardContent: Component) => {
         borderColor: "#CCCCCC",
         minWidth: "100%",
       },
-      bg: "White.0",
+      bg: "White.6",
     },
     children: [
       {

@@ -20,7 +20,7 @@ export const jsonStructure = (props?: any): Component => {
         height: "auto",
         padding: `${px(theme.spacing.sm)}px`,
       },
-      textColor: textColor ?? "White.0",
+      textColor: textColor ?? "White.6",
       ...(rest || {}),
       children: value ?? "New Button",
     },

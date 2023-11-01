@@ -141,7 +141,7 @@ export const requiredModifiers: RequiredModifiers = {
     variant: "filled",
     size: "md",
     color: "Primary.6",
-    textColor: "White.0",
+    textColor: "White.6",
     leftIcon: "",
     align: "flex-start",
   },

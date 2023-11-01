@@ -158,7 +158,7 @@ export const jsonStructure = (props?: any): Component => {
                   width: "auto",
                   padding: px(theme.spacing.sm),
                 },
-                textColor: "White.0",
+                textColor: "White.6",
                 children: "Register",
               },
               blockDroppingChildrenInside: true,

@@ -201,7 +201,7 @@ export const getEditorTreeFromPageStructure = (
                 style: {
                   width: "100%",
                   padding: "20px",
-                  backgroundColor: "White.0",
+                  backgroundColor: "White.6",
                   display: "flex",
                   flexDirection: "row",
                 },
