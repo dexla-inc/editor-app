@@ -1,14 +1,12 @@
 import { Icon } from "@/components/Icon";
 import { SortableTreeItem } from "@/components/SortableTreeItem";
 import { useDraggable } from "@/hooks/useDraggable";
-import { useMemoizedDebounce } from "@/hooks/useMemoizedDebounce";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import {
   Component,
-  checkIfIsDirectAncestor,
   debouncedTreeComponentDescriptionpdate,
 } from "@/utils/editor";
 import {
@@ -80,33 +78,23 @@ const ListItem = ({ component, children }: ListItemProps) => {
     if (e.key === "Enter" || e.key === "Escape") closeEdit();
   };
 
-  const onDragEnter = useMemoizedDebounce(() => {
-    const isAncestorOfSelectedComponent =
-      component.id && selectedComponentId
-        ? checkIfIsDirectAncestor(
-            editorTree.root,
-            selectedComponentId,
-            component.id,
-          )
-        : false;
-
-    if (
-      (component.id === selectedComponentId ||
-        isAncestorOfSelectedComponent ||
-        isCurrentTarget) &&
-      !isStructureCollapsed
-    ) {
-      open();
-    }
-  }, 200);
-
   useEffect(() => {
-    setClickedManualToggle(false);
-    if (component.id === selectedComponentId)
-      ref.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (clickedManualToggle) return;
+    const isCurrentComponentSelected = component.id === selectedComponentId;
+    const isRootOrContentWrapper =
+      selectedComponentId === "root" ||
+      selectedComponentId === "content-wrapper";
+
+    if (!isCurrentComponentSelected || isRootOrContentWrapper) {
+      return;
+    }
+
+    // Scroll the current component into view if it's not root or content-wrapper
+    ref.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId, activeTab]);
-  useEffect(onDragEnter, [onDragEnter]);
+
   useEffect(() => {
     if (editable) {
       editFieldRef?.current?.focus();
@@ -114,12 +102,13 @@ const ListItem = ({ component, children }: ListItemProps) => {
   }, [editable]);
 
   useEffect(() => {
-    if (isStructureCollapsed) {
-      close();
-      setClickedManualToggle(true);
-    } else {
-      open();
-      setClickedManualToggle(false);
+    if (!clickedManualToggle) {
+      // Only update the state if user hasn't manually toggled
+      if (isStructureCollapsed) {
+        close();
+      } else {
+        open();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isStructureCollapsed]);
