@@ -28,7 +28,8 @@ export const label = "Border";
 
 export const defaultBorderValues = requiredModifiers.border;
 
-const getThemeColor = (theme: any, hex: string) => {
+export const getThemeColor = (theme: any, hex: string) => {
+  if (hex === "transparent") return hex;
   return Object.keys(theme.colors).reduce((themeColor: string, key: string) => {
     const colorIndex = theme.colors[key].findIndex((c: string) => c === hex);
 
@@ -37,13 +38,22 @@ const getThemeColor = (theme: any, hex: string) => {
     }
 
     return themeColor;
-  }, "");
+  }, "transparent");
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useEditorStore((state) => state.theme);
+  const style = selectedComponent?.props?.style;
+
+  const isBorderRadiusAllSame =
+    style?.borderTopLeftRadius === style?.borderTopRightRadius &&
+    style?.borderTopLeftRadius === style?.borderBottomLeftRadius &&
+    style?.borderTopLeftRadius === style?.borderBottomRightRadius;
+
   const form = useForm({
     initialValues: {
+      showBorder: "all",
+      showRadius: isBorderRadiusAllSame ? "radius-all" : "radius-sides",
       ...defaultBorderValues,
     },
   });
@@ -53,6 +63,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
       let { style = {} } = selectedComponent.props!;
 
       form.setValues({
+        // @ts-ignore
         borderStyle: style.borderTopStyle ?? defaultBorderValues.borderTopStyle,
         borderTopStyle:
           style.borderTopStyle ?? defaultBorderValues.borderTopStyle,
@@ -338,7 +349,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             <SegmentedControl
               fullWidth
               size="sm"
-              w="50%"
+              w="100%"
               data={[
                 {
                   label: (
@@ -369,30 +380,33 @@ export const Modifier = withModifier(({ selectedComponent }) => {
               }}
               {...form.getInputProps("showRadius")}
             />
-            <UnitInput
-              {...form.getInputProps("borderRadius")}
-              onChange={(value) => {
-                form.setFieldValue("borderRadius", value);
-                form.setFieldValue("borderTopLeftRadius", value);
-                form.setFieldValue("borderTopRightRadius", value);
-                form.setFieldValue("borderBottomLeftRadius", value);
-                form.setFieldValue("borderBottomRightRadius", value);
+            {form.values.showRadius === "radius-all" && (
+              <UnitInput
+                {...form.getInputProps("borderRadius")}
+                onChange={(value) => {
+                  form.setFieldValue("borderRadius", value);
+                  form.setFieldValue("borderTopLeftRadius", value);
+                  form.setFieldValue("borderTopRightRadius", value);
+                  form.setFieldValue("borderBottomLeftRadius", value);
+                  form.setFieldValue("borderBottomRightRadius", value);
 
-                debouncedTreeUpdate(selectedComponent?.id as string, {
-                  style: {
-                    borderTopLeftRadius: value,
-                    borderTopRightRadius: value,
-                    borderBottomLeftRadius: value,
-                    borderBottomRightRadius: value,
-                  },
-                });
-              }}
-              options={[
-                { value: "px", label: "PX" },
-                { value: "rem", label: "REM" },
-                { value: "%", label: "%" },
-              ]}
-            />
+                  debouncedTreeUpdate(selectedComponent?.id as string, {
+                    style: {
+                      borderRadius: value,
+                      borderTopLeftRadius: value,
+                      borderTopRightRadius: value,
+                      borderBottomLeftRadius: value,
+                      borderBottomRightRadius: value,
+                    },
+                  });
+                }}
+                options={[
+                  { value: "px", label: "PX" },
+                  { value: "rem", label: "REM" },
+                  { value: "%", label: "%" },
+                ]}
+              />
+            )}
           </Group>
           {form.values.showRadius === "radius-sides" && (
             <>
