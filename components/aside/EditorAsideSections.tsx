@@ -57,6 +57,7 @@ import {
 import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
 import { useEffect, useMemo, useState } from "react";
+import { useUserConfigStore } from "@/stores/userConfig";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -126,6 +127,12 @@ export const EditorAsideSections = () => {
   const currentTreeComponentsStates = useEditorStore(
     (state) => state.currentTreeComponentsStates,
   );
+  const initiallyOpenedModifiersByComponent = useUserConfigStore(
+    (state) => state.initiallyOpenedModifiersByComponent,
+  );
+  const setInitiallyOpenedModifiersByComponent = useUserConfigStore(
+    (state) => state.setInitiallyOpenedModifiersByComponent,
+  );
   const [tab, setTab] = useState<Tab>("design");
 
   const component = useMemo(
@@ -164,8 +171,12 @@ export const EditorAsideSections = () => {
       id: id,
       label: modifier.label,
       icon: modifier.icon,
-      initiallyOpened: id === "layout",
+      initiallyOpened:
+        initiallyOpenedModifiersByComponent[component!.name]?.includes(id),
       Component: modifier.Modifier,
+      onClick: (id: string, isOpen: boolean) => {
+        setInitiallyOpenedModifiersByComponent(component!.name, id, isOpen);
+      },
     };
   });
 
