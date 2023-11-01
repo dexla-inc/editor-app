@@ -8,12 +8,10 @@ import { IFrame } from "@/components/IFrame";
 import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
-import { getPage, getPageTemplate } from "@/requests/pages/queries";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { componentMapper } from "@/utils/componentMapper";
-import { decodeSchema } from "@/utils/compression";
 import {
   ASIDE_WIDTH,
   HEADER_HEIGHT,
@@ -27,12 +25,12 @@ import {
   getComponentIndex,
   getComponentParent,
   removeComponent,
-  replaceTilesData,
 } from "@/utils/editor";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import {
   Aside,
   Box,
+  Button,
   Global,
   Loader,
   Navbar,
@@ -44,7 +42,9 @@ import {
 } from "@mantine/core";
 import { useDisclosure, useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback } from "react";
+import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   projectId: string;
@@ -65,21 +65,21 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
-  const pages = useEditorStore((state) => state.pages);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
-  const startLoading = useAppStore((state) => state.startLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
   const isLoading = useAppStore((state) => state.isLoading);
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
-  const isGettingPageData = useRef<boolean>(false);
   const [canvasRef] = useAutoAnimate();
   const [isCustomComponentModalOpen, customComponentModal] =
     useDisclosure(false);
+
+  useGetPageData({ projectId, pageId });
+
+  const queryClient = useQueryClient();
 
   const deleteComponent = useCallback(() => {
     if (
@@ -241,82 +241,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
     ],
   ]);
 
-  useEffect(() => {
-    const getPageData = async () => {
-      setIsLoading(true);
-      const page = await getPage(projectId, pageId);
-      if (page.pageState) {
-        const decodedSchema = decodeSchema(page.pageState);
-        setEditorTree(JSON.parse(decodedSchema), {
-          onLoad: true,
-          action: "Initial State",
-        });
-        setIsLoading(false);
-      } else {
-        startLoading({
-          id: "page-generation",
-          title: "Generating Page",
-          message: "AI is generating your page",
-        });
-
-        const aiPageTemplate = await getPageTemplate(projectId, pageId);
-        const templateResponse = await fetch(
-          `/api/templates/${aiPageTemplate.template.name.replace(
-            "Template",
-            "",
-          )}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
-        );
-
-        const template = await templateResponse.json();
-
-        const projectResponse = await fetch(`/api/project/${projectId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        const project = await projectResponse.json();
-
-        // TODO: Replace tiles from template state with tiles from aiPageTemplate
-        const aiTiles = aiPageTemplate.template.tiles;
-        console.log({ aiPageTemplate, template, aiTiles, data: project?.data });
-        const treeState = replaceTilesData(
-          template.state,
-          aiTiles,
-          project?.data,
-        );
-
-        setEditorTree(treeState);
-        stopLoading({
-          id: "page-generation",
-          title: "Page Generated",
-          message: "Here's your page. We hope you like it",
-        });
-      }
-    };
-
-    if (projectId && pageId && !isGettingPageData.current) {
-      (isGettingPageData as any).current = true;
-      getPageData();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    projectId,
-    pageId,
-    setEditorTree,
-    startLoading,
-    stopLoading,
-    setIsLoading,
-    pages,
-    theme,
-  ]);
   const renderTree = (component: Component) => {
     if (component.id === "root") {
       return (
@@ -420,6 +344,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
             p={"40px 10px"}
           >
             <Paper
+              pos="relative"
               shadow="xs"
               bg="white"
               sx={{
@@ -436,6 +361,23 @@ export const Editor = ({ projectId, pageId }: Props) => {
                 </Text>
                 <Loader />
               </Stack>
+
+              <Button
+                color="red"
+                pos="absolute"
+                bottom={30}
+                type="button"
+                onClick={() => {
+                  queryClient.cancelQueries({ queryKey: ["page"] });
+                  setEditorTree(defaultPageState, {
+                    onLoad: true,
+                    action: "Initial State",
+                  });
+                  setIsLoading(false);
+                }}
+              >
+                Cancel
+              </Button>
             </Paper>
           </Box>
         )}
