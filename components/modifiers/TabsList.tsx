@@ -22,8 +22,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     initialValues: { ...requiredModifiers.tabsList },
   });
 
-  console.log(selectedComponent?.props);
-
   useEffect(() => {
     if (selectedComponent?.id) {
       const data = pick(selectedComponent.props!, ["position"]);

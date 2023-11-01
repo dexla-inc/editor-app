@@ -1,25 +1,20 @@
 import { IconSelector } from "@/components/IconSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTexture } from "@tabler/icons-react";
-import { useEffect } from "react";
-import { withModifier } from "@/hoc/withModifier";
 import { pick } from "next/dist/lib/pick";
+import { useEffect } from "react";
+import { getThemeColor } from "./Border";
 
 export const icon = IconTexture;
 export const label = "Icon";
 
-export const defaultIconValues = {
-  color: "Primary.6",
-  icon: "",
-};
-
-type ColorMappings = {
-  [index: string]: string;
-};
+export const defaultIconValues = requiredModifiers.icon;
 
 export const Modifier = withModifier(({ selectedComponent }) => {
   const theme = useEditorStore((state) => state.theme);
@@ -32,41 +27,24 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     if (selectedComponent?.id) {
       const data = pick(selectedComponent.props!, ["style", "name"]);
       form.setValues({
-        color: data.style?.color ?? "Primary.6",
-        icon: data.name,
+        color: data.style?.color
+          ? getThemeColor(theme, data.style.color)
+          : defaultIconValues.color,
+        icon: data.name ?? defaultIconValues.icon,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
 
-  const handleColorChange = (value: string) => {
-    let [color, index] = value.split(".");
-    let opacity = 1;
+  const handleColorChange = (_value: string) => {
+    const [color, index] = _value.split(".");
+    // @ts-ignore
+    const value = theme.colors[color][index];
+    form.setFieldValue("color", _value);
 
-    const colorMappings: ColorMappings = {
-      Primary: "blue",
-      Accent: "orange",
-      Danger: "red",
-      Warning: "yellow",
-      Success: "green",
-      Neutral: "gray",
-      Black: "dark",
-      White: "White",
-      Border: "dark",
-    };
-
-    color = colorMappings[color] || "transparent";
-
-    const variant = parseInt(index);
-    const colorToRgb =
-      color === "transparent"
-        ? color
-        : theme.fn.rgba(theme.colors[color][variant], opacity);
-
-    form.setFieldValue("color", value);
     debouncedTreeUpdate(selectedComponent?.id as string, {
-      style: { color: colorToRgb },
+      style: { color: value },
     });
   };
 

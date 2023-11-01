@@ -12,11 +12,22 @@ export const label = "Spacing";
 
 export const Modifier = withModifier(({ selectedComponent }) => {
   const initialValues = requiredModifiers.spacing;
+  const style = selectedComponent?.props?.style;
+
+  const isPaddingAllSame =
+    style?.paddingTop === style?.paddingBottom &&
+    style?.paddingTop === style?.paddingLeft &&
+    style?.paddingTop === style?.paddingRight;
+
+  const isMarginAllSame =
+    style?.marginTop === style?.marginBottom &&
+    style?.marginTop === style?.marginLeft &&
+    style?.marginTop === style?.marginRight;
 
   const form = useForm({
     initialValues: {
-      showPadding: "padding-all",
-      showMargin: "margin-all",
+      showPadding: isPaddingAllSame ? "padding-all" : "padding-sides",
+      showMargin: isMarginAllSame ? "margin-all" : "margin-sides",
       ...initialValues,
     },
   });
@@ -29,16 +40,39 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         form.setValues({
           // @ts-ignore
           padding: data.style.padding ?? initialValues.padding,
-          paddingTop: data.style.paddingTop ?? initialValues.paddingTop,
+          paddingTop:
+            data.style.paddingTop ??
+            data.style.padding ??
+            initialValues.paddingTop,
           paddingBottom:
-            data.style.paddingBottom ?? initialValues.paddingBottom,
-          paddingLeft: data.style.paddingLeft ?? initialValues.paddingLeft,
-          paddingRight: data.style.paddingRight ?? initialValues.paddingRight,
+            data.style.paddingBottom ??
+            data.style.padding ??
+            initialValues.paddingBottom,
+          paddingLeft:
+            data.style.paddingLeft ??
+            data.style.padding ??
+            initialValues.paddingLeft,
+          paddingRight:
+            data.style.paddingRight ??
+            data.style.padding ??
+            initialValues.paddingRight,
           margin: data.style.margin ?? initialValues.margin,
-          marginTop: data.style.marginTop ?? initialValues.marginTop,
-          marginBottom: data.style.marginBottom ?? initialValues.marginBottom,
-          marginLeft: data.style.marginLeft ?? initialValues.marginLeft,
-          marginRight: data.style.marginRight ?? initialValues.marginRight,
+          marginTop:
+            data.style.marginTop ??
+            data.style.margin ??
+            initialValues.marginTop,
+          marginBottom:
+            data.style.marginBottom ??
+            data.style.margin ??
+            initialValues.marginBottom,
+          marginLeft:
+            data.style.marginLeft ??
+            data.style.margin ??
+            initialValues.marginLeft,
+          marginRight:
+            data.style.marginRight ??
+            data.style.margin ??
+            initialValues.marginRight,
         });
       }
     }
