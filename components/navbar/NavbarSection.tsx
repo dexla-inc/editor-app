@@ -81,7 +81,11 @@ export const NavbarSection = ({
             width: "100%",
           }}
         >
-          <ThemeIcon color="teal" variant="light" size={30}>
+          <ThemeIcon
+            color={activeTab === id ? "indigo" : "teal"}
+            variant="light"
+            size={30}
+          >
             <Icon size={ICON_SIZE} />
           </ThemeIcon>
         </UnstyledButton>

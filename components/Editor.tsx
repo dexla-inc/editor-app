@@ -372,7 +372,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
           !isPreviewMode && isNavBarVisible ? (
             <Navbar
               miw={{ base: NAVBAR_MIN_WIDTH }}
-              width={{ base: "auto" }}
+              width={{ base: NAVBAR_MIN_WIDTH }}
               maw={{ base: NAVBAR_WIDTH }}
               sx={{
                 height: `calc(100% - ${HEADER_HEIGHT}px)`,
