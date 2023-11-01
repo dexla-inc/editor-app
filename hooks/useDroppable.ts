@@ -84,7 +84,9 @@ export const useDroppable = ({
       event.preventDefault();
       event.stopPropagation();
       setCurrentTargetId(id);
-      if (!(activeTab === "layers" && isTabPinned)) {
+      if (isTabPinned && activeTab !== "layers") {
+        setActiveTab("layers");
+      } else if (!(activeTab === "layers" && isTabPinned)) {
         setActiveTab(undefined);
       }
     },

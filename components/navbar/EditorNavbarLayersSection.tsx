@@ -94,7 +94,6 @@ const ListItem = ({ component, children }: ListItemProps) => {
       (component.id === selectedComponentId ||
         isAncestorOfSelectedComponent ||
         isCurrentTarget) &&
-      !clickedManualToggle &&
       !isStructureCollapsed
     ) {
       open();
