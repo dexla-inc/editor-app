@@ -6,13 +6,13 @@ export type StyledAccordionItemProps = {
 } & AccordionItemProps;
 
 export default function StyledAccordionItem({
-  value = "Control Test",
-  description = "Panel Test",
+  value,
+  description,
+  ...props
 }: StyledAccordionItemProps) {
-  console.log(value, description);
   return (
-    <Accordion.Item value={value} sx={{ fontWeight: 500 }}>
-      <Accordion.Control sx={{ fontWeight: 500 }}>{value}</Accordion.Control>
+    <Accordion.Item value={value} {...props}>
+      <Accordion.Control>{value}</Accordion.Control>
       <Accordion.Panel>{description}</Accordion.Panel>
     </Accordion.Item>
   );

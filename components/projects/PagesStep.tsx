@@ -229,11 +229,7 @@ export default function PagesStep({
             title="Here are your pages and what they will do"
             text="Feel free to change if they aren't quite right and add some new ones before generating your app."
           />
-          <StyledAccordion
-            defaultValue={pages?.[0]?.name ?? ""}
-            w="100%"
-            maw="100%"
-          >
+          <StyledAccordion defaultValue={pages?.[0]?.name ?? ""}>
             {pages.map(({ name, features }, index) => {
               return (
                 <StyledAccordionItem
@@ -242,6 +238,8 @@ export default function PagesStep({
                   description={features
                     .map((feature) => `${feature}`)
                     .join(". ")}
+                  w={400}
+                  maw={400}
                 />
               );
             })}

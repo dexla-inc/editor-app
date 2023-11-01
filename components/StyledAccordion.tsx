@@ -58,7 +58,6 @@ export default function StyledAccordion({
 
   return (
     <Accordion
-      maw={420}
       mx="auto"
       variant="filled"
       defaultValue={defaultValue}
