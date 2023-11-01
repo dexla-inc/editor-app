@@ -1,4 +1,4 @@
-import { openai } from "@/utils/openai";
+import { GPT35_TURBO_MODEL, openai } from "@/utils/openai";
 import { prisma } from "@/utils/prisma";
 import { ProjectTypes } from "@/utils/projectTypes";
 import { getEntitiesPrompt } from "@/utils/prompts";
@@ -66,7 +66,7 @@ export default async function handler(
     console.log(_project);
 
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: GPT35_TURBO_MODEL,
       stream: false,
       messages: [
         {

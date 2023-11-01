@@ -6,6 +6,8 @@ type PromptParams = {
   entities?: string;
   templates?: string;
   description?: string;
+  pageCount?: string;
+  excludedPages?: string;
 };
 
 export const getPageGenerationPrompt = ({
@@ -41,18 +43,47 @@ export const getPagesPrompt = ({
   appDescription,
   appIndustry,
   entities,
+  pageCount,
 }: PromptParams) => `
-  Given an app description, app industry, and the entities that can be used on the app, respond with a page list that would make sense for that app.
+  Given an app description, app industry, and the entities that can be used on the app, respond with a list of ${pageCount} pages that are distinct, relevant and unique for that app.
+
   The response must match the Pages Typescript type:
 
   type Pages = {
-    name: string
-    // what the page contains
-    description: string
+    name: string;
+    // max two features
+    features: string[];
   }[]
 
   Always include a Dashboard page where one can see a overview of the app data for the given entities.
   The return must be in JSON format. Make sure it's valid JSON as we will be parsing it using JSON.parse.
+  Include two essential features for each page. Each feature should be described concisely that clarifies its purpose.
+  
+  APP DESCRIPTION: ${appDescription}
+  APP INDUSTRY: ${appIndustry}
+  ENTITIES: ${entities}
+`;
+
+export const getPagePrompt = ({
+  appDescription,
+  appIndustry,
+  entities,
+  excludedPages,
+}: PromptParams) => `
+  Given an app description, app industry, and the entities that can be used on the app, respond with 1 new page that is distinct, relevant and unique for that app.
+  I already have the following pages ${excludedPages} so do not use including any similar.
+
+  The response must match the Page Typescript type:
+
+  type Page = {
+    name: string;
+    // max two features
+    features: string[];
+  }
+
+  The return must be in JSON format. Make sure it's valid JSON as we will be parsing it using JSON.parse.
+  Include two essential features for the page. Each feature should be described concisely that clarifies its purpose.
+  Remember to only return a single page.
 
   APP DESCRIPTION: ${appDescription}
   APP INDUSTRY: ${appIndustry}

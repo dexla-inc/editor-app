@@ -1,7 +1,7 @@
-import { getPageGenerationPrompt } from "@/utils/prompts";
-import { openai } from "@/utils/openai";
-import { NextApiRequest, NextApiResponse } from "next";
+import { GPT4_MODEL, openai } from "@/utils/openai";
 import { prisma } from "@/utils/prisma";
+import { getPageGenerationPrompt } from "@/utils/prompts";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
@@ -70,7 +70,7 @@ export default async function handler(
     }, "" as any);
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: GPT4_MODEL,
       stream: false,
       messages: [
         {

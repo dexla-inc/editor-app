@@ -1,36 +1,27 @@
 import { InformationAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
-import { Icon } from "@/components/Icon";
 import NextButton from "@/components/NextButton";
 import {
   createDataSource,
   createDataSourceEndpoint,
 } from "@/requests/datasources/mutations";
 import { createPageList, createPages } from "@/requests/pages/mutations";
-import { PageBody } from "@/requests/pages/types";
+import { PageAIResponse, PageBody } from "@/requests/pages/types";
 import { createVariable } from "@/requests/variables/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
-import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
+import { ICON_SIZE } from "@/utils/config";
 import {
   NextStepperClickEvent,
   PreviousStepperClickEvent,
 } from "@/utils/dashboardTypes";
-import {
-  ActionIcon,
-  Button,
-  Divider,
-  Flex,
-  Group,
-  List,
-  Stack,
-  TextInput,
-  ThemeIcon,
-} from "@mantine/core";
-import { IconCircleCheck, IconPlus, IconSparkles } from "@tabler/icons-react";
+import { Button, Divider, Flex, Group, Stack } from "@mantine/core";
+import { IconPlus, IconSparkles } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
-import { SetStateAction, useRef } from "react";
+import { SetStateAction } from "react";
 import slugify from "slugify";
+import StyledAccordion from "../StyledAccordion";
+import StyledAccordionItem from "../StyledAccordionItem";
 
 export const getServerSideProps = async ({
   query,
@@ -46,10 +37,8 @@ export interface PagesStepProps
   extends PreviousStepperClickEvent,
     NextStepperClickEvent {
   projectId: string;
-  pages: { name: string; description: string }[];
-  setPages: (
-    value: SetStateAction<{ name: string; description: string }[]>,
-  ) => void;
+  pages: PageAIResponse[];
+  setPages: (value: SetStateAction<PageAIResponse[]>) => void;
   hasPagesCreated: boolean;
   setHasPagesCreated: (value: boolean) => void;
   setHomePageId: (value: string) => void;
@@ -66,15 +55,15 @@ export default function PagesStep({
   setHomePageId,
 }: PagesStepProps) {
   const resetTree = useEditorStore((state) => state.resetTree);
-  const initiallPageGeneration = useRef(false);
-  const updatePage = (index: number, value: string) => {
-    const updatedPages = [...pages];
-    updatedPages[index] = { name: value, description: "A simple page" };
-    setPages(updatedPages);
-  };
+  // const initiallPageGeneration = useRef(false);
+  // const updatePage = (index: number, value: string) => {
+  //   const updatedPages = [...pages];
+  //   updatedPages[index] = { name: value, description: "A simple page" };
+  //   setPages(updatedPages);
+  // };
 
   const addEmptyPage = () => {
-    setPages((oldPages) => [...oldPages, { name: "", description: "" }]);
+    setPages((oldPages) => [...oldPages]);
   };
 
   const isLoading = useAppStore((state) => state.isLoading);
@@ -82,15 +71,23 @@ export default function PagesStep({
   const stopLoading = useAppStore((state) => state.stopLoading);
   const startLoading = useAppStore((state) => state.startLoading);
 
-  const handlePageNamesGeneration = async () => {
+  const handlePageNamesGeneration = async (pageCount?: string) => {
     startLoading({
       id: "creating-pages",
       title: "Creating Pages",
       message: "Wait while your pages are being created",
     });
-    const pages = await createPageList(projectId);
 
-    setPages(pages);
+    const existingPageNames = pages.map((page) => page.name).join(",");
+
+    const newPageList = await createPageList(
+      projectId,
+      pageCount,
+      existingPageNames,
+    );
+
+    setPages((oldPages) => [...oldPages, ...newPageList]);
+
     stopLoading({
       id: "creating-pages",
       title: "Pages Created",
@@ -121,7 +118,7 @@ export default function PagesStep({
           return {
             title: page.name,
             slug: slugify(page.name),
-            description: page.description,
+            description: page.features.join(", "),
             isHome: index === 0,
             authenticatedOnly: false,
           } as PageBody;
@@ -229,43 +226,26 @@ export default function PagesStep({
       {hasPageNames && (
         <>
           <InformationAlert
-            title="Generated Page Names"
-            text="Feel free to change the page names if they aren't quite right add some new ones before generating your app."
+            title="Here are your pages and what they will do"
+            text="Feel free to change if they aren't quite right and add some new ones before generating your app."
           />
-          <List
-            spacing="xs"
-            size="xl"
-            center
-            icon={
-              <ThemeIcon color="teal" size={24} radius="xl">
-                <IconCircleCheck size={ICON_SIZE} />
-              </ThemeIcon>
-            }
+          <StyledAccordion
+            defaultValue={pages?.[0]?.name ?? ""}
+            w="100%"
+            maw="100%"
           >
-            {pages.map(({ name: page }, index) => {
+            {pages.map(({ name, features }, index) => {
               return (
-                <List.Item key={index}>
-                  <Flex align="center" gap="md">
-                    <TextInput
-                      value={page}
-                      sx={{ width: "400px" }}
-                      onChange={(event) =>
-                        updatePage(index, event.currentTarget.value)
-                      }
-                    />
-                    <ActionIcon
-                      onClick={() => deletePage(page)}
-                      variant="filled"
-                      color="red"
-                      tabIndex={-1}
-                    >
-                      <Icon name={ICON_DELETE} />
-                    </ActionIcon>
-                  </Flex>
-                </List.Item>
+                <StyledAccordionItem
+                  key={name}
+                  value={name}
+                  description={features
+                    .map((feature) => `${feature}`)
+                    .join(". ")}
+                />
               );
             })}
-          </List>
+          </StyledAccordion>
         </>
       )}
       {!hasPageNames && (
@@ -279,7 +259,7 @@ export default function PagesStep({
           <Button
             variant="light"
             leftIcon={<IconSparkles size={ICON_SIZE} />}
-            onClick={handlePageNamesGeneration}
+            onClick={() => handlePageNamesGeneration("5-8")}
             loading={isLoading}
             disabled={isLoading || hasPageNames}
           >
@@ -290,9 +270,7 @@ export default function PagesStep({
             <Button
               variant="light"
               leftIcon={<IconPlus size={ICON_SIZE} />}
-              onClick={() => {
-                // TODO: Generate new page
-              }}
+              onClick={() => handlePageNamesGeneration("1")}
               loading={isLoading}
               disabled={hasPagesCreated}
             >

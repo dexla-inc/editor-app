@@ -11,8 +11,8 @@ export default function StyledAccordionItem({
 }: StyledAccordionItemProps) {
   console.log(value, description);
   return (
-    <Accordion.Item value={value}>
-      <Accordion.Control>{value}</Accordion.Control>
+    <Accordion.Item value={value} sx={{ fontWeight: 500 }}>
+      <Accordion.Control sx={{ fontWeight: 500 }}>{value}</Accordion.Control>
       <Accordion.Panel>{description}</Accordion.Panel>
     </Accordion.Item>
   );

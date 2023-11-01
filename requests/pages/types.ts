@@ -1,6 +1,11 @@
 import { PagingParams } from "@/requests/types";
 import { AppTypes } from "@/utils/dashboardTypes";
 
+export type PageAIResponse = {
+  name: string;
+  features: string[];
+};
+
 export interface PageResponse extends PageBody {
   id: string;
   [key: string]: any;

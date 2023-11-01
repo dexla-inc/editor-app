@@ -8,7 +8,9 @@ const useStyles = createStyles((theme) => ({
         : theme.colors.gray[0],
     borderRadius: theme.radius.sm,
   },
-
+  label: {
+    fontWeight: 500,
+  },
   item: {
     backgroundColor:
       theme.colorScheme === "dark"
