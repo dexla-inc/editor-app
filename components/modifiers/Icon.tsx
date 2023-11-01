@@ -1,5 +1,6 @@
 import { IconSelector } from "@/components/IconSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { getThemeColor } from "@/components/modifiers/Border";
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
 import { debouncedTreeUpdate } from "@/utils/editor";
@@ -9,7 +10,6 @@ import { useForm } from "@mantine/form";
 import { IconTexture } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
-import { getThemeColor } from "./Border";
 
 export const icon = IconTexture;
 export const label = "Icon";
