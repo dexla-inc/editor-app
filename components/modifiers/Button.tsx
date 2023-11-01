@@ -52,6 +52,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
       ]);
 
       form.setValues({
+        ...data.style,
         value: data.children ?? defaultButtonValues.value,
         type: data.type ?? defaultButtonValues.type,
         variant: data.variant ?? defaultButtonValues.variant,
@@ -60,7 +61,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         textColor: data.textColor ?? defaultButtonValues.textColor,
         icon: data.leftIcon ?? defaultButtonValues.leftIcon,
         align: data.style?.justifyContent ?? defaultButtonValues.align,
-        ...data.style,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
