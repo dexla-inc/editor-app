@@ -143,7 +143,7 @@ export const requiredModifiers: RequiredModifiers = {
     color: "Primary.6",
     textColor: "White.0",
     leftIcon: "",
-    justify: "center",
+    align: "flex-start",
   },
   title: {
     value: "",

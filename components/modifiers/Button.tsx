@@ -3,31 +3,35 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
-import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
-import { Select, Stack, TextInput } from "@mantine/core";
+import {
+  debouncedTreeComponentPropsUpdate,
+  debouncedTreeUpdate,
+} from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
+import {
+  SegmentedControl,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconClick } from "@tabler/icons-react";
+import {
+  IconAlignCenter,
+  IconAlignLeft,
+  IconAlignRight,
+  IconClick,
+} from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
+import { StylingPaneItemIcon } from "./StylingPaneItemIcon";
 
 export const icon = IconClick;
 export const label = "Button";
 
-export const defaultButtonValues = {
-  value: "New Button",
-  type: "button",
-  variant: "filled",
-  size: "md",
-  color: "Primary.6",
-  textColor: "White.0",
-  leftIcon: "",
-  justify: "center",
-};
+export const defaultButtonValues = requiredModifiers.button;
 
 export const Modifier = withModifier(({ selectedComponent }) => {
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent,
-  );
   const theme = useEditorStore((state) => state.theme);
 
   const form = useForm({
@@ -56,6 +60,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         color: data.color ?? defaultButtonValues.color,
         textColor: data.textColor ?? defaultButtonValues.textColor,
         icon: data.leftIcon ?? defaultButtonValues.leftIcon,
+        align: data.style?.justifyContent ?? defaultButtonValues.align,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
@@ -126,26 +131,58 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             debouncedTreeComponentPropsUpdate("textColor", value);
           }}
         />
-        <Select
-          label="Justify"
-          size="xs"
-          data={[
-            { label: "Center", value: "center" },
-            { label: "Flex-start", value: "flex-start" },
-            { label: "Flex-end", value: "flex-end" },
-            { label: "Space-around", value: "space-around" },
-            { label: "Space-between", value: "space-between" },
-          ]}
-          {...form.getInputProps("justify")}
-          onChange={(value) => {
-            form.setFieldValue("justify", value as string);
-            debouncedTreeComponentPropsUpdate("style", {
-              ...selectedComponent?.props?.style,
-              display: "flex",
-              justifyContent: value as string,
-            });
-          }}
-        />
+        <Stack spacing={2}>
+          <Text size="xs" fw={500}>
+            Alignment
+          </Text>
+          <SegmentedControl
+            size="xs"
+            data={[
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Left"
+                    icon={<IconAlignLeft size={14} />}
+                  />
+                ),
+                value: "flex-start",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Center"
+                    icon={<IconAlignCenter size={14} />}
+                  />
+                ),
+                value: "center",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Right"
+                    icon={<IconAlignRight size={14} />}
+                  />
+                ),
+                value: "flex-end",
+              },
+            ]}
+            styles={{
+              label: {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              },
+            }}
+            {...form.getInputProps("align")}
+            onChange={(value) => {
+              form.setFieldValue("align", value as string);
+              debouncedTreeUpdate(selectedComponent?.id as string, {
+                style: { justifyContent: value as string },
+              });
+            }}
+          />
+        </Stack>
         {/* Adding a react component as a property doesn't work -
         Error: Objects are not valid as a React child (found: object with keys {key, ref, props, _owner, _store}). 
         If you meant to render a collection of children, use an array instead. */}
