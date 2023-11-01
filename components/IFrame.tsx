@@ -122,11 +122,11 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
     if (!isLive && !isPreviewMode) {
       containerStyles.width = isTabPinned
         ? `calc(100% - ${NAVBAR_WIDTH}px)`
-        : `calc(100% - ${NAVBAR_MIN_WIDTH}px)`;
+        : `calc(100% - ${NAVBAR_MIN_WIDTH - 50}px)`; // Weird sizing issue that I haven't got time to investigate, had to hack it
 
       containerStyles.marginLeft = isTabPinned
         ? `${NAVBAR_WIDTH}px`
-        : `${NAVBAR_MIN_WIDTH}px`;
+        : `${NAVBAR_MIN_WIDTH - 50}px`; // Weird sizing issue that I haven't got time to investigate, had to hack it
     }
 
     return containerStyles;

@@ -416,7 +416,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
             pos="relative"
             onClick={clearSelection}
             style={{ minHeight: `calc(100vh - ${HEADER_HEIGHT}px)` }}
-            ml={isTabPinned ? NAVBAR_WIDTH : NAVBAR_MIN_WIDTH}
+            ml={isTabPinned ? NAVBAR_WIDTH : NAVBAR_MIN_WIDTH - 50} // Weird sizing issue that I haven't got time to investigate, had to hack it
             p={"40px 10px"}
           >
             <Paper
