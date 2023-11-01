@@ -2,6 +2,7 @@ import { Menu, Stack } from "@mantine/core";
 
 import DashboardCompanySelectorPopover from "@/components/DashboardCompanySelectorPopover";
 import { usePropelAuthStore } from "@/stores/propelAuth";
+import { useRouter } from "next/router";
 
 export const DashboardCompanySelector = () => {
   const companies = usePropelAuthStore((state) => state.companies);
@@ -9,6 +10,15 @@ export const DashboardCompanySelector = () => {
   const setActiveCompany = usePropelAuthStore(
     (state) => state.setActiveCompany,
   );
+  const router = useRouter();
+
+  const handleCompanyClick = (orgId: string) => {
+    setActiveCompany(orgId);
+
+    if (router.pathname !== "/projects") {
+      router.push("/projects");
+    }
+  };
 
   return (
     <Menu withArrow>
@@ -23,7 +33,7 @@ export const DashboardCompanySelector = () => {
             <Menu.Item
               key={company.orgId}
               onClick={() => {
-                setActiveCompany(company.orgId);
+                handleCompanyClick(company.orgId);
               }}
             >
               {company.orgName}
