@@ -37,7 +37,13 @@ export const defaultPageState = {
   },
 };
 
-export const useGetPageData = ({ projectId, pageId }: any) => {
+export const useGetPageData = ({
+  projectId,
+  pageId,
+}: {
+  projectId: string;
+  pageId: string;
+}) => {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
