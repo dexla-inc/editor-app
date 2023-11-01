@@ -70,7 +70,7 @@ export const LogicFlowShell = ({
               )}
             </Group>
             <Group>
-              <Button onClick={() => setShowFormModal(true)}>
+              <Button onClick={() => setShowFormModal(true)} compact>
                 Create Logic Flow
               </Button>
               <VariablesButton pageId={pageId!} projectId={projectId!} />
@@ -78,6 +78,7 @@ export const LogicFlowShell = ({
                 component={Link}
                 variant="default"
                 href={`/projects/${projectId}/editor/${pageId}`}
+                compact
               >
                 Back to Editor
               </Button>

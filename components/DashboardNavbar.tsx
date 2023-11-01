@@ -42,6 +42,7 @@ export default function DashboardNavbar({
                 variant="subtle"
                 leftIcon={<IconArrowLeft size={ICON_SIZE} stroke={1.5} />}
                 sx={{ margin: 10 }}
+                compact
               >
                 Back
               </Button>

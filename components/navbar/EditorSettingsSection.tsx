@@ -17,11 +17,6 @@ export const EditorSettingsSection = () => {
         href={`/projects/${router.query.id}/settings/datasources`}
       />
       <SettingsButton
-        iconName="IconUser"
-        text="Team"
-        href={`/projects/${router.query.id}/settings/team`}
-      />
-      <SettingsButton
         iconName="IconWorldWww"
         text="Domain"
         href={`/projects/${router.query.id}/settings/domain`}

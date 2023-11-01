@@ -44,6 +44,7 @@ export default function InitialPane({
       <Button
         leftIcon={<IconPlus size={ICON_SIZE} />}
         onClick={() => setPage(null)}
+        compact
       >
         Add Page
       </Button>

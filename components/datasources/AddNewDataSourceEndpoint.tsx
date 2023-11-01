@@ -50,6 +50,7 @@ export const AddNewDataSourceEndpoint = ({
           onClick={addNewEndpoint}
           variant="outline"
           leftIcon={<Icon name="IconPlus"></Icon>}
+          compact
         >
           Create New Endpoint
         </Button>

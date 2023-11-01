@@ -167,7 +167,9 @@ export const EditorNavbarThemesSection = ({
             ))}
           <Button
             type="button"
+            variant="outline"
             fullWidth
+            compact
             onClick={() =>
               form.insertListItem("colors", {
                 friendlyName: "",
@@ -176,6 +178,7 @@ export const EditorNavbarThemesSection = ({
                 isDefault: false,
               })
             }
+            mb="xl"
           >
             Add Colour
           </Button>
@@ -286,7 +289,7 @@ export const EditorNavbarThemesSection = ({
             {...form.getInputProps("defaultSpacing")}
           />
         </Stack>
-        <Button type="submit" size="sm" fullWidth my="xl">
+        <Button type="submit" size="sm" fullWidth my="xl" compact>
           Save
         </Button>
       </>

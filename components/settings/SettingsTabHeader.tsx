@@ -12,6 +12,7 @@ export const SettingsTabHeader = ({ name }: { name: string }) => {
         variant="subtle"
         leftIcon={<Icon name="IconArrowLeft" size={ICON_SIZE} stroke={1.5} />}
         m={10}
+        compact
       >
         Back
       </Button>

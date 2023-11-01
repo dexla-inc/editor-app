@@ -262,6 +262,7 @@ export default function PagesStep({
             onClick={() => handlePageNamesGeneration("5-8")}
             loading={isLoading}
             disabled={isLoading || hasPageNames}
+            compact
           >
             Generate page names
           </Button>
@@ -273,8 +274,9 @@ export default function PagesStep({
               onClick={() => handlePageNamesGeneration("1")}
               loading={isLoading}
               disabled={hasPagesCreated}
+              compact
             >
-              Generate new page
+              Generate
             </Button>
             <Button
               variant="outline"
@@ -284,8 +286,9 @@ export default function PagesStep({
               disabled={
                 pages.some((page) => page.name === "") || hasPagesCreated
               }
+              compact
             >
-              Add new page
+              Add
             </Button>
           </>
         )}

@@ -174,7 +174,7 @@ export const LogicFlowFormModal = () => {
             label="Is Global"
             {...form.getInputProps("isGlobal", { type: "checkbox" })}
           />
-          <Button type="submit" loading={isLoading}>
+          <Button type="submit" loading={isLoading} compact>
             {currentFlowId ? "Save" : "Create"}
           </Button>
         </Stack>

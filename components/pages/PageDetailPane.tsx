@@ -208,6 +208,7 @@ export default function PageDetailPane({
               onClick={() => setPage(undefined)}
               variant="subtle"
               leftIcon={<IconArrowLeft size={ICON_SIZE} />}
+              compact
             >
               Back
             </Button>
@@ -309,7 +310,7 @@ export default function PageDetailPane({
                 Save
               </Button>
             ) : (
-              <Button type="submit" loading={isLoading}>
+              <Button type="submit" loading={isLoading} compact>
                 Create
               </Button>
             )}

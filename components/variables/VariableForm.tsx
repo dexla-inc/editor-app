@@ -1,3 +1,4 @@
+import { useVariable } from "@/hooks/useVariable";
 import { getVariable } from "@/requests/variables/queries";
 import { VariableTypesOptions } from "@/requests/variables/types";
 import {
@@ -11,7 +12,6 @@ import {
 import { useForm } from "@mantine/form";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { useVariable } from "@/hooks/useVariable";
 
 type VariablesFormValues = {
   name: string;
@@ -84,7 +84,11 @@ export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
           {...form.getInputProps("isGlobal", { type: "checkbox" })}
         />
 
-        <Button type="submit" loading={createVariablesMutation.isLoading}>
+        <Button
+          type="submit"
+          loading={createVariablesMutation.isLoading}
+          compact
+        >
           {variableId ? "Save" : "Create"} Variable
         </Button>
       </Stack>
