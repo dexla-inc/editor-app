@@ -4,6 +4,7 @@ import PagesStep from "@/components/projects/PagesStep";
 import ProjectInfoStep from "@/components/projects/ProjectInfoStep";
 import ProjectStep from "@/components/projects/ProjectStep";
 import { getPageList } from "@/requests/pages/queries";
+import { PageAIResponse, PageResponse } from "@/requests/pages/types";
 import { RegionTypes, getProject } from "@/requests/projects/queries";
 import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
@@ -33,9 +34,7 @@ export default function New() {
   const [screenshots, setScreenshots] = useState<FileWithPath[]>([]);
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [themeResponse, setThemeResponse] = useState<ThemeResponse>();
-  const [pages, setPages] = useState<{ name: string; description: string }[]>(
-    [],
-  );
+  const [pages, setPages] = useState<PageAIResponse[]>([]);
   const [hasPagesCreated, setHasPagesCreated] = useState(false);
   const [homePageId, setHomePageId] = useState("");
   const [friendlyName, setFriendlyName] = useState(activeCompany.orgName);
@@ -52,7 +51,7 @@ export default function New() {
 
       const fetchProject = async () => {
         const project = await getProject(projectIdFromQuery as string);
-        console.log(project);
+
         setDescription(project.description);
         setIndustry(project.industry);
         setFriendlyName(project.friendlyName);
@@ -61,13 +60,16 @@ export default function New() {
 
       const fetchPages = async () => {
         const pages = await getPageList(projectIdFromQuery as string);
-        console.log(projectIdFromQuery, pages);
-        const pageList = pages.results.map((page) => ({
-          name: page.name,
-          description: page.description as string,
-        }));
 
-        setPages(pageList);
+        const pageAiResult: PageAIResponse[] = pages.results.map(
+          (page: PageResponse) => ({
+            name: page.title,
+            features: page.description?.split(",") || [],
+          }),
+        );
+
+        setPages(pageAiResult);
+
         if (stepFromQuery) {
           setActiveStep(parseInt(stepFromQuery as string));
         }

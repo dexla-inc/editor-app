@@ -8,12 +8,12 @@ type AuthState = {
   accessToken: string;
   user: User;
   companies: OrgMemberInfo[];
-  setActiveCompany: (companyId: string) => void;
-  activeCompany: OrgMemberInfo;
-  activeCompanyId: string;
-  initializeAuth: () => Promise<void>;
   isDexlaAdmin: boolean;
+  activeCompanyId: string;
+  activeCompany: OrgMemberInfo;
   userPermissions: string[];
+  setActiveCompany: (companyId: string) => void;
+  initializeAuth: () => Promise<void>;
 };
 
 export const usePropelAuthStore = create<AuthState>()(
@@ -66,7 +66,6 @@ export const usePropelAuthStore = create<AuthState>()(
             activeCompanyId: activeCompanyId || activeCompany?.orgId || "",
             isDexlaAdmin:
               activeCompany?.userAssignedRole?.includes("DEXLA_ADMIN") || false,
-            //isDexlaAdmin: activeCompany?.orgName.includes("DEXLA") || false,
           });
         }
       },

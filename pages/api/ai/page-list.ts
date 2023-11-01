@@ -1,7 +1,7 @@
-import { getPagesPrompt } from "@/utils/prompts";
-import { openai } from "@/utils/openai";
-import { NextApiRequest, NextApiResponse } from "next";
+import { GPT4_MODEL, openai } from "@/utils/openai";
 import { prisma } from "@/utils/prisma";
+import { getPagePrompt, getPagesPrompt } from "@/utils/prompts";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,7 +12,7 @@ export default async function handler(
       throw new Error("Invalid method");
     }
 
-    const { projectId, accessToken } = req.body;
+    const { projectId, accessToken, pageCount, excludedPages } = req.body;
     const project = await prisma.project.findFirstOrThrow({
       where: {
         id: projectId as string,
@@ -32,17 +32,30 @@ export default async function handler(
 
     const _project = await projectResponse.json();
 
+    const prompt =
+      pageCount === "1"
+        ? getPagePrompt({
+            appDescription: _project.description ?? "",
+            appIndustry: _project.industry ?? "",
+            entities: JSON.stringify(project.entities ?? []),
+            excludedPages: excludedPages,
+          })
+        : getPagesPrompt({
+            appDescription: _project.description ?? "",
+            appIndustry: _project.industry ?? "",
+            entities: JSON.stringify(project.entities ?? []),
+            pageCount: pageCount,
+          });
+
+    console.log(prompt);
+
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: GPT4_MODEL,
       stream: false,
       messages: [
         {
           role: "user",
-          content: getPagesPrompt({
-            entities: JSON.stringify(project.entities ?? []),
-            appDescription: _project.description ?? "",
-            appIndustry: _project.industry ?? "",
-          }),
+          content: prompt,
         },
       ],
     });

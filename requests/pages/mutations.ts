@@ -1,4 +1,5 @@
 import {
+  PageAIResponse,
   PageBody,
   PageResponse,
   PagesResponse,
@@ -37,7 +38,11 @@ export const createPages = async (params: PageBody[], projectId: string) => {
   return response;
 };
 
-export const createPageList = async (projectId: string) => {
+export const createPageList = async (
+  projectId: string,
+  pageCount?: string,
+  excludedPages?: string,
+): Promise<PageAIResponse[]> => {
   const accessToken = await getAuthToken();
   const response = await fetch("/api/ai/page-list", {
     method: "POST",
@@ -47,11 +52,15 @@ export const createPageList = async (projectId: string) => {
     body: JSON.stringify({
       projectId,
       accessToken,
+      pageCount,
+      excludedPages,
     }),
   });
 
   const json = await response.json();
-  return json as { name: string; description: string }[];
+  console.log("json", json);
+
+  return Array.isArray(json) ? json : [json];
 };
 
 export const updatePageState = async (

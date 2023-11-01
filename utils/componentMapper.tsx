@@ -100,7 +100,6 @@ import {
   IconArrowAutofitContent,
   IconBoxModel,
   IconBrandChrome,
-  IconBread,
   IconCalendar,
   IconChartArcs,
   IconChartAreaLine,
@@ -133,6 +132,7 @@ import {
   IconPictureInPicture,
   IconSelect,
   IconSeparator,
+  IconSlash,
   IconStackPop,
   IconTable,
   IconToggleLeft,
@@ -546,11 +546,11 @@ export const structureMapper: StructureMapper = {
     Draggable: () => (
       <DraggableComponent
         id="Breadcrumb"
-        icon={<IconBread size={LARGE_ICON_SIZE} />}
+        icon={<IconSlash size={LARGE_ICON_SIZE} />}
       />
     ),
     category: "Navigation",
-    icon: <IconBread size={ICON_SIZE} />,
+    icon: <IconSlash size={ICON_SIZE} />,
   },
   Pagination: {
     structure: (props: any) => PaginationStructure.jsonStructure(props),
