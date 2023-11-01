@@ -3,6 +3,7 @@ type FetchType = {
   method?: string;
   body?: object;
   headers?: object;
+  init?: object;
 };
 
 export const baseURL = process.env.NEXT_PUBLIC_APPS_BASE_URL;
@@ -12,11 +13,13 @@ async function doFetchWithoutAuth<Type>({
   method,
   body,
   headers = {},
+  init = {},
 }: FetchType): Promise<Type | null> {
   return new Promise(async (resolve, reject) => {
     let response = null;
     try {
       response = await fetch(`${baseURL}${url}`, {
+        ...init,
         method,
         headers: {
           "Content-Type": "application/json",
@@ -42,10 +45,12 @@ async function doFetchWithoutAuth<Type>({
 export async function getWithoutAuth<Type>(
   url: FetchType["url"],
   headers?: object,
+  init?: object,
 ): Promise<Type | ReadableStream<Uint8Array> | null> {
   return doFetchWithoutAuth<Type | ReadableStream<Uint8Array> | null>({
     url,
     method: "GET",
     headers,
+    init,
   });
 }

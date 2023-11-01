@@ -18,17 +18,29 @@ export const getPageList = async (projectId: string, params?: PageParams) => {
   return response;
 };
 
-export const getPage = async (projectId: string, pageId: string) => {
+export const getPage = async (
+  projectId: string,
+  pageId: string,
+  headers = {},
+  init = {},
+) => {
   const response = (await getWithoutAuth<PageResponse>(
     `/projects/${projectId}/pages/${pageId}`,
+    headers,
+    init,
   )) as PageResponse;
 
   return response;
 };
 
-export const getPageTemplate = async (projectId: string, pageId: string) => {
+export const getPageTemplate = async (
+  projectId: string,
+  pageId: string,
+  init = {},
+) => {
   const accessToken = await getAuthToken();
   const response = await fetch("/api/ai/page", {
+    ...init,
     method: "POST",
     headers: {
       "Content-Type": "application/json",
