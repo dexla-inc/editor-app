@@ -12,7 +12,7 @@ import {
   ScrollArea,
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 export const defaultTheme: MantineTheme = {
@@ -37,6 +37,12 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
+  const setIsStructureCollapsed = useEditorStore(
+    (state) => state.setIsStructureCollapsed,
+  );
+  const isStructureCollapsed = useEditorStore(
+    (state) => state.isStructureCollapsed,
+  );
 
   const theme = useEditorStore((state) => state.theme);
   const setTheme = useEditorStore((state) => state.setTheme);
@@ -134,15 +140,23 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
 
   const styles = getContainerStyles(isLive, isPreviewMode, isTabPinned);
 
+  const handleMouseDown = useCallback(() => {
+    if (isTabPinned) {
+      setActiveTab("layers");
+    } else {
+      setActiveTab(undefined);
+    }
+    isStructureCollapsed && setIsStructureCollapsed(false);
+  }, [
+    isTabPinned,
+    isStructureCollapsed,
+    setActiveTab,
+    setIsStructureCollapsed,
+  ]);
+
   return (
     <Box
-      onMouseDown={() => {
-        if (isTabPinned) {
-          setActiveTab("layers");
-        } else {
-          setActiveTab(undefined);
-        }
-      }}
+      onMouseDown={handleMouseDown}
       ref={setContentRef as any}
       component="iframe"
       style={styles}
