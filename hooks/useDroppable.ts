@@ -1,5 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { NAVBAR_WIDTH } from "@/utils/config";
 import {
   DropTarget,
   Edge,
@@ -84,10 +85,15 @@ export const useDroppable = ({
       event.preventDefault();
       event.stopPropagation();
       setCurrentTargetId(id);
-      if (isTabPinned && activeTab !== "layers") {
-        setActiveTab("layers");
-      } else if (!(activeTab === "layers" && isTabPinned)) {
+      if (event.clientX > NAVBAR_WIDTH) {
         setActiveTab(undefined);
+      } else {
+        if (
+          (isTabPinned && activeTab !== "layers") ||
+          (!isTabPinned && activeTab === "layers")
+        ) {
+          setActiveTab("layers");
+        }
       }
     },
     [id, setCurrentTargetId, setActiveTab, activeTab, isTabPinned],

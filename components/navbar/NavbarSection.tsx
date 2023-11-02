@@ -48,6 +48,7 @@ export const NavbarSection = ({
 
   useEffect(() => {
     isTabPinned && setActiveTab("layers");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTabPinned]);
 
   const currentSection = sections.find((section) => section.id === activeTab);
