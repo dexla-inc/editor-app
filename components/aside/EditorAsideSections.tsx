@@ -3,6 +3,7 @@ import { SidebarSection } from "@/components/SidebarSection";
 import { ActionsFlow } from "@/components/actions/ActionsFlow";
 import * as AccordionModifier from "@/components/modifiers/Accordion";
 import * as AccordionItemModifier from "@/components/modifiers/AccordionItem";
+import * as AlertModifier from "@/components/modifiers/Alert";
 import * as AvatarModifier from "@/components/modifiers/Avatar";
 import * as BackgroundModifier from "@/components/modifiers/Background";
 import * as BorderModifier from "@/components/modifiers/Border";
@@ -41,6 +42,7 @@ import * as TextModifier from "@/components/modifiers/Text";
 import * as TextareaModifier from "@/components/modifiers/Textaarea";
 import * as TitleModifier from "@/components/modifiers/Title";
 import { useEditorStore } from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/userConfig";
 import { Action, actionMapper } from "@/utils/actions";
 import { componentMapper } from "@/utils/componentMapper";
 import { getComponentById } from "@/utils/editor";
@@ -57,7 +59,6 @@ import {
 import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
 import { useEffect, useMemo, useState } from "react";
-import { useUserConfigStore } from "@/stores/userConfig";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -103,6 +104,7 @@ const sectionMapper: SectionsMapper = {
   tab: TabModifier,
   tabsPanel: TabsPanelModifier,
   tabsList: TabsListModifier,
+  alert: AlertModifier,
 };
 
 type Tab = "design" | "actions";

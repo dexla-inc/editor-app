@@ -1,6 +1,6 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { Alert as MantineAlert, AlertProps } from "@mantine/core";
+import { AlertProps, Alert as MantineAlert } from "@mantine/core";
 import { memo } from "react";
 
 type Props = {

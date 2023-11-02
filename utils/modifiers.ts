@@ -37,7 +37,8 @@ export type Modifiers =
   | "tabs"
   | "tab"
   | "tabsPanel"
-  | "tabsList";
+  | "tabsList"
+  | "alert";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -307,6 +308,10 @@ export const requiredModifiers: RequiredModifiers = {
   },
   tabsPanel: { value: "first" },
   tabsList: { position: "left" },
+  alert: {
+    title: "Alert",
+    color: "Black.6",
+  },
 };
 
 type AISupportedModifiers = {

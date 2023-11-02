@@ -2,7 +2,6 @@ import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { useEditorStore } from "@/stores/editor";
 import {
   debouncedTreeComponentPropsUpdate,
   debouncedTreeUpdate,
@@ -32,8 +31,6 @@ export const label = "Button";
 export const defaultButtonValues = requiredModifiers.button;
 
 export const Modifier = withModifier(({ selectedComponent }) => {
-  const theme = useEditorStore((state) => state.theme);
-
   const form = useForm({
     initialValues: defaultButtonValues,
   });
