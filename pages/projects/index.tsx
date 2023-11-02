@@ -14,6 +14,7 @@ import {
   Stack,
   TextInput,
   Title,
+  Tooltip,
   useMantineTheme,
 } from "@mantine/core";
 import { IconSearch, IconSparkles } from "@tabler/icons-react";
@@ -117,21 +118,37 @@ export default function Projects() {
       <Container py="xl" size="lg">
         <Stack spacing="xl">
           <Title>Welcome back, {user?.firstName}</Title>
-
           <Flex>
-            <Link href={`/projects/new?company=${company.orgId}`}>
-              <IconTitleDescriptionButton
-                icon={
-                  <IconSparkles
-                    size={LARGE_ICON_SIZE}
-                    color={theme.colors.teal[5]}
-                  />
-                }
-                title="Create new project"
-                description="Type what you want to build and customise"
-              ></IconTitleDescriptionButton>
-            </Link>
+            {company.orgName !== "Dexla" ? (
+              <Link href={`/projects/new?company=${company.orgId}`}>
+                <IconTitleDescriptionButton
+                  icon={
+                    <IconSparkles
+                      size={LARGE_ICON_SIZE}
+                      color={theme.colors.teal[5]}
+                    />
+                  }
+                  title="Create new project"
+                  description="Type what you want to build and customise"
+                />
+              </Link>
+            ) : (
+              <Tooltip label="You are unable to create new projects for Dexla">
+                <IconTitleDescriptionButton
+                  icon={
+                    <IconSparkles
+                      size={LARGE_ICON_SIZE}
+                      color={theme.colors.teal[5]}
+                    />
+                  }
+                  tooltip="This project is used only for the Templates project"
+                  title="Create new project"
+                  description="Type what you want to build and customise"
+                />
+              </Tooltip>
+            )}
           </Flex>
+
           {projectsQuery.data?.results && (
             <TextInput
               placeholder="Search a project"
