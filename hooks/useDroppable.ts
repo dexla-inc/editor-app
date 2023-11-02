@@ -85,7 +85,7 @@ export const useDroppable = ({
       event.preventDefault();
       event.stopPropagation();
       setCurrentTargetId(id);
-      if (event.clientX > NAVBAR_WIDTH) {
+      if (event.clientX > NAVBAR_WIDTH && !isTabPinned) {
         setActiveTab(undefined);
       } else {
         if (
