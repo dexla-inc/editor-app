@@ -6,6 +6,8 @@ import { Flex, SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconShadow } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { withModifier } from "@/hoc/withModifier";
+import { getThemeColor } from "@/components/modifiers/Border";
 
 export const icon = IconShadow;
 export const label = "Shadow";
@@ -19,30 +21,27 @@ export const defaultBoxShadowValues = {
   color: "Black.9",
 };
 
-export const Modifier = () => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
-
-  const selectedComponent = getComponentById(
-    editorTree.root,
-    selectedComponentId as string
-  );
-
-  const componentProps = selectedComponent?.props || {};
-
+export const Modifier = withModifier(({ selectedComponent }) => {
+  const theme = useEditorStore((state) => state.theme);
   const form = useForm({
     initialValues: defaultBoxShadowValues,
   });
 
   useEffect(() => {
-    if (selectedComponentId) {
-      const { style = {} } = componentProps;
+    if (selectedComponent?.id) {
+      let { style = {} } = selectedComponent.props!;
 
       // Parsing existing boxShadow style into separate parts
-      const [inset, xOffset, yOffset, blur, spread, color] =
-        (style.boxShadow ?? "").split(" ") || defaultBoxShadowValues;
+      const boxShadow = style.boxShadow ?? defaultBoxShadowValues;
+
+      const values = boxShadow.split(/\s+/);
+
+      const inset = values[0] === "inset" ? "inset" : "";
+      const xOffset = values[1];
+      const yOffset = values[2];
+      const blur = values[3];
+      const spread = values[4];
+      const color = values.slice(5).join(" ");
 
       form.setValues({
         inset: inset ?? defaultBoxShadowValues.inset,
@@ -50,15 +49,15 @@ export const Modifier = () => {
         yOffset: yOffset ?? defaultBoxShadowValues.yOffset,
         blur: blur ?? defaultBoxShadowValues.blur,
         spread: spread ?? defaultBoxShadowValues.spread,
-        color: color ?? defaultBoxShadowValues.color,
+        color: getThemeColor(theme, color) ?? defaultBoxShadowValues.color,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponent]);
 
   return (
-    <form key={selectedComponentId}>
+    <form key={selectedComponent?.id}>
       <Stack spacing="xs">
         <Stack spacing={0}>
           <Text size="xs" fw={500}>
@@ -75,7 +74,7 @@ export const Modifier = () => {
               form.setFieldValue("inset", value as string);
               const boxShadow = `${value} ${form.values.xOffset} ${form.values.yOffset} ${form.values.blur} ${form.values.spread} ${form.values.color}`;
 
-              debouncedTreeUpdate(selectedComponentId as string, {
+              debouncedTreeUpdate(selectedComponent?.id as string, {
                 style: { boxShadow },
               });
             }}
@@ -89,7 +88,7 @@ export const Modifier = () => {
               form.setFieldValue("xOffset", value as string);
               const boxShadow = `${form.values.inset} ${value} ${form.values.yOffset} ${form.values.blur} ${form.values.spread} ${form.values.color}`;
 
-              debouncedTreeUpdate(selectedComponentId as string, {
+              debouncedTreeUpdate(selectedComponent?.id as string, {
                 style: { boxShadow },
               });
             }}
@@ -106,7 +105,7 @@ export const Modifier = () => {
               form.setFieldValue("yOffset", value as string);
               const boxShadow = `${form.values.inset} ${form.values.xOffset} ${value} ${form.values.blur} ${form.values.spread} ${form.values.color}`;
 
-              debouncedTreeUpdate(selectedComponentId as string, {
+              debouncedTreeUpdate(selectedComponent?.id as string, {
                 style: { boxShadow },
               });
             }}
@@ -125,7 +124,7 @@ export const Modifier = () => {
               form.setFieldValue("blur", value as string);
               const boxShadow = `${form.values.inset} ${form.values.xOffset} ${form.values.yOffset} ${value} ${form.values.spread} ${form.values.color}`;
 
-              debouncedTreeUpdate(selectedComponentId as string, {
+              debouncedTreeUpdate(selectedComponent?.id as string, {
                 style: { boxShadow },
               });
             }}
@@ -142,7 +141,7 @@ export const Modifier = () => {
               form.setFieldValue("spread", value as string);
               const boxShadow = `${form.values.inset} ${form.values.xOffset} ${form.values.yOffset} ${form.values.blur} ${value} ${form.values.color}`;
 
-              debouncedTreeUpdate(selectedComponentId as string, {
+              debouncedTreeUpdate(selectedComponent?.id as string, {
                 style: { boxShadow },
               });
             }}
@@ -156,11 +155,15 @@ export const Modifier = () => {
         <ThemeColorSelector
           label="Color"
           {...form.getInputProps("color")}
-          onChange={(value: string) => {
-            form.setFieldValue("color", value);
+          onChange={(_value: string) => {
+            const [color, index] = _value.split(".");
+            // @ts-ignore
+            const value = theme.colors[color][index];
+
+            form.setFieldValue("color", _value);
             const boxShadow = `${form.values.inset} ${form.values.xOffset} ${form.values.yOffset} ${form.values.blur} ${form.values.spread} ${value}`;
 
-            debouncedTreeUpdate(selectedComponentId as string, {
+            debouncedTreeUpdate(selectedComponent?.id as string, {
               style: { boxShadow },
             });
           }}
@@ -168,4 +171,4 @@ export const Modifier = () => {
       </Stack>
     </form>
   );
-};
+});

@@ -34,7 +34,7 @@ export const getThemeColor = (theme: any, hex: string) => {
     const colorIndex = theme.colors[key].findIndex((c: string) => c === hex);
 
     if (colorIndex > -1) {
-      return `${key}.${colorIndex}`;
+      themeColor = `${key}.${colorIndex}`;
     }
 
     return themeColor;
