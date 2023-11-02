@@ -96,7 +96,7 @@ export const GenerateComponentsAIButton = () => {
         tree,
       } = params;
 
-      const newComponents = getNewComponents(tomlData, theme, pages);
+      const newComponents = getNewComponents(tomlData, theme, pages, true);
 
       const id = getComponentBeingAddedId(tree.root);
 

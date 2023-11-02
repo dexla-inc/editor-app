@@ -200,7 +200,6 @@ export const getEditorTreeFromPageStructure = (
               props: {
                 style: {
                   width: "100%",
-                  padding: "20px",
                   backgroundColor: "White.6",
                   display: "flex",
                   flexDirection: "row",
@@ -253,6 +252,7 @@ export const getNewComponents = (
   tree: { rows: Row[] },
   theme: MantineThemeExtended,
   pages: PageResponse[],
+  fromAi?: boolean,
 ): Component => {
   return {
     id: nanoid(),
@@ -273,7 +273,8 @@ export const getNewComponents = (
         props: {
           style: {
             width: "100%",
-            padding: "20px",
+            rowGap: fromAi ? "8px" : "0px",
+            columnGap: fromAi ? "8px" : "0px",
           },
         },
         children:

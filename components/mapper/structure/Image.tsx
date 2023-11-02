@@ -9,8 +9,8 @@ export const jsonStructure = (props?: any): Component => {
     description: "Image",
     props: {
       style: {
-        width: "200px",
-        height: "150px",
+        width: "120px",
+        height: "120px",
         position: "relative",
       },
       ...defaultImageValues,

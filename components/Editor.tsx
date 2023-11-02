@@ -7,6 +7,7 @@ import { DroppableDraggable } from "@/components/DroppableDraggable";
 import { IFrame } from "@/components/IFrame";
 import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
+import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
@@ -41,10 +42,9 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure, useHotkeys } from "@mantine/hooks";
+import { useQueryClient } from "@tanstack/react-query";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
-import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
-import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   projectId: string;
@@ -68,6 +68,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
   const isLoading = useAppStore((state) => state.isLoading);
+  const stopLoading = useAppStore((state) => state.stopLoading);
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
@@ -80,6 +81,21 @@ export const Editor = ({ projectId, pageId }: Props) => {
   useGetPageData({ projectId, pageId });
 
   const queryClient = useQueryClient();
+
+  const cancelGeneratePage = () => {
+    stopLoading({
+      id: "page-generation",
+      title: "Page Cancelled",
+      message: "You can build from scratch",
+      isError: true,
+    });
+    queryClient.cancelQueries({ queryKey: ["page"] });
+    setEditorTree(defaultPageState, {
+      onLoad: true,
+      action: "Initial State",
+    });
+    setIsLoading(false);
+  };
 
   const deleteComponent = useCallback(() => {
     if (
@@ -367,14 +383,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
                 pos="absolute"
                 bottom={30}
                 type="button"
-                onClick={() => {
-                  queryClient.cancelQueries({ queryKey: ["page"] });
-                  setEditorTree(defaultPageState, {
-                    onLoad: true,
-                    action: "Initial State",
-                  });
-                  setIsLoading(false);
-                }}
+                onClick={cancelGeneratePage}
               >
                 Cancel
               </Button>
