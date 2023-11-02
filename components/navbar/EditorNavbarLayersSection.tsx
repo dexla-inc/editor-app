@@ -128,9 +128,6 @@ const ListItem = ({ component, children }: ListItemProps) => {
         component.id !== "root"
           ? {
               padding: "0 0 0 10px",
-              "&:has(.is-drag-over)": {
-                borderLeft: `1px solid ${theme.colors.teal[6]}!important`,
-              },
             }
           : {}
       }
