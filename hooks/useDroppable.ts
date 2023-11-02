@@ -70,7 +70,7 @@ export const useDroppable = ({
         bottomDist > 5 &&
         !component?.blockDroppingChildrenInside
       ) {
-        // If not within 3 pixels of any edge, set edge to center.
+        // If not within 5 pixels of any edge, set edge to center.
         setEdge("center");
       } else {
         // Check the closest edge and set it accordingly.
@@ -129,11 +129,21 @@ export const useDroppable = ({
     [setShouldHandleDragOver, setEdge],
   );
 
+  const handleDragEnd = useCallback(
+    (event: any) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setEdge(undefined);
+    },
+    [setEdge],
+  );
+
   return {
     edge,
     onDrop: handleDrop,
     onDragOver: handleDragOver,
     onDragEnter: handleDragEnter,
     onDragLeave: handleDragLeave,
+    onDragEnd: handleDragEnd,
   };
 };
