@@ -1,11 +1,7 @@
-import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
-import {
-  debouncedTreeComponentPropsUpdate,
-  debouncedTreeUpdate,
-} from "@/utils/editor";
-import { Group, Select, Stack, TextInput } from "@mantine/core";
+import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
+import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconRadio } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
@@ -15,11 +11,6 @@ export const icon = IconRadio;
 export const label = "Radio";
 
 export const defaultRadioValues = {
-  label: "",
-  size: "sm",
-  weight: "normal",
-  align: "left",
-  labelSpacing: "0",
   withAsterisk: false,
 };
 
@@ -30,20 +21,10 @@ export const Modifier = withModifier(({ selectedComponent }) => {
 
   useEffect(() => {
     if (selectedComponent?.id) {
-      const data = pick(selectedComponent.props!, [
-        "label",
-        "styles",
-        "labelProps",
-        "withAsterisk",
-      ]);
+      const data = pick(selectedComponent.props!, ["withAsterisk"]);
 
       form.setValues({
-        label: data.label ?? defaultRadioValues.label,
-        size: data.labelProps?.size ?? defaultRadioValues.size,
-        align: data.styles?.label.textAlign ?? defaultRadioValues.align,
-        weight: data.styles?.label.fontWeight ?? defaultRadioValues.weight,
         withAsterisk: data.withAsterisk ?? defaultRadioValues.withAsterisk,
-        labelSpacing: data.labelProps?.mb ?? defaultRadioValues.labelSpacing,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
@@ -53,79 +34,15 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
-        <TextInput
-          label="Label"
-          size="xs"
-          {...form.getInputProps("label")}
-          onChange={(e) => {
-            form.setFieldValue("label", e.target.value);
-            debouncedTreeComponentPropsUpdate("label", e.target.value);
-          }}
-        />
-        <Group noWrap>
-          <Select
-            label="Label Align"
-            size="xs"
-            data={[
-              { label: "Left", value: "left" },
-              { label: "Center", value: "center" },
-              { label: "Right", value: "right" },
-            ]}
-            {...form.getInputProps("align")}
-            onChange={(value) => {
-              form.setFieldValue("align", value as string);
-              debouncedTreeUpdate(selectedComponent?.id as string, {
-                styles: { label: { textAlign: value } },
-              });
-            }}
-          />
-          <Select
-            label="Label Weight"
-            size="xs"
-            data={[
-              { label: "Normal", value: "normal" },
-              { label: "Bold", value: "bold" },
-            ]}
-            {...form.getInputProps("weight")}
-            onChange={(value) => {
-              form.setFieldValue("weight", value as string);
-              debouncedTreeUpdate(selectedComponent?.id as string, {
-                styles: { label: { fontWeight: value } },
-              });
-            }}
-          />
-        </Group>
-        <Group noWrap>
-          <SizeSelector
-            label="Label Size"
-            {...form.getInputProps("size")}
-            onChange={(value) => {
-              form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponent?.id as string, {
-                labelProps: { size: value },
-              });
-            }}
-          />
-          <SwitchSelector
-            topLabel="Required"
-            {...form.getInputProps("withAsterisk")}
-            onChange={(event) => {
-              form.setFieldValue("withAsterisk", event.currentTarget.checked);
-              debouncedTreeComponentPropsUpdate(
-                "withAsterisk",
-                event.currentTarget.checked,
-              );
-            }}
-          />
-        </Group>
-        <SizeSelector
-          label="Label Spacing"
-          {...form.getInputProps("labelSpacing")}
-          onChange={(value) => {
-            form.setFieldValue("labelSpacing", value as string);
-            debouncedTreeComponentPropsUpdate("labelProps", {
-              mb: value as string,
-            });
+        <SwitchSelector
+          topLabel="Required"
+          {...form.getInputProps("withAsterisk")}
+          onChange={(event) => {
+            form.setFieldValue("withAsterisk", event.currentTarget.checked);
+            debouncedTreeComponentPropsUpdate(
+              "withAsterisk",
+              event.currentTarget.checked,
+            );
           }}
         />
       </Stack>

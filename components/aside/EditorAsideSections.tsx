@@ -32,7 +32,6 @@ import * as SelectModifier from "@/components/modifiers/Select";
 import * as SizeModifier from "@/components/modifiers/Size";
 import * as SpacingModifier from "@/components/modifiers/Spacing";
 import * as StepperModifier from "@/components/modifiers/Stepper";
-import * as SwitchModifier from "@/components/modifiers/Switch";
 import * as TabModifier from "@/components/modifiers/Tab";
 import * as TableModifier from "@/components/modifiers/Table";
 import * as TabsModifier from "@/components/modifiers/Tabs";
@@ -95,7 +94,6 @@ const sectionMapper: SectionsMapper = {
   popOver: PopOverModifier,
   navLink: NavLinkModifier,
   accordionItem: AccordionItemModifier,
-  switch: SwitchModifier,
   accordion: AccordionModifier,
   avatar: AvatarModifier,
   textarea: TextareaModifier,

@@ -1,23 +1,58 @@
 import { defaultTheme } from "@/components/IFrame";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
+import { defaultLayoutValues } from "@/components/modifiers/Layout";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
 
   return {
     id: nanoid(),
-    name: "Textarea",
-    description: "Textarea",
+    name: "Container",
+    description: "Container",
     props: {
-      name: "Textarea",
-      placeholder: "Textarea",
       style: {
-        width: "100%",
+        ...defaultLayoutValues,
+        width: "auto",
         height: "auto",
       },
-      ...(props.props || {}),
     },
-    children: [],
+    children: [
+      {
+        id: nanoid(),
+        name: "Text",
+        description: "Text",
+        children: [],
+        props: {
+          children: "A label",
+          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+          size: "md",
+          weight: "normal",
+          style: {
+            lineHeight: "110%",
+            letterSpacing: "0px",
+            width: "auto",
+            height: "auto",
+          },
+          ...(props.props || {}),
+        },
+        blockDroppingChildrenInside: true,
+      },
+      {
+        id: nanoid(),
+        name: "Textarea",
+        description: "Textarea",
+        props: {
+          name: "Textarea",
+          placeholder: "Textarea",
+          style: {
+            width: "100%",
+            height: "auto",
+          },
+          ...(props.props || {}),
+        },
+        children: [],
+      },
+    ],
   };
 };

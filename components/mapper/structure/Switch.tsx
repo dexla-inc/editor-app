@@ -1,23 +1,58 @@
 import { defaultTheme } from "@/components/IFrame";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
+import { defaultLayoutValues } from "@/components/modifiers/Layout";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
 
   return {
     id: nanoid(),
-    name: "Switch",
-    description: "Switch",
+    name: "Container",
+    description: "Container",
     props: {
-      label: "Switch Label",
-      showLabel: true,
       style: {
+        ...defaultLayoutValues,
         width: "auto",
         height: "auto",
+        flexDirection: "row",
+        columnGap: "10px",
       },
-      ...(props.props || {}),
     },
-    blockDroppingChildrenInside: true,
+    children: [
+      {
+        id: nanoid(),
+        name: "Switch",
+        description: "Switch",
+        props: {
+          style: {
+            width: "auto",
+            height: "auto",
+          },
+          ...(props.props || {}),
+        },
+        blockDroppingChildrenInside: true,
+      },
+      {
+        id: nanoid(),
+        name: "Text",
+        description: "Text",
+        children: [],
+        props: {
+          children: "A label",
+          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+          size: "md",
+          weight: "normal",
+          style: {
+            lineHeight: "110%",
+            letterSpacing: "0px",
+            width: "auto",
+            height: "auto",
+          },
+          ...(props.props || {}),
+        },
+        blockDroppingChildrenInside: true,
+      },
+    ],
   };
 };

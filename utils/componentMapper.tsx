@@ -984,7 +984,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["switch", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

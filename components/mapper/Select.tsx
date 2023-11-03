@@ -2,7 +2,6 @@ import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Loader, Select as MantineSelect, SelectProps } from "@mantine/core";
 import get from "lodash.get";
-import merge from "lodash.merge";
 import { memo } from "react";
 import cloneDeep from "lodash.clonedeep";
 
@@ -25,7 +24,6 @@ const SelectComponent = ({
     dataPath,
     triggers,
     loading,
-    styles,
     ...componentProps
   } = component.props as any;
 
@@ -49,7 +47,6 @@ const SelectComponent = ({
 
   return (
     <MantineSelect
-      styles={merge({ label: { width: "100%" } }, styles)}
       {...props}
       {...componentProps}
       {...triggers}
@@ -62,6 +59,7 @@ const SelectComponent = ({
         };
       })}
       rightSection={loading ? <Loader size="xs" /> : null}
+      label={undefined}
     />
   );
 };

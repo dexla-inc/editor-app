@@ -53,6 +53,7 @@ const RadioComponent = ({
       {...componentProps}
       {...otherTriggers}
       value={value}
+      label={undefined}
     >
       <Group mt="xs">
         {component.children && component.children.length > 0

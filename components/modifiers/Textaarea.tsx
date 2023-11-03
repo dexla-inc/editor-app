@@ -1,13 +1,9 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
-import {
-  debouncedTreeComponentPropsUpdate,
-  debouncedTreeUpdate,
-} from "@/utils/editor";
+import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Flex, Select, Stack, Switch, Text, TextInput } from "@mantine/core";
+import { Stack, Switch, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTextPlus } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
@@ -17,15 +13,11 @@ export const icon = IconTextPlus;
 export const label = "Textaarea";
 
 export const defaultTextareaValues = {
-  value: "New Text",
+  placeholder: "Textarea",
   size: "md",
-  weight: "normal",
-  color: "Black.6",
-  lineHeight: "",
-  letterSpacing: "",
-  align: "left",
   hideIfDataIsEmpty: false,
   autosize: false,
+  withAsterisk: false,
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
@@ -36,24 +28,17 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   useEffect(() => {
     if (selectedComponent?.id) {
       const data = pick(selectedComponent.props!, [
-        "children",
+        "placeholder",
         "style",
-        "color",
         "size",
-        "weight",
-        "hideIfDataIsEmpty",
+        "withAsterisk",
       ]);
 
       form.setValues({
-        value: data.children ?? defaultTextareaValues.value,
-        color: data.color ?? defaultTextareaValues.color,
+        placeholder: data.placeholder ?? defaultTextareaValues.placeholder,
         size: data.size ?? defaultTextareaValues.size,
-        weight: data.weight ?? defaultTextareaValues.weight,
-        align: data.style.textAlign ?? defaultTextareaValues.align,
         autosize: data.style.autosize ?? defaultTextareaValues.autosize,
-        hideIfDataIsEmpty:
-          data.hideIfDataIsEmpty ?? defaultTextareaValues.hideIfDataIsEmpty,
-        ...data.style,
+        withAsterisk: data.withAsterisk ?? defaultTextareaValues.withAsterisk,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
@@ -64,31 +49,12 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     <form>
       <Stack spacing="xs">
         <TextInput
-          label="Label"
-          size="xs"
-          {...form.getInputProps("label")}
-          onChange={(e) => {
-            form.setFieldValue("label", e.target.value);
-            debouncedTreeComponentPropsUpdate("label", e.target.value);
-          }}
-        />
-        <TextInput
           label="Placeholder"
           size="xs"
           {...form.getInputProps("placeholder")}
           onChange={(e) => {
             form.setFieldValue("placeholder", e.target.value);
             debouncedTreeComponentPropsUpdate("placeholder", e.target.value);
-          }}
-        />
-        <Select
-          label="Type"
-          size="xs"
-          data={INPUT_TYPES_DATA}
-          {...form.getInputProps("type")}
-          onChange={(value) => {
-            form.setFieldValue("type", value as string);
-            debouncedTreeComponentPropsUpdate("type", value as string);
           }}
         />
         <TextInput
@@ -118,33 +84,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             );
           }}
         />
-        <Flex gap={3}>
-          <SizeSelector
-            label="Label Spacing"
-            {...form.getInputProps("labelSpacing")}
-            onChange={(value) => {
-              form.setFieldValue("labelSpacing", value as string);
-              debouncedTreeComponentPropsUpdate("labelProps", {
-                mb: value as string,
-              });
-            }}
-          />
-          <Select
-            label="Label Weight"
-            size="xs"
-            data={[
-              { label: "Normal", value: "normal" },
-              { label: "Bold", value: "bold" },
-            ]}
-            {...form.getInputProps("labelWeight")}
-            onChange={(value) => {
-              form.setFieldValue("labelWeight", value as string);
-              debouncedTreeUpdate(selectedComponent?.id as string, {
-                styles: { label: { fontWeight: value } },
-              });
-            }}
-          />
-        </Flex>
         <Stack spacing={2}>
           <Text size="xs" fw={500}>
             Autosize

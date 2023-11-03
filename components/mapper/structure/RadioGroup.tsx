@@ -2,190 +2,221 @@ import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 import { defaultTheme } from "@/components/IFrame";
 import { px } from "@mantine/core";
+import { defaultLayoutValues } from "@/components/modifiers/Layout";
 
 export const jsonStructure = (props?: any): Component => {
   const radioGroupId = nanoid();
   const theme = props.theme ?? defaultTheme;
 
   return {
-    id: radioGroupId,
-    name: "Radio",
-    description: "Radio Group",
+    id: nanoid(),
+    name: "Container",
+    description: "Container",
     props: {
-      name: radioGroupId,
-      label: "Select a radio",
       style: {
+        ...defaultLayoutValues,
         width: "auto",
         height: "auto",
       },
-      ...(props.props || {}),
     },
     children: [
       {
         id: nanoid(),
-        name: "RadioItem",
-        description: "Radio Item",
+        name: "Text",
+        description: "Text",
+        children: [],
         props: {
-          value: "change-me-1",
+          children: "A label",
+          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+          size: "md",
           style: {
-            borderRadius: px(theme.radius.md),
+            width: "auto",
+            height: "auto",
           },
           ...(props.props || {}),
         },
-        children: [
-          {
-            id: nanoid(),
-            name: "Container",
-            description: "Container",
-            props: {
-              style: {
-                display: "flex",
-                flexWrap: "wrap",
-                flexDirection: "row",
-                rowGap: "10px",
-                columnGap: "20px",
-                alignItems: "center",
-                justifyContent: "center",
-                position: "relative",
-                padding: "15px",
-                width: "auto",
-                height: "auto",
-                minHeight: "30px",
-                paddingTop: "15px",
-                paddingBottom: "15px",
-                paddingLeft: "15px",
-                paddingRight: "15px",
-              },
-            },
-            children: [
-              {
-                id: nanoid(),
-                name: "Icon",
-                description: "Icon",
-                children: [],
-                props: {
-                  name: "IconCircle",
-                  width: "24px",
-                  style: {
-                    position: "relative",
-                    width: "26px",
-                    height: "26px",
-                  },
-                },
-                blockDroppingChildrenInside: true,
-                states: {
-                  checked: {
-                    name: "IconCircleDot",
-                  },
-                },
-              },
-              {
-                id: nanoid(),
-                name: "Text",
-                description: "Text",
-                children: [],
-                props: {
-                  children: "New Radio Item 1",
-                  color: "Black.6",
-                  size: "sm",
-                  style: {
-                    lineHeight: "110%",
-                    letterSpacing: "0px",
-                    width: "auto",
-                    height: "auto",
-                    marginRight: "0px",
-                    marginBottom: "0px",
-                  },
-                },
-                blockDroppingChildrenInside: true,
-              },
-            ],
-          },
-        ],
-        blockDroppingChildrenInside: false,
+        blockDroppingChildrenInside: true,
       },
       {
-        id: nanoid(),
-        name: "RadioItem",
-        description: "Radio Item",
+        id: radioGroupId,
+        name: "Radio",
+        description: "Radio Group",
         props: {
-          value: "change-me-2",
+          name: radioGroupId,
           style: {
-            borderRadius: px(theme.radius.md),
+            width: "auto",
+            height: "auto",
           },
           ...(props.props || {}),
         },
         children: [
           {
             id: nanoid(),
-            name: "Container",
-            description: "Container",
+            name: "RadioItem",
+            description: "Radio Item",
             props: {
+              value: "change-me-1",
               style: {
-                display: "flex",
-                flexWrap: "wrap",
-                flexDirection: "row",
-                rowGap: "10px",
-                columnGap: "20px",
-                alignItems: "center",
-                justifyContent: "center",
-                position: "relative",
-                padding: "15px",
-                width: "auto",
-                height: "auto",
-                minHeight: "30px",
-                paddingTop: "15px",
-                paddingBottom: "15px",
-                paddingLeft: "15px",
-                paddingRight: "15px",
+                borderRadius: px(theme.radius.md),
               },
+              ...(props.props || {}),
             },
             children: [
               {
                 id: nanoid(),
-                name: "Icon",
-                description: "Icon",
-                children: [],
+                name: "Container",
+                description: "Container",
                 props: {
-                  name: "IconCircle",
-                  width: "24px",
                   style: {
+                    display: "flex",
+                    flexWrap: "wrap",
+                    flexDirection: "row",
+                    rowGap: "10px",
+                    columnGap: "20px",
+                    alignItems: "center",
+                    justifyContent: "center",
                     position: "relative",
-                    width: "26px",
-                    height: "26px",
-                  },
-                },
-                blockDroppingChildrenInside: true,
-                states: {
-                  checked: {
-                    name: "IconCircleDot",
-                  },
-                },
-              },
-              {
-                id: nanoid(),
-                name: "Text",
-                description: "Text",
-                children: [],
-                props: {
-                  children: "New Radio Item 2",
-                  color: "Black.6",
-                  size: "sm",
-                  style: {
-                    lineHeight: "110%",
-                    letterSpacing: "0px",
+                    padding: "15px",
                     width: "auto",
                     height: "auto",
-                    marginRight: "0px",
-                    marginBottom: "0px",
+                    minHeight: "30px",
+                    paddingTop: "15px",
+                    paddingBottom: "15px",
+                    paddingLeft: "15px",
+                    paddingRight: "15px",
                   },
                 },
-                blockDroppingChildrenInside: true,
+                children: [
+                  {
+                    id: nanoid(),
+                    name: "Icon",
+                    description: "Icon",
+                    children: [],
+                    props: {
+                      name: "IconCircle",
+                      width: "24px",
+                      style: {
+                        position: "relative",
+                        width: "26px",
+                        height: "26px",
+                      },
+                    },
+                    blockDroppingChildrenInside: true,
+                    states: {
+                      checked: {
+                        name: "IconCircleDot",
+                      },
+                    },
+                  },
+                  {
+                    id: nanoid(),
+                    name: "Text",
+                    description: "Text",
+                    children: [],
+                    props: {
+                      children: "New Radio Item 1",
+                      color: "Black.6",
+                      size: "sm",
+                      style: {
+                        lineHeight: "110%",
+                        letterSpacing: "0px",
+                        width: "auto",
+                        height: "auto",
+                        marginRight: "0px",
+                        marginBottom: "0px",
+                      },
+                    },
+                    blockDroppingChildrenInside: true,
+                  },
+                ],
               },
             ],
+            blockDroppingChildrenInside: false,
+          },
+          {
+            id: nanoid(),
+            name: "RadioItem",
+            description: "Radio Item",
+            props: {
+              value: "change-me-2",
+              style: {
+                borderRadius: px(theme.radius.md),
+              },
+              ...(props.props || {}),
+            },
+            children: [
+              {
+                id: nanoid(),
+                name: "Container",
+                description: "Container",
+                props: {
+                  style: {
+                    display: "flex",
+                    flexWrap: "wrap",
+                    flexDirection: "row",
+                    rowGap: "10px",
+                    columnGap: "20px",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "relative",
+                    padding: "15px",
+                    width: "auto",
+                    height: "auto",
+                    minHeight: "30px",
+                    paddingTop: "15px",
+                    paddingBottom: "15px",
+                    paddingLeft: "15px",
+                    paddingRight: "15px",
+                  },
+                },
+                children: [
+                  {
+                    id: nanoid(),
+                    name: "Icon",
+                    description: "Icon",
+                    children: [],
+                    props: {
+                      name: "IconCircle",
+                      width: "24px",
+                      style: {
+                        position: "relative",
+                        width: "26px",
+                        height: "26px",
+                      },
+                    },
+                    blockDroppingChildrenInside: true,
+                    states: {
+                      checked: {
+                        name: "IconCircleDot",
+                      },
+                    },
+                  },
+                  {
+                    id: nanoid(),
+                    name: "Text",
+                    description: "Text",
+                    children: [],
+                    props: {
+                      children: "New Radio Item 2",
+                      color: "Black.6",
+                      size: "sm",
+                      style: {
+                        lineHeight: "110%",
+                        letterSpacing: "0px",
+                        width: "auto",
+                        height: "auto",
+                        marginRight: "0px",
+                        marginBottom: "0px",
+                      },
+                    },
+                    blockDroppingChildrenInside: true,
+                  },
+                ],
+              },
+            ],
+            blockDroppingChildrenInside: false,
           },
         ],
-        blockDroppingChildrenInside: false,
       },
     ],
   };
