@@ -22,7 +22,15 @@ import {
   IconAlignCenter,
   IconAlignLeft,
   IconAlignRight,
+  IconLetterCase,
+  IconLetterCaseLower,
+  IconLetterCaseUpper,
+  IconLetterN,
+  IconOverline,
+  IconStrikethrough,
   IconTextSize,
+  IconUnderline,
+  IconX,
 } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
@@ -39,6 +47,8 @@ export const defaultInputValues = {
   letterSpacing: "",
   align: "left",
   hideIfDataIsEmpty: false,
+  textDecoration: "none",
+  textTransform: "none",
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
@@ -97,29 +107,27 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             );
           }}
         />
-        <Group noWrap>
-          <SizeSelector
-            label="Size"
-            {...form.getInputProps("size")}
-            onChange={(value) => {
-              form.setFieldValue("size", value as string);
-              debouncedTreeComponentPropsUpdate("size", value);
-            }}
-          />
-          <Select
-            label="Weight"
-            size="xs"
-            data={[
-              { label: "Normal", value: "normal" },
-              { label: "Bold", value: "bold" },
-            ]}
-            {...form.getInputProps("weight")}
-            onChange={(value) => {
-              form.setFieldValue("weight", value as string);
-              debouncedTreeComponentPropsUpdate("weight", value);
-            }}
-          />
-        </Group>
+        <SizeSelector
+          label="Size"
+          {...form.getInputProps("size")}
+          onChange={(value) => {
+            form.setFieldValue("size", value as string);
+            debouncedTreeComponentPropsUpdate("size", value);
+          }}
+        />
+        <Select
+          label="Weight"
+          size="xs"
+          data={[
+            { label: "Normal", value: "normal" },
+            { label: "Bold", value: "bold" },
+          ]}
+          {...form.getInputProps("weight")}
+          onChange={(value) => {
+            form.setFieldValue("weight", value as string);
+            debouncedTreeComponentPropsUpdate("weight", value);
+          }}
+        />
         <Group noWrap>
           <UnitInput
             label="Line Height"
@@ -192,6 +200,126 @@ export const Modifier = withModifier(({ selectedComponent }) => {
               debouncedTreeUpdate(selectedComponent?.id as string, {
                 style: { textAlign: value as string },
               });
+            }}
+          />
+        </Stack>
+
+        <Stack spacing={2}>
+          <Text size="xs" fw={500}>
+            Text Transform
+          </Text>
+          <SegmentedControl
+            size="xs"
+            data={[
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="None"
+                    icon={<IconLetterN size={14} />}
+                  />
+                ),
+                value: "none",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Lowercase"
+                    icon={<IconLetterCaseLower size={14} />}
+                  />
+                ),
+                value: "lowercase",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Uppercase"
+                    icon={<IconLetterCaseUpper size={14} />}
+                  />
+                ),
+                value: "uppercase",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Capitalize"
+                    icon={<IconLetterCase size={14} />}
+                  />
+                ),
+                value: "capitalize",
+              },
+            ]}
+            styles={{
+              label: {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              },
+            }}
+            {...form.getInputProps("textTransform")}
+            onChange={(value) => {
+              form.setFieldValue("textTransform", value as string);
+              debouncedTreeComponentPropsUpdate("tt", value);
+            }}
+          />
+        </Stack>
+
+        <Stack spacing={2}>
+          <Text size="xs" fw={500}>
+            Decoration
+          </Text>
+          <SegmentedControl
+            size="xs"
+            data={[
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="None"
+                    icon={<IconX size={14} />}
+                  />
+                ),
+                value: "none",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Underline"
+                    icon={<IconUnderline size={14} />}
+                  />
+                ),
+                value: "underline",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Overline"
+                    icon={<IconOverline size={14} />}
+                  />
+                ),
+                value: "overline",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Strikethrough"
+                    icon={<IconStrikethrough size={14} />}
+                  />
+                ),
+                value: "line-through",
+              },
+            ]}
+            styles={{
+              label: {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              },
+            }}
+            {...form.getInputProps("textDecoration")}
+            onChange={(value) => {
+              form.setFieldValue("textDecoration", value as string);
+              debouncedTreeComponentPropsUpdate("td", value);
             }}
           />
         </Stack>
