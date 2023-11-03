@@ -201,10 +201,10 @@ export const DroppableDraggable = ({
 
   const borderColor = isPicking ? "orange" : "teal";
 
-  const baseShadow = `0 0 0 1px ${theme.colors[borderColor][6]}`;
+  const baseShadow = `0 0 0 2px ${theme.colors[borderColor][6]}`;
 
   const shadows = isHighlighted
-    ? { boxShadow: `0 0 0 1px ${theme.colors.orange[6]}` }
+    ? { boxShadow: `0 0 0 2px ${theme.colors.orange[6]}` }
     : isOver
     ? {
         boxShadow:
@@ -303,7 +303,9 @@ export const DroppableDraggable = ({
           zIndex: 80,
         },
         "&:hover": {
-          ...(!isPreviewMode ? { boxShadow: baseShadow } : {}),
+          ...(!isPreviewMode
+            ? { boxShadow: `0 0 0 1px ${theme.colors[borderColor][6]}` }
+            : {}),
         },
       }}
       onClick={(e) => {
