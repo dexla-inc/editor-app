@@ -1,19 +1,58 @@
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
+import { defaultTheme } from "@/components/IFrame";
+import { defaultLayoutValues } from "@/components/modifiers/Layout";
 
 export const jsonStructure = (props?: any): Component => {
+  const theme = props.theme ?? defaultTheme;
+
   return {
     id: nanoid(),
-    name: "Checkbox",
-    description: "Checkbox",
+    name: "Container",
+    description: "Container",
     props: {
-      label: "Checkbox Label",
       style: {
-        width: "100%",
+        ...defaultLayoutValues,
+        width: "auto",
         height: "auto",
+        flexDirection: "row",
+        columnGap: "10px",
       },
-      ...(props.props || {}),
     },
-    blockDroppingChildrenInside: true,
+    children: [
+      {
+        id: nanoid(),
+        name: "Checkbox",
+        description: "Checkbox",
+        props: {
+          style: {
+            width: "auto",
+            height: "auto",
+          },
+          ...(props.props || {}),
+        },
+        blockDroppingChildrenInside: true,
+      },
+      {
+        id: nanoid(),
+        name: "Text",
+        description: "Text",
+        children: [],
+        props: {
+          children: "A label",
+          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+          size: "md",
+          weight: "normal",
+          style: {
+            lineHeight: "110%",
+            letterSpacing: "0px",
+            width: "auto",
+            height: "auto",
+          },
+          ...(props.props || {}),
+        },
+        blockDroppingChildrenInside: true,
+      },
+    ],
   };
 };

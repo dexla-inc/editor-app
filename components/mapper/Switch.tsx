@@ -9,15 +9,9 @@ type Props = {
 } & SwitchProps;
 
 const SwitchComponent = ({ renderTree, component, ...props }: Props) => {
-  const { label, showLabel, ...componentProps } = component.props as any;
+  const { label, ...componentProps } = component.props as any;
 
-  return (
-    <MantineSwitch
-      {...props}
-      {...componentProps}
-      label={showLabel ? label : undefined}
-    />
-  );
+  return <MantineSwitch {...props} {...componentProps} label={undefined} />;
 };
 
 export const Switch = memo(SwitchComponent, isSame);

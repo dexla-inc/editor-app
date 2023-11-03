@@ -42,6 +42,7 @@ const TextareaComponent = ({ renderTree, component, ...props }: Props) => {
         triggers?.onChange ? debouncedOnChange(e) : undefined;
       }}
       rightSection={loading ? <Loader size="xs" /> : null}
+      label={undefined}
     >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))

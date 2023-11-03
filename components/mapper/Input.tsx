@@ -49,11 +49,8 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
           min={0}
           value={props.value || value || undefined}
           onChange={triggers?.onChange ? debouncedOnChange : undefined}
-        >
-          {component.children && component.children.length > 0
-            ? component.children?.map((child) => renderTree(child))
-            : children}
-        </MantineNumberInput>
+          label={undefined}
+        />
       ) : (
         <MantineInput
           id={component.id}
@@ -83,11 +80,8 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
             triggers?.onChange ? debouncedOnChange(e) : undefined;
           }}
           rightSection={loading ? <Loader size="xs" /> : null}
-        >
-          {component.children && component.children.length > 0
-            ? component.children?.map((child) => renderTree(child))
-            : children}
-        </MantineInput>
+          label={undefined}
+        />
       )}
     </>
   );

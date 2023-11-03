@@ -29,7 +29,6 @@ export type Modifiers =
   | "popOver"
   | "navLink"
   | "accordionItem"
-  | "switch"
   | "accordion"
   | "avatar"
   | "textarea"
@@ -278,10 +277,6 @@ export const requiredModifiers: RequiredModifiers = {
   },
   accordionItem: {
     value: "first",
-  },
-  switch: {
-    label: "first",
-    showLabel: true,
   },
   accordion: { variant: "default" },
   avatar: {
