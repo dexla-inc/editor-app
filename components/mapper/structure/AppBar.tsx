@@ -1,5 +1,4 @@
 import { defaultTheme } from "@/components/IFrame";
-import { defaultBorderValues } from "@/components/modifiers/Border";
 import { Component } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
@@ -14,7 +13,6 @@ export const jsonStructure = (props?: any): Component => {
     fixedPosition: { position: "top", target: "content-wrapper" },
     props: {
       style: {
-        ...defaultBorderValues,
         borderBottomWidth: `1px`,
         borderBottomStyle: `solid`,
         borderBottomColor: theme.colors.Border ? "Border.6" : "gray.3",

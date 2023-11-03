@@ -21,6 +21,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
+import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
 
 export const icon = IconBorderStyle;
@@ -50,21 +51,22 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     style?.borderTopLeftRadius === style?.borderBottomLeftRadius &&
     style?.borderTopLeftRadius === style?.borderBottomRightRadius;
 
-  const form = useForm({
+  const form = useForm<Record<string, any>>({
     initialValues: {
       showBorder: "all",
       showRadius: isBorderRadiusAllSame ? "radius-all" : "radius-sides",
+      currentWidth: defaultBorderValues.borderWidth,
       ...defaultBorderValues,
     },
   });
 
   useEffect(() => {
     if (selectedComponent?.id) {
-      let { style = {} } = selectedComponent.props!;
+      const { style } = pick(selectedComponent.props!, ["style"]);
 
       form.setValues({
         // @ts-ignore
-        borderStyle: style.borderTopStyle ?? defaultBorderValues.borderTopStyle,
+        borderStyle: style.borderStyle ?? defaultBorderValues.borderStyle,
         borderTopStyle:
           style.borderTopStyle ?? defaultBorderValues.borderTopStyle,
         borderRightStyle:
@@ -100,7 +102,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         borderBottomRightRadius:
           style.borderBottomRightRadius ??
           defaultBorderValues.borderBottomRightRadius,
-        borderWidth: style.borderTopWidth ?? defaultBorderValues.borderTopWidth,
+        borderWidth: style.borderWidth ?? defaultBorderValues.borderWidth,
         borderTopWidth:
           style.borderTopWidth ?? defaultBorderValues.borderTopWidth,
         borderRightWidth:
@@ -114,6 +116,41 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
+
+  const changeBorderStyle = (value: string) => {
+    let borderStyle = {};
+    if (form.values.showBorder === "all") {
+      borderStyle = {
+        borderStyle: value,
+        borderTopStyle: value,
+        borderRightStyle: value,
+        borderBottomStyle: value,
+        borderLeftStyle: value,
+      };
+      form.setFieldValue("borderStyle", value);
+      form.setFieldValue("borderTopStyle", value);
+      form.setFieldValue("borderRightStyle", value);
+      form.setFieldValue("borderBottomStyle", value);
+      form.setFieldValue("borderLeftStyle", value);
+    } else {
+      const key = `border${startCase(form.values.showBorder)}Style`;
+      form.setFieldValue("borderStyle", value);
+      form.setFieldValue(key, value);
+      borderStyle = {
+        [key]: value,
+      };
+    }
+    debouncedTreeUpdate(selectedComponent?.id as string, {
+      style: borderStyle,
+    });
+  };
+
+  const getBorderProp = (val: string) => {
+    if (form.values.showBorder === "all") {
+      return `border${startCase(val)}`;
+    }
+    return `border${startCase(form.values.showBorder)}${val}`;
+  };
 
   return (
     <form key={selectedComponent?.id}>
@@ -178,19 +215,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           {...form.getInputProps("showBorder")}
           onChange={(value) => {
             form.setFieldValue("showBorder", value as string);
-
-            if (value !== "all") {
-              form.setFieldValue(
-                "borderStyle",
-                // @ts-ignore
-                form.values[`border${startCase(value)}Style`],
-              );
-              form.setFieldValue(
-                "borderWidth",
-                // @ts-ignore
-                form.values[`border${startCase(value)}Width`],
-              );
-            }
           }}
         />
         <Stack spacing={2}>
@@ -243,42 +267,16 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                 height: "100%",
               },
             }}
-            {...form.getInputProps("borderStyle")}
-            onChange={(value) => {
-              let borderStyle = {};
-              if (form.values.showBorder === "all") {
-                borderStyle = {
-                  borderStyle: value,
-                  borderTopStyle: value,
-                  borderRightStyle: value,
-                  borderBottomStyle: value,
-                  borderLeftStyle: value,
-                };
-                form.setFieldValue("borderStyle", value);
-                form.setFieldValue("borderTopStyle", value);
-                form.setFieldValue("borderRightStyle", value);
-                form.setFieldValue("borderBottomStyle", value);
-                form.setFieldValue("borderLeftStyle", value);
-              } else {
-                const key = `border${startCase(form.values.showBorder)}Style`;
-                form.setFieldValue("borderStyle", value);
-                form.setFieldValue(key, value);
-                borderStyle = {
-                  [key]: value,
-                };
-              }
-
-              debouncedTreeUpdate(selectedComponent?.id as string, {
-                style: borderStyle,
-              });
-            }}
+            {...form.getInputProps(getBorderProp("Style"))}
+            onChange={(value) => changeBorderStyle(value)}
           />
         </Stack>
         <UnitInput
           label="Size"
-          {...form.getInputProps("borderWidth")}
+          {...form.getInputProps(getBorderProp("Width"))}
           onChange={(value) => {
             let borderWidth = {};
+
             if (form.values.showBorder === "all") {
               borderWidth = {
                 borderWidth: value,
@@ -308,11 +306,11 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         />
         <ThemeColorSelector
           label="Color"
-          {...form.getInputProps("borderColor")}
+          {...form.getInputProps(getBorderProp("Color"))}
           onChange={(_value: string) => {
             const [color, index] = _value.split(".");
             // @ts-ignore
-            const value = theme.colors[color][index];
+            const value = index ? theme.colors[color][index] : color;
             let borderColor = {};
             if (form.values.showBorder === "all") {
               borderColor = {
