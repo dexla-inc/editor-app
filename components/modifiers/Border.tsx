@@ -39,7 +39,7 @@ export const getThemeColor = (theme: any, hex: string) => {
     }
 
     return themeColor;
-  }, "transparent");
+  }, "Black.9");
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
