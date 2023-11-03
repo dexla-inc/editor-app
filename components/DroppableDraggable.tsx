@@ -290,14 +290,14 @@ export const DroppableDraggable = ({
   );
 
   const ref = useRef<HTMLDivElement>(null!);
+
   useEffect(() => {
-    if (typeof window !== undefined) {
-      const el = ref.current;
-      const width = window.getComputedStyle(el).width.match(/^\d+|^.+\D$/)![0];
+    if (ref.current && selectedComponentId === id) {
+      const width = ref.current?.children[1]?.getBoundingClientRect().width;
       setDefaultComponentWidth(Number(width));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [selectedComponentId, id]);
 
   return (
     <Box

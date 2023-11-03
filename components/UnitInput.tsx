@@ -32,7 +32,6 @@ export const UnitInput = ({
   const defaultComponentWidth = useEditorStore(
     (state) => state.defaultComponentWidth,
   );
-  console.log(defaultComponentWidth);
 
   const options = customOptions ?? [
     { value: "px", label: "PX" },
@@ -88,10 +87,14 @@ export const UnitInput = ({
           setValue(100);
         } else if (val === "px") {
           if (value === undefined) {
-            setValue(0 as number);
+            setValue(defaultComponentWidth);
           } else {
             setValue(
-              value === "auto" ? (modifierType === "size" ? 100 : 0) : value,
+              value === "auto"
+                ? modifierType === "size"
+                  ? defaultComponentWidth
+                  : 0
+                : value,
             );
           }
         } else if (value === "auto" || val === "auto") {
