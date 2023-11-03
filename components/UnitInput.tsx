@@ -1,3 +1,4 @@
+import { useEditorStore } from "@/stores/editor";
 import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
 import {
   NumberInput,
@@ -28,6 +29,10 @@ export const UnitInput = ({
   ...props
 }: Props & Omit<NumberInputProps, "onChange">) => {
   const theme = useMantineTheme();
+  const defaultComponentWidth = useEditorStore(
+    (state) => state.defaultComponentWidth,
+  );
+  console.log(defaultComponentWidth);
 
   const options = customOptions ?? [
     { value: "px", label: "PX" },

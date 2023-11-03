@@ -38,6 +38,7 @@ import {
   PropsWithChildren,
   useEffect,
   useMemo,
+  useRef,
 } from "react";
 
 type Props = {
@@ -284,8 +285,23 @@ export const DroppableDraggable = ({
       : {},
   });
 
+  const setDefaultComponentWidth = useEditorStore(
+    (state) => state.setDefaultComponentWidth,
+  );
+
+  const ref = useRef<HTMLDivElement>(null!);
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      const el = ref.current;
+      const width = window.getComputedStyle(el).width.match(/^\d+|^.+\D$/)![0];
+      setDefaultComponentWidth(Number(width));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponentId]);
+
   return (
     <Box
+      ref={ref}
       id={id}
       pos="relative"
       sx={{

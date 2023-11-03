@@ -82,7 +82,9 @@ export type EditorState = {
   copiedAction?: Action[];
   sequentialTo?: string;
   openAction?: OpenAction;
+  defaultComponentWidth?: number;
 
+  setDefaultComponentWidth: (defaultComponentWidth: number) => void;
   setOpenAction: (openAction: OpenAction) => void;
   setSequentialTo: (sequentialTo?: string) => void;
   setPickingComponentToBindTo: (
@@ -184,6 +186,12 @@ export const useEditorStore = create<EditorState>()(
             { onMountActionsRan: [] },
             false,
             "editor/resetOnMountActionsRan",
+          ),
+        setDefaultComponentWidth: (defaultComponentWidth) =>
+          set(
+            { defaultComponentWidth },
+            false,
+            "editor/setDefaultComponentWidth",
           ),
         setOpenAction: (openAction) =>
           set({ openAction }, false, "editor/setOpenAction"),
