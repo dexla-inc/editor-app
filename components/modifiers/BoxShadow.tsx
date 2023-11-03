@@ -32,7 +32,8 @@ export const Modifier = withModifier(({ selectedComponent }) => {
       let { style = {} } = selectedComponent.props!;
 
       // Parsing existing boxShadow style into separate parts
-      const boxShadow = style.boxShadow ?? defaultBoxShadowValues;
+      const boxShadow =
+        style.boxShadow ?? Object.values(defaultBoxShadowValues).join(" ");
 
       const values = boxShadow.split(/\s+/);
 
