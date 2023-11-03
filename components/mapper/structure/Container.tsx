@@ -1,4 +1,3 @@
-import { defaultBorderValues } from "@/components/modifiers/Border";
 import { defaultLayoutValues } from "@/components/modifiers/Layout";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
@@ -14,7 +13,7 @@ export const jsonStructure = (props?: any): Component => {
       ...(rest || {}),
       style: {
         ...defaultLayoutValues,
-        ...defaultBorderValues,
+        // ...defaultBorderValues,
         width: "100%",
         height: "auto",
         minHeight: "20px",

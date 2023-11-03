@@ -1,5 +1,4 @@
 import { defaultTheme } from "@/components/IFrame";
-import { defaultBorderValues } from "@/components/modifiers/Border";
 import { Component } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
@@ -38,7 +37,6 @@ export const jsonStructure = (props?: any): Component => {
       style: {
         width: "100%",
         height: "auto",
-        ...defaultBorderValues,
       },
       ...(props.props || {}),
     },
