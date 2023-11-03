@@ -1,15 +1,29 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { UnitInput } from "@/components/UnitInput";
+import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import {
   debouncedTreeComponentPropsUpdate,
   debouncedTreeUpdate,
 } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Checkbox, Group, Select, Stack, Textarea } from "@mantine/core";
+import {
+  Checkbox,
+  Group,
+  SegmentedControl,
+  Select,
+  Stack,
+  Text,
+  Textarea,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconTextSize } from "@tabler/icons-react";
+import {
+  IconAlignCenter,
+  IconAlignLeft,
+  IconAlignRight,
+  IconTextSize,
+} from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
 
@@ -129,32 +143,66 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             }}
           />
         </Group>
-        <Group noWrap>
-          <Select
-            label="Align"
+        <Stack spacing={2}>
+          <Text size="xs" fw={500}>
+            Alignment
+          </Text>
+          <SegmentedControl
             size="xs"
             data={[
-              { label: "Left", value: "left" },
-              { label: "Center", value: "center" },
-              { label: "Right", value: "right" },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Left"
+                    icon={<IconAlignLeft size={14} />}
+                  />
+                ),
+                value: "left",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Center"
+                    icon={<IconAlignCenter size={14} />}
+                  />
+                ),
+                value: "center",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Right"
+                    icon={<IconAlignRight size={14} />}
+                  />
+                ),
+                value: "right",
+              },
             ]}
+            styles={{
+              label: {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              },
+            }}
             {...form.getInputProps("align")}
             onChange={(value) => {
               form.setFieldValue("align", value as string);
               debouncedTreeUpdate(selectedComponent?.id as string, {
-                style: { textAlign: value },
+                style: { textAlign: value as string },
               });
             }}
           />
-          <ThemeColorSelector
-            label="Color"
-            {...form.getInputProps("color")}
-            onChange={(value: string) => {
-              form.setFieldValue("color", value);
-              debouncedTreeComponentPropsUpdate("color", value);
-            }}
-          />
-        </Group>
+        </Stack>
+        <ThemeColorSelector
+          label="Color"
+          {...form.getInputProps("color")}
+          onChange={(value: string) => {
+            form.setFieldValue("color", value);
+            debouncedTreeComponentPropsUpdate("color", value);
+          }}
+        />
       </Stack>
     </form>
   );
