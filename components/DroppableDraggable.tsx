@@ -40,6 +40,7 @@ import {
   useMemo,
   useRef,
 } from "react";
+import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 
 type Props = {
   id: string;
@@ -111,6 +112,7 @@ export const DroppableDraggable = ({
   const highlightedComponentId = useEditorStore(
     (state) => state.highlightedComponentId,
   );
+  const componentContextMenu = useComponentContextMenu();
 
   const actions: Action[] = component.actions ?? [];
   const onMountAction: Action | undefined = actions.find(
@@ -337,6 +339,9 @@ export const DroppableDraggable = ({
         }
       }}
       {...filteredProps}
+      {...(isPreviewMode
+        ? {}
+        : { onContextMenu: componentContextMenu(component) })}
       {...(isPreviewMode ? {} : droppable)}
     >
       {/* @ts-ignore */}
