@@ -17,6 +17,8 @@ import {
 } from "@/utils/editor";
 import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
+import { NAVBAR_WIDTH } from "@/utils/config";
+import { useUserConfigStore } from "@/stores/userConfig";
 
 const determinePasteTarget = (selectedId: string | undefined) => {
   if (!selectedId) return "content-wrapper";
@@ -33,6 +35,8 @@ export const useComponentContextMenu = () => {
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
+  const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
+  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
   const wrapIn = useCallback(
     (component: Component, componentName: string) => {
@@ -112,32 +116,39 @@ export const useComponentContextMenu = () => {
   );
 
   return (component: Component) =>
-    showContextMenu([
+    showContextMenu(
+      [
+        {
+          key: "wrapIn",
+          icon: <IconBoxMargin size={16} />,
+          title: "Wrap in",
+          items: [
+            {
+              key: "container",
+              icon: <IconContainer size={16} />,
+              title: "Container",
+              onClick: () => wrapIn(component, "Container"),
+            },
+          ],
+        },
+        {
+          key: "copy",
+          icon: <IconCopy size={16} />,
+          title: "Duplicate",
+          onClick: () => duplicateComponent(component),
+        },
+        {
+          key: "delete",
+          icon: <IconTrash size={16} />,
+          color: "red",
+          title: "Delete",
+          onClick: () => deleteComponent(component),
+        },
+      ],
       {
-        key: "wrapIn",
-        icon: <IconBoxMargin size={16} />,
-        title: "Wrap in",
-        items: [
-          {
-            key: "container",
-            icon: <IconContainer size={16} />,
-            title: "Container",
-            onClick: () => wrapIn(component, "Container"),
-          },
-        ],
+        styles: {
+          ...(isTabPinned && { root: { marginLeft: NAVBAR_WIDTH } }),
+        },
       },
-      {
-        key: "copy",
-        icon: <IconCopy size={16} />,
-        title: "Duplicate",
-        onClick: () => duplicateComponent(component),
-      },
-      {
-        key: "delete",
-        icon: <IconTrash size={16} />,
-        color: "red",
-        title: "Delete",
-        onClick: () => deleteComponent(component),
-      },
-    ]);
+    );
 };
