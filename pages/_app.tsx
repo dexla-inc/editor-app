@@ -22,6 +22,7 @@ import Script from "next/script";
 import { Fragment, PropsWithChildren, useEffect, useState } from "react";
 import TagManager from "react-gtm-module";
 import { ReactFlowProvider } from "reactflow";
+import { ContextMenuProvider } from "mantine-contextmenu";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -126,90 +127,92 @@ export default function App(props: AppProps) {
       theme={theme}
       emotionCache={cache}
     >
-      <AuthProvider isLive={isLive}>
-        <Head>
-          <title>Editor</title>
-          <meta name="description" content="Dexla Editor" />
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, maximum-scale=1"
-          />
-          <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        </Head>
-        {/* Google Tag Manager */}
-        {loadTagManager && (
-          <Script id="google-analytics" strategy="afterInteractive">
-            {`
+      <ContextMenuProvider>
+        <AuthProvider isLive={isLive}>
+          <Head>
+            <title>Editor</title>
+            <meta name="description" content="Dexla Editor" />
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1, maximum-scale=1"
+            />
+            <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+          </Head>
+          {/* Google Tag Manager */}
+          {loadTagManager && (
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
             })(window,document,'script','dataLayer','${GTM_ID}');
         `}
-          </Script>
-        )}
-        {/* End Google Tag Manager */}
-        <body>
-          {loadTagManager && (
-            <noscript>
-              <iframe
-                src={`https://www.googletagmanager.com/ns.html?id='${GTM_ID}'`}
-                height="0"
-                width="0"
-                style={{ display: "none", visibility: "hidden" }}
-              ></iframe>
-            </noscript>
+            </Script>
           )}
-          <main className={inter.variable}>
-            <QueryClientProvider client={queryClient}>
-              <Hydrate state={pageProps.dehydratedState}>
-                <Notifications />
-                <Global
-                  styles={{
-                    "*, *::before, *::after": {
-                      boxSizing: "border-box",
-                    },
-                    body: {
-                      margin: 0,
-                      padding: 0,
-                      ...theme.fn.fontStyles(),
-                      lineHeight: theme.lineHeight,
-                      maxHeight: "100vh",
-                      minHeight: "100vh",
-                      background: "white",
-                      // For WebKit browsers (e.g., Chrome, Safari)
-                      "::-webkit-scrollbar": {
-                        width: isLive ? "0px" : "8px",
-                        height: isLive && "0px",
+          {/* End Google Tag Manager */}
+          <body>
+            {loadTagManager && (
+              <noscript>
+                <iframe
+                  src={`https://www.googletagmanager.com/ns.html?id='${GTM_ID}'`}
+                  height="0"
+                  width="0"
+                  style={{ display: "none", visibility: "hidden" }}
+                ></iframe>
+              </noscript>
+            )}
+            <main className={inter.variable}>
+              <QueryClientProvider client={queryClient}>
+                <Hydrate state={pageProps.dehydratedState}>
+                  <Notifications />
+                  <Global
+                    styles={{
+                      "*, *::before, *::after": {
+                        boxSizing: "border-box",
                       },
-                      "::-webkit-scrollbar-thumb": {
-                        backgroundColor: !isLive && "#888",
-                        borderRadius: !isLive && "10px",
+                      body: {
+                        margin: 0,
+                        padding: 0,
+                        ...theme.fn.fontStyles(),
+                        lineHeight: theme.lineHeight,
+                        maxHeight: "100vh",
+                        minHeight: "100vh",
+                        background: "white",
+                        // For WebKit browsers (e.g., Chrome, Safari)
+                        "::-webkit-scrollbar": {
+                          width: isLive ? "0px" : "8px",
+                          height: isLive && "0px",
+                        },
+                        "::-webkit-scrollbar-thumb": {
+                          backgroundColor: !isLive && "#888",
+                          borderRadius: !isLive && "10px",
+                        },
+
+                        // For Firefox
+                        scrollbarWidth: isLive ? "none" : "thin",
+                        scrollbarColor: !isLive && "#888 transparent",
+
+                        // For IE and Edge
+                        msOverflowStyle: isLive
+                          ? "none"
+                          : "-ms-autohiding-scrollbar",
                       },
 
-                      // For Firefox
-                      scrollbarWidth: isLive ? "none" : "thin",
-                      scrollbarColor: !isLive && "#888 transparent",
-
-                      // For IE and Edge
-                      msOverflowStyle: isLive
-                        ? "none"
-                        : "-ms-autohiding-scrollbar",
-                    },
-
-                    html: {
-                      maxHeight: "-webkit-fill-available",
-                    },
-                  }}
-                />
-                <ReactFlowProvider>
-                  <Component {...pageProps} />
-                </ReactFlowProvider>
-              </Hydrate>
-            </QueryClientProvider>
-          </main>
-        </body>
-      </AuthProvider>
+                      html: {
+                        maxHeight: "-webkit-fill-available",
+                      },
+                    }}
+                  />
+                  <ReactFlowProvider>
+                    <Component {...pageProps} />
+                  </ReactFlowProvider>
+                </Hydrate>
+              </QueryClientProvider>
+            </main>
+          </body>
+        </AuthProvider>
+      </ContextMenuProvider>
     </MantineProvider>
   );
 }
