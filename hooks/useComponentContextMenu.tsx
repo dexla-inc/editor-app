@@ -1,5 +1,6 @@
 import {
   IconBoxMargin,
+  IconClipboardCopy,
   IconContainer,
   IconCopy,
   IconTrash,
@@ -10,6 +11,7 @@ import cloneDeep from "lodash.clonedeep";
 import {
   addComponent,
   Component,
+  getComponentById,
   getComponentIndex,
   getComponentParent,
   removeComponent,
@@ -33,6 +35,9 @@ export const useComponentContextMenu = () => {
   const editorTheme = useEditorStore((state) => state.theme);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const clearSelection = useEditorStore((state) => state.clearSelection);
+  const setCopiedComponent = useEditorStore(
+    (state) => state.setCopiedComponent,
+  );
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
@@ -115,6 +120,13 @@ export const useComponentContextMenu = () => {
     [editorTree, setSelectedComponentId, setEditorTree],
   );
 
+  const copyComponent = useCallback(
+    (component: Component) => {
+      setCopiedComponent(getComponentById(editorTree.root, component.id!)!);
+    },
+    [setCopiedComponent, editorTree.root],
+  );
+
   return {
     forceDestroyContextMenu: destroy,
     componentContextMenu: (component: Component) =>
@@ -134,10 +146,16 @@ export const useComponentContextMenu = () => {
             ],
           },
           {
-            key: "copy",
+            key: "duplicate",
             icon: <IconCopy size={16} />,
             title: "Duplicate",
             onClick: () => duplicateComponent(component),
+          },
+          {
+            key: "copy",
+            icon: <IconClipboardCopy size={16} />,
+            title: "Copy",
+            onClick: () => copyComponent(component),
           },
           {
             key: "delete",
