@@ -1,3 +1,4 @@
+import { useEditorStore } from "@/stores/editor";
 import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
 import {
   NumberInput,
@@ -16,6 +17,7 @@ type Props = {
   onChange?: (value: string) => void;
   disabledUnits?: Unit[];
   options?: SelectItem[];
+  modifierType?: string;
 };
 
 export const UnitInput = ({
@@ -23,9 +25,13 @@ export const UnitInput = ({
   onChange,
   disabledUnits,
   options: customOptions,
+  modifierType,
   ...props
 }: Props & Omit<NumberInputProps, "onChange">) => {
   const theme = useMantineTheme();
+  const defaultComponentWidth = useEditorStore(
+    (state) => state.defaultComponentWidth,
+  );
 
   const options = customOptions ?? [
     { value: "px", label: "PX" },
@@ -61,8 +67,8 @@ export const UnitInput = ({
   const handleChange = (val: string, isTextInput: boolean = false) => {
     if (!isNaN(Number(val))) {
       if (unit === "auto" && val !== "") {
-        setUnit("px");
         setValue(Number(val));
+        setUnit("px");
       } else {
         isTextInput ? setTextValue(val) : setValue(Number(val));
         setUnit((unit ?? splitUnit) as Unit);
@@ -81,9 +87,15 @@ export const UnitInput = ({
           setValue(100);
         } else if (val === "px") {
           if (value === undefined) {
-            setValue(0 as number);
+            setValue(modifierType === "size" ? defaultComponentWidth : 0);
           } else {
-            setValue(value === "auto" ? 0 : value);
+            setValue(
+              value === "auto"
+                ? modifierType === "size"
+                  ? defaultComponentWidth
+                  : 0
+                : value,
+            );
           }
         } else if (value === "auto" || val === "auto") {
           setValue("auto");

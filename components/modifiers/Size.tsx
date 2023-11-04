@@ -29,6 +29,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
       <Stack spacing="xs">
         <Group noWrap>
           <UnitInput
+            modifierType="size"
             label="Width"
             {...form.getInputProps("width")}
             onChange={(value) => {
@@ -39,6 +40,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             }}
           />
           <UnitInput
+            modifierType="size"
             label="Height"
             {...form.getInputProps("height")}
             onChange={(value) => {
@@ -52,6 +54,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         <Group noWrap>
           <UnitInput
             label="Min Width"
+            modifierType="size"
             {...form.getInputProps("minWidth")}
             onChange={(value) => {
               form.setFieldValue("minWidth", value as string);
@@ -62,6 +65,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           />
           <UnitInput
             label="Min Height"
+            modifierType="size"
             {...form.getInputProps("minHeight")}
             onChange={(value) => {
               form.setFieldValue("minHeight", value as string);
@@ -73,6 +77,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         </Group>
         <Group noWrap>
           <UnitInput
+            modifierType="size"
             label="Max Width"
             {...form.getInputProps("maxWidth")}
             onChange={(value) => {
@@ -84,6 +89,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           />
           <UnitInput
             label="Max Height"
+            modifierType="size"
             {...form.getInputProps("maxHeight")}
             onChange={(value) => {
               form.setFieldValue("maxHeight", value as string);

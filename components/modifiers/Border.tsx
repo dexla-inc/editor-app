@@ -55,7 +55,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     initialValues: {
       showBorder: "all",
       showRadius: isBorderRadiusAllSame ? "radius-all" : "radius-sides",
-      currentWidth: defaultBorderValues.borderWidth,
       ...defaultBorderValues,
     },
   });
@@ -213,9 +212,9 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             },
           }}
           {...form.getInputProps("showBorder")}
-          onChange={(value) => {
-            form.setFieldValue("showBorder", value as string);
-          }}
+          onChange={(value) =>
+            form.setFieldValue("showBorder", value as string)
+          }
         />
         <Stack spacing={2}>
           <Text size="0.75rem">Style</Text>

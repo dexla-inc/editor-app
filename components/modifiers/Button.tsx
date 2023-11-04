@@ -1,6 +1,7 @@
 import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import {
   debouncedTreeComponentPropsUpdate,
@@ -23,7 +24,6 @@ import {
 } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
-import { StylingPaneItemIcon } from "./StylingPaneItemIcon";
 
 export const icon = IconClick;
 export const label = "Button";

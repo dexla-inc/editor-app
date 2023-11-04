@@ -1,36 +1,80 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { UnitInput } from "@/components/UnitInput";
+import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
+import { useEditorStore } from "@/stores/editor";
+import { ICON_SIZE } from "@/utils/config";
 import {
   debouncedTreeComponentPropsUpdate,
   debouncedTreeUpdate,
 } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Checkbox, Group, Select, Stack, Textarea } from "@mantine/core";
+import {
+  ActionIcon,
+  Checkbox,
+  Flex,
+  Group,
+  SegmentedControl,
+  Select,
+  Stack,
+  Text,
+  Textarea,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconTextSize } from "@tabler/icons-react";
+import { useDisclosure } from "@mantine/hooks";
+import {
+  IconAlignCenter,
+  IconAlignLeft,
+  IconAlignRight,
+  IconCheck,
+  IconLetterCase,
+  IconLetterCaseLower,
+  IconLetterCaseUpper,
+  IconLetterN,
+  IconMinus,
+  IconOverline,
+  IconPlus,
+  IconStrikethrough,
+  IconTextSize,
+  IconUnderline,
+  IconX,
+} from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
+import { getThemeColor } from "./Border";
 
 export const icon = IconTextSize;
-export const label = "Text";
+export const label = "Content";
 
-export const defaultInputValues = {
-  value: "New Text",
-  size: "md",
-  weight: "normal",
-  color: "Black.6",
-  lineHeight: "",
-  letterSpacing: "",
-  align: "left",
-  hideIfDataIsEmpty: false,
-};
+export const defaultInputValues = requiredModifiers.text;
 
 export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({
-    initialValues: { ...requiredModifiers.text },
+    initialValues: defaultInputValues,
   });
+  const theme = useEditorStore((state) => state.theme);
+  const shadow = selectedComponent?.props?.style?.textShadow;
+  const getShadowStyle = (shadow: string) => {
+    // Parsing existing boxShadow style into separate parts
+    const textShadow =
+      typeof shadow === "string"
+        ? shadow
+        : Object.values(defaultInputValues.textShadow).join(" ");
+
+    const values = textShadow.split(/\s+/);
+
+    const xOffset = values[0];
+    const yOffset = values[1];
+    const blur = values[2];
+    const shadowColor = values.slice(3).join(" ");
+
+    return { xOffset, yOffset, blur, shadowColor };
+  };
+
+  const [showTruncateProp, { open, close }] = useDisclosure(false);
+  const [addShadow, { open: add, close: remove }] = useDisclosure(false);
+  const { xOffset, yOffset, blur, shadowColor } = getShadowStyle(shadow);
 
   useEffect(() => {
     if (selectedComponent?.id) {
@@ -41,14 +85,33 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         "size",
         "weight",
         "hideIfDataIsEmpty",
+        "tt",
+        "td",
+        "truncate",
+        "order",
       ]);
+
+      const { xOffset, yOffset, blur, shadowColor } = getShadowStyle(
+        data.style?.textShadow,
+      );
 
       form.setValues({
         value: data.children ?? defaultInputValues.value,
+        order: data.order?.toString() ?? defaultInputValues.order,
         color: data.color ?? defaultInputValues.color,
         size: data.size ?? defaultInputValues.size,
         weight: data.weight ?? defaultInputValues.weight,
         align: data.style.textAlign ?? defaultInputValues.align,
+        textWrap: data.style.whiteSpace ?? defaultInputValues.textWrap,
+        textTransform: data.tt ?? defaultInputValues.textTransform,
+        textDecoration: data.td ?? defaultInputValues.textDecoration,
+        truncate: data.truncate?.toString() ?? defaultInputValues.truncate,
+        xOffset: xOffset ?? defaultInputValues.textShadow.xOffset,
+        yOffset: yOffset ?? defaultInputValues.textShadow.yOffset,
+        blur: blur ?? defaultInputValues.textShadow.blur,
+        shadowColor:
+          getThemeColor(theme, shadowColor) ??
+          defaultInputValues.textShadow.shadowColor,
         hideIfDataIsEmpty:
           data.hideIfDataIsEmpty ?? defaultInputValues.hideIfDataIsEmpty,
         ...data.style,
@@ -57,6 +120,13 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
+
+  useEffect(() => {
+    form.values.textWrap !== "normal" ? open() : close();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.values.textWrap]);
+
+  const isTitle = selectedComponent?.name === "Title";
 
   return (
     <form>
@@ -71,55 +141,102 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             debouncedTreeComponentPropsUpdate("children", e.target.value);
           }}
         />
-        <Checkbox
-          size="xs"
-          label="Hide text when data is empty"
-          {...form.getInputProps("hideIfDataIsEmpty", { type: "checkbox" })}
-          onChange={(e) => {
-            form.setFieldValue("hideIfDataIsEmpty", e.target.checked);
-            debouncedTreeComponentPropsUpdate(
-              "hideIfDataIsEmpty",
-              e.target.checked,
-            );
-          }}
-        />
+
+        {!isTitle && (
+          <>
+            <Checkbox
+              size="xs"
+              label="Hide text when data is empty"
+              {...form.getInputProps("hideIfDataIsEmpty", { type: "checkbox" })}
+              onChange={(e) => {
+                form.setFieldValue("hideIfDataIsEmpty", e.target.checked);
+                debouncedTreeComponentPropsUpdate(
+                  "hideIfDataIsEmpty",
+                  e.target.checked,
+                );
+              }}
+            />
+            <SizeSelector
+              label="Size"
+              {...form.getInputProps("size")}
+              onChange={(value) => {
+                form.setFieldValue("size", value as string);
+                debouncedTreeComponentPropsUpdate("size", value);
+              }}
+            />
+          </>
+        )}
         <Group noWrap>
-          <SizeSelector
-            label="Size"
-            {...form.getInputProps("size")}
+          {isTitle ? (
+            <Select
+              label="Order"
+              size="xs"
+              data={[
+                { label: "H1", value: "1" },
+                { label: "H2", value: "2" },
+                { label: "H3", value: "3" },
+                { label: "H4", value: "4" },
+                { label: "H5", value: "5" },
+                { label: "H6", value: "6" },
+              ]}
+              {...form.getInputProps("order")}
+              onChange={(value) => {
+                // @ts-ignore
+                const size = theme.headings.sizes[`h${value}`];
+                form.setFieldValue("order", value as string);
+                debouncedTreeUpdate(selectedComponent?.id as string, {
+                  order: parseInt(value as string, 10),
+                  style: {
+                    fontSize: size.fontSize,
+                    lineHeight: size.lineHeight,
+                  },
+                });
+              }}
+            />
+          ) : (
+            <Select
+              label="Weight"
+              size="xs"
+              data={[
+                { label: "Normal", value: "normal" },
+                { label: "Bold", value: "bold" },
+              ]}
+              {...form.getInputProps("weight")}
+              onChange={(value) => {
+                form.setFieldValue("weight", value as string);
+                debouncedTreeComponentPropsUpdate("weight", value);
+              }}
+            />
+          )}
+          <UnitInput
+            label="Word Spacing"
+            disabledUnits={["%", "auto", "vh", "vw"]}
+            {...form.getInputProps("wordSpacing")}
             onChange={(value) => {
-              form.setFieldValue("size", value as string);
-              debouncedTreeComponentPropsUpdate("size", value);
-            }}
-          />
-          <Select
-            label="Weight"
-            size="xs"
-            data={[
-              { label: "Normal", value: "normal" },
-              { label: "Bold", value: "bold" },
-            ]}
-            {...form.getInputProps("weight")}
-            onChange={(value) => {
-              form.setFieldValue("weight", value as string);
-              debouncedTreeComponentPropsUpdate("weight", value);
+              form.setFieldValue("wordSpacing", value as string);
+              debouncedTreeComponentPropsUpdate("style", {
+                wordSpacing: value,
+              });
             }}
           />
         </Group>
         <Group noWrap>
+          {!isTitle && (
+            <UnitInput
+              label="Line Height"
+              {...form.getInputProps("lineHeight")}
+              onChange={(value) => {
+                form.setFieldValue("lineHeight", value as string);
+                debouncedTreeComponentPropsUpdate("style", {
+                  lineHeight: value,
+                });
+              }}
+            />
+          )}
           <UnitInput
-            label="Line Height"
-            {...form.getInputProps("lineHeight")}
-            onChange={(value) => {
-              form.setFieldValue("lineHeight", value as string);
-              debouncedTreeComponentPropsUpdate("style", {
-                lineHeight: value,
-              });
-            }}
-          />
-          <UnitInput
+            w={!isTitle ? "100%" : "50%"}
             label="Letter Spacing"
-            disabledUnits={["%"]}
+            disabledUnits={["%", "auto", "vh", "vw"]}
             {...form.getInputProps("letterSpacing")}
             onChange={(value) => {
               form.setFieldValue("letterSpacing", value as string);
@@ -130,31 +247,367 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           />
         </Group>
         <Group noWrap>
-          <Select
-            label="Align"
+          <Stack w="100%" spacing={2}>
+            <Text size="xs" fw={500}>
+              Text Wrap
+            </Text>
+            <SegmentedControl
+              size="xs"
+              data={[
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Off"
+                      icon={<IconX size={14} />}
+                    />
+                  ),
+                  value: "nowrap",
+                },
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="On"
+                      icon={<IconCheck size={14} />}
+                    />
+                  ),
+                  value: "normal",
+                },
+              ]}
+              styles={{
+                label: {
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                },
+              }}
+              {...form.getInputProps("textWrap")}
+              onChange={(value) => {
+                form.setFieldValue("textWrap", value as string);
+                debouncedTreeUpdate(selectedComponent?.id as string, {
+                  style: { whiteSpace: value },
+                });
+              }}
+            />
+          </Stack>
+          {showTruncateProp && (
+            <Stack w="100%" spacing={2}>
+              <Text size="xs" fw={500}>
+                Ellipsis
+              </Text>
+              <SegmentedControl
+                size="xs"
+                data={[
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Off"
+                        icon={<IconX size={14} />}
+                      />
+                    ),
+                    value: "false",
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="On"
+                        icon={<IconCheck size={14} />}
+                      />
+                    ),
+                    value: "true",
+                  },
+                ]}
+                styles={{
+                  label: {
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  },
+                }}
+                {...form.getInputProps("truncate")}
+                onChange={(value) => {
+                  form.setFieldValue("truncate", value as string);
+                  const _value = value === "true" ? true : false;
+                  debouncedTreeComponentPropsUpdate("truncate", _value);
+                }}
+              />
+            </Stack>
+          )}
+        </Group>
+        <Stack spacing={2}>
+          <Text size="xs" fw={500}>
+            Alignment
+          </Text>
+          <SegmentedControl
             size="xs"
             data={[
-              { label: "Left", value: "left" },
-              { label: "Center", value: "center" },
-              { label: "Right", value: "right" },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Left"
+                    icon={<IconAlignLeft size={14} />}
+                  />
+                ),
+                value: "left",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Center"
+                    icon={<IconAlignCenter size={14} />}
+                  />
+                ),
+                value: "center",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Right"
+                    icon={<IconAlignRight size={14} />}
+                  />
+                ),
+                value: "right",
+              },
             ]}
+            styles={{
+              label: {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              },
+            }}
             {...form.getInputProps("align")}
             onChange={(value) => {
               form.setFieldValue("align", value as string);
               debouncedTreeUpdate(selectedComponent?.id as string, {
-                style: { textAlign: value },
+                style: { textAlign: value as string },
               });
             }}
           />
-          <ThemeColorSelector
-            label="Color"
-            {...form.getInputProps("color")}
-            onChange={(value: string) => {
-              form.setFieldValue("color", value);
-              debouncedTreeComponentPropsUpdate("color", value);
+        </Stack>
+
+        <Stack spacing={2}>
+          <Text size="xs" fw={500}>
+            Text Transform
+          </Text>
+          <SegmentedControl
+            size="xs"
+            data={[
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="None"
+                    icon={<IconLetterN size={14} />}
+                  />
+                ),
+                value: "none",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Lowercase"
+                    icon={<IconLetterCaseLower size={14} />}
+                  />
+                ),
+                value: "lowercase",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Uppercase"
+                    icon={<IconLetterCaseUpper size={14} />}
+                  />
+                ),
+                value: "uppercase",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Capitalize"
+                    icon={<IconLetterCase size={14} />}
+                  />
+                ),
+                value: "capitalize",
+              },
+            ]}
+            styles={{
+              label: {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              },
+            }}
+            {...form.getInputProps("textTransform")}
+            onChange={(value) => {
+              form.setFieldValue("textTransform", value as string);
+              debouncedTreeComponentPropsUpdate("tt", value);
             }}
           />
-        </Group>
+        </Stack>
+
+        <Stack spacing={2}>
+          <Text size="xs" fw={500}>
+            Decoration
+          </Text>
+          <SegmentedControl
+            size="xs"
+            data={[
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="None"
+                    icon={<IconX size={14} />}
+                  />
+                ),
+                value: "none",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Underline"
+                    icon={<IconUnderline size={14} />}
+                  />
+                ),
+                value: "underline",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Overline"
+                    icon={<IconOverline size={14} />}
+                  />
+                ),
+                value: "overline",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Strikethrough"
+                    icon={<IconStrikethrough size={14} />}
+                  />
+                ),
+                value: "line-through",
+              },
+            ]}
+            styles={{
+              label: {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              },
+            }}
+            {...form.getInputProps("textDecoration")}
+            onChange={(value) => {
+              form.setFieldValue("textDecoration", value as string);
+              debouncedTreeComponentPropsUpdate("td", value);
+            }}
+          />
+        </Stack>
+        <ThemeColorSelector
+          label="Color"
+          {...form.getInputProps("color")}
+          onChange={(value: string) => {
+            form.setFieldValue("color", value);
+            debouncedTreeComponentPropsUpdate("color", value);
+          }}
+        />
+
+        <Stack spacing={8}>
+          <Flex justify="space-between" align="center">
+            <Text size="xs" fw={500}>
+              Text Shadow
+            </Text>
+            <ActionIcon
+              variant="subtle"
+              onClick={() => (addShadow ? remove() : add())}
+            >
+              {addShadow ? (
+                <IconMinus size={ICON_SIZE} />
+              ) : (
+                <IconPlus size={ICON_SIZE} />
+              )}
+            </ActionIcon>
+          </Flex>
+
+          {addShadow && (
+            <>
+              <Flex gap="xs">
+                <UnitInput
+                  label="X Offset"
+                  {...form.getInputProps("xOffset")}
+                  onChange={(value) => {
+                    form.setFieldValue("xOffset", value as string);
+                    const textShadow = `${value} ${yOffset} ${blur} ${shadowColor}`;
+
+                    debouncedTreeUpdate(selectedComponent?.id as string, {
+                      style: { textShadow },
+                    });
+                  }}
+                  options={[
+                    { value: "px", label: "PX" },
+                    { value: "rem", label: "REM" },
+                    { value: "%", label: "%" },
+                  ]}
+                />
+                <UnitInput
+                  label="Y Offset"
+                  {...form.getInputProps("yOffset")}
+                  onChange={(value) => {
+                    form.setFieldValue("yOffset", value as string);
+                    const textShadow = `${xOffset} ${value} ${blur} ${shadowColor}`;
+
+                    debouncedTreeUpdate(selectedComponent?.id as string, {
+                      style: { textShadow },
+                    });
+                  }}
+                  options={[
+                    { value: "px", label: "PX" },
+                    { value: "rem", label: "REM" },
+                    { value: "%", label: "%" },
+                  ]}
+                />
+              </Flex>
+              <UnitInput
+                w="50%"
+                label="Blur"
+                {...form.getInputProps("blur")}
+                onChange={(value) => {
+                  form.setFieldValue("blur", value as string);
+                  const textShadow = `${xOffset} ${yOffset} ${value} ${shadowColor}`;
+
+                  debouncedTreeUpdate(selectedComponent?.id as string, {
+                    style: { textShadow },
+                  });
+                }}
+                options={[
+                  { value: "px", label: "PX" },
+                  { value: "rem", label: "REM" },
+                  { value: "%", label: "%" },
+                ]}
+              />
+              <ThemeColorSelector
+                label="Shadow Color"
+                {...form.getInputProps("shadowColor")}
+                onChange={(_value: string) => {
+                  const [color, index] = _value.split(".");
+                  // @ts-ignore
+                  const value = theme.colors[color][index];
+
+                  form.setFieldValue("shadowColor", _value);
+                  const textShadow = `${xOffset} ${yOffset} ${blur} ${value}`;
+
+                  debouncedTreeUpdate(selectedComponent?.id as string, {
+                    style: { textShadow },
+                  });
+                }}
+              />
+            </>
+          )}
+        </Stack>
       </Stack>
     </form>
   );
