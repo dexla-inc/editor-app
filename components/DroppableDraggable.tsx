@@ -492,7 +492,7 @@ export const DroppableDraggable = ({
               mih={24}
               h={24}
               w="100px"
-              bottom={-25}
+              bottom={-26}
               sx={{
                 zIndex: 90,
                 background: theme.colors.gray[1],
