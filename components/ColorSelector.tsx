@@ -1,6 +1,7 @@
 import { LARGE_ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
+  Box,
   ColorPicker,
   ColorSwatch,
   Flex,
@@ -10,8 +11,10 @@ import {
   TextInput,
   Tooltip,
 } from "@mantine/core";
+import { useClickOutside } from "@mantine/hooks";
 import { IconX } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import debounce from "lodash.debounce";
+import { useCallback, useEffect, useState } from "react";
 
 type Props = {
   friendlyName?: string;
@@ -20,6 +23,7 @@ type Props = {
   onValueChange?: (value: { friendlyName: string; hex: string }) => void;
   mantineTheme: MantineTheme;
   deleteColor?: () => void;
+  size?: number;
 };
 
 export const ColorSelector = ({
@@ -29,10 +33,21 @@ export const ColorSelector = ({
   onValueChange,
   mantineTheme,
   deleteColor,
+  size,
 }: Props) => {
   const hexToHexa = fetchedHex.length === 7 ? fetchedHex + "ff" : fetchedHex;
   const [hexa, setHexa] = useState(hexToHexa);
   const [friendlyName, setFriendlyName] = useState(fetchedFriendlyName);
+  const [opened, setOpened] = useState(false);
+  const ref = useClickOutside(() => setOpened(false));
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedOnChange = useCallback(
+    debounce((nextValue) => {
+      setFriendlyName(nextValue);
+    }, 10000),
+    [debounce],
+  );
 
   useEffect(() => {
     if (onValueChange) {
@@ -47,14 +62,25 @@ export const ColorSelector = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (event: any) => {
+      if (event.key === "Escape") {
+        opened && setOpened(false);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [opened]);
+
   return (
     <Flex align="center">
-      <Popover withArrow zIndex="20">
+      <Popover withArrow zIndex="20" opened={opened} onChange={setOpened}>
         <Popover.Target>
           <Tooltip label="Click to change color">
             <ColorSwatch
+              onClick={() => setOpened(!opened)}
               color={hexa}
-              size={36}
+              size={size ? size : 36}
               radius="0px"
               withShadow={false}
               style={{
@@ -68,19 +94,33 @@ export const ColorSelector = ({
           </Tooltip>
         </Popover.Target>
         <Popover.Dropdown>
-          <ColorPicker format="hexa" value={hexa} onChange={setHexa} />
-          <Input
-            value={hexa}
-            mt="sm"
-            onChange={(e) => setHexa(e.target.value)}
-          />
+          <Box ref={ref}>
+            <ColorPicker format="hexa" value={hexa} onChange={setHexa} />
+            <Input
+              size={size ? "xs" : "sm"}
+              value={hexa}
+              mt="sm"
+              onChange={(e) => {
+                let _value = e.target.value;
+                if (_value && !_value.startsWith("#")) {
+                  _value = `#${_value}`;
+                }
+                // Update the hexa value state only if the input is either empty or starts with a "#"
+                if (_value === "" || _value.startsWith("#")) {
+                  setHexa(_value);
+                }
+              }}
+            />
+          </Box>
         </Popover.Dropdown>
         <Tooltip label="Click to edit name">
           <TextInput
+            size={size ? "xs" : "sm"}
             style={{ width: "100%", borderLeft: "0px" }}
             radius="0px 4px 4px 0px"
             defaultValue={friendlyName}
-            onChange={(event) => setFriendlyName(event.target.value)}
+            onBlur={() => debouncedOnChange.flush()}
+            onChange={(event) => debouncedOnChange(event.target.value)}
             rightSection={
               !isDefault && (
                 <ActionIcon onClick={deleteColor} color="gray">

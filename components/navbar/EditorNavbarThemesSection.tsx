@@ -4,6 +4,7 @@ import { saveTheme } from "@/requests/themes/mutations";
 import { getTheme } from "@/requests/themes/queries";
 import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
+import { useEditorStore } from "@/stores/editor";
 import { fonts } from "@/utils/dashboardTypes";
 import {
   Box,
@@ -56,6 +57,8 @@ export const EditorNavbarThemesSection = ({
   const [currentFontTag, setCurrentFontTag] = useState<string>("H1");
   const mantineTheme = useMantineTheme();
   const queryClient = useQueryClient();
+  const theme = useEditorStore((state) => state.theme);
+  const setTheme = useEditorStore((state) => state.setTheme);
 
   const projectId = router.query.id as string;
 
@@ -140,6 +143,7 @@ export const EditorNavbarThemesSection = ({
           {form.values?.colors &&
             form.values?.colors.map(({ friendlyName, hex, name }, index) => (
               <ColorSelector
+                size={30}
                 key={`color-${name}`}
                 friendlyName={friendlyName}
                 hex={hex}
@@ -178,9 +182,11 @@ export const EditorNavbarThemesSection = ({
                 isDefault: false,
               })
             }
-            mb="xl"
           >
             Add Color
+          </Button>
+          <Button type="submit" size="sm" fullWidth mb="xl" compact>
+            Save
           </Button>
           <SegmentedControl
             fullWidth
