@@ -112,7 +112,8 @@ export const DroppableDraggable = ({
   const highlightedComponentId = useEditorStore(
     (state) => state.highlightedComponentId,
   );
-  const componentContextMenu = useComponentContextMenu();
+  const { componentContextMenu, forceDestroyContextMenu } =
+    useComponentContextMenu();
 
   const actions: Action[] = component.actions ?? [];
   const onMountAction: Action | undefined = actions.find(
@@ -330,6 +331,7 @@ export const DroppableDraggable = ({
         if (!isPreviewMode) {
           e.stopPropagation();
           e.preventDefault();
+          forceDestroyContextMenu();
 
           if (isPicking) {
             setComponentToBind(id);
