@@ -22,7 +22,7 @@ import Script from "next/script";
 import { Fragment, PropsWithChildren, useEffect, useState } from "react";
 import TagManager from "react-gtm-module";
 import { ReactFlowProvider } from "reactflow";
-import { ContextMenuProvider } from "mantine-contextmenu";
+import { ContextMenuProvider } from "@/contexts/ContextMenuProvider";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({

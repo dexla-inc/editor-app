@@ -4,7 +4,7 @@ import {
   IconCopy,
   IconTrash,
 } from "@tabler/icons-react";
-import { useContextMenu } from "mantine-contextmenu";
+// import { useContextMenu } from "mantine-contextmenu";
 import { useCallback } from "react";
 import cloneDeep from "lodash.clonedeep";
 import {
@@ -19,6 +19,7 @@ import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import { NAVBAR_WIDTH } from "@/utils/config";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { useContextMenu } from "@/contexts/ContextMenuProvider";
 
 const determinePasteTarget = (selectedId: string | undefined) => {
   if (!selectedId) return "content-wrapper";
@@ -27,7 +28,7 @@ const determinePasteTarget = (selectedId: string | undefined) => {
 };
 
 export const useComponentContextMenu = () => {
-  const showContextMenu = useContextMenu();
+  const { showContextMenu, destroy } = useContextMenu();
   const editorTree = useEditorStore((state) => state.tree);
   const editorTheme = useEditorStore((state) => state.theme);
   const setEditorTree = useEditorStore((state) => state.setTree);
@@ -35,7 +36,6 @@ export const useComponentContextMenu = () => {
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
-  const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
   const wrapIn = useCallback(
@@ -115,40 +115,43 @@ export const useComponentContextMenu = () => {
     [editorTree, setSelectedComponentId, setEditorTree],
   );
 
-  return (component: Component) =>
-    showContextMenu(
-      [
+  return {
+    forceDestroyContextMenu: destroy,
+    componentContextMenu: (component: Component) =>
+      showContextMenu(
+        [
+          {
+            key: "wrapIn",
+            icon: <IconBoxMargin size={16} />,
+            title: "Wrap in",
+            items: [
+              {
+                key: "container",
+                icon: <IconContainer size={16} />,
+                title: "Container",
+                onClick: () => wrapIn(component, "Container"),
+              },
+            ],
+          },
+          {
+            key: "copy",
+            icon: <IconCopy size={16} />,
+            title: "Duplicate",
+            onClick: () => duplicateComponent(component),
+          },
+          {
+            key: "delete",
+            icon: <IconTrash size={16} />,
+            color: "red",
+            title: "Delete",
+            onClick: () => deleteComponent(component),
+          },
+        ],
         {
-          key: "wrapIn",
-          icon: <IconBoxMargin size={16} />,
-          title: "Wrap in",
-          items: [
-            {
-              key: "container",
-              icon: <IconContainer size={16} />,
-              title: "Container",
-              onClick: () => wrapIn(component, "Container"),
-            },
-          ],
+          styles: {
+            ...(isTabPinned && { root: { marginLeft: NAVBAR_WIDTH } }),
+          },
         },
-        {
-          key: "copy",
-          icon: <IconCopy size={16} />,
-          title: "Duplicate",
-          onClick: () => duplicateComponent(component),
-        },
-        {
-          key: "delete",
-          icon: <IconTrash size={16} />,
-          color: "red",
-          title: "Delete",
-          onClick: () => deleteComponent(component),
-        },
-      ],
-      {
-        styles: {
-          ...(isTabPinned && { root: { marginLeft: NAVBAR_WIDTH } }),
-        },
-      },
-    );
+      ),
+  };
 };
