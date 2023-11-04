@@ -83,7 +83,7 @@ export const template = (data: Data, theme: MantineThemeExtended) => {
                   alignItems: "center",
                   justifyContent: "center",
                 },
-                bg: `linear-gradient(175deg, ${theme.colors.Primary[6]} 45%, ${theme.colors.Accent[6]} 45%)`,
+                bg: `linear-gradient(175deg, ${theme.colors.Primary[6]} 45%, ${theme.colors.Secondary[6]} 45%)`,
               },
               children: [
                 {

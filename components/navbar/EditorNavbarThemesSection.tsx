@@ -180,7 +180,7 @@ export const EditorNavbarThemesSection = ({
             }
             mb="xl"
           >
-            Add Colour
+            Add Color
           </Button>
           <SegmentedControl
             fullWidth

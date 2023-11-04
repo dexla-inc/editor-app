@@ -249,7 +249,7 @@ export default function BrandingStep({
               <Title order={4}>Main Colors</Title>
               {themeResponse?.colors &&
                 themeResponse?.colors
-                  .filter((t) => t.name === "Primary" || t.name === "Accent")
+                  .filter((t) => t.name === "Primary" || t.name === "Secondary")
                   .map(({ friendlyName, hex, name }, index) => (
                     <ColorSelector
                       key={`color-${name}`}
@@ -293,7 +293,7 @@ export default function BrandingStep({
                   })
                 }
               >
-                Add Colour
+                Add Color
               </Button> */}
               <Title order={4}>Fonts</Title>
               <Select
