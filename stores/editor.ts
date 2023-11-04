@@ -133,7 +133,7 @@ export type EditorState = {
     currentState: string,
   ) => void;
   setSelectedComponentId: (selectedComponentId?: string) => void;
-  clearSelection: () => void;
+  clearSelection: (id?: string) => void;
   setIsSaving: (isSaving: boolean) => void;
   setPreviewMode: (value: boolean) => void;
   setIsLive: (value: boolean) => void;
@@ -432,9 +432,9 @@ export const useEditorStore = create<EditorState>()(
           set({ componentToAdd }, false, "editor/setComponentToAdd"),
         setSelectedComponentId: (selectedComponentId) =>
           set({ selectedComponentId }, false, "editor/setSelectedComponentId"),
-        clearSelection: () =>
+        clearSelection: (id) =>
           set(
-            { selectedComponentId: "content-wrapper" },
+            { selectedComponentId: id ?? "content-wrapper" },
             false,
             "editor/clearSelection",
           ),

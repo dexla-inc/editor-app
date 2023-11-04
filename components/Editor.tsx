@@ -105,10 +105,12 @@ export const Editor = ({ projectId, pageId }: Props) => {
       !isPreviewMode
     ) {
       const copy = cloneDeep(editorTree);
+
+      const parent = getComponentParent(editorTree.root, selectedComponentId);
       const component = getComponentById(copy.root, selectedComponentId);
       removeComponent(copy.root, selectedComponentId);
       setEditorTree(copy, { action: `Removed ${component?.name}` });
-      clearSelection();
+      clearSelection(parent?.id);
     }
   }, [
     clearSelection,
@@ -354,7 +356,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
         {isLoading && editorTree.root.children?.length === 0 && (
           <Box
             pos="relative"
-            onClick={clearSelection}
+            onClick={() => clearSelection()}
             style={{ minHeight: `calc(100vh - ${HEADER_HEIGHT}px)` }}
             ml={isTabPinned ? NAVBAR_WIDTH : NAVBAR_MIN_WIDTH - 50} // Weird sizing issue that I haven't got time to investigate, had to hack it
             p={"40px 10px"}
@@ -393,7 +395,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
         {(editorTree?.root?.children ?? [])?.length > 0 && (
           <Box
             pos="relative"
-            onClick={clearSelection}
+            onClick={() => clearSelection()}
             style={{
               minHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
               height: "100%",
