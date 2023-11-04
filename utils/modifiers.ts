@@ -8,7 +8,6 @@ export type Modifiers =
   | "background"
   | "input"
   | "button"
-  | "title"
   | "image"
   | "link"
   | "icon"
@@ -66,12 +65,26 @@ export const requiredModifiers: RequiredModifiers = {
     maxHeight: "",
   },
   text: {
-    fontSize: "14px",
-    fontWeight: "400",
-    lineHeight: "1.5",
+    value: "New Text",
+    size: "md",
+    weight: "normal",
+    color: "Black.6",
+    lineHeight: "",
     letterSpacing: "0px",
-    textAlign: "left",
-    color: "Text.0",
+    wordSpacing: "0px",
+    align: "left",
+    hideIfDataIsEmpty: false,
+    textDecoration: "none",
+    textTransform: "none",
+    textWrap: "normal",
+    truncate: "false",
+    textShadow: {
+      xOffset: "0px",
+      yOffset: "0px",
+      blur: "0px",
+      shadowColor: "transparent",
+    },
+    order: "1",
   },
   border: {
     borderTopStyle: "none",
@@ -145,11 +158,6 @@ export const requiredModifiers: RequiredModifiers = {
     textColor: "White.6",
     leftIcon: "",
     align: "flex-start",
-  },
-  title: {
-    value: "",
-    color: "Black.6",
-    order: "1",
   },
   image: {
     src: "https://www.contentviewspro.com/wp-content/uploads/2017/07/default_image.png",

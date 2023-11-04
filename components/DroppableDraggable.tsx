@@ -294,7 +294,7 @@ export const DroppableDraggable = ({
   useEffect(() => {
     if (ref.current && selectedComponentId === id) {
       const width = ref.current?.children[1]?.getBoundingClientRect().width;
-      setDefaultComponentWidth(Number(width));
+      setDefaultComponentWidth(width);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId, id]);

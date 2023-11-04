@@ -87,7 +87,7 @@ export const UnitInput = ({
           setValue(100);
         } else if (val === "px") {
           if (value === undefined) {
-            setValue(defaultComponentWidth);
+            setValue(modifierType === "size" ? defaultComponentWidth : 0);
           } else {
             setValue(
               value === "auto"

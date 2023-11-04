@@ -40,7 +40,6 @@ import * as TabsListModifier from "@/components/modifiers/TabsList";
 import * as TabsPanelModifier from "@/components/modifiers/TabsPanel";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TextareaModifier from "@/components/modifiers/Textaarea";
-import * as TitleModifier from "@/components/modifiers/Title";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { Action, actionMapper } from "@/utils/actions";
@@ -73,7 +72,6 @@ const sectionMapper: SectionsMapper = {
   background: BackgroundModifier,
   input: InputModifier,
   button: ButtonModifier,
-  title: TitleModifier,
   image: ImageModifier,
   link: LinkModifier,
   icon: IconModifier,
