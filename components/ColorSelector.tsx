@@ -1,7 +1,6 @@
 import { LARGE_ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
-  Box,
   ColorPicker,
   ColorSwatch,
   Flex,
@@ -65,7 +64,7 @@ export const ColorSelector = ({
   useEffect(() => {
     const handleKeyDown = (event: any) => {
       if (event.key === "Escape") {
-        opened && setOpened(false);
+        setOpened(false);
       }
     };
     document.addEventListener("keydown", handleKeyDown);
@@ -73,11 +72,12 @@ export const ColorSelector = ({
   }, [opened]);
 
   return (
-    <Flex align="center">
+    <Flex align="center" ref={ref}>
       <Popover withArrow zIndex="20" opened={opened} onChange={setOpened}>
         <Popover.Target>
           <Tooltip label="Click to change color">
             <ColorSwatch
+              ref={ref}
               onClick={() => setOpened(!opened)}
               color={hexa}
               size={size ? size : 36}
@@ -94,24 +94,22 @@ export const ColorSelector = ({
           </Tooltip>
         </Popover.Target>
         <Popover.Dropdown>
-          <Box ref={ref}>
-            <ColorPicker format="hexa" value={hexa} onChange={setHexa} />
-            <Input
-              size={size ? "xs" : "sm"}
-              value={hexa}
-              mt="sm"
-              onChange={(e) => {
-                let _value = e.target.value;
-                if (_value && !_value.startsWith("#")) {
-                  _value = `#${_value}`;
-                }
-                // Update the hexa value state only if the input is either empty or starts with a "#"
-                if (_value === "" || _value.startsWith("#")) {
-                  setHexa(_value);
-                }
-              }}
-            />
-          </Box>
+          <ColorPicker format="hexa" value={hexa} onChange={setHexa} />
+          <Input
+            size={size ? "xs" : "sm"}
+            value={hexa}
+            mt="sm"
+            onChange={(e) => {
+              let _value = e.target.value;
+              if (_value && !_value.startsWith("#")) {
+                _value = `#${_value}`;
+              }
+              // Update the hexa value state only if the input is either empty or starts with a "#"
+              if (_value === "" || _value.startsWith("#")) {
+                setHexa(_value);
+              }
+            }}
+          />
         </Popover.Dropdown>
         <Tooltip label="Click to edit name">
           <TextInput

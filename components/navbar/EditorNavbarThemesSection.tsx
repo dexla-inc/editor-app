@@ -4,7 +4,6 @@ import { saveTheme } from "@/requests/themes/mutations";
 import { getTheme } from "@/requests/themes/queries";
 import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
-import { useEditorStore } from "@/stores/editor";
 import { fonts } from "@/utils/dashboardTypes";
 import {
   Box,
@@ -57,8 +56,6 @@ export const EditorNavbarThemesSection = ({
   const [currentFontTag, setCurrentFontTag] = useState<string>("H1");
   const mantineTheme = useMantineTheme();
   const queryClient = useQueryClient();
-  const theme = useEditorStore((state) => state.theme);
-  const setTheme = useEditorStore((state) => state.setTheme);
 
   const projectId = router.query.id as string;
 
@@ -176,9 +173,10 @@ export const EditorNavbarThemesSection = ({
             compact
             onClick={() =>
               form.insertListItem("colors", {
-                friendlyName: "",
                 name: "",
+                friendlyName: "",
                 hex: "",
+                brightness: 0,
                 isDefault: false,
               })
             }
