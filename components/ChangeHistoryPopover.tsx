@@ -10,6 +10,7 @@ import {
   ActionIcon,
   Button,
   Flex,
+  List,
   Popover,
   Text,
   Tooltip,
@@ -17,7 +18,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowBackUp } from "@tabler/icons-react";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Icon } from "./Icon";
 
 const convertTimestampToTimeTaken = (timestamp: number) => {
@@ -43,26 +44,29 @@ export const ChangeHistoryPopover: FC = () => {
       timestamp: state.tree.timestamp,
     },
   }));
-  const { changeHistory, pastStates } = useTemporalStore((state) => ({
-    changeHistory: [
-      ...state.pastStates,
-      currentState,
-      ...state.futureStates,
-    ].reduce(
-      (acc, { tree }, index) => {
-        return index === 0
-          ? acc
-          : acc.concat({
-              name: tree?.name,
-              timestamp: tree?.timestamp,
-            });
-      },
-      [] as Array<{ name?: string; timestamp?: number }>,
-    ),
-    pastStates: state.pastStates,
-  }));
+  const { changeHistory, pastStates, undo, redo, futureStates } =
+    useTemporalStore((state) => ({
+      changeHistory: [
+        ...state.pastStates,
+        currentState,
+        ...state.futureStates,
+      ].reduce(
+        (acc, { tree }, index) => {
+          return index === 0
+            ? acc
+            : acc.concat({
+                name: tree?.name,
+                timestamp: tree?.timestamp,
+              });
+        },
+        [] as Array<{ name?: string; timestamp?: number }>,
+      ),
+      pastStates: state.pastStates,
+      futureStates: state.futureStates,
+      undo: state.undo,
+      redo: state.redo,
+    }));
 
-  const { undo, redo, futureStates } = useTemporalStore((state) => state);
   const [opened, { close, open }] = useDisclosure(false);
   const theme = useMantineTheme();
 
@@ -134,23 +138,44 @@ export const ChangeHistoryPopover: FC = () => {
               width: "auto!important",
             }}
           >
-            <ul
+            <List
+              listStyleType="none"
+              p={0}
+              m={0}
+              mah={200}
               style={{
-                listStyle: "none",
-                padding: 0,
-                margin: 0,
-                maxHeight: "200px",
                 overflowY: "auto",
               }}
             >
               {changeHistory
                 .map((item: any, index: number) => {
+                  const currentHistoryIndex = pastStates.length - 1;
                   const color =
                     pastStates.length - 1 === index
                       ? "indigo"
                       : theme.colors.dark[9];
                   return (
-                    <li key={index} onClick={(e) => e.stopPropagation()}>
+                    <List.Item
+                      px={3}
+                      sx={{
+                        cursor: "pointer",
+                        "&:hover": { background: theme.colors.gray[0] },
+                      }}
+                      key={index}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const newChangeHistoryIndex =
+                          currentHistoryIndex - index;
+
+                        newChangeHistoryIndex >= 0
+                          ? handlePageStateChange(() =>
+                              undo(newChangeHistoryIndex),
+                            )
+                          : handlePageStateChange(() =>
+                              redo(Math.abs(newChangeHistoryIndex)),
+                            );
+                      }}
+                    >
                       <Text component="span" size="sm" color={color}>
                         {item.name}
                       </Text>
@@ -162,11 +187,11 @@ export const ChangeHistoryPopover: FC = () => {
                         )}
                         )
                       </Text>
-                    </li>
+                    </List.Item>
                   );
                 })
                 .reverse()}
-            </ul>
+            </List>
           </Popover.Dropdown>
         </Popover>
       </div>{" "}
