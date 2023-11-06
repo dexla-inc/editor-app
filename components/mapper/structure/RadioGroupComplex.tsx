@@ -27,7 +27,7 @@ export const jsonStructure = (props?: any): Component => {
         children: [],
         props: {
           color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-          size: "md",
+          size: "sm",
           style: {
             width: "auto",
             height: "auto",
