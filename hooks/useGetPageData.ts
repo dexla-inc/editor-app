@@ -2,7 +2,7 @@ import { getPage, getPageTemplate } from "@/requests/pages/queries";
 import { decodeSchema } from "@/utils/compression";
 import { replaceTilesData } from "@/utils/editor";
 import { useAppStore } from "@/stores/app";
-import { useEditorStore } from "@/stores/editor";
+import { emptyEditorTree, useEditorStore } from "@/stores/editor";
 import { useQuery } from "@tanstack/react-query";
 
 type getPageDataParams = {
@@ -13,10 +13,7 @@ export const defaultPageState = {
   name: "Initial State",
   timestamp: Date.now(),
   root: {
-    id: "root",
-    name: "Container",
-    description: "Root Container",
-    props: { style: { width: "100%" } },
+    ...emptyEditorTree.root,
     children: [
       {
         id: "content-wrapper",
