@@ -6,15 +6,7 @@ import {
   PreviousStepperClickEvent,
   convertToPatchParams,
 } from "@/utils/dashboardTypes";
-import {
-  Anchor,
-  Button,
-  Divider,
-  Flex,
-  Group,
-  Stack,
-  TextInput,
-} from "@mantine/core";
+import { Button, Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
 import { useRouter } from "next/router";
 import BackButton from "../BackButton";
 import { Icon } from "../Icon";
@@ -109,7 +101,17 @@ export default function ProjectInfoStep({
       <Group position="apart">
         <BackButton onClick={prevStep}></BackButton>
         <Flex gap="lg" align="end">
-          {isLoading !== true && (
+          <Button
+            onClick={() => {
+              onSubmit();
+              goToEditor(projectId, homePageId);
+            }}
+            loading={isLoading}
+            leftIcon={<Icon name="IconSparkles" />}
+          >
+            Generate app
+          </Button>
+          {/* {isLoading !== true && (
             <Anchor
               onClick={async () => {
                 onSubmit();
@@ -128,7 +130,7 @@ export default function ProjectInfoStep({
             leftIcon={<Icon name="IconDatabase" />}
           >
             Set up a datasource
-          </Button>
+          </Button> */}
         </Flex>
       </Group>
     </Stack>
