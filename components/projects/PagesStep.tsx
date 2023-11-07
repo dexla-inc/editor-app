@@ -253,18 +253,7 @@ export default function PagesStep({
         />
       )}
       <Flex gap="lg">
-        {!hasPageNames ? (
-          <Button
-            variant="light"
-            leftIcon={<IconSparkles size={ICON_SIZE} />}
-            onClick={() => handlePageNamesGeneration("5-8")}
-            loading={isLoading}
-            disabled={isLoading || hasPageNames}
-            compact
-          >
-            Generate page names
-          </Button>
-        ) : (
+        {hasPageNames && (
           <>
             <Button
               variant="light"
@@ -272,21 +261,20 @@ export default function PagesStep({
               onClick={() => handlePageNamesGeneration("1")}
               loading={isLoading}
               disabled={hasPagesCreated}
-              compact
             >
-              Generate
+              Generate another page
             </Button>
             <Button
               variant="outline"
               leftIcon={<IconPlus size={ICON_SIZE} />}
               onClick={() => addEmptyPage()}
               loading={isLoading}
-              disabled={
-                pages.some((page) => page.name === "") || hasPagesCreated
-              }
-              compact
+              disabled
+              // disabled={
+              //   pages.some((page) => page.name === "") || hasPagesCreated
+              // }
             >
-              Add
+              Add another page
             </Button>
           </>
         )}
@@ -295,14 +283,26 @@ export default function PagesStep({
       <Group position="apart">
         <BackButton onClick={prevStep} />
 
-        <NextButton
-          onClick={async () => {
-            if (!hasPagesCreated) await createManyPages(projectId);
-            nextStep();
-          }}
-          isLoading={isLoading}
-          disabled={isLoading}
-        />
+        {!hasPageNames ? (
+          <Button
+            variant="light"
+            leftIcon={<IconSparkles size={ICON_SIZE} />}
+            onClick={() => handlePageNamesGeneration("5-8")}
+            loading={isLoading}
+            disabled={isLoading || hasPageNames}
+          >
+            Generate pages
+          </Button>
+        ) : (
+          <NextButton
+            onClick={async () => {
+              if (!hasPagesCreated) await createManyPages(projectId);
+              nextStep();
+            }}
+            isLoading={isLoading}
+            disabled={isLoading}
+          />
+        )}
       </Group>
     </Stack>
   );
