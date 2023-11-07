@@ -63,6 +63,11 @@ export const descriptionPlaceholderMapping: Record<
       "display: flex; width: 220px; padding-bottom: 0px; flex-direction: column; align-items: flex-start; gap: 16px; flex-shrink: 0; align-self: stretch;",
     replaceText: "CSS modifier",
   },
+  THEME: {
+    description: "",
+    placeholder: "",
+    replaceText: "Theme",
+  },
 };
 
 type HandlerProps = {

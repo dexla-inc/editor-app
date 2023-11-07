@@ -2,15 +2,9 @@ import { InformationAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
 import { ColorSelector } from "@/components/ColorSelector";
 import NextButton from "@/components/NextButton";
-import { generateStructure } from "@/requests/ai/mutations";
-import { BrandingAITheme } from "@/requests/projects/types";
 import { saveTheme } from "@/requests/themes/mutations";
 import { getTheme } from "@/requests/themes/queries";
-import {
-  Color,
-  ThemeMutationParams,
-  ThemeResponse,
-} from "@/requests/themes/types";
+import { Color, ThemeResponse } from "@/requests/themes/types";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
@@ -224,65 +218,6 @@ export default function BrandingStep({
     }
   };
 
-  const generateTheme = async () => {
-    const result = await generateStructure<BrandingAITheme>(projectId, {
-      type: "THEME",
-      description: "",
-    });
-
-    //@ts-ignore
-    const updatedTheme: ThemeMutationParams = {
-      ...userTheme.data,
-      defaultFont: result.fontFamily,
-      hasCompactButtons: result.hasCompactButtons,
-      colors: userTheme.data!.colors.map((color) => {
-        switch (color.name) {
-          case "Primary":
-            return {
-              ...color,
-              hex: result.colors.primary.backgroundColor,
-            };
-          case "PrimaryText":
-            return {
-              ...color,
-              hex: result.colors.primary.textColor,
-            };
-          case "Secondary":
-            return {
-              ...color,
-              hex: result.colors.secondary.backgroundColor,
-            };
-          case "SecondaryText":
-            return {
-              ...color,
-              hex: result.colors.secondary.textColor,
-            };
-          case "Tertiary":
-            return {
-              ...color,
-              hex: result.colors.tertiary.backgroundColor,
-            };
-          case "TertiaryText":
-            return {
-              ...color,
-              hex: result.colors.tertiary.textColor,
-            };
-          case "Background":
-            return {
-              ...color,
-              hex: result.backgroundColor,
-            };
-          default:
-            return color;
-        }
-      }),
-    };
-
-    console.log(updatedTheme);
-
-    saveTheme(projectId, updatedTheme);
-  };
-
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xl">
@@ -402,7 +337,6 @@ export default function BrandingStep({
             {!themeResponse && (
               <Anchor
                 onClick={async () => {
-                  await generateTheme();
                   nextStep();
                 }}
               >

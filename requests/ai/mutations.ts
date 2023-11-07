@@ -1,15 +1,15 @@
-import { EventSourceParams } from "@/requests/ai/types";
+import { EventSourceParams, QueueResponse } from "@/requests/ai/types";
 import { post } from "@/utils/api";
 
-export const generateStructure = async <T>(
+export const processAI = async (
   projectId: string,
   params: EventSourceParams,
 ) => {
-  let url = `/projects/${projectId}/automations/json`;
+  let url = `/projects/${projectId}/automations/process`;
 
-  const response = (await post<T>(url, {
+  const response = (await post<QueueResponse>(url, {
     ...params,
-  })) as T;
+  })) as QueueResponse;
 
   return response;
 };

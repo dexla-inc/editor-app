@@ -24,3 +24,11 @@ export type EventSourceParams = {
   description: string;
   pageName?: string;
 };
+
+export type QueueResponse = {
+  message: string;
+  callbackUrl: string;
+  statusEndpoint: string;
+  estimatedTimeOfCompletion: number;
+  expectedCallBack: Record<string, string>;
+};

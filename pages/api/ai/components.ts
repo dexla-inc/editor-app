@@ -1,7 +1,8 @@
-import { GPT4_MODEL, openai } from "@/utils/openai";
+import { GPT4_PREVIEW_MODEL, openai } from "@/utils/openai";
 import { getComponentsPrompt } from "@/utils/prompts";
 import { NextApiRequest, NextApiResponse } from "next";
 
+// This needs to be a stream
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>,
@@ -18,7 +19,7 @@ export default async function handler(
     const { description } = req.body;
 
     const chatStream = await openai.chat.completions.create({
-      model: GPT4_MODEL,
+      model: GPT4_PREVIEW_MODEL,
       stream: true,
       messages: [
         {

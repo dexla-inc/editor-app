@@ -1,9 +1,11 @@
 import { InformationAlert } from "@/components/Alerts";
 import NextButton from "@/components/NextButton";
 import ScreenshotUploader from "@/components/projects/ScreenshotUploader";
+import { processAI } from "@/requests/ai/mutations";
 import {
   ProjectParams,
-  createEntitiesAndProject,
+  createEntities,
+  createProject,
   patchProject,
 } from "@/requests/projects/mutations";
 import { uploadFile } from "@/requests/storage/mutations";
@@ -73,16 +75,25 @@ export default function ProjectStep({
         id: "creating-project",
         title: "AI is thinking...",
         message:
-          "Thinking about your app, this step usually takes around 20 seconds...",
+          "Thinking about your app, this step usually takes around 5 seconds...",
       });
 
       form.validate();
 
-      let project = await createEntitiesAndProject(values);
+      const project = await createProject(values);
 
-      if (!project || !project.id) throw new Error("Project not created");
+      var queueResponse = await processAI(project.id, {
+        type: "THEME",
+        description: values.description,
+      });
 
       setProjectId(project.id);
+
+      console.log("queueResponse", queueResponse);
+
+      await createEntities(values, project.id);
+
+      if (!project || !project.id) throw new Error("Project not created");
 
       projectId = project.id;
 
@@ -103,7 +114,7 @@ export default function ProjectStep({
           },
         ] as PatchParams[];
 
-        project = await patchProject(projectId, patchParams);
+        await patchProject(projectId, patchParams);
       }
 
       stopLoading({

@@ -1,6 +1,5 @@
 import { GPT35_TURBO_MODEL, openai } from "@/utils/openai";
 import { prisma } from "@/utils/prisma";
-import { ProjectTypes } from "@/utils/projectTypes";
 import { getEntitiesPrompt } from "@/utils/prompts";
 import { Stopwatch } from "@/utils/stopwatch";
 import { faker } from "@faker-js/faker";
@@ -36,37 +35,20 @@ export default async function handler(
     );
 
     const data: {
+      projectId: string;
       appDescription: string;
       appIndustry: string;
       accessToken: string;
       timer: Stopwatch;
     } = req.body;
 
-    const { appDescription, appIndustry, ...restData } = data;
-
-    const projectsResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/projects`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${data.accessToken}`,
-        },
-        body: JSON.stringify({
-          ...restData,
-          type: "" as ProjectTypes,
-          description: appDescription,
-          industry: appIndustry,
-        }),
-      },
-    );
-
-    const _project = await projectsResponse.json();
-
-    console.log(_project);
+    const { projectId, appDescription, appIndustry, ...restData } = data;
 
     const response = await openai.chat.completions.create({
       model: GPT35_TURBO_MODEL,
+      response_format: {
+        type: "json_object",
+      },
       stream: false,
       messages: [
         {
@@ -221,7 +203,7 @@ export default async function handler(
 
     await prisma.project.create({
       data: {
-        id: _project.id,
+        id: projectId,
         entities: content.entities,
         data: transformedData,
       },
@@ -232,7 +214,7 @@ export default async function handler(
       "Entities API Finished:  await prisma.project.create({",
     );
 
-    return res.status(200).json(_project);
+    return res.status(200).json({ id: projectId });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error });
