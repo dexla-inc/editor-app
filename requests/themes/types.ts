@@ -9,8 +9,12 @@ export type ThemeMutationParams = {
   faviconUrl: string;
   logoUrl: string;
   logos: Logo[];
-  defaultBorderRadius: number;
+  defaultRadius: number;
   defaultSpacing: number;
+  defaultFont?: string;
+  hasCompactButtons?: boolean;
+  focusRing?: "OVAL" | "BARS" | "DOTS";
+  loader?: "DEFAULT" | "ON_BRAND_THIN" | "ON_BRAND_THICK";
 };
 
 export interface ThemeResponse extends ThemeMutationParams {

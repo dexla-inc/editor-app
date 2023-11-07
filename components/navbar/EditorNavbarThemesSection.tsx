@@ -83,7 +83,7 @@ export const EditorNavbarThemesSection = ({
       faviconUrl: "",
       logoUrl: "",
       logos: [],
-      defaultBorderRadius: 0,
+      defaultRadius: 0,
       defaultSpacing: 0,
     },
     validate: {},
@@ -284,8 +284,8 @@ export const EditorNavbarThemesSection = ({
           />
           <UnitInput
             label="Default border edges"
-            defaultValue={form.values.defaultBorderRadius}
-            {...form.getInputProps("defaultBorderRadius")}
+            defaultValue={form.values.defaultRadius}
+            {...form.getInputProps("defaultRadius")}
           />
           <UnitInput
             label="Default spacing"
