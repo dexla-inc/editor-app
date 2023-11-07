@@ -21,6 +21,7 @@ export type Modifiers =
   | "radio"
   | "radioItem"
   | "stepper"
+  | "carousel"
   | "drawer"
   | "buttonIcon"
   | "mapSettings"
@@ -245,6 +246,10 @@ export const requiredModifiers: RequiredModifiers = {
   stepper: {
     activeStep: "0",
     numberOfSteps: 3,
+  },
+  carousel: {
+    activeSlide: "0",
+    numberOfSlides: 3,
   },
   drawer: {
     title: "Drawer Title",

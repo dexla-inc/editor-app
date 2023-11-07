@@ -3,6 +3,7 @@ import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
+  const { style = {}, ...imageProps } = props.props || {};
   return {
     id: nanoid(),
     name: "Image",
@@ -12,9 +13,10 @@ export const jsonStructure = (props?: any): Component => {
         width: "120px",
         height: "120px",
         position: "relative",
+        ...style,
       },
       ...defaultImageValues,
-      ...(props.props || {}),
+      ...(imageProps || {}),
     },
     blockDroppingChildrenInside: true,
   };

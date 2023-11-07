@@ -75,6 +75,7 @@ import * as RatingStructure from "@/components/mapper/structure/Rating";
 import * as SelectStructure from "@/components/mapper/structure/Select";
 import * as StepperStructure from "@/components/mapper/structure/Stepper";
 import * as StepperStepStructure from "@/components/mapper/structure/StepperStep";
+import * as CarouselStructure from "@/components/mapper/structure/Carousel";
 import * as SwitchStructure from "@/components/mapper/structure/Switch";
 import * as TableStructure from "@/components/mapper/structure/Table";
 import * as TabsStructure from "@/components/mapper/structure/Tabs";
@@ -103,6 +104,7 @@ import {
   IconBoxModel,
   IconBrandChrome,
   IconCalendar,
+  IconCarouselHorizontal,
   IconChartArcs,
   IconChartAreaLine,
   IconChartBar,
@@ -141,6 +143,7 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import { useRouter } from "next/router";
+import { Carousel } from "@/components/mapper/Carousel";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -592,10 +595,17 @@ export const structureMapper: StructureMapper = {
     category: "Navigation",
     icon: <IconArrowAutofitContent size={ICON_SIZE} />,
   },
-  // Carousel: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   category: "Navigation",
-  // },
+  Carousel: {
+    structure: (props: any) => CarouselStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Carousel"
+        icon={<IconCarouselHorizontal size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Navigation",
+    icon: <IconCarouselHorizontal size={ICON_SIZE} />,
+  },
   // ProgressCard: {
   //   structure: (props: any) => NotImplemented.jsonStructure(props),
   //   category: "Card",
@@ -801,6 +811,14 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: ["stepper", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  Carousel: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Carousel component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["carousel", "spacing", "size", "border"],
+    actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Container: {

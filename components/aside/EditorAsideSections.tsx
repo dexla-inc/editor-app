@@ -32,6 +32,7 @@ import * as SelectModifier from "@/components/modifiers/Select";
 import * as SizeModifier from "@/components/modifiers/Size";
 import * as SpacingModifier from "@/components/modifiers/Spacing";
 import * as StepperModifier from "@/components/modifiers/Stepper";
+import * as CarouselModifier from "@/components/modifiers/Carousel";
 import * as TabModifier from "@/components/modifiers/Tab";
 import * as TableModifier from "@/components/modifiers/Table";
 import * as TabsModifier from "@/components/modifiers/Tabs";
@@ -88,6 +89,7 @@ const sectionMapper: SectionsMapper = {
   buttonIcon: ButtonIconModifier,
   mapSettings: GoogleMapModifier,
   stepper: StepperModifier,
+  carousel: CarouselModifier,
   fileButton: FileButtonModifier,
   popOver: PopOverModifier,
   navLink: NavLinkModifier,
