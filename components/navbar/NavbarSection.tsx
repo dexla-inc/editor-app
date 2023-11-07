@@ -40,6 +40,9 @@ export const NavbarSection = ({
   const setIsStructureCollapsed = useEditorStore(
     (state) => state.setIsStructureCollapsed,
   );
+  const setIsPageStructure = useEditorStore(
+    (state) => state.setIsPageStructure,
+  );
 
   const IconToggle = isTabPinned ? IconPinnedOff : IconPinned;
   const IconCollapse = isStructureCollapsed
@@ -134,6 +137,8 @@ export const NavbarSection = ({
 
   const itemTab = (
     <Stack
+      onMouseEnter={() => setIsPageStructure(true)}
+      onMouseLeave={() => setIsPageStructure(false)}
       sx={{
         overflowX: "hidden",
         overflowY: "scroll",

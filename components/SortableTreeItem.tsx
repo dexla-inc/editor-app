@@ -1,10 +1,10 @@
-import React, { CSSProperties, PropsWithChildren } from "react";
-import { Box, BoxProps, useMantineTheme } from "@mantine/core";
-import { Component } from "@/utils/editor";
-import { DROP_INDICATOR_WIDTH } from "@/utils/config";
 import { useDroppable } from "@/hooks/useDroppable";
-import { useEditorStore } from "@/stores/editor";
 import { useOnDrop } from "@/hooks/useOnDrop";
+import { useEditorStore } from "@/stores/editor";
+import { DROP_INDICATOR_WIDTH } from "@/utils/config";
+import { Component } from "@/utils/editor";
+import { Box, BoxProps, useMantineTheme } from "@mantine/core";
+import { CSSProperties, PropsWithChildren } from "react";
 
 type Props = {
   component: Component;

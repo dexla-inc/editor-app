@@ -65,51 +65,51 @@ export const Modifier = withModifier(({ selectedComponent }) => {
 
       form.setValues({
         // @ts-ignore
-        borderStyle: style.borderStyle ?? defaultBorderValues.borderStyle,
+        borderStyle: style?.borderStyle ?? defaultBorderValues.borderStyle,
         borderTopStyle:
-          style.borderTopStyle ?? defaultBorderValues.borderTopStyle,
+          style?.borderTopStyle ?? defaultBorderValues.borderTopStyle,
         borderRightStyle:
-          style.borderRightStyle ?? defaultBorderValues.borderRightStyle,
+          style?.borderRightStyle ?? defaultBorderValues.borderRightStyle,
         borderBottomStyle:
-          style.borderBottomStyle ?? defaultBorderValues.borderBottomStyle,
+          style?.borderBottomStyle ?? defaultBorderValues.borderBottomStyle,
         borderLeftStyle:
-          style.borderLeftStyle ?? defaultBorderValues.borderLeftStyle,
-        borderColor: style.borderColor
+          style?.borderLeftStyle ?? defaultBorderValues.borderLeftStyle,
+        borderColor: style?.borderColor
           ? getThemeColor(theme, style.borderColor)
           : defaultBorderValues.borderTopColor,
-        borderTopColor: style.borderTopColor
+        borderTopColor: style?.borderTopColor
           ? getThemeColor(theme, style.borderTopColor)
           : defaultBorderValues.borderTopColor,
-        borderRightColor: style.borderRightColor
+        borderRightColor: style?.borderRightColor
           ? getThemeColor(theme, style.borderRightColor)
           : defaultBorderValues.borderRightColor,
-        borderBottomColor: style.borderBottomColor
+        borderBottomColor: style?.borderBottomColor
           ? getThemeColor(theme, style.borderBottomColor)
           : defaultBorderValues.borderBottomColor,
-        borderLeftColor: style.borderLeftColor
+        borderLeftColor: style?.borderLeftColor
           ? getThemeColor(theme, style.borderLeftColor)
           : defaultBorderValues.borderLeftColor,
-        borderRadius: style.borderRadius ?? defaultBorderValues.borderRadius,
+        borderRadius: style?.borderRadius ?? defaultBorderValues.borderRadius,
         borderTopLeftRadius:
-          style.borderTopLeftRadius ?? defaultBorderValues.borderTopLeftRadius,
+          style?.borderTopLeftRadius ?? defaultBorderValues.borderTopLeftRadius,
         borderTopRightRadius:
-          style.borderTopRightRadius ??
+          style?.borderTopRightRadius ??
           defaultBorderValues.borderTopRightRadius,
         borderBottomLeftRadius:
-          style.borderBottomLeftRadius ??
+          style?.borderBottomLeftRadius ??
           defaultBorderValues.borderBottomLeftRadius,
         borderBottomRightRadius:
-          style.borderBottomRightRadius ??
+          style?.borderBottomRightRadius ??
           defaultBorderValues.borderBottomRightRadius,
-        borderWidth: style.borderWidth ?? defaultBorderValues.borderWidth,
+        borderWidth: style?.borderWidth ?? defaultBorderValues.borderWidth,
         borderTopWidth:
-          style.borderTopWidth ?? defaultBorderValues.borderTopWidth,
+          style?.borderTopWidth ?? defaultBorderValues.borderTopWidth,
         borderRightWidth:
-          style.borderRightWidth ?? defaultBorderValues.borderRightWidth,
+          style?.borderRightWidth ?? defaultBorderValues.borderRightWidth,
         borderBottomWidth:
-          style.borderBottomWidth ?? defaultBorderValues.borderBottomWidth,
+          style?.borderBottomWidth ?? defaultBorderValues.borderBottomWidth,
         borderLeftWidth:
-          style.borderLeftWidth ?? defaultBorderValues.borderLeftWidth,
+          style?.borderLeftWidth ?? defaultBorderValues.borderLeftWidth,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
