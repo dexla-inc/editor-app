@@ -5,4 +5,5 @@ export const openai = new OpenAI({
 });
 
 export const GPT4_MODEL = "gpt-4";
-export const GPT35_TURBO_MODEL = "gpt-3.5-turbo";
+export const GPT4_PREVIEW_MODEL = "gpt-4-1106-preview";
+export const GPT35_TURBO_MODEL = "gpt-3.5-turbo-1106";
