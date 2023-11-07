@@ -83,7 +83,9 @@ export type EditorState = {
   sequentialTo?: string;
   openAction?: OpenAction;
   defaultComponentWidth?: number;
+  isPageStructure?: boolean;
 
+  setIsPageStructure: (isPageStructure: boolean) => void;
   setDefaultComponentWidth: (defaultComponentWidth: number) => void;
   setOpenAction: (openAction: OpenAction) => void;
   setSequentialTo: (sequentialTo?: string) => void;
@@ -453,6 +455,8 @@ export const useEditorStore = create<EditorState>()(
             "editor/setPreviewMode",
           ),
         setIsLive: (value) => set({ isLive: value }, false, "editor/setIsLive"),
+        setIsPageStructure: (isPageStructure) =>
+          set({ isPageStructure }, false, "editor/setIsPageStructure"),
         setIsStructureCollapsed: (value) =>
           set(
             { isStructureCollapsed: value },

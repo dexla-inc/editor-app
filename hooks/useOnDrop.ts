@@ -2,15 +2,15 @@ import { useEditorStore } from "@/stores/editor";
 import {
   Component,
   DropTarget,
+  EditorTree,
   addComponent,
   getComponentById,
+  getComponentIndex,
   getComponentParent,
   moveComponent,
   moveComponentToDifferentParent,
   removeComponent,
   removeComponentFromParent,
-  EditorTree,
-  getComponentIndex,
 } from "@/utils/editor";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
@@ -67,6 +67,8 @@ export const useOnDrop = () => {
       handleRootDrop,
     ],
   );
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   function handleComponentAddition(
     copy: EditorTree,
     dropTarget: DropTarget,
@@ -107,6 +109,8 @@ export const useOnDrop = () => {
     }
     setComponentToAdd(undefined);
   }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   function handleReorderingOrMoving(
     copy: EditorTree,
     droppedId: string,
@@ -142,6 +146,8 @@ export const useOnDrop = () => {
       );
     }
   }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   function handleRootDrop(
     copy: EditorTree,
     droppedId: string,

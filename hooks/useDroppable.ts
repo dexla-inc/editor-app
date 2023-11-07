@@ -21,6 +21,7 @@ export const useDroppable = ({
   currentWindow?: Window;
 }) => {
   const editorTree = useEditorStore((state) => state.tree);
+  const isPageStructure = useEditorStore((state) => state.isPageStructure);
   const setCurrentTargetId = useEditorStore(
     (state) => state.setCurrentTargetId,
   );
@@ -47,6 +48,32 @@ export const useDroppable = ({
     [activeId, id, setCurrentTargetId, edge, onDrop],
   );
 
+  const handleEdgeSet = (
+    distances: {
+      leftDist: number;
+      rightDist: number;
+      topDist: number;
+      bottomDist: number;
+    },
+    threshold: number,
+  ) => {
+    const { leftDist, rightDist, topDist, bottomDist } = distances;
+    if (
+      leftDist > threshold &&
+      rightDist > threshold &&
+      topDist > threshold &&
+      bottomDist > threshold &&
+      !component?.blockDroppingChildrenInside
+    ) {
+      // If not within 5 pixels of top and bottom edge, set edge to center.
+      setEdge("center");
+    } else {
+      // Check the closest edge and set it accordingly.
+      const { edge } = getClosestEdge(leftDist, rightDist, topDist, bottomDist);
+      setEdge(edge as Edge);
+    }
+  };
+
   const handleDragOver = useCallback(
     (event: React.DragEvent) => {
       event.preventDefault();
@@ -63,26 +90,13 @@ export const useDroppable = ({
       const topDist = mouseY - rect.top;
       const bottomDist = rect.bottom - mouseY;
 
-      if (
-        leftDist > 5 &&
-        rightDist > 5 &&
-        topDist > 5 &&
-        bottomDist > 5 &&
-        !component?.blockDroppingChildrenInside
-      ) {
-        // If not within 5 pixels of any edge, set edge to center.
-        setEdge("center");
+      if (isPageStructure && mouseX <= NAVBAR_WIDTH) {
+        handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 2);
       } else {
-        // Check the closest edge and set it accordingly.
-        const { edge } = getClosestEdge(
-          leftDist,
-          rightDist,
-          topDist,
-          bottomDist,
-        );
-        setEdge(edge as Edge);
+        handleEdgeSet({ leftDist, rightDist, topDist, bottomDist }, 5);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       id,
       currentWindow,

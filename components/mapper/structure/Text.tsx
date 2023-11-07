@@ -1,6 +1,5 @@
 import { defaultTheme } from "@/components/IFrame";
 import { Component } from "@/utils/editor";
-import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
