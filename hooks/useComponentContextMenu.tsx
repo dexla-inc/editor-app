@@ -1,27 +1,30 @@
 import {
   IconBoxMargin,
   IconClipboardCopy,
+  IconClipboardData,
+  IconClipboardPlus,
   IconContainer,
   IconCopy,
   IconTrash,
 } from "@tabler/icons-react";
 // import { useContextMenu } from "mantine-contextmenu";
-import { useCallback } from "react";
-import cloneDeep from "lodash.clonedeep";
+import { useContextMenu } from "@/contexts/ContextMenuProvider";
+import { ClipboardProps, useEditorStore } from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/userConfig";
+import { structureMapper } from "@/utils/componentMapper";
+import { NAVBAR_WIDTH } from "@/utils/config";
 import {
-  addComponent,
   Component,
+  addComponent,
+  debouncedTreeUpdate,
   getComponentById,
   getComponentIndex,
   getComponentParent,
   removeComponent,
   removeComponentFromParent,
 } from "@/utils/editor";
-import { useEditorStore } from "@/stores/editor";
-import { structureMapper } from "@/utils/componentMapper";
-import { NAVBAR_WIDTH } from "@/utils/config";
-import { useUserConfigStore } from "@/stores/userConfig";
-import { useContextMenu } from "@/contexts/ContextMenuProvider";
+import cloneDeep from "lodash.clonedeep";
+import { useCallback } from "react";
 
 const determinePasteTarget = (selectedId: string | undefined) => {
   if (!selectedId) return "content-wrapper";
@@ -29,19 +32,36 @@ const determinePasteTarget = (selectedId: string | undefined) => {
   return selectedId as string;
 };
 
+const blackList = ["name", "value", "children"];
+
+const filteredPropsToUpdate = (props: ClipboardProps["componentProps"]) => {
+  const result = {} as ClipboardProps["componentProps"];
+  Object.keys(props).forEach((key) => {
+    if (!blackList.includes(key)) {
+      result[key] = props[key];
+    }
+  });
+  return result as ClipboardProps["componentProps"];
+};
+
 export const useComponentContextMenu = () => {
   const { showContextMenu, destroy } = useContextMenu();
   const editorTree = useEditorStore((state) => state.tree);
   const editorTheme = useEditorStore((state) => state.theme);
+  const copiedProperties = useEditorStore((state) => state.copiedProperties);
+  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
+
   const setEditorTree = useEditorStore((state) => state.setTree);
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const setCopiedComponent = useEditorStore(
     (state) => state.setCopiedComponent,
   );
+  const setCopiedProperties = useEditorStore(
+    (state) => state.setCopiedProperties,
+  );
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
-  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
   const wrapIn = useCallback(
     (component: Component, componentName: string) => {
@@ -127,6 +147,31 @@ export const useComponentContextMenu = () => {
     [setCopiedComponent, editorTree.root],
   );
 
+  const copyProperties = useCallback(
+    (component: Component) => {
+      const targetComponent = getComponentById(editorTree.root, component.id!)!;
+      setCopiedProperties({
+        componentName: targetComponent.name,
+        componentProps: targetComponent.props!,
+      });
+    },
+    [setCopiedProperties, editorTree.root],
+  );
+
+  const pasteProperties = useCallback(
+    (component: Component) => {
+      if (!copiedProperties) return;
+      const isTargetNameSame =
+        component.name === copiedProperties.componentName;
+      if (!isTargetNameSame) return;
+      const filteredProps = filteredPropsToUpdate(
+        copiedProperties.componentProps,
+      );
+      debouncedTreeUpdate(component.id!, filteredProps);
+    },
+    [copiedProperties],
+  );
+
   return {
     forceDestroyContextMenu: destroy,
     componentContextMenu: (component: Component) =>
@@ -156,6 +201,25 @@ export const useComponentContextMenu = () => {
             icon: <IconClipboardCopy size={16} />,
             title: "Copy",
             onClick: () => copyComponent(component),
+          },
+          {
+            key: "properties",
+            icon: <IconClipboardData size={16} />,
+            title: "Properties",
+            items: [
+              {
+                key: "copy_properties",
+                icon: <IconClipboardCopy size={16} />,
+                title: "Copy Properties",
+                onClick: () => copyProperties(component),
+              },
+              {
+                key: "paste_properties",
+                icon: <IconClipboardPlus size={16} />,
+                title: "Paste Properties",
+                onClick: () => pasteProperties(component),
+              },
+            ],
           },
           {
             key: "delete",
