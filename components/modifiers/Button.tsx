@@ -1,5 +1,6 @@
 import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
+import { SwitchSelector } from "@/components/SwitchSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
@@ -9,7 +10,6 @@ import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
-import { SwitchSelector } from "../SwitchSelector";
 
 export const icon = IconClick;
 export const label = "Button";
