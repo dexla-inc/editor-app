@@ -156,7 +156,7 @@ export const requiredModifiers: RequiredModifiers = {
     color: "Primary.6",
     textColor: "White.6",
     leftIcon: "",
-    align: "flex-start",
+    compact: false,
   },
   image: {
     src: "https://www.contentviewspro.com/wp-content/uploads/2017/07/default_image.png",

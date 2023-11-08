@@ -15,7 +15,6 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       style: {
         ...defaultButtonValues,
-        display: "flex",
         width: "auto",
         height: "auto",
         padding: `${px(theme.spacing.sm)}px`,
