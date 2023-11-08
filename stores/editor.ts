@@ -60,6 +60,11 @@ export type OpenAction = {
   componentId?: string;
 };
 
+export type ClipboardProps = {
+  componentName: string;
+  componentProps: { [key: string]: any };
+};
+
 export type EditorState = {
   tree: EditorTree;
   currentProjectId?: string;
@@ -89,7 +94,9 @@ export type EditorState = {
   openAction?: OpenAction;
   defaultComponentWidth?: number;
   isPageStructure?: boolean;
+  copiedProperties?: ClipboardProps;
 
+  setCopiedProperties: (copiedProperties: ClipboardProps) => void;
   setIsPageStructure: (isPageStructure: boolean) => void;
   setDefaultComponentWidth: (defaultComponentWidth: number) => void;
   setOpenAction: (openAction: OpenAction) => void;
@@ -194,6 +201,8 @@ export const useEditorStore = create<EditorState>()(
             false,
             "editor/resetOnMountActionsRan",
           ),
+        setCopiedProperties: (copiedProperties) =>
+          set({ copiedProperties }, false, "editor/setCopiedProperties"),
         setDefaultComponentWidth: (defaultComponentWidth) =>
           set(
             { defaultComponentWidth },
