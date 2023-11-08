@@ -1,3 +1,5 @@
+import { CardStyle, FocusRing, LoaderType } from "../projects/types";
+
 export type ThemeQueryParams = {
   websiteUrl?: string;
 };
@@ -9,12 +11,13 @@ export type ThemeMutationParams = {
   faviconUrl: string;
   logoUrl: string;
   logos: Logo[];
-  defaultRadius: number;
-  defaultSpacing: number;
+  defaultRadius: string;
+  defaultSpacing: string;
   defaultFont?: string;
   hasCompactButtons?: boolean;
-  focusRing?: "OVAL" | "BARS" | "DOTS";
-  loader?: "DEFAULT" | "ON_BRAND_THIN" | "ON_BRAND_THICK";
+  focusRing?: FocusRing;
+  loader?: LoaderType;
+  cardStyle: CardStyle;
 };
 
 export interface ThemeResponse extends ThemeMutationParams {

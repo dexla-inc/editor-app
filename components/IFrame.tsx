@@ -1,5 +1,5 @@
 import { getTheme } from "@/requests/themes/queries";
-import { useEditorStore } from "@/stores/editor";
+import { MantineThemeExtended, useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
 import createCache from "@emotion/cache";
@@ -8,14 +8,13 @@ import {
   BoxProps,
   DEFAULT_THEME,
   MantineProvider,
-  MantineTheme,
   ScrollArea,
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
-export const defaultTheme: MantineTheme = {
+export const defaultTheme: MantineThemeExtended = {
   ...DEFAULT_THEME,
   fontFamily: "Arial, sans-serif",
   headings: {
@@ -23,6 +22,13 @@ export const defaultTheme: MantineTheme = {
     fontFamily: "Arial, sans-serif",
   },
   primaryColor: "teal",
+  defaultFont: "Arial, sans-serif",
+  hasCompactButtons: true,
+  //focusRing: "DEFAULT",  Need to do focusRingStyles: {     styles(theme: MantineThemeBase): CSSObject;
+  loader: "oval",
+  cardStyle: "ROUNDED",
+  defaultSpacing: "md",
+  defaultRadius: "md",
 };
 
 type Props = {
@@ -81,6 +87,14 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
         logoUrl: userTheme.data?.logoUrl,
         faviconUrl: userTheme.data?.faviconUrl,
         logos: userTheme.data?.logos,
+        hasCompactButtons: userTheme.data?.hasCompactButtons,
+        cardStyle: userTheme.data?.cardStyle,
+        defaultFont: userTheme.data?.defaultFont,
+        defaultSpacing:
+          userTheme.data?.defaultSpacing ?? defaultTheme.spacing.md,
+        defaultRadius: userTheme.data?.defaultRadius ?? defaultTheme.radius.md,
+        // loader: userTheme.data?.loader?
+        // focusRing: userTheme.data?.focusRing,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

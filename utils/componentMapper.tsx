@@ -9,6 +9,7 @@ import { Avatar } from "@/components/mapper/Avatar";
 import { Breadcrumb } from "@/components/mapper/Breadcrumb";
 import { Button } from "@/components/mapper/Button";
 import { ButtonIcon } from "@/components/mapper/ButtonIcon";
+import { Card } from "@/components/mapper/Card";
 import { Checkbox } from "@/components/mapper/Checkbox";
 import { Container } from "@/components/mapper/Container";
 import { DateInput } from "@/components/mapper/DateInput";
@@ -50,6 +51,7 @@ import * as AvatarStructure from "@/components/mapper/structure/Avatar";
 import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
 import * as ButtonStructure from "@/components/mapper/structure/Button";
 import * as ButtonIconStructure from "@/components/mapper/structure/ButtonIcon";
+import * as CardStructure from "@/components/mapper/structure/Card";
 import * as CheckboxStructure from "@/components/mapper/structure/Checkbox";
 import * as ContainerStructure from "@/components/mapper/structure/Container";
 import * as DateInputStructure from "@/components/mapper/structure/DateInput";
@@ -176,6 +178,17 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Layout",
     icon: <IconContainer size={ICON_SIZE} />,
+  },
+  Card: {
+    structure: (props: any) => CardStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Card"
+        icon={<IconBoxModel size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Layout",
+    icon: <IconBoxModel size={ICON_SIZE} />,
   },
   Button: {
     structure: (props: any) => ButtonStructure.jsonStructure(props),
@@ -583,10 +596,6 @@ export const structureMapper: StructureMapper = {
   //   structure: (props: any) => NotImplemented.jsonStructure(props),
   //   category: "Navigation",
   // },
-  // Card: {
-  //   structure: (props: any) => NotImplemented.jsonStructure(props),
-  //   category: "Card",
-  // },
   // ProgressCard: {
   //   structure: (props: any) => NotImplemented.jsonStructure(props),
   //   category: "Card",
@@ -804,6 +813,22 @@ export const componentMapper: ComponentMapper = {
       "spacing",
       "size",
       "position",
+      "effects",
+      "border",
+      "boxShadow",
+    ],
+    actionTriggers: ["onMount", "onClick", "onHover"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  Card: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Card component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: [
+      "layout",
+      "background",
+      "spacing",
+      "size",
       "effects",
       "border",
       "boxShadow",
