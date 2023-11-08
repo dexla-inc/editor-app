@@ -1,5 +1,6 @@
 import {
   IconBoxMargin,
+  IconBoxModel,
   IconClipboardCopy,
   IconClipboardData,
   IconClipboardPlus,
@@ -187,6 +188,12 @@ export const useComponentContextMenu = () => {
                 icon: <IconContainer size={16} />,
                 title: "Container",
                 onClick: () => wrapIn(component, "Container"),
+              },
+              {
+                key: "card",
+                icon: <IconBoxModel size={16} />,
+                title: "Card",
+                onClick: () => wrapIn(component, "Card"),
               },
             ],
           },
