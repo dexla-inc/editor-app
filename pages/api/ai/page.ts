@@ -71,6 +71,9 @@ export default async function handler(
 
     const response = await openai.chat.completions.create({
       model: GPT4_PREVIEW_MODEL,
+      response_format: {
+        type: "json_object",
+      },
       stream: false,
       messages: [
         {
