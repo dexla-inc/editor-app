@@ -1,5 +1,4 @@
 import { EditorNavbarComponentsSection } from "@/components/navbar/EditorNavbarComponentsSection";
-import { EditorNavbarLayersSection } from "@/components/navbar/EditorNavbarLayersSection";
 import { EditorNavbarPagesSection } from "@/components/navbar/EditorNavbarPagesSection";
 import { EditorNavbarThemesSection } from "@/components/navbar/EditorNavbarThemesSection";
 import { EditorSettingsSection } from "@/components/navbar/EditorSettingsSection";
@@ -11,6 +10,7 @@ import {
   IconLayoutDashboard,
   IconSettings,
 } from "@tabler/icons-react";
+import { NavbarLayersSection } from "./NavbarLayersSection";
 import { NavbarSection } from "./NavbarSection";
 
 type SectionId = "pages" | "layers" | "components" | "theme" | "settings";
@@ -52,7 +52,7 @@ type SectionsMapper = {
 
 export const sectionMapper: SectionsMapper = {
   pages: (props: any) => <EditorNavbarPagesSection {...props} />,
-  layers: (props: any) => <EditorNavbarLayersSection {...props} />,
+  layers: (props: any) => <NavbarLayersSection {...props} />,
   components: (props: any) => <EditorNavbarComponentsSection {...props} />,
   theme: (props: any) => <EditorNavbarThemesSection {...props} />,
   settings: (props: any) => <EditorSettingsSection {...props} />,
