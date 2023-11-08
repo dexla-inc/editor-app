@@ -168,7 +168,17 @@ export const NavbarSection = ({
         </Title>
         {activeTab === "layers" && actionButtons}
       </Flex>
-      <Stack align="flex-start" w="100%">
+      <Stack
+        align="flex-start"
+        w="100%"
+        sx={{
+          ".nestable": { padding: 0, margin: 0 },
+          ".nestable > ol": { padding: 0, margin: 0 },
+          "ol,ul": { listStyleType: "none", margin: 0, padding: 0 },
+          ".nestable-list": { paddingLeft: 10 },
+          ".nestable-item-name > div": { paddingLeft: 0 },
+        }}
+      >
         {children}
       </Stack>
     </Stack>
