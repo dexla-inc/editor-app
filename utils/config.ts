@@ -7,3 +7,4 @@ export const ICON_MEDIUM_SIZE = 24;
 export const LARGE_ICON_SIZE = 32;
 export const DROP_INDICATOR_WIDTH = 3;
 export const ICON_DELETE = "IconTrash";
+export const INPUT_SIZE = "xs";

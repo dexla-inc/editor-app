@@ -7,7 +7,7 @@ interface SwitchSelectorProps extends SwitchProps {
 export const SwitchSelector = ({ topLabel, ...props }: SwitchSelectorProps) => {
   return (
     <Box>
-      <Text size="xs" fw={500}>
+      <Text size="xs" fw={500} pb={2}>
         {topLabel}
       </Text>
       <Switch {...props} />

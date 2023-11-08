@@ -1,6 +1,7 @@
 import { defaultTheme } from "@/components/IFrame";
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
+import { CardStyle } from "@/requests/projects/types";
 import { Logo } from "@/requests/themes/types";
 import { Action } from "@/utils/actions";
 import { encodeSchema } from "@/utils/compression";
@@ -14,7 +15,7 @@ import {
   updateTreeComponentChildren,
   updateTreeComponentDescription,
 } from "@/utils/editor";
-import { MantineTheme } from "@mantine/core";
+import { MantineNumberSize, MantineTheme } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
 import isEqual from "lodash.isequal";
@@ -43,6 +44,10 @@ export interface MantineThemeExtended extends MantineTheme {
   logoUrl?: string;
   faviconUrl?: string;
   logos?: Logo[];
+  defaultFont?: string;
+  hasCompactButtons?: boolean;
+  cardStyle?: CardStyle;
+  defaultSpacing?: MantineNumberSize;
 }
 
 export type ComponentToBind = {
