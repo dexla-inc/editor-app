@@ -128,6 +128,11 @@ export const Modifier = withModifier(({ selectedComponent }) => {
 
   const changeBorderStyle = (value: string) => {
     let borderStyle = {};
+    let borderColor = "";
+    const [color, index] = defaultBorderValues.borderColor.split(".");
+    const borderValue = index ? theme.colors[color][index] : color;
+    borderColor = borderValue;
+    form.setFieldValue("borderColor", borderValue);
     if (form.values.showBorder === "all") {
       borderStyle = {
         borderStyle: value,
@@ -136,11 +141,14 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         borderBottomStyle: value,
         borderLeftStyle: value,
       };
+
       form.setFieldValue("borderStyle", value);
       form.setFieldValue("borderTopStyle", value);
       form.setFieldValue("borderRightStyle", value);
       form.setFieldValue("borderBottomStyle", value);
       form.setFieldValue("borderLeftStyle", value);
+
+      // @ts-ignore
     } else {
       const key = `border${startCase(form.values.showBorder)}Style`;
       form.setFieldValue("borderStyle", value);
@@ -150,7 +158,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
       };
     }
     debouncedTreeUpdate(selectedComponent?.id as string, {
-      style: borderStyle,
+      style: { ...borderStyle, borderColor },
     });
   };
 
@@ -169,11 +177,9 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           onChange={(value) => {
             const cardStyles = getCardStyling(
               value as CardStyle,
-              "Black.6",
+              theme.colors["Border"][6],
               theme.defaultRadius,
             );
-
-            console.log(theme.defaultRadius);
 
             setTheme({
               ...theme,

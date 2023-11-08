@@ -16,16 +16,13 @@ export const CardStyleSelector = (props: Omit<SelectProps, "data">) => {
       data={[
         { label: "Rounded", value: "ROUNDED" },
         { label: "Squared", value: "SQUARED" },
-        { label: "Flat", value: "FLAT" },
-        { label: "Flat Rounded", value: "FLAT_ROUNDED" },
-        { label: "Flat Squared", value: "FLAT_SQUARED" },
         { label: "Outlined", value: "OUTLINED" },
+        { label: "Elevated", value: "ELEVATED" },
         { label: "Outlined Rounded", value: "OUTLINED_ROUNDED" },
         { label: "Outlined Squared", value: "OUTLINED_SQUARED" },
-        { label: "Elevated", value: "ELEVATED" },
+        { label: "Outlined Elevated", value: "OUTLINED_ELEVATED" },
         { label: "Elevated Rounded", value: "ELEVATED_ROUNDED" },
         { label: "Elevated Squared", value: "ELEVATED_SQUARED" },
-        { label: "Elevated Outlined", value: "ELEVATED_OUTLINED" },
         {
           label: "Elevated Outlined Rounded",
           value: "ELEVATED_OUTLINED_ROUNDED",
@@ -52,8 +49,7 @@ export function getCardStyling(
   borderColor: string,
   radius: MantineNumberSize,
 ): CardStyleProps {
-  const elevatedColor = "rgba(0, 0, 0, 0.1)";
-  const boxShadow = `0px 0px 2px 4px ${elevatedColor}`;
+  const boxShadow = `rgba(145, 158, 171, 0.2) 0px 0px 2px 0px, rgba(145, 158, 171, 0.12) 0px 12px 24px -4px`;
 
   const styles: Record<CardStyle, CardStyleProps> = {
     ROUNDED: {
@@ -64,26 +60,14 @@ export function getCardStyling(
     SQUARED: {
       borderRadius: convertMantineRadiusToPixels(0),
       boxShadow: "none",
-    },
-    FLAT: {
       borderStyle: "none",
-      boxShadow: "none",
-    },
-    FLAT_ROUNDED: {
-      borderStyle: "none",
-      borderRadius: convertMantineRadiusToPixels(radius),
-      boxShadow: "none",
-    },
-    FLAT_SQUARED: {
-      borderStyle: "none",
-      borderRadius: convertMantineRadiusToPixels(0),
-      boxShadow: "none",
     },
     OUTLINED: {
       borderStyle: "solid",
       borderColor: borderColor,
       borderWidth: "1px",
       boxShadow: "none",
+      borderRadius: convertMantineRadiusToPixels(0),
     },
     OUTLINED_ROUNDED: {
       borderStyle: "solid",
@@ -101,20 +85,24 @@ export function getCardStyling(
     },
     ELEVATED: {
       boxShadow: boxShadow,
+      borderStyle: "none",
     },
     ELEVATED_ROUNDED: {
       borderRadius: convertMantineRadiusToPixels(radius),
       boxShadow: boxShadow,
+      borderStyle: "none",
     },
     ELEVATED_SQUARED: {
       borderRadius: convertMantineRadiusToPixels(0),
       boxShadow: boxShadow,
+      borderStyle: "none",
     },
-    ELEVATED_OUTLINED: {
+    OUTLINED_ELEVATED: {
       borderStyle: "solid",
       borderColor: borderColor,
       borderWidth: "1px",
       boxShadow: boxShadow,
+      borderRadius: convertMantineRadiusToPixels(0),
     },
     ELEVATED_OUTLINED_ROUNDED: {
       borderStyle: "solid",
@@ -126,7 +114,7 @@ export function getCardStyling(
     ELEVATED_OUTLINED_SQUARED: {
       borderStyle: "solid",
       borderColor: borderColor,
-      borderRadius: undefined,
+      borderRadius: convertMantineRadiusToPixels(0),
       borderWidth: "1px",
       boxShadow: boxShadow,
     },

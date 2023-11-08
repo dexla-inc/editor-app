@@ -10,10 +10,10 @@ export const jsonStructure = (props?: any): Component => {
   const theme = useEditorStore.getState().theme;
   const cardStylingProps = getCardStyling(
     theme.cardStyle ?? "ROUNDED",
-    "Black.6",
+    theme.colors["Border"][6],
     theme.defaultRadius,
   );
-  console.log(cardStylingProps, theme.cardStyle);
+
   return {
     id: nanoid(),
     name: "Card",
@@ -22,7 +22,8 @@ export const jsonStructure = (props?: any): Component => {
       ...(rest || {}),
       style: {
         ...defaultLayoutValues,
-        width: "900px",
+        width: "100%",
+        maxWidth: "900px",
         height: "auto",
         minHeight: "100px",
         padding: theme.defaultSpacing,

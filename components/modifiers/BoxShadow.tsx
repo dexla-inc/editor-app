@@ -76,11 +76,9 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           onChange={(value) => {
             const cardStyles = getCardStyling(
               value as CardStyle,
-              "Black.6",
+              theme.colors["Border"][6],
               theme.defaultRadius,
             );
-
-            console.log(cardStyles);
 
             setTheme({
               ...theme,

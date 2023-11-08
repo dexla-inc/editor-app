@@ -220,6 +220,7 @@ export const EditorNavbarThemesSection = ({
               defaultValue={form.values.cardStyle}
               {...form.getInputProps("cardStyle")}
               onChange={(value) => {
+                form.setFieldValue("cardStyle", value as CardStyle);
                 setUsersTheme({
                   ...usersTheme,
                   cardStyle: value as CardStyle,

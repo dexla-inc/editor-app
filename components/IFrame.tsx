@@ -66,19 +66,20 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
         colors: {
           ...theme.colors,
           ...userTheme.data?.colors.reduce((userColors, color) => {
+            const hex = color.hex.substring(0, 7);
             return {
               ...userColors,
               [color.name]: [
-                theme.fn.lighten(color.hex, 0.9),
-                theme.fn.lighten(color.hex, 0.8),
-                theme.fn.lighten(color.hex, 0.7),
-                theme.fn.lighten(color.hex, 0.6),
-                theme.fn.lighten(color.hex, 0.5),
-                theme.fn.lighten(color.hex, 0.4),
+                theme.fn.lighten(hex, 0.9),
+                theme.fn.lighten(hex, 0.8),
+                theme.fn.lighten(hex, 0.7),
+                theme.fn.lighten(hex, 0.6),
+                theme.fn.lighten(hex, 0.5),
+                theme.fn.lighten(hex, 0.4),
                 color.hex,
-                theme.fn.darken(color.hex, 0.1),
-                theme.fn.darken(color.hex, 0.2),
-                theme.fn.darken(color.hex, 0.3),
+                theme.fn.darken(hex, 0.1),
+                theme.fn.darken(hex, 0.2),
+                theme.fn.darken(hex, 0.3),
               ],
             };
           }, {}),
