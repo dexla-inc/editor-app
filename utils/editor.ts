@@ -1017,6 +1017,16 @@ export const debouncedTreeComponentDescriptionpdate = debounce(
   300,
 );
 
+export const debouncedTreeRootChildrenUpdate = debounce(
+  (value: Component[]) => {
+    const updateTreeComponentChildren =
+      useEditorStore.getState().updateTreeComponentChildren;
+    const tree = useEditorStore.getState().tree;
+    updateTreeComponentChildren(tree.root.id as string, value);
+  },
+  300,
+);
+
 export const getColorFromTheme = (
   theme: MantineThemeExtended,
   colorName = "",

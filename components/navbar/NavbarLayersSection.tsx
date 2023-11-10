@@ -5,6 +5,7 @@ import { ICON_SIZE } from "@/utils/config";
 import {
   Component,
   debouncedTreeComponentDescriptionpdate,
+  debouncedTreeRootChildrenUpdate,
 } from "@/utils/editor";
 import {
   ActionIcon,
@@ -17,7 +18,7 @@ import {
 import { useForm } from "@mantine/form";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown, IconChevronRight } from "@tabler/icons-react";
-import { KeyboardEvent, useEffect, useRef, useState } from "react";
+import { KeyboardEvent, useEffect, useRef } from "react";
 import Nestable from "react-nestable";
 
 type ListItemProps = {
@@ -35,15 +36,7 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
-  const isStructureCollapsed = useEditorStore(
-    (state) => state.isStructureCollapsed,
-  );
-  const activeTab = useEditorStore((state) => state.activeTab);
 
-  const [opened, { toggle, open, close }] = useDisclosure(
-    isStructureCollapsed ? false : true,
-  );
-  const [clickedManualToggle, setClickedManualToggle] = useState(false);
   const [editable, { toggle: toggleEdit, close: closeEdit }] =
     useDisclosure(false);
   const editFieldRef = useRef<HTMLInputElement>(null);
@@ -60,29 +53,11 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
     }
   };
 
-  const canExpand = (component.children ?? [])?.length > 0;
   const isCurrentTarget = currentTargetId === `layer-${component.id}`;
 
   const handleKeyPress = (e: KeyboardEvent) => {
     if (e.key === "Enter" || e.key === "Escape") closeEdit();
   };
-
-  useEffect(() => {
-    if (clickedManualToggle) return;
-    const isCurrentComponentSelected = component.id === selectedComponentId;
-    const isRootOrContentWrapper =
-      selectedComponentId === "root" ||
-      selectedComponentId === "content-wrapper";
-
-    if (!isCurrentComponentSelected || isRootOrContentWrapper) {
-      return;
-    }
-
-    // Scroll the current component into view if it's not root or content-wrapper
-    ref.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId, activeTab]);
 
   useEffect(() => {
     if (editable) {
@@ -205,6 +180,10 @@ const Collapser = ({ isCollapsed }: { isCollapsed: boolean }) => {
 export const NavbarLayersSection = () => {
   const editorTree = useEditorStore((state) => state.tree);
 
+  const isStructureCollapsed = useEditorStore(
+    (state) => state.isStructureCollapsed,
+  );
+
   // Render function for Nestable items
   const renderItem = ({ item, collapseIcon }: any): JSX.Element => {
     return <ListItem collapseIcon={collapseIcon} component={item} />;
@@ -212,15 +191,22 @@ export const NavbarLayersSection = () => {
 
   const items = editorTree.root.children;
 
+  const handleChange = (items: any) => {
+    debouncedTreeRootChildrenUpdate(items.items);
+  };
+
   return (
     <Nestable
       items={items}
       renderItem={renderItem}
+      onChange={handleChange}
       renderCollapseIcon={({ isCollapsed }) => (
         <Collapser isCollapsed={isCollapsed} />
       )}
-      // onChange={handleMove}
-      maxDepth={10} // Set the maximum depth to your preferred limit
+      maxDepth={10}
+      collapsed={isStructureCollapsed}
+      // @ts-ignore
+      disableDrag
     />
   );
 };
