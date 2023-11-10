@@ -1,3 +1,4 @@
+import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 import { useDraggable } from "@/hooks/useDraggable";
 import { useDroppable } from "@/hooks/useDroppable";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
@@ -40,7 +41,6 @@ import {
   useMemo,
   useRef,
 } from "react";
-import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 
 type Props = {
   id: string;
@@ -343,7 +343,9 @@ export const DroppableDraggable = ({
       {...filteredProps}
       {...(isPreviewMode
         ? {}
-        : { onContextMenu: componentContextMenu(component) })}
+        : {
+            onContextMenu: componentContextMenu(component),
+          })}
       {...(isPreviewMode ? {} : droppable)}
     >
       {/* @ts-ignore */}
