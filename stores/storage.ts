@@ -1,20 +1,22 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 type StorageState = {
-  storedImages?: File[];
+  storedImages: File[];
   setStoredImages: (storedImages: File[]) => void;
 };
 export const useStorage = create<StorageState>()(
   persist(
     (set) => ({
+      storedImages: [],
       setStoredImages: (storedImages) => set({ storedImages }),
     }),
     {
-      name: "propelauth-storage",
+      name: "files-storage",
       partialize: (state: StorageState) => ({
         storedImages: state.storedImages,
       }),
+      storage: createJSONStorage(() => localStorage),
     },
   ),
 );
