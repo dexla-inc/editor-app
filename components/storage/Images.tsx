@@ -20,8 +20,6 @@ export const Images = () => {
   const [files, setFiles] = useState<any[]>([]);
   const storedImages = useStorage((state) => state.storedImages);
 
-  console.log(storedImages);
-
   const setStoredImages = useStorage((state) => state.setStoredImages);
   const isImagesEmpty = !storedImages || storedImages.length === 0;
 
@@ -36,7 +34,7 @@ export const Images = () => {
   const addImageUrlToStoredImages = useCallback(
     (arr: File[]) => {
       const newArr = arr.map(async (file) => {
-        const url = await getFile(projectId, file.name);
+        const url = getFile(projectId, file.name);
         return { ...file, url };
       });
       setFiles(newArr);
