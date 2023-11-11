@@ -22,6 +22,7 @@ import { AIChatHistoryButton } from "@/components/AIChatHistoryButton";
 import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
 import { DeployButton } from "@/components/DeployButton";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
+import { FileStorageButton } from "@/components/FileStorageButton";
 import { GenerateAIButton } from "@/components/GenerateAIButton";
 import { Icon } from "@/components/Icon";
 import { SaveTemplateButton } from "@/components/SaveTemplateButton";
@@ -90,7 +91,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               <GenerateAIButton projectId={projectId} />
               <LogicFlowButton projectId={projectId} pageId={currentPageId} />
               <VariablesButton projectId={projectId} pageId={currentPageId} />
-
+              <FileStorageButton />
               <ChangeHistoryPopover />
               <EditorPreviewModeToggle
                 isPreviewMode={isPreviewMode}
