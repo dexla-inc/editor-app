@@ -1,6 +1,13 @@
 import { Images } from "@/components/storage/Images";
 import { ICON_SIZE } from "@/utils/config";
-import { ActionIcon, Group, Modal, Tabs, Tooltip } from "@mantine/core";
+import {
+  ActionIcon,
+  Group,
+  Modal,
+  ScrollArea,
+  Tabs,
+  Tooltip,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
   IconArrowsMaximize,
@@ -26,6 +33,8 @@ export const FileStorageButton = () => {
         size="xl"
         opened={openStorageModal}
         onClose={close}
+        scrollAreaComponent={ScrollArea.Autosize}
+        xOffset={10}
       >
         <Modal.Overlay />
         <Modal.Content h="100%">
@@ -59,15 +68,15 @@ export const FileStorageButton = () => {
               </Tabs.List>
 
               <Tabs.Panel value="images" pt="xs">
-                <Images />
+                <Images expand={expand} />
               </Tabs.Panel>
 
               <Tabs.Panel value="audios" pt="xs">
-                Messages tab content
+                Audios
               </Tabs.Panel>
 
               <Tabs.Panel value="videos" pt="xs">
-                Settings tab content
+                Videos
               </Tabs.Panel>
             </Tabs>
           </Modal.Body>

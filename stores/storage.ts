@@ -1,9 +1,11 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+export type FileObj = { [key: string]: any };
+
 type StorageState = {
-  storedImages: File[];
-  setStoredImages: (storedImages: File[]) => void;
+  storedImages: Array<FileObj>;
+  setStoredImages: (storedImages: Array<FileObj>) => void;
 };
 export const useStorage = create<StorageState>()(
   persist(
