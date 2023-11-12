@@ -41,7 +41,12 @@ export const FileStorageButton = () => {
           <Modal.Header>
             <Modal.Title>User File Storage</Modal.Title>
             <Group sx={{ gap: 0 }} noWrap>
-              <Tooltip label={expand ? "Minimize" : "Maximize"}>
+              <Tooltip
+                fz={10}
+                withArrow
+                offset={0}
+                label={expand ? "Minimize" : "Maximize"}
+              >
                 <ActionIcon onClick={toggleExpand}>
                   {expand ? (
                     <IconArrowsMinimize size={12} />
@@ -50,7 +55,9 @@ export const FileStorageButton = () => {
                   )}
                 </ActionIcon>
               </Tooltip>
-              <Modal.CloseButton w={28} h={28} />
+              <Tooltip fz={10} withArrow offset={0} label="Close">
+                <Modal.CloseButton w={28} h={28} />
+              </Tooltip>
             </Group>
           </Modal.Header>
           <Modal.Body>

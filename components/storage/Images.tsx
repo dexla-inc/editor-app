@@ -11,11 +11,13 @@ import {
   Flex,
   Grid,
   Group,
+  LoadingOverlay,
   Stack,
   Text,
   TextInput,
   Tooltip,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { IconCopy, IconSearch, IconTrash } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -32,7 +34,18 @@ export const Images = ({ expand }: Props) => {
 
   const setStoredImages = useStorage((state) => state.setStoredImages);
   const theme = useEditorStore((state) => state.theme);
-  const isImagesEmpty = !storedImages || storedImages.length === 0;
+
+  const [searchText, setSearchText] = useState("");
+  const [loading, { open: onLoading, close: offLoading }] =
+    useDisclosure(false);
+
+  // Filter storedImages based on searchText
+  const filteredImages = storedImages.filter((image) =>
+    image.name.toLowerCase().includes(searchText.toLowerCase()),
+  );
+
+  const isImagesEmpty =
+    !storedImages || storedImages.length === 0 || filteredImages.length === 0;
 
   const handleImageStorage = (
     files: File[],
@@ -42,8 +55,10 @@ export const Images = ({ expand }: Props) => {
       name: file.url.split("_")[1],
       url: file.url,
     }));
+
     const findItemUrl = (name: string) =>
       respToMerge.find((item) => item.name === name)?.url;
+
     const newStorageImages = files.map((file) => ({
       name: file.name,
       size: file.size,
@@ -54,12 +69,14 @@ export const Images = ({ expand }: Props) => {
   };
 
   const onUpload = async (e: File[]) => {
+    onLoading();
     let newStoredImages: FileObj[] = [];
     const response = await uploadFile(projectId, e, true);
     const newImages = handleImageStorage(e, response as UploadMultipleResponse);
     if (isImagesEmpty) newStoredImages = [...newImages];
     else newStoredImages = [...storedImages, ...newImages];
     setStoredImages(newStoredImages);
+    offLoading();
   };
 
   const copyImage = (url: string) => {
@@ -81,11 +98,17 @@ export const Images = ({ expand }: Props) => {
 
   return (
     <Stack spacing="xs">
+      <LoadingOverlay
+        visible={loading}
+        overlayOpacity={0.3}
+        loaderProps={{ variant: "dots" }}
+      />
       <Group noWrap>
         <TextInput
           icon={<IconSearch size={ICON_SIZE} />}
           placeholder="Search images"
           w="100%"
+          onChange={(e) => setSearchText(e.currentTarget.value)}
         />
         <FileButton multiple onChange={onUpload} accept="image/*">
           {(props) => (
@@ -98,39 +121,57 @@ export const Images = ({ expand }: Props) => {
       {isImagesEmpty ? (
         <Group mt={10}>
           <Text italic lineClamp={1}>
-            There are no images in the storage
+            {filteredImages.length === 0
+              ? "No images found"
+              : "There are no images in the storage"}
           </Text>
         </Group>
       ) : (
-        <Grid columns={13} sx={{ gap: 20 }} m={5} mt={10}>
-          {storedImages.map((image, index) => (
+        <Grid
+          justify="space-between"
+          columns={expand ? 12.5 : 12}
+          sx={{ gap: 10 }}
+          m={5}
+          mt={10}
+        >
+          {filteredImages.map((image, index) => (
             <Grid.Col
               key={index}
-              p={5}
               w="100%"
-              span={expand ? 3 : 4}
+              span={expand ? 6 : 12}
               sx={{
-                border: `1px solid ${theme.colors.gray[3]}`,
                 cursor: "default",
               }}
             >
-              <Group noWrap>
+              <Group w="100%" noWrap>
                 <Avatar size={30} src={image.url} />
                 <Flex w="100%" align="center" justify="space-between">
-                  <Text
-                    lineClamp={1}
-                    truncate
-                    size="sm"
-                    fw={500}
-                    color={theme.colors.gray[6]}
-                  >
-                    {image.name}
-                  </Text>
+                  <Group noWrap>
+                    <Text
+                      lineClamp={1}
+                      truncate
+                      size="sm"
+                      fw={500}
+                      w={400}
+                      color={theme.colors.gray[6]}
+                    >
+                      {image.name}
+                    </Text>
+                    <Text
+                      lineClamp={1}
+                      truncate
+                      size="sm"
+                      color={theme.colors.gray[6]}
+                    >
+                      ~{image.size}KB
+                    </Text>
+                  </Group>
                   <Group spacing="0" noWrap>
                     <Tooltip
                       zIndex={100}
                       label={copied ? "copied" : "copy"}
                       withArrow
+                      offset={0}
                       fz="xs"
                       pt={2}
                     >
@@ -145,6 +186,7 @@ export const Images = ({ expand }: Props) => {
                       zIndex={100}
                       label="delete"
                       withArrow
+                      offset={0}
                       fz="xs"
                       pt={2}
                     >
