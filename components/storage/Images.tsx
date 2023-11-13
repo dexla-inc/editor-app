@@ -1,7 +1,10 @@
-import { uploadFile } from "@/requests/storage/mutations";
-import { UploadMultipleResponse } from "@/requests/storage/types";
+import { deleteFile, uploadFile } from "@/requests/storage/mutations";
+import { getAllFiles } from "@/requests/storage/queries";
+import {
+  UploadMultipleResponse,
+  UploadResponse,
+} from "@/requests/storage/types";
 import { useEditorStore } from "@/stores/editor";
-import { FileObj, useStorage } from "@/stores/storage";
 import { ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
@@ -20,63 +23,72 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { IconCopy, IconSearch, IconTrash } from "@tabler/icons-react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Props = {
   expand: boolean;
 };
 
+type FileObj = { [key: string]: any };
+
 export const Images = ({ expand }: Props) => {
   const router = useRouter();
   const projectId = router.query.id as string;
-  const storedImages = useStorage((state) => state.storedImages);
-  const [copied, setCopied] = useState(false);
-
-  const setStoredImages = useStorage((state) => state.setStoredImages);
   const theme = useEditorStore((state) => state.theme);
 
+  const [storedImages, setStoredImages] = useState<FileObj[]>([]);
+  const [copied, setCopied] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [loading, { open: onLoading, close: offLoading }] =
     useDisclosure(false);
 
   // Filter storedImages based on searchText
-  const filteredImages = storedImages.filter((image) =>
-    image.name.toLowerCase().includes(searchText.toLowerCase()),
+  const filteredImages = useMemo(
+    () =>
+      storedImages.filter((image) =>
+        image.name.toLowerCase().includes(searchText.toLowerCase()),
+      ),
+    [storedImages, searchText],
   );
 
   const isImagesEmpty =
-    !storedImages || storedImages.length === 0 || filteredImages.length === 0;
+    !loading && (storedImages.length === 0 || filteredImages.length === 0);
 
-  const handleImageStorage = (
-    files: File[],
-    response: UploadMultipleResponse,
-  ) => {
-    const respToMerge = response.files.map((file) => ({
-      name: file.url.split("_")[1],
+  const getPropFromResponse = (file: UploadResponse) => {
+    const underscoreIndex = file.url.indexOf("_");
+    if (underscoreIndex === -1) return;
+
+    const name = file.url.substring(underscoreIndex + 1);
+    const extensionIndex = name.lastIndexOf(".");
+    const type =
+      extensionIndex !== -1
+        ? `Image.${name.substring(extensionIndex + 1)}`
+        : "";
+
+    return { name, type };
+  };
+
+  const handleImageStorage = (response: UploadMultipleResponse) => {
+    const images = response.files.map((file) => ({
+      name: getPropFromResponse(file)?.name,
+      type: getPropFromResponse(file)?.type,
       url: file.url,
     }));
 
-    const findItemUrl = (name: string) =>
-      respToMerge.find((item) => item.name === name)?.url;
-
-    const newStorageImages = files.map((file) => ({
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      url: findItemUrl(file.name),
-    }));
-    return newStorageImages;
+    setStoredImages(images);
   };
 
   const onUpload = async (e: File[]) => {
-    onLoading();
-    let newStoredImages: FileObj[] = [];
-    const response = await uploadFile(projectId, e, true);
-    const newImages = handleImageStorage(e, response as UploadMultipleResponse);
-    if (isImagesEmpty) newStoredImages = [...newImages];
-    else newStoredImages = [...storedImages, ...newImages];
-    setStoredImages(newStoredImages);
-    offLoading();
+    try {
+      onLoading();
+      await uploadFile(projectId, e, true);
+      const response = await getAllFiles(projectId);
+      handleImageStorage(response as UploadMultipleResponse);
+    } catch (error) {
+      console.error("Error uploading file: ", error);
+    } finally {
+      offLoading();
+    }
   };
 
   const copyImage = (url: string) => {
@@ -89,15 +101,33 @@ export const Images = ({ expand }: Props) => {
     return () => clearTimeout(timer);
   }, [copied]);
 
-  const deleteImage = (file: FileObj) => {
-    const newStoredImages = storedImages.filter(
-      (image) => image.url !== file.url,
-    );
-    setStoredImages(newStoredImages);
+  const deleteImage = async (name: string) => {
+    try {
+      onLoading();
+      await deleteFile(projectId, name);
+      const response = await getAllFiles(projectId);
+      handleImageStorage(response as UploadMultipleResponse);
+    } catch (error) {
+      console.error("Error deleting file: ", error);
+    } finally {
+      offLoading();
+    }
   };
 
+  useEffect(() => {
+    const loadData = async () => {
+      onLoading();
+      const response = await getAllFiles(projectId);
+      handleImageStorage(response as UploadMultipleResponse);
+      offLoading();
+    };
+
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <Stack spacing="xs">
+    <Stack spacing="xs" mih={200}>
       <LoadingOverlay
         visible={loading}
         overlayOpacity={0.3}
@@ -118,6 +148,7 @@ export const Images = ({ expand }: Props) => {
           )}
         </FileButton>
       </Group>
+
       {isImagesEmpty ? (
         <Group mt={10}>
           <Text italic lineClamp={1}>
@@ -163,7 +194,7 @@ export const Images = ({ expand }: Props) => {
                       size="sm"
                       color={theme.colors.gray[6]}
                     >
-                      ~{image.size}KB
+                      ~{image.type}
                     </Text>
                   </Group>
                   <Group spacing="0" noWrap>
@@ -191,7 +222,7 @@ export const Images = ({ expand }: Props) => {
                       pt={2}
                     >
                       <ActionIcon
-                        onClick={() => deleteImage(image)}
+                        onClick={() => deleteImage(image.name)}
                         variant="subtle"
                       >
                         <IconTrash size={ICON_SIZE} />
