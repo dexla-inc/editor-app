@@ -74,15 +74,15 @@ export const FileStorageButton = () => {
                 </Tabs.Tab>
               </Tabs.List>
 
-              <Tabs.Panel value="images" pt="xs">
+              <Tabs.Panel value="images" pt="sm">
                 <Images expand={expand} />
               </Tabs.Panel>
 
-              <Tabs.Panel value="audios" pt="xs">
+              <Tabs.Panel value="audios" pt="sm">
                 Audios
               </Tabs.Panel>
 
-              <Tabs.Panel value="videos" pt="xs">
+              <Tabs.Panel value="videos" pt="sm">
                 Videos
               </Tabs.Panel>
             </Tabs>
