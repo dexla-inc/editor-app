@@ -13,6 +13,7 @@ import {
   Tooltip,
   UnstyledButton,
 } from "@mantine/core";
+import { useHover } from "@mantine/hooks";
 import {
   IconArrowsDiagonal2,
   IconArrowsDiagonalMinimize,
@@ -43,6 +44,7 @@ export const NavbarSection = ({
   const setIsPageStructure = useEditorStore(
     (state) => state.setIsPageStructure,
   );
+  const { ref, hovered } = useHover();
 
   const IconToggle = isTabPinned ? IconPinnedOff : IconPinned;
   const IconCollapse = isStructureCollapsed
@@ -53,6 +55,10 @@ export const NavbarSection = ({
     isTabPinned && setActiveTab("layers");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTabPinned]);
+
+  useEffect(() => {
+    if (ref.current) ref.current.scrollTop = 0;
+  }, [activeTab, ref]);
 
   const currentSection = sections.find((section) => section.id === activeTab);
 
@@ -137,6 +143,7 @@ export const NavbarSection = ({
 
   const itemTab = (
     <Stack
+      ref={ref}
       onMouseEnter={() => setIsPageStructure(true)}
       onMouseLeave={() => setIsPageStructure(false)}
       sx={{
@@ -147,7 +154,7 @@ export const NavbarSection = ({
         msOverflowStyle: "-ms-autohiding-scrollbar",
         "::-webkit-scrollbar": { width: "5px", borderRadius: "10px" },
         "::-webkit-scrollbar-thumb": {
-          backgroundColor: "#888",
+          backgroundColor: hovered ? "#888" : "transparent",
           borderRadius: "10px",
         },
       }}
