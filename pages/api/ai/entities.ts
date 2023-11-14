@@ -1,4 +1,5 @@
-import { GPT35_TURBO_MODEL, openai } from "@/utils/openai";
+import { GPT35_TURBO_MODEL } from "@/utils/config";
+import { openai } from "@/utils/openai";
 import { prisma } from "@/utils/prisma";
 import { getEntitiesPrompt } from "@/utils/prompts";
 import { Stopwatch } from "@/utils/stopwatch";
