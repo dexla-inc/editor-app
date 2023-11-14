@@ -1,4 +1,5 @@
-import { GPT4_PREVIEW_MODEL, openai } from "@/utils/openai";
+import { GPT4_PREVIEW_MODEL } from "@/utils/config";
+import { openai } from "@/utils/openai";
 import { getComponentsPrompt } from "@/utils/prompts";
 import { NextApiRequest, NextApiResponse } from "next";
 

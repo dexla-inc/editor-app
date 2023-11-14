@@ -1,5 +1,6 @@
 import {
   AIRequestTypes,
+  AIResponseTypes,
   ChatHistoryMessage,
   EventSourceParams,
 } from "@/requests/ai/types";
@@ -126,4 +127,53 @@ export const getChatHistoryList = async (projectId: string) => {
   )) as PagingResponse<ChatHistoryMessage>;
 
   return response;
+};
+
+export const generateStructureFromScreenshot = async (
+  description: string,
+  responseType: AIResponseTypes,
+  base64Image?: string,
+) => {
+  const response = await fetch("/api/ai/component-screenshot", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      description,
+      responseType,
+      image: base64Image,
+    }),
+  });
+
+  const json = await response.json();
+
+  return json;
+};
+
+export const anyPrompt = async (
+  model: string,
+  prompt: string,
+  image?: string,
+) => {
+  const response = await fetch("/api/ai/any-prompt", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      prompt,
+      image,
+    }),
+  });
+  const clonedResponse = response.clone();
+
+  try {
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    const text = await clonedResponse.text();
+    return text;
+  }
 };

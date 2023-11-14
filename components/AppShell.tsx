@@ -23,7 +23,6 @@ import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
 import { DeployButton } from "@/components/DeployButton";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { FileStorageButton } from "@/components/FileStorageButton";
-import { GenerateAIButton } from "@/components/GenerateAIButton";
 import { Icon } from "@/components/Icon";
 import { SaveTemplateButton } from "@/components/SaveTemplateButton";
 import { LogicFlowButton } from "@/components/logic-flow/LogicFlowButton";
@@ -64,8 +63,8 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                   <Logo />
                 </Link>
               </Tooltip>
+              {/* <AIPromptTextInput /> */}
             </Group>
-
             <Group noWrap position="right" spacing="xs">
               <Select
                 label="Language"
@@ -88,7 +87,6 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               />
               {isDexlaAdmin && <SaveTemplateButton />}
               {isDexlaAdmin && <AIChatHistoryButton projectId={projectId} />}
-              <GenerateAIButton projectId={projectId} />
               <LogicFlowButton projectId={projectId} pageId={currentPageId} />
               <VariablesButton projectId={projectId} pageId={currentPageId} />
               <FileStorageButton />

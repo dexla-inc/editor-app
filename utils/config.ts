@@ -8,3 +8,7 @@ export const LARGE_ICON_SIZE = 32;
 export const DROP_INDICATOR_WIDTH = 3;
 export const ICON_DELETE = "IconTrash";
 export const INPUT_SIZE = "xs";
+export const GPT4_MODEL = "gpt-4";
+export const GPT4_PREVIEW_MODEL = "gpt-4-1106-preview";
+export const GPT4_VISION_MODEL = "gpt-4-vision-preview";
+export const GPT35_TURBO_MODEL = "gpt-3.5-turbo-1106";

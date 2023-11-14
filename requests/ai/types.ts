@@ -9,6 +9,8 @@ export type AIRequestTypes =
   | "CSS_MODIFIER"
   | "THEME";
 
+export type AIResponseTypes = "JSON" | "TOML" | "QUEUE" | "NORMAL";
+
 type AIRoleTypes = "USER" | "ASSISTANT";
 
 export type ChatHistoryMessage = {

@@ -58,7 +58,6 @@ export const createPageList = async (
   });
 
   const json = await response.json();
-  console.log("json", json);
 
   return Array.isArray(json) ? json : [json];
 };
