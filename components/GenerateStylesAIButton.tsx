@@ -115,7 +115,7 @@ export const GenerateStylesAIButton = () => {
 
   return (
     <>
-      <Button
+      {/* <Button
         onClick={open}
         color="dark"
         compact
@@ -124,7 +124,7 @@ export const GenerateStylesAIButton = () => {
         loading={isLoading}
       >
         Style with AI
-      </Button>
+      </Button> */}
       <Modal
         size="lg"
         opened={openedAIModal}

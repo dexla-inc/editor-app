@@ -1,3 +1,5 @@
+import { AIResponseTypes } from "@/requests/ai/types";
+
 type PromptParams = {
   pageName?: string;
   pageDescription?: string;
@@ -8,6 +10,7 @@ type PromptParams = {
   description?: string;
   pageCount?: string;
   excludedPages?: string;
+  responseType?: AIResponseTypes;
 };
 
 export const getPageGenerationPrompt = ({
@@ -267,4 +270,140 @@ const json = TOML.parse(stream);
 - Keep all props on a single line for JSON parsing.
 
 USER_INPUT: ${description}
+`;
+
+export const getComponentScreenshotPrompt = ({
+  description,
+  responseType = "JSON",
+}: PromptParams) => `
+
+You are a Layout & Styling Component Generator System (LSCGS) that returns structured ${responseType} consistent with the given TypeScript GridContainer type definition.
+Your task is to analyze the provided screenshot and generate its layout, components and their styling in the correct location you seem them.
+
+While examining the screenshot, adhere to these specific requirements:
+
+Detailed Grid Structure: 
+- Emphasize the need for a detailed examination of the grid structure in the screenshot, including the number of rows and columns, their 
+respective sizes, and the placement of content within the grid cells.
+
+Visual Hierarchy: 
+- Point out that the visual hierarchy observed in the screenshot should be maintained in the ${responseType} structure, with clear indications of the 
+relationships between different components.
+
+Styling Precision: 
+- You must be precise with your styling attributes to be extracted from the screenshot and reflected in the ${responseType}.
+
+Component Mapping: 
+- Specify that the elements in the screenshot should be mapped to corresponding Mantine UI components, ensuring that the ${responseType} output is ready for 
+use with Mantine UI v6.
+
+Iconography: 
+- If icons are present, ensure that the appropriate Tabler icons are identified and included in the ${responseType}.
+
+Charts:
+- If charts are present, ensure that the appropriate chart type is identified and included in the ${responseType}.
+
+Specific Requirements:
+- ${description ?? "Copy the screenshot to your best ability"}
+
+type GridContainer = {
+  gridTemplateColumns:  "{number} / span {number}";
+  containers: Container[];
+  type: "CARD" | "INVISIBLE_CONTAINER"
+}
+
+type Container = {
+  gap?: string;
+  gridTemplateColumns?: "repeat({number}, 1fr)" | undefined;
+  components?: Component[];
+};
+
+type BaseComponent = {
+  name: string;
+  description: string;
+  children?: Component[]
+  props?: {style: {[key: string]: any}; [key: string]: any; }
+}
+
+type Button = BaseComponent & { name: 'Button'; props: { value: string; icon?: Icon; [key: string]: string; } }
+type Link = BaseComponent & { name: 'Link'; props: { value: string; [key: string]: string; } } 
+type Input = BaseComponent & { name: 'Input'; props: { label: string; placeholder: string; [key: string]: string; } }
+type Select = BaseComponent & { name: 'Select'; props: { label: string; placeholder: string; [key: string]: string; } }
+type Checkbox = BaseComponent & { name: 'Checkbox'; }
+type RadioItem = BaseComponent & { name: 'RadioItem'; props: { value: string; label: string; [key: string]: string; }; }
+type RadioGroup = BaseComponent & { name: 'RadioGroup'; props: { label: string; [key: string]: string; }; children: RadioItem[]; }
+type Form = BaseComponent & { name: 'Form'; children: Input | DateInput | Text | Button | Select | Switch | Checkbox | RadioGroup | Rating | Toggle | Textarea; }
+type Switch = BaseComponent & { name: 'Switch'; }
+type DateInput = BaseComponent & { name: 'DateInput'; }
+type Textarea = BaseComponent & { name: 'Textarea'; props: { placeholder: string; [key: string]: string; } }
+type ActionIcon = BaseComponent & { name: 'ActionIcon'; }
+type Rating = BaseComponent & { name: 'Rating'; }
+type FileButton = BaseComponent & { name: 'FileButton'; }
+type FileUpload = BaseComponent & { name: 'FileUpload'; }
+
+type Title = BaseComponent & { name: 'Title'; props: { order: 1 | 2 | 3 | 4 | 5 | 6; value: string; [key: string]: string; } }
+type Text = BaseComponent & { name: 'Text'; props: { value: string; [key: string]: string; } }
+
+type Table = BaseComponent & { name: 'Table'; props: { data: { [key: string]: string }[]; } }
+type Icon = BaseComponent & { name: 'Icon'; props: { name: string; } } // Use icons from https://tabler-icons-react.vercel.app/ for example IconTrendingUp
+type Image = BaseComponent & { name: 'Image'; }
+type Divider = BaseComponent & { name: 'Divider'; props: { label: string; labelPosition: 'center'; [key: string]: string; } }
+type Avatar = BaseComponent & { name: 'Avatar'; }
+type Accordion = BaseComponent & { name: 'Accordion'; }
+
+type Breadcrumb = BaseComponent & { name: 'Breadcrumb'; children: Link[]; }
+type Tabs = BaseComponent & { name: 'Tabs'; }
+
+type Alert = BaseComponent & { name: 'Alert'; }
+type Badge = BaseComponent & { name: 'Badge'; }
+
+type ChartProps = { series: { name: string; data: number[]; }[]; options: { title: { text: string; }; }; }
+type XAxisProps = { xaxis: { categories: string[]; }; }
+type PieChart = { name: 'PieChart'; props: { series: number[]; options: { labels: string[]; }; }; }
+type RadarChart = { name: 'RadarChart'; props: ChartProps & XAxisProps; }
+type BarChart = { name: 'BarChart'; props: ChartProps & XAxisProps; }
+type LineChart = { name: 'LineChart'; props: ChartProps & XAxisProps; }
+type AreaChart = { name: 'AreaChart'; props: ChartProps & XAxisProps; }
+type RadialChart = { name: 'RadialChart'; props: ChartProps & XAxisProps; }
+
+type Component = 
+  | Button
+  | Link
+  | Input
+  | Select
+  | Checkbox
+  | RadioGroup
+  | Form
+  | Switch
+  | DateInput
+  | Textarea
+  | ActionIcon
+  | Rating
+  | FileButton
+  | FileUpload
+  | Title
+  | Text
+  | Table
+  | Icon
+  | Image
+  | Divider
+  | Avatar
+  | Accordion
+  | Breadcrumb
+  | Tabs
+  | Alert
+  | Badge
+  | PieChart
+  | RadarChart
+  | BarChart
+  | LineChart
+  | AreaChart;
+
+  ${
+    responseType === "JSON" || responseType === "TOML"
+      ? `Remember LSCGS, you must return in ${responseType} format only as I will parse the response using ${responseType}.parse(<RESPONSE>).
+  There is no need to include the starting ${responseType} quotes.
+  Do not explain the response, it has to be ${responseType} only.`
+      : ""
+  }
 `;

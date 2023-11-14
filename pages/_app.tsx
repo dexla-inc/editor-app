@@ -1,3 +1,4 @@
+import { ContextMenuProvider } from "@/contexts/ContextMenuProvider";
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { cache } from "@/utils/emotionCache";
@@ -22,7 +23,6 @@ import Script from "next/script";
 import { Fragment, PropsWithChildren, useEffect, useState } from "react";
 import TagManager from "react-gtm-module";
 import { ReactFlowProvider } from "reactflow";
-import { ContextMenuProvider } from "@/contexts/ContextMenuProvider";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({

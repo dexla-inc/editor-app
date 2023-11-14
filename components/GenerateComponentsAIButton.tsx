@@ -18,15 +18,7 @@ import {
   handleRequestContentStream,
   processTOMLStream,
 } from "@/utils/streamingAI";
-import {
-  Badge,
-  Button,
-  Flex,
-  Modal,
-  Stack,
-  Text,
-  Tooltip,
-} from "@mantine/core";
+import { Badge, Button, Flex, Modal, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
@@ -163,7 +155,7 @@ export const GenerateComponentsAIButton = () => {
 
   return (
     <>
-      <Tooltip label="Type in English" withArrow fz="xs">
+      {/* <Tooltip label="Type in English" withArrow fz="xs">
         <Button
           onClick={open}
           color="dark"
@@ -173,7 +165,7 @@ export const GenerateComponentsAIButton = () => {
         >
           Build with AI
         </Button>
-      </Tooltip>
+      </Tooltip> */}
       <Modal
         size="lg"
         opened={openedAIModal}
