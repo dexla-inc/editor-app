@@ -7,13 +7,21 @@ type Props = {
 };
 
 export const Carousel = ({ renderTree, component, ...props }: Props) => {
-  const { children, triggers, ...componentProps } = component.props!;
+  const { children, triggers, style, ...componentProps } = component.props!;
+  const { height, width } = style;
 
   return (
-    <MantineCarousel {...props} {...componentProps} {...triggers}>
+    <MantineCarousel
+      {...props}
+      {...componentProps}
+      {...triggers}
+      {...style}
+      height={height}
+      width={width}
+    >
       {(component?.children ?? []).map((child: Component) => {
         return (
-          <MantineCarousel.Slide key={child.id}>
+          <MantineCarousel.Slide key={child.id} h="100%" w="100%">
             {renderTree(child)}
           </MantineCarousel.Slide>
         );

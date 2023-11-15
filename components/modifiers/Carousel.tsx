@@ -4,7 +4,6 @@ import {
   debouncedTreeComponentChildrenUpdate,
   debouncedTreeComponentPropsUpdate,
   debouncedTreeUpdate,
-  getComponentById,
 } from "@/utils/editor";
 import { SegmentedControl, Select, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -214,14 +213,10 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           label="Number of Slides"
           {...form.getInputProps("numberOfSlides")}
           onChange={(value) => {
-            const carousel = getComponentById(
-              editorTree.root,
-              selectedComponent?.id!,
-            );
             if (Number(value) > Number(form.values.numberOfSlides)) {
-              addCarouselSlide(carousel!);
+              addCarouselSlide(selectedComponent!);
             } else {
-              removeCarouselSlide(carousel!, value);
+              removeCarouselSlide(selectedComponent!, value);
             }
             form.setFieldValue("numberOfSlides", Number(value));
           }}
