@@ -1,7 +1,7 @@
 import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
-import { ICON_SIZE } from "@/utils/config";
+import { ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
 import {
   Component,
   debouncedTreeComponentDescriptionpdate,
@@ -60,6 +60,22 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
   };
 
   useEffect(() => {
+    const isCurrentComponentSelected = component.id === selectedComponentId;
+    const isRootOrContentWrapper =
+      selectedComponentId === "root" ||
+      selectedComponentId === "content-wrapper";
+
+    if (!isCurrentComponentSelected || isRootOrContentWrapper) {
+      return;
+    }
+
+    // Scroll the current component into view if it's not root or content-wrapper
+    ref.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedComponentId]);
+
+  useEffect(() => {
     if (editable) {
       editFieldRef?.current?.focus();
     }
@@ -103,7 +119,11 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
           e.stopPropagation();
           handleSelection(component.id as string);
         }}
-        onDoubleClick={toggleEdit}
+        onDoubleClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleEdit();
+        }}
         onBlur={closeEdit}
         onKeyDown={handleKeyPress}
       >
@@ -138,6 +158,7 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
                 {...form.getInputProps("value")}
                 onChange={(e) => {
                   e.preventDefault();
+                  e.stopPropagation();
                   form.setFieldValue("value", e.target.value);
                   debouncedTreeComponentDescriptionpdate(e.target.value);
                 }}
@@ -203,10 +224,8 @@ export const NavbarLayersSection = () => {
       renderCollapseIcon={({ isCollapsed }) => (
         <Collapser isCollapsed={isCollapsed} />
       )}
-      maxDepth={10}
+      maxDepth={NAVBAR_WIDTH}
       collapsed={isStructureCollapsed}
-      // @ts-ignore
-      disableDrag
     />
   );
 };

@@ -44,7 +44,7 @@ export const NavbarSection = ({
   const setIsPageStructure = useEditorStore(
     (state) => state.setIsPageStructure,
   );
-  const { ref, hovered } = useHover();
+  const { ref } = useHover();
 
   const IconToggle = isTabPinned ? IconPinnedOff : IconPinned;
   const IconCollapse = isStructureCollapsed
@@ -150,22 +150,23 @@ export const NavbarSection = ({
         overflowX: "hidden",
         overflowY: "scroll",
         scrollbarWidth: "thin",
-        scrollbarColor: "#888 transparent",
+        scrollbarColor: "transparent transparent",
         msOverflowStyle: "-ms-autohiding-scrollbar",
         "::-webkit-scrollbar": { width: "5px", borderRadius: "10px" },
         "::-webkit-scrollbar-thumb": {
-          backgroundColor: hovered ? "#888" : "transparent",
+          backgroundColor: "transparent",
           borderRadius: "10px",
         },
+        ":hover": { scrollbarColor: "#888 transparent" },
+        ":hover::-webkit-scrollbar-thumb": { backgroundColor: "#888" },
       }}
       pos="fixed"
       bg="white"
       top={HEADER_HEIGHT}
       p={10}
-      pb={80}
       left={NAVBAR_MIN_WIDTH}
       w={250}
-      h="100%"
+      h={`calc(100vh - ${HEADER_HEIGHT}px )`}
       spacing="xs"
       align="flex-start"
     >

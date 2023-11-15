@@ -2,6 +2,8 @@ import { EditorNavbarComponentsSection } from "@/components/navbar/EditorNavbarC
 import { EditorNavbarPagesSection } from "@/components/navbar/EditorNavbarPagesSection";
 import { EditorNavbarThemesSection } from "@/components/navbar/EditorNavbarThemesSection";
 import { EditorSettingsSection } from "@/components/navbar/EditorSettingsSection";
+import { NavbarLayersSection } from "@/components/navbar/NavbarLayersSection";
+import { NavbarSection } from "@/components/navbar/NavbarSection";
 import { useEditorStore } from "@/stores/editor";
 import {
   IconBrush,
@@ -10,8 +12,6 @@ import {
   IconLayoutDashboard,
   IconSettings,
 } from "@tabler/icons-react";
-import { NavbarLayersSection } from "./NavbarLayersSection";
-import { NavbarSection } from "./NavbarSection";
 
 type SectionId = "pages" | "layers" | "components" | "theme" | "settings";
 
