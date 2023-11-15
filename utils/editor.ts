@@ -286,6 +286,35 @@ export const getNewComponents = (
   };
 };
 
+export const getNewComponent = (
+  row: Row,
+  theme: MantineThemeExtended,
+  pages: PageResponse[],
+): Component => {
+  const firstComponent = row.components[0];
+
+  const structureDefinition = structureMapper[firstComponent.name];
+  const firstComponentStructure = structureDefinition.structure({
+    ...firstComponent,
+    props: {
+      ...(firstComponent?.props ?? {}),
+    },
+    theme,
+    pages,
+  });
+
+  return {
+    id: nanoid(),
+    name: firstComponentStructure.name,
+    description: firstComponentStructure.name,
+    props: { ...firstComponentStructure.props },
+    children:
+      firstComponent.children && firstComponent.children.length > 0
+        ? traverseComponents(firstComponent.children, theme, pages)
+        : [],
+  };
+};
+
 export type TileType = {
   node: Component;
   name: string;

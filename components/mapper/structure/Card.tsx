@@ -22,11 +22,10 @@ export const jsonStructure = (props?: any): Component => {
       ...(rest || {}),
       style: {
         ...defaultLayoutValues,
-        width: "100%",
-        maxWidth: "900px",
+        width: "auto",
         height: "auto",
         minHeight: "100px",
-        padding: theme.defaultSpacing,
+        padding: "20px",
         ...(style || {}),
         ...cardStylingProps,
       },

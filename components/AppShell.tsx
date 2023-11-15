@@ -19,6 +19,7 @@ import {
 import Link from "next/link";
 
 import { AIChatHistoryButton } from "@/components/AIChatHistoryButton";
+import AIPromptTextInput from "@/components/AIPromptTextInput";
 import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
 import { DeployButton } from "@/components/DeployButton";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
@@ -63,7 +64,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                   <Logo />
                 </Link>
               </Tooltip>
-              {/* <AIPromptTextInput /> */}
+              <AIPromptTextInput />
             </Group>
             <Group noWrap position="right" spacing="xs">
               <Select

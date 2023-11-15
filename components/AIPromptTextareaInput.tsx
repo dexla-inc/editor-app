@@ -2,6 +2,8 @@ import { convertToBase64 } from "@/utils/common";
 import { ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
+  Badge,
+  Box,
   Button,
   FileButton,
   Flex,
@@ -73,8 +75,8 @@ export default function AIPromptTextareaInput({
 
   return (
     <Stack spacing={0} bg="white">
-      {screenshot && (
-        <Group>
+      <Group position="apart" align="self-start">
+        {screenshot ? (
           <Paper
             pos="relative"
             sx={{
@@ -121,8 +123,13 @@ export default function AIPromptTextareaInput({
               ></Icon>
             </Paper>
           </Paper>
-        </Group>
-      )}
+        ) : (
+          <Box></Box>
+        )}
+        <Badge color="dark" size="xs">
+          ESC to Close
+        </Badge>
+      </Group>
       <Flex align="center">
         <Tooltip label="Upload screenshot" fz="xs">
           <FileButton onChange={setScreenshot} accept="image/png,image/jpeg">
