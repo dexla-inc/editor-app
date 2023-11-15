@@ -2,7 +2,15 @@ import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getAllComponentsByName } from "@/utils/editor";
-import { Flex, Pagination, Select, TableProps, Text } from "@mantine/core";
+import {
+  Flex,
+  Pagination,
+  ScrollArea,
+  Select,
+  TableProps,
+  Text,
+} from "@mantine/core";
+import cloneDeep from "lodash.clonedeep";
 import get from "lodash.get";
 import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
@@ -13,7 +21,6 @@ import {
   useMantineReactTable,
 } from "mantine-react-table";
 import { memo, useEffect, useState } from "react";
-import cloneDeep from "lodash.clonedeep";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -145,34 +152,40 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
 
   return (
     <>
-      <MantineReactTable
-        {...props}
-        {...componentProps}
-        {...tableTriggers}
-        table={table}
-      />
-      {dataProp?.base &&
-        component.children?.map((child) => renderTree(merge(child)))}
-      {!dataProp?.base && (
-        <Flex justify="flex-end" gap={10} py={10} align="center">
-          <Flex>
-            <Text>
-              Showing {pageSize} results of {data.length}
-            </Text>
+      <ScrollArea
+        w={style?.width ?? "100%"}
+        h={style?.height ?? "auto"}
+        offsetScrollbars
+      >
+        <MantineReactTable
+          {...props}
+          {...componentProps}
+          {...tableTriggers}
+          table={table}
+        />
+        {dataProp?.base &&
+          component.children?.map((child) => renderTree(merge(child)))}
+        {!dataProp?.base && (
+          <Flex justify="flex-end" gap={10} py={10} align="center">
+            <Flex>
+              <Text>
+                Showing {pageSize} results of {data.length}
+              </Text>
+            </Flex>
+            <Select
+              data={["5", "10", "15"]}
+              value={pageSize}
+              style={{ width: "70px" }}
+              onChange={setPageSize}
+            />
+            <Pagination
+              total={Math.ceil(data.length / 5)}
+              value={pageIndex}
+              onChange={setPageIndex}
+            />
           </Flex>
-          <Select
-            data={["5", "10", "15"]}
-            value={pageSize}
-            style={{ width: "70px" }}
-            onChange={setPageSize}
-          />
-          <Pagination
-            total={Math.ceil(data.length / 5)}
-            value={pageIndex}
-            onChange={setPageIndex}
-          />
-        </Flex>
-      )}
+        )}
+      </ScrollArea>
     </>
   );
 };
