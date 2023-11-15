@@ -13,7 +13,7 @@ export const jsonStructure = (props?: any): Component => {
       ...(rest || {}),
       style: {
         ...defaultLayoutValues,
-        width: "100%",
+        width: "auto",
         height: "auto",
         minHeight: "20px",
         ...(style || {}),

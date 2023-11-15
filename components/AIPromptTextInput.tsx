@@ -1,6 +1,9 @@
+import { createComponentEditorHandler as createComponentGenerationHandler } from "@/components/AIGenerationEditor";
 import AIPromptTextareaInput from "@/components/AIPromptTextareaInput";
 import { generateStructureFromScreenshot } from "@/requests/ai/queries";
+import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
+import { DropTarget, getComponentById } from "@/utils/editor";
 import {
   Flex,
   Popover,
@@ -9,24 +12,79 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { IconSparkles } from "@tabler/icons-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function AIPromptTextInput() {
-  const theme = useMantineTheme();
+  const internalTheme = useMantineTheme();
   const [description, setDescription] = useState<string>("");
 
-  const onClick = async (base64Image?: string) => {
-    const result = await generateStructureFromScreenshot(
-      description,
-      "JSON",
-      base64Image,
-    );
+  // start of handleComponentGeneration props
 
-    // Set the result to the editor
+  const { editorTree, selectedComponentId } = useEditorStore((state) => ({
+    editorTree: state.tree,
+    selectedComponentId: state.selectedComponentId,
+  }));
+
+  let selectedComponent = null;
+  if (selectedComponentId) {
+    selectedComponent = getComponentById(editorTree.root, selectedComponentId);
+  }
+
+  const dropTarget = {
+    id: selectedComponent?.id! ?? "content-wrapper",
+    edge: "left",
+  } as DropTarget;
+
+  const componentBeingAddedId = useRef<string>();
+
+  const { theme, updateTreeComponentChildren, tree, setTree, pages } =
+    useEditorStore((state) => ({
+      theme: state.theme,
+      updateTreeComponentChildren: state.updateTreeComponentChildren,
+      tree: state.tree,
+      setTree: state.setTree,
+      pages: state.pages,
+      dropTarget,
+    }));
+
+  // end of handleComponentGeneration props
+
+  const onClick = async (base64Image?: string) => {
+    try {
+      const result = await generateStructureFromScreenshot(
+        description,
+        "JSON",
+        base64Image,
+      );
+
+      const applyComponentsIntoTree = createComponentGenerationHandler({
+        componentBeingAddedId,
+        theme,
+        updateTreeComponentChildren,
+        tree,
+        setTree,
+        pages,
+        dropTarget,
+      });
+
+      applyComponentsIntoTree(result);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const resetState = () => {
+    setDescription("");
   };
 
   return (
-    <Popover width={500} position="bottom-start" withArrow shadow="md">
+    <Popover
+      width={500}
+      position="bottom-start"
+      withArrow
+      shadow="md"
+      onClose={resetState}
+    >
       <Popover.Target>
         <UnstyledButton
           placeholder="How can I help you?"
@@ -44,14 +102,17 @@ export default function AIPromptTextInput() {
           })}
         >
           <Flex align="center" gap="xs">
-            <IconSparkles size={ICON_SIZE} color={theme.colors.teal[6]} />
+            <IconSparkles
+              size={ICON_SIZE}
+              color={internalTheme.colors.teal[6]}
+            />
             <Text color="grey">How can I help you today?</Text>
           </Flex>
         </UnstyledButton>
       </Popover.Target>
       <Popover.Dropdown>
         <AIPromptTextareaInput
-          onClick={async () => onClick()}
+          onClick={onClick}
           placeholder="Try something like 'Use the screenshot attached to build out a similar layout'"
           description={description}
           setDescription={setDescription}

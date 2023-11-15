@@ -1,4 +1,4 @@
-import { GPT4_PREVIEW_MODEL, GPT4_VISION_MODEL } from "@/utils/config";
+import { GPT4_VISION_MODEL } from "@/utils/config";
 import { openai } from "@/utils/openai";
 import { getComponentScreenshotPrompt } from "@/utils/prompts";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -16,7 +16,7 @@ export default async function handler(
     const { description, responseType, image } = req.body;
 
     const prompt = getComponentScreenshotPrompt({ description, responseType });
-
+    console.log(prompt);
     const contentMessages = [
       {
         type: "text",
@@ -34,7 +34,7 @@ export default async function handler(
     }
 
     const response = await openai.chat.completions.create({
-      model: image ? GPT4_VISION_MODEL : GPT4_PREVIEW_MODEL,
+      model: GPT4_VISION_MODEL,
       stream: false,
       max_tokens: 4096, // 4096 is our max until we spend more with open ai.
       messages: [
@@ -46,7 +46,7 @@ export default async function handler(
     });
 
     const message = response.choices[0].message;
-
+    console.log("content", message.content);
     try {
       const content = JSON.parse(message.content ?? "{}");
       return res.status(200).json(content);
