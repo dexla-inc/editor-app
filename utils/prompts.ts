@@ -272,6 +272,38 @@ const json = TOML.parse(stream);
 USER_INPUT: ${description}
 `;
 
+export const getFunctionalityPrompt = ({
+  description,
+  responseType,
+}: PromptParams) => `
+
+You are a Web App Product Expert Generator System (WAPEGS). Please analyze the app description and list out features I need to think about to build this app.
+Think from a front end and back end perspective.
+
+The structure of the response must match the ProductDetail TypeScript type and return in JSON reponse format: 
+
+type ProductDetail = {
+  features: Feature[];
+};
+
+type Feature = {
+  type: "FRONT_END" | "BACK_END";
+  name: string;
+  description: string;
+};
+
+Key Requirements: 
+
+- Return the ProductDetail object in JSON format so I can parse by doing JsonSerializer.Deserialize<ProductDetail>(response).
+- The features should include its type, feature name and a description.
+
+APP_DESCRIPTION: ${description}
+
+Remember LSCGS, you must return in JSON format only as I will parse the response using JSON.parse(<RESPONSE>).
+There is no need to include the starting JSON quotes.
+Do not explain the response, it has to be JSON only
+`;
+
 export const getComponentScreenshotPrompt = ({
   description,
   responseType = "JSON",
@@ -308,21 +340,22 @@ Specific Requirements:
 
 type GridContainer = {
   gridTemplateColumns:  "{number} / span {number}";
+  type: "CARD" | "INVISIBLE_CONTAINER";
   containers: Container[];
-  type: "CARD" | "INVISIBLE_CONTAINER"
 }
 
 type Container = {
-  gap?: string;
-  gridTemplateColumns?: "repeat({number}, 1fr)" | undefined;
-  components?: Component[];
+  gap: string;
+  gridTemplateColumns: string;
+  components: Component[];
 };
 
 type BaseComponent = {
-  name: string;
+  name: string; // Only include names from the Component type
   description: string;
-  children?: Component[]
-  props?: {style: {[key: string]: any}; [key: string]: any; }
+  children?: Component[];
+  gridColumn: string;
+  props?: {style: {[key: string]: any}; [key: string]: any; };
 }
 
 type Button = BaseComponent & { name: 'Button'; props: { value: string; icon?: Icon; [key: string]: string; } }

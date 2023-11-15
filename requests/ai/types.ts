@@ -9,7 +9,7 @@ export type AIRequestTypes =
   | "CSS_MODIFIER"
   | "THEME";
 
-export type AIResponseTypes = "JSON" | "TOML" | "QUEUE" | "NORMAL";
+export type AIResponseTypes = "JSON" | "TOML" | "QUEUE" | "TEXT";
 
 type AIRoleTypes = "USER" | "ASSISTANT";
 

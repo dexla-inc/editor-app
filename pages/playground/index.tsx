@@ -1,4 +1,5 @@
 import AIPromptTextareaInput from "@/components/AIPromptTextareaInput";
+import { ErrorAlert } from "@/components/Alerts";
 import { anyPrompt } from "@/requests/ai/queries";
 import { AIResponseTypes } from "@/requests/ai/types";
 import {
@@ -10,6 +11,7 @@ import {
 import {
   getComponentScreenshotPrompt,
   getComponentsPrompt,
+  getFunctionalityPrompt,
 } from "@/utils/prompts";
 import {
   Box,
@@ -18,12 +20,16 @@ import {
   SegmentedControl,
   Select,
   Stack,
+  Text,
 } from "@mantine/core";
 import { Prism } from "@mantine/prism";
 import { useEffect, useState } from "react";
 
 type Tabs = "prompts" | "freetype";
-type PrompTemplates = "getComponentScreenshotPrompt" | "getComponentsPrompt";
+type PrompTemplates =
+  | "getComponentScreenshotPrompt"
+  | "getComponentsPrompt"
+  | "getFunctionalityPrompt";
 
 export default function Playground() {
   const [aiResponse, setAiResponse] = useState<string>();
@@ -35,11 +41,17 @@ export default function Playground() {
     "getComponentScreenshotPrompt",
   );
   const [model, setModel] = useState<string>(GPT4_VISION_MODEL);
+  const [errorText, setErrorText] = useState<string>("");
 
   const onClick = async (base64Image?: string) => {
-    const result = await anyPrompt(model, prompt, base64Image);
+    if (base64Image && model !== GPT4_VISION_MODEL) {
+      setErrorText("Only GPT-4 Vision is supported with screenshots.");
+    } else {
+      setErrorText("");
+      const result = await anyPrompt(model, prompt, base64Image);
 
-    setAiResponse(result);
+      setAiResponse(result);
+    }
   };
 
   useEffect(() => {
@@ -51,6 +63,9 @@ export default function Playground() {
       case "getComponentsPrompt":
         newPrompt = getComponentsPrompt({ description });
         break;
+      case "getFunctionalityPrompt":
+        newPrompt = getFunctionalityPrompt({ description });
+        break;
       default:
         newPrompt = prompt;
     }
@@ -60,21 +75,21 @@ export default function Playground() {
 
   useEffect(() => {
     if (tab === "freetype") {
-      setResponseType("NORMAL");
       setPromptTemplate(null);
-      setPrompt(description);
-      setAiResponse("Text will appear here");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
 
   useEffect(() => {
+    setAiResponse(`${responseType} will appear here`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [responseType]);
+
+  useEffect(() => {
     if (tab === "freetype") {
       setPrompt(description);
     } else if (tab === "prompts") {
-      setPromptTemplate("getComponentScreenshotPrompt");
       setResponseType("JSON");
-      setAiResponse("// Code will appear here");
     }
   }, [tab, description]);
 
@@ -89,8 +104,13 @@ export default function Playground() {
               { label: "Pre-built Prompts", value: "prompts" },
               { label: "FreeType", value: "freetype" },
             ]}
+            color="dark"
           />
-          <Group>
+
+          {errorText && (
+            <ErrorAlert title="Error" text={errorText}></ErrorAlert>
+          )}
+          <Group position="apart" align="center">
             <Select
               label="Model"
               value={model}
@@ -103,9 +123,26 @@ export default function Playground() {
               ]}
               size="xs"
             />
+            <Stack spacing={2}>
+              <Text size="xs" fw={500}>
+                Response Type
+              </Text>
+              <SegmentedControl
+                value={responseType}
+                onChange={(value) => setResponseType(value as AIResponseTypes)}
+                data={[
+                  { value: "JSON", label: "JSON" },
+                  { value: "TEXT", label: "Text" },
+                  { value: "TOML", label: "TOML" },
+                  { value: "QUEUE", label: "Queue" },
+                ]}
+                size="xs"
+                w={250}
+              />
+            </Stack>
           </Group>
           {tab === "prompts" && (
-            <Group position="apart">
+            <Group>
               <Select
                 label="Prompt Template"
                 value={promptTemplate}
@@ -116,21 +153,13 @@ export default function Playground() {
                     label: "Component Screenshot",
                   },
                   {
+                    value: "getFunctionalityPrompt",
+                    label: "Functionality",
+                  },
+                  {
                     value: "getComponentsPrompt",
                     label: "Component",
                   },
-                ]}
-                size="xs"
-              />
-              <Select
-                label="Response Type"
-                value={responseType}
-                onChange={(value) => setResponseType(value as AIResponseTypes)}
-                data={[
-                  { value: "JSON", label: "JSON" },
-                  { value: "NORMAL", label: "Normal" },
-                  { value: "TOML", label: "TOML" },
-                  { value: "QUEUE", label: "Queue" },
                 ]}
                 size="xs"
               />
@@ -155,7 +184,8 @@ export default function Playground() {
               }
               description={description}
               setDescription={setDescription}
-              maxRows={30}
+              maxRows={25}
+              disabled={tab === "prompts" && promptTemplate === null}
             />
           </Box>
         </Stack>
@@ -172,6 +202,7 @@ export default function Playground() {
             copyLabel="Copy to clipboard"
             copiedLabel="Copied to clipboard"
             m={0}
+            mah={900}
           >
             {(responseType === "JSON"
               ? JSON.stringify(aiResponse, null, 2)

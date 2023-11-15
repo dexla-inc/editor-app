@@ -11,6 +11,7 @@ import {
   Stack,
   Textarea,
   TextareaProps,
+  Tooltip,
 } from "@mantine/core";
 import { FileWithPath } from "@mantine/dropzone";
 import { IconPhoto, IconSparkles } from "@tabler/icons-react";
@@ -22,6 +23,7 @@ type Props = {
   setDescription: (description: string) => void;
   onClick: (screenshot?: string) => Promise<void>;
   placeholder: string;
+  disabled?: boolean;
 } & Omit<TextareaProps, "onClick">;
 
 export default function AIPromptTextareaInput({
@@ -29,6 +31,7 @@ export default function AIPromptTextareaInput({
   setDescription,
   onClick,
   placeholder,
+  disabled,
   ...props
 }: Props) {
   const [screenshot, setScreenshot] = useState<FileWithPath | null>(null);
@@ -121,13 +124,15 @@ export default function AIPromptTextareaInput({
         </Group>
       )}
       <Flex align="center">
-        <FileButton onChange={setScreenshot} accept="image/png,image/jpeg">
-          {(props) => (
-            <ActionIcon {...props} variant="transparent">
-              <IconPhoto size={ICON_SIZE} />
-            </ActionIcon>
-          )}
-        </FileButton>
+        <Tooltip label="Upload screenshot" fz="xs">
+          <FileButton onChange={setScreenshot} accept="image/png,image/jpeg">
+            {(actionIconProps) => (
+              <ActionIcon {...actionIconProps} variant="transparent">
+                <IconPhoto size={ICON_SIZE} />
+              </ActionIcon>
+            )}
+          </FileButton>
+        </Tooltip>
 
         <Textarea
           placeholder={placeholder}
@@ -149,14 +154,18 @@ export default function AIPromptTextareaInput({
         />
       </Flex>
       <Group position="apart">
-        <Button variant="default" compact disabled>
-          Try example
-        </Button>
+        <Tooltip label="Coming soon" fz="xs">
+          <Button variant="default" compact disabled>
+            Try example
+          </Button>
+        </Tooltip>
         <Button
           onClick={handleGenerateClick}
           leftIcon={<IconSparkles size={ICON_SIZE} />}
           compact
-          //disabled={prompt.length === 0}
+          disabled={
+            disabled || (description.length === 0 && screenshot === null)
+          }
           loading={isLoading}
         >
           Generate
