@@ -36,8 +36,11 @@ import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
-  const { resetTree, isPreviewMode, setPreviewMode, language, setLanguage } =
-    useEditorStore((state) => state);
+  const resetTree = useEditorStore((state) => state.resetTree);
+  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const setPreviewMode = useEditorStore((state) => state.setPreviewMode);
+  const language = useEditorStore((state) => state.language);
+  const setLanguage = useEditorStore((state) => state.setLanguage);
 
   const router = useRouter();
   const projectId = router.query.id as string;

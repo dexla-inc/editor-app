@@ -207,7 +207,13 @@ export const NavbarLayersSection = () => {
 
   // Render function for Nestable items
   const renderItem = ({ item, collapseIcon }: any): JSX.Element => {
-    return <ListItem collapseIcon={collapseIcon} component={item} />;
+    return (
+      <ListItem
+        collapseIcon={collapseIcon}
+        component={item}
+        key={`listItem-${item.id}`}
+      />
+    );
   };
 
   const items = editorTree.root.children;

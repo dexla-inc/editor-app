@@ -1,33 +1,18 @@
 // The comment below force next to refresh the editor state every time we change something in the code
 // @refresh reset
 import { Shell } from "@/components/AppShell";
-import { CustomComponentModal } from "@/components/CustomComponentModal";
-import { Droppable } from "@/components/Droppable";
-import { DroppableDraggable } from "@/components/DroppableDraggable";
-import { IFrame } from "@/components/IFrame";
 import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
-import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import { useAppStore } from "@/stores/app";
-import { useEditorStore, useTemporalStore } from "@/stores/editor";
+import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { componentMapper } from "@/utils/componentMapper";
 import {
   ASIDE_WIDTH,
   HEADER_HEIGHT,
   NAVBAR_MIN_WIDTH,
   NAVBAR_WIDTH,
 } from "@/utils/config";
-import {
-  Component,
-  addComponent,
-  getComponentById,
-  getComponentIndex,
-  getComponentParent,
-  removeComponent,
-} from "@/utils/editor";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import {
   Aside,
   Box,
@@ -41,10 +26,8 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
-import { useDisclosure, useHotkeys } from "@mantine/hooks";
 import { useQueryClient } from "@tanstack/react-query";
-import cloneDeep from "lodash.clonedeep";
-import { useCallback } from "react";
+import { EditorCanvas } from "@/components/EditorCanvas";
 
 type Props = {
   projectId: string;
@@ -53,15 +36,6 @@ type Props = {
 
 export const Editor = ({ projectId, pageId }: Props) => {
   const theme = useMantineTheme();
-  const undo = useTemporalStore((state) => state.undo);
-  const redo = useTemporalStore((state) => state.redo);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
-  );
-  const copiedComponent = useEditorStore((state) => state.copiedComponent);
-  const setCopiedComponent = useEditorStore(
-    (state) => state.setCopiedComponent,
-  );
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
@@ -69,14 +43,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
   const isLoading = useAppStore((state) => state.isLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
-  const setSelectedComponentId = useEditorStore(
-    (state) => state.setSelectedComponentId,
-  );
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
-  const [canvasRef] = useAutoAnimate();
-  const [isCustomComponentModalOpen, customComponentModal] =
-    useDisclosure(false);
 
   useGetPageData({ projectId, pageId });
 
@@ -95,215 +63,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
       action: "Initial State",
     });
     setIsLoading(false);
-  };
-
-  const deleteComponent = useCallback(() => {
-    if (
-      selectedComponentId &&
-      selectedComponentId !== "root" &&
-      selectedComponentId !== "content-wrapper" &&
-      !isPreviewMode
-    ) {
-      const copy = cloneDeep(editorTree);
-
-      const parent = getComponentParent(editorTree.root, selectedComponentId);
-      const component = getComponentById(copy.root, selectedComponentId);
-      removeComponent(copy.root, selectedComponentId);
-      setEditorTree(copy, { action: `Removed ${component?.name}` });
-      clearSelection(parent?.id);
-    }
-  }, [
-    clearSelection,
-    editorTree,
-    selectedComponentId,
-    setEditorTree,
-    isPreviewMode,
-  ]);
-
-  const copySelectedComponent = useCallback(() => {
-    if (!isPreviewMode && selectedComponentId) {
-      setCopiedComponent(
-        getComponentById(editorTree.root, selectedComponentId!)!,
-      );
-    }
-  }, [editorTree.root, isPreviewMode, selectedComponentId, setCopiedComponent]);
-
-  const cutSelectedComponent = useCallback(() => {
-    if (!isPreviewMode && selectedComponentId) {
-      copySelectedComponent();
-      deleteComponent();
-    }
-  }, [
-    copySelectedComponent,
-    deleteComponent,
-    isPreviewMode,
-    selectedComponentId,
-  ]);
-
-  const determinePasteTarget = (selectedId: string | undefined) => {
-    if (!selectedId) return "content-wrapper";
-    if (selectedId === "root") return "content-wrapper";
-    return selectedId as string;
-  };
-
-  const pasteCopiedComponent = useCallback(async () => {
-    if (!copiedComponent || isPreviewMode) {
-      return; // Early exit if conditions aren't met
-    }
-
-    const copy = cloneDeep(editorTree);
-    const targetId = determinePasteTarget(selectedComponentId);
-    const parentComponent = getComponentParent(copy.root, targetId);
-
-    const newSelectedId = addComponent(
-      copy.root,
-      copiedComponent,
-      {
-        id: parentComponent!.id as string,
-        edge: "right",
-      },
-      getComponentIndex(parentComponent!, selectedComponentId!) + 1,
-    );
-
-    await setEditorTree(copy, { action: `Pasted ${copiedComponent.name}` });
-    setSelectedComponentId(newSelectedId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    copiedComponent,
-    editorTree,
-    isPreviewMode,
-    selectedComponentId,
-    setEditorTree,
-  ]);
-
-  useHotkeys([
-    ["backspace", deleteComponent],
-    ["delete", deleteComponent],
-    ["mod+C", copySelectedComponent],
-    ["mod+V", pasteCopiedComponent],
-    ["mod+X", cutSelectedComponent],
-    [
-      "mod+Z",
-      () => {
-        if (!isPreviewMode) {
-          undo();
-        }
-      },
-    ],
-    [
-      "mod+shift+Z",
-      () => {
-        if (!isPreviewMode) {
-          redo();
-        }
-      },
-    ],
-    [
-      "mod+Y",
-      () => {
-        if (!isPreviewMode) {
-          redo();
-        }
-      },
-    ],
-  ]);
-
-  const isMac = window.navigator.userAgent.includes("Mac");
-
-  useHotkeysOnIframe([
-    [
-      isMac ? "backspace" : "delete",
-      (e) => {
-        // @ts-ignore
-        if (e.target.contentEditable !== "true" && !isPreviewMode) {
-          deleteComponent();
-        }
-      },
-      { preventDefault: false },
-    ],
-    ["mod+C", copySelectedComponent, { preventDefault: false }],
-    ["mod+X", cutSelectedComponent, { preventDefault: false }],
-    [
-      "mod+V",
-      (e) => {
-        // @ts-ignore
-        if (e.target.contentEditable !== "true" && !isPreviewMode) {
-          pasteCopiedComponent();
-        }
-      },
-      { preventDefault: false },
-    ],
-    [
-      "mod+Z",
-      () => {
-        if (!isPreviewMode) {
-          undo();
-        }
-      },
-    ],
-    [
-      "mod+shift+Z",
-      () => {
-        if (!isPreviewMode) {
-          redo();
-        }
-      },
-    ],
-    [
-      "mod+Y",
-      () => {
-        if (!isPreviewMode) {
-          redo();
-        }
-      },
-    ],
-  ]);
-
-  const renderTree = (component: Component) => {
-    if (component.id === "root") {
-      return (
-        <Droppable
-          key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
-          id={component.id}
-          m={0}
-          p={2}
-        >
-          <Paper shadow="xs" ref={canvasRef} bg="gray.0" display="flex">
-            {component.children?.map((child) => renderTree(child))}
-          </Paper>
-        </Droppable>
-      );
-    }
-
-    const componentToRender = componentMapper[component.name];
-
-    if (!componentToRender) {
-      return (
-        <DroppableDraggable
-          key={`${component.id}-${component?.props?.key}-${
-            isPreviewMode ? "preview" : "editor"
-          }`}
-          id={component.id!}
-          component={component}
-          customComponentModal={customComponentModal}
-        >
-          {component.children?.map((child) => renderTree(child))}
-        </DroppableDraggable>
-      );
-    }
-
-    return (
-      <DroppableDraggable
-        key={`${component.id}-${component?.props?.key}-${
-          isPreviewMode ? "preview" : "editor"
-        }`}
-        id={component.id!}
-        component={component}
-        customComponentModal={customComponentModal}
-      >
-        {componentToRender?.Component({ component, renderTree })}
-      </DroppableDraggable>
-    );
   };
 
   return (
@@ -392,26 +151,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
             </Paper>
           </Box>
         )}
-        {(editorTree?.root?.children ?? [])?.length > 0 && (
-          <Box
-            pos="relative"
-            onClick={() => clearSelection()}
-            style={{
-              minHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
-              height: "100%",
-              overflow: "hidden",
-            }}
-            p={0}
-          >
-            <IFrame onClick={clearSelection} projectId={projectId}>
-              {renderTree(editorTree.root)}
-            </IFrame>
-          </Box>
-        )}
-        <CustomComponentModal
-          customComponentModal={customComponentModal}
-          isCustomComponentModalOpen={isCustomComponentModalOpen}
-        />
+        <EditorCanvas projectId={projectId} pageId={pageId} />
       </Shell>
     </>
   );

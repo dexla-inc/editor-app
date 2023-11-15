@@ -9,7 +9,7 @@ type WithModifier = {
 };
 
 export const withModifier = (Modifier: ComponentType<WithModifier>) => {
-  const Config = () => {
+  const Config = ({ initiallyOpened }: any) => {
     const editorTree = useEditorStore((state) => state.tree);
     const selectedComponentId = useEditorStore(
       (state) => state.selectedComponentId,
@@ -35,6 +35,10 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
       return selectedComponent;
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedComponent, currentState, language]);
+
+    if (!initiallyOpened) {
+      return null;
+    }
 
     return (
       <Modifier

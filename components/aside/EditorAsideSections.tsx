@@ -183,7 +183,7 @@ export const EditorAsideSections = () => {
 
   const designSections = sections?.map(({ Component, ...item }) => (
     <SidebarSection {...item} key={item.label}>
-      <Component key={currentState} />
+      <Component key={currentState} initiallyOpened={item.initiallyOpened} />
     </SidebarSection>
   ));
 

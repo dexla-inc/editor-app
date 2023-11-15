@@ -66,7 +66,7 @@ export const Live = ({ projectId, pageId }: Props) => {
     if (!componentToRender) {
       return (
         <DroppableDraggable
-          key={`${component.id}-${component?.props?.key}-preview`}
+          key={`${component.id}-preview`}
           id={component.id!}
           component={component}
         >
@@ -77,7 +77,7 @@ export const Live = ({ projectId, pageId }: Props) => {
 
     return (
       <DroppableDraggable
-        key={`${component.id}-${component?.props?.key}-preview`}
+        key={`${component.id}-preview`}
         id={component.id!}
         component={component}
       >
