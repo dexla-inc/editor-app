@@ -73,6 +73,13 @@ export default function AIPromptTextareaInput({
     setIsLoading(false); // Set isLoading back to false when the request completes
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+      event.preventDefault();
+      handleGenerateClick();
+    }
+  };
+
   return (
     <Stack spacing={0} bg="white">
       <Group position="apart" align="self-start">
@@ -145,6 +152,7 @@ export default function AIPromptTextareaInput({
           placeholder={placeholder}
           value={description}
           onChange={(event) => setDescription(event.currentTarget.value)}
+          onKeyDown={handleKeyDown}
           onPaste={handlePaste}
           autoFocus
           autosize

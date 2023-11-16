@@ -46,15 +46,21 @@ export default async function handler(
     });
 
     const message = response.choices[0].message;
-    console.log("content", message.content);
+    const cleanedJson = cleanJson(message.content);
+    console.log("content", cleanedJson);
     try {
-      const content = JSON.parse(message.content ?? "{}");
+      const content = JSON.parse(cleanedJson ?? "{}");
       return res.status(200).json(content);
     } catch (error) {
-      return res.status(200).send(message.content || "");
+      return res.status(200).send(cleanedJson || "");
     }
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error });
   }
+}
+
+// Move to common file
+function cleanJson(json: string | null) {
+  return json?.replace("```json", "").replace("```", "");
 }
