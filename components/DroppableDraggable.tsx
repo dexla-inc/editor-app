@@ -350,21 +350,25 @@ export const DroppableDraggable = ({
     >
       {/* @ts-ignore */}
       <ComponentWrapper
-        {...(hasTooltip ? { label: component.props?.tooltip } : {})}
+        {...(hasTooltip
+          ? { label: component.props?.tooltip, withArrow: true, fz: "xs" }
+          : {})}
       >
-        {cloneElement(
-          // @ts-ignore
-          children,
-          {
-            component: {
-              ...component,
-              props: propsWithOverwrites,
+        <Box>
+          {cloneElement(
+            // @ts-ignore
+            children,
+            {
+              component: {
+                ...component,
+                props: propsWithOverwrites,
+              },
+              isPreviewMode,
             },
-            isPreviewMode,
-          },
-          // @ts-ignore
-          children?.children,
-        )}
+            // @ts-ignore
+            children?.children,
+          )}
+        </Box>
       </ComponentWrapper>
       {
         <>
