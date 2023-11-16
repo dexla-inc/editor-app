@@ -69,7 +69,6 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
               minHeight: "auto",
               ...style,
               width: "-webkit-fill-available",
-              height: "-webkit-fill-available",
             },
           }}
           {...props}

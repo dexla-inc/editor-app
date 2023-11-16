@@ -1,12 +1,12 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconDivide } from "@tabler/icons-react";
-import { useEffect } from "react";
-import { withModifier } from "@/hoc/withModifier";
 import { pick } from "next/dist/lib/pick";
+import { useEffect } from "react";
 
 export const icon = IconDivide;
 export const label = "Divider";
@@ -16,7 +16,7 @@ export const defaultInputValues = {
   label: "Divider",
   labelPosition: "center",
   orientation: "horizontal",
-  size: "md",
+  size: "xs",
   variant: "solid",
 };
 

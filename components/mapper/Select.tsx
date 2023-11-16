@@ -1,9 +1,9 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Loader, Select as MantineSelect, SelectProps } from "@mantine/core";
+import cloneDeep from "lodash.clonedeep";
 import get from "lodash.get";
 import { memo } from "react";
-import cloneDeep from "lodash.clonedeep";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -24,6 +24,7 @@ const SelectComponent = ({
     dataPath,
     triggers,
     loading,
+    style: { height, ...style },
     ...componentProps
   } = component.props as any;
 
@@ -50,6 +51,10 @@ const SelectComponent = ({
       {...props}
       {...componentProps}
       {...triggers}
+      styles={{
+        input: { height },
+      }}
+      {...style}
       withinPortal={false}
       maxDropdownHeight={120}
       data={data.map((d: any) => {
