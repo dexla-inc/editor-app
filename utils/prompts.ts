@@ -320,21 +320,28 @@ While examining the screenshot, adhere to these specific requirements:
 Visual Hierarchy Representation:
 - Reflect the visual hierarchy in the JSON with nested components where necessary, keeping the parent-child relationships intact.
 - You must replicate the exact layout of the screenshot using flex unless mentioned in Specific Requirements.
-- You must use a single 'Card' or 'Container' component to encapsulate related elements as seen in the screenshot.
 - Examine how many columns there are in the screenshot and supply the same number of Containers direct children of the root Card or Container.
+- Make sure you replicate the correct flexDirection as per the screenshot.
 
 Detailed Flex Structure Analysis:
 - The JSON should reflect the layout's flex properties, which are critical for replicating the layout seen in the screenshot.
 - Analyze the screenshot to identify the layout structure and the flex properties of each component.
-- You should use Containers with the flex property for flex-grow, flex-shrink, flex-basis to replicate the screenshot layout and create dynamic layouts consistening of multiple rows and columns.
+- You should use Containers with the flex property for flex-grow, flex-shrink, flex-basis to replicate the screenshot layout and create dynamic 
+layouts consistening of multiple rows and columns.
+- Flex rowGap and columnGap only works for direct children, so make sure you are not adding unnecessary Containers which will break the gaps.
 
 Card Component Styling:
-- A Card with multiple Containers as children should have flexDirection row.
-- Omit the boxShadow and border properties from the Card component unless mentioned in Specific Requirements.
+- You should identify how many cards are in the screenshot and include the same amount, if there are more than one then Cards should be an array of children of Container.
+- A 'Card' must not have a 'Card' Component as a property of children, grandchildren etc.
+- A 'Card' with multiple Containers as children should have flexDirection row.
+- Omit the boxShadow and border properties from the 'Card' component unless mentioned in Specific Requirements.
 - Make sure to get the correct padding from the screenshot.
 
 Styling Precision:
-- Translate the styling of elements from the screenshot into JSON 'style' properties with exact values for width, height, margins, paddings, font sizes, colors, etc.
+- Translate the styling of elements from the screenshot into JSON 'style' properties with exact values for all styling properties such as
+gaps between components, width, height, margins, paddings, font sizes, colors, etc.
+- Use the Color with the correct shade of Color, the 6th shade is the default.
+- The text color must adhere to the Web Content Accessibility Guidelines (WCAG) to ensure readability.
 
 Component Mapping to Mantine UI:
 - Map visual elements to the closest corresponding Mantine UI v6 components.
@@ -345,6 +352,7 @@ Iconography with Tabler Icons:
 - Include the appropriate Tabler icon names in the JSON props section using the name as the icon for example IconAB, IconOneTwoThree etc.
 
 Chart Components:
+- apexcharts is the chart library used.
 - Identify the chart types in the screenshot.
 - Inspect the screenshot and copy its width in pixels and apply it to props.style, no need to worry about height.
 - Do not explain or comment within the Chart JSON, so no need to comment on data, just strictly supply the data.
@@ -358,101 +366,333 @@ Specific Requirements:
 - ${description ?? "Copy the screenshot to your best ability"}
 
 type Row = {
-  components: CardOrContainer[];
+  components: Card[] | Container[];
 };
 
-type CardOrContainer = BaseComponent & {
-  name: "Card" | "Container";
-  children?: ColumnContainer[]; // Must equal the number of columns so any layout can be created using flex
+type Container = BaseComponent & {
+  name: "Container";
+  props: {
+    style: {
+      flexDirection: "row" | "column";
+      flex: "{number} {number} {auto | number}";
+      justifyContent:
+        | "flex-start"
+        | "flex-end"
+        | "center"
+        | "space-between"
+        | "space-around"
+        | "space-evenly";
+      alignItems: "flex-start" | "flex-end" | "center" | "stretch" | "baseline";
+      rowGap: "<number>px";
+      columnGap: "<number>px";
+      flexWrap: "nowrap" | "wrap";
+      padding: "<number>px";
+      [key: string]: any;
+    };
+  };
+  children: Component[];
 };
 
-type ColumnContainer = BaseComponent & {
-  name: "Container"; // Make sure each component in the screenshot is in the correct Container
+type CardChildren = Exclude<Component, Card>[];
+type Card = Container & {
+  name: "Card";
+  children: CardChildren[];
 };
 
 type BaseComponent = {
   name: string; // Only include names from the Component type
   description: string;
   children?: Component[];
-  props?: { style: {[key: string]: any}; [key: string]: any; };
-}
+  props?: {
+    [key: string]: any;
+    style: {
+      [key: string]: any;
+    };
+  };
+};
 
-type Container = BaseComponent & { name: 'Container'; props: { style: { flexDirection: 'row' | 'column'; flex: '{number} {number} {number | string}' // flex-grow | flex-shrink | flex-basis; justifyContent: 'start' | 'center' | 'end'; alignItems: 'start' | 'center' | 'end'; rowGap: string; columnGap: string; [key: string]: any; } }
-type Card = BaseComponent & { name: 'Card'; props: { style: { pading: "<number>px"; width: string; flexDirection: 'row' | 'column'; justifyContent: 'start' | 'center' | 'end'; alignItems: 'start' | 'center' | 'end'; flex: string; rowGap: string; columnGap: string; [key: string]: any}; } }
+// The colors are named appropriately with a . then a number to indicate the shade
+type Color =
+  | "Primary.{0-9}"
+  | "PrimaryText.{0-9}"
+  | "Secondary.{0-9}"
+  | "SecondaryText.{0-9}"
+  | "Tertiary.{0-9}"
+  | "TertiaryText.{0-9}"
+  | "Background.{0-9}"
+  | "Border.{0-9}"
+  | "Neutral.{0-9}"
+  | "Black.{0-9}"
+  | "White.{0-9}";
 
-type Button = BaseComponent & { name: 'Button'; props: { value: string; icon?: Icon; [key: string]: string; } }
-type Link = BaseComponent & { name: 'Link'; props: { value: string; [key: string]: string; } } 
-type Input = BaseComponent & { name: 'Input'; props: { label: string; placeholder: string; [key: string]: string; } }
-type Select = BaseComponent & { name: 'Select'; props: { label: string; placeholder: string; [key: string]: string; } }
-type Checkbox = BaseComponent & { name: 'Checkbox'; }
-type RadioItem = BaseComponent & { name: 'RadioItem'; props: { value: string; label: string; [key: string]: string; }; }
-type RadioGroup = BaseComponent & { name: 'RadioGroup'; props: { label: string; [key: string]: string; }; children: RadioItem[]; }
-type Form = BaseComponent & { name: 'Form'; children: Input | DateInput | Text | Button | Select | Switch | Checkbox | RadioGroup | Rating | Toggle | Textarea; }
-type Switch = BaseComponent & { name: 'Switch'; }
-type DateInput = BaseComponent & { name: 'DateInput'; }
-type Textarea = BaseComponent & { name: 'Textarea'; props: { placeholder: string; [key: string]: string; } }
-type ActionIcon = BaseComponent & { name: 'ActionIcon'; }
-type Rating = BaseComponent & { name: 'Rating'; }
-type FileButton = BaseComponent & { name: 'FileButton'; }
-type FileUpload = BaseComponent & { name: 'FileUpload'; }
+type MantineSize = "xs" | "sm" | "md" | "lg" | "xl";
 
-type Title = BaseComponent & { name: 'Title'; props: { order: 1 | 2 | 3 | 4 | 5 | 6; value: string; [key: string]: string; } }
-type Text = BaseComponent & { name: 'Text'; props: { value: string; [key: string]: string; } }
+type AppBar = BaseComponent & {
+  name: "AppBar";
+  props: {
+    style: {
+      flexDirection: "row";
+      justifyContent: "flex-start" | "flex-end" | "space-between";
+      rowGap: "<number>px";
+      padding: "<number>px";
+      [key: string]: any;
+    };
+  };
+  children: Container[]; // Can include ButtonIcon, Title, Avatar, Link, Image within Container
+};
 
-type Table = BaseComponent & { name: 'Table'; props: { data: { [key: string]: string }[]; } }
-type Icon = BaseComponent & { name: 'Icon'; props: { name: string; } } // Use icons from https://tabler-icons-react.vercel.app/ for example IconTrendingUp
-type Image = BaseComponent & { name: 'Image'; }
-type Divider = BaseComponent & { name: 'Divider'; props: { label: string; labelPosition: 'center'; [key: string]: string; } }
-type Avatar = BaseComponent & { name: 'Avatar'; }
-type Accordion = BaseComponent & { name: 'Accordion'; }
+type Button = BaseComponent & {
+  name: "Button";
+  props: {
+    value: string;
+    color: Color;
+    textColor: Color;
+    icon?: Icon;
+    [key: string]: string;
+  };
+};
+type Link = BaseComponent & {
+  name: "Link";
+  props: { value: string; [key: string]: string };
+};
+type Input = BaseComponent & {
+  name: "Input";
+  props: { label: string; placeholder: string; [key: string]: string };
+};
+type Select = BaseComponent & {
+  name: "Select";
+  props: {
+    label: string;
+    placeholder: string;
+    data: { [key: string]: string }[]; // Always include at least one item
+    icon?: Icon;
+    [key: string]: string;
+  };
+};
+type Checkbox = BaseComponent & { name: "Checkbox" };
+type RadioItem = BaseComponent & {
+  name: "RadioItem";
+  props: { value: string; label: string; [key: string]: string };
+};
+type RadioGroup = BaseComponent & {
+  name: "RadioGroup";
+  props: { label: string; [key: string]: string };
+  children: RadioItem[];
+};
+type Switch = BaseComponent & {
+  name: "Switch";
+  children: [
+    {
+      props: { placeholder: string; [key: string]: string };
+    }
+  ];
+};
+type DateInput = BaseComponent & {
+  name: "DateInput";
+};
+type Textarea = BaseComponent & {
+  name: "Textarea";
+};
 
-type Breadcrumb = BaseComponent & { name: 'Breadcrumb'; children: Link[]; }
-type Tabs = BaseComponent & { name: 'Tabs'; }
+type FormInputGroup<TComponent extends BaseComponent> = BaseComponent & {
+  name: "Container";
+  description: "Form Input Container";
+  children: [
+    {
+      name: "Text";
+      props: {
+        value: string; // The label of the input
+        color: Color;
+      };
+    },
+    TComponent & {
+      props: TComponent["props"] & {
+        placeholder: string;
+        [key: string]: string;
+      };
+    }
+  ];
+};
 
-type Alert = BaseComponent & { name: 'Alert'; }
-type Badge = BaseComponent & { name: 'Badge'; }
+type Form = BaseComponent & {
+  name: "Form";
+  children:
+    | FormInputGroup<Input>
+    | Input
+    | FormInputGroup<DateInput>
+    | DateInput
+    | Text
+    | Button
+    | FormInputGroup<Select>
+    | Select
+    | FormInputGroup<Switch>
+    | Switch
+    | FormInputGroup<Checkbox>
+    | Checkbox
+    | FormInputGroup<RadioGroup>
+    | RadioGroup
+    | FormInputGroup<Rating>
+    | Rating
+    | FormInputGroup<Textarea>
+    | Textarea;
+};
 
-type ChartProps = { series: { name: string; data: number[]; }[]; options: { title: { text: string; }; }; props?: { style: { width: "{number}px"; [key: string]: any; }; }}
-type XAxisProps = { xaxis: { categories: string[]; }; }
-type PieChart = { name: 'PieChart'; props: { series: number[]; options: { labels: string[]; }; }; }
-type RadarChart = { name: 'RadarChart'; props: ChartProps & XAxisProps; }
-type BarChart = { name: 'BarChart'; props: ChartProps & XAxisProps; }
-type LineChart = { name: 'LineChart'; props: ChartProps & XAxisProps; }
-type AreaChart = { name: 'AreaChart'; props: ChartProps & XAxisProps; }
-type RadialChart = { name: 'RadialChart'; props: ChartProps & XAxisProps; }
+type ButtonIcon = BaseComponent & {
+  name: "ButtonIcon";
+  props: { variant: "filled" | "default"; radius: MantineSize };
+  children: [Icon];
+}; // This is mantine ActionIcon. It is a button with an icon only.
+type Rating = BaseComponent & {
+  name: "Rating";
+  props: { value: 0 | 1 | 2 | 3 | 4 | 5 };
+};
+type FileButton = BaseComponent & {
+  name: "FileButton";
+  props: { accept: string };
+  children: [Button];
+};
+type FileUpload = BaseComponent & { name: "FileUpload" }; // This is Mantine's Dropzone
 
-type Component = 
+type Title = BaseComponent & {
+  name: "Title";
+  props: { order: 1 | 2 | 3 | 4 | 5 | 6; value: string; [key: string]: string };
+};
+type Text = BaseComponent & {
+  name: "Text";
+  props: { value: string; color: Color; [key: string]: string }; // Color is a prop for Text, not a style
+};
+
+type Table = BaseComponent & {
+  name: "Table";
+  props: { data: { [key: string]: string }[] };
+};
+type Icon = BaseComponent & { name: "Icon"; props: { name: string } }; // Use icons from https://tabler-icons-react.vercel.app/ for example IconTrendingUp
+type Image = BaseComponent & {
+  name: "Image";
+  props: {
+    src: string;
+    alt?: string;
+    fit?: string;
+    position?: string;
+    style: { width: string; height: string; [key: string]: any };
+    [key: string]: string;
+  };
+};
+type Divider = BaseComponent & {
+  name: "Divider";
+  props: { label: string; labelPosition: "center"; [key: string]: string };
+};
+type Avatar = BaseComponent & {
+  name: "Avatar";
+  props: {
+    src: string;
+    value: string;
+    color: Color;
+    radius: MantineSize;
+    size: MantineSize;
+  };
+};
+
+type Accordion = BaseComponent & { name: "Accordion" };
+
+type Breadcrumb = BaseComponent & { name: "Breadcrumb"; children: Link[] };
+type Tab = BaseComponent & {
+  name: "Tab";
+  props: { value: string; icon: Icon };
+  children: [Text];
+};
+type TabsList = BaseComponent & { name: "TabsList"; children: Tab[] };
+type TabsPanel = BaseComponent & {
+  name: "TabsPanel";
+  children: Container[];
+};
+type Tabs = BaseComponent & {
+  name: "Tabs";
+  props: { defaultValue: string };
+  children: TabsList[] | TabsPanel[]; // Uses Mantine Tabs.List and Tabs.Panel
+};
+
+type Alert = BaseComponent & {
+  name: "Alert";
+  props: { title: string; color: Color };
+};
+type Badge = BaseComponent & {
+  name: "Badge";
+  props: { value: string; color: Color; size: MantineSize };
+};
+
+type CommonChartProps = {
+  series: Array<{ name: string; data: number[] }>;
+  options: {};
+  props?: {
+    style: {
+      width: string; // Assuming width is a string like "300px" or "100%"
+      [key: string]: any;
+    };
+  };
+};
+
+type XAxisProps = { xaxis: { categories: string[] } };
+type PieChart = {
+  name: "PieChart";
+  props: {
+    series: number[];
+    labels: string[];
+  };
+};
+type RadarChart = { name: "RadarChart"; props: CommonChartProps & XAxisProps };
+type BarChart = { name: "BarChart"; props: CommonChartProps & XAxisProps };
+type LineChart = { name: "LineChart"; props: CommonChartProps & XAxisProps };
+type AreaChart = { name: "AreaChart"; props: CommonChartProps & XAxisProps };
+type RadialChart = {
+  name: "RadialChart";
+  props: CommonChartProps & XAxisProps;
+};
+
+type Component =
+  | Accordion
+  | Alert
+  | AreaChart
+  | AppBar
+  | Avatar
+  | BarChart
+  | Badge
+  | Breadcrumb
   | Button
-  | Link
-  | Input
-  | Select
-  | Checkbox
-  | RadioGroup
-  | Form
-  | Switch
-  | DateInput
-  | Textarea
-  | ActionIcon
-  | Rating
+  | ButtonIcon
+  | Card
+  | Container
+  | Divider
   | FileButton
   | FileUpload
-  | Title
-  | Text
-  | Table
+  | Form
+  | FormInputGroup<Checkbox>
+  | Checkbox
+  | FormInputGroup<DateInput>
+  | DateInput
+  | FormInputGroup<Input>
+  | Input
+  | FormInputGroup<RadioGroup>
+  | RadioGroup
+  | FormInputGroup<Rating>
+  | Rating
+  | FormInputGroup<Select>
+  | Select
+  | FormInputGroup<Switch>
+  | Switch
+  | FormInputGroup<Textarea>
+  | Textarea
   | Icon
   | Image
-  | Divider
-  | Avatar
-  | Accordion
-  | Breadcrumb
-  | Tabs
-  | Alert
-  | Badge
+  | Link
+  | LineChart
   | PieChart
   | RadarChart
-  | BarChart
-  | LineChart
-  | AreaChart;
+  | RadialChart
+  | Table
+  | Tabs
+  | Text
+  | Title;
 
   Remember to provide the JSON in a format that's directly usable with the provided type definitions, ensuring that the names of components 
   and properties match those expected by Mantine UI and the TypeScript Row type definition.
@@ -464,6 +704,7 @@ Remember LSCGS, you must:
 
 - Return in JSON format only as I will parse the response using JsonSerializer.Deserialize<Row>(response).
 - The response type must be JSON.
+- Props and Style can't be empty, leave them out if they are not needed.
 `
       : ""
   }

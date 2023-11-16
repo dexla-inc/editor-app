@@ -1,8 +1,8 @@
+import { defaultTheme } from "@/components/IFrame";
 import { defaultInputValues } from "@/components/modifiers/Input";
+import { defaultLayoutValues } from "@/components/modifiers/Layout";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
-import { defaultLayoutValues } from "@/components/modifiers/Layout";
-import { defaultTheme } from "@/components/IFrame";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
@@ -44,7 +44,7 @@ export const jsonStructure = (props?: any): Component => {
           style: {
             width: "100%",
             height: "auto",
-            flexDirection: "column",
+            minWidth: "220px",
           },
           ...defaultInputValues,
           ...(props.props || {}),
