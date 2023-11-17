@@ -137,7 +137,7 @@ const ListItem = ({ component, children }: ListItemProps) => {
         w="100%"
         p={0}
         bg={hovered ? "gray.1" : undefined}
-        sx={{
+        style={{
           cursor: "move",
           border:
             selectedComponentId === component.id

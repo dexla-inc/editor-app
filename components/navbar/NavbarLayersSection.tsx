@@ -105,7 +105,7 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
         w="100%"
         p={2}
         bg={hovered ? "gray.1" : undefined}
-        sx={{
+        style={{
           cursor: "move",
           border:
             selectedComponentId === component.id
@@ -135,7 +135,10 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
             align="center"
             sx={{ backgroundColor: `${editable && "white"}` }}
           >
-            <ActionIcon sx={{ cursor: "pointer", pointerEvents: "all" }}>
+            <ActionIcon
+              variant="transparent"
+              sx={{ cursor: "pointer", pointerEvents: "all" }}
+            >
               {collapseIcon}
             </ActionIcon>
             {component.id !== "root" && icon}

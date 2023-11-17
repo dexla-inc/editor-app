@@ -1,7 +1,10 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
+import {
+  debouncedTreeComponentPropsUpdate,
+  debouncedTreeUpdate,
+} from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconDivide } from "@tabler/icons-react";
@@ -83,7 +86,11 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           {...form.getInputProps("orientation")}
           onChange={(value) => {
             form.setFieldValue("orientation", value as string);
-            debouncedTreeComponentPropsUpdate("orientation", value as string);
+            const height = value === "horizontal" ? "auto" : "20px";
+            debouncedTreeUpdate(selectedComponent?.id!, {
+              style: { height },
+              orientation: value as string,
+            });
           }}
         />
         <SizeSelector

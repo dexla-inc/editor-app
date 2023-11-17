@@ -18,7 +18,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowBackUp } from "@tabler/icons-react";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Icon } from "./Icon";
 
 const convertTimestampToTimeTaken = (timestamp: number) => {
@@ -90,7 +90,7 @@ export const ChangeHistoryPopover: FC = () => {
       p={4}
       bg="gray.0"
       sx={(theme) => ({
-        border: `1px solid ${theme.colors.gray[3]}`,
+        border: `1px solid ${theme.colors.gray[2]}`,
         borderRadius: theme.radius.sm,
       })}
     >

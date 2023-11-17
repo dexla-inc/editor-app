@@ -50,6 +50,23 @@ export const theme: MantineTheme = {
   breakpoints: { xs: 500, sm: 1100, md: 1150, lg: 1200, xl: 1400 },
   black: "#222",
   primaryColor: "teal",
+  components: {
+    Input: {
+      styles: (theme) => ({
+        input: { borderColor: theme.colors.gray[2] },
+      }),
+    },
+    Select: {
+      styles: (theme) => ({
+        input: { borderColor: theme.colors.gray[2] },
+      }),
+    },
+    Card: {
+      defaultProps: (theme) => ({
+        style: { borderColor: theme.colors.gray[2] },
+      }),
+    },
+  },
 };
 
 const AuthProvider = ({
