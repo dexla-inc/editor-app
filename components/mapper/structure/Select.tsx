@@ -1,60 +1,23 @@
-import { defaultTheme } from "@/components/IFrame";
-import { defaultLayoutValues } from "@/components/modifiers/Layout";
 import { defaultSelectValues } from "@/components/modifiers/Select";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
-  const theme = props.theme ?? defaultTheme;
   const { ...defaultValues } = defaultSelectValues;
 
   return {
     id: nanoid(),
-    name: "Container",
-    description: "Container",
+    name: "Select",
+    description: "Select",
     props: {
       style: {
-        ...defaultLayoutValues,
         width: "auto",
         height: "auto",
+        minWidth: "220px",
       },
+      ...defaultValues,
+      ...(props.props || {}),
     },
-    children: [
-      {
-        id: nanoid(),
-        name: "Text",
-        description: "Text",
-        children: [],
-        props: {
-          children: "A label",
-          color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-          size: "sm",
-          weight: "normal",
-          style: {
-            lineHeight: "110%",
-            letterSpacing: "0px",
-            width: "auto",
-            height: "auto",
-          },
-          ...(props.props || {}),
-        },
-        blockDroppingChildrenInside: true,
-      },
-      {
-        id: nanoid(),
-        name: "Select",
-        description: "Select",
-        props: {
-          style: {
-            width: "auto",
-            height: "auto",
-            minWidth: "220px",
-          },
-          ...defaultValues,
-          ...(props.props || {}),
-        },
-        blockDroppingChildrenInside: true,
-      },
-    ],
+    blockDroppingChildrenInside: true,
   };
 };
