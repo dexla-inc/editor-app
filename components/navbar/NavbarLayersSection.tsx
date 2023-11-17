@@ -137,7 +137,7 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
           >
             <ActionIcon
               variant="transparent"
-              sx={{ cursor: "pointer", pointerEvents: "all", border: "none" }}
+              sx={{ cursor: "pointer", pointerEvents: "all" }}
             >
               {collapseIcon}
             </ActionIcon>
@@ -179,22 +179,12 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
           </Group>
         </Group>
         {componentActions && !!componentActions.length && (
-          <ActionIcon
-            color="teal"
-            variant="transparent"
-            size={30}
-            sx={{ border: "none" }}
-          >
+          <ActionIcon color="teal" variant="transparent" size={30}>
             <Icon name="IconBolt" size={ICON_SIZE} />
           </ActionIcon>
         )}
         {component.props?.style?.display === "none" && (
-          <ActionIcon
-            color="dark"
-            variant="transparent"
-            size={30}
-            sx={{ border: "none" }}
-          >
+          <ActionIcon color="dark" variant="transparent" size={30}>
             <Icon name="IconEyeOff" size={ICON_SIZE} />
           </ActionIcon>
         )}

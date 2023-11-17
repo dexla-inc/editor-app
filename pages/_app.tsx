@@ -66,11 +66,6 @@ export const theme: MantineTheme = {
         style: { borderColor: theme.colors.gray[2] },
       }),
     },
-    ActionIcon: {
-      defaultProps: (theme) => ({
-        style: { borderColor: theme.colors.gray[2] },
-      }),
-    },
   },
 };
 
