@@ -105,7 +105,7 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
         w="100%"
         p={2}
         bg={hovered ? "gray.1" : undefined}
-        sx={{
+        style={{
           cursor: "move",
           border:
             selectedComponentId === component.id
@@ -135,7 +135,10 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
             align="center"
             sx={{ backgroundColor: `${editable && "white"}` }}
           >
-            <ActionIcon sx={{ cursor: "pointer", pointerEvents: "all" }}>
+            <ActionIcon
+              variant="transparent"
+              sx={{ cursor: "pointer", pointerEvents: "all", border: "none" }}
+            >
               {collapseIcon}
             </ActionIcon>
             {component.id !== "root" && icon}
@@ -176,12 +179,22 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
           </Group>
         </Group>
         {componentActions && !!componentActions.length && (
-          <ActionIcon color="teal" variant="transparent" size={30}>
+          <ActionIcon
+            color="teal"
+            variant="transparent"
+            size={30}
+            sx={{ border: "none" }}
+          >
             <Icon name="IconBolt" size={ICON_SIZE} />
           </ActionIcon>
         )}
         {component.props?.style?.display === "none" && (
-          <ActionIcon color="dark" variant="transparent" size={30}>
+          <ActionIcon
+            color="dark"
+            variant="transparent"
+            size={30}
+            sx={{ border: "none" }}
+          >
             <Icon name="IconEyeOff" size={ICON_SIZE} />
           </ActionIcon>
         )}
