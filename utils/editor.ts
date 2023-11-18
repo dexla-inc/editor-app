@@ -1000,9 +1000,9 @@ export const getClosestEdge = (
 
 export const debouncedTreeComponentChildrenUpdate = debounce(
   (value: Component[]) => {
-    const updateTreeComponentChildren =
-      useEditorStore.getState().updateTreeComponentChildren;
-    const selectedComponentId = useEditorStore.getState().selectedComponentId;
+    const { updateTreeComponentChildren, selectedComponentId } =
+      useEditorStore.getState();
+
     updateTreeComponentChildren(selectedComponentId as string, value);
   },
   300,
@@ -1010,19 +1010,19 @@ export const debouncedTreeComponentChildrenUpdate = debounce(
 
 export const debouncedTreeComponentPropsUpdate = debounce(
   (field: string, value: any) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    const selectedComponentId = useEditorStore.getState().selectedComponentId;
-    updateTreeComponent(selectedComponentId as string, {
-      [field]: value,
-    });
+    const { updateTreeComponent, selectedComponentId } =
+      useEditorStore.getState();
+    if (selectedComponentId) {
+      updateTreeComponent(selectedComponentId, { [field]: value });
+    }
   },
   300,
 );
 
 export const debouncedTreeComponentStyleUpdate = debounce(
   (field: string, value: any) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    const selectedComponentId = useEditorStore.getState().selectedComponentId;
+    const { updateTreeComponent, selectedComponentId } =
+      useEditorStore.getState();
     updateTreeComponent(selectedComponentId as string, {
       style: { [field]: value },
     });
@@ -1038,9 +1038,9 @@ export const debouncedTreeUpdate = debounce((...params: any[]) => {
 
 export const debouncedTreeComponentDescriptionpdate = debounce(
   (value: string) => {
-    const updateTreeComponentDescription =
-      useEditorStore.getState().updateTreeComponentDescription;
-    const selectedComponentId = useEditorStore.getState().selectedComponentId;
+    const { updateTreeComponentDescription, selectedComponentId } =
+      useEditorStore.getState();
+
     updateTreeComponentDescription(selectedComponentId!, value);
   },
   300,
@@ -1048,9 +1048,7 @@ export const debouncedTreeComponentDescriptionpdate = debounce(
 
 export const debouncedTreeRootChildrenUpdate = debounce(
   (value: Component[]) => {
-    const updateTreeComponentChildren =
-      useEditorStore.getState().updateTreeComponentChildren;
-    const tree = useEditorStore.getState().tree;
+    const { updateTreeComponentChildren, tree } = useEditorStore.getState();
     updateTreeComponentChildren(tree.root.id as string, value);
   },
   300,

@@ -65,7 +65,7 @@ export const requiredModifiers: RequiredModifiers = {
   },
   text: {
     value: "New Text",
-    size: "md",
+    size: "sm",
     weight: "normal",
     color: "Black.6",
     lineHeight: "",

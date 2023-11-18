@@ -19,6 +19,7 @@ export const jsonStructure = (props?: any): Component => {
         width: columnsToWidth,
         height: "auto",
       },
+      separator: "•",
       ...(props.props || {}),
     },
     children: [
