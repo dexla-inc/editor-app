@@ -1,4 +1,5 @@
 import { AIResponseTypes } from "@/requests/ai/types";
+import { MantineThemeExtended } from "@/stores/editor";
 
 type PromptParams = {
   pageName?: string;
@@ -11,6 +12,7 @@ type PromptParams = {
   pageCount?: string;
   excludedPages?: string;
   responseType?: AIResponseTypes;
+  theme?: MantineThemeExtended;
 };
 
 export const getPageGenerationPrompt = ({
@@ -306,7 +308,8 @@ Do not explain the response, it has to be JSON only
 
 export const getComponentScreenshotPrompt = ({
   description,
-  responseType = "JSON",
+  responseType,
+  theme,
 }: PromptParams) => `
 
 You are a Layout & Styling Component Generator System (LSCGS), your task is to generate a strict JSON representation of the provided layout screenshot 
@@ -328,7 +331,8 @@ Detailed Flex Structure Analysis:
 - Analyze the screenshot to identify the layout structure and the flex properties of each component.
 - You should use Containers with the flex property for flex-grow, flex-shrink, flex-basis to replicate the screenshot layout and create dynamic 
 layouts consistening of multiple rows and columns.
-- Flex rowGap and columnGap only works for direct children, so make sure you are not adding unnecessary Containers which will break the gaps.
+- Make sure you are not adding unnecessary Containers which will break the rowGap and columnGap you add.
+- You must repkicate the rowGap and columnGap as per the screenshot.
 
 Card Component Styling:
 - You should identify how many cards are in the screenshot and include the same amount, if there are more than one then Cards should be an array of children of Container.
@@ -342,10 +346,12 @@ Styling Precision:
 gaps between components, width, height, margins, paddings, font sizes, colors, etc.
 - Use the Color with the correct shade of Color, the 6th shade is the default.
 - The text color must adhere to the Web Content Accessibility Guidelines (WCAG) to ensure readability.
+- The hex colors are provided in the comments for each color for your reference on what color to choose, do not use the hex value, use the Color type properties.
 
 Component Mapping to Mantine UI:
 - Map visual elements to the closest corresponding Mantine UI v6 components.
 - Ensure that each component's 'name' property is a valid Mantine component name.
+- Breadcrumbs should use the separator prop to match the screenshot.
 
 Iconography with Tabler Icons:
 - Identify icons in the screenshot and match them to Tabler icons, (https://tabler-icons-react.vercel.app).
@@ -411,19 +417,19 @@ type BaseComponent = {
   };
 };
 
-// The colors are named appropriately with a . then a number to indicate the shade
+// The colors are named appropriately with a . then a number to indicate the shade. The comment is the hex value of the color.
 type Color =
-  | "Primary.{0-9}"
-  | "PrimaryText.{0-9}"
-  | "Secondary.{0-9}"
-  | "SecondaryText.{0-9}"
-  | "Tertiary.{0-9}"
-  | "TertiaryText.{0-9}"
-  | "Background.{0-9}"
-  | "Border.{0-9}"
-  | "Neutral.{0-9}"
-  | "Black.{0-9}"
-  | "White.{0-9}";
+  | "Primary.{0-9}" // ${theme?.colors["Primary"][6]}
+  | "PrimaryText.{0-9}" // ${theme?.colors["PrimaryText"][6]}
+  | "Secondary.{0-9}" // ${theme?.colors["Secondary"][6]}
+  | "SecondaryText.{0-9}" // ${theme?.colors["SecondaryText"][6]}
+  | "Tertiary.{0-9}" // ${theme?.colors["Tertiary"][6]}
+  | "TertiaryText.{0-9}" // ${theme?.colors["TertiaryText"][6]}
+  | "Background.{0-9}" // ${theme?.colors["Background"][6]}
+  | "Border.{0-9}" // ${theme?.colors["Border"][6]}
+  | "Neutral.{0-9}" // ${theme?.colors["Neutral"][6]}
+  | "Black.6"
+  | "White.6";
 
 type MantineSize = "xs" | "sm" | "md" | "lg" | "xl";
 
@@ -464,8 +470,7 @@ type Select = BaseComponent & {
   props: {
     label: string;
     placeholder: string;
-    data: { [key: string]: string }[]; // Always include at least one item
-    icon?: Icon;
+    data: { [key: string]: string }[];
     [key: string]: string;
   };
 };
@@ -551,6 +556,7 @@ type FileButton = BaseComponent & {
   props: { accept: string };
   children: [Button];
 };
+// Add children to FileUpload so any uploader can be copied
 type FileUpload = BaseComponent & { name: "FileUpload" }; // This is Mantine's Dropzone
 
 type Title = BaseComponent & {
@@ -559,7 +565,7 @@ type Title = BaseComponent & {
 };
 type Text = BaseComponent & {
   name: "Text";
-  props: { value: string; color: Color; [key: string]: string }; // Color is a prop for Text, not a style
+  props: { value: string; color: "Black.6" | "White.6"; [key: string]: string }; // Color is a prop for Text, not a style
 };
 
 type Table = BaseComponent & {
@@ -595,7 +601,11 @@ type Avatar = BaseComponent & {
 
 type Accordion = BaseComponent & { name: "Accordion" };
 
-type Breadcrumb = BaseComponent & { name: "Breadcrumb"; children: Link[] };
+type Breadcrumb = BaseComponent & {
+  name: "Breadcrumb";
+  children: [...Link[], Text]; // The last item in the array is the current page so no need to have a link
+  separator: "." | "/" | ">" | "-" | "•••" | "..." | ">>>" | ">" | string;
+};
 type Tab = BaseComponent & {
   name: "Tab";
   props: { value: string; icon: Icon };
@@ -626,7 +636,7 @@ type CommonChartProps = {
   options: {};
   props?: {
     style: {
-      width: string; // Assuming width is a string like "300px" or "100%"
+      width: "<number>px" | "100%";
       [key: string]: any;
     };
   };

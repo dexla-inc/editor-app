@@ -1,8 +1,8 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import {
-  Breadcrumbs as MantineBreadcrumbs,
   BreadcrumbsProps,
+  Breadcrumbs as MantineBreadcrumbs,
 } from "@mantine/core";
 import { memo } from "react";
 

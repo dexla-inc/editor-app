@@ -54,6 +54,7 @@ export default function AIPromptTextInput() {
       const result = await generateStructureFromScreenshot(
         description,
         "JSON",
+        theme,
         base64Image,
       );
 

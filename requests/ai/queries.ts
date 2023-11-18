@@ -5,6 +5,7 @@ import {
   EventSourceParams,
 } from "@/requests/ai/types";
 import { PagingResponse } from "@/requests/types";
+import { MantineThemeExtended } from "@/stores/editor";
 import { baseURL, get, getAuthToken } from "@/utils/api";
 import {
   EventSourceMessage,
@@ -132,6 +133,7 @@ export const getChatHistoryList = async (projectId: string) => {
 export const generateStructureFromScreenshot = async (
   description: string,
   responseType: AIResponseTypes,
+  theme: MantineThemeExtended,
   base64Image?: string,
 ) => {
   const response = await fetch("/api/ai/component-screenshot", {
@@ -143,6 +145,7 @@ export const generateStructureFromScreenshot = async (
       description,
       responseType,
       image: base64Image,
+      theme,
     }),
   });
 

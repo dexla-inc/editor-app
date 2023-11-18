@@ -1,12 +1,15 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { withModifier } from "@/hoc/withModifier";
+import {
+  debouncedTreeComponentPropsUpdate,
+  debouncedTreeUpdate,
+} from "@/utils/editor";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
-import { useEffect } from "react";
-import { withModifier } from "@/hoc/withModifier";
 import { pick } from "next/dist/lib/pick";
+import { useEffect } from "react";
 
 export const icon = IconClick;
 export const label = "Link";
@@ -57,12 +60,11 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           }}
         />
         <SizeSelector
+          label="Size"
           {...form.getInputProps("size")}
           onChange={(value) => {
             form.setFieldValue("size", value as string);
-            debouncedTreeUpdate(selectedComponent?.id as string, {
-              size: value,
-            });
+            debouncedTreeComponentPropsUpdate("size", value);
           }}
         />
         <ThemeColorSelector

@@ -1,6 +1,7 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { UnitInput } from "@/components/UnitInput";
+import { getThemeColor } from "@/components/modifiers/Border";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
@@ -42,7 +43,6 @@ import {
 } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
-import { getThemeColor } from "./Border";
 
 export const icon = IconTextSize;
 export const label = "Content";
