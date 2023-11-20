@@ -6,6 +6,7 @@ import * as AccordionItemModifier from "@/components/modifiers/AccordionItem";
 import * as AlertModifier from "@/components/modifiers/Alert";
 import * as AvatarModifier from "@/components/modifiers/Avatar";
 import * as BackgroundModifier from "@/components/modifiers/Background";
+import * as BadgeModifier from "@/components/modifiers/Badge";
 import * as BorderModifier from "@/components/modifiers/Border";
 import * as BoxShadowModifier from "@/components/modifiers/BoxShadow";
 import * as BreadcrumbModifier from "@/components/modifiers/Breadcrumb";
@@ -101,6 +102,7 @@ const sectionMapper: SectionsMapper = {
   tabsPanel: TabsPanelModifier,
   tabsList: TabsListModifier,
   alert: AlertModifier,
+  badge: BadgeModifier,
 };
 
 type Tab = "design" | "actions";

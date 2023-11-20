@@ -6,6 +6,7 @@ import { AccordionPanel } from "@/components/mapper/AccordionPanel";
 import { Alert } from "@/components/mapper/Alert";
 import { AppBar } from "@/components/mapper/AppBar";
 import { Avatar } from "@/components/mapper/Avatar";
+import { Badge } from "@/components/mapper/Badge";
 import { Breadcrumb } from "@/components/mapper/Breadcrumb";
 import { Button } from "@/components/mapper/Button";
 import { ButtonIcon } from "@/components/mapper/ButtonIcon";
@@ -48,6 +49,7 @@ import * as AccordionStructure from "@/components/mapper/structure/Accordion";
 import * as AlertStructure from "@/components/mapper/structure/Alert";
 import * as AppBarStructure from "@/components/mapper/structure/AppBar";
 import * as AvatarStructure from "@/components/mapper/structure/Avatar";
+import * as BadgeStructure from "@/components/mapper/structure/Badge";
 import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
 import * as ButtonStructure from "@/components/mapper/structure/Button";
 import * as ButtonIconStructure from "@/components/mapper/structure/ButtonIcon";
@@ -98,6 +100,7 @@ import { uploadFile } from "@/requests/storage/mutations";
 import { useEditorStore } from "@/stores/editor";
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import { Modifiers } from "@/utils/modifiers";
+
 import {
   IconArrowAutofitContent,
   IconBoxModel,
@@ -121,6 +124,7 @@ import {
   IconFileUpload,
   IconForms,
   IconHeading,
+  IconIdBadge,
   IconJewishStar,
   IconLayoutBottombarCollapse,
   IconLayoutKanban,
@@ -495,6 +499,17 @@ export const structureMapper: StructureMapper = {
     category: "Data Display",
     icon: <IconUser size={ICON_SIZE} />,
   },
+  Alert: {
+    structure: (props: any) => AlertStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Alert"
+        icon={<IconExclamationMark size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+    icon: <IconExclamationMark size={ICON_SIZE} />,
+  },
   // List: {
   //   structure: (props: any) => NotImplemented.jsonStructure(props),
   //   category: "Data Display",
@@ -698,16 +713,16 @@ export const structureMapper: StructureMapper = {
     category: "Chart",
     icon: <IconChartDonut size={ICON_SIZE} />,
   },
-  Alert: {
-    structure: (props: any) => AlertStructure.jsonStructure(props),
+  Badge: {
+    structure: (props: any) => BadgeStructure.jsonStructure(props),
     Draggable: () => (
       <DraggableComponent
-        id="Alert"
-        icon={<IconExclamationMark size={LARGE_ICON_SIZE} />}
+        id="Badge"
+        icon={<IconIdBadge size={LARGE_ICON_SIZE} />}
       />
     ),
     category: "Feedback",
-    icon: <IconExclamationMark size={ICON_SIZE} />,
+    icon: <IconIdBadge size={ICON_SIZE} />,
   },
   Modal: {
     structure: (props: any) => ModalStructure.jsonStructure(props),
@@ -773,6 +788,14 @@ export const componentMapper: ComponentMapper = {
       <Avatar component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["avatar", "spacing", "size", "border"],
+    actionTriggers: ["onMount", "onClick"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  Badge: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Badge component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["badge", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

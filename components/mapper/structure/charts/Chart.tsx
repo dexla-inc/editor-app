@@ -12,7 +12,7 @@ export const jsonStructure = (props?: any): Component => {
       height: "auto",
       style: {
         height: "auto",
-        width: "400px",
+        width: "auto",
       },
       series: [
         {

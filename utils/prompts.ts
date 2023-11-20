@@ -336,7 +336,7 @@ type Container = BaseComponent & {
   props: {
     style: {
       flexDirection: "row" | "column";
-      flex: "{number} {number} {auto | number}";
+      flex: "{number} {number} {auto | 'number'px | 'number'%}";
       justifyContent:
         | "flex-start"
         | "flex-end"

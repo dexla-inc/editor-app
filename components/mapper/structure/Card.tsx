@@ -26,6 +26,7 @@ export const jsonStructure = (props?: any): Component => {
         height: "auto",
         minHeight: "100px",
         padding: "20px",
+        flex: "1 0 auto",
         ...(style || {}),
         ...cardStylingProps,
       },

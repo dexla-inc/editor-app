@@ -1,6 +1,8 @@
 import { Select, SelectProps } from "@mantine/core";
 
-export const SizeSelector = (props: Omit<SelectProps, "data">) => {
+export const SizeSelector = (
+  props: Omit<SelectProps, "data"> | SelectProps,
+) => {
   return (
     <Select
       label="Size"

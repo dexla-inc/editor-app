@@ -36,7 +36,8 @@ export type Modifiers =
   | "tab"
   | "tabsPanel"
   | "tabsList"
-  | "alert";
+  | "alert"
+  | "badge";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -314,6 +315,13 @@ export const requiredModifiers: RequiredModifiers = {
   alert: {
     title: "Alert",
     color: "Black.6",
+  },
+  badge: {
+    value: "New Badge",
+    color: "Primary.6",
+    size: "md",
+    radius: "xl",
+    variant: "filled",
   },
 };
 

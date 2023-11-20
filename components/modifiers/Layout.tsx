@@ -34,8 +34,8 @@ import { useEffect, useState } from "react";
 export const icon = IconLayout2;
 export const label = "Layout";
 
-let GROW_FLEX_DEFAULT = "1 0 auto";
-let SHRINK_FLEX_DEFAULT = "0 1 auto";
+export let GROW_FLEX_DEFAULT = "1 0 auto";
+export let SHRINK_FLEX_DEFAULT = "0 1 auto";
 let AUTO_FLEX_DEFAULT = "0 0 auto";
 let CUSTOM_FLEX_DEFAULT = "1 1 auto";
 
