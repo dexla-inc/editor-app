@@ -25,7 +25,7 @@ export const SavingDisplay = forwardRef<HTMLDivElement, SavingDisplayProps>(
         ref={ref}
         {...props}
         sx={(theme) => ({
-          border: theme.colors.gray[2] + " solid 1px",
+          border: theme.colors.gray[3] + " solid 1px",
           backgroundColor: "white",
           width: 65,
           textAlign: "center",

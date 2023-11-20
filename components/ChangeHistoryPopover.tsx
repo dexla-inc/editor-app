@@ -90,7 +90,7 @@ export const ChangeHistoryPopover: FC = () => {
       p={4}
       bg="gray.0"
       sx={(theme) => ({
-        border: `1px solid ${theme.colors.gray[2]}`,
+        border: `1px solid ${theme.colors.gray[3]}`,
         borderRadius: theme.radius.sm,
       })}
     >

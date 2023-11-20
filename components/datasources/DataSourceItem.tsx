@@ -41,7 +41,7 @@ export function DataSourceItem({
       <Box
         sx={{
           borderRadius: theme.radius.sm,
-          border: "1px solid " + theme.colors.gray[2],
+          border: "1px solid " + theme.colors.gray[3],
         }}
       >
         <Box p="md" sx={{ ...buttonHoverStyles(theme) }}>
@@ -71,7 +71,7 @@ export function DataSourceItem({
           py="xs"
           px="md"
           sx={{
-            borderTop: "1px solid " + theme.colors.gray[2],
+            borderTop: "1px solid " + theme.colors.gray[3],
             width: "100%",
           }}
         >

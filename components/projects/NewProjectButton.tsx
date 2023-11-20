@@ -29,7 +29,7 @@ export default function IconTitleDescriptionButton({
         sx={() => ({
           padding: theme.spacing.md,
           borderRadius: theme.radius.sm,
-          border: "1px solid " + theme.colors.gray[2],
+          border: "1px solid " + theme.colors.gray[3],
           color:
             theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
 

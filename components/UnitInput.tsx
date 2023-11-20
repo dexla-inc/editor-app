@@ -112,10 +112,10 @@ export const UnitInput = ({
           paddingRight: "1rem",
           borderTopLeftRadius: 0,
           borderBottomLeftRadius: 0,
-          border: `1px solid ${theme.colors.gray[4]}`,
+          border: `1px solid ${theme.colors.gray[3]}`,
           borderLeft: "none",
           "&:focus": {
-            borderColor: theme.colors.gray[4],
+            borderColor: theme.colors.gray[3],
           },
         },
         item: {

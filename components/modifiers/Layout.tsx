@@ -371,7 +371,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                 bg="gray.1"
                 sx={(theme) => ({
                   borderRadius: theme.radius.sm,
-                  border: "1px solid " + theme.colors.gray[2],
+                  border: "1px solid " + theme.colors.gray[3],
                 })}
               >
                 <NumberInput

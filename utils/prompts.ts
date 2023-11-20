@@ -321,8 +321,9 @@ using JsonSerializer.Deserialize<Row>(response) without any comments or non-JSON
 While examining the screenshot, adhere to these specific requirements:
 
 Visual Hierarchy Representation:
-- Reflect the visual hierarchy in the JSON with nested components where necessary, keeping the parent-child relationships intact.
+- Reflect the visual hierarchy in the JSON with nested components where necessary, keeping the parent-child-sibling relationships intact.
 - You must replicate the exact layout of the screenshot using flex unless mentioned in Specific Requirements.
+- You must get all Components from the screenshots and return them as part of the JSON.
 - Examine how many columns there are in the screenshot and supply the same number of Containers direct children of the root Card or Container.
 - Make sure you replicate the correct flexDirection as per the screenshot.
 
@@ -348,9 +349,11 @@ gaps between components, width, height, margins, paddings, font sizes, colors, e
 - The text color must adhere to the Web Content Accessibility Guidelines (WCAG) to ensure readability.
 - The hex colors are provided in the comments for each color for your reference on what color to choose, do not use the hex value, use the Color type properties.
 
-Component Mapping to Mantine UI:
+Component Mapping:
 - Map visual elements to the closest corresponding Mantine UI v6 components.
-- Ensure that each component's 'name' property is a valid Mantine component name.
+- Make sure to use the exact name of the Component set in its TypeScript type.
+- You should validate the JSON against the TypeScript type definition to ensure the JSON is valid.
+- You should identify if an input has a label, if it does then it should be wrapped in a Container with a Text component as a child.
 - Breadcrumbs should use the separator prop to match the screenshot.
 
 Iconography with Tabler Icons:
@@ -406,7 +409,7 @@ type Card = Container & {
 };
 
 type BaseComponent = {
-  name: string; // Only include names from the Component type
+  name: string;
   description: string;
   children?: Component[];
   props?: {
@@ -431,6 +434,8 @@ type Color =
   | "Black.6"
   | "White.6";
 
+type TextColor = "Black.6" | "White.6";
+
 type MantineSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 type AppBar = BaseComponent & {
@@ -439,6 +444,7 @@ type AppBar = BaseComponent & {
     style: {
       flexDirection: "row";
       justifyContent: "flex-start" | "flex-end" | "space-between";
+      alignItems: "center";
       rowGap: "<number>px";
       padding: "<number>px";
       [key: string]: any;
@@ -461,10 +467,18 @@ type Link = BaseComponent & {
   name: "Link";
   props: { value: string; [key: string]: string };
 };
+
+// A text input that is not multiline
 type Input = BaseComponent & {
   name: "Input";
   props: { label: string; placeholder: string; [key: string]: string };
 };
+
+// A text input that is multiline
+type Textarea = BaseComponent & {
+  name: "Textarea";
+};
+
 type Select = BaseComponent & {
   name: "Select";
   props: {
@@ -485,60 +499,38 @@ type RadioGroup = BaseComponent & {
   children: RadioItem[];
 };
 type Switch = BaseComponent & {
-  name: "Switch";
+  name: "Container";
+  description: "Switch Container";
   children: [
     {
-      props: { placeholder: string; [key: string]: string };
-    }
-  ];
-};
-type DateInput = BaseComponent & {
-  name: "DateInput";
-};
-type Textarea = BaseComponent & {
-  name: "Textarea";
-};
-
-type FormInputGroup<TComponent extends BaseComponent> = BaseComponent & {
-  name: "Container";
-  description: "Form Input Container";
-  children: [
+      name: "Switch";
+    },
     {
       name: "Text";
       props: {
-        value: string; // The label of the input
-        color: Color;
-      };
-    },
-    TComponent & {
-      props: TComponent["props"] & {
-        placeholder: string;
-        [key: string]: string;
+        value: string;
+        color: TextColor;
       };
     }
   ];
+};
+
+type DateInput = BaseComponent & {
+  name: "DateInput";
 };
 
 type Form = BaseComponent & {
   name: "Form";
   children:
-    | FormInputGroup<Input>
     | Input
-    | FormInputGroup<DateInput>
     | DateInput
     | Text
     | Button
-    | FormInputGroup<Select>
     | Select
-    | FormInputGroup<Switch>
     | Switch
-    | FormInputGroup<Checkbox>
     | Checkbox
-    | FormInputGroup<RadioGroup>
     | RadioGroup
-    | FormInputGroup<Rating>
     | Rating
-    | FormInputGroup<Textarea>
     | Textarea;
 };
 
@@ -556,8 +548,12 @@ type FileButton = BaseComponent & {
   props: { accept: string };
   children: [Button];
 };
-// Add children to FileUpload so any uploader can be copied
-type FileUpload = BaseComponent & { name: "FileUpload" }; // This is Mantine's Dropzone
+
+// This is Mantine's Dropzone
+type FileUpload = BaseComponent & {
+  name: "FileUpload";
+  children: Container[];
+};
 
 type Title = BaseComponent & {
   name: "Title";
@@ -565,7 +561,7 @@ type Title = BaseComponent & {
 };
 type Text = BaseComponent & {
   name: "Text";
-  props: { value: string; color: "Black.6" | "White.6"; [key: string]: string }; // Color is a prop for Text, not a style
+  props: { value: string; color: TextColor; [key: string]: string }; // Color is a prop for Text, not a style
 };
 
 type Table = BaseComponent & {
@@ -588,11 +584,19 @@ type Divider = BaseComponent & {
   name: "Divider";
   props: { label: string; labelPosition: "center"; [key: string]: string };
 };
+
 type Avatar = BaseComponent & {
   name: "Avatar";
-  props: {
-    src: string;
-    value: string;
+  props: (
+    | {
+        src: string;
+        value?: never;
+      }
+    | {
+        src?: never;
+        value: string; // Max two characters, e.g. "AB"
+      }
+  ) & {
     color: Color;
     radius: MantineSize;
     size: MantineSize;
@@ -676,21 +680,13 @@ type Component =
   | FileButton
   | FileUpload
   | Form
-  | FormInputGroup<Checkbox>
   | Checkbox
-  | FormInputGroup<DateInput>
   | DateInput
-  | FormInputGroup<Input>
   | Input
-  | FormInputGroup<RadioGroup>
   | RadioGroup
-  | FormInputGroup<Rating>
   | Rating
-  | FormInputGroup<Select>
   | Select
-  | FormInputGroup<Switch>
   | Switch
-  | FormInputGroup<Textarea>
   | Textarea
   | Icon
   | Image
@@ -703,6 +699,8 @@ type Component =
   | Tabs
   | Text
   | Title;
+
+
 
   Remember to provide the JSON in a format that's directly usable with the provided type definitions, ensuring that the names of components 
   and properties match those expected by Mantine UI and the TypeScript Row type definition.

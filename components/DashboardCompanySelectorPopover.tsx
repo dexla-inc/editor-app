@@ -26,7 +26,7 @@ const DashboardCompanySelectorPopover = forwardRef<
       bg="white"
       sx={(theme) => ({
         margin: "0 auto",
-        borderTop: "1px solid " + theme.colors.gray[2],
+        borderTop: "1px solid " + theme.colors.gray[3],
         boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
         borderRadius: theme.radius.sm,
       })}

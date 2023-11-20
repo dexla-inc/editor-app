@@ -1,3 +1,6 @@
+import { LogicFlowResponse } from "@/requests/logicflows/types";
+import { decodeSchema } from "@/utils/compression";
+import { nodesData } from "@/utils/logicFlows";
 import {
   ActionIcon,
   Avatar,
@@ -10,14 +13,11 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
+import { IconCopy, IconDots, IconEdit, IconTrashX } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useRouter } from "next/router";
-import { nodesData } from "@/utils/logicFlows";
-import { IconCopy, IconDots, IconEdit, IconTrashX } from "@tabler/icons-react";
 import { Edge, Node } from "reactflow";
-import { decodeSchema } from "@/utils/compression";
-import { LogicFlowResponse } from "@/requests/logicflows/types";
 
 dayjs.extend(relativeTime);
 
@@ -125,7 +125,7 @@ export const LogicFlowCard = ({
         </Menu>
       </Group>
       <Card.Section mt="sm">
-        <Divider color={theme.colors.gray[2]} />
+        <Divider color={theme.colors.gray[3]} />
         <Box p="xs">
           <Avatar.Group spacing="xs">
             {avatars

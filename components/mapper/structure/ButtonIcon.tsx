@@ -5,7 +5,7 @@ export const jsonStructure = (props?: any): Component => {
   return {
     id: nanoid(),
     name: "ButtonIcon",
-    description: "Button with icon only",
+    description: "ButtonIcon",
     props: {
       style: {
         width: "auto",

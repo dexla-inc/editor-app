@@ -83,7 +83,7 @@ export function ProjectItem({
       <Box
         sx={{
           borderRadius: theme.radius.sm,
-          border: "1px solid " + theme.colors.gray[2],
+          border: "1px solid " + theme.colors.gray[3],
         }}
       >
         <UnstyledButton
@@ -109,7 +109,7 @@ export function ProjectItem({
           py="xs"
           px="md"
           sx={{
-            borderTop: "1px solid " + theme.colors.gray[2],
+            borderTop: "1px solid " + theme.colors.gray[3],
             width: "100%",
           }}
         >
