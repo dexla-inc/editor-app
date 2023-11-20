@@ -53,17 +53,17 @@ export const theme: MantineTheme = {
   components: {
     Input: {
       styles: (theme) => ({
-        input: { borderColor: theme.colors.gray[2] },
+        input: { borderColor: theme.colors.gray[3] },
       }),
     },
     Select: {
       styles: (theme) => ({
-        input: { borderColor: theme.colors.gray[2] },
+        input: { borderColor: theme.colors.gray[3] },
       }),
     },
     Card: {
       defaultProps: (theme) => ({
-        style: { borderColor: theme.colors.gray[2] },
+        style: { borderColor: theme.colors.gray[3] },
       }),
     },
   },

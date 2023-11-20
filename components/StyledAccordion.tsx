@@ -30,7 +30,7 @@ const useStyles = createStyles((theme) => ({
       borderColor:
         theme.colorScheme === "dark"
           ? theme.colors.dark[4]
-          : theme.colors.gray[2],
+          : theme.colors.gray[3],
       borderRadius: theme.radius.md,
       zIndex: 1,
       fontWeight: 400,

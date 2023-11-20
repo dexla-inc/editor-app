@@ -508,7 +508,7 @@ export const DroppableDraggable = ({
                 left: "50%",
                 transform: "translate(-50%)",
                 "&:hover": {
-                  background: theme.colors.gray[2],
+                  background: theme.colors.gray[3],
                 },
               }}
             >

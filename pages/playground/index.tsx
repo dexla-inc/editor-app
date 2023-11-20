@@ -169,9 +169,9 @@ export default function Playground() {
             p="sm"
             sx={(theme) => ({
               borderRadius: theme.radius.sm,
-              border: "1px solid" + theme.colors.gray[2],
+              border: "1px solid" + theme.colors.gray[3],
               "&:hover": {
-                outline: "1px solid" + theme.colors.gray[2],
+                outline: "1px solid" + theme.colors.gray[3],
               },
             })}
           >

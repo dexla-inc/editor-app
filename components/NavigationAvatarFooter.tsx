@@ -19,7 +19,7 @@ const NavigationAvatarFooter = forwardRef<
       ref={ref}
       sx={(theme) => ({
         margin: "0 auto",
-        borderTop: "1px solid " + theme.colors.gray[2],
+        borderTop: "1px solid " + theme.colors.gray[3],
       })}
       {...props}
     >

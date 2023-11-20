@@ -1,3 +1,5 @@
+import { ErrorAlert } from "@/components/Alerts";
+import { Icon } from "@/components/Icon";
 import { convertToBase64 } from "@/utils/common";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -18,7 +20,6 @@ import {
 import { FileWithPath } from "@mantine/dropzone";
 import { IconPhoto, IconSparkles } from "@tabler/icons-react";
 import { useRef, useState } from "react";
-import { Icon } from "./Icon";
 
 type Props = {
   description: string;
@@ -39,6 +40,7 @@ export default function AIPromptTextareaInput({
   const [screenshot, setScreenshot] = useState<FileWithPath | null>(null);
   const resetRef = useRef<() => void>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [errorText, setErrorText] = useState<string>("");
 
   const clearScreenshot = () => {
     setScreenshot(null);
@@ -61,16 +63,22 @@ export default function AIPromptTextareaInput({
   };
 
   const handleGenerateClick = async () => {
-    setIsLoading(true); // Set isLoading to true before making the request
+    try {
+      setIsLoading(true);
 
-    if (screenshot) {
-      const base64 = await convertToBase64(screenshot);
-      await onClick(base64);
-    } else {
-      await onClick();
+      if (screenshot) {
+        const base64 = await convertToBase64(screenshot);
+        await onClick(base64);
+      } else {
+        await onClick();
+      }
+
+      setIsLoading(false);
+    } catch (error) {
+      setErrorText(
+        "There has been a problem, try again by including more information.",
+      );
     }
-
-    setIsLoading(false); // Set isLoading back to false when the request completes
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -82,6 +90,7 @@ export default function AIPromptTextareaInput({
 
   return (
     <Stack spacing={0} bg="white">
+      {errorText && <ErrorAlert title="Error" text={errorText}></ErrorAlert>}
       <Group position="apart" align="self-start">
         {screenshot ? (
           <Paper
