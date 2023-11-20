@@ -256,6 +256,10 @@ Iconography with Tabler Icons:
 - Identify icons in the screenshot and match them to Tabler icons, (https://tabler-icons-react.vercel.app).
 - Include the appropriate Tabler icon names in the JSON props section using the name as the icon for example IconAB, IconOneTwoThree etc.
 
+Fake Images with Faker.js:
+- You must use faker.js to generate fake images as URLs like avatars, country flags, logos, background images, etc.
+- For example, faker.image.avatar will generate a random avatar image url, faker.image.countryFlag will generate a random country flag image url.
+
 Chart Components:
 - apexcharts is the chart library used.
 - Identify the chart types in the screenshot.
@@ -277,7 +281,7 @@ type Row = {
 
 ${_componentTypes(theme)}
 
-Remember LSCGS, to provide the JSON in a format that's directly usable with the provided type definitions, ensuring that the names of components 
+Remember LSCGS, provide the JSON in a format that's directly usable with the provided type definitions, ensuring that the names of components 
 and properties match those expected by Mantine UI and the TypeScript Row type definition.
 
 - Return in JSON format only as I will parse the response using JsonSerializer.Deserialize<Row>(response).
