@@ -1,6 +1,9 @@
 import { GPT4_VISION_MODEL } from "@/utils/config";
 import { openai } from "@/utils/openai";
-import { getComponentScreenshotPrompt } from "@/utils/prompts";
+import {
+  getComponentScreenshotPrompt,
+  getComponentsJsonPrompt,
+} from "@/utils/prompts";
 import { NextApiRequest, NextApiResponse } from "next";
 import { ChatCompletionContentPart } from "openai/resources";
 
@@ -13,9 +16,12 @@ export default async function handler(
       throw new Error("Invalid method");
     }
 
-    const { description, responseType, image } = req.body;
+    const { description, image, theme } = req.body;
 
-    const prompt = getComponentScreenshotPrompt({ description, responseType });
+    const prompt = image
+      ? getComponentScreenshotPrompt({ description, theme })
+      : getComponentsJsonPrompt({ description, theme });
+
     console.log(prompt);
     const contentMessages = [
       {

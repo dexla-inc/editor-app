@@ -1,6 +1,5 @@
 import {
   AIRequestTypes,
-  AIResponseTypes,
   ChatHistoryMessage,
   EventSourceParams,
 } from "@/requests/ai/types";
@@ -132,7 +131,6 @@ export const getChatHistoryList = async (projectId: string) => {
 
 export const generateStructureFromScreenshot = async (
   description: string,
-  responseType: AIResponseTypes,
   theme: MantineThemeExtended,
   base64Image?: string,
 ) => {
@@ -143,9 +141,8 @@ export const generateStructureFromScreenshot = async (
     },
     body: JSON.stringify({
       description,
-      responseType,
-      image: base64Image,
       theme,
+      image: base64Image,
     }),
   });
 
