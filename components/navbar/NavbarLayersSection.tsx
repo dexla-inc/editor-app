@@ -1,4 +1,5 @@
 import { Icon } from "@/components/Icon";
+import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
@@ -33,6 +34,7 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );
+  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
@@ -40,6 +42,9 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
   const [editable, { toggle: toggleEdit, close: closeEdit }] =
     useDisclosure(false);
   const editFieldRef = useRef<HTMLInputElement>(null);
+
+  const { componentContextMenu, forceDestroyContextMenu } =
+    useComponentContextMenu();
 
   const form = useForm({
     initialValues: {
@@ -117,6 +122,7 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
+          forceDestroyContextMenu();
           handleSelection(component.id as string);
         }}
         onDoubleClick={(e) => {
@@ -126,6 +132,11 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
         }}
         onBlur={closeEdit}
         onKeyDown={handleKeyPress}
+        {...(isPreviewMode
+          ? {}
+          : {
+              onContextMenu: componentContextMenu(component),
+            })}
       >
         <Group position="apart" noWrap w="100%">
           <Group
