@@ -1,4 +1,5 @@
-import { GPT4_VISION_MODEL } from "@/utils/config";
+import { cleanJson } from "@/utils/common";
+import { GPT4_PREVIEW_MODEL, GPT4_VISION_MODEL } from "@/utils/config";
 import { openai } from "@/utils/openai";
 import {
   getComponentScreenshotPrompt,
@@ -13,7 +14,7 @@ export function callFakerFunction(funcString: string) {
     return new Function("faker", `return ${funcString};`)(faker);
   } catch (error) {
     console.error("Error executing faker function:", error);
-    return null; // or some default value
+    return null;
   }
 }
 
@@ -51,7 +52,9 @@ export default async function handler(
 
     const { description, image, theme } = req.body;
 
-    const prompt = image
+    const isPromptWithScreenshot = image as boolean;
+
+    const prompt = isPromptWithScreenshot
       ? getComponentScreenshotPrompt({ description, theme })
       : getComponentsJsonPrompt({ description, theme });
 
@@ -73,9 +76,12 @@ export default async function handler(
     }
 
     const response = await openai.chat.completions.create({
-      model: GPT4_VISION_MODEL,
+      model: isPromptWithScreenshot ? GPT4_VISION_MODEL : GPT4_PREVIEW_MODEL,
+      ...(isPromptWithScreenshot
+        ? {}
+        : { response_format: { type: "json_object" } }),
       stream: false,
-      max_tokens: 4096, // 4096 is our max until we spend more with open ai.
+      max_tokens: 4096,
       messages: [
         {
           role: "user",
@@ -100,9 +106,4 @@ export default async function handler(
     console.log(error);
     return res.status(500).json({ error });
   }
-}
-
-// Move to common file
-function cleanJson(json: string | null) {
-  return json?.replace("```json", "").replace("```", "");
 }

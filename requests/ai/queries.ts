@@ -152,6 +152,27 @@ export const generateStructureFromScreenshot = async (
   return json;
 };
 
+export const generateThemeFromScreenshot = async (
+  description: string,
+  base64Image: string,
+) => {
+  const response = await fetch("/api/ai/theme-screenshot", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      description,
+      image: base64Image,
+    }),
+  });
+
+  const json = await response.json();
+  console.log(json);
+
+  return json;
+};
+
 export const anyPrompt = async (
   model: string,
   prompt: string,

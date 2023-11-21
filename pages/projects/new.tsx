@@ -11,7 +11,6 @@ import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { StepperDetailsType } from "@/utils/projectTypes";
 import { Container, Stack, Stepper, Title } from "@mantine/core";
-import { FileWithPath } from "@mantine/dropzone";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -31,7 +30,7 @@ export default function New() {
   const [projectId, setProjectId] = useState("");
   const [description, setDescription] = useState("");
   const [industry, setIndustry] = useState("");
-  const [screenshots, setScreenshots] = useState<FileWithPath[]>([]);
+  const [screenshots, setScreenshots] = useState<File[]>([]);
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [themeResponse, setThemeResponse] = useState<ThemeResponse>();
   const [pages, setPages] = useState<PageAIResponse[]>([]);
@@ -122,6 +121,7 @@ export default function New() {
                 setWebsiteUrl={setWebsiteUrl}
                 themeResponse={themeResponse}
                 setThemeResponse={setThemeResponse}
+                screenshots={screenshots}
               />
             </Stepper.Step>
             <Stepper.Step label="Functionality">
