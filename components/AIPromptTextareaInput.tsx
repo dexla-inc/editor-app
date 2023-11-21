@@ -1,7 +1,7 @@
 import { ErrorAlert } from "@/components/Alerts";
 import { Icon } from "@/components/Icon";
 import { convertToBase64 } from "@/utils/common";
-import { ICON_SIZE } from "@/utils/config";
+import { ICON_MEDIUM_SIZE, ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
   Badge,
@@ -11,6 +11,7 @@ import {
   Flex,
   Group,
   Image,
+  Overlay,
   Paper,
   Stack,
   Textarea,
@@ -19,7 +20,7 @@ import {
 } from "@mantine/core";
 import { FileWithPath } from "@mantine/dropzone";
 import { IconPhoto, IconSparkles } from "@tabler/icons-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
   description: string;
@@ -41,6 +42,7 @@ export default function AIPromptTextareaInput({
   const resetRef = useRef<() => void>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorText, setErrorText] = useState<string>("");
+  const [isDragging, setIsDragging] = useState(false);
 
   const clearScreenshot = () => {
     setScreenshot(null);
@@ -88,8 +90,75 @@ export default function AIPromptTextareaInput({
     }
   };
 
+  useEffect(() => {
+    let dragCounter = 0;
+    let dragTimeout: any;
+
+    const handleDragEnter = (event: any) => {
+      event.preventDefault();
+      dragCounter++;
+      setIsDragging(true);
+    };
+
+    const handleDragOver = (event: any) => {
+      event.preventDefault();
+    };
+
+    const handleDrop = (event: any) => {
+      event.preventDefault();
+      dragCounter = 0; // Reset counter on drop
+      clearTimeout(dragTimeout);
+      setIsDragging(false);
+      const files = event.dataTransfer.files;
+      if (files.length > 0) {
+        const file = files[0];
+        if (file.type.startsWith("image/")) {
+          setScreenshot(file);
+        }
+      }
+    };
+
+    const handleDragLeave = (event: any) => {
+      event.preventDefault();
+      dragCounter--;
+      if (dragCounter === 0) {
+        dragTimeout = setTimeout(() => {
+          setIsDragging(false);
+        }, 100);
+      }
+    };
+
+    document.addEventListener("dragenter", handleDragEnter);
+    document.addEventListener("dragover", handleDragOver);
+    document.addEventListener("drop", handleDrop);
+    document.addEventListener("dragleave", handleDragLeave);
+
+    return () => {
+      document.removeEventListener("dragenter", handleDragEnter);
+      document.removeEventListener("dragover", handleDragOver);
+      document.removeEventListener("drop", handleDrop);
+      document.removeEventListener("dragleave", handleDragLeave);
+    };
+  }, []);
+
   return (
     <Stack spacing={0} bg="white">
+      {isDragging && (
+        <Overlay
+          zIndex={1000}
+          sx={(theme) => ({
+            color: "white",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: theme.radius.sm,
+          })}
+        >
+          <IconPhoto size={ICON_MEDIUM_SIZE} style={{ marginRight: "8px" }} />
+          Drop a PNG or JPG of a design here.
+        </Overlay>
+      )}
+
       {errorText && <ErrorAlert title="Error" text={errorText}></ErrorAlert>}
       <Group position="apart" align="self-start">
         {screenshot ? (

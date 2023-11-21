@@ -1,19 +1,35 @@
 import { Icon } from "@/components/Icon";
-import { LARGE_ICON_SIZE } from "@/utils/config";
-import { Box, Image, Paper, SimpleGrid, Stack, Text } from "@mantine/core";
-import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from "@mantine/dropzone";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { ICON_MEDIUM_SIZE, ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
+import {
+  ActionIcon,
+  Box,
+  FileButton,
+  Flex,
+  Image,
+  Overlay,
+  Paper,
+  SimpleGrid,
+  Stack,
+  Text,
+  Textarea,
+  Tooltip,
+} from "@mantine/core";
+import { IconPhoto } from "@tabler/icons-react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 type Props = {
-  screenshots: FileWithPath[];
-  setScreenshots: Dispatch<SetStateAction<FileWithPath[]>>;
+  screenshots: File[];
+  setScreenshots: Dispatch<SetStateAction<File[]>>;
 };
 
 export default function ScreenshotUploader({
   screenshots,
   setScreenshots,
 }: Props) {
+  const [isDragging, setIsDragging] = useState(false);
+
   const previews = screenshots.map((file, index) => {
+    console.log("file", file);
     const imageUrl = URL.createObjectURL(file);
     return (
       <Image
@@ -28,20 +44,94 @@ export default function ScreenshotUploader({
     );
   });
 
-  const onDropHandler = (newFiles: FileWithPath[]) => {
-    setScreenshots((prevState) => [...prevState, ...newFiles]);
-  };
-
   const removeFile = (index: number) => {
     setScreenshots((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
+  const handlePaste = (event: any) => {
+    const items = (event.clipboardData || event.originalEvent.clipboardData)
+      .items;
+
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf("image") !== -1) {
+        const blob = items[i].getAsFile();
+        if (blob) {
+          setScreenshots((prevScreenshots) => [...prevScreenshots, blob]);
+        }
+      }
+    }
+  };
+
   useEffect(() => {
-    if (screenshots.length > 0) console.log(screenshots);
-  }, [screenshots]);
+    let dragCounter = 0;
+    let dragTimeout: any;
+
+    const handleDragEnter = (event: any) => {
+      event.preventDefault();
+      dragCounter++;
+      setIsDragging(true);
+    };
+
+    const handleDragOver = (event: any) => {
+      event.preventDefault();
+    };
+
+    const handleDrop = (event: any) => {
+      event.preventDefault();
+      dragCounter = 0; // Reset counter on drop
+      clearTimeout(dragTimeout);
+      setIsDragging(false);
+      const files = event.dataTransfer.files;
+      if (files.length > 0) {
+        const fileArray: File[] = Array.from(files);
+        setScreenshots(
+          (prevScreenshots: File[]) =>
+            [...prevScreenshots, ...fileArray] as File[],
+        );
+      }
+    };
+
+    const handleDragLeave = (event: any) => {
+      event.preventDefault();
+      dragCounter--;
+      if (dragCounter === 0) {
+        dragTimeout = setTimeout(() => {
+          setIsDragging(false);
+        }, 100);
+      }
+    };
+
+    document.addEventListener("dragenter", handleDragEnter);
+    document.addEventListener("dragover", handleDragOver);
+    document.addEventListener("drop", handleDrop);
+    document.addEventListener("dragleave", handleDragLeave);
+
+    return () => {
+      document.removeEventListener("dragenter", handleDragEnter);
+      document.removeEventListener("dragover", handleDragOver);
+      document.removeEventListener("drop", handleDrop);
+      document.removeEventListener("dragleave", handleDragLeave);
+    };
+  }, []);
 
   return (
     <Stack spacing="xl">
+      {isDragging && (
+        <Overlay
+          zIndex={1000}
+          sx={(theme) => ({
+            color: "white",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: theme.radius.sm,
+          })}
+        >
+          <IconPhoto size={ICON_MEDIUM_SIZE} style={{ marginRight: "8px" }} />
+          Drop a PNG or JPG of a design anywhere.
+        </Overlay>
+      )}
+
       <Box>
         <Text fw={500} size="sm">
           Do you have designs or design inspiration?
@@ -50,13 +140,57 @@ export default function ScreenshotUploader({
           Export designs from Figma, Sketch, Adobe XD, etc. Or take screenshots
           of designs you like from Dribbble, Behance, etc.
         </Text>
+        <Flex align="center" pt={2}>
+          <Tooltip
+            position="top-start"
+            label="Upload screenshot by dropping or pasting"
+            fz="xs"
+          >
+            <Flex
+              align="center"
+              w="100%"
+              sx={(theme) => ({
+                border: "2px dashed " + theme.colors.gray[3],
+                paddingLeft: theme.spacing.md,
+                borderRadius: theme.radius.sm,
+                ":focus-within": {
+                  borderColor: theme.colors.teal[6],
+                },
+              })}
+            >
+              <FileButton
+                onChange={setScreenshots}
+                accept="image/png,image/jpeg"
+                multiple
+              >
+                {(actionIconProps) => (
+                  <ActionIcon {...actionIconProps} variant="transparent">
+                    <IconPhoto size={ICON_SIZE} />
+                  </ActionIcon>
+                )}
+              </FileButton>
 
-        <Dropzone onDrop={onDropHandler} accept={IMAGE_MIME_TYPE} mt={2}>
-          <Text align="center">Drop here</Text>
-          <Text size="xs" color="gray" align="center">
-            {IMAGE_MIME_TYPE.join(", ")}
-          </Text>
-        </Dropzone>
+              <Textarea
+                placeholder="Paste or Drop in PNG, JPEG format"
+                onPaste={handlePaste}
+                onKeyDown={(e) => {
+                  // Prevent typing, but allow other actions like paste
+                  if (!e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                  }
+                }}
+                autosize
+                my="sm"
+                w="100%"
+                sx={(theme) => ({
+                  "& textarea": {
+                    border: "none",
+                  },
+                })}
+              />
+            </Flex>
+          </Tooltip>
+        </Flex>
       </Box>
 
       <SimpleGrid

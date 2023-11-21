@@ -1,4 +1,3 @@
-import { InformationAlert } from "@/components/Alerts";
 import NextButton from "@/components/NextButton";
 import ScreenshotUploader from "@/components/projects/ScreenshotUploader";
 import { processAI } from "@/requests/ai/mutations";
@@ -11,9 +10,10 @@ import {
 import { uploadFile } from "@/requests/storage/mutations";
 import { UploadMultipleResponse } from "@/requests/storage/types";
 import { PatchParams } from "@/requests/types";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { LoadingStore, NextStepperClickEvent } from "@/utils/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
-import { Divider, Group, Stack, TextInput } from "@mantine/core";
+import { Group, Stack, TextInput } from "@mantine/core";
 import { FileWithPath } from "@mantine/dropzone";
 import { useForm } from "@mantine/form";
 import { Dispatch, SetStateAction } from "react";
@@ -46,6 +46,8 @@ export default function ProjectStep({
   screenshots,
   setScreenshots,
 }: ProjectStepProps) {
+  const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
+
   const form = useForm<ProjectParams>({
     initialValues: {
       companyId: companyId,
@@ -138,39 +140,45 @@ export default function ProjectStep({
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack spacing="xl">
-        <InformationAlert
+      <Stack spacing={40} my={25}>
+        {/* <InformationAlert
           title="Let's get started!"
           text="Unlock the magic of AI! Answer a few questions and we'll tailor a unique experience just for you!"
-        />
+        /> */}
         <TextInput
-          label="What do you do? *"
-          description="Your one-liner e.g. Transforming Drone and Satellite Data into Actionable Business Insights"
+          label="What do you do?"
+          description={
+            isDexlaAdmin
+              ? "e.g. Transform Drone and Satellite Data into Actionable Business Insights"
+              : undefined
+          }
+          placeholder="e.g. Transform Drone and Satellite Data into Actionable Business Insights"
           required
-          withAsterisk={false}
           value={description}
           onChange={(event) => {
             form.setFieldValue("description", event.currentTarget.value);
             setDescription(event.currentTarget.value);
           }}
         />
+        {description && (
+          <>
+            <TextInput
+              label="What industry are you in?"
+              description="e.g. Big Data"
+              placeholder={isDexlaAdmin ? "e.g. Big Data" : undefined}
+              value={industry}
+              onChange={(event) => {
+                form.setFieldValue("industry", event.currentTarget.value);
+                setIndustry(event.currentTarget.value);
+              }}
+            />
 
-        <TextInput
-          label="What industry are you in? *"
-          description="e.g. Big Data"
-          value={industry}
-          onChange={(event) => {
-            form.setFieldValue("industry", event.currentTarget.value);
-            setIndustry(event.currentTarget.value);
-          }}
-        />
-
-        <ScreenshotUploader
-          screenshots={screenshots}
-          setScreenshots={setScreenshots}
-        ></ScreenshotUploader>
-
-        <Divider></Divider>
+            <ScreenshotUploader
+              screenshots={screenshots}
+              setScreenshots={setScreenshots}
+            ></ScreenshotUploader>
+          </>
+        )}
         <Group position="right">
           <NextButton isLoading={isLoading} isSubmit></NextButton>
         </Group>
