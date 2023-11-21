@@ -34,7 +34,6 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
@@ -132,11 +131,7 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
         }}
         onBlur={closeEdit}
         onKeyDown={handleKeyPress}
-        {...(isPreviewMode
-          ? {}
-          : {
-              onContextMenu: componentContextMenu(component),
-            })}
+        onContextMenu={componentContextMenu(component)}
       >
         <Group position="apart" noWrap w="100%">
           <Group
