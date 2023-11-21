@@ -50,6 +50,7 @@ export const useComponentContextMenu = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const editorTheme = useEditorStore((state) => state.theme);
   const copiedProperties = useEditorStore((state) => state.copiedProperties);
+  const isPageStructure = useEditorStore((state) => state.isPageStructure);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
   const setEditorTree = useEditorStore((state) => state.setTree);
@@ -238,7 +239,8 @@ export const useComponentContextMenu = () => {
         ],
         {
           styles: {
-            ...(isTabPinned && { root: { marginLeft: NAVBAR_WIDTH } }),
+            ...(isTabPinned &&
+              !isPageStructure && { root: { marginLeft: NAVBAR_WIDTH } }),
           },
         },
       ),
