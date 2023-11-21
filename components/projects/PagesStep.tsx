@@ -1,4 +1,3 @@
-import { InformationAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
 import NextButton from "@/components/NextButton";
 import {
@@ -15,7 +14,7 @@ import {
   NextStepperClickEvent,
   PreviousStepperClickEvent,
 } from "@/utils/dashboardTypes";
-import { Button, Divider, Flex, Group, Stack } from "@mantine/core";
+import { Button, Flex, Group, Stack } from "@mantine/core";
 import { IconPlus, IconSparkles } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
 import { SetStateAction } from "react";
@@ -222,13 +221,13 @@ export default function PagesStep({
   const hasPageNames = pages.length > 0;
 
   return (
-    <Stack spacing="xl" mb="xl">
+    <Stack spacing={40} my={25}>
       {hasPageNames && (
         <>
-          <InformationAlert
+          {/* <InformationAlert
             title="Here are your pages and what they will do"
             text="Feel free to change if they aren't quite right and add some new ones before generating your app."
-          />
+          /> */}
           <StyledAccordion defaultValue={pages?.[0]?.name ?? ""}>
             {pages.map(({ name, features }, index) => {
               return (
@@ -246,12 +245,12 @@ export default function PagesStep({
           </StyledAccordion>
         </>
       )}
-      {!hasPageNames && (
+      {/* {!hasPageNames && (
         <InformationAlert
           title="Generate Your Page Names"
           text="Click on the button below to generate pages and functionality each page will have for your project"
         />
-      )}
+      )} */}
       <Flex gap="lg">
         {hasPageNames && (
           <>
@@ -279,7 +278,6 @@ export default function PagesStep({
           </>
         )}
       </Flex>
-      <Divider />
       <Group position="apart">
         <BackButton onClick={prevStep} />
 

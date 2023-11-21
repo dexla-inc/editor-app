@@ -91,10 +91,7 @@ export default function New() {
             allowNextStepsSelect={false}
             py="lg"
           >
-            <Stepper.Step
-              label="Project"
-              description="Define your project scope"
-            >
+            <Stepper.Step label="Project">
               <ProjectStep
                 companyId={company}
                 nextStep={nextStep}
@@ -112,7 +109,7 @@ export default function New() {
                 setScreenshots={setScreenshots}
               />
             </Stepper.Step>
-            <Stepper.Step label="Branding" description="Personalise your app">
+            <Stepper.Step label="Branding">
               <BrandingStep
                 prevStep={prevStep}
                 nextStep={nextStep}
@@ -127,7 +124,7 @@ export default function New() {
                 setThemeResponse={setThemeResponse}
               />
             </Stepper.Step>
-            <Stepper.Step label="Pages" description="Generate your page names">
+            <Stepper.Step label="Functionality">
               <PagesStep
                 prevStep={prevStep}
                 nextStep={nextStep}
@@ -163,13 +160,13 @@ export default function New() {
 
 const stepperDetails: StepperDetailsType = {
   0: {
-    title: "Ready to create something Buck-tacular?",
+    title: "Let's get started!",
   },
   1: {
-    title: "Grab your Buck-ets, it's time to paint your brand!",
+    title: "It's branding time!",
   },
   2: {
-    title: "Here are your pages. It’s Buck-athon time!",
+    title: "Let's create your pages!",
   },
   3: {
     title: "Ready to be blown away? Because there’s a Buck-storm coming...",

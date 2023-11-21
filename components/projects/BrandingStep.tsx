@@ -1,4 +1,3 @@
-import { InformationAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
 import { ColorSelector } from "@/components/ColorSelector";
 import NextButton from "@/components/NextButton";
@@ -19,7 +18,6 @@ import { Component } from "@/utils/editor";
 import {
   Anchor,
   Button,
-  Divider,
   Flex,
   Group,
   MantineProvider,
@@ -221,11 +219,11 @@ export default function BrandingStep({
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack spacing="xl">
-        <InformationAlert
+      <Stack spacing={40} my={25}>
+        {/* <InformationAlert
           title="Branding time!"
           text="We will fetch your brand from your website. If you don’t have a website, you can skip this step."
-        />
+        /> */}
         <TextInput
           label="Website URL"
           description="Enter the URL of your website so we can fetch your brand. e.g. https://dexla.ai"
@@ -242,7 +240,6 @@ export default function BrandingStep({
               setWebsiteUrlError("");
             }
           }}
-          required
         />
         {themeResponse && (
           <Flex sx={{ width: "100%" }} justify="space-between" gap="xl">
@@ -331,7 +328,6 @@ export default function BrandingStep({
             </Stack>
           </Flex>
         )}
-        <Divider></Divider>
         <Group position="apart">
           <BackButton onClick={prevStep}></BackButton>
           <Flex gap="lg" align="end">
