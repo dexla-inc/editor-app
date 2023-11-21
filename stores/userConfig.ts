@@ -1,10 +1,12 @@
+import merge from "lodash.merge";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import merge from "lodash.merge";
 
 type UserConfigState = {
   isTabPinned: boolean;
+  isShadesActive: boolean;
   initiallyOpenedModifiersByComponent: Record<string, string[]>;
+  setIsShadesActive: (isShadesActive: boolean) => void;
   setIsTabPinned: (isTabPinned: boolean) => void;
   setInitiallyOpenedModifiersByComponent: (
     componentType: string,
@@ -18,6 +20,10 @@ export const useUserConfigStore = create<UserConfigState>()(
     persist(
       (set, get) => ({
         isTabPinned: false,
+        isShadesActive: false,
+        setIsShadesActive: (isShadesActive: boolean) => {
+          set({ isShadesActive }, false, "userConfig/setIsShadesActive");
+        },
         setIsTabPinned: (isTabPinned: boolean) => {
           set(
             {

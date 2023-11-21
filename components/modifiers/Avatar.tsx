@@ -1,3 +1,5 @@
+import { SizeSelector } from "@/components/SizeSelector";
+import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { Select, Stack, TextInput } from "@mantine/core";
@@ -5,8 +7,6 @@ import { useForm } from "@mantine/form";
 import { IconUser } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
-import { SizeSelector } from "../SizeSelector";
-import { ThemeColorSelector } from "../ThemeColorSelector";
 
 const defaultAvatarValues = {
   variant: "filled",

@@ -1,11 +1,17 @@
+import { OpenThemeButton } from "@/components/OpenThemeButton";
 import { useEditorStore } from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/userConfig";
 import {
+  ActionIcon,
+  Avatar,
   Box,
   ColorSwatch,
   Group,
   Paper,
   Select,
   SelectProps,
+  Stack,
+  Tooltip,
 } from "@mantine/core";
 import { forwardRef } from "react";
 
@@ -49,6 +55,10 @@ const SelectedColor: React.FC<SelectedColorProps> = ({ color }) => (
 
 export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
   const theme = useEditorStore((state) => state.theme);
+  const isShadesActive = useUserConfigStore((state) => state.isShadesActive);
+  const setIsShadesActive = useUserConfigStore(
+    (state) => state.setIsShadesActive,
+  );
   const excludeColors = new Set([
     "blue",
     "cyan",
@@ -70,15 +80,17 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
     .filter((color) => !excludeColors.has(color))
     .reduce((all, color: string) => {
       const colors = theme.colors[color];
+      const _dataWithShades = colors.map((_, index) => ({
+        label: `${color}-${index}`,
+        value: `${color}.${index}`,
+      }));
+      const _data = isShadesActive
+        ? _dataWithShades
+        : [{ label: color, value: `${color}.6` }];
 
       return all.concat(
         // @ts-ignore
-        colors.map((_, index) => {
-          return {
-            label: `${color}-${index}`,
-            value: `${color}.${index}`,
-          };
-        }),
+        _data,
       );
     }, []);
 
@@ -109,16 +121,38 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
     );
 
   return (
-    <Select
-      size="xs"
-      {...props}
-      data={data.concat({
-        label: "transparent",
-        value: "transparent",
-      })}
-      itemComponent={SelectItem}
-      searchable
-      icon={bgColor}
-    />
+    <Stack spacing={5}>
+      <Group noWrap align="end">
+        <Select
+          size="xs"
+          {...props}
+          data={data.concat({
+            label: "transparent",
+            value: "transparent",
+          })}
+          itemComponent={SelectItem}
+          searchable
+          icon={bgColor}
+        />
+        <Tooltip
+          withArrow
+          withinPortal
+          position="left"
+          offset={0}
+          fz="xs"
+          p="2px 4px"
+          label={isShadesActive ? "Turn off shades" : "Turn on shades"}
+        >
+          <ActionIcon onClick={() => setIsShadesActive(!isShadesActive)}>
+            <Avatar
+              radius="xl"
+              size={24}
+              src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Color_circle_%28RGB%29.svg"
+            />
+          </ActionIcon>
+        </Tooltip>
+      </Group>
+      <OpenThemeButton />
+    </Stack>
   );
 };
