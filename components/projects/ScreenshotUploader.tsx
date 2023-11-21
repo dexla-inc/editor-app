@@ -29,7 +29,6 @@ export default function ScreenshotUploader({
   const [isDragging, setIsDragging] = useState(false);
 
   const previews = screenshots.map((file, index) => {
-    console.log("file", file);
     const imageUrl = URL.createObjectURL(file);
     return (
       <Image
@@ -174,17 +173,16 @@ export default function ScreenshotUploader({
                 placeholder="Paste or Drop in PNG, JPEG format"
                 onPaste={handlePaste}
                 onKeyDown={(e) => {
-                  // Prevent typing, but allow other actions like paste
                   if (!e.ctrlKey && !e.metaKey) {
                     e.preventDefault();
                   }
                 }}
                 autosize
-                my="sm"
                 w="100%"
                 sx={(theme) => ({
                   "& textarea": {
                     border: "none",
+                    padding: theme.spacing.xl,
                   },
                 })}
               />
@@ -193,11 +191,7 @@ export default function ScreenshotUploader({
         </Flex>
       </Box>
 
-      <SimpleGrid
-        cols={4}
-        breakpoints={[{ maxWidth: "sm", cols: 1 }]}
-        mt={previews.length > 0 ? "xl" : 0}
-      >
+      <SimpleGrid cols={4} breakpoints={[{ maxWidth: "sm", cols: 1 }]}>
         {previews.map((preview, index) => (
           <Paper
             key={preview.key}

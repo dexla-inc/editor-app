@@ -14,3 +14,7 @@ export const convertToBase64 = (file: FileWithPath): Promise<string> => {
     };
   });
 };
+
+export function cleanJson(json: string | null) {
+  return json?.replace("```json", "").replace("```", "");
+}

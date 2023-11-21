@@ -38,7 +38,7 @@ export default function AIPromptTextInput() {
   const componentBeingAddedId = useRef<string>();
 
   const { theme, updateTreeComponentChildren, tree, setTree, pages } =
-    useEditorStore((state) => ({
+    useEditorStore((state: any) => ({
       theme: state.theme,
       updateTreeComponentChildren: state.updateTreeComponentChildren,
       tree: state.tree,

@@ -1,6 +1,5 @@
 import NextButton from "@/components/NextButton";
 import ScreenshotUploader from "@/components/projects/ScreenshotUploader";
-import { processAI } from "@/requests/ai/mutations";
 import {
   ProjectParams,
   createEntities,
@@ -14,7 +13,6 @@ import { usePropelAuthStore } from "@/stores/propelAuth";
 import { LoadingStore, NextStepperClickEvent } from "@/utils/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
 import { Group, Stack, TextInput } from "@mantine/core";
-import { FileWithPath } from "@mantine/dropzone";
 import { useForm } from "@mantine/form";
 import { Dispatch, SetStateAction } from "react";
 
@@ -26,8 +24,8 @@ interface ProjectStepProps extends LoadingStore, NextStepperClickEvent {
   setDescription: (description: string) => void;
   industry: string;
   setIndustry: (industry: string) => void;
-  screenshots: FileWithPath[];
-  setScreenshots: Dispatch<SetStateAction<FileWithPath[]>>;
+  screenshots: File[];
+  setScreenshots: Dispatch<SetStateAction<File[]>>;
 }
 
 export default function ProjectStep({
@@ -84,14 +82,7 @@ export default function ProjectStep({
 
       const project = await createProject(values);
 
-      var queueResponse = await processAI(project.id, {
-        type: "THEME",
-        description: values.description,
-      });
-
       setProjectId(project.id);
-
-      console.log("queueResponse", queueResponse);
 
       await createEntities(values, project.id);
 

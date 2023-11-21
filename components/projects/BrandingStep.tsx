@@ -1,10 +1,12 @@
 import BackButton from "@/components/BackButton";
 import { ColorSelector } from "@/components/ColorSelector";
 import NextButton from "@/components/NextButton";
+import { generateThemeFromScreenshot } from "@/requests/ai/queries";
 import { saveTheme } from "@/requests/themes/mutations";
 import { getTheme } from "@/requests/themes/queries";
 import { Color, ThemeResponse } from "@/requests/themes/types";
 import { useEditorStore } from "@/stores/editor";
+import { convertToBase64 } from "@/utils/common";
 import { componentMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -18,11 +20,16 @@ import { Component } from "@/utils/editor";
 import {
   Anchor,
   Button,
+  Divider,
   Flex,
   Group,
+  Image,
   MantineProvider,
+  Paper,
   Select,
+  SimpleGrid,
   Stack,
+  Text,
   TextInput,
   Title,
   useMantineTheme,
@@ -41,6 +48,7 @@ export interface BrandingStepProps
   setWebsiteUrl: (value: SetStateAction<string>) => void;
   themeResponse?: ThemeResponse;
   setThemeResponse: (value: SetStateAction<ThemeResponse | undefined>) => void;
+  screenshots: File[];
 }
 
 type BrandingParams = {
@@ -92,6 +100,7 @@ export default function BrandingStep({
   setWebsiteUrl,
   themeResponse,
   setThemeResponse,
+  screenshots,
 }: BrandingStepProps) {
   const [websiteUrlError, setWebsiteUrlError] = useState("");
   const mantineTheme = useMantineTheme();
@@ -112,6 +121,33 @@ export default function BrandingStep({
     queryFn: () => getTheme(projectId),
     enabled: !!themeResponse,
   });
+
+  const previews = screenshots.map((file, index) => {
+    const imageUrl = URL.createObjectURL(file);
+    return (
+      <Image
+        alt={file.name}
+        key={index}
+        src={imageUrl}
+        imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+        width={220}
+        height={140}
+        fit="cover"
+      />
+    );
+  });
+
+  const [selectedScreenshot, setSelectedScreenshot] = useState<
+    number | undefined
+  >();
+
+  const selectScreenshot = (index: number) => {
+    if (index === selectedScreenshot) {
+      setSelectedScreenshot(undefined);
+    } else {
+      setSelectedScreenshot(index);
+    }
+  };
 
   useEffect(() => {
     if (userTheme.isFetched) {
@@ -150,7 +186,7 @@ export default function BrandingStep({
     },
     validate: {
       websiteUrl: (value) =>
-        !isWebsite(value) ? "Must be a valid website URL" : null,
+        value && !isWebsite(value) ? "Must be a valid website URL" : null,
     },
   });
 
@@ -185,7 +221,7 @@ export default function BrandingStep({
 
   const onSubmit = async (values: BrandingParams) => {
     try {
-      if (!isWebsite(websiteUrl)) {
+      if (websiteUrl && !isWebsite(websiteUrl)) {
         setWebsiteUrlError("Must be a valid website URL");
         return;
       }
@@ -197,7 +233,26 @@ export default function BrandingStep({
         message: "Wait while we get your brand",
       });
 
-      const theme = await saveTheme(projectId, {} as ThemeResponse, websiteUrl);
+      // if selectedScreenshot is not null then get theme prompt
+      let theme;
+
+      if (selectedScreenshot !== undefined) {
+        const screenshot = screenshots[selectedScreenshot];
+        const base64Image = await convertToBase64(screenshot);
+
+        const themeScreenshotResponse = await generateThemeFromScreenshot(
+          "",
+          base64Image,
+        );
+
+        theme = await saveTheme(
+          projectId,
+          themeScreenshotResponse as ThemeResponse,
+          websiteUrl,
+        );
+      } else {
+        theme = await saveTheme(projectId, {} as ThemeResponse, websiteUrl);
+      }
 
       setThemeResponse(theme);
 
@@ -328,6 +383,50 @@ export default function BrandingStep({
             </Stack>
           </Flex>
         )}
+        <Divider m="xs" label="Or" labelPosition="center" />
+        <Stack spacing="xs">
+          <Text size="sm" fw={500}>
+            Choose a screenshot you want to use for your brand
+          </Text>
+          <SimpleGrid cols={4} breakpoints={[{ maxWidth: "sm", cols: 1 }]}>
+            {previews.map((preview, index) => (
+              <Paper
+                key={preview.key}
+                pos="relative"
+                sx={{
+                  borderRadius: 0,
+                  ...(selectedScreenshot === index && {
+                    boxShadow: `0 0 0 3px ${mantineTheme.colors.teal[6]}`,
+                  }),
+                  "&:hover > div": {
+                    opacity: 1,
+                  },
+                }}
+              >
+                {preview}
+                <Paper
+                  display="flex"
+                  onClick={() => selectScreenshot(index)}
+                  sx={{
+                    opacity: 0,
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    transition: "opacity 0.3s ease",
+                    "&:hover": {
+                      cursor: "pointer",
+                    },
+                  }}
+                ></Paper>
+              </Paper>
+            ))}
+          </SimpleGrid>
+        </Stack>
         <Group position="apart">
           <BackButton onClick={prevStep}></BackButton>
           <Flex gap="lg" align="end">
@@ -337,14 +436,14 @@ export default function BrandingStep({
                   nextStep();
                 }}
               >
-                I don’t have a website, skip
+                Skip
               </Anchor>
             )}
             <Button
               type="submit"
               variant="light"
               loading={isLoading}
-              disabled={websiteUrl === ""}
+              disabled={websiteUrl === "" && selectedScreenshot === undefined}
               leftIcon={<IconBrush size={ICON_SIZE} />}
             >
               {themeResponse ? "Refetch Brand" : "Get Brand"}
