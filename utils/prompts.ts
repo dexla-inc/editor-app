@@ -256,9 +256,10 @@ Iconography with Tabler Icons:
 - Identify icons in the screenshot and match them to Tabler icons, (https://tabler-icons-react.vercel.app).
 - Include the appropriate Tabler icon names in the JSON props section using the name as the icon for example IconAB, IconOneTwoThree etc.
 
-Fake Images with Faker.js:
-- You must use faker.js to generate fake images as URLs like avatars, country flags, logos, background images, etc.
-- For example, faker.image.avatar will generate a random avatar image url, faker.image.countryFlag will generate a random country flag image url.
+Fake Images with Faker.js v7:
+- You must use faker.js to generate fake image function URLs for images and avatars.
+- For example you should return a function such as faker.image.imageUrl(1234, 2345, 'flag', true) or faker.image.avatar() for avatars.
+- If avatars or images are circle then use radius xl.
 
 Chart Components:
 - apexcharts is the chart library used.
@@ -335,6 +336,7 @@ Remember LSCGS, you must:
 
 const _componentTypes = (theme?: MantineThemeExtended) => `
 
+
 type Container = BaseComponent & {
   name: "Container";
   props: {
@@ -377,21 +379,39 @@ type BaseComponent = {
   };
 };
 
-// The colors are named appropriately with a . then a number to indicate the shade. The comment is the hex value of the color.
+// The comment is the hex value of the color so you know which color to use for the screenshot.
 type Color =
-  | "Primary.{0-9}" // ${theme?.colors["Primary"][6]}
-  | "PrimaryText.{0-9}" // ${theme?.colors["PrimaryText"][6]}
-  | "Secondary.{0-9}" // ${theme?.colors["Secondary"][6]}
-  | "SecondaryText.{0-9}" // ${theme?.colors["SecondaryText"][6]}
-  | "Tertiary.{0-9}" // ${theme?.colors["Tertiary"][6]}
-  | "TertiaryText.{0-9}" // ${theme?.colors["TertiaryText"][6]}
-  | "Background.{0-9}" // ${theme?.colors["Background"][6]}
-  | "Border.{0-9}" // ${theme?.colors["Border"][6]}
-  | "Neutral.{0-9}" // ${theme?.colors["Neutral"][6]}
+  | "Primary.6" // ${theme?.colors["Primary"][6]}
+  | "PrimaryText.6" // ${theme?.colors["PrimaryText"][6]}
+  | "Secondary.6" // ${theme?.colors["Secondary"][6]}
+  | "SecondaryText.6" // ${theme?.colors["SecondaryText"][6]}
+  | "Tertiary.6" // ${theme?.colors["Tertiary"][6]}
+  | "TertiaryText.6" // ${theme?.colors["TertiaryText"][6]}
+  | "Background.6" // ${theme?.colors["Background"][6]}
+  | "Border.6" // ${theme?.colors["Border"][6]}
+  | "Neutral.6" // ${theme?.colors["Neutral"][6]}
   | "Black.6"
   | "White.6";
 
 type TextColor = "Black.6" | "White.6";
+
+type MatchTextColor<C extends Color> = C extends "Primary.6"
+  ? "PrimaryText.6"
+  : C extends "Secondary.6"
+  ? "SecondaryText.6"
+  : C extends "Tertiary.6"
+  ? "TertiaryText.6"
+  : C extends "Background.6"
+  ? never // Assuming no corresponding text color for Background
+  : C extends "Border.6"
+  ? never // Assuming no corresponding text color for Border
+  : C extends "Neutral.6"
+  ? never // Assuming no corresponding text color for Neutral
+  : C extends "Black.6"
+  ? never // Assuming no corresponding text color for Black
+  : C extends "White.6"
+  ? never // Assuming no corresponding text color for White
+  : never;
 
 type MantineSize = "xs" | "sm" | "md" | "lg" | "xl";
 
@@ -410,12 +430,13 @@ type AppBar = BaseComponent & {
   children: Container[]; // Can include ButtonIcon, Title, Avatar, Link, Image within Container
 };
 
+// You must use color and textColor on props and not style, that is why they are Omitted.
 type Button = BaseComponent & {
   name: "Button";
   props: {
     value: string;
     color: Color;
-    textColor: Color;
+    textColor: MatchTextColor<Color>;
     [key: string]: string;
   } & (
     | { leftIcon: string; rightIcon?: never } // Use icons from https://tabler-icons-react.vercel.app/ for example IconTrendingUp
@@ -533,7 +554,7 @@ type Icon = BaseComponent & { name: "Icon"; props: { name: string } }; // Use ic
 type Image = BaseComponent & {
   name: "Image";
   props: {
-    src: string;
+    src: string; // The faker.js function name including parameters such as faker.image.imageUrl(1234, 2345, 'cat', true)
     alt?: string;
     fit?: string;
     position?: string;
@@ -550,7 +571,7 @@ type Avatar = BaseComponent & {
   name: "Avatar";
   props: (
     | {
-        src: string;
+        src: "faker.image.avatar()";
         value?: never;
       }
     | {
@@ -559,7 +580,7 @@ type Avatar = BaseComponent & {
       }
   ) & {
     color: Color;
-    radius: MantineSize;
+    radius: MantineSize; // If Avatar is a circle then use xl
     size: MantineSize;
   };
 };
@@ -660,5 +681,7 @@ type Component =
   | Tabs
   | Text
   | Title;
+
+
 
 `;

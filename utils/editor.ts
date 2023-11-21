@@ -142,6 +142,7 @@ export const traverseComponents = (
       }
 
       const structureDefinition = structureMapper[component.name];
+
       const newComponent = structureDefinition.structure({
         ...component,
         props: {
@@ -156,6 +157,7 @@ export const traverseComponents = (
         theme,
         pages,
       });
+      console.log("component?.props", component?.props);
       if (component.children) {
         newComponent.children = traverseComponents(
           component.children,
@@ -292,7 +294,6 @@ export const getNewComponent = (
   pages: PageResponse[],
 ): Component => {
   const firstComponent = row.components[0];
-
   const structureDefinition = structureMapper[firstComponent.name];
   const firstComponentStructure = structureDefinition.structure({
     ...firstComponent,

@@ -13,12 +13,13 @@ export const jsonStructure = (props?: any): Component => {
     name: "Button",
     description: "Button",
     props: {
+      ...defaultButtonValues,
       style: {
-        ...defaultButtonValues,
         width: "auto",
         height: "auto",
         padding: `${px(theme.spacing.sm)}px`,
       },
+      color: color ?? "Primary.6",
       textColor: textColor ?? "PrimaryText.6",
       ...(rest || {}),
       children: value ?? "New Button",
