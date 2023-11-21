@@ -10,7 +10,8 @@ export const jsonStructure = (props?: any): Component => {
     name: "DateInput",
     description: "Date Input",
     props: {
-      placeholder: "Date Input",
+      placeholder: "DD MMM YYYY",
+      valueFormat: "DD MMM YYYY",
       style: {
         width: "100%",
         height: "auto",

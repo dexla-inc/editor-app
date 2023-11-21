@@ -1,6 +1,8 @@
+import { Icon } from "@/components/Icon";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { DateInput as MantineDateInput, DateInputProps } from "@mantine/dates";
+import { DateInputProps, DateInput as MantineDateInput } from "@mantine/dates";
+import merge from "lodash.merge";
 import { memo } from "react";
 
 type Props = {
@@ -9,10 +11,25 @@ type Props = {
 } & DateInputProps;
 
 const DateInputComponent = ({ renderTree, component, ...props }: Props) => {
-  const { children, ...componentProps } = component.props as any;
+  const {
+    children,
+    isDisabled,
+    disabled,
+    icon: iconName,
+    styles,
+    ...componentProps
+  } = component.props as any;
+
+  const customStyles = merge({}, styles, { label: { width: "100%" } });
 
   return (
-    <MantineDateInput {...props} {...componentProps}>
+    <MantineDateInput
+      icon={iconName ? <Icon name={iconName} /> : null}
+      disabled={isDisabled ? true : false}
+      styles={customStyles}
+      {...props}
+      {...componentProps}
+    >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))
         : children}

@@ -37,7 +37,8 @@ export type Modifiers =
   | "tabsPanel"
   | "tabsList"
   | "alert"
-  | "badge";
+  | "badge"
+  | "dateInput";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -322,6 +323,22 @@ export const requiredModifiers: RequiredModifiers = {
     size: "md",
     radius: "xl",
     variant: "filled",
+  },
+  dateInput: {
+    label: "",
+    placeholder: "DD MMM YYYY",
+    description: "",
+    radius: "sm",
+    size: "sm",
+    disabled: false,
+    withAsterisk: false,
+    clearable: false,
+    valueFormat: "",
+    icon: "",
+    labelSize: "sm",
+    labelWeight: "normal",
+    labelAlign: "left",
+    labelSpacing: "0",
   },
 };
 

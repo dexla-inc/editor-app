@@ -892,7 +892,7 @@ export const componentMapper: ComponentMapper = {
         }}
       />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["dateInput", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange", "onFocus", "onBlur"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
