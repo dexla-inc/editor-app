@@ -10,8 +10,7 @@ import { ChatCompletionContentPart } from "openai/resources";
 
 export function callFakerFunction(funcString: string) {
   try {
-    const fakerFunction = new Function("faker", `return ${funcString};`)(faker);
-    return fakerFunction();
+    return new Function("faker", `return ${funcString};`)(faker);
   } catch (error) {
     console.error("Error executing faker function:", error);
     return null; // or some default value
@@ -31,7 +30,7 @@ export const callFakerFuncs = (obj: any): any => {
 
   if (obj !== null && typeof obj === "object") {
     // Recursively apply the function to each property of the object
-    return Object.keys(obj).reduce((acc, key) => {
+    return Object.keys(obj).reduce((acc: any, key) => {
       acc[key] = callFakerFuncs(obj[key]);
       return acc;
     }, {});
@@ -92,7 +91,7 @@ export default async function handler(
     try {
       const content = JSON.parse(cleanedJson ?? "{}");
       const resultWithFakerValues = callFakerFuncs(content);
-      console.log(resultWithFakerValues);
+
       return res.status(200).json(resultWithFakerValues);
     } catch (error) {
       return res.status(200).send(cleanedJson || "");

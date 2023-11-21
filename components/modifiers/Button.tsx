@@ -3,6 +3,7 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
+import { useEditorStore } from "@/stores/editor";
 import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack, TextInput } from "@mantine/core";
@@ -17,6 +18,7 @@ export const label = "Button";
 export const defaultButtonValues = requiredModifiers.button;
 
 export const Modifier = withModifier(({ selectedComponent }) => {
+  const theme = useEditorStore((state) => state.theme);
   const form = useForm({
     initialValues: defaultButtonValues,
   });
@@ -41,8 +43,8 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         type: data.type ?? defaultButtonValues.type,
         variant: data.variant ?? defaultButtonValues.variant,
         size: data.size ?? defaultButtonValues.size,
-        color: data.color ?? defaultButtonValues.color,
-        textColor: data.textColor ?? defaultButtonValues.textColor,
+        color: data.color ?? theme.colors["Primary.6"],
+        textColor: data.textColor ?? theme.colors["PrimaryText.6"],
         icon: data.leftIcon ?? defaultButtonValues.leftIcon,
         compact: data.compact ?? defaultButtonValues.compact,
       });
