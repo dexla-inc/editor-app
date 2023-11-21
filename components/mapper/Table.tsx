@@ -152,11 +152,7 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
 
   return (
     <>
-      <ScrollArea
-        w={style?.width ?? "100%"}
-        h={style?.height ?? "auto"}
-        offsetScrollbars
-      >
+      <ScrollArea w={style?.width ?? "100%"} h={style?.height ?? "auto"}>
         <MantineReactTable
           {...props}
           {...componentProps}
