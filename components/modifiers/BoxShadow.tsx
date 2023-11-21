@@ -1,3 +1,8 @@
+import {
+  CardStyleProps,
+  CardStyleSelector,
+  getCardStyling,
+} from "@/components/CardStyleSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { UnitInput } from "@/components/UnitInput";
 import { getThemeColor } from "@/components/modifiers/Border";
@@ -9,11 +14,6 @@ import { Flex, SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconShadow } from "@tabler/icons-react";
 import { useEffect } from "react";
-import {
-  CardStyleProps,
-  CardStyleSelector,
-  getCardStyling,
-} from "../CardStyleSelector";
 
 export const icon = IconShadow;
 export const label = "Shadow";
