@@ -13,6 +13,7 @@ import * as BreadcrumbModifier from "@/components/modifiers/Breadcrumb";
 import * as ButtonModifier from "@/components/modifiers/Button";
 import * as ButtonIconModifier from "@/components/modifiers/ButtonIcon";
 import * as CheckboxModifier from "@/components/modifiers/Checkbox";
+import * as DateInputModifier from "@/components/modifiers/DateInput";
 import * as DividerModifier from "@/components/modifiers/Divider";
 import * as DrawerModifier from "@/components/modifiers/Drawer";
 import * as EffectsModifier from "@/components/modifiers/Effects";
@@ -103,6 +104,7 @@ const sectionMapper: SectionsMapper = {
   tabsList: TabsListModifier,
   alert: AlertModifier,
   badge: BadgeModifier,
+  dateInput: DateInputModifier,
 };
 
 type Tab = "design" | "actions";
