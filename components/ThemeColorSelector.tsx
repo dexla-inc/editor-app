@@ -121,7 +121,7 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
       />
     );
 
-  const boxShadow = `0 0 5px 0.625px ${theme.colors.green[6]}`;
+  const boxShadow = `0 0 5px 0.625px ${theme.colors.Success[6]}`;
   const { label, ...selectProps } = props;
 
   return (
