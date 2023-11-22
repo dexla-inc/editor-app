@@ -15,9 +15,9 @@ export const OpenThemeButton = () => {
       sx={{
         ":hover": {
           textDecoration: "underline",
-          color: theme.colors.Success[9],
+          color: theme.colors.teal[9],
         },
-        color: theme.colors.Success[6],
+        color: theme.colors.teal[6],
         transition: "all 200ms ease",
       }}
       fz="xs"
