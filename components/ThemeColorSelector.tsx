@@ -11,6 +11,7 @@ import {
   Select,
   SelectProps,
   Stack,
+  Text,
   Tooltip,
 } from "@mantine/core";
 import { forwardRef } from "react";
@@ -120,38 +121,47 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
       />
     );
 
+  const boxShadow = `0 0 5px 0.625px ${theme.colors.green[6]}`;
+  const { label, ...selectProps } = props;
+
   return (
     <Stack spacing={5}>
-      <Group noWrap align="end">
-        <Select
-          size="xs"
-          {...props}
-          data={data.concat({
-            label: "transparent",
-            value: "transparent",
-          })}
-          itemComponent={SelectItem}
-          searchable
-          icon={bgColor}
-        />
-        <Tooltip
-          withArrow
-          withinPortal
-          position="left"
-          offset={0}
-          fz="xs"
-          p="2px 4px"
-          label={isShadesActive ? "Turn off shades" : "Turn on shades"}
-        >
-          <ActionIcon onClick={() => setIsShadesActive(!isShadesActive)}>
-            <Avatar
-              radius="xl"
-              size={24}
-              src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Color_circle_%28RGB%29.svg"
-            />
-          </ActionIcon>
-        </Tooltip>
-      </Group>
+      <Stack spacing={0}>
+        <Text fw={500} fz="xs">
+          {label}
+        </Text>
+        <Group noWrap align="center">
+          <Select
+            size="xs"
+            {...selectProps}
+            data={data.concat({
+              label: "transparent",
+              value: "transparent",
+            })}
+            itemComponent={SelectItem}
+            searchable
+            icon={bgColor}
+          />
+          <Tooltip
+            withArrow
+            withinPortal
+            position="left"
+            offset={0}
+            fz="xs"
+            p="2px 4px"
+            label={isShadesActive ? "Turn off shades" : "Turn on shades"}
+          >
+            <ActionIcon onClick={() => setIsShadesActive(!isShadesActive)}>
+              <Avatar
+                sx={isShadesActive ? { boxShadow } : {}}
+                radius="xl"
+                size={24}
+                src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Color_circle_%28RGB%29.svg"
+              />
+            </ActionIcon>
+          </Tooltip>
+        </Group>
+      </Stack>
       <OpenThemeButton />
     </Stack>
   );

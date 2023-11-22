@@ -18,7 +18,7 @@ type UserConfigState = {
 export const useUserConfigStore = create<UserConfigState>()(
   devtools(
     persist(
-      (set, get) => ({
+      (set) => ({
         isTabPinned: false,
         isShadesActive: false,
         setIsShadesActive: (isShadesActive: boolean) => {
@@ -69,6 +69,7 @@ export const useUserConfigStore = create<UserConfigState>()(
         name: "user-config",
         partialize: (state: UserConfigState) => ({
           isTabPinned: state.isTabPinned,
+          isShadesActive: state.isShadesActive,
           initiallyOpenedModifiersByComponent:
             state.initiallyOpenedModifiersByComponent,
         }),
