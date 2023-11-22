@@ -146,13 +146,14 @@ export function replaceBrackets(
 export const fonts = [
   "Arial",
   "Helvetica",
+  "Inter",
   "Lato",
   "Open Sans",
+  "Opensaucesans",
   "Roboto",
   "Raleway",
-  "Times New Roman",
-  "Opensaucesans",
   "Red Hat Display",
+  "Times New Roman",
 ];
 
 export const regionTypeLabels: { [key in RegionTypes]: string } = {

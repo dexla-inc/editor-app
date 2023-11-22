@@ -13,7 +13,7 @@ import {
 import { useClickOutside } from "@mantine/hooks";
 import { IconX } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type Props = {
   friendlyName?: string;
@@ -34,9 +34,8 @@ export const ColorSelector = ({
   deleteColor,
   size,
 }: Props) => {
-  const hexToHexa = fetchedHex.length === 7 ? fetchedHex + "ff" : fetchedHex;
-  const [hexa, setHexa] = useState(hexToHexa);
-  const [friendlyName, setFriendlyName] = useState(fetchedFriendlyName);
+  const [hexa, setHexa] = useState<string>("");
+  const [friendlyName, setFriendlyName] = useState<string>("");
   const [opened, setOpened] = useState(false);
   const ref = useClickOutside(() => setOpened(false));
 
@@ -48,18 +47,32 @@ export const ColorSelector = ({
     [debounce],
   );
 
+  const onValueChangeRef = useRef(onValueChange);
+  onValueChangeRef.current = onValueChange;
+
+  // Create a debounced function using useRef so it's stable and doesn't change on re-renders
+  const debouncedOnValueChangeRef = useRef(
+    debounce((hex, name) => {
+      if (onValueChangeRef.current) {
+        onValueChangeRef.current({ friendlyName: name, hex });
+      }
+    }, 100),
+  );
+
+  // Call the current debounced function whenever hexa or friendlyName changes
   useEffect(() => {
-    if (onValueChange) {
-      onValueChange({ friendlyName, hex: hexa });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [friendlyName, hexa]);
+    debouncedOnValueChangeRef.current(hexa, friendlyName);
+    // Make sure to cancel the debounced call on effect cleanup
+    return () => debouncedOnValueChangeRef.current.cancel();
+  }, [hexa, friendlyName]);
 
   useEffect(() => {
-    setHexa(hexa);
+    const hexToHexa = fetchedHex.length === 7 ? fetchedHex + "ff" : fetchedHex;
+
+    setHexa(hexToHexa);
     setFriendlyName(fetchedFriendlyName);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchedHex, fetchedFriendlyName]);
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
@@ -73,7 +86,13 @@ export const ColorSelector = ({
 
   return (
     <Flex align="center" ref={ref}>
-      <Popover withArrow zIndex="20" opened={opened} onChange={setOpened}>
+      <Popover
+        withArrow
+        zIndex="20"
+        opened={opened}
+        onChange={setOpened}
+        position="bottom-start"
+      >
         <Popover.Target>
           <Tooltip label="Click to change color">
             <ColorSwatch

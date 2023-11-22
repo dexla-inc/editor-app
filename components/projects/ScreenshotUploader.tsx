@@ -38,7 +38,7 @@ export default function ScreenshotUploader({
         imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
         width={220}
         height={140}
-        fit="contain"
+        fit="cover"
       />
     );
   });
@@ -191,12 +191,19 @@ export default function ScreenshotUploader({
         </Flex>
       </Box>
 
-      <SimpleGrid cols={4} breakpoints={[{ maxWidth: "sm", cols: 1 }]}>
+      <SimpleGrid
+        cols={4}
+        breakpoints={[
+          { maxWidth: "md", cols: 3 },
+          { maxWidth: "sm", cols: 1 },
+        ]}
+      >
         {previews.map((preview, index) => (
           <Paper
             key={preview.key}
             pos="relative"
             sx={{
+              width: "220px",
               "&:hover > div": {
                 opacity: 1,
               },
@@ -211,7 +218,7 @@ export default function ScreenshotUploader({
                 position: "absolute",
                 top: 0,
                 left: 0,
-                width: "100%",
+                width: "220px",
                 height: "100%",
                 backgroundColor: "rgba(0, 0, 0, 0.5)",
                 justifyContent: "center",
