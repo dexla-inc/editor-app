@@ -201,6 +201,23 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
     ],
   ]);
 
+  const DroppableDraggableContainer = ({ children, component }: any) => {
+    const isSelected = useEditorStore(
+      (state) => state.selectedComponentId === component.id,
+    );
+
+    return (
+      <DroppableDraggable
+        id={component.id!}
+        component={component}
+        customComponentModal={customComponentModal}
+        isSelected={isSelected}
+      >
+        {children}
+      </DroppableDraggable>
+    );
+  };
+
   const renderTree = (component: Component) => {
     if (component.id === "root") {
       return (
@@ -221,26 +238,22 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
 
     if (!componentToRender) {
       return (
-        <DroppableDraggable
+        <DroppableDraggableContainer
           key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
-          id={component.id!}
           component={component}
-          customComponentModal={customComponentModal}
         >
           {component.children?.map((child) => renderTree(child))}
-        </DroppableDraggable>
+        </DroppableDraggableContainer>
       );
     }
 
     return (
-      <DroppableDraggable
+      <DroppableDraggableContainer
         key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
-        id={component.id!}
         component={component}
-        customComponentModal={customComponentModal}
       >
         {componentToRender?.Component({ component, renderTree })}
-      </DroppableDraggable>
+      </DroppableDraggableContainer>
     );
   };
 

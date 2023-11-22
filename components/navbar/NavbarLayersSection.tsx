@@ -19,21 +19,19 @@ import {
 import { useForm } from "@mantine/form";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown, IconChevronRight } from "@tabler/icons-react";
-import { KeyboardEvent, useEffect, useRef } from "react";
+import { KeyboardEvent, memo, useEffect, useRef } from "react";
 import Nestable from "react-nestable";
 
 type ListItemProps = {
   component: Component;
   collapseIcon: any;
+  isSelected: boolean;
 };
 
-const ListItem = ({ component, collapseIcon }: ListItemProps) => {
+const ListItem = ({ component, collapseIcon, isSelected }: ListItemProps) => {
   const theme = useMantineTheme();
   const { ref, hovered } = useHover();
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
-  );
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
@@ -64,20 +62,13 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
   };
 
   useEffect(() => {
-    const isCurrentComponentSelected = component.id === selectedComponentId;
-    const isRootOrContentWrapper =
-      selectedComponentId === "root" ||
-      selectedComponentId === "content-wrapper";
-
-    if (!isCurrentComponentSelected || isRootOrContentWrapper) {
-      return;
+    if (isSelected) {
+      // Scroll the current component into view if it's not root or content-wrapper
+      ref.current?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
-    // Scroll the current component into view if it's not root or content-wrapper
-    ref.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId]);
+  }, [isSelected]);
 
   useEffect(() => {
     if (editable) {
@@ -111,10 +102,7 @@ const ListItem = ({ component, collapseIcon }: ListItemProps) => {
         bg={hovered ? "gray.1" : undefined}
         style={{
           cursor: "move",
-          border:
-            selectedComponentId === component.id
-              ? `1px solid ${theme.colors.teal[6]}`
-              : undefined,
+          border: isSelected ? `1px solid ${theme.colors.teal[6]}` : undefined,
           display: "flex",
           position: "relative",
         }}
@@ -207,6 +195,20 @@ const Collapser = ({ isCollapsed }: { isCollapsed: boolean }) => {
   );
 };
 
+const RenderItemInner = ({ item, collapseIcon }: any) => {
+  const isSelected = useEditorStore(
+    (state) => state.selectedComponentId === item.id,
+  );
+  return (
+    <ListItem
+      isSelected={isSelected}
+      collapseIcon={collapseIcon}
+      component={item}
+      key={`listItem-${item.id}`}
+    />
+  );
+};
+
 export const NavbarLayersSection = () => {
   const editorTree = useEditorStore((state) => state.tree);
 
@@ -216,13 +218,7 @@ export const NavbarLayersSection = () => {
 
   // Render function for Nestable items
   const renderItem = ({ item, collapseIcon }: any): JSX.Element => {
-    return (
-      <ListItem
-        collapseIcon={collapseIcon}
-        component={item}
-        key={`listItem-${item.id}`}
-      />
-    );
+    return <RenderItemInner item={item} collapseIcon={collapseIcon} />;
   };
 
   const items = editorTree.root.children;
