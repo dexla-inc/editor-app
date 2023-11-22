@@ -11,7 +11,6 @@ import { useCallback, useEffect, useState } from "react";
 
 export const useDroppable = ({
   id,
-  activeId,
   onDrop,
   currentWindow,
 }: {
@@ -38,6 +37,7 @@ export const useDroppable = ({
     (event: React.DragEvent) => {
       event.preventDefault();
       event.stopPropagation();
+      const activeId = useEditorStore.getState().selectedComponentId;
       const dropTarget = {
         id,
         edge: edge!,
@@ -45,7 +45,7 @@ export const useDroppable = ({
       onDrop?.(activeId!, dropTarget);
       setCurrentTargetId(undefined);
     },
-    [activeId, id, setCurrentTargetId, edge, onDrop],
+    [id, setCurrentTargetId, edge, onDrop],
   );
 
   const handleEdgeSet = (

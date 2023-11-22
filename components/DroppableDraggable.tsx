@@ -46,6 +46,7 @@ type Props = {
   id: string;
   component: Component;
   customComponentModal?: any;
+  isSelected?: boolean;
 } & BoxProps;
 
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
@@ -74,6 +75,7 @@ export const DroppableDraggable = ({
   children,
   component,
   customComponentModal,
+  isSelected,
 }: PropsWithChildren<Props>) => {
   const router = useRouter();
   const theme = useMantineTheme();
@@ -102,9 +104,9 @@ export const DroppableDraggable = ({
   const setTreeComponentCurrentState = useEditorStore(
     (state) => state.setTreeComponentCurrentState,
   );
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
-  );
+  // const selectedComponentId = useEditorStore(
+  //   (state) => state.selectedComponentId,
+  // );
   const currentTreeComponentsStates = useEditorStore(
     (state) => state.currentTreeComponentsStates,
   );
@@ -193,13 +195,12 @@ export const DroppableDraggable = ({
   });
   const { edge, ...droppable } = useDroppable({
     id,
-    activeId: selectedComponentId,
     onDrop,
     currentWindow: iframeWindow,
   });
 
   const isPicking = pickingComponentToBindFrom || pickingComponentToBindTo;
-  const isSelected = selectedComponentId === id;
+  // const isSelected = selectedComponentId === id;
   const isOver = currentTargetId === id;
   const isHighlighted = highlightedComponentId === id;
 
@@ -295,12 +296,12 @@ export const DroppableDraggable = ({
   const ref = useRef<HTMLDivElement>(null!);
 
   useEffect(() => {
-    if (ref.current && selectedComponentId === id) {
+    if (ref.current && isSelected) {
       const width = ref.current?.children[1]?.getBoundingClientRect().width;
       setDefaultComponentWidth(width);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponentId, id]);
+  }, [isSelected, id]);
 
   return (
     <Box
