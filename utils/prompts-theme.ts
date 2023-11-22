@@ -42,7 +42,7 @@ JSON Parsing:
       };
       backgroundColor: string;
       borderColor: string;
-      hasLargeButtons: boolean;
+      hasCompactButtons: boolean; // If buttons are compact, they have less padding than standard website buttons.
       focusRing: "DEFAULT" | "ON_BRAND_THIN" | "ON_BRAND_THICK";
       cardStyle:
         | "ROUNDED"

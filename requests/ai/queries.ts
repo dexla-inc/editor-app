@@ -3,6 +3,7 @@ import {
   ChatHistoryMessage,
   EventSourceParams,
 } from "@/requests/ai/types";
+import { BrandingAITheme } from "@/requests/projects/types";
 import { PagingResponse } from "@/requests/types";
 import { MantineThemeExtended } from "@/stores/editor";
 import { baseURL, get, getAuthToken } from "@/utils/api";
@@ -155,7 +156,7 @@ export const generateStructureFromScreenshot = async (
 export const generateThemeFromScreenshot = async (
   description: string,
   base64Image: string,
-) => {
+): Promise<BrandingAITheme> => {
   const response = await fetch("/api/ai/theme-screenshot", {
     method: "POST",
     headers: {
@@ -168,7 +169,6 @@ export const generateThemeFromScreenshot = async (
   });
 
   const json = await response.json();
-  console.log(json);
 
   return json;
 };

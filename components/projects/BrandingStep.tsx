@@ -2,7 +2,7 @@ import BackButton from "@/components/BackButton";
 import { ColorSelector } from "@/components/ColorSelector";
 import NextButton from "@/components/NextButton";
 import { generateThemeFromScreenshot } from "@/requests/ai/queries";
-import { saveTheme } from "@/requests/themes/mutations";
+import { saveBasicTheme, saveTheme } from "@/requests/themes/mutations";
 import { getTheme } from "@/requests/themes/queries";
 import { Color, ThemeResponse } from "@/requests/themes/types";
 import { useEditorStore } from "@/stores/editor";
@@ -112,6 +112,7 @@ export default function BrandingStep({
   };
 
   const buttonComponent = componentMapper["Button"];
+
   const linkComponent = componentMapper["Link"];
   const theme = useEditorStore((state) => state.theme);
   const setTheme = useEditorStore((state) => state.setTheme);
@@ -234,7 +235,7 @@ export default function BrandingStep({
       });
 
       // if selectedScreenshot is not null then get theme prompt
-      let theme;
+      let theme: ThemeResponse | undefined;
 
       if (selectedScreenshot !== undefined) {
         const screenshot = screenshots[selectedScreenshot];
@@ -245,11 +246,7 @@ export default function BrandingStep({
           base64Image,
         );
 
-        theme = await saveTheme(
-          projectId,
-          themeScreenshotResponse as ThemeResponse,
-          websiteUrl,
-        );
+        theme = await saveBasicTheme(projectId, themeScreenshotResponse);
       } else {
         theme = await saveTheme(projectId, {} as ThemeResponse, websiteUrl);
       }
@@ -300,40 +297,47 @@ export default function BrandingStep({
           <Flex sx={{ width: "100%" }} justify="space-between" gap="xl">
             <Stack sx={{ width: "100%" }}>
               <Title order={4}>Main Colors</Title>
-              {themeResponse?.colors &&
-                themeResponse?.colors
-                  .filter((t) => t.name === "Primary" || t.name === "Secondary")
-                  .map(({ friendlyName, hex, name }, index) => (
-                    <ColorSelector
-                      key={`color-${name}`}
-                      friendlyName={friendlyName}
-                      hex={hex}
-                      isDefault={themeResponse.colors[index].isDefault}
-                      mantineTheme={mantineTheme}
-                      onValueChange={(value) => {
-                        setThemeResponse((prevThemeResponse) => {
-                          if (!prevThemeResponse) {
-                            return prevThemeResponse;
-                          }
+              {themeResponse?.colors
+                .filter(
+                  (t) =>
+                    t.name === "Primary" ||
+                    t.name === "PrimaryText" ||
+                    t.name === "Secondary" ||
+                    t.name === "SecondaryText" ||
+                    t.name === "Tertiary" ||
+                    t.name === "TertiaryText",
+                )
+                .map(({ friendlyName, hex, name }, index) => (
+                  <ColorSelector
+                    key={`color-${name}`}
+                    friendlyName={friendlyName}
+                    hex={hex}
+                    isDefault={themeResponse.colors[index].isDefault}
+                    mantineTheme={mantineTheme}
+                    onValueChange={(value) => {
+                      setThemeResponse((prevThemeResponse) => {
+                        if (!prevThemeResponse) {
+                          return prevThemeResponse;
+                        }
 
-                          const updatedColor = {
-                            ...prevThemeResponse.colors[index],
-                            friendlyName: value.friendlyName,
-                            hex: value.hex,
-                            name: !prevThemeResponse.colors[index].isDefault
-                              ? value.friendlyName
-                              : prevThemeResponse.colors[index].name,
-                          };
+                        const updatedColor = {
+                          ...prevThemeResponse.colors[index],
+                          friendlyName: value.friendlyName,
+                          hex: value.hex,
+                          name: !prevThemeResponse.colors[index].isDefault
+                            ? value.friendlyName
+                            : prevThemeResponse.colors[index].name,
+                        };
 
-                          return updateThemeResponseColor(
-                            prevThemeResponse,
-                            index,
-                            updatedColor,
-                          );
-                        });
-                      }}
-                    />
-                  ))}
+                        return updateThemeResponseColor(
+                          prevThemeResponse,
+                          index,
+                          updatedColor,
+                        );
+                      });
+                    }}
+                  />
+                ))}
               {/* <Button
                 type="button"
                 fullWidth
@@ -388,12 +392,19 @@ export default function BrandingStep({
           <Text size="sm" fw={500}>
             Choose a screenshot you want to use for your brand
           </Text>
-          <SimpleGrid cols={4} breakpoints={[{ maxWidth: "sm", cols: 1 }]}>
+          <SimpleGrid
+            cols={4}
+            breakpoints={[
+              { maxWidth: "md", cols: 3 },
+              { maxWidth: "sm", cols: 1 },
+            ]}
+          >
             {previews.map((preview, index) => (
               <Paper
                 key={preview.key}
                 pos="relative"
                 sx={{
+                  width: "220px",
                   borderRadius: 0,
                   ...(selectedScreenshot === index && {
                     boxShadow: `0 0 0 3px ${mantineTheme.colors.teal[6]}`,
@@ -412,7 +423,8 @@ export default function BrandingStep({
                     position: "absolute",
                     top: 0,
                     left: 0,
-                    width: "100%",
+                    borderRadius: 0,
+                    width: "220px",
                     height: "100%",
                     backgroundColor: "rgba(0, 0, 0, 0.5)",
                     justifyContent: "center",

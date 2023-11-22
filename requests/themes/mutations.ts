@@ -1,5 +1,6 @@
 import { ThemeResponse } from "@/requests/themes/types";
 import { del, post } from "@/utils/api";
+import { BrandingAITheme } from "../projects/types";
 
 export type SaveThemeProps = {
   params: ThemeResponse;
@@ -35,6 +36,18 @@ export async function saveTheme(
   const response = (await post<ThemeResponse>(
     `/projects/${projectId}/themes` +
       (websiteUrl ? `?websiteUrl=${websiteUrl}` : ""),
+    params,
+  )) as ThemeResponse;
+
+  return response;
+}
+
+export async function saveBasicTheme(
+  projectId: string,
+  params: BrandingAITheme,
+): Promise<ThemeResponse> {
+  const response = (await post<ThemeResponse>(
+    `/projects/${projectId}/themes/basic`,
     params,
   )) as ThemeResponse;
 

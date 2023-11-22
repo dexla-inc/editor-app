@@ -46,7 +46,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         color: data.color ?? theme.colors["Primary.6"],
         textColor: data.textColor ?? theme.colors["PrimaryText.6"],
         icon: data.leftIcon ?? defaultButtonValues.leftIcon,
-        compact: data.compact ?? defaultButtonValues.compact,
+        compact: data.compact ?? theme.hasCompactButtons,
       });
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes

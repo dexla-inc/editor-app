@@ -2,6 +2,7 @@ import NextButton from "@/components/NextButton";
 import ScreenshotUploader from "@/components/projects/ScreenshotUploader";
 import {
   ProjectParams,
+  ProjectResponse,
   createEntities,
   createProject,
   patchProject,
@@ -56,16 +57,16 @@ export default function ProjectStep({
       friendlyName: "",
       similarCompany: undefined,
     },
-    validate: {
-      description: (value) =>
-        value === ""
-          ? "You must provide a description"
-          : value.length > 250
-          ? "Description too long"
-          : value.length < 15
-          ? "Description too short"
-          : null,
-    },
+    // validate: {
+    //   description: (value) =>
+    //     value === ""
+    //       ? "You must provide a description"
+    //       : value.length > 250
+    //       ? "Description too long"
+    //       : value.length < 15
+    //       ? "Description too short"
+    //       : null,
+    // },
   });
 
   const onSubmit = async (values: ProjectParams) => {
@@ -77,18 +78,20 @@ export default function ProjectStep({
         message:
           "Thinking about your app, this step usually takes around 5 seconds...",
       });
-
       form.validate();
 
-      const project = await createProject(values);
+      let project: ProjectResponse;
+      if (!projectId) {
+        project = await createProject(values);
 
-      setProjectId(project.id);
+        setProjectId(project.id);
 
-      await createEntities(values, project.id);
+        await createEntities(values, project.id);
 
-      if (!project || !project.id) throw new Error("Project not created");
+        if (!project || !project.id) throw new Error("Project not created");
 
-      projectId = project.id;
+        projectId = project.id;
+      }
 
       if (screenshots.length > 0) {
         const storedScreenshots = (await uploadFile(
@@ -106,8 +109,7 @@ export default function ProjectStep({
             value: urls,
           },
         ] as PatchParams[];
-
-        await patchProject(projectId, patchParams);
+        await patchProject(project!.id, patchParams);
       }
 
       stopLoading({
