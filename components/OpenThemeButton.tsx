@@ -13,8 +13,11 @@ export const OpenThemeButton = () => {
   return (
     <UnstyledButton
       sx={{
-        ":hover": { textDecoration: "underline", color: theme.colors.green[9] },
-        color: theme.colors.green[6],
+        ":hover": {
+          textDecoration: "underline",
+          color: theme.colors.Success[9],
+        },
+        color: theme.colors.Success[6],
         transition: "all 200ms ease",
       }}
       fz="xs"
