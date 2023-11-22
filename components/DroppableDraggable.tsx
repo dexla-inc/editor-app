@@ -104,9 +104,6 @@ export const DroppableDraggable = ({
   const setTreeComponentCurrentState = useEditorStore(
     (state) => state.setTreeComponentCurrentState,
   );
-  // const selectedComponentId = useEditorStore(
-  //   (state) => state.selectedComponentId,
-  // );
   const currentTreeComponentsStates = useEditorStore(
     (state) => state.currentTreeComponentsStates,
   );
@@ -200,7 +197,6 @@ export const DroppableDraggable = ({
   });
 
   const isPicking = pickingComponentToBindFrom || pickingComponentToBindTo;
-  // const isSelected = selectedComponentId === id;
   const isOver = currentTargetId === id;
   const isHighlighted = highlightedComponentId === id;
 
