@@ -372,7 +372,12 @@ export default function BrandingStep({
               <Title order={6}>Button</Title>
               <MantineProvider withNormalizeCSS theme={theme}>
                 {buttonComponent.Component({
-                  component: { props: { children: <>Button Preview</> } },
+                  component: {
+                    props: {
+                      children: <>Button Preview</>,
+                      textColor: "PrimaryText.6",
+                    },
+                  },
                   renderTree,
                 })}
               </MantineProvider>
