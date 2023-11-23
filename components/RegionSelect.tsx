@@ -26,7 +26,7 @@ export default function RegionSelect(props: Omit<SelectProps, "data">) {
   return (
     <Select
       label="Region"
-      description="The region where your project will be deployed"
+      description="The country your project will be deployed in"
       data={regionTypes}
       itemComponent={RegionSelectItem}
       icon={

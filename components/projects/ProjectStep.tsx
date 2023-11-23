@@ -2,7 +2,6 @@ import NextButton from "@/components/NextButton";
 import ScreenshotUploader from "@/components/projects/ScreenshotUploader";
 import {
   ProjectParams,
-  ProjectResponse,
   createEntities,
   createProject,
   patchProject,
@@ -20,7 +19,8 @@ import { Dispatch, SetStateAction } from "react";
 interface ProjectStepProps extends LoadingStore, NextStepperClickEvent {
   companyId: string;
   projectId: string;
-  setProjectId: (id: string) => void;
+  projectCreated: boolean;
+  setProjectCreated: (value: boolean) => void;
   description: string;
   setDescription: (description: string) => void;
   industry: string;
@@ -37,7 +37,8 @@ export default function ProjectStep({
   startLoading,
   stopLoading,
   projectId,
-  setProjectId,
+  projectCreated,
+  setProjectCreated,
   description,
   setDescription,
   industry,
@@ -49,6 +50,7 @@ export default function ProjectStep({
 
   const form = useForm<ProjectParams>({
     initialValues: {
+      id: projectId,
       companyId: companyId,
       description: "",
       region: "US_CENTRAL",
@@ -80,17 +82,13 @@ export default function ProjectStep({
       });
       form.validate();
 
-      let project: ProjectResponse;
-      if (!projectId) {
-        project = await createProject(values);
+      if (!projectCreated) {
+        const project = await createProject(values);
 
-        setProjectId(project.id);
+        if (!project) throw new Error("Project not created");
+        setProjectCreated(true);
 
-        await createEntities(values, project.id);
-
-        if (!project || !project.id) throw new Error("Project not created");
-
-        projectId = project.id;
+        await createEntities(values);
       }
 
       if (screenshots.length > 0) {
@@ -109,7 +107,8 @@ export default function ProjectStep({
             value: urls,
           },
         ] as PatchParams[];
-        await patchProject(project!.id, patchParams);
+
+        await patchProject(projectId, patchParams);
       }
 
       stopLoading({
@@ -120,11 +119,11 @@ export default function ProjectStep({
 
       setIsLoading && setIsLoading(false);
       nextStep();
-    } catch (error) {
+    } catch (error: any) {
       stopLoading({
         id: "creating-project",
         title: "Project Failed",
-        message: "Validation failed",
+        message: error.message,
         isError: true,
       });
       setIsLoading && setIsLoading(false);

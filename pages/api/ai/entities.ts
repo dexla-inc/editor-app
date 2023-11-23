@@ -1,4 +1,4 @@
-import { GPT35_TURBO_MODEL } from "@/utils/config";
+import { GPT35_TURBO_16K_MODEL } from "@/utils/config";
 import { openai } from "@/utils/openai";
 import { prisma } from "@/utils/prisma";
 import { getEntitiesPrompt } from "@/utils/prompts";
@@ -36,20 +36,20 @@ export default async function handler(
     );
 
     const data: {
-      projectId: string;
+      id: string;
       appDescription: string;
       appIndustry: string;
       accessToken: string;
       timer: Stopwatch;
     } = req.body;
 
-    const { projectId, appDescription, appIndustry, ...restData } = data;
+    const { appDescription, appIndustry, ...restData } = data;
 
     const response = await openai.chat.completions.create({
-      model: GPT35_TURBO_MODEL,
-      response_format: {
-        type: "json_object",
-      },
+      model: GPT35_TURBO_16K_MODEL,
+      // response_format: {
+      //   type: "json_object",
+      // },
       stream: false,
       messages: [
         {
@@ -70,6 +70,7 @@ export default async function handler(
 
     const projectData = Object.keys(content.entities).reduce((acc, key) => {
       const entity = content.entities[key];
+      console.log("entity", entity);
 
       const callFakerFuncs = (obj: any): any => {
         return Object.keys(obj).reduce((acc, curr) => {
@@ -202,9 +203,9 @@ export default async function handler(
       };
     }, {});
 
-    await prisma.project.create({
+    const prismaResponse = await prisma.project.create({
       data: {
-        id: projectId,
+        id: data.id,
         entities: content.entities,
         data: transformedData,
       },
@@ -212,10 +213,10 @@ export default async function handler(
 
     console.log(
       "Entities API duration: " + timer.getElapsedMilliseconds(),
-      "Entities API Finished:  await prisma.project.create({",
+      "Entities API Finished:  Prisma Project Created " + prismaResponse,
     );
 
-    return res.status(200).json({ id: projectId });
+    return res.status(200).json({ id: data.id });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error });

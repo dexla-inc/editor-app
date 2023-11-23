@@ -4,6 +4,7 @@ import { del, getAuthToken, patch, post } from "@/utils/api";
 import { ProjectTypes } from "@/utils/projectTypes";
 
 export interface ProjectParams extends ProjectUpdateParams {
+  id: string;
   companyId: string;
   description: string;
   type: ProjectTypes;
@@ -32,10 +33,7 @@ export const createProject = async (params: ProjectParams) => {
   return response;
 };
 
-export const createEntities = async (
-  params: ProjectParams,
-  projectId: string,
-) => {
+export const createEntities = async (params: ProjectParams) => {
   const accessToken = await getAuthToken();
   const response = await fetch("/api/ai/entities", {
     method: "POST",
@@ -44,7 +42,6 @@ export const createEntities = async (
     },
     body: JSON.stringify({
       ...params,
-      projectId,
       appDescription: params.description,
       appIndustry: params.industry,
       accessToken,

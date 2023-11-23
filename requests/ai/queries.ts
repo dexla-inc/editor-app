@@ -178,6 +178,7 @@ export const anyPrompt = async (
   prompt: string,
   image?: string,
 ) => {
+  console.log("prompt", prompt);
   const response = await fetch("/api/ai/any-prompt", {
     method: "POST",
     headers: {

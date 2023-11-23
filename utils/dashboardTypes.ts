@@ -147,12 +147,15 @@ export const fonts = [
   "Arial",
   "Helvetica",
   "Inter",
+  "Inter, sans-serif",
   "Lato",
   "Open Sans",
   "Opensaucesans",
   "Roboto",
   "Raleway",
   "Red Hat Display",
+  "sans-serif",
+  "Segoe UI, sans-serif",
   "Times New Roman",
 ];
 
@@ -224,3 +227,8 @@ export function convertToPatchParams<T extends Record<string, any>>(
 }
 
 export type ApiType = "header" | "parameter" | "body";
+
+export function generateId(): string {
+  const guid = crypto.randomUUID();
+  return guid.replace(/-/g, "");
+}

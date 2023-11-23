@@ -7,6 +7,7 @@ import { ProjectListResponse, getProjects } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
+import { generateId } from "@/utils/dashboardTypes";
 import {
   Container,
   Flex,
@@ -33,6 +34,8 @@ export default function Projects() {
     user: state.user,
     company: state.activeCompany,
   }));
+  const manuallyCreatedProjectId = generateId();
+
   const startLoading = useAppStore((state) => state.startLoading);
   const router = useRouter();
 
@@ -120,7 +123,9 @@ export default function Projects() {
           <Title>Welcome back, {user?.firstName}</Title>
           <Flex>
             {company.orgName !== "Dexla" ? (
-              <Link href={`/projects/new?company=${company.orgId}`}>
+              <Link
+                href={`/projects/new?company=${company.orgId}&id=${manuallyCreatedProjectId}`}
+              >
                 <IconTitleDescriptionButton
                   icon={
                     <IconSparkles

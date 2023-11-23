@@ -52,6 +52,8 @@ export default async function handler(
       },
     });
 
+    console.log("templates", templates);
+
     const templatesData = await templates.reduce(async (acc, template) => {
       const tiles = await prisma.tile.findMany({
         where: {

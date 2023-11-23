@@ -26,8 +26,11 @@ export default function New() {
     setActiveStep((current) => (current < 3 ? current + 1 : current));
   const prevStep = () =>
     setActiveStep((current) => (current > 0 ? current - 1 : current));
+  const router = useRouter();
 
-  const [projectId, setProjectId] = useState("");
+  const projectId =
+    (router.query.id as string) || (router.query.projectId as string);
+
   const [description, setDescription] = useState("");
   const [industry, setIndustry] = useState("");
   const [screenshots, setScreenshots] = useState<File[]>([]);
@@ -35,19 +38,17 @@ export default function New() {
   const [themeResponse, setThemeResponse] = useState<ThemeResponse>();
   const [pages, setPages] = useState<PageAIResponse[]>([]);
   const [hasPagesCreated, setHasPagesCreated] = useState(false);
+  const [projectCreated, setProjectCreated] = useState(false);
   const [homePageId, setHomePageId] = useState("");
   const [friendlyName, setFriendlyName] = useState(activeCompany.orgName);
   const [region, setRegion] = useState<RegionTypes>("US_CENTRAL");
 
-  const router = useRouter();
   const company = router.query.company as string;
   const projectIdFromQuery = router.query.projectId;
   const stepFromQuery = router.query.step;
 
   useEffect(() => {
     if (projectIdFromQuery) {
-      setProjectId(projectIdFromQuery as string);
-
       const fetchProject = async () => {
         const project = await getProject(projectIdFromQuery as string);
 
@@ -99,7 +100,8 @@ export default function New() {
                 startLoading={startLoading}
                 stopLoading={stopLoading}
                 projectId={projectId}
-                setProjectId={setProjectId}
+                projectCreated={projectCreated}
+                setProjectCreated={setProjectCreated}
                 description={description}
                 setDescription={setDescription}
                 industry={industry}
@@ -169,7 +171,7 @@ const stepperDetails: StepperDetailsType = {
     title: "Let's create your pages!",
   },
   3: {
-    title: "Ready to be blown away? Because there’s a Buck-storm coming...",
+    title: "Last minute touches!",
   },
 };
 

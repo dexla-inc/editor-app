@@ -87,7 +87,7 @@ export default function ProjectInfoStep({
     <Stack spacing="xl">
       <TextInput
         label="Project Name"
-        description="A friendly name for your project"
+        placeholder="A friendly name for your project"
         value={friendlyName}
         onChange={(event) => setFriendlyName(event.currentTarget.value)}
       />

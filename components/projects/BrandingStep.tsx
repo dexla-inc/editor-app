@@ -394,58 +394,63 @@ export default function BrandingStep({
             </Stack>
           </Flex>
         )}
-        <Divider m="xs" label="Or" labelPosition="center" />
-        <Stack spacing="xs">
-          <Text size="sm" fw={500}>
-            Choose a screenshot you want to use for your brand
-          </Text>
-          <SimpleGrid
-            cols={4}
-            breakpoints={[
-              { maxWidth: "md", cols: 3 },
-              { maxWidth: "sm", cols: 1 },
-            ]}
-          >
-            {previews.map((preview, index) => (
-              <Paper
-                key={preview.key}
-                pos="relative"
-                sx={{
-                  width: "220px",
-                  borderRadius: 0,
-                  ...(selectedScreenshot === index && {
-                    boxShadow: `0 0 0 3px ${mantineTheme.colors.teal[6]}`,
-                  }),
-                  "&:hover > div": {
-                    opacity: 1,
-                  },
-                }}
+        {screenshots.length > 0 && (
+          <>
+            <Divider m="xs" label="Or" labelPosition="center" />
+            <Stack spacing="xs">
+              <Text size="sm" fw={500}>
+                Choose a screenshot you want to use for your brand
+              </Text>
+
+              <SimpleGrid
+                cols={4}
+                breakpoints={[
+                  { maxWidth: "md", cols: 3 },
+                  { maxWidth: "sm", cols: 1 },
+                ]}
               >
-                {preview}
-                <Paper
-                  display="flex"
-                  onClick={() => selectScreenshot(index)}
-                  sx={{
-                    opacity: 0,
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    borderRadius: 0,
-                    width: "220px",
-                    height: "100%",
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    transition: "opacity 0.3s ease",
-                    "&:hover": {
-                      cursor: "pointer",
-                    },
-                  }}
-                ></Paper>
-              </Paper>
-            ))}
-          </SimpleGrid>
-        </Stack>
+                {previews.map((preview, index) => (
+                  <Paper
+                    key={preview.key}
+                    pos="relative"
+                    sx={{
+                      width: "220px",
+                      borderRadius: 0,
+                      ...(selectedScreenshot === index && {
+                        boxShadow: `0 0 0 3px ${mantineTheme.colors.teal[6]}`,
+                      }),
+                      "&:hover > div": {
+                        opacity: 1,
+                      },
+                    }}
+                  >
+                    {preview}
+                    <Paper
+                      display="flex"
+                      onClick={() => selectScreenshot(index)}
+                      sx={{
+                        opacity: 0,
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        borderRadius: 0,
+                        width: "220px",
+                        height: "100%",
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        transition: "opacity 0.3s ease",
+                        "&:hover": {
+                          cursor: "pointer",
+                        },
+                      }}
+                    ></Paper>
+                  </Paper>
+                ))}
+              </SimpleGrid>
+            </Stack>
+          </>
+        )}
         <Group position="apart">
           <BackButton onClick={prevStep}></BackButton>
           <Flex gap="lg" align="end">
