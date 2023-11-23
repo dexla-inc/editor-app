@@ -14,13 +14,23 @@ import {
   NextStepperClickEvent,
   PreviousStepperClickEvent,
 } from "@/utils/dashboardTypes";
-import { Button, Flex, Group, Stack } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Flex,
+  Group,
+  Stack,
+  Text,
+  TextInput,
+  Textarea,
+  Tooltip,
+} from "@mantine/core";
 import { IconPlus, IconSparkles } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
 import { SetStateAction } from "react";
 import slugify from "slugify";
-import StyledAccordion from "../StyledAccordion";
-import StyledAccordionItem from "../StyledAccordionItem";
+import { InformationAlert } from "../Alerts";
+import { Icon } from "../Icon";
 
 export const getServerSideProps = async ({
   query,
@@ -84,6 +94,8 @@ export default function PagesStep({
       pageCount,
       existingPageNames,
     );
+
+    console.log({ newPageList });
 
     setPages((oldPages) => [...oldPages, ...newPageList]);
 
@@ -222,59 +234,91 @@ export default function PagesStep({
 
   return (
     <Stack spacing={40} my={25}>
-      {hasPageNames && (
-        <>
-          {/* <InformationAlert
-            title="Here are your pages and what they will do"
-            text="Feel free to change if they aren't quite right and add some new ones before generating your app."
-          /> */}
-          <StyledAccordion defaultValue={pages?.[0]?.name ?? ""}>
-            {pages.map(({ name, features }, index) => {
-              return (
-                <StyledAccordionItem
-                  key={name}
-                  value={name}
-                  description={features
-                    .map((feature) => `${feature}`)
-                    .join(". ")}
-                  w={400}
-                  maw={400}
-                />
-              );
-            })}
-          </StyledAccordion>
-        </>
-      )}
-      {/* {!hasPageNames && (
-        <InformationAlert
-          title="Generate Your Page Names"
-          text="Click on the button below to generate pages and functionality each page will have for your project"
-        />
-      )} */}
+      <Stack spacing="lg" maw={600}>
+        {hasPageNames ? (
+          pages.map(({ name, features }, index) => {
+            const isLastItem = index === pages.length - 1;
+            return (
+              <>
+                {/* Added div with key */}
+                <Stack
+                  // p="md"
+                  // bg="gray.0"
+                  sx={(theme) => ({
+                    border: `1px solid ${theme.colors.gray[2]}`,
+                    borderRadius: theme.radius.sm,
+                  })}
+                  pb="sm"
+                >
+                  <Group
+                    position="apart"
+                    bg="gray.0"
+                    p="sm"
+                    sx={(theme) => ({
+                      borderRadius: theme.radius.sm,
+                    })}
+                  >
+                    <Text fw={500}>Page {index + 1}</Text>
+                    <ActionIcon
+                      onClick={() => deletePage(name)}
+                      color="red"
+                      radius="xl"
+                    >
+                      <Icon name="IconTrash" />
+                    </ActionIcon>
+                  </Group>
+                  <TextInput
+                    value={name}
+                    label="Page name"
+                    placeholder="Page name"
+                    mx="sm"
+                  />
+                  <Textarea
+                    value={features}
+                    label="Features"
+                    autosize
+                    mx="sm"
+                  />
+                </Stack>
+                {/* {!isLastItem && <Divider color="gray.2" />} */}
+              </>
+            );
+          })
+        ) : (
+          <InformationAlert
+            title="Hit Generate pages"
+            text="We'll generate some pages and its functionality for you to get started. You can change this later."
+          />
+        )}
+      </Stack>
+
       <Flex gap="lg">
         {hasPageNames && (
           <>
-            <Button
-              variant="light"
-              leftIcon={<IconPlus size={ICON_SIZE} />}
-              onClick={() => handlePageNamesGeneration("1")}
-              loading={isLoading}
-              disabled={hasPagesCreated}
-            >
-              Generate another page
-            </Button>
-            <Button
-              variant="outline"
-              leftIcon={<IconPlus size={ICON_SIZE} />}
-              onClick={() => addEmptyPage()}
-              loading={isLoading}
-              disabled
-              // disabled={
-              //   pages.some((page) => page.name === "") || hasPagesCreated
-              // }
-            >
-              Add another page
-            </Button>
+            <Tooltip fz="xs" label="Get AI to generate a new page">
+              <Button
+                variant="light"
+                leftIcon={<IconSparkles size={ICON_SIZE} />}
+                onClick={() => handlePageNamesGeneration("1")}
+                loading={isLoading}
+                disabled={hasPagesCreated}
+              >
+                Generate one page
+              </Button>
+            </Tooltip>
+            <Tooltip fz="xs" label="Add empty page so you can freetype">
+              <Button
+                variant="outline"
+                leftIcon={<IconPlus size={ICON_SIZE} />}
+                onClick={() => addEmptyPage()}
+                loading={isLoading}
+                disabled={
+                  pages.some((page) => page.name === "") || hasPagesCreated
+                }
+              >
+                Add new page
+              </Button>
+            </Tooltip>
           </>
         )}
       </Flex>

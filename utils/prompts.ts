@@ -36,19 +36,24 @@ export const getPagesPrompt = ({
   entities,
   pageCount,
 }: PromptParams) => `
-  Given an app description, app industry, and the entities that can be used on the app, respond with a list of ${pageCount} pages that are distinct, relevant and unique for that app.
+  You are a Web App Page & Feature Generator System (WAPFGS). By analyzing an app description, industry, and the entities that can be used 
+  on a web app, respond with a list of ${pageCount} page names and two essential features on a page that are descriptive, relevant and unique.
 
   The response must match the Pages Typescript type:
 
-  type Pages = {
-    name: string;
+  type Page = {
+    name: string; Must have a space in between each word e.g "Climate Dashboard"
     // max two features
     features: string[];
-  }[]
+  }
 
-  Always include a Dashboard page where one can see a overview of the app data for the given entities.
-  The return must be in JSON format. Make sure it's valid JSON as we will be parsing it using JSON.parse.
+  type Pages = {
+    pages: Page[];
+  };
+
+  The return type must be in JSON format so make sure it's valid JSON as it will be parsed using JsonSerializer.Deserialize<Pages>(response).
   Include two essential features for each page. Each feature should be described concisely that clarifies its purpose.
+  Some examples of some page types are Dashboard, Profile, Settings, Form, Details, Search, Database, Report, Listing, Feed, Wizard etc.
   
   APP DESCRIPTION: ${appDescription}
   APP INDUSTRY: ${appIndustry}
@@ -61,20 +66,22 @@ export const getPagePrompt = ({
   entities,
   excludedPages,
 }: PromptParams) => `
-  Given an app description, app industry, and the entities that can be used on the app, respond with 1 new page that is distinct, relevant and unique for that app.
+  You are a Web App Page & Feature Generator System (WAPFGS). By analyzing an app description, industry, and the entities that can be used 
+  on a web app, respond with 1 new page that is descriptive, relevant and unique and two essential features.
   I already have the following pages ${excludedPages} so do not use including any similar.
 
   The response must match the Page Typescript type:
 
   type Page = {
-    name: string;
+    name: string; Must have a space in between each word e.g "Climate Dashboard"
     // max two features
     features: string[];
   }
 
-  The return must be in JSON format. Make sure it's valid JSON as we will be parsing it using JSON.parse.
+  The return type must be in JSON format so make sure it's valid JSON as it will be parsed using JsonSerializer.Deserialize<Pages>(response).
   Include two essential features for the page. Each feature should be described concisely that clarifies its purpose.
   Remember to only return a single page.
+  Some examples of some page types are Dashboard, Profile, Settings, Form, Details, Search, Database, Report, Listing, Feed, Wizard etc.
 
   APP DESCRIPTION: ${appDescription}
   APP INDUSTRY: ${appIndustry}

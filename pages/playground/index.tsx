@@ -3,7 +3,7 @@ import { ErrorAlert } from "@/components/Alerts";
 import { anyPrompt } from "@/requests/ai/queries";
 import { AIResponseTypes } from "@/requests/ai/types";
 import {
-  GPT35_TURBO_MODEL,
+  GPT35_TURBO_1106_MODEL,
   GPT4_MODEL,
   GPT4_PREVIEW_MODEL,
   GPT4_VISION_MODEL,
@@ -12,7 +12,9 @@ import {
   getComponentScreenshotPrompt,
   getComponentsPrompt,
   getFunctionalityPrompt,
+  getPagesPrompt,
 } from "@/utils/prompts";
+import { getThemeScreenshotPrompt } from "@/utils/prompts-theme";
 import {
   Box,
   Flex,
@@ -29,7 +31,9 @@ type Tabs = "prompts" | "freetype";
 type PrompTemplates =
   | "getComponentScreenshotPrompt"
   | "getComponentsPrompt"
-  | "getFunctionalityPrompt";
+  | "getFunctionalityPrompt"
+  | "getThemeScreenshotPrompt"
+  | "getPagesPrompt";
 
 export default function Playground() {
   const [aiResponse, setAiResponse] = useState<string>();
@@ -48,15 +52,23 @@ export default function Playground() {
       setErrorText("Only GPT-4 Vision is supported with screenshots.");
     } else {
       setErrorText("");
-      const result = await anyPrompt(model, prompt, base64Image);
 
+      const result = await anyPrompt(model, prompt, base64Image);
+      console.log(result);
       setAiResponse(result);
     }
   };
 
   useEffect(() => {
+    console.log(prompt);
+  }, [prompt]);
+
+  useEffect(() => {
     let newPrompt;
     switch (promptTemplate) {
+      case "getThemeScreenshotPrompt":
+        newPrompt = getThemeScreenshotPrompt({ description });
+        break;
       case "getComponentScreenshotPrompt":
         newPrompt = getComponentScreenshotPrompt({ description, responseType });
         break;
@@ -65,6 +77,9 @@ export default function Playground() {
         break;
       case "getFunctionalityPrompt":
         newPrompt = getFunctionalityPrompt({ description });
+        break;
+      case "getPagesPrompt":
+        newPrompt = getPagesPrompt({ appDescription: description });
         break;
       default:
         newPrompt = prompt;
@@ -119,7 +134,10 @@ export default function Playground() {
                 { value: GPT4_PREVIEW_MODEL, label: GPT4_PREVIEW_MODEL },
                 { value: GPT4_MODEL, label: GPT4_MODEL },
                 { value: GPT4_VISION_MODEL, label: GPT4_VISION_MODEL },
-                { value: GPT35_TURBO_MODEL, label: GPT35_TURBO_MODEL },
+                {
+                  value: GPT35_TURBO_1106_MODEL,
+                  label: GPT35_TURBO_1106_MODEL,
+                },
               ]}
               size="xs"
             />
@@ -150,7 +168,11 @@ export default function Playground() {
                 data={[
                   {
                     value: "getComponentScreenshotPrompt",
-                    label: "Component Screenshot",
+                    label: "Screenshot",
+                  },
+                  {
+                    value: "getThemeScreenshotPrompt",
+                    label: "Branding",
                   },
                   {
                     value: "getFunctionalityPrompt",
@@ -158,7 +180,11 @@ export default function Playground() {
                   },
                   {
                     value: "getComponentsPrompt",
-                    label: "Component",
+                    label: "Components",
+                  },
+                  {
+                    value: "getPagesPrompt",
+                    label: "Pages",
                   },
                 ]}
                 size="xs"
