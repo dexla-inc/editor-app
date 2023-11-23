@@ -385,7 +385,9 @@ export default function BrandingStep({
               <Title order={6}>Link</Title>
               <MantineProvider withNormalizeCSS theme={theme}>
                 {linkComponent.Component({
-                  component: { props: { children: <>Link Preview</> } },
+                  component: {
+                    props: { children: <>Link Preview</>, size: "sm" },
+                  },
                   renderTree,
                 })}
               </MantineProvider>
