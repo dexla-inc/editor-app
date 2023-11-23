@@ -42,6 +42,10 @@ const SelectComponent = ({
     data = exampleData.value ?? exampleData ?? dataProp?.value ?? dataProp;
     const path = dataPath.replaceAll("[0]", "");
     data = get(data, path, data);
+  } else {
+    data = cloneDeep(
+      dataProp?.value ?? dataProp ?? exampleData.value ?? exampleData,
+    );
   }
 
   const keys = Object.keys(get(data, "[0]", {}));
