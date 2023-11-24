@@ -197,10 +197,11 @@ const Collapser = ({ isCollapsed }: { isCollapsed: boolean }) => {
   );
 };
 
-const RenderItemInner = ({ item, collapseIcon, editorTree }: any) => {
+const RenderItemInner = ({ item, collapseIcon }: any) => {
   const isSelected = useEditorStore(
     (state) => state.selectedComponentId === item.id,
   );
+  const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const clearSelection = useEditorStore((state) => state.clearSelection);
 
@@ -253,13 +254,7 @@ export const NavbarLayersSection = () => {
 
   // Render function for Nestable items
   const renderItem = ({ item, collapseIcon }: any): JSX.Element => {
-    return (
-      <RenderItemInner
-        editorTree={editorTree}
-        item={item}
-        collapseIcon={collapseIcon}
-      />
-    );
+    return <RenderItemInner item={item} collapseIcon={collapseIcon} />;
   };
 
   const items = editorTree.root.children;
