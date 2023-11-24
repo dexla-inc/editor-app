@@ -7,7 +7,6 @@ import {
   Component,
   debouncedTreeComponentDescriptionpdate,
   debouncedTreeRootChildrenUpdate,
-  removeComponent,
 } from "@/utils/editor";
 import {
   ActionIcon,
@@ -20,8 +19,7 @@ import {
 import { useForm } from "@mantine/form";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown, IconChevronRight } from "@tabler/icons-react";
-import cloneDeep from "lodash.clonedeep";
-import { KeyboardEvent, useCallback, useEffect, useRef } from "react";
+import { KeyboardEvent, memo, useEffect, useRef } from "react";
 import Nestable from "react-nestable";
 
 type ListItemProps = {
@@ -119,8 +117,8 @@ const ListItem = ({ component, collapseIcon, isSelected }: ListItemProps) => {
           e.stopPropagation();
           toggleEdit();
         }}
-        onKeyDown={handleKeyPress}
         onBlur={closeEdit}
+        onKeyDown={handleKeyPress}
         onContextMenu={componentContextMenu(component)}
       >
         <Group position="apart" noWrap w="100%">
@@ -201,40 +199,6 @@ const RenderItemInner = ({ item, collapseIcon }: any) => {
   const isSelected = useEditorStore(
     (state) => state.selectedComponentId === item.id,
   );
-  const editorTree = useEditorStore((state) => state.tree);
-  const setEditorTree = useEditorStore((state) => state.setTree);
-  const clearSelection = useEditorStore((state) => state.clearSelection);
-
-  const deleteComponent = useCallback(
-    (component: Component) => {
-      if (
-        component.id &&
-        component.id !== "root" &&
-        component.id !== "content-wrapper"
-      ) {
-        const copy = cloneDeep(editorTree);
-        removeComponent(copy.root, component.id);
-        setEditorTree(copy, { action: `Removed ${component?.name}` });
-        clearSelection();
-      }
-    },
-    [clearSelection, editorTree, setEditorTree],
-  );
-
-  useEffect(() => {
-    const handleKeyPress = (event: any) => {
-      if (isSelected && (event.key === "Delete" || event.key === "Backspace")) {
-        deleteComponent(item);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-    };
-  }, [item, deleteComponent, isSelected]);
-
   return (
     <ListItem
       isSelected={isSelected}
