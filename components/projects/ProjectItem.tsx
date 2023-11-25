@@ -29,6 +29,7 @@ import {
   IconSettings,
 } from "@tabler/icons-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 type ProjectItemProps = {
@@ -46,6 +47,7 @@ export function ProjectItem({
   goToEditor,
   onDeleteProject,
 }: ProjectItemProps) {
+  const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
   const [pages, setPages] = useState<PageResponse[]>([]);
   const [pagesLoading] = useState(false);
@@ -62,8 +64,18 @@ export function ProjectItem({
     setPages(pages.results);
 
     const homePage = pages.results.find((page) => page.isHome);
-    const pageId = homePage?.id || pages.results[0].id;
-    goToEditor(project.id, pageId);
+    let pageId: string | undefined = homePage?.id;
+
+    if (!pageId && pages.results.length > 0) {
+      pageId = pages.results[0].id;
+    }
+
+    if (pageId !== undefined) {
+      goToEditor(project.id, pageId);
+    } else {
+      const newProjectUrl = `/projects/new?company=${company.orgId}&projectId=${project.id}&step=2`;
+      router.push(newProjectUrl);
+    }
   };
 
   const getPages = async () => {
