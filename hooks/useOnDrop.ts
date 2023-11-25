@@ -113,13 +113,14 @@ export const useOnDrop = () => {
     targetComponent: Component | null,
     componentToAdd: Component,
   ) {
-    const targetParent = getComponentParent(copy, dropTarget.id);
     const allowedParentTypes =
       componentMapper[componentToAdd.name].allowedParentTypes;
+
     if (allowedParentTypes?.includes(targetComponent?.name as string)) {
       const newSelectedId = addComponent(copy, componentToAdd, dropTarget);
       setSelectedComponentId(newSelectedId);
     } else {
+      const targetParent = getComponentParent(copy, dropTarget.id);
       if (targetParent && allowedParentTypes?.includes(targetParent.name)) {
         const newSelectedId = addComponent(copy, componentToAdd, {
           id: targetParent.id as string,

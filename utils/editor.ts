@@ -810,11 +810,12 @@ export const addComponent = (
   replaceIdsDeeply(copy);
   const directChildren = ["Modal", "Drawer", "Toast"];
   const isGrid = copy.name === "Grid";
+  const isColumn = copy.name === "GridColumn";
 
   crawl(
     treeRoot,
     (node, context) => {
-      if (isGrid) {
+      if ((isGrid || isColumn) && node.id === dropTarget.id) {
         addNodeToTarget(
           treeRoot,
           node,
@@ -879,7 +880,7 @@ export const addComponent = (
     { order: "bfs" },
   );
 
-  if (isGrid) {
+  if (isGrid || isColumn) {
     calculateGridSizes(treeRoot);
   }
 

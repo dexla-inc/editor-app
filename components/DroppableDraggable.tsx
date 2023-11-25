@@ -7,13 +7,7 @@ import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper, ActionTrigger } from "@/utils/actions";
 import { structureMapper } from "@/utils/componentMapper";
 import { DROP_INDICATOR_WIDTH, ICON_SIZE } from "@/utils/config";
-import {
-  addComponent,
-  Component,
-  getComponentIndex,
-  getComponentParent,
-  removeComponentFromParent,
-} from "@/utils/editor";
+import { addComponent, Component, getComponentParent } from "@/utils/editor";
 import {
   ActionIcon,
   Box,
@@ -21,7 +15,6 @@ import {
   Button,
   Group,
   Text,
-  Tooltip,
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
@@ -36,7 +29,6 @@ import merge from "lodash.merge";
 import { Router, useRouter } from "next/router";
 import {
   cloneElement,
-  Fragment,
   PropsWithChildren,
   useEffect,
   useMemo,
@@ -51,18 +43,15 @@ type Props = {
 } & BoxProps;
 
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
-const handlerBlacklist = ["Modal"];
 
 export const DroppableDraggable = ({
   id,
   children,
   component,
-  customComponentModal,
   isSelected,
 }: PropsWithChildren<Props>) => {
   const router = useRouter();
   const theme = useMantineTheme();
-  const editorTheme = useEditorStore((state) => state.theme);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
@@ -94,8 +83,7 @@ export const DroppableDraggable = ({
   const highlightedComponentId = useEditorStore(
     (state) => state.highlightedComponentId,
   );
-  const { componentContextMenu, forceDestroyContextMenu } =
-    useComponentContextMenu();
+  const { forceDestroyContextMenu } = useComponentContextMenu();
 
   const actions: Action[] = component.actions ?? [];
   const onMountAction: Action | undefined = actions.find(
@@ -207,12 +195,6 @@ export const DroppableDraggable = ({
     ? { boxShadow: baseShadow }
     : {};
 
-  const isContentWrapper = id === "content-wrapper";
-  const haveNonRootParent = parent && parent.id !== "root";
-
-  const hasTooltip = !!component.props?.tooltip;
-  const ComponentWrapper = hasTooltip ? Tooltip : Fragment;
-
   const currentState =
     currentTreeComponentsStates?.[component.id!] ?? "default";
   const hoverStateFunc = () => {
@@ -241,7 +223,7 @@ export const DroppableDraggable = ({
       // up to the parent element (the green border div)
       width: isWidthPercentage ? "100%" : propsWithOverwrites?.style?.width,
       height: isHeightPercentage ? "100%" : propsWithOverwrites?.style?.height,
-      position: "static",
+      position: "relative",
     },
     disabled:
       component.props?.disabled ??
@@ -270,7 +252,7 @@ export const DroppableDraggable = ({
   }, [isSelected, id]);
 
   const ColumnSchema = structureMapper["GridColumn"].structure({});
-  const GridSchema = structureMapper["GridColumn"].structure({});
+  const GridSchema = structureMapper["Grid"].structure({});
 
   const ChildWithHelpers = () => {
     return (
@@ -285,7 +267,7 @@ export const DroppableDraggable = ({
             noWrap
             pos="absolute"
             spacing="xs"
-            style={{ zIndex: 9999 }}
+            style={{ zIndex: 999 }}
           >
             <Box
               h={20}
@@ -327,7 +309,7 @@ export const DroppableDraggable = ({
                     addComponent(
                       copy.root,
                       // @ts-ignore
-                      { ...GridSchema, children: [GridSchema.children[0]] },
+                      { ...GridSchema, children: [ColumnSchema] },
                       {
                         id: parent?.id!,
                         edge: "center",
@@ -368,7 +350,7 @@ export const DroppableDraggable = ({
                     addComponent(
                       copy.root,
                       // @ts-ignore
-                      { ...GridSchema, children: [GridSchema.children[0]] },
+                      { ...GridSchema, children: [ColumnSchema] },
                       {
                         id: component?.id!,
                         edge: "center",
@@ -424,200 +406,5 @@ export const DroppableDraggable = ({
         childWithHelpers,
       )}
     </>
-  );
-
-  return (
-    <Box
-      ref={ref}
-      id={id}
-      pos="relative"
-      sx={{
-        width: component?.props?.style?.width ?? "auto",
-        height: component?.props?.style?.height ?? "auto",
-        "&:before": {
-          ...(!isPreviewMode ? shadows : {}),
-          content: '""',
-          position: "absolute",
-          pointerEvents: "none",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: 80,
-        },
-        "&:hover": {
-          ...(!isPreviewMode
-            ? { boxShadow: `0 0 0 1px ${theme.colors[borderColor][6]}` }
-            : {}),
-        },
-      }}
-      onClick={(e) => {
-        if (!isPreviewMode) {
-          e.stopPropagation();
-          e.preventDefault();
-          forceDestroyContextMenu();
-
-          if (isPicking) {
-            setComponentToBind(id);
-          } else {
-            setSelectedComponentId(id);
-          }
-        }
-      }}
-      {...filteredProps}
-      {...(isPreviewMode
-        ? {}
-        : {
-            onContextMenu: componentContextMenu(component),
-          })}
-      {...(isPreviewMode ? {} : droppable)}
-    >
-      {/* @ts-ignore */}
-      <ComponentWrapper
-        {...(hasTooltip
-          ? { label: component.props?.tooltip, withArrow: true, fz: "xs" }
-          : {})}
-      >
-        <Box>
-          {cloneElement(
-            // @ts-ignore
-            children,
-            {
-              component: {
-                ...component,
-                props: propsWithOverwrites,
-              },
-              isPreviewMode,
-            },
-            // @ts-ignore
-            children?.children,
-          )}
-        </Box>
-      </ComponentWrapper>
-      {
-        <>
-          {!isPreviewMode &&
-            !handlerBlacklist.includes(component.name) &&
-            isSelected &&
-            !isContentWrapper && (
-              <Box
-                pos="absolute"
-                h={24}
-                top={-24}
-                sx={{
-                  zIndex: 90,
-                  background: theme.colors.teal[6],
-                  borderTopLeftRadius: theme.radius.sm,
-                  borderTopRightRadius: theme.radius.sm,
-                }}
-              >
-                <Group px={4} h={24} noWrap spacing={2} align="center">
-                  {!component.fixedPosition && (
-                    <UnstyledButton
-                      sx={{
-                        cursor: "move",
-                        alignItems: "center",
-                        display: "flex",
-                      }}
-                      {...draggable}
-                    >
-                      <IconGripVertical
-                        size={ICON_SIZE}
-                        color="white"
-                        strokeWidth={1.5}
-                      />
-                    </UnstyledButton>
-                  )}
-                  <Text
-                    color="white"
-                    size="xs"
-                    pr={haveNonRootParent ? 8 : "xs"}
-                  >
-                    {(component.description || "").length > 20
-                      ? `${component.description?.substring(0, 20)}...`
-                      : component.description}
-                  </Text>
-                  {haveNonRootParent && (
-                    <ActionIcon
-                      size="xs"
-                      variant="transparent"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setSelectedComponentId(parent!.id as string);
-                      }}
-                    >
-                      <IconArrowUp
-                        size={ICON_SIZE}
-                        color="white"
-                        strokeWidth={1.5}
-                      />
-                    </ActionIcon>
-                  )}
-                  <ActionIcon
-                    size="xs"
-                    variant="transparent"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      customComponentModal?.open();
-                    }}
-                  >
-                    <IconPlus
-                      size={ICON_SIZE}
-                      color="white"
-                      strokeWidth={1.5}
-                    />
-                  </ActionIcon>
-                  <ActionIcon
-                    size="xs"
-                    variant="transparent"
-                    onClick={() => {
-                      const container = structureMapper["Container"].structure({
-                        theme: editorTheme,
-                      });
-
-                      if (container.props && container.props.style) {
-                        container.props.style = {
-                          ...container.props.style,
-                          width: "auto",
-                          padding: "0px",
-                        };
-                      }
-
-                      const copy = cloneDeep(editorTree);
-                      const containerId = addComponent(
-                        copy.root,
-                        container,
-                        {
-                          id: parent?.id!,
-                          edge: "left",
-                        },
-                        getComponentIndex(parent!, id),
-                      );
-
-                      addComponent(copy.root, component, {
-                        id: containerId,
-                        edge: "left",
-                      });
-
-                      removeComponentFromParent(copy.root, id, parent?.id!);
-                      setEditorTree(copy, {
-                        action: `Wrapped ${component.name} with a Container`,
-                      });
-                    }}
-                  >
-                    <IconBoxMargin
-                      size={ICON_SIZE}
-                      color="white"
-                      strokeWidth={1.5}
-                    />
-                  </ActionIcon>
-                </Group>
-              </Box>
-            )}
-        </>
-      }
-    </Box>
   );
 };
