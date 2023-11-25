@@ -7,7 +7,13 @@ import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper, ActionTrigger } from "@/utils/actions";
 import { structureMapper } from "@/utils/componentMapper";
 import { DROP_INDICATOR_WIDTH, ICON_SIZE } from "@/utils/config";
-import { addComponent, Component, getComponentParent } from "@/utils/editor";
+import {
+  addComponent,
+  Component,
+  getComponentIndex,
+  getComponentParent,
+  removeComponentFromParent,
+} from "@/utils/editor";
 import {
   ActionIcon,
   Box,
@@ -21,8 +27,10 @@ import {
 import {
   IconArrowUp,
   IconBoxMargin,
+  IconColumnInsertRight,
   IconGripVertical,
-  IconPlus,
+  IconLayoutColumns,
+  IconRowInsertBottom,
 } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import merge from "lodash.merge";
@@ -52,6 +60,7 @@ export const DroppableDraggable = ({
 }: PropsWithChildren<Props>) => {
   const router = useRouter();
   const theme = useMantineTheme();
+  const editorTheme = useEditorStore((state) => state.theme);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
@@ -254,6 +263,8 @@ export const DroppableDraggable = ({
   const ColumnSchema = structureMapper["GridColumn"].structure({});
   const GridSchema = structureMapper["Grid"].structure({});
 
+  const haveNonRootParent = parent && parent.id !== "root";
+
   const ChildWithHelpers = () => {
     return (
       <>
@@ -261,33 +272,97 @@ export const DroppableDraggable = ({
         {children?.children}
         {isSelected && !isPreviewMode && (
           <Group
-            h={20}
-            top={-20}
-            left={0}
+            px={4}
+            h={24}
             noWrap
+            spacing={2}
+            top={-24}
+            left={0}
             pos="absolute"
-            spacing="xs"
             style={{ zIndex: 999 }}
+            bg={theme.colors.teal[6]}
           >
-            <Box
-              h={20}
-              bg="green"
-              {...(isColumn ? {} : draggable)}
-              px={10}
-              sx={{
-                cursor: isColumn ? "default" : "move",
+            {!component.fixedPosition && (
+              <UnstyledButton
+                sx={{
+                  cursor: isColumn ? "default" : "move",
+                  alignItems: "center",
+                  display: "flex",
+                }}
+                {...(isColumn ? {} : draggable)}
+              >
+                {component.name !== "GridColumn" && (
+                  <IconGripVertical
+                    size={ICON_SIZE}
+                    color="white"
+                    strokeWidth={1.5}
+                  />
+                )}
+              </UnstyledButton>
+            )}
+            <Text color="white" size="xs" pr={haveNonRootParent ? 8 : "xs"}>
+              {(component.description || "").length > 20
+                ? `${component.description?.substring(0, 20)}...`
+                : component.description}
+            </Text>
+            {haveNonRootParent && (
+              <ActionIcon
+                size="xs"
+                variant="transparent"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setSelectedComponentId(parent.id as string);
+                }}
+              >
+                <IconArrowUp size={ICON_SIZE} color="white" strokeWidth={1.5} />
+              </ActionIcon>
+            )}
+            <ActionIcon
+              size="xs"
+              variant="transparent"
+              onClick={() => {
+                const container = structureMapper["Container"].structure({
+                  theme: editorTheme,
+                });
+
+                if (container.props && container.props.style) {
+                  container.props.style = {
+                    ...container.props.style,
+                    width: "auto",
+                    padding: "0px",
+                  };
+                }
+
+                const copy = cloneDeep(editorTree);
+                const containerId = addComponent(
+                  copy.root,
+                  container,
+                  {
+                    id: parent?.id!,
+                    edge: "left",
+                  },
+                  getComponentIndex(parent!, id),
+                );
+
+                addComponent(copy.root, component, {
+                  id: containerId,
+                  edge: "left",
+                });
+
+                removeComponentFromParent(copy.root, id, parent?.id!);
+                setEditorTree(copy, {
+                  action: `Wrapped ${component.name} with a Container`,
+                });
               }}
             >
-              <Text size="xs" color="white">
-                {component.description}
-              </Text>
-            </Box>
+              <IconBoxMargin size={ICON_SIZE} color="white" strokeWidth={1.5} />
+            </ActionIcon>
             {component.name === "Grid" && (
               <>
-                <Button
-                  color="green"
+                <ActionIcon
+                  variant="transparent"
                   size="xs"
-                  compact
                   onClick={() => {
                     const copy = cloneDeep(editorTree);
                     addComponent(copy.root, ColumnSchema, {
@@ -298,12 +373,15 @@ export const DroppableDraggable = ({
                     setEditorTree(copy);
                   }}
                 >
-                  Add Column
-                </Button>
-                <Button
-                  color="green"
+                  <IconColumnInsertRight
+                    size={ICON_SIZE}
+                    color="white"
+                    strokeWidth={1.5}
+                  />
+                </ActionIcon>
+                <ActionIcon
+                  variant="transparent"
                   size="xs"
-                  compact
                   onClick={() => {
                     const copy = cloneDeep(editorTree);
                     addComponent(
@@ -319,16 +397,19 @@ export const DroppableDraggable = ({
                     setEditorTree(copy);
                   }}
                 >
-                  Add Row
-                </Button>
+                  <IconRowInsertBottom
+                    size={ICON_SIZE}
+                    color="white"
+                    strokeWidth={1.5}
+                  />
+                </ActionIcon>
               </>
             )}
             {component.name === "GridColumn" && (
               <>
-                <Button
-                  color="green"
+                <ActionIcon
+                  variant="transparent"
                   size="xs"
-                  compact
                   onClick={() => {
                     const copy = cloneDeep(editorTree);
                     addComponent(copy.root, GridSchema, {
@@ -339,12 +420,15 @@ export const DroppableDraggable = ({
                     setEditorTree(copy);
                   }}
                 >
-                  Split Column
-                </Button>
-                <Button
-                  color="green"
+                  <IconLayoutColumns
+                    size={ICON_SIZE}
+                    color="white"
+                    strokeWidth={1.5}
+                  />
+                </ActionIcon>
+                <ActionIcon
+                  variant="transparent"
                   size="xs"
-                  compact
                   onClick={() => {
                     const copy = cloneDeep(editorTree);
                     addComponent(
@@ -360,8 +444,12 @@ export const DroppableDraggable = ({
                     setEditorTree(copy);
                   }}
                 >
-                  Add Row
-                </Button>
+                  <IconRowInsertBottom
+                    size={ICON_SIZE}
+                    color="white"
+                    strokeWidth={1.5}
+                  />
+                </ActionIcon>
               </>
             )}
           </Group>
