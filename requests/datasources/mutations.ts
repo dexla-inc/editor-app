@@ -1,12 +1,11 @@
 import {
-  CreatedResponse,
   DataSourceParams,
   DataSourceResponse,
   DataSourceTypes,
   Endpoint,
   EndpointParams,
 } from "@/requests/datasources/types";
-import { PatchParams } from "@/requests/types";
+import { CreatedResponse, PatchParams } from "@/requests/types";
 import { del, patch, post, put } from "@/utils/api";
 
 export async function createDataSource(

@@ -1,8 +1,8 @@
+import { SuccessResponse } from "@/requests/types";
 import { get } from "@/utils/api";
 import { getWithoutAuth } from "@/utils/apiNoAuth";
 import { UserRoles } from "@/utils/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
-import { SuccessResponse } from "../datasources/types";
 
 export type RegionTypes = "FRANCE_CENTRAL" | "US_CENTRAL" | "UK_SOUTH";
 

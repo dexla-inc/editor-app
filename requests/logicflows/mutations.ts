@@ -2,9 +2,8 @@ import {
   LogicFlowParams,
   LogicFlowResponse,
 } from "@/requests/logicflows/types";
-import { PatchParams } from "@/requests/types";
+import { PatchParams, SuccessResponse } from "@/requests/types";
 import { del, patch, post } from "@/utils/api";
-import { SuccessResponse } from "@/requests/datasources/types";
 
 export const createLogicFlow = async (
   projectId: string,

@@ -1,8 +1,9 @@
 import { getPage, getPageTemplate } from "@/requests/pages/queries";
-import { decodeSchema } from "@/utils/compression";
-import { replaceTilesData } from "@/utils/editor";
 import { useAppStore } from "@/stores/app";
 import { emptyEditorTree, useEditorStore } from "@/stores/editor";
+import { usePropelAuthStore } from "@/stores/propelAuth";
+import { decodeSchema } from "@/utils/compression";
+import { replaceTilesData } from "@/utils/editor";
 import { useQuery } from "@tanstack/react-query";
 
 type getPageDataParams = {
@@ -45,6 +46,8 @@ export const useGetPageData = ({
   const stopLoading = useAppStore((state) => state.stopLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const setEditorTree = useEditorStore((state) => state.setTree);
+  const company = usePropelAuthStore((state) => state.activeCompany);
+
   const getPageData = async ({ signal }: getPageDataParams) => {
     setIsLoading(true);
     const page = await getPage(projectId, pageId, {}, { signal });
@@ -62,9 +65,14 @@ export const useGetPageData = ({
         message: "AI is generating your page",
       });
 
-      const aiPageTemplate = await getPageTemplate(projectId, pageId, {
-        signal,
-      });
+      const aiPageTemplate = await getPageTemplate(
+        company.orgId,
+        projectId,
+        pageId,
+        {
+          signal,
+        },
+      );
       const template = await fetch(
         `/api/templates/${aiPageTemplate.template.name.replace(
           "Template",
