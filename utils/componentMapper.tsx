@@ -37,7 +37,6 @@ import { Select } from "@/components/mapper/Select";
 import { Stepper } from "@/components/mapper/Stepper";
 import { Switch } from "@/components/mapper/Switch";
 import { Tab } from "@/components/mapper/Tab";
-import { Table } from "@/components/mapper/Table";
 import { Tabs } from "@/components/mapper/Tabs";
 import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";
@@ -82,7 +81,6 @@ import * as SelectStructure from "@/components/mapper/structure/Select";
 import * as StepperStructure from "@/components/mapper/structure/Stepper";
 import * as StepperStepStructure from "@/components/mapper/structure/StepperStep";
 import * as SwitchStructure from "@/components/mapper/structure/Switch";
-import * as TableStructure from "@/components/mapper/structure/Table";
 import * as TabsStructure from "@/components/mapper/structure/Tabs";
 import * as TextStructure from "@/components/mapper/structure/Text";
 import * as TextareaStructure from "@/components/mapper/structure/Textarea";
@@ -93,6 +91,8 @@ import * as LineChartStructure from "@/components/mapper/structure/charts/LineCh
 import * as PieChartStructure from "@/components/mapper/structure/charts/PieChart";
 import * as RadarChartStructure from "@/components/mapper/structure/charts/RadarChart";
 import * as RadialChartStructure from "@/components/mapper/structure/charts/RadialChart";
+import * as TableStructure from "@/components/mapper/structure/table/Table";
+import { Table } from "@/components/mapper/table/Table";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 
@@ -105,6 +105,9 @@ import { useEditorStore } from "@/stores/editor";
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import { Modifiers } from "@/utils/modifiers";
 
+import { TableCell } from "@/components/mapper/table/TableCell";
+import { TableContent } from "@/components/mapper/table/TableContent";
+import { TableRow } from "@/components/mapper/table/TableRow";
 import {
   IconArrowAutofitContent,
   IconBoxModel,
@@ -995,15 +998,57 @@ export const componentMapper: ComponentMapper = {
   },
   Table: {
     Component: (props: { component: Component; renderTree: any }) => (
-      <Table
-        key={`${JSON.stringify(
-          props.component?.props?.config ?? {},
-        )}-${JSON.stringify(props.component?.props?.headers ?? {})}`}
-        component={props.component}
-        renderTree={props.renderTree}
-      />
+      <Table component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["table", "spacing", "size", "border"],
+    modifiers: ["spacing", "size", "border"],
+    actionTriggers: [
+      "onMount",
+      "onRowClick",
+      "onRowHover",
+      "onRowSelect",
+      "onRowExpand",
+      "onSort",
+      "onFilterApplied",
+    ],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  TableContent: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <TableContent component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size", "border"],
+    actionTriggers: [
+      "onMount",
+      "onRowClick",
+      "onRowHover",
+      "onRowSelect",
+      "onRowExpand",
+      "onSort",
+      "onFilterApplied",
+    ],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  TableRow: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <TableRow component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size", "border"],
+    actionTriggers: [
+      "onMount",
+      "onRowClick",
+      "onRowHover",
+      "onRowSelect",
+      "onRowExpand",
+      "onSort",
+      "onFilterApplied",
+    ],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  TableCell: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <TableCell component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["spacing", "size", "border"],
     actionTriggers: [
       "onMount",
       "onRowClick",
