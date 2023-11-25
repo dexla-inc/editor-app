@@ -23,3 +23,10 @@ export type PatchParams = {
   path: string;
   value: any;
 };
+
+export type CreatedResponse = {
+  id: string;
+  trackingId: string;
+};
+
+export type SuccessResponse = Omit<CreatedResponse, "id">;

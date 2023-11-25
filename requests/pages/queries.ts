@@ -34,6 +34,7 @@ export const getPage = async (
 };
 
 export const getPageTemplate = async (
+  companyId: string,
   projectId: string,
   pageId: string,
   init = {},
@@ -46,8 +47,9 @@ export const getPageTemplate = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      pageId,
+      companyId,
       projectId,
+      pageId,
       accessToken,
     }),
   });
