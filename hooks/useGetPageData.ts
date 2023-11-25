@@ -12,26 +12,7 @@ type getPageDataParams = {
 export const defaultPageState = {
   name: "Initial State",
   timestamp: Date.now(),
-  root: {
-    ...emptyEditorTree.root,
-    children: [
-      {
-        id: "content-wrapper",
-        name: "Container",
-        description: "Root Container",
-        props: {
-          style: {
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            boxSizing: "border-box",
-            minHeight: "50px",
-          },
-        },
-        children: [],
-      },
-    ],
-  },
+  root: emptyEditorTree.root,
 };
 
 export const useGetPageData = ({
@@ -54,6 +35,7 @@ export const useGetPageData = ({
         onLoad: true,
         action: "Initial State",
       });
+
       setIsLoading(false);
     } else {
       startLoading({
@@ -89,7 +71,6 @@ export const useGetPageData = ({
 
       // TODO: Replace tiles from template state with tiles from aiPageTemplate
       const aiTiles = aiPageTemplate.template.tiles;
-      console.log({ aiPageTemplate, template, aiTiles, data: project?.data });
       const treeState = replaceTilesData(
         template.state,
         aiTiles,

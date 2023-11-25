@@ -18,6 +18,7 @@ import {
   ActionIcon,
   Box,
   BoxProps,
+  Button,
   Group,
   Text,
   Tooltip,
@@ -50,24 +51,6 @@ type Props = {
 } & BoxProps;
 
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
-// Whitelist certain props that can be passed down
-const styleWhitelist = [
-  "position",
-  "top",
-  "left",
-  "right",
-  "bottom",
-  "background",
-  "backgroundColor",
-  "margin",
-  "marginTop",
-  "marginBottom",
-  "marginLeft",
-  "marginRight",
-  "zIndex",
-  "alignSelf",
-  "flex",
-];
 const handlerBlacklist = ["Modal"];
 
 export const DroppableDraggable = ({
@@ -199,10 +182,9 @@ export const DroppableDraggable = ({
   const isPicking = pickingComponentToBindFrom || pickingComponentToBindTo;
   const isOver = currentTargetId === id;
   const isHighlighted = highlightedComponentId === id;
-
   const borderColor = isPicking ? "orange" : "teal";
-
   const baseShadow = `0 0 0 2px ${theme.colors[borderColor][6]}`;
+  const isColumn = component.name === "GridColumn";
 
   const shadows = isHighlighted
     ? { boxShadow: `0 0 0 2px ${theme.colors.orange[6]}` }
@@ -210,13 +192,13 @@ export const DroppableDraggable = ({
     ? {
         boxShadow:
           edge === "top"
-            ? `inset 0 ${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+            ? `0 -${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
             : edge === "bottom"
-            ? `inset 0 -${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+            ? `0 ${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
             : edge === "left"
-            ? `inset ${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+            ? `-${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
             : edge === "right"
-            ? `inset -${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+            ? `${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
             : baseShadow,
         background: edge === "center" ? theme.colors.teal[6] : "none",
         opacity: edge === "center" ? 0.4 : 1,
@@ -227,18 +209,6 @@ export const DroppableDraggable = ({
 
   const isContentWrapper = id === "content-wrapper";
   const haveNonRootParent = parent && parent.id !== "root";
-
-  const filteredProps = {
-    style: Object.keys(component.props?.style || {}).reduce(
-      (newStyle, key) => {
-        if (styleWhitelist.includes(key)) {
-          newStyle[key] = component.props?.style[key];
-        }
-        return newStyle;
-      },
-      {} as Record<string, unknown>,
-    ),
-  };
 
   const hasTooltip = !!component.props?.tooltip;
   const ComponentWrapper = hasTooltip ? Tooltip : Fragment;
@@ -298,6 +268,163 @@ export const DroppableDraggable = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSelected, id]);
+
+  const ColumnSchema = structureMapper["GridColumn"].structure({});
+  const GridSchema = structureMapper["GridColumn"].structure({});
+
+  const ChildWithHelpers = () => {
+    return (
+      <>
+        {/* @ts-ignore */}
+        {children?.children}
+        {isSelected && !isPreviewMode && (
+          <Group
+            h={20}
+            top={-20}
+            left={0}
+            noWrap
+            pos="absolute"
+            spacing="xs"
+            style={{ zIndex: 9999 }}
+          >
+            <Box
+              h={20}
+              bg="green"
+              {...(isColumn ? {} : draggable)}
+              px={10}
+              sx={{
+                cursor: isColumn ? "default" : "move",
+              }}
+            >
+              <Text size="xs" color="white">
+                {component.description}
+              </Text>
+            </Box>
+            {component.name === "Grid" && (
+              <>
+                <Button
+                  color="green"
+                  size="xs"
+                  compact
+                  onClick={() => {
+                    const copy = cloneDeep(editorTree);
+                    addComponent(copy.root, ColumnSchema, {
+                      id: component.id!,
+                      edge: "center",
+                    });
+
+                    setEditorTree(copy);
+                  }}
+                >
+                  Add Column
+                </Button>
+                <Button
+                  color="green"
+                  size="xs"
+                  compact
+                  onClick={() => {
+                    const copy = cloneDeep(editorTree);
+                    addComponent(
+                      copy.root,
+                      // @ts-ignore
+                      { ...GridSchema, children: [GridSchema.children[0]] },
+                      {
+                        id: parent?.id!,
+                        edge: "center",
+                      },
+                    );
+
+                    setEditorTree(copy);
+                  }}
+                >
+                  Add Row
+                </Button>
+              </>
+            )}
+            {component.name === "GridColumn" && (
+              <>
+                <Button
+                  color="green"
+                  size="xs"
+                  compact
+                  onClick={() => {
+                    const copy = cloneDeep(editorTree);
+                    addComponent(copy.root, GridSchema, {
+                      id: component.id!,
+                      edge: "center",
+                    });
+
+                    setEditorTree(copy);
+                  }}
+                >
+                  Split Column
+                </Button>
+                <Button
+                  color="green"
+                  size="xs"
+                  compact
+                  onClick={() => {
+                    const copy = cloneDeep(editorTree);
+                    addComponent(
+                      copy.root,
+                      // @ts-ignore
+                      { ...GridSchema, children: [GridSchema.children[0]] },
+                      {
+                        id: component?.id!,
+                        edge: "center",
+                      },
+                    );
+
+                    setEditorTree(copy);
+                  }}
+                >
+                  Add Row
+                </Button>
+              </>
+            )}
+          </Group>
+        )}
+      </>
+    );
+  };
+
+  const childWithHelpers = ChildWithHelpers();
+
+  return (
+    <>
+      {cloneElement(
+        // @ts-ignore
+        children,
+        {
+          component,
+          ...droppable,
+          ...propsWithOverwrites,
+          pos: "relative",
+          isPreviewMode,
+          style: {
+            ...propsWithOverwrites.style,
+            ...(component.props?.style ?? {}),
+            ...shadows,
+          },
+          onClick: (e: any) => {
+            if (!isPreviewMode) {
+              e.stopPropagation();
+              // @ts-ignore
+              propsWithOverwrites.onClick?.(e);
+              forceDestroyContextMenu();
+
+              if (isPicking) {
+                setComponentToBind(id);
+              } else {
+                setSelectedComponentId(id);
+              }
+            }
+          },
+        },
+        childWithHelpers,
+      )}
+    </>
+  );
 
   return (
     <Box
@@ -417,7 +544,7 @@ export const DroppableDraggable = ({
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        setSelectedComponentId(parent.id as string);
+                        setSelectedComponentId(parent!.id as string);
                       }}
                     >
                       <IconArrowUp
@@ -489,50 +616,6 @@ export const DroppableDraggable = ({
                 </Group>
               </Box>
             )}
-          {!isPreviewMode && isContentWrapper && (
-            <Box
-              pos="absolute"
-              mih={24}
-              h={24}
-              w="100px"
-              bottom={-26}
-              sx={{
-                zIndex: 90,
-                background: theme.colors.gray[1],
-                padding: "4px",
-                borderBottomLeftRadius: theme.radius.sm,
-                borderBottomRightRadius: theme.radius.sm,
-                left: "50%",
-                transform: "translate(-50%)",
-                "&:hover": {
-                  background: theme.colors.gray[3],
-                },
-              }}
-            >
-              <UnstyledButton
-                onClick={async () => {
-                  const container = structureMapper["Container"].structure({
-                    theme: editorTheme,
-                  });
-
-                  const copy = cloneDeep(editorTree);
-                  const newSelectedId = addComponent(copy.root, container, {
-                    id: "content-wrapper",
-                    edge: "center",
-                  });
-
-                  await setEditorTree(copy, {
-                    action: `Added ${component.name}`,
-                  });
-                  setSelectedComponentId(newSelectedId);
-                }}
-              >
-                <Text size="xs" align="center">
-                  + Add Container
-                </Text>
-              </UnstyledButton>
-            </Box>
-          )}
         </>
       }
     </Box>

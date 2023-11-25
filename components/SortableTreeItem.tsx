@@ -28,7 +28,6 @@ export const SortableTreeItem = ({
 
   const { edge, ...droppable } = useDroppable({
     id,
-    activeId: selectedComponentId,
     onDrop,
   });
 

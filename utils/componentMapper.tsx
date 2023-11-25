@@ -40,6 +40,8 @@ import { Tabs } from "@/components/mapper/Tabs";
 import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";
 import { Title } from "@/components/mapper/Title";
+import { Grid } from "@/components/mapper/Grid";
+import { GridColumn } from "@/components/mapper/GridColumn";
 import { AreaChart } from "@/components/mapper/charts/AreaChart";
 import { BarChart } from "@/components/mapper/charts/BarChart";
 import { LineChart } from "@/components/mapper/charts/LineChart";
@@ -83,6 +85,8 @@ import * as TabsStructure from "@/components/mapper/structure/Tabs";
 import * as TextStructure from "@/components/mapper/structure/Text";
 import * as TextareaStructure from "@/components/mapper/structure/Textarea";
 import * as TitleStructure from "@/components/mapper/structure/Title";
+import * as GridStructure from "@/components/mapper/structure/Grid";
+import * as GridColumnStructure from "@/components/mapper/structure/GridColumn";
 import * as AreaChartStructure from "@/components/mapper/structure/charts/AreaChart";
 import * as BarChartStructure from "@/components/mapper/structure/charts/BarChart";
 import * as LineChartStructure from "@/components/mapper/structure/charts/LineChart";
@@ -127,6 +131,8 @@ import {
   IconIdBadge,
   IconJewishStar,
   IconLayoutBottombarCollapse,
+  IconLayoutColumns,
+  IconLayoutGrid,
   IconLayoutKanban,
   IconLayoutNavbar,
   IconLayoutSidebar,
@@ -182,6 +188,21 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Layout",
     icon: <IconContainer size={ICON_SIZE} />,
+  },
+  Grid: {
+    structure: (props: any) => GridStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Grid"
+        icon={<IconLayoutColumns size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Layout",
+    icon: <IconLayoutColumns size={ICON_SIZE} />,
+  },
+  GridColumn: {
+    structure: (props: any) => GridColumnStructure.jsonStructure(props),
+    category: "Layout",
   },
   Card: {
     structure: (props: any) => CardStructure.jsonStructure(props),
@@ -775,6 +796,7 @@ export type ComponentDefinition = {
   modifiers: Modifiers[];
   actionTriggers: ActionTrigger[];
   sequentialTriggers: SequentialTrigger[];
+  allowedParentTypes?: string[];
   // TODO: Add actions: Action[]. Filter all possible actions for a component
 };
 
@@ -840,6 +862,23 @@ export const componentMapper: ComponentMapper = {
       "border",
       "boxShadow",
     ],
+    actionTriggers: ["onMount", "onClick", "onHover"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  Grid: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Grid component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["effects"],
+    actionTriggers: ["onMount", "onClick", "onHover"],
+    sequentialTriggers: ["onSuccess", "onError"],
+    allowedParentTypes: ["Grid", "GridColumn"],
+  },
+  GridColumn: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <GridColumn component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["effects"],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

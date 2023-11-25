@@ -39,7 +39,6 @@ export const createComponentEditorHandler = ({
 }: Props) => {
   return function (row: Row) {
     const newComponents = getNewComponent(row, theme, pages);
-    console.log("newComponents", newComponents);
     const id = getComponentBeingAddedId(tree.root);
 
     if (!id) {

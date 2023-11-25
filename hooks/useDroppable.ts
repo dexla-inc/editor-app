@@ -1,13 +1,15 @@
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { componentMapper } from "@/utils/componentMapper";
 import { NAVBAR_WIDTH } from "@/utils/config";
 import {
   DropTarget,
   Edge,
+  checkIfIsChildDeep,
   getClosestEdge,
   getComponentById,
 } from "@/utils/editor";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 export const useDroppable = ({
   id,
@@ -16,7 +18,6 @@ export const useDroppable = ({
 }: {
   id: string;
   onDrop: (droppedId: string, dropTarget: DropTarget) => void;
-  activeId?: string;
   currentWindow?: Window;
 }) => {
   const editorTree = useEditorStore((state) => state.tree);
@@ -29,7 +30,12 @@ export const useDroppable = ({
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const [edge, setEdge] = useState<Edge>();
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
-  const [shouldHandleDragOver, setShouldHandleDragOver] = useState(false);
+  const componentToAdd = useEditorStore((state) => state.componentToAdd);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
+
+  const activeId = componentToAdd?.id ?? selectedComponentId;
 
   const component = getComponentById(editorTree.root, id);
 
@@ -37,15 +43,17 @@ export const useDroppable = ({
     (event: React.DragEvent) => {
       event.preventDefault();
       event.stopPropagation();
-      const activeId = useEditorStore.getState().selectedComponentId;
       const dropTarget = {
         id,
-        edge: edge!,
+        edge: edge ?? "center",
       } as DropTarget;
-      onDrop?.(activeId!, dropTarget);
+      if (activeId) {
+        onDrop?.(activeId, dropTarget);
+      }
+
       setCurrentTargetId(undefined);
     },
-    [id, setCurrentTargetId, edge, onDrop],
+    [activeId, id, edge, onDrop, setCurrentTargetId],
   );
 
   const handleEdgeSet = (
@@ -108,8 +116,30 @@ export const useDroppable = ({
   const handleDragEnter = useCallback(
     (event: any) => {
       event.preventDefault();
-      event.stopPropagation();
-      setShouldHandleDragOver(true);
+
+      const activeComponent = getComponentById(editorTree.root, activeId!);
+
+      console.log({ activeComponent, activeId });
+      const comp = getComponentById(editorTree.root, id);
+      const isTryingToDropInsideItself =
+        activeComponent && activeId !== id
+          ? checkIfIsChildDeep(activeComponent!, id)
+          : false;
+
+      if (
+        !isTryingToDropInsideItself &&
+        activeComponent &&
+        componentMapper[
+          activeComponent?.name as string
+        ].allowedParentTypes?.includes(comp?.name as string)
+      ) {
+        setCurrentTargetId(id);
+        event.stopPropagation();
+      } else if (!activeComponent) {
+        setCurrentTargetId(id);
+        event.stopPropagation();
+      }
+
       if (event.clientX > NAVBAR_WIDTH && !isTabPinned) {
         setActiveTab(undefined);
       } else {
@@ -121,15 +151,16 @@ export const useDroppable = ({
         }
       }
     },
-    [setActiveTab, activeTab, isTabPinned],
+    [
+      editorTree,
+      activeId,
+      id,
+      isTabPinned,
+      setCurrentTargetId,
+      setActiveTab,
+      activeTab,
+    ],
   );
-
-  useEffect(() => {
-    if (shouldHandleDragOver) {
-      const timeout = setTimeout(() => setCurrentTargetId(id), 20);
-      return () => clearTimeout(timeout);
-    }
-  }, [setCurrentTargetId, id, shouldHandleDragOver]);
 
   // TODO: Handle isOver differently to have better ux as currently
   // it remove the drop target even if hovering over a non droppable children
@@ -137,10 +168,9 @@ export const useDroppable = ({
     (event: any) => {
       event.preventDefault();
       event.stopPropagation();
-      setShouldHandleDragOver(false);
       setEdge(undefined);
     },
-    [setShouldHandleDragOver, setEdge],
+    [setEdge],
   );
 
   const handleDragEnd = useCallback(

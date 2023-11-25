@@ -23,7 +23,7 @@ export const useDraggable = ({
       event.dataTransfer.effectAllowed = "copyMove";
       onDragStart(id);
     },
-    [id, onDragStart, currentWindow]
+    [id, onDragStart, currentWindow],
   );
 
   return {

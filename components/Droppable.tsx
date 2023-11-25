@@ -17,15 +17,11 @@ export const Droppable = ({
   const theme = useMantineTheme();
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
-  );
 
   const onDrop = useOnDrop();
 
   const { edge, ...droppable } = useDroppable({
     id,
-    activeId: selectedComponentId,
     onDrop,
     currentWindow: id === "root" ? iframeWindow : undefined,
   });
