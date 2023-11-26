@@ -2,7 +2,14 @@ import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getAllComponentsByName } from "@/utils/editor";
-import { ScrollArea, TableProps } from "@mantine/core";
+import {
+  Flex,
+  Pagination,
+  ScrollArea,
+  Select,
+  TableProps,
+  Text,
+} from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import get from "lodash.get";
 import isEmpty from "lodash.isempty";
@@ -39,6 +46,8 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
 
   const [sorting, setSorting] = useState<MRT_SortingState>([]);
   const [rowsSelected, setRowsSelected] = useState<any>([]);
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState<string | null>("5");
 
   useEffect(() => {
     const sortingString = sorting
@@ -112,6 +121,10 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
       isLoading: componentProps.loading,
       sorting,
       rowSelection: rowsSelected,
+      pagination: {
+        pageIndex,
+        pageSize: parseInt(pageSize ?? "5"),
+      },
     },
     manualSorting: true,
     manualPagination: true,
@@ -150,6 +163,26 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
         />
         {dataProp?.base &&
           component.children?.map((child) => renderTree(merge(child)))}
+        {!dataProp?.base && (
+          <Flex justify="flex-end" gap={10} py={10} align="center">
+            <Flex>
+              <Text>
+                Showing {pageSize} results of {data.length}
+              </Text>
+            </Flex>
+            <Select
+              data={["5", "10", "15"]}
+              value={pageSize}
+              style={{ width: "70px" }}
+              onChange={setPageSize}
+            />
+            <Pagination
+              total={Math.ceil(data.length / 5)}
+              value={pageIndex}
+              onChange={setPageIndex}
+            />
+          </Flex>
+        )}
       </ScrollArea>
     </>
   );
