@@ -38,7 +38,8 @@ export type Modifiers =
   | "tabsList"
   | "alert"
   | "badge"
-  | "dateInput";
+  | "dateInput"
+  | "chart";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -338,6 +339,11 @@ export const requiredModifiers: RequiredModifiers = {
     labelWeight: "normal",
     labelAlign: "left",
     labelSpacing: "0",
+  },
+  chart: {
+    data: "",
+    dataLabels: "",
+    colors: "",
   },
 };
 

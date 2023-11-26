@@ -1261,7 +1261,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <BarChart component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["chart", "spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1269,7 +1269,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <LineChart component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["chart", "spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1277,7 +1277,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <PieChart component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["chart", "spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1285,7 +1285,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <AreaChart component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["chart", "spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1293,7 +1293,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <RadarChart component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["chart", "spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1301,7 +1301,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <RadialChart component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["chart", "spacing", "size", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
