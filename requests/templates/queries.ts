@@ -1,6 +1,6 @@
 import { TemplateResponse } from "@/requests/templates/types";
 import { PagingParams, PagingResponse } from "@/requests/types";
-import { get } from "@/utils/api";
+import { getWithoutAuth } from "@/utils/apiNoAuth";
 import { buildQueryString } from "@/utils/dashboardTypes";
 
 export const listTemplates = async (
@@ -13,7 +13,7 @@ export const listTemplates = async (
 
   url += buildQueryString({ companyId, offset, limit });
 
-  const response = (await get<PagingResponse<TemplateResponse>>(
+  const response = (await getWithoutAuth<PagingResponse<TemplateResponse>>(
     url,
   )) as PagingResponse<TemplateResponse>;
 
@@ -23,7 +23,9 @@ export const listTemplates = async (
 export const getTemplate = async (companyId: string, id: string) => {
   let url = `/templates/${id}?companyId=${companyId}`;
 
-  const response = (await get<TemplateResponse>(url)) as TemplateResponse;
+  const response = (await getWithoutAuth<TemplateResponse>(
+    url,
+  )) as TemplateResponse;
 
   return response;
 };

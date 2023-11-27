@@ -1,6 +1,12 @@
 import { getPage } from "@/requests/pages/queries";
+import { createTemplate, updateTemplate } from "@/requests/templates/mutations";
+import { TemplateParams, TemplateTypes } from "@/requests/templates/types";
+import { upsertTile } from "@/requests/tiles/mutations";
+import { TileParams } from "@/requests/tiles/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
+import { usePropelAuthStore } from "@/stores/propelAuth";
+import { encodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
 import { getTileData, getTiles } from "@/utils/editor";
 import { ActionIcon, Tooltip } from "@mantine/core";
@@ -13,6 +19,7 @@ export const SaveTemplateButton = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
+  const company = usePropelAuthStore((state) => state.activeCompany);
 
   const saveTemplate = async () => {
     try {
@@ -44,44 +51,39 @@ export const SaveTemplateButton = () => {
         return { id, tile, prompt };
       });
 
-      const templateResponse = await fetch("/api/templates/upsert", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: page.id,
-          name: camelcase(page.title),
-          state: editorTree,
-          type: page.queryStrings?.type,
-          tags: page.queryStrings?.tags,
-          prompt: `
-          type ${camelcase(page.title)}Template = {
-            name: "${camelcase(page.title)}Template"
-            tiles: (${tilesData.map((t) => t.id).join(" | ")})[]
-          }
-        `,
-        }),
-      });
+      const templateParams: TemplateParams = {
+        name: camelcase(page.title),
+        //state: JSON.stringify(editorTree),
+        state: encodeSchema(JSON.stringify(editorTree)),
+        type: page.queryStrings?.type as TemplateTypes,
+        tags: page.queryStrings?.tags as any,
+        prompt: `
+        type ${camelcase(page.title)}Template = {
+          name: "${camelcase(page.title)}Template"
+          tiles: (${tilesData.map((t) => t.id).join(" | ")})[]
+        }
+      `,
+      };
 
-      const templateData = await templateResponse.json();
+      const templateResponse = page.id
+        ? await updateTemplate(page.id, company.orgId, templateParams)
+        : await createTemplate(company.orgId, templateParams);
 
-      await fetch("/api/tiles/upsert", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          tiles: tilesData.map((tile) => {
-            return {
-              id: `${templateData.id}-${tile.id}`,
-              name: tile.id,
-              state: tile.tile.node,
-              prompt: tile.prompt,
-              templateId: templateData.id,
-            };
-          }),
-        }),
+      tilesData.map(async (tile) => {
+        const tileParams: TileParams = {
+          id: `${templateResponse.id}-${tile.id}`,
+          name: tile.id,
+          //state: JSON.stringify(tile.tile.node),
+          state: encodeSchema(JSON.stringify(tile.tile.node)),
+          prompt: tile.prompt,
+          templateId: templateResponse.id,
+        };
+
+        const tileResponse = await upsertTile(
+          company.orgId,
+          templateResponse.id,
+          tileParams,
+        );
       });
 
       stopLoading({
