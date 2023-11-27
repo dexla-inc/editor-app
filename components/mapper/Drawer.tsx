@@ -16,20 +16,19 @@ export const Drawer = ({
   ...props
 }: Props) => {
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId
+    (state) => state.selectedComponentId,
   );
   const theme = useEditorStore((state) => state.theme);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
+    (state) => state.updateTreeComponent,
   );
 
   const {
     children,
     title,
     opened: propOpened,
-    style,
     ...componentProps
   } = component.props as any;
 

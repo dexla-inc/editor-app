@@ -8,12 +8,7 @@ type Props = {
   component: Component;
 } & BoxProps;
 
-export const GridColumn = ({
-  renderTree,
-  component,
-  children,
-  ...props
-}: Props) => {
+export const GridColumn = ({ renderTree, component, ...props }: Props) => {
   const isLive = useEditorStore((state) => state.isLive);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   // @ts-ignore
@@ -31,7 +26,6 @@ export const GridColumn = ({
       {...propsRest}
       id={component.id}
     >
-      {children}
       {component.children &&
         component.children.length > 0 &&
         component.children?.map((child: any) => renderTree(child))}

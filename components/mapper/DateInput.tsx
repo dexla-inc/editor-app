@@ -16,11 +16,10 @@ const DateInputComponent = ({ renderTree, component, ...props }: Props) => {
     isDisabled,
     disabled,
     icon: iconName,
-    styles,
     ...componentProps
   } = component.props as any;
 
-  const customStyles = merge({}, styles, { label: { width: "100%" } });
+  const customStyles = merge({}, props.styles, { label: { width: "100%" } });
 
   return (
     <MantineDateInput

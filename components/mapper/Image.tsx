@@ -10,13 +10,12 @@ type Props = {
   component: Component;
 } & ImageProps;
 
-const ImageComponent = ({ component }: Props) => {
+const ImageComponent = ({ component, ...props }: Props) => {
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
 
   const {
     alt = "Image",
     src,
-    style: { width, height, ...style },
     triggers,
     data,
     repeatedIndex,
@@ -24,6 +23,8 @@ const ImageComponent = ({ component }: Props) => {
     loading,
     ...componentProps
   } = component.props as any;
+
+  const { width, height, ...style } = props.style ?? {};
 
   let value = isPreviewMode ? data?.value ?? src : src;
 

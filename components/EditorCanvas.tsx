@@ -22,6 +22,7 @@ import { Box, Paper } from "@mantine/core";
 import { useDisclosure, useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback, useMemo } from "react";
+import { ComponentToolbox } from "./ComponentToolbox";
 
 type Props = {
   projectId: string;
@@ -307,6 +308,7 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
           isCustomComponentModalOpen={isCustomComponentModalOpen}
         />
       )}
+      <ComponentToolbox />
     </>
   );
 };

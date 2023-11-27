@@ -9,13 +9,13 @@ type Props = {
 } & FlexProps;
 
 const AppBarComponent = ({ renderTree, component, ...props }: Props) => {
-  const { children, style, ...componentProps } = component.props as any;
+  const { children, ...componentProps } = component.props as any;
 
   return (
     <MantineFlex
       {...props}
       {...componentProps}
-      style={{ ...style, width: "100%" }}
+      style={{ ...props.style, width: "100%" }}
     >
       {component.children && component.children.length > 0
         ? component.children?.map((child) => renderTree(child))

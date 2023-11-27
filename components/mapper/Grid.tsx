@@ -7,7 +7,7 @@ type Props = {
   component: Component;
 } & BoxProps;
 
-export const Grid = ({ renderTree, component, children, ...props }: Props) => {
+export const Grid = ({ renderTree, component, ...props }: Props) => {
   const theme = useMantineTheme();
   const { style = {}, gridSize } = component.props!;
 
@@ -27,7 +27,6 @@ export const Grid = ({ renderTree, component, children, ...props }: Props) => {
         gridTemplateColumns: `repeat(${gridSize ?? GRID_SIZE}, 1fr)`,
       }}
     >
-      {children}
       {component.children &&
         component.children.length > 0 &&
         component.children?.map((child: Component) => renderTree(child))}

@@ -16,7 +16,6 @@ const ButtonComponent = ({
   renderTree,
   component,
   isPreviewMode,
-  children: child,
   ...props
 }: Props) => {
   const theme = useEditorStore((state) => state.theme);
@@ -59,7 +58,6 @@ const ButtonComponent = ({
       {...componentProps}
       {...triggers}
     >
-      {child}
       {children}
     </MantineButton>
   );

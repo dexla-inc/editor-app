@@ -18,7 +18,7 @@ type Props = {
   TextInputProps;
 
 const InputComponent = ({ renderTree, component, ...props }: Props) => {
-  const { children, icon, triggers, value, loading, style, ...componentProps } =
+  const { children, icon, triggers, value, loading, ...componentProps } =
     component.props as any;
   const { name: iconName } = icon && icon!.props!;
   const [inputValue, setInputValue] = useState(value);
@@ -67,7 +67,7 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
             },
             input: {
               minHeight: "auto",
-              ...style,
+              ...props.style,
               width: "-webkit-fill-available",
             },
           }}

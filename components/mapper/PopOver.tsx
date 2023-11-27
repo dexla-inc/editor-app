@@ -30,7 +30,6 @@ const PopOverComponent = ({
     children,
     title,
     opened: propOpened,
-    style,
     targetId,
     loading,
     ...componentProps

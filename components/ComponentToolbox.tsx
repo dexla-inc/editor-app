@@ -1,0 +1,288 @@
+import { useDraggable } from "@/hooks/useDraggable";
+import { useOnDragStart } from "@/hooks/useOnDragStart";
+import { theme } from "@/pages/_app";
+import { useEditorStore } from "@/stores/editor";
+import { structureMapper } from "@/utils/componentMapper";
+import { ICON_SIZE } from "@/utils/config";
+import {
+  addComponent,
+  getComponentById,
+  getComponentIndex,
+  getComponentParent,
+  removeComponentFromParent,
+} from "@/utils/editor";
+import { Group, UnstyledButton, ActionIcon, Text } from "@mantine/core";
+import {
+  IconGripVertical,
+  IconArrowUp,
+  IconBoxMargin,
+  IconColumnInsertRight,
+  IconRowInsertBottom,
+  IconLayoutColumns,
+} from "@tabler/icons-react";
+import cloneDeep from "lodash.clonedeep";
+import { useCallback, useEffect, useMemo } from "react";
+
+export const ComponentToolbox = () => {
+  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
+  const editorTheme = useEditorStore((state) => state.theme);
+  const editorTree = useEditorStore((state) => state.tree);
+  const setEditorTree = useEditorStore((state) => state.setTree);
+  const setSelectedComponentId = useEditorStore(
+    (state) => state.setSelectedComponentId,
+  );
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
+
+  const component = getComponentById(editorTree.root, selectedComponentId!);
+
+  const id = component?.id;
+  const isColumn = component?.name === "GridColumn";
+
+  const parent = useMemo(
+    () => (id ? getComponentParent(editorTree.root, id) : null),
+    [editorTree.root, id],
+  );
+
+  const onDragStart = useOnDragStart();
+
+  const draggable = useDraggable({
+    id: id || "",
+    onDragStart,
+    currentWindow: iframeWindow,
+  });
+
+  const calculatePosition = useCallback(() => {
+    if (component?.id && !isPreviewMode) {
+      const canvas = document.getElementById("iframe-canvas");
+      const toolbox = document.getElementById("toolbox");
+      const comp = iframeWindow?.document.getElementById(component.id);
+
+      if (toolbox && comp && canvas) {
+        const canvasRect = canvas.getBoundingClientRect();
+        const toolboxRect = toolbox.getBoundingClientRect();
+        const compRect = comp.getBoundingClientRect();
+
+        toolbox.style.top = `${
+          canvasRect.top + compRect.top - toolboxRect.height
+        }px`;
+        toolbox.style.left = `${canvasRect.left + compRect.left}px`;
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    component?.id,
+    iframeWindow?.document,
+    isPreviewMode,
+    editorTree.timestamp,
+  ]);
+
+  useEffect(() => {
+    calculatePosition();
+  }, [calculatePosition]);
+
+  useEffect(() => {
+    const el = iframeWindow?.document.querySelector(
+      ".iframe-canvas-ScrollArea-viewport",
+    );
+    el?.addEventListener("scroll", calculatePosition);
+    return () => el?.removeEventListener("scroll", calculatePosition);
+  }, [calculatePosition, iframeWindow]);
+
+  if (!component || isPreviewMode || !id) {
+    return null;
+  }
+
+  const ColumnSchema = structureMapper["GridColumn"].structure({});
+  const GridSchema = structureMapper["Grid"].structure({});
+
+  const haveNonRootParent = parent && parent.id !== "root";
+
+  return (
+    <Group
+      id="toolbox"
+      px={4}
+      h={24}
+      noWrap
+      spacing={2}
+      top={-24}
+      left={0}
+      pos="absolute"
+      style={{ zIndex: 999 }}
+      bg={theme.colors.teal[6]}
+    >
+      {!component.fixedPosition && (
+        <UnstyledButton
+          sx={{
+            cursor: isColumn ? "default" : "move",
+            alignItems: "center",
+            display: "flex",
+          }}
+          {...(isColumn ? {} : draggable)}
+        >
+          {component.name !== "GridColumn" && (
+            <IconGripVertical
+              size={ICON_SIZE}
+              color="white"
+              strokeWidth={1.5}
+            />
+          )}
+        </UnstyledButton>
+      )}
+      <Text color="white" size="xs" pr={haveNonRootParent ? 8 : "xs"}>
+        {(component.description || "").length > 20
+          ? `${component.description?.substring(0, 20)}...`
+          : component.description}
+      </Text>
+      {haveNonRootParent && (
+        <ActionIcon
+          size="xs"
+          variant="transparent"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setSelectedComponentId(parent.id as string);
+          }}
+        >
+          <IconArrowUp size={ICON_SIZE} color="white" strokeWidth={1.5} />
+        </ActionIcon>
+      )}
+      <ActionIcon
+        size="xs"
+        variant="transparent"
+        onClick={() => {
+          const container = structureMapper["Container"].structure({
+            theme: editorTheme,
+          });
+
+          if (container.props && container.props.style) {
+            container.props.style = {
+              ...container.props.style,
+              width: "auto",
+              padding: "0px",
+            };
+          }
+
+          const copy = cloneDeep(editorTree);
+          const containerId = addComponent(
+            copy.root,
+            container,
+            {
+              id: parent?.id!,
+              edge: "left",
+            },
+            getComponentIndex(parent!, id),
+          );
+
+          addComponent(copy.root, component, {
+            id: containerId,
+            edge: "left",
+          });
+
+          removeComponentFromParent(copy.root, id, parent?.id!);
+          setEditorTree(copy, {
+            action: `Wrapped ${component.name} with a Container`,
+          });
+        }}
+      >
+        <IconBoxMargin size={ICON_SIZE} color="white" strokeWidth={1.5} />
+      </ActionIcon>
+      {component.name === "Grid" && (
+        <>
+          <ActionIcon
+            variant="transparent"
+            size="xs"
+            onClick={() => {
+              const copy = cloneDeep(editorTree);
+              addComponent(copy.root, ColumnSchema, {
+                id: component.id!,
+                edge: "center",
+              });
+
+              setEditorTree(copy);
+            }}
+          >
+            <IconColumnInsertRight
+              size={ICON_SIZE}
+              color="white"
+              strokeWidth={1.5}
+            />
+          </ActionIcon>
+          <ActionIcon
+            variant="transparent"
+            size="xs"
+            onClick={() => {
+              const copy = cloneDeep(editorTree);
+              addComponent(
+                copy.root,
+                // @ts-ignore
+                { ...GridSchema, children: [ColumnSchema] },
+                {
+                  id: parent?.id!,
+                  edge: "center",
+                },
+              );
+
+              setEditorTree(copy);
+            }}
+          >
+            <IconRowInsertBottom
+              size={ICON_SIZE}
+              color="white"
+              strokeWidth={1.5}
+            />
+          </ActionIcon>
+        </>
+      )}
+      {component.name === "GridColumn" && (
+        <>
+          <ActionIcon
+            variant="transparent"
+            size="xs"
+            onClick={() => {
+              const copy = cloneDeep(editorTree);
+              addComponent(copy.root, GridSchema, {
+                id: component.id!,
+                edge: "center",
+              });
+
+              setEditorTree(copy);
+            }}
+          >
+            <IconLayoutColumns
+              size={ICON_SIZE}
+              color="white"
+              strokeWidth={1.5}
+            />
+          </ActionIcon>
+          <ActionIcon
+            variant="transparent"
+            size="xs"
+            onClick={() => {
+              const copy = cloneDeep(editorTree);
+              addComponent(
+                copy.root,
+                // @ts-ignore
+                { ...GridSchema, children: [ColumnSchema] },
+                {
+                  id: component?.id!,
+                  edge: "center",
+                },
+              );
+
+              setEditorTree(copy);
+            }}
+          >
+            <IconRowInsertBottom
+              size={ICON_SIZE}
+              color="white"
+              strokeWidth={1.5}
+            />
+          </ActionIcon>
+        </>
+      )}
+    </Group>
+  );
+};

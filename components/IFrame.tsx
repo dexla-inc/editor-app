@@ -171,6 +171,7 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
 
   return (
     <Box
+      id="iframe-canvas"
       onMouseDown={handleMouseDown}
       ref={setContentRef as any}
       component="iframe"
