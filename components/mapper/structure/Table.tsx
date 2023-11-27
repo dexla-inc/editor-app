@@ -1,5 +1,6 @@
 import { defaultButtonValues } from "@/components/modifiers/Button";
 import { defaultInputValues } from "@/components/modifiers/Input";
+import { defaultInputValues as defaultTextValues } from "@/components/modifiers/Text";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
@@ -7,7 +8,7 @@ export const jsonStructure = (props?: any): Component => {
   return {
     id: nanoid(),
     name: "Container",
-    description: "Table Container",
+    description: "Table",
     props: {
       style: {
         display: "flex",
@@ -25,7 +26,7 @@ export const jsonStructure = (props?: any): Component => {
       {
         id: nanoid(),
         name: "Container",
-        description: "Table Actions Header",
+        description: "Table Header",
         props: {
           style: {
             display: "flex",
@@ -112,7 +113,7 @@ export const jsonStructure = (props?: any): Component => {
       {
         id: nanoid(),
         name: "Table",
-        description: "Table",
+        description: "Table Body",
         props: {
           exampleData: {
             value: [
@@ -142,53 +143,57 @@ export const jsonStructure = (props?: any): Component => {
           },
           ...(props.props || {}),
         },
+        children: [],
+        blockDroppingChildrenInside: true,
+      },
+      {
+        id: nanoid(),
+        name: "Container",
+        description: "Table Footer",
+        props: {
+          style: {
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            gap: "20px",
+            width: "100%",
+          },
+        },
         children: [
           {
             id: nanoid(),
-            name: "Container",
-            description: "Table Actions Footer",
+            name: "Text",
+            description: "Text",
+            props: {
+              ...defaultTextValues,
+              children: "Showing 5 results of 10",
+            },
+          },
+          {
+            id: nanoid(),
+            name: "Select",
+            description: "Select",
             props: {
               style: {
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                alignItems: "center",
-                gap: "20px",
-                width: "100%",
-                paddingTop: "20px",
-                paddingBottom: "20px",
+                width: "70px",
               },
+              defaultValue: 5,
+              data: [
+                { label: 5, value: 5 },
+                { label: 10, value: 10 },
+                { label: 15, value: 15 },
+              ],
             },
-            children: [
-              {
-                id: nanoid(),
-                name: "Select",
-                description: "Select",
-                props: {
-                  style: {
-                    width: "70px",
-                  },
-                  defaultValue: 5,
-                  data: [
-                    { label: 5, value: 5 },
-                    { label: 10, value: 10 },
-                    { label: 15, value: 15 },
-                  ],
-                },
-              },
-              {
-                id: nanoid(),
-                name: "Pagination",
-                description: "Pagination",
-                props: {
-                  style: {},
-                },
-                children: [],
-              },
-            ],
+          },
+          {
+            id: nanoid(),
+            name: "Pagination",
+            description: "Pagination",
+            props: { value: 1, total: 2, style: {} },
+            children: [],
           },
         ],
-        blockDroppingChildrenInside: true,
       },
     ],
   };
