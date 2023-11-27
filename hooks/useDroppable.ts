@@ -119,12 +119,15 @@ export const useDroppable = ({
 
       const activeComponent = getComponentById(editorTree.root, activeId!);
 
-      console.log({ activeComponent, activeId });
       const comp = getComponentById(editorTree.root, id);
       const isTryingToDropInsideItself =
         activeComponent && activeId !== id
           ? checkIfIsChildDeep(activeComponent!, id)
           : false;
+
+      if (id === "root" || id === "content-wrapper") {
+        return;
+      }
 
       if (
         !isTryingToDropInsideItself &&

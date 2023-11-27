@@ -43,9 +43,17 @@ export const useOnDrop = () => {
       const copy = cloneDeep(editorTree);
       const activeComponent = getComponentById(copy.root, droppedId);
       let targetComponent = getComponentById(copy.root, dropTarget.id);
+      const targetParentComponent = getComponentParent(
+        copy.root,
+        dropTarget.id,
+      );
+      const isParentContentWrapper =
+        targetParentComponent?.id === "content-wrapper";
+      const isDroppable =
+        !isParentContentWrapper || dropTarget.edge === "center";
       const isMoving = !!activeComponent;
 
-      if (!isMoving && droppedId && componentToAdd) {
+      if (!isMoving && droppedId && componentToAdd && isDroppable) {
         if (componentToAdd.name === "Grid") {
           handleGridComponentAddition(
             copy.root,
@@ -61,7 +69,7 @@ export const useOnDrop = () => {
             componentToAdd,
           );
         }
-      } else if (dropTarget.id !== "root") {
+      } else if (dropTarget.id !== "root" && isDroppable) {
         if (activeComponent?.name === "Grid") {
           const isDopopingInVerticalAxis =
             dropTarget.edge === "top" || dropTarget.edge === "bottom";
@@ -89,7 +97,7 @@ export const useOnDrop = () => {
             dropTarget,
           );
         }
-      } else {
+      } else if (isDroppable) {
         handleRootDrop(copy, droppedId, activeComponent, dropTarget);
       }
 

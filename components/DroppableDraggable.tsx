@@ -16,9 +16,7 @@ import {
 } from "@/utils/editor";
 import {
   ActionIcon,
-  Box,
   BoxProps,
-  Button,
   Group,
   Text,
   UnstyledButton,
@@ -473,7 +471,6 @@ export const DroppableDraggable = ({
           isPreviewMode,
           style: {
             ...propsWithOverwrites.style,
-            ...(component.props?.style ?? {}),
             ...shadows,
           },
           onClick: (e: any) => {

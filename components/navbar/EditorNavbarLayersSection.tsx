@@ -192,7 +192,7 @@ const ListItem = ({ component, children }: ListItemProps) => {
                 sx={{ cursor: "move", width: "100%" }}
                 {...draggable}
               >
-                {component.id === "root" ? "Body" : "Content Wrapper"}
+                {component.id === "root" ? "Body" : component.description}
               </Text>
             ) : editable ? (
               <TextInput
