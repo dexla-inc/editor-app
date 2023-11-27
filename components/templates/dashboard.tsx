@@ -118,7 +118,7 @@ type Template =
   | SigninTemplate
   | CRUDTemplate;
 
-type Page = {
+export type Page = {
   template: Template;
 };
 

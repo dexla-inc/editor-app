@@ -1,3 +1,5 @@
+import { listTemplates } from "@/requests/templates/queries";
+import { listTiles } from "@/requests/tiles/queries";
 import { GPT4_PREVIEW_MODEL } from "@/utils/config";
 import { openai } from "@/utils/openai";
 import { prisma } from "@/utils/prisma";
@@ -13,7 +15,7 @@ export default async function handler(
       throw new Error("Invalid method");
     }
 
-    const { projectId, pageId, accessToken } = req.body;
+    const { companyId, projectId, pageId, accessToken } = req.body;
     const project = await prisma.project.findFirstOrThrow({
       where: {
         id: projectId as string,
@@ -46,31 +48,29 @@ export default async function handler(
 
     const _project = await projectResponse.json();
 
-    const templates = await prisma.template.findMany({
-      where: {
-        prompt: { not: null },
-      },
-    });
+    const templates = await listTemplates(companyId as string);
 
     console.log("templates", templates);
 
-    const templatesData = await templates.reduce(async (acc, template) => {
-      const tiles = await prisma.tile.findMany({
-        where: {
-          templateId: template.id,
-        },
-      });
+    const templatesData = await templates.results.reduce(
+      async (acc, template) => {
+        const tiles = await listTiles(
+          companyId as string,
+          template.id as string,
+        );
 
-      const prev = await acc;
+        const prev = await acc;
 
-      return Promise.resolve(`
+        return Promise.resolve(`
         ${prev}
         // ${template.name} tiles:
-        ${tiles.map((tile) => tile.prompt)}
+        ${tiles.results.map((tile) => tile.prompt)}
         // ${template.name} type:
         ${template.prompt}
       `);
-    }, "" as any);
+      },
+      "" as any,
+    );
 
     const response = await openai.chat.completions.create({
       model: GPT4_PREVIEW_MODEL,
@@ -97,7 +97,7 @@ export default async function handler(
             appIndustry: _project?.industry ?? "",
             templates: `${templatesData}
             
-            type Template = ${templates.map((t) => t.name).join(" | ")}
+            type Template = ${templates.results.map((t) => t.name).join(" | ")}
             `,
           }),
         },

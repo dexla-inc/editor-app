@@ -1,3 +1,4 @@
+import { Page } from "@/components/templates/dashboard";
 import {
   PageListResponse,
   PageParams,
@@ -34,10 +35,11 @@ export const getPage = async (
 };
 
 export const getPageTemplate = async (
+  companyId: string,
   projectId: string,
   pageId: string,
   init = {},
-) => {
+): Promise<Page> => {
   const accessToken = await getAuthToken();
   const response = await fetch("/api/ai/page", {
     ...init,
@@ -46,14 +48,15 @@ export const getPageTemplate = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      pageId,
+      companyId,
       projectId,
+      pageId,
       accessToken,
     }),
   });
 
   const json = await response.json();
-  return json as any;
+  return json as Page;
 };
 
 export const getPageBySlug = async (projectId: string, slug: string) => {

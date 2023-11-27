@@ -1,8 +1,10 @@
 import { getPage, getPageTemplate } from "@/requests/pages/queries";
-import { decodeSchema } from "@/utils/compression";
-import { replaceTilesData } from "@/utils/editor";
+import { getTemplate } from "@/requests/templates/queries";
 import { useAppStore } from "@/stores/app";
 import { emptyEditorTree, useEditorStore } from "@/stores/editor";
+import { usePropelAuthStore } from "@/stores/propelAuth";
+import { decodeSchema } from "@/utils/compression";
+import { replaceTilesData } from "@/utils/editor";
 import { useQuery } from "@tanstack/react-query";
 
 type getPageDataParams = {
@@ -26,6 +28,8 @@ export const useGetPageData = ({
   const stopLoading = useAppStore((state) => state.stopLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const setEditorTree = useEditorStore((state) => state.setTree);
+  const company = usePropelAuthStore((state) => state.activeCompany);
+
   const getPageData = async ({ signal }: getPageDataParams) => {
     setIsLoading(true);
     const page = await getPage(projectId, pageId, {}, { signal });
@@ -44,24 +48,34 @@ export const useGetPageData = ({
         message: "AI is generating your page",
       });
 
-      const aiPageTemplate = await getPageTemplate(projectId, pageId, {
-        signal,
-      });
-      const template = await fetch(
-        `/api/templates/${aiPageTemplate.template.name.replace(
-          "Template",
-          "",
-        )}`,
+      const aiPageTemplate = await getPageTemplate(
+        company.orgId,
+        projectId,
+        pageId,
         {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
           signal,
         },
-      ).then((templateResponse) => templateResponse.json());
+      );
 
-      const project = await fetch(`/api/project/${projectId}`, {
+      const templateName = aiPageTemplate.template.name.replace("Template", "");
+
+      const template = await getTemplate(company.orgId, templateName);
+
+      // const template = await fetch(
+      //   `/api/templates/${aiPageTemplate.template.name.replace(
+      //     "Template",
+      //     "",
+      //   )}`,
+      //   {
+      //     method: "GET",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     signal,
+      //   },
+      // ).then((templateResponse) => templateResponse.json());
+
+      const _project = await fetch(`/api/project/${projectId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -71,10 +85,11 @@ export const useGetPageData = ({
 
       // TODO: Replace tiles from template state with tiles from aiPageTemplate
       const aiTiles = aiPageTemplate.template.tiles;
+
       const treeState = replaceTilesData(
-        template.state,
+        JSON.parse(decodeSchema(template.state)),
         aiTiles,
-        project?.data,
+        _project?.data,
       );
 
       setEditorTree(treeState);

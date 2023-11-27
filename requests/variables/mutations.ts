@@ -1,17 +1,16 @@
-import { PatchParams } from "@/requests/types";
+import { PatchParams, SuccessResponse } from "@/requests/types";
 import { VariableParams, VariableResponse } from "@/requests/variables/types";
 import { del, patch, post, put } from "@/utils/api";
-import { SuccessResponse } from "../datasources/types";
 
 export const createVariable = async (
   projectId: string,
-  params: VariableParams
+  params: VariableParams,
 ) => {
   let url = `/projects/${projectId}/variables`;
 
   const response = (await post<VariableResponse>(
     url,
-    params
+    params,
   )) as VariableResponse;
 
   return response;
@@ -20,13 +19,13 @@ export const createVariable = async (
 export const updateVariable = async (
   projectId: string,
   id: string,
-  params: VariableParams
+  params: VariableParams,
 ) => {
   let url = `/projects/${projectId}/variables/${id}`;
 
   const response = (await put<VariableResponse>(
     url,
-    params
+    params,
   )) as VariableResponse;
 
   return response;
@@ -35,13 +34,13 @@ export const updateVariable = async (
 export const patchVariable = async (
   projectId: string,
   id: string,
-  params: PatchParams[]
+  params: PatchParams[],
 ) => {
   let url = `/projects/${projectId}/variables/${id}`;
 
   const response = (await patch<VariableResponse>(
     url,
-    params
+    params,
   )) as VariableResponse;
 
   return response;

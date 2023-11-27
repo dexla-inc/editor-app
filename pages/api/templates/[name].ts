@@ -1,5 +1,5 @@
+import { getTemplate } from "@/requests/templates/queries";
 import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "@/utils/prisma";
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,14 +10,11 @@ export default async function handler(
       throw new Error("Invalid method");
     }
 
-    const { name } = req.query;
-    const tempate = await prisma.template.findFirstOrThrow({
-      where: {
-        name: name as string,
-      },
-    });
+    const { companyId, name } = req.query;
 
-    return res.status(200).json(tempate);
+    const template = await getTemplate(companyId as string, name as string);
+
+    return res.status(200).json(template);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error });
