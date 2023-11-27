@@ -146,7 +146,7 @@ export default function Projects() {
                       color={theme.colors.teal[5]}
                     />
                   }
-                  tooltip="This project is used only for the Templates project"
+                  tooltip="This company is used for the Templates project only"
                   title="Create new project"
                   description="Type what you want to build and customise"
                 />

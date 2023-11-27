@@ -1,5 +1,5 @@
 import { getPage } from "@/requests/pages/queries";
-import { createTemplate, updateTemplate } from "@/requests/templates/mutations";
+import { upsertTemplate } from "@/requests/templates/mutations";
 import { TemplateParams, TemplateTypes } from "@/requests/templates/types";
 import { upsertTile } from "@/requests/tiles/mutations";
 import { TileParams } from "@/requests/tiles/types";
@@ -65,9 +65,10 @@ export const SaveTemplateButton = () => {
       `,
       };
 
-      const templateResponse = page.id
-        ? await updateTemplate(page.id, company.orgId, templateParams)
-        : await createTemplate(company.orgId, templateParams);
+      const templateResponse = await upsertTemplate(
+        company.orgId,
+        templateParams,
+      );
 
       tilesData.map(async (tile) => {
         const tileParams: TileParams = {

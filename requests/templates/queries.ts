@@ -20,8 +20,8 @@ export const listTemplates = async (
   return response;
 };
 
-export const getTemplate = async (companyId: string, id: string) => {
-  let url = `/templates/${id}?companyId=${companyId}`;
+export const getTemplate = async (companyId: string, name: string) => {
+  let url = `/templates/${name}?companyId=${companyId}`;
 
   const response = (await getWithoutAuth<TemplateResponse>(
     url,

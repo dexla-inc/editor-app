@@ -1,29 +1,14 @@
 import { TemplateParams, TemplateResponse } from "@/requests/templates/types";
 import { SuccessResponse } from "@/requests/types";
-import { del, post, put } from "@/utils/api";
+import { del, post } from "@/utils/api";
 
-export const createTemplate = async (
+export const upsertTemplate = async (
   companyId: string,
   params: TemplateParams,
 ) => {
   const url = `/templates?companyId=${companyId}`;
 
   const response = (await post<TemplateResponse>(
-    url,
-    params,
-  )) as TemplateResponse;
-
-  return response;
-};
-
-export const updateTemplate = async (
-  id: string,
-  companyId: string,
-  params: TemplateParams,
-) => {
-  const url = `/templates/${id}?companyId=${companyId}`;
-
-  const response = (await put<TemplateResponse>(
     url,
     params,
   )) as TemplateResponse;

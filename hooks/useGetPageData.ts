@@ -1,4 +1,5 @@
 import { getPage, getPageTemplate } from "@/requests/pages/queries";
+import { getTemplate } from "@/requests/templates/queries";
 import { useAppStore } from "@/stores/app";
 import { emptyEditorTree, useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
@@ -73,21 +74,26 @@ export const useGetPageData = ({
           signal,
         },
       );
-      const template = await fetch(
-        `/api/templates/${aiPageTemplate.template.name.replace(
-          "Template",
-          "",
-        )}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          signal,
-        },
-      ).then((templateResponse) => templateResponse.json());
 
-      const project = await fetch(`/api/project/${projectId}`, {
+      const templateName = aiPageTemplate.template.name.replace("Template", "");
+
+      const template = await getTemplate(company.orgId, templateName);
+
+      // const template = await fetch(
+      //   `/api/templates/${aiPageTemplate.template.name.replace(
+      //     "Template",
+      //     "",
+      //   )}`,
+      //   {
+      //     method: "GET",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     signal,
+      //   },
+      // ).then((templateResponse) => templateResponse.json());
+
+      const _project = await fetch(`/api/project/${projectId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -97,11 +103,11 @@ export const useGetPageData = ({
 
       // TODO: Replace tiles from template state with tiles from aiPageTemplate
       const aiTiles = aiPageTemplate.template.tiles;
-      console.log({ aiPageTemplate, template, aiTiles, data: project?.data });
+
       const treeState = replaceTilesData(
-        template.state,
+        JSON.parse(decodeSchema(template.state)),
         aiTiles,
-        project?.data,
+        _project?.data,
       );
 
       setEditorTree(treeState);
