@@ -16,8 +16,8 @@ export const label = "Link";
 
 export const defaultInputValues = {
   value: "New Link",
-  size: "md",
-  color: "teal",
+  size: "sm",
+  color: "Primary.6",
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
@@ -69,12 +69,10 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         />
         <ThemeColorSelector
           label="Color"
-          {...form.getInputProps("color")}
+          value={form.getInputProps("color").value}
           onChange={(value: string) => {
             form.setFieldValue("color", value);
-            debouncedTreeUpdate(selectedComponent?.id as string, {
-              color: value,
-            });
+            debouncedTreeComponentPropsUpdate("color", value);
           }}
         />
       </Stack>
