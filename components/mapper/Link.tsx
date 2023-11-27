@@ -8,17 +8,23 @@ type Props = {
   component: Component;
 } & AnchorProps;
 
-const LinkComponent = ({ renderTree, component, ...props }: Props) => {
+const LinkComponent = ({
+  renderTree,
+  component,
+  children: child,
+  ...props
+}: Props) => {
   const { children, triggers, ...componentProps } = component.props as any;
 
   return (
     <MantineAnchor {...props} {...componentProps} {...triggers}>
+      {child}
       {component.children && component.children.length > 0
         ? component.children?.map((child) =>
             renderTree({
               ...child,
               props: { ...child.props, ...triggers },
-            })
+            }),
           )
         : children}
     </MantineAnchor>

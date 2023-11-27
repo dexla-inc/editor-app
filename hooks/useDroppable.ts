@@ -129,13 +129,15 @@ export const useDroppable = ({
         return;
       }
 
-      if (
-        !isTryingToDropInsideItself &&
-        activeComponent &&
-        componentMapper[
-          activeComponent?.name as string
-        ].allowedParentTypes?.includes(comp?.name as string)
-      ) {
+      const isGrid = activeComponent?.name === "Grid";
+
+      const isAllowed = isGrid
+        ? componentMapper[
+            activeComponent?.name as string
+          ].allowedParentTypes?.includes(comp?.name as string)
+        : !comp?.props?.blockDroppingChildrenInside;
+
+      if (!isTryingToDropInsideItself && activeComponent && isAllowed) {
         setCurrentTargetId(id);
         event.stopPropagation();
       } else if (!activeComponent) {

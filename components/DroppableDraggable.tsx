@@ -458,21 +458,28 @@ export const DroppableDraggable = ({
 
   const childWithHelpers = ChildWithHelpers();
 
+  const childStyles = {
+    ...propsWithOverwrites.style,
+    ...shadows,
+  };
+
+  delete propsWithOverwrites.style;
+
   return (
     <>
       {cloneElement(
         // @ts-ignore
         children,
         {
-          component,
+          component: {
+            ...component,
+            props: propsWithOverwrites,
+          },
           ...droppable,
-          ...propsWithOverwrites,
+          id: component.id,
           pos: "relative",
           isPreviewMode,
-          style: {
-            ...propsWithOverwrites.style,
-            ...shadows,
-          },
+          style: childStyles,
           onClick: (e: any) => {
             if (!isPreviewMode) {
               e.stopPropagation();

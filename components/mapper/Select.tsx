@@ -15,6 +15,7 @@ const SelectComponent = ({
   renderTree,
   component,
   isPreviewMode,
+  children: child,
   ...props
 }: Props) => {
   const {
@@ -24,9 +25,10 @@ const SelectComponent = ({
     dataPath,
     triggers,
     loading,
-    style: { height, ...style },
     ...componentProps
   } = component.props as any;
+
+  const { height, ...style } = props.style ?? {};
 
   let data = [];
 
