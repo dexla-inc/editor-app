@@ -3,11 +3,12 @@ export type TemplateParams = {
   state: string;
   prompt: string;
   type: TemplateTypes;
-  // tags?: string[];
+  tags?: string; // csv
 };
 
 export type TemplateResponse = TemplateParams & {
   id: string;
+  tags?: TemplateTag[];
 };
 
 export type TemplateTypes =
@@ -52,6 +53,15 @@ export const TemplateTypesKeys: Record<TemplateTypes, string> = {
   PROJECT: "Project",
   SELECTION: "Selection",
 };
+
+type TemplateTag =
+  | "MODERN"
+  | "TRADITIONAL"
+  | "MINIMALISTIC"
+  | "FLAT"
+  | "FUTURISTIC"
+  | "RETRO"
+  | "VINTAGE";
 
 export const TemplateTypesOptions = Object.keys(TemplateTypesKeys).map(
   (key) => ({

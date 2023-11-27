@@ -50,12 +50,6 @@ export default async function handler(
 
     const templates = await listTemplates(companyId as string);
 
-    // const templates = await prisma.template.findMany({
-    //   where: {
-    //     prompt: { not: null },
-    //   },
-    // });
-
     console.log("templates", templates);
 
     const templatesData = await templates.results.reduce(

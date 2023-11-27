@@ -17,8 +17,8 @@ export const createTemplate = async (
 };
 
 export const updateTemplate = async (
-  companyId: string,
   id: string,
+  companyId: string,
   params: TemplateParams,
 ) => {
   const url = `/templates/${id}?companyId=${companyId}`;

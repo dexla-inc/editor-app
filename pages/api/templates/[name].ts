@@ -11,7 +11,7 @@ export default async function handler(
     }
 
     const { companyId, name } = req.query;
-    // TODO: Move template gets to the Apps API
+
     const template = await getTemplate(companyId as string, name as string);
 
     return res.status(200).json(template);
