@@ -343,7 +343,17 @@ export const requiredModifiers: RequiredModifiers = {
   chart: {
     data: "",
     dataLabels: "",
-    colors: [],
+    colors: [
+      "Success.7",
+      "Background.4",
+      "Primary.4",
+      "Danger.6",
+      "Success.4",
+      "Background.9",
+      "Success.9",
+      "Primary.8",
+      "Primary.9",
+    ],
   },
 };
 

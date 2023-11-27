@@ -1,4 +1,5 @@
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -14,6 +15,7 @@ export const jsonStructure = (props?: any): Component => {
         height: "auto",
         width: "auto",
       },
+      chartColors: [...requiredModifiers.chart.colors],
       series: [
         {
           name: "Desktops",

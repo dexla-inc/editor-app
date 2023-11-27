@@ -1,5 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
-import { Component } from "@/utils/editor";
+import { Component, getColorFromTheme } from "@/utils/editor";
 import { ApexOptions } from "apexcharts";
 import get from "lodash.get";
 import merge from "lodash.merge";
@@ -24,6 +24,7 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
     series,
     type,
     options,
+    chartColors,
     triggers,
     ...componentProps
   } = component.props as any;
@@ -32,20 +33,24 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
   const isPieOrRadial =
     type === "pie" || type === "donut" || type === "radialBar";
 
+  const colors = chartColors?.map((color: any) =>
+    getColorFromTheme(theme, color),
+  ) ?? [
+    theme.colors.green[7],
+    theme.colors.orange[4],
+    theme.colors.blue[4],
+    theme.colors.red[6],
+    theme.colors.green[4],
+    theme.colors.orange[9],
+    theme.colors.green[9],
+    theme.colors.blue[8],
+    theme.colors.blue[9],
+  ];
+
   const customOptions: ApexOptions = merge(
     {},
     {
-      colors: [
-        theme.colors.green[7],
-        theme.colors.orange[4],
-        theme.colors.blue[4],
-        theme.colors.red[6],
-        theme.colors.green[4],
-        theme.colors.orange[9],
-        theme.colors.green[9],
-        theme.colors.blue[8],
-        theme.colors.blue[9],
-      ],
+      colors,
       chart: {
         toolbar: {
           show: false,
