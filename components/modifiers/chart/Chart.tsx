@@ -1,7 +1,9 @@
+import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
+import { useEditorStore } from "@/stores/editor";
 import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Stack, Textarea } from "@mantine/core";
+import { Divider, Stack, Text, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconChartInfographic } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -14,6 +16,7 @@ export const icon = IconChartInfographic;
 const initialValues = requiredModifiers.chart;
 
 export const Modifier = withModifier(({ selectedComponent }) => {
+  const theme = useEditorStore((state) => state.theme);
   const form = useForm({
     initialValues,
   });
@@ -35,12 +38,24 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         merge({}, initialValues, {
           data: JSON.stringify(series, null, 2),
           dataLabels: JSON.stringify(_dataLabels, null, 2),
-          colors: options?.colors,
+          colors: options?.colors ?? [
+            "Success.7",
+            theme.colors.orange[4],
+            theme.colors.blue[4],
+            theme.colors.red[6],
+            theme.colors.green[4],
+            theme.colors.orange[9],
+            theme.colors.green[9],
+            theme.colors.blue[8],
+            theme.colors.blue[9],
+          ],
         }),
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
+
+  console.log(form.values.colors);
 
   return (
     <form>
@@ -85,6 +100,32 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             }
           }}
         />
+        <Divider variant="dotted" />
+        <Stack>
+          <Text fw={500} size="xs">
+            Chart Colors
+          </Text>
+          <Stack spacing="xs">
+            {form.values.colors.map((color: string, index: number) => (
+              <ThemeColorSelector
+                key={index}
+                value={color}
+                onChange={(e) => {
+                  const colors = [...form.values.colors];
+                  colors[index] = e;
+                  form.setFieldValue("colors", colors);
+                  try {
+                    debouncedTreeComponentPropsUpdate("options", {
+                      colors,
+                    });
+                  } catch (error) {
+                    console.error(error);
+                  }
+                }}
+              />
+            ))}
+          </Stack>
+        </Stack>
       </Stack>
     </form>
   );

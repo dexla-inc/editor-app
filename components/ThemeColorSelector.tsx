@@ -132,6 +132,7 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
         </Text>
         <Group noWrap align="center">
           <Select
+            w="100%"
             size="xs"
             {...selectProps}
             // value={_value}
