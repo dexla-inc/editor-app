@@ -1,4 +1,5 @@
 export type TemplateParams = {
+  id: string;
   name: string;
   state: string;
   prompt: string;
@@ -7,7 +8,6 @@ export type TemplateParams = {
 };
 
 export type TemplateResponse = TemplateParams & {
-  id: string;
   tags?: TemplateTag[];
 };
 

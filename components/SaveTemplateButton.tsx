@@ -28,10 +28,15 @@ export const SaveTemplateButton = () => {
         title: "Saving Template",
         message: "Please wait while we save your template",
       });
-      const page = await getPage(
-        router.query.id as string,
-        router.query.page as string,
-      );
+
+      const { id: projectId, page: pageId } = router.query as {
+        id: string;
+        page: string;
+      };
+
+      console.log(pageId);
+
+      const page = await getPage(projectId, pageId);
 
       const tiles = getTiles(editorTree.root);
       const tilesData = tiles.map((tile) => {
@@ -50,11 +55,12 @@ export const SaveTemplateButton = () => {
 
         return { id, tile, prompt };
       });
+      const templateState = encodeSchema(JSON.stringify(editorTree));
 
       const templateParams: TemplateParams = {
+        id: pageId,
         name: camelcase(page.title),
-        //state: JSON.stringify(editorTree),
-        state: encodeSchema(JSON.stringify(editorTree)),
+        state: templateState,
         type: page.queryStrings?.type as TemplateTypes,
         tags: page.queryStrings?.tags as any,
         prompt: `
@@ -74,7 +80,6 @@ export const SaveTemplateButton = () => {
         const tileParams: TileParams = {
           id: `${templateResponse.id}-${tile.id}`,
           name: tile.id,
-          //state: JSON.stringify(tile.tile.node),
           state: encodeSchema(JSON.stringify(tile.tile.node)),
           prompt: tile.prompt,
           templateId: templateResponse.id,
