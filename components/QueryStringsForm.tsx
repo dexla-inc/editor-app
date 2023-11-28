@@ -1,10 +1,11 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { Icon } from "@/components/Icon";
 import { QueryStringListItem } from "@/requests/pages/types";
+import { useEditorStore } from "@/stores/editor";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Flex, Group, Text, TextInput } from "@mantine/core";
 import { Dispatch, SetStateAction, useState } from "react";
-import { useEditorStore } from "@/stores/editor";
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { ActionIconDefault } from "./ActionIconDefault";
 
 type QueryStringsFormProps = {
   queryStringState: [
@@ -50,7 +51,7 @@ export const QueryStringsForm = ({
               setQueryKey("");
               setQueryValue("");
             }}
-            color="indigo"
+            variant="default"
             sx={{ marginRight: 0 }}
             leftIcon={<Icon name="IconPlus" size={ICON_SIZE} />}
           >
@@ -74,6 +75,7 @@ export const QueryStringsForm = ({
                     return nPrev;
                   });
                 }}
+                size="xs"
                 style={{ width: "50%" }}
               />
               {readOnlyKeys ? (
@@ -104,19 +106,19 @@ export const QueryStringsForm = ({
                       return nPrev;
                     });
                   }}
+                  size="xs"
                   style={{ width: "50%" }}
                 />
               )}
 
-              <Icon
-                name={ICON_DELETE}
+              <ActionIconDefault
+                iconName={ICON_DELETE}
+                tooltip="Delete"
                 onClick={() => {
                   setQueryStrings((prev: QueryStringListItem[]) => {
                     return prev.filter((_, i) => index !== i);
                   });
                 }}
-                style={{ cursor: "pointer" }}
-                color="red"
               />
             </Group>
           );

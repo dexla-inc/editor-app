@@ -26,7 +26,6 @@ import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { FileStorageButton } from "@/components/FileStorageButton";
 import { Icon } from "@/components/Icon";
 import { SaveTemplateButton } from "@/components/SaveTemplateButton";
-import { LogicFlowButton } from "@/components/logic-flow/LogicFlowButton";
 import { VariablesButton } from "@/components/variables/VariablesButton";
 import { getPageList } from "@/requests/pages/queries";
 import { PageListResponse } from "@/requests/pages/types";
@@ -35,6 +34,7 @@ import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
+import { ActionIconDefault } from "./ActionIconDefault";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const resetTree = useEditorStore((state) => state.resetTree);
@@ -91,7 +91,12 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               />
               {isDexlaAdmin && <SaveTemplateButton />}
               {isDexlaAdmin && <AIChatHistoryButton projectId={projectId} />}
-              <LogicFlowButton projectId={projectId} pageId={currentPageId} />
+              <ActionIconDefault
+                iconName="IconGitBranch"
+                tooltip="Logic Flows"
+                href={`/projects/${projectId}/editor/${currentPageId}/flows`}
+              />
+
               <VariablesButton projectId={projectId} pageId={currentPageId} />
               <FileStorageButton />
               <ChangeHistoryPopover />
