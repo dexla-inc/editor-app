@@ -1,4 +1,3 @@
-import { Icon } from "@/components/Icon";
 import { QueryStringsForm } from "@/components/QueryStringsForm";
 import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
 import {
@@ -10,15 +9,7 @@ import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { decodeSchema } from "@/utils/compression";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
-import {
-  ActionIcon,
-  Button,
-  Flex,
-  Group,
-  Stack,
-  TextInput,
-  Tooltip,
-} from "@mantine/core";
+import { Button, Flex, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useClipboard } from "@mantine/hooks";
 import { IconArrowLeft } from "@tabler/icons-react";
@@ -26,6 +17,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
+import { ActionIconDefault } from "../ActionIconDefault";
 
 type PageDetailPaneProps = {
   page?: PageResponse | null | undefined;
@@ -214,61 +206,28 @@ export default function PageDetailPane({
             </Button>
             <Group sx={{ gap: "5px" }}>
               {page?.id && (
-                <Tooltip
-                  withArrow
-                  color="green"
-                  label="Duplicate"
-                  sx={{ fontSize: "0.75rem" }}
-                >
-                  <ActionIcon
-                    loading={isLoading}
-                    onClick={duplicate}
-                    color="yellow"
-                    variant="light"
-                    radius="xl"
-                  >
-                    <Icon name="IconCopy" size={ICON_SIZE} />
-                  </ActionIcon>
-                </Tooltip>
+                <ActionIconDefault
+                  iconName="IconCopy"
+                  tooltip="Duplicate"
+                  onClick={duplicate}
+                />
               )}
               {page?.pageState && (
-                <Tooltip
-                  withArrow
-                  color="orange"
-                  label={copied ? "Copied" : "Copy Design"}
-                  sx={{ fontSize: "0.75rem" }}
-                >
-                  <ActionIcon
-                    loading={isLoading}
-                    onClick={(e) => {
-                      const pageStructure = decodeSchema(page.pageState!);
-                      copy(pageStructure);
-                    }}
-                    color="grape"
-                    variant="light"
-                    radius="xl"
-                  >
-                    <Icon name="IconPhotoPlus" size={ICON_SIZE} />
-                  </ActionIcon>
-                </Tooltip>
+                <ActionIconDefault
+                  iconName="IconPhotoPlus"
+                  tooltip={copied ? "Copied" : "Copy Design"}
+                  onClick={(e) => {
+                    const pageStructure = decodeSchema(page.pageState!);
+                    copy(pageStructure);
+                  }}
+                />
               )}
               {page?.id && (
-                <Tooltip
-                  withArrow
-                  color="red"
-                  label="Delete"
-                  sx={{ fontSize: "0.75rem" }}
-                >
-                  <ActionIcon
-                    loading={isLoading}
-                    onClick={deleteFn}
-                    color="red"
-                    variant="light"
-                    radius="xl"
-                  >
-                    <Icon name={ICON_DELETE} />
-                  </ActionIcon>
-                </Tooltip>
+                <ActionIconDefault
+                  iconName={ICON_DELETE}
+                  tooltip="Delete"
+                  onClick={deleteFn}
+                />
               )}
             </Group>
           </Group>
@@ -289,6 +248,7 @@ export default function PageDetailPane({
               autoComplete="off"
               data-lpignore="true"
               data-form-type="other"
+              size="xs"
             />
             <TextInput
               label="Slug"
@@ -301,6 +261,7 @@ export default function PageDetailPane({
                 form.setFieldValue("slug", newSlug);
                 form.setTouched({ slug: true });
               }}
+              size="xs"
             />
 
             <QueryStringsForm queryStringState={queryStringState} />

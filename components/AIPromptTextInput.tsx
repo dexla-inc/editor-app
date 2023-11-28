@@ -106,7 +106,9 @@ export default function AIPromptTextInput() {
               size={ICON_SIZE}
               color={internalTheme.colors.teal[6]}
             />
-            <Text color="grey">How can I help you today?</Text>
+            <Text color="grey" size="xs">
+              How can I help you today?
+            </Text>
           </Flex>
         </UnstyledButton>
       </Popover.Target>

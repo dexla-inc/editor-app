@@ -1,15 +1,8 @@
 import { VariableForm } from "@/components/variables/VariableForm";
-import {
-  ActionIcon,
-  ButtonProps,
-  Modal,
-  SegmentedControl,
-  Stack,
-  Tooltip,
-} from "@mantine/core";
+import { ButtonProps, Modal, SegmentedControl, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
-import { Icon } from "../Icon";
+import { ActionIconDefault } from "../ActionIconDefault";
 import { VariableList } from "./VariableList";
 
 type Props = ButtonProps & {
@@ -23,11 +16,12 @@ export const VariablesButton = ({ projectId, pageId }: Props) => {
 
   return (
     <>
-      <Tooltip label="Variables" withArrow fz="xs">
-        <ActionIcon onClick={modal.open} variant="default">
-          <Icon name="IconVariable" />
-        </ActionIcon>
-      </Tooltip>
+      <ActionIconDefault
+        iconName="IconVariable"
+        tooltip="Variables"
+        onClick={modal.open}
+      />
+
       <Modal
         title="Variables"
         opened={opened}

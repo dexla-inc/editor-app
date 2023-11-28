@@ -66,6 +66,7 @@ export const EditorNavbarComponentsSection = () => {
       <SegmentedControl
         value={componentTypeToShow}
         onChange={setComponentTypeToShow}
+        size="xs"
         data={[
           {
             label: "Default",
@@ -82,6 +83,7 @@ export const EditorNavbarComponentsSection = () => {
         onChange={(e) => setQuery(e.target.value)}
         value={query}
         placeholder="Search"
+        size="xs"
         icon={<IconSearch size={ICON_SIZE} />}
       />
       {componentTypeToShow === "default" && (
