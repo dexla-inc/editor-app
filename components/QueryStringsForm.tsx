@@ -1,9 +1,11 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { Icon } from "@/components/Icon";
 import { QueryStringListItem } from "@/requests/pages/types";
+import { TemplateTypesOptions } from "@/requests/templates/types";
 import { useEditorStore } from "@/stores/editor";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
-import { Button, Flex, Group, Text, TextInput } from "@mantine/core";
+import { Button, Flex, Group, Select, Text, TextInput } from "@mantine/core";
 import { Dispatch, SetStateAction, useState } from "react";
 import { ActionIconDefault } from "./ActionIconDefault";
 
@@ -33,10 +35,12 @@ export const QueryStringsForm = ({
     (state) => state.setPickingComponentToBindTo,
   );
 
+  const company = usePropelAuthStore((state) => state.activeCompany);
+
   return (
     <>
-      <Flex justify="space-between">
-        <Text fz="sm" weight="500">
+      <Flex justify="space-between" align="center">
+        <Text fz="xs" weight="500">
           Query Strings
         </Text>
 
@@ -94,6 +98,19 @@ export const QueryStringsForm = ({
                     setPickingComponentToBindTo(undefined);
                     setComponentToBind(undefined);
                   }}
+                />
+              ) : company.orgName == "Dexla" && key == "type" ? (
+                <Select
+                  value={value ?? "REPORT"}
+                  onChange={(value) => {
+                    setQueryStrings((prev: QueryStringListItem[]) => {
+                      const nPrev = [...prev];
+                      nPrev[index].value = value as string;
+                      return nPrev;
+                    });
+                  }}
+                  data={TemplateTypesOptions}
+                  size="xs"
                 />
               ) : (
                 <TextInput

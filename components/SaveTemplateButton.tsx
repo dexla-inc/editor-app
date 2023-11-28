@@ -95,12 +95,11 @@ export const SaveTemplateButton = () => {
         title: "Saved Template",
         message: "Your template has been saved",
       });
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
       stopLoading({
         id: "save-template",
         title: "Oops",
-        message: "Something went wrong while saving your template",
+        message: error,
         isError: true,
       });
     }
