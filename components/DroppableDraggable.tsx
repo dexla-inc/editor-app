@@ -31,6 +31,7 @@ export const DroppableDraggable = ({
   const isLive = useEditorStore((state) => state.isLive);
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const isResizing = useEditorStore((state) => state.isResizing);
   const onMountActionsRan = useEditorStore((state) => state.onMountActionsRan);
   const addOnMountActionsRan = useEditorStore(
     (state) => state.addOnMountActionsRan,
@@ -208,9 +209,11 @@ export const DroppableDraggable = ({
       : {},
   });
 
+  const showShadows = !isPreviewMode && !isLive && !isResizing;
+
   const childStyles = {
     ...propsWithOverwrites.style,
-    ...(isPreviewMode || isLive ? {} : shadows),
+    ...(showShadows ? shadows : {}),
   };
 
   delete propsWithOverwrites.style;
@@ -225,7 +228,7 @@ export const DroppableDraggable = ({
             ...component,
             props: propsWithOverwrites,
           },
-          ...droppable,
+          ...(isResizing ? {} : droppable),
           id: component.id,
           isPreviewMode,
           style: childStyles,

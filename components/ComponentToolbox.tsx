@@ -110,7 +110,7 @@ export const ComponentToolbox = () => {
       top={-24}
       left={0}
       pos="absolute"
-      style={{ zIndex: 999 }}
+      style={{ zIndex: 200 }}
       bg={theme.colors.teal[6]}
     >
       {!component.fixedPosition && (
