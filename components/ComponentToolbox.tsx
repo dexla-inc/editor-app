@@ -100,6 +100,10 @@ export const ComponentToolbox = () => {
 
   const haveNonRootParent = parent && parent.id !== "root";
 
+  if (!selectedComponentId || !component) {
+    return null;
+  }
+
   return (
     <Group
       id="toolbox"

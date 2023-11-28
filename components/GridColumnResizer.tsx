@@ -1,20 +1,36 @@
 import { useEditorStore } from "@/stores/editor";
-import { getComponentById } from "@/utils/editor";
+import { GRID_SIZE } from "@/utils/config";
+import {
+  getComponentById,
+  getComponentParent,
+  updateTreeComponent,
+} from "@/utils/editor";
+import { calculateGridSizes } from "@/utils/grid";
 import { Box } from "@mantine/core";
-import { useCallback, useEffect } from "react";
+import cloneDeep from "lodash.clonedeep";
+import { useCallback, useEffect, useState } from "react";
+
+const SNAP_SIZE = 10;
 
 export const GridColumnResizer = () => {
+  const [columnSpan, setColumnSpan] = useState(0);
   const setIsResizing = useEditorStore((state) => state.setIsResizing);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const editorTree = useEditorStore((state) => state.tree);
+  const setEditorTree = useEditorStore((state) => state.setTree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
+  const parent = getComponentParent(editorTree.root, selectedComponentId!);
   const span = component?.props?.span;
   const isColumn = component?.name === "GridColumn";
+  const siblings = (parent?.children ?? []).filter(
+    (c) => c.name === "GridColumn",
+  );
+  const isLast = siblings[siblings.length - 1]?.id === component?.id;
 
   const calculatePosition = useCallback(() => {
     if (component?.id && !isPreviewMode && isColumn) {
@@ -54,19 +70,28 @@ export const GridColumnResizer = () => {
   const calculateDistance = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
       if (component?.id && !isPreviewMode && isColumn) {
-        const resizer = document.getElementById("right-resizer");
-        const comp = iframeWindow?.document.getElementById(component.id);
+        const resizer = document.getElementById("resizer");
 
-        if (resizer && comp) {
-          const compRect = comp.getBoundingClientRect();
+        if (resizer) {
+          const resizerRect = resizer.getBoundingClientRect();
 
-          const draggedDistanceFormStartingPoint = compRect.right - e.clientX;
+          const draggedDistanceFormStartingPoint = resizerRect.left - e.clientX;
           const isGoingLeft = draggedDistanceFormStartingPoint > 0;
           const distance = Math.abs(draggedDistanceFormStartingPoint);
-          // calculate the number os step in the grid (considering the grid span) for each 20px
-          const steps = Math.floor(distance / 20) * span;
-          const newSpan = isGoingLeft ? span - steps : span + steps;
-          console.log({ distance, isGoingLeft, steps, newSpan, span });
+          if (distance > SNAP_SIZE) {
+            const steps = Math.floor(distance / SNAP_SIZE);
+            if (steps === 0) return;
+
+            let newSpan = isGoingLeft ? span - steps : span + steps;
+
+            if (newSpan < 12) {
+              newSpan = 12;
+            } else if (newSpan > GRID_SIZE) {
+              newSpan = GRID_SIZE;
+            }
+
+            setColumnSpan(newSpan);
+          }
         }
       }
     },
@@ -89,7 +114,20 @@ export const GridColumnResizer = () => {
     return () => el?.removeEventListener("scroll", calculatePosition);
   }, [calculatePosition, iframeWindow]);
 
-  if (!isColumn || isPreviewMode || !component) {
+  useEffect(() => {
+    if (columnSpan && component?.id && columnSpan !== span) {
+      const tree = useEditorStore.getState().tree;
+      const copy = cloneDeep(tree);
+      updateTreeComponent(copy.root, component?.id, {
+        span: columnSpan,
+      });
+
+      // calculateGridSizes(copy.root);
+      setEditorTree(copy, { action: `Resizing ${component?.id}` });
+    }
+  }, [columnSpan, component?.id, setEditorTree, span]);
+
+  if (!isColumn || isPreviewMode || !component || isLast) {
     return null;
   }
 

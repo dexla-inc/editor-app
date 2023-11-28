@@ -79,8 +79,8 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
         removeComponent(copy.root, parent.id!);
       }
 
-      setEditorTree(copy, { action: `Removed ${comp?.name}` });
       setSelectedComponentId(undefined);
+      setEditorTree(copy, { action: `Removed ${comp?.name}` });
     }
   }, [
     editorTree,
@@ -309,7 +309,7 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
         />
       )}
       <ComponentToolbox />
-      <GridColumnResizer />
+      <GridColumnResizer key={selectedComponentId} />
     </>
   );
 };
