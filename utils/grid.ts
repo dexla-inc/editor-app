@@ -8,21 +8,18 @@ export const calculateGridSizes = (tree: Component) => {
       if (node.name === "Grid") {
         const parent = context.parent as Component;
         if (parent.name === "GridColumn") {
-          const newGridSize = Math.floor(
-            parent.props!.span / ((parent.children ?? []).length ?? 1),
-          );
-
-          console.log("newGridSize", newGridSize);
-          node.props!.gridSize = newGridSize;
+          node.props!.gridSize = parent.props!.span;
         }
       } else if (node.name === "GridColumn") {
         const parent = context.parent as Component;
         if (parent.name === "Grid") {
-          const newSpanSize = Math.floor(
-            parent.props!.gridSize / ((parent.children ?? []).length ?? 1),
+          const columnChilds = (parent.children ?? []).filter(
+            (child) => child.name === "GridColumn",
           );
 
-          console.log("newSpanSize", newSpanSize);
+          const newSpanSize = Math.floor(
+            parent.props!.gridSize / columnChilds.length ?? 1,
+          );
 
           node.props!.span = newSpanSize;
         }

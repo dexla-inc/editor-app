@@ -16,12 +16,10 @@ export const GridColumnResizer = () => {
   const span = component?.props?.span;
   const isColumn = component?.name === "GridColumn";
 
-  console.log({ span, component });
-
   const calculatePosition = useCallback(() => {
     if (component?.id && !isPreviewMode && isColumn) {
       const canvas = document.getElementById("iframe-canvas");
-      const resizer = document.getElementById("right-resizer");
+      const resizer = document.getElementById("resizer");
       const comp = iframeWindow?.document.getElementById(component.id);
 
       if (resizer && comp && canvas) {
@@ -97,7 +95,7 @@ export const GridColumnResizer = () => {
 
   return (
     <Box
-      id="right-resizer"
+      id="resizer"
       bg="teal"
       w="4px"
       h="40px"
