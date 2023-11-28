@@ -84,7 +84,7 @@ export default function InitialPane({
                   },
                 }}
               >
-                <Flex gap="xs" sx={{ maxWidth: 180 }}>
+                <Flex gap="xs" sx={{ maxWidth: 164 }}>
                   <Flex style={{ flex: "0 0 auto" }}>
                     {page.isHome ? (
                       <IconHome
@@ -96,7 +96,7 @@ export default function InitialPane({
                     )}
                   </Flex>
                   <Text size="xs" truncate>
-                    {page.title}{" "}
+                    {page.title}
                   </Text>
                 </Flex>
                 <ActionIconDefault

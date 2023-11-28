@@ -267,7 +267,7 @@ export default function PageDetailPane({
             <QueryStringsForm queryStringState={queryStringState} />
 
             {page ? (
-              <Button type="submit" loading={isLoading}>
+              <Button type="submit" loading={isLoading} compact>
                 Save
               </Button>
             ) : (
