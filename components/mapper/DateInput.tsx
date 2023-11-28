@@ -1,6 +1,7 @@
 import { Icon } from "@/components/Icon";
+import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { Component, getColorFromTheme } from "@/utils/editor";
 import { DateInputProps, DateInput as MantineDateInput } from "@mantine/dates";
 import merge from "lodash.merge";
 import { memo } from "react";
@@ -17,10 +18,17 @@ const DateInputComponent = ({ renderTree, component, ...props }: Props) => {
     disabled,
     icon: iconName,
     styles,
+    style,
     ...componentProps
   } = component.props as any;
+  const theme = useEditorStore((state) => state.theme);
+  const borderColor = getColorFromTheme(theme, "Border.6");
 
-  const customStyles = merge({}, styles, { label: { width: "100%" } });
+  const customInputStyle = merge({}, { borderColor }, style);
+  const customStyles = merge({}, styles, {
+    input: customInputStyle,
+    label: { width: "100%" },
+  });
 
   return (
     <MantineDateInput
