@@ -2,15 +2,15 @@ import { useEditorStore } from "@/stores/editor";
 import { GRID_SIZE } from "@/utils/config";
 import {
   getComponentById,
+  getComponentIndex,
   getComponentParent,
   updateTreeComponent,
 } from "@/utils/editor";
-import { calculateGridSizes } from "@/utils/grid";
 import { Box } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback, useEffect, useState } from "react";
 
-const SNAP_SIZE = 10;
+const SNAP_SIZE = 15;
 
 export const GridColumnResizer = () => {
   const [columnSpan, setColumnSpan] = useState(0);
@@ -116,16 +116,22 @@ export const GridColumnResizer = () => {
 
   useEffect(() => {
     if (columnSpan && component?.id && columnSpan !== span) {
+      const nextSibling =
+        siblings[getComponentIndex(parent!, component.id) + 1];
+      const nextSiblingSpan = nextSibling?.props?.span - (columnSpan - span);
       const tree = useEditorStore.getState().tree;
       const copy = cloneDeep(tree);
       updateTreeComponent(copy.root, component?.id, {
         span: columnSpan,
+        resized: true,
       });
-
-      // calculateGridSizes(copy.root);
+      updateTreeComponent(copy.root, nextSibling?.id!, {
+        span: nextSiblingSpan,
+        resized: true,
+      });
       setEditorTree(copy, { action: `Resizing ${component?.id}` });
     }
-  }, [columnSpan, component?.id, setEditorTree, span]);
+  }, [columnSpan, component?.id, parent, setEditorTree, siblings, span]);
 
   if (!isColumn || isPreviewMode || !component || isLast) {
     return null;

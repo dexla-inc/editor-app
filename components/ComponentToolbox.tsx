@@ -200,10 +200,17 @@ export const ComponentToolbox = () => {
             size="xs"
             onClick={() => {
               const copy = cloneDeep(editorTree);
-              addComponent(copy.root, ColumnSchema, {
-                id: component.id!,
-                edge: "center",
-              });
+              addComponent(
+                copy.root,
+                {
+                  ...ColumnSchema,
+                  props: { ...ColumnSchema.props, resetTargetResized: true },
+                },
+                {
+                  id: component.id!,
+                  edge: "center",
+                },
+              );
 
               setEditorTree(copy);
             }}

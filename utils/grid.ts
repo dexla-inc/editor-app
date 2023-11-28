@@ -10,7 +10,7 @@ export const calculateGridSizes = (tree: Component) => {
         if (parent.name === "GridColumn") {
           node.props!.gridSize = parent.props!.span;
         }
-      } else if (node.name === "GridColumn") {
+      } else if (node.name === "GridColumn" && !node.props?.resized) {
         const parent = context.parent as Component;
         if (parent.name === "Grid") {
           const columnChilds = (parent.children ?? []).filter(
