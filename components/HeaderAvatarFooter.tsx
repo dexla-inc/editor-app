@@ -11,10 +11,10 @@ import {
 import { forwardRef } from "react";
 
 type NavigationAvatarFooterProps = {
-  firstName?: string;
-  lastName?: string;
+  firstname?: string;
+  lastname?: string;
   email?: string;
-  pictureUrl?: string;
+  pictureurl?: string;
 };
 
 const NavigationAvatarFooter = forwardRef<
@@ -47,16 +47,16 @@ const NavigationAvatarFooter = forwardRef<
           },
         }}
       >
-        {(props.firstName ||
-          props.lastName ||
+        {(props.firstname ||
+          props.lastname ||
           props.email ||
-          props.pictureUrl) && (
+          props.pictureurl) && (
           <Flex py="xs" align="center" gap="xs">
-            <Avatar src={props?.pictureUrl} radius="xl" />
+            <Avatar src={props?.pictureurl} radius="xl" />
             <Box sx={{ flex: 1 }}>
-              {props?.firstName && props.lastName && (
+              {props?.firstname && props.lastname && (
                 <Text size="sm" weight={500} sx={{ whiteSpace: "nowrap" }}>
-                  {`${props?.firstName} ${props?.lastName}`}
+                  {`${props?.firstname} ${props?.lastname}`}
                 </Text>
               )}
               <Text color="dimmed" size="xs">

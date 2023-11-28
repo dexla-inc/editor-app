@@ -18,7 +18,6 @@ export const Icon = ({ name, size = ICON_SIZE, ...props }: Props) => {
 
   return (
     <Box
-      unstyled
       bg={props.bg}
       style={{
         display: "flex",

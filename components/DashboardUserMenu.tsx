@@ -16,10 +16,10 @@ export const DashboardUserMenu = () => {
     <Menu withArrow>
       <Menu.Target>
         <NavigationAvatarFooter
-          firstName={user?.firstName}
-          lastName={user?.lastName}
+          firstname={user?.firstName}
+          lastname={user?.lastName}
           email={user?.email}
-          pictureUrl={user?.pictureUrl}
+          pictureurl={user?.pictureUrl}
         />
       </Menu.Target>
       <Menu.Dropdown>
