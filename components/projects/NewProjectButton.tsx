@@ -7,6 +7,7 @@ import {
   UnstyledButtonProps,
   useMantineTheme,
 } from "@mantine/core";
+import { forwardRef } from "react";
 
 type IconTitleDescriptionButtonProps = {
   icon: JSX.Element;
@@ -15,17 +16,15 @@ type IconTitleDescriptionButtonProps = {
   tooltip?: string;
 } & UnstyledButtonProps;
 
-export default function IconTitleDescriptionButton({
-  icon,
-  title,
-  description,
-  tooltip,
-  ...props
-}: IconTitleDescriptionButtonProps) {
+const IconTitleDescriptionButton = forwardRef<
+  HTMLButtonElement,
+  IconTitleDescriptionButtonProps
+>(({ icon, title, description, tooltip, ...props }, ref) => {
   const theme = useMantineTheme();
   return (
     <Tooltip label={tooltip} disabled={tooltip === undefined}>
       <UnstyledButton
+        ref={ref}
         sx={() => ({
           padding: theme.spacing.md,
           borderRadius: theme.radius.sm,
@@ -58,4 +57,8 @@ export default function IconTitleDescriptionButton({
       </UnstyledButton>
     </Tooltip>
   );
-}
+});
+
+IconTitleDescriptionButton.displayName = "IconTitleDescriptionButton";
+
+export default IconTitleDescriptionButton;

@@ -238,8 +238,14 @@ export default function PagesStep({
         {hasPageNames ? (
           pages.map(({ name, features }, index) => {
             const isLastItem = index === pages.length - 1;
+            const _features = JSON.stringify(features)
+              .replace(/"/g, "")
+              .replace("[", "")
+              .replace("]", "")
+              .replace(/,/g, ", ");
+
             return (
-              <>
+              <Stack key={index}>
                 {/* Added div with key */}
                 <Stack
                   // p="md"
@@ -269,19 +275,37 @@ export default function PagesStep({
                   </Group>
                   <TextInput
                     value={name}
+                    onChange={(e) => {
+                      const updatedPages = [...pages];
+                      updatedPages[index] = {
+                        ...updatedPages[index],
+                        name: e.currentTarget.value,
+                      };
+                      setPages(updatedPages);
+                    }}
                     label="Page name"
                     placeholder="Page name"
                     mx="sm"
                   />
                   <Textarea
-                    value={features}
+                    value={_features}
+                    onChange={(e) => {
+                      const updatedPages = [...pages];
+                      updatedPages[index] = {
+                        ...updatedPages[index],
+                        features: e.currentTarget.value
+                          .split(",")
+                          .map((f) => f.trim()),
+                      };
+                      setPages(updatedPages);
+                    }}
                     label="Features"
                     autosize
                     mx="sm"
                   />
                 </Stack>
                 {/* {!isLastItem && <Divider color="gray.2" />} */}
-              </>
+              </Stack>
             );
           })
         ) : (
