@@ -134,8 +134,10 @@ export const generateStructureFromScreenshot = async (
   description: string,
   theme: MantineThemeExtended,
   base64Image?: string,
+  init = {},
 ) => {
   const response = await fetch("/api/ai/component-screenshot", {
+    ...init,
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -156,8 +158,10 @@ export const generateStructureFromScreenshot = async (
 export const generateThemeFromScreenshot = async (
   description: string,
   base64Image: string,
+  init = {},
 ): Promise<BrandingAITheme> => {
   const response = await fetch("/api/ai/theme-screenshot", {
+    ...init,
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -177,9 +181,10 @@ export const anyPrompt = async (
   model: string,
   prompt: string,
   image?: string,
+  init = {},
 ) => {
-  console.log("prompt", prompt);
   const response = await fetch("/api/ai/any-prompt", {
+    ...init,
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -57,6 +57,8 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
         },
         width: "100%",
         foreColor: theme.colors.gray[5],
+        offsetX: 0,
+        offsetY: 0,
       },
       states: {
         hover: {
@@ -91,7 +93,7 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
         strokeColors: theme.colors.gray[0],
       },
       legend: {
-        show: true,
+        show: type !== "radialBar" && series.length > 0,
         fontSize: 13,
         position: "top",
         horizontalAlign: "right",
@@ -156,6 +158,16 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
       : { xaxis: { categories: dataLabels } }),
   };
 
+  var _options = {
+    chart: {
+      height: "auto",
+      width: 350,
+      type: "radialBar",
+    },
+    series: [70],
+    labels: ["Progress"],
+  };
+
   return (
     <div>
       <ReactApexChart
@@ -165,8 +177,18 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
         series={dataSeries}
         style={{
           ...style,
-          textAlign: "center",
+          padding: 0,
           color: theme.colors.gray[8],
+          ...(type === "radialBar"
+            ? {
+                marginTop: "-6.5%",
+                marginBottom: "-20%",
+              }
+            : type === "radar"
+            ? {
+                marginBottom: "-20%",
+              }
+            : {}),
         }}
         width="100%"
         type={type}

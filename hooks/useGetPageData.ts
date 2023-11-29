@@ -67,21 +67,22 @@ export const useGetPageData = ({
       const templateToUse = await analyseTemplateToUse(
         page.name,
         page.description ?? "",
+        undefined,
+        undefined,
+        { signal },
       );
 
       const template = await getTemplate(templateToUse.name, true);
 
-      const _project = await fetch(`/api/project/${projectId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        signal,
-      }).then((projectResponse) => projectResponse.json());
-
       // TODO: Replace tiles from template state with tiles from aiPageTemplate
       const templateTreeState = JSON.parse(decodeSchema(template.state));
-
+      // const _project = await fetch(`/api/project/${projectId}`, {
+      //   method: "GET",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   signal,
+      // }).then((projectResponse) => projectResponse.json());
       // TODO: Add tiles into AI response /api/ai/page
       // const treeState = replaceTilesData(
       //   templateTreeState,
