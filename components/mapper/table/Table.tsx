@@ -15,7 +15,8 @@ const TableComponent = ({ component, renderTree, ...props }: Props) => {
     <ScrollArea w={style?.width ?? "100%"}>
       <MantineTable
         striped
-        sx={merge({}, style)}
+        highlightOnHover
+        sx={merge({ cursor: "default" }, style)}
         {...componentProps}
         {...props}
       >
