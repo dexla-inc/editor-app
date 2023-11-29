@@ -13,7 +13,12 @@ const TableComponent = ({ component, renderTree, ...props }: Props) => {
   const { style, ...componentProps } = component.props as any;
   return (
     <ScrollArea w={style?.width ?? "100%"}>
-      <MantineTable sx={merge({}, style)} {...componentProps} {...props}>
+      <MantineTable
+        striped
+        sx={merge({}, style)}
+        {...componentProps}
+        {...props}
+      >
         {component.children && component.children.length > 0
           ? component.children?.map((child) => renderTree(merge(child)))
           : null}

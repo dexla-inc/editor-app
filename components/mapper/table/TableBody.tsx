@@ -9,7 +9,7 @@ type Props = {
   component: Component;
 };
 
-export const TableHeaderComponent = ({
+export const TableBodyComponent = ({
   component,
   renderTree,
   ...props
@@ -42,4 +42,4 @@ export const TableHeaderComponent = ({
   );
 };
 
-export const TableHeader = memo(TableHeaderComponent, isSame);
+export const TableBody = memo(TableBodyComponent, isSame);
