@@ -1,5 +1,6 @@
 import { Chart } from "@/components/mapper/charts/Chart";
 import { MantineSkeleton } from "@/components/skeleton/Skeleton";
+import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
 
@@ -10,6 +11,7 @@ type Props = {
 
 export const RadialChart = (props: Props) => {
   const { loading } = props.component.props as any;
+  const theme = useEditorStore((state) => state.theme);
 
   const customProps = merge({}, props, {
     component: {
@@ -31,11 +33,10 @@ export const RadialChart = (props: Props) => {
             radialBar: {
               startAngle: -90,
               endAngle: 90,
-              hollow: { size: "70%" },
+              hollow: { size: "73%" },
               track: {
                 background: "#e7e7e7",
                 strokeWidth: "97%",
-                margin: 5, // margin is in pixels
                 dropShadow: {
                   enabled: true,
                   top: 2,
@@ -50,8 +51,8 @@ export const RadialChart = (props: Props) => {
                   offsetY: 10,
                 },
                 value: {
-                  offsetY: -30,
-                  fontSize: "22px",
+                  offsetY: -35,
+                  fontSize: theme.fontSizes.xl,
                   fontFamily: "Helvetica, Arial, sans-serif",
                   fontWeight: 600,
                   color: "#373d3f",
@@ -62,6 +63,10 @@ export const RadialChart = (props: Props) => {
           stroke: {
             lineCap: "round",
           },
+        },
+        style: {
+          margin: 0,
+          padding: 0,
         },
       },
     },

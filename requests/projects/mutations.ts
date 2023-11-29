@@ -33,9 +33,10 @@ export const createProject = async (params: ProjectParams) => {
   return response;
 };
 
-export const createEntities = async (params: ProjectParams) => {
+export const createEntities = async (params: ProjectParams, init = {}) => {
   const accessToken = await getAuthToken();
   const response = await fetch("/api/ai/entities", {
+    ...init,
     method: "POST",
     headers: {
       "Content-Type": "application/json",

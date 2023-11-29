@@ -15,7 +15,7 @@ export default async function handler(
       throw new Error("Invalid method");
     }
 
-    const { companyId, projectId, pageId, accessToken } = req.body;
+    const { projectId, pageId, accessToken } = req.body;
     const project = await prisma.project.findFirstOrThrow({
       where: {
         id: projectId as string,
