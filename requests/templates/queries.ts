@@ -3,15 +3,12 @@ import { PagingParams, PagingResponse } from "@/requests/types";
 import { getWithoutAuth } from "@/utils/apiNoAuth";
 import { buildQueryString } from "@/utils/dashboardTypes";
 
-export const listTemplates = async (
-  companyId: string,
-  params?: PagingParams,
-) => {
+export const listTemplates = async (params?: PagingParams) => {
   let url = `/templates`;
 
   const { offset, limit } = params || {};
 
-  url += buildQueryString({ companyId, offset, limit });
+  url += buildQueryString({ offset, limit });
 
   const response = (await getWithoutAuth<PagingResponse<TemplateResponse>>(
     url,
@@ -20,8 +17,8 @@ export const listTemplates = async (
   return response;
 };
 
-export const getTemplate = async (companyId: string, name: string) => {
-  let url = `/templates/${name}?companyId=${companyId}`;
+export const getTemplate = async (name: string, includeTiles: boolean) => {
+  let url = `/templates/${name}?includeTiles=${includeTiles}`;
 
   const response = (await getWithoutAuth<TemplateResponse>(
     url,

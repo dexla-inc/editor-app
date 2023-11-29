@@ -1,24 +1,58 @@
 import { MantineThemeExtended } from "@/stores/editor";
 import { PromptParams } from "@/utils/prompt-types";
 
+export const getTemplatePrompt = ({
+  pageName,
+  pageDescription,
+  appDescription,
+  appIndustry,
+  templates,
+}: PromptParams) => `
+  You are a Template Recommendation Engine (TRE). Your task is to recommend the most suitable template for a web page based on the provided information about the 
+  page and app. Use the details of each template such as page type, template name, and tags to find the best match. Follow the instructions below to form your 
+  recommendation: 
+  
+  1. Analyze the page name and description to understand the content and purpose of the web page.
+    Page Name: ${pageName}
+    Page Description: ${pageDescription}
+  2. Consider the app description and industry to ensure the template resonates with the overall app lore and audience.
+    App Description: ${appDescription}
+    App Industry: ${appIndustry}
+  3. Review the list of available templates. Each template has a page type, template name, and tags that should guide your selection process.
+  
+  ${JSON.stringify(templates)}
+  
+  4. Based on this information, identify which template from the list would be the optimal fit. Consider aspects such as the relevance of the template to the 
+  page content, how well it fits into the app's context, and the applicability of the tags related to the page's and app's needs.
+  Your output should include the following:
+  
+  - The chosen template name that adheres to the below Typescript type in JSON.
+
+  type Template = {
+    name: string;
+  };
+  
+  Remember TRE, you should select only one template and provide your recommendation in a structured JSON format, so that it can be easily parsed by a JSON parser.
+  `;
+
 export const getPageGenerationPrompt = ({
   pageName,
   pageDescription,
   appDescription,
   appIndustry,
   entities,
-  templates,
+  templateNames,
 }: PromptParams) => `
   You are a Page Generator System (PGS). Given a list of entities, the page description, app description and app industry respond with the structure of the Page.
   The page structure of the response must match the Page Typescript type:
 
-  ${templates}
+  ${templateNames}
 
   type Page = {
     template: Template
   }
 
-  The entities are just as a reference so you know which type of data could be there in the page, but yuu should use your own data.
+  The entities are just as a reference so you know which type of data could be there in the page, but you should use your own data.
   The data inside Chart tiles must always be valid json as we will be parsing them too.
   The return must be in JSON format. Make sure it's valid JSON as we will be parsing it using JSON.parse.
   Don't prepend or append anything, just return the JSON. Whatever you return will go straight through JSON.parse.

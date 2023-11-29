@@ -1,3 +1,5 @@
+import { TileResponse } from "@/requests/tiles/types";
+
 export type TemplateParams = {
   id: string;
   name: string;
@@ -9,6 +11,13 @@ export type TemplateParams = {
 
 export type TemplateResponse = TemplateParams & {
   tags?: TemplateTag[];
+  tiles?: TileResponse[];
+};
+
+export type TemplateDetail = {
+  name: string;
+  type: TemplateTypes;
+  tags?: TemplateTag[] | undefined;
 };
 
 export type TemplateTypes =
