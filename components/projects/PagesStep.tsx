@@ -95,8 +95,6 @@ export default function PagesStep({
       existingPageNames,
     );
 
-    console.log({ newPageList });
-
     setPages((oldPages) => [...oldPages, ...newPageList]);
 
     stopLoading({
