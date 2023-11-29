@@ -1,5 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
+import { BoxProps } from "@mantine/core";
 import { ApexOptions } from "apexcharts";
 import get from "lodash.get";
 import merge from "lodash.merge";
@@ -13,12 +14,11 @@ type Props = {
   renderTree: (component: Component) => any;
   component: Component;
   isPreviewMode?: boolean;
-};
+} & BoxProps;
 
 export const Chart = ({ renderTree, component, ...props }: Props) => {
   const {
     children,
-    style,
     data,
     repeatedIndex,
     series,
@@ -159,7 +159,7 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
         {...triggers}
         series={dataSeries}
         style={{
-          ...style,
+          ...(props.style ?? {}),
           textAlign: "center",
           color: theme.colors.gray[8],
         }}
