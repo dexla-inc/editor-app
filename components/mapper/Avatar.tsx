@@ -1,7 +1,6 @@
-import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { Avatar as MantineAvatar, AvatarProps } from "@mantine/core";
+import { AvatarProps, Avatar as MantineAvatar } from "@mantine/core";
 import get from "lodash.get";
 import { memo } from "react";
 
@@ -11,7 +10,7 @@ type Props = {
 } & AvatarProps;
 
 const AvatarComponent = ({ renderTree, component, ...props }: Props) => {
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const isPreviewMode = component.isPreviewMode ?? false;
 
   const {
     src,

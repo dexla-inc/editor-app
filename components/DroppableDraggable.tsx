@@ -359,8 +359,8 @@ export const DroppableDraggable = ({
               component: {
                 ...component,
                 props: propsWithOverwrites,
+                isPreviewMode,
               },
-              isPreviewMode,
             },
             // @ts-ignore
             children?.children,

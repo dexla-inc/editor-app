@@ -20,7 +20,7 @@ import {
 import { IconSearch } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { GenerateComponentsAIButton } from "../GenerateComponentsAIButton";
 
 type DraggableComponentData = {
@@ -100,7 +100,7 @@ export const EditorNavbarComponentsSection = () => {
               }
 
               return (
-                <>
+                <Fragment key={category}>
                   <Grid.Col span={12}>
                     <Title order={6}>{category}</Title>
                   </Grid.Col>
@@ -109,7 +109,7 @@ export const EditorNavbarComponentsSection = () => {
                       <Draggable />
                     </Grid.Col>
                   ))}
-                </>
+                </Fragment>
               );
             },
           )}

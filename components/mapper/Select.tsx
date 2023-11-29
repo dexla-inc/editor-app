@@ -10,15 +10,9 @@ import { memo } from "react";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-  isPreviewMode?: boolean;
 } & SelectProps;
 
-const SelectComponent = ({
-  renderTree,
-  component,
-  isPreviewMode,
-  ...props
-}: Props) => {
+const SelectComponent = ({ renderTree, component, ...props }: Props) => {
   const {
     children,
     data: dataProp,
@@ -29,9 +23,9 @@ const SelectComponent = ({
     style: { height, ...style },
     ...componentProps
   } = component.props as any;
+  const isPreviewMode = component.isPreviewMode ?? false;
   const theme = useEditorStore((state) => state.theme);
   const borderColor = getColorFromTheme(theme, "Border.6");
-
   const customStyle = merge({}, { borderColor }, style);
 
   let data = [];

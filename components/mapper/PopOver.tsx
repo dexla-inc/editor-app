@@ -20,7 +20,7 @@ const PopOverComponent = ({
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const isPreviewMode = component.isPreviewMode ?? false;
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,
   );

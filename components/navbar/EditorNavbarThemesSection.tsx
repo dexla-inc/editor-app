@@ -217,7 +217,6 @@ export const EditorNavbarThemesSection = ({
               General defaults
             </Title>
             <CardStyleSelector
-              defaultValue={form.values.cardStyle}
               {...form.getInputProps("cardStyle")}
               onChange={(value) => {
                 form.setFieldValue("cardStyle", value as CardStyle);
@@ -231,13 +230,11 @@ export const EditorNavbarThemesSection = ({
 
             <SizeSelector
               label="Default border edges"
-              defaultValue={form.values.defaultRadius}
               {...form.getInputProps("defaultRadius")}
               size={INPUT_SIZE}
             />
             <SizeSelector
               label="Default spacing"
-              defaultValue={form.values.defaultSpacing}
               {...form.getInputProps("defaultSpacing")}
               size={INPUT_SIZE}
             />
@@ -247,12 +244,10 @@ export const EditorNavbarThemesSection = ({
               {...form.getInputProps("hasCompactButtons")}
             />
             <LoaderSelector
-              defaultValue={form.values.loader}
               {...form.getInputProps("loader")}
               size={INPUT_SIZE}
             />
             <FocusRingSelector
-              defaultValue={form.values.focusRing}
               {...form.getInputProps("focusRing")}
               size={INPUT_SIZE}
             />
@@ -260,14 +255,12 @@ export const EditorNavbarThemesSection = ({
             <TextInput
               label="Favicon"
               placeholder="https://example.com/favicon.ico"
-              defaultValue={form.values.faviconUrl}
               {...form.getInputProps("faviconUrl")}
               size={INPUT_SIZE}
             />
             <TextInput
               label="Logo"
               placeholder="https://example.com/logo.png"
-              defaultValue={form.values.logoUrl}
               {...form.getInputProps("logoUrl")}
               size={INPUT_SIZE}
             />
@@ -311,7 +304,7 @@ export const EditorNavbarThemesSection = ({
               />
               <UnitInput
                 label="Size"
-                defaultValue={currentFont?.fontSize}
+                value={currentFont?.fontSize as any}
                 onChange={(value: string) => {
                   setFontValue("fontSize", value);
                 }}
@@ -321,7 +314,7 @@ export const EditorNavbarThemesSection = ({
             <Flex align="center" gap="sm">
               <UnitInput
                 label="Line Height"
-                defaultValue={currentFont?.lineHeight}
+                value={currentFont?.lineHeight as any}
                 onChange={(value: string) => {
                   setFontValue("lineHeight", value);
                 }}
@@ -329,7 +322,7 @@ export const EditorNavbarThemesSection = ({
               />
               <UnitInput
                 label="Letter Spacing"
-                defaultValue={currentFont?.letterSpacing}
+                value={currentFont?.letterSpacing as any}
                 onChange={(value: string) => {
                   setFontValue("letterSpacing", value);
                 }}

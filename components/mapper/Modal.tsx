@@ -19,7 +19,7 @@ export const Modal = ({
     (state) => state.selectedComponentId,
   );
   const theme = useEditorStore((state) => state.theme);
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const isPreviewMode = component.isPreviewMode ?? false;
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,

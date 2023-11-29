@@ -12,7 +12,6 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-  isPreviewMode?: boolean;
 };
 
 export const Chart = ({ renderTree, component, ...props }: Props) => {
@@ -129,7 +128,7 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
   let dataSeries = series;
   let dataLabels = isPieOrRadial ? options?.labels : options?.xaxis?.categories;
 
-  if (props.isPreviewMode) {
+  if (component.isPreviewMode) {
     dataSeries = data?.series?.value ?? series;
     dataLabels = data?.labels?.value ?? dataLabels;
 

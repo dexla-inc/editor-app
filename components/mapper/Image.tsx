@@ -1,4 +1,3 @@
-import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { ImageProps, Image as MantineImage } from "@mantine/core";
@@ -11,7 +10,7 @@ type Props = {
 } & ImageProps;
 
 const ImageComponent = ({ component }: Props) => {
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const isPreviewMode = component.isPreviewMode ?? false;
 
   const {
     alt = "Image",

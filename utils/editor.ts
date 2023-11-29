@@ -33,6 +33,7 @@ export type Component = {
   actions?: Action[];
   states?: Record<string, any>;
   languages?: Record<string, any>;
+  isPreviewMode?: boolean;
 };
 
 export type Row = {

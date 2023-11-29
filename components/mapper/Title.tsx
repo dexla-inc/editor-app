@@ -13,9 +13,9 @@ type Props = {
 const TitleComponent = ({ renderTree, component, ...props }: Props) => {
   const ref = useRef<HTMLDivElement>();
   const [isEditable, setIsEditable] = useState(false);
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const isPreviewMode = component.isPreviewMode ?? false;
   const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
+    (state) => state.updateTreeComponent,
   );
   const {
     children,

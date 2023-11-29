@@ -7,15 +7,9 @@ import { memo, useEffect, useState } from "react";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-  isPreviewMode: boolean;
 } & RadioProps;
 
-const RadioItemComponent = ({
-  renderTree,
-  component,
-  isPreviewMode,
-  ...props
-}: Props) => {
+const RadioItemComponent = ({ renderTree, component, ...props }: Props) => {
   const {
     value,
     triggers,
@@ -24,6 +18,7 @@ const RadioItemComponent = ({
     children,
     ...componentProps
   } = component.props as any;
+  const isPreviewMode = component.isPreviewMode ?? false;
 
   const setTreeComponentCurrentState = useEditorStore(
     (state) => state.setTreeComponentCurrentState,

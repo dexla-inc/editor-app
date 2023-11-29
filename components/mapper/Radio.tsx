@@ -7,18 +7,12 @@ import { memo, useState } from "react";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-  isPreviewMode?: boolean;
 } & RadioGroupProps;
 
-const RadioComponent = ({
-  renderTree,
-  component,
-  isPreviewMode,
-  ...props
-}: Props) => {
+const RadioComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, value, triggers, styles, style, ...componentProps } =
     component.props as any;
-
+  const isPreviewMode = component.isPreviewMode ?? false;
   const [_value, setValue] = useState(value);
   const defaultStyle = {
     display: "flex",

@@ -9,16 +9,10 @@ import { ReactElement, memo } from "react";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-  isPreviewMode: boolean;
 } & ButtonProps &
   ReactElement<"Button">;
 
-const ButtonComponent = ({
-  renderTree,
-  component,
-  isPreviewMode,
-  ...props
-}: Props) => {
+const ButtonComponent = ({ renderTree, component, ...props }: Props) => {
   const theme = useEditorStore((state) => state.theme);
 
   const {
@@ -32,6 +26,8 @@ const ButtonComponent = ({
     style,
     ...componentProps
   } = component.props as any;
+
+  const isPreviewMode = component?.isPreviewMode ?? false;
 
   const defaultTriggers = isPreviewMode
     ? {}

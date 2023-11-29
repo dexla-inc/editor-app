@@ -1,5 +1,4 @@
 import { MantineSkeleton } from "@/components/skeleton/Skeleton";
-import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getAllComponentsByName } from "@/utils/editor";
 import {
@@ -28,7 +27,7 @@ type Props = {
 } & TableProps;
 
 const TableComponent = ({ renderTree, component, ...props }: Props) => {
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const isPreviewMode = component.isPreviewMode ?? false;
 
   const {
     children,

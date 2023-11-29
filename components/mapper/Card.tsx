@@ -1,5 +1,4 @@
 import { MantineSkeleton } from "@/components/skeleton/Skeleton";
-import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import isEmpty from "lodash.isempty";
@@ -10,7 +9,7 @@ type Props = {
 } & FlexProps;
 
 export const Card = ({ renderTree, component, ...props }: Props) => {
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const isPreviewMode = component.isPreviewMode ?? false;
 
   const {
     children,

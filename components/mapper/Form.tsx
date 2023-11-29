@@ -7,12 +7,12 @@ import { FormEvent, memo } from "react";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-  isPreviewMode?: boolean;
 } & FlexProps;
 
 const FormComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, triggers, loading, ...componentProps } =
     component.props as any;
+  const isPreviewMode = component.isPreviewMode ?? false;
   const { onSubmit, ...otherTriggers } = triggers;
   const form = useForm();
 
@@ -30,7 +30,7 @@ const FormComponent = ({ renderTree, component, ...props }: Props) => {
       {...props}
       {...componentProps}
       component="form"
-      autoComplete={props.isPreviewMode ? "on" : "off"}
+      autoComplete={isPreviewMode ? "on" : "off"}
       onSubmit={onSubmitCustom}
       {...otherTriggers}
       pos="relative"
