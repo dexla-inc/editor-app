@@ -11,17 +11,11 @@ import {
   getComponentParent,
   removeComponentFromParent,
 } from "@/utils/editor";
-import { Group, UnstyledButton, ActionIcon, Text } from "@mantine/core";
-import {
-  IconGripVertical,
-  IconArrowUp,
-  IconBoxMargin,
-  IconColumnInsertRight,
-  IconRowInsertBottom,
-  IconLayoutColumns,
-} from "@tabler/icons-react";
+import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
+import { IconGripVertical } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback, useEffect, useMemo } from "react";
+import { ActionIconTransparent } from "./ActionIconTransparent";
 
 export const ComponentToolbox = () => {
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
@@ -118,22 +112,24 @@ export const ComponentToolbox = () => {
       bg={theme.colors.teal[6]}
     >
       {!component.fixedPosition && (
-        <UnstyledButton
-          sx={{
-            cursor: isColumn ? "default" : "move",
-            alignItems: "center",
-            display: "flex",
-          }}
-          {...(isColumn ? {} : draggable)}
-        >
-          {component.name !== "GridColumn" && (
-            <IconGripVertical
-              size={ICON_SIZE}
-              color="white"
-              strokeWidth={1.5}
-            />
-          )}
-        </UnstyledButton>
+        <Tooltip label="Move" fz="xs">
+          <UnstyledButton
+            sx={{
+              cursor: isColumn ? "default" : "move",
+              alignItems: "center",
+              display: "flex",
+            }}
+            {...(isColumn ? {} : draggable)}
+          >
+            {component.name !== "GridColumn" && (
+              <IconGripVertical
+                size={ICON_SIZE}
+                color="white"
+                strokeWidth={1.5}
+              />
+            )}
+          </UnstyledButton>
+        </Tooltip>
       )}
       <Text color="white" size="xs" pr={haveNonRootParent ? 8 : "xs"}>
         {(component.description || "").length > 20
@@ -141,21 +137,19 @@ export const ComponentToolbox = () => {
           : component.description}
       </Text>
       {haveNonRootParent && (
-        <ActionIcon
-          size="xs"
-          variant="transparent"
+        <ActionIconTransparent
+          iconName="IconArrowUp"
+          tooltip="Go up"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             setSelectedComponentId(parent.id as string);
           }}
-        >
-          <IconArrowUp size={ICON_SIZE} color="white" strokeWidth={1.5} />
-        </ActionIcon>
+        />
       )}
-      <ActionIcon
-        size="xs"
-        variant="transparent"
+      <ActionIconTransparent
+        iconName="IconBoxMargin"
+        tooltip="Wrap container"
         onClick={() => {
           const container = structureMapper["Container"].structure({
             theme: editorTheme,
@@ -190,14 +184,12 @@ export const ComponentToolbox = () => {
             action: `Wrapped ${component.name} with a Container`,
           });
         }}
-      >
-        <IconBoxMargin size={ICON_SIZE} color="white" strokeWidth={1.5} />
-      </ActionIcon>
+      />
       {component.name === "Grid" && (
         <>
-          <ActionIcon
-            variant="transparent"
-            size="xs"
+          <ActionIconTransparent
+            iconName="IconColumnInsertRight"
+            tooltip="Add column"
             onClick={() => {
               const copy = cloneDeep(editorTree);
               addComponent(
@@ -214,16 +206,11 @@ export const ComponentToolbox = () => {
 
               setEditorTree(copy);
             }}
-          >
-            <IconColumnInsertRight
-              size={ICON_SIZE}
-              color="white"
-              strokeWidth={1.5}
-            />
-          </ActionIcon>
-          <ActionIcon
-            variant="transparent"
-            size="xs"
+          />
+
+          <ActionIconTransparent
+            iconName="IconRowInsertBottom"
+            tooltip="Insert row"
             onClick={() => {
               const copy = cloneDeep(editorTree);
               addComponent(
@@ -238,20 +225,14 @@ export const ComponentToolbox = () => {
 
               setEditorTree(copy);
             }}
-          >
-            <IconRowInsertBottom
-              size={ICON_SIZE}
-              color="white"
-              strokeWidth={1.5}
-            />
-          </ActionIcon>
+          />
         </>
       )}
       {component.name === "GridColumn" && (
         <>
-          <ActionIcon
-            variant="transparent"
-            size="xs"
+          <ActionIconTransparent
+            iconName="IconLayoutColumns"
+            tooltip="Split columns"
             onClick={() => {
               const copy = cloneDeep(editorTree);
               addComponent(copy.root, GridSchema, {
@@ -261,16 +242,11 @@ export const ComponentToolbox = () => {
 
               setEditorTree(copy);
             }}
-          >
-            <IconLayoutColumns
-              size={ICON_SIZE}
-              color="white"
-              strokeWidth={1.5}
-            />
-          </ActionIcon>
-          <ActionIcon
-            variant="transparent"
-            size="xs"
+          />
+
+          <ActionIconTransparent
+            iconName="IconRowInsertBottom"
+            tooltip="Insert row"
             onClick={() => {
               const copy = cloneDeep(editorTree);
               addComponent(
@@ -285,13 +261,7 @@ export const ComponentToolbox = () => {
 
               setEditorTree(copy);
             }}
-          >
-            <IconRowInsertBottom
-              size={ICON_SIZE}
-              color="white"
-              strokeWidth={1.5}
-            />
-          </ActionIcon>
+          />
         </>
       )}
     </Group>
