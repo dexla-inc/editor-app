@@ -27,6 +27,7 @@ export const useDroppable = ({
   );
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
   const activeTab = useEditorStore((state) => state.activeTab);
+  const isResizing = useEditorStore((state) => state.isResizing);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const [edge, setEdge] = useState<Edge>();
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
@@ -41,6 +42,8 @@ export const useDroppable = ({
 
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
+      if (isResizing) return;
+
       event.preventDefault();
       event.stopPropagation();
       const dropTarget = {
@@ -53,7 +56,7 @@ export const useDroppable = ({
 
       setCurrentTargetId(undefined);
     },
-    [activeId, id, edge, onDrop, setCurrentTargetId],
+    [activeId, id, edge, onDrop, setCurrentTargetId, isResizing],
   );
 
   const handleEdgeSet = (
@@ -84,6 +87,8 @@ export const useDroppable = ({
 
   const handleDragOver = useCallback(
     (event: React.DragEvent) => {
+      if (isResizing) return;
+
       event.preventDefault();
       event.stopPropagation();
 
@@ -110,11 +115,14 @@ export const useDroppable = ({
       currentWindow,
       currentTargetId,
       component?.blockDroppingChildrenInside,
+      isResizing,
     ],
   );
 
   const handleDragEnter = useCallback(
     (event: any) => {
+      if (isResizing) return;
+
       event.preventDefault();
 
       const activeComponent = getComponentById(editorTree.root, activeId!);
@@ -164,27 +172,30 @@ export const useDroppable = ({
       setCurrentTargetId,
       setActiveTab,
       activeTab,
+      isResizing,
     ],
   );
 
-  // TODO: Handle isOver differently to have better ux as currently
-  // it remove the drop target even if hovering over a non droppable children
   const handleDragLeave = useCallback(
     (event: any) => {
+      if (isResizing) return;
+
       event.preventDefault();
       event.stopPropagation();
       setEdge(undefined);
     },
-    [setEdge],
+    [setEdge, isResizing],
   );
 
   const handleDragEnd = useCallback(
     (event: any) => {
+      if (isResizing) return;
+
       event.preventDefault();
       event.stopPropagation();
       setEdge(undefined);
     },
-    [setEdge],
+    [setEdge, isResizing],
   );
 
   return {

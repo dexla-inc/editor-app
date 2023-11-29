@@ -1,3 +1,4 @@
+import { useEditorStore } from "@/stores/editor";
 import { useCallback } from "react";
 
 export const useDraggable = ({
@@ -9,8 +10,12 @@ export const useDraggable = ({
   onDragStart: (id: string) => void;
   currentWindow?: Window;
 }) => {
+  const isResizing = useEditorStore((state) => state.isResizing);
+
   const handleDragStart = useCallback(
     (event: React.DragEvent) => {
+      if (isResizing) return;
+
       const w = currentWindow ?? window;
       const el = w.document.getElementById(id)!;
       const rect = el?.getBoundingClientRect()!;
@@ -25,7 +30,7 @@ export const useDraggable = ({
 
       onDragStart(id);
     },
-    [id, onDragStart, currentWindow],
+    [id, onDragStart, currentWindow, isResizing],
   );
 
   return {

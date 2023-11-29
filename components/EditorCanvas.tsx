@@ -22,7 +22,6 @@ import { useDisclosure, useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback, useMemo } from "react";
 import { ComponentToolbox } from "@/components/ComponentToolbox";
-import { GridColumnResizer } from "@/components/GridColumnResizer";
 
 type Props = {
   projectId: string;
@@ -309,7 +308,6 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
         />
       )}
       <ComponentToolbox />
-      <GridColumnResizer key={selectedComponentId} />
     </>
   );
 };

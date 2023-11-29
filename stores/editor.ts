@@ -192,6 +192,8 @@ export type EditorState = {
   highlightedComponentId?: string | null;
   isResizing?: boolean;
   setIsResizing: (isResizing?: boolean) => void;
+  columnSpans?: { [key: string]: number };
+  setColumnSpan: (id: string, span: number) => void;
 };
 
 export const debouncedUpdatePageState = debounce(updatePageState, 2000);
@@ -526,6 +528,10 @@ export const useEditorStore = create<EditorState>()(
             "editor/setHighlightedComponentId",
           ),
         setIsResizing: (isResizing) => set({ isResizing }),
+        setColumnSpan: (id, span) =>
+          set((state) => ({
+            columnSpans: { ...(state.columnSpans ?? {}), [id]: span },
+          })),
       }),
       {
         partialize: (state) => {

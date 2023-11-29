@@ -209,7 +209,7 @@ export const DroppableDraggable = ({
       : {},
   });
 
-  const showShadows = !isPreviewMode && !isLive && !isResizing;
+  const showShadows = !isPreviewMode && !isLive;
 
   const childStyles = {
     ...propsWithOverwrites.style,
