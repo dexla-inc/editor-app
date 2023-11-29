@@ -77,24 +77,6 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
     "yellow",
   ]);
 
-  const data: any[] = (Object.keys(theme.colors) ?? [])
-    .filter((color) => !excludeColors.has(color))
-    .reduce((all, color: string) => {
-      const colors = theme.colors[color];
-      const _dataWithShades = colors.map((_, index) => ({
-        label: `${color}-${index}`,
-        value: `${color}.${index}`,
-      }));
-      const _data = isShadesActive
-        ? _dataWithShades
-        : [{ label: color, value: `${color}.6` }];
-
-      return all.concat(
-        // @ts-ignore
-        _data,
-      );
-    }, []);
-
   let [selectedColor, selectedIndex] = ["Primary", 6]; // default color if none is selected
 
   // If a color is selected and it's not 'transparent', determine the color
@@ -121,6 +103,24 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
       />
     );
 
+  const data: any[] = (Object.keys(theme.colors) ?? [])
+    .filter((color) => !excludeColors.has(color))
+    .reduce((all, color: string) => {
+      const colors = theme.colors[color];
+      const _dataWithShades = colors.map((_, index) => ({
+        label: `${color}-${index}`,
+        value: `${color}.${index}`,
+      }));
+      const _data = isShadesActive
+        ? _dataWithShades
+        : [{ label: color, value: `${color}.${selectedIndex}` }];
+
+      return all.concat(
+        // @ts-ignore
+        _data,
+      );
+    }, []);
+
   const boxShadow = `0 0 5px 0.625px ${theme.colors.teal[6]}`;
   const { label, ...selectProps } = props;
 
@@ -132,8 +132,10 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
         </Text>
         <Group noWrap align="center">
           <Select
+            w="100%"
             size="xs"
             {...selectProps}
+            // value={_value}
             data={data.concat({
               label: "transparent",
               value: "transparent",
