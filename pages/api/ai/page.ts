@@ -48,14 +48,11 @@ export default async function handler(
 
     const _project = await projectResponse.json();
 
-    const templates = await listTemplates(companyId as string);
+    const templates = await listTemplates();
 
     const templatesData = await templates.results.reduce(
       async (acc, template) => {
-        const tiles = await listTiles(
-          companyId as string,
-          template.id as string,
-        );
+        const tiles = await listTiles(template.id as string);
 
         const prev = await acc;
 

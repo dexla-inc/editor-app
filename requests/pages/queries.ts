@@ -37,7 +37,7 @@ export const getPage = async (
 export const analyseTemplateToUse = async (
   pageName: string,
   pageDescription: string,
-  appDescription: string,
+  appDescription?: string,
   appIndustry?: string,
   init = {},
 ): Promise<TemplateAiResponse> => {
