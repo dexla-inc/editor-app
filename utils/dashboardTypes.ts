@@ -151,6 +151,7 @@ export const fonts = [
   "Lato",
   "Open Sans",
   "Opensaucesans",
+  "Poppins",
   "Roboto",
   "Raleway",
   "Red Hat Display",

@@ -32,8 +32,6 @@ export const SaveTemplateButton = () => {
         page: string;
       };
 
-      console.log(pageId);
-
       const page = await getPage(projectId, pageId);
 
       const tiles = getTiles(editorTree.root);

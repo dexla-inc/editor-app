@@ -59,7 +59,7 @@ export default async function handler(
 
     res.end();
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({ error });
   }
 }

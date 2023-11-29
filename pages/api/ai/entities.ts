@@ -218,7 +218,7 @@ export default async function handler(
 
     return res.status(200).json({ id: data.id });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({ error });
   }
 }
