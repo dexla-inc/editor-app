@@ -1,4 +1,4 @@
-import { Page } from "@/components/templates/dashboard";
+import { Page, TemplateAiResponse } from "@/components/templates/dashboard";
 import {
   PageListResponse,
   PageParams,
@@ -34,8 +34,32 @@ export const getPage = async (
   return response;
 };
 
+export const analyseTemplateToUse = async (
+  pageName: string,
+  pageDescription: string,
+  appDescription: string,
+  appIndustry?: string,
+  init = {},
+): Promise<TemplateAiResponse> => {
+  const response = await fetch("/api/ai/template", {
+    ...init,
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      pageName,
+      pageDescription,
+      appDescription,
+      appIndustry,
+    }),
+  });
+
+  const json = await response.json();
+  return json as TemplateAiResponse;
+};
+
 export const getPageTemplate = async (
-  companyId: string,
   projectId: string,
   pageId: string,
   init = {},
@@ -48,7 +72,6 @@ export const getPageTemplate = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      companyId,
       projectId,
       pageId,
       accessToken,

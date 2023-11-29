@@ -50,8 +50,6 @@ export default async function handler(
 
     const templates = await listTemplates(companyId as string);
 
-    console.log("templates", templates);
-
     const templatesData = await templates.results.reduce(
       async (acc, template) => {
         const tiles = await listTiles(
@@ -72,6 +70,22 @@ export default async function handler(
       "" as any,
     );
 
+    console.log("templatesData", templatesData);
+
+    const prompt = getPageGenerationPrompt({
+      entities: JSON.stringify(project?.entities ?? []),
+      pageName: page.name ?? "",
+      pageDescription: page.description ?? "",
+      appDescription: _project?.description ?? "",
+      appIndustry: _project?.industry ?? "",
+      templateNames: `${templatesData}
+  
+      type Template = ${templates.results.map((t) => t.name).join(" | ")}
+      `,
+    });
+
+    console.log("pagePrompt", prompt);
+
     const response = await openai.chat.completions.create({
       model: GPT4_PREVIEW_MODEL,
       response_format: {
@@ -80,26 +94,8 @@ export default async function handler(
       stream: false,
       messages: [
         {
-          role: "system",
-          content: `You are a Page Generator System (PGS). As a PGS you respond with a Page based on a given page name, app description and app industry.`,
-        },
-        {
-          role: "system",
-          content: `PGS must respond with a JSON containing the structure of the Page, nothing more. no explanation, no comments, no extra information.`,
-        },
-        {
           role: "user",
-          content: getPageGenerationPrompt({
-            entities: JSON.stringify(project?.entities ?? []),
-            pageName: page.name ?? "",
-            pageDescription: page.description ?? "",
-            appDescription: _project?.description ?? "",
-            appIndustry: _project?.industry ?? "",
-            templates: `${templatesData}
-            
-            type Template = ${templates.results.map((t) => t.name).join(" | ")}
-            `,
-          }),
+          content: prompt,
         },
       ],
     });

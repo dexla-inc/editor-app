@@ -10,9 +10,11 @@ export default async function handler(
       throw new Error("Invalid method");
     }
 
-    const { companyId, name } = req.query;
+    const { name } = req.query;
 
-    const template = await getTemplate(companyId as string, name as string);
+    const includeTiles = false;
+
+    const template = await getTemplate(name as string, includeTiles);
 
     return res.status(200).json(template);
   } catch (error) {
