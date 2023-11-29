@@ -18,6 +18,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { ActionIconTransparent } from "./ActionIconTransparent";
 
 export const ComponentToolbox = () => {
+  const isResizing = useEditorStore((state) => state.isResizing);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const editorTheme = useEditorStore((state) => state.theme);
@@ -85,7 +86,7 @@ export const ComponentToolbox = () => {
     return () => el?.removeEventListener("scroll", calculatePosition);
   }, [calculatePosition, iframeWindow]);
 
-  if (!component || isPreviewMode || !id) {
+  if (!component || isPreviewMode || !id || isResizing) {
     return null;
   }
 

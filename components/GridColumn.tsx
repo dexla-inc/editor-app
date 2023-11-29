@@ -23,6 +23,7 @@ export const GridColumn = ({
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const setIsResizing = useEditorStore((state) => state.setIsResizing);
   const [initialWidth, setInitialWidth] = useState(0);
+  const [initialSpan, setInitialSpan] = useState(0);
   const [initialNextSiblingSpan, setInitialNextSiblingSpan] = useState(0);
   const [initialPrevSiblingSpan, setInitialPrevSiblingSpan] = useState(0);
 
@@ -34,21 +35,10 @@ export const GridColumn = ({
   const compIndex = getComponentIndex(parent!, props.id);
   const nextSibling =
     compIndex < siblings.length - 1 ? siblings[compIndex + 1] : null;
-  const prevSibling = compIndex > 0 ? siblings[compIndex - 1] : null;
+  // const prevSibling = compIndex > 0 ? siblings[compIndex - 1] : null;
   const isLast = siblings[siblings.length - 1]?.id === props.id;
   const isOnlyChild = siblings.length === 1;
-  const resizingFromLeft = isLast && !isOnlyChild;
-
-  /* useEffect(() => {
-    if (iframeWindow?.document) {
-      const comp = iframeWindow.document.getElementById(props.id);
-      if (comp) {
-        const rect = comp.getBoundingClientRect();
-        console.log({ comp, rect });
-        setInitialWidth(rect.width);
-      }
-    }
-  }, [iframeWindow, props.id]); */
+  const isResizingFromLeft = isLast && !isOnlyChild;
 
   useEffect(() => {
     if (columnSpans[props.id] === undefined) {
@@ -72,7 +62,7 @@ export const GridColumn = ({
         top: false,
         right: isLast || isOnlyChild ? false : true,
         bottom: false,
-        left: resizingFromLeft,
+        left: isResizingFromLeft,
         topRight: false,
         bottomRight: false,
         bottomLeft: false,
@@ -80,25 +70,34 @@ export const GridColumn = ({
       }}
       onResizeStart={(e: any, direction: any, ref: any, delta: any) => {
         const rect = ref.getBoundingClientRect();
-        setInitialWidth(rect.width);
+        const initialSpan = ref.style.gridColumn.split(" ")[1];
+        setInitialWidth(Math.floor(rect.width));
         setIsResizing(true);
+        setInitialSpan(parseInt(initialSpan, 10));
 
         if (nextSibling) {
-          setInitialNextSiblingSpan(nextSibling.props?.span);
-        }
+          const nextSiblingEl = iframeWindow?.document.getElementById(
+            nextSibling?.id!,
+          );
 
-        if (prevSibling) {
-          setInitialPrevSiblingSpan(prevSibling.props?.span);
+          if (nextSiblingEl) {
+            const initialNextSiblingSpan =
+              nextSiblingEl.style.gridColumn.split(" ")[1];
+
+            if (initialNextSiblingSpan) {
+              setInitialNextSiblingSpan(parseInt(initialNextSiblingSpan, 10));
+            }
+          }
         }
       }}
       onResize={(e: any, direction: any, ref: any, delta: any) => {
         const isRightResizer = direction === "right";
         const isGoingLeft = delta.width < 0;
         const rect = ref.getBoundingClientRect();
-        const newSpan = Math.floor((rect.width * span) / initialWidth);
-        console.log({ newSpan, ref, initialWidth, span, w: rect.width });
-
-        const spanDiff = Math.abs(newSpan - span);
+        const newSpan = Math.floor(
+          (Math.floor(rect.width) * initialSpan) / initialWidth,
+        );
+        const spanDiff = Math.abs(newSpan - initialSpan);
 
         if (isRightResizer) {
           const nextSiblingEl = iframeWindow?.document.getElementById(
@@ -135,8 +134,7 @@ export const GridColumn = ({
           resized: true,
         });
 
-        if (nextSibling) {
-          console.log({ nextSibling });
+        if (nextSibling && !isResizingFromLeft) {
           updateTreeComponent(copy.root, nextSibling.id!, {
             span: columnSpans[nextSibling.id!] ?? 0,
             resized: false,
