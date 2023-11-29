@@ -811,12 +811,13 @@ export const addComponent = (
   const directChildren = ["Modal", "Drawer", "Toast"];
   const isGrid = copy.name === "Grid";
   const isColumn = copy.name === "GridColumn";
+  let targetComponent = null;
 
   crawl(
     treeRoot,
     (node, context) => {
       if ((isGrid || isColumn) && node.id === dropTarget.id) {
-        addNodeToTarget(
+        targetComponent = addNodeToTarget(
           treeRoot,
           node,
           copy,
@@ -880,8 +881,8 @@ export const addComponent = (
     { order: "bfs" },
   );
 
-  if (isGrid || isColumn) {
-    calculateGridSizes(treeRoot);
+  if ((isGrid || isColumn) && targetComponent) {
+    calculateGridSizes(targetComponent);
   }
 
   return copy.id as string;
@@ -1059,7 +1060,7 @@ const addNodeToTarget = (
       });
     }
 
-    return;
+    return target;
   }
   const shouldRemoveResizing = target.name === "Grid" && isAddingToXAxis;
 
@@ -1105,7 +1106,7 @@ const addNodeToTarget = (
       target.children?.splice(i, 0, copy);
     }
 
-    return;
+    return target;
   }
 
   if (dropTarget.edge === "bottom") {
@@ -1141,7 +1142,7 @@ const addNodeToTarget = (
       target.children?.splice(i!, 0, copy);
     }
 
-    return;
+    return target;
   }
 
   const gridColumn = {
@@ -1175,6 +1176,8 @@ const addNodeToTarget = (
     // @ts-ignore
     target.children?.splice(i, 0, gridColumn);
   }
+
+  return target;
 };
 
 export const moveComponent = (
@@ -1182,13 +1185,14 @@ export const moveComponent = (
   id: string,
   dropTarget: DropTarget,
 ) => {
+  let targetComponent = null;
   crawl(
     treeRoot,
     (node, context) => {
       if (node.id === id) {
         const isGrid = node.name === "Grid";
         if (isGrid) {
-          addNodeToTarget(
+          targetComponent = addNodeToTarget(
             treeRoot,
             context.parent!,
             node,
@@ -1231,7 +1235,9 @@ export const moveComponent = (
     { order: "bfs" },
   );
 
-  calculateGridSizes(treeRoot);
+  if (targetComponent) {
+    calculateGridSizes(targetComponent);
+  }
 };
 
 export const moveComponentToDifferentParent = (
@@ -1242,6 +1248,7 @@ export const moveComponentToDifferentParent = (
 ) => {
   const componentToAdd = getComponentById(treeRoot, id) as Component;
   const isGrid = componentToAdd.name === "Grid";
+  let targetComponent = null;
 
   crawl(
     treeRoot,
@@ -1254,7 +1261,7 @@ export const moveComponentToDifferentParent = (
             (c) => c.id === dropTarget.id,
           ) as number;
 
-          addNodeToTarget(
+          targetComponent = addNodeToTarget(
             treeRoot,
             node,
             componentToAdd,
@@ -1304,7 +1311,9 @@ export const moveComponentToDifferentParent = (
     { order: "bfs" },
   );
 
-  calculateGridSizes(treeRoot);
+  if (targetComponent) {
+    calculateGridSizes(targetComponent);
+  }
 };
 
 export const removeComponentFromParent = (
@@ -1313,6 +1322,7 @@ export const removeComponentFromParent = (
   parentId: string,
 ) => {
   let shouldRecalculate = false;
+  let targetComponent = null;
 
   crawl(
     treeRoot,
@@ -1320,6 +1330,7 @@ export const removeComponentFromParent = (
       if (node.id === id && context.parent?.id === parentId) {
         context.parent?.children?.splice(context.index, 1);
         shouldRecalculate = node.name === "GridColumn" || node.name === "Grid";
+        targetComponent = context.parent;
         context.remove();
         context.break();
       }
@@ -1327,13 +1338,14 @@ export const removeComponentFromParent = (
     { order: "bfs" },
   );
 
-  if (shouldRecalculate) {
-    calculateGridSizes(treeRoot);
+  if (shouldRecalculate && targetComponent) {
+    calculateGridSizes(targetComponent);
   }
 };
 
 export const removeComponent = (treeRoot: Component, id: string) => {
   let shouldRecalculate = false;
+  let targetComponent = null;
 
   crawl(
     treeRoot,
@@ -1341,6 +1353,7 @@ export const removeComponent = (treeRoot: Component, id: string) => {
       if (node.id === id) {
         context.parent?.children?.splice(context.index, 1);
         shouldRecalculate = node.name === "GridColumn" || node.name === "Grid";
+        targetComponent = context.parent;
         context.remove();
         context.break();
       }
@@ -1348,7 +1361,7 @@ export const removeComponent = (treeRoot: Component, id: string) => {
     { order: "bfs" },
   );
 
-  if (shouldRecalculate) {
-    calculateGridSizes(treeRoot);
+  if (shouldRecalculate && targetComponent) {
+    calculateGridSizes(targetComponent);
   }
 };

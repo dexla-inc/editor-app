@@ -52,7 +52,7 @@ export const GridColumn = ({
       p="xs"
       display="grid"
       style={{
-        gridColumn: `span ${columnSpans[props.id] ?? 0}`,
+        gridColumn: `span ${columnSpans[props.id] ?? span}`,
         gap: theme.spacing.xs,
         ...(style ?? {}),
       }}

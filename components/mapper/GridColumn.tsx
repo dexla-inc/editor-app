@@ -21,6 +21,7 @@ export const GridColumn = ({ renderTree, component, ...props }: Props) => {
 
   return (
     <GridColumnComponent
+      key={`${component.id}-${componentProps.span}`}
       style={{ ...stylesRest, border: shouldRemoveBorder ? "none" : border }}
       {...componentProps}
       {...propsRest}
