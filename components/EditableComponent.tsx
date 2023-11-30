@@ -232,6 +232,17 @@ export const EditableComponent = ({
           id: component.id,
           isPreviewMode,
           style: childStyles,
+          sx: {
+            "&:hover": {
+              ...(!isPreviewMode
+                ? {
+                    boxShadow: `0 0 0 1px ${
+                      theme.colors[isPicking ? "orange" : "green"][4]
+                    }`,
+                  }
+                : {}),
+            },
+          },
           onClick: (e: any) => {
             if (!isPreviewMode) {
               e.stopPropagation();
