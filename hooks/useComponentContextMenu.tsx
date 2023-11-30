@@ -47,23 +47,30 @@ const filteredPropsToUpdate = (props: ClipboardProps["componentProps"]) => {
 
 export const useComponentContextMenu = () => {
   const { showContextMenu, destroy } = useContextMenu();
-  const editorTree = useEditorStore((state) => state.tree);
-  const editorTheme = useEditorStore((state) => state.theme);
-  const copiedProperties = useEditorStore((state) => state.copiedProperties);
-  const isPageStructure = useEditorStore((state) => state.isPageStructure);
-  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
-  const setEditorTree = useEditorStore((state) => state.setTree);
-  const clearSelection = useEditorStore((state) => state.clearSelection);
-  const setCopiedComponent = useEditorStore(
-    (state) => state.setCopiedComponent,
-  );
-  const setCopiedProperties = useEditorStore(
-    (state) => state.setCopiedProperties,
-  );
-  const setSelectedComponentId = useEditorStore(
-    (state) => state.setSelectedComponentId,
-  );
+  const {
+    tree: editorTree,
+    theme: editorTheme,
+    copiedProperties,
+    isPageStructure,
+    setTree: setEditorTree,
+    clearSelection,
+    setCopiedComponent,
+    setCopiedProperties,
+    setSelectedComponentId,
+  } = useEditorStore((state) => ({
+    tree: state.tree,
+    theme: state.theme,
+    copiedProperties: state.copiedProperties,
+    isPageStructure: state.isPageStructure,
+    setTree: state.setTree,
+    clearSelection: state.clearSelection,
+    setCopiedComponent: state.setCopiedComponent,
+    setCopiedProperties: state.setCopiedProperties,
+    setSelectedComponentId: state.setSelectedComponentId,
+  }));
+
+  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
   const wrapIn = useCallback(
     (component: Component, componentName: string) => {

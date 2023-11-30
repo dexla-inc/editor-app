@@ -6,6 +6,7 @@ type UserConfigState = {
   isTabPinned: boolean;
   isShadesActive: boolean;
   initiallyOpenedModifiersByComponent: Record<string, string[]>;
+  pageCancelled: boolean;
   setIsShadesActive: (isShadesActive: boolean) => void;
   setIsTabPinned: (isTabPinned: boolean) => void;
   setInitiallyOpenedModifiersByComponent: (
@@ -13,6 +14,7 @@ type UserConfigState = {
     modifierName: string,
     isOpen: boolean,
   ) => void;
+  setPageCancelled: (pageCancelled: boolean) => void;
 };
 
 export const useUserConfigStore = create<UserConfigState>()(
@@ -21,6 +23,7 @@ export const useUserConfigStore = create<UserConfigState>()(
       (set) => ({
         isTabPinned: false,
         isShadesActive: false,
+        pageCancelled: false,
         setIsShadesActive: (isShadesActive: boolean) => {
           set({ isShadesActive }, false, "userConfig/setIsShadesActive");
         },
@@ -64,6 +67,9 @@ export const useUserConfigStore = create<UserConfigState>()(
           );
         },
         initiallyOpenedModifiersByComponent: {},
+        setPageCancelled: (pageCancelled: boolean) => {
+          set({ pageCancelled }, false, "userConfig/setPageCancelled");
+        },
       }),
       {
         name: "user-config",

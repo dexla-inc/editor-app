@@ -1,6 +1,7 @@
 import { RegionTypes } from "@/requests/projects/queries";
 import { PatchParams } from "@/requests/types";
 import { del, getAuthToken, patch, post } from "@/utils/api";
+import { buildQueryString } from "@/utils/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
 
 export interface ProjectParams extends ProjectUpdateParams {
@@ -14,6 +15,7 @@ export interface ProjectParams extends ProjectUpdateParams {
 
 export type ProjectResponse = {
   id: string;
+  homePageId?: string;
   [key: string]: any;
 };
 
@@ -24,9 +26,16 @@ export type ProjectUpdateParams = {
   subDomain?: string;
 };
 
-export const createProject = async (params: ProjectParams) => {
+export const createProject = async (
+  params: ProjectParams | {},
+  empty: boolean = false,
+) => {
+  let url = `/projects`;
+
+  url += buildQueryString({ empty });
+
   const response = (await post<ProjectResponse>(
-    `/projects`,
+    url,
     params,
   )) as ProjectResponse;
 

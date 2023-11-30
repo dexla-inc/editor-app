@@ -27,37 +27,41 @@ export const EditableComponent = ({
 }: PropsWithChildren<Props>) => {
   const router = useRouter();
   const theme = useMantineTheme();
-  const iframeWindow = useEditorStore((state) => state.iframeWindow);
-  const isLive = useEditorStore((state) => state.isLive);
-  const currentTargetId = useEditorStore((state) => state.currentTargetId);
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-  const isResizing = useEditorStore((state) => state.isResizing);
-  const onMountActionsRan = useEditorStore((state) => state.onMountActionsRan);
-  const addOnMountActionsRan = useEditorStore(
-    (state) => state.addOnMountActionsRan,
-  );
-  const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind,
-  );
-  const pickingComponentToBindFrom = useEditorStore(
-    (state) => state.pickingComponentToBindFrom,
-  );
-  const pickingComponentToBindTo = useEditorStore(
-    (state) => state.pickingComponentToBindTo,
-  );
-  const setSelectedComponentId = useEditorStore(
-    (state) => state.setSelectedComponentId,
-  );
-  const setTreeComponentCurrentState = useEditorStore(
-    (state) => state.setTreeComponentCurrentState,
-  );
-  const currentTreeComponentsStates = useEditorStore(
-    (state) => state.currentTreeComponentsStates,
-  );
-  const language = useEditorStore((state) => state.language);
-  const highlightedComponentId = useEditorStore(
-    (state) => state.highlightedComponentId,
-  );
+
+  const {
+    iframeWindow,
+    isLive,
+    currentTargetId,
+    isPreviewMode,
+    isResizing,
+    onMountActionsRan,
+    addOnMountActionsRan,
+    setComponentToBind,
+    pickingComponentToBindFrom,
+    pickingComponentToBindTo,
+    setSelectedComponentId,
+    setTreeComponentCurrentState,
+    currentTreeComponentsStates,
+    language,
+    highlightedComponentId,
+  } = useEditorStore((state) => ({
+    iframeWindow: state.iframeWindow,
+    isLive: state.isLive,
+    currentTargetId: state.currentTargetId,
+    isPreviewMode: state.isPreviewMode,
+    isResizing: state.isResizing,
+    onMountActionsRan: state.onMountActionsRan,
+    addOnMountActionsRan: state.addOnMountActionsRan,
+    setComponentToBind: state.setComponentToBind,
+    pickingComponentToBindFrom: state.pickingComponentToBindFrom,
+    pickingComponentToBindTo: state.pickingComponentToBindTo,
+    setSelectedComponentId: state.setSelectedComponentId,
+    setTreeComponentCurrentState: state.setTreeComponentCurrentState,
+    currentTreeComponentsStates: state.currentTreeComponentsStates,
+    language: state.language,
+    highlightedComponentId: state.highlightedComponentId,
+  }));
+
   const { forceDestroyContextMenu } = useComponentContextMenu();
 
   const actions: Action[] = component.actions ?? [];

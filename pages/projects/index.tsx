@@ -2,11 +2,11 @@ import { DashboardShell } from "@/components/DashboardShell";
 import IconTitleDescriptionButton from "@/components/projects/NewProjectButton";
 import { ProjectItem } from "@/components/projects/ProjectItem";
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
-import { deleteProject } from "@/requests/projects/mutations";
+import { createProject, deleteProject } from "@/requests/projects/mutations";
 import { ProjectListResponse, getProjects } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";
-import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
+import { ICON_SIZE } from "@/utils/config";
 import { generateId } from "@/utils/dashboardTypes";
 import {
   Container,
@@ -18,7 +18,7 @@ import {
   Tooltip,
   useMantineTheme,
 } from "@mantine/core";
-import { IconSearch, IconSparkles } from "@tabler/icons-react";
+import { IconSearch } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import debounce from "lodash.debounce";
 import Link from "next/link";
@@ -49,18 +49,6 @@ export default function Projects() {
     router.push(`/projects/${projectId}/editor/${pageId}`);
   };
 
-  // const fetchProjects = useCallback(async () => {
-  //   const result = await getProjects(company.orgId, search);
-
-  //   setProjects(result.results);
-  // }, [search, company]);
-
-  // const handleDeleteProject = (id: string) => {
-  //   setProjects((prevProjects) =>
-  //     prevProjects.filter((project) => project.id !== id),
-  //   );
-  // };
-
   const projectsQuery = useQuery<ProjectListResponse, Error>({
     queryKey: ["projects", company.orgId, search],
     queryFn: () => getProjects(company.orgId, search),
@@ -78,16 +66,20 @@ export default function Projects() {
     },
   });
 
-  const refreshProjects = () => {
-    projectsQuery.refetch();
-  };
-
   const ownedProjects = projectsQuery.data?.results.filter(
     (project) => project.isOwner,
   );
   const sharedProjects = projectsQuery.data?.results.filter(
     (project) => !project.isOwner,
   );
+
+  const createEmptyProject = async () => {
+    // This is temporary until we create a right click context menu to create empty project
+    const project = await createProject({}, true);
+    const url = `/projects/${project.id}/editor/${project.homePageId}}`;
+
+    router.push(url);
+  };
 
   useEffect(() => {
     if (!user) {
@@ -123,29 +115,28 @@ export default function Projects() {
           <Title>Welcome back, {user?.firstName}</Title>
           <Flex>
             {company.orgName !== "Dexla" ? (
-              <Link
-                href={`/projects/new?company=${company.orgId}&id=${manuallyCreatedProjectId}`}
-              >
+              <Flex gap="sm">
+                <Link
+                  href={`/projects/new?company=${company.orgId}&id=${manuallyCreatedProjectId}`}
+                >
+                  <IconTitleDescriptionButton
+                    icon="IconSparkles"
+                    title="Create new project"
+                    description="Type what you want to build and customise"
+                    color="teal"
+                  />
+                </Link>
                 <IconTitleDescriptionButton
-                  icon={
-                    <IconSparkles
-                      size={LARGE_ICON_SIZE}
-                      color={theme.colors.teal[5]}
-                    />
-                  }
-                  title="Create new project"
-                  description="Type what you want to build and customise"
+                  icon="IconSparkles"
+                  title="Create empty project"
+                  description="Start from scratch"
+                  onClick={createEmptyProject}
                 />
-              </Link>
+              </Flex>
             ) : (
               <Tooltip label="You are unable to create new projects for Dexla">
                 <IconTitleDescriptionButton
-                  icon={
-                    <IconSparkles
-                      size={LARGE_ICON_SIZE}
-                      color={theme.colors.teal[5]}
-                    />
-                  }
+                  icon="IconSparkles"
                   tooltip="This company is used for the Templates project only"
                   title="Create new project"
                   description="Type what you want to build and customise"
