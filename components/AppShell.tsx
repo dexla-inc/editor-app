@@ -34,7 +34,8 @@ import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
-import { ActionIconDefault } from "./ActionIconDefault";
+import { ActionIconDefault } from "@/components/ActionIconDefault";
+import { AddGridButton } from "@/components/AddGridButton";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const resetTree = useEditorStore((state) => state.resetTree);
@@ -89,6 +90,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                 }}
                 display="none"
               />
+              {isDexlaAdmin && <AddGridButton />}
               {isDexlaAdmin && <SaveTemplateButton />}
               {isDexlaAdmin && <AIChatHistoryButton projectId={projectId} />}
               <ActionIconDefault

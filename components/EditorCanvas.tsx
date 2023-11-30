@@ -256,7 +256,13 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
           p={2}
           miw={980}
         >
-          <Paper shadow="xs" ref={canvasRef} bg="gray.0" display="flex">
+          <Paper
+            shadow="xs"
+            ref={canvasRef}
+            bg="gray.0"
+            display="flex"
+            sx={{ flexDirection: "column" }}
+          >
             {component.children?.map((child) => renderTree(child))}
           </Paper>
         </Droppable>
