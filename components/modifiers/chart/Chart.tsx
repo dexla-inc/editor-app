@@ -24,11 +24,13 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     selectedComponent?.name === "PieChart" ||
     selectedComponent?.name === "RadialChart";
 
+  const isRadialOnly = selectedComponent?.name === "RadialChart";
+
   useEffect(() => {
     if (selectedComponent?.id) {
-      const { series, options, chartColors, labelColor } = pick(
+      const { series, options, chartColors, labelColor, foreColor } = pick(
         selectedComponent.props!,
-        ["series", "options", "chartColors", "labelColor"],
+        ["series", "options", "chartColors", "labelColor", "foreColor"],
       );
       const _dataLabels = isPieOrRadial
         ? options?.labels
@@ -40,6 +42,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           dataLabels: JSON.stringify(_dataLabels, null, 2),
           colors: chartColors,
           labelColor,
+          foreColor,
         }),
       );
     }
@@ -72,6 +75,16 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             debouncedTreeComponentPropsUpdate("labelColor", e);
           }}
         />
+        {!isRadialOnly && (
+          <ThemeColorSelector
+            label="Axis Labels Color"
+            {...form.getInputProps("foreColor")}
+            onChange={(e) => {
+              form.setFieldValue("foreColor", e);
+              debouncedTreeComponentPropsUpdate("foreColor", e);
+            }}
+          />
+        )}
         <Textarea
           autosize
           maxRows={10}

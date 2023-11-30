@@ -1,4 +1,4 @@
-import { Chart } from "@/components/mapper/charts/Chart";
+import { Chart, getChartColor } from "@/components/mapper/charts/Chart";
 import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
@@ -10,8 +10,9 @@ type Props = {
 };
 
 export const RadialChart = (props: Props) => {
-  const { loading } = props.component.props as any;
+  const { loading, labelColor } = props.component.props as any;
   const theme = useEditorStore((state) => state.theme);
+  const _labelColor = getChartColor(theme, labelColor, "SecondaryText.5");
 
   const customProps = merge({}, props, {
     component: {
@@ -48,14 +49,14 @@ export const RadialChart = (props: Props) => {
               dataLabels: {
                 name: {
                   show: true,
-                  offsetY: 10,
+                  color: _labelColor,
                 },
                 value: {
                   offsetY: -35,
                   fontSize: theme.fontSizes.xl,
                   fontFamily: "Helvetica, Arial, sans-serif",
                   fontWeight: 600,
-                  color: "#373d3f",
+                  color: _labelColor,
                 },
               },
             },
