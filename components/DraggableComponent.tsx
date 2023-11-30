@@ -20,7 +20,8 @@ export const DraggableComponent = ({ id, text, data, icon }: Props) => {
   useEffect(() => {
     if (!data) {
       const component = structureMapper[id];
-      setDraggableData(component.structure({ theme, pages }));
+      const _data = component.structure({ theme, pages });
+      setDraggableData(_data);
     } else {
       setDraggableData(data);
     }

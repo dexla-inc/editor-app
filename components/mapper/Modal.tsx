@@ -29,7 +29,6 @@ export const Modal = ({
     children,
     title,
     opened: propOpened,
-    style,
     forceHide,
     ...componentProps
   } = component.props as any;
@@ -47,13 +46,15 @@ export const Modal = ({
     if (!propOpened) close();
   }, [close, open, propOpened]);
 
+  const target = iframeWindow?.document.getElementById("iframe-content");
+
   return (
     <MantineModal
       centered
       withinPortal
       trapFocus={false}
       lockScroll={false}
-      target={iframeWindow?.document.getElementById("iframe-content")}
+      target={target}
       opened={
         isPreviewMode
           ? opened
@@ -66,7 +67,7 @@ export const Modal = ({
       {...props}
       {...componentProps}
       styles={{
-        content: style ?? {},
+        content: props.style ?? {},
         body: { height: "fit-content" },
         title: { fontFamily: theme.fontFamily },
       }}

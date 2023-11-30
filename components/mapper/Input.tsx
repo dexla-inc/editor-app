@@ -22,7 +22,7 @@ type Props = {
 const InputComponent = ({ renderTree, component, ...props }: Props) => {
   const theme = useEditorStore((state) => state.theme);
   const borderColor = getColorFromTheme(theme, "Border.6");
-  const { children, icon, triggers, value, loading, style, ...componentProps } =
+  const { children, icon, triggers, value, loading, ...componentProps } =
     component.props as any;
   const { name: iconName } = icon && icon!.props!;
   const [inputValue, setInputValue] = useState(value);
@@ -41,7 +41,7 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
 
   const type = (componentProps.type as string) || "text";
 
-  const customStyle = merge({}, { borderColor }, style);
+  const customStyle = merge({}, { borderColor }, props.style);
   return (
     <>
       {type === "number" ? (

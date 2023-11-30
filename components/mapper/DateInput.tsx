@@ -18,13 +18,12 @@ const DateInputComponent = ({ renderTree, component, ...props }: Props) => {
     disabled,
     icon: iconName,
     styles,
-    style,
     ...componentProps
   } = component.props as any;
   const theme = useEditorStore((state) => state.theme);
   const borderColor = getColorFromTheme(theme, "Border.6");
 
-  const customInputStyle = merge({}, { borderColor }, style);
+  const customInputStyle = merge({}, { borderColor }, props.style);
   const customStyles = merge({}, styles, {
     input: customInputStyle,
     label: { width: "100%" },

@@ -167,7 +167,6 @@ export const template = async (
     .filter((tile: Tile) => tile.name === "person")
     // @ts-ignore
     .reduce((acc: { [key: string]: PersonTile[] }, curr: PersonTile) => {
-      console.log({ acc, curr });
       if (!acc.hasOwnProperty(curr.entityName)) {
         acc = {
           ...acc,

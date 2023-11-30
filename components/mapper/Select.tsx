@@ -17,6 +17,7 @@ const SelectComponent = ({
   renderTree,
   component,
   isPreviewMode,
+  children: child,
   ...props
 }: Props) => {
   const {
@@ -26,12 +27,12 @@ const SelectComponent = ({
     dataPath,
     triggers,
     loading,
-    style: { height, ...style },
     ...componentProps
   } = component.props as any;
   const theme = useEditorStore((state) => state.theme);
   const borderColor = getColorFromTheme(theme, "Border.6");
 
+  const { height, ...style } = props.style ?? {};
   const customStyle = merge({}, { borderColor }, style);
 
   let data = [];

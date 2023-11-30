@@ -15,7 +15,7 @@ const TitleComponent = ({ renderTree, component, ...props }: Props) => {
   const [isEditable, setIsEditable] = useState(false);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent
+    (state) => state.updateTreeComponent,
   );
   const {
     children,

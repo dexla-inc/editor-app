@@ -77,6 +77,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
               maw={{ base: NAVBAR_WIDTH }}
               sx={{
                 height: `calc(100% - ${HEADER_HEIGHT}px)`,
+                zIndex: 300,
               }}
             >
               <Navbar.Section grow component={ScrollArea} py="sm">

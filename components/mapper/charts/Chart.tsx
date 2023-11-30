@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { BoxProps } from "@mantine/core";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { ApexOptions } from "apexcharts";
 import get from "lodash.get";
@@ -13,12 +14,11 @@ type Props = {
   renderTree: (component: Component) => any;
   component: Component;
   isPreviewMode?: boolean;
-};
+} & BoxProps;
 
 export const Chart = ({ renderTree, component, ...props }: Props) => {
   const {
     children,
-    style,
     data,
     repeatedIndex,
     series,
@@ -158,16 +158,6 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
       : { xaxis: { categories: dataLabels } }),
   };
 
-  var _options = {
-    chart: {
-      height: "auto",
-      width: 350,
-      type: "radialBar",
-    },
-    series: [70],
-    labels: ["Progress"],
-  };
-
   return (
     <div>
       <ReactApexChart
@@ -176,7 +166,8 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
         {...triggers}
         series={dataSeries}
         style={{
-          ...style,
+          ...(props.style ?? {}),
+          textAlign: "center",
           padding: 0,
           color: theme.colors.gray[8],
           ...(type === "radialBar"

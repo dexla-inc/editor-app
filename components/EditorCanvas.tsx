@@ -2,9 +2,8 @@
 // @refresh reset
 import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { Droppable } from "@/components/Droppable";
-import { DroppableDraggable } from "@/components/DroppableDraggable";
+import { EditableComponent } from "@/components/EditableComponent";
 import { IFrame } from "@/components/IFrame";
-import { useGetPageData } from "@/hooks/useGetPageData";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
@@ -22,6 +21,7 @@ import { Box, Paper } from "@mantine/core";
 import { useDisclosure, useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback, useMemo } from "react";
+import { ComponentToolbox } from "@/components/ComponentToolbox";
 
 type Props = {
   projectId: string;
@@ -39,6 +39,9 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
@@ -46,26 +49,45 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
   const [isCustomComponentModalOpen, customComponentModal] =
     useDisclosure(false);
 
-  useGetPageData({ projectId, pageId });
+  // useGetPageData({ projectId, pageId });
 
   const deleteComponent = useCallback(() => {
-    const selectedComponentId = useEditorStore.getState().selectedComponentId;
-
-    if (
-      selectedComponentId &&
-      selectedComponentId !== "root" &&
-      selectedComponentId !== "content-wrapper" &&
-      !isPreviewMode
-    ) {
+    if (selectedComponentId && !isPreviewMode) {
       const copy = cloneDeep(editorTree);
 
-      const parent = getComponentParent(editorTree.root, selectedComponentId);
-      const component = getComponentById(copy.root, selectedComponentId);
+      const comp = getComponentById(copy.root, selectedComponentId);
+      const parent = getComponentParent(copy.root, selectedComponentId);
+      const grandParent = getComponentParent(copy.root, parent?.id!);
+
+      if (
+        comp?.name === "GridColumn" &&
+        parent?.name === "Grid" &&
+        parent?.children?.length === 1 &&
+        grandParent?.id === "root"
+      ) {
+        return;
+      }
+
       removeComponent(copy.root, selectedComponentId);
-      setEditorTree(copy, { action: `Removed ${component?.name}` });
-      clearSelection(parent?.id);
+
+      if (
+        comp?.name === "GridColumn" &&
+        parent?.name === "Grid" &&
+        parent?.children?.length === 0
+      ) {
+        removeComponent(copy.root, parent.id!);
+      }
+
+      setSelectedComponentId(undefined);
+      setEditorTree(copy, { action: `Removed ${comp?.name}` });
     }
-  }, [clearSelection, editorTree, setEditorTree, isPreviewMode]);
+  }, [
+    editorTree,
+    selectedComponentId,
+    setEditorTree,
+    setSelectedComponentId,
+    isPreviewMode,
+  ]);
 
   const copySelectedComponent = useCallback(() => {
     const selectedComponentId = useEditorStore.getState().selectedComponentId;
@@ -201,20 +223,20 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
     ],
   ]);
 
-  const DroppableDraggableContainer = ({ children, component }: any) => {
+  const EditableComponentContainer = ({ children, component }: any) => {
     const isSelected = useEditorStore(
       (state) => state.selectedComponentId === component.id,
     );
 
     return (
-      <DroppableDraggable
+      <EditableComponent
         id={component.id!}
         component={component}
         customComponentModal={customComponentModal}
         isSelected={isSelected}
       >
         {children}
-      </DroppableDraggable>
+      </EditableComponent>
     );
   };
 
@@ -238,22 +260,22 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
 
     if (!componentToRender) {
       return (
-        <DroppableDraggableContainer
+        <EditableComponentContainer
           key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
           component={component}
         >
           {component.children?.map((child) => renderTree(child))}
-        </DroppableDraggableContainer>
+        </EditableComponentContainer>
       );
     }
 
     return (
-      <DroppableDraggableContainer
+      <EditableComponentContainer
         key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
         component={component}
       >
         {componentToRender?.Component({ component, renderTree })}
-      </DroppableDraggableContainer>
+      </EditableComponentContainer>
     );
   };
 
@@ -285,6 +307,7 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
           isCustomComponentModalOpen={isCustomComponentModalOpen}
         />
       )}
+      <ComponentToolbox />
     </>
   );
 };

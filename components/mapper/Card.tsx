@@ -14,7 +14,6 @@ export const Card = ({ renderTree, component, ...props }: Props) => {
 
   const {
     children,
-    style,
     bg,
     triggers,
     data: dataProp,
@@ -35,7 +34,7 @@ export const Card = ({ renderTree, component, ...props }: Props) => {
       {...props}
       {...componentProps}
       {...triggers}
-      style={{ width: "100%", ...style }}
+      style={{ width: "100%", ...props.style }}
       bg={bg}
     >
       <LoadingOverlay visible={loading} overlayBlur={2} />

@@ -17,7 +17,7 @@ const NavbarComponent = ({ renderTree, component, ...props }: Props) => {
 
   const backgroundColor = getColorFromTheme(theme, bg);
 
-  merge(componentProps, { style: { backgroundColor } });
+  merge(componentProps, { style: { ...props.style, backgroundColor } });
 
   return (
     <MantineBox {...props} {...componentProps}>

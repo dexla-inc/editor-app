@@ -39,7 +39,6 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
   const {
     markers,
     options,
-    style = {},
     apiKey,
     language,
     zoom,
@@ -51,7 +50,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
   const [internalZoom, setInternalZoom] = useState<number>(zoom);
   const MAP_SCRIPT_DELAY_DURATION = 800;
 
-  const { width, height, ...googleStyles } = style;
+  const { width, height, ...googleStyles } = props.style ?? {};
   const containerStyle = { width, height };
 
   const loadScript = useLoadScript({
@@ -110,7 +109,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
       center={center}
       onLoad={onLoad}
       onUnmount={unMount}
-      zoom={internalZoom}
+      zoom={(internalZoom ?? 0) as any}
       onClick={() => setActiveMarkerId(null)}
       mapContainerStyle={containerStyle}
       {...componentProps}

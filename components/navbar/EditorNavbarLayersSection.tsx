@@ -32,7 +32,6 @@ type ListItemProps = {
 const ListItem = ({ component, children }: ListItemProps) => {
   const theme = useMantineTheme();
   const { ref, hovered } = useHover();
-  const editorTree = useEditorStore((state) => state.tree);
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
@@ -193,7 +192,7 @@ const ListItem = ({ component, children }: ListItemProps) => {
                 sx={{ cursor: "move", width: "100%" }}
                 {...draggable}
               >
-                {component.id === "root" ? "Body" : "Content Wrapper"}
+                {component.id === "root" ? "Body" : component.description}
               </Text>
             ) : editable ? (
               <TextInput

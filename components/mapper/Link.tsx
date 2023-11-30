@@ -18,7 +18,7 @@ const LinkComponent = ({ renderTree, component, ...props }: Props) => {
             renderTree({
               ...child,
               props: { ...child.props, ...triggers },
-            })
+            }),
           )
         : children}
     </MantineAnchor>

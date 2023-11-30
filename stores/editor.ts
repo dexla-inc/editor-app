@@ -5,6 +5,7 @@ import { CardStyle } from "@/requests/projects/types";
 import { Logo } from "@/requests/themes/types";
 import { Action } from "@/utils/actions";
 import { encodeSchema } from "@/utils/compression";
+import { GRID_SIZE } from "@/utils/config";
 import {
   Component,
   EditorTree,
@@ -19,6 +20,7 @@ import { MantineNumberSize, MantineTheme } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
 import isEqual from "lodash.isequal";
+import { nanoid } from "nanoid";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
@@ -30,13 +32,41 @@ export const emptyEditorTree = {
   root: {
     id: "root",
     name: "Container",
-    description: "Root Container",
-    props: {
-      style: {
-        width: "100%",
+    description: "Root component",
+    children: [
+      {
+        id: "content-wrapper",
+        name: "Grid",
+        description: "Grid",
+        props: {
+          bg: "white",
+          m: 0,
+          p: 0,
+          gridSize: GRID_SIZE,
+          style: {
+            width: "100%",
+            height: "auto",
+            minHeight: "50px",
+          },
+        },
+        children: [
+          {
+            id: nanoid(),
+            name: "GridColumn",
+            description: "GridColumn",
+            props: {
+              span: GRID_SIZE,
+              bg: "white",
+              style: {
+                height: "auto",
+                minHeight: "50px",
+                border: "2px dotted #ddd",
+              },
+            },
+          },
+        ],
       },
-    },
-    children: [],
+    ],
   },
 };
 
@@ -160,6 +190,10 @@ export type EditorState = {
   setLanguage: (isSaving: string) => void;
   setHighlightedComponentId: (componentId: string | null) => void;
   highlightedComponentId?: string | null;
+  isResizing?: boolean;
+  setIsResizing: (isResizing?: boolean) => void;
+  columnSpans?: { [key: string]: number };
+  setColumnSpan: (id: string, span: number) => void;
 };
 
 export const debouncedUpdatePageState = debounce(updatePageState, 2000);
@@ -493,6 +527,11 @@ export const useEditorStore = create<EditorState>()(
             false,
             "editor/setHighlightedComponentId",
           ),
+        setIsResizing: (isResizing) => set({ isResizing }),
+        setColumnSpan: (id, span) =>
+          set((state) => ({
+            columnSpans: { ...(state.columnSpans ?? {}), [id]: span },
+          })),
       }),
       {
         partialize: (state) => {

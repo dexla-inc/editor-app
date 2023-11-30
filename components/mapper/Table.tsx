@@ -29,7 +29,6 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
     exampleData = {},
     headers = {},
     config = {},
-    style,
     dataPath = "",
     repeatedIndex,
     triggers,
@@ -122,7 +121,7 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
     mantineTableProps: {
       striped: true,
       withColumnBorders: true,
-      sx: style,
+      sx: props.style as any,
     },
     mantineTableHeadRowProps: { sx: { backgroundColor: "lightgrey" } },
   });
@@ -139,7 +138,10 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
 
   return (
     <>
-      <ScrollArea w={style?.width ?? "100%"} h={style?.height ?? "auto"}>
+      <ScrollArea
+        w={props.style?.width ?? "100%"}
+        h={props.style?.height ?? "auto"}
+      >
         <MantineReactTable
           {...props}
           {...componentProps}

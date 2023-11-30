@@ -1,3 +1,4 @@
+import { useEditorStore } from "@/stores/editor";
 import { useCallback } from "react";
 
 export const useDraggable = ({
@@ -9,21 +10,27 @@ export const useDraggable = ({
   onDragStart: (id: string) => void;
   currentWindow?: Window;
 }) => {
+  const isResizing = useEditorStore((state) => state.isResizing);
+
   const handleDragStart = useCallback(
     (event: React.DragEvent) => {
+      if (isResizing) return;
+
       const w = currentWindow ?? window;
       const el = w.document.getElementById(id)!;
       const rect = el?.getBoundingClientRect()!;
 
-      const x = Math.max(0, Math.round(event.pageX - rect.left - w.scrollX));
+      if (rect) {
+        const left = event.pageX - rect.left - w.scrollX;
+        const top = event.pageY - rect.top - w.scrollY;
 
-      const y = Math.max(0, Math.round(event.pageY - rect.top - w.scrollY));
+        event.dataTransfer.setDragImage(el, left, top);
+        event.dataTransfer.effectAllowed = "copyMove";
+      }
 
-      event.dataTransfer.setDragImage(el, x, y);
-      event.dataTransfer.effectAllowed = "copyMove";
       onDragStart(id);
     },
-    [id, onDragStart, currentWindow]
+    [id, onDragStart, currentWindow, isResizing],
   );
 
   return {
