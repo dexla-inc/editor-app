@@ -15,6 +15,7 @@ export function getProjection(
   indentationWidth: number,
 ) {
   const overItemIndex = items.findIndex(({ id }) => id === overId);
+  const overItem = items.find(({ id }) => id === overId);
   const activeItemIndex = items.findIndex(({ id }) => id === activeId);
   const activeItem = items[activeItemIndex];
   const newItems = arrayMove(items, activeItemIndex, overItemIndex);
@@ -59,6 +60,10 @@ export function getProjection(
 }
 
 function getMaxDepth({ previousItem }: { previousItem: FlattenedItem }) {
+  if (previousItem.blockDroppingChildrenInside) {
+    return previousItem.depth;
+  }
+
   if (previousItem) {
     return previousItem.depth + 1;
   }

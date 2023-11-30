@@ -124,14 +124,15 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           e.preventDefault();
           e.stopPropagation();
           forceDestroyContextMenu();
-          handleSelection(id as string);
+          if (!editable) {
+            handleSelection(id as string);
+          }
         }}
         onDoubleClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
           toggleEdit();
         }}
-        onBlur={closeEdit}
         onKeyDown={handleKeyPress}
         onContextMenu={componentContextMenu(component)}
       >
@@ -206,6 +207,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                     form.setFieldValue("value", e.target.value);
                     debouncedTreeComponentDescriptionpdate(e.target.value);
                   }}
+                  onBlur={closeEdit}
                 />
               ) : (
                 <Text
