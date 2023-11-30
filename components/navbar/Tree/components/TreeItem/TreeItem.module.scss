@@ -67,16 +67,21 @@
 }
 
 .TreeItem {
-  --vertical-padding: 10px;
+  --vertical-padding: 2px;
 
   position: relative;
   display: flex;
   align-items: center;
-  padding: var(--vertical-padding) 10px;
+  padding: var(--vertical-padding) 5px;
   background-color: #fff;
-  border: 1px solid #dedede;
+  border-radius: 0.25rem;
+  //border: 1px solid #dedede;
   color: #222;
   box-sizing: border-box;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
 }
 
 .Text {
@@ -113,15 +118,5 @@
   .Count {
     user-select: none;
     -webkit-user-select: none;
-  }
-}
-
-.Collapse {
-  svg {
-    transition: transform 250ms ease;
-  }
-
-  &.collapsed svg {
-    transform: rotate(-90deg);
   }
 }

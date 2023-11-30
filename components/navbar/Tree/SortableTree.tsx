@@ -1,10 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
-  Announcements,
   DndContext,
   closestCenter,
-  KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
@@ -30,43 +28,14 @@ import {
   flattenTree,
   getProjection,
   getChildCount,
-  removeItem,
   removeChildrenOf,
   setProperty,
 } from "./utilities";
 import type { FlattenedItem, SensorContext, TreeItems } from "./types";
-// import { sortableTreeKeyboardCoordinates } from "./keyboardCoordinates";
 import { SortableTreeItem } from "./components";
 import { CSS } from "@dnd-kit/utilities";
 import { useEditorStore } from "@/stores/editor";
 import { debouncedTreeRootChildrenUpdate } from "@/utils/editor";
-
-// const initialItems: TreeItems = [
-//   {
-//     id: "Home",
-//     children: [],
-//   },
-//   {
-//     id: "Collections",
-//     children: [
-//       { id: "Spring", children: [] },
-//       { id: "Summer", children: [] },
-//       { id: "Fall", children: [] },
-//       { id: "Winter", children: [] },
-//     ],
-//   },
-//   {
-//     id: "About Us",
-//     children: [],
-//   },
-//   {
-//     id: "My Account",
-//     children: [
-//       { id: "Addresses", children: [] },
-//       { id: "Order History", children: [] },
-//     ],
-//   },
-// ];
 
 const measuring = {
   droppable: {
@@ -98,37 +67,23 @@ const dropAnimationConfig: DropAnimation = {
 };
 
 interface Props {
-  collapsible?: boolean;
-  // defaultItems?: TreeItems;
   indentationWidth?: number;
   indicator?: boolean;
-  removable?: boolean;
 }
 
 export function NavbarLayersSection({
-  collapsible,
-  // defaultItems = initialItems,
   indicator = false,
-  indentationWidth = 50,
-  removable,
+  indentationWidth = 20,
 }: Props) {
   const editorTree = useEditorStore((state) => state.tree);
-  // const setItems = useEditorStore((state) => state.setTree);
-
   const items = editorTree.root.children;
 
   const setItems = (updateItems: any) => {
     debouncedTreeRootChildrenUpdate(updateItems);
   };
-
-  // const [items, setItems] = useState(() => defaultItems);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
   const [offsetLeft, setOffsetLeft] = useState(0);
-  const [currentPosition, setCurrentPosition] = useState<{
-    parentId: UniqueIdentifier | null;
-    overId: UniqueIdentifier;
-  } | null>(null);
 
   const flattenedItems = useMemo(() => {
     const flattenedTree = flattenTree(items as TreeItems);
@@ -159,14 +114,12 @@ export function NavbarLayersSection({
     items: flattenedItems,
     offset: offsetLeft,
   });
-  // const [coordinateGetter] = useState(() =>
-  //   sortableTreeKeyboardCoordinates(sensorContext, indicator, indentationWidth),
-  // );
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    // useSensor(KeyboardSensor, {
-    //   coordinateGetter,
-    // }),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 10,
+      },
+    }),
   );
 
   const sortedIds = useMemo(
@@ -184,6 +137,22 @@ export function NavbarLayersSection({
     };
   }, [flattenedItems, offsetLeft]);
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (overId) {
+        setItems(
+          setProperty(items as TreeItems, overId, "collapsed", (value) => {
+            return false;
+          }),
+        );
+      }
+    }, 100);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [overId, handleCollapse]);
+
   return (
     <DndContext
       // accessibility={{ announcements }}
@@ -200,23 +169,33 @@ export function NavbarLayersSection({
         items={sortedIds as string[]}
         strategy={verticalListSortingStrategy}
       >
-        {flattenedItems.map(({ id, children, collapsed, depth }) => (
-          <SortableTreeItem
-            key={id}
-            id={id!}
-            value={id as string}
-            depth={id === activeId && projected ? projected.depth : depth}
-            indentationWidth={indentationWidth}
-            indicator={indicator}
-            collapsed={Boolean(collapsed && children!.length)}
-            // onCollapse={
-            //   collapsible && children!.length
-            //     ? () => handleCollapse(id!)
-            //     : undefined
-            // }
-            // onRemove={removable ? () => handleRemove(id!) : undefined}
-          />
-        ))}
+        {flattenedItems.map((component) => {
+          return (
+            <SortableTreeItem
+              component={component}
+              key={component.id}
+              id={component.id!}
+              name={component.name}
+              value={component.description as string}
+              depth={
+                component.id === activeId && projected
+                  ? projected.depth
+                  : component.depth
+              }
+              indentationWidth={indentationWidth}
+              indicator={indicator}
+              collapsed={Boolean(
+                component.collapsed && component.children!.length,
+              )}
+              onCollapse={
+                (component.children ?? [])!.length
+                  ? () => handleCollapse(component.id!)
+                  : undefined
+              }
+            />
+          );
+        })}
+
         {createPortal(
           <DragOverlay
             dropAnimation={dropAnimationConfig}
@@ -224,11 +203,13 @@ export function NavbarLayersSection({
           >
             {activeId && activeItem ? (
               <SortableTreeItem
+                component={activeItem}
                 id={activeId}
+                name={activeItem.name!}
                 depth={activeItem.depth}
                 clone
                 childCount={getChildCount(items as TreeItems, activeId) + 1}
-                value={activeId.toString()}
+                value={activeItem.description!.toString()}
                 indentationWidth={indentationWidth}
               />
             ) : null}
@@ -239,27 +220,25 @@ export function NavbarLayersSection({
     </DndContext>
   );
 
-  function handleDragStart({ active: { id: activeId } }: DragStartEvent) {
+  function handleDragStart(e: DragStartEvent) {
+    const {
+      active: { id: activeId },
+    } = e;
     setActiveId(activeId);
     setOverId(activeId);
-
-    const activeItem = flattenedItems.find(({ id }) => id === activeId);
-
-    if (activeItem) {
-      setCurrentPosition({
-        parentId: activeItem.parentId,
-        overId: activeId,
-      });
-    }
 
     document.body.style.setProperty("cursor", "grabbing");
   }
 
-  function handleDragMove({ delta }: DragMoveEvent) {
+  function handleDragMove({ delta, activatorEvent }: DragMoveEvent) {
+    activatorEvent?.preventDefault();
+    activatorEvent?.stopPropagation();
     setOffsetLeft(delta.x);
   }
 
-  function handleDragOver({ over }: DragOverEvent) {
+  function handleDragOver({ over, activatorEvent }: DragOverEvent) {
+    activatorEvent?.preventDefault();
+    activatorEvent?.stopPropagation();
     setOverId(over?.id ?? null);
   }
 
@@ -296,9 +275,16 @@ export function NavbarLayersSection({
     setOverId(null);
     setActiveId(null);
     setOffsetLeft(0);
-    setCurrentPosition(null);
 
     document.body.style.setProperty("cursor", "");
+  }
+
+  function handleCollapse(id: UniqueIdentifier) {
+    setItems(
+      setProperty(items as TreeItems, id, "collapsed", (value) => {
+        return !value;
+      }),
+    );
   }
 }
 
