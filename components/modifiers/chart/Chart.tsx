@@ -26,11 +26,10 @@ export const Modifier = withModifier(({ selectedComponent }) => {
 
   useEffect(() => {
     if (selectedComponent?.id) {
-      const { series, options, chartColors } = pick(selectedComponent.props!, [
-        "series",
-        "options",
-        "chartColors",
-      ]);
+      const { series, options, chartColors, labelColor } = pick(
+        selectedComponent.props!,
+        ["series", "options", "chartColors", "labelColor"],
+      );
       const _dataLabels = isPieOrRadial
         ? options?.labels
         : options?.xaxis?.categories;
@@ -40,6 +39,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           data: JSON.stringify(series, null, 2),
           dataLabels: JSON.stringify(_dataLabels, null, 2),
           colors: chartColors,
+          labelColor,
         }),
       );
     }
@@ -64,6 +64,14 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
+        <ThemeColorSelector
+          label="Label Color"
+          {...form.getInputProps("labelColor")}
+          onChange={(e) => {
+            form.setFieldValue("labelColor", e);
+            debouncedTreeComponentPropsUpdate("labelColor", e);
+          }}
+        />
         <Textarea
           autosize
           maxRows={10}

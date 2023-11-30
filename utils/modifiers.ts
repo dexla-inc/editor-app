@@ -354,6 +354,7 @@ export const requiredModifiers: RequiredModifiers = {
       "Black.6",
       "Primary.3",
     ],
+    labelColor: "SecondaryText.5",
   },
 };
 
