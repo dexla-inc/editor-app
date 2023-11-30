@@ -34,6 +34,7 @@ export const ComponentToolbox = () => {
   const component = getComponentById(editorTree.root, selectedComponentId!);
 
   const id = component?.id;
+  const isGrid = component?.name === "Grid";
   const isColumn = component?.name === "GridColumn";
 
   const parent = useMemo(
@@ -148,45 +149,47 @@ export const ComponentToolbox = () => {
           }}
         />
       )}
-      <ActionIconTransparent
-        iconName="IconBoxMargin"
-        tooltip="Wrap container"
-        onClick={() => {
-          const container = structureMapper["Container"].structure({
-            theme: editorTheme,
-          });
+      {!isGrid && !isColumn && (
+        <ActionIconTransparent
+          iconName="IconBoxMargin"
+          tooltip="Wrap container"
+          onClick={() => {
+            const container = structureMapper["Container"].structure({
+              theme: editorTheme,
+            });
 
-          if (container.props && container.props.style) {
-            container.props.style = {
-              ...container.props.style,
-              width: "auto",
-              padding: "0px",
-            };
-          }
+            if (container.props && container.props.style) {
+              container.props.style = {
+                ...container.props.style,
+                width: "auto",
+                padding: "0px",
+              };
+            }
 
-          const copy = cloneDeep(editorTree);
-          const containerId = addComponent(
-            copy.root,
-            container,
-            {
-              id: parent?.id!,
+            const copy = cloneDeep(editorTree);
+            const containerId = addComponent(
+              copy.root,
+              container,
+              {
+                id: parent?.id!,
+                edge: "left",
+              },
+              getComponentIndex(parent!, id),
+            );
+
+            addComponent(copy.root, component, {
+              id: containerId,
               edge: "left",
-            },
-            getComponentIndex(parent!, id),
-          );
+            });
 
-          addComponent(copy.root, component, {
-            id: containerId,
-            edge: "left",
-          });
-
-          removeComponentFromParent(copy.root, id, parent?.id!);
-          setEditorTree(copy, {
-            action: `Wrapped ${component.name} with a Container`,
-          });
-        }}
-      />
-      {component.name === "Grid" && (
+            removeComponentFromParent(copy.root, id, parent?.id!);
+            setEditorTree(copy, {
+              action: `Wrapped ${component.name} with a Container`,
+            });
+          }}
+        />
+      )}
+      {isGrid && (
         <>
           <ActionIconTransparent
             iconName="IconColumnInsertRight"
@@ -197,7 +200,7 @@ export const ComponentToolbox = () => {
                 copy.root,
                 {
                   ...ColumnSchema,
-                  props: { ...ColumnSchema.props, resetTargetResized: true },
+                  props: { ...ColumnSchema.props },
                 },
                 {
                   id: component.id!,
@@ -229,7 +232,7 @@ export const ComponentToolbox = () => {
           />
         </>
       )}
-      {component.name === "GridColumn" && (
+      {isColumn && (
         <>
           <ActionIconTransparent
             iconName="IconLayoutColumns"
