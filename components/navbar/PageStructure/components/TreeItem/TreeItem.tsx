@@ -72,6 +72,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     },
     ref,
   ) => {
+    const customRef = useRef(null);
     const theme = useMantineTheme();
     const [editable, { toggle: toggleEdit, close: closeEdit }] =
       useDisclosure(false);
@@ -107,9 +108,9 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     useEffect(() => {
       const isRootOrContentWrapper = id === "root" || id === "content-wrapper";
 
-      if (isSelected && !isRootOrContentWrapper) {
+      if (isSelected) {
         // @ts-ignore
-        wrapperRef.current?.scrollIntoView({
+        customRef.current?.scrollIntoView({
           behavior: "smooth",
           block: "center",
         });
@@ -162,7 +163,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           }}
           {...handleProps}
         >
-          <Group position="apart" noWrap w="100%">
+          <Group position="apart" noWrap w="100%" ref={customRef}>
             <Group
               spacing={4}
               noWrap

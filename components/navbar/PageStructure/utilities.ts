@@ -60,7 +60,7 @@ export function getProjection(
 }
 
 function getMaxDepth({ previousItem }: { previousItem: FlattenedItem }) {
-  if (previousItem.blockDroppingChildrenInside) {
+  if (previousItem?.blockDroppingChildrenInside) {
     return previousItem.depth;
   }
 
