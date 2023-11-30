@@ -128,11 +128,13 @@ export const GridColumn = ({
         const copy = cloneDeep(editorTree);
         updateTreeComponent(copy.root, props.id, {
           span: columnSpans[props.id] ?? 0,
+          resized: true,
         });
 
         if (nextSibling) {
           updateTreeComponent(copy.root, nextSibling.id!, {
             span: columnSpans[nextSibling.id!] ?? 0,
+            resized: false,
           });
 
           const nextSiblingComp = getComponentById(copy.root, nextSibling.id!);

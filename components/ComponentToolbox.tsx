@@ -200,7 +200,7 @@ export const ComponentToolbox = () => {
                 copy.root,
                 {
                   ...ColumnSchema,
-                  props: { ...ColumnSchema.props },
+                  props: { ...ColumnSchema.props, resetTargetResized: true },
                 },
                 {
                   id: component.id!,

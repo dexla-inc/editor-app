@@ -111,7 +111,7 @@ export default function ScreenshotUploader({
       document.removeEventListener("drop", handleDrop);
       document.removeEventListener("dragleave", handleDragLeave);
     };
-  }, []);
+  }, [setScreenshots]);
 
   return (
     <Stack spacing="xl">

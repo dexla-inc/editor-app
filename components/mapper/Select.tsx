@@ -32,9 +32,8 @@ const SelectComponent = ({
   const theme = useEditorStore((state) => state.theme);
   const borderColor = getColorFromTheme(theme, "Border.6");
 
-  const customStyle = merge({}, { borderColor }, style);
-
   const { height, ...style } = props.style ?? {};
+  const customStyle = merge({}, { borderColor }, style);
 
   let data = [];
 

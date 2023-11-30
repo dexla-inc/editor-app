@@ -1047,7 +1047,30 @@ const addNodeToTarget = (
   if (dropTarget.edge === "center") {
     targetNode.children = [...(targetNode.children || []), copy];
 
+    copy.props!.resized = false;
+    copy.children = copy.children?.map((child) => {
+      child.props!.resized = false;
+      return child;
+    });
+
+    if (copy.props?.resetTargetResized && !isMoving) {
+      target.props!.resized = false;
+      target.children = target.children?.map((child) => {
+        child.props!.resized = false;
+        return child;
+      });
+    }
+
     return target;
+  }
+  const shouldRemoveResizing = target.name === "Grid" && isAddingToXAxis;
+
+  if (shouldRemoveResizing) {
+    copy.props!.resized = false;
+    target.children = target.children?.map((child) => {
+      child.props!.resized = false;
+      return child;
+    });
   }
 
   if (dropTarget.edge === "top") {
