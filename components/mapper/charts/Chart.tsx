@@ -158,16 +158,6 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
       : { xaxis: { categories: dataLabels } }),
   };
 
-  var _options = {
-    chart: {
-      height: "auto",
-      width: 350,
-      type: "radialBar",
-    },
-    series: [70],
-    labels: ["Progress"],
-  };
-
   return (
     <div>
       <ReactApexChart
