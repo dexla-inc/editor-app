@@ -3,7 +3,7 @@ import IconTitleDescriptionButton from "@/components/projects/NewProjectButton";
 import { getDataSources } from "@/requests/datasources/queries";
 import { DataSourceResponse } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
-import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
+import { ICON_SIZE } from "@/utils/config";
 import {
   Container,
   Flex,
@@ -13,7 +13,7 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
-import { IconSearch, IconSparkles } from "@tabler/icons-react";
+import { IconSearch } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -61,12 +61,7 @@ export default function DataSourceSettings({ projectId }: Props) {
             as={`/projects/${projectId}/settings/datasources/new`}
           >
             <IconTitleDescriptionButton
-              icon={
-                <IconSparkles
-                  size={LARGE_ICON_SIZE}
-                  color={theme.colors.teal[5]}
-                />
-              }
+              icon="IconSparkles"
               title="Create new data source"
               description="Create as many data sources as you like. We only support APIs for now but GraphQL and Airtable are coming soon!"
             ></IconTitleDescriptionButton>
