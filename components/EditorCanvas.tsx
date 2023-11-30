@@ -1,11 +1,13 @@
 // The comment below force next to refresh the editor state every time we change something in the code
 // @refresh reset
+import { ComponentToolbox } from "@/components/ComponentToolbox";
 import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { Droppable } from "@/components/Droppable";
 import { EditableComponent } from "@/components/EditableComponent";
 import { IFrame } from "@/components/IFrame";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
+import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
 import { componentMapper } from "@/utils/componentMapper";
 import { HEADER_HEIGHT } from "@/utils/config";
 import {
@@ -21,7 +23,6 @@ import { Box, Paper } from "@mantine/core";
 import { useDisclosure, useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback, useMemo } from "react";
-import { ComponentToolbox } from "@/components/ComponentToolbox";
 
 type Props = {
   projectId: string;
@@ -89,15 +90,17 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
     isPreviewMode,
   ]);
 
-  const copySelectedComponent = useCallback(() => {
+  const copySelectedComponent = useCallback(async () => {
     const selectedComponentId = useEditorStore.getState().selectedComponentId;
-
+    const componentToCopy = getComponentById(
+      editorTree.root,
+      selectedComponentId!,
+    )!;
     if (!isPreviewMode && selectedComponentId) {
-      setCopiedComponent(
-        getComponentById(editorTree.root, selectedComponentId!)!,
-      );
+      setCopiedComponent(componentToCopy);
+      await copyToClipboard(projectId, componentToCopy);
     }
-  }, [editorTree.root, isPreviewMode, setCopiedComponent]);
+  }, [editorTree.root, isPreviewMode, setCopiedComponent, projectId]);
 
   const cutSelectedComponent = useCallback(() => {
     const selectedComponentId = useEditorStore.getState().selectedComponentId;
@@ -115,7 +118,10 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
   };
 
   const pasteCopiedComponent = useCallback(async () => {
-    if (!copiedComponent || isPreviewMode) {
+    const clipboardContent = await pasteFromClipboard(projectId);
+    let componentToPaste =
+      copiedComponent || (clipboardContent as typeof copiedComponent);
+    if (!componentToPaste || isPreviewMode) {
       return; // Early exit if conditions aren't met
     }
 
@@ -127,7 +133,7 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
 
     const newSelectedId = addComponent(
       copy.root,
-      copiedComponent,
+      componentToPaste,
       {
         id: parentComponent!.id as string,
         edge: "right",
@@ -135,7 +141,7 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
       getComponentIndex(parentComponent!, selectedComponentId!) + 1,
     );
 
-    await setEditorTree(copy, { action: `Pasted ${copiedComponent.name}` });
+    await setEditorTree(copy, { action: `Pasted ${componentToPaste.name}` });
     setSelectedComponentId(newSelectedId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [copiedComponent, editorTree, isPreviewMode, setEditorTree]);
