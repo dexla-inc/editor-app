@@ -189,16 +189,6 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
           textAlign: "center",
           padding: 0,
           color: theme.colors.gray[8],
-          ...(type === "radialBar"
-            ? {
-                marginTop: "-6.5%",
-                marginBottom: "-20%",
-              }
-            : type === "radar"
-            ? {
-                marginBottom: "-20%",
-              }
-            : {}),
         }}
         width="100%"
         type={type}
