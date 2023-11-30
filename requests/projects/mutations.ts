@@ -27,7 +27,7 @@ export type ProjectUpdateParams = {
 };
 
 export const createProject = async (
-  params: ProjectParams | {},
+  params: ProjectParams | { companyId: string },
   empty: boolean = false,
 ) => {
   let url = `/projects`;

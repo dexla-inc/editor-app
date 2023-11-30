@@ -113,7 +113,7 @@ export function ProjectItem({
           onClick={goToEditorHomePage}
         >
           {!isHovered && <Text truncate="end">{project.friendlyName}</Text>}
-          {isHovered && <Text align="center">Go to editor</Text>}
+          {isHovered && <Text>Go to editor</Text>}
         </UnstyledButton>
         <Flex
           align="center"

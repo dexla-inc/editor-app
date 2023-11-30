@@ -75,7 +75,7 @@ export default function Projects() {
 
   const createEmptyProject = async () => {
     // This is temporary until we create a right click context menu to create empty project
-    const project = await createProject({}, true);
+    const project = await createProject({ companyId: company.orgId }, true);
     const url = `/projects/${project.id}/editor/${project.homePageId}}`;
 
     router.push(url);
