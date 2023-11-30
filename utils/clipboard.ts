@@ -1,26 +1,22 @@
 import { decodeSchema, encodeSchema } from "./compression";
 import { Component } from "./editor";
 
-export const copyToClipboard = async (
-  projectId: string,
-  content: Component,
-) => {
+export const copyToClipboard = (projectId: string, content: Component) => {
   try {
     const _content = encodeSchema(JSON.stringify({ id: projectId, content }));
-    if (!navigator.clipboard) return; // early exit if clipboard is not supported
-    await navigator.clipboard.writeText(_content);
+    localStorage.setItem("component", _content);
   } catch (error) {
-    console.log(error);
+    console.log((error as Error).message);
   }
 };
 
-export const pasteFromClipboard = async (projectId: string) => {
+export const pasteFromClipboard = (projectId: string) => {
   try {
-    if (!navigator.clipboard) return; // early exit if clipboard is not supported
-    const content = await navigator.clipboard.readText();
+    const content = localStorage.getItem("component");
+    if (!content) return; // early exit if no content
     const _content = JSON.parse(decodeSchema(content));
     return _content.id !== projectId ? _content.content : null;
   } catch (error) {
-    console.log(error);
+    console.log((error as Error).message);
   }
 };
