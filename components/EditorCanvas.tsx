@@ -2,7 +2,7 @@
 // @refresh reset
 import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { Droppable } from "@/components/Droppable";
-import { DroppableDraggable } from "@/components/DroppableDraggable";
+import { EditableComponent } from "@/components/EditableComponent";
 import { IFrame } from "@/components/IFrame";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
@@ -223,20 +223,20 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
     ],
   ]);
 
-  const DroppableDraggableContainer = ({ children, component }: any) => {
+  const EditableComponentContainer = ({ children, component }: any) => {
     const isSelected = useEditorStore(
       (state) => state.selectedComponentId === component.id,
     );
 
     return (
-      <DroppableDraggable
+      <EditableComponent
         id={component.id!}
         component={component}
         customComponentModal={customComponentModal}
         isSelected={isSelected}
       >
         {children}
-      </DroppableDraggable>
+      </EditableComponent>
     );
   };
 
@@ -260,22 +260,22 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
 
     if (!componentToRender) {
       return (
-        <DroppableDraggableContainer
+        <EditableComponentContainer
           key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
           component={component}
         >
           {component.children?.map((child) => renderTree(child))}
-        </DroppableDraggableContainer>
+        </EditableComponentContainer>
       );
     }
 
     return (
-      <DroppableDraggableContainer
+      <EditableComponentContainer
         key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
         component={component}
       >
         {componentToRender?.Component({ component, renderTree })}
-      </DroppableDraggableContainer>
+      </EditableComponentContainer>
     );
   };
 

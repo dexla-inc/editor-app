@@ -19,7 +19,7 @@ type Props = {
 
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
 
-export const DroppableDraggable = ({
+export const EditableComponent = ({
   id,
   children,
   component,

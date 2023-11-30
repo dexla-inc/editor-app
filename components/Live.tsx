@@ -1,7 +1,7 @@
 // The comment below force next to refresh the editor state every time we change something in the code
 // @refresh reset
 import { Droppable } from "@/components/Droppable";
-import { DroppableDraggable } from "@/components/DroppableDraggable";
+import { EditableComponent } from "@/components/EditableComponent";
 import { IFrame } from "@/components/IFrame";
 import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries";
 import { useAppStore } from "@/stores/app";
@@ -65,24 +65,24 @@ export const Live = ({ projectId, pageId }: Props) => {
 
     if (!componentToRender) {
       return (
-        <DroppableDraggable
+        <EditableComponent
           key={`${component.id}-preview`}
           id={component.id!}
           component={component}
         >
           {component.children?.map((child) => renderTree(child))}
-        </DroppableDraggable>
+        </EditableComponent>
       );
     }
 
     return (
-      <DroppableDraggable
+      <EditableComponent
         key={`${component.id}-preview`}
         id={component.id!}
         component={component}
       >
         {componentToRender?.Component({ component, renderTree })}
-      </DroppableDraggable>
+      </EditableComponent>
     );
   };
 
