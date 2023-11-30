@@ -1,9 +1,33 @@
-import React, { forwardRef, HTMLAttributes } from "react";
+import React, {
+  forwardRef,
+  HTMLAttributes,
+  KeyboardEvent,
+  useRef,
+} from "react";
 import classNames from "classnames";
 
 import styles from "./TreeItem.module.scss";
+import { ICON_SIZE } from "@/utils/config";
+import { IconChevronDown } from "@tabler/icons-react";
+import {
+  ActionIcon,
+  Card,
+  Group,
+  Text,
+  TextInput,
+  useMantineTheme,
+} from "@mantine/core";
+import { debouncedTreeComponentDescriptionpdate } from "@/utils/editor";
+import { Icon } from "@/components/Icon";
+import { structureMapper } from "@/utils/componentMapper";
+import { useDisclosure } from "@mantine/hooks";
+import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
+import { useForm } from "@mantine/form";
+import { useEditorStore } from "@/stores/editor";
 
 export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
+  id: any;
+  name: string;
   childCount?: number;
   clone?: boolean;
   collapsed?: boolean;
@@ -18,10 +42,12 @@ export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   onCollapse?(): void;
   onRemove?(): void;
   wrapperRef?(node: HTMLLIElement): void;
+  component: any;
 }
 
+// eslint-disable-next-line react/display-name
 export const TreeItem = forwardRef<HTMLDivElement, Props>(
-  function treeItemInner(
+  (
     {
       childCount,
       clone,
@@ -37,11 +63,46 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       onRemove,
       style,
       value,
+      id,
+      name,
       wrapperRef,
+      component,
       ...props
     },
     ref,
-  ) {
+  ) => {
+    const theme = useMantineTheme();
+    const [editable, { toggle: toggleEdit, close: closeEdit }] =
+      useDisclosure(false);
+    const editFieldRef = useRef<HTMLInputElement>(null);
+    const isSelected = useEditorStore(
+      (state) => state.selectedComponentId === id,
+    );
+    const setSelectedComponentId = useEditorStore(
+      (state) => state.setSelectedComponentId,
+    );
+
+    const { componentContextMenu, forceDestroyContextMenu } =
+      useComponentContextMenu();
+
+    const form = useForm({
+      initialValues: {
+        value,
+      },
+    });
+
+    const handleSelection = (id: string) => {
+      if (id !== "root") {
+        setSelectedComponentId(id as string);
+      }
+    };
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === "Escape") closeEdit();
+    };
+
+    const icon = structureMapper[name as string]?.icon;
+    const componentActions = component.actions;
+
     return (
       <li
         className={classNames(
@@ -59,33 +120,117 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           } as React.CSSProperties
         }
         {...props}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          forceDestroyContextMenu();
+          handleSelection(id as string);
+        }}
+        onDoubleClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleEdit();
+        }}
+        onBlur={closeEdit}
+        onKeyDown={handleKeyPress}
+        onContextMenu={componentContextMenu(component)}
       >
-        <div className={styles.TreeItem} ref={ref} style={style}>
-          <button {...handleProps} />
-          {onCollapse && (
-            <button
-              onClick={onCollapse}
-              className={classNames(
-                styles.Collapse,
-                collapsed && styles.collapsed,
-              )}
+        <div
+          className={styles.TreeItem}
+          ref={ref}
+          style={{
+            ...style,
+            border: isSelected
+              ? `1px solid ${theme.colors.teal[6]}`
+              : undefined,
+          }}
+          {...handleProps}
+        >
+          <Group position="apart" noWrap w="100%">
+            <Group
+              spacing={4}
+              noWrap
+              w="100%"
+              align="center"
+              sx={{ backgroundColor: `${editable && "white"}` }}
             >
-              {collapseIcon}
-            </button>
+              {onCollapse && (
+                <ActionIcon
+                  onClick={onCollapse}
+                  className={classNames(
+                    styles.Collapse,
+                    collapsed && styles.collapsed,
+                  )}
+                  sx={{
+                    pointerEvents: "all",
+                    width: "auto",
+                    minWidth: "auto",
+                    cursor: "pointer",
+                  }}
+                >
+                  <IconChevronDown
+                    size={ICON_SIZE}
+                    style={{
+                      transition: "transform 200ms ease",
+                      transform: !collapsed ? `none` : "rotate(-90deg)",
+                    }}
+                  />
+                </ActionIcon>
+              )}
+              {!onCollapse && (
+                <Card unstyled w="18px" h="28px" p={0} bg="transparent">
+                  {" "}
+                </Card>
+              )}
+              {id !== "root" && icon}
+              {id === "root" || id === "content-wrapper" ? (
+                <Text
+                  id={`layer-${id}`}
+                  size="xs"
+                  lineClamp={1}
+                  sx={{ cursor: "move", width: "100%" }}
+                >
+                  {id === "root" ? "Body" : "Content Wrapper"}
+                </Text>
+              ) : editable ? (
+                <TextInput
+                  ref={editFieldRef}
+                  id={`layer-${id}`}
+                  size="xs"
+                  w="100%"
+                  variant="unstyled"
+                  {...form.getInputProps("value")}
+                  onChange={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    form.setFieldValue("value", e.target.value);
+                    debouncedTreeComponentDescriptionpdate(e.target.value);
+                  }}
+                />
+              ) : (
+                <Text
+                  id={`layer-${id}`}
+                  size="xs"
+                  lineClamp={1}
+                  sx={{ cursor: "move", width: "100%" }}
+                >
+                  {value}
+                </Text>
+              )}
+            </Group>
+          </Group>
+          {componentActions && !!componentActions.length && (
+            <ActionIcon color="teal" variant="transparent" size={30}>
+              <Icon name="IconBolt" size={ICON_SIZE} />
+            </ActionIcon>
           )}
-          <span className={styles.Text}>{value}</span>
-          {/*{!clone && onRemove && <Remove onClick={onRemove} />}*/}
-          {clone && childCount && childCount > 1 ? (
-            <span className={styles.Count}>{childCount}</span>
-          ) : null}
+          {component.props?.style?.display === "none" && (
+            <ActionIcon color="dark" variant="transparent" size={30}>
+              <Icon name="IconEyeOff" size={ICON_SIZE} />
+            </ActionIcon>
+          )}
         </div>
       </li>
     );
   },
-);
-
-const collapseIcon = (
-  <svg width="10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 41">
-    <path d="M30.76 39.2402C31.885 40.3638 33.41 40.995 35 40.995C36.59 40.995 38.115 40.3638 39.24 39.2402L68.24 10.2402C69.2998 9.10284 69.8768 7.59846 69.8494 6.04406C69.822 4.48965 69.1923 3.00657 68.093 1.90726C66.9937 0.807959 65.5106 0.178263 63.9562 0.150837C62.4018 0.123411 60.8974 0.700397 59.76 1.76024L35 26.5102L10.24 1.76024C9.10259 0.700397 7.59822 0.123411 6.04381 0.150837C4.4894 0.178263 3.00632 0.807959 1.90702 1.90726C0.807714 3.00657 0.178019 4.48965 0.150593 6.04406C0.123167 7.59846 0.700153 9.10284 1.75999 10.2402L30.76 39.2402Z" />
-  </svg>
 );

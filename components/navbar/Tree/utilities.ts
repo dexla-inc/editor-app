@@ -3,8 +3,6 @@ import { arrayMove } from "@dnd-kit/sortable";
 
 import type { FlattenedItem, TreeItem, TreeItems } from "./types";
 
-// export const iOS = /iPad|iPhone|iPod/.test(navigator.platform);
-
 function getDragDepth(offset: number, indentationWidth: number) {
   return Math.round(offset / indentationWidth);
 }
@@ -81,13 +79,11 @@ function flatten(
   parentId: UniqueIdentifier | null = null,
   depth = 0,
 ): FlattenedItem[] {
-  console.log({ items, parentId, depth });
-  return items.reduce<FlattenedItem[]>((acc, item, index) => {
+  return (items ?? []).reduce<FlattenedItem[]>((acc, item, index) => {
     return [
       ...acc,
       { ...item, parentId, depth, index },
-      // @ts-ignore
-      ...flatten(item.children, item.id, depth + 1),
+      ...flatten(item.children ?? [], item.id, depth + 1),
     ];
   }, []);
 }
@@ -133,8 +129,7 @@ export function findItemDeep(
       return item;
     }
 
-    // @ts-ignore
-    if (children.length) {
+    if ((children ?? []).length) {
       // @ts-ignore
       const child = findItemDeep(children, itemId);
 
@@ -155,8 +150,7 @@ export function removeItem(items: TreeItems, id: UniqueIdentifier) {
       continue;
     }
 
-    // @ts-ignore
-    if (item.children.length) {
+    if ((item.children ?? []).length) {
       // @ts-ignore
       item.children = removeItem(item.children, id);
     }
@@ -181,7 +175,7 @@ export function setProperty<T extends keyof TreeItem>(
     }
 
     // @ts-ignore
-    if (item.children.length) {
+    if ((item.children || []).length) {
       // @ts-ignore
       item.children = setProperty(item.children, id, property, setter);
     }
@@ -191,7 +185,7 @@ export function setProperty<T extends keyof TreeItem>(
 }
 
 function countChildren(items: TreeItem[], count = 0): number {
-  return items.reduce((acc, { children }) => {
+  return (items ?? []).reduce((acc, { children }) => {
     // @ts-ignore
     if (children.length) {
       // @ts-ignore
@@ -218,7 +212,7 @@ export function removeChildrenOf(
   return items.filter((item) => {
     if (item.parentId && excludeParentIds.includes(item.parentId)) {
       // @ts-ignore
-      if (item.children.length) {
+      if ((item.children ?? []).length) {
         // @ts-ignore
         excludeParentIds.push(item.id);
       }
