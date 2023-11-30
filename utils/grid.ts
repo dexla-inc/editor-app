@@ -21,6 +21,7 @@ export const calculateGridSizes = (tree: Component) => {
             (parent.children ?? []).filter(
               (child) => child.name === "GridColumn",
             ) ?? [];
+
           const isAlone = sibilings.length === 1;
           // if there's no resized column in the current depth and the current column is resized, skip this column,
           // if there's a resized column in the current depth already, go ahead and resize it anyway
