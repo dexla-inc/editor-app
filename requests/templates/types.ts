@@ -1,3 +1,5 @@
+import { TileResponse } from "@/requests/tiles/types";
+
 export type TemplateParams = {
   id: string;
   name: string;
@@ -9,63 +11,74 @@ export type TemplateParams = {
 
 export type TemplateResponse = TemplateParams & {
   tags?: TemplateTag[];
+  tiles?: TileResponse[];
+};
+
+export type TemplateDetail = {
+  name: string;
+  type: TemplateTypes;
+  tags?: TemplateTag[] | undefined;
 };
 
 export type TemplateTypes =
-  | "LOGIN"
-  | "FORM"
-  | "SEARCH"
-  | "SETTINGS"
-  | "HELP"
-  | "REPORT"
-  | "ERROR"
-  | "PROFILE"
-  | "CHARTS"
-  | "LISTING"
   | "DETAILS"
-  | "GALLERY"
-  | "FEED"
-  | "WIZARD"
-  | "LANDING"
+  | "REPORT"
+  | "SEARCH"
   | "CHECKOUT"
+  | "CHARTS"
+  | "ERROR"
   | "FAQ"
+  | "FEED"
+  | "FORM"
+  | "GALLERY"
+  | "HELP"
+  | "LANDING"
+  | "LISTING"
+  | "LOGIN"
   | "PROJECT"
-  | "SELECTION";
+  | "PROFILE"
+  | "SELECTION"
+  | "SETTINGS"
+  | "WIZARD";
 
 export const TemplateTypesKeys: Record<TemplateTypes, string> = {
-  LOGIN: "Login",
-  FORM: "Form",
-  SEARCH: "Search",
-  SETTINGS: "Settings",
-  HELP: "Help",
-  REPORT: "Report",
-  ERROR: "Error",
-  PROFILE: "Profile",
-  CHARTS: "Charts",
-  LISTING: "Listing",
   DETAILS: "Details",
-  GALLERY: "Gallery",
-  FEED: "Feed",
-  WIZARD: "Wizard",
-  LANDING: "Landing",
+  REPORT: "Report",
+  SEARCH: "Search",
   CHECKOUT: "Checkout",
+  CHARTS: "Charts",
+  ERROR: "Error",
   FAQ: "FAQ",
+  FEED: "Feed",
+  FORM: "Form",
+  GALLERY: "Gallery",
+  HELP: "Help",
+  LANDING: "Landing",
+  LISTING: "Listing",
+  LOGIN: "Login",
   PROJECT: "Project",
+  PROFILE: "Profile",
   SELECTION: "Selection",
+  SETTINGS: "Settings",
+  WIZARD: "Wizard",
 };
 
-type TemplateTag =
-  | "MODERN"
-  | "TRADITIONAL"
-  | "MINIMALISTIC"
+export type TemplateTag =
   | "FLAT"
   | "FUTURISTIC"
+  | "MINIMALISTIC"
+  | "MODERN"
   | "RETRO"
+  | "TRADITIONAL"
   | "VINTAGE";
 
 export const TemplateTypesOptions = Object.keys(TemplateTypesKeys).map(
   (key) => ({
     label: TemplateTypesKeys[key as TemplateTypes],
     value: key,
+    group:
+      key == "REPORT" || key == "SEARCH" || key == "DETAILS"
+        ? "Popular"
+        : "Others",
   }),
 );

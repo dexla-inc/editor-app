@@ -1,6 +1,7 @@
 import { Icon } from "@/components/Icon";
+import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { Component, getColorFromTheme } from "@/utils/editor";
 import {
   Loader,
   TextInput as MantineInput,
@@ -9,6 +10,7 @@ import {
   TextInputProps,
 } from "@mantine/core";
 import debounce from "lodash.debounce";
+import merge from "lodash.merge";
 import { memo, useCallback, useEffect, useState } from "react";
 
 type Props = {
@@ -18,6 +20,8 @@ type Props = {
   TextInputProps;
 
 const InputComponent = ({ renderTree, component, ...props }: Props) => {
+  const theme = useEditorStore((state) => state.theme);
+  const borderColor = getColorFromTheme(theme, "Border.6");
   const { children, icon, triggers, value, loading, ...componentProps } =
     component.props as any;
   const { name: iconName } = icon && icon!.props!;
@@ -36,6 +40,8 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
   }, [value]);
 
   const type = (componentProps.type as string) || "text";
+
+  const customStyle = merge({}, { borderColor }, props.style);
   return (
     <>
       {type === "number" ? (
@@ -43,7 +49,13 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
           autoComplete={false}
           id={component.id}
           icon={iconName ? <Icon name={iconName} /> : null}
-          styles={{ root: { display: "block !important" } }}
+          styles={merge(
+            {},
+            {
+              root: { display: "block !important" },
+              input: { ...customStyle },
+            },
+          )}
           {...props}
           {...componentProps}
           min={0}
@@ -67,7 +79,7 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
             },
             input: {
               minHeight: "auto",
-              ...props.style,
+              ...customStyle,
               width: "-webkit-fill-available",
             },
           }}

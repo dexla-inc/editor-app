@@ -1,8 +1,10 @@
+import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
+import { Component, getColorFromTheme } from "@/utils/editor";
 import { Loader, Select as MantineSelect, SelectProps } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import get from "lodash.get";
+import merge from "lodash.merge";
 import { memo } from "react";
 
 type Props = {
@@ -27,6 +29,10 @@ const SelectComponent = ({
     loading,
     ...componentProps
   } = component.props as any;
+  const theme = useEditorStore((state) => state.theme);
+  const borderColor = getColorFromTheme(theme, "Border.6");
+
+  const customStyle = merge({}, { borderColor }, style);
 
   const { height, ...style } = props.style ?? {};
 
@@ -58,9 +64,8 @@ const SelectComponent = ({
       {...componentProps}
       {...triggers}
       styles={{
-        input: { height },
+        input: { height, ...customStyle },
       }}
-      {...style}
       withinPortal={false}
       maxDropdownHeight={120}
       data={data.map((d: any) => {

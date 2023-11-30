@@ -3,6 +3,7 @@ import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
+import merge from "lodash.merge";
 import { ReactElement, memo } from "react";
 
 type Props = {
@@ -43,17 +44,19 @@ const ButtonComponent = ({
   const labelTextColor = getColorFromTheme(theme, textColor);
   const backgroundColor = getColorFromTheme(theme, color);
 
+  const borderColor = getColorFromTheme(theme, "Border.6");
+  const customStyle = merge({ borderColor, borderWidth: "0px" }, style, {
+    backgroundColor,
+    color: labelTextColor,
+  });
+
   return (
     <MantineButton
       {...(leftIcon && { leftIcon: <Icon name={leftIcon} /> })}
       {...(rightIcon && { rightIcon: <Icon name={rightIcon} /> })}
       loading={loading}
       {...defaultTriggers}
-      style={{
-        ...style,
-        backgroundColor,
-        color: labelTextColor,
-      }}
+      style={customStyle}
       {...props}
       {...componentProps}
       {...triggers}

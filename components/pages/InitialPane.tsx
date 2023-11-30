@@ -8,17 +8,12 @@ import {
   Stack,
   Text,
   TextInput,
-  Tooltip,
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
-import {
-  IconFileAnalytics,
-  IconHome,
-  IconPlus,
-  IconSettings,
-} from "@tabler/icons-react";
+import { IconFileAnalytics, IconHome, IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
+import { ActionIconDefault } from "../ActionIconDefault";
 
 type InitialPaneProps = {
   projectId: string;
@@ -53,81 +48,69 @@ export default function InitialPane({
         onChange={(event) => {
           debouncedSearch(event.currentTarget.value);
         }}
+        size="xs"
       />
       <Stack spacing={0}>
         {pages.map((page) => {
           return (
-            <Tooltip key={page.id} label={page.title} fz="xs">
-              <UnstyledButton
-                component={Link}
-                href={`/projects/${projectId}/editor/${page.id}`}
-                onClick={() => {
-                  resetTree();
+            <UnstyledButton
+              key={page.id}
+              component={Link}
+              href={`/projects/${projectId}/editor/${page.id}`}
+              onClick={() => {
+                resetTree();
+              }}
+            >
+              <Group
+                p="xs"
+                spacing="sm"
+                position="apart"
+                align="center"
+                sx={{
+                  flexWrap: "nowrap",
+                  borderRadius: theme.radius.md,
+                  textDecoration: "none",
+                  fontWeight: currentPage === page.id ? 500 : "normal",
+                  color:
+                    currentPage === page.id
+                      ? theme.black
+                      : theme.colors.gray[7],
+                  backgroundColor:
+                    currentPage === page.id ? theme.colors.gray[0] : undefined,
+
+                  "&:hover": {
+                    backgroundColor: theme.colors.gray[0],
+                    color: theme.black,
+                  },
                 }}
               >
-                <Group
-                  p="xs"
-                  spacing="sm"
-                  position="apart"
-                  align="center"
-                  sx={{
-                    flexWrap: "nowrap",
-                    borderRadius: theme.radius.md,
-                    textDecoration: "none",
-                    fontWeight: currentPage === page.id ? 500 : "normal",
-                    color:
-                      currentPage === page.id
-                        ? theme.black
-                        : theme.colors.gray[7],
-                    backgroundColor:
-                      currentPage === page.id
-                        ? theme.colors.gray[0]
-                        : undefined,
-
-                    "&:hover": {
-                      backgroundColor: theme.colors.gray[0],
-                      color: theme.black,
-                    },
-                  }}
-                >
-                  <Flex gap="xs" sx={{ maxWidth: 180 }}>
-                    <Flex style={{ flex: "0 0 auto" }}>
-                      {page.isHome ? (
-                        <IconHome
-                          size={ICON_SIZE}
-                          style={{ flex: "flex-grow" }}
-                        />
-                      ) : (
-                        <IconFileAnalytics size={ICON_SIZE} />
-                      )}
-                    </Flex>
-                    <Text size="xs" truncate>
-                      {page.title}{" "}
-                    </Text>
+                <Flex gap="xs" sx={{ maxWidth: 164 }}>
+                  <Flex style={{ flex: "0 0 auto" }}>
+                    {page.isHome ? (
+                      <IconHome
+                        size={ICON_SIZE}
+                        style={{ flex: "flex-grow" }}
+                      />
+                    ) : (
+                      <IconFileAnalytics size={ICON_SIZE} />
+                    )}
                   </Flex>
-                  <UnstyledButton
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setPage(page);
-                    }}
-                    p={5}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: theme.radius.md,
-                      "&:hover": {
-                        backgroundColor: theme.colors.teal[5],
-                        color: theme.white,
-                      },
-                    }}
-                  >
-                    <IconSettings size={ICON_SIZE} />
-                  </UnstyledButton>
-                </Group>
-              </UnstyledButton>
-            </Tooltip>
+                  <Text size="xs" truncate>
+                    {page.title}
+                  </Text>
+                </Flex>
+                <ActionIconDefault
+                  iconName="IconSettings"
+                  tooltip="Page Settings"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setPage(page);
+                  }}
+                  color="white"
+                />
+              </Group>
+            </UnstyledButton>
           );
         })}
       </Stack>

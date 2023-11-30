@@ -1,6 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
-import { Component } from "@/utils/editor";
 import { BoxProps } from "@mantine/core";
+import { Component, getColorFromTheme } from "@/utils/editor";
 import { ApexOptions } from "apexcharts";
 import get from "lodash.get";
 import merge from "lodash.merge";
@@ -24,6 +24,7 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
     series,
     type,
     options,
+    chartColors,
     triggers,
     ...componentProps
   } = component.props as any;
@@ -32,26 +33,32 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
   const isPieOrRadial =
     type === "pie" || type === "donut" || type === "radialBar";
 
+  const colors = chartColors?.map((color: any) =>
+    getColorFromTheme(theme, color),
+  ) ?? [
+    theme.colors.green[7],
+    theme.colors.orange[4],
+    theme.colors.blue[4],
+    theme.colors.red[6],
+    theme.colors.green[4],
+    theme.colors.orange[9],
+    theme.colors.green[9],
+    theme.colors.blue[8],
+    theme.colors.blue[9],
+  ];
+
   const customOptions: ApexOptions = merge(
     {},
     {
-      colors: [
-        theme.colors.green[7],
-        theme.colors.orange[4],
-        theme.colors.blue[4],
-        theme.colors.red[6],
-        theme.colors.green[4],
-        theme.colors.orange[9],
-        theme.colors.green[9],
-        theme.colors.blue[8],
-        theme.colors.blue[9],
-      ],
+      colors,
       chart: {
         toolbar: {
           show: false,
         },
         width: "100%",
         foreColor: theme.colors.gray[5],
+        offsetX: 0,
+        offsetY: 0,
       },
       states: {
         hover: {
@@ -86,7 +93,7 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
         strokeColors: theme.colors.gray[0],
       },
       legend: {
-        show: true,
+        show: type !== "radialBar" && series.length > 0,
         fontSize: 13,
         position: "top",
         horizontalAlign: "right",
@@ -151,6 +158,16 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
       : { xaxis: { categories: dataLabels } }),
   };
 
+  var _options = {
+    chart: {
+      height: "auto",
+      width: 350,
+      type: "radialBar",
+    },
+    series: [70],
+    labels: ["Progress"],
+  };
+
   return (
     <div>
       <ReactApexChart
@@ -161,7 +178,18 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
         style={{
           ...(props.style ?? {}),
           textAlign: "center",
+          padding: 0,
           color: theme.colors.gray[8],
+          ...(type === "radialBar"
+            ? {
+                marginTop: "-6.5%",
+                marginBottom: "-20%",
+              }
+            : type === "radar"
+            ? {
+                marginBottom: "-20%",
+              }
+            : {}),
         }}
         width="100%"
         type={type}

@@ -490,24 +490,24 @@
   resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-5.4.2.tgz#ba2b7faeb227c76e423e88f962afe6a031319f3f"
   integrity sha512-fqeucJ3LH0e1eyFdT0zRx+oETLancu5+n4lhiYECyEz6H2RDskPJHJYHkVc0LhkU4Uv7fuEnppKU3nVKNzMh8g==
 
-"@propelauth/javascript@^2.0.6":
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/@propelauth/javascript/-/javascript-2.0.6.tgz#724930f4f4706eaf3e15e97ab5be7a395202599c"
-  integrity sha512-STz+44y+4A4leC9oRm2pg7QNp1XUZv62f2FR78WVikDphlAbAqOeEd+T284QKqaE/3V8/OnGms/CCKj7CpJN9Q==
+"@propelauth/javascript@^2.0.10":
+  version "2.0.10"
+  resolved "https://registry.yarnpkg.com/@propelauth/javascript/-/javascript-2.0.10.tgz#e2cb32a619574b696ff21ecb8caee25511946c5a"
+  integrity sha512-dsli7iYp0hKVOglZW1Kkx7elKzLWRx2PZ8Jr9wRUBCx/2t9lAxnfgsfIyQDukMe6s8fOyA0w59KIIPfWw97/3g==
 
-"@propelauth/node@^2.1.6":
-  version "2.1.6"
-  resolved "https://registry.yarnpkg.com/@propelauth/node/-/node-2.1.6.tgz#c26ba7135582cddc213ab0cdc700de27440dc0d7"
-  integrity sha512-BPiJffbtifMecmMFNF2U78bbzLkWUP1oDMZaSzysnKF6wYG4mPVVVpokk1RXLNCZb9m3aDGAyZE2dyr3Wm8w6w==
+"@propelauth/node@^2.1.7":
+  version "2.1.7"
+  resolved "https://registry.yarnpkg.com/@propelauth/node/-/node-2.1.7.tgz#841ce5e27ad2bc7de377ea6fa6b7d1e7779ba948"
+  integrity sha512-N620U0fBI91fUme8vzqSc5hyl2uaCq608AjjNRudxgQdB7Q882BNFOu0KMaZGAgcCSAp7FaAism92wNB50R3oA==
   dependencies:
     jsonwebtoken "^9.0.0"
 
-"@propelauth/react@^2.0.10":
-  version "2.0.10"
-  resolved "https://registry.yarnpkg.com/@propelauth/react/-/react-2.0.10.tgz#f75a6e23e86e66b27cc4b3bda2f8a50cc28cd03b"
-  integrity sha512-/HJlNdCZrdQ8hZ+kNNPw5bP19G63xvlbxx48orCbYka8FK9bW5LE0NHb8c//3zV1SR6ukSJZvPMGV7JyN99U0Q==
+"@propelauth/react@^2.0.14":
+  version "2.0.14"
+  resolved "https://registry.yarnpkg.com/@propelauth/react/-/react-2.0.14.tgz#da87e5e112f019157c83c3c74cfce7a17a1a391d"
+  integrity sha512-5QXLocg9EPEdcvpv2Xv4l8eVGlcem9emf45m9xG1fmw6B6x246iucoW5ynxFT7koBXqqeJNt1IGLWIoVJMli5A==
   dependencies:
-    "@propelauth/javascript" "^2.0.6"
+    "@propelauth/javascript" "^2.0.10"
     hoist-non-react-statics "^3.3.2"
     utility-types "^3.10.0"
 
@@ -1500,10 +1500,10 @@ ansi-styles@^6.0.0, ansi-styles@^6.1.0:
   resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-6.2.1.tgz#0e62320cf99c21afff3b3012192546aacbfb05c5"
   integrity sha512-bN798gFfQX+viw3R7yrGWRqnrN2oRkEkUjjl4JNn4E8GxxbjtG3FbrEIIY3l8/hrwUwIeCZvi4QuOTP4MErVug==
 
-apexcharts@^3.41.0:
-  version "3.42.0"
-  resolved "https://registry.yarnpkg.com/apexcharts/-/apexcharts-3.42.0.tgz#143eb4a12d93c59a37dd88efcf0c7ed0d9ab8735"
-  integrity sha512-hYhzZqh2Efny9uiutkGU2M/EarJ4Nn8s6dxZ0C7E7N+SV4d1xjTioXi2NLn4UKVJabZkb3HnpXDoumXgtAymwg==
+apexcharts@^3.44.0:
+  version "3.44.0"
+  resolved "https://registry.yarnpkg.com/apexcharts/-/apexcharts-3.44.0.tgz#b52f95b0d0c2a5357b4614fa42faac956b69a4a9"
+  integrity sha512-u7Xzrbcxc2yWznN78Jh5NMCYVAsWDfBjRl5ea++rVzFAqjU2hLz4RgKIFwYOBDRQtW1e/Qz8azJTqIJ1+Vu9Qg==
   dependencies:
     "@yr/monotone-cubic-spline" "^1.0.3"
     svg.draggable.js "^2.2.2"

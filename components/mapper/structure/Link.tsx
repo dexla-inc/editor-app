@@ -1,6 +1,5 @@
 import { defaultTheme } from "@/components/IFrame";
 import { Component } from "@/utils/editor";
-import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -18,10 +17,10 @@ export const jsonStructure = (props?: any): Component => {
     description: "Link",
     props: {
       children: content,
+      size: "sm",
       style: {
         width: "auto",
         height: "auto",
-        fontSize: `${px(theme.fontSizes.sm)}px`,
         fontWeight: "normal",
         lineHeight: "110%",
         letterSpacing: "0px",

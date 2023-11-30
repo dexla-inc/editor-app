@@ -1,10 +1,8 @@
-import { getPage, getPageTemplate } from "@/requests/pages/queries";
+import { analyseTemplateToUse, getPage } from "@/requests/pages/queries";
 import { getTemplate } from "@/requests/templates/queries";
 import { useAppStore } from "@/stores/app";
 import { emptyEditorTree, useEditorStore } from "@/stores/editor";
-import { usePropelAuthStore } from "@/stores/propelAuth";
 import { decodeSchema } from "@/utils/compression";
-import { replaceTilesData } from "@/utils/editor";
 import { useQuery } from "@tanstack/react-query";
 
 type getPageDataParams = {
@@ -28,11 +26,11 @@ export const useGetPageData = ({
   const stopLoading = useAppStore((state) => state.stopLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const setEditorTree = useEditorStore((state) => state.setTree);
-  const company = usePropelAuthStore((state) => state.activeCompany);
 
   const getPageData = async ({ signal }: getPageDataParams) => {
     setIsLoading(true);
     const page = await getPage(projectId, pageId, {}, { signal });
+
     if (page.pageState) {
       const decodedSchema = decodeSchema(page.pageState);
       setEditorTree(JSON.parse(decodedSchema), {
@@ -48,51 +46,33 @@ export const useGetPageData = ({
         message: "AI is generating your page",
       });
 
-      const aiPageTemplate = await getPageTemplate(
-        company.orgId,
-        projectId,
-        pageId,
-        {
-          signal,
-        },
+      const templateToUse = await analyseTemplateToUse(
+        page.name,
+        page.description ?? "",
+        undefined,
+        undefined,
+        { signal },
       );
 
-      const templateName = aiPageTemplate.template.name.replace("Template", "");
-
-      const template = await getTemplate(company.orgId, templateName);
-
-      // const template = await fetch(
-      //   `/api/templates/${aiPageTemplate.template.name.replace(
-      //     "Template",
-      //     "",
-      //   )}`,
-      //   {
-      //     method: "GET",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     signal,
-      //   },
-      // ).then((templateResponse) => templateResponse.json());
-
-      const _project = await fetch(`/api/project/${projectId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        signal,
-      }).then((projectResponse) => projectResponse.json());
+      const template = await getTemplate(templateToUse.name, true);
 
       // TODO: Replace tiles from template state with tiles from aiPageTemplate
-      const aiTiles = aiPageTemplate.template.tiles;
+      const templateTreeState = JSON.parse(decodeSchema(template.state));
+      // const _project = await fetch(`/api/project/${projectId}`, {
+      //   method: "GET",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   signal,
+      // }).then((projectResponse) => projectResponse.json());
+      // TODO: Add tiles into AI response /api/ai/page
+      // const treeState = replaceTilesData(
+      //   templateTreeState,
+      //   template.tiles ?? [],
+      //   _project?.data,
+      // );
 
-      const treeState = replaceTilesData(
-        JSON.parse(decodeSchema(template.state)),
-        aiTiles,
-        _project?.data,
-      );
-
-      setEditorTree(treeState);
+      setEditorTree(templateTreeState);
       stopLoading({
         id: "page-generation",
         title: "Page Generated",

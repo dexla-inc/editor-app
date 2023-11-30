@@ -1,3 +1,4 @@
+import { WarningAlert } from "@/components/Alerts";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { Divider, Stack, Switch, Textarea } from "@mantine/core";
@@ -7,7 +8,6 @@ import get from "lodash.get";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
-import { InformationAlert, WarningAlert } from "@/components/Alerts";
 
 export const icon = IconTable;
 export const label = "Table";
@@ -124,7 +124,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           autosize
           label="Data"
           size="xs"
-          maxLength={20}
           {...form.getInputProps("data")}
           onChange={(e) => {
             form.setFieldValue("data", e.target.value);

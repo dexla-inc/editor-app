@@ -7,12 +7,10 @@ import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { encodeSchema } from "@/utils/compression";
-import { ICON_SIZE } from "@/utils/config";
 import { getTileData, getTiles } from "@/utils/editor";
-import { ActionIcon, Tooltip } from "@mantine/core";
-import { IconTemplate } from "@tabler/icons-react";
 import camelcase from "lodash.camelcase";
 import { useRouter } from "next/router";
+import { ActionIconDefault } from "./ActionIconDefault";
 
 export const SaveTemplateButton = () => {
   const router = useRouter();
@@ -97,22 +95,27 @@ export const SaveTemplateButton = () => {
         title: "Saved Template",
         message: "Your template has been saved",
       });
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
       stopLoading({
         id: "save-template",
         title: "Oops",
-        message: "Something went wrong while saving your template",
+        message: error,
         isError: true,
       });
     }
   };
 
   return (
-    <Tooltip label="Save Template" withArrow fz="xs">
-      <ActionIcon onClick={saveTemplate} variant="light" color="indigo">
-        <IconTemplate size={ICON_SIZE} />
-      </ActionIcon>
-    </Tooltip>
+    <ActionIconDefault
+      iconName="IconTemplate"
+      tooltip="Save Template"
+      onClick={saveTemplate}
+      color="indigo"
+    />
+    // <Tooltip label="Save Template" withArrow fz="xs">
+    //   <ActionIcon onClick={saveTemplate} variant="light" color="indigo">
+    //     <IconTemplate size={ICON_SIZE} />
+    //   </ActionIcon>
+    // </Tooltip>
   );
 };

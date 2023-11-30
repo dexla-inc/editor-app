@@ -42,9 +42,11 @@ export const createPageList = async (
   projectId: string,
   pageCount?: string,
   excludedPages?: string,
+  init = {},
 ): Promise<PageAIResponse[]> => {
   const accessToken = await getAuthToken();
   const response = await fetch("/api/ai/page-list", {
+    ...init,
     method: "POST",
     headers: {
       "Content-Type": "application/json",

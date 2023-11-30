@@ -14,6 +14,8 @@ export const jsonStructure = (props?: any): Component => {
         width: "auto",
         height: "auto",
         minWidth: "220px",
+        borderWidth: "1px",
+        borderStyle: "solid",
       },
       ...defaultValues,
       ...(props.props || {}),

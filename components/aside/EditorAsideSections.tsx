@@ -41,6 +41,7 @@ import * as TabsListModifier from "@/components/modifiers/TabsList";
 import * as TabsPanelModifier from "@/components/modifiers/TabsPanel";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TextareaModifier from "@/components/modifiers/Textaarea";
+import * as ChartModifier from "@/components/modifiers/chart/Chart";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { Action, actionMapper } from "@/utils/actions";
@@ -105,6 +106,7 @@ const sectionMapper: SectionsMapper = {
   alert: AlertModifier,
   badge: BadgeModifier,
   dateInput: DateInputModifier,
+  chart: ChartModifier,
 };
 
 type Tab = "design" | "actions";

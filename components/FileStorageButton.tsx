@@ -12,22 +12,22 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   IconArrowsMaximize,
   IconArrowsMinimize,
-  IconCloudStorm,
   IconMusic,
   IconPhoto,
   IconVideo,
 } from "@tabler/icons-react";
+import { ActionIconDefault } from "./ActionIconDefault";
 
 export const FileStorageButton = () => {
   const [openStorageModal, { open, close }] = useDisclosure(false);
   const [expand, { toggle: toggleExpand }] = useDisclosure(false);
   return (
     <>
-      <Tooltip label="File Storage" withArrow fz="xs">
-        <ActionIcon onClick={open} variant="default">
-          <IconCloudStorm size={ICON_SIZE} />
-        </ActionIcon>
-      </Tooltip>
+      <ActionIconDefault
+        iconName="IconCloudStorm"
+        tooltip="File Storage"
+        onClick={open}
+      />
       <Modal.Root
         fullScreen={expand}
         size="xl"

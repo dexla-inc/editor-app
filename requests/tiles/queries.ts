@@ -3,16 +3,12 @@ import { PagingParams, PagingResponse } from "@/requests/types";
 import { getWithoutAuth } from "@/utils/apiNoAuth";
 import { buildQueryString } from "@/utils/dashboardTypes";
 
-export const listTiles = async (
-  companyId: string,
-  id: string,
-  params?: PagingParams,
-) => {
+export const listTiles = async (id: string, params?: PagingParams) => {
   let url = `/templates/${id}/tiles`;
 
   const { offset, limit } = params || {};
 
-  url += buildQueryString({ companyId, offset, limit });
+  url += buildQueryString({ offset, limit });
 
   const response = (await getWithoutAuth<PagingResponse<TemplateResponse>>(
     url,
@@ -21,8 +17,8 @@ export const listTiles = async (
   return response;
 };
 
-export const getTile = async (companyId: string, id: string) => {
-  const url = `/templates/${id}/tiles?companyId=${companyId}`;
+export const getTile = async (id: string) => {
+  const url = `/templates/${id}/tiles`;
 
   const response = (await getWithoutAuth<TemplateResponse>(
     url,

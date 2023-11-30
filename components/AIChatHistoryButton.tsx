@@ -22,6 +22,7 @@ import { Prism } from "@mantine/prism";
 import { IconJson, IconToml } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { ActionIconDefault } from "./ActionIconDefault";
 
 type Props = {
   projectId: string;
@@ -152,18 +153,15 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
 
   return (
     <>
-      <Tooltip label="AI History" withArrow fz="xs">
-        <ActionIcon
-          onClick={() => {
-            refreshChatHistory();
-            open();
-          }}
-          variant="light"
-          color="indigo"
-        >
-          <Icon name="IconHistory" />
-        </ActionIcon>
-      </Tooltip>
+      <ActionIconDefault
+        iconName="IconHistory"
+        tooltip="AI History"
+        onClick={() => {
+          refreshChatHistory();
+          open();
+        }}
+        color="indigo"
+      />
       <Modal size="90%" opened={opened} onClose={close} title="Chat History">
         <Stack>
           <Table>

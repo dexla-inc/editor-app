@@ -122,6 +122,10 @@ export type Page = {
   template: Template;
 };
 
+export type TemplateAiResponse = {
+  name: string;
+};
+
 export type Data = {
   tiles: Tile[];
 };
