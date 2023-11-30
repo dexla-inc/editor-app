@@ -16,6 +16,13 @@ type Props = {
   isPreviewMode?: boolean;
 } & BoxProps;
 
+export const getChartColor = (
+  theme: MantineThemeExtended,
+  color: string,
+  altColor: string,
+) =>
+  color ? getColorFromTheme(theme, color) : getColorFromTheme(theme, altColor);
+
 export const Chart = ({ renderTree, component, ...props }: Props) => {
   const {
     children,
@@ -49,17 +56,8 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
     theme.colors.blue[9],
   ];
 
-  const getColor = (
-    theme: MantineThemeExtended,
-    color: string,
-    altColor: string,
-  ) =>
-    color
-      ? getColorFromTheme(theme, color)
-      : getColorFromTheme(theme, altColor);
-
-  const _labelColor = getColor(theme, labelColor, "SecondaryText.5");
-  const _foreColor = getColor(theme, foreColor, "Secondary.5");
+  const _labelColor = getChartColor(theme, labelColor, "SecondaryText.5");
+  const _foreColor = getChartColor(theme, foreColor, "Secondary.5");
 
   const customOptions: ApexOptions = merge(
     {},
@@ -70,7 +68,7 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
           show: false,
         },
         width: "100%",
-        foreColor: theme.colors.gray[5],
+        foreColor: _foreColor,
         offsetX: 0,
         offsetY: 0,
       },
@@ -95,7 +93,7 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
       },
       grid: {
         strokeDashArray: 3,
-        borderColor: theme.fn.lighten(theme.colors.gray[5], 0.2),
+        borderColor: theme.fn.lighten(_foreColor, 0.2),
         xaxis: {
           lines: {
             show: false,
@@ -169,7 +167,14 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
     ...customOptions,
     ...(isPieOrRadial
       ? { labels: dataLabels }
-      : { xaxis: { categories: dataLabels } }),
+      : {
+          xaxis: {
+            categories: dataLabels,
+            labels: {
+              style: { colors: dataLabels.map((_: any) => _foreColor) },
+            },
+          },
+        }),
   };
 
   return (

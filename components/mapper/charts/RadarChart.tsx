@@ -1,8 +1,8 @@
 import { Chart } from "@/components/mapper/charts/Chart";
 import { MantineSkeleton } from "@/components/skeleton/Skeleton";
+import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
-import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   renderTree: (component: Component) => any;
