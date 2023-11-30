@@ -90,7 +90,7 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
     isPreviewMode,
   ]);
 
-  const copySelectedComponent = useCallback(async () => {
+  const copySelectedComponent = useCallback(() => {
     const selectedComponentId = useEditorStore.getState().selectedComponentId;
     const componentToCopy = getComponentById(
       editorTree.root,
@@ -98,7 +98,7 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
     )!;
     if (!isPreviewMode && selectedComponentId) {
       setCopiedComponent(componentToCopy);
-      await copyToClipboard(projectId, componentToCopy);
+      copyToClipboard(projectId, componentToCopy);
     }
   }, [editorTree.root, isPreviewMode, setCopiedComponent, projectId]);
 
@@ -118,9 +118,9 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
   };
 
   const pasteCopiedComponent = useCallback(async () => {
-    const clipboardContent = await pasteFromClipboard(projectId);
+    const clipboardContent = pasteFromClipboard(projectId);
     let componentToPaste =
-      copiedComponent || (clipboardContent as typeof copiedComponent);
+      (clipboardContent as typeof copiedComponent) || copiedComponent;
     if (!componentToPaste || isPreviewMode) {
       return; // Early exit if conditions aren't met
     }
