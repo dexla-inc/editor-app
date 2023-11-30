@@ -254,6 +254,7 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
           id={component.id}
           m={0}
           p={2}
+          miw={980}
         >
           <Paper shadow="xs" ref={canvasRef} bg="gray.0" display="flex">
             {component.children?.map((child) => renderTree(child))}
