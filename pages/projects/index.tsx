@@ -47,7 +47,7 @@ export default function Projects() {
   const goToEditor = async (projectId: string, pageId: string) => {
     startLoading({
       id: "go-to-editor",
-      title: "Loading Editor",
+      title: "Loading App",
       message: "Wait while we load the editor for your project",
     });
 
@@ -79,9 +79,15 @@ export default function Projects() {
   );
 
   const createEmptyProject = async () => {
+    startLoading({
+      id: "go-to-editor",
+      title: "Loading App",
+      message: "Wait while we load the editor for your project",
+    });
+
     setPageCancelled(true);
     const project = await createProject({ companyId: company.orgId }, true);
-    const url = `/projects/${project.id}/editor/${project.homePageId}}`;
+    const url = `/projects/${project.id}/editor/${project.homePageId}`;
 
     router.push(url);
   };

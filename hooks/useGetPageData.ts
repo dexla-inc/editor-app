@@ -38,16 +38,21 @@ export const useGetPageData = ({
 
   const getPageData = async ({ signal }: getPageDataParams) => {
     const page = await getPage(projectId, pageId, {}, { signal });
+    setIsLoading(true);
 
     if (pageCancelled) {
       setEditorTree(defaultPageState, {
-        onLoad: true,
+        onLoad: false,
         action: "Initial State",
       });
       setPageCancelled(false);
       setIsLoading(false);
+      stopLoading({
+        id: "go-to-editor",
+        title: "Page Loaded",
+        message: "Your page has successfully loaded",
+      });
     } else if (page.pageState) {
-      setIsLoading(true);
       const decodedSchema = decodeSchema(page.pageState);
       setEditorTree(JSON.parse(decodedSchema), {
         onLoad: true,
@@ -55,6 +60,11 @@ export const useGetPageData = ({
       });
 
       setIsLoading(false);
+      stopLoading({
+        id: "go-to-editor",
+        title: "Page Loaded",
+        message: "Your page has successfully loaded",
+      });
     } else {
       setIsLoading(true);
       startLoading({
