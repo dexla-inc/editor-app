@@ -16,16 +16,17 @@ export const calculateGridSizes = (tree: Component) => {
       } else if (node.name === "GridColumn") {
         const parent = context.parent as Component;
         if (parent?.name === "Grid") {
-          const columnChilds = (parent.children ?? []).filter(
-            (child) => child.name === "GridColumn",
+          const sibilings =
+            (parent.children ?? []).filter(
+              (child) => child.name === "GridColumn",
+            ) ?? [];
+
+          const siblingsSpan = Math.floor(
+            parent.props!.gridSize / sibilings.length ?? 1,
           );
 
-          const newSpanSize = Math.floor(
-            parent.props!.gridSize / columnChilds.length ?? 1,
-          );
-
-          node.props!.span = newSpanSize;
-          setColumnSpan(node.id!, newSpanSize);
+          node.props!.span = siblingsSpan;
+          setColumnSpan(node.id!, siblingsSpan);
         }
       }
     },
@@ -50,7 +51,7 @@ export const calculateGridSizes = (tree: Component) => {
             const newSpanSize =
               firstColumn.props!.span + node.props?.gridSize - sum;
             firstColumn.props!.span = newSpanSize;
-            setColumnSpan(node.id!, newSpanSize);
+            setColumnSpan(firstColumn.id!, newSpanSize);
           }
         }
       }
