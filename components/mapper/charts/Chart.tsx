@@ -1,6 +1,6 @@
-import { useEditorStore } from "@/stores/editor";
-import { BoxProps } from "@mantine/core";
+import { MantineThemeExtended, useEditorStore } from "@/stores/editor";
 import { Component, getColorFromTheme } from "@/utils/editor";
+import { BoxProps } from "@mantine/core";
 import { ApexOptions } from "apexcharts";
 import get from "lodash.get";
 import merge from "lodash.merge";
@@ -25,6 +25,8 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
     type,
     options,
     chartColors,
+    labelColor,
+    foreColor,
     triggers,
     ...componentProps
   } = component.props as any;
@@ -46,6 +48,18 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
     theme.colors.blue[8],
     theme.colors.blue[9],
   ];
+
+  const getColor = (
+    theme: MantineThemeExtended,
+    color: string,
+    altColor: string,
+  ) =>
+    color
+      ? getColorFromTheme(theme, color)
+      : getColorFromTheme(theme, altColor);
+
+  const _labelColor = getColor(theme, labelColor, "SecondaryText.5");
+  const _foreColor = getColor(theme, foreColor, "Secondary.5");
 
   const customOptions: ApexOptions = merge(
     {},
@@ -105,7 +119,7 @@ export const Chart = ({ renderTree, component, ...props }: Props) => {
           horizontal: 8,
         },
         labels: {
-          colors: theme.colors.gray[8],
+          colors: _labelColor,
         },
         legend: {
           onItemClick: {
