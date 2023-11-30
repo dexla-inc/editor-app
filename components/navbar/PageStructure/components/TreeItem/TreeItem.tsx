@@ -2,6 +2,7 @@ import React, {
   forwardRef,
   HTMLAttributes,
   KeyboardEvent,
+  useEffect,
   useRef,
 } from "react";
 import classNames from "classnames";
@@ -102,6 +103,20 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
     const icon = structureMapper[name as string]?.icon;
     const componentActions = component.actions;
+
+    useEffect(() => {
+      const isRootOrContentWrapper = id === "root" || id === "content-wrapper";
+
+      if (isSelected && !isRootOrContentWrapper) {
+        // @ts-ignore
+        wrapperRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isSelected]);
 
     return (
       <li
