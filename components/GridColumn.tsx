@@ -3,11 +3,13 @@ import { PropsWithChildren, useEffect, useState } from "react";
 import { Resizable } from "re-resizable";
 import { useEditorStore } from "@/stores/editor";
 import {
+  getComponentById,
   getComponentIndex,
   getComponentParent,
   updateTreeComponent,
 } from "@/utils/editor";
 import cloneDeep from "lodash.clonedeep";
+import { calculateGridSizes } from "@/utils/grid";
 
 export const GridColumn = ({
   children,
@@ -139,19 +141,25 @@ export const GridColumn = ({
             span: columnSpans[nextSibling.id!] ?? 0,
             resized: false,
           });
-        }
-
-        /* if (nextSibling && !resizingFromLeft) {
-          updateTreeComponent(copy.root, nextSibling?.props?.id, {
-            span: columnSpans[nextSibling?.props?.id] ?? 0,
-            resized: false,
-          });
-        } else if (prevSibling && resizingFromLeft) {
+        } /* else if (prevSibling && resizingFromLeft) {
           updateTreeComponent(copy.root, prevSibling?.props?.id, {
             span: columnSpans[prevSibling?.props?.id] ?? 0,
             resized: false,
           });
         } */
+
+        const component = getComponentById(copy.root, props.id!);
+        if (component) {
+          calculateGridSizes(component);
+        }
+
+        if (nextSibling) {
+          const nextSiblingComp = getComponentById(copy.root, nextSibling.id!);
+          if (nextSiblingComp) {
+            calculateGridSizes(nextSiblingComp);
+          }
+        }
+
         setEditorTree(copy);
         setIsResizing(false);
       }}
