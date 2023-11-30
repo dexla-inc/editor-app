@@ -2,7 +2,6 @@ import { EditorNavbarComponentsSection } from "@/components/navbar/EditorNavbarC
 import { EditorNavbarPagesSection } from "@/components/navbar/EditorNavbarPagesSection";
 import { EditorNavbarThemesSection } from "@/components/navbar/EditorNavbarThemesSection";
 import { EditorSettingsSection } from "@/components/navbar/EditorSettingsSection";
-// import { NavbarLayersSection } from "@/components/navbar/NavbarLayersSection";
 import { NavbarLayersSection } from "@/components/navbar/Tree/SortableTree";
 import { NavbarSection } from "@/components/navbar/NavbarSection";
 import { useEditorStore } from "@/stores/editor";
