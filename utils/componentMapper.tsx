@@ -19,6 +19,8 @@ import { Drawer } from "@/components/mapper/Drawer";
 import { FileUpload } from "@/components/mapper/FileUpload";
 import { Form } from "@/components/mapper/Form";
 import { GoogleMapPlugin } from "@/components/mapper/GoogleMapPlugin";
+import { Grid } from "@/components/mapper/Grid";
+import { GridColumn } from "@/components/mapper/GridColumn";
 import { Icon } from "@/components/mapper/Icon";
 import { Image } from "@/components/mapper/Image";
 import { Input } from "@/components/mapper/Input";
@@ -40,8 +42,6 @@ import { Tabs } from "@/components/mapper/Tabs";
 import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";
 import { Title } from "@/components/mapper/Title";
-import { Grid } from "@/components/mapper/Grid";
-import { GridColumn } from "@/components/mapper/GridColumn";
 import { AreaChart } from "@/components/mapper/charts/AreaChart";
 import { BarChart } from "@/components/mapper/charts/BarChart";
 import { LineChart } from "@/components/mapper/charts/LineChart";
@@ -65,6 +65,8 @@ import * as FileButtonStructure from "@/components/mapper/structure/FileButton";
 import * as FileUploadStructure from "@/components/mapper/structure/FileUpload";
 import * as FormStructure from "@/components/mapper/structure/Form";
 import * as MapStructure from "@/components/mapper/structure/GoogleMap";
+import * as GridStructure from "@/components/mapper/structure/Grid";
+import * as GridColumnStructure from "@/components/mapper/structure/GridColumn";
 import * as IconStructure from "@/components/mapper/structure/Icon";
 import * as ImageStructure from "@/components/mapper/structure/Image";
 import * as InputStructure from "@/components/mapper/structure/Input";
@@ -85,8 +87,6 @@ import * as TabsStructure from "@/components/mapper/structure/Tabs";
 import * as TextStructure from "@/components/mapper/structure/Text";
 import * as TextareaStructure from "@/components/mapper/structure/Textarea";
 import * as TitleStructure from "@/components/mapper/structure/Title";
-import * as GridStructure from "@/components/mapper/structure/Grid";
-import * as GridColumnStructure from "@/components/mapper/structure/GridColumn";
 import * as AreaChartStructure from "@/components/mapper/structure/charts/AreaChart";
 import * as BarChartStructure from "@/components/mapper/structure/charts/BarChart";
 import * as LineChartStructure from "@/components/mapper/structure/charts/LineChart";
@@ -177,7 +177,22 @@ export type StructureMapper = {
 
 export const structureMapper: StructureMapper = {
   // AI generated structures
-
+  Grid: {
+    structure: (props: any) => GridStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Grid"
+        icon={<IconLayoutGrid size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Layout",
+    icon: <IconLayoutGrid size={ICON_SIZE} />,
+  },
+  GridColumn: {
+    structure: (props: any) => GridColumnStructure.jsonStructure(props),
+    category: "Layout",
+    icon: <IconLayoutColumns size={ICON_SIZE} />,
+  },
   Container: {
     structure: (props: any) => ContainerStructure.jsonStructure(props),
     Draggable: () => (
@@ -189,21 +204,7 @@ export const structureMapper: StructureMapper = {
     category: "Layout",
     icon: <IconContainer size={ICON_SIZE} />,
   },
-  Grid: {
-    structure: (props: any) => GridStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Grid"
-        icon={<IconLayoutColumns size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Layout",
-    icon: <IconLayoutColumns size={ICON_SIZE} />,
-  },
-  GridColumn: {
-    structure: (props: any) => GridColumnStructure.jsonStructure(props),
-    category: "Layout",
-  },
+
   Card: {
     structure: (props: any) => CardStructure.jsonStructure(props),
     Draggable: () => (
@@ -848,23 +849,6 @@ export const componentMapper: ComponentMapper = {
     actionTriggers: ["onMount", "onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
-  Container: {
-    Component: (props: { component: Component; renderTree: any }) => (
-      <Container component={props.component} renderTree={props.renderTree} />
-    ),
-    modifiers: [
-      "layout",
-      "background",
-      "spacing",
-      "size",
-      "position",
-      "effects",
-      "border",
-      "boxShadow",
-    ],
-    actionTriggers: ["onMount", "onClick", "onHover"],
-    sequentialTriggers: ["onSuccess", "onError"],
-  },
   Grid: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Grid component={props.component} renderTree={props.renderTree} />
@@ -882,6 +866,24 @@ export const componentMapper: ComponentMapper = {
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
+  Container: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Container component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: [
+      "layout",
+      "background",
+      "spacing",
+      "size",
+      "position",
+      "effects",
+      "border",
+      "boxShadow",
+    ],
+    actionTriggers: ["onMount", "onClick", "onHover"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+
   Card: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Card component={props.component} renderTree={props.renderTree} />

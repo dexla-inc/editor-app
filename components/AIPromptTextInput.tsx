@@ -84,6 +84,7 @@ export default function AIPromptTextInput() {
       withArrow
       shadow="md"
       onClose={resetState}
+      withinPortal
     >
       <Popover.Target>
         <UnstyledButton

@@ -2,6 +2,7 @@ import { analyseTemplateToUse, getPage } from "@/requests/pages/queries";
 import { getTemplate } from "@/requests/templates/queries";
 import { useAppStore } from "@/stores/app";
 import { emptyEditorTree, useEditorStore } from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/userConfig";
 import { decodeSchema } from "@/utils/compression";
 import { useQuery } from "@tanstack/react-query";
 
@@ -22,16 +23,30 @@ export const useGetPageData = ({
   projectId: string;
   pageId: string;
 }) => {
-  const startLoading = useAppStore((state) => state.startLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
-  const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const { startLoading, stopLoading, setIsLoading } = useAppStore((state) => ({
+    startLoading: state.startLoading,
+    stopLoading: state.stopLoading,
+    setIsLoading: state.setIsLoading,
+  }));
+
   const setEditorTree = useEditorStore((state) => state.setTree);
+
+  const { pageCancelled, setPageCancelled } = useUserConfigStore((state) => ({
+    pageCancelled: state.pageCancelled,
+    setPageCancelled: state.setPageCancelled,
+  }));
 
   const getPageData = async ({ signal }: getPageDataParams) => {
     setIsLoading(true);
     const page = await getPage(projectId, pageId, {}, { signal });
 
-    if (page.pageState) {
+    if (pageCancelled) {
+      setEditorTree(defaultPageState, {
+        onLoad: true,
+        action: "Initial State",
+      });
+      setPageCancelled(false);
+    } else if (page.pageState) {
       const decodedSchema = decodeSchema(page.pageState);
       setEditorTree(JSON.parse(decodedSchema), {
         onLoad: true,

@@ -1,18 +1,23 @@
+import { LARGE_ICON_SIZE } from "@/utils/config";
 import {
   Box,
-  Group,
+  Flex,
   Text,
   Tooltip,
   UnstyledButton,
   UnstyledButtonProps,
   useMantineTheme,
 } from "@mantine/core";
+import { Icon } from "../Icon";
 
 type IconTitleDescriptionButtonProps = {
-  icon: JSX.Element;
+  icon: string;
   title: string;
   description: string;
   tooltip?: string;
+  onClick?: () => void;
+  color?: "teal" | "white";
+  width?: number;
 } & UnstyledButtonProps;
 
 export default function IconTitleDescriptionButton({
@@ -20,41 +25,53 @@ export default function IconTitleDescriptionButton({
   title,
   description,
   tooltip,
+  onClick,
+  color = "white",
+  width = 220,
   ...props
 }: IconTitleDescriptionButtonProps) {
   const theme = useMantineTheme();
   return (
     <Tooltip label={tooltip} disabled={tooltip === undefined}>
       <UnstyledButton
-        sx={() => ({
+        {...props}
+        sx={(theme) => ({
           padding: theme.spacing.md,
           borderRadius: theme.radius.sm,
-          border: "1px solid " + theme.colors.gray[3],
-          color:
-            theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
+          border: `1px solid ${
+            color === "teal" ? theme.colors.teal[6] : theme.colors.gray[3]
+          }`,
+          color: color === "teal" ? theme.white : theme.black,
+          backgroundColor:
+            color === "teal" ? theme.colors.teal[6] : theme.white,
 
           "&:hover": {
             backgroundColor:
-              theme.colorScheme === "dark"
-                ? theme.colors.dark[6]
-                : theme.colors.gray[0],
+              color === "teal" ? theme.colors.teal[7] : theme.colors.gray[0],
           },
         })}
-        {...props}
+        onClick={onClick}
       >
-        <Group>
-          {icon}
+        <Flex gap="md" align="center">
+          <Icon
+            name={icon}
+            size={LARGE_ICON_SIZE}
+            color={color === "teal" ? theme.white : theme.colors.teal[6]}
+          />
           <Box
             sx={{
-              maxWidth: 250,
+              width: width,
             }}
           >
-            <Text>{title}</Text>
-            <Text size="xs" color="dimmed">
+            <Text size="lg">{title}</Text>
+            <Text
+              size="xs"
+              color={color === "teal" ? theme.white : theme.colors.gray[6]}
+            >
               {description}
             </Text>
           </Box>
-        </Group>
+        </Flex>
       </UnstyledButton>
     </Tooltip>
   );
