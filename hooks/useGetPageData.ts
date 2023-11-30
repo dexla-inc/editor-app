@@ -37,7 +37,6 @@ export const useGetPageData = ({
   }));
 
   const getPageData = async ({ signal }: getPageDataParams) => {
-    setIsLoading(true);
     const page = await getPage(projectId, pageId, {}, { signal });
 
     if (pageCancelled) {
@@ -46,7 +45,9 @@ export const useGetPageData = ({
         action: "Initial State",
       });
       setPageCancelled(false);
+      setIsLoading(false);
     } else if (page.pageState) {
+      setIsLoading(true);
       const decodedSchema = decodeSchema(page.pageState);
       setEditorTree(JSON.parse(decodedSchema), {
         onLoad: true,
@@ -55,6 +56,7 @@ export const useGetPageData = ({
 
       setIsLoading(false);
     } else {
+      setIsLoading(true);
       startLoading({
         id: "page-generation",
         title: "Generating Page",

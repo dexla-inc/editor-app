@@ -6,6 +6,7 @@ import { createProject, deleteProject } from "@/requests/projects/mutations";
 import { ProjectListResponse, getProjects } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";
+import { useUserConfigStore } from "@/stores/userConfig";
 import { ICON_SIZE } from "@/utils/config";
 import { generateId } from "@/utils/dashboardTypes";
 import {
@@ -37,6 +38,10 @@ export default function Projects() {
   const manuallyCreatedProjectId = generateId();
 
   const startLoading = useAppStore((state) => state.startLoading);
+  const { setPageCancelled } = useUserConfigStore((state) => ({
+    setPageCancelled: state.setPageCancelled,
+  }));
+
   const router = useRouter();
 
   const goToEditor = async (projectId: string, pageId: string) => {
@@ -74,7 +79,7 @@ export default function Projects() {
   );
 
   const createEmptyProject = async () => {
-    // This is temporary until we create a right click context menu to create empty project
+    setPageCancelled(true);
     const project = await createProject({ companyId: company.orgId }, true);
     const url = `/projects/${project.id}/editor/${project.homePageId}}`;
 

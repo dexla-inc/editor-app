@@ -14,9 +14,12 @@ type Props = {
 };
 
 export const DeployButton = ({ projectId, page }: Props) => {
-  const startLoading = useAppStore((state) => state.startLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
-  const isLoading = useAppStore((state) => state.isLoading);
+  const { startLoading, stopLoading, isLoading } = useAppStore((state) => ({
+    startLoading: state.startLoading,
+    stopLoading: state.stopLoading,
+    isLoading: state.isLoading,
+  }));
+
   const [customDomain, setCustomDomain] = useState("");
   const [hasDeployed, setHasDeployed] = useState(false);
 
