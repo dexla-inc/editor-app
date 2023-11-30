@@ -112,6 +112,10 @@ export const ComponentToolbox = () => {
       pos="absolute"
       style={{ zIndex: 200 }}
       bg={theme.colors.teal[6]}
+      sx={(theme) => ({
+        borderTopLeftRadius: theme.radius.sm,
+        borderTopRightRadius: theme.radius.sm,
+      })}
     >
       {!component.fixedPosition && (
         <Tooltip label="Move" fz="xs">
