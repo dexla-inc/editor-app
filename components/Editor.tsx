@@ -152,7 +152,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
             </Paper>
           </Box>
         )}
-        <EditorCanvas projectId={projectId} pageId={pageId} />
+        <EditorCanvas projectId={projectId} />
       </Shell>
     </>
   );

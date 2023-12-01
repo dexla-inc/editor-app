@@ -26,10 +26,9 @@ import { useCallback, useMemo } from "react";
 
 type Props = {
   projectId: string;
-  pageId: string;
 };
 
-export const EditorCanvas = ({ projectId, pageId }: Props) => {
+export const EditorCanvas = ({ projectId }: Props) => {
   const undo = useTemporalStore((state) => state.undo);
   const redo = useTemporalStore((state) => state.redo);
   const copiedComponent = useEditorStore((state) => state.copiedComponent);
@@ -49,8 +48,6 @@ export const EditorCanvas = ({ projectId, pageId }: Props) => {
   const [canvasRef] = useAutoAnimate();
   const [isCustomComponentModalOpen, customComponentModal] =
     useDisclosure(false);
-
-  // useGetPageData({ projectId, pageId });
 
   const deleteComponent = useCallback(() => {
     if (selectedComponentId && !isPreviewMode) {

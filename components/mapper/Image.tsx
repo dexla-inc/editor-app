@@ -35,8 +35,10 @@ const ImageComponent = ({ component, ...props }: Props) => {
 
   return (
     <MantineImage
+      id={component.id}
       alt={alt}
       imageProps={{ src: value, style }}
+      {...props}
       {...componentProps}
       width={width ?? "100px"}
       height={height ?? "100px"}

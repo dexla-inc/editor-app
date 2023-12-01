@@ -182,9 +182,6 @@ export const EditableComponent = ({
     component.states?.[currentState],
   );
 
-  const isColumn = component.name === "GridColumn";
-  const isGrid = component.name === "Grid";
-
   const isWidthPercentage = propsWithOverwrites?.style?.width?.endsWith("%");
   const isHeightPercentage = propsWithOverwrites?.style?.height?.endsWith("%");
   merge(propsWithOverwrites, {
@@ -194,12 +191,6 @@ export const EditableComponent = ({
       width: isWidthPercentage ? "100%" : propsWithOverwrites?.style?.width,
       height: isHeightPercentage ? "100%" : propsWithOverwrites?.style?.height,
       position: "relative",
-      ...(!isColumn && !isGrid
-        ? {
-            alignSelf: "start" /* Aligns the item to the start of the column */,
-            justifySelf: "start" /* Aligns the item to the start of the row */,
-          }
-        : {}),
     },
     disabled:
       component.props?.disabled ??
@@ -250,6 +241,7 @@ export const EditableComponent = ({
           onClick: (e: any) => {
             if (!isPreviewMode) {
               e.stopPropagation();
+
               // @ts-ignore
               propsWithOverwrites.onClick?.(e);
               forceDestroyContextMenu();
