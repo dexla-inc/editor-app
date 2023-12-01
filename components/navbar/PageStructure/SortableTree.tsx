@@ -1,0 +1,296 @@
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragStartEvent,
+  DragOverlay,
+  DragMoveEvent,
+  DragEndEvent,
+  DragOverEvent,
+  MeasuringStrategy,
+  DropAnimation,
+  Modifier,
+  defaultDropAnimation,
+  UniqueIdentifier,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+
+import {
+  buildTree,
+  flattenTree,
+  getProjection,
+  getChildCount,
+  removeChildrenOf,
+  setProperty,
+} from "./utilities";
+import type { FlattenedItem, SensorContext, TreeItems } from "./types";
+import { SortableTreeItem } from "./components";
+import { CSS } from "@dnd-kit/utilities";
+import { useEditorStore } from "@/stores/editor";
+import { debouncedTreeRootChildrenUpdate } from "@/utils/editor";
+
+const measuring = {
+  droppable: {
+    strategy: MeasuringStrategy.Always,
+  },
+};
+
+const dropAnimationConfig: DropAnimation = {
+  keyframes({ transform }) {
+    return [
+      { opacity: 1, transform: CSS.Transform.toString(transform.initial) },
+      {
+        opacity: 0,
+        transform: CSS.Transform.toString({
+          ...transform.final,
+          x: transform.final.x + 5,
+          y: transform.final.y + 5,
+        }),
+      },
+    ];
+  },
+  easing: "ease-out",
+  sideEffects({ active }) {
+    active.node.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: defaultDropAnimation.duration,
+      easing: defaultDropAnimation.easing,
+    });
+  },
+};
+
+interface Props {
+  indentationWidth?: number;
+  indicator?: boolean;
+}
+
+export function NavbarLayersSection({
+  indicator = false,
+  indentationWidth = 20,
+}: Props) {
+  const editorTree = useEditorStore((state) => state.tree);
+  const items = editorTree.root.children;
+
+  const setItems = (updateItems: any) => {
+    debouncedTreeRootChildrenUpdate(updateItems);
+  };
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+  const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
+  const [offsetLeft, setOffsetLeft] = useState(0);
+
+  const flattenedItems = useMemo(() => {
+    const flattenedTree = flattenTree(items as TreeItems);
+    const collapsedItems = flattenedTree.reduce<string[]>(
+      (acc, { children, collapsed, id }) =>
+        // @ts-ignore
+        collapsed && children.length ? [...acc, id] : acc,
+      [],
+    );
+
+    return removeChildrenOf(
+      flattenedTree,
+      // @ts-ignore
+      activeId ? [activeId, ...collapsedItems] : collapsedItems,
+    );
+  }, [activeId, items]);
+  const projected =
+    activeId && overId
+      ? getProjection(
+          flattenedItems,
+          activeId,
+          overId,
+          offsetLeft,
+          indentationWidth,
+        )
+      : null;
+  const sensorContext: SensorContext = useRef({
+    items: flattenedItems,
+    offset: offsetLeft,
+  });
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 10,
+      },
+    }),
+  );
+
+  const sortedIds = useMemo(
+    () => flattenedItems.map(({ id }) => id),
+    [flattenedItems],
+  );
+  const activeItem = activeId
+    ? flattenedItems.find(({ id }) => id === activeId)
+    : null;
+
+  useEffect(() => {
+    sensorContext.current = {
+      items: flattenedItems,
+      offset: offsetLeft,
+    };
+  }, [flattenedItems, offsetLeft]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (overId) {
+        setItems(
+          setProperty(items as TreeItems, overId, "collapsed", (value) => {
+            return false;
+          }),
+        );
+      }
+    }, 100);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [overId, handleCollapse]);
+
+  return (
+    <DndContext
+      // accessibility={{ announcements }}
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      measuring={measuring}
+      onDragStart={handleDragStart}
+      onDragMove={handleDragMove}
+      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
+    >
+      <SortableContext
+        items={sortedIds as string[]}
+        strategy={verticalListSortingStrategy}
+      >
+        {flattenedItems.map((component) => {
+          return (
+            <SortableTreeItem
+              component={component}
+              key={component.id}
+              id={component.id!}
+              name={component.name}
+              value={component.description as string}
+              depth={
+                component.id === activeId && projected
+                  ? projected.depth
+                  : component.depth
+              }
+              indentationWidth={indentationWidth}
+              indicator={indicator}
+              collapsed={Boolean(
+                component.collapsed && component.children!.length,
+              )}
+              onCollapse={
+                (component.children ?? [])!.length
+                  ? () => handleCollapse(component.id!)
+                  : undefined
+              }
+            />
+          );
+        })}
+
+        {createPortal(
+          <DragOverlay
+            dropAnimation={dropAnimationConfig}
+            modifiers={indicator ? [adjustTranslate] : undefined}
+          >
+            {activeId && activeItem ? (
+              <SortableTreeItem
+                component={activeItem}
+                id={activeId}
+                name={activeItem.name!}
+                depth={activeItem.depth}
+                clone
+                childCount={getChildCount(items as TreeItems, activeId) + 1}
+                value={activeItem.description!.toString()}
+                indentationWidth={indentationWidth}
+              />
+            ) : null}
+          </DragOverlay>,
+          document.body,
+        )}
+      </SortableContext>
+    </DndContext>
+  );
+
+  function handleDragStart(e: DragStartEvent) {
+    const {
+      active: { id: activeId },
+    } = e;
+    setActiveId(activeId);
+    setOverId(activeId);
+
+    document.body.style.setProperty("cursor", "grabbing");
+  }
+
+  function handleDragMove({ delta, activatorEvent }: DragMoveEvent) {
+    activatorEvent?.preventDefault();
+    activatorEvent?.stopPropagation();
+    setOffsetLeft(delta.x);
+  }
+
+  function handleDragOver({ over, activatorEvent }: DragOverEvent) {
+    activatorEvent?.preventDefault();
+    activatorEvent?.stopPropagation();
+    setOverId(over?.id ?? null);
+  }
+
+  function handleDragEnd({ active, over }: DragEndEvent) {
+    resetState();
+
+    if (projected && over) {
+      const { depth, parentId } = projected;
+      const clonedItems: FlattenedItem[] = JSON.parse(
+        JSON.stringify(flattenTree(items as TreeItems)),
+      );
+      const overIndex = clonedItems.findIndex(({ id }) => id === over.id);
+      const activeIndex = clonedItems.findIndex(({ id }) => id === active.id);
+      const activeTreeItem = clonedItems[activeIndex];
+
+      clonedItems[activeIndex] = {
+        ...activeTreeItem,
+        depth,
+        parentId: parentId!,
+      };
+
+      const sortedItems = arrayMove(clonedItems, activeIndex, overIndex);
+      const newItems = buildTree(sortedItems);
+
+      setItems(newItems as any);
+    }
+  }
+
+  function handleDragCancel() {
+    resetState();
+  }
+
+  function resetState() {
+    setOverId(null);
+    setActiveId(null);
+    setOffsetLeft(0);
+
+    document.body.style.setProperty("cursor", "");
+  }
+
+  function handleCollapse(id: UniqueIdentifier) {
+    setItems(
+      setProperty(items as TreeItems, id, "collapsed", (value) => {
+        return !value;
+      }),
+    );
+  }
+}
+
+const adjustTranslate: Modifier = ({ transform }) => {
+  return {
+    ...transform,
+    y: transform.y - 25,
+  };
+};
