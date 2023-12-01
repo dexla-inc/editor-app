@@ -95,9 +95,9 @@ export const EditorCanvas = ({ projectId }: Props) => {
     )!;
     if (!isPreviewMode && selectedComponentId) {
       setCopiedComponent(componentToCopy);
-      copyToClipboard(projectId, componentToCopy);
+      copyToClipboard(componentToCopy);
     }
-  }, [editorTree.root, isPreviewMode, setCopiedComponent, projectId]);
+  }, [editorTree.root, isPreviewMode, setCopiedComponent]);
 
   const cutSelectedComponent = useCallback(() => {
     const selectedComponentId = useEditorStore.getState().selectedComponentId;
@@ -115,7 +115,7 @@ export const EditorCanvas = ({ projectId }: Props) => {
   };
 
   const pasteCopiedComponent = useCallback(async () => {
-    const clipboardContent = pasteFromClipboard(projectId);
+    const clipboardContent = pasteFromClipboard();
     let componentToPaste =
       (clipboardContent as typeof copiedComponent) || copiedComponent;
     if (!componentToPaste || isPreviewMode) {

@@ -62,7 +62,8 @@ export const EditableComponent = ({
     highlightedComponentId: state.highlightedComponentId,
   }));
 
-  const { forceDestroyContextMenu } = useComponentContextMenu();
+  const { componentContextMenu, forceDestroyContextMenu } =
+    useComponentContextMenu();
 
   const actions: Action[] = component.actions ?? [];
   const onMountAction: Action | undefined = actions.find(
@@ -253,6 +254,7 @@ export const EditableComponent = ({
               }
             }
           },
+          onContextMenu: componentContextMenu(component),
         },
       )}
     </>
