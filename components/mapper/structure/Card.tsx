@@ -9,7 +9,7 @@ export const jsonStructure = (props?: any): Component => {
   // get theme card style
   const theme = useEditorStore.getState().theme;
   const cardStylingProps = getCardStyling(
-    theme.cardStyle ?? "ROUNDED",
+    theme.cardStyle ?? "OUTLINED_ROUNDED",
     theme.colors["Border"][6],
     theme.defaultRadius,
   );

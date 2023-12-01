@@ -26,7 +26,7 @@ export const defaultTheme: MantineThemeExtended = {
   hasCompactButtons: true,
   //focusRing: "DEFAULT",  Need to do focusRingStyles: {     styles(theme: MantineThemeBase): CSSObject;
   loader: "oval",
-  cardStyle: "ROUNDED",
+  cardStyle: "OUTLINED_ROUNDED",
   defaultSpacing: "md",
   defaultRadius: "md",
 };

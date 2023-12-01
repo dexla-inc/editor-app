@@ -99,7 +99,7 @@ export const EditorNavbarThemesSection = ({
       logos: [],
       defaultRadius: "sm",
       defaultSpacing: "md",
-      cardStyle: "ROUNDED",
+      cardStyle: "OUTLINED_ROUNDED",
       loader: "OVAL",
       focusRing: "DEFAULT",
       hasCompactButtons: true,
