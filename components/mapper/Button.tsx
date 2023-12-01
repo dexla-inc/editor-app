@@ -29,7 +29,6 @@ const ButtonComponent = ({
     loading,
     textColor,
     color,
-    style,
     ...componentProps
   } = component.props as any;
 
@@ -45,7 +44,7 @@ const ButtonComponent = ({
   const backgroundColor = getColorFromTheme(theme, color);
 
   const borderColor = getColorFromTheme(theme, "Border.6");
-  const customStyle = merge({ borderColor, borderWidth: "0px" }, style, {
+  const customStyle = merge({ borderColor, borderWidth: "0px" }, props.style, {
     backgroundColor,
     color: labelTextColor,
   });
@@ -56,10 +55,10 @@ const ButtonComponent = ({
       {...(rightIcon && { rightIcon: <Icon name={rightIcon} /> })}
       loading={loading}
       {...defaultTriggers}
-      style={customStyle}
       {...props}
       {...componentProps}
       {...triggers}
+      style={customStyle}
     >
       {children}
     </MantineButton>
