@@ -42,7 +42,8 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         <NumberInput
           label="Grid Size"
           size="xs"
-          error="not a valid number"
+          type="number"
+          pattern="[0-9]*"
           {...form.getInputProps("gridSize")}
           onChange={(value) => {
             form.setFieldValue("gridSize", value);
