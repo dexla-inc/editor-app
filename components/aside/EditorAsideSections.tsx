@@ -19,6 +19,7 @@ import * as DrawerModifier from "@/components/modifiers/Drawer";
 import * as EffectsModifier from "@/components/modifiers/Effects";
 import * as FileButtonModifier from "@/components/modifiers/FileButton";
 import * as GoogleMapModifier from "@/components/modifiers/GoogleMap";
+import * as GridModifier from "@/components/modifiers/Grid";
 import * as IconModifier from "@/components/modifiers/Icon";
 import * as ImageModifier from "@/components/modifiers/Image";
 import * as InputModifier from "@/components/modifiers/Input";
@@ -107,6 +108,7 @@ const sectionMapper: SectionsMapper = {
   badge: BadgeModifier,
   dateInput: DateInputModifier,
   chart: ChartModifier,
+  grid: GridModifier,
 };
 
 type Tab = "design" | "actions";

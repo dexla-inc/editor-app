@@ -39,7 +39,8 @@ export type Modifiers =
   | "alert"
   | "badge"
   | "dateInput"
-  | "chart";
+  | "chart"
+  | "grid";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -357,6 +358,7 @@ export const requiredModifiers: RequiredModifiers = {
     labelColor: "SecondaryText.5",
     foreColor: "Secondary.5",
   },
+  grid: { gap: "xs" },
 };
 
 type AISupportedModifiers = {

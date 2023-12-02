@@ -1,6 +1,7 @@
 // The comment below force next to refresh the editor state every time we change something in the code
 // @refresh reset
 import { Shell } from "@/components/AppShell";
+import { EditorCanvas } from "@/components/EditorCanvas";
 import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
@@ -27,7 +28,6 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
-import { EditorCanvas } from "@/components/EditorCanvas";
 
 type Props = {
   projectId: string;
@@ -36,14 +36,26 @@ type Props = {
 
 export const Editor = ({ projectId, pageId }: Props) => {
   const theme = useMantineTheme();
-  const clearSelection = useEditorStore((state) => state.clearSelection);
-  const editorTree = useEditorStore((state) => state.tree);
-  const setEditorTree = useEditorStore((state) => state.setTree);
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-  const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
-  const isLoading = useAppStore((state) => state.isLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
-  const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const {
+    clearSelection,
+    editorTree,
+    setEditorTree,
+    isPreviewMode,
+    isNavBarVisible,
+  } = useEditorStore((state) => ({
+    clearSelection: state.clearSelection,
+    editorTree: state.tree,
+    setEditorTree: state.setTree,
+    isPreviewMode: state.isPreviewMode,
+    isNavBarVisible: state.isNavBarVisible,
+  }));
+
+  const { isLoading, setIsLoading, stopLoading } = useAppStore((state) => ({
+    isLoading: state.isLoading,
+    setIsLoading: state.setIsLoading,
+    stopLoading: state.stopLoading,
+  }));
+
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
   useGetPageData({ projectId, pageId });

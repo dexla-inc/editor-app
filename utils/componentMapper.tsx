@@ -132,7 +132,6 @@ import {
   IconJewishStar,
   IconLayoutBottombarCollapse,
   IconLayoutColumns,
-  IconLayoutGrid,
   IconLayoutKanban,
   IconLayoutNavbar,
   IconLayoutSidebar,
@@ -177,22 +176,7 @@ export type StructureMapper = {
 
 export const structureMapper: StructureMapper = {
   // AI generated structures
-  Grid: {
-    structure: (props: any) => GridStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Grid"
-        icon={<IconLayoutGrid size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Layout",
-    icon: <IconLayoutGrid size={ICON_SIZE} />,
-  },
-  GridColumn: {
-    structure: (props: any) => GridColumnStructure.jsonStructure(props),
-    category: "Layout",
-    icon: <IconLayoutColumns size={ICON_SIZE} />,
-  },
+
   Container: {
     structure: (props: any) => ContainerStructure.jsonStructure(props),
     Draggable: () => (
@@ -204,7 +188,21 @@ export const structureMapper: StructureMapper = {
     category: "Layout",
     icon: <IconContainer size={ICON_SIZE} />,
   },
-
+  Grid: {
+    structure: (props: any) => GridStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Grid"
+        icon={<IconLayoutColumns size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Layout",
+    icon: <IconLayoutColumns size={ICON_SIZE} />,
+  },
+  GridColumn: {
+    structure: (props: any) => GridColumnStructure.jsonStructure(props),
+    category: "Layout",
+  },
   Card: {
     structure: (props: any) => CardStructure.jsonStructure(props),
     Draggable: () => (
@@ -849,23 +847,6 @@ export const componentMapper: ComponentMapper = {
     actionTriggers: ["onMount", "onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
-  Grid: {
-    Component: (props: { component: Component; renderTree: any }) => (
-      <Grid component={props.component} renderTree={props.renderTree} />
-    ),
-    modifiers: ["effects"],
-    actionTriggers: ["onMount", "onClick", "onHover"],
-    sequentialTriggers: ["onSuccess", "onError"],
-    allowedParentTypes: ["Grid", "GridColumn"],
-  },
-  GridColumn: {
-    Component: (props: { component: Component; renderTree: any }) => (
-      <GridColumn component={props.component} renderTree={props.renderTree} />
-    ),
-    modifiers: ["effects"],
-    actionTriggers: ["onMount", "onClick", "onHover"],
-    sequentialTriggers: ["onSuccess", "onError"],
-  },
   Container: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Container component={props.component} renderTree={props.renderTree} />
@@ -883,7 +864,23 @@ export const componentMapper: ComponentMapper = {
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
-
+  Grid: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Grid component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["grid", "effects"],
+    actionTriggers: ["onMount", "onClick", "onHover"],
+    sequentialTriggers: ["onSuccess", "onError"],
+    allowedParentTypes: ["Grid", "GridColumn"],
+  },
+  GridColumn: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <GridColumn component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["effects"],
+    actionTriggers: ["onMount", "onClick", "onHover"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
   Card: {
     Component: (props: { component: Component; renderTree: any }) => (
       <Card component={props.component} renderTree={props.renderTree} />
