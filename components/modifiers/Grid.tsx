@@ -2,7 +2,7 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Stack } from "@mantine/core";
+import { NumberInput, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutColumns } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -19,8 +19,11 @@ export const Modifier = withModifier(({ selectedComponent }) => {
 
   useEffect(() => {
     if (selectedComponent?.id) {
-      const { gap } = pick(selectedComponent.props!, ["gap"]);
-      form.setValues(merge({}, initialValues, { gap }));
+      const { gap, gridSize } = pick(selectedComponent.props!, [
+        "gap",
+        "gridSize",
+      ]);
+      form.setValues(merge({}, initialValues, { gap, gridSize }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
@@ -29,10 +32,21 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     <form>
       <Stack spacing="xs">
         <SizeSelector
+          label="Gap"
           {...form.getInputProps("gap")}
           onChange={(value) => {
             form.setFieldValue("gap", value as string);
             debouncedTreeComponentPropsUpdate("gap", value as string);
+          }}
+        />
+        <NumberInput
+          label="Grid Size"
+          size="xs"
+          error="not a valid number"
+          {...form.getInputProps("gridSize")}
+          onChange={(value) => {
+            form.setFieldValue("gridSize", value);
+            debouncedTreeComponentPropsUpdate("gridSize", value);
           }}
         />
       </Stack>

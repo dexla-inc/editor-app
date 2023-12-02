@@ -1,6 +1,7 @@
 import { GRID_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 import { Box, BoxProps, useMantineTheme } from "@mantine/core";
+import merge from "lodash.merge";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -9,7 +10,7 @@ type Props = {
 
 export const Grid = ({ renderTree, component, ...props }: Props) => {
   const theme = useMantineTheme();
-  const { style = {}, gridSize } = component.props!;
+  const { style = {}, gridSize, gap } = component.props!;
 
   return (
     <Box
@@ -18,14 +19,12 @@ export const Grid = ({ renderTree, component, ...props }: Props) => {
       {...props}
       id={component.id}
       pos="relative"
-      style={{
-        ...props.style,
-        ...style,
-        gap: Object.keys(theme.spacing).includes(component.props!.gap)
-          ? theme.spacing[component.props!.gap ?? "xs"]
-          : component.props!.gap ?? theme.spacing.xs,
+      style={merge(props.style, style, {
+        gap: Object.keys(theme.spacing).includes(gap)
+          ? theme.spacing[gap ?? "xs"]
+          : gap ?? theme.spacing.xs,
         gridTemplateColumns: `repeat(${gridSize ?? GRID_SIZE}, 1fr)`,
-      }}
+      })}
     >
       {component.children &&
         component.children.length > 0 &&
