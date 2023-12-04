@@ -9,6 +9,7 @@ const gridStructure = {
   name: "Grid",
   description: "Grid",
   props: {
+    // isBeingAdded: true,
     bg: "white",
     m: 0,
     p: 0,

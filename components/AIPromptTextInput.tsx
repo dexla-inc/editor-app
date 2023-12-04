@@ -1,9 +1,9 @@
-import { createComponentEditorHandler as createComponentGenerationHandler } from "@/components/AIGenerationEditor";
+import { createComponentEditorHandler } from "@/components/AIGenerationEditor";
 import AIPromptTextareaInput from "@/components/AIPromptTextareaInput";
 import { generateStructureFromScreenshot } from "@/requests/ai/queries";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
-import { DropTarget, getComponentById } from "@/utils/editor";
+import { Component, DropTarget, getComponentById } from "@/utils/editor";
 import {
   Flex,
   Popover,
@@ -57,7 +57,7 @@ export default function AIPromptTextInput() {
         base64Image,
       );
 
-      const applyComponentsIntoTree = createComponentGenerationHandler({
+      const applyComponentsIntoTree = createComponentEditorHandler({
         componentBeingAddedId,
         theme,
         updateTreeComponentChildren,
@@ -66,8 +66,8 @@ export default function AIPromptTextInput() {
         pages,
         dropTarget,
       });
-
-      applyComponentsIntoTree(result);
+      console.log("result.components", result.components);
+      applyComponentsIntoTree(result.components as Component[]);
     } catch (error) {
       console.error(error);
     }

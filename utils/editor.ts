@@ -7,6 +7,8 @@ import {
 } from "@/stores/editor";
 import { Action, ChangeStepAction } from "@/utils/actions";
 import { structureMapper } from "@/utils/componentMapper";
+import { GRID_SIZE } from "@/utils/config";
+import { calculateGridSizes } from "@/utils/grid";
 import { templatesMapper } from "@/utils/templatesMapper";
 import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
@@ -17,8 +19,6 @@ import { nanoid } from "nanoid";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
-import { GRID_SIZE } from "@/utils/config";
-import { calculateGridSizes } from "@/utils/grid";
 
 export type Component = {
   id?: string;
@@ -290,11 +290,11 @@ export const getNewComponents = (
 };
 
 export const getNewComponent = (
-  row: Row,
+  components: Component[],
   theme: MantineThemeExtended,
   pages: PageResponse[],
 ): Component => {
-  const firstComponent = row.components[0];
+  const firstComponent = components[0];
   const structureDefinition = structureMapper[firstComponent.name];
   const firstComponentStructure = structureDefinition.structure({
     ...firstComponent,

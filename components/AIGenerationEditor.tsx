@@ -4,7 +4,6 @@ import {
   Component,
   DropTarget,
   EditorTree,
-  Row,
   addComponent,
   getComponentBeingAddedId,
   getNewComponent,
@@ -37,10 +36,11 @@ export const createComponentEditorHandler = ({
   tree,
   dropTarget,
 }: Props) => {
-  return function (row: Row) {
-    const newComponents = getNewComponent(row, theme, pages);
+  return function (components: Component[]) {
+    const newComponents = getNewComponent(components, theme, pages);
     const id = getComponentBeingAddedId(tree.root);
-
+    console.log("tree", tree);
+    console.log("id", id);
     if (!id) {
       const copy = cloneDeep(tree);
       addComponent(copy.root, newComponents, dropTarget);
