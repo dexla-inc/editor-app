@@ -163,7 +163,7 @@ export type EditorState = {
   updateTreeComponentChildren: (
     componentId: string,
     children: Component[],
-    save: boolean,
+    save?: boolean,
   ) => void;
   updateTreeComponentActions: (componentId: string, actions: Action[]) => void;
   updateTreeComponentDescription: (
