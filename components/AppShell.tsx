@@ -20,6 +20,8 @@ import Link from "next/link";
 
 import { AIChatHistoryButton } from "@/components/AIChatHistoryButton";
 import AIPromptTextInput from "@/components/AIPromptTextInput";
+import { ActionIconDefault } from "@/components/ActionIconDefault";
+import { AddGridButton } from "@/components/AddGridButton";
 import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
 import { DeployButton } from "@/components/DeployButton";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
@@ -31,11 +33,10 @@ import { getPageList } from "@/requests/pages/queries";
 import { PageListResponse } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
+import { flexStyles } from "@/utils/branding";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
-import { ActionIconDefault } from "@/components/ActionIconDefault";
-import { AddGridButton } from "@/components/AddGridButton";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const resetTree = useEditorStore((state) => state.resetTree);
@@ -81,10 +82,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                   { value: "french", label: "French" },
                 ]}
                 sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: "10px",
+                  ...flexStyles,
                   whiteSpace: "nowrap",
                   width: "160px",
                 }}

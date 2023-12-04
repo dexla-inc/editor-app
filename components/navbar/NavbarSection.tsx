@@ -1,6 +1,7 @@
 import { Sections } from "@/components/navbar/EditorNavbarSections";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { scrollbarStyles } from "@/utils/branding";
 import { HEADER_HEIGHT, ICON_SIZE, NAVBAR_MIN_WIDTH } from "@/utils/config";
 import {
   ActionIcon,
@@ -146,20 +147,7 @@ export const NavbarSection = ({
       ref={ref}
       onMouseEnter={() => setIsPageStructure(true)}
       onMouseLeave={() => setIsPageStructure(false)}
-      sx={{
-        overflowX: "hidden",
-        overflowY: "scroll",
-        scrollbarWidth: "thin",
-        scrollbarColor: "transparent transparent",
-        msOverflowStyle: "-ms-autohiding-scrollbar",
-        "::-webkit-scrollbar": { width: "5px", borderRadius: "10px" },
-        "::-webkit-scrollbar-thumb": {
-          backgroundColor: "transparent",
-          borderRadius: "10px",
-        },
-        ":hover": { scrollbarColor: "#888 transparent" },
-        ":hover::-webkit-scrollbar-thumb": { backgroundColor: "#888" },
-      }}
+      sx={scrollbarStyles}
       pos="fixed"
       bg="white"
       top={HEADER_HEIGHT}

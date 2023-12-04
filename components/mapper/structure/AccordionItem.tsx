@@ -1,4 +1,4 @@
-import { defaultTheme } from "@/components/IFrame";
+import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";

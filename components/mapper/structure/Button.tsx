@@ -1,5 +1,5 @@
-import { defaultTheme } from "@/components/IFrame";
 import { defaultButtonValues } from "@/components/modifiers/Button";
+import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 

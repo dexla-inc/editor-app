@@ -137,21 +137,19 @@ const TableComponent = ({ renderTree, component, ...props }: Props) => {
   }
 
   return (
-    <>
-      <ScrollArea
-        w={props.style?.width ?? "100%"}
-        h={props.style?.height ?? "auto"}
-      >
-        <MantineReactTable
-          {...props}
-          {...componentProps}
-          {...tableTriggers}
-          table={table}
-        />
-        {dataProp?.base &&
-          component.children?.map((child) => renderTree(merge(child)))}
-      </ScrollArea>
-    </>
+    <ScrollArea
+      w={props.style?.width ?? "100%"}
+      h={props.style?.height ?? "auto"}
+    >
+      <MantineReactTable
+        {...props}
+        {...componentProps}
+        {...tableTriggers}
+        table={table}
+      />
+      {dataProp?.base &&
+        component.children?.map((child) => renderTree(merge(child)))}
+    </ScrollArea>
   );
 };
 
