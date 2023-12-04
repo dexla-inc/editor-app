@@ -15,6 +15,7 @@ import {
   updateTreeComponentAttrs,
   updateTreeComponentChildren,
   updateTreeComponentDescription,
+  updateTreeComponentWithOmitProps,
 } from "@/utils/editor";
 import { MantineNumberSize, MantineTheme } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
@@ -162,6 +163,7 @@ export type EditorState = {
   updateTreeComponentChildren: (
     componentId: string,
     children: Component[],
+    save: boolean,
   ) => void;
   updateTreeComponentActions: (componentId: string, actions: Action[]) => void;
   updateTreeComponentDescription: (
@@ -355,17 +357,22 @@ export const useEditorStore = create<EditorState>()(
           );
         },
         // anything out of .props that changes .children[]
-        updateTreeComponentChildren: (componentId, children) => {
+        updateTreeComponentChildren: (componentId, children, save = true) => {
           set(
             (state) => {
               const copy = cloneDeep(state.tree);
               updateTreeComponentChildren(copy.root, componentId, children);
-              debouncedUpdatePageState(
-                encodeSchema(JSON.stringify(copy)),
-                state.currentProjectId ?? "",
-                state.currentPageId ?? "",
-                state.setIsSaving,
-              );
+
+              if (save) {
+                const toBeSavedCopy = cloneDeep(copy);
+                updateTreeComponentWithOmitProps(toBeSavedCopy.root);
+                debouncedUpdatePageState(
+                  encodeSchema(JSON.stringify(toBeSavedCopy)),
+                  state.currentProjectId ?? "",
+                  state.currentPageId ?? "",
+                  state.setIsSaving,
+                );
+              }
 
               const component = getComponentById(copy.root, componentId);
 

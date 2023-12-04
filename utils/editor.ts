@@ -597,6 +597,31 @@ export const updateTreeComponentChildren = (
         node.children = children;
         context.break();
       }
+      // // @ts-ignore
+      // delete node.collapsed;
+      // // @ts-ignore
+      // delete node.depth;
+      // // @ts-ignore
+      // delete node.index;
+      // // @ts-ignore
+      // delete node.parentId;
+    },
+    { order: "bfs" },
+  );
+};
+
+export const updateTreeComponentWithOmitProps = (treeRoot: Component) => {
+  crawl(
+    treeRoot,
+    (node, context) => {
+      // @ts-ignore
+      delete node.collapsed;
+      // @ts-ignore
+      delete node.depth;
+      // @ts-ignore
+      delete node.index;
+      // @ts-ignore
+      delete node.parentId;
     },
     { order: "bfs" },
   );
@@ -907,11 +932,11 @@ export const getClosestEdge = (
 };
 
 export const debouncedTreeComponentChildrenUpdate = debounce(
-  (value: Component[]) => {
+  (value: Component[], save = true) => {
     const { updateTreeComponentChildren, selectedComponentId } =
       useEditorStore.getState();
 
-    updateTreeComponentChildren(selectedComponentId as string, value);
+    updateTreeComponentChildren(selectedComponentId as string, value, save);
   },
   300,
 );
@@ -955,9 +980,9 @@ export const debouncedTreeComponentDescriptionpdate = debounce(
 );
 
 export const debouncedTreeRootChildrenUpdate = debounce(
-  (value: Component[]) => {
+  (value: Component[], save = true) => {
     const { updateTreeComponentChildren, tree } = useEditorStore.getState();
-    updateTreeComponentChildren(tree.root.id as string, value);
+    updateTreeComponentChildren(tree.root.id as string, value, save);
   },
   300,
 );

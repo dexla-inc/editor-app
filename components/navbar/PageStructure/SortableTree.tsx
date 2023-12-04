@@ -73,13 +73,15 @@ interface Props {
 
 export function NavbarLayersSection({
   indicator = false,
-  indentationWidth = 20,
+  indentationWidth = 10,
 }: Props) {
-  const editorTree = useEditorStore((state) => state.tree);
-  const items = editorTree.root.children;
+  const items = useEditorStore((state) => {
+    const { children } = state.tree.root;
+    return children;
+  });
 
-  const setItems = (updateItems: any) => {
-    debouncedTreeRootChildrenUpdate(updateItems);
+  const setItems = (updateItems: any, save = true) => {
+    debouncedTreeRootChildrenUpdate(updateItems, save);
   };
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
@@ -144,6 +146,7 @@ export function NavbarLayersSection({
           setProperty(items as TreeItems, overId, "collapsed", (value) => {
             return false;
           }),
+          false,
         );
       }
     }, 100);
@@ -155,7 +158,6 @@ export function NavbarLayersSection({
 
   return (
     <DndContext
-      // accessibility={{ announcements }}
       sensors={sensors}
       collisionDetection={closestCenter}
       measuring={measuring}
@@ -284,6 +286,7 @@ export function NavbarLayersSection({
       setProperty(items as TreeItems, id, "collapsed", (value) => {
         return !value;
       }),
+      false,
     );
   }
 }
