@@ -33,6 +33,7 @@ export default function InitialPane({
 }: InitialPaneProps) {
   const theme = useMantineTheme();
   const resetTree = useEditorStore((state) => state.resetTree);
+  const liveblocks = useEditorStore((state) => state.liveblocks);
 
   return (
     <>
@@ -58,6 +59,7 @@ export default function InitialPane({
               component={Link}
               href={`/projects/${projectId}/editor/${page.id}`}
               onClick={() => {
+                liveblocks.leaveRoom();
                 resetTree();
               }}
             >

@@ -28,6 +28,7 @@ import {
 } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
 import { EditorCanvas } from "@/components/EditorCanvas";
+import { useEffect } from "react";
 
 type Props = {
   projectId: string;
@@ -36,6 +37,7 @@ type Props = {
 
 export const Editor = ({ projectId, pageId }: Props) => {
   const theme = useMantineTheme();
+  const liveblocks = useEditorStore((state) => state.liveblocks);
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
@@ -64,6 +66,17 @@ export const Editor = ({ projectId, pageId }: Props) => {
     });
     setIsLoading(false);
   };
+
+  useEffect(() => {
+    if (pageId) {
+      liveblocks.leaveRoom();
+      liveblocks.enterRoom(pageId);
+    }
+
+    return () => {
+      liveblocks.leaveRoom();
+    };
+  }, [pageId]);
 
   return (
     <>

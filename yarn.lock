@@ -310,6 +310,26 @@
   resolved "https://registry.yarnpkg.com/@iarna/toml/-/toml-2.2.5.tgz#b32366c89b43c6f8cefbdefac778b9c828e3ba8c"
   integrity sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==
 
+"@liveblocks/client@1.8.2", "@liveblocks/client@^1.8.2":
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/@liveblocks/client/-/client-1.8.2.tgz#85b5a250cd23dd5bc60983c93c9e4bd8a2e08613"
+  integrity sha512-PefC91UIIpVO6gbYEgO91iHXXeWqD4PLMe9whTZZ9n4DXJy/P1ERLfey0X0qNqruWsmg/gijNPfQGUb8TbqUtg==
+  dependencies:
+    "@liveblocks/core" "1.8.2"
+
+"@liveblocks/core@1.8.2":
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/@liveblocks/core/-/core-1.8.2.tgz#d75175ade53837d26634aea1a24b0a0a818fdfa9"
+  integrity sha512-N2DT8rzVehftQOBymIc47GBf9mpofl1jETexSwfl8GOhmpHXYJHOLQzIEWHOamoWuOez3Dy5Io0AA3k6L7nxbg==
+
+"@liveblocks/zustand@^1.8.2":
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/@liveblocks/zustand/-/zustand-1.8.2.tgz#eae795a3236ae5ea35b8fd681e55d887dcc7e3a7"
+  integrity sha512-S1vQStCN4twWBri8KbbaTOqRC7XQ+Efat05N7hcDAPMo7qw2+hUBM5VCNejlOnEL8P1Y7/1Z/99bZJjgDzD/SQ==
+  dependencies:
+    "@liveblocks/client" "1.8.2"
+    "@liveblocks/core" "1.8.2"
+
 "@mantine/core@^6.0.21":
   version "6.0.21"
   resolved "https://registry.yarnpkg.com/@mantine/core/-/core-6.0.21.tgz#6e3a1b8d0f6869518a644d5f5e3d55a5db7e1e51"
