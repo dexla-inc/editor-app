@@ -1,7 +1,7 @@
+import { defaultLayoutValues } from "@/components/modifiers/Layout";
+import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
-import { defaultTheme } from "@/components/IFrame";
-import { defaultLayoutValues } from "@/components/modifiers/Layout";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;

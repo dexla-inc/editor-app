@@ -1,6 +1,7 @@
 import { Icon } from "@/components/Icon";
 import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 import { useEditorStore } from "@/stores/editor";
+import { HOVERED, SELECTED } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
 import {
@@ -8,18 +9,11 @@ import {
   debouncedTreeComponentDescriptionpdate,
   debouncedTreeRootChildrenUpdate,
 } from "@/utils/editor";
-import {
-  ActionIcon,
-  Card,
-  Group,
-  Text,
-  TextInput,
-  useMantineTheme,
-} from "@mantine/core";
+import { ActionIcon, Card, Group, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown, IconChevronRight } from "@tabler/icons-react";
-import { KeyboardEvent, memo, useEffect, useRef } from "react";
+import { KeyboardEvent, useEffect, useMemo, useRef } from "react";
 import Nestable from "react-nestable";
 
 type ListItemProps = {
@@ -29,7 +23,6 @@ type ListItemProps = {
 };
 
 const ListItem = ({ component, collapseIcon, isSelected }: ListItemProps) => {
-  const theme = useMantineTheme();
   const { ref, hovered } = useHover();
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const setSelectedComponentId = useEditorStore(
@@ -84,10 +77,7 @@ const ListItem = ({ component, collapseIcon, isSelected }: ListItemProps) => {
       unstyled
       w="100%"
       {...(isCurrentTarget && { className: "is-drag-over" })}
-      style={{
-        borderLeft: "1px solid transparent",
-      }}
-      sx={(theme) =>
+      sx={() =>
         component.id !== "root"
           ? {
               padding: "0 0 0 10px",
@@ -99,10 +89,10 @@ const ListItem = ({ component, collapseIcon, isSelected }: ListItemProps) => {
         ref={ref}
         w="100%"
         p={2}
-        bg={hovered ? "gray.1" : undefined}
+        bg={hovered ? HOVERED : undefined}
         style={{
           cursor: "move",
-          border: isSelected ? `1px solid ${theme.colors.teal[6]}` : undefined,
+          border: isSelected ? SELECTED : undefined,
           display: "flex",
           position: "relative",
         }}
@@ -221,7 +211,10 @@ export const NavbarLayersSection = () => {
     return <RenderItemInner item={item} collapseIcon={collapseIcon} />;
   };
 
-  const items = editorTree.root.children;
+  const items = useMemo(
+    () => editorTree.root.children,
+    [editorTree.root.children],
+  );
 
   const handleChange = (items: any) => {
     debouncedTreeRootChildrenUpdate(items.items);

@@ -1,8 +1,9 @@
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
+import { scrollbarStyles } from "@/utils/branding";
 import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { CSSObject, Divider, Stack, Text, Textarea } from "@mantine/core";
+import { Divider, Stack, Text, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconChartInfographic } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -49,21 +50,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
 
-  const customStyle = {
-    overflowX: "hidden",
-    overflowY: "scroll",
-    scrollbarWidth: "thin",
-    scrollbarColor: "transparent transparent",
-    msOverflowStyle: "-ms-autohiding-scrollbar",
-    "::-webkit-scrollbar": { width: "5px", borderRadius: "10px" },
-    "::-webkit-scrollbar-thumb": {
-      backgroundColor: "transparent",
-      borderRadius: "10px",
-    },
-    ":hover": { scrollbarColor: "#aaa transparent" },
-    ":hover::-webkit-scrollbar-thumb": { backgroundColor: "#aaa" },
-  } as CSSObject;
-
   return (
     <form>
       <Stack spacing="xs">
@@ -90,7 +76,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           maxRows={10}
           label={isPieOrRadial ? "Data" : "Data (y-axis)"}
           size="xs"
-          styles={{ input: customStyle }}
+          styles={{ input: scrollbarStyles }}
           {...form.getInputProps("data")}
           onChange={(e) => {
             form.setFieldValue("data", e.currentTarget.value);
@@ -109,7 +95,7 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           maxRows={10}
           label={isPieOrRadial ? "Data Labels" : "Data (x-axis)"}
           size="xs"
-          styles={{ input: customStyle }}
+          styles={{ input: scrollbarStyles }}
           {...form.getInputProps("dataLabels")}
           onChange={(e) => {
             form.setFieldValue("dataLabels", e.currentTarget.value);

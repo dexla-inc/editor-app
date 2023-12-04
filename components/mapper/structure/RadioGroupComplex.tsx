@@ -1,8 +1,7 @@
-import { defaultTheme } from "@/components/IFrame";
+import { defaultLayoutValues } from "@/components/modifiers/Layout";
+import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
-import { defaultLayoutValues } from "@/components/modifiers/Layout";
-import { defaultInputValues } from "@/components/modifiers/Input";
 
 export const jsonStructure = (props?: any): Component => {
   const radioGroupId = nanoid();

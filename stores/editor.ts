@@ -1,9 +1,9 @@
-import { defaultTheme } from "@/components/IFrame";
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
 import { CardStyle } from "@/requests/projects/types";
 import { Logo } from "@/requests/themes/types";
 import { Action } from "@/utils/actions";
+import { defaultTheme } from "@/utils/branding";
 import { encodeSchema } from "@/utils/compression";
 import { GRID_SIZE } from "@/utils/config";
 import {

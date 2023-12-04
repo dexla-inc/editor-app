@@ -3,6 +3,13 @@ import { useDroppable } from "@/hooks/useDroppable";
 import { useOnDrop } from "@/hooks/useOnDrop";
 import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper, ActionTrigger } from "@/utils/actions";
+import {
+  GREEN_BASE_SHADOW,
+  GREEN_COLOR,
+  ORANGE_BASE_SHADOW,
+  THIN_GREEN_BASE_SHADOW,
+  THIN_ORANGE_BASE_SHADOW,
+} from "@/utils/branding";
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
 import { Component } from "@/utils/editor";
 import { BoxProps, useMantineTheme } from "@mantine/core";
@@ -28,39 +35,37 @@ export const EditableComponent = ({
   const router = useRouter();
   const theme = useMantineTheme();
 
-  const {
-    iframeWindow,
-    isLive,
-    currentTargetId,
-    isPreviewMode,
-    isResizing,
-    onMountActionsRan,
-    addOnMountActionsRan,
-    setComponentToBind,
-    pickingComponentToBindFrom,
-    pickingComponentToBindTo,
-    setSelectedComponentId,
-    setTreeComponentCurrentState,
-    currentTreeComponentsStates,
-    language,
-    highlightedComponentId,
-  } = useEditorStore((state) => ({
-    iframeWindow: state.iframeWindow,
-    isLive: state.isLive,
-    currentTargetId: state.currentTargetId,
-    isPreviewMode: state.isPreviewMode,
-    isResizing: state.isResizing,
-    onMountActionsRan: state.onMountActionsRan,
-    addOnMountActionsRan: state.addOnMountActionsRan,
-    setComponentToBind: state.setComponentToBind,
-    pickingComponentToBindFrom: state.pickingComponentToBindFrom,
-    pickingComponentToBindTo: state.pickingComponentToBindTo,
-    setSelectedComponentId: state.setSelectedComponentId,
-    setTreeComponentCurrentState: state.setTreeComponentCurrentState,
-    currentTreeComponentsStates: state.currentTreeComponentsStates,
-    language: state.language,
-    highlightedComponentId: state.highlightedComponentId,
-  }));
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
+  const isLive = useEditorStore((state) => state.isLive);
+  const currentTargetId = useEditorStore((state) => state.currentTargetId);
+  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const isResizing = useEditorStore((state) => state.isResizing);
+  const onMountActionsRan = useEditorStore((state) => state.onMountActionsRan);
+  const addOnMountActionsRan = useEditorStore(
+    (state) => state.addOnMountActionsRan,
+  );
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
+  const pickingComponentToBindFrom = useEditorStore(
+    (state) => state.pickingComponentToBindFrom,
+  );
+  const pickingComponentToBindTo = useEditorStore(
+    (state) => state.pickingComponentToBindTo,
+  );
+  const setSelectedComponentId = useEditorStore(
+    (state) => state.setSelectedComponentId,
+  );
+  const setTreeComponentCurrentState = useEditorStore(
+    (state) => state.setTreeComponentCurrentState,
+  );
+  const currentTreeComponentsStates = useEditorStore(
+    (state) => state.currentTreeComponentsStates,
+  );
+  const language = useEditorStore((state) => state.language);
+  const highlightedComponentId = useEditorStore(
+    (state) => state.highlightedComponentId,
+  );
 
   const { componentContextMenu, forceDestroyContextMenu } =
     useComponentContextMenu();
@@ -139,24 +144,26 @@ export const EditableComponent = ({
   const isPicking = pickingComponentToBindFrom || pickingComponentToBindTo;
   const isOver = currentTargetId === id;
   const isHighlighted = highlightedComponentId === id;
-  const borderColor = isPicking ? "orange" : "teal";
-  const baseShadow = `0 0 0 2px ${theme.colors[borderColor][6]}`;
+  const baseShadow = isPicking ? ORANGE_BASE_SHADOW : GREEN_BASE_SHADOW;
+  const thinBaseShadow = isPicking
+    ? THIN_ORANGE_BASE_SHADOW
+    : THIN_GREEN_BASE_SHADOW;
 
   const shadows = isHighlighted
-    ? { boxShadow: `0 0 0 2px ${theme.colors.orange[6]}` }
+    ? { boxShadow: ORANGE_BASE_SHADOW }
     : isOver
     ? {
         boxShadow:
           edge === "top"
-            ? `0 -${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+            ? `0 -${DROP_INDICATOR_WIDTH}px 0 0 ${GREEN_COLOR}, ${baseShadow}`
             : edge === "bottom"
-            ? `0 ${DROP_INDICATOR_WIDTH}px 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+            ? `0 ${DROP_INDICATOR_WIDTH}px 0 0 ${GREEN_COLOR}, ${baseShadow}`
             : edge === "left"
-            ? `-${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+            ? `-${DROP_INDICATOR_WIDTH}px 0 0 0 ${GREEN_COLOR}, ${baseShadow}`
             : edge === "right"
-            ? `${DROP_INDICATOR_WIDTH}px 0 0 0 ${theme.colors.teal[6]}, ${baseShadow}`
+            ? `${DROP_INDICATOR_WIDTH}px 0 0 0 ${GREEN_COLOR}, ${baseShadow}`
             : baseShadow,
-        background: edge === "center" ? theme.colors.teal[6] : "none",
+        background: edge === "center" ? GREEN_COLOR : "none",
         opacity: edge === "center" ? 0.4 : 1,
       }
     : isSelected
@@ -230,13 +237,7 @@ export const EditableComponent = ({
           style: childStyles,
           sx: {
             "&:hover": {
-              ...(!isPreviewMode
-                ? {
-                    boxShadow: `0 0 0 1px ${
-                      theme.colors[isPicking ? "orange" : "green"][4]
-                    }`,
-                  }
-                : {}),
+              ...(!isPreviewMode ? { boxShadow: thinBaseShadow } : {}),
             },
           },
           onClick: (e: any) => {

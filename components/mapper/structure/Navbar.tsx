@@ -1,7 +1,7 @@
-import { defaultTheme } from "@/components/IFrame";
 import { defaultImageValues } from "@/components/modifiers/Image";
 import { PageResponse } from "@/requests/pages/types";
 import { MantineThemeExtended } from "@/stores/editor";
+import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
 import { nanoid } from "nanoid";

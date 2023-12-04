@@ -1,35 +1,13 @@
 import { getTheme } from "@/requests/themes/queries";
-import { MantineThemeExtended, useEditorStore } from "@/stores/editor";
+import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { defaultTheme } from "@/utils/branding";
 import { NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
 import createCache from "@emotion/cache";
-import {
-  Box,
-  BoxProps,
-  DEFAULT_THEME,
-  MantineProvider,
-  ScrollArea,
-} from "@mantine/core";
+import { Box, BoxProps, MantineProvider, ScrollArea } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-
-export const defaultTheme: MantineThemeExtended = {
-  ...DEFAULT_THEME,
-  fontFamily: "Arial, sans-serif",
-  headings: {
-    ...DEFAULT_THEME.headings,
-    fontFamily: "Arial, sans-serif",
-  },
-  primaryColor: "teal",
-  defaultFont: "Arial, sans-serif",
-  hasCompactButtons: true,
-  //focusRing: "DEFAULT",  Need to do focusRingStyles: {     styles(theme: MantineThemeBase): CSSObject;
-  loader: "oval",
-  cardStyle: "OUTLINED_ROUNDED",
-  defaultSpacing: "md",
-  defaultRadius: "md",
-};
 
 type Props = {
   onClick?: () => void;

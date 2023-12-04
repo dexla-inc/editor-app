@@ -22,13 +22,13 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Paper } from "@mantine/core";
 import { useDisclosure, useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
-import { useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 
 type Props = {
   projectId: string;
 };
 
-export const EditorCanvas = ({ projectId }: Props) => {
+const EditorCanvasComponent = ({ projectId }: Props) => {
   const undo = useTemporalStore((state) => state.undo);
   const redo = useTemporalStore((state) => state.redo);
   const copiedComponent = useEditorStore((state) => state.copiedComponent);
@@ -343,3 +343,5 @@ export const EditorCanvas = ({ projectId }: Props) => {
     </>
   );
 };
+
+export const EditorCanvas = memo(EditorCanvasComponent);
