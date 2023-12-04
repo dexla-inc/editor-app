@@ -3,12 +3,13 @@ import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { theme } from "@/pages/_app";
 import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
-import { ICON_SIZE } from "@/utils/config";
+import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import {
   addComponent,
   getComponentById,
   getComponentIndex,
   getComponentParent,
+  removeComponent,
   removeComponentFromParent,
 } from "@/utils/editor";
 import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
@@ -272,6 +273,15 @@ export const ComponentToolbox = () => {
           />
         </>
       )}
+      <ActionIconTransparent
+        iconName={ICON_DELETE}
+        tooltip="Delete"
+        onClick={() => {
+          const copy = cloneDeep(editorTree);
+          removeComponent(copy.root, component?.id!);
+          setEditorTree(copy, { action: `Removed ${component?.name}` });
+        }}
+      />
     </Group>
   );
 };

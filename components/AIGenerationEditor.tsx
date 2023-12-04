@@ -39,8 +39,7 @@ export const createComponentEditorHandler = ({
   return function (components: Component[]) {
     const newComponents = getNewComponent(components, theme, pages);
     const id = getComponentBeingAddedId(tree.root);
-    console.log("tree", tree);
-    console.log("id", id);
+
     if (!id) {
       const copy = cloneDeep(tree);
       addComponent(copy.root, newComponents, dropTarget);

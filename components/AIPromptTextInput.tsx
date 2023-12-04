@@ -66,7 +66,7 @@ export default function AIPromptTextInput() {
         pages,
         dropTarget,
       });
-      console.log("result.components", result.components);
+
       applyComponentsIntoTree(result.components as Component[]);
     } catch (error) {
       console.error(error);
