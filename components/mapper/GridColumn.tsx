@@ -1,7 +1,7 @@
-import { Component } from "@/utils/editor";
-import { BoxProps } from "@mantine/core";
 import { GridColumn as GridColumnComponent } from "@/components/GridColumn";
 import { useEditorStore } from "@/stores/editor";
+import { Component } from "@/utils/editor";
+import { BoxProps } from "@mantine/core";
 
 type Props = {
   renderTree: (component: Component) => any;

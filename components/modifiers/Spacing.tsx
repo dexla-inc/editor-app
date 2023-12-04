@@ -88,11 +88,13 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           form={form}
           selectedComponentId={selectedComponent?.id as string}
         />
-        <SpacingControl
-          type="Margin"
-          form={form}
-          selectedComponentId={selectedComponent?.id as string}
-        />
+        {selectedComponent?.name !== "GridColumn" && (
+          <SpacingControl
+            type="Margin"
+            form={form}
+            selectedComponentId={selectedComponent?.id as string}
+          />
+        )}
       </Stack>
     </form>
   );
