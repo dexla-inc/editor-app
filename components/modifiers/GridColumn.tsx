@@ -14,15 +14,16 @@ import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
 import { StylingPaneItemIcon } from "./StylingPaneItemIcon";
 
-const initialValues = requiredModifiers.gridColumn;
+export const initialValues = requiredModifiers.gridColumn;
 
-export const label = "Grid";
+export const label = "Grid Column";
 export const icon = IconLayoutColumns;
 
 export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({ initialValues });
 
   useEffect(() => {
+    console.log(selectedComponent?.id);
     if (selectedComponent?.id) {
       const { alignSelf, gridAutoFlow } = pick(selectedComponent.props!.style, [
         "alignSelf",

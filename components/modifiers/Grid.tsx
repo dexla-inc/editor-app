@@ -9,7 +9,7 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
 
-const initialValues = requiredModifiers.grid;
+export const initialValues = requiredModifiers.grid;
 
 export const label = "Grid";
 export const icon = IconLayoutGrid;
