@@ -143,7 +143,7 @@ export const useComponentContextMenu = () => {
         getComponentIndex(parentComponent!, component?.id!) + 1,
       );
 
-      await setEditorTree(copy, { action: `Pasted ${component.name}` });
+      setEditorTree(copy, { action: `Pasted ${component.name}` });
       setSelectedComponentId(newSelectedId);
     },
     [editorTree, setSelectedComponentId, setEditorTree],

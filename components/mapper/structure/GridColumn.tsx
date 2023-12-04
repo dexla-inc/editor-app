@@ -4,7 +4,6 @@ import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
-  console.log(initialValues);
   return {
     id: nanoid(),
     name: "GridColumn",
