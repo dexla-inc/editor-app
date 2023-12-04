@@ -9,8 +9,6 @@ const gridStructure = {
   name: "Grid",
   description: "Grid",
   props: {
-    // isBeingAdded: true,
-    bg: "white",
     m: 0,
     p: 0,
     gridSize: GRID_SIZE,
@@ -27,10 +25,8 @@ const gridStructure = {
       description: "GridColumn",
       props: {
         span: GRID_SIZE,
-        bg: "white",
         style: {
           height: "auto",
-          minHeight: "50px",
           border: "2px dotted #ddd",
         },
       },

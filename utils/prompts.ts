@@ -372,7 +372,7 @@ type GridColumn = BaseComponent & {
       gridRowStart?: string; // Optional: Defines the row start for the item
       gridRowEnd?: string; // Optional: Defines the row end for the item
       justifyContent?: 'start' | 'end' | 'center' | 'stretch' | 'space-around' | 'space-between' | 'space-evenly'; // Optional: Horizontal alignment
-      alignItems?: 'start' | 'end' | 'center' | 'stretch'; // Optional: Vertical alignment
+      alignSelf?: 'start' | 'end' | 'center'; // Optional: Vertical alignment
       padding?: string;
       [key: string]: any;
     };
