@@ -108,7 +108,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     useEffect(() => {
       const isRootOrContentWrapper = id === "root" || id === "content-wrapper";
 
-      if (isSelected) {
+      if (isSelected && !isRootOrContentWrapper) {
         // @ts-ignore
         customRef.current?.scrollIntoView({
           behavior: "smooth",
