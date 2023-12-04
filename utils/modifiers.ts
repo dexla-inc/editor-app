@@ -39,7 +39,9 @@ export type Modifiers =
   | "alert"
   | "badge"
   | "dateInput"
-  | "chart";
+  | "chart"
+  | "grid"
+  | "gridColumn";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -356,6 +358,16 @@ export const requiredModifiers: RequiredModifiers = {
     ],
     labelColor: "SecondaryText.5",
     foreColor: "Secondary.5",
+  },
+  grid: {
+    columnGap: "20px",
+    rowGap: "20px",
+    justifyItems: "stretch",
+    justifyContent: "start",
+    alignContent: "start",
+  },
+  gridColumn: {
+    alignSelf: "start",
   },
 };
 

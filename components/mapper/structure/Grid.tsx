@@ -1,3 +1,5 @@
+import { initialValues as initialGridValues } from "@/components/modifiers/Grid";
+import { initialValues as initialGridColumnValues } from "@/components/modifiers/GridColumn";
 import { GRID_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
@@ -14,9 +16,9 @@ export const jsonStructure = (props?: any): Component => {
       gridSize: GRID_SIZE,
       gap: "xs",
       style: {
+        ...initialGridValues,
         width: "100%",
         height: "auto",
-        minHeight: "50px",
       },
     },
     children: [
@@ -28,8 +30,8 @@ export const jsonStructure = (props?: any): Component => {
           span: GRID_SIZE / 2,
           bg: "white",
           style: {
+            ...initialGridColumnValues,
             height: "auto",
-            minHeight: "50px",
             border: "2px dotted #ddd",
           },
         },
@@ -43,7 +45,6 @@ export const jsonStructure = (props?: any): Component => {
           bg: "white",
           style: {
             height: "auto",
-            minHeight: "50px",
             border: "2px dotted #ddd",
           },
         },

@@ -1,6 +1,7 @@
 // The comment below force next to refresh the editor state every time we change something in the code
 // @refresh reset
 import { Shell } from "@/components/AppShell";
+import { EditorCanvas } from "@/components/EditorCanvas";
 import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
@@ -27,7 +28,6 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
-import { EditorCanvas } from "@/components/EditorCanvas";
 
 type Props = {
   projectId: string;
