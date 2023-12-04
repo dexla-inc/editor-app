@@ -10,7 +10,6 @@ export const jsonStructure = (props?: any): Component => {
     name: "Grid",
     description: "Grid",
     props: {
-      bg: "white",
       m: 0,
       p: 0,
       gridSize: GRID_SIZE,
@@ -28,7 +27,6 @@ export const jsonStructure = (props?: any): Component => {
         description: "GridColumn",
         props: {
           span: GRID_SIZE / 2,
-          bg: "white",
           style: {
             ...initialGridColumnValues,
             height: "auto",
@@ -42,8 +40,8 @@ export const jsonStructure = (props?: any): Component => {
         description: "GridColumn",
         props: {
           span: GRID_SIZE / 2,
-          bg: "white",
           style: {
+            ...initialGridColumnValues,
             height: "auto",
             border: "2px dotted #ddd",
           },

@@ -1177,10 +1177,8 @@ const addNodeToTarget = (
     description: "GridColumn",
     props: {
       span: GRID_SIZE,
-      bg: "white",
       style: {
         height: "auto",
-        minHeight: "50px",
         border: "2px dotted #ddd",
       },
     },

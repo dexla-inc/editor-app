@@ -40,7 +40,6 @@ export const emptyEditorTree = {
         name: "Grid",
         description: "Grid",
         props: {
-          bg: "white",
           m: 0,
           p: 0,
           gridSize: GRID_SIZE,
@@ -57,10 +56,8 @@ export const emptyEditorTree = {
             description: "GridColumn",
             props: {
               span: GRID_SIZE,
-              bg: "white",
               style: {
                 height: "auto",
-                minHeight: "50px",
                 border: "2px dotted #ddd",
               },
             },
