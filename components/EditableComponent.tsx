@@ -4,6 +4,7 @@ import { useOnDrop } from "@/hooks/useOnDrop";
 import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper, ActionTrigger } from "@/utils/actions";
 import {
+  GRAY_OUTLINE,
   GREEN_BASE_SHADOW,
   GREEN_COLOR,
   ORANGE_BASE_SHADOW,
@@ -217,6 +218,10 @@ export const EditableComponent = ({
   const childStyles = {
     ...propsWithOverwrites.style,
     ...(showShadows ? shadows : {}),
+    outline:
+      isPreviewMode && propsWithOverwrites.style?.outline === GRAY_OUTLINE
+        ? "none"
+        : propsWithOverwrites.style?.outline,
   };
 
   delete propsWithOverwrites.style;
