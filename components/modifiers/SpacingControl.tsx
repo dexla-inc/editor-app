@@ -11,10 +11,10 @@ export const label = "Spacing";
 type Props = {
   type: "Padding" | "Margin";
   form: UseFormReturnType<any>;
-  selectedComponentId: string | null;
+  selectedComponentIds: string[];
 };
 
-export const SpacingControl = ({ type, form, selectedComponentId }: Props) => {
+export const SpacingControl = ({ type, form, selectedComponentIds }: Props) => {
   const sideTypes = type === "Padding" ? "padding-sides" : "margin-sides";
   const allTypes = type === "Padding" ? "padding-all" : "margin-all";
 
@@ -31,7 +31,7 @@ export const SpacingControl = ({ type, form, selectedComponentId }: Props) => {
     };
     form.setValues(newValues);
 
-    debouncedTreeUpdate(selectedComponentId as string, {
+    debouncedTreeUpdate(selectedComponentIds, {
       style: newValues,
     });
   };
@@ -41,7 +41,7 @@ export const SpacingControl = ({ type, form, selectedComponentId }: Props) => {
     value: string,
   ) => {
     setTypeValue(`${type.toLowerCase()}${side}`, value);
-    debouncedTreeUpdate(selectedComponentId as string, {
+    debouncedTreeUpdate(selectedComponentIds, {
       style: { [`${type.toLowerCase()}${side}`]: value },
     });
   };

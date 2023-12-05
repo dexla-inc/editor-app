@@ -4,98 +4,82 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconBoxModel2 } from "@tabler/icons-react";
-import { pick } from "next/dist/lib/pick";
-import { useEffect } from "react";
+import merge from "lodash.merge";
 
 export const icon = IconBoxModel2;
 export const label = "Spacing";
 
-export const Modifier = withModifier(({ selectedComponent }) => {
-  const initialValues = requiredModifiers.spacing;
-  const style = selectedComponent?.props?.style;
+export const Modifier = withModifier(
+  ({ selectedComponent, selectedComponentIds }) => {
+    const initialValues = requiredModifiers.spacing;
+    const style = selectedComponent?.props?.style;
 
-  const isPaddingAllSame =
-    style?.paddingTop === style?.paddingBottom &&
-    style?.paddingTop === style?.paddingLeft &&
-    style?.paddingTop === style?.paddingRight;
+    const isPaddingAllSame =
+      style?.paddingTop === style?.paddingBottom &&
+      style?.paddingTop === style?.paddingLeft &&
+      style?.paddingTop === style?.paddingRight;
 
-  const isMarginAllSame =
-    style?.marginTop === style?.marginBottom &&
-    style?.marginTop === style?.marginLeft &&
-    style?.marginTop === style?.marginRight;
+    const isMarginAllSame =
+      style?.marginTop === style?.marginBottom &&
+      style?.marginTop === style?.marginLeft &&
+      style?.marginTop === style?.marginRight;
 
-  const form = useForm({
-    initialValues: {
-      showPadding: isPaddingAllSame ? "padding-all" : "padding-sides",
-      showMargin: isMarginAllSame ? "margin-all" : "margin-sides",
-      ...initialValues,
-    },
-  });
-
-  useEffect(() => {
-    if (selectedComponent?.id) {
-      const data = pick(selectedComponent.props!, ["style"]);
-
-      if (data.style) {
-        form.setValues({
-          // @ts-ignore
-          padding: data.style.padding ?? initialValues.padding,
+    const form = useForm({
+      initialValues: merge(
+        {},
+        {
+          showPadding: isPaddingAllSame ? "padding-all" : "padding-sides",
+          showMargin: isMarginAllSame ? "margin-all" : "margin-sides",
+          ...initialValues,
+        },
+        {
+          padding: selectedComponent?.props?.style?.padding,
           paddingTop:
-            data.style.paddingTop ??
-            data.style.padding ??
-            initialValues.paddingTop,
+            selectedComponent?.props?.style?.paddingTop ??
+            selectedComponent?.props?.style?.padding,
           paddingBottom:
-            data.style.paddingBottom ??
-            data.style.padding ??
-            initialValues.paddingBottom,
+            selectedComponent?.props?.style?.paddingBottom ??
+            selectedComponent?.props?.style?.padding,
           paddingLeft:
-            data.style.paddingLeft ??
-            data.style.padding ??
-            initialValues.paddingLeft,
+            selectedComponent?.props?.style?.paddingLeft ??
+            selectedComponent?.props?.style?.padding,
           paddingRight:
-            data.style.paddingRight ??
-            data.style.padding ??
-            initialValues.paddingRight,
-          margin: data.style.margin ?? initialValues.margin,
+            selectedComponent?.props?.style?.paddingRight ??
+            selectedComponent?.props?.style?.padding,
+          margin: selectedComponent?.props?.style?.margin,
           marginTop:
-            data.style.marginTop ??
-            data.style.margin ??
-            initialValues.marginTop,
+            selectedComponent?.props?.style?.marginTop ??
+            selectedComponent?.props?.style?.margin,
           marginBottom:
-            data.style.marginBottom ??
-            data.style.margin ??
-            initialValues.marginBottom,
+            selectedComponent?.props?.style?.marginBottom ??
+            selectedComponent?.props?.style?.margin,
           marginLeft:
-            data.style.marginLeft ??
-            data.style.margin ??
-            initialValues.marginLeft,
+            selectedComponent?.props?.style?.marginLeft ??
+            selectedComponent?.props?.style?.margin,
           marginRight:
-            data.style.marginRight ??
-            data.style.margin ??
-            initialValues.marginRight,
-        });
-      }
-    }
+            selectedComponent?.props?.style?.marginRight ??
+            selectedComponent?.props?.style?.margin,
+        },
+      ),
+    });
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
-
-  return (
-    <form key={selectedComponent?.id}>
-      <Stack spacing="xs">
-        <SpacingControl
-          type="Padding"
-          form={form}
-          selectedComponentId={selectedComponent?.id as string}
-        />
-        {selectedComponent?.name !== "GridColumn" && (
+    return (
+      <form key={selectedComponent?.id}>
+        <Stack spacing="xs">
           <SpacingControl
-            type="Margin"
+            type="Padding"
             form={form}
-            selectedComponentId={selectedComponent?.id as string}
+            selectedComponentIds={selectedComponentIds}
           />
-        )}
-      </Stack>
-    </form>
-  );
-});
+          {selectedComponent?.name !== "GridColumn" && (
+            <SpacingControl
+              type="Margin"
+              form={form}
+              selectedComponentIds={selectedComponentIds}
+            />
+          )}
+        </Stack>
+      </form>
+    );
+  },
+);
