@@ -71,7 +71,7 @@ const SelectComponent = ({
         root: { width },
       }}
       withinPortal={false}
-      maxDropdownHeight={120}
+      maxDropdownHeight={150}
       data={data.map((d: any) => {
         return {
           label: d.label ?? d[keys[1]],

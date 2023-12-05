@@ -3,6 +3,7 @@ import {
   Box as MantineBox,
   Group as MantineGroup,
   Text as MantineText,
+  ScrollArea,
 } from "@mantine/core";
 
 type LinkProps = { text: string; link: string; url: string };
@@ -29,7 +30,7 @@ const FixedLink = ({ text, link, url }: LinkProps) => (
 export const CustomDropdown = ({ children, components, ...props }: any) => {
   const isComponent = components.customText || components.customLinkText;
   return (
-    <MantineBox {...props}>
+    <MantineBox component={ScrollArea} {...props}>
       {children}
       {isComponent && (
         <FixedLink
