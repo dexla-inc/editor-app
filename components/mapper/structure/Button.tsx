@@ -1,5 +1,5 @@
-import { defaultTheme } from "@/components/IFrame";
 import { defaultButtonValues } from "@/components/modifiers/Button";
+import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
@@ -18,7 +18,7 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       ...defaultButtonValues,
       style: {
-        width: "auto",
+        width: "fit-content",
         height: "auto",
         paddingTop: paddingY,
         paddingBottom: paddingY,

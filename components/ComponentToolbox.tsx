@@ -1,7 +1,7 @@
 import { useDraggable } from "@/hooks/useDraggable";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
-import { theme } from "@/pages/_app";
 import { useEditorStore } from "@/stores/editor";
+import { theme } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import {

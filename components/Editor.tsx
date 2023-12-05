@@ -8,6 +8,7 @@ import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { globalStyles } from "@/utils/branding";
 import {
   ASIDE_WIDTH,
   HEADER_HEIGHT,
@@ -25,9 +26,9 @@ import {
   ScrollArea,
   Stack,
   Text,
-  useMantineTheme,
 } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
+import { useCallback } from "react";
 
 type Props = {
   projectId: string;
@@ -35,22 +36,23 @@ type Props = {
 };
 
 export const Editor = ({ projectId, pageId }: Props) => {
-  const theme = useMantineTheme();
   const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
+
   const isLoading = useAppStore((state) => state.isLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const stopLoading = useAppStore((state) => state.stopLoading);
+
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
   useGetPageData({ projectId, pageId });
 
   const queryClient = useQueryClient();
 
-  const cancelGeneratePage = () => {
+  const cancelGeneratePage = useCallback(() => {
     stopLoading({
       id: "page-generation",
       title: "Page Cancelled",
@@ -63,7 +65,9 @@ export const Editor = ({ projectId, pageId }: Props) => {
       action: "Initial State",
     });
     setIsLoading(false);
-  };
+    // we don't unnnecessary rerendering of the editor
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setEditorTree]);
 
   return (
     <>
@@ -103,16 +107,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
           ) : undefined
         }
       >
-        <Global
-          styles={{
-            body: {
-              background: theme.colors.gray[0],
-              backgroundImage: `radial-gradient(${theme.colors.gray[4]} 1px, transparent 1px), radial-gradient( ${theme.colors.gray[4]} 1px, transparent 1px)`,
-              backgroundSize: "20px 20px",
-              backgroundPosition: "0 0, 50px 50px",
-            },
-          }}
-        />
+        <Global styles={globalStyles} />
         {isLoading && editorTree.root.children?.length === 0 && (
           <Box
             pos="relative"

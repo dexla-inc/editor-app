@@ -4,9 +4,18 @@ import { SwitchSelector } from "@/components/SwitchSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
-import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
+import {
+  debouncedTreeComponentPropsUpdate,
+  debouncedTreeComponentStyleUpdate,
+} from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Select, Stack, TextInput } from "@mantine/core";
+import {
+  SegmentedControl,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
@@ -65,6 +74,23 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             debouncedTreeComponentPropsUpdate("children", e.target.value);
           }}
         />
+        <Stack spacing={2}>
+          <Text size="xs" fw={500}>
+            Width
+          </Text>
+          <SegmentedControl
+            size="xs"
+            data={[
+              { label: "Fit to Content", value: "fit-content" },
+              { label: "Full Width", value: "100%" },
+            ]}
+            {...form.getInputProps("width")}
+            onChange={(value) => {
+              form.setFieldValue("width", value as string);
+              debouncedTreeComponentStyleUpdate("width", value as string);
+            }}
+          />
+        </Stack>
         <SwitchSelector
           topLabel="Compact"
           {...form.getInputProps("compact")}

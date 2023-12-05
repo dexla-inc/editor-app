@@ -22,13 +22,13 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Paper } from "@mantine/core";
 import { useDisclosure, useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
-import { useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 
 type Props = {
   projectId: string;
 };
 
-export const EditorCanvas = ({ projectId }: Props) => {
+const EditorCanvasComponent = ({ projectId }: Props) => {
   const undo = useTemporalStore((state) => state.undo);
   const redo = useTemporalStore((state) => state.redo);
   const copiedComponent = useEditorStore((state) => state.copiedComponent);
@@ -103,7 +103,14 @@ export const EditorCanvas = ({ projectId }: Props) => {
   const determinePasteTarget = (selectedId: string | undefined) => {
     if (!selectedId) return "content-wrapper";
     if (selectedId === "root") return "content-wrapper";
-    return selectedId as string;
+    const component = getComponentById(editorTree.root, selectedId);
+
+    if (!component?.blockDroppingChildrenInside) {
+      return selectedId as string;
+    } else {
+      const parentComponent = getComponentParent(editorTree.root, selectedId);
+      return parentComponent?.id as string;
+    }
   };
 
   const pasteCopiedComponent = useCallback(async () => {
@@ -111,26 +118,41 @@ export const EditorCanvas = ({ projectId }: Props) => {
     let componentToPaste =
       (clipboardContent as typeof copiedComponent) || copiedComponent;
     if (!componentToPaste || isPreviewMode) {
-      return; // Early exit if conditions aren't met
+      return;
     }
 
     const selectedComponentId = useEditorStore.getState().selectedComponentId;
 
     const copy = cloneDeep(editorTree);
-    const targetId = determinePasteTarget(selectedComponentId);
-    const parentComponent = getComponentParent(copy.root, targetId);
+
+    if (!selectedComponentId) return "content-wrapper";
+    if (selectedComponentId === "root") return "content-wrapper";
+    const component = getComponentById(editorTree.root, selectedComponentId);
+    let targetId = selectedComponentId;
+    let componentIndex = 0;
+    if (component?.blockDroppingChildrenInside) {
+      const parentComponent = getComponentParent(
+        editorTree.root,
+        selectedComponentId,
+      );
+      targetId = parentComponent?.id as string;
+      componentIndex =
+        getComponentIndex(parentComponent!, selectedComponentId!) + 1;
+    } else {
+      componentIndex = component?.children!.length ?? 0;
+    }
 
     const newSelectedId = addComponent(
       copy.root,
       componentToPaste,
       {
-        id: parentComponent!.id as string,
-        edge: "right",
+        id: targetId,
+        edge: "bottom",
       },
-      getComponentIndex(parentComponent!, selectedComponentId!) + 1,
+      componentIndex,
     );
 
-    await setEditorTree(copy, { action: `Pasted ${componentToPaste.name}` });
+    setEditorTree(copy, { action: `Pasted ${componentToPaste.name}` });
     setSelectedComponentId(newSelectedId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [copiedComponent, editorTree, isPreviewMode, setEditorTree]);
@@ -304,3 +326,5 @@ export const EditorCanvas = ({ projectId }: Props) => {
     </>
   );
 };
+
+export const EditorCanvas = memo(EditorCanvasComponent);

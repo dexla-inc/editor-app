@@ -1,6 +1,6 @@
-import { defaultTheme } from "@/components/IFrame";
 import { defaultInputValues } from "@/components/modifiers/Input";
 import { defaultModalValues } from "@/components/modifiers/Modal";
+import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";

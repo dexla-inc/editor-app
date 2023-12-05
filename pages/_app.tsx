@@ -1,14 +1,9 @@
 import { ContextMenuProvider } from "@/contexts/ContextMenuProvider";
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
 import { usePropelAuthStore } from "@/stores/propelAuth";
+import { theme } from "@/utils/branding";
 import { cache } from "@/utils/emotionCache";
-import {
-  DEFAULT_THEME,
-  Global,
-  LoadingOverlay,
-  MantineProvider,
-  MantineTheme,
-} from "@mantine/core";
+import { Global, LoadingOverlay, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { RedirectToLogin, RequiredAuthProvider } from "@propelauth/react";
 import {
@@ -38,36 +33,6 @@ declare global {
 }
 
 const GTM_ID = "GTM-P3DVFXMS";
-
-export const theme: MantineTheme = {
-  ...DEFAULT_THEME,
-  fontFamily: "var(--font-inter)",
-  headings: {
-    ...DEFAULT_THEME.headings,
-    fontFamily: "var(--font-inter)",
-  },
-  // @ts-ignore
-  breakpoints: { xs: 500, sm: 1100, md: 1150, lg: 1200, xl: 1400 },
-  black: "#222",
-  primaryColor: "teal",
-  components: {
-    Input: {
-      styles: (theme) => ({
-        input: { borderColor: theme.colors.gray[3] },
-      }),
-    },
-    Select: {
-      styles: (theme) => ({
-        input: { borderColor: theme.colors.gray[3] },
-      }),
-    },
-    Card: {
-      defaultProps: (theme) => ({
-        style: { borderColor: theme.colors.gray[3] },
-      }),
-    },
-  },
-};
 
 const AuthProvider = ({
   children,

@@ -23,7 +23,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({ initialValues });
 
   useEffect(() => {
-    console.log(selectedComponent?.id);
     if (selectedComponent?.id) {
       const { alignSelf, gridAutoFlow } = pick(selectedComponent.props!.style, [
         "alignSelf",

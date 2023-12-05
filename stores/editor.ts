@@ -1,9 +1,9 @@
-import { defaultTheme } from "@/components/IFrame";
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
 import { CardStyle } from "@/requests/projects/types";
 import { Logo } from "@/requests/themes/types";
 import { Action } from "@/utils/actions";
+import { GRAY_OUTLINE, defaultTheme } from "@/utils/branding";
 import { encodeSchema } from "@/utils/compression";
 import { GRID_SIZE } from "@/utils/config";
 import {
@@ -40,7 +40,6 @@ export const emptyEditorTree = {
         name: "Grid",
         description: "Grid",
         props: {
-          bg: "white",
           m: 0,
           p: 0,
           gridSize: GRID_SIZE,
@@ -57,11 +56,10 @@ export const emptyEditorTree = {
             description: "GridColumn",
             props: {
               span: GRID_SIZE,
-              bg: "white",
               style: {
                 height: "auto",
-                minHeight: "50px",
-                border: "2px dotted #ddd",
+                outline: GRAY_OUTLINE,
+                outlineOffset: "-2px",
               },
             },
           },
