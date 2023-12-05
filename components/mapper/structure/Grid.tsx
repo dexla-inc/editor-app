@@ -1,5 +1,6 @@
 import { initialValues as initialGridValues } from "@/components/modifiers/Grid";
 import { initialValues as initialGridColumnValues } from "@/components/modifiers/GridColumn";
+import { GRAY_OUTLINE } from "@/utils/branding";
 import { GRID_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
@@ -30,7 +31,8 @@ export const jsonStructure = (props?: any): Component => {
           style: {
             ...initialGridColumnValues,
             height: "auto",
-            border: "2px dotted #ddd",
+            outline: GRAY_OUTLINE,
+            outlineOffset: "-2px",
           },
         },
       },
@@ -43,7 +45,8 @@ export const jsonStructure = (props?: any): Component => {
           style: {
             ...initialGridColumnValues,
             height: "auto",
-            border: "2px dotted #ddd",
+            outline: GRAY_OUTLINE,
+            outlineOffset: "-2px",
           },
         },
       },

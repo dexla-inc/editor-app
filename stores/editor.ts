@@ -3,7 +3,7 @@ import { PageResponse } from "@/requests/pages/types";
 import { CardStyle } from "@/requests/projects/types";
 import { Logo } from "@/requests/themes/types";
 import { Action } from "@/utils/actions";
-import { defaultTheme } from "@/utils/branding";
+import { GRAY_OUTLINE, defaultTheme } from "@/utils/branding";
 import { encodeSchema } from "@/utils/compression";
 import { GRID_SIZE } from "@/utils/config";
 import {
@@ -58,7 +58,8 @@ export const emptyEditorTree = {
               span: GRID_SIZE,
               style: {
                 height: "auto",
-                border: "2px dotted #ddd",
+                outline: GRAY_OUTLINE,
+                outlineOffset: "-2px",
               },
             },
           },

@@ -44,8 +44,7 @@ const theme: MantineTheme = {
     ...DEFAULT_THEME.headings,
     fontFamily: "var(--font-inter)",
   },
-  // @ts-ignore
-  breakpoints: { xs: 500, sm: 1100, md: 1150, lg: 1200, xl: 1400 },
+  breakpoints: { xs: "500", sm: "1100", md: "1150", lg: "1200", xl: "1400" },
   black: "#222",
   primaryColor: "teal",
   components: {
@@ -95,6 +94,7 @@ const THIN_ORANGE_BASE_SHADOW = `0 0 0 1px ${theme.colors.orange[4]}`;
 const ORANGE_BASE_SHADOW = `0 0 0 2px ${theme.colors.orange[6]}`;
 const THIN_GREEN_BASE_SHADOW = `0 0 0 1px ${theme.colors.teal[4]}`;
 const GREEN_BASE_SHADOW = `0 0 0 2px ${theme.colors.teal[6]}`;
+const GRAY_OUTLINE = `2px dashed ${theme.colors.gray[3]}`;
 const SELECTED = `1px solid ${GREEN_COLOR}`;
 const HOVERED = theme.colors.gray[1];
 
@@ -117,6 +117,7 @@ const darkTheme = {
 
 export {
   GRAY_COLOR,
+  GRAY_OUTLINE,
   GREEN_BASE_SHADOW,
   GREEN_BORDER_COLOR,
   GREEN_COLOR,

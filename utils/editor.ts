@@ -6,6 +6,7 @@ import {
   useEditorStore,
 } from "@/stores/editor";
 import { Action, ChangeStepAction } from "@/utils/actions";
+import { GRAY_OUTLINE } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
 import { GRID_SIZE } from "@/utils/config";
 import { calculateGridSizes } from "@/utils/grid";
@@ -1179,7 +1180,8 @@ const addNodeToTarget = (
       span: GRID_SIZE,
       style: {
         height: "auto",
-        border: "2px dotted #ddd",
+        outline: GRAY_OUTLINE,
+        outlineOffset: "-2px",
       },
     },
     children: [copy],

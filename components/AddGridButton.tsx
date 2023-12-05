@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { GRAY_OUTLINE } from "@/utils/branding";
 import { GRID_SIZE } from "@/utils/config";
 import { Button } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
@@ -27,7 +28,8 @@ const gridStructure = {
         span: GRID_SIZE,
         style: {
           height: "auto",
-          border: "2px dotted #ddd",
+          outline: GRAY_OUTLINE,
+          outlineOffset: "-2px",
         },
       },
     },
