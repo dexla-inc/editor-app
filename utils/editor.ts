@@ -475,6 +475,25 @@ export const getComponentById = (
   return found;
 };
 
+export const getAllComponentsByIds = (
+  treeRoot: Component,
+  ids: string[],
+): Component[] => {
+  let found: Component[] = [];
+
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (ids.includes(node.id!)) {
+        found.push(node);
+      }
+    },
+    { order: "bfs" },
+  );
+
+  return found;
+};
+
 export const getComponentBeingAddedId = (
   treeRoot: Component,
 ): string | null => {
@@ -546,11 +565,13 @@ export const updateTreeComponentAttrs = (
 
 export const updateTreeComponent = (
   treeRoot: Component,
-  id: string,
+  ids: string | string[],
   props: any,
   state: string = "default",
   language: string = "default",
 ) => {
+  ids = Array.isArray(ids) ? ids : [ids];
+
   const translatableFields = pickBy(props, pickTranslatableFields);
   const styleFields = pickBy(props, pickStyleFields);
   const alwaysDefaultFields = omit(props, [
@@ -561,7 +582,7 @@ export const updateTreeComponent = (
   crawl(
     treeRoot,
     (node, context) => {
-      if (node.id === id) {
+      if (ids.includes(node.id!)) {
         if (language === "default") {
           node.props = merge(node.props, translatableFields);
         } else {
@@ -580,7 +601,7 @@ export const updateTreeComponent = (
 
         node.props = merge(node.props, alwaysDefaultFields);
 
-        context.break();
+        // context.break();
       }
     },
     { order: "bfs" },
@@ -961,10 +982,12 @@ export const debouncedTreeComponentPropsUpdate = debounce(
 
 export const debouncedTreeComponentStyleUpdate = debounce(
   (field: string, value: any) => {
-    const { updateTreeComponent, selectedComponentId } =
+    const { updateTreeComponent, selectedComponentIds } =
       useEditorStore.getState();
-    updateTreeComponent(selectedComponentId as string, {
-      style: { [field]: value },
+    selectedComponentIds?.forEach((id) => {
+      updateTreeComponent(id, {
+        style: { [field]: value },
+      });
     });
   },
   300,
@@ -972,8 +995,14 @@ export const debouncedTreeComponentStyleUpdate = debounce(
 
 export const debouncedTreeUpdate = debounce((...params: any[]) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  // @ts-ignore
-  updateTreeComponent(...params);
+  const updateTreeComponents = useEditorStore.getState().updateTreeComponents;
+  if (Array.isArray(params[0])) {
+    // @ts-ignore
+    updateTreeComponents(...params);
+  } else {
+    // @ts-ignore
+    updateTreeComponent(...params);
+  }
 }, 300);
 
 export const debouncedTreeComponentDescriptionpdate = debounce(

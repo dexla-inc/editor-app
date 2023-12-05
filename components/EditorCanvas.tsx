@@ -161,6 +161,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   }, [copiedComponent, editorTree, isPreviewMode, setEditorTree]);
 
   useHotkeys([
+    ["mod+click", () => {}],
     ["backspace", deleteComponent],
     ["delete", deleteComponent],
     ["mod+C", copySelectedComponent],

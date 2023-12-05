@@ -39,6 +39,9 @@ export const EditableComponent = ({
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
+  const setSelectedComponentIds = useEditorStore(
+    (state) => state.setSelectedComponentIds,
+  );
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
