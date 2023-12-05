@@ -1,9 +1,14 @@
-import { Anchor, Box, Group, Text } from "@mantine/core";
+import {
+  Anchor as MantineAnchor,
+  Box as MantineBox,
+  Group as MantineGroup,
+  Text as MantineText,
+} from "@mantine/core";
 
 type LinkProps = { text: string; link: string; url: string };
 
 const FixedLink = ({ text, link, url }: LinkProps) => (
-  <Group
+  <MantineGroup
     noWrap
     spacing={8}
     sx={{
@@ -12,19 +17,19 @@ const FixedLink = ({ text, link, url }: LinkProps) => (
       padding: "10px 15px",
     }}
   >
-    {text && <Text size="sm">{text}</Text>}
+    {text && <MantineText size="sm">{text}</MantineText>}
     {link && (
-      <Anchor href={url} target="_blank" variant="link">
+      <MantineAnchor href={url} target="_blank" variant="link">
         {link}
-      </Anchor>
+      </MantineAnchor>
     )}
-  </Group>
+  </MantineGroup>
 );
 
 export const CustomDropdown = ({ children, components, ...props }: any) => {
   const isComponent = components.customText || components.customLinkText;
   return (
-    <Box {...props}>
+    <MantineBox {...props}>
       {children}
       {isComponent && (
         <FixedLink
@@ -33,6 +38,6 @@ export const CustomDropdown = ({ children, components, ...props }: any) => {
           url={components.customLinkUrl}
         />
       )}
-    </Box>
+    </MantineBox>
   );
 };
