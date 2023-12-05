@@ -33,14 +33,6 @@ export const Modifier = withModifier(({ selectedComponent }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
 
-  // gridTemplateColumns: string; // e.g., 'repeat(3, 1fr)' or '200px 1fr 200px'
-  // gridTemplateRows?: string; // e.g., 'repeat(2, 100px)' or 'auto'
-  // gridColumnGap: string; // e.g., '10px'
-  // gridRowGap: string; // e.g., '10px'
-  // justifyContent: 'start' | 'end' | 'center' | 'stretch' | 'space-around' | 'space-between' | 'space-evenly';
-  // alignItems: 'start' | 'end' | 'center' | 'stretch';
-  // padding: string;
-
   return (
     <form>
       <Stack spacing="xs">

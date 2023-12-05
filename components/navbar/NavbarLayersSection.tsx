@@ -133,7 +133,7 @@ const ListItem = ({ component, collapseIcon, isSelected }: ListItemProps) => {
                 lineClamp={1}
                 sx={{ cursor: "move", width: "100%" }}
               >
-                {component.id === "root" ? "Body" : "Content Wrapper"}
+                Body
               </Text>
             ) : editable ? (
               <TextInput

@@ -41,7 +41,8 @@ export type Modifiers =
   | "dateInput"
   | "chart"
   | "grid"
-  | "gridColumn";
+  | "gridColumn"
+  | "navbar";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -368,6 +369,9 @@ export const requiredModifiers: RequiredModifiers = {
   },
   gridColumn: {
     alignSelf: "start",
+  },
+  navbar: {
+    width: "260px",
   },
 };
 

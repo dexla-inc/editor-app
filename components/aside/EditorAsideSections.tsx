@@ -28,6 +28,7 @@ import * as LayoutModifier from "@/components/modifiers/Layout";
 import * as LinkModifier from "@/components/modifiers/Link";
 import * as ModalModifier from "@/components/modifiers/Modal";
 import * as NavLinkModifier from "@/components/modifiers/NavLink";
+import * as NavbarModifier from "@/components/modifiers/Navbar";
 import * as PopOverModifier from "@/components/modifiers/PopOver";
 import * as PositionModifier from "@/components/modifiers/Position";
 import * as RadioModifier from "@/components/modifiers/Radio";
@@ -111,6 +112,7 @@ const sectionMapper: SectionsMapper = {
   chart: ChartModifier,
   grid: GridModifier,
   gridColumn: GridColumnModifier,
+  navbar: NavbarModifier,
 };
 
 type Tab = "design" | "actions";
@@ -161,8 +163,7 @@ export const EditorAsideSections = () => {
       <Box p="xl">
         <Center>
           <Text size="xs" color="dimmed" align="center">
-            You are unable to edit this Content Wrapper. Select another
-            component to edit.
+            You are unable to edit the Body. Select another component to edit.
           </Text>
         </Center>
       </Box>

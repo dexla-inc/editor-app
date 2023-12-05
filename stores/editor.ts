@@ -40,12 +40,9 @@ export const emptyEditorTree = {
         name: "Grid",
         description: "Grid",
         props: {
-          m: 0,
-          p: 0,
           gridSize: GRID_SIZE,
+          gap: 0,
           style: {
-            width: "100%",
-            height: "auto",
             minHeight: "50px",
           },
         },
