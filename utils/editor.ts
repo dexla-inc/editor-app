@@ -5,6 +5,7 @@ import {
   emptyEditorTree,
   useEditorStore,
 } from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/userConfig";
 import { Action, ChangeStepAction } from "@/utils/actions";
 import { GRAY_OUTLINE } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
@@ -839,11 +840,15 @@ export const addComponent = (
   const directChildren = ["Modal", "Drawer", "Toast"];
   const isGrid = copy.name === "Grid";
   const isColumn = copy.name === "GridColumn";
+  const isNavbar = copy.name === "Navbar";
   let targetComponent = null;
 
   crawl(
     treeRoot,
     (node, context) => {
+      if (isNavbar) {
+        useUserConfigStore.getState().setNavbarWidth("260px");
+      }
       if ((isGrid || isColumn) && node.id === dropTarget.id) {
         targetComponent = addNodeToTarget(
           treeRoot,
@@ -1377,6 +1382,12 @@ export const removeComponent = (treeRoot: Component, id: string) => {
   crawl(
     treeRoot,
     (node, context) => {
+      if (
+        node.name === "Navbar" ||
+        node.children?.find((c) => c.name === "Navbar")
+      ) {
+        useUserConfigStore.getState().setNavbarWidth(undefined);
+      }
       if (node.id === id) {
         context.parent?.children?.splice(context.index, 1);
         shouldRecalculate = node.name === "GridColumn" || node.name === "Grid";

@@ -122,8 +122,9 @@ export const useComponentContextMenu = () => {
   const duplicateComponent = useCallback(
     async (component: Component) => {
       const copy = cloneDeep(editorTree);
-
-      const targetId = determinePasteTarget(component?.id);
+      const componentId = component?.id!;
+      const componentName = component.name!;
+      const targetId = determinePasteTarget(componentId);
       const parentComponent = getComponentParent(copy.root, targetId);
 
       const newSelectedId = addComponent(
@@ -131,12 +132,12 @@ export const useComponentContextMenu = () => {
         component,
         {
           id: parentComponent!.id as string,
-          edge: "right",
+          edge: "center",
         },
-        getComponentIndex(parentComponent!, component?.id!) + 1,
+        getComponentIndex(parentComponent!, componentId) + 1,
       );
 
-      setEditorTree(copy, { action: `Pasted ${component.name}` });
+      setEditorTree(copy, { action: `Pasted ${componentName}` });
       setSelectedComponentId(newSelectedId);
     },
     [editorTree, setSelectedComponentId, setEditorTree],

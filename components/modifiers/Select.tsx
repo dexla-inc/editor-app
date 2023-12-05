@@ -5,6 +5,7 @@ import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
 import { Stack, Switch, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconSelect } from "@tabler/icons-react";
+import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
 
@@ -26,6 +27,9 @@ export const defaultSelectValues = {
     { label: "Option 1", value: "option-1" },
     { label: "Option 2", value: "option-2" },
   ],
+  customText: "",
+  customLinkText: "",
+  customLinkUrl: "",
 };
 
 export const Modifier = withModifier(({ selectedComponent }) => {
@@ -43,17 +47,12 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         "data",
         "withAsterisk",
         "clearable",
+        "customText",
+        "customLinkText",
+        "customLinkUrl",
       ]);
 
-      form.setValues({
-        name: data.name ?? defaultSelectValues.name,
-        size: data.size ?? defaultSelectValues.size,
-        placeholder: data.placeholder ?? defaultSelectValues.placeholder,
-        icon: data.icon ?? defaultSelectValues.icon,
-        withAsterisk: data.withAsterisk ?? defaultSelectValues.withAsterisk,
-        data: data.data ?? defaultSelectValues.data,
-        clearable: data.clearable ?? defaultSelectValues.clearable,
-      });
+      form.setValues(merge(defaultSelectValues, data));
     }
     // Disabling the lint here because we don't want this to be updated every time the form changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -106,6 +105,31 @@ export const Modifier = withModifier(({ selectedComponent }) => {
         <SelectOptionsForm
           getValue={() => form.getInputProps("data").value}
           setFieldValue={setFieldValue}
+        />
+
+        <TextInput
+          label="Custom Text"
+          size="xs"
+          {...form.getInputProps("customText")}
+          onChange={(e) => {
+            setFieldValue("customText", e.target.value);
+          }}
+        />
+        <TextInput
+          label="Custom Link Description"
+          size="xs"
+          {...form.getInputProps("customLinkText")}
+          onChange={(e) => {
+            setFieldValue("customLinkText", e.target.value);
+          }}
+        />
+        <TextInput
+          label="Custom Link Url"
+          size="xs"
+          {...form.getInputProps("customLinkUrl")}
+          onChange={(e) => {
+            setFieldValue("customLinkUrl", e.target.value);
+          }}
         />
       </Stack>
     </form>

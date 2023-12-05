@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import React, {
   forwardRef,
   HTMLAttributes,
@@ -5,11 +6,13 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import classNames from "classnames";
 
-import styles from "./TreeItem.module.scss";
+import { Icon } from "@/components/Icon";
+import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
+import { useEditorStore } from "@/stores/editor";
+import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
-import { IconChevronDown } from "@tabler/icons-react";
+import { debouncedTreeComponentDescriptionpdate } from "@/utils/editor";
 import {
   ActionIcon,
   Card,
@@ -18,13 +21,10 @@ import {
   TextInput,
   useMantineTheme,
 } from "@mantine/core";
-import { debouncedTreeComponentDescriptionpdate } from "@/utils/editor";
-import { Icon } from "@/components/Icon";
-import { structureMapper } from "@/utils/componentMapper";
-import { useDisclosure } from "@mantine/hooks";
-import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 import { useForm } from "@mantine/form";
-import { useEditorStore } from "@/stores/editor";
+import { useDisclosure } from "@mantine/hooks";
+import { IconChevronDown } from "@tabler/icons-react";
+import styles from "./TreeItem.module.scss";
 
 export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   id: any;
@@ -207,7 +207,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                   lineClamp={1}
                   sx={{ cursor: "move", width: "100%" }}
                 >
-                  {id === "root" ? "Body" : "Content Wrapper"}
+                  Body
                 </Text>
               ) : editable ? (
                 <TextInput

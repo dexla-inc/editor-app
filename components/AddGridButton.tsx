@@ -10,12 +10,9 @@ const gridStructure = {
   name: "Grid",
   description: "Grid",
   props: {
-    m: 0,
-    p: 0,
     gridSize: GRID_SIZE,
+    gap: 0,
     style: {
-      width: "100%",
-      height: "auto",
       minHeight: "50px",
     },
   },
@@ -23,11 +20,12 @@ const gridStructure = {
     {
       id: nanoid(),
       name: "GridColumn",
-      description: "GridColumn",
+      description: "Main Content",
       props: {
         span: GRID_SIZE,
         style: {
-          height: "auto",
+          alignSelf: "start",
+          minHeight: "50px",
           outline: GRAY_OUTLINE,
           outlineOffset: "-2px",
         },
@@ -49,7 +47,7 @@ export const AddGridButton = () => {
         return {
           ...child,
           id: nanoid(),
-          description: "Old Content Wrapper",
+          description: "Old Body",
         };
       })
       .concat(gridStructure);
