@@ -98,25 +98,23 @@ export function flattenTree(items: TreeItems): FlattenedItem[] {
 }
 
 export function buildTree(flattenedItems: FlattenedItem[]): TreeItems {
-  // @ts-ignore
-  const root: TreeItem = { id: "root", children: [] };
-  // @ts-ignore
-  const nodes: Record<string, TreeItem> = { [root.id]: root };
+  const root: TreeItem = { id: "root", name: "Container", children: [] };
+  const nodes: Record<string, TreeItem> = { [root.id as string]: root };
   const items = flattenedItems.map((item) => ({ ...item, children: [] }));
 
   for (const item of items) {
-    const { id, children } = item;
-    const parentId = item.parentId ?? root.id;
-    // @ts-ignore
+    const { id, name, children } = item;
+    if (id === undefined) {
+      continue;
+    }
+    const parentId = item.parentId ?? root.id ?? "content-wrapper";
     const parent = nodes[parentId] ?? findItem(items, parentId);
 
-    // @ts-ignore
-    nodes[id] = { id, children };
-    parent.children.push(item);
+    nodes[id] = { id, name, children };
+    parent.children?.push(item);
   }
 
-  // @ts-ignore
-  return root.children;
+  return root.children as TreeItems;
 }
 
 export function findItem(items: TreeItem[], itemId: UniqueIdentifier) {
@@ -134,10 +132,8 @@ export function findItemDeep(
       return item;
     }
 
-    if ((children ?? []).length) {
-      // @ts-ignore
+    if (children && children.length) {
       const child = findItemDeep(children, itemId);
-
       if (child) {
         return child;
       }
@@ -155,8 +151,7 @@ export function removeItem(items: TreeItems, id: UniqueIdentifier) {
       continue;
     }
 
-    if ((item.children ?? []).length) {
-      // @ts-ignore
+    if (item.children?.length) {
       item.children = removeItem(item.children, id);
     }
 
@@ -171,29 +166,31 @@ export function setProperty<T extends keyof TreeItem>(
   id: UniqueIdentifier,
   property: T,
   setter: (value: TreeItem[T]) => TreeItem[T],
-) {
-  for (const item of items) {
-    if (item.id === id) {
-      // @ts-ignore
-      item[property] = setter(item[property]);
-      continue;
+): TreeItems {
+  return items.map((item) => {
+    const currentItem = item as TreeItem;
+
+    if (currentItem.id === id) {
+      return {
+        ...currentItem,
+        [property]: setter(currentItem[property] as TreeItem[T]),
+      };
     }
 
-    // @ts-ignore
-    if ((item.children || []).length) {
-      // @ts-ignore
-      item.children = setProperty(item.children, id, property, setter);
+    if (currentItem.children) {
+      return {
+        ...currentItem,
+        children: setProperty(currentItem.children, id, property, setter),
+      };
     }
-  }
 
-  return [...items];
+    return currentItem;
+  });
 }
 
 function countChildren(items: TreeItem[], count = 0): number {
   return (items ?? []).reduce((acc, { children }) => {
-    // @ts-ignore
-    if (children.length) {
-      // @ts-ignore
+    if (children?.length) {
       return countChildren(children, acc + 1);
     }
 
@@ -204,8 +201,11 @@ function countChildren(items: TreeItem[], count = 0): number {
 export function getChildCount(items: TreeItems, id: UniqueIdentifier) {
   const item = findItemDeep(items, id);
 
-  // @ts-ignore
-  return item ? countChildren(item.children) : 0;
+  if (!item) {
+    return 0;
+  }
+
+  return countChildren(item.children || []);
 }
 
 export function removeChildrenOf(
@@ -216,10 +216,10 @@ export function removeChildrenOf(
 
   return items.filter((item) => {
     if (item.parentId && excludeParentIds.includes(item.parentId)) {
-      // @ts-ignore
       if ((item.children ?? []).length) {
-        // @ts-ignore
-        excludeParentIds.push(item.id);
+        if (item.id !== undefined) {
+          excludeParentIds.push(item.id);
+        }
       }
       return false;
     }
