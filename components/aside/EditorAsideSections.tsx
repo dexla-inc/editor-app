@@ -62,7 +62,7 @@ import {
 } from "@mantine/core";
 import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
-import { useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -128,7 +128,7 @@ export const EditorAsideSections = () => {
   const setTreeComponentCurrentState = useEditorStore(
     (state) => state.setTreeComponentCurrentState,
   );
-  const selectedComponentId = useEditorStore(
+  const _selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );
   const editorTree = useEditorStore((state) => state.tree);
@@ -144,6 +144,7 @@ export const EditorAsideSections = () => {
     (state) => state.setInitiallyOpenedModifiersByComponent,
   );
   const [tab, setTab] = useState<Tab>("design");
+  const selectedComponentId = useDeferredValue(_selectedComponentId);
 
   const component = useMemo(
     () => getComponentById(editorTree.root, selectedComponentId as string),

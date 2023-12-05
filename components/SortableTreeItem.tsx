@@ -19,9 +19,6 @@ export const SortableTreeItem = ({
 }: PropsWithChildren<Props>) => {
   const theme = useMantineTheme();
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
-  );
 
   const onDrop = useOnDrop();
   const id = `layer-${component.id}`;

@@ -13,15 +13,14 @@ import {
 } from "@/utils/branding";
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
 import { Component } from "@/utils/editor";
-import { BoxProps, useMantineTheme } from "@mantine/core";
+import { BoxProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { Router, useRouter } from "next/router";
-import { cloneElement, PropsWithChildren, useEffect } from "react";
+import { cloneElement, PropsWithChildren, useCallback, useEffect } from "react";
 
 type Props = {
   id: string;
   component: Component;
-  customComponentModal?: any;
   isSelected?: boolean;
 } & BoxProps;
 
@@ -34,25 +33,11 @@ export const EditableComponent = ({
   isSelected,
 }: PropsWithChildren<Props>) => {
   const router = useRouter();
-  const theme = useMantineTheme();
 
-  const iframeWindow = useEditorStore((state) => state.iframeWindow);
-  const isLive = useEditorStore((state) => state.isLive);
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-  const isResizing = useEditorStore((state) => state.isResizing);
-  const onMountActionsRan = useEditorStore((state) => state.onMountActionsRan);
-  const addOnMountActionsRan = useEditorStore(
-    (state) => state.addOnMountActionsRan,
-  );
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
-  );
-  const pickingComponentToBindFrom = useEditorStore(
-    (state) => state.pickingComponentToBindFrom,
-  );
-  const pickingComponentToBindTo = useEditorStore(
-    (state) => state.pickingComponentToBindTo,
   );
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
@@ -63,9 +48,22 @@ export const EditableComponent = ({
   const currentTreeComponentsStates = useEditorStore(
     (state) => state.currentTreeComponentsStates,
   );
+  const onMountActionsRan = useEditorStore((state) => state.onMountActionsRan);
+  const addOnMountActionsRan = useEditorStore(
+    (state) => state.addOnMountActionsRan,
+  );
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
+  const isResizing = useEditorStore((state) => state.isResizing);
+  const isLive = useEditorStore((state) => state.isLive);
   const language = useEditorStore((state) => state.language);
   const highlightedComponentId = useEditorStore(
     (state) => state.highlightedComponentId,
+  );
+  const pickingComponentToBindFrom = useEditorStore(
+    (state) => state.pickingComponentToBindFrom,
+  );
+  const pickingComponentToBindTo = useEditorStore(
+    (state) => state.pickingComponentToBindTo,
   );
 
   const { componentContextMenu, forceDestroyContextMenu } =
@@ -226,6 +224,36 @@ export const EditableComponent = ({
 
   delete propsWithOverwrites.style;
 
+  const handleClick = useCallback(
+    (e: any) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!isPreviewMode) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (isPicking) {
+          setComponentToBind(id);
+        } else {
+          setSelectedComponentId(id);
+        }
+
+        // @ts-ignore
+        propsWithOverwrites.onClick?.(e);
+        forceDestroyContextMenu();
+      }
+    },
+    [
+      forceDestroyContextMenu,
+      id,
+      isPicking,
+      isPreviewMode,
+      propsWithOverwrites,
+      setComponentToBind,
+      setSelectedComponentId,
+    ],
+  );
+
   return (
     <>
       {cloneElement(
@@ -245,21 +273,7 @@ export const EditableComponent = ({
               ...(!isPreviewMode ? { boxShadow: thinBaseShadow } : {}),
             },
           },
-          onClick: (e: any) => {
-            if (!isPreviewMode) {
-              e.stopPropagation();
-
-              // @ts-ignore
-              propsWithOverwrites.onClick?.(e);
-              forceDestroyContextMenu();
-
-              if (isPicking) {
-                setComponentToBind(id);
-              } else {
-                setSelectedComponentId(id);
-              }
-            }
-          },
+          onClick: handleClick,
           ...(isPreviewMode
             ? {}
             : {

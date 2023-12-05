@@ -10,7 +10,6 @@ import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 type Props = {
-  onClick?: () => void;
   isLive?: boolean;
   projectId: string;
 } & BoxProps;
