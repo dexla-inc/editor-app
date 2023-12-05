@@ -1,10 +1,10 @@
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
+import { debouncedTreeUpdate } from "@/utils/editor";
 import { Stack, Switch, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconFileUpload } from "@tabler/icons-react";
-import { pick } from "next/dist/lib/pick";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent } from "react";
+import merge from "lodash.merge";
 
 export const defaultValues = {
   name: "Upload Button",
@@ -16,84 +16,71 @@ export const defaultValues = {
 export const icon = IconFileUpload;
 export const label = "File";
 
-export const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm({
-    initialValues: defaultValues,
-  });
+export const Modifier = withModifier(
+  ({ selectedComponent, selectedComponentIds }) => {
+    const form = useForm({
+      initialValues: merge({}, defaultValues, {
+        name: selectedComponent.props?.name,
+        accept: selectedComponent.props?.accept,
+        multiple: selectedComponent.props?.multiple,
+        disabled: selectedComponent.props?.disabled,
+      }),
+    });
 
-  useEffect(() => {
-    if (selectedComponent?.id) {
-      const data = pick(selectedComponent.props!, [
-        "name",
-        "accept",
-        "multiple",
-        "disabled",
-      ]);
-
-      form.setValues({
-        name: data.name ?? defaultValues.name,
-        accept: data.accept ?? defaultValues.accept,
-        multiple: data.multiple ?? defaultValues.multiple,
-        disabled: data.disabled ?? defaultValues.disabled,
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+      e.preventDefault();
+      const name = e.target.name;
+      const value = e.target.value;
+      form.setFieldValue(name, value);
+      debouncedTreeUpdate(selectedComponentIds, {
+        [name]: value,
       });
-    }
-    // Disabling the lint here because we don't want this to be updated every time the form changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+    };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const name = e.target.name;
-    const value = e.target.value;
-    form.setFieldValue(name, value);
-    debouncedTreeComponentPropsUpdate(name, value);
-  };
-
-  return (
-    <form>
-      <Stack spacing="xs">
-        {selectedComponent?.name === "fileButton" && (
+    return (
+      <form>
+        <Stack spacing="xs">
+          {selectedComponent?.name === "fileButton" && (
+            <TextInput
+              size="xs"
+              label="Name"
+              name="name"
+              {...form.getInputProps("name")}
+              onChange={(e) => handleChange(e)}
+            />
+          )}
           <TextInput
             size="xs"
-            label="Name"
-            name="name"
-            {...form.getInputProps("name")}
+            label="Accept"
+            name="accept"
+            {...form.getInputProps("accept")}
             onChange={(e) => handleChange(e)}
           />
-        )}
-        <TextInput
-          size="xs"
-          label="Accept"
-          name="accept"
-          {...form.getInputProps("accept")}
-          onChange={(e) => handleChange(e)}
-        />
-        <Switch
-          size="xs"
-          checked={form.values.multiple}
-          {...form.getInputProps("multiple")}
-          label="Multiple"
-          onChange={(e) => {
-            form.setFieldValue("multiple", e.currentTarget.checked);
-            debouncedTreeComponentPropsUpdate(
-              "multiple",
-              e.currentTarget.checked,
-            );
-          }}
-        />
-        <Switch
-          size="xs"
-          checked={form.values.disabled}
-          label="Disabled"
-          onChange={(e) => {
-            form.setFieldValue("disabled", e.currentTarget.checked);
-            debouncedTreeComponentPropsUpdate(
-              "disabled",
-              e.currentTarget.checked,
-            );
-          }}
-        />
-      </Stack>
-    </form>
-  );
-});
+          <Switch
+            size="xs"
+            checked={form.values.multiple}
+            {...form.getInputProps("multiple")}
+            label="Multiple"
+            onChange={(e) => {
+              form.setFieldValue("multiple", e.currentTarget.checked);
+              debouncedTreeUpdate(selectedComponentIds, {
+                multiple: e.currentTarget.checked,
+              });
+            }}
+          />
+          <Switch
+            size="xs"
+            checked={form.values.disabled}
+            label="Disabled"
+            onChange={(e) => {
+              form.setFieldValue("disabled", e.currentTarget.checked);
+              debouncedTreeUpdate(selectedComponentIds, {
+                disabled: e.currentTarget.checked,
+              });
+            }}
+          />
+        </Stack>
+      </form>
+    );
+  },
+);
