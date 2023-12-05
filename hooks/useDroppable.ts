@@ -9,7 +9,59 @@ import {
   getClosestEdge,
   getComponentById,
 } from "@/utils/editor";
+import debounce from "lodash.debounce";
 import { useCallback, useState } from "react";
+
+const debouncedDragEnter = debounce((event: any, id: string) => {
+  const isResizing = useEditorStore.getState().isResizing;
+  if (isResizing) return;
+
+  const editorTree = useEditorStore.getState().tree;
+  const componentToAdd = useEditorStore.getState().componentToAdd;
+  const selectedComponentId = useEditorStore.getState().selectedComponentId;
+  const setCurrentTargetId = useEditorStore.getState().setCurrentTargetId;
+  const activeTab = useEditorStore.getState().activeTab;
+  const setActiveTab = useEditorStore.getState().setActiveTab;
+  const isTabPinned = useUserConfigStore.getState().isTabPinned;
+  const activeId = componentToAdd?.id ?? selectedComponentId;
+
+  const activeComponent = getComponentById(editorTree.root, activeId!);
+
+  const comp = getComponentById(editorTree.root, id);
+  const isTryingToDropInsideItself =
+    activeComponent && activeId !== id
+      ? checkIfIsChildDeep(activeComponent!, id)
+      : false;
+
+  if (id === "root" || id === "content-wrapper") {
+    return;
+  }
+
+  const isGrid = activeComponent?.name === "Grid";
+
+  const isAllowed = isGrid
+    ? componentMapper[
+        activeComponent?.name as string
+      ].allowedParentTypes?.includes(comp?.name as string)
+    : !comp?.props?.blockDroppingChildrenInside;
+
+  if (!isTryingToDropInsideItself && activeComponent && isAllowed) {
+    setCurrentTargetId(id);
+  } else if (!activeComponent) {
+    setCurrentTargetId(id);
+  }
+
+  if (event.clientX > NAVBAR_WIDTH && !isTabPinned) {
+    setActiveTab(undefined);
+  } else {
+    if (
+      (isTabPinned && activeTab !== "layers") ||
+      (!isTabPinned && activeTab === "layers")
+    ) {
+      setActiveTab("layers");
+    }
+  }
+}, 100);
 
 export const useDroppable = ({
   id,
@@ -121,59 +173,11 @@ export const useDroppable = ({
 
   const handleDragEnter = useCallback(
     (event: any) => {
-      if (isResizing) return;
-
       event.preventDefault();
-
-      const activeComponent = getComponentById(editorTree.root, activeId!);
-
-      const comp = getComponentById(editorTree.root, id);
-      const isTryingToDropInsideItself =
-        activeComponent && activeId !== id
-          ? checkIfIsChildDeep(activeComponent!, id)
-          : false;
-
-      if (id === "root" || id === "content-wrapper") {
-        return;
-      }
-
-      const isGrid = activeComponent?.name === "Grid";
-
-      const isAllowed = isGrid
-        ? componentMapper[
-            activeComponent?.name as string
-          ].allowedParentTypes?.includes(comp?.name as string)
-        : !comp?.props?.blockDroppingChildrenInside;
-
-      if (!isTryingToDropInsideItself && activeComponent && isAllowed) {
-        setCurrentTargetId(id);
-        event.stopPropagation();
-      } else if (!activeComponent) {
-        setCurrentTargetId(id);
-        event.stopPropagation();
-      }
-
-      if (event.clientX > NAVBAR_WIDTH && !isTabPinned) {
-        setActiveTab(undefined);
-      } else {
-        if (
-          (isTabPinned && activeTab !== "layers") ||
-          (!isTabPinned && activeTab === "layers")
-        ) {
-          setActiveTab("layers");
-        }
-      }
+      event.stopPropagation();
+      debouncedDragEnter(event, id);
     },
-    [
-      editorTree,
-      activeId,
-      id,
-      isTabPinned,
-      setCurrentTargetId,
-      setActiveTab,
-      activeTab,
-      isResizing,
-    ],
+    [id],
   );
 
   const handleDragLeave = useCallback(
