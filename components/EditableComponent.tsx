@@ -8,13 +8,11 @@ import { Component } from "@/utils/editor";
 import { BoxProps, useMantineTheme } from "@mantine/core";
 import merge from "lodash.merge";
 import { Router, useRouter } from "next/router";
-import { cloneElement, PropsWithChildren, useEffect } from "react";
+import { cloneElement, PropsWithChildren, useCallback, useEffect } from "react";
 
 type Props = {
   id: string;
   component: Component;
-  customComponentModal?: any;
-  isSelected?: boolean;
 } & BoxProps;
 
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
@@ -23,7 +21,6 @@ export const EditableComponent = ({
   id,
   children,
   component,
-  isSelected,
 }: PropsWithChildren<Props>) => {
   const router = useRouter();
   const theme = useMantineTheme();
@@ -44,6 +41,7 @@ export const EditableComponent = ({
     currentTreeComponentsStates,
     language,
     highlightedComponentId,
+    selectedComponentId,
   } = useEditorStore((state) => ({
     iframeWindow: state.iframeWindow,
     isLive: state.isLive,
@@ -60,6 +58,7 @@ export const EditableComponent = ({
     currentTreeComponentsStates: state.currentTreeComponentsStates,
     language: state.language,
     highlightedComponentId: state.highlightedComponentId,
+    selectedComponentId: state.selectedComponentId,
   }));
 
   const { componentContextMenu, forceDestroyContextMenu } =
@@ -141,6 +140,7 @@ export const EditableComponent = ({
   const isHighlighted = highlightedComponentId === id;
   const borderColor = isPicking ? "orange" : "teal";
   const baseShadow = `0 0 0 2px ${theme.colors[borderColor][6]}`;
+  const isSelected = selectedComponentId === id;
 
   const shadows = isHighlighted
     ? { boxShadow: `0 0 0 2px ${theme.colors.orange[6]}` }
@@ -193,6 +193,7 @@ export const EditableComponent = ({
       height: isHeightPercentage ? "100%" : propsWithOverwrites?.style?.height,
       position: "relative",
     },
+    isSelected,
     disabled:
       component.props?.disabled ??
       (currentState === "disabled" && !!component.states?.disabled),
@@ -213,6 +214,34 @@ export const EditableComponent = ({
   };
 
   delete propsWithOverwrites.style;
+
+  const handleClick = useCallback(
+    (e: any) => {
+      if (!isPreviewMode) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (isPicking) {
+          setComponentToBind(id);
+        } else {
+          setSelectedComponentId(id);
+        }
+
+        // @ts-ignore
+        propsWithOverwrites.onClick?.(e);
+        forceDestroyContextMenu();
+      }
+    },
+    [
+      forceDestroyContextMenu,
+      id,
+      isPicking,
+      isPreviewMode,
+      propsWithOverwrites,
+      setComponentToBind,
+      setSelectedComponentId,
+    ],
+  );
 
   return (
     <>
@@ -239,21 +268,7 @@ export const EditableComponent = ({
                 : {}),
             },
           },
-          onClick: (e: any) => {
-            if (!isPreviewMode) {
-              e.stopPropagation();
-
-              // @ts-ignore
-              propsWithOverwrites.onClick?.(e);
-              forceDestroyContextMenu();
-
-              if (isPicking) {
-                setComponentToBind(id);
-              } else {
-                setSelectedComponentId(id);
-              }
-            }
-          },
+          onClick: handleClick,
           ...(isPreviewMode
             ? {}
             : {

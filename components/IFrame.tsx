@@ -32,7 +32,6 @@ export const defaultTheme: MantineThemeExtended = {
 };
 
 type Props = {
-  onClick?: () => void;
   isLive?: boolean;
   projectId: string;
 } & BoxProps;

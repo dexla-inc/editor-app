@@ -821,6 +821,7 @@ export const resetContentWrapperWidth = (treeRoot: Component) => {
 };
 
 export const getComponentIndex = (parent: Component, id: string) => {
+  if (!parent) return -1;
   return (
     parent.children?.findIndex((child: Component) => child.id === id) ?? -1
   );

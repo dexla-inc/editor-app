@@ -1,13 +1,15 @@
+import { isSame } from "@/utils/componentComparison";
 import { GRID_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 import { Box, BoxProps, useMantineTheme } from "@mantine/core";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & BoxProps;
 
-export const Grid = ({ renderTree, component, ...props }: Props) => {
+const GridComponent = ({ renderTree, component, ...props }: Props) => {
   const theme = useMantineTheme();
   const { style = {}, gridSize } = component.props!;
 
@@ -33,3 +35,5 @@ export const Grid = ({ renderTree, component, ...props }: Props) => {
     </Box>
   );
 };
+
+export const Grid = memo(GridComponent, isSame);
