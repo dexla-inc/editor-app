@@ -30,7 +30,7 @@ type Props = {
 
 const EditableComponentContainer = ({ children, component }: any) => {
   const isSelected = useEditorStore(
-    (state) => state.selectedComponentId === component.id,
+      (state) => state.selectedComponentIds?.includes(component.id),
   );
 
   return (
@@ -161,6 +161,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   }, [copiedComponent, editorTree, isPreviewMode, setEditorTree]);
 
   useHotkeys([
+    ["mod+click", () => {}],
     ["backspace", deleteComponent],
     ["delete", deleteComponent],
     ["mod+C", copySelectedComponent],

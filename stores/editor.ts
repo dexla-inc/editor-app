@@ -96,6 +96,7 @@ export type EditorState = {
   currentProjectId?: string;
   currentPageId?: string;
   selectedComponentId?: string;
+  selectedComponentIds?: string[];
   copiedComponent?: Component;
   componentToAdd?: Component;
   iframeWindow?: Window;
@@ -155,6 +156,11 @@ export type EditorState = {
     props: any,
     save?: boolean,
   ) => void;
+  updateTreeComponents: (
+    componentIds: string[],
+    props: any,
+    save?: boolean,
+  ) => void;
   updateTreeComponentChildren: (
     componentId: string,
     children: Component[],
@@ -174,7 +180,9 @@ export type EditorState = {
     currentState: string,
   ) => void;
   setSelectedComponentId: (selectedComponentId?: string) => void;
+  setSelectedComponentIds: (cb: (ids: string[]) => string[]) => void;
   clearSelection: (id?: string) => void;
+  clearSelections: (ids?: string[]) => void;
   setIsSaving: (isSaving: boolean) => void;
   setPreviewMode: (value: boolean) => void;
   setIsLive: (value: boolean) => void;
@@ -207,6 +215,7 @@ export const useEditorStore = create<EditorState>()(
         pages: [],
         onMountActionsRan: [],
         selectedComponentId: "content-wrapper",
+        selectedComponentIds: ["content-wrapper"],
         language: "default",
         addOnMountActionsRan: (onMountAction) =>
           set(
@@ -353,6 +362,46 @@ export const useEditorStore = create<EditorState>()(
             "editor/updateTreeComponent",
           );
         },
+        updateTreeComponents: (componentIds, props, save = true) => {
+          set(
+            (prev) => {
+              const lastComponentId = componentIds[componentIds.length - 1];
+              const copy = cloneDeep(prev.tree);
+              const currentState =
+                prev.currentTreeComponentsStates?.[lastComponentId] ??
+                "default";
+              const currentLanguage = prev.language;
+
+              updateTreeComponent(
+                copy.root,
+                componentIds,
+                props,
+                currentState,
+                currentLanguage,
+              );
+              if (save) {
+                debouncedUpdatePageState(
+                  encodeSchema(JSON.stringify(copy)),
+                  prev.currentProjectId ?? "",
+                  prev.currentPageId ?? "",
+                  prev.setIsSaving,
+                );
+              }
+
+              // const component = getComponentById(copy.root, componentId);
+
+              return {
+                tree: {
+                  ...cloneDeep(copy),
+                  name: `Edited multiple components`,
+                  timestamp: Date.now(),
+                },
+              };
+            },
+            false,
+            "editor/updateTreeComponents",
+          );
+        },
         // anything out of .props that changes .children[]
         updateTreeComponentChildren: (componentId, children, save = true) => {
           set(
@@ -486,11 +535,27 @@ export const useEditorStore = create<EditorState>()(
           set({ componentToAdd }, false, "editor/setComponentToAdd"),
         setSelectedComponentId: (selectedComponentId) =>
           set({ selectedComponentId }, false, "editor/setSelectedComponentId"),
+        setSelectedComponentIds: (cb) => {
+          return set(
+            (state) => {
+              const selectedComponentIds = cb(state.selectedComponentIds ?? []);
+              return { selectedComponentIds };
+            },
+            false,
+            "editor/setSelectedComponentIds",
+          );
+        },
         clearSelection: (id) =>
           set(
             { selectedComponentId: id ?? "content-wrapper" },
             false,
             "editor/clearSelection",
+          ),
+        clearSelections: (ids) =>
+          set(
+            { selectedComponentIds: ids ?? ["content-wrapper"] },
+            false,
+            "editor/clearSelections",
           ),
         setIsSaving: (isSaving) =>
           set({ isSaving }, false, "editor/setIsSaving"),

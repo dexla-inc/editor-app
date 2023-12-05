@@ -39,6 +39,9 @@ export const EditableComponent = ({
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
+  const setSelectedComponentIds = useEditorStore(
+      (state) => state.setSelectedComponentIds,
+  );
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
@@ -226,16 +229,26 @@ export const EditableComponent = ({
 
   const handleClick = useCallback(
     (e: any) => {
-      e.preventDefault();
-      e.stopPropagation();
+      // e.preventDefault();
+      // e.stopPropagation();
       if (!isPreviewMode) {
-        e.preventDefault();
+        // e.preventDefault();
         e.stopPropagation();
 
         if (isPicking) {
           setComponentToBind(id);
         } else {
           setSelectedComponentId(id);
+          if (e.ctrlKey || e.metaKey) {
+            setSelectedComponentIds((prev) => {
+              if (prev.includes(id)) {
+                return prev.filter((p) => p !== id);
+              }
+              return [...prev, id];
+            });
+          } else {
+            setSelectedComponentIds(() => [id]);
+          }
         }
 
         // @ts-ignore
