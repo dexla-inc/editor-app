@@ -1,3 +1,4 @@
+import { CustomDropdown } from "@/components/mapper/CustomSelectDropdown";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getColorFromTheme } from "@/utils/editor";
@@ -27,12 +28,15 @@ const SelectComponent = ({
     dataPath,
     triggers,
     loading,
+    customText,
+    customLinkText,
+    customLinkUrl,
     ...componentProps
   } = component.props as any;
   const theme = useEditorStore((state) => state.theme);
   const borderColor = getColorFromTheme(theme, "Border.6");
 
-  const { height, ...style } = props.style ?? {};
+  const { height, width, ...style } = props.style ?? {};
   const customStyle = merge({}, { borderColor }, style);
 
   let data = [];
@@ -63,7 +67,8 @@ const SelectComponent = ({
       {...componentProps}
       {...triggers}
       styles={{
-        input: { height, ...customStyle },
+        input: { height, width: "100%", ...customStyle },
+        root: { width },
       }}
       withinPortal={false}
       maxDropdownHeight={120}
@@ -73,6 +78,12 @@ const SelectComponent = ({
           value: d.value ?? d[keys[0]],
         };
       })}
+      dropdownComponent={(props: any) => (
+        <CustomDropdown
+          {...props}
+          components={{ customText, customLinkText, customLinkUrl }}
+        />
+      )}
       rightSection={loading ? <Loader size="xs" /> : null}
       label={undefined}
     />
