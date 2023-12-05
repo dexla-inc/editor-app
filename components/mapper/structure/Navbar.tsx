@@ -46,15 +46,8 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       ...merge({
         style: {
-          width: "260px",
+          gridTemplateRows: "auto 1fr auto",
           height: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          flexWrap: "nowrap",
-          flexGrow: "1",
-          gap: "0px",
-          position: "sticky",
-          top: "0px",
           backgroundColor: isDarkTheme
             ? theme.colors.dark[6]
             : theme.colors.gray[1],
@@ -62,7 +55,7 @@ export const jsonStructure = (props?: any): Component => {
         ...props.props,
       }),
     },
-    fixedPosition: { position: "left", target: "root" },
+    fixedPosition: { position: "left", target: "content-wrapper" },
     children: [
       {
         id: nanoid(),
