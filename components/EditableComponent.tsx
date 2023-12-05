@@ -21,6 +21,7 @@ import { cloneElement, PropsWithChildren, useCallback, useEffect } from "react";
 type Props = {
   id: string;
   component: Component;
+  isSelected?: boolean;
 } & BoxProps;
 
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
@@ -29,44 +30,41 @@ export const EditableComponent = ({
   id,
   children,
   component,
+  isSelected,
 }: PropsWithChildren<Props>) => {
   const router = useRouter();
 
-  const {
-    iframeWindow,
-    isLive,
-    currentTargetId,
-    isPreviewMode,
-    isResizing,
-    onMountActionsRan,
-    addOnMountActionsRan,
-    setComponentToBind,
-    pickingComponentToBindFrom,
-    pickingComponentToBindTo,
-    setSelectedComponentId,
-    setTreeComponentCurrentState,
-    currentTreeComponentsStates,
-    language,
-    highlightedComponentId,
-    selectedComponentId,
-  } = useEditorStore((state) => ({
-    iframeWindow: state.iframeWindow,
-    isLive: state.isLive,
-    currentTargetId: state.currentTargetId,
-    isPreviewMode: state.isPreviewMode,
-    isResizing: state.isResizing,
-    onMountActionsRan: state.onMountActionsRan,
-    addOnMountActionsRan: state.addOnMountActionsRan,
-    setComponentToBind: state.setComponentToBind,
-    pickingComponentToBindFrom: state.pickingComponentToBindFrom,
-    pickingComponentToBindTo: state.pickingComponentToBindTo,
-    setSelectedComponentId: state.setSelectedComponentId,
-    setTreeComponentCurrentState: state.setTreeComponentCurrentState,
-    currentTreeComponentsStates: state.currentTreeComponentsStates,
-    language: state.language,
-    highlightedComponentId: state.highlightedComponentId,
-    selectedComponentId: state.selectedComponentId,
-  }));
+  const currentTargetId = useEditorStore((state) => state.currentTargetId);
+  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const setComponentToBind = useEditorStore(
+    (state) => state.setComponentToBind,
+  );
+  const setSelectedComponentId = useEditorStore(
+    (state) => state.setSelectedComponentId,
+  );
+  const setTreeComponentCurrentState = useEditorStore(
+    (state) => state.setTreeComponentCurrentState,
+  );
+  const currentTreeComponentsStates = useEditorStore(
+    (state) => state.currentTreeComponentsStates,
+  );
+  const onMountActionsRan = useEditorStore((state) => state.onMountActionsRan);
+  const addOnMountActionsRan = useEditorStore(
+    (state) => state.addOnMountActionsRan,
+  );
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
+  const isResizing = useEditorStore((state) => state.isResizing);
+  const isLive = useEditorStore((state) => state.isLive);
+  const language = useEditorStore((state) => state.language);
+  const highlightedComponentId = useEditorStore(
+    (state) => state.highlightedComponentId,
+  );
+  const pickingComponentToBindFrom = useEditorStore(
+    (state) => state.pickingComponentToBindFrom,
+  );
+  const pickingComponentToBindTo = useEditorStore(
+    (state) => state.pickingComponentToBindTo,
+  );
 
   const { componentContextMenu, forceDestroyContextMenu } =
     useComponentContextMenu();
@@ -145,7 +143,6 @@ export const EditableComponent = ({
   const isPicking = pickingComponentToBindFrom || pickingComponentToBindTo;
   const isOver = currentTargetId === id;
   const isHighlighted = highlightedComponentId === id;
-  const isSelected = selectedComponentId === id;
   const baseShadow = isPicking ? ORANGE_BASE_SHADOW : GREEN_BASE_SHADOW;
   const thinBaseShadow = isPicking
     ? THIN_ORANGE_BASE_SHADOW
@@ -202,7 +199,6 @@ export const EditableComponent = ({
       height: isHeightPercentage ? "100%" : propsWithOverwrites?.style?.height,
       position: "relative",
     },
-    isSelected,
     disabled:
       component.props?.disabled ??
       (currentState === "disabled" && !!component.states?.disabled),
@@ -230,6 +226,8 @@ export const EditableComponent = ({
 
   const handleClick = useCallback(
     (e: any) => {
+      e.preventDefault();
+      e.stopPropagation();
       if (!isPreviewMode) {
         e.preventDefault();
         e.stopPropagation();

@@ -36,7 +36,6 @@ type Props = {
 };
 
 export const Editor = ({ projectId, pageId }: Props) => {
-  const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
@@ -111,7 +110,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
         {isLoading && editorTree.root.children?.length === 0 && (
           <Box
             pos="relative"
-            onClick={() => clearSelection()}
             style={{ minHeight: `calc(100vh - ${HEADER_HEIGHT}px)` }}
             ml={isTabPinned ? NAVBAR_WIDTH : NAVBAR_MIN_WIDTH - 50} // Weird sizing issue that I haven't got time to investigate, had to hack it
             p={"40px 10px"}

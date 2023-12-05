@@ -77,24 +77,18 @@ export const useDroppable = ({
   const setCurrentTargetId = useEditorStore(
     (state) => state.setCurrentTargetId,
   );
-  const setActiveTab = useEditorStore((state) => state.setActiveTab);
-  const activeTab = useEditorStore((state) => state.activeTab);
   const isResizing = useEditorStore((state) => state.isResizing);
-  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const [edge, setEdge] = useState<Edge>();
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const componentToAdd = useEditorStore((state) => state.componentToAdd);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
-  );
-
-  const activeId = componentToAdd?.id ?? selectedComponentId;
 
   const component = getComponentById(editorTree.root, id);
 
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
       if (isResizing) return;
+      const selectedComponentId = useEditorStore.getState().selectedComponentId;
+      const activeId = componentToAdd?.id ?? selectedComponentId;
 
       event.preventDefault();
       event.stopPropagation();
@@ -103,12 +97,12 @@ export const useDroppable = ({
         edge: edge ?? "center",
       } as DropTarget;
       if (activeId) {
-        onDrop?.(activeId, dropTarget);
+        onDrop?.(activeId as string, dropTarget);
       }
 
       setCurrentTargetId(undefined);
     },
-    [activeId, id, edge, onDrop, setCurrentTargetId, isResizing],
+    [isResizing, componentToAdd?.id, id, edge, setCurrentTargetId, onDrop],
   );
 
   const handleEdgeSet = (

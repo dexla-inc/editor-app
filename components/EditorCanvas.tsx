@@ -28,6 +28,22 @@ type Props = {
   projectId: string;
 };
 
+const EditableComponentContainer = ({ children, component }: any) => {
+  const isSelected = useEditorStore(
+    (state) => state.selectedComponentId === component.id,
+  );
+
+  return (
+    <EditableComponent
+      id={component.id!}
+      component={component}
+      isSelected={isSelected}
+    >
+      {children}
+    </EditableComponent>
+  );
+};
+
 const EditorCanvasComponent = ({ projectId }: Props) => {
   const undo = useTemporalStore((state) => state.undo);
   const redo = useTemporalStore((state) => state.redo);
@@ -99,19 +115,6 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       deleteComponent();
     }
   }, [copySelectedComponent, deleteComponent, isPreviewMode]);
-
-  const determinePasteTarget = (selectedId: string | undefined) => {
-    if (!selectedId) return "content-wrapper";
-    if (selectedId === "root") return "content-wrapper";
-    const component = getComponentById(editorTree.root, selectedId);
-
-    if (!component?.blockDroppingChildrenInside) {
-      return selectedId as string;
-    } else {
-      const parentComponent = getComponentParent(editorTree.root, selectedId);
-      return parentComponent?.id as string;
-    }
-  };
 
   const pasteCopiedComponent = useCallback(async () => {
     const clipboardContent = pasteFromClipboard();
@@ -239,14 +242,6 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       },
     ],
   ]);
-
-  const EditableComponentContainer = ({ children, component }: any) => {
-    return (
-      <EditableComponent id={component.id!} component={component}>
-        {children}
-      </EditableComponent>
-    );
-  };
 
   const renderTree = useCallback(
     (component: Component) => {
