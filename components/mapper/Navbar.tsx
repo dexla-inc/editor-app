@@ -20,12 +20,6 @@ const NavbarComponent = ({ renderTree, component, ...props }: Props) => {
   merge(componentProps, { style: { ...props.style, backgroundColor } });
 
   return (
-    // <MantineBox {...props} {...componentProps}>
-    //   {component.children && component.children.length > 0
-    //     ? component.children?.map((child) => renderTree(child))
-    //     : children}
-    // </MantineBox>
-
     <Box display="grid" {...component.props} {...props}>
       {component.children &&
         component.children.length > 0 &&
