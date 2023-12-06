@@ -1,4 +1,5 @@
 import { defaultImageValues } from "@/components/modifiers/Image";
+import { initialValues } from "@/components/modifiers/Navbar";
 import { PageResponse } from "@/requests/pages/types";
 import { MantineThemeExtended } from "@/stores/editor";
 import { defaultTheme } from "@/utils/branding";
@@ -8,6 +9,7 @@ import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = (props.theme ?? defaultTheme) as MantineThemeExtended;
+
   const pages = (
     props.pages && props.pages.length > 0
       ? props.pages
@@ -46,8 +48,7 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       ...merge({
         style: {
-          gridTemplateRows: "auto 1fr auto",
-          height: "100vh",
+          ...initialValues,
           backgroundColor: isDarkTheme
             ? theme.colors.dark[6]
             : theme.colors.gray[1],

@@ -1,6 +1,6 @@
 import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
-import { useUserConfigStore } from "@/stores/userConfig";
+import { useEditorStore } from "@/stores/editor";
 import { debouncedTreeComponentStyleUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
@@ -17,7 +17,21 @@ export const icon = IconLayoutSidebar;
 
 export const Modifier = withModifier(({ selectedComponent }) => {
   const form = useForm({ initialValues });
-  const setNavbarWidth = useUserConfigStore((state) => state.setNavbarWidth);
+  const editorTree = useEditorStore((state) => state.tree);
+  const setTree = useEditorStore((state) => state.setTree);
+
+  const setNavbarWidth = (value: string) => {
+    const contentWrapper = editorTree.root.children?.find(
+      (child) => child.id === "content-wrapper",
+    );
+    if (contentWrapper) {
+      contentWrapper.props = {
+        ...contentWrapper.props,
+        navbarWidth: value,
+      };
+    }
+    setTree(editorTree);
+  };
 
   useEffect(() => {
     if (selectedComponent?.id) {
