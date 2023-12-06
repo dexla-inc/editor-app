@@ -1,13 +1,3 @@
-import {
-  IconBoxMargin,
-  IconBoxModel,
-  IconClipboardCopy,
-  IconClipboardData,
-  IconClipboardPlus,
-  IconContainer,
-  IconCopy,
-  IconTrash,
-} from "@tabler/icons-react";
 import { useContextMenu } from "@/contexts/ContextMenuProvider";
 import { ClipboardProps, useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
@@ -23,6 +13,16 @@ import {
   removeComponent,
   removeComponentFromParent,
 } from "@/utils/editor";
+import {
+  IconBoxMargin,
+  IconBoxModel,
+  IconClipboardCopy,
+  IconClipboardData,
+  IconClipboardPlus,
+  IconContainer,
+  IconCopy,
+  IconTrash,
+} from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
 
@@ -61,6 +61,9 @@ export const useComponentContextMenu = () => {
   );
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
+  );
+  const setSelectedComponentIds = useEditorStore(
+    (state) => state.setSelectedComponentIds,
   );
 
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
@@ -139,8 +142,14 @@ export const useComponentContextMenu = () => {
 
       setEditorTree(copy, { action: `Pasted ${componentName}` });
       setSelectedComponentId(newSelectedId);
+      setSelectedComponentIds(() => [newSelectedId]);
     },
-    [editorTree, setSelectedComponentId, setEditorTree],
+    [
+      editorTree,
+      setSelectedComponentId,
+      setEditorTree,
+      setSelectedComponentIds,
+    ],
   );
 
   const copyComponent = useCallback(

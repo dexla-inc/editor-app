@@ -58,6 +58,9 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
+  const setSelectedComponentIds = useEditorStore(
+    (state) => state.setSelectedComponentIds,
+  );
   const [canvasRef] = useAutoAnimate();
   const [isCustomComponentModalOpen, customComponentModal] =
     useDisclosure(false);
@@ -91,6 +94,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       }
 
       setSelectedComponentId(undefined);
+      setSelectedComponentIds(() => []);
       setEditorTree(copy, { action: `Removed ${comp?.name}` });
     }
   }, [editorTree, setEditorTree, setSelectedComponentId, isPreviewMode]);
@@ -157,6 +161,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
 
     setEditorTree(copy, { action: `Pasted ${componentToPaste.name}` });
     setSelectedComponentId(newSelectedId);
+    setSelectedComponentIds(() => [newSelectedId]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [copiedComponent, editorTree, isPreviewMode, setEditorTree]);
 

@@ -33,6 +33,9 @@ export const useOnDrop = () => {
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
+  const setSelectedComponentIds = useEditorStore(
+    (state) => state.setSelectedComponentIds,
+  );
   const isResizing = useEditorStore((state) => state.isResizing);
 
   const onDrop = useCallback(
@@ -127,6 +130,7 @@ export const useOnDrop = () => {
     if (allowedParentTypes?.includes(targetComponent?.name as string)) {
       const newSelectedId = addComponent(copy, componentToAdd, dropTarget);
       setSelectedComponentId(newSelectedId);
+      setSelectedComponentIds(() => [newSelectedId]);
     } else {
       const targetParent = getComponentParent(copy, dropTarget.id);
       if (targetParent && allowedParentTypes?.includes(targetParent.name)) {
@@ -135,6 +139,7 @@ export const useOnDrop = () => {
           edge: dropTarget.edge,
         });
         setSelectedComponentId(newSelectedId);
+        setSelectedComponentIds(() => [newSelectedId]);
       }
     }
 
@@ -162,6 +167,7 @@ export const useOnDrop = () => {
       }
 
       setSelectedComponentId(newSelectedId);
+      setSelectedComponentIds(() => [newSelectedId]);
     } else {
       if (targetParent) {
         const dropTargetIndex = getComponentIndex(targetParent, dropTarget.id);
@@ -178,6 +184,7 @@ export const useOnDrop = () => {
             : dropTargetIndex,
         );
         setSelectedComponentId(newSelectedId);
+        setSelectedComponentIds(() => [newSelectedId]);
       }
     }
     setComponentToAdd(undefined);
@@ -270,6 +277,7 @@ export const useOnDrop = () => {
       dropTarget,
     );
     setSelectedComponentId(newSelectedId);
+    setSelectedComponentIds(() => [newSelectedId]);
   }
   return onDrop;
 };

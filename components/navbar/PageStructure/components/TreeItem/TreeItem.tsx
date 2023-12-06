@@ -83,6 +83,9 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     const setSelectedComponentId = useEditorStore(
       (state) => state.setSelectedComponentId,
     );
+    const setSelectedComponentIds = useEditorStore(
+      (state) => state.setSelectedComponentIds,
+    );
 
     const { componentContextMenu, forceDestroyContextMenu } =
       useComponentContextMenu();
@@ -96,6 +99,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     const handleSelection = (id: string) => {
       if (id !== "root") {
         setSelectedComponentId(id as string);
+        setSelectedComponentIds(() => [id!]);
       }
     };
     const handleKeyPress = (e: KeyboardEvent) => {
