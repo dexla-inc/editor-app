@@ -53,6 +53,7 @@ export const useComponentContextMenu = () => {
   const isPageStructure = useEditorStore((state) => state.isPageStructure);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const clearSelection = useEditorStore((state) => state.clearSelection);
+  const clearSelections = useEditorStore((state) => state.clearSelections);
   const setCopiedComponent = useEditorStore(
     (state) => state.setCopiedComponent,
   );
@@ -62,9 +63,9 @@ export const useComponentContextMenu = () => {
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
-    const setSelectedComponentIds = useEditorStore(
-        (state) => state.setSelectedComponentIds,
-    );
+  const setSelectedComponentIds = useEditorStore(
+    (state) => state.setSelectedComponentIds,
+  );
 
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
@@ -117,9 +118,10 @@ export const useComponentContextMenu = () => {
         removeComponent(copy.root, component.id);
         setEditorTree(copy, { action: `Removed ${component?.name}` });
         clearSelection();
+        clearSelections();
       }
     },
-    [clearSelection, editorTree, setEditorTree],
+    [clearSelection, clearSelections, editorTree, setEditorTree],
   );
 
   const duplicateComponent = useCallback(

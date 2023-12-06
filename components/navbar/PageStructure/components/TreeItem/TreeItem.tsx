@@ -89,13 +89,14 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     const setSelectedComponentId = useEditorStore(
       (state) => state.setSelectedComponentId,
     );
-      const setSelectedComponentIds = useEditorStore(
-          (state) => state.setSelectedComponentIds,
-      );
+    const setSelectedComponentIds = useEditorStore(
+      (state) => state.setSelectedComponentIds,
+    );
     const isWindowError = useEditorStore((state) => state.isWindowError);
     const editorTree = useEditorStore((state) => state.tree);
     const setEditorTree = useEditorStore((state) => state.setTree);
     const clearSelection = useEditorStore((state) => state.clearSelection);
+    const clearSelections = useEditorStore((state) => state.clearSelections);
 
     const deleteComponent = useCallback(
       (component: Component) => {
@@ -108,9 +109,10 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           removeComponent(copy.root, component.id);
           setEditorTree(copy, { action: `Removed ${component?.name}` });
           clearSelection();
+          clearSelections();
         }
       },
-      [clearSelection, editorTree, setEditorTree],
+      [clearSelection, clearSelections, editorTree, setEditorTree],
     );
 
     const { componentContextMenu, forceDestroyContextMenu } =
