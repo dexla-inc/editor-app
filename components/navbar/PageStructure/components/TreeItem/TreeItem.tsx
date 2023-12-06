@@ -84,7 +84,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       useDisclosure(false);
     const editFieldRef = useRef<HTMLInputElement>(null);
     const isSelected = useEditorStore(
-      (state) => state.selectedComponentId === id,
+      (state) => state.selectedComponentIds?.includes(id),
     );
     const setSelectedComponentId = useEditorStore(
       (state) => state.setSelectedComponentId,
@@ -124,10 +124,22 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       },
     });
 
-    const handleSelection = (id: string) => {
+    const handleSelection = (
+      e: React.MouseEvent<HTMLLIElement>,
+      id: string,
+    ) => {
       if (id !== "root") {
         setSelectedComponentId(id as string);
-        setSelectedComponentIds(() => [id!]);
+        if (e.ctrlKey || e.metaKey) {
+          setSelectedComponentIds((prev) => {
+            if (prev.includes(id)) {
+              return prev.filter((p) => p !== id);
+            }
+            return [...prev, id];
+          });
+        } else {
+          setSelectedComponentIds(() => [id]);
+        }
       }
     };
 
@@ -179,7 +191,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           e.stopPropagation();
           forceDestroyContextMenu();
           if (!editable) {
-            handleSelection(id as string);
+            handleSelection(e, id as string);
           }
         }}
         onDoubleClick={(e) => {
