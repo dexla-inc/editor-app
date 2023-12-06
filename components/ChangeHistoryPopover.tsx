@@ -37,6 +37,7 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
 };
 
 export const ChangeHistoryPopover: FC = () => {
+  const [historyIndex, setHistoryIndex] = useState(9);
   const currentState = useEditorStore((state) => ({
     isSaving: state.isSaving,
     tree: {
@@ -112,7 +113,7 @@ export const ChangeHistoryPopover: FC = () => {
           <ActionIcon
             variant="default"
             onClick={() => handlePageStateChange(undo)}
-            disabled={pastStates.length < 2}
+            disabled={setButtonDisabled}
             radius={"4px 0px 0px 4px"}
             size="sm"
           >
@@ -160,7 +161,7 @@ export const ChangeHistoryPopover: FC = () => {
                 overflowY: "auto",
               }}
             >
-              {changeHistory
+              {filteredHistory
                 .map((item: any, index: number) => {
                   const currentHistoryIndex = pastStates.length - 1;
                   const color =
@@ -178,7 +179,7 @@ export const ChangeHistoryPopover: FC = () => {
                       onClick={(e) => {
                         e.stopPropagation();
                         const newChangeHistoryIndex =
-                          currentHistoryIndex - index;
+                          currentHistoryIndex - index - historyIndex;
 
                         newChangeHistoryIndex >= 0
                           ? handlePageStateChange(() =>
