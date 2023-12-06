@@ -39,6 +39,9 @@ const ListItem = ({ component, children }: ListItemProps) => {
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
+  const setSelectedComponentIds = useEditorStore(
+    (state) => state.setSelectedComponentIds,
+  );
   const isStructureCollapsed = useEditorStore(
     (state) => state.isStructureCollapsed,
   );
@@ -67,6 +70,7 @@ const ListItem = ({ component, children }: ListItemProps) => {
   const handleSelection = (id: string) => {
     if (id !== "root") {
       setSelectedComponentId(id as string);
+      setSelectedComponentIds(() => [id]);
     }
   };
 

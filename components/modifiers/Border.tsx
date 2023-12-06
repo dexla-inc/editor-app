@@ -30,6 +30,7 @@ import {
 import startCase from "lodash.startcase";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
+import merge from "lodash.merge";
 
 export const icon = IconBorderStyle;
 export const label = "Border";
@@ -49,258 +50,191 @@ export const getThemeColor = (theme: any, hex: string) => {
   }, "Black.9");
 };
 
-export const Modifier = withModifier(({ selectedComponent }) => {
-  const { theme, setTheme } = useEditorStore((state) => ({
-    theme: state.theme,
-    setTheme: state.setTheme,
-  }));
-  const style = selectedComponent?.props?.style;
+export const Modifier = withModifier(
+  ({ selectedComponent, selectedComponentIds }) => {
+    const { theme, setTheme } = useEditorStore((state) => ({
+      theme: state.theme,
+      setTheme: state.setTheme,
+    }));
+    const style = selectedComponent?.props?.style;
 
-  const isBorderRadiusAllSame =
-    style?.borderTopLeftRadius === style?.borderTopRightRadius &&
-    style?.borderTopLeftRadius === style?.borderBottomLeftRadius &&
-    style?.borderTopLeftRadius === style?.borderBottomRightRadius;
+    const isBorderRadiusAllSame =
+      style?.borderTopLeftRadius === style?.borderTopRightRadius &&
+      style?.borderTopLeftRadius === style?.borderBottomLeftRadius &&
+      style?.borderTopLeftRadius === style?.borderBottomRightRadius;
 
-  const form = useForm<Record<string, any>>({
-    initialValues: {
-      showBorder: "all",
-      showRadius: isBorderRadiusAllSame ? "radius-all" : "radius-sides",
-      ...defaultBorderValues,
-    },
-  });
-
-  useEffect(() => {
-    if (selectedComponent?.id) {
-      const { style } = pick(selectedComponent.props!, ["style"]);
-
-      form.setValues({
-        // @ts-ignore
-        borderStyle: style?.borderStyle ?? defaultBorderValues.borderStyle,
-        borderTopStyle:
-          style?.borderTopStyle ?? defaultBorderValues.borderTopStyle,
-        borderRightStyle:
-          style?.borderRightStyle ?? defaultBorderValues.borderRightStyle,
-        borderBottomStyle:
-          style?.borderBottomStyle ?? defaultBorderValues.borderBottomStyle,
-        borderLeftStyle:
-          style?.borderLeftStyle ?? defaultBorderValues.borderLeftStyle,
-        borderColor: style?.borderColor
-          ? getThemeColor(theme, style.borderColor)
-          : defaultBorderValues.borderTopColor,
-        borderTopColor: style?.borderTopColor
-          ? getThemeColor(theme, style.borderTopColor)
-          : defaultBorderValues.borderTopColor,
-        borderRightColor: style?.borderRightColor
-          ? getThemeColor(theme, style.borderRightColor)
-          : defaultBorderValues.borderRightColor,
-        borderBottomColor: style?.borderBottomColor
-          ? getThemeColor(theme, style.borderBottomColor)
-          : defaultBorderValues.borderBottomColor,
-        borderLeftColor: style?.borderLeftColor
-          ? getThemeColor(theme, style.borderLeftColor)
-          : defaultBorderValues.borderLeftColor,
-        borderRadius: style?.borderRadius ?? defaultBorderValues.borderRadius,
-        borderTopLeftRadius:
-          style?.borderTopLeftRadius ?? defaultBorderValues.borderTopLeftRadius,
-        borderTopRightRadius:
-          style?.borderTopRightRadius ??
-          defaultBorderValues.borderTopRightRadius,
-        borderBottomLeftRadius:
-          style?.borderBottomLeftRadius ??
-          defaultBorderValues.borderBottomLeftRadius,
-        borderBottomRightRadius:
-          style?.borderBottomRightRadius ??
-          defaultBorderValues.borderBottomRightRadius,
-        borderWidth: style?.borderWidth ?? defaultBorderValues.borderWidth,
-        borderTopWidth:
-          style?.borderTopWidth ?? defaultBorderValues.borderTopWidth,
-        borderRightWidth:
-          style?.borderRightWidth ?? defaultBorderValues.borderRightWidth,
-        borderBottomWidth:
-          style?.borderBottomWidth ?? defaultBorderValues.borderBottomWidth,
-        borderLeftWidth:
-          style?.borderLeftWidth ?? defaultBorderValues.borderLeftWidth,
-      });
-    }
-    // Disabling the lint here because we don't want this to be updated every time the form changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
-
-  const changeBorderStyle = (value: string) => {
-    let borderStyle = {};
-    let borderColor = "";
-    const [color, index] = defaultBorderValues.borderColor.split(".");
-    const borderValue = index ? theme.colors[color][index] : color;
-    borderColor = borderValue;
-    form.setFieldValue("borderColor", borderValue);
-    if (form.values.showBorder === "all") {
-      borderStyle = {
-        borderStyle: value,
-        borderTopStyle: value,
-        borderRightStyle: value,
-        borderBottomStyle: value,
-        borderLeftStyle: value,
-      };
-
-      form.setFieldValue("borderStyle", value);
-      form.setFieldValue("borderTopStyle", value);
-      form.setFieldValue("borderRightStyle", value);
-      form.setFieldValue("borderBottomStyle", value);
-      form.setFieldValue("borderLeftStyle", value);
-
-      // @ts-ignore
-    } else {
-      const key = `border${startCase(form.values.showBorder)}Style`;
-      form.setFieldValue("borderStyle", value);
-      form.setFieldValue(key, value);
-      borderStyle = {
-        [key]: value,
-      };
-    }
-    debouncedTreeUpdate(selectedComponent?.id as string, {
-      style: { ...borderStyle, borderColor },
+    const form = useForm<Record<string, any>>({
+      initialValues: merge(
+        {},
+        {
+          showBorder: "all",
+          showRadius: isBorderRadiusAllSame ? "radius-all" : "radius-sides",
+          ...defaultBorderValues,
+        },
+        {
+          borderStyle: selectedComponent.props?.style?.borderStyle,
+          borderTopStyle: selectedComponent.props?.style?.borderTopStyle,
+          borderRightStyle: selectedComponent.props?.style?.borderRightStyle,
+          borderBottomStyle: selectedComponent.props?.style?.borderBottomStyle,
+          borderLeftStyle: selectedComponent.props?.style?.borderLeftStyle,
+          borderColor: getThemeColor(
+            theme,
+            selectedComponent.props?.style?.borderColor,
+          ),
+          borderTopColor: getThemeColor(
+            theme,
+            selectedComponent.props?.style?.borderTopColor,
+          ),
+          borderRightColor: getThemeColor(
+            theme,
+            selectedComponent.props?.style?.borderRightColor,
+          ),
+          borderBottomColor: getThemeColor(
+            theme,
+            selectedComponent.props?.style?.borderBottomColor,
+          ),
+          borderLeftColor: getThemeColor(
+            theme,
+            selectedComponent.props?.style?.borderLeftColor,
+          ),
+          borderRadius: selectedComponent.props?.style?.borderRadius,
+          borderTopLeftRadius:
+            selectedComponent.props?.style?.borderTopLeftRadius,
+          borderTopRightRadius:
+            selectedComponent.props?.style?.borderTopRightRadius,
+          borderBottomLeftRadius:
+            selectedComponent.props?.style?.borderBottomLeftRadius,
+          borderBottomRightRadius:
+            selectedComponent.props?.style?.borderBottomRightRadius,
+          borderWidth: selectedComponent.props?.style?.borderWidth,
+          borderTopWidth: selectedComponent.props?.style?.borderTopWidth,
+          borderRightWidth: selectedComponent.props?.style?.borderRightWidth,
+          borderBottomWidth: selectedComponent.props?.style?.borderBottomWidth,
+          borderLeftWidth: selectedComponent.props?.style?.borderLeftWidth,
+        },
+      ),
     });
-  };
 
-  const getBorderProp = (val: string) => {
-    if (form.values.showBorder === "all") {
-      return `border${startCase(val)}`;
-    }
-    return `border${startCase(form.values.showBorder)}${val}`;
-  };
+    const changeBorderStyle = (value: string) => {
+      let borderStyle = {};
+      let borderColor = "";
+      const [color, index] = defaultBorderValues.borderColor.split(".");
+      const borderValue = index ? theme.colors[color][index] : color;
+      borderColor = borderValue;
+      form.setFieldValue("borderColor", borderValue);
+      if (form.values.showBorder === "all") {
+        borderStyle = {
+          borderStyle: value,
+          borderTopStyle: value,
+          borderRightStyle: value,
+          borderBottomStyle: value,
+          borderLeftStyle: value,
+        };
 
-  return (
-    <form key={selectedComponent?.id}>
-      {selectedComponent?.name === "Card" ? (
-        <CardStyleSelector
-          value={theme.cardStyle}
-          onChange={(value) => {
-            const cardStyles = getCardStyling(
-              value as CardStyle,
-              theme.colors["Border"][6],
-              theme.defaultRadius,
-            );
+        form.setFieldValue("borderStyle", value);
+        form.setFieldValue("borderTopStyle", value);
+        form.setFieldValue("borderRightStyle", value);
+        form.setFieldValue("borderBottomStyle", value);
+        form.setFieldValue("borderLeftStyle", value);
 
-            setTheme({
-              ...theme,
-              cardStyle: value as CardStyle,
-            });
+        // @ts-ignore
+      } else {
+        const key = `border${startCase(form.values.showBorder)}Style`;
+        form.setFieldValue("borderStyle", value);
+        form.setFieldValue(key, value);
+        borderStyle = {
+          [key]: value,
+        };
+      }
+      debouncedTreeUpdate(selectedComponentIds, {
+        style: { ...borderStyle, borderColor },
+      });
+    };
 
-            Object.keys(cardStyles).forEach((key) => {
-              const styleKey = key as keyof CardStyleProps;
-              form.setFieldValue(styleKey, cardStyles[styleKey]);
-            });
+    const getBorderProp = (val: string) => {
+      if (form.values.showBorder === "all") {
+        return `border${startCase(val)}`;
+      }
+      return `border${startCase(form.values.showBorder)}${val}`;
+    };
 
-            debouncedTreeUpdate(selectedComponent?.id as string, {
-              style: cardStyles,
-            });
-          }}
-          size={INPUT_SIZE}
-        />
-      ) : (
-        <Stack spacing="xs">
-          <SegmentedControl
-            size="xs"
-            data={[
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="All"
-                    icon={<IconSquare size={14} />}
-                  />
-                ),
-                value: "all",
-              },
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="Left"
-                    icon={<IconBorderLeft size={14} />}
-                  />
-                ),
-                value: "left",
-              },
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="Top"
-                    icon={<IconBorderTop size={14} />}
-                  />
-                ),
-                value: "top",
-              },
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="Right"
-                    icon={<IconBorderRight size={14} />}
-                  />
-                ),
-                value: "right",
-              },
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="Bottom"
-                    icon={<IconBorderBottom size={14} />}
-                  />
-                ),
-                value: "bottom",
-              },
-            ]}
-            styles={{
-              label: {
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
-              },
+    return (
+      <form key={selectedComponent?.id}>
+        {selectedComponent?.name === "Card" ? (
+          <CardStyleSelector
+            value={theme.cardStyle}
+            onChange={(value) => {
+              const cardStyles = getCardStyling(
+                value as CardStyle,
+                theme.colors["Border"][6],
+                theme.defaultRadius,
+              );
+
+              setTheme({
+                ...theme,
+                cardStyle: value as CardStyle,
+              });
+
+              Object.keys(cardStyles).forEach((key) => {
+                const styleKey = key as keyof CardStyleProps;
+                form.setFieldValue(styleKey, cardStyles[styleKey]);
+              });
+
+              debouncedTreeUpdate(selectedComponentIds, {
+                style: cardStyles,
+              });
             }}
-            {...form.getInputProps("showBorder")}
-            onChange={(value) =>
-              form.setFieldValue("showBorder", value as string)
-            }
+            size={INPUT_SIZE}
           />
-          <Stack spacing={2}>
-            <Text size="0.75rem">Style</Text>
+        ) : (
+          <Stack spacing="xs">
             <SegmentedControl
               size="xs"
               data={[
                 {
                   label: (
                     <StylingPaneItemIcon
-                      label="None"
-                      icon={<IconX size={14} />}
+                      label="All"
+                      icon={<IconSquare size={14} />}
                     />
                   ),
-                  value: "none",
+                  value: "all",
                 },
                 {
                   label: (
                     <StylingPaneItemIcon
-                      label="Solid"
-                      icon={<IconMinus size={14} />}
+                      label="Left"
+                      icon={<IconBorderLeft size={14} />}
                     />
                   ),
-                  value: "solid",
+                  value: "left",
                 },
                 {
                   label: (
                     <StylingPaneItemIcon
-                      label="Dashed"
-                      icon={<IconLineDashed size={14} />}
+                      label="Top"
+                      icon={<IconBorderTop size={14} />}
                     />
                   ),
-                  value: "dashed",
+                  value: "top",
                 },
                 {
                   label: (
                     <StylingPaneItemIcon
-                      label="Dotted"
-                      icon={<IconLineDotted size={14} />}
+                      label="Right"
+                      icon={<IconBorderRight size={14} />}
                     />
                   ),
-                  value: "dotted",
+                  value: "right",
+                },
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Bottom"
+                      icon={<IconBorderBottom size={14} />}
+                    />
+                  ),
+                  value: "bottom",
                 },
               ]}
               styles={{
@@ -311,105 +245,51 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                   height: "100%",
                 },
               }}
-              {...form.getInputProps(getBorderProp("Style"))}
-              onChange={(value) => changeBorderStyle(value)}
+              {...form.getInputProps("showBorder")}
+              onChange={(value) =>
+                form.setFieldValue("showBorder", value as string)
+              }
             />
-          </Stack>
-          <UnitInput
-            label="Size"
-            {...form.getInputProps(getBorderProp("Width"))}
-            onChange={(value) => {
-              let borderWidth = {};
-
-              if (form.values.showBorder === "all") {
-                borderWidth = {
-                  borderWidth: value,
-                  borderTopWidth: value,
-                  borderRightWidth: value,
-                  borderBottomWidth: value,
-                  borderLeftWidth: value,
-                };
-                form.setFieldValue("borderWidth", value);
-                form.setFieldValue("borderTopWidth", value);
-                form.setFieldValue("borderRightWidth", value);
-                form.setFieldValue("borderBottomWidth", value);
-                form.setFieldValue("borderLeftWidth", value);
-              } else {
-                const key = `border${startCase(form.values.showBorder)}Width`;
-                form.setFieldValue("borderWidth", value);
-                form.setFieldValue(key, value);
-                borderWidth = {
-                  [key]: value,
-                };
-              }
-
-              debouncedTreeUpdate(selectedComponent?.id as string, {
-                style: borderWidth,
-              });
-            }}
-          />
-          <ThemeColorSelector
-            label="Color"
-            {...form.getInputProps(getBorderProp("Color"))}
-            onChange={(_value: string) => {
-              const [color, index] = _value.split(".");
-              // @ts-ignore
-              const value = index ? theme.colors[color][index] : color;
-              let borderColor = {};
-              if (form.values.showBorder === "all") {
-                borderColor = {
-                  borderColor: value,
-                  borderTopColor: value,
-                  borderRightColor: value,
-                  borderBottomColor: value,
-                  borderLeftColor: value,
-                };
-                form.setFieldValue("borderColor", _value);
-                form.setFieldValue("borderTopColor", _value);
-                form.setFieldValue("borderRightColor", _value);
-                form.setFieldValue("borderBottomColor", _value);
-                form.setFieldValue("borderLeftColor", _value);
-              } else {
-                const key = `border${startCase(form.values.showBorder)}Color`;
-                form.setFieldValue("borderColor", _value);
-                form.setFieldValue(key, _value);
-                borderColor = {
-                  [key]: value,
-                };
-              }
-
-              debouncedTreeUpdate(selectedComponent?.id as string, {
-                style: borderColor,
-              });
-            }}
-          />
-          <Stack spacing={4} mt={12}>
-            <Text size="0.75rem" weight={500}>
-              Radius
-            </Text>
-            <Group noWrap>
+            <Stack spacing={2}>
+              <Text size="0.75rem">Style</Text>
               <SegmentedControl
-                fullWidth
-                size="sm"
-                w="100%"
+                size="xs"
                 data={[
                   {
                     label: (
                       <StylingPaneItemIcon
-                        label="All"
-                        icon={<IconSquare size={14} />}
+                        label="None"
+                        icon={<IconX size={14} />}
                       />
                     ),
-                    value: "radius-all",
+                    value: "none",
                   },
                   {
                     label: (
                       <StylingPaneItemIcon
-                        label="Sides"
-                        icon={<IconBorderCorners size={14} />}
+                        label="Solid"
+                        icon={<IconMinus size={14} />}
                       />
                     ),
-                    value: "radius-sides",
+                    value: "solid",
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Dashed"
+                        icon={<IconLineDashed size={14} />}
+                      />
+                    ),
+                    value: "dashed",
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Dotted"
+                        icon={<IconLineDotted size={14} />}
+                      />
+                    ),
+                    value: "dotted",
                   },
                 ]}
                 styles={{
@@ -420,99 +300,209 @@ export const Modifier = withModifier(({ selectedComponent }) => {
                     height: "100%",
                   },
                 }}
-                {...form.getInputProps("showRadius")}
+                {...form.getInputProps(getBorderProp("Style"))}
+                onChange={(value) => changeBorderStyle(value)}
               />
-              {form.values.showRadius === "radius-all" && (
-                <UnitInput
-                  {...form.getInputProps("borderRadius")}
-                  onChange={(value) => {
-                    form.setFieldValue("borderRadius", value);
-                    form.setFieldValue("borderTopLeftRadius", value);
-                    form.setFieldValue("borderTopRightRadius", value);
-                    form.setFieldValue("borderBottomLeftRadius", value);
-                    form.setFieldValue("borderBottomRightRadius", value);
+            </Stack>
+            <UnitInput
+              label="Size"
+              {...form.getInputProps(getBorderProp("Width"))}
+              onChange={(value) => {
+                let borderWidth = {};
 
-                    debouncedTreeUpdate(selectedComponent?.id as string, {
-                      style: {
-                        borderRadius: value,
-                        borderTopLeftRadius: value,
-                        borderTopRightRadius: value,
-                        borderBottomLeftRadius: value,
-                        borderBottomRightRadius: value,
-                      },
-                    });
-                  }}
-                  options={[
-                    { value: "px", label: "PX" },
-                    { value: "rem", label: "REM" },
-                    { value: "%", label: "%" },
+                if (form.values.showBorder === "all") {
+                  borderWidth = {
+                    borderWidth: value,
+                    borderTopWidth: value,
+                    borderRightWidth: value,
+                    borderBottomWidth: value,
+                    borderLeftWidth: value,
+                  };
+                  form.setFieldValue("borderWidth", value);
+                  form.setFieldValue("borderTopWidth", value);
+                  form.setFieldValue("borderRightWidth", value);
+                  form.setFieldValue("borderBottomWidth", value);
+                  form.setFieldValue("borderLeftWidth", value);
+                } else {
+                  const key = `border${startCase(form.values.showBorder)}Width`;
+                  form.setFieldValue("borderWidth", value);
+                  form.setFieldValue(key, value);
+                  borderWidth = {
+                    [key]: value,
+                  };
+                }
+
+                debouncedTreeUpdate(selectedComponentIds, {
+                  style: borderWidth,
+                });
+              }}
+            />
+            <ThemeColorSelector
+              label="Color"
+              {...form.getInputProps(getBorderProp("Color"))}
+              onChange={(_value: string) => {
+                const [color, index] = _value.split(".");
+                // @ts-ignore
+                const value = index ? theme.colors[color][index] : color;
+                let borderColor = {};
+                if (form.values.showBorder === "all") {
+                  borderColor = {
+                    borderColor: value,
+                    borderTopColor: value,
+                    borderRightColor: value,
+                    borderBottomColor: value,
+                    borderLeftColor: value,
+                  };
+                  form.setFieldValue("borderColor", _value);
+                  form.setFieldValue("borderTopColor", _value);
+                  form.setFieldValue("borderRightColor", _value);
+                  form.setFieldValue("borderBottomColor", _value);
+                  form.setFieldValue("borderLeftColor", _value);
+                } else {
+                  const key = `border${startCase(form.values.showBorder)}Color`;
+                  form.setFieldValue("borderColor", _value);
+                  form.setFieldValue(key, _value);
+                  borderColor = {
+                    [key]: value,
+                  };
+                }
+
+                debouncedTreeUpdate(selectedComponentIds, {
+                  style: borderColor,
+                });
+              }}
+            />
+            <Stack spacing={4} mt={12}>
+              <Text size="0.75rem" weight={500}>
+                Radius
+              </Text>
+              <Group noWrap>
+                <SegmentedControl
+                  fullWidth
+                  size="sm"
+                  w="100%"
+                  data={[
+                    {
+                      label: (
+                        <StylingPaneItemIcon
+                          label="All"
+                          icon={<IconSquare size={14} />}
+                        />
+                      ),
+                      value: "radius-all",
+                    },
+                    {
+                      label: (
+                        <StylingPaneItemIcon
+                          label="Sides"
+                          icon={<IconBorderCorners size={14} />}
+                        />
+                      ),
+                      value: "radius-sides",
+                    },
                   ]}
+                  styles={{
+                    label: {
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "100%",
+                    },
+                  }}
+                  {...form.getInputProps("showRadius")}
                 />
+                {form.values.showRadius === "radius-all" && (
+                  <UnitInput
+                    {...form.getInputProps("borderRadius")}
+                    onChange={(value) => {
+                      form.setFieldValue("borderRadius", value);
+                      form.setFieldValue("borderTopLeftRadius", value);
+                      form.setFieldValue("borderTopRightRadius", value);
+                      form.setFieldValue("borderBottomLeftRadius", value);
+                      form.setFieldValue("borderBottomRightRadius", value);
+
+                      debouncedTreeUpdate(selectedComponentIds, {
+                        style: {
+                          borderRadius: value,
+                          borderTopLeftRadius: value,
+                          borderTopRightRadius: value,
+                          borderBottomLeftRadius: value,
+                          borderBottomRightRadius: value,
+                        },
+                      });
+                    }}
+                    options={[
+                      { value: "px", label: "PX" },
+                      { value: "rem", label: "REM" },
+                      { value: "%", label: "%" },
+                    ]}
+                  />
+                )}
+              </Group>
+              {form.values.showRadius === "radius-sides" && (
+                <>
+                  <Group noWrap>
+                    <UnitInput
+                      label="Top Left"
+                      {...form.getInputProps("borderTopLeftRadius")}
+                      onChange={(value) => {
+                        form.setFieldValue(
+                          "borderTopLeftRadius",
+                          value as string,
+                        );
+                        debouncedTreeUpdate(selectedComponentIds, {
+                          style: { borderTopLeftRadius: value },
+                        });
+                      }}
+                    />
+                    <UnitInput
+                      label="Top Right"
+                      {...form.getInputProps("borderTopRightRadius")}
+                      onChange={(value) => {
+                        form.setFieldValue(
+                          "borderTopRightRadius",
+                          value as string,
+                        );
+                        debouncedTreeUpdate(selectedComponentIds, {
+                          style: { borderTopRightRadius: value },
+                        });
+                      }}
+                    />
+                  </Group>
+                  <Group noWrap>
+                    <UnitInput
+                      label="Bottom Left"
+                      {...form.getInputProps("borderBottomLeftRadius")}
+                      onChange={(value) => {
+                        form.setFieldValue(
+                          "borderBottomLeftRadius",
+                          value as string,
+                        );
+                        debouncedTreeUpdate(selectedComponentIds, {
+                          style: { borderBottomLeftRadius: value },
+                        });
+                      }}
+                    />
+                    <UnitInput
+                      label="Bottom Right"
+                      {...form.getInputProps("borderBottomRightRadius")}
+                      onChange={(value) => {
+                        form.setFieldValue(
+                          "borderBottomRightRadius",
+                          value as string,
+                        );
+                        debouncedTreeUpdate(selectedComponentIds, {
+                          style: { borderBottomRightRadius: value },
+                        });
+                      }}
+                    />
+                  </Group>
+                </>
               )}
-            </Group>
-            {form.values.showRadius === "radius-sides" && (
-              <>
-                <Group noWrap>
-                  <UnitInput
-                    label="Top Left"
-                    {...form.getInputProps("borderTopLeftRadius")}
-                    onChange={(value) => {
-                      form.setFieldValue(
-                        "borderTopLeftRadius",
-                        value as string,
-                      );
-                      debouncedTreeUpdate(selectedComponent?.id as string, {
-                        style: { borderTopLeftRadius: value },
-                      });
-                    }}
-                  />
-                  <UnitInput
-                    label="Top Right"
-                    {...form.getInputProps("borderTopRightRadius")}
-                    onChange={(value) => {
-                      form.setFieldValue(
-                        "borderTopRightRadius",
-                        value as string,
-                      );
-                      debouncedTreeUpdate(selectedComponent?.id as string, {
-                        style: { borderTopRightRadius: value },
-                      });
-                    }}
-                  />
-                </Group>
-                <Group noWrap>
-                  <UnitInput
-                    label="Bottom Left"
-                    {...form.getInputProps("borderBottomLeftRadius")}
-                    onChange={(value) => {
-                      form.setFieldValue(
-                        "borderBottomLeftRadius",
-                        value as string,
-                      );
-                      debouncedTreeUpdate(selectedComponent?.id as string, {
-                        style: { borderBottomLeftRadius: value },
-                      });
-                    }}
-                  />
-                  <UnitInput
-                    label="Bottom Right"
-                    {...form.getInputProps("borderBottomRightRadius")}
-                    onChange={(value) => {
-                      form.setFieldValue(
-                        "borderBottomRightRadius",
-                        value as string,
-                      );
-                      debouncedTreeUpdate(selectedComponent?.id as string, {
-                        style: { borderBottomRightRadius: value },
-                      });
-                    }}
-                  />
-                </Group>
-              </>
-            )}
+            </Stack>
           </Stack>
-        </Stack>
-      )}
-    </form>
-  );
-});
+        )}
+      </form>
+    );
+  },
+);

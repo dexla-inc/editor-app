@@ -62,6 +62,9 @@ export const useComponentContextMenu = () => {
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
+    const setSelectedComponentIds = useEditorStore(
+        (state) => state.setSelectedComponentIds,
+    );
 
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
@@ -139,6 +142,7 @@ export const useComponentContextMenu = () => {
 
       setEditorTree(copy, { action: `Pasted ${componentName}` });
       setSelectedComponentId(newSelectedId);
+      setSelectedComponentIds(() => [newSelectedId]);
     },
     [editorTree, setSelectedComponentId, setEditorTree],
   );

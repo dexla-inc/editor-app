@@ -1,5 +1,5 @@
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeComponentStyleUpdate } from "@/utils/editor";
+import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -12,8 +12,6 @@ import {
   IconLayoutColumns,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { pick } from "next/dist/lib/pick";
-import { useEffect } from "react";
 import { SizeSelector } from "../SizeSelector";
 import { StylingPaneItemIcon } from "./StylingPaneItemIcon";
 
@@ -22,21 +20,14 @@ export const initialValues = requiredModifiers.gridColumn;
 export const label = "Grid Column";
 export const icon = IconLayoutColumns;
 
-export const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm({ initialValues });
-
-  useEffect(() => {
-    if (selectedComponent?.id) {
-      const { alignSelf, gridAutoFlow, gap } = pick(
-        selectedComponent.props!.style,
-        ["alignSelf", "gridAutoFlow", "gap"],
-      );
-      form.setValues(
-        merge({}, initialValues, { gap, alignSelf, gridAutoFlow }),
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+export const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+  const form = useForm({
+    initialValues: merge({}, initialValues, {
+      alignSelf: selectedComponent.props?.style?.alignSelf,
+      gridAutoFlow: selectedComponent.props?.style?.gridAutoFlow,
+      gap: selectedComponent.props?.style?.gap,
+    }),
+  });
 
   return (
     <form>
@@ -46,7 +37,11 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           {...form.getInputProps("gap")}
           onChange={(value) => {
             form.setFieldValue("gap", value);
-            debouncedTreeComponentStyleUpdate("gap", value);
+            debouncedTreeUpdate(selectedComponentIds, {
+              style: {
+                gap: value,
+              },
+            });
           }}
         />
         <Stack spacing={2}>
@@ -78,10 +73,11 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             {...form.getInputProps("gridAutoFlow")}
             onChange={(value) => {
               form.setFieldValue(" gridAutoFlow", value as string);
-              debouncedTreeComponentStyleUpdate(
-                "gridAutoFlow",
-                value as string,
-              );
+              debouncedTreeUpdate(selectedComponentIds, {
+                style: {
+                  gridAutoFlow: value,
+                },
+              });
             }}
           />
         </Stack>
@@ -123,7 +119,11 @@ export const Modifier = withModifier(({ selectedComponent }) => {
             {...form.getInputProps("alignSelf")}
             onChange={(value) => {
               form.setFieldValue("alignSelf", value as string);
-              debouncedTreeComponentStyleUpdate("alignSelf", value as string);
+              debouncedTreeUpdate(selectedComponentIds, {
+                style: {
+                  alignSelf: value,
+                },
+              });
             }}
           />
         </Stack>

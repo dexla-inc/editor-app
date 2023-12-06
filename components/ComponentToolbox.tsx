@@ -28,6 +28,9 @@ export const ComponentToolbox = () => {
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
   );
+  const setSelectedComponentIds = useEditorStore(
+    (state) => state.setSelectedComponentIds,
+  );
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );
@@ -151,6 +154,7 @@ export const ComponentToolbox = () => {
             e.preventDefault();
             e.stopPropagation();
             setSelectedComponentId(parent.id as string);
+            setSelectedComponentIds(() => [parent.id!]);
           }}
         />
       )}

@@ -1,13 +1,12 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
+import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, Switch, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTextPlus } from "@tabler/icons-react";
-import { pick } from "next/dist/lib/pick";
-import { useEffect } from "react";
+import merge from "lodash.merge";
 
 export const icon = IconTextPlus;
 export const label = "Textaarea";
@@ -20,90 +19,81 @@ export const defaultTextareaValues = {
   withAsterisk: false,
 };
 
-export const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm({
-    initialValues: { ...requiredModifiers.text },
-  });
+export const Modifier = withModifier(
+  ({ selectedComponent, selectedComponentIds }) => {
+    const form = useForm({
+      initialValues: merge({}, requiredModifiers.text, {
+        placeholder: selectedComponent?.props?.placeholder,
+        size: selectedComponent?.props?.size,
+        autosize: selectedComponent?.props?.style?.autosize,
+        withAsterisk: selectedComponent?.props?.withAsterisk,
+      }),
+    });
 
-  useEffect(() => {
-    if (selectedComponent?.id) {
-      const data = pick(selectedComponent.props!, [
-        "placeholder",
-        "style",
-        "size",
-        "withAsterisk",
-      ]);
-
-      form.setValues({
-        placeholder: data.placeholder ?? defaultTextareaValues.placeholder,
-        size: data.size ?? defaultTextareaValues.size,
-        autosize: data.style.autosize ?? defaultTextareaValues.autosize,
-        withAsterisk: data.withAsterisk ?? defaultTextareaValues.withAsterisk,
-      });
-    }
-    // Disabling the lint here because we don't want this to be updated every time the form changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
-
-  return (
-    <form>
-      <Stack spacing="xs">
-        <TextInput
-          label="Placeholder"
-          size="xs"
-          {...form.getInputProps("placeholder")}
-          onChange={(e) => {
-            form.setFieldValue("placeholder", e.target.value);
-            debouncedTreeComponentPropsUpdate("placeholder", e.target.value);
-          }}
-        />
-        <TextInput
-          label="Name"
-          size="xs"
-          {...form.getInputProps("name")}
-          onChange={(e) => {
-            form.setFieldValue("name", e.target.value);
-            debouncedTreeComponentPropsUpdate("name", e.target.value);
-          }}
-        />
-        <SizeSelector
-          {...form.getInputProps("size")}
-          onChange={(value) => {
-            form.setFieldValue("size", value as string);
-            debouncedTreeComponentPropsUpdate("size", value as string);
-          }}
-        />
-        <SwitchSelector
-          topLabel="Required"
-          {...form.getInputProps("withAsterisk")}
-          onChange={(event) => {
-            form.setFieldValue("withAsterisk", event.currentTarget.checked);
-            debouncedTreeComponentPropsUpdate(
-              "withAsterisk",
-              event.currentTarget.checked,
-            );
-          }}
-        />
-        <Stack spacing={2}>
-          <Text size="xs" fw={500}>
-            Autosize
-          </Text>
-          <Switch
-            {...form.getInputProps("autosize")}
+    return (
+      <form>
+        <Stack spacing="xs">
+          <TextInput
+            label="Placeholder"
             size="xs"
+            {...form.getInputProps("placeholder")}
             onChange={(e) => {
-              form.setFieldValue(
-                "autosize",
-                e.currentTarget.checked as boolean,
-              );
-              debouncedTreeComponentPropsUpdate(
-                "autosize",
-                e.currentTarget.checked,
-              );
+              form.setFieldValue("placeholder", e.target.value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                placeholder: e.target.value,
+              });
             }}
           />
+          <TextInput
+            label="Name"
+            size="xs"
+            {...form.getInputProps("name")}
+            onChange={(e) => {
+              form.setFieldValue("name", e.target.value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                name: e.target.value,
+              });
+            }}
+          />
+          <SizeSelector
+            {...form.getInputProps("size")}
+            onChange={(value) => {
+              form.setFieldValue("size", value as string);
+              debouncedTreeUpdate(selectedComponentIds, {
+                size: value,
+              });
+            }}
+          />
+          <SwitchSelector
+            topLabel="Required"
+            {...form.getInputProps("withAsterisk")}
+            onChange={(event) => {
+              form.setFieldValue("withAsterisk", event.currentTarget.checked);
+              debouncedTreeUpdate(selectedComponentIds, {
+                withAsterisk: event.currentTarget.checked,
+              });
+            }}
+          />
+          <Stack spacing={2}>
+            <Text size="xs" fw={500}>
+              Autosize
+            </Text>
+            <Switch
+              {...form.getInputProps("autosize")}
+              size="xs"
+              onChange={(e) => {
+                form.setFieldValue(
+                  "autosize",
+                  e.currentTarget.checked as boolean,
+                );
+                debouncedTreeUpdate(selectedComponentIds, {
+                  autosize: e.currentTarget.checked,
+                });
+              }}
+            />
+          </Stack>
         </Stack>
-      </Stack>
-    </form>
-  );
-});
+      </form>
+    );
+  },
+);
