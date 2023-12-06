@@ -97,7 +97,8 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       setSelectedComponentIds(() => []);
       setEditorTree(copy, { action: `Removed ${comp?.name}` });
     }
-  }, [editorTree, setEditorTree, setSelectedComponentId, isPreviewMode]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editorTree, setEditorTree, isPreviewMode]);
 
   const copySelectedComponent = useCallback(() => {
     const selectedComponentId = useEditorStore.getState().selectedComponentId;
@@ -166,6 +167,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   }, [copiedComponent, editorTree, isPreviewMode, setEditorTree]);
 
   useHotkeys([
+    ["mod+click", () => {}],
     ["backspace", deleteComponent],
     ["delete", deleteComponent],
     ["mod+C", copySelectedComponent],

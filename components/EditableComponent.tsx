@@ -39,6 +39,12 @@ export const EditableComponent = ({
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
+  const pickingComponentToBindFrom = useEditorStore(
+    (state) => state.pickingComponentToBindFrom,
+  );
+  const pickingComponentToBindTo = useEditorStore(
+    (state) => state.pickingComponentToBindTo,
+  );
   const setSelectedComponentIds = useEditorStore(
     (state) => state.setSelectedComponentIds,
   );
@@ -61,12 +67,6 @@ export const EditableComponent = ({
   const language = useEditorStore((state) => state.language);
   const highlightedComponentId = useEditorStore(
     (state) => state.highlightedComponentId,
-  );
-  const pickingComponentToBindFrom = useEditorStore(
-    (state) => state.pickingComponentToBindFrom,
-  );
-  const pickingComponentToBindTo = useEditorStore(
-    (state) => state.pickingComponentToBindTo,
   );
 
   const { componentContextMenu, forceDestroyContextMenu } =
@@ -232,15 +232,27 @@ export const EditableComponent = ({
       e.preventDefault();
       e.stopPropagation();
       if (!isPreviewMode) {
-        e.preventDefault();
         e.stopPropagation();
+
+        // @ts-ignore
+        propsWithOverwrites.onClick?.(e);
+        forceDestroyContextMenu();
 
         if (isPicking) {
           setComponentToBind(id);
         } else {
           setSelectedComponentId(id);
+          if (e.ctrlKey || e.metaKey) {
+            setSelectedComponentIds((prev) => {
+              if (prev.includes(id)) {
+                return prev.filter((p) => p !== id);
+              }
+              return [...prev, id];
+            });
+          } else {
+            setSelectedComponentIds(() => [id]);
+          }
         }
-
         // @ts-ignore
         propsWithOverwrites.onClick?.(e);
         forceDestroyContextMenu();
@@ -254,6 +266,7 @@ export const EditableComponent = ({
       propsWithOverwrites,
       setComponentToBind,
       setSelectedComponentId,
+      setSelectedComponentIds,
     ],
   );
 
