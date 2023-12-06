@@ -1,5 +1,6 @@
 import { ThemeResponse } from "@/requests/themes/types";
 import { del, post } from "@/utils/api";
+import { buildQueryString } from "@/utils/dashboardTypes";
 import { BrandingAITheme } from "../projects/types";
 
 export type SaveThemeProps = {
@@ -25,7 +26,6 @@ export async function saveTheme(
 ): Promise<ThemeResponse> {
   let projectId;
 
-  // Determine which version of the function was called
   if (typeof projectIdOrProps === "string") {
     projectId = projectIdOrProps;
   } else {
@@ -33,11 +33,11 @@ export async function saveTheme(
     params = projectIdOrProps.params;
   }
 
-  const response = (await post<ThemeResponse>(
-    `/projects/${projectId}/themes` +
-      (websiteUrl ? `?websiteUrl=${websiteUrl}` : ""),
-    params,
-  )) as ThemeResponse;
+  let url = `/projects/${projectId}/themes`;
+  url += buildQueryString({ websiteUrl });
+  console.log(url);
+
+  const response = (await post<ThemeResponse>(url, params)) as ThemeResponse;
 
   return response;
 }

@@ -64,7 +64,7 @@ export const Modifier = withModifier(
             onChange={(e) => {
               form.setFieldValue("src", e.target.value);
               debouncedTreeUpdate(selectedComponentIds, {
-                src: e.target.value,
+                style: { src: e.target.value },
               });
             }}
           />

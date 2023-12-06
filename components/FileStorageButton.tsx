@@ -1,3 +1,4 @@
+import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { Images } from "@/components/storage/Images";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -16,7 +17,6 @@ import {
   IconPhoto,
   IconVideo,
 } from "@tabler/icons-react";
-import { ActionIconDefault } from "./ActionIconDefault";
 
 export const FileStorageButton = () => {
   const [openStorageModal, { open, close }] = useDisclosure(false);

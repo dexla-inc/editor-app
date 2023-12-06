@@ -1,7 +1,7 @@
+import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { useEditorStore } from "@/stores/editor";
 import { GRAY_OUTLINE } from "@/utils/branding";
 import { GRID_SIZE } from "@/utils/config";
-import { Button } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import { nanoid } from "nanoid";
 
@@ -57,8 +57,11 @@ export const AddGridButton = () => {
   };
 
   return (
-    <Button size="xs" onClick={addGrid}>
-      Add Grid
-    </Button>
+    <ActionIconDefault
+      iconName="IconLayoutGridAdd"
+      tooltip="Add Grid"
+      onClick={addGrid}
+      color="indigo"
+    />
   );
 };
