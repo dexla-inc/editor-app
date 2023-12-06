@@ -361,14 +361,11 @@ export const requiredModifiers: RequiredModifiers = {
     foreColor: "Secondary.5",
   },
   grid: {
-    columnGap: "20px",
-    rowGap: "20px",
-    justifyItems: "stretch",
-    justifyContent: "start",
-    alignContent: "start",
+    gap: "xs",
   },
   gridColumn: {
     alignSelf: "start",
+    gap: "xs",
   },
   navbar: {
     width: "260px",

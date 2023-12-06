@@ -14,6 +14,7 @@ import {
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
+import { SizeSelector } from "../SizeSelector";
 import { StylingPaneItemIcon } from "./StylingPaneItemIcon";
 
 export const initialValues = requiredModifiers.gridColumn;
@@ -26,11 +27,13 @@ export const Modifier = withModifier(({ selectedComponent }) => {
 
   useEffect(() => {
     if (selectedComponent?.id) {
-      const { alignSelf, gridAutoFlow } = pick(selectedComponent.props!.style, [
-        "alignSelf",
-        "gridAutoFlow",
-      ]);
-      form.setValues(merge({}, initialValues, { alignSelf, gridAutoFlow }));
+      const { alignSelf, gridAutoFlow, gap } = pick(
+        selectedComponent.props!.style,
+        ["alignSelf", "gridAutoFlow", "gap"],
+      );
+      form.setValues(
+        merge({}, initialValues, { gap, alignSelf, gridAutoFlow }),
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponent]);
@@ -38,6 +41,14 @@ export const Modifier = withModifier(({ selectedComponent }) => {
   return (
     <form>
       <Stack spacing="xs">
+        <SizeSelector
+          label="Gap"
+          {...form.getInputProps("gap")}
+          onChange={(value) => {
+            form.setFieldValue("gap", value);
+            debouncedTreeComponentStyleUpdate("gap", value);
+          }}
+        />
         <Stack spacing={2}>
           <Text size="xs" fw={500}>
             Direction

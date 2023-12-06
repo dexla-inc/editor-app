@@ -1,6 +1,6 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
+import { debouncedTreeComponentStyleUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -19,9 +19,10 @@ export const Modifier = withModifier(({ selectedComponent }) => {
 
   useEffect(() => {
     if (selectedComponent?.id) {
-      const { gap } = pick(selectedComponent.props!, ["gap"]);
-
-      const { alignSelf } = pick(selectedComponent.props!.style, ["alignSelf"]);
+      const { alignSelf, gap } = pick(selectedComponent.props!.style, [
+        "alignSelf",
+        "gap",
+      ]);
       form.setValues(merge({}, initialValues, { gap, alignSelf }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -42,8 +43,8 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           label="Gap"
           {...form.getInputProps("gap")}
           onChange={(value) => {
-            form.setFieldValue("gap", value as string);
-            debouncedTreeComponentPropsUpdate("gap", value as string);
+            form.setFieldValue("gap", value);
+            debouncedTreeComponentStyleUpdate("gap", value);
           }}
         />
       </Stack>
