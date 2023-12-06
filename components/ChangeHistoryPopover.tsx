@@ -19,7 +19,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowBackUp } from "@tabler/icons-react";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 
 const convertTimestampToTimeTaken = (timestamp: number) => {
   const now = Date.now();
@@ -37,6 +37,7 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
 };
 
 export const ChangeHistoryPopover: FC = () => {
+  const [historyIndex, setHistoryIndex] = useState(9);
   const currentState = useEditorStore((state) => ({
     isSaving: state.isSaving,
     tree: {
@@ -44,6 +45,9 @@ export const ChangeHistoryPopover: FC = () => {
       timestamp: state.tree.timestamp,
     },
   }));
+
+  const pageId = useEditorStore((state) => state.currentPageId);
+
   const { changeHistory, pastStates, undo, redo, futureStates } =
     useTemporalStore((state) => ({
       changeHistory: [
@@ -59,13 +63,32 @@ export const ChangeHistoryPopover: FC = () => {
                 timestamp: tree?.timestamp,
               });
         },
-        [] as Array<{ name?: string; timestamp?: number }>,
+        [] as Array<{
+          name?: string;
+          timestamp?: number;
+        }>,
       ),
       pastStates: state.pastStates,
       futureStates: state.futureStates,
       undo: state.undo,
       redo: state.redo,
     }));
+
+  useEffect(
+    () => setHistoryIndex(pastStates.length),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [pageId],
+  );
+
+  const filteredPastStates = pastStates.filter(
+    (_, index) => index > historyIndex,
+  );
+
+  const filteredHistory = changeHistory.filter(
+    (_, index) => index > historyIndex - 1,
+  );
+
+  const setButtonDisabled = filteredPastStates.length < 1;
 
   const [opened, { close, open }] = useDisclosure(false);
   const theme = useMantineTheme();
@@ -99,7 +122,7 @@ export const ChangeHistoryPopover: FC = () => {
           <ActionIcon
             variant="default"
             onClick={() => handlePageStateChange(undo)}
-            disabled={pastStates.length < 2}
+            disabled={setButtonDisabled}
             radius={"4px 0px 0px 4px"}
             size="sm"
           >
@@ -147,11 +170,11 @@ export const ChangeHistoryPopover: FC = () => {
                 overflowY: "auto",
               }}
             >
-              {changeHistory
+              {filteredHistory
                 .map((item: any, index: number) => {
                   const currentHistoryIndex = pastStates.length - 1;
                   const color =
-                    pastStates.length - 1 === index
+                    currentHistoryIndex === index + historyIndex
                       ? "indigo"
                       : theme.colors.dark[9];
                   return (
@@ -165,7 +188,7 @@ export const ChangeHistoryPopover: FC = () => {
                       onClick={(e) => {
                         e.stopPropagation();
                         const newChangeHistoryIndex =
-                          currentHistoryIndex - index;
+                          currentHistoryIndex - index - historyIndex;
 
                         newChangeHistoryIndex >= 0
                           ? handlePageStateChange(() =>
