@@ -131,6 +131,9 @@ export const EditorAsideSections = () => {
   const _selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );
+  const selectedComponentIds = useEditorStore(
+    (state) => state.selectedComponentIds,
+  );
   const editorTree = useEditorStore((state) => state.tree);
   const openAction = useEditorStore((state) => state.openAction);
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
@@ -288,7 +291,11 @@ export const EditorAsideSections = () => {
           style={{ width: "100%" }}
           data={[
             { label: "Design", value: "design" },
-            { label: "Actions", value: "actions" },
+            {
+              label: "Actions",
+              value: "actions",
+              disabled: (selectedComponentIds ?? []).length > 1,
+            },
           ]}
           onChange={(value) => {
             setTab(value as Tab);

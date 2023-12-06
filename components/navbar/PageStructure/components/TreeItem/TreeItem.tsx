@@ -89,6 +89,9 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     const setSelectedComponentId = useEditorStore(
       (state) => state.setSelectedComponentId,
     );
+      const setSelectedComponentIds = useEditorStore(
+          (state) => state.setSelectedComponentIds,
+      );
     const isWindowError = useEditorStore((state) => state.isWindowError);
     const editorTree = useEditorStore((state) => state.tree);
     const setEditorTree = useEditorStore((state) => state.setTree);
@@ -122,6 +125,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     const handleSelection = (id: string) => {
       if (id !== "root") {
         setSelectedComponentId(id as string);
+        setSelectedComponentIds(() => [id!]);
       }
     };
 
