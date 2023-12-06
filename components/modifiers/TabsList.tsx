@@ -1,4 +1,4 @@
-import { StylingPaneItemIcon } from "@/components/StylingPaneItemIcon";
+import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";

@@ -1,7 +1,7 @@
+import { StylingPaneItemIcon } from "@/components//modifiers/StylingPaneItemIcon";
 import { Icon } from "@/components/Icon";
 import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
-import { StylingPaneItemIcon } from "@/components/StylingPaneItemIcon";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { ICON_DELETE } from "@/utils/config";

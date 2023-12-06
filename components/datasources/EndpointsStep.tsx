@@ -1,7 +1,7 @@
 import { InformationAlert, WarningAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
-import { DataSourceEndpointList } from "@/components/DataSourceEndpointList";
 import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
+import { DataSourceEndpointList } from "@/components/datasources/DataSourceEndpointList";
 import EndpointsButton from "@/components/datasources/EndpointsButton";
 import { TestUserLogin } from "@/components/datasources/TestUserLogin";
 import {
