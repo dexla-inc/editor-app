@@ -11,8 +11,8 @@ const gridStructure = {
   description: "Grid",
   props: {
     gridSize: GRID_SIZE,
-    gap: 0,
     style: {
+      gap: "0",
       minHeight: "50px",
     },
   },

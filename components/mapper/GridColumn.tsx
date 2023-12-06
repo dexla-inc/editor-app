@@ -1,9 +1,9 @@
-import { Component } from "@/utils/editor";
-import { BoxProps } from "@mantine/core";
 import { GridColumn as GridColumnBase } from "@/components/GridColumn";
 import { useEditorStore } from "@/stores/editor";
-import { memo } from "react";
 import { isSame } from "@/utils/componentComparison";
+import { Component } from "@/utils/editor";
+import { BoxProps } from "@mantine/core";
+import { memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -11,12 +11,16 @@ type Props = {
 } & BoxProps;
 
 const GridColumnComponent = ({ renderTree, component, ...props }: Props) => {
+  const theme = useEditorStore((state) => state.theme);
+
   const isLive = useEditorStore((state) => state.isLive);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   // @ts-ignore
   const { style = {}, ...componentProps } = component.props;
   const { style: propsStyle = {}, ...propsRest } = props;
-  const styles = { ...style, ...propsStyle };
+  const gap = propsStyle?.gap ? theme.spacing[propsStyle.gap as string] : 0;
+
+  const styles = { ...style, ...propsStyle, gap };
 
   const shouldRemoveBorder = isLive || isPreviewMode;
   const { border, ...stylesRest } = styles;

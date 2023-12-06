@@ -20,6 +20,8 @@ const GridComponent = ({ renderTree, component, ...props }: Props) => {
       ? `${navbarWidth} ${defaultGridTemplateColumns}`
       : defaultGridTemplateColumns;
 
+  const gap = props?.style?.gap ? theme.spacing[props.style.gap as string] : 0;
+
   return (
     <Box
       display="grid"
@@ -30,9 +32,7 @@ const GridComponent = ({ renderTree, component, ...props }: Props) => {
       style={{
         ...props.style,
         ...style,
-        gap: Object.keys(theme.spacing).includes(component.props!.gap)
-          ? theme.spacing[component.props!.gap ?? "xs"]
-          : component.props!.gap ?? theme.spacing.xs,
+        gap: props?.style?.gap ? gap : theme.spacing.xs,
         gridTemplateColumns: gridTemplateColumns ?? defaultGridTemplateColumns,
       }}
     >
