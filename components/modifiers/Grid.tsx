@@ -1,32 +1,24 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeComponentStyleUpdate } from "@/utils/editor";
+import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutGrid } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { pick } from "next/dist/lib/pick";
-import { useEffect } from "react";
 
 export const initialValues = requiredModifiers.grid;
 
 export const label = "Grid";
 export const icon = IconLayoutGrid;
 
-export const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm({ initialValues });
-
-  useEffect(() => {
-    if (selectedComponent?.id) {
-      const { alignSelf, gap } = pick(selectedComponent.props!.style, [
-        "alignSelf",
-        "gap",
-      ]);
-      form.setValues(merge({}, initialValues, { gap, alignSelf }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+export const Modifier = withModifier(({ selectedComponent, selectedComponentIds }) => {
+    const form = useForm({
+        initialValues: merge({}, initialValues, {
+            gap: selectedComponent?.props?.style?.gap,
+            alignSelf: selectedComponent?.props?.style?.alignSelf,
+        }),
+    });
 
   // gridTemplateColumns: string; // e.g., 'repeat(3, 1fr)' or '200px 1fr 200px'
   // gridTemplateRows?: string; // e.g., 'repeat(2, 100px)' or 'auto'
@@ -43,8 +35,10 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           label="Gap"
           {...form.getInputProps("gap")}
           onChange={(value) => {
-            form.setFieldValue("gap", value);
-            debouncedTreeComponentStyleUpdate("gap", value);
+            form.setFieldValue("gap", value as string);
+              debouncedTreeUpdate(selectedComponentIds, {
+                  style: { gap: value }
+              });
           }}
         />
       </Stack>
