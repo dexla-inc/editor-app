@@ -372,6 +372,8 @@ export const requiredModifiers: RequiredModifiers = {
   },
   navbar: {
     width: "260px",
+    gridTemplateRows: "auto 1fr auto",
+    height: "100vh",
   },
 };
 

@@ -1,5 +1,4 @@
 import { isSame } from "@/utils/componentComparison";
-import { useUserConfigStore } from "@/stores/userConfig";
 import { GRID_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 import { Box, BoxProps, useMantineTheme } from "@mantine/core";
@@ -12,14 +11,16 @@ type Props = {
 
 const GridComponent = ({ renderTree, component, ...props }: Props) => {
   const theme = useMantineTheme();
-  const { style = {}, gridSize } = component.props!;
-  const navbarWidth = useUserConfigStore((state) => state.navbarWidth);
+  const { style = {}, gridSize, navbarWidth } = component.props!;
 
-  const repeatTemplateColumns = `repeat(${gridSize ?? GRID_SIZE}, 1fr)`;
+  const defaultGridTemplateColumns = `repeat(${gridSize ?? GRID_SIZE}, 1fr)`;
+
   const gridTemplateColumns =
     navbarWidth !== undefined && component.id === "content-wrapper"
-      ? `${navbarWidth} ${repeatTemplateColumns}`
-      : repeatTemplateColumns;
+      ? `${navbarWidth} ${defaultGridTemplateColumns}`
+      : defaultGridTemplateColumns;
+
+  console.log(navbarWidth);
 
   return (
     <Box
@@ -34,7 +35,7 @@ const GridComponent = ({ renderTree, component, ...props }: Props) => {
         gap: Object.keys(theme.spacing).includes(component.props!.gap)
           ? theme.spacing[component.props!.gap ?? "xs"]
           : component.props!.gap ?? theme.spacing.xs,
-        gridTemplateColumns: gridTemplateColumns,
+        gridTemplateColumns: gridTemplateColumns ?? defaultGridTemplateColumns,
       }}
     >
       {component.children &&
