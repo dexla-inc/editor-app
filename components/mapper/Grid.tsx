@@ -20,8 +20,6 @@ const GridComponent = ({ renderTree, component, ...props }: Props) => {
       ? `${navbarWidth} ${defaultGridTemplateColumns}`
       : defaultGridTemplateColumns;
 
-  console.log(navbarWidth);
-
   return (
     <Box
       display="grid"

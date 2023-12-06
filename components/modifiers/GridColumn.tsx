@@ -4,6 +4,8 @@ import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
+  IconArrowNarrowDown,
+  IconArrowNarrowRight,
   IconLayoutAlignCenter,
   IconLayoutAlignLeft,
   IconLayoutAlignRight,
@@ -43,8 +45,24 @@ export const Modifier = withModifier(({ selectedComponent }) => {
           <SegmentedControl
             size="xs"
             data={[
-              { label: "Horizontal", value: "row" },
-              { label: "Vertical", value: "column" },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Vertical"
+                    icon={<IconArrowNarrowDown size={14} />}
+                  />
+                ),
+                value: "row",
+              },
+              {
+                label: (
+                  <StylingPaneItemIcon
+                    label="Horizontal"
+                    icon={<IconArrowNarrowRight size={14} />}
+                  />
+                ),
+                value: "column",
+              },
             ]}
             {...form.getInputProps("gridAutoFlow")}
             onChange={(value) => {
