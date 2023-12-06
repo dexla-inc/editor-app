@@ -1,41 +1,41 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import {
   DndContext,
-  closestCenter,
+  DragEndEvent,
+  DragMoveEvent,
+  DragOverEvent,
+  DragOverlay,
+  DragStartEvent,
+  DropAnimation,
+  MeasuringStrategy,
+  Modifier,
   PointerSensor,
+  UniqueIdentifier,
+  closestCenter,
+  defaultDropAnimation,
   useSensor,
   useSensors,
-  DragStartEvent,
-  DragOverlay,
-  DragMoveEvent,
-  DragEndEvent,
-  DragOverEvent,
-  MeasuringStrategy,
-  DropAnimation,
-  Modifier,
-  defaultDropAnimation,
-  UniqueIdentifier,
 } from "@dnd-kit/core";
 import {
   SortableContext,
   arrayMove,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
+import { useEditorStore } from "@/stores/editor";
+import { debouncedTreeRootChildrenUpdate } from "@/utils/editor";
+import { CSS } from "@dnd-kit/utilities";
+import { SortableTreeItem } from "./components";
+import type { FlattenedItem, SensorContext, TreeItems } from "./types";
 import {
   buildTree,
   flattenTree,
-  getProjection,
   getChildCount,
+  getProjection,
   removeChildrenOf,
   setProperty,
 } from "./utilities";
-import type { FlattenedItem, SensorContext, TreeItems } from "./types";
-import { SortableTreeItem } from "./components";
-import { CSS } from "@dnd-kit/utilities";
-import { useEditorStore } from "@/stores/editor";
-import { debouncedTreeRootChildrenUpdate } from "@/utils/editor";
 
 const measuring = {
   droppable: {
@@ -154,6 +154,7 @@ export function NavbarLayersSection({
     return () => {
       clearTimeout(timeout);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [overId, handleCollapse]);
 
   return (

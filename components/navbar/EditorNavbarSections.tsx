@@ -3,8 +3,8 @@ import { EditorNavbarPagesSection } from "@/components/navbar/EditorNavbarPagesS
 import { EditorNavbarThemesSection } from "@/components/navbar/EditorNavbarThemesSection";
 import { EditorSettingsSection } from "@/components/navbar/EditorSettingsSection";
 // import { NavbarLayersSection } from "@/components/navbar/NavbarLayersSection";
-import { NavbarLayersSection } from "@/components/navbar/PageStructure/SortableTree";
 import { NavbarSection } from "@/components/navbar/NavbarSection";
+import { NavbarLayersSection } from "@/components/navbar/PageStructure/SortableTree";
 import { useEditorStore } from "@/stores/editor";
 import {
   IconBrush,

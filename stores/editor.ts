@@ -191,6 +191,8 @@ export type EditorState = {
   setIsResizing: (isResizing?: boolean) => void;
   columnSpans?: { [key: string]: number };
   setColumnSpan: (id: string, span: number) => void;
+  isWindowError?: boolean;
+  setIsWindowError: (isWindowError: boolean) => void;
 };
 
 export const debouncedUpdatePageState = debounce(updatePageState, 2000);
@@ -523,6 +525,8 @@ export const useEditorStore = create<EditorState>()(
           set({ copiedAction }, false, "editor/setCopiedAction"),
         setLanguage: (language) =>
           set({ language }, false, "editor/setLanguage"),
+        setIsWindowError: (isWindowError) =>
+          set({ isWindowError }, false, "editor/setIsWindowError"),
         setHighlightedComponentId: (componentId) =>
           set(
             { highlightedComponentId: componentId },
