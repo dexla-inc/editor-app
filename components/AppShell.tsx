@@ -40,6 +40,7 @@ import { ErrorBoundary } from "react-error-boundary";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const resetTree = useEditorStore((state) => state.resetTree);
+  const setIsWindowError = useEditorStore((state) => state.setIsWindowError);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setPreviewMode = useEditorStore((state) => state.setPreviewMode);
   const language = useEditorStore((state) => state.language);
@@ -150,6 +151,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
         onError={(error, info) => {
           console.error("Error:", error);
           console.error("Info:", info);
+          setIsWindowError(true);
         }}
         onReset={() => {
           resetTree();
