@@ -40,7 +40,7 @@ export const EditableComponent = ({
     (state) => state.setComponentToBind,
   );
   const setSelectedComponentIds = useEditorStore(
-      (state) => state.setSelectedComponentIds,
+    (state) => state.setSelectedComponentIds,
   );
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
@@ -229,10 +229,7 @@ export const EditableComponent = ({
 
   const handleClick = useCallback(
     (e: any) => {
-      // e.preventDefault();
-      // e.stopPropagation();
       if (!isPreviewMode) {
-        // e.preventDefault();
         e.stopPropagation();
 
         if (isPicking) {
