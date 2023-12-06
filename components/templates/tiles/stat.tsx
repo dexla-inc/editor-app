@@ -1,5 +1,5 @@
+import { StatTile } from "@/components/templates/dashboard";
 import { nanoid } from "nanoid";
-import { StatTile } from "../dashboard";
 
 export const tile = (tile: StatTile) => {
   return {

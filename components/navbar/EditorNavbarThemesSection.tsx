@@ -1,4 +1,9 @@
+import { CardStyleSelector } from "@/components/CardStyleSelector";
 import { ColorSelector } from "@/components/ColorSelector";
+import { FocusRingSelector } from "@/components/FocusRingSelector";
+import { LoaderSelector } from "@/components/LoaderSelector";
+import { SizeSelector } from "@/components/SizeSelector";
+import { SwitchSelector } from "@/components/SwitchSelector";
 import { UnitInput } from "@/components/UnitInput";
 import { CardStyle } from "@/requests/projects/types";
 import { saveTheme } from "@/requests/themes/mutations";
@@ -24,11 +29,6 @@ import { useForm } from "@mantine/form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { CardStyleSelector } from "../CardStyleSelector";
-import { FocusRingSelector } from "../FocusRingSelector";
-import { LoaderSelector } from "../LoaderSelector";
-import { SizeSelector } from "../SizeSelector";
-import { SwitchSelector } from "../SwitchSelector";
 
 const fontTags = [
   { label: "H1", value: "H1" },

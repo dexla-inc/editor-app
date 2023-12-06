@@ -78,7 +78,7 @@ export default function ProjectStep({
         id: "creating-project",
         title: "AI is thinking...",
         message:
-          "Thinking about your app, this step usually takes around 5 seconds...",
+          "Thinking about your app, this step usually takes around 20 seconds...",
       });
       form.validate();
 

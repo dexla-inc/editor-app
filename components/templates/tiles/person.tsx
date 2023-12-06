@@ -1,5 +1,5 @@
+import { PersonTile } from "@/components/templates/dashboard";
 import { nanoid } from "nanoid";
-import { PersonTile } from "../dashboard";
 
 export const tile = (tile: PersonTile) => {
   return {

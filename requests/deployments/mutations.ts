@@ -1,5 +1,8 @@
+import {
+  DeploymentParams,
+  DeploymentResponse,
+} from "@/requests/deployments/types";
 import { post } from "@/utils/api";
-import { DeploymentParams, DeploymentResponse } from "./types";
 
 export const createDeployment = async (
   projectId: string,

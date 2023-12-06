@@ -1,6 +1,7 @@
 import { InformationAlert, WarningAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
 import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
+import { DataSourceEndpointList } from "@/components/datasources/DataSourceEndpointList";
 import EndpointsButton from "@/components/datasources/EndpointsButton";
 import { TestUserLogin } from "@/components/datasources/TestUserLogin";
 import {
@@ -20,7 +21,6 @@ import {
   Title,
 } from "@mantine/core";
 import { useRouter } from "next/router";
-import { DataSourceEndpointList } from "./DataSourceEndpointList";
 
 interface AuthenticationStepParams extends DataSourceStepperWithoutNextProps {
   accessToken?: string | null;

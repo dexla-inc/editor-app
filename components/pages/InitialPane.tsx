@@ -1,3 +1,4 @@
+import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { PageResponse } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
@@ -13,7 +14,6 @@ import {
 } from "@mantine/core";
 import { IconFileAnalytics, IconHome, IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
-import { ActionIconDefault } from "../ActionIconDefault";
 
 type InitialPaneProps = {
   projectId: string;

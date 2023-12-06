@@ -1,3 +1,4 @@
+import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { Icon } from "@/components/Icon";
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
 import { getChatHistoryList } from "@/requests/ai/queries";
@@ -22,7 +23,6 @@ import { Prism } from "@mantine/prism";
 import { IconJson, IconToml } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { ActionIconDefault } from "./ActionIconDefault";
 
 type Props = {
   projectId: string;

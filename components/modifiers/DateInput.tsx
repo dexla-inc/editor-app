@@ -1,3 +1,4 @@
+import { StylingPaneItemIcon } from "@/components//modifiers/StylingPaneItemIcon";
 import { Icon } from "@/components/Icon";
 import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
@@ -24,7 +25,6 @@ import {
   IconAlignRight,
   IconForms,
 } from "@tabler/icons-react";
-import { StylingPaneItemIcon } from "./StylingPaneItemIcon";
 import merge from "lodash.merge";
 
 export const icon = IconForms;

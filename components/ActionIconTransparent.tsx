@@ -1,6 +1,6 @@
+import { Icon } from "@/components/Icon";
 import { ActionIcon, Tooltip } from "@mantine/core";
 import { MouseEventHandler } from "react";
-import { Icon } from "./Icon";
 
 type Props = {
   iconName: string;

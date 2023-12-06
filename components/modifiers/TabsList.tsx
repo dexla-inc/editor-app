@@ -1,3 +1,4 @@
+import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -10,7 +11,6 @@ import {
   IconLayoutDistributeHorizontal,
   IconLayoutKanban,
 } from "@tabler/icons-react";
-import { StylingPaneItemIcon } from "./StylingPaneItemIcon";
 import merge from "lodash.merge";
 
 export const icon = IconLayoutKanban;

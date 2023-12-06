@@ -1,4 +1,5 @@
 import { DraggableComponent } from "@/components/DraggableComponent";
+import { GenerateComponentsAIButton } from "@/components/GenerateComponentsAIButton";
 import { CustomComponentResponse } from "@/requests/components/mutations";
 import { getComponentList } from "@/requests/components/queries";
 import {
@@ -21,7 +22,6 @@ import { IconSearch } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { GenerateComponentsAIButton } from "../GenerateComponentsAIButton";
 
 type DraggableComponentData = {
   id: string;

@@ -1,5 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
-import { ICON_MEDIUM_SIZE } from "@/utils/config";
+import { ICON_SIZE } from "@/utils/config";
 import { Group, Switch, Tooltip, useMantineTheme } from "@mantine/core";
 import { IconBrush, IconEye } from "@tabler/icons-react";
 
@@ -26,10 +26,8 @@ export const EditorPreviewModeToggle = ({
         <Switch
           size="md"
           color={theme.colorScheme === "dark" ? "gray" : "teal"}
-          onLabel={<IconBrush size={ICON_MEDIUM_SIZE} color={theme.white} />}
-          offLabel={
-            <IconEye size={ICON_MEDIUM_SIZE} color={theme.colors.teal[5]} />
-          }
+          onLabel={<IconBrush size={ICON_SIZE} color={theme.white} />}
+          offLabel={<IconEye size={ICON_SIZE} color={theme.colors.teal[5]} />}
           checked={isPreviewMode}
           onChange={(event) => {
             const isPreviewMode = event.currentTarget.checked;

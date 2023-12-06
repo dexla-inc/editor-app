@@ -1,8 +1,8 @@
+import { AddNewDataSourceEndpoint } from "@/components/datasources/AddNewDataSourceEndpoint";
 import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries";
 import { Title } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { AddNewDataSourceEndpoint } from "./AddNewDataSourceEndpoint";
 
 type DataSourceEndpointListProps = {
   projectId: string;

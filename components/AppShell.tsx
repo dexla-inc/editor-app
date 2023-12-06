@@ -97,7 +97,6 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                 tooltip="Logic Flows"
                 href={`/projects/${projectId}/editor/${currentPageId}/flows`}
               />
-
               <VariablesButton projectId={projectId} pageId={currentPageId} />
               <FileStorageButton />
               <ChangeHistoryPopover />

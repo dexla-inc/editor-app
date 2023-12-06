@@ -1,5 +1,5 @@
-import { decodeSchema, encodeSchema } from "./compression";
-import { Component } from "./editor";
+import { decodeSchema, encodeSchema } from "@/utils/compression";
+import { Component } from "@/utils/editor";
 
 export const copyToClipboard = (content: Component) => {
   try {

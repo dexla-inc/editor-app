@@ -1,3 +1,4 @@
+import { InformationAlert, SuccessAlert } from "@/components/Alerts";
 import { patchProject } from "@/requests/projects/mutations";
 import { getProject } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
@@ -13,7 +14,6 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
-import { InformationAlert, SuccessAlert } from "../Alerts";
 
 type Props = {
   projectId: string;
