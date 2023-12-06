@@ -853,7 +853,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Grid component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["grid", "background", "effects"],
+    modifiers: ["grid", "background", "border", "effects"],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
     allowedParentTypes: ["Grid", "GridColumn"],
