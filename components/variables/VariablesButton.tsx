@@ -1,9 +1,9 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { VariableForm } from "@/components/variables/VariableForm";
+import { VariableList } from "@/components/variables/VariableList";
 import { ButtonProps, Modal, SegmentedControl, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
-import { VariableList } from "./VariableList";
 
 type Props = ButtonProps & {
   pageId: string;

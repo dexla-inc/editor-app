@@ -1,3 +1,4 @@
+import { ErrorAlert } from "@/components/Alerts";
 import { Icon } from "@/components/Icon";
 import { AITextArea } from "@/components/ai/AITextArea";
 import { AIRequestTypes } from "@/requests/ai/types";
@@ -40,7 +41,6 @@ import { IconSparkles } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { MutableRefObject, useRef, useState } from "react";
-import { ErrorAlert } from "./Alerts";
 
 type ComponentGenerationProps = {
   componentBeingAddedId: MutableRefObject<string | undefined>;

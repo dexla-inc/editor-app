@@ -16,11 +16,11 @@ import {
 import Link from "next/link";
 
 import { LogicFlowFormModal } from "@/components/logic-flow/LogicFlowFormModal";
+import { VariablesButton } from "@/components/variables/VariablesButton";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { ErrorBoundary } from "react-error-boundary";
-import { VariablesButton } from "../variables/VariablesButton";
 
 export interface ShellProps extends AppShellProps {
   flow?: LogicFlowResponse;

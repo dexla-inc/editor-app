@@ -1,3 +1,4 @@
+import { Icon } from "@/components/Icon";
 import { LARGE_ICON_SIZE } from "@/utils/config";
 import {
   Box,
@@ -8,7 +9,6 @@ import {
   UnstyledButtonProps,
   useMantineTheme,
 } from "@mantine/core";
-import { Icon } from "../Icon";
 
 type IconTitleDescriptionButtonProps = {
   icon: string;

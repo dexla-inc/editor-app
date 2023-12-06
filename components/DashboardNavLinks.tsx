@@ -1,6 +1,6 @@
+import { DashboardNavLink } from "@/components/DashboardNavLink";
 import { Stack, Text } from "@mantine/core";
 import { useRouter } from "next/router";
-import { DashboardNavLink } from "./DashboardNavLink";
 
 export const DashboardNavLinks = () => {
   const router = useRouter();

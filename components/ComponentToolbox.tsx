@@ -1,3 +1,4 @@
+import { ActionIconTransparent } from "@/components/ActionIconTransparent";
 import { useDraggable } from "@/hooks/useDraggable";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useEditorStore } from "@/stores/editor";
@@ -16,7 +17,6 @@ import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback, useEffect, useMemo } from "react";
-import { ActionIconTransparent } from "./ActionIconTransparent";
 
 export const ComponentToolbox = () => {
   const isResizing = useEditorStore((state) => state.isResizing);

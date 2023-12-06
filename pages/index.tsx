@@ -1,12 +1,12 @@
-import { GetServerSidePropsContext } from "next";
-import { isMatchingUrl } from "./[page]";
-import { getByDomain } from "@/requests/projects/queries";
+import { Live } from "@/components/Live";
+import { isMatchingUrl } from "@/pages/[page]";
 import { getMostRecentDeployment } from "@/requests/deployments/queries";
 import { PageResponse } from "@/requests/pages/types";
+import { getByDomain } from "@/requests/projects/queries";
 import { useEditorStore } from "@/stores/editor";
-import { useEffect } from "react";
+import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
-import { Live } from "@/components/Live";
+import { useEffect } from "react";
 
 export const getServerSideProps = async ({
   req,

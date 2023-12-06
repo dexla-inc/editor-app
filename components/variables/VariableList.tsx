@@ -1,3 +1,4 @@
+import { VariableForm } from "@/components/variables/VariableForm";
 import { deleteVariable } from "@/requests/variables/mutations";
 import { listVariables } from "@/requests/variables/queries";
 import {
@@ -15,7 +16,6 @@ import { useDebouncedState, useDisclosure } from "@mantine/hooks";
 import { IconEdit, IconSearch, IconX } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { VariableForm } from "./VariableForm";
 
 type Props = {
   projectId: string;

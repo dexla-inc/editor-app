@@ -1,7 +1,7 @@
+import { Icon } from "@/components/Icon";
 import { ActionIcon, Tooltip } from "@mantine/core";
 import Link from "next/link";
 import { MouseEventHandler } from "react";
-import { Icon } from "./Icon";
 
 type BaseProps = {
   iconName: string;

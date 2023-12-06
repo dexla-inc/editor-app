@@ -1,4 +1,4 @@
-import { CardStyle, FocusRing, LoaderType } from "../projects/types";
+import { CardStyle, FocusRing, LoaderType } from "@/requests/projects/types";
 
 export type ThemeQueryParams = {
   websiteUrl?: string;

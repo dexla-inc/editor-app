@@ -1,3 +1,4 @@
+import { Icon } from "@/components/Icon";
 import { createDeployment } from "@/requests/deployments/mutations";
 import { getMostRecentDeployment } from "@/requests/deployments/queries";
 import { getProject } from "@/requests/projects/queries";
@@ -6,7 +7,6 @@ import { ICON_SIZE } from "@/utils/config";
 import { Button, Tooltip } from "@mantine/core";
 import { IconLink } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { Icon } from "./Icon";
 
 type Props = {
   projectId: string;

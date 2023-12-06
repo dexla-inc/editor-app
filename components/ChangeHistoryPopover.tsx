@@ -1,3 +1,4 @@
+import { Icon } from "@/components/Icon";
 import { SavingDisplay } from "@/components/SavingDisplay";
 import {
   debouncedUpdatePageState,
@@ -19,7 +20,6 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowBackUp } from "@tabler/icons-react";
 import { FC } from "react";
-import { Icon } from "./Icon";
 
 const convertTimestampToTimeTaken = (timestamp: number) => {
   const now = Date.now();

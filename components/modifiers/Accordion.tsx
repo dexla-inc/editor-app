@@ -1,9 +1,9 @@
+import { IconSelector } from "@/components/IconSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutBottombarCollapse } from "@tabler/icons-react";
-import { IconSelector } from "../IconSelector";
 import merge from "lodash.merge";
 
 const defaultInputValues = { variant: "default", icon: "" };
