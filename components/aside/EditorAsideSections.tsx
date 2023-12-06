@@ -1,3 +1,4 @@
+import intersection from "lodash/intersection";
 import { GenerateStylesAIButton } from "@/components/GenerateStylesAIButton";
 import { SidebarSection } from "@/components/SidebarSection";
 import { ActionsFlow } from "@/components/actions/ActionsFlow";
@@ -49,7 +50,7 @@ import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { Action, actionMapper } from "@/utils/actions";
 import { componentMapper } from "@/utils/componentMapper";
-import { getComponentById } from "@/utils/editor";
+import { getAllComponentsByIds, getComponentById } from "@/utils/editor";
 import { Modifiers } from "@/utils/modifiers";
 import {
   Box,
@@ -153,6 +154,10 @@ export const EditorAsideSections = () => {
     () => getComponentById(editorTree.root, selectedComponentId as string),
     [editorTree.root, selectedComponentId],
   );
+  const components = useMemo(
+    () => getAllComponentsByIds(editorTree.root, selectedComponentIds!),
+    [editorTree.root, selectedComponentIds],
+  );
 
   useEffect(() => {
     selectedComponentId !== openAction?.componentId &&
@@ -175,9 +180,11 @@ export const EditorAsideSections = () => {
   }
 
   const componentActions = component?.actions ?? [];
-  const mappedComponent = componentMapper[component?.name as string];
+  const mappedModifiers = intersection(
+    ...components.map((c) => componentMapper[c?.name as string]?.modifiers),
+  );
 
-  const sections = mappedComponent?.modifiers?.map((id) => {
+  const sections = mappedModifiers?.map((id) => {
     const modifier = sectionMapper[id];
 
     return {
