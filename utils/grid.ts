@@ -5,7 +5,7 @@ import crawl from "tree-crawl";
 export const calculateGridSizes = (tree: Component) => {
   const setColumnSpan = useEditorStore.getState().setColumnSpan;
   const componentResizedMap: { [parentId: string]: Component } = {};
-  console.log(tree);
+
   crawl(
     tree,
     (node, context) => {

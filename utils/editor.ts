@@ -436,7 +436,6 @@ export const replaceTilesData = (
   crawl(
     tree.root,
     (node) => {
-      console.log(node);
       if (node.description?.endsWith(".tile")) {
         const name = node.description?.replace(".tile", "");
         const tile = tiles.find((t) => t.name === `${name}Tile`);

@@ -54,14 +54,9 @@ export default function Playground() {
       setErrorText("");
 
       const result = await anyPrompt(model, prompt, base64Image);
-      console.log(result);
       setAiResponse(result);
     }
   };
-
-  useEffect(() => {
-    console.log(prompt);
-  }, [prompt]);
 
   useEffect(() => {
     let newPrompt;

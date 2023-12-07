@@ -215,7 +215,7 @@ export default function PagesStep({
       setIsLoading(false);
       return createdPages;
     } catch (error) {
-      console.log({ error });
+      console.error({ error });
       stopLoading({
         id: "creating-pages",
         title: "Error Creating Pages",

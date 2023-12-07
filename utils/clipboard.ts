@@ -6,7 +6,7 @@ export const copyToClipboard = (content: Component) => {
     const _content = encodeSchema(JSON.stringify(content));
     localStorage.setItem("component", _content);
   } catch (error) {
-    console.log((error as Error).message);
+    console.error((error as Error).message);
   }
 };
 
@@ -17,6 +17,6 @@ export const pasteFromClipboard = () => {
     const _content = JSON.parse(decodeSchema(content));
     return _content;
   } catch (error) {
-    console.log((error as Error).message);
+    console.error((error as Error).message);
   }
 };
