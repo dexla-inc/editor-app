@@ -17,7 +17,7 @@ const NavbarComponent = ({ renderTree, component, ...props }: Props) => {
 
   const backgroundColor = getColorFromTheme(theme, bg);
 
-  merge(componentProps, { style: { backgroundColor, ...props.style } });
+  merge(componentProps, { style: { ...props.style, backgroundColor } });
 
   return (
     <Box display="grid" {...component.props} {...props}>
