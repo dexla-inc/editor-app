@@ -136,7 +136,6 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     }
 
     const selectedComponentId = useEditorStore.getState().selectedComponentId;
-
     const copy = cloneDeep(editorTree);
 
     if (!selectedComponentId || selectedComponentId === "root")
@@ -145,12 +144,11 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     let targetId = selectedComponentId;
     let componentIndex = 0;
 
-    const isSpecialComponents = [
-      "Grid",
-      "GridColumn",
-      "Alert",
-      "Accordion",
-    ].includes(componentToPaste.name);
+    const isSpecialComponents = ["GridColumn", "Alert", "Accordion"].includes(
+      componentToPaste.name,
+    );
+    const isGridItems = ["Grid", "GridColumn"].includes(componentToPaste.name);
+
     const isLayoutCategory =
       structureMapper[componentToPaste.name!].category === "Layout";
 
@@ -176,7 +174,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       componentToPaste,
       {
         id: targetId,
-        edge: "bottom",
+        edge: isGridItems ? "center" : "top",
       },
       componentIndex,
     );

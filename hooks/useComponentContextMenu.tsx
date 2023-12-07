@@ -1,16 +1,7 @@
-import {
-  IconBoxMargin,
-  IconBoxModel,
-  IconClipboardCopy,
-  IconClipboardData,
-  IconClipboardPlus,
-  IconContainer,
-  IconCopy,
-  IconTrash,
-} from "@tabler/icons-react";
 import { useContextMenu } from "@/contexts/ContextMenuProvider";
 import { ClipboardProps, useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { copyToClipboard } from "@/utils/clipboard";
 import { structureMapper } from "@/utils/componentMapper";
 import { NAVBAR_WIDTH } from "@/utils/config";
 import {
@@ -23,6 +14,16 @@ import {
   removeComponent,
   removeComponentFromParent,
 } from "@/utils/editor";
+import {
+  IconBoxMargin,
+  IconBoxModel,
+  IconClipboardCopy,
+  IconClipboardData,
+  IconClipboardPlus,
+  IconContainer,
+  IconCopy,
+  IconTrash,
+} from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
 
@@ -151,7 +152,9 @@ export const useComponentContextMenu = () => {
 
   const copyComponent = useCallback(
     (component: Component) => {
-      setCopiedComponent(getComponentById(editorTree.root, component.id!)!);
+      const copiedComponent = getComponentById(editorTree.root, component.id!)!;
+      setCopiedComponent(copiedComponent);
+      copyToClipboard(copiedComponent);
     },
     [setCopiedComponent, editorTree.root],
   );
