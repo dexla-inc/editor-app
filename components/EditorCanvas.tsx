@@ -8,7 +8,7 @@ import { IFrame } from "@/components/IFrame";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
-import { componentMapper } from "@/utils/componentMapper";
+import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import { HEADER_HEIGHT } from "@/utils/config";
 import {
   Component,
@@ -30,7 +30,7 @@ type Props = {
 
 const EditableComponentContainer = ({ children, component }: any) => {
   const isSelected = useEditorStore(
-      (state) => state.selectedComponentIds?.includes(component.id),
+    (state) => state.selectedComponentIds?.includes(component.id),
   );
 
   return (
@@ -47,6 +47,7 @@ const EditableComponentContainer = ({ children, component }: any) => {
 const EditorCanvasComponent = ({ projectId }: Props) => {
   const undo = useTemporalStore((state) => state.undo);
   const redo = useTemporalStore((state) => state.redo);
+  const pastStates = useTemporalStore((state) => state.pastStates);
   const copiedComponent = useEditorStore((state) => state.copiedComponent);
   const setCopiedComponent = useEditorStore(
     (state) => state.setCopiedComponent,
@@ -97,7 +98,13 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       setSelectedComponentIds(() => []);
       setEditorTree(copy, { action: `Removed ${comp?.name}` });
     }
-  }, [editorTree, setEditorTree, setSelectedComponentId, isPreviewMode]);
+  }, [
+    editorTree,
+    setEditorTree,
+    setSelectedComponentId,
+    setSelectedComponentIds,
+    isPreviewMode,
+  ]);
 
   const copySelectedComponent = useCallback(() => {
     const selectedComponentId = useEditorStore.getState().selectedComponentId;
@@ -132,12 +139,27 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
 
     const copy = cloneDeep(editorTree);
 
-    if (!selectedComponentId) return "content-wrapper";
-    if (selectedComponentId === "root") return "content-wrapper";
+    if (!selectedComponentId || selectedComponentId === "root")
+      return "content-wrapper";
     const component = getComponentById(editorTree.root, selectedComponentId);
     let targetId = selectedComponentId;
     let componentIndex = 0;
-    if (component?.blockDroppingChildrenInside) {
+
+    const isSpecialComponents = [
+      "Grid",
+      "GridColumn",
+      "Alert",
+      "Accordion",
+    ].includes(componentToPaste.name);
+    const isLayoutCategory =
+      structureMapper[componentToPaste.name!].category === "Layout";
+
+    const addAsSiblingFlag =
+      component?.blockDroppingChildrenInside ||
+      isSpecialComponents ||
+      isLayoutCategory;
+
+    if (addAsSiblingFlag) {
       const parentComponent = getComponentParent(
         editorTree.root,
         selectedComponentId,
@@ -146,7 +168,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       componentIndex =
         getComponentIndex(parentComponent!, selectedComponentId!) + 1;
     } else {
-      componentIndex = component?.children!.length ?? 0;
+      componentIndex = component?.children?.length ?? 0;
     }
 
     const newSelectedId = addComponent(
@@ -175,6 +197,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       "mod+Z",
       () => {
         if (!isPreviewMode) {
+          if (pastStates.length <= 1) return; // to avoid rendering a blank page
           undo();
         }
       },
@@ -226,6 +249,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       "mod+Z",
       () => {
         if (!isPreviewMode) {
+          if (pastStates.length <= 1) return; // to avoid rendering a blank page
           undo();
         }
       },

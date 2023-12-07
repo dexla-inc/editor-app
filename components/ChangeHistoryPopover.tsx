@@ -19,7 +19,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowBackUp } from "@tabler/icons-react";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 
 const convertTimestampToTimeTaken = (timestamp: number) => {
   const now = Date.now();
@@ -44,7 +44,10 @@ export const ChangeHistoryPopover: FC = () => {
       timestamp: state.tree.timestamp,
     },
   }));
-  const { changeHistory, pastStates, undo, redo, futureStates } =
+
+  const pageId = useEditorStore((state) => state.currentPageId);
+
+  const { changeHistory, pastStates, undo, redo, futureStates, clear } =
     useTemporalStore((state) => ({
       changeHistory: [
         ...state.pastStates,
@@ -59,13 +62,23 @@ export const ChangeHistoryPopover: FC = () => {
                 timestamp: tree?.timestamp,
               });
         },
-        [] as Array<{ name?: string; timestamp?: number }>,
+        [] as Array<{
+          name?: string;
+          timestamp?: number;
+        }>,
       ),
       pastStates: state.pastStates,
       futureStates: state.futureStates,
       undo: state.undo,
       redo: state.redo,
+      clear: state.clear,
     }));
+
+  useEffect(
+    () => clear(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [pageId],
+  );
 
   const [opened, { close, open }] = useDisclosure(false);
   const theme = useMantineTheme();
@@ -151,7 +164,7 @@ export const ChangeHistoryPopover: FC = () => {
                 .map((item: any, index: number) => {
                   const currentHistoryIndex = pastStates.length - 1;
                   const color =
-                    pastStates.length - 1 === index
+                    currentHistoryIndex === index
                       ? "indigo"
                       : theme.colors.dark[9];
                   return (
