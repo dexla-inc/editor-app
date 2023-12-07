@@ -1324,7 +1324,7 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["navbar", "background", "border"],
+    modifiers: ["navbar", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
