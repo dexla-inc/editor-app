@@ -1,6 +1,3 @@
-import { Box, Text, px, useMantineTheme } from "@mantine/core";
-import { PropsWithChildren, useEffect, useState } from "react";
-import { Resizable } from "re-resizable";
 import { useEditorStore } from "@/stores/editor";
 import {
   getComponentById,
@@ -8,8 +5,11 @@ import {
   getComponentParent,
   updateTreeComponent,
 } from "@/utils/editor";
-import cloneDeep from "lodash.clonedeep";
 import { calculateGridSizes } from "@/utils/grid";
+import { Box, Text, px, useMantineTheme } from "@mantine/core";
+import cloneDeep from "lodash.clonedeep";
+import { Resizable } from "re-resizable";
+import { PropsWithChildren, useEffect, useState } from "react";
 
 export const GridColumn = ({
   children,
@@ -46,9 +46,9 @@ export const GridColumn = ({
   }, [columnSpans, props.id, setColumnSpan, span]);
 
   const handleOffset = px(
-    Object.keys(theme.spacing).includes(parent?.props!.gap)
-      ? theme.spacing[parent?.props!.gap ?? "xs"]
-      : parent?.props!.gap ?? theme.spacing.xs,
+    Object.keys(theme.spacing).includes(parent?.props?.gap)
+      ? theme.spacing[parent?.props?.gap ?? "xs"]
+      : parent?.props?.gap ?? theme.spacing.xs,
   );
 
   return (
