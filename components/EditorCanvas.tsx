@@ -148,14 +148,19 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       componentToPaste.name,
     );
     const isGridItems = ["Grid", "GridColumn"].includes(componentToPaste.name);
-
+    const isTargetGridItems = ["Grid", "GridColumn"].includes(component?.name!);
     const isLayoutCategory =
       structureMapper[componentToPaste.name!].category === "Layout";
+    const isAllowedGridMatch =
+      isGridItems === isTargetGridItems &&
+      component?.name === componentToPaste.name;
+    const isAllowedSibling = isLayoutCategory && !isTargetGridItems;
 
     const addAsSiblingFlag =
       component?.blockDroppingChildrenInside ||
       isSpecialComponents ||
-      isLayoutCategory;
+      isAllowedSibling ||
+      isAllowedGridMatch;
 
     if (addAsSiblingFlag) {
       const parentComponent = getComponentParent(
