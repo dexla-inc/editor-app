@@ -13,25 +13,51 @@ const defaultTableValues = {
   style: { width: "100%" },
 };
 
+const badgeColor = {
+  Banned: "Danger.9",
+  Pending: "Background.9",
+  Active: "Success.9",
+};
+
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
   const data = props.data ?? [
-    { position: 6, mass: 12.011, symbol: "C", name: "Carbon" },
-    { position: 7, mass: 14.007, symbol: "N", name: "Nitrogen" },
-    { position: 39, mass: 88.906, symbol: "Y", name: "Yttrium" },
-    { position: 56, mass: 137.33, symbol: "Ba", name: "Barium" },
-    { position: 58, mass: 140.12, symbol: "Ce", name: "Cerium" },
-    { position: 1, mass: 1.008, symbol: "H", name: "Hydrogen" },
-    { position: 8, mass: 15.999, symbol: "O", name: "Oxygen" },
-    { position: 20, mass: 40.08, symbol: "Ca", name: "Calcium" },
-    { position: 47, mass: 107.87, symbol: "Ag", name: "Silver" },
-    { position: 63, mass: 151.96, symbol: "Eu", name: "Europium" },
+    {
+      name: "Angelique Morse",
+      phoneNumber: "500-268-4826",
+      company: "Wuckert Inc",
+      status: "Banned",
+    },
+    {
+      name: "Ariana Lang",
+      phoneNumber: "408-439-8033",
+      company: "Feest Group",
+      status: "Pending",
+    },
+    {
+      name: "Aspen Schmitt",
+      phoneNumber: "531-492-6028",
+      company: "Kinh, Marquardt and Crist",
+      status: "Banned",
+    },
+    {
+      name: "Brycen Jimenez",
+      phoneNumber: "201-465-1954",
+      company: "Rempel, Hand and Herzog",
+      status: "Active",
+    },
+    {
+      name: "Chase Day",
+      phoneNumber: "285-840-9338",
+      company: "Mraz, Donnelly and Collins",
+      status: "Banned",
+    },
   ];
 
   return {
     id: nanoid(),
     name: "Container",
-    description: "Table",
+    description: "Table Container",
     props: {
       style: {
         display: "flex",
@@ -46,15 +72,15 @@ export const jsonStructure = (props?: any): Component => {
       {
         id: nanoid(),
         name: "Table",
-        description: "Table Body",
+        description: "Table",
         props: { ...defaultTableValues, ...(props.props || {}) },
         children: [
           {
             id: nanoid(),
-            name: "TableContent",
+            name: "TableHead",
             description: "Table Head",
             blockDroppingChildrenInside: true,
-            props: { type: "thead" },
+            props: { style: {} },
             children: [
               {
                 id: nanoid(),
@@ -67,7 +93,9 @@ export const jsonStructure = (props?: any): Component => {
                     id: nanoid(),
                     name: "TableCell",
                     description: "Table Cell",
-                    props: { type: "th" },
+                    props: {
+                      style: {},
+                    },
                     children: [
                       {
                         id: nanoid(),
@@ -75,6 +103,7 @@ export const jsonStructure = (props?: any): Component => {
                         description: "Checkbox",
                         props: {
                           style: {
+                            marginLeft: "10px",
                             width: "auto",
                             height: "auto",
                           },
@@ -84,26 +113,36 @@ export const jsonStructure = (props?: any): Component => {
                       },
                     ],
                   },
-                  ...Object.keys(data[0]).map((header) => ({
-                    id: nanoid(),
-                    key: nanoid(),
-                    name: "TableCell",
-                    description: "Table Cell",
-                    props: { type: "th" },
-                    children: [
-                      {
-                        id: nanoid(),
-                        name: "Text",
-                        description: "Text",
-                        props: { children: header },
-                      },
-                    ],
-                  })),
+                  ...["Name", "Phone Number", "Company", "Status", ""].map(
+                    (header) => ({
+                      id: nanoid(),
+                      key: nanoid(),
+                      name: "TableCell",
+                      description: "Table Cell",
+                      props: { style: {} },
+                      children: [
+                        {
+                          id: nanoid(),
+                          name: "Text",
+                          description: "Text",
+                          props: { children: header },
+                        },
+                      ],
+                    }),
+                  ),
                 ],
               },
-              ...data.map((item: any) => ({
+            ],
+          },
+          {
+            id: nanoid(),
+            name: "TableBody",
+            description: "Table Body",
+            blockDroppingChildrenInside: true,
+            props: { style: {} },
+            children: [
+              ...data.map((row: any) => ({
                 id: nanoid(),
-                key: nanoid(),
                 name: "TableRow",
                 description: "Table Row",
                 blockDroppingChildrenInside: true,
@@ -113,7 +152,7 @@ export const jsonStructure = (props?: any): Component => {
                     id: nanoid(),
                     name: "TableCell",
                     description: "Table Cell",
-                    props: { type: "td" },
+                    props: { style: {} },
                     children: [
                       {
                         id: nanoid(),
@@ -121,6 +160,7 @@ export const jsonStructure = (props?: any): Component => {
                         description: "Checkbox",
                         props: {
                           style: {
+                            marginLeft: "10px",
                             width: "auto",
                             height: "auto",
                           },
@@ -130,23 +170,202 @@ export const jsonStructure = (props?: any): Component => {
                       },
                     ],
                   },
-                  ...Object.keys(item).map((data) => ({
+                  {
                     id: nanoid(),
                     key: nanoid(),
                     name: "TableCell",
                     description: "Table Cell",
-                    props: { type: "th" },
+                    props: { style: {} },
+                    children: [
+                      {
+                        id: nanoid(),
+                        name: "Container",
+                        description: "Container",
+                        props: {
+                          style: {
+                            alignItems: "center",
+                            gap: "10px",
+                          },
+                        },
+                        children: [
+                          {
+                            id: nanoid(),
+                            name: "Avatar",
+                            description: "Avatar",
+                            blockDroppingChildrenInside: true,
+                            props: {
+                              style: {
+                                borderRadius: "50px",
+                              },
+                              children: row.name
+                                .split(" ")
+                                .map((name: string) => name[0])
+                                .join(""),
+                            },
+                          },
+                          {
+                            id: nanoid(),
+                            name: "Text",
+                            description: "Text",
+                            blockDroppingChildrenInside: true,
+                            props: {
+                              style: {},
+                              children: row.name,
+                            },
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    id: nanoid(),
+                    key: nanoid(),
+                    name: "TableCell",
+                    description: "Table Cell",
+                    props: {},
                     children: [
                       {
                         id: nanoid(),
                         name: "Text",
                         description: "Text",
+                        blockDroppingChildrenInside: true,
                         props: {
-                          children: (item as Record<string, any>)[data],
+                          children: row.phoneNumber,
                         },
                       },
                     ],
-                  })),
+                  },
+                  {
+                    id: nanoid(),
+                    key: nanoid(),
+                    name: "TableCell",
+                    description: "Table Cell",
+                    props: {},
+                    children: [
+                      {
+                        id: nanoid(),
+                        name: "Text",
+                        description: "Text",
+                        blockDroppingChildrenInside: true,
+                        props: {
+                          children: row.company,
+                        },
+                      },
+                    ],
+                  },
+                  {
+                    id: nanoid(),
+                    key: nanoid(),
+                    name: "TableCell",
+                    description: "Table Cell",
+                    props: {},
+                    children: [
+                      {
+                        id: nanoid(),
+                        name: "Badge",
+                        description: "Badge",
+                        children: [],
+                        props: {
+                          children: row.status,
+                          variant: "light",
+                          radius: "xl",
+                          size: "md",
+                          color:
+                            badgeColor[row.status as keyof typeof badgeColor],
+                          ...(props.props || {}),
+                        },
+                        blockDroppingChildrenInside: true,
+                      },
+                    ],
+                  },
+                  {
+                    id: nanoid(),
+                    key: nanoid(),
+                    name: "TableCell",
+                    description: "Table Cell",
+                    props: { style: {} },
+                    children: [
+                      {
+                        id: nanoid(),
+                        name: "Container",
+                        description: "Container",
+                        props: {
+                          style: {
+                            alignItems: "center",
+                            gap: "10px",
+                          },
+                        },
+                        children: [
+                          {
+                            id: nanoid(),
+                            name: "ButtonIcon",
+                            description: "ButtonIcon",
+                            props: {
+                              style: {
+                                width: "auto",
+                                height: "auto",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              },
+                              color: "Primary",
+                            },
+                            blockDroppingChildrenInside: true,
+                            children: [
+                              {
+                                id: nanoid(),
+                                name: "Icon",
+                                description: "Icon",
+                                props: {
+                                  style: {
+                                    width: "30px",
+                                    height: "30px",
+                                    borderRadius: "50px",
+                                  },
+                                  name: "IconPencil",
+                                },
+                                children: [],
+                                blockDroppingChildrenInside: true,
+                              },
+                            ],
+                          },
+                          {
+                            id: nanoid(),
+                            name: "ButtonIcon",
+                            description: "ButtonIcon",
+                            props: {
+                              style: {
+                                width: "auto",
+                                height: "auto",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              },
+                              color: "Primary",
+                            },
+                            blockDroppingChildrenInside: true,
+                            children: [
+                              {
+                                id: nanoid(),
+                                name: "Icon",
+                                description: "Icon",
+                                props: {
+                                  style: {
+                                    width: "30px",
+                                    height: "30px",
+                                    borderRadius: "50px",
+                                  },
+                                  name: "IconDotsVertical",
+                                },
+                                children: [],
+                                blockDroppingChildrenInside: true,
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
                 ],
               })),
             ],

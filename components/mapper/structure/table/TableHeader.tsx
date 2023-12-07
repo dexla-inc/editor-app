@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 export const tableHeader = {
   id: nanoid(),
   name: "Container",
-  description: "Table Header",
+  description: "Table Controls",
   blockDroppingChildrenInside: true,
   props: {
     style: {
