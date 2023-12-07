@@ -197,7 +197,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       "mod+Z",
       () => {
         if (!isPreviewMode) {
-          if (pastStates.length <= 1) return; // to avoid returning a blank page
+          if (pastStates.length <= 1) return; // to avoid rendering a blank page
           undo();
         }
       },
@@ -249,7 +249,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       "mod+Z",
       () => {
         if (!isPreviewMode) {
-          if (pastStates.length <= 1) return; // to avoid returning a blank page
+          if (pastStates.length <= 1) return; // to avoid rendering a blank page
           undo();
         }
       },
