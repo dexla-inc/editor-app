@@ -48,7 +48,7 @@ export const ChangeHistoryPopover: FC = () => {
 
   const pageId = useEditorStore((state) => state.currentPageId);
 
-  const { changeHistory, pastStates, undo, redo, futureStates } =
+  const { changeHistory, pastStates, undo, redo, futureStates, clear } =
     useTemporalStore((state) => ({
       changeHistory: [
         ...state.pastStates,
@@ -72,23 +72,14 @@ export const ChangeHistoryPopover: FC = () => {
       futureStates: state.futureStates,
       undo: state.undo,
       redo: state.redo,
+      clear: state.clear,
     }));
 
   useEffect(
-    () => setHistoryIndex(pastStates.length),
+    () => clear(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [pageId],
   );
-
-  const filteredPastStates = pastStates.filter(
-    (_, index) => index > historyIndex,
-  );
-
-  const filteredHistory = changeHistory.filter(
-    (_, index) => index > historyIndex - 1,
-  );
-
-  const setButtonDisabled = filteredPastStates.length < 1;
 
   const [opened, { close, open }] = useDisclosure(false);
   const theme = useMantineTheme();
@@ -122,7 +113,7 @@ export const ChangeHistoryPopover: FC = () => {
           <ActionIcon
             variant="default"
             onClick={() => handlePageStateChange(undo)}
-            disabled={setButtonDisabled}
+            disabled={pastStates.length < 2}
             radius={"4px 0px 0px 4px"}
             size="sm"
           >
@@ -170,11 +161,11 @@ export const ChangeHistoryPopover: FC = () => {
                 overflowY: "auto",
               }}
             >
-              {filteredHistory
+              {changeHistory
                 .map((item: any, index: number) => {
                   const currentHistoryIndex = pastStates.length - 1;
                   const color =
-                    currentHistoryIndex === index + historyIndex
+                    currentHistoryIndex === index
                       ? "indigo"
                       : theme.colors.dark[9];
                   return (
@@ -188,7 +179,7 @@ export const ChangeHistoryPopover: FC = () => {
                       onClick={(e) => {
                         e.stopPropagation();
                         const newChangeHistoryIndex =
-                          currentHistoryIndex - index - historyIndex;
+                          currentHistoryIndex - index;
 
                         newChangeHistoryIndex >= 0
                           ? handlePageStateChange(() =>
