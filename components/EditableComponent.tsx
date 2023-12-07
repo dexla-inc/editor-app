@@ -194,13 +194,14 @@ export const EditableComponent = ({
 
   const isWidthPercentage = propsWithOverwrites?.style?.width?.endsWith("%");
   const isHeightPercentage = propsWithOverwrites?.style?.height?.endsWith("%");
+  if (component.name === "Navbar") console.log(component);
   merge(propsWithOverwrites, {
     style: {
       // setting the inner div width/height. If percentage, the inner div size is 100% and the actual size is propagated
       // up to the parent element (the green border div)
       width: isWidthPercentage ? "100%" : propsWithOverwrites?.style?.width,
       height: isHeightPercentage ? "100%" : propsWithOverwrites?.style?.height,
-      position: "relative",
+      position: component.props?.style?.position ?? "relative",
     },
     disabled:
       component.props?.disabled ??

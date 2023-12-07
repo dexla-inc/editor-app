@@ -1,4 +1,3 @@
-import intersection from "lodash/intersection";
 import { GenerateStylesAIButton } from "@/components/GenerateStylesAIButton";
 import { SidebarSection } from "@/components/SidebarSection";
 import { ActionsFlow } from "@/components/actions/ActionsFlow";
@@ -63,6 +62,7 @@ import {
 } from "@mantine/core";
 import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
+import intersection from "lodash/intersection";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 
 type SectionsMapper = {
