@@ -187,15 +187,17 @@ export const EditorAsideSections = () => {
   const sections = mappedModifiers?.map((id) => {
     const modifier = sectionMapper[id];
 
+    const componentName = component?.name ?? "content-wrapper";
+
     return {
       id: id,
       label: modifier.label,
       icon: modifier.icon,
       initiallyOpened:
-        initiallyOpenedModifiersByComponent[component!.name]?.includes(id),
+        initiallyOpenedModifiersByComponent[componentName]?.includes(id),
       Component: modifier.Modifier,
       onClick: (id: string, isOpen: boolean) => {
-        setInitiallyOpenedModifiersByComponent(component!.name, id, isOpen);
+        setInitiallyOpenedModifiersByComponent(componentName, id, isOpen);
       },
     };
   });
