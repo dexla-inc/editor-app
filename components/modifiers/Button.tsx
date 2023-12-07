@@ -32,7 +32,7 @@ export const Modifier = withModifier(
         {
           color: "Primary.6",
           textColor: "PrimaryText.6",
-            compact: theme.hasCompactButtons,
+          compact: theme.hasCompactButtons,
         },
         {
           value: selectedComponent.props?.children,
@@ -61,23 +61,63 @@ export const Modifier = withModifier(
               });
             }}
           />
-            <Stack spacing={2}>
-                <Text size="xs" fw={500}>
-                    Width
-                </Text>
-                <SegmentedControl
-                    size="xs"
-                    data={[
-                        { label: "Fit to Content", value: "fit-content" },
-                        { label: "Full Width", value: "100%" },
-                    ]}
-                    {...form.getInputProps("width")}
-                    onChange={(value) => {
-                        form.setFieldValue("width", value as string);
-                        debouncedTreeUpdate(selectedComponentIds, { style: { width: value } });
-                    }}
-                />
-            </Stack>
+          <Select
+            label="Variant"
+            size="xs"
+            data={[
+              { label: "Filled", value: "filled" },
+              { label: "Light", value: "light" },
+              { label: "Outline", value: "outline" },
+              { label: "Default", value: "default" },
+              { label: "Subtle", value: "subtle" },
+            ]}
+            {...form.getInputProps("variant")}
+            onChange={(value) => {
+              form.setFieldValue("variant", value as string);
+              debouncedTreeUpdate(selectedComponentIds, {
+                variant: value,
+              });
+            }}
+          />
+          <ThemeColorSelector
+            label="Background Color"
+            {...form.getInputProps("color")}
+            onChange={(value: string) => {
+              form.setFieldValue("color", value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                color: value,
+              });
+            }}
+          />
+          <ThemeColorSelector
+            label="Text Color"
+            {...form.getInputProps("textColor")}
+            onChange={(value: string) => {
+              form.setFieldValue("textColor", value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                textColor: value,
+              });
+            }}
+          />
+          <Stack spacing={2}>
+            <Text size="xs" fw={500}>
+              Width
+            </Text>
+            <SegmentedControl
+              size="xs"
+              data={[
+                { label: "Fit to Content", value: "fit-content" },
+                { label: "Full Width", value: "100%" },
+              ]}
+              {...form.getInputProps("width")}
+              onChange={(value) => {
+                form.setFieldValue("width", value as string);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  style: { width: value },
+                });
+              }}
+            />
+          </Stack>
           <SwitchSelector
             topLabel="Compact"
             {...form.getInputProps("compact")}
@@ -103,24 +143,6 @@ export const Modifier = withModifier(
               });
             }}
           />
-          <Select
-            label="Variant"
-            size="xs"
-            data={[
-              { label: "Filled", value: "filled" },
-              { label: "Light", value: "light" },
-              { label: "Outline", value: "outline" },
-              { label: "Default", value: "default" },
-              { label: "Subtle", value: "subtle" },
-            ]}
-            {...form.getInputProps("variant")}
-            onChange={(value) => {
-              form.setFieldValue("variant", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                variant: value,
-              });
-            }}
-          />
           <SizeSelector
             {...form.getInputProps("size")}
             onChange={(value) => {
@@ -130,28 +152,7 @@ export const Modifier = withModifier(
               });
             }}
           />
-          <ThemeColorSelector
-            label="Background Color"
-            {...form.getInputProps("color")}
-            onChange={(value: string) => {
-              form.setFieldValue("color", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                color: value,
-              });
-            }}
-          />
-          <ThemeColorSelector
-            label="Text Color"
-            {...form.getInputProps("textColor")}
-            onChange={(value: string) => {
-              form.setFieldValue("textColor", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                textColor: value,
-              });
-            }}
-          />
-
-        {/* Adding a react component as a property doesn't work -
+          {/* Adding a react component as a property doesn't work -
         Error: Objects are not valid as a React child (found: object with keys {key, ref, props, _owner, _store}). 
         If you meant to render a collection of children, use an array instead. */}
           <IconSelector

@@ -1,6 +1,3 @@
-import { Box, Text, px, useMantineTheme } from "@mantine/core";
-import { PropsWithChildren, useEffect, useState } from "react";
-import { Resizable } from "re-resizable";
 import { useEditorStore } from "@/stores/editor";
 import {
   getComponentById,
@@ -8,8 +5,11 @@ import {
   getComponentParent,
   updateTreeComponent,
 } from "@/utils/editor";
-import cloneDeep from "lodash.clonedeep";
 import { calculateGridSizes } from "@/utils/grid";
+import { Box, Text, px, useMantineTheme } from "@mantine/core";
+import cloneDeep from "lodash.clonedeep";
+import { Resizable } from "re-resizable";
+import { PropsWithChildren, useEffect, useState } from "react";
 
 export const GridColumn = ({
   children,
@@ -86,7 +86,7 @@ export const GridColumn = ({
         }}
         onResizeStart={(e: any, direction: any, ref: any, delta: any) => {
           const rect = ref.getBoundingClientRect();
-          const initialSpan = ref.style.gridColumn.split(" ")[1];
+          const initialSpan = ref.style?.gridColumn.split(" ")[1];
           setInitialWidth(Math.floor(rect.width));
           setIsResizing(true);
           setInitialSpan(parseInt(initialSpan, 10));
@@ -98,7 +98,7 @@ export const GridColumn = ({
 
             if (nextSiblingEl) {
               const initialNextSiblingSpan =
-                nextSiblingEl.style.gridColumn.split(" ")[1];
+                nextSiblingEl.style?.gridColumn.split(" ")[1];
 
               if (initialNextSiblingSpan) {
                 setInitialNextSiblingSpan(parseInt(initialNextSiblingSpan, 10));

@@ -1,10 +1,11 @@
+import { globalStyles } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
-import { Box } from "@mantine/core";
+import { Box, MantineSize } from "@mantine/core";
 import * as Icons from "@tabler/icons-react";
 
 type Props = {
   name: string;
-  size?: number;
+  size?: number | MantineSize;
   bg?: string;
 } & Icons.TablerIconsProps;
 
@@ -15,6 +16,9 @@ export const Icon = ({ name, size = ICON_SIZE, ...props }: Props) => {
   if (!IconToRender) {
     return null;
   }
+
+  const sizeAsNumber =
+    typeof size === "number" ? size : globalStyles.sizing.icon[size];
 
   return (
     <Box
@@ -29,7 +33,7 @@ export const Icon = ({ name, size = ICON_SIZE, ...props }: Props) => {
         borderRadius: props.style?.borderBottomLeftRadius,
       }}
     >
-      <IconToRender size={size} {...props} />
+      <IconToRender size={sizeAsNumber} {...props} />
     </Box>
   );
 };

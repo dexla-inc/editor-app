@@ -177,6 +177,7 @@ export const requiredModifiers: RequiredModifiers = {
   icon: {
     color: "Black.6",
     icon: "",
+    size: "sm",
   },
   divider: {
     color: "Neutral.9",

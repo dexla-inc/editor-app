@@ -4,6 +4,7 @@ import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
   Anchor,
   Col,
+  Flex,
   Grid,
   Input,
   Modal,
@@ -29,7 +30,7 @@ const allIconNames = Object.keys(Icons)
     (name) =>
       name !== "Icon" &&
       name !== "TablerIconsProps" &&
-      name !== "createReactComponent"
+      name !== "createReactComponent",
   )
   .map((name) => ({ original: name, spaced: toSpaced(name) }));
 
@@ -45,14 +46,14 @@ export const IconModal = ({ onIconSelect }: Props) => {
   const iconsPerPage = 30;
 
   const filteredIconNames = allIconNames.filter(({ spaced }) =>
-    spaced.toLowerCase().includes(searchQuery.toLowerCase())
+    spaced.toLowerCase().includes(searchQuery.toLowerCase()),
   );
   // Get current icons
   const indexOfLastIcon = currentPage * iconsPerPage;
   const indexOfFirstIcon = indexOfLastIcon - iconsPerPage;
   const currentIcons = filteredIconNames.slice(
     indexOfFirstIcon,
-    indexOfLastIcon
+    indexOfLastIcon,
   );
 
   const openModal = () => setIsModalOpen(true);
@@ -64,8 +65,10 @@ export const IconModal = ({ onIconSelect }: Props) => {
 
   return (
     <Stack>
-      <Anchor onClick={openModal} size="sm">
-        Change Icon <Icon name="IconExternalLink" size={ICON_SIZE} />
+      <Anchor onClick={openModal} size="xs">
+        <Flex gap="xs">
+          Change Icon <Icon name="IconExternalLink" size={ICON_SIZE} />
+        </Flex>
       </Anchor>
       <Modal
         opened={isModalOpen}

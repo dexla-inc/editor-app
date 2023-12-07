@@ -1,5 +1,10 @@
 import { MantineThemeExtended } from "@/stores/editor";
-import { CSSObject, DEFAULT_THEME, MantineTheme } from "@mantine/core";
+import {
+  CSSObject,
+  DEFAULT_THEME,
+  MantineSize,
+  MantineTheme,
+} from "@mantine/core";
 
 // Global styles for the editor
 const globalStyles = {
@@ -8,6 +13,15 @@ const globalStyles = {
     backgroundImage: `radial-gradient(#ced4da 1px, transparent 1px), radial-gradient( #ced4da 1px, transparent 1px)`,
     backgroundSize: "20px 20px",
     backgroundPosition: "0 0, 50px 50px",
+  },
+  sizing: {
+    icon: {
+      xs: 16,
+      sm: 20,
+      md: 24,
+      lg: 32,
+      xl: 40,
+    } as Record<MantineSize, any>,
   },
 };
 

@@ -1,5 +1,3 @@
-import { transpile } from "typescript";
-import { createBrowserHistory } from "history";
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { BindPlaceDataActionForm } from "@/components/actions/BindPlaceDataActionForm";
 import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
@@ -31,9 +29,12 @@ import { CloseModalFlowActionForm } from "@/components/actions/logic-flow-forms/
 import { ClosePopOverFlowActionForm } from "@/components/actions/logic-flow-forms/ClosePopOverFlowActionForm";
 import { CustomJavascriptFlowActionForm } from "@/components/actions/logic-flow-forms/CustomJavascriptFlowActionForm";
 import { DebugFlowActionForm } from "@/components/actions/logic-flow-forms/DebugFlowActionForm";
+import { createBrowserHistory } from "history";
+import { transpile } from "typescript";
 
 import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableActionForm";
 import { BindVariableToChartFlowActionForm } from "@/components/actions/logic-flow-forms/BindVariableToChartFlowActionForm";
+import { ChangeVariableFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeVariableFlowActionForm";
 import { GoToUrlFlowActionForm } from "@/components/actions/logic-flow-forms/GoToUrlFlowActionForm";
 import { LoginFlowActionForm } from "@/components/actions/logic-flow-forms/LoginFlowActionForm";
 import { NavigationFlowActionForm } from "@/components/actions/logic-flow-forms/NavigationFlowActionForm";
@@ -43,7 +44,6 @@ import { OpenPopOverFlowActionForm } from "@/components/actions/logic-flow-forms
 import { OpenToastFlowActionForm } from "@/components/actions/logic-flow-forms/OpenToastFlowActionForm";
 import { ReloadComponentFlowActionForm } from "@/components/actions/logic-flow-forms/ReloadComponentFlowActionForm";
 import { TogglePropsFlowActionForm } from "@/components/actions/logic-flow-forms/TogglePropsFlowActionForm";
-import { ChangeVariableFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeVariableFlowActionForm";
 import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components/actions/logic-flow-forms/TriggerLogicFlowActionForm";
 import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { Options } from "@/components/modifiers/GoogleMap";
@@ -563,7 +563,7 @@ export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
     {} as Component,
   );
 
-  const isExpanded = selectedComponent?.props?.style.width !== "100px";
+  const isExpanded = selectedComponent?.props?.style?.width !== "100px";
   const name = isExpanded ? "IconChevronRight" : "IconChevronLeft";
   const width = isExpanded ? "100px" : "260px";
   const flexDirection = isExpanded ? "column" : "row";
