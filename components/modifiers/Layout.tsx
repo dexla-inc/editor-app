@@ -69,22 +69,22 @@ export const Modifier = withModifier(({ selectedComponent }) => {
 
       form.setValues({
         display: data.style?.display ?? defaultLayoutValues.display,
-        position: data.style.position ?? defaultLayoutValues.position,
-        flexWrap: data.style.flexWrap ?? defaultLayoutValues.flexWrap,
+        position: data.style?.position ?? defaultLayoutValues.position,
+        flexWrap: data.style?.flexWrap ?? defaultLayoutValues.flexWrap,
         flexDirection:
-          data.style.flexDirection ?? defaultLayoutValues.flexDirection,
-        rowGap: data.style.rowGap ?? defaultLayoutValues.rowGap,
-        columnGap: data.style.columnGap ?? defaultLayoutValues.columnGap,
-        alignItems: data.style.alignItems ?? defaultLayoutValues.alignItems,
-        flex: data.style.flex ?? defaultLayoutValues.flex,
+          data.style?.flexDirection ?? defaultLayoutValues.flexDirection,
+        rowGap: data.style?.rowGap ?? defaultLayoutValues.rowGap,
+        columnGap: data.style?.columnGap ?? defaultLayoutValues.columnGap,
+        alignItems: data.style?.alignItems ?? defaultLayoutValues.alignItems,
+        flex: data.style?.flex ?? defaultLayoutValues.flex,
         justifyContent:
-          data.style.justifyContent ?? defaultLayoutValues.justifyContent,
+          data.style?.justifyContent ?? defaultLayoutValues.justifyContent,
       });
 
       const isCustomFlex =
-        data.style.flex !== GROW_FLEX_DEFAULT &&
-        data.style.flex !== SHRINK_FLEX_DEFAULT &&
-        data.style.flex !== AUTO_FLEX_DEFAULT;
+        data.style?.flex !== GROW_FLEX_DEFAULT &&
+        data.style?.flex !== SHRINK_FLEX_DEFAULT &&
+        data.style?.flex !== AUTO_FLEX_DEFAULT;
 
       setCustomFlexInputVisible(isCustomFlex);
     }

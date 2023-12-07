@@ -1,4 +1,4 @@
-import { ActionIconDefault } from "@/components//ActionIconDefault";
+import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { QueryStringsForm } from "@/components/QueryStringsForm";
 import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
 import {

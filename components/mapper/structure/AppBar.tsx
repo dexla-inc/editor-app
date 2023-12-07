@@ -1,6 +1,7 @@
-import { defaultTheme } from "@/utils/branding";
+import { initialValues as initialGridValues } from "@/components/modifiers/Grid";
+import { initialValues as initialGridColumnValues } from "@/components/modifiers/GridColumn";
+import { GRAY_OUTLINE, defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
-import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -8,33 +9,31 @@ export const jsonStructure = (props?: any): Component => {
 
   return {
     id: nanoid(),
-    name: "AppBar",
-    description: "Page Heading",
-    fixedPosition: { position: "top", target: "content-wrapper" },
+    name: "Grid",
+    description: "App Bar",
+    fixedPosition: { position: "top", target: "main-content" },
     props: {
+      gap: "xs",
       style: {
-        borderBottomWidth: `1px`,
-        borderBottomStyle: `solid`,
-        borderBottomColor: theme.colors.Border ? "Border.6" : "gray.3",
-        padding: px(theme.spacing.lg),
-        height: "auto",
+        ...initialGridValues,
         width: "100%",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: theme.spacing.md,
+        height: "auto",
       },
-      ...(props.props || {}),
     },
     children: [
       {
         id: nanoid(),
-        name: "Container",
-        description: "Search box",
+        name: "GridColumn",
+        description: "GridColumn",
         props: {
-          style: { display: "flex", alignItems: "center" },
+          style: {
+            ...initialGridColumnValues,
+            height: "auto",
+            outline: GRAY_OUTLINE,
+            outlineOffset: "-2px",
+          },
+          span: 27,
         },
-        blockDroppingChildrenInside: true,
         children: [
           {
             id: nanoid(),
@@ -49,6 +48,9 @@ export const jsonStructure = (props?: any): Component => {
                 props: { name: "IconSearch" },
               },
               placeholder: "Search anything...",
+              style: {
+                maxWidth: "400px",
+              },
             },
             blockDroppingChildrenInside: true,
           },
@@ -56,195 +58,61 @@ export const jsonStructure = (props?: any): Component => {
       },
       {
         id: nanoid(),
-        name: "Container",
-        description: "Buttons container",
+        name: "GridColumn",
+        description: "GridColumn",
         props: {
           style: {
-            display: "flex",
-            alignItems: "center",
-            gap: theme.spacing.sm,
+            ...initialGridColumnValues,
+            height: "auto",
+            outline: GRAY_OUTLINE,
+            outlineOffset: "-2px",
           },
+          span: 12,
         },
-        blockDroppingChildrenInside: true,
         children: [
           {
             id: nanoid(),
             name: "Container",
-            description: "Notifications Container",
+            description: "Container",
             props: {
               style: {
-                width: "35px",
-                height: "35px",
-                overflow: "hidden",
-                borderRadius: "50%",
-                padding: "0px",
-                display: "flex",
+                justifyContent: "flex-end",
                 alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                type: "button",
-              },
-            },
-            blockDroppingChildrenInside: true,
-            children: [
-              {
-                id: nanoid(),
-                name: "Container",
-                description: "Notifications Container",
-                props: {
-                  style: {
-                    width: "25px",
-                    height: "25px",
-                    overflow: "hidden",
-                    borderRadius: "50%",
-                  },
-                },
-                blockDroppingChildrenInside: true,
-                children: [
-                  {
-                    id: nanoid(),
-                    name: "Image",
-                    description: "Notifications button",
-                    props: {
-                      fit: "cover",
-                      alt: "Notification",
-                      src: "https://dexlastatesdev.blob.core.windows.net/temp/notifications.svg",
-                      style: {
-                        width: "25px",
-                        height: "25px",
-                        filter: "contrast(40%)",
-                      },
-                    },
-                    blockDroppingChildrenInside: true,
-                    children: [],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: nanoid(),
-            name: "Container",
-            description: "Settings Container",
-            props: {
-              style: {
-                width: "35px",
-                height: "35px",
-                overflow: "hidden",
-                borderRadius: "50%",
-                padding: "0px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                type: "button",
-              },
-            },
-            blockDroppingChildrenInside: true,
-            children: [
-              {
-                id: nanoid(),
-                name: "Container",
-                description: "Settings Container",
-                props: {
-                  style: {
-                    width: "25px",
-                    height: "25px",
-                    overflow: "hidden",
-                    borderRadius: "50%",
-                  },
-                },
-                blockDroppingChildrenInside: true,
-                children: [
-                  {
-                    id: nanoid(),
-                    name: "Image",
-                    description: "Settings button",
-                    props: {
-                      fit: "cover",
-                      alt: "Settings",
-                      src: "https://dexlastatesdev.blob.core.windows.net/temp/settings.svg",
-                      style: {
-                        width: "25px",
-                        height: "25px",
-                        filter: "contrast(40%)",
-                      },
-                    },
-                    blockDroppingChildrenInside: true,
-                    children: [],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: nanoid(),
-            name: "Container",
-            description: "Profile Container",
-            props: {
-              style: {
-                width: "auto",
-                height: "35px",
-                overflow: "hidden",
-                borderRadius: "50%",
-                padding: "0px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
                 gap: theme.spacing.xs,
-                cursor: "pointer",
-                type: "button",
               },
             },
-            blockDroppingChildrenInside: true,
             children: [
               {
                 id: nanoid(),
-                name: "Container",
-                description: "Profile Container",
+                name: "Icon",
+                description: "Icon",
+                children: [],
                 props: {
-                  style: {
-                    width: "25px",
-                    height: "25px",
-                    overflow: "hidden",
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  },
+                  name: "IconBell",
+                  size: 20,
                 },
                 blockDroppingChildrenInside: true,
-                children: [
-                  {
-                    id: nanoid(),
-                    name: "Image",
-                    description: "Profile Image",
-                    props: {
-                      fit: "contain",
-                      radius: "md",
-                      alt: "Profile Image",
-                      src: "https://dexlastatesdev.blob.core.windows.net/temp/avatar_25.jpg",
-                      style: {
-                        width: "100%",
-                        height: "100%",
-                      },
-                    },
-                    blockDroppingChildrenInside: true,
-                    children: [],
-                  },
-                ],
               },
               {
                 id: nanoid(),
-                name: "Title",
-                description: "Title",
-                props: {
-                  children: "John Doe",
-                  color: theme.colors.dark[7],
-                  order: 5,
-                  style: { fontWeight: "semibold" },
-                },
+                name: "Icon",
+                description: "Icon",
                 children: [],
+                props: {
+                  name: "IconSettings",
+                  size: 20,
+                },
+                blockDroppingChildrenInside: true,
+              },
+              {
+                id: nanoid(),
+                name: "Icon",
+                description: "Icon",
+                children: [],
+                props: {
+                  name: "IconUser",
+                  size: 20,
+                },
                 blockDroppingChildrenInside: true,
               },
             ],
@@ -253,4 +121,252 @@ export const jsonStructure = (props?: any): Component => {
       },
     ],
   };
+
+  //   return {
+  //     id: nanoid(),
+  //     name: "AppBar",
+  //     description: "App Bar",
+  //     fixedPosition: { position: "top", target: "main-content" },
+  //     props: {
+  //       style: {
+  //         borderBottomWidth: `1px`,
+  //         borderBottomStyle: `solid`,
+  //         borderBottomColor: theme.colors.Border ? "Border.6" : "gray.3",
+  //         padding: px(theme.spacing.lg),
+  //         height: "auto",
+  //         width: "100%",
+  //         display: "flex",
+  //         justifyContent: "space-between",
+  //         alignItems: "center",
+  //         gap: theme.spacing.md,
+  //       },
+  //       ...(props.props || {}),
+  //     },
+  //     children: [
+  //       {
+  //         id: nanoid(),
+  //         name: "Container",
+  //         description: "Search box",
+  //         props: {
+  //           style: { display: "flex", alignItems: "center" },
+  //         },
+  //         blockDroppingChildrenInside: true,
+  //         children: [
+  //           {
+  //             id: nanoid(),
+  //             name: "Input",
+  //             description: "Search",
+  //             props: {
+  //               variant: "default",
+  //               radius: "md",
+  //               type: "search",
+  //               size: "sm",
+  //               icon: {
+  //                 props: { name: "IconSearch" },
+  //               },
+  //               placeholder: "Search anything...",
+  //             },
+  //             blockDroppingChildrenInside: true,
+  //           },
+  //         ],
+  //       },
+  //       {
+  //         id: nanoid(),
+  //         name: "Container",
+  //         description: "Buttons container",
+  //         props: {
+  //           style: {
+  //             display: "flex",
+  //             alignItems: "center",
+  //             gap: theme.spacing.sm,
+  //           },
+  //         },
+  //         blockDroppingChildrenInside: true,
+  //         children: [
+  //           {
+  //             id: nanoid(),
+  //             name: "Container",
+  //             description: "Notifications Container",
+  //             props: {
+  //               style: {
+  //                 width: "35px",
+  //                 height: "35px",
+  //                 overflow: "hidden",
+  //                 borderRadius: "50%",
+  //                 padding: "0px",
+  //                 display: "flex",
+  //                 alignItems: "center",
+  //                 justifyContent: "center",
+  //                 cursor: "pointer",
+  //                 type: "button",
+  //               },
+  //             },
+  //             blockDroppingChildrenInside: true,
+  //             children: [
+  //               {
+  //                 id: nanoid(),
+  //                 name: "Container",
+  //                 description: "Notifications Container",
+  //                 props: {
+  //                   style: {
+  //                     width: "25px",
+  //                     height: "25px",
+  //                     overflow: "hidden",
+  //                     borderRadius: "50%",
+  //                   },
+  //                 },
+  //                 blockDroppingChildrenInside: true,
+  //                 children: [
+  //                   {
+  //                     id: nanoid(),
+  //                     name: "Image",
+  //                     description: "Notifications button",
+  //                     props: {
+  //                       fit: "cover",
+  //                       alt: "Notification",
+  //                       src: "https://dexlastatesdev.blob.core.windows.net/temp/notifications.svg",
+  //                       style: {
+  //                         width: "25px",
+  //                         height: "25px",
+  //                         filter: "contrast(40%)",
+  //                       },
+  //                     },
+  //                     blockDroppingChildrenInside: true,
+  //                     children: [],
+  //                   },
+  //                 ],
+  //               },
+  //             ],
+  //           },
+  //           {
+  //             id: nanoid(),
+  //             name: "Container",
+  //             description: "Settings Container",
+  //             props: {
+  //               style: {
+  //                 width: "35px",
+  //                 height: "35px",
+  //                 overflow: "hidden",
+  //                 borderRadius: "50%",
+  //                 padding: "0px",
+  //                 display: "flex",
+  //                 alignItems: "center",
+  //                 justifyContent: "center",
+  //                 cursor: "pointer",
+  //                 type: "button",
+  //               },
+  //             },
+  //             blockDroppingChildrenInside: true,
+  //             children: [
+  //               {
+  //                 id: nanoid(),
+  //                 name: "Container",
+  //                 description: "Settings Container",
+  //                 props: {
+  //                   style: {
+  //                     width: "25px",
+  //                     height: "25px",
+  //                     overflow: "hidden",
+  //                     borderRadius: "50%",
+  //                   },
+  //                 },
+  //                 blockDroppingChildrenInside: true,
+  //                 children: [
+  //                   {
+  //                     id: nanoid(),
+  //                     name: "Image",
+  //                     description: "Settings button",
+  //                     props: {
+  //                       fit: "cover",
+  //                       alt: "Settings",
+  //                       src: "https://dexlastatesdev.blob.core.windows.net/temp/settings.svg",
+  //                       style: {
+  //                         width: "25px",
+  //                         height: "25px",
+  //                         filter: "contrast(40%)",
+  //                       },
+  //                     },
+  //                     blockDroppingChildrenInside: true,
+  //                     children: [],
+  //                   },
+  //                 ],
+  //               },
+  //             ],
+  //           },
+  //           {
+  //             id: nanoid(),
+  //             name: "Container",
+  //             description: "Profile Container",
+  //             props: {
+  //               style: {
+  //                 width: "auto",
+  //                 height: "35px",
+  //                 overflow: "hidden",
+  //                 borderRadius: "50%",
+  //                 padding: "0px",
+  //                 display: "flex",
+  //                 alignItems: "center",
+  //                 justifyContent: "center",
+  //                 gap: theme.spacing.xs,
+  //                 cursor: "pointer",
+  //                 type: "button",
+  //               },
+  //             },
+  //             blockDroppingChildrenInside: true,
+  //             children: [
+  //               {
+  //                 id: nanoid(),
+  //                 name: "Container",
+  //                 description: "Profile Container",
+  //                 props: {
+  //                   style: {
+  //                     width: "25px",
+  //                     height: "25px",
+  //                     overflow: "hidden",
+  //                     borderRadius: "50%",
+  //                     display: "flex",
+  //                     alignItems: "center",
+  //                     justifyContent: "center",
+  //                   },
+  //                 },
+  //                 blockDroppingChildrenInside: true,
+  //                 children: [
+  //                   {
+  //                     id: nanoid(),
+  //                     name: "Image",
+  //                     description: "Profile Image",
+  //                     props: {
+  //                       fit: "contain",
+  //                       radius: "md",
+  //                       alt: "Profile Image",
+  //                       src: "https://dexlastatesdev.blob.core.windows.net/temp/avatar_25.jpg",
+  //                       style: {
+  //                         width: "100%",
+  //                         height: "100%",
+  //                       },
+  //                     },
+  //                     blockDroppingChildrenInside: true,
+  //                     children: [],
+  //                   },
+  //                 ],
+  //               },
+  //               {
+  //                 id: nanoid(),
+  //                 name: "Title",
+  //                 description: "Title",
+  //                 props: {
+  //                   children: "John Doe",
+  //                   color: theme.colors.dark[7],
+  //                   order: 5,
+  //                   style: { fontWeight: "semibold" },
+  //                 },
+  //                 children: [],
+  //                 blockDroppingChildrenInside: true,
+  //               },
+  //             ],
+  //           },
+  //         ],
+  //       },
+  //     ],
+  //   };
 };

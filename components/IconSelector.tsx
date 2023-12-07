@@ -19,7 +19,7 @@ export const IconSelector = ({
       </Text>
       <Flex gap="md" align="center">
         <IconModal onIconSelect={onIconSelect} />
-        {selectedIcon}
+        <Text size="xs">{selectedIcon}</Text>
       </Flex>
     </Box>
   );

@@ -86,7 +86,7 @@ export const GridColumn = ({
         }}
         onResizeStart={(e: any, direction: any, ref: any, delta: any) => {
           const rect = ref.getBoundingClientRect();
-          const initialSpan = ref.style.gridColumn.split(" ")[1];
+          const initialSpan = ref.style?.gridColumn.split(" ")[1];
           setInitialWidth(Math.floor(rect.width));
           setIsResizing(true);
           setInitialSpan(parseInt(initialSpan, 10));
@@ -98,7 +98,7 @@ export const GridColumn = ({
 
             if (nextSiblingEl) {
               const initialNextSiblingSpan =
-                nextSiblingEl.style.gridColumn.split(" ")[1];
+                nextSiblingEl.style?.gridColumn.split(" ")[1];
 
               if (initialNextSiblingSpan) {
                 setInitialNextSiblingSpan(parseInt(initialNextSiblingSpan, 10));
