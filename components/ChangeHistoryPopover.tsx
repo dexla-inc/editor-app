@@ -19,7 +19,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowBackUp } from "@tabler/icons-react";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 
 const convertTimestampToTimeTaken = (timestamp: number) => {
   const now = Date.now();
@@ -37,7 +37,6 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
 };
 
 export const ChangeHistoryPopover: FC = () => {
-  const [historyIndex, setHistoryIndex] = useState(0);
   const currentState = useEditorStore((state) => ({
     isSaving: state.isSaving,
     tree: {
