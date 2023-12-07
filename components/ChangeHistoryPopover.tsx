@@ -113,7 +113,7 @@ export const ChangeHistoryPopover: FC = () => {
           <ActionIcon
             variant="default"
             onClick={() => handlePageStateChange(undo)}
-            disabled={setButtonDisabled}
+            disabled={pastStates.length < 2}
             radius={"4px 0px 0px 4px"}
             size="sm"
           >
@@ -161,7 +161,7 @@ export const ChangeHistoryPopover: FC = () => {
                 overflowY: "auto",
               }}
             >
-              {filteredHistory
+              {changeHistory
                 .map((item: any, index: number) => {
                   const currentHistoryIndex = pastStates.length - 1;
                   const color =
@@ -179,7 +179,7 @@ export const ChangeHistoryPopover: FC = () => {
                       onClick={(e) => {
                         e.stopPropagation();
                         const newChangeHistoryIndex =
-                          currentHistoryIndex - index - historyIndex;
+                          currentHistoryIndex - index;
 
                         newChangeHistoryIndex >= 0
                           ? handlePageStateChange(() =>
