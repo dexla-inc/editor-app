@@ -371,6 +371,8 @@ export const requiredModifiers: RequiredModifiers = {
     width: "260px",
     gridTemplateRows: "auto 1fr auto",
     height: "100vh",
+    position: "sticky",
+    top: "0",
   },
 };
 
