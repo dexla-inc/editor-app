@@ -37,7 +37,6 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
 };
 
 export const ChangeHistoryPopover: FC = () => {
-  const [historyIndex, setHistoryIndex] = useState(0);
   const currentState = useEditorStore((state) => ({
     isSaving: state.isSaving,
     tree: {
