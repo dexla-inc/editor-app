@@ -24,4 +24,4 @@ const IconComponent = forwardRef(
 );
 IconComponent.displayName = "Icon";
 
-export const Icon = memo(withComponentWrapper(IconComponent), isSame);
+export const Icon = memo(withComponentWrapper<Props>(IconComponent), isSame);

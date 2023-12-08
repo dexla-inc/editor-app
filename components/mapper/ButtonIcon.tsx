@@ -44,6 +44,6 @@ const ButtonIconComponent = forwardRef(
 ButtonIconComponent.displayName = "ButtonIcon";
 
 export const ButtonIcon = memo(
-  withComponentWrapper(ButtonIconComponent),
+  withComponentWrapper<Props>(ButtonIconComponent),
   isSame,
 );

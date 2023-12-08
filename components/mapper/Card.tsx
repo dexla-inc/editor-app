@@ -75,4 +75,4 @@ export const CardComponent = forwardRef(
 );
 CardComponent.displayName = "Card";
 
-export const Card = withComponentWrapper(CardComponent);
+export const Card = withComponentWrapper<Props>(CardComponent);

@@ -46,6 +46,6 @@ const GridColumnComponent = forwardRef(
 GridColumnComponent.displayName = "GridColumn";
 
 export const GridColumn = memo(
-  withComponentWrapper(GridColumnComponent),
+  withComponentWrapper<Props>(GridColumnComponent),
   isSame,
 );

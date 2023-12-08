@@ -70,4 +70,7 @@ const ButtonComponent = forwardRef(
 ButtonComponent.displayName = "Button";
 
 // export const Button = memo(ButtonComponent, isSame);
-export const Button = memo(withComponentWrapper(ButtonComponent), isSame);
+export const Button = memo(
+  withComponentWrapper<Props>(ButtonComponent),
+  isSame,
+);

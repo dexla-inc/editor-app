@@ -50,4 +50,4 @@ const ImageComponent = forwardRef(({ component, ...props }: Props, ref) => {
 });
 ImageComponent.displayName = "Image";
 
-export const Image = memo(withComponentWrapper(ImageComponent), isSame);
+export const Image = memo(withComponentWrapper<Props>(ImageComponent), isSame);
