@@ -2,6 +2,7 @@ import { defaultButtonValues } from "@/components/modifiers/Button";
 import { defaultInputValues } from "@/components/modifiers/Input";
 import { nanoid } from "nanoid";
 
+// TODO: This needs export const jsonStructure = (props?: any): Component => {
 export const tableHeader = {
   id: nanoid(),
   name: "Container",
@@ -66,16 +67,9 @@ export const tableHeader = {
           props: {
             style: {
               ...defaultButtonValues,
-              width: "auto",
-              height: "auto",
-              padding: "9px",
-              borderRadius: 8,
-              borderColor: "rgba(179, 179, 179, 1)",
-              borderStyle: "solid",
-              borderWidth: "1px",
             },
-            color: "transparent",
-            textColor: "Black.7",
+            color: "Primary.6",
+            textColor: "PrimaryText.6",
             children: "Export CSV",
             leftIcon: "IconDownload",
           },
