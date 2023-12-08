@@ -562,7 +562,7 @@ export const useEditorStore = create<EditorState>()(
         isPreviewMode: false,
         isLive: false,
         isNavBarVisible: true,
-        isStructureCollapsed: false,
+        isStructureCollapsed: true,
         setActiveTab: (activeTab) =>
           set({ activeTab }, false, "editor/setActiveTab"),
         setPreviewMode: (value) =>

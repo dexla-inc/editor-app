@@ -99,11 +99,11 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       setEditorTree(copy, { action: `Removed ${comp?.name}` });
     }
   }, [
+    isPreviewMode,
     editorTree,
-    setEditorTree,
     setSelectedComponentId,
     setSelectedComponentIds,
-    isPreviewMode,
+    setEditorTree,
   ]);
 
   const copySelectedComponent = useCallback(() => {

@@ -20,12 +20,6 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
-  const setIsStructureCollapsed = useEditorStore(
-    (state) => state.setIsStructureCollapsed,
-  );
-  const isStructureCollapsed = useEditorStore(
-    (state) => state.isStructureCollapsed,
-  );
 
   const theme = useEditorStore((state) => state.theme);
   const setTheme = useEditorStore((state) => state.setTheme);
@@ -138,13 +132,7 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
     } else {
       setActiveTab(undefined);
     }
-    isStructureCollapsed && setIsStructureCollapsed(false);
-  }, [
-    isTabPinned,
-    isStructureCollapsed,
-    setActiveTab,
-    setIsStructureCollapsed,
-  ]);
+  }, [isTabPinned, setActiveTab]);
 
   return (
     <Box

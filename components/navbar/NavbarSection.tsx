@@ -116,7 +116,9 @@ export const NavbarSection = ({
         <ActionIcon aria-label="collapseTab">
           <IconCollapse
             style={{ transform: "rotate(45deg)" }}
-            onClick={() => setIsStructureCollapsed(!isStructureCollapsed)}
+            onClick={() => {
+              setIsStructureCollapsed(!isStructureCollapsed);
+            }}
             size={ICON_SIZE}
             color="gray"
           />
