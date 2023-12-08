@@ -52,4 +52,4 @@ const GridComponent = forwardRef(
 );
 GridComponent.displayName = "Grid";
 
-export const Grid = memo(withComponentWrapper(GridComponent), isSame);
+export const Grid = memo(withComponentWrapper<Props>(GridComponent), isSame);

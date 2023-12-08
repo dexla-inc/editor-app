@@ -75,4 +75,4 @@ export const ContainerComponent = forwardRef(
 );
 ContainerComponent.displayName = "Container";
 
-export const Container = withComponentWrapper(ContainerComponent);
+export const Container = withComponentWrapper<Props>(ContainerComponent);
