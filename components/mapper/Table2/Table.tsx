@@ -8,7 +8,7 @@ type Props = {
   component: Component;
 } & TableProps;
 
-export const Table = ({ renderTree, component, ...props }: Props) => {
+export const TableComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;
 
   return (
@@ -34,16 +34,26 @@ export const TableRow = ({ renderTree, component }: Props) => {
   return <tr>{component.children?.map((child) => renderTree(child))}</tr>;
 };
 
+export const TableHeaderCell = ({ renderTree, component, ...props }: Props) => {
+  const { children, style, triggers, ...componentProps } =
+    component.props as any;
+
+  return (
+    <th style={{ ...style }} {...componentProps}>
+      {component.children?.map((child) => renderTree(child))}
+    </th>
+  );
+};
+
 export const TableCell = ({ renderTree, component, ...props }: Props) => {
   const { children, style, triggers, ...componentProps } =
     component.props as any;
 
   return (
-    <td
-      style={{ paddingLeft: 0, paddingRight: 0, ...style }}
-      {...componentProps}
-    >
+    <td style={{ ...style }} {...componentProps}>
       {component.children?.map((child) => renderTree(child))}
     </td>
   );
 };
+
+export const Table = memo(TableComponent, isSame);

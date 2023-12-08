@@ -346,6 +346,7 @@ Remember LSCGS, you must:
 
 const _componentTypes = (theme?: MantineThemeExtended) => `
 
+
 type Grid = BaseComponent & {
   name: "Grid";
   props: {
@@ -447,6 +448,22 @@ type AppBar = BaseComponent & {
     };
   };
   children: GridColumn[]; // Can include ButtonIcon, Title, Avatar, Link, Image within GridColumn
+};
+
+
+type Navbar = BaseComponent & {
+  name: "Navbar";
+  props: {
+    style: {
+      gridTemplateRows: "auto 1fr auto",
+      justifyContent: 'start' | 'end' | 'center' | 'stretch' | 'space-around' | 'space-between' | 'space-evenly';
+      alignItems: 'center';
+      gap: string;
+      padding: string;
+      [key: string]: any;
+    };
+  };
+  children: GridColumn[]; // Should be three parts. One for logo, one for nav links, and one for profile footer
 };
 
 // You must use color and textColor on props and not style, that is why they are Omitted.
@@ -676,30 +693,31 @@ type Component =
   | Button
   | ButtonIcon
   | Card
+  | Checkbox
+  | DateInput
   | Divider
   | FileButton
   | FileUpload
   | Form
   | Grid
   | GridColumn
-  | Checkbox
-  | DateInput
   | Input
+  | Icon
+  | Image
+  | Link
+  | Navbar
   | RadioGroup
   | Rating
   | Select
   | Switch
   | Textarea
-  | Icon
-  | Image
-  | Link
+  | Table
+  | Tabs
+  | Text
+  | Title
   | LineChart
   | PieChart
   | RadarChart
   | RadialChart
-  | Table
-  | Tabs
-  | Text
-  | Title;
 
 `;

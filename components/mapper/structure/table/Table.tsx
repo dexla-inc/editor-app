@@ -87,14 +87,26 @@ export const jsonStructure = (props?: any): Component => {
                 name: "TableRow",
                 description: "Table Row",
                 blockDroppingChildrenInside: true,
-                props: { style: { width: "100%" } },
+                props: {
+                  style: {
+                    paddingTop: "10px",
+                    paddingBottom: "10px",
+                    backgroundColor: "Neutral.6",
+                    width: "100%",
+                  },
+                },
                 children: [
                   {
                     id: nanoid(),
-                    name: "TableCell",
-                    description: "Table Cell",
+                    name: "TableHeaderCell",
+                    description: "Table Header Cell",
                     props: {
-                      style: {},
+                      style: {
+                        paddingLeft: "0px",
+                        paddingRight: "0px",
+                        paddingTop: "10px",
+                        paddingBottom: "10px",
+                      },
                     },
                     children: [
                       {
@@ -117,15 +129,26 @@ export const jsonStructure = (props?: any): Component => {
                     (header) => ({
                       id: nanoid(),
                       key: nanoid(),
-                      name: "TableCell",
-                      description: "Table Cell",
-                      props: { style: {} },
+                      name: "TableHeaderCell",
+                      description: "Table Header Cell",
+                      props: {
+                        style: {
+                          paddingLeft: "0px",
+                          paddingRight: "0px",
+                          paddingTop: "10px",
+                          paddingBottom: "10px",
+                        },
+                      },
                       children: [
                         {
                           id: nanoid(),
                           name: "Text",
                           description: "Text",
-                          props: { children: header },
+                          props: {
+                            weight: "bold",
+                            size: "sm",
+                            children: header,
+                          },
                         },
                       ],
                     }),
@@ -194,6 +217,7 @@ export const jsonStructure = (props?: any): Component => {
                             description: "Avatar",
                             blockDroppingChildrenInside: true,
                             props: {
+                              color: "Primary.6",
                               style: {
                                 borderRadius: "50px",
                               },
@@ -269,7 +293,7 @@ export const jsonStructure = (props?: any): Component => {
                           children: row.status,
                           variant: "light",
                           radius: "xl",
-                          size: "md",
+                          size: "sm",
                           color:
                             badgeColor[row.status as keyof typeof badgeColor],
                           ...(props.props || {}),
@@ -317,9 +341,8 @@ export const jsonStructure = (props?: any): Component => {
                                 name: "Icon",
                                 description: "Icon",
                                 props: {
+                                  size: "sm",
                                   style: {
-                                    width: "30px",
-                                    height: "30px",
                                     borderRadius: "50px",
                                   },
                                   name: "IconPencil",
@@ -351,8 +374,6 @@ export const jsonStructure = (props?: any): Component => {
                                 description: "Icon",
                                 props: {
                                   style: {
-                                    width: "30px",
-                                    height: "30px",
                                     borderRadius: "50px",
                                   },
                                   name: "IconDotsVertical",

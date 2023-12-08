@@ -1,6 +1,7 @@
 import { useDraggable } from "@/hooks/useDraggable";
 import { deleteCustomComponent } from "@/requests/components/mutations";
 import { useEditorStore } from "@/stores/editor";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
@@ -33,6 +34,7 @@ export const Draggable = ({
   const theme = useMantineTheme();
 
   const setComponentToAdd = useEditorStore((state) => state.setComponentToAdd);
+  const activeCompany = usePropelAuthStore((state) => state.activeCompany);
 
   const onDragStart = useCallback(() => {
     setComponentToAdd(data);
@@ -90,6 +92,7 @@ export const Draggable = ({
                 e.stopPropagation();
                 mutate({
                   projectId: router.query.id as string,
+                  companyId: activeCompany.orgId,
                   id,
                 });
               }}

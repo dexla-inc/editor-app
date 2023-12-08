@@ -1,5 +1,6 @@
 import { createCustomComponent } from "@/requests/components/mutations";
 import { useEditorStore } from "@/stores/editor";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
@@ -27,6 +28,7 @@ export const CustomComponentModal = ({
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );
+  const activeCompany = usePropelAuthStore((state) => state.activeCompany);
 
   const { mutate } = useMutation(createCustomComponent, {
     onSettled(_, err) {
@@ -77,6 +79,7 @@ export const CustomComponentModal = ({
         type: values.scope === "global" ? values.type : copy?.name,
       },
       projectId: router.query.id as string,
+      companyId: activeCompany.orgId,
     });
   };
 

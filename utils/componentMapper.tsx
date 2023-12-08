@@ -37,6 +37,14 @@ import { Select } from "@/components/mapper/Select";
 import { Stepper } from "@/components/mapper/Stepper";
 import { Switch } from "@/components/mapper/Switch";
 import { Tab } from "@/components/mapper/Tab";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
+} from "@/components/mapper/Table2/Table";
 import { Tabs } from "@/components/mapper/Tabs";
 import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";
@@ -92,13 +100,6 @@ import * as PieChartStructure from "@/components/mapper/structure/charts/PieChar
 import * as RadarChartStructure from "@/components/mapper/structure/charts/RadarChart";
 import * as RadialChartStructure from "@/components/mapper/structure/charts/RadialChart";
 import * as TableStructure from "@/components/mapper/structure/table/Table";
-import {
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-} from "@/components/mapper/Table2/Table";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 
@@ -1034,6 +1035,17 @@ export const componentMapper: ComponentMapper = {
   TableCell: {
     Component: (props: { component: Component; renderTree: any }) => (
       <TableCell component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: [],
+    actionTriggers: [],
+    sequentialTriggers: [],
+  },
+  TableHeaderCell: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <TableHeaderCell
+        component={props.component}
+        renderTree={props.renderTree}
+      />
     ),
     modifiers: [],
     actionTriggers: [],

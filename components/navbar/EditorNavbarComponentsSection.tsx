@@ -2,6 +2,7 @@ import { DraggableComponent } from "@/components/DraggableComponent";
 import { GenerateComponentsAIButton } from "@/components/GenerateComponentsAIButton";
 import { CustomComponentResponse } from "@/requests/components/mutations";
 import { getComponentList } from "@/requests/components/queries";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import {
   ComponentCategoryType,
   structureMapper,
@@ -34,10 +35,12 @@ export const EditorNavbarComponentsSection = () => {
   const [componentTypeToShow, setComponentTypeToShow] =
     useState<string>("default");
   const router = useRouter();
+  const activeCompany = usePropelAuthStore((state) => state.activeCompany);
 
   const componentList = useQuery({
     queryKey: ["components"],
-    queryFn: () => getComponentList(router.query.id as string),
+    queryFn: () =>
+      getComponentList(router.query.id as string, activeCompany.orgId),
     enabled: !!router.query.id && componentTypeToShow === "custom",
   });
 
