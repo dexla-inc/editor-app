@@ -4,6 +4,7 @@ import { useForm } from "@mantine/form";
 import { IconTransform } from "@tabler/icons-react";
 import { withModifier } from "@/hoc/withModifier";
 import merge from "lodash.merge";
+import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 
 export const icon = IconTransform;
 export const label = "Effects";
@@ -100,6 +101,17 @@ export const Modifier = withModifier(
               form.setFieldValue("tooltip", e.target.value);
               debouncedTreeUpdate(selectedComponentIds, {
                 tooltip: e.target.value,
+              });
+            }}
+          />
+
+          <ThemeColorSelector
+            label="Tooltip Color"
+            {...form.getInputProps("tooltipColor")}
+            onChange={(value: string) => {
+              form.setFieldValue("tooltipColor", value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                tooltipColor: value,
               });
             }}
           />
