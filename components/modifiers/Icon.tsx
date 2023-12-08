@@ -32,8 +32,6 @@ export const Modifier = withModifier(
       }),
     });
 
-    console.log("form.values", form.values, selectedComponent.props);
-
     const handleColorChange = (_value: string) => {
       const [color, index] = _value.split(".");
       // @ts-ignore

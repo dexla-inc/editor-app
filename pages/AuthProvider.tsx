@@ -1,13 +1,11 @@
 import { Fragment, PropsWithChildren, useEffect, useState } from "react";
-import { InitialisePropelAuth } from "./InitialisePropelAuth";
+import InitialisePropelAuth from "./InitialisePropelAuth";
 
-export const AuthProvider = ({
+export default function AuthProvider({
   children,
   isLive,
-}: PropsWithChildren & { isLive: boolean }) => {
+}: PropsWithChildren & { isLive: boolean }) {
   const [isClient, setIsClient] = useState(false);
-
-  console.log("AuthProvider");
 
   useEffect(() => {
     setIsClient(true);
@@ -20,4 +18,4 @@ export const AuthProvider = ({
   }
 
   return !isLive && <InitialisePropelAuth>{children}</InitialisePropelAuth>;
-};
+}

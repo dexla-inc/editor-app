@@ -16,7 +16,7 @@ import Script from "next/script";
 import { useEffect, useState } from "react";
 import TagManager from "react-gtm-module";
 import { ReactFlowProvider } from "reactflow";
-import { AuthProvider } from "./AuthProvider";
+import AuthProvider from "./AuthProvider";
 import InstantiatePropelAuthStore from "./InstantiatePropelAuthStore";
 
 // If loading a variable font, you don't need to specify the font weight
@@ -37,7 +37,7 @@ const GTM_ID = "GTM-P3DVFXMS";
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const isLive = useCheckIfIsLive();
-  console.log(isLive);
+
   const [loadTagManager, setLoadTagManager] = useState(false);
 
   useEffect(() => {

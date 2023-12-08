@@ -2,8 +2,7 @@ import { LoadingOverlay } from "@mantine/core";
 import { RedirectToLogin, RequiredAuthProvider } from "@propelauth/react";
 import { PropsWithChildren } from "react";
 
-export function InitialisePropelAuth({ children }: PropsWithChildren) {
-  console.log("InitialisePropelAuth");
+export default function InitialisePropelAuth({ children }: PropsWithChildren) {
   // user is injected automatically from withRequiredAuthInfo below
   return (
     <RequiredAuthProvider
