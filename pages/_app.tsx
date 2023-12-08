@@ -1,11 +1,9 @@
 import { ContextMenuProvider } from "@/contexts/ContextMenuProvider";
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
-import { usePropelAuthStore } from "@/stores/propelAuth";
 import { theme } from "@/utils/branding";
 import { cache } from "@/utils/emotionCache";
-import { Global, LoadingOverlay, MantineProvider } from "@mantine/core";
+import { Global, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
-import { RedirectToLogin, RequiredAuthProvider } from "@propelauth/react";
 import {
   Hydrate,
   QueryClient,
@@ -15,9 +13,11 @@ import { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import Head from "next/head";
 import Script from "next/script";
-import { Fragment, PropsWithChildren, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import TagManager from "react-gtm-module";
 import { ReactFlowProvider } from "reactflow";
+import AuthProvider from "./AuthProvider";
+import InstantiatePropelAuthStore from "./InstantiatePropelAuthStore";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -34,50 +34,11 @@ declare global {
 
 const GTM_ID = "GTM-P3DVFXMS";
 
-const AuthProvider = ({
-  children,
-  isLive,
-}: PropsWithChildren & { isLive: boolean }) => {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, [isClient]);
-
-  if (!isClient) return null;
-
-  if (isLive) {
-    return <Fragment>{children}</Fragment>;
-  }
-
-  return (
-    <RequiredAuthProvider
-      authUrl={process.env.NEXT_PUBLIC_AUTH_URL as string}
-      displayWhileLoading={<LoadingOverlay visible overlayBlur={2} />}
-      displayIfLoggedOut={
-        <RedirectToLogin
-          postLoginRedirectUrl={
-            process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL as string
-          }
-        />
-      }
-    >
-      {children}
-    </RequiredAuthProvider>
-  );
-};
-
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const isLive = useCheckIfIsLive();
+
   const [loadTagManager, setLoadTagManager] = useState(false);
-
-  const initializeAuth = usePropelAuthStore((state) => state.initializeAuth);
-
-  useEffect(() => {
-    initializeAuth();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     setLoadTagManager(!isLive && process.env.NODE_ENV !== "development");
@@ -111,6 +72,7 @@ export default function App(props: AppProps) {
     >
       <ContextMenuProvider>
         <AuthProvider isLive={isLive}>
+          {!isLive && <InstantiatePropelAuthStore />}
           <Head>
             <title>Editor</title>
             <meta name="description" content="Dexla Editor" />

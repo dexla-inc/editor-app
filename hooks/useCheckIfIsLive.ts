@@ -5,31 +5,33 @@ import { useEffect, useState } from "react";
 
 export const useCheckIfIsLive = () => {
   const router = useRouter();
-  const [isLive, setIsLive] = useState(false);
+
+  const url = typeof window !== "undefined" ? window.location.host : "";
+  let initialIsLive = false;
+
+  if (
+    router?.asPath === "/[page]" ||
+    isMatchingUrl(url) ||
+    url.endsWith(".localhost:3000")
+  ) {
+    initialIsLive = true;
+  }
+
+  const [isLive, setIsLive] = useState(initialIsLive);
 
   useEffect(() => {
-    const chekcIfIsLive = async () => {
-      // @ts-ignore
-      if (router?.state?.pathname === "/[page]") {
-        setIsLive(true);
-      } else {
-        let id = "";
-        const url = window?.location.host;
-        if (isMatchingUrl(url!) || url?.endsWith(".localhost:3000")) {
-          id = url?.split(".")[0] as string;
-        } else {
-          const project = await getByDomain(url!);
-          id = project.id;
-        }
-
-        if (id) {
-          setIsLive(true);
-        }
+    const setLiveIfHasCustomDomain = async () => {
+      try {
+        const project = await getByDomain(url);
+        if (project.id) setIsLive(!!project.id);
+      } catch (error) {
+        console.error("Error checking if live:", error);
       }
     };
 
-    chekcIfIsLive();
+    setLiveIfHasCustomDomain();
     // @ts-ignore
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router?.state?.pathname]);
 
   return isLive;
