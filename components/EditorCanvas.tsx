@@ -8,7 +8,7 @@ import { IFrame } from "@/components/IFrame";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
-import { componentMapper } from "@/utils/componentMapper";
+import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import { HEADER_HEIGHT } from "@/utils/config";
 import {
   Component,
@@ -47,6 +47,7 @@ const EditableComponentContainer = ({ children, component }: any) => {
 const EditorCanvasComponent = ({ projectId }: Props) => {
   const undo = useTemporalStore((state) => state.undo);
   const redo = useTemporalStore((state) => state.redo);
+  const pastStates = useTemporalStore((state) => state.pastStates);
   const copiedComponent = useEditorStore((state) => state.copiedComponent);
   const setCopiedComponent = useEditorStore(
     (state) => state.setCopiedComponent,
@@ -135,15 +136,33 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     }
 
     const selectedComponentId = useEditorStore.getState().selectedComponentId;
-
     const copy = cloneDeep(editorTree);
 
-    if (!selectedComponentId) return "content-wrapper";
-    if (selectedComponentId === "root") return "content-wrapper";
+    if (!selectedComponentId || selectedComponentId === "root")
+      return "content-wrapper";
     const component = getComponentById(editorTree.root, selectedComponentId);
     let targetId = selectedComponentId;
     let componentIndex = 0;
-    if (component?.blockDroppingChildrenInside) {
+
+    const isSpecialComponents = ["GridColumn", "Alert", "Accordion"].includes(
+      componentToPaste.name,
+    );
+    const isGridItems = ["Grid", "GridColumn"].includes(componentToPaste.name);
+    const isTargetGridItems = ["Grid", "GridColumn"].includes(component?.name!);
+    const isLayoutCategory =
+      structureMapper[componentToPaste.name!].category === "Layout";
+    const isAllowedGridMatch =
+      isGridItems === isTargetGridItems &&
+      component?.name === componentToPaste.name;
+    const isAllowedSibling = isLayoutCategory && !isTargetGridItems;
+
+    const addAsSiblingFlag =
+      component?.blockDroppingChildrenInside ||
+      isSpecialComponents ||
+      isAllowedSibling ||
+      isAllowedGridMatch;
+
+    if (addAsSiblingFlag) {
       const parentComponent = getComponentParent(
         editorTree.root,
         selectedComponentId,
@@ -152,7 +171,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       componentIndex =
         getComponentIndex(parentComponent!, selectedComponentId!) + 1;
     } else {
-      componentIndex = component?.children!.length ?? 0;
+      componentIndex = component?.children?.length ?? 0;
     }
 
     const newSelectedId = addComponent(
@@ -160,7 +179,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       componentToPaste,
       {
         id: targetId,
-        edge: "bottom",
+        edge: isGridItems ? "center" : "top",
       },
       componentIndex,
     );
@@ -181,6 +200,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       "mod+Z",
       () => {
         if (!isPreviewMode) {
+          if (pastStates.length <= 1) return; // to avoid rendering a blank page
           undo();
         }
       },
@@ -232,6 +252,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       "mod+Z",
       () => {
         if (!isPreviewMode) {
+          if (pastStates.length <= 1) return; // to avoid rendering a blank page
           undo();
         }
       },

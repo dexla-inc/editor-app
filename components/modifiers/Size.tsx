@@ -14,7 +14,12 @@ export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
       initialValues: merge({}, requiredModifiers.size, {
-        style: selectedComponent.props?.style,
+        width: selectedComponent.props?.style?.width,
+        height: selectedComponent.props?.style?.height,
+        minWidth: selectedComponent.props?.style?.minWidth,
+        minHeight: selectedComponent.props?.style?.minHeight,
+        maxWidth: selectedComponent.props?.style?.maxWidth,
+        maxHeight: selectedComponent.props?.style?.maxHeight,
       }),
     });
 

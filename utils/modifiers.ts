@@ -177,6 +177,7 @@ export const requiredModifiers: RequiredModifiers = {
   icon: {
     color: "Black.6",
     icon: "",
+    size: "sm",
   },
   divider: {
     color: "Neutral.9",
@@ -371,6 +372,8 @@ export const requiredModifiers: RequiredModifiers = {
     width: "260px",
     gridTemplateRows: "auto 1fr auto",
     height: "100vh",
+    position: "sticky",
+    top: "0",
   },
 };
 

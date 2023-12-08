@@ -1,4 +1,3 @@
-import intersection from "lodash/intersection";
 import { GenerateStylesAIButton } from "@/components/GenerateStylesAIButton";
 import { SidebarSection } from "@/components/SidebarSection";
 import { ActionsFlow } from "@/components/actions/ActionsFlow";
@@ -63,6 +62,7 @@ import {
 } from "@mantine/core";
 import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
+import intersection from "lodash/intersection";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 
 type SectionsMapper = {
@@ -187,18 +187,17 @@ export const EditorAsideSections = () => {
   const sections = mappedModifiers?.map((id) => {
     const modifier = sectionMapper[id];
 
+    const componentName = component?.name ?? "content-wrapper";
+
     return {
       id: id,
       label: modifier.label,
       icon: modifier.icon,
-      initiallyOpened: component
-        ? initiallyOpenedModifiersByComponent[component.name]?.includes(id)
-        : false,
+      initiallyOpened:
+        initiallyOpenedModifiersByComponent[componentName]?.includes(id),
       Component: modifier.Modifier,
       onClick: (id: string, isOpen: boolean) => {
-        if (component?.name) {
-          setInitiallyOpenedModifiersByComponent(component.name, id, isOpen);
-        }
+        setInitiallyOpenedModifiersByComponent(componentName, id, isOpen);
       },
     };
   });

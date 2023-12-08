@@ -48,7 +48,7 @@ export const Modifier = withModifier(
               { label: "Light", value: "light" },
               { label: "Outline", value: "outline" },
               { label: "Default", value: "default" },
-              { label: "Subtle", value: "subtle" },
+              { label: "Dot", value: "dot" },
             ]}
             {...form.getInputProps("variant")}
             onChange={(value) => {
@@ -91,16 +91,6 @@ export const Modifier = withModifier(
               form.setFieldValue("color", value);
               debouncedTreeUpdate(selectedComponentIds, {
                 color: value,
-              });
-            }}
-          />
-          <ThemeColorSelector
-            label="Text Color"
-            {...form.getInputProps("textColor")}
-            onChange={(value: string) => {
-              form.setFieldValue("textColor", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                textColor: value,
               });
             }}
           />

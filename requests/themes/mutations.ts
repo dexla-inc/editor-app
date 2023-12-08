@@ -35,7 +35,6 @@ export async function saveTheme(
 
   let url = `/projects/${projectId}/themes`;
   url += buildQueryString({ websiteUrl });
-  console.log(url);
 
   const response = (await post<ThemeResponse>(url, params)) as ThemeResponse;
 

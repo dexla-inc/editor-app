@@ -1,9 +1,9 @@
 import { useEditorStore } from "@/stores/editor";
 import { Component, getAllComponentsByIds } from "@/utils/editor";
-import { ComponentType, useMemo } from "react";
-import merge from "lodash.merge";
-import cloneDeep from "lodash.clonedeep";
 import _ from "lodash";
+import cloneDeep from "lodash.clonedeep";
+import merge from "lodash.merge";
+import { ComponentType, useMemo } from "react";
 
 type WithModifier = {
   selectedComponentIds: string[];
@@ -70,6 +70,7 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
     }, [selectedComponents, currentState, language]);
 
     const component = findIntersectedKeyValues(mergedCustomData as Component[]);
+
     if (!initiallyOpened) {
       return null;
     }

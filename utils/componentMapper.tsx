@@ -92,7 +92,13 @@ import * as PieChartStructure from "@/components/mapper/structure/charts/PieChar
 import * as RadarChartStructure from "@/components/mapper/structure/charts/RadarChart";
 import * as RadialChartStructure from "@/components/mapper/structure/charts/RadialChart";
 import * as TableStructure from "@/components/mapper/structure/table/Table";
-import { Table } from "@/components/mapper/table/Table";
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+} from "@/components/mapper/Table2/Table";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 
@@ -105,9 +111,6 @@ import { useEditorStore } from "@/stores/editor";
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import { Modifiers } from "@/utils/modifiers";
 
-import { TableCell } from "@/components/mapper/table/TableCell";
-import { TableContent } from "@/components/mapper/table/TableContent";
-import { TableRow } from "@/components/mapper/table/TableRow";
 import {
   IconArrowAutofitContent,
   IconBoxModel,
@@ -984,15 +987,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Icon component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: [
-      "icon",
-      "background",
-      "spacing",
-      "size",
-      "effects",
-      "border",
-      "position",
-    ],
+    modifiers: ["icon", "spacing", "effects", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1012,53 +1007,37 @@ export const componentMapper: ComponentMapper = {
     ],
     sequentialTriggers: ["onSuccess", "onError"],
   },
-  TableContent: {
+  TableHead: {
     Component: (props: { component: Component; renderTree: any }) => (
-      <TableContent component={props.component} renderTree={props.renderTree} />
+      <TableHead component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
-    actionTriggers: [
-      "onMount",
-      "onRowClick",
-      "onRowHover",
-      "onRowSelect",
-      "onRowExpand",
-      "onSort",
-      "onFilterApplied",
-    ],
-    sequentialTriggers: ["onSuccess", "onError"],
+    modifiers: [],
+    actionTriggers: [],
+    sequentialTriggers: [],
+  },
+  TableBody: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <TableBody component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: [],
+    actionTriggers: [],
+    sequentialTriggers: [],
   },
   TableRow: {
     Component: (props: { component: Component; renderTree: any }) => (
       <TableRow component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
-    actionTriggers: [
-      "onMount",
-      "onRowClick",
-      "onRowHover",
-      "onRowSelect",
-      "onRowExpand",
-      "onSort",
-      "onFilterApplied",
-    ],
-    sequentialTriggers: ["onSuccess", "onError"],
+    modifiers: [],
+    actionTriggers: [],
+    sequentialTriggers: [],
   },
   TableCell: {
     Component: (props: { component: Component; renderTree: any }) => (
       <TableCell component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
-    actionTriggers: [
-      "onMount",
-      "onRowClick",
-      "onRowHover",
-      "onRowSelect",
-      "onRowExpand",
-      "onSort",
-      "onFilterApplied",
-    ],
-    sequentialTriggers: ["onSuccess", "onError"],
+    modifiers: [],
+    actionTriggers: [],
+    sequentialTriggers: [],
   },
   FileUpload: {
     Component: (props: { component: Component; renderTree: any }) => {
@@ -1324,7 +1303,7 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: ["navbar", "background", "border"],
+    modifiers: ["navbar", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

@@ -49,9 +49,6 @@ export const jsonStructure = (props?: any): Component => {
       ...merge({
         style: {
           ...initialValues,
-          backgroundColor: isDarkTheme
-            ? theme.colors.dark[6]
-            : theme.colors.gray[1],
         },
         ...props.props,
       }),

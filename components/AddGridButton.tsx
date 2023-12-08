@@ -1,38 +1,7 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
-import { useEditorStore } from "@/stores/editor";
-import { GRAY_OUTLINE } from "@/utils/branding";
-import { GRID_SIZE } from "@/utils/config";
+import { emptyEditorTree, useEditorStore } from "@/stores/editor";
 import cloneDeep from "lodash.clonedeep";
 import { nanoid } from "nanoid";
-
-const gridStructure = {
-  id: "content-wrapper",
-  name: "Grid",
-  description: "Grid",
-  props: {
-    gridSize: GRID_SIZE,
-    style: {
-      gap: "0",
-      minHeight: "50px",
-    },
-  },
-  children: [
-    {
-      id: nanoid(),
-      name: "GridColumn",
-      description: "Main Content",
-      props: {
-        span: GRID_SIZE,
-        style: {
-          alignSelf: "start",
-          minHeight: "50px",
-          outline: GRAY_OUTLINE,
-          outlineOffset: "-2px",
-        },
-      },
-    },
-  ],
-};
 
 export const AddGridButton = () => {
   const editorTree = useEditorStore((state) => state.tree);
@@ -50,7 +19,7 @@ export const AddGridButton = () => {
           description: "Old Body",
         };
       })
-      .concat(gridStructure);
+      .concat(emptyEditorTree.root.children[0]);
 
     copy.root.children.reverse();
     setEditorTree(copy);

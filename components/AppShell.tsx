@@ -71,6 +71,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                 </Link>
               </Tooltip>
               <AIPromptTextInput />
+              {isDexlaAdmin && <AddGridButton />}
             </Group>
             <Group noWrap position="right" spacing="xs">
               <Select
@@ -89,7 +90,6 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                 }}
                 display="none"
               />
-              {isDexlaAdmin && <AddGridButton />}
               {isDexlaAdmin && <SaveTemplateButton />}
               {isDexlaAdmin && <AIChatHistoryButton projectId={projectId} />}
               <ActionIconDefault

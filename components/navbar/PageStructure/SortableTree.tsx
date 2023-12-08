@@ -184,7 +184,7 @@ export function NavbarLayersSection({
     setActiveId(activeId);
     setOverId(activeId);
 
-    document.body.style.setProperty("cursor", "grabbing");
+    document.body.style?.setProperty("cursor", "grabbing");
   }
 
   function handleDragMove({ delta, activatorEvent }: DragMoveEvent) {
@@ -233,7 +233,7 @@ export function NavbarLayersSection({
     setActiveId(null);
     setOffsetLeft(0);
 
-    document.body.style.setProperty("cursor", "");
+    document.body.style?.setProperty("cursor", "");
   }
 
   const handleCollapse = useCallback(

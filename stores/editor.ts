@@ -21,7 +21,6 @@ import { MantineNumberSize, MantineTheme } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
 import isEqual from "lodash.isequal";
-import { nanoid } from "nanoid";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
@@ -38,7 +37,7 @@ export const emptyEditorTree = {
       {
         id: "content-wrapper",
         name: "Grid",
-        description: "Grid",
+        description: "Body",
         props: {
           gridSize: GRID_SIZE,
           style: {
@@ -48,13 +47,14 @@ export const emptyEditorTree = {
         },
         children: [
           {
-            id: nanoid(),
+            id: "main-content",
             name: "GridColumn",
-            description: "GridColumn",
+            description: "Main Content",
             props: {
               span: GRID_SIZE,
               style: {
-                height: "auto",
+                alignSelf: "start",
+                minHeight: "50px",
                 outline: GRAY_OUTLINE,
                 outlineOffset: "-2px",
               },
