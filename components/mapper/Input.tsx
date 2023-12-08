@@ -8,10 +8,13 @@ import {
   NumberInput as MantineNumberInput,
   NumberInputProps,
   TextInputProps,
+  Group,
+  ActionIcon,
 } from "@mantine/core";
 import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { memo, useCallback, useEffect, useState } from "react";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -35,18 +38,71 @@ const InputComponent = ({ renderTree, component, ...props }: Props) => {
     [debounce],
   );
 
-  useEffect(() => {
-    setInputValue(value);
-  }, [value]);
-
   const type = (componentProps.type as string) || "text";
 
   const customStyle = merge({}, { borderColor }, props.style);
+
   return (
     <>
-      {type === "number" ? (
+      {type === "numberRange" ? (
+        <>
+          <Group
+            spacing={0}
+            {...props}
+            styles={merge(
+              {},
+              {
+                root: { ...customStyle },
+              },
+            )}
+          >
+            <ActionIcon
+              size={props.size}
+              variant="default"
+              style={{ border: "none" }}
+              onClick={() => {
+                setInputValue((prev: number) => (!prev ? -1 : prev - 1));
+                triggers?.onChange && debouncedOnChange(value);
+              }}
+            >
+              –
+            </ActionIcon>
+
+            <MantineNumberInput
+              hideControls
+              type="number"
+              autoComplete="off"
+              id={component.id}
+              {...omit(componentProps, ["type"])}
+              styles={{
+                root: { display: "inline", flexGrow: 1 },
+                input: { border: "none", textAlign: "center" },
+              }}
+              size={props.size}
+              value={inputValue}
+              onChange={(e) => {
+                setInputValue(e);
+                triggers?.onChange ? debouncedOnChange(e) : undefined;
+              }}
+              label={undefined}
+            />
+
+            <ActionIcon
+              size={props.size}
+              variant="default"
+              style={{ border: "none" }}
+              onClick={() => {
+                setInputValue((prev: number) => (!prev ? 1 : prev + 1));
+                triggers?.onChange && debouncedOnChange(value);
+              }}
+            >
+              +
+            </ActionIcon>
+          </Group>
+        </>
+      ) : type === "number" ? (
         <MantineNumberInput
-          autoComplete={false}
+          autoComplete="off"
           id={component.id}
           icon={iconName ? <Icon name={iconName} /> : null}
           styles={merge(
