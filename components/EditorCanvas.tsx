@@ -30,7 +30,7 @@ type Props = {
 
 const EditableComponentContainer = ({ children, component }: any) => {
   const isSelected = useEditorStore(
-      (state) => state.selectedComponentIds?.includes(component.id),
+    (state) => state.selectedComponentIds?.includes(component.id),
   );
 
   return (
@@ -97,7 +97,13 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       setSelectedComponentIds(() => []);
       setEditorTree(copy, { action: `Removed ${comp?.name}` });
     }
-  }, [editorTree, setEditorTree, setSelectedComponentId, isPreviewMode]);
+  }, [
+    isPreviewMode,
+    editorTree,
+    setSelectedComponentId,
+    setSelectedComponentIds,
+    setEditorTree,
+  ]);
 
   const copySelectedComponent = useCallback(() => {
     const selectedComponentId = useEditorStore.getState().selectedComponentId;

@@ -15,7 +15,6 @@ export function getProjection(
   indentationWidth: number,
 ) {
   const overItemIndex = items.findIndex(({ id }) => id === overId);
-  const overItem = items.find(({ id }) => id === overId);
   const activeItemIndex = items.findIndex(({ id }) => id === activeId);
   const activeItem = items[activeItemIndex];
   const newItems = arrayMove(items, activeItemIndex, overItemIndex);
@@ -96,6 +95,24 @@ function flatten(
 export function flattenTree(items: TreeItems): FlattenedItem[] {
   return flatten(items);
 }
+
+export const getAllAncestors = (
+  flattenedItems: FlattenedItem[],
+  id: UniqueIdentifier,
+): FlattenedItem[] => {
+  const item = flattenedItems.find((item) => item.id === id);
+  if (!item) {
+    return [];
+  }
+  const { parentId } = item;
+  if (!parentId) {
+    return [];
+  }
+
+  const parentItem = flattenedItems.find((item) => item.id === parentId)!;
+
+  return [parentItem, ...getAllAncestors(flattenedItems, parentId)];
+};
 
 export function buildTree(flattenedItems: FlattenedItem[]): TreeItems {
   const root: TreeItem = { id: "root", name: "Container", children: [] };

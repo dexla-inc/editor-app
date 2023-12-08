@@ -261,6 +261,7 @@ export const EditableComponent = ({
       propsWithOverwrites,
       setComponentToBind,
       setSelectedComponentId,
+      setSelectedComponentIds,
     ],
   );
 

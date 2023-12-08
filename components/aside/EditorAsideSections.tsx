@@ -191,11 +191,14 @@ export const EditorAsideSections = () => {
       id: id,
       label: modifier.label,
       icon: modifier.icon,
-      initiallyOpened:
-        initiallyOpenedModifiersByComponent[component!.name]?.includes(id),
+      initiallyOpened: component
+        ? initiallyOpenedModifiersByComponent[component.name]?.includes(id)
+        : false,
       Component: modifier.Modifier,
       onClick: (id: string, isOpen: boolean) => {
-        setInitiallyOpenedModifiersByComponent(component!.name, id, isOpen);
+        if (component?.name) {
+          setInitiallyOpenedModifiersByComponent(component.name, id, isOpen);
+        }
       },
     };
   });
