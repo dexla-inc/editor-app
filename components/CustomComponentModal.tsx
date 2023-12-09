@@ -89,6 +89,8 @@ export const CustomComponentModal = ({
       title="New Custom Component"
       onClose={customComponentModal.close}
       opened={isCustomComponentModalOpen}
+      overlayProps={{ zIndex: 300 }}
+      zIndex={400}
     >
       <form
         onSubmit={customComponentForm.onSubmit(handleSubmitCustomComponent)}

@@ -8,7 +8,7 @@ import {
   structureMapper,
 } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
-import { ICON_SIZE } from "@/utils/config";
+import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { toSpaced } from "@/utils/dashboardTypes";
 import {
   Center,
@@ -19,7 +19,7 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { IconSearch } from "@tabler/icons-react";
+import { IconFrustum, IconSearch } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -129,23 +129,27 @@ export const EditorNavbarComponentsSection = () => {
               </Text>
             </Center>
           )}
-          {(query
-            ? customComponents.filter((sc) =>
-                new RegExp(query, "i").test(sc.id),
-              )
-            : customComponents
-          ).map(
-            ({ id, content, description, type }: CustomComponentResponse) => {
-              return (
-                <DraggableComponent
-                  key={type}
-                  id={id}
-                  text={description}
-                  data={JSON.parse(decodeSchema(content))}
-                />
-              );
-            },
-          )}
+          <Grid gutter="xs">
+            {(query
+              ? customComponents.filter((cc) =>
+                  new RegExp(query, "i").test(cc.description),
+                )
+              : customComponents
+            ).map(
+              ({ id, content, description, type }: CustomComponentResponse) => {
+                return (
+                  <Grid.Col span={6} key={id}>
+                    <DraggableComponent
+                      icon={<IconFrustum size={LARGE_ICON_SIZE} />}
+                      id={id}
+                      text={description}
+                      data={JSON.parse(decodeSchema(content))}
+                    />
+                  </Grid.Col>
+                );
+              },
+            )}
+          </Grid>
         </Stack>
       )}
     </Stack>

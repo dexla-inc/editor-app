@@ -18,7 +18,11 @@ import { IconGripVertical } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback, useEffect, useMemo } from "react";
 
-export const ComponentToolbox = () => {
+type Props = {
+  customComponentModal: any;
+};
+
+export const ComponentToolbox = ({ customComponentModal }: Props) => {
   const isResizing = useEditorStore((state) => state.isResizing);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
@@ -286,6 +290,15 @@ export const ComponentToolbox = () => {
           setEditorTree(copy, { action: `Removed ${component?.name}` });
         }}
       />
+      {customComponentModal && (
+        <ActionIconTransparent
+          iconName="IconDeviceFloppy"
+          tooltip="Save as custom component"
+          onClick={() => {
+            customComponentModal.open();
+          }}
+        />
+      )}
     </Group>
   );
 };

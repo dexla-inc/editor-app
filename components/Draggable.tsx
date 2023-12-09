@@ -80,26 +80,30 @@ export const Draggable = ({
           },
         }}
       >
+        {isDeletable && (
+          <Card.Section>
+            <Group position="right" noWrap p="xs">
+              <ActionIcon
+                size="xs"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  mutate({
+                    projectId: router.query.id as string,
+                    companyId: activeCompany.orgId,
+                    id,
+                  });
+                }}
+              >
+                <IconX size={12} />
+              </ActionIcon>
+            </Group>
+          </Card.Section>
+        )}
         <Group position="apart" noWrap sx={{ textAlign: "center" }}>
           <Box {...draggable} w="100%">
             {children}
           </Box>
-          {isDeletable && (
-            <ActionIcon
-              size="xs"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                mutate({
-                  projectId: router.query.id as string,
-                  companyId: activeCompany.orgId,
-                  id,
-                });
-              }}
-            >
-              <IconX size={ICON_SIZE} />
-            </ActionIcon>
-          )}
         </Group>
       </Card>
     </Box>
