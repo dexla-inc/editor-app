@@ -1,19 +1,19 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { isSame } from "@/utils/componentComparison";
 import { GRID_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
-import { Box, BoxProps, useMantineTheme } from "@mantine/core";
-import { forwardRef, memo, useEffect } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { usePrevious } from "@mantine/hooks";
 import { calculateGridSizes } from "@/utils/grid";
+import { Box, BoxProps, useMantineTheme } from "@mantine/core";
+import { usePrevious } from "@mantine/hooks";
+import { forwardRef, memo, useEffect } from "react";
 
-type Props = {
+export type GridProps = {
   renderTree: (component: Component) => any;
   component: Component;
 } & BoxProps;
 
 const GridComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ renderTree, component, ...props }: GridProps, ref) => {
     const theme = useMantineTheme();
     const { style = {}, gridSize, navbarWidth } = component.props!;
 
@@ -63,4 +63,7 @@ const GridComponent = forwardRef(
 );
 GridComponent.displayName = "Grid";
 
-export const Grid = memo(withComponentWrapper<Props>(GridComponent), isSame);
+export const Grid = memo(
+  withComponentWrapper<GridProps>(GridComponent),
+  isSame,
+);

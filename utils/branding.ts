@@ -96,6 +96,7 @@ const defaultTheme: MantineThemeExtended = {
   cardStyle: "OUTLINED_ROUNDED",
   defaultSpacing: "md",
   defaultRadius: "md",
+  theme: "LIGHT",
 };
 
 // Variables

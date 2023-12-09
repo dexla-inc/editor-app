@@ -65,6 +65,7 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
         defaultSpacing:
           userTheme.data?.defaultSpacing ?? defaultTheme.spacing.md,
         defaultRadius: userTheme.data?.defaultRadius ?? defaultTheme.radius.md,
+        theme: userTheme.data?.theme ?? defaultTheme.theme,
         // loader: userTheme.data?.loader?
         // focusRing: userTheme.data?.focusRing,
       });

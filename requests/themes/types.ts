@@ -18,6 +18,7 @@ export type ThemeMutationParams = {
   focusRing?: FocusRing;
   loader?: LoaderType;
   cardStyle: CardStyle;
+  theme: "LIGHT" | "DARK";
 };
 
 export interface ThemeResponse extends ThemeMutationParams {

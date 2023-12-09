@@ -157,7 +157,7 @@ export const Modifier = withModifier(
         If you meant to render a collection of children, use an array instead. */}
           <IconSelector
             topLabel="Icon"
-            selectedIcon={form.values.leftIcon}
+            selectedIcon={selectedComponent.props?.leftIcon}
             onIconSelect={(value: string) => {
               form.setFieldValue("leftIcon", value);
               debouncedTreeUpdate(selectedComponentIds, {

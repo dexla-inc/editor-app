@@ -23,11 +23,7 @@ export const TableHead = ({ renderTree, component }: Props) => {
 };
 
 export const TableBody = ({ renderTree, component }: Props) => {
-  return (
-    <tbody style={{ padding: "0 10px" }}>
-      {component.children?.map((child) => renderTree(child))}
-    </tbody>
-  );
+  return <tbody>{component.children?.map((child) => renderTree(child))}</tbody>;
 };
 
 export const TableRow = ({ renderTree, component }: Props) => {

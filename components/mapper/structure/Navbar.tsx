@@ -53,7 +53,7 @@ export const jsonStructure = (props?: any): Component => {
         ...props.props,
       }),
     },
-    fixedPosition: { position: "left", target: "content-wrapper" },
+    fixedPosition: { position: "top", target: "content-wrapper" },
     children: [
       {
         id: nanoid(),
