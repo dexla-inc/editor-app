@@ -100,6 +100,7 @@ export type EditorState = {
   currentProjectId?: string;
   currentPageId?: string;
   selectedComponentId?: string;
+  hoveredComponentId?: string;
   selectedComponentIds?: string[];
   copiedComponent?: Component;
   componentToAdd?: Component;
@@ -184,6 +185,7 @@ export type EditorState = {
     currentState: string,
   ) => void;
   setSelectedComponentId: (selectedComponentId?: string) => void;
+  setHoveredComponentId: (hoveredComponentId?: string) => void;
   setSelectedComponentIds: (cb: (ids: string[]) => string[]) => void;
   clearSelection: (id?: string) => void;
   clearSelections: (ids?: string[]) => void;
@@ -602,6 +604,8 @@ export const useEditorStore = create<EditorState>()(
             false,
             "editor/setHighlightedComponentId",
           ),
+        setHoveredComponentId: (hoveredComponentId) =>
+          set({ hoveredComponentId }, false, "editor/setHoveredComponentId"),
         setIsResizing: (isResizing) => set({ isResizing }),
         setColumnSpan: (id, span) =>
           set((state) => ({
