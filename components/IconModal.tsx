@@ -66,7 +66,7 @@ export const IconModal = ({ onIconSelect }: Props) => {
   const onIconClick = (iconName: string | undefined) => {
     if (iconName) onIconSelect(iconName);
     else {
-      onIconSelect(undefined);
+      onIconSelect("");
     }
     closeModal();
   };
