@@ -9,6 +9,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import Head from "next/head";
@@ -153,6 +154,7 @@ export default function App(props: AppProps) {
                   </ReactFlowProvider>
                 </Hydrate>
               </QueryClientProvider>
+              <SpeedInsights />
             </main>
           </body>
         </AuthProvider>
