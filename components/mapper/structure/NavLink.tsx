@@ -5,14 +5,20 @@ export const jsonStructure = (props?: any): Component => {
   return {
     id: nanoid(),
     name: "NavLink",
-    description: "Navigation Item",
+    description: "Nav Link",
     props: {
-      label: "Navigation Item",
+      icon: "IconLayoutDashboard",
+      label: "Nav Link",
       style: {
         width: "100%",
         height: "auto",
+        display: "flex",
+        alignItems: "center",
+        padding: "10px",
+        color: "Black.6",
       },
       ...(props.props || {}),
     },
+    blockDroppingChildrenInside: true,
   };
 };

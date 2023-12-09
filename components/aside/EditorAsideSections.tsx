@@ -48,6 +48,7 @@ import * as ChartModifier from "@/components/modifiers/chart/Chart";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { Action, actionMapper } from "@/utils/actions";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { componentMapper } from "@/utils/componentMapper";
 import { getAllComponentsByIds, getComponentById } from "@/utils/editor";
 import { Modifiers } from "@/utils/modifiers";
@@ -366,9 +367,7 @@ export const EditorAsideSections = () => {
                   onChange={(value: string) => {
                     setTreeComponentCurrentState(selectedComponentId, value);
                   }}
-                  autoComplete="off"
-                  data-lpignore="true"
-                  data-form-type="other"
+                  {...AUTOCOMPLETE_OFF_PROPS}
                 />
               </>
             )}

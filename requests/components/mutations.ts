@@ -1,23 +1,10 @@
-import { del, post, put } from "@/utils/api";
+import {
+  CustomComponentParams,
+  CustomComponentResponse,
+} from "@/requests/components/types";
+import { del, post } from "@/utils/api";
 
-export type CustomComponentParams = {
-  type: string;
-  name: string;
-  scopes: string;
-  content: string;
-  description: string;
-};
-
-export type CustomComponentResponse = {
-  id: string;
-  type: string;
-  name: string;
-  scope: string;
-  content: string;
-  description: string;
-};
-
-export const createCustomComponent = async ({
+export const upsertCustomComponent = async ({
   values,
   projectId,
   companyId,
@@ -29,29 +16,6 @@ export const createCustomComponent = async ({
   const { name, ...params } = values;
   const response = (await post<CustomComponentResponse>(
     `/projects/${projectId}/components?companyId=${companyId}`,
-    {
-      ...params,
-      description: name,
-    },
-  )) as CustomComponentResponse;
-
-  return response;
-};
-
-export const updateComponent = async ({
-  values,
-  projectId,
-  companyId,
-  id,
-}: {
-  values: CustomComponentParams;
-  projectId: string;
-  companyId: string;
-  id: string;
-}) => {
-  const { name, ...params } = values;
-  const response = (await put<CustomComponentResponse>(
-    `/projects/${projectId}/components/${id}?companyId=${companyId}`,
     {
       ...params,
       description: name,

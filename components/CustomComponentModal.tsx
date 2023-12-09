@@ -1,6 +1,7 @@
-import { createCustomComponent } from "@/requests/components/mutations";
+import { upsertCustomComponent } from "@/requests/components/mutations";
 import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
@@ -30,7 +31,7 @@ export const CustomComponentModal = ({
   );
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
 
-  const { mutate } = useMutation(createCustomComponent, {
+  const { mutate } = useMutation(upsertCustomComponent, {
     onSettled(_, err) {
       if (err) {
         console.error(err);
@@ -75,6 +76,7 @@ export const CustomComponentModal = ({
     mutate({
       values: {
         ...values,
+        id: selectedComponentId,
         content: encodeSchema(JSON.stringify(copy)) as string,
         type: values.scope === "global" ? values.type : copy?.name,
       },
@@ -89,8 +91,7 @@ export const CustomComponentModal = ({
       title="New Custom Component"
       onClose={customComponentModal.close}
       opened={isCustomComponentModalOpen}
-      overlayProps={{ zIndex: 300 }}
-      zIndex={400}
+      zIndex={300}
     >
       <form
         onSubmit={customComponentForm.onSubmit(handleSubmitCustomComponent)}
@@ -102,6 +103,7 @@ export const CustomComponentModal = ({
               label="Name"
               withAsterisk={false}
               {...customComponentForm.getInputProps("name")}
+              {...AUTOCOMPLETE_OFF_PROPS}
             />
             <Select
               withinPortal

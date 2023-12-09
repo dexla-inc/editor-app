@@ -147,6 +147,7 @@ export const useComponentContextMenu = () => {
       setSelectedComponentId(newSelectedId);
       setSelectedComponentIds(() => [newSelectedId]);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [editorTree, setSelectedComponentId, setEditorTree],
   );
 
@@ -228,13 +229,13 @@ export const useComponentContextMenu = () => {
               {
                 key: "copy_properties",
                 icon: <IconClipboardCopy size={16} />,
-                title: "Copy Properties",
+                title: "Copy",
                 onClick: () => copyProperties(component),
               },
               {
                 key: "paste_properties",
                 icon: <IconClipboardPlus size={16} />,
-                title: "Paste Properties",
+                title: "Paste",
                 onClick: () => pasteProperties(component),
               },
             ],

@@ -28,6 +28,7 @@ export const Modifier = withModifier(
         orientation: selectedComponent.props?.orientation,
         size: selectedComponent.props?.size,
         variant: selectedComponent.props?.variant,
+        color: selectedComponent.props?.color,
       }),
     });
 
@@ -104,7 +105,7 @@ export const Modifier = withModifier(
             }}
           />
           <ThemeColorSelector
-            label="Text Color"
+            label="Color"
             {...form.getInputProps("color")}
             onChange={(value: string) => {
               form.setFieldValue("color", value);

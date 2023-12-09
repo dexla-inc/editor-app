@@ -21,6 +21,7 @@ import { FrontEndTypes } from "@/requests/variables/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import { APICallAction, Action, LoginAction } from "@/utils/actions";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ApiType } from "@/utils/dashboardTypes";
 import { getComponentById } from "@/utils/editor";
 import {
@@ -335,10 +336,8 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                               { required: param.required }
                             : {})}
                           {...additionalProps}
-                          autoComplete="off"
-                          data-lpignore="true"
-                          data-form-type="other"
                           {...form.getInputProps(field)}
+                          {...AUTOCOMPLETE_OFF_PROPS}
                         />
                       </Stack>
                     );

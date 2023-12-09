@@ -58,7 +58,7 @@ export const jsonStructure = (props?: any): Component => {
       {
         id: nanoid(),
         name: "Container",
-        description: "Container for Logo and Brand",
+        description: "Logo",
         props: {
           style: {
             display: "flex",
@@ -180,7 +180,7 @@ export const jsonStructure = (props?: any): Component => {
       {
         id: nanoid(),
         name: "Container",
-        description: "Container for Pages and Avatar",
+        description: "Can Delete Containier",
         props: {
           style: {
             display: "flex",
@@ -200,7 +200,7 @@ export const jsonStructure = (props?: any): Component => {
           {
             id: nanoid(),
             name: "Container",
-            description: "Container for navigation links",
+            description: "Nav Links",
             props: {
               style: {
                 display: "flex",
@@ -211,7 +211,7 @@ export const jsonStructure = (props?: any): Component => {
             children: pages.map((page) => ({
               id: page.id,
               name: "NavLink",
-              description: "Navbar Item",
+              description: "Nav Link",
               props: {
                 icon: page.icon ?? "IconLayoutDashboard",
                 label: page.title,
@@ -228,6 +228,7 @@ export const jsonStructure = (props?: any): Component => {
                   borderRadius: "3px",
                 },
               },
+              blockDroppingChildrenInside: true,
               actions: [
                 {
                   id: nanoid(),
@@ -290,7 +291,6 @@ export const jsonStructure = (props?: any): Component => {
                       color: isDarkTheme
                         ? theme.colors.gray[5]
                         : theme.colors.dark[9],
-                      borderRadius: "3px",
                     },
                   },
                   actions: [

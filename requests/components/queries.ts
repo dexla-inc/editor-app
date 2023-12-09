@@ -1,15 +1,5 @@
+import { CustomComponentResponse } from "@/requests/components/types";
 import { getWithoutAuth } from "@/utils/apiNoAuth";
-
-export type CustomComponentResponse = {
-  id: string;
-  type: string;
-  name: string;
-  scope: ComponentScopes;
-  content: string;
-  description: string;
-};
-
-type ComponentScopes = "PROJECT" | "COMPANY" | "GLOBAL";
 
 type CustomComponentListResponse = {
   results: CustomComponentResponse[];

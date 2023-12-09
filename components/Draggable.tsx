@@ -2,16 +2,16 @@ import { useDraggable } from "@/hooks/useDraggable";
 import { deleteCustomComponent } from "@/requests/components/mutations";
 import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
-import { ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
   Box,
   BoxProps,
   Card,
   Group,
+  Tooltip,
   useMantineTheme,
 } from "@mantine/core";
-import { IconX } from "@tabler/icons-react";
+import { IconTrash } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { PropsWithChildren, useCallback } from "react";
@@ -82,7 +82,7 @@ export const Draggable = ({
       >
         {isDeletable && (
           <Card.Section>
-            <Group position="right" noWrap p="xs">
+            <Group position="right" noWrap>
               <ActionIcon
                 size="xs"
                 onClick={(e) => {
@@ -95,7 +95,16 @@ export const Draggable = ({
                   });
                 }}
               >
-                <IconX size={12} />
+                <Tooltip label="Delete" withArrow fz="xs" withinPortal>
+                  <IconTrash
+                    size={12}
+                    style={{
+                      position: "absolute",
+                      right: 10,
+                      top: 10,
+                    }}
+                  />
+                </Tooltip>
               </ActionIcon>
             </Group>
           </Card.Section>

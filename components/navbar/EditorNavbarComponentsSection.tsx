@@ -1,7 +1,7 @@
 import { DraggableComponent } from "@/components/DraggableComponent";
 import { GenerateComponentsAIButton } from "@/components/GenerateComponentsAIButton";
-import { CustomComponentResponse } from "@/requests/components/mutations";
 import { getComponentList } from "@/requests/components/queries";
+import { CustomComponentResponse } from "@/requests/components/types";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import {
   ComponentCategoryType,
