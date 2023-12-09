@@ -130,6 +130,63 @@ const darkTheme = {
   },
 };
 
+type HoverProps = {
+  paddings: {
+    padding: string;
+    paddingTop: string;
+    paddingBottom: string;
+    paddingLeft: string;
+    paddingRight: string;
+  };
+  margins: {
+    margin: string;
+    marginTop: string;
+    marginBottom: string;
+    marginLeft: string;
+    marginRight: string;
+  };
+};
+
+// Dev hover style
+const hoverStyles = (styles: any) => ({
+  "&::before": {
+    content: '""',
+    ...styles.position,
+    top: 0,
+    left: 0,
+    display: styles.display,
+    position: "absolute",
+    border: `${styles.padding.padding} solid rgba(153, 115, 0,0.1)`,
+    boxSizing: "border-box",
+    backgroundColor:
+      "rgba(173, 216, 230, 0.5)" /* Light blue background for content */,
+    pointerEvents: "none", // Ensure the pseudo-element doesn't block your element events
+  },
+  // "&::after": {
+  //   content: '""',
+  //   ...styles.position,
+  //   display: styles.display,
+  //   ...styles.padding,
+  //   top: 0,
+  //   left: 0,
+  //   position: "absolute",
+  //   // top: "-10px", // Adjust padding thickness here
+  //   // right: "-10px", // Adjust padding thickness here
+  //   // bottom: "-10px", // Adjust padding thickness here
+  //   // left: "-10px", // Adjust padding thickness here
+  //   // boxShadow:
+  //   //   "0 0 0 10px rgba(0,255,0,0.3)" /* Adjust the overall width highlight */,
+  //   pointerEvents: "none", // Ensure the pseudo-element doesn't block your element events
+  // },
+
+  // "&>*": {
+  //   position: "relative",
+  //   zIndex: 1 /* Make sure the content appears above the pseudo-elements */,
+  //   backgroundColor:
+  //     "rgba(173, 216, 230, 0.5)" /* Light blue background for content */,
+  // },
+});
+
 export {
   GRAY_COLOR,
   GRAY_OUTLINE,
@@ -147,6 +204,7 @@ export {
   defaultTheme,
   flexStyles,
   globalStyles,
+  hoverStyles,
   nestable,
   scrollbarStyles,
   theme,

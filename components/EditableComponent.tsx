@@ -7,6 +7,7 @@ import {
   GRAY_OUTLINE,
   GREEN_BASE_SHADOW,
   GREEN_COLOR,
+  hoverStyles,
   ORANGE_BASE_SHADOW,
   THIN_GREEN_BASE_SHADOW,
   THIN_ORANGE_BASE_SHADOW,
@@ -16,7 +17,13 @@ import { Component } from "@/utils/editor";
 import { BoxProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { Router, useRouter } from "next/router";
-import { cloneElement, PropsWithChildren, useCallback, useEffect } from "react";
+import {
+  cloneElement,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 
 type Props = {
   id: string;
@@ -195,6 +202,62 @@ export const EditableComponent = ({
   const isWidthPercentage = propsWithOverwrites?.style?.width?.endsWith("%");
   const isHeightPercentage = propsWithOverwrites?.style?.height?.endsWith("%");
 
+  // State hooks for overlays
+  const [overlayStyles, setOverlayStyles] = useState({
+    display: "none", // By default, the overlays are not displayed
+    position: {},
+    padding: {},
+    content: {},
+  });
+
+  const [hoveredId, setHoveredId] = useState("");
+  const isHovered = hoveredId === component.id;
+
+  // Function to update overlays based on the target element
+  const updateOverlays = (element: any) => {
+    if (!element) return;
+
+    const rect = element.getBoundingClientRect();
+    const computedStyle = window.getComputedStyle(element);
+
+    setOverlayStyles({
+      display: "block", // Show the overlays
+      position: {
+        width: rect.width + "px",
+        height: rect.height + "px",
+        top: rect.top + "px",
+        left: rect.left + "px",
+      },
+      padding: {
+        paddingTop: computedStyle.paddingTop,
+        paddingRight: computedStyle.paddingRight,
+        paddingBottom: computedStyle.paddingBottom,
+        paddingLeft: computedStyle.paddingLeft,
+        padding: computedStyle.padding,
+        border: "2px dashed purple", // Padding overlay color
+      },
+      content: {
+        width: `calc(100% - ${computedStyle.paddingLeft} - ${computedStyle.paddingRight})`,
+        height: `calc(100% - ${computedStyle.paddingTop} - ${computedStyle.paddingBottom})`,
+        backgroundColor: "rgba(173, 216, 230, 0.5)", // Content overlay color
+      },
+    });
+  };
+
+  // Event handlers for mouse enter and leave
+  const handleMouseEnter = () => {
+    setHoveredId(component.id as string);
+    const element = (iframeWindow ?? window).document.getElementById(
+      component.id!,
+    );
+    updateOverlays(element);
+  };
+
+  const handleMouseLeave = () => {
+    setOverlayStyles((prevStyles) => ({ ...prevStyles, display: "none" }));
+    setHoveredId("");
+  };
+
   merge(propsWithOverwrites, {
     style: {
       // setting the inner div width/height. If percentage, the inner div size is 100% and the actual size is propagated
@@ -212,7 +275,7 @@ export const EditableComponent = ({
           onMouseEnter: triggers?.onHover ?? hoverStateFunc,
           onMouseLeave: leaveHoverStateFunc,
         }
-      : {},
+      : { onMouseEnter: handleMouseEnter, onMouseLeave: handleMouseLeave },
   });
 
   const showShadows = !isPreviewMode && !isLive;
@@ -254,6 +317,7 @@ export const EditableComponent = ({
         forceDestroyContextMenu();
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       forceDestroyContextMenu,
       id,
@@ -282,7 +346,12 @@ export const EditableComponent = ({
           style: childStyles,
           sx: {
             "&:hover": {
-              ...(!isPreviewMode ? { boxShadow: thinBaseShadow } : {}),
+              ...(!isPreviewMode
+                ? {
+                    boxShadow: thinBaseShadow,
+                    ...(isHovered && hoverStyles(overlayStyles)),
+                  }
+                : {}),
             },
           },
           onClick: handleClick,
