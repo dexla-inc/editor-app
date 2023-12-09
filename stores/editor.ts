@@ -52,11 +52,14 @@ export const emptyEditorTree = {
             description: "Main Content",
             props: {
               span: GRID_SIZE,
+              gap: "sm",
               style: {
                 alignSelf: "start",
                 minHeight: "50px",
                 outline: GRAY_OUTLINE,
                 outlineOffset: "-2px",
+                height: "100vh",
+                background: "Background.6",
               },
             },
           },
@@ -74,6 +77,7 @@ export interface MantineThemeExtended extends MantineTheme {
   hasCompactButtons?: boolean;
   cardStyle?: CardStyle;
   defaultSpacing?: MantineNumberSize;
+  theme: "LIGHT" | "DARK";
 }
 
 export type ComponentToBind = {

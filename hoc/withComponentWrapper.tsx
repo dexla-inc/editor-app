@@ -5,7 +5,7 @@ export const withComponentWrapper = <T extends {}>(
   Component: ComponentType<T>,
 ) => {
   const Config = (props: any) => {
-    const hasTooltip = !!props.component.props?.tooltip;
+    const hasTooltip = !!props.component?.props?.tooltip;
     const Wrapper = hasTooltip ? Tooltip : Fragment;
 
     return (
@@ -13,8 +13,8 @@ export const withComponentWrapper = <T extends {}>(
       <Wrapper
         {...(hasTooltip
           ? {
-              label: props.component.props?.tooltip,
-              color: props.component.props?.tooltipColor,
+              label: props.component?.props?.tooltip,
+              color: props.component?.props?.tooltipColor,
               withArrow: true,
             }
           : {})}

@@ -57,17 +57,26 @@ export const IconModal = ({ onIconSelect }: Props) => {
   );
 
   const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-  const onIconClick = (iconName: string) => {
-    onIconSelect(iconName);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSearchQuery("");
+    setCurrentPage(1);
+  };
+
+  const onIconClick = (iconName: string | undefined) => {
+    if (iconName) onIconSelect(iconName);
+    else {
+      onIconSelect("");
+    }
     closeModal();
   };
 
   return (
     <Stack>
       <Anchor onClick={openModal} size="xs">
-        <Flex gap="xs">
-          Change Icon <Icon name="IconExternalLink" size={ICON_SIZE} />
+        <Flex gap="xs" wrap="nowrap">
+          <Text size="xs">Change Icon</Text>{" "}
+          <Icon name="IconExternalLink" size={ICON_SIZE} />
         </Flex>
       </Anchor>
       <Modal
@@ -75,6 +84,7 @@ export const IconModal = ({ onIconSelect }: Props) => {
         onClose={closeModal}
         title="Select an icon"
         size="70%"
+        zIndex={300}
       >
         <Stack spacing="lg">
           <Input

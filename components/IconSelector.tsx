@@ -1,5 +1,6 @@
 import { IconModal } from "@/components/IconModal";
-import { Box, Flex, Text } from "@mantine/core";
+import { ActionIcon, Box, Flex, Text, Tooltip } from "@mantine/core";
+import { Icon } from "./Icon";
 
 type Props = {
   topLabel: string;
@@ -17,9 +18,18 @@ export const IconSelector = ({
       <Text size="xs" fw={500}>
         {topLabel}
       </Text>
-      <Flex gap="md" align="center">
-        <IconModal onIconSelect={onIconSelect} />
-        <Text size="xs">{selectedIcon}</Text>
+      <Flex gap="md" align="center" justify="space-between">
+        <>
+          <IconModal onIconSelect={onIconSelect} />
+          <Icon name={selectedIcon} />
+        </>
+        {selectedIcon && (
+          <Tooltip label="Delete" withArrow fz="xs">
+            <ActionIcon onClick={() => onIconSelect("X")}>
+              <Icon name="IconX" />
+            </ActionIcon>
+          </Tooltip>
+        )}
       </Flex>
     </Box>
   );

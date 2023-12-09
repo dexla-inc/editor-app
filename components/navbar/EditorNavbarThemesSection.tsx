@@ -104,6 +104,7 @@ export const EditorNavbarThemesSection = ({
       focusRing: "DEFAULT",
       hasCompactButtons: true,
       defaultFont: "Arial, sans-serif",
+      theme: "LIGHT",
     },
     validate: {},
   });

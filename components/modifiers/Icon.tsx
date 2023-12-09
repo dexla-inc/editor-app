@@ -27,16 +27,21 @@ export const Modifier = withModifier(
       initialValues: merge({}, defaultIconValues, {
         color: getThemeColor(theme, selectedComponent.props?.color),
         bg: selectedComponent.props?.bg,
-        icon: selectedComponent.props?.icon,
+        icon: selectedComponent.props?.name,
         size: selectedComponent.props?.size,
       }),
     });
 
     const handleColorChange = (_value: string) => {
       const [color, index] = _value.split(".");
-      // @ts-ignore
-      const value = theme.colors[color][index];
+
       form.setFieldValue("color", _value);
+
+      const value =
+        _value != "transparent"
+          ? // @ts-ignore
+            theme.colors[color][index]
+          : _value;
 
       debouncedTreeComponentStyleUpdate(selectedComponentIds, {
         color: value,
@@ -45,9 +50,13 @@ export const Modifier = withModifier(
 
     const handleBackgroundColorChange = (_value: string) => {
       const [color, index] = _value.split(".");
-      // @ts-ignore
-      const value = theme.colors[color][index];
+
       form.setFieldValue("bg", _value);
+
+      const value =
+        _value != "transparent" // @ts-ignore
+          ? theme.colors[color][index]
+          : _value;
 
       debouncedTreeUpdate(selectedComponentIds, {
         bg: value,
@@ -64,7 +73,7 @@ export const Modifier = withModifier(
         <Stack spacing="xs">
           <IconSelector
             topLabel="Icon"
-            selectedIcon={form.values.icon}
+            selectedIcon={selectedComponent.props?.name}
             onIconSelect={handleIconSelect}
           />
           <ThemeColorSelector

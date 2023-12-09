@@ -996,7 +996,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Table component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["spacing", "size", "border"],
+    modifiers: ["table", "spacing", "size", "border"],
     actionTriggers: [
       "onMount",
       "onRowClick",
