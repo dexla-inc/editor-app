@@ -207,21 +207,26 @@ export const EditableComponent = ({
     display: "none", // By default, the overlays are not displayed
     position: {},
     padding: {},
+    margin: {},
     content: {},
   });
 
-  const [hoveredId, setHoveredId] = useState("");
-  const isHovered = hoveredId === component.id;
+  const hoveredComponentId = useEditorStore(
+    (state) => state.hoveredComponentId,
+  );
+  const setHoveredComponentId = useEditorStore(
+    (state) => state.setHoveredComponentId,
+  );
 
   // Function to update overlays based on the target element
-  const updateOverlays = (element: any) => {
+  const updateOverlays = (element: any, display?: string) => {
     if (!element) return;
 
     const rect = element.getBoundingClientRect();
     const computedStyle = window.getComputedStyle(element);
 
     setOverlayStyles({
-      display: "block", // Show the overlays
+      display: display ?? "block", // Show the overlays
       position: {
         width: rect.width + "px",
         height: rect.height + "px",
@@ -236,6 +241,14 @@ export const EditableComponent = ({
         padding: computedStyle.padding,
         border: "2px dashed purple", // Padding overlay color
       },
+      margin: {
+        marginTop: computedStyle.marginTop,
+        marginRight: computedStyle.marginRight,
+        marginBottom: computedStyle.marginBottom,
+        marginLeft: computedStyle.marginLeft,
+        margin: computedStyle.margin,
+        border: "2px dashed purple", // Padding overlay color
+      },
       content: {
         width: `calc(100% - ${computedStyle.paddingLeft} - ${computedStyle.paddingRight})`,
         height: `calc(100% - ${computedStyle.paddingTop} - ${computedStyle.paddingBottom})`,
@@ -245,18 +258,29 @@ export const EditableComponent = ({
   };
 
   // Event handlers for mouse enter and leave
-  const handleMouseEnter = () => {
-    setHoveredId(component.id as string);
+  const handleMouseEnter = (e: any, id?: string) => {
+    e.stopPropagation();
+    const newHoveredId = e.currentTarget.id;
+    setHoveredComponentId(newHoveredId);
     const element = (iframeWindow ?? window).document.getElementById(
-      component.id!,
+      id ?? newHoveredId,
     );
     updateOverlays(element);
   };
 
-  const handleMouseLeave = () => {
-    setOverlayStyles((prevStyles) => ({ ...prevStyles, display: "none" }));
-    setHoveredId("");
+  const handleMouseLeave = (e: any) => {
+    e.stopPropagation(); // Stop the event from bubbling up to prevent child's onMouseLeave affecting parent
+    // Set a timeout to clear the hovered state
+    setTimeout(() => {
+      if (hoveredComponentId === e.currentTarget?.id) {
+        setHoveredComponentId("");
+        // ... Hide overlays
+        setOverlayStyles((prevStyles) => ({ ...prevStyles, display: "none" }));
+      }
+    }, 10);
   };
+
+  const shouldDisplayOverlay = hoveredComponentId === id;
 
   merge(propsWithOverwrites, {
     style: {
@@ -275,7 +299,7 @@ export const EditableComponent = ({
           onMouseEnter: triggers?.onHover ?? hoverStateFunc,
           onMouseLeave: leaveHoverStateFunc,
         }
-      : { onMouseEnter: handleMouseEnter, onMouseLeave: handleMouseLeave },
+      : {},
   });
 
   const showShadows = !isPreviewMode && !isLive;
@@ -283,6 +307,7 @@ export const EditableComponent = ({
   const childStyles = {
     ...propsWithOverwrites.style,
     ...(showShadows ? shadows : {}),
+
     outline:
       isPreviewMode && propsWithOverwrites.style?.outline === GRAY_OUTLINE
         ? "none"
@@ -349,12 +374,14 @@ export const EditableComponent = ({
               ...(!isPreviewMode
                 ? {
                     boxShadow: thinBaseShadow,
-                    ...(isHovered && hoverStyles(overlayStyles)),
+                    ...(shouldDisplayOverlay && hoverStyles(overlayStyles)),
                   }
                 : {}),
             },
           },
           onClick: handleClick,
+          onMouseOver: handleMouseEnter,
+          onMouseLeave: handleMouseLeave,
           ...(isPreviewMode
             ? {}
             : {

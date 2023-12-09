@@ -148,44 +148,57 @@ type HoverProps = {
 };
 
 // Dev hover style
-const hoverStyles = (styles: any) => ({
-  "&::before": {
-    content: '""',
-    ...styles.position,
-    top: 0,
-    left: 0,
-    display: styles.display,
-    position: "absolute",
-    border: `${styles.padding.padding} solid rgba(153, 115, 0,0.1)`,
-    boxSizing: "border-box",
-    backgroundColor:
-      "rgba(173, 216, 230, 0.5)" /* Light blue background for content */,
-    pointerEvents: "none", // Ensure the pseudo-element doesn't block your element events
-  },
-  // "&::after": {
-  //   content: '""',
-  //   ...styles.position,
-  //   display: styles.display,
-  //   ...styles.padding,
-  //   top: 0,
-  //   left: 0,
-  //   position: "absolute",
-  //   // top: "-10px", // Adjust padding thickness here
-  //   // right: "-10px", // Adjust padding thickness here
-  //   // bottom: "-10px", // Adjust padding thickness here
-  //   // left: "-10px", // Adjust padding thickness here
-  //   // boxShadow:
-  //   //   "0 0 0 10px rgba(0,255,0,0.3)" /* Adjust the overall width highlight */,
-  //   pointerEvents: "none", // Ensure the pseudo-element doesn't block your element events
-  // },
-
-  // "&>*": {
-  //   position: "relative",
-  //   zIndex: 1 /* Make sure the content appears above the pseudo-elements */,
-  //   backgroundColor:
-  //     "rgba(173, 216, 230, 0.5)" /* Light blue background for content */,
-  // },
-});
+const hoverStyles = (styles: any) => {
+  const {
+    position,
+    padding: { padding, paddingTop, paddingBottom, paddingLeft, paddingRight },
+    margin: { margin, marginTop, marginBottom, marginLeft, marginRight },
+    display,
+  } = styles;
+  return {
+    "&::before": {
+      content: '""',
+      ...position,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      display,
+      position: "absolute",
+      border: `${padding} solid rgba(173, 216, 230, 0.5)`,
+      borderTop: `${paddingTop} solid rgba(173, 216, 230, 0.5)`,
+      borderBottom: `${paddingBottom} solid rgba(173, 216, 230, 0.5)`,
+      borderLeft: `${paddingLeft} solid rgba(173, 216, 230, 0.5)`,
+      borderRight: `${paddingRight} solid rgba(173, 216, 230, 0.5)`,
+      boxSizing: "border-box",
+      zIndex: 1,
+      pointerEvents: "none", // Ensure the pseudo-element doesn't block your element events
+    },
+    "&::after": {
+      content: '""',
+      ...position,
+      width: `calc(${position.width} + ${paddingLeft ?? padding} + ${
+        paddingRight ?? padding
+      })`,
+      height: `calc(${position.height} + ${paddingTop ?? padding} + ${
+        paddingBottom ?? padding
+      })`,
+      top: `-${marginTop ?? margin}`,
+      left: `-${marginLeft ?? margin}`,
+      bottom: `-${marginBottom ?? margin}`,
+      right: `-${marginRight ?? margin}`,
+      display,
+      position: "absolute",
+      border: `${margin} solid rgba(153, 115, 0,0.1)`,
+      borderTop: `${marginTop} solid rgba(153, 115, 0,0.1)`,
+      borderBottom: `${marginBottom} solid rgba(153, 115, 0,0.1)`,
+      borderLeft: `${marginLeft} solid rgba(153, 115, 0,0.1)`,
+      borderRight: `${marginRight} solid rgba(153, 115, 0,0.1)`,
+      boxSizing: "border-box",
+      pointerEvents: "none", // Ensure the pseudo-element doesn't block your element events
+    },
+  };
+};
 
 export {
   GRAY_COLOR,
