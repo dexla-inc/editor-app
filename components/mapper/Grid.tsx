@@ -2,8 +2,10 @@ import { isSame } from "@/utils/componentComparison";
 import { GRID_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 import { Box, BoxProps, useMantineTheme } from "@mantine/core";
-import { forwardRef, memo } from "react";
+import { forwardRef, memo, useEffect } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { usePrevious } from "@mantine/hooks";
+import { calculateGridSizes } from "@/utils/grid";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -25,6 +27,15 @@ const GridComponent = forwardRef(
     const gap = props?.style?.gap
       ? theme.spacing[props.style?.gap as string]
       : 0;
+
+    const gapValue = props?.style?.gap ? gap : theme.spacing.xs;
+    const prevGap = usePrevious(gapValue);
+
+    useEffect(() => {
+      if (prevGap !== gapValue) {
+        calculateGridSizes(component);
+      }
+    }, [gapValue, prevGap, component]);
 
     return (
       <Box
