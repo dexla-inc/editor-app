@@ -177,11 +177,11 @@ const hoverStyles = (styles: any) => {
     "&::after": {
       content: '""',
       ...position,
-      width: `calc(${position.width} + ${paddingLeft ?? padding} + ${
-        paddingRight ?? padding
-      })`,
-      height: `calc(${position.height} + ${paddingTop ?? padding} + ${
-        paddingBottom ?? padding
+      width: `calc(${position.width} + ${marginLeft ?? margin} + ${
+        marginRight ?? margin
+      } + ${marginLeft ?? margin} + ${marginRight ?? margin})`,
+      height: `calc(${position.height} + ${marginTop ?? margin} + ${
+        marginBottom ?? margin
       })`,
       top: `-${marginTop ?? margin}`,
       left: `-${marginLeft ?? margin}`,
@@ -189,11 +189,11 @@ const hoverStyles = (styles: any) => {
       right: `-${marginRight ?? margin}`,
       display,
       position: "absolute",
-      border: `${margin} solid rgba(153, 115, 0,0.1)`,
-      borderTop: `${marginTop} solid rgba(153, 115, 0,0.1)`,
-      borderBottom: `${marginBottom} solid rgba(153, 115, 0,0.1)`,
-      borderLeft: `${marginLeft} solid rgba(153, 115, 0,0.1)`,
-      borderRight: `${marginRight} solid rgba(153, 115, 0,0.1)`,
+      border: `${margin} solid rgba(255, 165, 0, 0.3)`,
+      borderTop: `${marginTop} solid rgba(255, 165, 0, 0.3)`,
+      borderBottom: `${marginBottom} solid rgba(255, 165, 0, 0.3)`,
+      borderLeft: `${marginLeft} solid rgba(255, 165, 0, 0.3)`,
+      borderRight: `${marginRight} solid rgba(255, 165, 0, 0.3)`,
       boxSizing: "border-box",
       pointerEvents: "none", // Ensure the pseudo-element doesn't block your element events
     },
