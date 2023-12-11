@@ -15,6 +15,8 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
+  IconArrowNarrowDown,
+  IconArrowNarrowRight,
   IconArrowsDiff,
   IconArrowsHorizontal,
   IconCircleX,
@@ -42,7 +44,7 @@ let CUSTOM_FLEX_DEFAULT = "1 1 auto";
 export const defaultLayoutValues = {
   display: "flex",
   flexWrap: "nowrap",
-  flexDirection: "column",
+  flexDirection: "row",
   rowGap: "0px",
   columnGap: "0px",
   alignItems: "stretch",
@@ -122,8 +124,24 @@ export const Modifier = withModifier(({ selectedComponent }) => {
               <SegmentedControl
                 size="xs"
                 data={[
-                  { label: "Horizontal", value: "row" },
-                  { label: "Vertical", value: "column" },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Vertical"
+                        icon={<IconArrowNarrowRight size={14} />}
+                      />
+                    ),
+                    value: "row",
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Horizontal"
+                        icon={<IconArrowNarrowDown size={14} />}
+                      />
+                    ),
+                    value: "column",
+                  },
                 ]}
                 {...form.getInputProps("flexDirection")}
                 onChange={(value) => {

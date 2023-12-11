@@ -61,7 +61,7 @@ export const Modifier = withModifier(
               });
             }}
           />
-          <Select
+          {/* <Select
             label="Variant"
             size="xs"
             data={[
@@ -78,7 +78,7 @@ export const Modifier = withModifier(
                 variant: value,
               });
             }}
-          />
+          /> */}
           <ThemeColorSelector
             label="Background Color"
             {...form.getInputProps("color")}

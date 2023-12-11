@@ -7,6 +7,7 @@ import { IconTable } from "@tabler/icons-react";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
+import { SwitchSelector } from "../SwitchSelector";
 
 export const icon = IconTable;
 export const label = "Table";
@@ -15,6 +16,7 @@ const initialValues = {
   data: "",
   headers: {},
   config: {},
+  striped: false,
 };
 
 export const Modifier = withModifier(
@@ -26,6 +28,7 @@ export const Modifier = withModifier(
       headers,
       config,
       repeatedIndex,
+      striped,
     } = pick(selectedComponent.props!, [
       "data",
       "exampleData",
@@ -33,6 +36,7 @@ export const Modifier = withModifier(
       "headers",
       "config",
       "repeatedIndex",
+      "striped",
     ]);
 
     let data = dataProp?.value ?? exampleData?.value;
@@ -49,6 +53,7 @@ export const Modifier = withModifier(
         data: JSON.stringify(data, null, 2),
         headers: headers,
         config: config,
+        striped: striped,
       }),
     });
 
@@ -59,6 +64,17 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
+          <SwitchSelector
+            topLabel="Striped"
+            {...form.getInputProps("striped")}
+            onChange={(event) => {
+              form.setFieldValue("striped", event.currentTarget.checked);
+              debouncedTreeUpdate(selectedComponentIds, {
+                striped: event.currentTarget.checked,
+              });
+            }}
+          />
+
           <Divider label="Headers" labelPosition="center" />
           {form.values.data &&
             Object.keys(JSON.parse(form.values.data)[0] ?? {}).map((key) => {

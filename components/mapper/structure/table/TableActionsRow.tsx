@@ -59,6 +59,7 @@ export const tableHeader = {
             ],
             placeholder: "Actions",
           },
+          blockDroppingChildrenInside: true,
         },
         {
           id: nanoid(),
