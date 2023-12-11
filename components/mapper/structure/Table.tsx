@@ -1,4 +1,3 @@
-import { defaultButtonValues } from "@/components/modifiers/Button";
 import { defaultInputValues } from "@/components/modifiers/Input";
 import { defaultInputValues as defaultTextValues } from "@/components/modifiers/Text";
 import { structureMapper } from "@/utils/componentMapper";
@@ -7,6 +6,7 @@ import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const select = structureMapper["Select"].structure({});
+  const defaultButton = structureMapper["Button"].structure({});
 
   return {
     id: nanoid(),
@@ -88,12 +88,8 @@ export const jsonStructure = (props?: any): Component => {
               },
               {
                 id: nanoid(),
-                name: "Button",
-                description: "Button",
+                ...defaultButton,
                 props: {
-                  style: {
-                    ...defaultButtonValues,
-                  },
                   color: "Primary.6",
                   textColor: "PrimaryText.6",
                   children: "Export CSV",

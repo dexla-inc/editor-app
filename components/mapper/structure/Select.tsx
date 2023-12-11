@@ -12,7 +12,6 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       style: {
         width: "220px",
-        height: "auto",
       },
       ...defaultValues,
       ...(props.props || {}),

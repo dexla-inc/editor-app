@@ -1,11 +1,13 @@
 import { defaultLayoutValues } from "@/components/modifiers/Layout";
 import { defaultTheme } from "@/utils/branding";
+import { structureMapper } from "@/utils/componentMapper";
 import { Component } from "@/utils/editor";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
+  const defaultButton = structureMapper["Button"].structure({});
 
   return {
     id: nanoid(),
@@ -128,8 +130,7 @@ export const jsonStructure = (props?: any): Component => {
                 children: [
                   {
                     id: nanoid(),
-                    name: "Button",
-                    description: "Button",
+                    ...defaultButton,
                     props: {
                       style: {
                         width: "auto",
@@ -156,8 +157,7 @@ export const jsonStructure = (props?: any): Component => {
                   },
                   {
                     id: nanoid(),
-                    name: "Button",
-                    description: "Button",
+                    ...defaultButton,
                     props: {
                       style: {
                         width: "auto",

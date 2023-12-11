@@ -1,7 +1,5 @@
-import { defaultBorderValues } from "@/components/modifiers/Border";
 import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
-import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -14,12 +12,11 @@ export const jsonStructure = (props?: any): Component => {
     description: "Upload Files",
     props: {
       style: {
-        ...defaultBorderValues,
+        // ...defaultBorderValues,
         width: "auto",
-        height: "auto",
-        padding: px(theme.spacing.sm),
         ...(style || {}),
       },
+      size: "sm",
       name: name ?? "Upload button",
       ...(rest || {}),
     },

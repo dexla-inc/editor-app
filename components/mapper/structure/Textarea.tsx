@@ -11,7 +11,6 @@ export const jsonStructure = (props?: any): Component => {
       placeholder: "Textarea",
       style: {
         width: "100%",
-        height: "auto",
       },
       ...(props.props || {}),
     },

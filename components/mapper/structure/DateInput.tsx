@@ -1,10 +1,7 @@
-import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
-  const theme = props.theme ?? defaultTheme;
-
   return {
     id: nanoid(),
     name: "DateInput",
@@ -12,11 +9,9 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       placeholder: "DD MMM YYYY",
       valueFormat: "DD MMM YYYY",
+      size: "sm",
       style: {
         width: "100%",
-        height: "auto",
-        borderWidth: "1px",
-        borderStyle: "solid",
       },
       ...(props.props || {}),
     },
