@@ -149,6 +149,7 @@ export const UnitInput = ({
       <NumberInput
         size="xs"
         hideControls
+        precision={3}
         value={(value ?? splitValue) as number}
         onChange={(val: number) => {
           handleChange(val.toString());

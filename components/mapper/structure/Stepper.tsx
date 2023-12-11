@@ -1,8 +1,11 @@
+import { structureMapper } from "@/utils/componentMapper";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const stepperId = nanoid();
+
+  const defaultButton = structureMapper["Button"].structure({});
 
   const stepperStructure = {
     id: nanoid(),
@@ -168,8 +171,7 @@ export const jsonStructure = (props?: any): Component => {
                         children: [
                           {
                             id: nanoid(),
-                            name: "Button",
-                            description: "Button",
+                            ...defaultButton,
                             props: {
                               style: {
                                 width: "auto",
@@ -190,8 +192,7 @@ export const jsonStructure = (props?: any): Component => {
                           },
                           {
                             id: nanoid(),
-                            name: "Button",
-                            description: "Button",
+                            ...defaultButton,
                             props: {
                               style: {
                                 width: "auto",
@@ -355,8 +356,7 @@ export const jsonStructure = (props?: any): Component => {
                         children: [
                           {
                             id: nanoid(),
-                            name: "Button",
-                            description: "Button",
+                            ...defaultButton,
                             props: {
                               style: {
                                 width: "auto",
@@ -383,8 +383,7 @@ export const jsonStructure = (props?: any): Component => {
                           },
                           {
                             id: nanoid(),
-                            name: "Button",
-                            description: "Button",
+                            ...defaultButton,
                             props: {
                               style: {
                                 width: "auto",
@@ -543,8 +542,7 @@ export const jsonStructure = (props?: any): Component => {
                         children: [
                           {
                             id: nanoid(),
-                            name: "Button",
-                            description: "Button",
+                            ...defaultButton,
                             props: {
                               style: {
                                 width: "auto",
@@ -571,8 +569,7 @@ export const jsonStructure = (props?: any): Component => {
                           },
                           {
                             id: nanoid(),
-                            name: "Button",
-                            description: "Button",
+                            ...defaultButton,
                             props: {
                               style: {
                                 width: "auto",
