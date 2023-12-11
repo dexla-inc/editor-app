@@ -618,14 +618,6 @@ export const updateTreeComponentChildren = (
         node.children = children;
         context.break();
       }
-      // // @ts-ignore
-      // delete node.collapsed;
-      // // @ts-ignore
-      // delete node.depth;
-      // // @ts-ignore
-      // delete node.index;
-      // // @ts-ignore
-      // delete node.parentId;
     },
     { order: "bfs" },
   );

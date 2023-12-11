@@ -606,16 +606,21 @@ export const useEditorStore = create<EditorState>()(
           ),
         setHoveredComponentId: (hoveredComponentId) =>
           set({ hoveredComponentId }, false, "editor/setHoveredComponentId"),
-        setIsResizing: (isResizing) => set({ isResizing }),
+        setIsResizing: (isResizing) =>
+          set({ isResizing }, false, "editor/setIsResizing"),
         setColumnSpan: (id, span) =>
-          set((state) => ({
-            columnSpans: { ...(state.columnSpans ?? {}), [id]: span },
-          })),
+          set(
+            (state) => ({
+              columnSpans: { ...(state.columnSpans ?? {}), [id]: span },
+            }),
+            false,
+            "editor/setColumnSpan",
+          ),
       }),
       {
         partialize: (state) => {
-          const { tree } = state;
-          return { tree };
+          const { tree, columnSpans } = state;
+          return { tree, columnSpans };
         },
         limit: 500,
         equality(currentState, pastState) {
