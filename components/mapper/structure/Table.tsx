@@ -7,11 +7,8 @@ export const jsonStructure = (props?: any): Component => {
   const select = structureMapper["Select"].structure({});
   const defaultButton = structureMapper["Button"].structure({});
 
-  const {
-    button: defaultButtonValues,
-    input: defaultInputValues,
-    text: defaultTextValues,
-  } = requiredModifiers;
+  const { input: defaultInputValues, text: defaultTextValues } =
+    requiredModifiers;
   return {
     id: nanoid(),
     name: "Container",
