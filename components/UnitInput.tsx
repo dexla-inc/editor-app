@@ -43,7 +43,7 @@ export const UnitInput = ({
   ];
 
   const [splitValue, splitUnit] = splitValueAndUnit(
-    fetchedValue.toString(),
+    !!fetchedValue ? (fetchedValue as string).toString() : "",
   ) ?? [0, "auto"];
 
   const [value, setValue] = useState<number | "auto">();
