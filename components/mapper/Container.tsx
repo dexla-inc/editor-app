@@ -1,10 +1,10 @@
 import { MantineSkeleton } from "@/components/skeleton/Skeleton";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import isEmpty from "lodash.isempty";
 import { forwardRef } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = {
   renderTree: (component: Component) => any;
