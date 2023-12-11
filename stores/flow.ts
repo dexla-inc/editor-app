@@ -16,6 +16,7 @@ import {
   EdgeAddChange,
 } from "reactflow";
 import { nanoid } from "nanoid";
+import { devtools } from "zustand/middleware";
 
 export type FlowData = {
   edges: Edge[];
@@ -89,141 +90,181 @@ export const initialNodes = [
 
 export const initialEdges = [] as Edge[];
 
-export const useFlowStore = create<FlowState>((set, get) => ({
-  isDragging: false,
-  isRestored: false,
-  isUpdating: false,
-  shouldShowFormModal: false,
-  nodes: [],
-  edges: [],
-  onNodesChange: (changes: NodeChange[]) => {
-    set({
-      nodes: applyNodeChanges(changes, get().nodes),
-    });
-  },
-  onEdgesChange: (changes: EdgeChange[]) => {
-    set({
-      edges: applyEdgeChanges(
-        changes.map((change) => {
-          const isAdd = change.type === "add";
-          return {
-            ...change,
-            ...(isAdd
-              ? {
-                  item: { ...change.item, ...edgeProps },
-                }
-              : {}),
-          };
-        }),
-        get().edges.map((edge) => {
-          return {
-            ...edge,
-            ...edgeProps,
-          };
-        }),
-      ),
-    });
-  },
-  onConnect: (connection: Connection) => {
-    set({
-      edges: addEdge(
-        { ...connection, ...edgeProps },
-        get().edges.map((edge) => {
-          return {
-            ...edge,
-            ...edgeProps,
-          };
-        }),
-      ),
-    });
-  },
-  onAddNode: (nodeToAdd: Node) => {
-    set({
-      nodes: applyNodeChanges<NodeAddChange>(
-        [{ item: nodeToAdd, type: "add" }],
-        get().nodes,
-      ),
-    });
-  },
-  setFlowInstance: (flowInstance: ReactFlowInstance) => {
-    set({ flowInstance });
-  },
-  restoreFlow: (state: FlowData) => {
-    set({
-      nodes: applyNodeChanges<NodeAddChange>(
-        state.nodes.map((node) => ({ item: node, type: "add" })),
-        [],
-      ),
-      edges: applyEdgeChanges<EdgeAddChange>(
-        state.edges.map((edge) => ({ item: edge, type: "add" })),
-        [],
-      ),
-      isRestored: true,
-    });
-  },
-  resetFlow: () => {
-    set({
-      nodes: applyNodeChanges<NodeAddChange>(
-        initialNodes.map((node) => ({ item: node, type: "add" })),
-        [],
-      ),
-      edges: applyEdgeChanges<EdgeAddChange>(
-        initialEdges.map((edge) => ({ item: edge, type: "add" })),
-        [],
-      ),
-      isRestored: false,
+export const useFlowStore = create<FlowState>()(
+  devtools(
+    (set, get) => ({
       isDragging: false,
-      selectedNode: undefined,
-      flowInstance: undefined,
-    });
-  },
-  setIsDragging: (isDragging) => {
-    set({ isDragging });
-  },
-  setIsUpdating: (isUpdating) => {
-    set({ isUpdating });
-  },
-  setSelectedNode: (selectedNode?: Partial<Node>) => {
-    set({ selectedNode: selectedNode ?? undefined });
-  },
-  updateNodeData: async (node: Partial<Node>): Promise<Node[]> => {
-    const state = get();
-    const dependencies = getDependecies(node as Node, state);
-
-    const nodes = state.nodes.map((n) => {
-      if (node.id === n.id) {
-        return {
-          ...n,
-          data: {
-            ...n.data,
-            ...node.data,
+      isRestored: false,
+      isUpdating: false,
+      shouldShowFormModal: false,
+      nodes: [],
+      edges: [],
+      onNodesChange: (changes: NodeChange[]) => {
+        set(
+          {
+            nodes: applyNodeChanges(changes, get().nodes),
           },
-        };
-      }
-
-      if (!!dependencies.find((dep) => dep.node.id === n.id)) {
-        return {
-          ...n,
-          data: {
-            ...n.data,
+          false,
+          "flow/onNodesChange",
+        );
+      },
+      onEdgesChange: (changes: EdgeChange[]) => {
+        set(
+          {
+            edges: applyEdgeChanges(
+              changes.map((change) => {
+                const isAdd = change.type === "add";
+                return {
+                  ...change,
+                  ...(isAdd
+                    ? {
+                        item: { ...change.item, ...edgeProps },
+                      }
+                    : {}),
+                };
+              }),
+              get().edges.map((edge) => {
+                return {
+                  ...edge,
+                  ...edgeProps,
+                };
+              }),
+            ),
           },
-        };
-      }
+          false,
+          "flow/onEdgesChange",
+        );
+      },
+      onConnect: (connection: Connection) => {
+        set(
+          {
+            edges: addEdge(
+              { ...connection, ...edgeProps },
+              get().edges.map((edge) => {
+                return {
+                  ...edge,
+                  ...edgeProps,
+                };
+              }),
+            ),
+          },
+          false,
+          "flow/onConnect",
+        );
+      },
+      onAddNode: (nodeToAdd: Node) => {
+        set(
+          {
+            nodes: applyNodeChanges<NodeAddChange>(
+              [{ item: nodeToAdd, type: "add" }],
+              get().nodes,
+            ),
+          },
+          false,
+          "flow/onAddNode",
+        );
+      },
+      setFlowInstance: (flowInstance: ReactFlowInstance) => {
+        set({ flowInstance }, false, "flow/setFlowInstance");
+      },
+      restoreFlow: (state: FlowData) => {
+        set(
+          {
+            nodes: applyNodeChanges<NodeAddChange>(
+              state.nodes.map((node) => ({ item: node, type: "add" })),
+              [],
+            ),
+            edges: applyEdgeChanges<EdgeAddChange>(
+              state.edges.map((edge) => ({ item: edge, type: "add" })),
+              [],
+            ),
+            isRestored: true,
+          },
+          false,
+          "flow/restoreFlow",
+        );
+      },
+      resetFlow: () => {
+        set(
+          {
+            nodes: applyNodeChanges<NodeAddChange>(
+              initialNodes.map((node) => ({ item: node, type: "add" })),
+              [],
+            ),
+            edges: applyEdgeChanges<EdgeAddChange>(
+              initialEdges.map((edge) => ({ item: edge, type: "add" })),
+              [],
+            ),
+            isRestored: false,
+            isDragging: false,
+            selectedNode: undefined,
+            flowInstance: undefined,
+          },
+          false,
+          "flow/resetFlow",
+        );
+      },
+      setIsDragging: (isDragging) => {
+        set({ isDragging }, false, "flow/setIsDragging");
+      },
+      setIsUpdating: (isUpdating) => {
+        set({ isUpdating }, false, "flow/setIsUpdating");
+      },
+      setSelectedNode: (selectedNode?: Partial<Node>) => {
+        set(
+          { selectedNode: selectedNode ?? undefined },
+          false,
+          "flow/setSelectedNode",
+        );
+      },
+      updateNodeData: async (node: Partial<Node>): Promise<Node[]> => {
+        const state = get();
+        const dependencies = getDependecies(node as Node, state);
 
-      return n;
-    });
+        const nodes = state.nodes.map((n) => {
+          if (node.id === n.id) {
+            return {
+              ...n,
+              data: {
+                ...n.data,
+                ...node.data,
+              },
+            };
+          }
 
-    set({ nodes });
+          if (!!dependencies.find((dep) => dep.node.id === n.id)) {
+            return {
+              ...n,
+              data: {
+                ...n.data,
+              },
+            };
+          }
 
-    return Promise.resolve(nodes);
-  },
-  getNodeById: (id?: string) => {
-    return get().nodes.find((n) => n.id === id) as Partial<Node>;
-  },
-  setCurrentFlowId: (currentFlowId?: string) => {
-    set({ currentFlowId });
-  },
-  setShowFormModal: (shouldShowFormModal?: boolean, currentFlowId?: string) => {
-    set({ shouldShowFormModal, currentFlowId: currentFlowId ?? undefined });
-  },
-}));
+          return n;
+        });
+
+        set({ nodes }, false, "flow/updateNodeData");
+
+        return Promise.resolve(nodes);
+      },
+      getNodeById: (id?: string) => {
+        return get().nodes.find((n) => n.id === id) as Partial<Node>;
+      },
+      setCurrentFlowId: (currentFlowId?: string) => {
+        set({ currentFlowId }, false, "flow/setCurrentFlowId");
+      },
+      setShowFormModal: (
+        shouldShowFormModal?: boolean,
+        currentFlowId?: string,
+      ) => {
+        set(
+          { shouldShowFormModal, currentFlowId: currentFlowId ?? undefined },
+          false,
+          "flow/setShowFormModal",
+        );
+      },
+    }),
+    { name: "Flow Store" },
+  ),
+);

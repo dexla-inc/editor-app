@@ -19,6 +19,7 @@ export const GridColumn = forwardRef(
     const columnSpans = useEditorStore((state) => state.columnSpans ?? {});
     const setColumnSpan = useEditorStore((state) => state.setColumnSpan);
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
+    const isResizing = useEditorStore((state) => state.isResizing);
     const setIsResizing = useEditorStore((state) => state.setIsResizing);
     const [initialWidth, setInitialWidth] = useState(0);
     const [initialSpan, setInitialSpan] = useState(0);
@@ -55,7 +56,7 @@ export const GridColumn = forwardRef(
           p="xs"
           display="grid"
           style={{
-            gridColumn: `span ${columnSpans[props.id] ?? span}`,
+            gridColumn: `span ${isResizing ? columnSpans[props.id] : span}`,
             gap: theme.spacing.xs,
             ...(style ?? {}),
           }}
@@ -84,8 +85,8 @@ export const GridColumn = forwardRef(
           onResizeStart={(e: any, direction: any, ref: any, delta: any) => {
             const rect = ref.getBoundingClientRect();
             const initialSpan = ref.style?.gridColumn.split(" ")[1];
-            setInitialWidth(Math.floor(rect.width));
             setIsResizing(true);
+            setInitialWidth(Math.floor(rect.width));
             setInitialSpan(parseInt(initialSpan, 10));
 
             if (nextSibling) {
