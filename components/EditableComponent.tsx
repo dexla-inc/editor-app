@@ -92,6 +92,13 @@ export const EditableComponent = ({
     (action: Action) => action.trigger === "onError",
   );
 
+  const hoveredComponentId = useEditorStore(
+    (state) => state.hoveredComponentId,
+  );
+  const setHoveredComponentId = useEditorStore(
+    (state) => state.setHoveredComponentId,
+  );
+
   const triggers = actions.reduce(
     (acc, action: Action) => {
       if (nonDefaultActionTriggers.includes(action.trigger)) {
@@ -157,6 +164,8 @@ export const EditableComponent = ({
   const thinBaseShadow = isPicking
     ? THIN_ORANGE_BASE_SHADOW
     : THIN_GREEN_BASE_SHADOW;
+  const shouldDisplayOverlay = hoveredComponentId === id;
+  const showShadows = !isPreviewMode && !isLive;
 
   const shadows = isHighlighted
     ? { boxShadow: ORANGE_BASE_SHADOW }
@@ -180,25 +189,15 @@ export const EditableComponent = ({
     : {};
 
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
     if (currentState === "default") {
       setTreeComponentCurrentState(e.currentTarget.id, "hover");
     }
   };
   const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
-    if (currentState === "hover") {
-      setTreeComponentCurrentState(e.currentTarget.id, "default");
-    }
+    e.stopPropagation();
+    setTreeComponentCurrentState(id, "default");
   };
-
-  const propsWithOverwrites = merge(
-    {},
-    component.props,
-    component.languages?.[language],
-    component.states?.[currentState],
-  );
-
-  const isWidthPercentage = propsWithOverwrites?.style?.width?.endsWith("%");
-  const isHeightPercentage = propsWithOverwrites?.style?.height?.endsWith("%");
 
   // State hooks for overlays
   const [overlayStyles, setOverlayStyles] = useState({
@@ -208,13 +207,6 @@ export const EditableComponent = ({
     margin: {},
     content: {},
   });
-
-  const hoveredComponentId = useEditorStore(
-    (state) => state.hoveredComponentId,
-  );
-  const setHoveredComponentId = useEditorStore(
-    (state) => state.setHoveredComponentId,
-  );
 
   // Function to update overlays based on the target element
   const updateOverlays = (element: any, display?: string) => {
@@ -278,32 +270,27 @@ export const EditableComponent = ({
     }, 10);
   };
 
-  const shouldDisplayOverlay = hoveredComponentId === id;
-
-  merge(propsWithOverwrites, {
-    style: {
-      // setting the inner div width/height. If percentage, the inner div size is 100% and the actual size is propagated
-      // up to the parent element (the green border div)
-      width: isWidthPercentage ? "100%" : propsWithOverwrites?.style?.width,
-      height: isHeightPercentage ? "100%" : propsWithOverwrites?.style?.height,
-      position: component.props?.style?.position ?? "relative",
+  const propsWithOverwrites = merge(
+    {},
+    component.props,
+    component.languages?.[language],
+    component.states?.[currentState],
+    {
+      disabled:
+        component.props?.disabled ??
+        (currentState === "disabled" && !!component.states?.disabled),
+      triggers: isPreviewMode
+        ? {
+            ...triggers,
+            onMouseEnter: triggers?.onHover ?? hoverStateFunc,
+            onMouseLeave: leaveHoverStateFunc,
+          }
+        : {
+            onMouseEnter: handleMouseEnter,
+            onMouseLeave: handleMouseLeave,
+          },
     },
-    disabled:
-      component.props?.disabled ??
-      (currentState === "disabled" && !!component.states?.disabled),
-    triggers: isPreviewMode
-      ? {
-          ...triggers,
-          onMouseEnter: triggers?.onHover ?? hoverStateFunc,
-          onMouseLeave: leaveHoverStateFunc,
-        }
-      : {
-          onMouseEnter: handleMouseEnter,
-          onMouseLeave: handleMouseLeave,
-        },
-  });
-
-  const showShadows = !isPreviewMode && !isLive;
+  );
 
   const childStyles = {
     ...propsWithOverwrites.style,
