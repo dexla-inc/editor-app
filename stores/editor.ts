@@ -43,7 +43,7 @@ export const emptyEditorTree = {
           gridSize: GRID_SIZE,
           style: {
             gap: "0",
-            minHeight: "50px",
+            minHeight: "20px",
           },
         },
         children: [
@@ -56,7 +56,6 @@ export const emptyEditorTree = {
               gap: "sm",
               style: {
                 alignSelf: "start",
-                minHeight: "50px",
                 outline: GRAY_OUTLINE,
                 outlineOffset: "-2px",
                 height: "100vh",

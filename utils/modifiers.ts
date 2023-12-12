@@ -118,8 +118,6 @@ export const requiredModifiers: RequiredModifiers = {
     flexWrap: "nowrap",
     flexDirection: "row",
     gap: "xs",
-    // rowGap: "0px",
-    // columnGap: "0px",
     alignItems: "stretch",
     justifyContent: "flex-start",
     position: "relative",

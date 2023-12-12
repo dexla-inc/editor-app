@@ -27,6 +27,7 @@ export const Modifier = withModifier(
         alignSelf: selectedComponent.props?.style?.alignSelf,
         gridAutoFlow: selectedComponent.props?.style?.gridAutoFlow,
         gap: selectedComponent.props?.style?.gap,
+        minHeight: selectedComponent.props?.style?.minHeight ?? "50px",
       }),
     });
 
