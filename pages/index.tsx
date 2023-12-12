@@ -4,6 +4,7 @@ import { getMostRecentDeployment } from "@/requests/deployments/queries";
 import { PageResponse } from "@/requests/pages/types";
 import { getByDomain } from "@/requests/projects/queries";
 import { useEditorStore } from "@/stores/editor";
+import { decodeSchema } from "@/utils/compression";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
@@ -69,13 +70,15 @@ const HomePage = ({ id, page }: Props) => {
     setIsLive,
   ]);
 
+  const state = JSON.parse(decodeSchema(page?.pageState ?? "") ?? "{}");
+
   return (
     <>
       <Head>
         <title>{page?.title}</title>
         <meta name="description" content={page?.title} />
       </Head>
-      <Live key={page?.id} pageId={page?.id} projectId={id} />;
+      <Live key={state?.timestamp} pageId={page?.id} projectId={id} />;
     </>
   );
 };
