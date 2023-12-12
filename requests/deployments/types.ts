@@ -24,6 +24,5 @@ export type DeploymentPage = {
 };
 
 export type DeploymentPageParams = {
-  slug?: string;
-  pageId?: string;
+  page: string;
 };
