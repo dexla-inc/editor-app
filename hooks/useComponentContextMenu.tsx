@@ -96,8 +96,18 @@ export const useComponentContextMenu = () => {
       setEditorTree(copy, {
         action: `Wrapped ${component.name} with a Container`,
       });
+      setTimeout(() => {
+        setSelectedComponentId(containerId);
+        setSelectedComponentIds(() => [containerId]);
+      }, 100);
     },
-    [editorTheme, editorTree, setEditorTree],
+    [
+      editorTheme,
+      editorTree,
+      setEditorTree,
+      setSelectedComponentId,
+      setSelectedComponentIds,
+    ],
   );
 
   const deleteComponent = useCallback(
