@@ -213,6 +213,8 @@ export type EditorState = {
   setColumnSpan: (id: string, span: number) => void;
   isWindowError?: boolean;
   setIsWindowError: (isWindowError: boolean) => void;
+  collapsedItemsCount: number;
+  setCollapsedItemsCount: (collapsedItemsCount: number) => void;
 };
 
 export const debouncedUpdatePageState = debounce(updatePageState, 2000);
@@ -222,6 +224,7 @@ export const useEditorStore = create<EditorState>()(
   devtools(
     temporal(
       (set) => ({
+        collapsedItemsCount: 0,
         tree: emptyEditorTree,
         theme: defaultTheme,
         pages: [],
@@ -601,7 +604,7 @@ export const useEditorStore = create<EditorState>()(
         isPreviewMode: false,
         isLive: false,
         isNavBarVisible: true,
-        isStructureCollapsed: true,
+        isStructureCollapsed: false,
         setActiveTab: (activeTab) =>
           set({ activeTab }, false, "editor/setActiveTab"),
         setPreviewMode: (value) =>
@@ -649,6 +652,8 @@ export const useEditorStore = create<EditorState>()(
             false,
             "editor/setColumnSpan",
           ),
+        setCollapsedItemsCount: (collapsedItemsCount) =>
+          set({ collapsedItemsCount }, false, "editor/setCollapsedItemsCount"),
       }),
       {
         partialize: (state) => {

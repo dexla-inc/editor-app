@@ -28,7 +28,6 @@ export const UnitInput = ({
   modifierType,
   ...props
 }: Props & Omit<NumberInputProps, "onChange">) => {
-  console.log(fetchedValue);
   const theme = useMantineTheme();
   const defaultComponentWidth = useEditorStore(
     (state) => state.defaultComponentWidth,

@@ -36,6 +36,12 @@ export const NavbarSection = ({
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const setPinTab = useUserConfigStore((state) => state.setIsTabPinned);
+  const collapsedItemsCount = useEditorStore(
+    (state) => state.collapsedItemsCount,
+  );
+  const setCollapsedItemsCount = useEditorStore(
+    (state) => state.setCollapsedItemsCount,
+  );
   const isStructureCollapsed = useEditorStore(
     (state) => state.isStructureCollapsed,
   );
@@ -47,10 +53,13 @@ export const NavbarSection = ({
   );
   const { ref } = useHover();
 
+  const hasCollapsedItems = collapsedItemsCount > 0;
+
   const IconToggle = isTabPinned ? IconPinnedOff : IconPinned;
-  const IconCollapse = isStructureCollapsed
-    ? IconArrowsDiagonal2
-    : IconArrowsDiagonalMinimize;
+  const IconCollapse =
+    isStructureCollapsed && hasCollapsedItems
+      ? IconArrowsDiagonal2
+      : IconArrowsDiagonalMinimize;
 
   useEffect(() => {
     isTabPinned && setActiveTab("layers");
@@ -107,7 +116,11 @@ export const NavbarSection = ({
   const actionButtons = (
     <Flex>
       <Tooltip
-        label={isStructureCollapsed ? "Expand All" : "Collapse All"}
+        label={
+          isStructureCollapsed && hasCollapsedItems
+            ? "Expand All"
+            : "Collapse All"
+        }
         fz="xs"
         position="top"
         withArrow
@@ -118,6 +131,7 @@ export const NavbarSection = ({
             style={{ transform: "rotate(45deg)" }}
             onClick={() => {
               setIsStructureCollapsed(!isStructureCollapsed);
+              setCollapsedItemsCount(isStructureCollapsed ? 0 : 1);
             }}
             size={ICON_SIZE}
             color="gray"

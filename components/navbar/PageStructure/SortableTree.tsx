@@ -42,6 +42,7 @@ import {
   removeChildrenOf,
   setProperty,
 } from "./utilities";
+import { usePrevious } from "@mantine/hooks";
 
 const measuring = {
   droppable: {
@@ -95,12 +96,23 @@ export function NavbarLayersSection({
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );
+  const isStructureCollapsed = useEditorStore(
+    (state) => state.isStructureCollapsed,
+  );
+  const setCollapsedItemsCount = useEditorStore(
+    (state) => state.setCollapsedItemsCount,
+  );
   const setItems = useCallback((updateItems: any, save = true) => {
     debouncedTreeRootChildrenUpdate(updateItems, save);
   }, []);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
   const [offsetLeft, setOffsetLeft] = useState(0);
+
+  const prevIsStructureCollapsed = usePrevious(isStructureCollapsed);
+
+  const didStructureCollapedChange =
+    prevIsStructureCollapsed !== isStructureCollapsed;
 
   const flattenedItems = useMemo(() => {
     const flattenedTree = flattenTree(items as TreeItems);
@@ -109,7 +121,26 @@ export function NavbarLayersSection({
       ancestors = getAllAncestors(flattenedTree, selectedComponentId);
     }
 
-    const collapsedItems = flattenedTree
+    if (didStructureCollapedChange && !isStructureCollapsed) {
+      return flattenedTree;
+    }
+
+    if (didStructureCollapedChange && isStructureCollapsed) {
+      const _flattenedTree = flattenedTree.map((item) => {
+        return { ...item, collapsed: true };
+      });
+
+      const collapsedItems = _flattenedTree.map((item) => item.id);
+
+      return removeChildrenOf(
+        _flattenedTree,
+        // @ts-ignore
+        activeId ? [activeId, ...collapsedItems] : collapsedItems,
+      );
+    }
+
+    // @ts-ignore
+    const collapsedItems: string[] = flattenedTree
       .map((item) => {
         if (ancestors.find((a) => a.id === item.id)) {
           return { ...item, collapsed: true };
@@ -117,7 +148,7 @@ export function NavbarLayersSection({
 
         return item;
       })
-      .reduce<string[]>(
+      .reduce(
         // @ts-ignore
         (acc, { children, collapsed, id }: TreeItem) => {
           const isCollapsed = collapsed && children?.length;
@@ -127,15 +158,25 @@ export function NavbarLayersSection({
 
           return acc;
         },
-        [] as TreeItem[],
+        [] as string[],
       );
+
+    const count = (collapsedItems ?? []).length;
+    setCollapsedItemsCount(count);
 
     return removeChildrenOf(
       flattenedTree,
       // @ts-ignore
       activeId ? [activeId, ...collapsedItems] : collapsedItems,
     );
-  }, [items, selectedComponentId, activeId]);
+  }, [
+    items,
+    selectedComponentId,
+    didStructureCollapedChange,
+    isStructureCollapsed,
+    setCollapsedItemsCount,
+    activeId,
+  ]);
 
   const projected =
     activeId && overId
