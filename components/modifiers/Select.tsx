@@ -2,6 +2,7 @@ import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 import { SizeSelector } from "@/components/SizeSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, Switch, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconSelect } from "@tabler/icons-react";
@@ -10,30 +11,10 @@ import merge from "lodash.merge";
 export const icon = IconSelect;
 export const label = "Select";
 
-export const defaultSelectValues = {
-  name: "Select",
-  size: "sm",
-  placeholder: "Select",
-  icon: "",
-  withAsterisk: false,
-  clearable: false,
-  data: [
-    { label: "Option 1", value: "option-1" },
-    { label: "Option 2", value: "option-2" },
-  ],
-  exampleData: [
-    { label: "Option 1", value: "option-1" },
-    { label: "Option 2", value: "option-2" },
-  ],
-  customText: "",
-  customLinkText: "",
-  customLinkUrl: "",
-};
-
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultSelectValues, {
+      initialValues: merge({}, requiredModifiers.select, {
         name: selectedComponent?.props?.name,
         size: selectedComponent?.props?.size,
         placeholder: selectedComponent?.props?.placeholder,

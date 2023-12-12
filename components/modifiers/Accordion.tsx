@@ -1,12 +1,11 @@
 import { IconSelector } from "@/components/IconSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutBottombarCollapse } from "@tabler/icons-react";
 import merge from "lodash.merge";
-
-const defaultInputValues = { variant: "default", icon: "" };
 
 export const icon = IconLayoutBottombarCollapse;
 export const label = "Accordion";
@@ -14,7 +13,7 @@ export const label = "Accordion";
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultInputValues, {
+      initialValues: merge({}, requiredModifiers.accordion, {
         variant: selectedComponent.props?.variant,
         icon: selectedComponent.props?.icon,
       }),

@@ -1,6 +1,7 @@
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
@@ -20,6 +21,7 @@ import {
   IconTextWrap,
   IconX,
 } from "@tabler/icons-react";
+import { merge } from "lodash";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
 import { SizeSelector } from "../SizeSelector";
@@ -32,18 +34,9 @@ export let SHRINK_FLEX_DEFAULT = "0 1 auto";
 let AUTO_FLEX_DEFAULT = "0 0 auto";
 let CUSTOM_FLEX_DEFAULT = "1 1 auto";
 
-export const defaultLayoutValues = {
-  display: "flex",
-  flexWrap: "nowrap",
-  flexDirection: "row",
-  gap: "0",
-  // rowGap: "0px",
-  // columnGap: "0px",
-  alignItems: "stretch",
-  justifyContent: "flex-start",
-  position: "relative",
+export const defaultLayoutValues = merge({}, requiredModifiers.layout, {
   flex: SHRINK_FLEX_DEFAULT,
-};
+});
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
@@ -55,20 +48,20 @@ export const Modifier = withModifier(
       if (selectedComponent?.id) {
         const data = pick(selectedComponent.props!, ["style"]);
 
-        form.setValues({
-          display: data.style?.display ?? defaultLayoutValues.display,
-          position: data.style?.position ?? defaultLayoutValues.position,
-          flexWrap: data.style?.flexWrap ?? defaultLayoutValues.flexWrap,
-          flexDirection:
-            data.style?.flexDirection ?? defaultLayoutValues.flexDirection,
-          // rowGap: data.style?.rowGap ?? defaultLayoutValues.rowGap,
-          // columnGap: data.style?.columnGap ?? defaultLayoutValues.columnGap,
-          gap: selectedComponent.props?.gap ?? defaultLayoutValues.gap,
-          alignItems: data.style?.alignItems ?? defaultLayoutValues.alignItems,
-          flex: data.style?.flex ?? defaultLayoutValues.flex,
-          justifyContent:
-            data.style?.justifyContent ?? defaultLayoutValues.justifyContent,
-        });
+        form.setValues(
+          merge({}, defaultLayoutValues, {
+            display: data.style?.display,
+            position: data.style?.position,
+            flexWrap: data.style?.flexWrap,
+            flexDirection: data.style?.flexDirection,
+            gap: selectedComponent.props?.gap,
+            // rowGap: data.style?.rowGap,
+            // columnGap: data.style?.columnGap,
+            alignItems: data.style?.alignItems,
+            flex: data.style?.flex,
+            justifyContent: data.style?.justifyContent,
+          }),
+        );
       }
       // Disabling the lint here because we don't want this to be updated every time the form changes
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -262,7 +255,7 @@ export const Modifier = withModifier(
           </Stack>
           <Stack spacing={2}>
             <Text size="xs" fw={500}>
-              Sizing
+              Scale
             </Text>
             <SegmentedControl
               size="xs"

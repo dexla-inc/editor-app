@@ -130,23 +130,6 @@ const darkTheme = {
   },
 };
 
-type HoverProps = {
-  paddings: {
-    padding: string;
-    paddingTop: string;
-    paddingBottom: string;
-    paddingLeft: string;
-    paddingRight: string;
-  };
-  margins: {
-    margin: string;
-    marginTop: string;
-    marginBottom: string;
-    marginLeft: string;
-    marginRight: string;
-  };
-};
-
 // Dev hover style
 const hoverStyles = (styles: any) => {
   const {

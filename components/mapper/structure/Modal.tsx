@@ -1,12 +1,13 @@
-import { defaultInputValues } from "@/components/modifiers/Input";
-import { defaultModalValues } from "@/components/modifiers/Modal";
 import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
+  const { input: defaultInputValues, modal: defaultModalValues } =
+    requiredModifiers;
 
   const defaultChildren = [
     {

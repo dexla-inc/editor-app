@@ -6,7 +6,7 @@ import { MouseEventHandler } from "react";
 type BaseProps = {
   iconName: string;
   tooltip: string;
-  color?: "white" | "indigo";
+  color?: "white" | "indigo" | "teal";
 };
 
 type ClickProps = {

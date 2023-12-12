@@ -9,20 +9,12 @@ import { IconTextPlus } from "@tabler/icons-react";
 import merge from "lodash.merge";
 
 export const icon = IconTextPlus;
-export const label = "Textaarea";
-
-export const defaultTextareaValues = {
-  placeholder: "Textarea",
-  size: "md",
-  hideIfDataIsEmpty: false,
-  autosize: false,
-  withAsterisk: false,
-};
+export const label = "Textarea";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, requiredModifiers.text, {
+      initialValues: merge({}, requiredModifiers.textarea, {
         placeholder: selectedComponent?.props?.placeholder,
         size: selectedComponent?.props?.size,
         autosize: selectedComponent?.props?.style?.autosize,

@@ -2,6 +2,7 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconDivide } from "@tabler/icons-react";
@@ -10,19 +11,10 @@ import merge from "lodash.merge";
 export const icon = IconDivide;
 export const label = "Divider";
 
-export const defaultInputValues = {
-  color: "Neutral.9",
-  label: "Divider",
-  labelPosition: "center",
-  orientation: "horizontal",
-  size: "xs",
-  variant: "solid",
-};
-
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultInputValues, {
+      initialValues: merge({}, requiredModifiers.divider, {
         label: selectedComponent.props?.label,
         labelPosition: selectedComponent.props?.labelPosition,
         orientation: selectedComponent.props?.orientation,

@@ -20,15 +20,13 @@ import merge from "lodash.merge";
 export const icon = IconClick;
 export const label = "Button";
 
-export const defaultButtonValues = requiredModifiers.button;
-
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const theme = useEditorStore((state) => state.theme);
     const form = useForm({
       initialValues: merge(
         {},
-        defaultButtonValues,
+        requiredModifiers.button,
         {
           color: "Primary.6",
           textColor: "PrimaryText.6",
@@ -43,6 +41,7 @@ export const Modifier = withModifier(
           compact: selectedComponent.props?.compact,
           color: selectedComponent.props?.color,
           textColor: selectedComponent.props?.textColor,
+          width: selectedComponent.props?.style?.width,
         },
       ),
     });

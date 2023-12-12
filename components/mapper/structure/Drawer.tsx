@@ -1,13 +1,14 @@
-import { defaultDrawerValues } from "@/components/modifiers/Drawer";
-import { defaultInputValues } from "@/components/modifiers/Input";
 import { defaultTheme } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
+  const { input: defaultInputValues, drawer: defaultDrawerValues } =
+    requiredModifiers;
 
   const defaultButton = structureMapper["Button"].structure({});
 

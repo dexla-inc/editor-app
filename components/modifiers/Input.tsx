@@ -4,7 +4,8 @@ import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
 import { debouncedTreeUpdate } from "@/utils/editor";
-import { Flex, Select, Stack, TextInput } from "@mantine/core";
+import { requiredModifiers } from "@/utils/modifiers";
+import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -12,19 +13,10 @@ import merge from "lodash.merge";
 export const icon = IconForms;
 export const label = "Input";
 
-export const defaultInputValues = {
-  size: "sm",
-  placeholder: "Input",
-  type: "text",
-  icon: { props: { name: "" } },
-  withAsterisk: false,
-  name: "Input",
-};
-
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultInputValues, {
+      initialValues: merge({}, requiredModifiers.input, {
         size: selectedComponent?.props?.size,
         placeholder: selectedComponent?.props?.placeholder,
         type: selectedComponent?.props?.type,

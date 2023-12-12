@@ -38,14 +38,14 @@ import {
   IconUnderline,
   IconX,
 } from "@tabler/icons-react";
+import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
-import merge from "lodash.merge";
 
 export const icon = IconTextSize;
 export const label = "Content";
 
-export const defaultInputValues = requiredModifiers.text;
+const defaultInputValues = requiredModifiers.text;
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
