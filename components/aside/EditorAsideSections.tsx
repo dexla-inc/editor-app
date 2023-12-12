@@ -52,18 +52,27 @@ import { componentMapper } from "@/utils/componentMapper";
 import { getAllComponentsByIds, getComponentById } from "@/utils/editor";
 import { Modifiers } from "@/utils/modifiers";
 import {
+  ActionIcon,
   Box,
   Center,
   Flex,
+  Group,
   SegmentedControl,
   Select,
   Stack,
   Text,
+  Tooltip,
 } from "@mantine/core";
-import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
+import {
+  IconArrowBadgeRight,
+  IconBolt,
+  IconRefresh,
+  IconRestore,
+} from "@tabler/icons-react";
 import startCase from "lodash.startcase";
 import intersection from "lodash/intersection";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
+import { ActionIconDefault } from "@/components/ActionIconDefault";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -265,6 +274,10 @@ export const EditorAsideSections = () => {
     );
   };
 
+  const onClickSetDefaultState = () => {
+    setTreeComponentCurrentState(selectedComponentId, "default");
+  };
+
   const actionsSections = componentActions.map((action: Action) => {
     const isSequential = !!action.sequentialTo;
     const actionName = action.action.name;
@@ -316,53 +329,65 @@ export const EditorAsideSections = () => {
       {tab === "design" && (
         <Stack spacing={0}>
           {selectedComponentId && (
-            <Select
-              px="md"
-              pb="md"
-              value={currentState}
-              size="xs"
-              label="State"
-              data={[
-                { label: "Default", value: "default" },
-                { label: "Hover", value: "hover" },
-                { label: "Disabled", value: "disabled" },
-                { label: "Checked", value: "checked" },
-                { label: "Hidden", value: "hidden" },
-                { label: "Active", value: "Active" },
-                { label: "Complete", value: "Complete" },
-                ...Object.keys(component?.states ?? {}).reduce((acc, key) => {
-                  if (
-                    key === "hover" ||
-                    key === "disabled" ||
-                    key === "checked" ||
-                    key === "hidden" ||
-                    key === "Active" ||
-                    key === "Complete"
-                  )
-                    return acc;
+            <Flex px="md" pb="md" gap="10px" align="flex-end">
+              <Select
+                style={{ flex: "1" }}
+                value={currentState}
+                size="xs"
+                label="State"
+                data={[
+                  { label: "Default", value: "default" },
+                  { label: "Hover", value: "hover" },
+                  { label: "Disabled", value: "disabled" },
+                  { label: "Checked", value: "checked" },
+                  { label: "Hidden", value: "hidden" },
+                  { label: "Active", value: "Active" },
+                  { label: "Complete", value: "Complete" },
+                  ...Object.keys(component?.states ?? {}).reduce((acc, key) => {
+                    if (
+                      key === "hover" ||
+                      key === "disabled" ||
+                      key === "checked" ||
+                      key === "hidden" ||
+                      key === "Active" ||
+                      key === "Complete"
+                    )
+                      return acc;
 
-                  return acc.concat({
-                    label: key,
-                    value: key,
-                  });
-                }, [] as any[]),
-              ]}
-              placeholder="Select State"
-              nothingFound="Nothing found"
-              searchable
-              creatable
-              getCreateLabel={(query) => `+ Custom State "${query}"`}
-              onCreate={(query) => {
-                const item = { value: query, label: query };
-                setTreeComponentCurrentState(selectedComponentId, query);
-                updateTreeComponent(selectedComponentId, {}, true);
-                return item;
-              }}
-              onChange={(value: string) => {
-                setTreeComponentCurrentState(selectedComponentId, value);
-              }}
-              {...AUTOCOMPLETE_OFF_PROPS}
-            />
+                    return acc.concat({
+                      label: key,
+                      value: key,
+                    });
+                  }, [] as any[]),
+                ]}
+                placeholder="Select State"
+                nothingFound="Nothing found"
+                searchable
+                creatable
+                getCreateLabel={(query) => `+ Custom State "${query}"`}
+                onCreate={(query) => {
+                  const item = { value: query, label: query };
+                  setTreeComponentCurrentState(selectedComponentId, query);
+                  updateTreeComponent(selectedComponentId, {}, true);
+                  return item;
+                }}
+                onChange={(value: string) => {
+                  setTreeComponentCurrentState(selectedComponentId, value);
+                }}
+                {...AUTOCOMPLETE_OFF_PROPS}
+              />
+              {currentState !== "default" && (
+                <Tooltip label={`Reset to default state`}>
+                  <ActionIcon
+                    variant="default"
+                    size="1.875rem"
+                    onClick={onClickSetDefaultState}
+                  >
+                    <IconRefresh size="1rem" />
+                  </ActionIcon>
+                </Tooltip>
+              )}
+            </Flex>
           )}
           <Stack spacing="xs">{designSections}</Stack>
         </Stack>
