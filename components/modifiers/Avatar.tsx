@@ -2,19 +2,11 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconUser } from "@tabler/icons-react";
 import merge from "lodash.merge";
-
-const defaultAvatarValues = {
-  variant: "filled",
-  src: "",
-  radius: "",
-  size: "md",
-  color: "Primary.6",
-  value: "",
-};
 
 export const icon = IconUser;
 export const label = "Avatar";
@@ -22,7 +14,7 @@ export const label = "Avatar";
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultAvatarValues, {
+      initialValues: merge({}, requiredModifiers.avatar, {
         value: selectedComponent.props?.children,
         variant: selectedComponent.props?.variant,
         src: selectedComponent.props?.src,

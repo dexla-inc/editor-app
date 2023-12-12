@@ -1,26 +1,20 @@
+import { IconSelector } from "@/components/IconSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
-import { withModifier } from "@/hoc/withModifier";
-import { IconSelector } from "@/components/IconSelector";
 import merge from "lodash.merge";
 
 export const icon = IconClick;
 export const label = "NavLink";
 
-export const defaultNavLinkValues = {
-  label: "Nav link",
-  color: "transparent",
-  align: "left",
-  icon: "",
-};
-
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultNavLinkValues, {
+      initialValues: merge({}, requiredModifiers.navLink, {
         label: selectedComponent?.props?.label,
         icon: selectedComponent?.props?.icon,
         color: selectedComponent?.props?.color,

@@ -10,6 +10,7 @@ import { withModifier } from "@/hoc/withModifier";
 import { CardStyle } from "@/requests/projects/types";
 import { useEditorStore } from "@/stores/editor";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Flex, SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconShadow } from "@tabler/icons-react";
@@ -18,15 +19,7 @@ import merge from "lodash.merge";
 export const icon = IconShadow;
 export const label = "Shadow";
 
-export const defaultBoxShadowValues = {
-  inset: "",
-  xOffset: "0px",
-  yOffset: "0px",
-  blur: "0px",
-  spread: "0px",
-  color: "Black.9",
-  boxShadow: "",
-};
+const defaultBoxShadowValues = requiredModifiers.boxShadow;
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {

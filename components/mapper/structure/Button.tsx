@@ -1,6 +1,6 @@
-import { defaultButtonValues } from "@/components/modifiers/Button";
 import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -15,7 +15,7 @@ export const jsonStructure = (props?: any): Component => {
     name: "Button",
     description: "Button",
     props: {
-      ...defaultButtonValues,
+      ...requiredModifiers.button,
       style: {
         width: "fit-content",
       },

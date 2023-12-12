@@ -1,10 +1,8 @@
-import { Icon } from "@/components/Icon";
 import { IconSelector } from "@/components/IconSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { ICON_DELETE } from "@/utils/config";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { ActionIcon, Group, Stack, TextInput } from "@mantine/core";
+import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutKanban } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -35,29 +33,16 @@ export const Modifier = withModifier(
               });
             }}
           />
-          <Group noWrap spacing="xs">
-            <IconSelector
-              topLabel="Icon"
-              selectedIcon={form.values.icon}
-              onIconSelect={(value: string) => {
-                form.setFieldValue("icon", value);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  icon: value,
-                });
-              }}
-            />
-            <ActionIcon
-              onClick={() => {
-                debouncedTreeUpdate(selectedComponentIds, {
-                  icon: null,
-                });
-              }}
-              variant="light"
-              radius="xl"
-            >
-              <Icon name={ICON_DELETE} />
-            </ActionIcon>
-          </Group>
+          <IconSelector
+            topLabel="Icon"
+            selectedIcon={form.values.icon}
+            onIconSelect={(value: string) => {
+              form.setFieldValue("icon", value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                icon: value,
+              });
+            }}
+          />
         </Stack>
       </form>
     );

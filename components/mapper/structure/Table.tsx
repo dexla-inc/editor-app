@@ -1,13 +1,17 @@
-import { defaultInputValues } from "@/components/modifiers/Input";
-import { defaultInputValues as defaultTextValues } from "@/components/modifiers/Text";
 import { structureMapper } from "@/utils/componentMapper";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const select = structureMapper["Select"].structure({});
   const defaultButton = structureMapper["Button"].structure({});
 
+  const {
+    button: defaultButtonValues,
+    input: defaultInputValues,
+    text: defaultTextValues,
+  } = requiredModifiers;
   return {
     id: nanoid(),
     name: "Container",

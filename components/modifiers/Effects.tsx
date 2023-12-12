@@ -1,25 +1,19 @@
+import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { NumberInput, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTransform } from "@tabler/icons-react";
-import { withModifier } from "@/hoc/withModifier";
 import merge from "lodash.merge";
-import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 
 export const icon = IconTransform;
 export const label = "Effects";
 
-export const defaultEffectsValues = {
-  cursor: "auto",
-  overflow: "auto",
-  opacity: 1,
-  tooltip: "",
-};
-
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultEffectsValues, {
+      initialValues: merge({}, requiredModifiers.effects, {
         cursor: selectedComponent.props?.style?.cursor,
         overflow: selectedComponent.props?.style?.overflow,
         opacity: selectedComponent.props?.style?.opacity,

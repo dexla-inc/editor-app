@@ -2,6 +2,7 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
@@ -10,16 +11,10 @@ import merge from "lodash.merge";
 export const icon = IconClick;
 export const label = "Link";
 
-export const defaultInputValues = {
-  value: "New Link",
-  size: "sm",
-  color: "Primary.6",
-};
-
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultInputValues, {
+      initialValues: merge({}, requiredModifiers.link, {
         value: selectedComponent.props?.children,
         size: selectedComponent.props?.size,
         color: selectedComponent.props?.color,

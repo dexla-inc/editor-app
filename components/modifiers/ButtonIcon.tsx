@@ -1,22 +1,19 @@
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconColorFilter } from "@tabler/icons-react";
-import { withModifier } from "@/hoc/withModifier";
 import merge from "lodash.merge";
 
 export const icon = IconColorFilter;
 export const label = "Background";
 
-export const defaultInputValues = {
-  bg: "transparent",
-};
-
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultInputValues, {
+      initialValues: merge({}, requiredModifiers.buttonIcon, {
         bg: selectedComponent.props?.bg,
       }),
     });

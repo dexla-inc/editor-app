@@ -1,25 +1,20 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
+import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconCheckbox } from "@tabler/icons-react";
-import { withModifier } from "@/hoc/withModifier";
 import merge from "lodash.merge";
 
 export const icon = IconCheckbox;
 export const label = "Checkbox";
 
-export const defaultInputValues = {
-  name: "Checkbox",
-  size: "sm",
-  withAsterisk: false,
-};
-
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultInputValues, {
+      initialValues: merge({}, requiredModifiers.checkbox, {
         name: selectedComponent.props?.name,
         size: selectedComponent.props?.size,
         withAsterisk: selectedComponent.props?.withAsterisk,

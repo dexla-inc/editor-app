@@ -1,19 +1,15 @@
+import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconPhoto } from "@tabler/icons-react";
-import { withModifier } from "@/hoc/withModifier";
 import merge from "lodash.merge";
 
 export const icon = IconPhoto;
 export const label = "Image";
 
-export const defaultImageValues = {
-  src: "https://www.contentviewspro.com/wp-content/uploads/2017/07/default_image.png",
-  alt: "",
-  fit: "contain",
-  position: "relative",
-};
+export const defaultImageValues = requiredModifiers.image;
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {

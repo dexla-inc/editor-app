@@ -1,17 +1,8 @@
-import { tableHeader } from "@/components/mapper/structure/table/TableActionsRow";
+import { jsonStructure as headerStructure } from "@/components/mapper/structure/table/TableActionsRow";
 import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
-
-const defaultTableValues = {
-  highlightOnHover: true,
-  horizontalCellSpacing: "sm",
-  verticalCellSpacing: "sm",
-  striped: false,
-  withBorder: false,
-  withColumnBorder: false,
-  style: { width: "100%" },
-};
 
 const badgeColor = {
   Banned: "Danger.9",
@@ -21,6 +12,8 @@ const badgeColor = {
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
+  const { table: defaultTableValues, button, input } = requiredModifiers;
+  const tableHeader = headerStructure({ theme, button, input });
   const data = props.data ?? [
     {
       name: "Angelique Morse",

@@ -1,5 +1,5 @@
-import { defaultInputValues } from "@/components/modifiers/Input";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -12,10 +12,8 @@ export const jsonStructure = (props?: any): Component => {
         width: "100%",
         height: "auto",
         minWidth: "220px",
-        borderWidth: "1px",
-        borderStyle: "solid",
       },
-      ...defaultInputValues,
+      ...requiredModifiers.input,
       ...(props.props || {}),
     },
     blockDroppingChildrenInside: true,

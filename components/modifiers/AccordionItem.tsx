@@ -1,11 +1,10 @@
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutBottombarCollapse } from "@tabler/icons-react";
 import merge from "lodash.merge";
-
-const defaultInputValues = { value: "first" };
 
 export const icon = IconLayoutBottombarCollapse;
 export const label = "Accordion Item";
@@ -13,7 +12,7 @@ export const label = "Accordion Item";
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultInputValues, {
+      initialValues: merge({}, requiredModifiers.accordionItem, {
         value: selectedComponent.props?.value,
       }),
     });

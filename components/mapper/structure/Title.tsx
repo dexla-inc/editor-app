@@ -1,3 +1,4 @@
+import { defaultBorderValues } from "@/components/modifiers/Border";
 import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import { nanoid } from "nanoid";
@@ -28,6 +29,7 @@ export const jsonStructure = (props?: any): Component => {
         lineHeight: size.lineHeight,
         width: "auto",
         height: "auto",
+        ...defaultBorderValues,
       },
       ...(rest || {}),
     },

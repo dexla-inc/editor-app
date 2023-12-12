@@ -27,10 +27,8 @@ import {
   IconSquare,
   IconX,
 } from "@tabler/icons-react";
-import startCase from "lodash.startcase";
-import { pick } from "next/dist/lib/pick";
-import { useEffect } from "react";
 import merge from "lodash.merge";
+import startCase from "lodash.startcase";
 
 export const icon = IconBorderStyle;
 export const label = "Border";
@@ -47,7 +45,7 @@ export const getThemeColor = (theme: any, hex: string) => {
     }
 
     return themeColor;
-  }, "Black.9");
+  }, "Border.6");
 };
 
 export const Modifier = withModifier(
@@ -115,13 +113,50 @@ export const Modifier = withModifier(
       ),
     });
 
+    const changeBorderColor = (_value: string) => {
+      const [color, index] = _value.split(".");
+      const value = index ? theme.colors[color][Number(index)] : color;
+      let borderColor = {};
+      if (form.values.showBorder === "all") {
+        borderColor = {
+          borderColor: value,
+          borderTopColor: value,
+          borderRightColor: value,
+          borderBottomColor: value,
+          borderLeftColor: value,
+        };
+        form.setFieldValue("borderColor", _value);
+        form.setFieldValue("borderTopColor", _value);
+        form.setFieldValue("borderRightColor", _value);
+        form.setFieldValue("borderBottomColor", _value);
+        form.setFieldValue("borderLeftColor", _value);
+      } else {
+        const key = `border${startCase(form.values.showBorder)}Color`;
+        form.setFieldValue("borderColor", _value);
+        form.setFieldValue(key, _value);
+        borderColor = {
+          [key]: value,
+        };
+      }
+
+      debouncedTreeUpdate(selectedComponentIds, {
+        style: borderColor,
+      });
+    };
+
     const changeBorderStyle = (value: string) => {
       let borderStyle = {};
-      let borderColor = "";
-      const [color, index] = defaultBorderValues.borderColor.split(".");
+      const key =
+        form.values.showBorder === "all"
+          ? "borderColor"
+          : `border${startCase(form.values.showBorder)}Color`;
+      let borderColor = {};
+      const [color, index] = form.values[key].split(".");
       const borderValue = index ? theme.colors[color][index] : color;
-      borderColor = borderValue;
-      form.setFieldValue("borderColor", borderValue);
+      borderColor = {
+        [key]: borderValue,
+        ...(key === "borderColor" ? {} : { borderColor: borderValue }),
+      };
       if (form.values.showBorder === "all") {
         borderStyle = {
           borderStyle: value,
@@ -147,7 +182,7 @@ export const Modifier = withModifier(
         };
       }
       debouncedTreeUpdate(selectedComponentIds, {
-        style: { ...borderStyle, borderColor },
+        style: { ...borderStyle, ...borderColor },
       });
     };
 
@@ -340,37 +375,7 @@ export const Modifier = withModifier(
             <ThemeColorSelector
               label="Color"
               {...form.getInputProps(getBorderProp("Color"))}
-              onChange={(_value: string) => {
-                const [color, index] = _value.split(".");
-                // @ts-ignore
-                const value = index ? theme.colors[color][index] : color;
-                let borderColor = {};
-                if (form.values.showBorder === "all") {
-                  borderColor = {
-                    borderColor: value,
-                    borderTopColor: value,
-                    borderRightColor: value,
-                    borderBottomColor: value,
-                    borderLeftColor: value,
-                  };
-                  form.setFieldValue("borderColor", _value);
-                  form.setFieldValue("borderTopColor", _value);
-                  form.setFieldValue("borderRightColor", _value);
-                  form.setFieldValue("borderBottomColor", _value);
-                  form.setFieldValue("borderLeftColor", _value);
-                } else {
-                  const key = `border${startCase(form.values.showBorder)}Color`;
-                  form.setFieldValue("borderColor", _value);
-                  form.setFieldValue(key, _value);
-                  borderColor = {
-                    [key]: value,
-                  };
-                }
-
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: borderColor,
-                });
-              }}
+              onChange={(_value: string) => changeBorderColor(_value)}
             />
             <Stack spacing={4} mt={12}>
               <Text size="0.75rem" weight={500}>
