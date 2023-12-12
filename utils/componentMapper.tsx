@@ -1081,7 +1081,10 @@ export const componentMapper: ComponentMapper = {
         onChange={(files) => {
           const updateTreeComponent =
             useEditorStore.getState().updateTreeComponent;
-          updateTreeComponent(props.component.id!, files);
+          updateTreeComponent({
+            componentId: props.component.id!,
+            props: files,
+          });
         }}
         component={props.component}
         renderTree={props.renderTree}

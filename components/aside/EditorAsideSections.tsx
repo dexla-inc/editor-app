@@ -274,8 +274,12 @@ export const EditorAsideSections = () => {
     );
   };
 
-  const onClickSetDefaultState = () => {
-    setTreeComponentCurrentState(selectedComponentId, "default");
+  const onClickResetToDefault = () => {
+    updateTreeComponent({
+      componentId: selectedComponentId!,
+      props: component?.props,
+      forceState: currentState,
+    });
   };
 
   const actionsSections = componentActions.map((action: Action) => {
@@ -368,7 +372,11 @@ export const EditorAsideSections = () => {
                 onCreate={(query) => {
                   const item = { value: query, label: query };
                   setTreeComponentCurrentState(selectedComponentId, query);
-                  updateTreeComponent(selectedComponentId, {}, true);
+                  updateTreeComponent({
+                    componentId: selectedComponentId,
+                    props: {},
+                    save: true,
+                  });
                   return item;
                 }}
                 onChange={(value: string) => {
@@ -377,11 +385,11 @@ export const EditorAsideSections = () => {
                 {...AUTOCOMPLETE_OFF_PROPS}
               />
               {currentState !== "default" && (
-                <Tooltip label={`Reset to default state`}>
+                <Tooltip label={`Revert to default settings`}>
                   <ActionIcon
                     variant="default"
                     size="1.875rem"
-                    onClick={onClickSetDefaultState}
+                    onClick={onClickResetToDefault}
                   >
                     <IconRefresh size="1rem" />
                   </ActionIcon>
