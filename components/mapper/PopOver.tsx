@@ -51,7 +51,11 @@ const PopOverComponent = ({
   const handleClose = () => {
     close();
     propOnClose && propOnClose();
-    updateTreeComponent(component.id!, { opened: false }, false);
+    updateTreeComponent({
+      componentId: component.id!,
+      props: { opened: false },
+      save: false,
+    });
   };
 
   useEffect(() => {

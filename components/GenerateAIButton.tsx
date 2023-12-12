@@ -230,8 +230,11 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
     const onCloseOverride = async () => {
       if (type === "COMPONENT" || type === "LAYOUT") {
         if (componentBeingAddedId.current) {
-          updateTreeComponent(componentBeingAddedId.current, {
-            isBeingAdded: false,
+          updateTreeComponent({
+            componentId: componentBeingAddedId.current,
+            props: {
+              isBeingAdded: false,
+            },
           });
         }
       }

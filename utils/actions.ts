@@ -465,32 +465,56 @@ export type ChangeLanguageActionParams = ActionParams & {
 
 export const openModalAction = ({ action }: OpenModalActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent(action.modalId, { opened: true }, false);
+  updateTreeComponent({
+    componentId: action.modalId,
+    props: { opened: true },
+    save: false,
+  });
 };
 
 export const closeModalAction = ({ action }: OpenModalActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent(action.modalId, { opened: false }, false);
+  updateTreeComponent({
+    componentId: action.modalId,
+    props: { opened: false },
+    save: false,
+  });
 };
 
 export const openDrawerAction = ({ action }: OpenDrawerActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent(action.drawerId, { opened: true }, false);
+  updateTreeComponent({
+    componentId: action.drawerId,
+    props: { opened: true },
+    save: false,
+  });
 };
 
 export const closeDrawerAction = ({ action }: OpenDrawerActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent(action.drawerId, { opened: false }, false);
+  updateTreeComponent({
+    componentId: action.drawerId,
+    props: { opened: false },
+    save: false,
+  });
 };
 
 export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent(action.popOverId, { opened: true }, false);
+  updateTreeComponent({
+    componentId: action.popOverId,
+    props: { opened: true },
+    save: false,
+  });
 };
 
 export const closePopOverAction = ({ action }: OpenPopOverActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent(action.popOverId, { opened: false }, false);
+  updateTreeComponent({
+    componentId: action.popOverId,
+    props: { opened: false },
+    save: false,
+  });
 };
 
 export const changeStepAction = ({ action }: ChangeStepActionParams) => {
@@ -517,7 +541,11 @@ export const changeStepAction = ({ action }: ChangeStepActionParams) => {
     activeStep += 1;
   }
 
-  updateTreeComponent(action.stepperId, { activeStep }, false);
+  updateTreeComponent({
+    componentId: action.stepperId,
+    props: { activeStep },
+    save: false,
+  });
 };
 export const togglePropsAction = ({
   action,
@@ -530,22 +558,22 @@ export const togglePropsAction = ({
       componentId = item.componentId;
     }
 
-    updateTreeComponent(
-      item.componentId,
-      {
+    updateTreeComponent({
+      componentId: item.componentId,
+      props: {
         style: { display: "none" },
       },
-      false,
-    );
+      save: false,
+    });
   });
 
-  updateTreeComponent(
-    componentId,
-    {
+  updateTreeComponent({
+    componentId: componentId,
+    props: {
       style: { display: "flex" },
     },
-    false,
-  );
+    save: false,
+  });
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const { updateTreeComponent, tree: editorTree } = useEditorStore.getState();
@@ -569,13 +597,19 @@ export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const flexDirection = isExpanded ? "column" : "row";
   const justifyContent = isExpanded ? "center" : "flex-start";
 
-  updateTreeComponent(buttonIcon?.id!, { name });
+  updateTreeComponent({ componentId: buttonIcon?.id!, props: { name } });
   linksComponent?.children?.forEach((child) => {
-    updateTreeComponent(child?.id as string, {
-      style: { flexDirection, justifyContent },
+    updateTreeComponent({
+      componentId: child?.id as string,
+      props: {
+        style: { flexDirection, justifyContent },
+      },
     });
   });
-  updateTreeComponent(selectedComponent?.id!, { style: { width } });
+  updateTreeComponent({
+    componentId: selectedComponent?.id!,
+    props: { style: { width } },
+  });
 };
 
 const getVariableValueFromVariableId = async (variableId = "") => {
@@ -868,13 +902,13 @@ export const loginAction = async ({
   const { endpoint, url, body } = await prepareRequestData(router, action);
 
   try {
-    updateTreeComponent(
-      component.id!,
-      {
+    updateTreeComponent({
+      componentId: component.id!,
+      props: {
         loading: action.showLoader,
       },
-      false,
-    );
+      save: false,
+    });
 
     const response = await fetch(url, {
       method: endpoint?.methodType,
@@ -944,13 +978,13 @@ export const apiCallAction = async ({
   const { endpoint, url, body } = await prepareRequestData(router, action);
 
   try {
-    updateTreeComponent(
-      component.id!,
-      {
+    updateTreeComponent({
+      componentId: component.id!,
+      props: {
         loading: action.showLoader,
       },
-      false,
-    );
+      save: false,
+    });
 
     const authStore = useAuthStore.getState();
     authStore.refreshAccessToken();
@@ -1023,16 +1057,16 @@ export const bindResponseToComponentAction = ({
     if (bind.component && bind.value) {
       const dataFlatten = flattenKeysWithRoot(data);
       const value = get(dataFlatten, bind.value);
-      updateTreeComponent(
-        bind.component,
-        {
+      updateTreeComponent({
+        componentId: bind.component,
+        props: {
           data: { value, base: data },
           dataPath: bind.value.startsWith("root[0].")
             ? bind.value.split("root[0].")[1]
             : bind.value.split("root.")[1],
         },
-        false,
-      );
+        save: false,
+      });
     }
   });
 };
@@ -1087,9 +1121,9 @@ export const bindVariableToChartAction = async ({
       labelsValue = get(dataFlatten, (labelsVar as any).path);
     }
 
-    updateTreeComponent(
-      action.component,
-      {
+    updateTreeComponent({
+      componentId: action.component,
+      props: {
         data: {
           series: {
             value: seriesValue,
@@ -1109,8 +1143,8 @@ export const bindVariableToChartAction = async ({
           },
         },
       },
-      false,
-    );
+      save: false,
+    });
   }
 };
 
@@ -1149,9 +1183,9 @@ export const bindVariableToComponentAction = async ({
       defaultValue = get(defaultValueFlatten, (_var as any).path);
     }
 
-    updateTreeComponent(
-      action.component,
-      {
+    updateTreeComponent({
+      componentId: action.component,
+      props: {
         data: {
           value,
           base:
@@ -1176,8 +1210,8 @@ export const bindVariableToComponentAction = async ({
           : {},
         dataPath: (_var as any)?.path ?? undefined,
       },
-      false,
-    );
+      save: false,
+    });
   }
 };
 
@@ -1321,11 +1355,11 @@ export const bindPlaceGeometryAction = ({
     },
     blockDroppingChildrenInside: true,
   } as Component;
-  updateTreeComponent(
-    ancestor.children![0].id!,
-    { value: formatted_address },
-    true,
-  );
+  updateTreeComponent({
+    componentId: ancestor.children![0].id!,
+    props: { value: formatted_address },
+    save: true,
+  });
   updateTreeComponentChildren(parent.id!, [child]);
 };
 

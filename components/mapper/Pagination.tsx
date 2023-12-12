@@ -21,7 +21,7 @@ const PaginationComponent = ({ renderTree, component, ...props }: Props) => {
   const { onChange, ...allTriggers } = triggers;
 
   const customOnChange = (value: any) => {
-    updateTreeComponent(component.id!, { value });
+    updateTreeComponent({ componentId: component.id!, props: { value } });
     onChange && onChange(value);
   };
 

@@ -158,11 +158,12 @@ export type EditorState = {
   setCurrentProjectId: (currentProjectId: string) => void;
   setCurrentPageId: (currentPageId: string) => void;
   setComponentToAdd: (componentToAdd?: Component) => void;
-  updateTreeComponent: (
-    componentId: string,
-    props: any,
-    save?: boolean,
-  ) => void;
+  updateTreeComponent: (params: {
+    componentId: string;
+    props: any;
+    forceState?: string;
+    save?: boolean;
+  }) => void;
   updateTreeComponents: (
     componentIds: string[],
     props: any,
@@ -337,13 +338,18 @@ export const useEditorStore = create<EditorState>()(
           );
         },
         // any props change
-        updateTreeComponent: (componentId, props, save = true) => {
+        updateTreeComponent: ({
+          componentId,
+          props,
+          forceState,
+          save = true,
+        }) => {
           set(
             (prev) => {
               const copy = cloneDeep(prev.tree);
               const currentState =
                 prev.currentTreeComponentsStates?.[componentId] ?? "default";
-              const currentLanguage = prev.language;
+              const currentLanguage = forceState ?? prev.language;
 
               updateTreeComponent(
                 copy.root,

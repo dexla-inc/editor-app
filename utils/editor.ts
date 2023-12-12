@@ -996,23 +996,29 @@ export const debouncedTreeComponentStyleUpdate = debounce(
       updateTreeComponents(componentIds, { style: { ...styleUpdate } });
     } else {
       const [componentId, styleUpdate] = params;
-      updateTreeComponent(componentId, { style: { ...styleUpdate } });
+      updateTreeComponent({
+        componentId: componentId,
+        props: { style: { ...styleUpdate } },
+      });
     }
   },
   300,
 );
 
-export const debouncedTreeUpdate = debounce((...params: any[]) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  const updateTreeComponents = useEditorStore.getState().updateTreeComponents;
-  if (Array.isArray(params[0])) {
-    // @ts-ignore
-    updateTreeComponents(...params);
-  } else {
-    // @ts-ignore
-    updateTreeComponent(...params);
-  }
-}, 300);
+export const debouncedTreeUpdate = debounce(
+  (componentId, props, save = true) => {
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    const updateTreeComponents = useEditorStore.getState().updateTreeComponents;
+    if (Array.isArray(componentId)) {
+      // @ts-ignore
+      updateTreeComponents(componentId, props, save);
+    } else {
+      // @ts-ignore
+      updateTreeComponent(componentId, props, save);
+    }
+  },
+  300,
+);
 
 export const debouncedTreeUpdateStates = debounce((...params: any[]) => {
   const updateTreeComponentStates =
