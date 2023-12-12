@@ -95,7 +95,7 @@ export const EditorNavbarComponentsSection = () => {
             ([category, components]) => {
               // Filter the components based on the query before rendering
               const filteredComponents = components.filter(({ id }) =>
-                query ? new RegExp(query, "i").test(id) : true,
+                query ? id.toLowerCase().includes(query.toLowerCase()) : true,
               );
 
               if (filteredComponents.length === 0) {
