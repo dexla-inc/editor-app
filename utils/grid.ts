@@ -1,6 +1,8 @@
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import crawl from "tree-crawl";
+import { theme } from "./branding";
+import { px } from "@mantine/core";
 
 export const calculateGridSizes = (tree: Component) => {
   const setColumnSpan = useEditorStore.getState().setColumnSpan;
@@ -9,6 +11,9 @@ export const calculateGridSizes = (tree: Component) => {
   crawl(
     tree,
     (node, context) => {
+      const baseGap = px(theme.spacing.xs);
+      const nodeGap = px(theme.spacing[node.props?.style?.gap ?? "xs"]);
+
       if (node.name === "Grid") {
         const parent = context.parent as Component;
         if (parent?.name === "GridColumn") {

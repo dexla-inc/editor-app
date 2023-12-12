@@ -1,7 +1,8 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { GRID_SIZE } from "@/utils/config";
-import { Component } from "@/utils/editor";
+import { Component, getComponentById } from "@/utils/editor";
 import { calculateGridSizes } from "@/utils/grid";
 import { Box, BoxProps, useMantineTheme } from "@mantine/core";
 import { usePrevious } from "@mantine/hooks";
@@ -15,6 +16,8 @@ export type GridProps = {
 const GridComponent = forwardRef(
   ({ renderTree, component, ...props }: GridProps, ref) => {
     const theme = useMantineTheme();
+    const editorTree = useEditorStore((state) => state.tree);
+    const componentFromTree = getComponentById(editorTree.root, component.id!);
     const { style = {}, gridSize, navbarWidth } = component.props!;
 
     const defaultGridTemplateColumns = `repeat(${gridSize ?? GRID_SIZE}, 1fr)`;
@@ -32,10 +35,10 @@ const GridComponent = forwardRef(
     const prevGap = usePrevious(gapValue);
 
     useEffect(() => {
-      if (prevGap !== gapValue) {
-        calculateGridSizes(component);
+      if (prevGap !== gapValue && componentFromTree) {
+        calculateGridSizes(componentFromTree);
       }
-    }, [gapValue, prevGap, component]);
+    }, [gapValue, prevGap, componentFromTree]);
 
     return (
       <Box
