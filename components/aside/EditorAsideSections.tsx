@@ -1,4 +1,3 @@
-import { GenerateStylesAIButton } from "@/components/GenerateStylesAIButton";
 import { SidebarSection } from "@/components/SidebarSection";
 import { ActionsFlow } from "@/components/actions/ActionsFlow";
 import * as AccordionModifier from "@/components/modifiers/Accordion";
@@ -314,68 +313,61 @@ export const EditorAsideSections = () => {
           value={tab}
         />
       </Flex>
-      <Stack key={selectedComponentId} spacing="xs">
-        {tab === "design" && (
-          <Stack>
-            {selectedComponentId && (
-              <>
-                <GenerateStylesAIButton />
-                <Select
-                  px="md"
-                  value={currentState}
-                  size="xs"
-                  label="State"
-                  data={[
-                    { label: "Default", value: "default" },
-                    { label: "Hover", value: "hover" },
-                    { label: "Disabled", value: "disabled" },
-                    { label: "Checked", value: "checked" },
-                    { label: "Hidden", value: "hidden" },
-                    { label: "Active", value: "Active" },
-                    { label: "Complete", value: "Complete" },
-                    ...Object.keys(component?.states ?? {}).reduce(
-                      (acc, key) => {
-                        if (
-                          key === "hover" ||
-                          key === "disabled" ||
-                          key === "checked" ||
-                          key === "hidden" ||
-                          key === "Active" ||
-                          key === "Complete"
-                        )
-                          return acc;
+      {tab === "design" && (
+        <Stack spacing={0}>
+          {selectedComponentId && (
+            <Select
+              px="md"
+              pb="md"
+              value={currentState}
+              size="xs"
+              label="State"
+              data={[
+                { label: "Default", value: "default" },
+                { label: "Hover", value: "hover" },
+                { label: "Disabled", value: "disabled" },
+                { label: "Checked", value: "checked" },
+                { label: "Hidden", value: "hidden" },
+                { label: "Active", value: "Active" },
+                { label: "Complete", value: "Complete" },
+                ...Object.keys(component?.states ?? {}).reduce((acc, key) => {
+                  if (
+                    key === "hover" ||
+                    key === "disabled" ||
+                    key === "checked" ||
+                    key === "hidden" ||
+                    key === "Active" ||
+                    key === "Complete"
+                  )
+                    return acc;
 
-                        return acc.concat({
-                          label: key,
-                          value: key,
-                        });
-                      },
-                      [] as any[],
-                    ),
-                  ]}
-                  placeholder="Select State"
-                  nothingFound="Nothing found"
-                  searchable
-                  creatable
-                  getCreateLabel={(query) => `+ Custom State "${query}"`}
-                  onCreate={(query) => {
-                    const item = { value: query, label: query };
-                    setTreeComponentCurrentState(selectedComponentId, query);
-                    updateTreeComponent(selectedComponentId, {}, true);
-                    return item;
-                  }}
-                  onChange={(value: string) => {
-                    setTreeComponentCurrentState(selectedComponentId, value);
-                  }}
-                  {...AUTOCOMPLETE_OFF_PROPS}
-                />
-              </>
-            )}
-            {designSections}
-          </Stack>
-        )}
-        {tab === "actions" && <ActionsFlow actionsSections={actionsSections} />}
-      </Stack>
+                  return acc.concat({
+                    label: key,
+                    value: key,
+                  });
+                }, [] as any[]),
+              ]}
+              placeholder="Select State"
+              nothingFound="Nothing found"
+              searchable
+              creatable
+              getCreateLabel={(query) => `+ Custom State "${query}"`}
+              onCreate={(query) => {
+                const item = { value: query, label: query };
+                setTreeComponentCurrentState(selectedComponentId, query);
+                updateTreeComponent(selectedComponentId, {}, true);
+                return item;
+              }}
+              onChange={(value: string) => {
+                setTreeComponentCurrentState(selectedComponentId, value);
+              }}
+              {...AUTOCOMPLETE_OFF_PROPS}
+            />
+          )}
+          <Stack spacing="xs">{designSections}</Stack>
+        </Stack>
+      )}
+      {tab === "actions" && <ActionsFlow actionsSections={actionsSections} />}
     </Stack>
   );
 };
