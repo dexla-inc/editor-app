@@ -83,7 +83,7 @@ export const Modifier = withModifier(
             }}
           />
           <ThemeColorSelector
-            label="Background Color"
+            label="Color"
             {...form.getInputProps("color")}
             onChange={(value: string) => {
               form.setFieldValue("color", value);

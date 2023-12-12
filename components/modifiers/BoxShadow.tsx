@@ -52,6 +52,11 @@ export const Modifier = withModifier(
       }),
     });
 
+    const themeShadowColor = (_value: string) => {
+      const [color, index] = _value.split(".");
+      return theme.colors[color][Number(index)];
+    };
+
     return (
       <form key={selectedComponent?.id}>
         {selectedComponent?.name === "Card" ? (
@@ -94,8 +99,7 @@ export const Modifier = withModifier(
                 {...form.getInputProps("inset")}
                 onChange={(value) => {
                   form.setFieldValue("inset", value as string);
-                  const boxShadow = `${value} ${form.values.xOffset} ${form.values.yOffset} ${form.values.blur} ${form.values.spread} ${form.values.color}`;
-
+                  const boxShadow = `${value} ${xOffset} ${yOffset} ${blur} ${spread} ${color}`;
                   debouncedTreeUpdate(selectedComponentIds, {
                     style: { boxShadow },
                   });
@@ -108,8 +112,7 @@ export const Modifier = withModifier(
                 {...form.getInputProps("xOffset")}
                 onChange={(value) => {
                   form.setFieldValue("xOffset", value as string);
-                  const boxShadow = `${form.values.inset} ${value} ${form.values.yOffset} ${form.values.blur} ${form.values.spread} ${form.values.color}`;
-
+                  const boxShadow = `${inset} ${value} ${yOffset} ${blur} ${spread} ${color}`;
                   debouncedTreeUpdate(selectedComponentIds, {
                     style: { boxShadow },
                   });
@@ -125,8 +128,7 @@ export const Modifier = withModifier(
                 {...form.getInputProps("yOffset")}
                 onChange={(value) => {
                   form.setFieldValue("yOffset", value as string);
-                  const boxShadow = `${form.values.inset} ${form.values.xOffset} ${value} ${form.values.blur} ${form.values.spread} ${form.values.color}`;
-
+                  const boxShadow = `${inset} ${xOffset} ${value} ${blur} ${spread} ${color}`;
                   debouncedTreeUpdate(selectedComponentIds, {
                     style: { boxShadow },
                   });
@@ -144,8 +146,7 @@ export const Modifier = withModifier(
                 {...form.getInputProps("blur")}
                 onChange={(value) => {
                   form.setFieldValue("blur", value as string);
-                  const boxShadow = `${form.values.inset} ${form.values.xOffset} ${form.values.yOffset} ${value} ${form.values.spread} ${form.values.color}`;
-
+                  const boxShadow = `${inset} ${xOffset} ${yOffset} ${value} ${spread} ${color}`;
                   debouncedTreeUpdate(selectedComponentIds, {
                     style: { boxShadow },
                   });
@@ -161,7 +162,7 @@ export const Modifier = withModifier(
                 {...form.getInputProps("spread")}
                 onChange={(value) => {
                   form.setFieldValue("spread", value as string);
-                  const boxShadow = `${form.values.inset} ${form.values.xOffset} ${form.values.yOffset} ${form.values.blur} ${value} ${form.values.color}`;
+                  const boxShadow = `${inset} ${xOffset} ${yOffset} ${blur} ${value} ${color}`;
 
                   debouncedTreeUpdate(selectedComponentIds, {
                     style: { boxShadow },
@@ -178,12 +179,9 @@ export const Modifier = withModifier(
               label="Color"
               {...form.getInputProps("color")}
               onChange={(_value: string) => {
-                const [color, index] = _value.split(".");
-                // @ts-ignore
-                const value = theme.colors[color][index];
-
+                const value = themeShadowColor(_value);
                 form.setFieldValue("color", _value);
-                const boxShadow = `${form.values.inset} ${form.values.xOffset} ${form.values.yOffset} ${form.values.blur} ${form.values.spread} ${value}`;
+                const boxShadow = `${inset} ${xOffset} ${yOffset} ${blur} ${spread} ${value}`;
 
                 debouncedTreeUpdate(selectedComponentIds, {
                   style: { boxShadow },

@@ -46,7 +46,7 @@ export const Modifier = withModifier(
           />
           <SwitchSelector
             topLabel="Required"
-            {...form.getInputProps("withAsterisk")}
+            checked={form.getInputProps("withAsterisk").value}
             onChange={(event) => {
               form.setFieldValue("withAsterisk", event.currentTarget.checked);
               debouncedTreeUpdate(selectedComponentIds, {
