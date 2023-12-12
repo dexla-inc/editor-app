@@ -1,6 +1,7 @@
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconRadio } from "@tabler/icons-react";
@@ -9,14 +10,10 @@ import merge from "lodash.merge";
 export const icon = IconRadio;
 export const label = "Radio";
 
-export const defaultRadioValues = {
-  withAsterisk: false,
-};
-
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultRadioValues, {
+      initialValues: merge({}, requiredModifiers.radio, {
         withAsterisk: selectedComponent?.props?.withAsterisk,
       }),
     });

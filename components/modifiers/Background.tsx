@@ -2,6 +2,7 @@ import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import {
   SegmentedControl,
   Select,
@@ -11,21 +12,11 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTexture } from "@tabler/icons-react";
-import { useState } from "react";
 import merge from "lodash.merge";
+import { useState } from "react";
 
 export const icon = IconTexture;
 export const label = "Background";
-
-const defaultBackgroundValues = {
-  bg: "transparent",
-  backgroundImage: "",
-  backgroundSize: "contain",
-  backgroundRepeat: "repeat",
-  backgroundPositionX: "0%",
-  backgroundPositionY: "0%",
-  backgroundAttachment: "scroll",
-};
 
 const extractBackgroundUrl = (backgroundImageValue: string): string => {
   const urlRegex = /url\(['"]?([^'"\(\)]+)['"]?\)/;
@@ -37,6 +28,8 @@ const extractBackgroundUrl = (backgroundImageValue: string): string => {
 
   return "";
 };
+
+const defaultBackgroundValues = requiredModifiers.background;
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {

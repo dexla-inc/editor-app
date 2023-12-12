@@ -11,12 +11,10 @@ import merge from "lodash.merge";
 export const icon = IconIdBadge;
 export const label = "Badge";
 
-export const defaultBadgeValues = requiredModifiers.badge;
-
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultBadgeValues, {
+      initialValues: merge({}, requiredModifiers.badge, {
         value: selectedComponent.props?.children,
         type: selectedComponent.props?.type,
         variant: selectedComponent.props?.variant,
@@ -85,7 +83,7 @@ export const Modifier = withModifier(
             }}
           />
           <ThemeColorSelector
-            label="Background Color"
+            label="Color"
             {...form.getInputProps("color")}
             onChange={(value: string) => {
               form.setFieldValue("color", value);

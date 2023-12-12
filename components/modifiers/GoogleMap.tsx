@@ -1,6 +1,8 @@
 import { Position } from "@/components/mapper/GoogleMapPlugin";
+import { withModifier } from "@/hoc/withModifier";
 import { ICON_SIZE } from "@/utils/config";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import {
   ActionIcon,
   Box,
@@ -16,10 +18,9 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconMapPin, IconPlus, IconTrash } from "@tabler/icons-react";
+import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
-import { withModifier } from "@/hoc/withModifier";
-import merge from "lodash.merge";
 
 export const icon = IconMapPin;
 export const label = "Map Settings";
@@ -28,25 +29,10 @@ export type MarkerItem = { id: string; name: string } & Position;
 export type Styler = Record<string, string | Record<string, any>[]>;
 export type Options = { mapTypeId: string; styles: Styler[] };
 
-export const defaultMapValues = {
-  language: "en",
-  apiKey: "",
-  center: {
-    lat: 0.0,
-    lng: 0.0,
-  },
-  options: {
-    mapTypeId: "SATELITE",
-    styles: [] as Styler[],
-  },
-  zoom: 10,
-  markers: [] as Array<MarkerItem>,
-};
-
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultMapValues, {
+      initialValues: merge({}, requiredModifiers.mapSettings, {
         language: selectedComponent.props?.language,
         apiKey: selectedComponent.props?.apiKey,
         center: selectedComponent.props?.center,

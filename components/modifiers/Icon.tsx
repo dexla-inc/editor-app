@@ -17,14 +17,12 @@ import { SizeSelector } from "../SizeSelector";
 export const icon = IconTexture;
 export const label = "Icon";
 
-export const defaultIconValues = requiredModifiers.icon;
-
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const theme = useEditorStore((state) => state.theme);
 
     const form = useForm({
-      initialValues: merge({}, defaultIconValues, {
+      initialValues: merge({}, requiredModifiers.icon, {
         color: getThemeColor(theme, selectedComponent.props?.color),
         bg: selectedComponent.props?.bg,
         icon: selectedComponent.props?.name,

@@ -1,5 +1,8 @@
 import { UnitInput } from "@/components/UnitInput";
+import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
+import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import {
   Flex,
   NumberInput,
@@ -16,27 +19,15 @@ import {
   IconAlignBoxRightMiddle,
   IconLayout,
 } from "@tabler/icons-react";
-import { withModifier } from "@/hoc/withModifier";
-import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import merge from "lodash.merge";
 
 export const icon = IconLayout;
 export const label = "Position";
 
-export const defaultPositionValues = {
-  position: "relative",
-  top: "auto",
-  right: "auto",
-  bottom: "auto",
-  left: "auto",
-  zIndex: 0,
-  alignSelf: "center",
-};
-
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultPositionValues, {
+      initialValues: merge({}, requiredModifiers.position, {
         position: selectedComponent?.props?.style?.position,
         top: selectedComponent?.props?.style?.top,
         right: selectedComponent?.props?.style?.right,

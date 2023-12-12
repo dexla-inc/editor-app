@@ -1,17 +1,11 @@
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, Switch, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconFileUpload } from "@tabler/icons-react";
-import { ChangeEvent } from "react";
 import merge from "lodash.merge";
-
-export const defaultValues = {
-  name: "Upload Button",
-  accept: "",
-  multiple: false,
-  disabled: false,
-};
+import { ChangeEvent } from "react";
 
 export const icon = IconFileUpload;
 export const label = "File";
@@ -19,7 +13,7 @@ export const label = "File";
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultValues, {
+      initialValues: merge({}, requiredModifiers.fileButton, {
         name: selectedComponent.props?.name,
         accept: selectedComponent.props?.accept,
         multiple: selectedComponent.props?.multiple,

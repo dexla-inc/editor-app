@@ -1,17 +1,15 @@
+import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack, Text, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutSidebarLeftCollapse } from "@tabler/icons-react";
-import { withModifier } from "@/hoc/withModifier";
 import merge from "lodash.merge";
 
 export const icon = IconLayoutSidebarLeftCollapse;
 export const label = "PopOver";
 
-export const defaultPopOverValues = {
-  title: "PopOver Title",
-  position: "left",
-};
+export const defaultPopOverValues = requiredModifiers.popOver;
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {

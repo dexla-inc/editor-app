@@ -1,22 +1,18 @@
+import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack, Text, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutSidebarLeftCollapse } from "@tabler/icons-react";
-import { withModifier } from "@/hoc/withModifier";
 import merge from "lodash.merge";
 
 export const icon = IconLayoutSidebarLeftCollapse;
 export const label = "Drawer";
 
-export const defaultDrawerValues = {
-  title: "Drawer Title",
-  position: "left",
-};
-
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge({}, defaultDrawerValues, {
+      initialValues: merge({}, requiredModifiers.drawer, {
         title: selectedComponent.props?.title,
         position: selectedComponent.props?.position,
       }),
