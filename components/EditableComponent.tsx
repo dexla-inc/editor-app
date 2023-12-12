@@ -17,7 +17,7 @@ import { Component } from "@/utils/editor";
 import { BoxProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { Router, useRouter } from "next/router";
-import {
+import React, {
   cloneElement,
   PropsWithChildren,
   useCallback,
@@ -55,8 +55,8 @@ export const EditableComponent = ({
   const setTreeComponentCurrentState = useEditorStore(
     (state) => state.setTreeComponentCurrentState,
   );
-  const currentTreeComponentsStates = useEditorStore(
-    (state) => state.currentTreeComponentsStates,
+  const currentState = useEditorStore(
+    (state) => state.currentTreeComponentsStates?.[component.id!] ?? "default",
   );
   const onMountActionsRan = useEditorStore((state) => state.onMountActionsRan);
   const addOnMountActionsRan = useEditorStore(
@@ -179,16 +179,14 @@ export const EditableComponent = ({
     ? { boxShadow: baseShadow }
     : {};
 
-  const currentState =
-    currentTreeComponentsStates?.[component.id!] ?? "default";
-  const hoverStateFunc = () => {
+  const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
     if (currentState === "default") {
-      setTreeComponentCurrentState(component.id!, "hover");
+      setTreeComponentCurrentState(e.currentTarget.id, "hover");
     }
   };
-  const leaveHoverStateFunc = () => {
+  const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
     if (currentState === "hover") {
-      setTreeComponentCurrentState(component.id!, "default");
+      setTreeComponentCurrentState(e.currentTarget.id, "default");
     }
   };
 
@@ -299,7 +297,10 @@ export const EditableComponent = ({
           onMouseEnter: triggers?.onHover ?? hoverStateFunc,
           onMouseLeave: leaveHoverStateFunc,
         }
-      : {},
+      : {
+          onMouseEnter: handleMouseEnter,
+          onMouseLeave: handleMouseLeave,
+        },
   });
 
   const showShadows = !isPreviewMode && !isLive;
@@ -380,8 +381,6 @@ export const EditableComponent = ({
             },
           },
           onClick: handleClick,
-          onMouseOver: handleMouseEnter,
-          onMouseLeave: handleMouseLeave,
           ...(isPreviewMode
             ? {}
             : {

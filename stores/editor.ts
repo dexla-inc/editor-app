@@ -15,6 +15,7 @@ import {
   updateTreeComponentAttrs,
   updateTreeComponentChildren,
   updateTreeComponentDescription,
+  updateTreeComponentStates,
   updateTreeComponentWithOmitProps,
 } from "@/utils/editor";
 import { MantineNumberSize, MantineTheme } from "@mantine/core";
@@ -93,6 +94,7 @@ export type OpenAction = {
 export type ClipboardProps = {
   componentName: string;
   componentProps: { [key: string]: any };
+  componentStates: Record<string, any>;
 };
 
 export type EditorState = {
@@ -164,6 +166,11 @@ export type EditorState = {
   updateTreeComponents: (
     componentIds: string[],
     props: any,
+    save?: boolean,
+  ) => void;
+  updateTreeComponentStates: (
+    componentId: string,
+    states: any,
     save?: boolean,
   ) => void;
   updateTreeComponentChildren: (
@@ -394,8 +401,6 @@ export const useEditorStore = create<EditorState>()(
                 );
               }
 
-              // const component = getComponentById(copy.root, componentId);
-
               return {
                 tree: {
                   ...cloneDeep(copy),
@@ -406,6 +411,35 @@ export const useEditorStore = create<EditorState>()(
             },
             false,
             "editor/updateTreeComponents",
+          );
+        },
+        updateTreeComponentStates: (componentId, states, save = true) => {
+          set(
+            (prev) => {
+              const copy = cloneDeep(prev.tree);
+
+              updateTreeComponentStates(copy.root, componentId, states);
+              if (save) {
+                debouncedUpdatePageState(
+                  encodeSchema(JSON.stringify(copy)),
+                  prev.currentProjectId ?? "",
+                  prev.currentPageId ?? "",
+                  prev.setIsSaving,
+                );
+              }
+
+              const component = getComponentById(copy.root, componentId);
+
+              return {
+                tree: {
+                  ...cloneDeep(copy),
+                  name: `Edited ${component?.name}`,
+                  timestamp: Date.now(),
+                },
+              };
+            },
+            false,
+            "editor/updateTreeComponentStates",
           );
         },
         // anything out of .props that changes .children[]
