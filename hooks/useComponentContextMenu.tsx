@@ -1,5 +1,5 @@
 import { useContextMenu } from "@/contexts/ContextMenuProvider";
-import { ClipboardProps, useEditorStore } from "@/stores/editor";
+import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { copyToClipboard } from "@/utils/clipboard";
 import { structureMapper } from "@/utils/componentMapper";
@@ -13,6 +13,7 @@ import {
   getComponentParent,
   removeComponent,
   removeComponentFromParent,
+  debouncedTreeUpdateStates,
 } from "@/utils/editor";
 import {
   IconBoxMargin,
@@ -26,6 +27,7 @@ import {
 } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback } from "react";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
 
 const determinePasteTarget = (selectedId: string | undefined) => {
   if (!selectedId) return "content-wrapper";
@@ -34,16 +36,6 @@ const determinePasteTarget = (selectedId: string | undefined) => {
 };
 
 const blackList = ["name", "value", "children"];
-
-const filteredPropsToUpdate = (props: ClipboardProps["componentProps"]) => {
-  const result = {} as ClipboardProps["componentProps"];
-  Object.keys(props).forEach((key) => {
-    if (!blackList.includes(key)) {
-      result[key] = props[key];
-    }
-  });
-  return result as ClipboardProps["componentProps"];
-};
 
 export const useComponentContextMenu = () => {
   const { showContextMenu, destroy } = useContextMenu();
@@ -166,6 +158,7 @@ export const useComponentContextMenu = () => {
       setCopiedProperties({
         componentName: targetComponent.name,
         componentProps: targetComponent.props!,
+        componentStates: targetComponent.states!,
       });
     },
     [setCopiedProperties, editorTree.root],
@@ -177,10 +170,14 @@ export const useComponentContextMenu = () => {
       const isTargetNameSame =
         component.name === copiedProperties.componentName;
       if (!isTargetNameSame) return;
-      const filteredProps = filteredPropsToUpdate(
-        copiedProperties.componentProps,
+      debouncedTreeUpdate(
+        component.id!,
+        omit(copiedProperties.componentProps, blackList),
       );
-      debouncedTreeUpdate(component.id!, filteredProps);
+      debouncedTreeUpdateStates(
+        component.id!,
+        copiedProperties.componentStates!,
+      );
     },
     [copiedProperties],
   );

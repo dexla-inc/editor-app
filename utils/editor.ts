@@ -606,6 +606,24 @@ export const updateTreeComponent = (
   );
 };
 
+export const updateTreeComponentStates = (
+  treeRoot: Component,
+  id: string,
+  states: any,
+) => {
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === id) {
+        node.states = merge(node.states, states);
+
+        context.break();
+      }
+    },
+    { order: "bfs" },
+  );
+};
+
 export const updateTreeComponentChildren = (
   treeRoot: Component,
   id: string,
@@ -994,6 +1012,13 @@ export const debouncedTreeUpdate = debounce((...params: any[]) => {
     // @ts-ignore
     updateTreeComponent(...params);
   }
+}, 300);
+
+export const debouncedTreeUpdateStates = debounce((...params: any[]) => {
+  const updateTreeComponentStates =
+    useEditorStore.getState().updateTreeComponentStates;
+  // @ts-ignore
+  updateTreeComponentStates(...params);
 }, 300);
 
 export const debouncedTreeComponentDescriptionpdate = debounce(
