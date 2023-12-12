@@ -255,7 +255,7 @@ export const Modifier = withModifier(
           </Stack>
           <Stack spacing={2}>
             <Text size="xs" fw={500}>
-              Sizing
+              Scale
             </Text>
             <SegmentedControl
               size="xs"
