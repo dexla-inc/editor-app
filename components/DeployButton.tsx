@@ -67,12 +67,12 @@ export const DeployButton = ({ projectId, page }: Props) => {
 
     // Validity check
     if (
-      deployLink.origin.startsWith("http") ||
-      deployLink.origin.startsWith("https")
+      deployLink.href.startsWith("http") ||
+      deployLink.href.startsWith("https")
     ) {
-      window?.open(deployLink.origin, "_blank");
+      window?.open(deployLink.href, "_blank");
     } else {
-      console.error(`Invalid URL: ${deployLink.origin}`);
+      console.error(`Invalid URL: ${deployLink.href}`);
     }
   };
 
