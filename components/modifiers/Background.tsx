@@ -3,13 +3,7 @@ import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import {
-  SegmentedControl,
-  Select,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
+import { SegmentedControl, Stack, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTexture } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -69,7 +63,7 @@ export const Modifier = withModifier(
             }}
           />
           <TextInput
-            label="Image URL"
+            label="Image"
             size="xs"
             placeholder="https://example.com/image.png"
             {...form.getInputProps("backgroundImage")}
@@ -82,28 +76,18 @@ export const Modifier = withModifier(
               });
             }}
           />
-          <Select
-            label="Size"
-            size="xs"
-            data={[
-              { label: "Contain", value: "contain" },
-              { label: "Cover", value: "cover" },
-              { label: "Percent", value: "100%" },
-            ]}
-            onChange={(value) => {
-              form.setFieldValue("backgroundSize", value as any);
-              setBackgroundSize(value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: { backgroundSize: value },
-              });
-            }}
-          />
-          {backgroundSize !== "contain" && backgroundSize !== "cover" ? (
-            <UnitInput
-              label="Percent"
+          <Stack spacing={2}>
+            <Text size="xs" fw={500}>
+              Size
+            </Text>
+            <SegmentedControl
               size="xs"
-              options={[{ value: "%", label: "%" }]}
-              value={backgroundSize as any}
+              data={[
+                { label: "Contain", value: "contain" },
+                { label: "Cover", value: "cover" },
+                { label: "%", value: "100%" },
+              ]}
+              {...form.getInputProps("backgroundSize")}
               onChange={(value) => {
                 form.setFieldValue("backgroundSize", value as any);
                 setBackgroundSize(value as string);
@@ -112,6 +96,44 @@ export const Modifier = withModifier(
                 });
               }}
             />
+          </Stack>
+          {backgroundSize !== "contain" && backgroundSize !== "cover" ? (
+            <>
+              <UnitInput
+                label="Percent"
+                size="xs"
+                options={[{ value: "%", label: "%" }]}
+                value={backgroundSize as any}
+                onChange={(value) => {
+                  form.setFieldValue("backgroundSize", value as any);
+                  setBackgroundSize(value as string);
+                  debouncedTreeUpdate(selectedComponentIds, {
+                    style: { backgroundSize: value },
+                  });
+                }}
+              />
+
+              <UnitInput
+                label="Position X"
+                {...form.getInputProps("backgroundPositionX")}
+                onChange={(value) => {
+                  form.setFieldValue("backgroundPositionX", value as any);
+                  debouncedTreeUpdate(selectedComponentIds, {
+                    style: { backgroundPositionX: value },
+                  });
+                }}
+              />
+              <UnitInput
+                label="Position Y"
+                {...form.getInputProps("backgroundPositionY")}
+                onChange={(value) => {
+                  form.setFieldValue("backgroundPositionY", value as any);
+                  debouncedTreeUpdate(selectedComponentIds, {
+                    style: { backgroundPositionY: value },
+                  });
+                }}
+              />
+            </>
           ) : (
             <TextInput
               {...form.getInputProps("backgroundSize")}
@@ -125,8 +147,8 @@ export const Modifier = withModifier(
             <SegmentedControl
               size="xs"
               data={[
-                { label: "No Repeat", value: "no-repeat" },
-                { label: "Repeat", value: "repeat" },
+                { label: "No", value: "no-repeat" },
+                { label: "Yes", value: "repeat" },
               ]}
               {...form.getInputProps("backgroundRepeat")}
               onChange={(value) => {
@@ -137,41 +159,25 @@ export const Modifier = withModifier(
               }}
             />
           </Stack>
-          <UnitInput
-            label="Position X"
-            {...form.getInputProps("backgroundPositionX")}
-            onChange={(value) => {
-              form.setFieldValue("backgroundPositionX", value as any);
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: { backgroundPositionX: value },
-              });
-            }}
-          />
-          <UnitInput
-            label="Position Y"
-            {...form.getInputProps("backgroundPositionY")}
-            onChange={(value) => {
-              form.setFieldValue("backgroundPositionY", value as any);
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: { backgroundPositionY: value },
-              });
-            }}
-          />
-          <Select
-            label="Attachment"
-            size="xs"
-            data={[
-              { label: "Scroll", value: "scroll" },
-              { label: "Fixed", value: "fixed" },
-            ]}
-            {...form.getInputProps("backgroundAttachment")}
-            onChange={(value) => {
-              form.setFieldValue("backgroundAttachment", value as any);
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: { backgroundAttachment: value },
-              });
-            }}
-          />
+          <Stack spacing={2}>
+            <Text size="xs" fw={500}>
+              Movement
+            </Text>
+            <SegmentedControl
+              size="xs"
+              data={[
+                { label: "Scroll", value: "scroll" },
+                { label: "Fixed", value: "fixed" },
+              ]}
+              {...form.getInputProps("backgroundAttachment")}
+              onChange={(value) => {
+                form.setFieldValue("backgroundAttachment", value as any);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  style: { backgroundAttachment: value },
+                });
+              }}
+            />
+          </Stack>
         </Stack>
       </form>
     );

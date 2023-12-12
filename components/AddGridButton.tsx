@@ -30,7 +30,7 @@ export const AddGridButton = () => {
       iconName="IconLayoutGridAdd"
       tooltip="Add Grid"
       onClick={addGrid}
-      color="indigo"
+      color="teal"
     />
   );
 };
