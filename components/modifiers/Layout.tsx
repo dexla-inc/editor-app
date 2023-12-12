@@ -54,7 +54,7 @@ export const Modifier = withModifier(
             position: data.style?.position,
             flexWrap: data.style?.flexWrap,
             flexDirection: data.style?.flexDirection,
-            gap: selectedComponent.props?.gap,
+            gap: selectedComponent.props?.gap ?? requiredModifiers.layout?.gap,
             // rowGap: data.style?.rowGap,
             // columnGap: data.style?.columnGap,
             alignItems: data.style?.alignItems,
@@ -80,7 +80,7 @@ export const Modifier = withModifier(
                 {
                   label: (
                     <StylingPaneItemIcon
-                      label="Vertical"
+                      label="Horizontal"
                       icon={<IconArrowNarrowRight size={14} />}
                     />
                   ),
@@ -89,7 +89,7 @@ export const Modifier = withModifier(
                 {
                   label: (
                     <StylingPaneItemIcon
-                      label="Horizontal"
+                      label="Vertical"
                       icon={<IconArrowNarrowDown size={14} />}
                     />
                   ),

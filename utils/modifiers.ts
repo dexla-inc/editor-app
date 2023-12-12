@@ -117,7 +117,7 @@ export const requiredModifiers: RequiredModifiers = {
     display: "flex",
     flexWrap: "nowrap",
     flexDirection: "row",
-    gap: "0px",
+    gap: "xs",
     // rowGap: "0px",
     // columnGap: "0px",
     alignItems: "stretch",
