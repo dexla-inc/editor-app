@@ -27,7 +27,7 @@ export const getServerSideProps = async ({
   }
 
   const page = await getMostRecentDeploymentByPage(id as string, {
-    slug: query.page as string,
+    page: query.page as string,
   });
 
   return {

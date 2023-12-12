@@ -26,7 +26,7 @@ export const Live = ({ projectId, pageId }: Props) => {
     const getPageData = async () => {
       setIsLoading(true);
       const page = await getMostRecentDeploymentByPage(projectId as string, {
-        pageId,
+        page: pageId,
       });
       if (page.pageState) {
         const decodedSchema = decodeSchema(page.pageState);
