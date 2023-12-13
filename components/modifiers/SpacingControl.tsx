@@ -1,7 +1,8 @@
 import { Icon } from "@/components/Icon";
+import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
 import { debouncedTreeUpdate } from "@/utils/editor";
-import { Flex, Group, SegmentedControl, Stack, Text } from "@mantine/core";
+import { Flex, Group, SegmentedControl, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { IconBoxModel2 } from "@tabler/icons-react";
 
@@ -48,9 +49,7 @@ export const SpacingControl = ({ type, form, selectedComponentIds }: Props) => {
 
   return (
     <Stack spacing={4}>
-      <Text size="0.75rem" weight={500}>
-        {type}
-      </Text>
+      <TopLabel text={type} size="0.75rem" />
       <Flex align="center" gap="sm" justify="space-between">
         <SegmentedControl
           fullWidth

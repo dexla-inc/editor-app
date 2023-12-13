@@ -4,7 +4,7 @@ import { useUserConfigStore } from "@/stores/userConfig";
 import {
   DARK_COLOR,
   DARK_MODE,
-  GREEN_COLOR,
+  GRAY_COLOR,
   LIGHT_MODE,
   scrollbarStyles,
 } from "@/utils/branding";
@@ -19,6 +19,7 @@ import {
   Title,
   Tooltip,
   UnstyledButton,
+  useMantineTheme,
 } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import {
@@ -39,6 +40,7 @@ export const NavbarSection = ({
   children,
   sections,
 }: PropsWithChildren<Props>) => {
+  const theme = useMantineTheme();
   const activeTab = useEditorStore((state) => state.activeTab);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
@@ -90,6 +92,8 @@ export const NavbarSection = ({
       }
     };
 
+    const isDarkTheme = theme.colorScheme === "dark";
+
     return (
       <Tooltip
         withinPortal
@@ -110,7 +114,12 @@ export const NavbarSection = ({
         >
           <ThemeIcon
             color={activeTab === id ? "indigo" : "teal"}
-            variant="light"
+            variant={isDarkTheme ? "default" : "light"}
+            sx={
+              isDarkTheme && activeTab === id
+                ? { color: DARK_COLOR, background: GRAY_COLOR }
+                : {}
+            }
             size={30}
           >
             <Icon size={ICON_SIZE} />
@@ -190,7 +199,7 @@ export const NavbarSection = ({
         <Title
           align="center"
           sx={(theme) => ({
-            color: theme.colorScheme === "dark" ? GREEN_COLOR : DARK_COLOR,
+            color: theme.colorScheme === "dark" ? LIGHT_MODE : DARK_COLOR,
           })}
           order={4}
         >

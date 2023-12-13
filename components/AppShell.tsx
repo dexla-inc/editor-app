@@ -23,6 +23,7 @@ import AIPromptTextInput from "@/components/AIPromptTextInput";
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { AddGridButton } from "@/components/AddGridButton";
 import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
+import { ChangeThemeButton } from "@/components/ChangeThemeButton";
 import { DeployButton } from "@/components/DeployButton";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { FileStorageButton } from "@/components/FileStorageButton";
@@ -37,7 +38,6 @@ import { flexStyles } from "@/utils/branding";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
-import { ChangeThemeButton } from "./ChangeThemeButton";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const resetTree = useEditorStore((state) => state.resetTree);
@@ -93,7 +93,6 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               {isDexlaAdmin && <AddGridButton />}
               {isDexlaAdmin && <SaveTemplateButton />}
               {isDexlaAdmin && <AIChatHistoryButton projectId={projectId} />}
-              <ChangeThemeButton />
               <ActionIconDefault
                 iconName="IconGitBranch"
                 tooltip="Logic Flows"
@@ -122,6 +121,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                   (p) => p.id === currentPageId,
                 )}
               />
+              <ChangeThemeButton />
             </Group>
           </Group>
         </Header>

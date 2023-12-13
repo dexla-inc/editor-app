@@ -1,9 +1,10 @@
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Stack, Text, TextInput } from "@mantine/core";
+import { SegmentedControl, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTexture } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -77,9 +78,7 @@ export const Modifier = withModifier(
             }}
           />
           <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Size
-            </Text>
+            <TopLabel text="Size" />
             <SegmentedControl
               size="xs"
               data={[
@@ -141,9 +140,7 @@ export const Modifier = withModifier(
             />
           )}
           <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Repeat
-            </Text>
+            <TopLabel text="Repeat" />
             <SegmentedControl
               size="xs"
               data={[
@@ -160,9 +157,7 @@ export const Modifier = withModifier(
             />
           </Stack>
           <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Movement
-            </Text>
+            <TopLabel text="Movement" />
             <SegmentedControl
               size="xs"
               data={[

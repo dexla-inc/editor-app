@@ -91,8 +91,8 @@ export function ProjectItem({
     setPages([]);
   };
 
-  const borderStyle =
-    theme.colorScheme === "dark" ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE;
+  const isDarkTheme = theme.colorScheme === "dark";
+  const borderStyle = isDarkTheme ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE;
 
   return (
     <Col lg={4} md={6} xs={12}>
@@ -232,7 +232,7 @@ export function ProjectItem({
               {isDexlaAdmin && (
                 <Menu.Item
                   icon={<Icon name="IconRefresh" />}
-                  color="indigo"
+                  color={isDarkTheme ? "teal" : "indigo"}
                   component={Link}
                   href={`/projects/new?company=${company.orgId}&projectId=${project.id}&step=2`}
                 >

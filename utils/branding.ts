@@ -61,17 +61,19 @@ const theme: MantineTheme = {
         style: { borderColor: theme.colors.gray[3] },
       }),
     },
+    ColorSwatch: {
+      styles: (theme) => ({
+        root: { border: "1px solid " + theme.colors.gray[4] },
+      }),
+    },
   },
 };
-
-const indigoColors = theme.colors.indigo;
-indigoColors[8] = theme.colors.gray[0];
 
 // App dark theme
 const darkTheme: MantineTheme = {
   ...theme,
   colorScheme: "dark",
-  colors: { ...theme.colors, indigo: indigoColors },
+
   components: {
     Input: {
       styles: (theme) => ({
@@ -87,13 +89,21 @@ const darkTheme: MantineTheme = {
     },
     Tooltip: {
       styles: (theme) => ({
-        tooltip: { background: DARK_MODE, color: GRAY_COLOR },
+        tooltip: { background: theme.colors.dark[6], color: GRAY_COLOR },
       }),
     },
     Card: {
       defaultProps: (theme) => ({
         style: { borderColor: theme.colors.dark[5] },
       }),
+    },
+    ColorSwatch: {
+      styles: (theme) => ({
+        root: { border: "1px solid " + theme.colors.dark[5] },
+      }),
+    },
+    Title: {
+      defaultProps: (theme) => ({ style: { color: GRAY_WHITE_COLOR } }),
     },
   },
 };

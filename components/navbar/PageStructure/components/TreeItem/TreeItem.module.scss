@@ -86,11 +86,15 @@
 
 .dark {
   background-color: transparent;
-  color: #12b886;
+  color: #fff;
 
   &:hover {
     background-color: #333;
   }
+}
+
+.darkThemeIcon {
+  color: #12b886;
 }
 
 .Text {

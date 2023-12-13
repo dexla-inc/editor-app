@@ -27,7 +27,10 @@ export const SettingsButton = ({ iconName, text, href, ...props }: Props) => {
       leftIcon={<Icon name={iconName} />}
       variant={variant}
       color={color}
-      sx={{ "&:hover": { textDecoration: "underline" } }}
+      sx={{
+        "&:hover": { textDecoration: "underline" },
+      }}
+      styles={{ inner: { justifyContent: "stretch" } }}
       {...props}
     >
       {text}

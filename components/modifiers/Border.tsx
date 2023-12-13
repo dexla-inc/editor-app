@@ -4,6 +4,7 @@ import {
   getCardStyling,
 } from "@/components/CardStyleSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
@@ -12,7 +13,7 @@ import { useEditorStore } from "@/stores/editor";
 import { INPUT_SIZE } from "@/utils/config";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Group, SegmentedControl, Stack, Text } from "@mantine/core";
+import { Group, SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconBorderBottom,
@@ -286,7 +287,7 @@ export const Modifier = withModifier(
               }
             />
             <Stack spacing={2}>
-              <Text size="0.75rem">Style</Text>
+              <TopLabel text="Style" />
               <SegmentedControl
                 size="xs"
                 data={[
@@ -378,9 +379,7 @@ export const Modifier = withModifier(
               onChange={(_value: string) => changeBorderColor(_value)}
             />
             <Stack spacing={4} mt={12}>
-              <Text size="0.75rem" weight={500}>
-                Radius
-              </Text>
+              <TopLabel text="Radius" />
               <Group noWrap>
                 <SegmentedControl
                   fullWidth

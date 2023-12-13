@@ -251,7 +251,13 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                   {" "}
                 </Card>
               )}
-              {id !== "root" && icon}
+              {id !== "root" && (
+                <div
+                  className={classNames(isDarkTheme && styles.darkThemeIcon)}
+                >
+                  {icon}
+                </div>
+              )}
               {id === "root" || id === "content-wrapper" ? (
                 <Text
                   id={`layer-${id}`}

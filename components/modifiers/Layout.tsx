@@ -1,8 +1,10 @@
+import { SizeSelector } from "@/components/SizeSelector";
+import { TopLabel } from "@/components/TopLabel";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Stack, Text } from "@mantine/core";
+import { SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconArrowNarrowDown,
@@ -22,7 +24,6 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import { merge } from "lodash";
-import { SizeSelector } from "../SizeSelector";
 
 export const icon = IconLayout2;
 export const label = "Layout";
@@ -51,9 +52,7 @@ export const Modifier = withModifier(
       <form key={selectedComponent?.id}>
         <Stack spacing="xs">
           <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Direction
-            </Text>
+            <TopLabel text="Direction" />
             <SegmentedControl
               size="xs"
               data={[
@@ -96,9 +95,7 @@ export const Modifier = withModifier(
             }}
           />
           <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Alignment
-            </Text>
+            <TopLabel text="Alignment" />
             {selectedComponent.props?.style?.flexDirection === "column" ? (
               <SegmentedControl
                 size="xs"
@@ -234,9 +231,7 @@ export const Modifier = withModifier(
             )}
           </Stack>
           <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Scale
-            </Text>
+            <TopLabel text="Scale" />
             <SegmentedControl
               size="xs"
               data={[
@@ -277,9 +272,7 @@ export const Modifier = withModifier(
             />
           </Stack>
           <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Wrap
-            </Text>
+            <TopLabel text="Wrap" />
             <SegmentedControl
               size="xs"
               data={[

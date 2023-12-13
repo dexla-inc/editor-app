@@ -174,12 +174,15 @@ export const ChangeHistoryPopover: FC = () => {
               {changeHistory
                 .map((item: any, index: number) => {
                   const currentHistoryIndex = pastStates.length - 1;
-                  const color =
-                    currentHistoryIndex === index
-                      ? "indigo"
-                      : theme.colorScheme === "dark"
-                      ? GRAY_COLOR
-                      : theme.colors.dark[9];
+                  const isCurrentHistory = currentHistoryIndex === index;
+                  const isDarkTheme = theme.colorScheme === "dark";
+
+                  let color;
+                  if (isCurrentHistory) {
+                    color = isDarkTheme ? "indigo" : "gray";
+                  } else {
+                    color = isDarkTheme ? GRAY_COLOR : theme.colors.dark[9];
+                  }
                   return (
                     <List.Item
                       px={3}
