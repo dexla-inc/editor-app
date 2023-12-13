@@ -15,15 +15,14 @@ type ActionProps = {
 };
 
 export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
-  const {
-    selectedComponentId,
-    tree: editorTree,
-    updateTreeComponentActions,
-    copiedAction,
-    setCopiedAction,
-    setSequentialTo,
-    setOpenAction,
-  } = useEditorStore.getState();
+  const selectedComponentId = useEditorStore.getState().selectedComponentId;
+  const editorTree = useEditorStore.getState().tree;
+  const updateTreeComponentActions =
+    useEditorStore.getState().updateTreeComponentActions;
+  const copiedAction = useEditorStore.getState().copiedAction;
+  const setCopiedAction = useEditorStore.getState().setCopiedAction;
+  const setSequentialTo = useEditorStore.getState().setSequentialTo;
+  const setOpenAction = useEditorStore.getState().setOpenAction;
 
   const form = useForm({
     initialValues: {

@@ -46,6 +46,9 @@ export const ChangeHistoryPopover: FC = () => {
   }));
 
   const pageId = useEditorStore((state) => state.currentPageId);
+  const tree = useEditorStore((state) => state.tree);
+  const currentProjectId = useEditorStore((state) => state.currentProjectId);
+  const setIsSaving = useEditorStore((state) => state.setIsSaving);
 
   const { changeHistory, pastStates, undo, redo, futureStates, clear } =
     useTemporalStore((state) => ({
@@ -87,12 +90,11 @@ export const ChangeHistoryPopover: FC = () => {
     operation: (steps?: number | undefined) => void,
   ) => {
     operation();
-    const currentState = useEditorStore.getState();
     debouncedUpdatePageState(
-      encodeSchema(JSON.stringify(currentState.tree)),
-      currentState.currentProjectId ?? "",
-      currentState.currentPageId ?? "",
-      currentState.setIsSaving,
+      encodeSchema(JSON.stringify(tree)),
+      currentProjectId ?? "",
+      pageId ?? "",
+      setIsSaving,
     );
   };
 

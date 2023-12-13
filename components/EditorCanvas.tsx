@@ -6,9 +6,14 @@ import { Droppable } from "@/components/Droppable";
 import { EditableComponent } from "@/components/EditableComponent";
 import { IFrame } from "@/components/IFrame";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
-import { useEditorStore, useTemporalStore } from "@/stores/editor";
+import {
+  debouncedUpdatePageState,
+  useEditorStore,
+  useTemporalStore,
+} from "@/stores/editor";
 import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
 import { componentMapper, structureMapper } from "@/utils/componentMapper";
+import { encodeSchema } from "@/utils/compression";
 import { HEADER_HEIGHT } from "@/utils/config";
 import {
   Component,
@@ -55,6 +60,9 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const currentProjectId = useEditorStore((state) => state.currentProjectId);
+  const currentPageId = useEditorStore((state) => state.currentPageId);
+  const setIsSaving = useEditorStore((state) => state.setIsSaving);
 
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
@@ -190,6 +198,18 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [copiedComponent, editorTree, isPreviewMode, setEditorTree]);
 
+  const handlePageStateChange = (
+    operation: (steps?: number | undefined) => void,
+  ) => {
+    operation();
+    debouncedUpdatePageState(
+      encodeSchema(JSON.stringify(editorTree)),
+      currentProjectId ?? "",
+      currentPageId ?? "",
+      setIsSaving,
+    );
+  };
+
   useHotkeys([
     ["backspace", deleteComponent],
     ["delete", deleteComponent],
@@ -201,7 +221,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       () => {
         if (!isPreviewMode) {
           if (pastStates.length <= 1) return; // to avoid rendering a blank page
-          undo();
+          handlePageStateChange(undo);
         }
       },
     ],
@@ -253,7 +273,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       () => {
         if (!isPreviewMode) {
           if (pastStates.length <= 1) return; // to avoid rendering a blank page
-          undo();
+          handlePageStateChange(undo);
         }
       },
     ],
@@ -261,7 +281,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       "mod+shift+Z",
       () => {
         if (!isPreviewMode) {
-          redo();
+          handlePageStateChange(redo);
         }
       },
     ],
@@ -269,7 +289,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       "mod+Y",
       () => {
         if (!isPreviewMode) {
-          redo();
+          handlePageStateChange(redo);
         }
       },
     ],

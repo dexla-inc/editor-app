@@ -20,10 +20,10 @@ export const label = "Stepper";
 
 const defaultStepperValues = requiredModifiers.stepper;
 
-const editorStore = useEditorStore.getState();
+const theme = useEditorStore.getState().theme;
 const createStepper = () => (stepperId: string) => {
   return structureMapper["StepperStep"].structure({
-    theme: editorStore.theme,
+    theme,
     stepperId,
   });
 };

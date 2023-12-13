@@ -68,8 +68,8 @@ export const TestUserLogin = ({
 
     const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
 
-    const authStore = useAuthStore.getState();
-    authStore.setAuthTokens(mergedAuthConfig);
+    const setAuthTokens = useAuthStore.getState().setAuthTokens;
+    setAuthTokens(mergedAuthConfig);
 
     setUserLoggedIn(true);
   };

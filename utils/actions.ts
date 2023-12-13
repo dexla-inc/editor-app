@@ -351,7 +351,7 @@ export const navigationAction = ({
   action,
   router,
 }: NavigationActionParams) => {
-  const { isLive } = useEditorStore.getState();
+  const isLive = useEditorStore.getState().isLive;
   const projectId = router.query.id as string;
   let url = isLive
     ? `/${action.pageId}`
@@ -373,7 +373,7 @@ export const goToUrlAction = async ({ action, component }: GoToUrlParams) => {
   const { url, openInNewTab } = action;
   let value = url;
   if (url.startsWith("var_")) {
-    const { currentProjectId } = useEditorStore.getState();
+    const currentProjectId = useEditorStore.getState().currentProjectId;
     value = url.split("var_")[1];
     const isObj = value.startsWith("{") && value.endsWith("}");
     const variableResponse = await getVariable(
@@ -551,7 +551,8 @@ export const togglePropsAction = ({
   action,
   event,
 }: TogglePropsActionParams) => {
-  const { updateTreeComponent, tree } = useEditorStore.getState();
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+
   let componentId = "";
   action.conditionRules.forEach((item) => {
     if (item.condition === event) {
@@ -576,7 +577,9 @@ export const togglePropsAction = ({
   });
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
-  const { updateTreeComponent, tree: editorTree } = useEditorStore.getState();
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const editorTree = useEditorStore.getState().tree;
+
   const selectedComponent = editorTree.root.children?.find(
     (tree) => tree.name === "Navbar",
   );
@@ -661,7 +664,8 @@ export const changeStateAction = ({
   action,
   event,
 }: ChangeStateActionParams) => {
-  const { setTreeComponentCurrentState } = useEditorStore.getState();
+  const setTreeComponentCurrentState =
+    useEditorStore.getState().setTreeComponentCurrentState;
   const skipPreviousList: string[] = [];
   (action.conditionRules || []).forEach((item) => {
     if (!skipPreviousList.includes(item.componentId)) {
@@ -935,8 +939,8 @@ export const loginAction = async ({
 
     const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
 
-    const authStore = useAuthStore.getState();
-    authStore.setAuthTokens(mergedAuthConfig);
+    const setAuthTokens = useAuthStore.getState().setAuthTokens;
+    setAuthTokens(mergedAuthConfig);
 
     await handleSuccess(
       responseJson,
@@ -986,12 +990,13 @@ export const apiCallAction = async ({
       save: false,
     });
 
-    const authStore = useAuthStore.getState();
-    authStore.refreshAccessToken();
+    const refreshAccessToken = useAuthStore.getState().refreshAccessToken;
+    const getAccessToken = useAuthStore.getState().getAccessToken;
+    refreshAccessToken();
 
     let authHeaderKey =
       endpoint?.authenticationScheme === "BEARER"
-        ? "Bearer " + authStore.getAccessToken()
+        ? "Bearer " + getAccessToken()
         : "";
 
     const fetchUrl = endpoint?.isServerRequest
@@ -1316,8 +1321,9 @@ export const bindPlaceGeometryAction = ({
   action: { key },
 }: BindPlaceGeometryActionParams) => {
   const editorTree = useEditorStore.getState().tree;
-  const { updateTreeComponentChildren, updateTreeComponent } =
-    useEditorStore.getState();
+  const updateTreeComponentChildren =
+    useEditorStore.getState().updateTreeComponentChildren;
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   const searchResults = getAllComponentsByName(editorTree.root, "Text").filter(
     (component) => component.description === "Search Address In Map",
   );
@@ -1366,7 +1372,7 @@ export const bindPlaceGeometryAction = ({
 export const changeLanguageAction = ({
   action,
 }: ChangeLanguageActionParams) => {
-  const { setLanguage } = useEditorStore.getState();
+  const setLanguage = useEditorStore.getState().setLanguage;
   setLanguage(action.language);
 };
 
@@ -1383,11 +1389,9 @@ export type ChangeVariableActionParams = ActionParams & {
 export const changeVariableAction = async ({
   action,
 }: ChangeVariableActionParams) => {
-  const {
-    currentProjectId,
-    currentPageId,
-    tree: editorTree,
-  } = useEditorStore.getState();
+  const currentProjectId = useEditorStore.getState().currentProjectId;
+  const currentPageId = useEditorStore.getState().currentPageId;
+  const editorTree = useEditorStore.getState().tree;
   let isPreviewValueObject = false;
   let isPreviewValueArray = false;
 
