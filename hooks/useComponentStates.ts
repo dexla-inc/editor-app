@@ -1,7 +1,12 @@
 import { useEditorStore } from "@/stores/editor";
-import { getAllComponentsByName, getComponentById } from "@/utils/editor";
+import { getAllComponentsByIds, getAllComponentsByName } from "@/utils/editor";
 
 export const useComponentStates = () => {
+  const selectedComponentIds = useEditorStore(
+    (state) => state.selectedComponentIds ?? [],
+  );
+  const editorTreeRoot = useEditorStore((state) => state.tree.root);
+
   const statesByComponent = {
     Default: [
       { label: "Default", value: "default" },
@@ -13,26 +18,19 @@ export const useComponentStates = () => {
   };
 
   const handleChildOf = (childOf: string) => {
-    const editorTree = useEditorStore.getState().tree;
-    const selectedComponentIds = useEditorStore.getState().selectedComponentIds;
-
-    const allParents = getAllComponentsByName(editorTree.root, childOf);
+    const allParents = getAllComponentsByName(editorTreeRoot, childOf);
 
     return allParents
       .flatMap((parent) => {
-        return selectedComponentIds?.map((selectedComponentId) =>
-          getComponentById(parent, selectedComponentId),
-        );
+        return getAllComponentsByIds(parent, selectedComponentIds);
       })
       .some((component) => component !== null);
   };
 
   const getComponentsStates = () => {
-    const editorTree = useEditorStore.getState().tree;
-    const selectedComponentIds = useEditorStore.getState().selectedComponentIds;
-
-    const components = selectedComponentIds?.map((selectedComponentId) =>
-      getComponentById(editorTree.root, selectedComponentId),
+    const components = getAllComponentsByIds(
+      editorTreeRoot,
+      selectedComponentIds,
     );
 
     const isStepperHeaderChild = handleChildOf("StepperStepHeader");

@@ -171,6 +171,9 @@ export const EditorAsideSections = () => {
     [editorTree.root, selectedComponentIds],
   );
   const { getComponentsStates } = useComponentStates();
+  const isMappedComponent = components.some(
+    (c) => componentMapper[c?.name as string],
+  );
 
   useEffect(() => {
     selectedComponentId !== openAction?.componentId &&
@@ -180,7 +183,7 @@ export const EditorAsideSections = () => {
 
   const isContentWrapperSelected = selectedComponentId === "content-wrapper";
 
-  if (!selectedComponentId || isContentWrapperSelected) {
+  if (!isMappedComponent || isContentWrapperSelected) {
     return (
       <Box p="xl">
         <Center>
