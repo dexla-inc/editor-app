@@ -12,6 +12,21 @@ export const useComponentStates = () => {
     Navbar: [{ label: "Collapse", value: "collapse" }],
   };
 
+  const handleChildOf = (childOf: string) => {
+    const editorTree = useEditorStore.getState().tree;
+    const selectedComponentIds = useEditorStore.getState().selectedComponentIds;
+
+    const allParents = getAllComponentsByName(editorTree.root, childOf);
+
+    return allParents
+      .flatMap((parent) => {
+        return selectedComponentIds?.map((selectedComponentId) =>
+          getComponentById(parent, selectedComponentId),
+        );
+      })
+      .some((component) => component !== null);
+  };
+
   const getComponentsStates = () => {
     const editorTree = useEditorStore.getState().tree;
     const selectedComponentIds = useEditorStore.getState().selectedComponentIds;
@@ -19,17 +34,9 @@ export const useComponentStates = () => {
     const components = selectedComponentIds?.map((selectedComponentId) =>
       getComponentById(editorTree.root, selectedComponentId),
     );
-    const allStepperHeaders = getAllComponentsByName(
-      editorTree.root,
-      "StepperStepHeader",
-    );
-    const isStepperHeaderChild = allStepperHeaders
-      .flatMap((stepperHeader) => {
-        return selectedComponentIds?.map((selectedComponentId) =>
-          getComponentById(stepperHeader, selectedComponentId),
-        );
-      })
-      .some((component) => component !== null);
+
+    const isStepperHeaderChild = handleChildOf("StepperStepHeader");
+    const isNavbarChild = handleChildOf("Navbar");
 
     const componentNames = [
       ...new Set(components?.map((component) => component?.name)),
@@ -55,6 +62,10 @@ export const useComponentStates = () => {
           { label: "Complete", value: "Complete" },
         ],
       );
+    }
+
+    if (isNavbarChild) {
+      statesList.push(...statesByComponent.Navbar);
     }
 
     const statesListValues = statesList.map((state) => state.value);
