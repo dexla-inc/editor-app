@@ -1,6 +1,7 @@
 import { ContextMenuProvider } from "@/contexts/ContextMenuProvider";
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
-import { theme } from "@/utils/branding";
+import { useUserConfigStore } from "@/stores/userConfig";
+import { darkTheme, theme } from "@/utils/branding";
 import { cache } from "@/utils/emotionCache";
 import { Global, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
@@ -38,6 +39,7 @@ const GTM_ID = "GTM-P3DVFXMS";
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const isLive = useCheckIfIsLive();
+  const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
 
   const [loadTagManager, setLoadTagManager] = useState(false);
 
@@ -68,7 +70,7 @@ export default function App(props: AppProps) {
     <MantineProvider
       withGlobalStyles
       withNormalizeCSS
-      theme={theme}
+      theme={isDarkTheme ? darkTheme : theme}
       emotionCache={cache}
     >
       <ContextMenuProvider>

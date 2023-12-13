@@ -2,6 +2,7 @@ import { createComponentEditorHandler } from "@/components/AIGenerationEditor";
 import AIPromptTextareaInput from "@/components/AIPromptTextareaInput";
 import { generateStructureFromScreenshot } from "@/requests/ai/queries";
 import { useEditorStore } from "@/stores/editor";
+import { THIN_GREEN_OUTLINE } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import { Component, DropTarget, getComponentById } from "@/utils/editor";
 import {
@@ -93,12 +94,13 @@ export default function AIPromptTextInput() {
           p={6}
           sx={(theme) => ({
             borderRadius: theme.radius.sm,
-            backgroundColor: theme.white,
+            backgroundColor:
+              theme.colorScheme === "dark" ? theme.black : theme.white,
             color: theme.colors.gray[9],
             fontSize: theme.fontSizes.sm,
-            border: "1px solid" + theme.colors.teal[6],
+            border: THIN_GREEN_OUTLINE,
             "&:hover": {
-              outline: "1px solid" + theme.colors.teal[6],
+              outline: THIN_GREEN_OUTLINE,
             },
           })}
         >

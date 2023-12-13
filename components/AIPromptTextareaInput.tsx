@@ -1,5 +1,6 @@
 import { ErrorAlert } from "@/components/Alerts";
 import { Icon } from "@/components/Icon";
+import { LIGHT_MODE } from "@/utils/branding";
 import { convertToBase64 } from "@/utils/common";
 import { ICON_MEDIUM_SIZE, ICON_SIZE } from "@/utils/config";
 import {
@@ -142,7 +143,12 @@ export default function AIPromptTextareaInput({
   }, []);
 
   return (
-    <Stack spacing={0} bg="white">
+    <Stack
+      spacing={0}
+      sx={(theme) => ({
+        background: theme.colorScheme === "dark" ? "transparent" : LIGHT_MODE,
+      })}
+    >
       {isDragging && (
         <Overlay
           zIndex={1000}

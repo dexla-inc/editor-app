@@ -5,6 +5,14 @@ import {
   useEditorStore,
   useTemporalStore,
 } from "@/stores/editor";
+import {
+  DARK_COLOR,
+  DARK_MODE,
+  GRAY_COLOR,
+  GRAY_WHITE_COLOR,
+  THIN_GRAY_OUTLINE,
+  THIN_GREEN_OUTLINE,
+} from "@/utils/branding";
 import { encodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -103,10 +111,11 @@ export const ChangeHistoryPopover: FC = () => {
       align="center"
       gap={4}
       p={4}
-      bg="gray.0"
       sx={(theme) => ({
-        border: `1px solid ${theme.colors.gray[3]}`,
+        border:
+          theme.colorScheme === "dark" ? THIN_GREEN_OUTLINE : THIN_GRAY_OUTLINE,
         borderRadius: theme.radius.sm,
+        background: theme.colorScheme === "dark" ? DARK_MODE : GRAY_WHITE_COLOR,
       })}
     >
       <Button.Group>
@@ -168,14 +177,21 @@ export const ChangeHistoryPopover: FC = () => {
                   const color =
                     currentHistoryIndex === index
                       ? "indigo"
+                      : theme.colorScheme === "dark"
+                      ? GRAY_COLOR
                       : theme.colors.dark[9];
                   return (
                     <List.Item
                       px={3}
-                      sx={{
+                      sx={(theme) => ({
                         cursor: "pointer",
-                        "&:hover": { background: theme.colors.gray[0] },
-                      }}
+                        "&:hover": {
+                          background:
+                            theme.colorScheme === "dark"
+                              ? DARK_COLOR
+                              : GRAY_WHITE_COLOR,
+                        },
+                      })}
                       key={index}
                       onClick={(e) => {
                         e.stopPropagation();

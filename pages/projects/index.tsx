@@ -31,6 +31,7 @@ export default function Projects() {
   const [search, setSearch] = useState<string>("");
   const debouncedSearch = debounce((query) => setSearch(query), 400);
   const theme = useMantineTheme();
+
   const { user, company } = usePropelAuthStore((state) => ({
     user: state.user,
     company: state.activeCompany,

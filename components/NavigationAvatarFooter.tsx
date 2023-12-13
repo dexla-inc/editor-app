@@ -1,4 +1,9 @@
 import { Icon } from "@/components/Icon";
+import {
+  GREEN_COLOR,
+  THIN_DARK_OUTLINE,
+  THIN_GRAY_OUTLINE,
+} from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import { Avatar, Box, Flex, Stack, Text, UnstyledButton } from "@mantine/core";
 import { forwardRef } from "react";
@@ -19,7 +24,8 @@ const NavigationAvatarFooter = forwardRef<
       ref={ref}
       sx={(theme) => ({
         margin: "0 auto",
-        borderTop: "1px solid " + theme.colors.gray[3],
+        borderTop:
+          theme.colorScheme === "dark" ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE,
       })}
       {...props}
     >
@@ -29,9 +35,7 @@ const NavigationAvatarFooter = forwardRef<
           width: "100%",
           borderRadius: theme.radius.sm,
           color:
-            theme.colorScheme === "dark"
-              ? theme.colors.gray[4]
-              : theme.colors.dark[8],
+            theme.colorScheme === "dark" ? GREEN_COLOR : theme.colors.dark[8],
 
           "&:hover": {
             backgroundColor:

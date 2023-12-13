@@ -4,6 +4,7 @@ import { PageResponse } from "@/requests/pages/types";
 import { deleteProject } from "@/requests/projects/mutations";
 import { ProjectResponse } from "@/requests/projects/queries";
 import { usePropelAuthStore } from "@/stores/propelAuth";
+import { THIN_DARK_OUTLINE, THIN_GRAY_OUTLINE } from "@/utils/branding";
 import { ICON_DELETE, ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { regionTypeFlags } from "@/utils/dashboardTypes";
 import {
@@ -90,12 +91,15 @@ export function ProjectItem({
     setPages([]);
   };
 
+  const borderStyle =
+    theme.colorScheme === "dark" ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE;
+
   return (
     <Col lg={4} md={6} xs={12}>
       <Box
         sx={{
           borderRadius: theme.radius.sm,
-          border: "1px solid " + theme.colors.gray[3],
+          border: borderStyle,
         }}
       >
         <UnstyledButton
@@ -121,7 +125,7 @@ export function ProjectItem({
           py="xs"
           px="md"
           sx={{
-            borderTop: "1px solid " + theme.colors.gray[3],
+            borderTop: borderStyle,
             width: "100%",
           }}
         >

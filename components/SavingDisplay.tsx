@@ -1,3 +1,9 @@
+import {
+  DARK_MODE,
+  LIGHT_MODE,
+  THIN_GRAY_OUTLINE,
+  THIN_GREEN_OUTLINE,
+} from "@/utils/branding";
 import { Box, Text } from "@mantine/core";
 import { forwardRef } from "react";
 
@@ -25,8 +31,12 @@ export const SavingDisplay = forwardRef<HTMLDivElement, SavingDisplayProps>(
         ref={ref}
         {...props}
         sx={(theme) => ({
-          border: theme.colors.gray[3] + " solid 1px",
-          backgroundColor: "white",
+          border:
+            theme.colorScheme === "dark"
+              ? THIN_GREEN_OUTLINE
+              : THIN_GRAY_OUTLINE,
+          backgroundColor:
+            theme.colorScheme === "dark" ? DARK_MODE : LIGHT_MODE,
           width: 65,
           textAlign: "center",
           padding: 1,
