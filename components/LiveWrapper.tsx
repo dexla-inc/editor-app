@@ -1,13 +1,17 @@
 import { useUserTheme } from "@/hooks/useUserTheme";
+import { getProject } from "@/requests/projects/queries";
 import { useEditorStore } from "@/stores/editor";
+import { decodeSchema } from "@/utils/compression";
 import createCache from "@emotion/cache";
 import { Box, BoxProps, MantineProvider } from "@mantine/core";
+import { useState, useEffect } from "react";
 
 type Props = {
   projectId: string;
 } & BoxProps;
 
 export const LiveWrapper = ({ children, projectId, ...props }: Props) => {
+  const [customCode, setCustomCode] = useState<any | null>(null);
   const theme = useEditorStore((state) => state.theme);
   useUserTheme(projectId);
 
@@ -20,6 +24,45 @@ export const LiveWrapper = ({ children, projectId, ...props }: Props) => {
   const styleTag = document.createElement("style");
   styleTag.textContent = `* { box-sizing: border-box; }`;
   insertionTarget?.appendChild(styleTag);
+
+  // add head custom code
+  if (customCode?.headCode) {
+    // check if head code already exists
+    const existingHeadCode = w?.document.getElementById("footer-code");
+    if (!existingHeadCode) {
+      const scriptTag = w?.document.createElement("script");
+      scriptTag!.textContent = customCode.headCode;
+      scriptTag!.setAttribute("id", "head-code");
+      insertionTarget?.appendChild(scriptTag!);
+    }
+  }
+
+  // add footer custom code
+  if (customCode?.footerCode) {
+    // check if footer code already exists
+    const existingFooterCode = w?.document.getElementById("footer-code");
+    if (!existingFooterCode) {
+      const scriptTag = w?.document.createElement("script");
+      scriptTag!.textContent = customCode.footerCode;
+      scriptTag!.setAttribute("id", "footer-code");
+      mountNode?.appendChild(scriptTag!);
+    }
+  }
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      const project = await getProject(projectId);
+      const customCode = project.customCode
+        ? JSON.parse(decodeSchema(project.customCode))
+        : undefined;
+      if (customCode) {
+        setCustomCode(customCode);
+      }
+    };
+
+    fetchProject();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId]);
 
   return (
     <MantineProvider

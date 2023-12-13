@@ -23,6 +23,7 @@ export type ProjectResponse = {
   deployed: boolean;
   domain: string;
   subDomain: string;
+  customCode?: string;
 };
 
 export type ProjectListResponse = {

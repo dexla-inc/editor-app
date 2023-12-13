@@ -1,6 +1,8 @@
 import { useUserTheme } from "@/hooks/useUserTheme";
+import { getProject } from "@/requests/projects/queries";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { decodeSchema } from "@/utils/compression";
 import { NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
 import createCache from "@emotion/cache";
 import { Box, BoxProps, MantineProvider, ScrollArea } from "@mantine/core";
@@ -13,6 +15,7 @@ type Props = {
 
 export const IFrame = ({ children, projectId, ...props }: Props) => {
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
+  const [customCode, setCustomCode] = useState<any | null>(null);
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
@@ -33,6 +36,30 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
   const styleTag = document.createElement("style");
   styleTag.textContent = `* { box-sizing: border-box; }`;
   insertionTarget?.appendChild(styleTag);
+
+  // add head custom code
+  if (customCode?.headCode) {
+    // check if head code already exists
+    const existingHeadCode = w?.document.getElementById("footer-code");
+    if (!existingHeadCode) {
+      const scriptTag = w?.document.createElement("script");
+      scriptTag!.textContent = customCode.headCode;
+      scriptTag!.setAttribute("id", "head-code");
+      insertionTarget?.appendChild(scriptTag!);
+    }
+  }
+
+  // add footer custom code
+  if (customCode?.footerCode) {
+    // check if footer code already exists
+    const existingFooterCode = w?.document.getElementById("footer-code");
+    if (!existingFooterCode) {
+      const scriptTag = w?.document.createElement("script");
+      scriptTag!.textContent = customCode.footerCode;
+      scriptTag!.setAttribute("id", "footer-code");
+      mountNode?.appendChild(scriptTag!);
+    }
+  }
 
   useEffect(() => {
     const w = contentRef?.contentWindow;
@@ -72,6 +99,21 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
       setActiveTab(undefined);
     }
   }, [isTabPinned, setActiveTab]);
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      const project = await getProject(projectId);
+      const customCode = project.customCode
+        ? JSON.parse(decodeSchema(project.customCode))
+        : undefined;
+      if (customCode) {
+        setCustomCode(customCode);
+      }
+    };
+
+    fetchProject();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId]);
 
   return (
     <Box
