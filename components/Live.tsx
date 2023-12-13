@@ -1,7 +1,6 @@
 // The comment below force next to refresh the editor state every time we change something in the code
 // @refresh reset
 import { EditableComponent } from "@/components/EditableComponent";
-import { IFrame } from "@/components/IFrame";
 import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
@@ -10,6 +9,7 @@ import { decodeSchema } from "@/utils/compression";
 import { Component } from "@/utils/editor";
 import { Box } from "@mantine/core";
 import { useCallback, useEffect } from "react";
+import { LiveWrapper } from "@/components/LiveWrapper";
 
 type Props = {
   projectId: string;
@@ -28,6 +28,7 @@ export const Live = ({ projectId, pageId }: Props) => {
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const isLoading = useAppStore((state) => state.isLoading);
 
   useEffect(() => {
     const getPageData = async () => {
@@ -76,7 +77,7 @@ export const Live = ({ projectId, pageId }: Props) => {
     );
   }, []);
 
-  if ((editorTree.root?.children ?? [])?.length === 0) {
+  if ((editorTree.root?.children ?? [])?.length === 0 || isLoading) {
     return null;
   }
 
@@ -88,9 +89,9 @@ export const Live = ({ projectId, pageId }: Props) => {
       }}
       p={0}
     >
-      <IFrame key={editorTree.timestamp} projectId={projectId} isLive>
+      <LiveWrapper key={editorTree.timestamp} projectId={projectId}>
         {renderTree(editorTree.root)}
-      </IFrame>
+      </LiveWrapper>
     </Box>
   );
 };

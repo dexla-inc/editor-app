@@ -96,67 +96,65 @@ export default function App(props: AppProps) {
             </Script>
           )}
           {/* End Google Tag Manager */}
-          <body>
-            {loadTagManager && (
-              <noscript>
-                <iframe
-                  src={`https://www.googletagmanager.com/ns.html?id='${GTM_ID}'`}
-                  height="0"
-                  width="0"
-                  style={{ display: "none", visibility: "hidden" }}
-                ></iframe>
-              </noscript>
-            )}
-            <main className={inter.variable}>
-              <QueryClientProvider client={queryClient}>
-                <Hydrate state={pageProps.dehydratedState}>
-                  <Notifications />
-                  <Global
-                    styles={{
-                      "*, *::before, *::after": {
-                        boxSizing: "border-box",
+          {loadTagManager && (
+            <noscript>
+              <iframe
+                src={`https://www.googletagmanager.com/ns.html?id='${GTM_ID}'`}
+                height="0"
+                width="0"
+                style={{ display: "none", visibility: "hidden" }}
+              ></iframe>
+            </noscript>
+          )}
+          <main className={inter.variable}>
+            <QueryClientProvider client={queryClient}>
+              <Hydrate state={pageProps.dehydratedState}>
+                <Notifications />
+                <Global
+                  styles={{
+                    "*, *::before, *::after": {
+                      boxSizing: "border-box",
+                    },
+                    body: {
+                      margin: 0,
+                      padding: 0,
+                      ...theme.fn.fontStyles(),
+                      lineHeight: theme.lineHeight,
+                      maxHeight: "100vh",
+                      minHeight: "100vh",
+                      background: "white",
+                      // For WebKit browsers (e.g., Chrome, Safari)
+                      "::-webkit-scrollbar": {
+                        width: isLive ? "0px" : "8px",
+                        height: isLive && "0px",
                       },
-                      body: {
-                        margin: 0,
-                        padding: 0,
-                        ...theme.fn.fontStyles(),
-                        lineHeight: theme.lineHeight,
-                        maxHeight: "100vh",
-                        minHeight: "100vh",
-                        background: "white",
-                        // For WebKit browsers (e.g., Chrome, Safari)
-                        "::-webkit-scrollbar": {
-                          width: isLive ? "0px" : "8px",
-                          height: isLive && "0px",
-                        },
-                        "::-webkit-scrollbar-thumb": {
-                          backgroundColor: !isLive && "#888",
-                          borderRadius: !isLive && "10px",
-                        },
-
-                        // For Firefox
-                        scrollbarWidth: isLive ? "none" : "thin",
-                        scrollbarColor: !isLive && "#888 transparent",
-
-                        // For IE and Edge
-                        msOverflowStyle: isLive
-                          ? "none"
-                          : "-ms-autohiding-scrollbar",
+                      "::-webkit-scrollbar-thumb": {
+                        backgroundColor: !isLive && "#888",
+                        borderRadius: !isLive && "10px",
                       },
 
-                      html: {
-                        maxHeight: "-webkit-fill-available",
-                      },
-                    }}
-                  />
-                  <ReactFlowProvider>
-                    <Component {...pageProps} />
-                  </ReactFlowProvider>
-                </Hydrate>
-              </QueryClientProvider>
-              <SpeedInsights />
-            </main>
-          </body>
+                      // For Firefox
+                      scrollbarWidth: isLive ? "none" : "thin",
+                      scrollbarColor: !isLive && "#888 transparent",
+
+                      // For IE and Edge
+                      msOverflowStyle: isLive
+                        ? "none"
+                        : "-ms-autohiding-scrollbar",
+                    },
+
+                    html: {
+                      maxHeight: "-webkit-fill-available",
+                    },
+                  }}
+                />
+                <ReactFlowProvider>
+                  <Component {...pageProps} />
+                </ReactFlowProvider>
+              </Hydrate>
+            </QueryClientProvider>
+            <SpeedInsights />
+          </main>
         </AuthProvider>
       </ContextMenuProvider>
     </MantineProvider>
