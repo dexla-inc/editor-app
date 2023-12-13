@@ -22,7 +22,6 @@ export const getServerSideProps = async ({
   query,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host;
-  console.log("PAGE", { url });
   let id = "";
   if (isMatchingUrl(url!) || url?.endsWith(".localhost:3000")) {
     id = url?.split(".")[0] as string;
@@ -31,19 +30,14 @@ export const getServerSideProps = async ({
     id = project.id;
   }
 
-  console.log("PAGE", { id, url });
-
   const page = await getMostRecentDeploymentByPage(id as string, {
     page: query.page as string,
   });
-
-  console.log("PAGE", { page, query });
 
   return {
     props: {
       id,
       page,
-      slug: query.page,
     },
   };
 };
@@ -51,12 +45,9 @@ export const getServerSideProps = async ({
 type Props = {
   id: string;
   page: PageResponse;
-  slug: string;
 };
 
-export default function LivePage({ id, page, slug }: Props) {
-  console.log("PAGE", { page, id, slug });
-
+export default function LivePage({ id, page }: Props) {
   const setCurrentProjectId = useEditorStore(
     (state) => state.setCurrentProjectId,
   );

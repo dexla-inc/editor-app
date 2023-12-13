@@ -14,7 +14,6 @@ export const getServerSideProps = async ({
 }: GetServerSidePropsContext) => {
   const url = req.headers.host;
 
-  console.log("HOME", { url });
   let id = "";
   if (isMatchingUrl(url!) || url?.endsWith(".localhost:3000")) {
     id = url?.split(".")[0] as string;
@@ -23,7 +22,6 @@ export const getServerSideProps = async ({
     id = project.id;
   }
 
-  console.log("HOME", { id, url });
   if (!id) {
     return {
       redirect: {
@@ -34,7 +32,6 @@ export const getServerSideProps = async ({
   }
 
   const recentDeployment = await getMostRecentDeployment(id as string);
-  console.log("HOME", { recentDeployment });
 
   return {
     props: {
