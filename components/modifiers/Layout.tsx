@@ -30,58 +30,22 @@ export const label = "Layout";
 export let GROW_FLEX_DEFAULT = "1 0 auto";
 export let SHRINK_FLEX_DEFAULT = "0 1 auto";
 
-export const defaultLayoutValues = merge({}, requiredModifiers.layout, {
-  flex: SHRINK_FLEX_DEFAULT,
-});
+export const defaultLayoutValues = requiredModifiers.layout;
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
-      initialValues: merge(
-        {},
-        requiredModifiers.layout,
-        {
-          gap: "xs",
-        },
-        {
-          flex: SHRINK_FLEX_DEFAULT,
-          display: selectedComponent.props?.style?.display,
-          position: selectedComponent.props?.style?.position,
-          flexWrap: selectedComponent.props?.style?.flexWrap,
-          flexDirection: selectedComponent.props?.style?.flexDirection,
-          alignItems: selectedComponent.props?.style?.alignItems,
-          justifyContent: selectedComponent.props?.style?.justifyContent,
-        },
-      ),
+      initialValues: merge({}, defaultLayoutValues, {
+        gap: selectedComponent.props?.gap ?? "xs",
+        flex: SHRINK_FLEX_DEFAULT,
+        display: selectedComponent.props?.style?.display,
+        position: selectedComponent.props?.style?.position,
+        flexWrap: selectedComponent.props?.style?.flexWrap,
+        flexDirection: selectedComponent.props?.style?.flexDirection,
+        alignItems: selectedComponent.props?.style?.alignItems,
+        justifyContent: selectedComponent.props?.style?.justifyContent,
+      }),
     });
-
-    // useEffect(() => {
-    //   if (selectedComponent?.id) {
-    //     console.log(
-    //       "layoutmodifier",
-    //       selectedComponent.props?.gap ?? requiredModifiers.layout?.gap,
-    //     );
-    //     const data = pick(selectedComponent.props!, ["style"]);
-
-    //     form.setValues(
-    //       merge({}, defaultLayoutValues, {
-    //         display: data.style?.display,
-    //         position: data.style?.position,
-    //         flexWrap: data.style?.flexWrap,
-    //         flexDirection: data.style?.flexDirection,
-    //         alignItems: data.style?.alignItems,
-    //         flex: data.style?.flex,
-    //         justifyContent: data.style?.justifyContent,
-    //       }),
-    //     );
-
-    //     form.setValues({
-    //       gap: selectedComponent.props?.gap ?? requiredModifiers.layout?.gap,
-    //     });
-    //   }
-    //   // Disabling the lint here because we don't want this to be updated every time the form changes
-    //   // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [selectedComponent]);
 
     return (
       <form key={selectedComponent?.id}>

@@ -389,7 +389,6 @@ export const requiredModifiers: RequiredModifiers = {
     height: "100vh",
     position: "sticky",
     top: "0",
-    paddingBottom: "20px",
   },
 };
 
