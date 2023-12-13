@@ -57,7 +57,7 @@ export const DeployButton = ({ projectId, page }: Props) => {
       ? `${domain}:3000`
       : customDomain
       ? customDomain
-      : "dexla.io";
+      : "dexla.ai";
 
     const deployLink = new URL(
       `${isLocalhost ? "http" : "https"}://${projectId}.${baseDomain}/${
