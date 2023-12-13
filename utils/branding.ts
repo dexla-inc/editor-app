@@ -1,4 +1,5 @@
 import { MantineThemeExtended } from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/userConfig";
 import {
   CSSObject,
   DEFAULT_THEME,
@@ -6,24 +7,7 @@ import {
   MantineTheme,
 } from "@mantine/core";
 
-// Global styles for the editor
-const globalStyles = {
-  body: {
-    background: "#f8f9fa",
-    backgroundImage: `radial-gradient(#ced4da 1px, transparent 1px), radial-gradient( #ced4da 1px, transparent 1px)`,
-    backgroundSize: "20px 20px",
-    backgroundPosition: "0 0, 50px 50px",
-  },
-  sizing: {
-    icon: {
-      xs: 16,
-      sm: 20,
-      md: 24,
-      lg: 32,
-      xl: 40,
-    } as Record<MantineSize, any>,
-  },
-};
+const isDarkTheme = useUserConfigStore.getState().isDarkTheme;
 
 // Default scrollbar style for the editor
 const scrollbarStyles = {
@@ -77,8 +61,96 @@ const theme: MantineTheme = {
         style: { borderColor: theme.colors.gray[3] },
       }),
     },
+    ColorSwatch: {
+      styles: (theme) => ({
+        root: { border: "1px solid " + theme.colors.gray[4] },
+      }),
+    },
   },
 };
+
+// App dark theme
+const darkTheme: MantineTheme = {
+  ...theme,
+  colorScheme: "dark",
+  components: {
+    Input: {
+      styles: (theme) => ({
+        input: {
+          borderColor: theme.colors.dark[5],
+        },
+      }),
+    },
+    Select: {
+      styles: (theme) => ({
+        input: { borderColor: theme.colors.dark[5] },
+      }),
+    },
+    Tooltip: {
+      styles: (theme) => ({
+        tooltip: { background: theme.colors.dark[6], color: GRAY_COLOR },
+      }),
+    },
+    Card: {
+      defaultProps: (theme) => ({
+        style: { borderColor: theme.colors.dark[5] },
+      }),
+    },
+    ColorSwatch: {
+      styles: (theme) => ({
+        root: { border: "1px solid " + theme.colors.dark[5] },
+      }),
+    },
+    Title: {
+      defaultProps: (theme) => ({ style: { color: GRAY_WHITE_COLOR } }),
+    },
+  },
+};
+
+// Variables
+const PRIMARY_COLOR = "#2F65CBff";
+const GREEN_COLOR = theme.colors.teal[6];
+const GRAY_COLOR = theme.colors.gray[5];
+const GRAY_WHITE_COLOR = theme.colors.gray[0];
+const ORANGE_BORDER_COLOR = "orange";
+const GREEN_BORDER_COLOR = "teal";
+const THIN_ORANGE_BASE_SHADOW = `0 0 0 1px ${theme.colors.orange[4]}`;
+const ORANGE_BASE_SHADOW = `0 0 0 2px ${theme.colors.orange[6]}`;
+const THIN_GREEN_BASE_SHADOW = `0 0 0 1px ${theme.colors.teal[4]}`;
+const GREEN_BASE_SHADOW = `0 0 0 2px ${theme.colors.teal[6]}`;
+const GRAY_OUTLINE = `2px dashed ${theme.colors.gray[3]}`;
+const THIN_GRAY_OUTLINE = `1px solid ${theme.colors.gray[3]}`;
+const THIN_GREEN_OUTLINE = `1px solid ${theme.colors.teal[6]}`;
+const THIN_DARK_OUTLINE = `1px solid ${theme.colors.dark[5]}`;
+const SELECTED = `1px solid ${GREEN_COLOR}`;
+const HOVERED = theme.colors.gray[1];
+const DARK_MODE = theme.colors.dark[7];
+const DARK_COLOR = theme.colors.dark[4];
+const LIGHT_MODE = "white";
+
+// Global styles for the editor
+const globalStyles = (isDarkTheme?: boolean) => ({
+  body: {
+    background: isDarkTheme ? "#2C2E33" : "#f8f9fa",
+    backgroundImage: `radial-gradient(${
+      isDarkTheme ? theme.colors.dark[3] : "#ced4da"
+    } 1px, transparent 1px), radial-gradient( ${
+      isDarkTheme ? theme.colors.dark[3] : "#ced4da"
+    } 1px, transparent 1px)`,
+    backgroundSize: "20px 20px",
+    backgroundPosition: "0 0, 50px 50px",
+  },
+  html: { colorScheme: "light" },
+  sizing: {
+    icon: {
+      xs: 16,
+      sm: 20,
+      md: 24,
+      lg: 32,
+      xl: 40,
+    } as Record<MantineSize, any>,
+  },
+});
 
 // Default Theme
 const defaultTheme: MantineThemeExtended = {
@@ -99,35 +171,12 @@ const defaultTheme: MantineThemeExtended = {
   theme: "LIGHT",
 };
 
-// Variables
-const PRIMARY_COLOR = "#2F65CBff";
-const GREEN_COLOR = theme.colors.teal[6];
-const GRAY_COLOR = theme.colors.gray[5];
-const ORANGE_BORDER_COLOR = "orange";
-const GREEN_BORDER_COLOR = "teal";
-const THIN_ORANGE_BASE_SHADOW = `0 0 0 1px ${theme.colors.orange[4]}`;
-const ORANGE_BASE_SHADOW = `0 0 0 2px ${theme.colors.orange[6]}`;
-const THIN_GREEN_BASE_SHADOW = `0 0 0 1px ${theme.colors.teal[4]}`;
-const GREEN_BASE_SHADOW = `0 0 0 2px ${theme.colors.teal[6]}`;
-const GRAY_OUTLINE = `2px dashed ${theme.colors.gray[3]}`;
-const SELECTED = `1px solid ${GREEN_COLOR}`;
-const HOVERED = theme.colors.gray[1];
-
 // Default flex
 const flexStyles = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   gap: "10px",
-};
-
-// dark theme
-const darkTheme = {
-  ...defaultTheme,
-  colorScheme: "dark",
-  globalStyles: {
-    body: { ...globalStyles, background: "#222" },
-  },
 };
 
 // Dev hover style
@@ -184,17 +233,24 @@ const hoverStyles = (styles: any) => {
 };
 
 export {
+  DARK_COLOR,
+  DARK_MODE,
   GRAY_COLOR,
   GRAY_OUTLINE,
+  GRAY_WHITE_COLOR,
   GREEN_BASE_SHADOW,
   GREEN_BORDER_COLOR,
   GREEN_COLOR,
   HOVERED,
+  LIGHT_MODE,
   ORANGE_BASE_SHADOW,
   ORANGE_BORDER_COLOR,
   PRIMARY_COLOR,
   SELECTED,
+  THIN_DARK_OUTLINE,
+  THIN_GRAY_OUTLINE,
   THIN_GREEN_BASE_SHADOW,
+  THIN_GREEN_OUTLINE,
   THIN_ORANGE_BASE_SHADOW,
   darkTheme,
   defaultTheme,

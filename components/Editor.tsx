@@ -46,6 +46,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const stopLoading = useAppStore((state) => state.stopLoading);
 
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
+  const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
 
   useGetPageData({ projectId, pageId });
 
@@ -106,7 +107,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
           ) : undefined
         }
       >
-        <Global styles={globalStyles} />
+        <Global styles={globalStyles(isDarkTheme)} />
         {isLoading && editorTree.root.children?.length === 0 && (
           <Box
             pos="relative"

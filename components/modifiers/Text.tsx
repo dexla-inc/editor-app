@@ -1,5 +1,6 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
 import { getThemeColor } from "@/components/modifiers/Border";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
@@ -247,9 +248,7 @@ export const Modifier = withModifier(
           </Group>
           <Group noWrap>
             <Stack w="100%" spacing={2}>
-              <Text size="xs" fw={500}>
-                Text Wrap
-              </Text>
+              <TopLabel text="Text Wrap" />
               <SegmentedControl
                 size="xs"
                 data={[
@@ -291,9 +290,7 @@ export const Modifier = withModifier(
             </Stack>
             {showTruncateProp && (
               <Stack w="100%" spacing={2}>
-                <Text size="xs" fw={500}>
-                  Ellipsis
-                </Text>
+                <TopLabel text="Ellipsis" />
                 <SegmentedControl
                   size="xs"
                   data={[
@@ -337,9 +334,7 @@ export const Modifier = withModifier(
             )}
           </Group>
           <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Alignment
-            </Text>
+            <TopLabel text="Alignment" />
             <SegmentedControl
               size="xs"
               data={[
@@ -390,9 +385,7 @@ export const Modifier = withModifier(
           </Stack>
 
           <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Text Transform
-            </Text>
+            <TopLabel text="Text Transform" />
             <SegmentedControl
               size="xs"
               data={[
@@ -450,9 +443,7 @@ export const Modifier = withModifier(
           </Stack>
 
           <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Decoration
-            </Text>
+            <TopLabel text="Decoration" />
             <SegmentedControl
               size="xs"
               data={[

@@ -1,6 +1,13 @@
 import { ContextMenuProvider } from "@/contexts/ContextMenuProvider";
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
-import { theme } from "@/utils/branding";
+import { useUserConfigStore } from "@/stores/userConfig";
+import {
+  DARK_MODE,
+  GREEN_COLOR,
+  LIGHT_MODE,
+  darkTheme,
+  theme,
+} from "@/utils/branding";
 import { cache } from "@/utils/emotionCache";
 import { Global, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
@@ -38,6 +45,7 @@ const GTM_ID = "GTM-P3DVFXMS";
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const isLive = useCheckIfIsLive();
+  const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
 
   const [loadTagManager, setLoadTagManager] = useState(false);
 
@@ -68,7 +76,7 @@ export default function App(props: AppProps) {
     <MantineProvider
       withGlobalStyles
       withNormalizeCSS
-      theme={theme}
+      theme={isDarkTheme ? darkTheme : theme}
       emotionCache={cache}
     >
       <ContextMenuProvider>
@@ -122,7 +130,9 @@ export default function App(props: AppProps) {
                       lineHeight: theme.lineHeight,
                       maxHeight: "100vh",
                       minHeight: "100vh",
-                      background: "white",
+                      background:
+                        !isLive && isDarkTheme ? DARK_MODE : LIGHT_MODE,
+                      color: !isLive && isDarkTheme ? GREEN_COLOR : theme.black,
                       // For WebKit browsers (e.g., Chrome, Safari)
                       "::-webkit-scrollbar": {
                         width: isLive ? "0px" : "8px",

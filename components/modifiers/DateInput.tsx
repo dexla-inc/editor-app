@@ -2,6 +2,7 @@ import { StylingPaneItemIcon } from "@/components//modifiers/StylingPaneItemIcon
 import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
+import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -11,7 +12,6 @@ import {
   SegmentedControl,
   Select,
   Stack,
-  Text,
   TextInput,
   Textarea,
 } from "@mantine/core";
@@ -101,9 +101,7 @@ export const Modifier = withModifier(
             />
           </Flex>
           <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Alignment
-            </Text>
+            <TopLabel text="Alignment" />
             <SegmentedControl
               size="xs"
               data={[

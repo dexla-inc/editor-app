@@ -2,17 +2,12 @@ import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import {
-  SegmentedControl,
-  Select,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
+import { SegmentedControl, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -99,9 +94,7 @@ export const Modifier = withModifier(
             }}
           />
           <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Width
-            </Text>
+            <TopLabel text="Width" />
             <SegmentedControl
               size="xs"
               data={[

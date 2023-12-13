@@ -11,6 +11,7 @@ import React, {
 import { Icon } from "@/components/Icon";
 import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 import { useEditorStore } from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/userConfig";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -97,6 +98,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     const setEditorTree = useEditorStore((state) => state.setTree);
     const clearSelection = useEditorStore((state) => state.clearSelection);
     const clearSelections = useEditorStore((state) => state.clearSelections);
+    const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
 
     const deleteComponent = useCallback(
       (component: Component) => {
@@ -203,7 +205,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
         onContextMenu={componentContextMenu(component)}
       >
         <div
-          className={styles.TreeItem}
+          className={classNames(styles.TreeItem, isDarkTheme && styles.dark)}
           ref={ref}
           style={{
             ...style,
@@ -249,7 +251,13 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                   {" "}
                 </Card>
               )}
-              {id !== "root" && icon}
+              {id !== "root" && (
+                <div
+                  className={classNames(isDarkTheme && styles.darkThemeIcon)}
+                >
+                  {icon}
+                </div>
+              )}
               {id === "root" || id === "content-wrapper" ? (
                 <Text
                   id={`layer-${id}`}

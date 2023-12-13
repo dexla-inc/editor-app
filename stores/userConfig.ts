@@ -15,6 +15,8 @@ type UserConfigState = {
     isOpen: boolean,
   ) => void;
   setPageCancelled: (pageCancelled: boolean) => void;
+  isDarkTheme: boolean;
+  setIsDarkTheme: (isDarkTheme: boolean) => void;
 };
 
 export const useUserConfigStore = create<UserConfigState>()(
@@ -24,6 +26,10 @@ export const useUserConfigStore = create<UserConfigState>()(
         isTabPinned: false,
         isShadesActive: false,
         pageCancelled: false,
+        isDarkTheme: false,
+        setIsDarkTheme: (isDarkTheme: boolean) => {
+          set({ isDarkTheme }, false, "userConfig/setIsDarkTheme");
+        },
         setIsShadesActive: (isShadesActive: boolean) => {
           set({ isShadesActive }, false, "userConfig/setIsShadesActive");
         },
@@ -76,6 +82,7 @@ export const useUserConfigStore = create<UserConfigState>()(
         partialize: (state: UserConfigState) => ({
           isTabPinned: state.isTabPinned,
           isShadesActive: state.isShadesActive,
+          isDarkTheme: state.isDarkTheme,
           initiallyOpenedModifiersByComponent:
             state.initiallyOpenedModifiersByComponent,
           pageCancelled: state.pageCancelled,

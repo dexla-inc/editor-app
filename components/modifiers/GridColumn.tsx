@@ -1,9 +1,10 @@
 import { SizeSelector } from "@/components/SizeSelector";
+import { TopLabel } from "@/components/TopLabel";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Stack, Text } from "@mantine/core";
+import { SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconArrowNarrowDown,
@@ -46,9 +47,7 @@ export const Modifier = withModifier(
             }}
           />
           <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Direction
-            </Text>
+            <TopLabel text="Direction" />
             <SegmentedControl
               size="xs"
               data={[
@@ -83,9 +82,7 @@ export const Modifier = withModifier(
             />
           </Stack>
           <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Align Vertically
-            </Text>
+            <TopLabel text="Align Vertically" />
             <SegmentedControl
               size="xs"
               data={[

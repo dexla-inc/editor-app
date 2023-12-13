@@ -1,3 +1,4 @@
+import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
@@ -9,7 +10,6 @@ import {
   SegmentedControl,
   Select,
   Stack,
-  Text,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
@@ -123,9 +123,7 @@ export const Modifier = withModifier(
           </Stack>
           {["relative"].includes(form.values.position) && (
             <Stack spacing={2}>
-              <Text size="xs" fw={500}>
-                Align Self
-              </Text>
+              <TopLabel text="Align Self" />
               <SegmentedControl
                 size="xs"
                 data={[

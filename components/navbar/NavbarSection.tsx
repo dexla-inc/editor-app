@@ -1,7 +1,13 @@
 import { Sections } from "@/components/navbar/EditorNavbarSections";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { scrollbarStyles } from "@/utils/branding";
+import {
+  DARK_COLOR,
+  DARK_MODE,
+  GRAY_COLOR,
+  LIGHT_MODE,
+  scrollbarStyles,
+} from "@/utils/branding";
 import { HEADER_HEIGHT, ICON_SIZE, NAVBAR_MIN_WIDTH } from "@/utils/config";
 import {
   ActionIcon,
@@ -13,6 +19,7 @@ import {
   Title,
   Tooltip,
   UnstyledButton,
+  useMantineTheme,
 } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import {
@@ -21,6 +28,7 @@ import {
   IconPinned,
   IconPinnedOff,
 } from "@tabler/icons-react";
+import { merge } from "lodash";
 import startCase from "lodash.startcase";
 import { PropsWithChildren, useEffect } from "react";
 
@@ -32,6 +40,7 @@ export const NavbarSection = ({
   children,
   sections,
 }: PropsWithChildren<Props>) => {
+  const theme = useMantineTheme();
   const activeTab = useEditorStore((state) => state.activeTab);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
@@ -83,6 +92,8 @@ export const NavbarSection = ({
       }
     };
 
+    const isDarkTheme = theme.colorScheme === "dark";
+
     return (
       <Tooltip
         withinPortal
@@ -103,7 +114,12 @@ export const NavbarSection = ({
         >
           <ThemeIcon
             color={activeTab === id ? "indigo" : "teal"}
-            variant="light"
+            variant={isDarkTheme ? "default" : "light"}
+            sx={
+              isDarkTheme && activeTab === id
+                ? { color: DARK_COLOR, background: GRAY_COLOR }
+                : {}
+            }
             size={30}
           >
             <Icon size={ICON_SIZE} />
@@ -163,9 +179,14 @@ export const NavbarSection = ({
       ref={ref}
       onMouseEnter={() => setIsPageStructure(true)}
       onMouseLeave={() => setIsPageStructure(false)}
-      sx={scrollbarStyles}
+      sx={(theme) =>
+        merge(
+          { background: theme.colorScheme === "dark" ? DARK_MODE : LIGHT_MODE },
+          scrollbarStyles,
+        )
+      }
       pos="fixed"
-      bg="white"
+      // bg={(theme) => (theme.co ? DARK_MODE : LIGHT_MODE)}
       top={HEADER_HEIGHT}
       p={10}
       left={NAVBAR_MIN_WIDTH}
@@ -175,7 +196,13 @@ export const NavbarSection = ({
       align="flex-start"
     >
       <Flex justify="space-between" w="100%">
-        <Title align="center" color="dark.4" order={4}>
+        <Title
+          align="center"
+          sx={(theme) => ({
+            color: theme.colorScheme === "dark" ? LIGHT_MODE : DARK_COLOR,
+          })}
+          order={4}
+        >
           {startCase(currentSection?.label)}
         </Title>
         {activeTab === "layers" && actionButtons}
