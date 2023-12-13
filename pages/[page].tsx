@@ -17,7 +17,7 @@ export const getServerSideProps = async ({
   query,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host;
-
+  console.log("PAGE", { url });
   let id = "";
   if (isMatchingUrl(url!) || url?.endsWith(".localhost:3000")) {
     id = url?.split(".")[0] as string;
@@ -26,9 +26,13 @@ export const getServerSideProps = async ({
     id = project.id;
   }
 
+  console.log("PAGE", { id, url });
+
   const page = await getMostRecentDeploymentByPage(id as string, {
     page: query.page as string,
   });
+
+  console.log("PAGE", { page, query });
 
   return {
     props: {
