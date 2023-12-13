@@ -10,8 +10,8 @@ import {
   DARK_MODE,
   GRAY_COLOR,
   GRAY_WHITE_COLOR,
+  THIN_DARK_OUTLINE,
   THIN_GRAY_OUTLINE,
-  THIN_GREEN_OUTLINE,
 } from "@/utils/branding";
 import { encodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
@@ -113,7 +113,7 @@ export const ChangeHistoryPopover: FC = () => {
       p={4}
       sx={(theme) => ({
         border:
-          theme.colorScheme === "dark" ? THIN_GREEN_OUTLINE : THIN_GRAY_OUTLINE,
+          theme.colorScheme === "dark" ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE,
         borderRadius: theme.radius.sm,
         background: theme.colorScheme === "dark" ? DARK_MODE : GRAY_WHITE_COLOR,
       })}

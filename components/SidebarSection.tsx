@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { DARK_COLOR, HOVERED } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
@@ -54,7 +55,8 @@ export function SidebarSection({
           color: theme.black,
 
           "&:hover": {
-            backgroundColor: theme.colors.gray[1],
+            backgroundColor:
+              theme.colorScheme === "dark" ? DARK_COLOR : HOVERED,
             color: theme.black,
           },
         }}

@@ -1,8 +1,8 @@
 import {
   DARK_MODE,
   LIGHT_MODE,
+  THIN_DARK_OUTLINE,
   THIN_GRAY_OUTLINE,
-  THIN_GREEN_OUTLINE,
 } from "@/utils/branding";
 import { Box, Text } from "@mantine/core";
 import { forwardRef } from "react";
@@ -33,7 +33,7 @@ export const SavingDisplay = forwardRef<HTMLDivElement, SavingDisplayProps>(
         sx={(theme) => ({
           border:
             theme.colorScheme === "dark"
-              ? THIN_GREEN_OUTLINE
+              ? THIN_DARK_OUTLINE
               : THIN_GRAY_OUTLINE,
           backgroundColor:
             theme.colorScheme === "dark" ? DARK_MODE : LIGHT_MODE,

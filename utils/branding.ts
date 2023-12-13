@@ -65,30 +65,44 @@ const theme: MantineTheme = {
 };
 
 const darkColors = theme.colors.dark;
-darkColors[0] = theme.colors.teal[6];
+// darkColors[0] = theme.colors.teal[6];
+
+const indigoColors = theme.colors.indigo;
+indigoColors[8] = theme.colors.gray[0];
 
 // App dark theme
 const darkTheme: MantineTheme = {
   ...theme,
   colorScheme: "dark",
-  colors: { ...theme.colors, dark: darkColors },
+  colors: { ...theme.colors, dark: darkColors, indigo: indigoColors },
   components: {
     Input: {
       styles: (theme) => ({
         input: {
-          borderColor: theme.colors.gray[7],
-          // background: theme.colors.dark[4],
+          borderColor: theme.colors.dark[5],
         },
       }),
     },
     Select: {
       styles: (theme) => ({
-        input: { borderColor: theme.colors.gray[7] },
+        input: { borderColor: theme.colors.dark[5] },
+      }),
+    },
+    Tooltip: {
+      styles: (theme) => ({
+        tooltip: { background: DARK_MODE, color: GRAY_COLOR },
       }),
     },
     Card: {
       defaultProps: (theme) => ({
-        style: { borderColor: theme.colors.gray[7] },
+        style: { borderColor: theme.colors.dark[5] },
+      }),
+    },
+    Table: {
+      defaultProps: (theme) => ({
+        sx: {
+          color: theme.colors.gray[5],
+        },
       }),
     },
   },
@@ -108,7 +122,7 @@ const GREEN_BASE_SHADOW = `0 0 0 2px ${theme.colors.teal[6]}`;
 const GRAY_OUTLINE = `2px dashed ${theme.colors.gray[3]}`;
 const THIN_GRAY_OUTLINE = `1px solid ${theme.colors.gray[3]}`;
 const THIN_GREEN_OUTLINE = `1px solid ${theme.colors.teal[6]}`;
-const THIN_DARK_OUTLINE = `1px solid ${theme.colors.gray[7]}`;
+const THIN_DARK_OUTLINE = `1px solid ${theme.colors.dark[5]}`;
 const SELECTED = `1px solid ${GREEN_COLOR}`;
 const HOVERED = theme.colors.gray[1];
 const DARK_MODE = theme.colors.dark[7];
@@ -119,7 +133,11 @@ const LIGHT_MODE = "white";
 const globalStyles = (isDarkTheme?: boolean) => ({
   body: {
     background: isDarkTheme ? "#2C2E33" : "#f8f9fa",
-    backgroundImage: `radial-gradient(#ced4da 1px, transparent 1px), radial-gradient( #ced4da 1px, transparent 1px)`,
+    backgroundImage: `radial-gradient(${
+      isDarkTheme ? theme.colors.dark[3] : "#ced4da"
+    } 1px, transparent 1px), radial-gradient( ${
+      isDarkTheme ? theme.colors.dark[3] : "#ced4da"
+    } 1px, transparent 1px)`,
     backgroundSize: "20px 20px",
     backgroundPosition: "0 0, 50px 50px",
   },

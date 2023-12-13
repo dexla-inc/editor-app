@@ -33,7 +33,7 @@ import { getPageList } from "@/requests/pages/queries";
 import { PageListResponse } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
-import { GREEN_COLOR, flexStyles } from "@/utils/branding";
+import { flexStyles } from "@/utils/branding";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
@@ -112,11 +112,6 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                 leftIcon={<Icon name="IconUserPlus" size={ICON_SIZE} />}
                 compact
                 variant="default"
-                styles={(theme) =>
-                  theme.colorScheme === "dark"
-                    ? { inner: { color: GREEN_COLOR } }
-                    : {}
-                }
                 target="_blank"
               >
                 Invite

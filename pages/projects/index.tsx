@@ -7,6 +7,7 @@ import { ProjectListResponse, getProjects } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { GRAY_COLOR } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import { generateId } from "@/utils/dashboardTypes";
 import {
@@ -31,7 +32,6 @@ export default function Projects() {
   const [search, setSearch] = useState<string>("");
   const debouncedSearch = debounce((query) => setSearch(query), 400);
   const theme = useMantineTheme();
-
   const { user, company } = usePropelAuthStore((state) => ({
     user: state.user,
     company: state.activeCompany,
@@ -124,7 +124,13 @@ export default function Projects() {
     <DashboardShell>
       <Container py="xl" size="lg">
         <Stack spacing="xl">
-          <Title>Welcome back, {user?.firstName}</Title>
+          <Title
+            sx={(theme) =>
+              theme.colorScheme === "dark" ? { color: GRAY_COLOR } : {}
+            }
+          >
+            Welcome back, {user?.firstName}
+          </Title>
           <Flex>
             {company.orgName !== "Dexla" ? (
               <Flex gap="sm">

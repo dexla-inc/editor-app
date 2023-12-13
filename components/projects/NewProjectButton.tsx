@@ -41,11 +41,11 @@ export default function IconTitleDescriptionButton({
 }: IconTitleDescriptionButtonProps) {
   const theme = useMantineTheme();
 
-  const background = theme.colorScheme === "dark" ? DARK_COLOR : theme.white;
+  const background = theme.colorScheme === "dark" ? DARK_MODE : theme.white;
   const textColor = theme.colorScheme === "dark" ? GREEN_COLOR : theme.black;
   const _border =
     theme.colorScheme === "dark" ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE;
-  const _hover = theme.colorScheme === "dark" ? DARK_MODE : GRAY_WHITE_COLOR;
+  const _hover = theme.colorScheme === "dark" ? DARK_COLOR : GRAY_WHITE_COLOR;
   return (
     <Tooltip label={tooltip} disabled={tooltip === undefined}>
       <UnstyledButton

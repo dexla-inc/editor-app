@@ -1,5 +1,4 @@
 import { Icon } from "@/components/Icon";
-import { GREEN_COLOR } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import { Button, Loader, NavLink, NavLinkProps } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
@@ -38,11 +37,6 @@ export const DashboardNavLink = ({
             leftIcon={<IconPlus size={ICON_SIZE} />}
             compact
             variant="default"
-            styles={(theme) =>
-              theme.colorScheme === "dark"
-                ? { root: { color: GREEN_COLOR } }
-                : {}
-            }
           >
             Invite
           </Button>
