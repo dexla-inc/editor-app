@@ -43,6 +43,7 @@ export const getServerSideProps = async ({
     props: {
       id,
       page,
+      slug: query.page,
     },
   };
 };
@@ -50,9 +51,12 @@ export const getServerSideProps = async ({
 type Props = {
   id: string;
   page: PageResponse;
+  slug: string;
 };
 
-export default function LivePage({ id, page }: Props) {
+export default function LivePage({ id, page, slug }: Props) {
+  console.log("PAGE", { page, id, slug });
+
   const setCurrentProjectId = useEditorStore(
     (state) => state.setCurrentProjectId,
   );
