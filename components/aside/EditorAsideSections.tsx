@@ -74,6 +74,7 @@ import {
 import startCase from "lodash.startcase";
 import intersection from "lodash/intersection";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
+import { useComponentStates } from "@/hooks/useComponentStates";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -169,6 +170,7 @@ export const EditorAsideSections = () => {
     () => getAllComponentsByIds(editorTree.root, selectedComponentIds!),
     [editorTree.root, selectedComponentIds],
   );
+  const { getComponentsStates } = useComponentStates();
 
   useEffect(() => {
     selectedComponentId !== openAction?.componentId &&
@@ -343,34 +345,7 @@ export const EditorAsideSections = () => {
                     value={currentState}
                     size="xs"
                     label="State"
-                    data={[
-                      { label: "Default", value: "default" },
-                      { label: "Hover", value: "hover" },
-                      { label: "Disabled", value: "disabled" },
-                      { label: "Checked", value: "checked" },
-                      { label: "Hidden", value: "hidden" },
-                      { label: "Active", value: "Active" },
-                      { label: "Complete", value: "Complete" },
-                      ...Object.keys(component?.states ?? {}).reduce(
-                        (acc, key) => {
-                          if (
-                            key === "hover" ||
-                            key === "disabled" ||
-                            key === "checked" ||
-                            key === "hidden" ||
-                            key === "Active" ||
-                            key === "Complete"
-                          )
-                            return acc;
-
-                          return acc.concat({
-                            label: key,
-                            value: key,
-                          });
-                        },
-                        [] as any[],
-                      ),
-                    ]}
+                    data={getComponentsStates()}
                     placeholder="Select State"
                     nothingFound="Nothing found"
                     searchable
