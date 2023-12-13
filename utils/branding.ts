@@ -73,7 +73,6 @@ const theme: MantineTheme = {
 const darkTheme: MantineTheme = {
   ...theme,
   colorScheme: "dark",
-
   components: {
     Input: {
       styles: (theme) => ({
@@ -150,43 +149,6 @@ const globalStyles = (isDarkTheme?: boolean) => ({
       lg: 32,
       xl: 40,
     } as Record<MantineSize, any>,
-  },
-});
-
-// App Styles
-const appStyles = (isLive: boolean, isDarkTheme?: boolean): CSSObject => ({
-  "*, *::before, *::after": {
-    boxSizing: "border-box",
-  },
-  body: {
-    margin: 0,
-    padding: 0,
-    ...theme.fn.fontStyles(),
-    lineHeight: theme.lineHeight,
-    maxHeight: "100vh",
-    minHeight: "100vh",
-    background: isDarkTheme ? DARK_MODE : LIGHT_MODE,
-    color: isDarkTheme ? GREEN_COLOR : theme.black,
-    // For WebKit browsers (e.g., Chrome, Safari)
-    "::-webkit-scrollbar": {
-      width: isLive ? "0px" : "8px",
-      height: isLive && "0px",
-    },
-    "::-webkit-scrollbar-thumb": {
-      backgroundColor: !isLive && "#888",
-      borderRadius: !isLive && "10px",
-    },
-
-    // For Firefox
-    scrollbarWidth: isLive ? "none" : "thin",
-    scrollbarColor: !isLive && "#888 transparent",
-
-    // For IE and Edge
-    msOverflowStyle: isLive ? "none" : "-ms-autohiding-scrollbar",
-  },
-
-  html: {
-    maxHeight: "-webkit-fill-available",
   },
 });
 
@@ -290,7 +252,6 @@ export {
   THIN_GREEN_BASE_SHADOW,
   THIN_GREEN_OUTLINE,
   THIN_ORANGE_BASE_SHADOW,
-  appStyles,
   darkTheme,
   defaultTheme,
   flexStyles,

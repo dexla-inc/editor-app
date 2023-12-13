@@ -1,7 +1,13 @@
 import { ContextMenuProvider } from "@/contexts/ContextMenuProvider";
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { darkTheme, theme } from "@/utils/branding";
+import {
+  DARK_MODE,
+  GREEN_COLOR,
+  LIGHT_MODE,
+  darkTheme,
+  theme,
+} from "@/utils/branding";
 import { cache } from "@/utils/emotionCache";
 import { Global, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
@@ -124,7 +130,9 @@ export default function App(props: AppProps) {
                       lineHeight: theme.lineHeight,
                       maxHeight: "100vh",
                       minHeight: "100vh",
-                      background: "white",
+                      background:
+                        !isLive && isDarkTheme ? DARK_MODE : LIGHT_MODE,
+                      color: !isLive && isDarkTheme ? GREEN_COLOR : theme.black,
                       // For WebKit browsers (e.g., Chrome, Safari)
                       "::-webkit-scrollbar": {
                         width: isLive ? "0px" : "8px",
