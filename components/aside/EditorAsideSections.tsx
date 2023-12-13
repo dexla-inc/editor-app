@@ -56,23 +56,24 @@ import {
   Box,
   Center,
   Flex,
-  Group,
   SegmentedControl,
   Select,
   Stack,
   Text,
+  TextInput,
   Tooltip,
 } from "@mantine/core";
 import {
   IconArrowBadgeRight,
   IconBolt,
+  IconCheck,
+  IconPlus,
   IconRefresh,
-  IconRestore,
+  IconX,
 } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
 import intersection from "lodash/intersection";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { ActionIconDefault } from "@/components/ActionIconDefault";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -158,6 +159,7 @@ export const EditorAsideSections = () => {
   );
   const [tab, setTab] = useState<Tab>("design");
   const selectedComponentId = useDeferredValue(_selectedComponentId);
+  const [createState, setCreateState] = useState<undefined | string>(undefined);
 
   const component = useMemo(
     () => getComponentById(editorTree.root, selectedComponentId as string),
@@ -331,72 +333,123 @@ export const EditorAsideSections = () => {
         />
       </Flex>
       {tab === "design" && (
-        <Stack spacing={0}>
+        <Stack spacing="xs">
           {selectedComponentId && (
-            <Flex px="md" pb="md" gap="10px" align="flex-end">
-              <Select
-                style={{ flex: "1" }}
-                value={currentState}
-                size="xs"
-                label="State"
-                data={[
-                  { label: "Default", value: "default" },
-                  { label: "Hover", value: "hover" },
-                  { label: "Disabled", value: "disabled" },
-                  { label: "Checked", value: "checked" },
-                  { label: "Hidden", value: "hidden" },
-                  { label: "Active", value: "Active" },
-                  { label: "Complete", value: "Complete" },
-                  ...Object.keys(component?.states ?? {}).reduce((acc, key) => {
-                    if (
-                      key === "hover" ||
-                      key === "disabled" ||
-                      key === "checked" ||
-                      key === "hidden" ||
-                      key === "Active" ||
-                      key === "Complete"
-                    )
-                      return acc;
+            <Stack spacing="xs" px="md">
+              {createState === undefined && (
+                <Flex gap="10px" align="flex-end">
+                  <Select
+                    style={{ flex: "1" }}
+                    value={currentState}
+                    size="xs"
+                    label="State"
+                    data={[
+                      { label: "Default", value: "default" },
+                      { label: "Hover", value: "hover" },
+                      { label: "Disabled", value: "disabled" },
+                      { label: "Checked", value: "checked" },
+                      { label: "Hidden", value: "hidden" },
+                      { label: "Active", value: "Active" },
+                      { label: "Complete", value: "Complete" },
+                      ...Object.keys(component?.states ?? {}).reduce(
+                        (acc, key) => {
+                          if (
+                            key === "hover" ||
+                            key === "disabled" ||
+                            key === "checked" ||
+                            key === "hidden" ||
+                            key === "Active" ||
+                            key === "Complete"
+                          )
+                            return acc;
 
-                    return acc.concat({
-                      label: key,
-                      value: key,
-                    });
-                  }, [] as any[]),
-                ]}
-                placeholder="Select State"
-                nothingFound="Nothing found"
-                searchable
-                creatable
-                getCreateLabel={(query) => `+ Custom State "${query}"`}
-                onCreate={(query) => {
-                  const item = { value: query, label: query };
-                  setTreeComponentCurrentState(selectedComponentId, query);
-                  updateTreeComponent({
-                    componentId: selectedComponentId,
-                    props: {},
-                    save: true,
-                  });
-                  return item;
-                }}
-                onChange={(value: string) => {
-                  setTreeComponentCurrentState(selectedComponentId, value);
-                }}
-                {...AUTOCOMPLETE_OFF_PROPS}
-              />
-              {currentState !== "default" && (
-                <Tooltip label={`Revert to default settings`}>
-                  <ActionIcon
-                    variant="default"
-                    size="1.875rem"
-                    onClick={onClickResetToDefault}
-                  >
-                    <IconRefresh size="1rem" />
-                  </ActionIcon>
-                </Tooltip>
+                          return acc.concat({
+                            label: key,
+                            value: key,
+                          });
+                        },
+                        [] as any[],
+                      ),
+                    ]}
+                    placeholder="Select State"
+                    nothingFound="Nothing found"
+                    searchable
+                    onChange={(value: string) => {
+                      setTreeComponentCurrentState(selectedComponentId, value);
+                    }}
+                    {...AUTOCOMPLETE_OFF_PROPS}
+                  />
+                  <Tooltip label={`Create new state`}>
+                    <ActionIcon
+                      variant="default"
+                      size="1.875rem"
+                      onClick={() => {
+                        setCreateState("");
+                      }}
+                    >
+                      <IconPlus size="1rem" />
+                    </ActionIcon>
+                  </Tooltip>
+                  {currentState !== "default" && (
+                    <Tooltip label={`Revert to default settings`}>
+                      <ActionIcon
+                        variant="default"
+                        size="1.875rem"
+                        onClick={onClickResetToDefault}
+                      >
+                        <IconRefresh size="1rem" />
+                      </ActionIcon>
+                    </Tooltip>
+                  )}
+                </Flex>
               )}
-            </Flex>
+              {createState !== undefined && (
+                <Flex gap="10px" align="flex-end">
+                  <TextInput
+                    style={{ flex: "1" }}
+                    size="xs"
+                    label="State Name"
+                    placeholder="My New State"
+                    value={createState}
+                    onChange={(event) => {
+                      setCreateState(event.currentTarget.value);
+                    }}
+                  />
+                  <Tooltip label={`Cancel`}>
+                    <ActionIcon
+                      variant="default"
+                      size="1.875rem"
+                      onClick={() => setCreateState(undefined)}
+                    >
+                      <IconX size="1rem" />
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label={`Save new state`}>
+                    <ActionIcon
+                      color="teal"
+                      variant="filled"
+                      size="1.875rem"
+                      onClick={() => {
+                        setTreeComponentCurrentState(
+                          selectedComponentId,
+                          createState,
+                        );
+                        updateTreeComponent({
+                          componentId: selectedComponentId,
+                          props: {},
+                          save: true,
+                        });
+                        setCreateState(undefined);
+                      }}
+                    >
+                      <IconCheck size="1rem" />
+                    </ActionIcon>
+                  </Tooltip>
+                </Flex>
+              )}
+            </Stack>
           )}
+
           <Stack spacing="xs">{designSections}</Stack>
         </Stack>
       )}
