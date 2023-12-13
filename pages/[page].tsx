@@ -8,7 +8,10 @@ import Head from "next/head";
 import { useEffect } from "react";
 
 export function isMatchingUrl(url: string): boolean {
-  const pattern = /^.*\.dexla\.io$/;
+  // check if ends with .dexla.io or .dexla.ai
+  const pattern = new RegExp(
+    "^([a-z0-9]+(-[a-z0-9]+)*\\.)+(dexla\\.io|dexla\\.ai)$",
+  );
   return pattern.test(url);
 }
 
