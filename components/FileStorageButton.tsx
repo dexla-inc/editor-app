@@ -25,7 +25,7 @@ export const FileStorageButton = () => {
     <>
       <ActionIconDefault
         iconName="IconCloudStorm"
-        tooltip="File Storage"
+        tooltip="Assets"
         onClick={open}
       />
       <Modal.Root

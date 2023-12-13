@@ -104,7 +104,6 @@ export const ColorSelector = ({
               withShadow={false}
               style={{
                 flex: "none",
-                border: "1px solid " + mantineTheme.colors.gray[4],
                 borderTopLeftRadius: mantineTheme.radius.sm,
                 borderBottomLeftRadius: mantineTheme.radius.sm,
                 borderRight: "0px",

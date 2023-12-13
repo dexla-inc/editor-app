@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { DARK_COLOR, HOVERED } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
@@ -46,6 +47,8 @@ export function SidebarSection({
     setOpenAction({ actionId: undefined, componentId: undefined });
   };
 
+  const isDarkTheme = theme.colorScheme === "dark";
+
   return (
     <>
       <Group
@@ -54,7 +57,8 @@ export function SidebarSection({
           color: theme.black,
 
           "&:hover": {
-            backgroundColor: theme.colors.gray[1],
+            backgroundColor:
+              theme.colorScheme === "dark" ? DARK_COLOR : HOVERED,
             color: theme.black,
           },
         }}
@@ -70,7 +74,11 @@ export function SidebarSection({
         >
           <Group position="apart" spacing={0} noWrap>
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <ThemeIcon color="teal" variant="light" size={30}>
+              <ThemeIcon
+                color="teal"
+                variant={isDarkTheme ? "default" : "light"}
+                size={30}
+              >
                 <Icon size={ICON_SIZE} />
               </ThemeIcon>
               <Text size="xs" ml="md">

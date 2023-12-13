@@ -4,6 +4,7 @@ import {
   getCardStyling,
 } from "@/components/CardStyleSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
 import { getThemeColor } from "@/components/modifiers/Border";
 import { withModifier } from "@/hoc/withModifier";
@@ -11,7 +12,7 @@ import { CardStyle } from "@/requests/projects/types";
 import { useEditorStore } from "@/stores/editor";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Flex, SegmentedControl, Stack, Text } from "@mantine/core";
+import { Flex, SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconShadow } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -87,9 +88,7 @@ export const Modifier = withModifier(
         ) : (
           <Stack spacing="xs">
             <Stack spacing={0}>
-              <Text size="xs" fw={500}>
-                Offset
-              </Text>
+              <TopLabel text="Offset" />
               <SegmentedControl
                 size="xs"
                 data={[

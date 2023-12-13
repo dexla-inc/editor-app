@@ -1,8 +1,9 @@
+import { TopLabel } from "@/components/TopLabel";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Stack, Text } from "@mantine/core";
+import { SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconLayoutAlignCenter,
@@ -27,9 +28,7 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing={2}>
-          <Text size="xs" fw={500}>
-            Position
-          </Text>
+          <TopLabel text="Position" />
           <SegmentedControl
             size="xs"
             data={[

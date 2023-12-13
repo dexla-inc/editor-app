@@ -1,4 +1,5 @@
 import { IconModal } from "@/components/IconModal";
+import { GRAY_COLOR } from "@/utils/branding";
 import { ActionIcon, Box, Flex, Text, Tooltip } from "@mantine/core";
 import { Icon } from "./Icon";
 
@@ -15,7 +16,13 @@ export const IconSelector = ({
 }: Props) => {
   return (
     <Box>
-      <Text size="xs" fw={500}>
+      <Text
+        sx={(theme) =>
+          theme.colorScheme === "dark" ? { color: GRAY_COLOR } : {}
+        }
+        size="xs"
+        fw={500}
+      >
         {topLabel}
       </Text>
       <Flex gap="md" align="center" justify="space-between">

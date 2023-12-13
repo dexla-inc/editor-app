@@ -20,6 +20,7 @@ import { DashboardUserMenu } from "@/components/DashboardUserMenu";
 import { useEditorStore } from "@/stores/editor";
 import { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { ChangeThemeButton } from "./ChangeThemeButton";
 
 export interface ShellProps extends AppShellProps {
   navbarType?: NavbarTypes;
@@ -45,6 +46,7 @@ export const DashboardShell = ({ children, aside }: ShellProps) => {
             <Link href="/projects">
               <Logo />
             </Link>
+            <ChangeThemeButton />
           </Flex>
         </Header>
       }

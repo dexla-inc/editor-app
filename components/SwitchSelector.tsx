@@ -1,3 +1,4 @@
+import { GRAY_COLOR } from "@/utils/branding";
 import { Box, Switch, SwitchProps, Text } from "@mantine/core";
 
 interface SwitchSelectorProps extends SwitchProps {
@@ -7,7 +8,14 @@ interface SwitchSelectorProps extends SwitchProps {
 export const SwitchSelector = ({ topLabel, ...props }: SwitchSelectorProps) => {
   return (
     <Box>
-      <Text size="xs" fw={500} pb={2}>
+      <Text
+        sx={(theme) =>
+          theme.colorScheme === "dark" ? { color: GRAY_COLOR } : {}
+        }
+        size="xs"
+        fw={500}
+        pb={2}
+      >
         {topLabel}
       </Text>
       <Switch {...props} />

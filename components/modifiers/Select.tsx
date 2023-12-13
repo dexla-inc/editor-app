@@ -1,9 +1,10 @@
 import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 import { SizeSelector } from "@/components/SizeSelector";
+import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Stack, Switch, Text, TextInput } from "@mantine/core";
+import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconSelect } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -47,18 +48,13 @@ export const Modifier = withModifier(
               });
             }}
           />
-          <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Clearable
-            </Text>
-            <Switch
-              {...form.getInputProps("clearable")}
-              size="xs"
-              onChange={(e) =>
-                setFieldValue("clearable", e.currentTarget.checked)
-              }
-            />
-          </Stack>
+          <SwitchSelector
+            topLabel="Clearable"
+            checked={form.getInputProps("clearable").value}
+            onChange={(e) =>
+              setFieldValue("clearable", e.currentTarget.checked)
+            }
+          />
           <TextInput
             label="Placeholder"
             size="xs"

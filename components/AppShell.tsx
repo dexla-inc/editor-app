@@ -23,6 +23,7 @@ import AIPromptTextInput from "@/components/AIPromptTextInput";
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { AddGridButton } from "@/components/AddGridButton";
 import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
+import { ChangeThemeButton } from "@/components/ChangeThemeButton";
 import { DeployButton } from "@/components/DeployButton";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { FileStorageButton } from "@/components/FileStorageButton";
@@ -120,6 +121,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                   (p) => p.id === currentPageId,
                 )}
               />
+              <ChangeThemeButton />
             </Group>
           </Group>
         </Header>

@@ -1,7 +1,8 @@
+import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Stack, Text, Textarea } from "@mantine/core";
+import { SegmentedControl, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutSidebarLeftCollapse } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -36,9 +37,7 @@ export const Modifier = withModifier(
             }}
           />
           <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Position
-            </Text>
+            <TopLabel text="Position" />
             <SegmentedControl
               size="xs"
               data={[
