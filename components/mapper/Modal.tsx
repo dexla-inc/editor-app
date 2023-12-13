@@ -74,6 +74,7 @@ export const Modal = ({
         content: props.style ?? {},
         body: { height: "fit-content" },
         title: { fontFamily: theme.fontFamily },
+        ...(componentProps.fullScreen && { inner: { left: 0 } }),
       }}
     >
       {component.children && component.children.length > 0

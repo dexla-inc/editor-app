@@ -15,6 +15,7 @@ export const Modifier = withModifier(
       initialValues: merge({}, requiredModifiers.modal, {
         title: selectedComponent?.props?.title,
         forceHide: selectedComponent?.props?.forceHide,
+        fullScreen: selectedComponent?.props?.fullScreen,
       }),
     });
 
@@ -41,6 +42,18 @@ export const Modifier = withModifier(
               form.setFieldValue("forceHide", e.target.checked);
               debouncedTreeUpdate(selectedComponentIds, {
                 forceHide: e.target.checked,
+              });
+            }}
+          />
+
+          <Checkbox
+            size="xs"
+            label="Full Screen"
+            {...form.getInputProps("fullScreen", { type: "checkbox" })}
+            onChange={(e) => {
+              form.setFieldValue("fullScreen", e.target.checked);
+              debouncedTreeUpdate(selectedComponentIds, {
+                fullScreen: e.target.checked,
               });
             }}
           />
