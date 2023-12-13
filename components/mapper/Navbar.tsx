@@ -1,7 +1,7 @@
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getColorFromTheme } from "@/utils/editor";
-import { Box, BoxProps } from "@mantine/core";
+import { Box, BoxProps, ScrollArea } from "@mantine/core";
 import merge from "lodash.merge";
 import { memo } from "react";
 
@@ -20,11 +20,13 @@ const NavbarComponent = ({ renderTree, component, ...props }: Props) => {
   merge(componentProps, { style: { ...props.style, backgroundColor } });
 
   return (
-    <Box display="grid" {...component.props} {...props}>
-      {component.children &&
-        component.children.length > 0 &&
-        component.children?.map((child: Component) => renderTree(child))}
-    </Box>
+    <ScrollArea>
+      <Box display="grid" {...component.props} {...props}>
+        {component.children &&
+          component.children.length > 0 &&
+          component.children?.map((child: Component) => renderTree(child))}
+      </Box>
+    </ScrollArea>
   );
 };
 
