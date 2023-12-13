@@ -64,9 +64,6 @@ const theme: MantineTheme = {
   },
 };
 
-const darkColors = theme.colors.dark;
-// darkColors[0] = theme.colors.teal[6];
-
 const indigoColors = theme.colors.indigo;
 indigoColors[8] = theme.colors.gray[0];
 
@@ -74,7 +71,7 @@ indigoColors[8] = theme.colors.gray[0];
 const darkTheme: MantineTheme = {
   ...theme,
   colorScheme: "dark",
-  colors: { ...theme.colors, dark: darkColors, indigo: indigoColors },
+  colors: { ...theme.colors, indigo: indigoColors },
   components: {
     Input: {
       styles: (theme) => ({
@@ -96,13 +93,6 @@ const darkTheme: MantineTheme = {
     Card: {
       defaultProps: (theme) => ({
         style: { borderColor: theme.colors.dark[5] },
-      }),
-    },
-    Table: {
-      defaultProps: (theme) => ({
-        sx: {
-          color: theme.colors.gray[5],
-        },
       }),
     },
   },
