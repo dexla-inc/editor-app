@@ -54,9 +54,12 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
       const existingHeadCode = w?.document.getElementById("footer-code");
       if (!existingHeadCode) {
         const scriptTag = w?.document.createElement("script");
-        scriptTag!.textContent = customCode.headCode;
-        scriptTag!.setAttribute("id", "head-code");
-        insertionTarget?.appendChild(scriptTag!);
+
+        if (scriptTag) {
+          scriptTag!.textContent = customCode.headCode;
+          scriptTag!.setAttribute("id", "head-code");
+          insertionTarget?.appendChild(scriptTag!);
+        }
       }
     }
 
@@ -66,9 +69,11 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
       const existingFooterCode = w?.document.getElementById("footer-code");
       if (!existingFooterCode) {
         const scriptTag = w?.document.createElement("script");
-        scriptTag!.textContent = customCode.footerCode;
-        scriptTag!.setAttribute("id", "footer-code");
-        mountNode?.appendChild(scriptTag!);
+        if (scriptTag) {
+          scriptTag.textContent = customCode.footerCode;
+          scriptTag.setAttribute("id", "footer-code");
+          mountNode?.appendChild(scriptTag!);
+        }
       }
     }
   }, [
