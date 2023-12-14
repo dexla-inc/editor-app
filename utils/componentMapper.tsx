@@ -9,6 +9,8 @@ import { Avatar } from "@/components/mapper/Avatar";
 import { Badge } from "@/components/mapper/Badge";
 import { Breadcrumb } from "@/components/mapper/Breadcrumb";
 import { Button } from "@/components/mapper/Button";
+import { Progress } from "@/components/mapper/Progress";
+
 import { ButtonIcon } from "@/components/mapper/ButtonIcon";
 import { Card } from "@/components/mapper/Card";
 import { Checkbox } from "@/components/mapper/Checkbox";
@@ -83,6 +85,7 @@ import * as NavLinkStructure from "@/components/mapper/structure/NavLink";
 import * as NavbarStructure from "@/components/mapper/structure/Navbar";
 import * as PaginationStructure from "@/components/mapper/structure/Pagination";
 import * as PopOverStructure from "@/components/mapper/structure/PopOver";
+import * as ProgressStructure from "@/components/mapper/structure/Progress";
 import * as RadioGroupStructure from "@/components/mapper/structure/RadioGroup";
 import * as RatingStructure from "@/components/mapper/structure/Rating";
 import * as SelectStructure from "@/components/mapper/structure/Select";
@@ -145,6 +148,7 @@ import {
   IconLayoutSidebar,
   IconLayoutSidebarLeftCollapse,
   IconLink,
+  IconLoader2,
   IconMapPin,
   IconPageBreak,
   IconPhoto,
@@ -753,6 +757,17 @@ export const structureMapper: StructureMapper = {
     category: "Feedback",
     icon: <IconIdBadge size={ICON_SIZE} />,
   },
+  Progress: {
+    structure: (props: any) => ProgressStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Progress"
+        icon={<IconLoader2 size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Feedback",
+    icon: <IconLoader2 size={ICON_SIZE} />,
+  },
   Modal: {
     structure: (props: any) => ModalStructure.jsonStructure(props),
     Draggable: () => (
@@ -990,6 +1005,14 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: ["icon", "spacing", "effects", "border"],
     actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  Progress: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Progress component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["progress"],
+    actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Table: {
