@@ -5,6 +5,7 @@ import { Checkbox, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconBoxModel } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { SizeSelector } from "@/components/SizeSelector";
 
 export const icon = IconBoxModel;
 export const label = "Modal";
@@ -13,27 +14,34 @@ export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
       initialValues: merge({}, requiredModifiers.modal, {
-        title: selectedComponent?.props?.title,
+        size: selectedComponent?.props?.size,
         forceHide: selectedComponent?.props?.forceHide,
-        fullScreen: selectedComponent?.props?.fullScreen,
       }),
     });
 
     return (
       <form>
         <Stack spacing="xs">
-          <Textarea
-            autosize
-            label="Title"
-            size="xs"
-            {...form.getInputProps("title")}
-            onChange={(e) => {
-              form.setFieldValue("title", e.target.value);
+          <SizeSelector
+            label="Size"
+            data={[
+              { label: "None", value: "0" },
+              { label: "Extra Small", value: "xs" },
+              { label: "Small", value: "sm" },
+              { label: "Medium", value: "md" },
+              { label: "Large", value: "lg" },
+              { label: "Extra Large", value: "xl" },
+              { label: "Full Screen", value: "fullScreen" },
+            ]}
+            {...form.getInputProps("size")}
+            onChange={(value) => {
+              form.setFieldValue("size", value as string);
               debouncedTreeUpdate(selectedComponentIds, {
-                title: e.target.value,
+                size: value,
               });
             }}
           />
+
           <Checkbox
             size="xs"
             label="Force Hide"
@@ -42,18 +50,6 @@ export const Modifier = withModifier(
               form.setFieldValue("forceHide", e.target.checked);
               debouncedTreeUpdate(selectedComponentIds, {
                 forceHide: e.target.checked,
-              });
-            }}
-          />
-
-          <Checkbox
-            size="xs"
-            label="Full Screen"
-            {...form.getInputProps("fullScreen", { type: "checkbox" })}
-            onChange={(e) => {
-              form.setFieldValue("fullScreen", e.target.checked);
-              debouncedTreeUpdate(selectedComponentIds, {
-                fullScreen: e.target.checked,
               });
             }}
           />
