@@ -28,7 +28,7 @@ import {
   Text,
 } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 type Props = {
   projectId: string;
@@ -51,6 +51,11 @@ export const Editor = ({ projectId, pageId }: Props) => {
   useGetPageData({ projectId, pageId });
 
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    setIsLoading(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const cancelGeneratePage = useCallback(() => {
     stopLoading({
@@ -118,7 +123,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
             <Paper
               pos="relative"
               shadow="xs"
-              bg="white"
               sx={{
                 width: "100%",
                 minHeight: "400px",
