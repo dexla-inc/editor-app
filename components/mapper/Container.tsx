@@ -52,7 +52,6 @@ export const ContainerComponent = forwardRef(
                     ...child,
                     props: {
                       ...child.props,
-                      ...componentProps,
                       repeatedIndex,
                     },
                   }),
@@ -65,7 +64,7 @@ export const ContainerComponent = forwardRef(
           ? component.children?.map((child) =>
               renderTree({
                 ...child,
-                props: { ...child.props, ...componentProps },
+                props: { ...child.props },
               }),
             )
           : children}
