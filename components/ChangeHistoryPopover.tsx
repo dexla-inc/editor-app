@@ -1,4 +1,5 @@
 import { SavingDisplay } from "@/components/SavingDisplay";
+import { usePreventNavigationOnSaving } from "@/hooks/usePreventNavigationOnSaving";
 import {
   debouncedUpdatePageState,
   useEditorStore,
@@ -41,6 +42,8 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
 };
 
 export const ChangeHistoryPopover: FC = () => {
+  usePreventNavigationOnSaving();
+
   const currentState = useEditorStore((state) => ({
     isSaving: state.isSaving,
     tree: {
@@ -218,7 +221,7 @@ export const ChangeHistoryPopover: FC = () => {
             </List>
           </Popover.Dropdown>
         </Popover>
-      </div>{" "}
+      </div>
     </Flex>
   );
 };
