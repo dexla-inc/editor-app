@@ -225,8 +225,8 @@ export const requiredModifiers: RequiredModifiers = {
     tooltip: "",
   },
   modal: {
-    title: "Modal Title",
     forceHide: false,
+    size: "md",
   },
   boxShadow: {
     inset: "",
