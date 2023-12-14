@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { DARK_COLOR, GRAY_BORDER_COLOR } from "@/utils/branding";
 import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
 import {
   NumberInput,
@@ -124,7 +125,8 @@ export const UnitInput = ({
           borderBottomLeftRadius: 0,
           borderLeft: "none",
           "&:focus": {
-            borderColor: theme.colors.gray[3],
+            borderColor:
+              theme.colorScheme === "light" ? GRAY_BORDER_COLOR : DARK_COLOR,
           },
         },
         item: {
@@ -151,6 +153,14 @@ export const UnitInput = ({
         }}
         rightSection={RightSection}
         rightSectionWidth={53}
+        sx={{
+          input: {
+            "&:focus": {
+              borderColor:
+                theme.colorScheme === "light" ? GRAY_BORDER_COLOR : DARK_COLOR,
+            },
+          },
+        }}
       />
     );
   } else {
@@ -168,6 +178,14 @@ export const UnitInput = ({
         {...props}
         rightSection={RightSection}
         rightSectionWidth={53}
+        sx={{
+          input: {
+            "&:focus": {
+              borderColor:
+                theme.colorScheme === "light" ? GRAY_BORDER_COLOR : DARK_COLOR,
+            },
+          },
+        }}
       />
     );
   }

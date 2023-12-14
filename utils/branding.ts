@@ -48,17 +48,17 @@ const theme: MantineTheme = {
   components: {
     Input: {
       styles: (theme) => ({
-        input: { borderColor: theme.colors.gray[3] },
+        input: { borderColor: GRAY_BORDER_COLOR },
       }),
     },
     Select: {
       styles: (theme) => ({
-        input: { borderColor: theme.colors.gray[3] },
+        input: { borderColor: GRAY_BORDER_COLOR },
       }),
     },
     Card: {
       defaultProps: (theme) => ({
-        style: { borderColor: theme.colors.gray[3] },
+        style: { borderColor: GRAY_BORDER_COLOR },
       }),
     },
     ColorSwatch: {
@@ -122,6 +122,7 @@ const darkTheme: MantineTheme = {
 const PRIMARY_COLOR = "#2F65CBff";
 const GREEN_COLOR = theme.colors.teal[6];
 const GRAY_COLOR = theme.colors.gray[5];
+const GRAY_BORDER_COLOR = theme.colors.gray[3];
 const GRAY_WHITE_COLOR = theme.colors.gray[0];
 const ORANGE_BORDER_COLOR = "orange";
 const GREEN_BORDER_COLOR = "teal";
@@ -129,8 +130,8 @@ const THIN_ORANGE_BASE_SHADOW = `0 0 0 1px ${theme.colors.orange[4]}`;
 const ORANGE_BASE_SHADOW = `0 0 0 2px ${theme.colors.orange[6]}`;
 const THIN_GREEN_BASE_SHADOW = `0 0 0 1px ${theme.colors.teal[4]}`;
 const GREEN_BASE_SHADOW = `0 0 0 2px ${theme.colors.teal[6]}`;
-const GRAY_OUTLINE = `2px dashed ${theme.colors.gray[3]}`;
-const THIN_GRAY_OUTLINE = `1px solid ${theme.colors.gray[3]}`;
+const GRAY_OUTLINE = `2px dashed ${GRAY_BORDER_COLOR}`;
+const THIN_GRAY_OUTLINE = `1px solid ${GRAY_BORDER_COLOR}`;
 const THIN_GREEN_OUTLINE = `1px solid ${theme.colors.teal[6]}`;
 const THIN_DARK_OUTLINE = `1px solid ${theme.colors.dark[5]}`;
 const SELECTED = `1px solid ${GREEN_COLOR}`;
@@ -247,6 +248,7 @@ const hoverStyles = (styles: any) => {
 export {
   DARK_COLOR,
   DARK_MODE,
+  GRAY_BORDER_COLOR,
   GRAY_COLOR,
   GRAY_OUTLINE,
   GRAY_WHITE_COLOR,
