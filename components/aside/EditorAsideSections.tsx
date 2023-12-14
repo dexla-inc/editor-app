@@ -30,6 +30,7 @@ import * as NavLinkModifier from "@/components/modifiers/NavLink";
 import * as NavbarModifier from "@/components/modifiers/Navbar";
 import * as PopOverModifier from "@/components/modifiers/PopOver";
 import * as PositionModifier from "@/components/modifiers/Position";
+import * as ProgressModifier from "@/components/modifiers/Progress";
 import * as RadioModifier from "@/components/modifiers/Radio";
 import * as RadioItemModifier from "@/components/modifiers/RadioItem";
 import * as SelectModifier from "@/components/modifiers/Select";
@@ -124,6 +125,7 @@ const sectionMapper: SectionsMapper = {
   grid: GridModifier,
   gridColumn: GridColumnModifier,
   navbar: NavbarModifier,
+  progress: ProgressModifier,
 };
 
 type Tab = "design" | "actions";

@@ -92,13 +92,7 @@ export const Modifier = withModifier(
                 size: value,
               });
             }}
-            data={[
-              { label: "Extra Small", value: "xs" },
-              { label: "Small", value: "sm" },
-              { label: "Medium", value: "md" },
-              { label: "Large", value: "lg" },
-              { label: "Extra Large", value: "xl" },
-            ]}
+            showNone={false}
           />
         </Stack>
       </form>

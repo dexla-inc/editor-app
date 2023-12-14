@@ -42,7 +42,8 @@ export type Modifiers =
   | "chart"
   | "grid"
   | "gridColumn"
-  | "navbar";
+  | "navbar"
+  | "progress";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -389,6 +390,12 @@ export const requiredModifiers: RequiredModifiers = {
     height: "100vh",
     position: "sticky",
     top: "0",
+  },
+  progress: {
+    color: "Primary.6",
+    size: "xs",
+    value: 50,
+    animate: true,
   },
 };
 
