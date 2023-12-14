@@ -12,8 +12,7 @@ type Props = {
 
 export const LiveWrapper = ({ children, projectId, ...props }: Props) => {
   const [customCode, setCustomCode] = useState<any | null>(null);
-  const theme = useEditorStore((state) => state.theme);
-  useUserTheme(projectId);
+  const theme = useUserTheme(projectId);
 
   const w = typeof window !== "undefined" ? window : undefined;
   const mountNode = w?.document.body;
@@ -25,29 +24,37 @@ export const LiveWrapper = ({ children, projectId, ...props }: Props) => {
   styleTag.textContent = `* { box-sizing: border-box; }`;
   insertionTarget?.appendChild(styleTag);
 
-  // add head custom code
-  if (customCode?.headCode) {
-    // check if head code already exists
-    const existingHeadCode = w?.document.getElementById("footer-code");
-    if (!existingHeadCode) {
-      const scriptTag = w?.document.createElement("script");
-      scriptTag!.textContent = customCode.headCode;
-      scriptTag!.setAttribute("id", "head-code");
-      insertionTarget?.appendChild(scriptTag!);
+  useEffect(() => {
+    // add head custom code
+    if (customCode?.headCode) {
+      // check if head code already exists
+      const existingHeadCode = w?.document.getElementById("footer-code");
+      if (!existingHeadCode) {
+        const scriptTag = w?.document.createElement("script");
+        scriptTag!.textContent = customCode.headCode;
+        scriptTag!.setAttribute("id", "head-code");
+        insertionTarget?.appendChild(scriptTag!);
+      }
     }
-  }
 
-  // add footer custom code
-  if (customCode?.footerCode) {
-    // check if footer code already exists
-    const existingFooterCode = w?.document.getElementById("footer-code");
-    if (!existingFooterCode) {
-      const scriptTag = w?.document.createElement("script");
-      scriptTag!.textContent = customCode.footerCode;
-      scriptTag!.setAttribute("id", "footer-code");
-      mountNode?.appendChild(scriptTag!);
+    // add footer custom code
+    if (customCode?.footerCode) {
+      // check if footer code already exists
+      const existingFooterCode = w?.document.getElementById("footer-code");
+      if (!existingFooterCode) {
+        const scriptTag = w?.document.createElement("script");
+        scriptTag!.textContent = customCode.footerCode;
+        scriptTag!.setAttribute("id", "footer-code");
+        mountNode?.appendChild(scriptTag!);
+      }
     }
-  }
+  }, [
+    customCode?.footerCode,
+    customCode?.headCode,
+    insertionTarget,
+    mountNode,
+    w?.document,
+  ]);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -63,6 +70,10 @@ export const LiveWrapper = ({ children, projectId, ...props }: Props) => {
     fetchProject();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
+
+  if (!theme) {
+    return null;
+  }
 
   return (
     <MantineProvider

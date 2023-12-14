@@ -151,6 +151,15 @@ export const EditorNavbarThemesSection = ({
     });
   };
 
+  const setHeadingsFontFamily = (value: string) => {
+    fontTags.forEach((_, index) => {
+      form.setFieldValue(`fonts.${index}`, {
+        ...form.values.fonts[index],
+        fontFamily: value,
+      });
+    });
+  };
+
   const currentFont = form.values.fonts.find((f) => f.tag === currentFontTag);
 
   return (
@@ -273,10 +282,30 @@ export const EditorNavbarThemesSection = ({
               size={INPUT_SIZE}
             />
           </Stack>
-          <Stack spacing={4}>
+          <Stack>
             <Title order={6} fw={600}>
               Fonts
             </Title>
+            <Select
+              label="Default Font Family"
+              placeholder="Type to search"
+              value={form?.values?.defaultFont}
+              data={fonts.map((f) => f)}
+              onChange={(value: string) => {
+                form.setFieldValue("defaultFont", value);
+              }}
+              size={INPUT_SIZE}
+            />
+            <Select
+              label="Headings Font Family"
+              placeholder="Type to search"
+              value={currentFont?.fontFamily}
+              data={fonts.map((f) => f)}
+              onChange={(value: string) => {
+                setHeadingsFontFamily(value);
+              }}
+              size={INPUT_SIZE}
+            />
             <SegmentedControl
               fullWidth
               size={INPUT_SIZE}
@@ -289,16 +318,6 @@ export const EditorNavbarThemesSection = ({
                 });
                 setCurrentFontTag(value);
               }}
-            />
-            <Select
-              label="Family"
-              placeholder="Type to search"
-              value={currentFont?.fontFamily}
-              data={fonts.map((f) => f)}
-              onChange={(value: string) => {
-                setFontValue("fontFamily", value);
-              }}
-              size={INPUT_SIZE}
             />
             <Flex gap="sm" align="center">
               <Select
@@ -339,10 +358,10 @@ export const EditorNavbarThemesSection = ({
             </Flex>
           </Stack>
           <Box>
-            <Text size={INPUT_SIZE} weight="500">
-              Responsive Breakpoints
-            </Text>
             <Stack spacing="xs">
+              <Title order={6} fw={600}>
+                Responsive Breakpoints
+              </Title>
               {form.values.responsiveBreakpoints &&
                 form.values.responsiveBreakpoints.map(
                   ({ type, breakpoint }, index) => (

@@ -6,6 +6,8 @@ import { decodeSchema } from "@/utils/compression";
 import { NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
 import createCache from "@emotion/cache";
 import { Box, BoxProps, MantineProvider, ScrollArea } from "@mantine/core";
+import { usePrevious } from "@mantine/hooks";
+import { isEqual } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -21,45 +23,51 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
-  const theme = useEditorStore((state) => state.theme);
-  useUserTheme(projectId);
-
+  const theme = useUserTheme(projectId);
   const w = contentRef?.contentWindow;
   const mountNode = w?.document.body;
   const insertionTarget = w?.document.head;
 
-  mountNode?.setAttribute(
-    "style",
-    `overflow: visible; margin: 10px 0px 10px 10px;`,
-  );
+  useEffect(() => {
+    mountNode?.setAttribute(
+      "style",
+      `overflow: visible; margin: 10px 0px 10px 10px;`,
+    );
 
-  const styleTag = document.createElement("style");
-  styleTag.textContent = `* { box-sizing: border-box; }`;
-  insertionTarget?.appendChild(styleTag);
+    const styleTag = document.createElement("style");
+    styleTag.textContent = `* { box-sizing: border-box; }`;
+    insertionTarget?.appendChild(styleTag);
 
-  // add head custom code
-  if (customCode?.headCode) {
-    // check if head code already exists
-    const existingHeadCode = w?.document.getElementById("footer-code");
-    if (!existingHeadCode) {
-      const scriptTag = w?.document.createElement("script");
-      scriptTag!.textContent = customCode.headCode;
-      scriptTag!.setAttribute("id", "head-code");
-      insertionTarget?.appendChild(scriptTag!);
+    // add head custom code
+    if (customCode?.headCode) {
+      // check if head code already exists
+      const existingHeadCode = w?.document.getElementById("footer-code");
+      if (!existingHeadCode) {
+        const scriptTag = w?.document.createElement("script");
+        scriptTag!.textContent = customCode.headCode;
+        scriptTag!.setAttribute("id", "head-code");
+        insertionTarget?.appendChild(scriptTag!);
+      }
     }
-  }
 
-  // add footer custom code
-  if (customCode?.footerCode) {
-    // check if footer code already exists
-    const existingFooterCode = w?.document.getElementById("footer-code");
-    if (!existingFooterCode) {
-      const scriptTag = w?.document.createElement("script");
-      scriptTag!.textContent = customCode.footerCode;
-      scriptTag!.setAttribute("id", "footer-code");
-      mountNode?.appendChild(scriptTag!);
+    // add footer custom code
+    if (customCode?.footerCode) {
+      // check if footer code already exists
+      const existingFooterCode = w?.document.getElementById("footer-code");
+      if (!existingFooterCode) {
+        const scriptTag = w?.document.createElement("script");
+        scriptTag!.textContent = customCode.footerCode;
+        scriptTag!.setAttribute("id", "footer-code");
+        mountNode?.appendChild(scriptTag!);
+      }
     }
-  }
+  }, [
+    customCode?.footerCode,
+    customCode?.headCode,
+    insertionTarget,
+    mountNode,
+    w?.document,
+  ]);
 
   useEffect(() => {
     const w = contentRef?.contentWindow;
@@ -114,6 +122,10 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
     fetchProject();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
+
+  if (!theme) {
+    return null;
+  }
 
   return (
     <Box

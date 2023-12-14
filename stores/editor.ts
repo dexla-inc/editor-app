@@ -19,6 +19,7 @@ import {
   updateTreeComponentWithOmitProps,
 } from "@/utils/editor";
 import { MantineNumberSize, MantineTheme } from "@mantine/core";
+import { merge } from "lodash";
 import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
 import isEqual from "lodash.isequal";
@@ -298,7 +299,12 @@ export const useEditorStore = create<EditorState>()(
         },
         setCopiedComponent: (copiedComponent) =>
           set({ copiedComponent }, false, "editor/setCopiedComponent"),
-        setTheme: (theme) => set({ theme }, false, "editor/setTheme"),
+        setTheme: (theme) =>
+          set(
+            (prev) => ({ theme: merge(prev.theme, theme) }),
+            false,
+            "editor/setTheme",
+          ),
         setIframeWindow: (iframeWindow) =>
           set({ iframeWindow }, false, "editor/setIframeWindow"),
         setCurrentTargetId: (currentTargetId) =>
