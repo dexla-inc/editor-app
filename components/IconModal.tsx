@@ -82,7 +82,7 @@ export const IconModal = ({ onIconSelect }: Props) => {
         sx={{ alignSelf: "self-start" }}
       >
         <Flex gap="xs" wrap="nowrap">
-          Add new color
+          Change icon
           <Icon name="IconExternalLink" size={ICON_SIZE} />
         </Flex>
       </Anchor>

@@ -2,10 +2,11 @@ import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Stack, Textarea } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconExclamationMark } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { IconSelector } from "../IconSelector";
 
 export const icon = IconExclamationMark;
 export const label = "Alert";
@@ -14,26 +15,14 @@ export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
       initialValues: merge({}, requiredModifiers.alert, {
-        title: selectedComponent.props?.title,
         color: selectedComponent.props?.color,
+        icon: selectedComponent.props?.icon,
       }),
     });
 
     return (
       <form>
         <Stack spacing="xs">
-          <Textarea
-            autosize
-            label="Title"
-            size="xs"
-            {...form.getInputProps("title")}
-            onChange={(e) => {
-              form.setFieldValue("title", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                title: e.target.value,
-              });
-            }}
-          />
           <ThemeColorSelector
             label="Color"
             {...form.getInputProps("color")}
@@ -42,6 +31,14 @@ export const Modifier = withModifier(
               debouncedTreeUpdate(selectedComponentIds, {
                 color: value,
               });
+            }}
+          />
+          <IconSelector
+            topLabel="Icon"
+            selectedIcon={selectedComponent.props?.icon}
+            onIconSelect={(value: string) => {
+              form.setFieldValue("icon", value);
+              debouncedTreeUpdate(selectedComponentIds, { icon: value });
             }}
           />
         </Stack>
