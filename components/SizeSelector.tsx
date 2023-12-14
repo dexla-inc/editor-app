@@ -3,6 +3,7 @@ import { Select, SelectItem, SelectProps } from "@mantine/core";
 type Props = {
   showNone?: boolean;
   showFullscreen?: boolean;
+  data?: Array<{ label: string; value: string }>;
 } & Omit<SelectProps, "data">;
 
 export const SizeSelector = ({
