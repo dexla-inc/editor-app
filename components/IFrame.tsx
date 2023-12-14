@@ -1,13 +1,21 @@
 import { useUserTheme } from "@/hooks/useUserTheme";
 import { getProject } from "@/requests/projects/queries";
+import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { decodeSchema } from "@/utils/compression";
-import { NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
+import { HEADER_HEIGHT, NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
 import createCache from "@emotion/cache";
-import { Box, BoxProps, MantineProvider, ScrollArea } from "@mantine/core";
-import { usePrevious } from "@mantine/hooks";
-import { isEqual } from "lodash";
+import {
+  Box,
+  BoxProps,
+  Loader,
+  MantineProvider,
+  Paper,
+  ScrollArea,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -22,6 +30,8 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
+  const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const isLoading = useAppStore((state) => state.isLoading);
 
   const theme = useUserTheme(projectId);
   const w = contentRef?.contentWindow;
@@ -117,6 +127,7 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
       if (customCode) {
         setCustomCode(customCode);
       }
+      setIsLoading(false);
     };
 
     fetchProject();
@@ -127,7 +138,33 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
     return null;
   }
 
-  return (
+  return isLoading ? (
+    <Box
+      pos="relative"
+      style={{ minHeight: `calc(100vh - ${HEADER_HEIGHT}px)` }}
+      ml={isTabPinned ? NAVBAR_WIDTH : NAVBAR_MIN_WIDTH - 50} // Weird sizing issue that I haven't got time to investigate, had to hack it
+      p="sm"
+    >
+      <Paper
+        pos="relative"
+        shadow="xs"
+        sx={{
+          width: "100%",
+          minHeight: "400px",
+          justifyContent: "center",
+          alignItems: "center",
+          display: "flex",
+        }}
+      >
+        <Stack align="center">
+          <Text color="teal.6" size="sm" weight="bold">
+            Loading the page
+          </Text>
+          <Loader />
+        </Stack>
+      </Paper>
+    </Box>
+  ) : (
     <Box
       id="iframe-canvas"
       onMouseDown={handleMouseDown}

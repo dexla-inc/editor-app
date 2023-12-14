@@ -11,6 +11,7 @@ import {
   useEditorStore,
   useTemporalStore,
 } from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/userConfig";
 import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
 import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
@@ -63,6 +64,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const currentProjectId = useEditorStore((state) => state.currentProjectId);
   const currentPageId = useEditorStore((state) => state.currentPageId);
   const setIsSaving = useEditorStore((state) => state.setIsSaving);
+  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
