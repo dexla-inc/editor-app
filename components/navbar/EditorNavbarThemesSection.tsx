@@ -12,20 +12,21 @@ import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { INPUT_SIZE } from "@/utils/config";
-import { fonts } from "@/utils/dashboardTypes";
+import { getGoogleFonts } from "@/utils/googleFonts";
 import {
   Box,
   Button,
   Flex,
+  Loader,
   SegmentedControl,
   Select,
   Stack,
-  Text,
   TextInput,
   Title,
   useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useDebouncedState } from "@mantine/hooks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -63,6 +64,7 @@ export const EditorNavbarThemesSection = ({
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const [currentFontTag, setCurrentFontTag] = useState<string>("H1");
+  const [fonts, setFonts] = useState<string[]>([]);
   const mantineTheme = useMantineTheme();
   const queryClient = useQueryClient();
 
@@ -161,6 +163,22 @@ export const EditorNavbarThemesSection = ({
   };
 
   const currentFont = form.values.fonts.find((f) => f.tag === currentFontTag);
+
+  useEffect(() => {
+    const getFonts = async () => {
+      try {
+        const googleFonts = await getGoogleFonts();
+        if (googleFonts) {
+          const fonts = googleFonts.map((f: any) => f.family);
+          setFonts(fonts);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getFonts();
+  }, []);
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
@@ -290,20 +308,22 @@ export const EditorNavbarThemesSection = ({
               label="Default Font Family"
               placeholder="Type to search"
               value={form?.values?.defaultFont}
-              data={fonts.map((f) => f)}
+              data={fonts}
               onChange={(value: string) => {
                 form.setFieldValue("defaultFont", value);
               }}
+              searchable
               size={INPUT_SIZE}
             />
             <Select
               label="Headings Font Family"
               placeholder="Type to search"
               value={currentFont?.fontFamily}
-              data={fonts.map((f) => f)}
+              data={fonts}
               onChange={(value: string) => {
                 setHeadingsFontFamily(value);
               }}
+              searchable
               size={INPUT_SIZE}
             />
             <SegmentedControl
