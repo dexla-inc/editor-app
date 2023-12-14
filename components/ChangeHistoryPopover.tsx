@@ -1,4 +1,3 @@
-import { Icon } from "@/components/Icon";
 import { SavingDisplay } from "@/components/SavingDisplay";
 import {
   debouncedUpdatePageState,
@@ -14,20 +13,17 @@ import {
   THIN_GRAY_OUTLINE,
 } from "@/utils/branding";
 import { encodeSchema } from "@/utils/compression";
-import { ICON_SIZE } from "@/utils/config";
 import {
-  ActionIcon,
   Button,
   Flex,
   List,
   Popover,
   Text,
-  Tooltip,
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconArrowBackUp } from "@tabler/icons-react";
 import { FC, useEffect } from "react";
+import { ActionIconDefault } from "./ActionIconDefault";
 
 const convertTimestampToTimeTaken = (timestamp: number) => {
   const now = Date.now();
@@ -119,28 +115,22 @@ export const ChangeHistoryPopover: FC = () => {
       })}
     >
       <Button.Group>
-        <Tooltip label="Undo" fz="xs">
-          <ActionIcon
-            variant="default"
-            onClick={() => handlePageStateChange(undo)}
-            disabled={pastStates.length < 2}
-            radius={"4px 0px 0px 4px"}
-            size="sm"
-          >
-            <IconArrowBackUp size={ICON_SIZE} />
-          </ActionIcon>
-        </Tooltip>
-        <Tooltip label="Redo" fz="xs">
-          <ActionIcon
-            variant="default"
-            onClick={() => handlePageStateChange(redo)}
-            disabled={futureStates.length === 0}
-            radius={"0px 4px 4px 0px"}
-            size="sm"
-          >
-            <Icon name="IconArrowForwardUp" />
-          </ActionIcon>
-        </Tooltip>
+        <ActionIconDefault
+          iconName="IconArrowBackUp"
+          tooltip="Undo"
+          onClick={() => handlePageStateChange(undo)}
+          disabled={pastStates.length < 2}
+          size="sm"
+          radius={"0px 4px 4px 0px"}
+        />
+        <ActionIconDefault
+          iconName="IconArrowForwardUp"
+          tooltip="Redo"
+          onClick={() => handlePageStateChange(redo)}
+          disabled={futureStates.length === 0}
+          radius={"0px 4px 4px 0px"}
+          size="sm"
+        />
       </Button.Group>
       <div onMouseEnter={open} onMouseLeave={close}>
         <Popover

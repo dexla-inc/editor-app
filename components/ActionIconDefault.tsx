@@ -1,13 +1,13 @@
 import { Icon } from "@/components/Icon";
-import { ActionIcon, Tooltip } from "@mantine/core";
+import { ActionIcon, ActionIconProps, Tooltip } from "@mantine/core";
 import Link from "next/link";
 import { MouseEventHandler } from "react";
 
 type BaseProps = {
   iconName: string;
   tooltip: string;
-  color?: "white" | "indigo" | "teal";
-};
+  color?: "white" | "indigo" | "teal" | "red";
+} & ActionIconProps;
 
 type ClickProps = {
   onClick: MouseEventHandler<HTMLButtonElement>;
@@ -27,6 +27,7 @@ export const ActionIconDefault = ({
   onClick,
   href,
   color = "white",
+  ...props
 }: Props) => {
   return (
     <Tooltip label={tooltip} withArrow fz="xs">
@@ -36,6 +37,7 @@ export const ActionIconDefault = ({
           href={href}
           variant={color === "white" ? "default" : "light"}
           color={color}
+          {...props}
         >
           <Icon name={iconName} />
         </ActionIcon>
@@ -44,6 +46,7 @@ export const ActionIconDefault = ({
           onClick={onClick}
           variant={color === "white" ? "default" : "light"}
           color={color}
+          {...props}
         >
           <Icon name={iconName} />
         </ActionIcon>

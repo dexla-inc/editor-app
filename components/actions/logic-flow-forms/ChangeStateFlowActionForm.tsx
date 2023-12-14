@@ -1,4 +1,7 @@
+import { ActionIconDefault } from "@/components/ActionIconDefault";
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { Icon } from "@/components/Icon";
+import { useComponentStates } from "@/hooks/useComponentStates";
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
@@ -7,7 +10,6 @@ import { decodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
 import {
-  ActionIcon,
   Button,
   Flex,
   Select,
@@ -17,11 +19,8 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { IconTrash } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useEffect } from "react";
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { useComponentStates } from "@/hooks/useComponentStates";
 
 type Props = {
   form: UseFormReturnType<FormValues>;
@@ -113,14 +112,15 @@ export const ChangeStateActionFlowForm = ({ form }: Props) => {
                 size="xs"
                 label={
                   <Flex justify="space-between" align="center">
-                    State{" "}
-                    <ActionIcon
+                    State
+                    <ActionIconDefault
+                      iconName="IconTrash"
+                      tooltip="Delete"
                       onClick={() => {
                         form.removeListItem("conditionRules", i);
                       }}
-                    >
-                      <IconTrash size={ICON_SIZE} color="red" />
-                    </ActionIcon>
+                      color="red"
+                    />
                   </Flex>
                 }
                 onChange={(val) => onChange(val, "state", i)}

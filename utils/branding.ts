@@ -66,6 +66,11 @@ const theme: MantineTheme = {
         root: { border: "1px solid " + theme.colors.gray[4] },
       }),
     },
+    Tooltip: {
+      defaultProps: (theme) => ({
+        fz: "xs",
+      }),
+    },
   },
 };
 
@@ -88,7 +93,10 @@ const darkTheme: MantineTheme = {
     },
     Tooltip: {
       styles: (theme) => ({
-        tooltip: { background: theme.colors.dark[6], color: GRAY_COLOR },
+        tooltip: { background: theme.colors.dark[4], color: theme.white },
+      }),
+      defaultProps: (theme) => ({
+        fz: "xs",
       }),
     },
     Card: {
@@ -102,7 +110,10 @@ const darkTheme: MantineTheme = {
       }),
     },
     Title: {
-      defaultProps: (theme) => ({ style: { color: GRAY_WHITE_COLOR } }),
+      defaultProps: (theme) => ({ color: GRAY_WHITE_COLOR }),
+    },
+    Text: {
+      defaultProps: (theme) => ({ color: GRAY_WHITE_COLOR }),
     },
   },
 };
@@ -125,8 +136,9 @@ const THIN_DARK_OUTLINE = `1px solid ${theme.colors.dark[5]}`;
 const SELECTED = `1px solid ${GREEN_COLOR}`;
 const HOVERED = theme.colors.gray[1];
 const DARK_MODE = theme.colors.dark[7];
-const DARK_COLOR = theme.colors.dark[4];
+const DARK_COLOR = theme.colors.dark[6];
 const LIGHT_MODE = "white";
+const LINK_COLOR = isDarkTheme ? "teal" : "white";
 
 // Global styles for the editor
 const globalStyles = (isDarkTheme?: boolean) => ({
@@ -243,6 +255,7 @@ export {
   GREEN_COLOR,
   HOVERED,
   LIGHT_MODE,
+  LINK_COLOR,
   ORANGE_BASE_SHADOW,
   ORANGE_BORDER_COLOR,
   PRIMARY_COLOR,

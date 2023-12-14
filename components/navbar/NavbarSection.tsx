@@ -4,7 +4,6 @@ import { useUserConfigStore } from "@/stores/userConfig";
 import {
   DARK_COLOR,
   DARK_MODE,
-  GRAY_COLOR,
   LIGHT_MODE,
   scrollbarStyles,
 } from "@/utils/branding";
@@ -117,7 +116,7 @@ export const NavbarSection = ({
             variant={isDarkTheme ? "default" : "light"}
             sx={
               isDarkTheme && activeTab === id
-                ? { color: DARK_COLOR, background: GRAY_COLOR }
+                ? { color: DARK_COLOR, background: theme.white }
                 : {}
             }
             size={30}

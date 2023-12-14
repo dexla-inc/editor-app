@@ -1,10 +1,4 @@
-import {
-  DARK_COLOR,
-  DARK_MODE,
-  GRAY_WHITE_COLOR,
-  THIN_DARK_OUTLINE,
-  THIN_GRAY_OUTLINE,
-} from "@/utils/branding";
+import { DARK_COLOR, DARK_MODE, GRAY_WHITE_COLOR } from "@/utils/branding";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Box, Flex, Stack, Text, UnstyledButton } from "@mantine/core";
 import { OrgMemberInfo } from "@propelauth/react";
@@ -32,8 +26,6 @@ const DashboardCompanySelectorPopover = forwardRef<
       m="xs"
       sx={(theme) => ({
         margin: "0 auto",
-        borderTop:
-          theme.colorScheme === "dark" ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE,
         boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
         borderRadius: theme.radius.sm,
         background: theme.colorScheme === "dark" ? DARK_MODE : theme.white,

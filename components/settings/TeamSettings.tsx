@@ -17,6 +17,7 @@ import {
   Table,
   TextInput,
   Title,
+  useMantineTheme,
 } from "@mantine/core";
 import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
 import Image from "next/image";
@@ -34,6 +35,7 @@ export default function TeamSettings({ projectId }: Props) {
   const [isInviteModalOpen, setInviteModalOpen] = useState(false);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
+  const theme = useMantineTheme();
 
   const openInviteModal = () => setInviteModalOpen(true);
   const closeInviteModal = () => setInviteModalOpen(false);
@@ -144,7 +146,7 @@ export default function TeamSettings({ projectId }: Props) {
                   {user.enabled ? (
                     <IconCircleCheck
                       size={LARGE_ICON_SIZE}
-                      style={{ color: "green" }}
+                      style={{ color: theme.colors.teal[6] }}
                     />
                   ) : (
                     <IconCircleX

@@ -3,6 +3,7 @@ import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
   Anchor,
+  Box,
   Col,
   Flex,
   Grid,
@@ -72,10 +73,16 @@ export const IconModal = ({ onIconSelect }: Props) => {
   };
 
   return (
-    <Stack>
-      <Anchor onClick={openModal} size="xs">
+    <Box>
+      <Anchor
+        component="button"
+        type="button"
+        onClick={openModal}
+        size="xs"
+        sx={{ alignSelf: "self-start" }}
+      >
         <Flex gap="xs" wrap="nowrap">
-          <Text size="xs">Change Icon</Text>{" "}
+          Add new color
           <Icon name="IconExternalLink" size={ICON_SIZE} />
         </Flex>
       </Anchor>
@@ -124,6 +131,6 @@ export const IconModal = ({ onIconSelect }: Props) => {
           />
         </Stack>
       </Modal>
-    </Stack>
+    </Box>
   );
 };

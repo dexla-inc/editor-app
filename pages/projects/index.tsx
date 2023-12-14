@@ -7,7 +7,6 @@ import { ProjectListResponse, getProjects } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { GRAY_COLOR } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import { generateId } from "@/utils/dashboardTypes";
 import {
@@ -124,13 +123,7 @@ export default function Projects() {
     <DashboardShell>
       <Container py="xl" size="lg">
         <Stack spacing="xl">
-          <Title
-            sx={(theme) =>
-              theme.colorScheme === "dark" ? { color: GRAY_COLOR } : {}
-            }
-          >
-            Welcome back, {user?.firstName}
-          </Title>
+          <Title>Welcome back, {user?.firstName}</Title>
           <Flex>
             {company.orgName !== "Dexla" ? (
               <Flex gap="sm">
@@ -141,7 +134,6 @@ export default function Projects() {
                     icon="IconSparkles"
                     title="Create new project"
                     description="Type what you want to build and customise"
-                    color="teal"
                   />
                 </Link>
                 <IconTitleDescriptionButton

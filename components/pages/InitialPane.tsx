@@ -64,7 +64,7 @@ export default function InitialPane({
         }}
         size="xs"
       />
-      <Stack spacing={0}>
+      <Stack spacing={2}>
         {pages.map((page) => {
           return (
             <UnstyledButton
@@ -76,13 +76,14 @@ export default function InitialPane({
               }}
             >
               <Group
-                p="xs"
+                px="xs"
+                py={4}
                 spacing="sm"
                 position="apart"
                 align="center"
                 sx={{
                   flexWrap: "nowrap",
-                  borderRadius: theme.radius.md,
+                  borderRadius: theme.radius.sm,
                   textDecoration: "none",
                   fontWeight: currentPage === page.id ? 500 : "normal",
                   color: currentPage === page.id ? color : whiteColor,

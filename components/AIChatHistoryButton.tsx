@@ -1,11 +1,9 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
-import { Icon } from "@/components/Icon";
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
 import { getChatHistoryList } from "@/requests/ai/queries";
-import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
+import { LARGE_ICON_SIZE } from "@/utils/config";
 import TOML from "@iarna/toml";
 import {
-  ActionIcon,
   Badge,
   Box,
   Collapse,
@@ -15,7 +13,6 @@ import {
   Table,
   Tabs,
   Text,
-  Tooltip,
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -132,19 +129,15 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
                   : element.content}
               </Text>
             )}
-            <Tooltip label={tooltipText} fz="xs">
-              <ActionIcon
-                variant="transparent"
-                onClick={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  copyToClipboard(element.content);
-                }}
-                color="yellow"
-              >
-                <Icon name="IconCopy" size={ICON_SIZE} />
-              </ActionIcon>
-            </Tooltip>
+            <ActionIconDefault
+              iconName="IconCopy"
+              tooltip={tooltipText}
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                copyToClipboard(element.content);
+              }}
+            />
           </Flex>
         </Box>
       </td>

@@ -44,6 +44,7 @@ import * as TabsPanelModifier from "@/components/modifiers/TabsPanel";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TextareaModifier from "@/components/modifiers/Textaarea";
 import * as ChartModifier from "@/components/modifiers/chart/Chart";
+import { useComponentStates } from "@/hooks/useComponentStates";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { Action, actionMapper } from "@/utils/actions";
@@ -67,14 +68,12 @@ import {
   IconArrowBadgeRight,
   IconBolt,
   IconCheck,
-  IconPlus,
-  IconRefresh,
   IconX,
 } from "@tabler/icons-react";
 import startCase from "lodash.startcase";
 import intersection from "lodash/intersection";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { useComponentStates } from "@/hooks/useComponentStates";
+import { ActionIconDefault } from "../ActionIconDefault";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -357,27 +356,19 @@ export const EditorAsideSections = () => {
                     }}
                     {...AUTOCOMPLETE_OFF_PROPS}
                   />
-                  <Tooltip label={`Create new state`}>
-                    <ActionIcon
-                      variant="default"
-                      size="1.875rem"
-                      onClick={() => {
-                        setCreateState("");
-                      }}
-                    >
-                      <IconPlus size="1rem" />
-                    </ActionIcon>
-                  </Tooltip>
+                  <ActionIconDefault
+                    iconName="IconPlus"
+                    tooltip="Create new state"
+                    onClick={() => {
+                      setCreateState("");
+                    }}
+                  />
                   {currentState !== "default" && (
-                    <Tooltip label={`Revert to default settings`}>
-                      <ActionIcon
-                        variant="default"
-                        size="1.875rem"
-                        onClick={onClickResetToDefault}
-                      >
-                        <IconRefresh size="1rem" />
-                      </ActionIcon>
-                    </Tooltip>
+                    <ActionIconDefault
+                      iconName="IconRefresh"
+                      tooltip="Revert to default settings"
+                      onClick={onClickResetToDefault}
+                    />
                   )}
                 </Flex>
               )}
