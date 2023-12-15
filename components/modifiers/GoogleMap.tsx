@@ -132,7 +132,7 @@ export const Modifier = withModifier(
     const [isApiKey, setIsApiKey] = useState(false);
 
     useEffect(() => {
-      (form.values.apiKey as string).length > 0
+      (form.values.apiKey as string)?.length > 0
         ? setIsApiKey(true)
         : setIsApiKey(false);
     }, [form.values.apiKey]);
