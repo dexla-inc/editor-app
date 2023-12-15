@@ -50,6 +50,7 @@ export const SpacingControl = ({ type, form, selectedComponentIds }: Props) => {
   return (
     <Stack spacing={4}>
       <TopLabel text={type} size="0.75rem" />
+      {showType}
       <Flex align="center" gap="sm" justify="space-between">
         <SegmentedControl
           fullWidth
@@ -85,6 +86,7 @@ export const SpacingControl = ({ type, form, selectedComponentIds }: Props) => {
               });
             }
             // Update showType value
+            console.log(`show${type}`, newValue);
             setTypeValue(`show${type}`, newValue);
           }}
         />

@@ -10,6 +10,21 @@ import { useEffect } from "react";
 export const icon = IconBoxModel2;
 export const label = "Spacing";
 
+type SpacingeModifierProps = {
+  showPadding: "padding-all" | "padding-sides";
+  showMargin: "margin-all" | "margin-sides";
+  padding: string;
+  paddingTop?: string;
+  paddingBottom?: string;
+  paddingLeft?: string;
+  paddingRight?: string;
+  margin: string;
+  marginTop?: string;
+  marginBottom?: string;
+  marginLeft?: string;
+  marginRight?: string;
+};
+
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const initialValues = requiredModifiers.spacing;
@@ -25,17 +40,20 @@ export const Modifier = withModifier(
       style?.marginTop === style?.marginLeft &&
       style?.marginTop === style?.marginRight;
 
-    const form = useForm();
+    const form = useForm<SpacingeModifierProps>({
+      initialValues: {
+        showPadding: isPaddingAllSame ? "padding-all" : "padding-sides",
+        showMargin: isMarginAllSame ? "margin-all" : "margin-sides",
+        padding: "0px",
+        margin: "0px",
+        ...initialValues,
+      },
+    });
 
     useEffect(() => {
       form.setValues(
         merge(
           {},
-          {
-            showPadding: isPaddingAllSame ? "padding-all" : "padding-sides",
-            showMargin: isMarginAllSame ? "margin-all" : "margin-sides",
-            ...initialValues,
-          },
           {
             padding: selectedComponent?.props?.style?.padding,
             paddingTop:
