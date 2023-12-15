@@ -30,20 +30,18 @@ export function SidebarSection({
   id,
   icon: Icon,
   label,
-  initiallyOpened,
+  initiallyOpened: isExpanded = false,
   children,
   onClick,
   isAction,
   removeAction,
 }: PropsWithChildren<SidebarSectionProps>) {
   const theme = useMantineTheme();
-  const [opened, setOpened] = useState(initiallyOpened || false);
 
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
 
   const handleSectionClick = () => {
-    setOpened((o) => !o);
-    onClick && onClick(id, !opened);
+    onClick && onClick(id, !isExpanded);
     setOpenAction({ actionId: undefined, componentId: undefined });
   };
 
@@ -91,7 +89,7 @@ export function SidebarSection({
                 stroke={1.5}
                 style={{
                   transition: "transform 200ms ease",
-                  transform: opened ? `none` : "rotate(-90deg)",
+                  transform: isExpanded ? `none` : "rotate(-90deg)",
                 }}
               />
             )}
@@ -111,7 +109,7 @@ export function SidebarSection({
         )}
       </Group>
       {children ? (
-        <Collapse in={opened}>
+        <Collapse in={isExpanded}>
           <Box px="md">{children}</Box>
         </Collapse>
       ) : null}
