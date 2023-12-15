@@ -6,6 +6,7 @@ import { SegmentedControl, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutSidebarLeftCollapse } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconLayoutSidebarLeftCollapse;
 export const label = "PopOver";
@@ -14,12 +15,17 @@ export const defaultPopOverValues = requiredModifiers.popOver;
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, defaultPopOverValues, {
-        title: selectedComponent?.props?.title,
-        position: selectedComponent?.props?.position,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, defaultPopOverValues, {
+          title: selectedComponent?.props?.title,
+          position: selectedComponent?.props?.position,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>

@@ -6,6 +6,7 @@ import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutGrid } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const initialValues = requiredModifiers.grid;
 
@@ -14,12 +15,17 @@ export const icon = IconLayoutGrid;
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, initialValues, {
-        gap: selectedComponent?.props?.style?.gap,
-        alignSelf: selectedComponent?.props?.style?.alignSelf,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, initialValues, {
+          gap: selectedComponent?.props?.style?.gap,
+          alignSelf: selectedComponent?.props?.style?.alignSelf,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>

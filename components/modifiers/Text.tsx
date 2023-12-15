@@ -86,29 +86,34 @@ export const Modifier = withModifier(
       "order",
     ]);
 
-    const form = useForm({
-      initialValues: merge({}, defaultInputValues, {
-        value: data.children ?? defaultInputValues.value,
-        order: data.order?.toString() ?? defaultInputValues.order,
-        color: data.color ?? defaultInputValues.color,
-        size: data.size ?? defaultInputValues.size,
-        weight: data.weight ?? defaultInputValues.weight,
-        align: data.style?.textAlign ?? defaultInputValues.align,
-        textWrap: data.style?.whiteSpace ?? defaultInputValues.textWrap,
-        textTransform: data.tt ?? defaultInputValues.textTransform,
-        textDecoration: data.td ?? defaultInputValues.textDecoration,
-        truncate: data.truncate?.toString() ?? defaultInputValues.truncate,
-        xOffset: xOffset ?? defaultInputValues.textShadow.xOffset,
-        yOffset: yOffset ?? defaultInputValues.textShadow.yOffset,
-        blur: blur ?? defaultInputValues.textShadow.blur,
-        shadowColor:
-          getThemeColor(theme, shadowColor) ??
-          defaultInputValues.textShadow.shadowColor,
-        hideIfDataIsEmpty:
-          data.hideIfDataIsEmpty ?? defaultInputValues.hideIfDataIsEmpty,
-        ...data.style,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, defaultInputValues, {
+          value: data.children ?? defaultInputValues.value,
+          order: data.order?.toString() ?? defaultInputValues.order,
+          color: data.color ?? defaultInputValues.color,
+          size: data.size ?? defaultInputValues.size,
+          weight: data.weight ?? defaultInputValues.weight,
+          align: data.style?.textAlign ?? defaultInputValues.align,
+          textWrap: data.style?.whiteSpace ?? defaultInputValues.textWrap,
+          textTransform: data.tt ?? defaultInputValues.textTransform,
+          textDecoration: data.td ?? defaultInputValues.textDecoration,
+          truncate: data.truncate?.toString() ?? defaultInputValues.truncate,
+          xOffset: xOffset ?? defaultInputValues.textShadow.xOffset,
+          yOffset: yOffset ?? defaultInputValues.textShadow.yOffset,
+          blur: blur ?? defaultInputValues.textShadow.blur,
+          shadowColor:
+            getThemeColor(theme, shadowColor) ??
+            defaultInputValues.textShadow.shadowColor,
+          hideIfDataIsEmpty:
+            data.hideIfDataIsEmpty ?? defaultInputValues.hideIfDataIsEmpty,
+          ...data.style,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     useEffect(() => {
       form.values.textWrap !== "normal" ? open() : close();

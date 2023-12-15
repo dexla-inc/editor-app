@@ -20,23 +20,29 @@ import {
   IconLayout,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconLayout;
 export const label = "Position";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.position, {
-        position: selectedComponent?.props?.style?.position,
-        top: selectedComponent?.props?.style?.top,
-        right: selectedComponent?.props?.style?.right,
-        bottom: selectedComponent?.props?.style?.bottom,
-        left: selectedComponent?.props?.style?.left,
-        zIndex: selectedComponent?.props?.style?.zIndex,
-        alignSelf: selectedComponent?.props?.style?.alignSelf,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.position, {
+          position: selectedComponent?.props?.style?.position,
+          top: selectedComponent?.props?.style?.top,
+          right: selectedComponent?.props?.style?.right,
+          bottom: selectedComponent?.props?.style?.bottom,
+          left: selectedComponent?.props?.style?.left,
+          zIndex: selectedComponent?.props?.style?.zIndex,
+          alignSelf: selectedComponent?.props?.style?.alignSelf,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form key={selectedComponent?.id}>
@@ -59,7 +65,9 @@ export const Modifier = withModifier(
                 });
               }}
             />
-            {["absolute", "sticky", "fixed"].includes(form.values.position) && (
+            {["absolute", "sticky", "fixed"].includes(
+              form.values.position as string,
+            ) && (
               <>
                 <Flex gap="sm">
                   <UnitInput
@@ -121,7 +129,7 @@ export const Modifier = withModifier(
               }}
             />
           </Stack>
-          {["relative"].includes(form.values.position) && (
+          {["relative"].includes(form.values.position as string) && (
             <Stack spacing={2}>
               <TopLabel text="Align Self" />
               <SegmentedControl

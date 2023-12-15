@@ -5,21 +5,26 @@ import { Stack, Switch, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconFileUpload } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 
 export const icon = IconFileUpload;
 export const label = "File";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.fileButton, {
-        name: selectedComponent.props?.name,
-        accept: selectedComponent.props?.accept,
-        multiple: selectedComponent.props?.multiple,
-        disabled: selectedComponent.props?.disabled,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.fileButton, {
+          name: selectedComponent.props?.name,
+          accept: selectedComponent.props?.accept,
+          multiple: selectedComponent.props?.multiple,
+          disabled: selectedComponent.props?.disabled,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
@@ -64,7 +69,7 @@ export const Modifier = withModifier(
           />
           <Switch
             size="xs"
-            checked={form.values.disabled}
+            checked={form.values.disabled as boolean}
             label="Disabled"
             onChange={(e) => {
               form.setFieldValue("disabled", e.currentTarget.checked);

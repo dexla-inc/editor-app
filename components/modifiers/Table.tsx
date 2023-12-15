@@ -8,9 +8,17 @@ import get from "lodash.get";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { SwitchSelector } from "../SwitchSelector";
+import { useEffect } from "react";
 
 export const icon = IconTable;
 export const label = "Table";
+
+type TableModifierProps = {
+  data: string;
+  headers: Record<string, string | boolean>;
+  config: Record<string, boolean>;
+  striped: boolean;
+};
 
 const initialValues = {
   data: "",
@@ -48,14 +56,19 @@ export const Modifier = withModifier(
       data = get(dataProp?.base, dataPath.replace("[0]", ""));
     }
 
-    const form = useForm({
-      initialValues: merge({}, initialValues, {
-        data: JSON.stringify(data, null, 2),
-        headers: headers,
-        config: config,
-        striped: striped,
-      }),
-    });
+    const form = useForm<TableModifierProps>();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, initialValues, {
+          data: JSON.stringify(data, null, 2),
+          headers: headers,
+          config: config,
+          striped: striped,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     const isThereAnyConfigChecked =
       get(form.values.config, "select", false) ||
@@ -83,7 +96,7 @@ export const Modifier = withModifier(
                   size="xs"
                   key={key}
                   label={key}
-                  checked={get(form.values.headers, key, false)}
+                  checked={!!get(form.values.headers, key, false)}
                   onChange={(e) => {
                     const headers = {
                       ...form.values.headers,

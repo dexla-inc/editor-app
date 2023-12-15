@@ -15,28 +15,34 @@ import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { TopLabel } from "../TopLabel";
+import { useEffect } from "react";
 
 export const icon = IconForms;
 export const label = "Date Input";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.dateInput, {
-        label: selectedComponent?.props?.label,
-        type: selectedComponent?.props?.type,
-        labelSize: selectedComponent?.props?.labelProps?.size,
-        placeholder: selectedComponent?.props?.placeholder,
-        description: selectedComponent?.props?.description,
-        radius: selectedComponent?.props?.radius,
-        size: selectedComponent?.props?.size,
-        disabled: selectedComponent?.props?.isDisabled,
-        withAsterisk: selectedComponent?.props?.withAsterisk,
-        clearable: selectedComponent?.props?.clearable,
-        valueFormat: selectedComponent?.props?.valueFormat,
-        icon: selectedComponent?.props?.icon,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.dateInput, {
+          label: selectedComponent?.props?.label,
+          type: selectedComponent?.props?.type,
+          labelSize: selectedComponent?.props?.labelProps?.size,
+          placeholder: selectedComponent?.props?.placeholder,
+          description: selectedComponent?.props?.description,
+          radius: selectedComponent?.props?.radius,
+          size: selectedComponent?.props?.size,
+          disabled: selectedComponent?.props?.isDisabled,
+          withAsterisk: selectedComponent?.props?.withAsterisk,
+          clearable: selectedComponent?.props?.clearable,
+          valueFormat: selectedComponent?.props?.valueFormat,
+          icon: selectedComponent?.props?.icon,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>
@@ -164,7 +170,7 @@ export const Modifier = withModifier(
           />
           <IconSelector
             topLabel="Icon"
-            selectedIcon={form.values.icon}
+            selectedIcon={form.values.icon as string}
             onIconSelect={(value: string) => {
               form.setFieldValue("icon", value);
               debouncedTreeUpdate(selectedComponentIds, {

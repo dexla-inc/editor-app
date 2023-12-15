@@ -8,6 +8,7 @@ import { useForm } from "@mantine/form";
 import { IconLayoutSidebar } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { ThemeColorSelector } from "../ThemeColorSelector";
+import { useEffect } from "react";
 
 export const initialValues = requiredModifiers.navbar;
 
@@ -19,12 +20,17 @@ export const Modifier = withModifier(
     const editorTree = useEditorStore((state) => state.tree);
     const setTree = useEditorStore((state) => state.setTree);
 
-    const form = useForm({
-      initialValues: merge({}, initialValues, {
-        width: selectedComponent?.props?.style?.width,
-        bg: selectedComponent?.props?.bg ?? "transparent",
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, initialValues, {
+          width: selectedComponent?.props?.style?.width,
+          bg: selectedComponent?.props?.bg ?? "transparent",
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     const setNavbarWidth = (value: string) => {
       const contentWrapper = editorTree.root.children?.find(

@@ -7,19 +7,25 @@ import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconCheckbox } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconCheckbox;
 export const label = "Checkbox";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.checkbox, {
-        name: selectedComponent.props?.name,
-        size: selectedComponent.props?.size,
-        withAsterisk: selectedComponent.props?.withAsterisk,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.checkbox, {
+          name: selectedComponent.props?.name,
+          size: selectedComponent.props?.size,
+          withAsterisk: selectedComponent.props?.withAsterisk,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>

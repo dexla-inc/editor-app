@@ -7,20 +7,26 @@ import { Stack, Switch, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTextPlus } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconTextPlus;
 export const label = "Textarea";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.textarea, {
-        placeholder: selectedComponent?.props?.placeholder,
-        size: selectedComponent?.props?.size,
-        autosize: selectedComponent?.props?.style?.autosize,
-        withAsterisk: selectedComponent?.props?.withAsterisk,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.textarea, {
+          placeholder: selectedComponent?.props?.placeholder,
+          size: selectedComponent?.props?.size,
+          autosize: selectedComponent?.props?.style?.autosize,
+          withAsterisk: selectedComponent?.props?.withAsterisk,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>

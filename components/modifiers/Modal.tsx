@@ -6,18 +6,24 @@ import { useForm } from "@mantine/form";
 import { IconBoxModel } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { SizeSelector } from "@/components/SizeSelector";
+import { useEffect } from "react";
 
 export const icon = IconBoxModel;
 export const label = "Modal";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.modal, {
-        size: selectedComponent?.props?.size,
-        forceHide: selectedComponent?.props?.forceHide,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.modal, {
+          size: selectedComponent?.props?.size,
+          forceHide: selectedComponent?.props?.forceHide,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>

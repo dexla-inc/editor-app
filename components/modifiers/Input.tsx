@@ -9,22 +9,28 @@ import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconForms;
 export const label = "Input";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.input, {
-        size: selectedComponent?.props?.size,
-        placeholder: selectedComponent?.props?.placeholder,
-        type: selectedComponent?.props?.type,
-        icon: selectedComponent?.props?.icon,
-        withAsterisk: selectedComponent?.props?.withAsterisk,
-        name: selectedComponent?.props?.name,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.input, {
+          size: selectedComponent?.props?.size,
+          placeholder: selectedComponent?.props?.placeholder,
+          type: selectedComponent?.props?.type,
+          icon: selectedComponent?.props?.icon,
+          withAsterisk: selectedComponent?.props?.withAsterisk,
+          name: selectedComponent?.props?.name,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>
@@ -84,7 +90,7 @@ export const Modifier = withModifier(
           />
           <IconSelector
             topLabel="Icon"
-            selectedIcon={form.values.icon?.props?.name}
+            selectedIcon={(form.values.icon as any)?.props?.name}
             onIconSelect={(iconName: string) => {
               const icon = { props: { name: iconName } };
               form.setFieldValue("icon.props.name", iconName);

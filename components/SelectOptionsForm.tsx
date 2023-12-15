@@ -22,7 +22,7 @@ export const SelectOptionsForm = ({
           type="button"
           compact
           onClick={() => {
-            setFieldValue("data", getValue().concat({ label, value }));
+            setFieldValue("data", getValue()?.concat({ label, value }));
             setKey("");
             setValue("");
           }}
@@ -36,7 +36,7 @@ export const SelectOptionsForm = ({
 
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         {/* @ts-ignore*/}
-        {getValue().map(({ label, value }, index) => {
+        {getValue()?.map(({ label, value }, index) => {
           return (
             <Group key={index} style={{ flexWrap: "nowrap" }}>
               <TextInput

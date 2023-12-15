@@ -7,22 +7,28 @@ import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconDivide } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconDivide;
 export const label = "Divider";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.divider, {
-        label: selectedComponent.props?.label,
-        labelPosition: selectedComponent.props?.labelPosition,
-        orientation: selectedComponent.props?.orientation,
-        size: selectedComponent.props?.size,
-        variant: selectedComponent.props?.variant,
-        color: selectedComponent.props?.color,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.divider, {
+          label: selectedComponent.props?.label,
+          labelPosition: selectedComponent.props?.labelPosition,
+          orientation: selectedComponent.props?.orientation,
+          size: selectedComponent.props?.size,
+          variant: selectedComponent.props?.variant,
+          color: selectedComponent.props?.color,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>

@@ -7,20 +7,26 @@ import { Select, Stack, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconClick;
 export const label = "NavLink";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.navLink, {
-        label: selectedComponent?.props?.label,
-        icon: selectedComponent?.props?.icon,
-        color: selectedComponent?.props?.color,
-        align: selectedComponent?.props?.style?.align,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.navLink, {
+          label: selectedComponent?.props?.label,
+          icon: selectedComponent?.props?.icon,
+          color: selectedComponent?.props?.color,
+          align: selectedComponent?.props?.style?.align,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>
@@ -65,7 +71,7 @@ export const Modifier = withModifier(
           />
           <IconSelector
             topLabel="Icon"
-            selectedIcon={form.values.icon}
+            selectedIcon={form.values.icon as string}
             onIconSelect={(value: string) => {
               form.setFieldValue("icon", value);
               debouncedTreeUpdate(selectedComponentIds, {

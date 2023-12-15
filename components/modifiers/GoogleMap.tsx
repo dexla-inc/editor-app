@@ -31,16 +31,21 @@ export type Options = { mapTypeId: string; styles: Styler[] };
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.mapSettings, {
-        language: selectedComponent.props?.language,
-        apiKey: selectedComponent.props?.apiKey,
-        center: selectedComponent.props?.center,
-        options: selectedComponent.props?.options,
-        zoom: selectedComponent.props?.zoom,
-        markers: selectedComponent.props?.markers,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.mapSettings, {
+          language: selectedComponent.props?.language,
+          apiKey: selectedComponent.props?.apiKey,
+          center: selectedComponent.props?.center,
+          options: selectedComponent.props?.options,
+          zoom: selectedComponent.props?.zoom,
+          markers: selectedComponent.props?.markers,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     const addMarker = () => {
       const id = nanoid();
@@ -49,13 +54,13 @@ export const Modifier = withModifier(
         name: "",
         position: { lat: 0.0, lng: 0.0 },
       };
-      const updatedMarkers = [...form.values.markers, newMarker];
+      const updatedMarkers = [...(form.values.markers as any[]), newMarker];
       form.setFieldValue("markers", updatedMarkers);
       debouncedTreeUpdate(selectedComponentIds, { markers: updatedMarkers });
     };
 
     const upDateMarker = (id: number, field: string, val: string | number) => {
-      const updatedMarkerItems = [...form.values.markers];
+      const updatedMarkerItems = [...(form.values.markers as any[])];
       if (field === "name") updatedMarkerItems[id][field] = val as string;
       if (field === "lat" || field === "lng")
         updatedMarkerItems[id].position[field] = val as number;
@@ -66,7 +71,7 @@ export const Modifier = withModifier(
     };
 
     const removeMarker = (index: number) => {
-      const updatedMarkers = form.values.markers;
+      const updatedMarkers = form.values.markers as any[];
       updatedMarkers.splice(index, 1);
       form.setValues({ ...form.values, markers: updatedMarkers });
       debouncedTreeUpdate(selectedComponentIds, { markers: updatedMarkers });
@@ -85,36 +90,51 @@ export const Modifier = withModifier(
           },
         ],
       };
-      const updatedMapStyle = [...form.values.options.styles, newMapStyle];
-      const options = { ...form.values.options, styles: updatedMapStyle };
+
+      const updatedMapStyle = [
+        ...(form.values.options as any).styles,
+        newMapStyle,
+      ];
+      const options = {
+        ...(form.values.options as any),
+        styles: updatedMapStyle,
+      };
       form.setFieldValue("options.styles", updatedMapStyle);
       debouncedTreeUpdate(selectedComponentIds, { options });
     };
 
     const updateMapStyle = (id: number, field: string, val: any) => {
-      const updatedMapStyles = [...form.values.options.styles];
+      const updatedMapStyles = [...(form.values.options as any).styles];
 
       updatedMapStyles[id][field] = val;
       form.setValues({
         ...form.values,
-        options: { ...form.values.options, styles: updatedMapStyles },
+        options: { ...(form.values.options as any), styles: updatedMapStyles },
       });
-      const options = { ...form.values.options, styles: updatedMapStyles };
+      const options = {
+        ...(form.values.options as any),
+        styles: updatedMapStyles,
+      };
       debouncedTreeUpdate(selectedComponentIds, { options });
     };
 
     const removeMapStyle = (id: number) => {
-      const updatedMapStyles = form.values.options.styles;
+      const updatedMapStyles = (form.values.options as any).styles;
       updatedMapStyles.splice(id, 1);
       form.setFieldValue("options.styles", updatedMapStyles);
-      const options = { ...form.values.options, styles: updatedMapStyles };
+      const options = {
+        ...(form.values.options as any),
+        styles: updatedMapStyles,
+      };
       debouncedTreeUpdate(selectedComponentIds, { options });
     };
 
     const [isApiKey, setIsApiKey] = useState(false);
 
     useEffect(() => {
-      form.values.apiKey.length > 0 ? setIsApiKey(true) : setIsApiKey(false);
+      (form.values.apiKey as string).length > 0
+        ? setIsApiKey(true)
+        : setIsApiKey(false);
     }, [form.values.apiKey]);
 
     return (
@@ -144,47 +164,49 @@ export const Modifier = withModifier(
                     Add
                   </Button>
                 </Flex>
-                {form.values.markers.map((child: any, index: any) => (
-                  <Box key={child.id}>
-                    <Flex justify="space-between">
-                      <Text size="sm">Marker {index + 1}</Text>
-                      <ActionIcon onClick={() => removeMarker(index)}>
-                        <IconTrash size={ICON_SIZE} color="red" />
-                      </ActionIcon>
-                    </Flex>
-                    <TextInput
-                      label="Name"
-                      size="xs"
-                      value={child.name}
-                      onChange={(e) =>
-                        upDateMarker(index, "name", e.target.value)
-                      }
-                    />
-                    <Group grow spacing="xs">
-                      <NumberInput
-                        label="Latitude"
+                {(form.values.markers as any[]).map(
+                  (child: any, index: any) => (
+                    <Box key={child.id}>
+                      <Flex justify="space-between">
+                        <Text size="sm">Marker {index + 1}</Text>
+                        <ActionIcon onClick={() => removeMarker(index)}>
+                          <IconTrash size={ICON_SIZE} color="red" />
+                        </ActionIcon>
+                      </Flex>
+                      <TextInput
+                        label="Name"
                         size="xs"
-                        precision={6}
-                        step={0.000005}
-                        value={child.position.lat}
+                        value={child.name}
                         onChange={(e) =>
-                          upDateMarker(index, "lat", e as number)
+                          upDateMarker(index, "name", e.target.value)
                         }
                       />
-                      <NumberInput
-                        label="Longitude"
-                        size="xs"
-                        precision={6}
-                        step={0.000005}
-                        value={child.position.lng}
-                        onChange={(e) =>
-                          upDateMarker(index, "lng", e as number)
-                        }
-                      />
-                    </Group>
-                    <Divider my="sm" />
-                  </Box>
-                ))}
+                      <Group grow spacing="xs">
+                        <NumberInput
+                          label="Latitude"
+                          size="xs"
+                          precision={6}
+                          step={0.000005}
+                          value={child.position.lat}
+                          onChange={(e) =>
+                            upDateMarker(index, "lat", e as number)
+                          }
+                        />
+                        <NumberInput
+                          label="Longitude"
+                          size="xs"
+                          precision={6}
+                          step={0.000005}
+                          value={child.position.lng}
+                          onChange={(e) =>
+                            upDateMarker(index, "lng", e as number)
+                          }
+                        />
+                      </Group>
+                      <Divider my="sm" />
+                    </Box>
+                  ),
+                )}
               </Stack>
 
               <Select
@@ -201,7 +223,7 @@ export const Modifier = withModifier(
                 onChange={(value) => {
                   form.setFieldValue("options.mapTypeId", value as string);
                   const options = {
-                    ...form.values.options,
+                    ...(form.values.options as any),
                     mapTypeId: value as string,
                   };
                   debouncedTreeUpdate(selectedComponentIds, { options });
@@ -245,7 +267,7 @@ export const Modifier = withModifier(
                   onChange={(value) => {
                     form.setFieldValue("center.lat", value as number);
                     const center = {
-                      ...form.values.center,
+                      ...(form.values.center as any),
                       lat: value as number,
                     };
                     debouncedTreeUpdate(selectedComponentIds, {
@@ -262,7 +284,7 @@ export const Modifier = withModifier(
                   onChange={(value) => {
                     form.setFieldValue("center.lng", value as number);
                     const center = {
-                      ...form.values.center,
+                      ...(form.values.center as any),
                       lng: value as number,
                     };
                     debouncedTreeUpdate(selectedComponentIds, {
@@ -283,49 +305,54 @@ export const Modifier = withModifier(
                     Add
                   </Button>
                 </Flex>
-                {form.values.options.styles.map((child: any, index: any) => {
-                  return (
-                    <Box key={index}>
-                      <Flex justify="space-between">
-                        <Text size="sm">Style {index + 1}</Text>
-                        <ActionIcon onClick={() => removeMapStyle(index)}>
-                          <IconTrash size={ICON_SIZE} color="red" />
-                        </ActionIcon>
-                      </Flex>
-                      <Select
-                        label="Feature Type"
-                        size="xs"
-                        value={child.featureType as string}
-                        data={[
-                          { label: "all", value: "all" },
-                          { label: "administrative", value: "administrative" },
-                          { label: "landscape", value: "landscape" },
-                          { label: "poi", value: "poi" },
-                          { label: "road", value: "road" },
-                          { label: "transit", value: "transit" },
-                          { label: "water", value: "water" },
-                        ]}
-                        onChange={(e) =>
-                          updateMapStyle(index, "featureType", e as string)
-                        }
-                      />
-                      <Select
-                        label="Element Type"
-                        size="xs"
-                        value={child.elementType as string}
-                        data={[
-                          { label: "all", value: "all" },
-                          { label: "geometry", value: "geometry" },
-                          { label: "labels", value: "labels" },
-                        ]}
-                        onChange={(e) =>
-                          updateMapStyle(index, "elementType", e as string)
-                        }
-                      />
-                      <Divider my="sm" />
-                    </Box>
-                  );
-                })}
+                {(form.values.options as any).styles.map(
+                  (child: any, index: any) => {
+                    return (
+                      <Box key={index}>
+                        <Flex justify="space-between">
+                          <Text size="sm">Style {index + 1}</Text>
+                          <ActionIcon onClick={() => removeMapStyle(index)}>
+                            <IconTrash size={ICON_SIZE} color="red" />
+                          </ActionIcon>
+                        </Flex>
+                        <Select
+                          label="Feature Type"
+                          size="xs"
+                          value={child.featureType as string}
+                          data={[
+                            { label: "all", value: "all" },
+                            {
+                              label: "administrative",
+                              value: "administrative",
+                            },
+                            { label: "landscape", value: "landscape" },
+                            { label: "poi", value: "poi" },
+                            { label: "road", value: "road" },
+                            { label: "transit", value: "transit" },
+                            { label: "water", value: "water" },
+                          ]}
+                          onChange={(e) =>
+                            updateMapStyle(index, "featureType", e as string)
+                          }
+                        />
+                        <Select
+                          label="Element Type"
+                          size="xs"
+                          value={child.elementType as string}
+                          data={[
+                            { label: "all", value: "all" },
+                            { label: "geometry", value: "geometry" },
+                            { label: "labels", value: "labels" },
+                          ]}
+                          onChange={(e) =>
+                            updateMapStyle(index, "elementType", e as string)
+                          }
+                        />
+                        <Divider my="sm" />
+                      </Box>
+                    );
+                  },
+                )}
               </Stack>
             </>
           )}
