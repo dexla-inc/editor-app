@@ -158,7 +158,7 @@ const GradientSelector = ({ getValue, setFieldValue }: GradientPickerProps) => {
   const handleClick = (index: number) => setIndex(index);
 
   const addNewColorToColors = () => {
-    const newColors = [...colors, { color: "#FFFFFF", stop: "0" }];
+    const newColors = [...colors, { color: "#ffffff00", stop: "0" }];
     setColors(newColors);
   };
 
