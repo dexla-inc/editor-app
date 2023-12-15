@@ -72,7 +72,7 @@ export default function InitialPane({
               component={Link}
               href={`/projects/${projectId}/editor/${page.id}`}
               onClick={() => {
-                resetTree();
+                currentPage !== page.id && resetTree();
               }}
             >
               <Group
