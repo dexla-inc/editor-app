@@ -9,7 +9,7 @@ import { SegmentedControl, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTexture } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export const icon = IconTexture;
 export const label = "Background";
@@ -29,50 +29,78 @@ const defaultBackgroundValues = requiredModifiers.background;
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm();
+    const form = useForm({
+      initialValues: merge({}, defaultBackgroundValues, {
+        bg: selectedComponent?.props?.bg,
+        backgroundImage: selectedComponent?.props?.style?.backgroundImage
+          ? extractBackgroundUrl(
+              selectedComponent?.props?.style?.backgroundImage,
+            )
+          : "",
+        backgroundPositionX:
+          selectedComponent?.props?.style?.backgroundPositionX,
+        backgroundPositionY:
+          selectedComponent?.props?.style?.backgroundPositionY,
+        backgroundSize: selectedComponent?.props?.style?.backgroundSize,
+        backgroundRepeat: selectedComponent?.props?.style?.backgroundRepeat,
+        background: selectedComponent?.props?.style?.background,
+      }),
+    });
+
+    const [backgroundType, setBackgroundType] = useState(
+      form.values.bg.includes("gradient") ? "gradient" : "single",
+    );
 
     const [backgroundSize, setBackgroundSize] = useState(
       selectedComponent?.props?.style?.backgroundSize ??
         defaultBackgroundValues.backgroundSize,
     );
 
-    useEffect(() => {
-      form.setValues(
-        merge({}, defaultBackgroundValues, {
-          bg: selectedComponent?.props?.bg,
-          backgroundImage: selectedComponent?.props?.style?.backgroundImage
-            ? extractBackgroundUrl(
-                selectedComponent?.props?.style?.backgroundImage,
-              )
-            : "",
-          backgroundPositionX:
-            selectedComponent?.props?.style?.backgroundPositionX,
-          backgroundPositionY:
-            selectedComponent?.props?.style?.backgroundPositionY,
-          backgroundSize: selectedComponent?.props?.style?.backgroundSize,
-          backgroundRepeat: selectedComponent?.props?.style?.backgroundRepeat,
-        }),
-      );
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComponent]);
+    const setFieldValue = (key: any, value: any) => {
+      form.setFieldValue(key, value);
+      debouncedTreeUpdate(selectedComponentIds, { [key]: value });
+    };
 
     return (
       <form>
         <Stack spacing="xs">
-          <ThemeColorSelector
-            label="Color"
-            {...form.getInputProps("bg")}
-            onChange={(value: string) => {
-              form.setFieldValue("bg", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                bg: value,
-              });
-            }}
-          />
-          <GradientPicker
-            getValue={() => form.getInputProps("background").value}
-            setFieldValue={setFieldValue}
-          />
+          <Stack spacing={0}>
+            <TopLabel text="Background Type" />
+            <SegmentedControl
+              size="xs"
+              data={[
+                { label: "Single", value: "single" },
+                { label: "Gradient", value: "gradient" },
+              ]}
+              value={backgroundType}
+              onChange={(value) => {
+                setBackgroundType(value as string);
+                if (value === "single") {
+                  setFieldValue("bg", "White.6");
+                } else {
+                  setFieldValue("bg", defaultBackgroundValues.bgGradient);
+                }
+              }}
+            />
+          </Stack>
+          {backgroundType === "single" ? (
+            <ThemeColorSelector
+              label="Color"
+              {...form.getInputProps("bg")}
+              onChange={(value: string) => {
+                form.setFieldValue("bg", value);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  bg: value,
+                });
+              }}
+            />
+          ) : (
+            <GradientPicker
+              getValue={() => form.getInputProps("bg").value}
+              setFieldValue={setFieldValue}
+            />
+          )}
+
           <TextInput
             label="Image"
             size="xs"

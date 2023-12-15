@@ -134,14 +134,14 @@ export const requiredModifiers: RequiredModifiers = {
   },
   background: {
     bg: "transparent",
+    bgGradient:
+      "linear-gradient(90deg, #ffffffff 0%, #000000ff 50%, #00ff00ff 100%)",
     backgroundImage: "",
     backgroundSize: "contain",
     backgroundRepeat: "repeat",
     backgroundPositionX: "0%",
     backgroundPositionY: "0%",
     backgroundAttachment: "scroll",
-    background:
-      "linear-gradient(90deg, #ffffff00 0%, #00000000 50%, #00ff0000 100%)",
   },
   input: {
     size: "sm",

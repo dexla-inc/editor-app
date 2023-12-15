@@ -1,10 +1,10 @@
+import { TopLabel } from "@/components/TopLabel";
 import { DARK_COLOR } from "@/utils/branding";
 import {
   ActionIcon,
   Box,
   CloseButton,
   ColorPicker,
-  ColorSwatch,
   Divider,
   Flex,
   Group,
@@ -20,16 +20,18 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { NuAnglePicker } from "react-nu-anglepicker";
-import { TopLabel } from "./TopLabel";
 
 type GradientPickerProps = {
   getValue: any;
   setFieldValue: any;
 };
 
-type GradientProps = {
-  gradient?: string;
-};
+function getRandomInt(): number {
+  const min = Math.ceil(0);
+  const max = Math.floor(100);
+  // The maximum is exclusive and the minimum is inclusive
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 function parseGradientDetailed(gradient: string) {
   // Default result in case of no match
@@ -57,7 +59,7 @@ function parseGradientDetailed(gradient: string) {
 }
 
 const ColorItem = ({ color, index, ...rest }: any) => {
-  const { handleClick, isSelected, colors, setColors } = rest;
+  const { handleClick, isSelected, colors, setColors, setIndex } = rest;
 
   const handleChange = (key: string, value: string) => {
     const newColors = colors.map((c: any, i: number) =>
@@ -76,13 +78,6 @@ const ColorItem = ({ color, index, ...rest }: any) => {
       })}
       align="center"
     >
-      <ColorSwatch
-        onClick={() => handleClick(index)}
-        color={color.color}
-        size={28}
-        w={40}
-        radius="sm"
-      />
       <Input
         size="xs"
         fz="xs"
@@ -117,16 +112,19 @@ const ColorItem = ({ color, index, ...rest }: any) => {
           }
         }}
       />
-      <CloseButton
-        onClick={(e) => {
-          e.preventDefault();
-          // Remove the color at the given index
-          const newColors = colors.filter((_: any, i: number) => i !== index);
-          setColors(newColors);
-        }}
-        size="xs"
-        iconSize="xs"
-      />
+      {colors.length > 2 ? (
+        <CloseButton
+          onClick={(e) => {
+            e.preventDefault();
+            isSelected && setIndex(0);
+            // Remove the color at the given index
+            const newColors = colors.filter((_: any, i: number) => i !== index);
+            setColors(newColors);
+          }}
+          size="xs"
+          iconSize="xs"
+        />
+      ) : null}
     </Flex>
   );
 };
@@ -158,7 +156,10 @@ const GradientSelector = ({ getValue, setFieldValue }: GradientPickerProps) => {
   const handleClick = (index: number) => setIndex(index);
 
   const addNewColorToColors = () => {
-    const newColors = [...colors, { color: "#ffffff00", stop: "0" }];
+    const newColors = [
+      ...colors,
+      { color: "#ffffffff", stop: `${getRandomInt()}` },
+    ];
     setColors(newColors);
   };
 
@@ -167,13 +168,15 @@ const GradientSelector = ({ getValue, setFieldValue }: GradientPickerProps) => {
     const gradient = `${_type}(${angle}, ${_colors
       .map((c: any) => `${c.color} ${c.stop}%`)
       .join(",")})`;
-    setFieldValue("background", gradient);
+    setFieldValue("bg", gradient);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_colors, _angle, _type]);
 
   return (
     <Paper shadow="md" p="sm" w={420} sx={{ justifyContent: "left" }}>
-      <Paper h={50} mb="md" sx={{ background: getValue() }} />
+      <Box>
+        <Paper pos="relative" h={50} mb="md" sx={{ background: getValue() }} />
+      </Box>
       <Group noWrap align="flex-start">
         <Stack spacing="lg">
           <ColorPicker
@@ -241,6 +244,7 @@ const GradientSelector = ({ getValue, setFieldValue }: GradientPickerProps) => {
                     key={i}
                     color={color}
                     index={i}
+                    setIndex={setIndex}
                     handleClick={handleClick}
                     isSelected={isSelected}
                     colors={_colors}
