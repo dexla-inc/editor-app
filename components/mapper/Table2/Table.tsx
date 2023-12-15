@@ -26,8 +26,14 @@ export const TableBody = ({ renderTree, component }: Props) => {
   return <tbody>{component.children?.map((child) => renderTree(child))}</tbody>;
 };
 
-export const TableRow = ({ renderTree, component }: Props) => {
-  return <tr>{component.children?.map((child) => renderTree(child))}</tr>;
+export const TableRow = ({ renderTree, component, ...props }: Props) => {
+  const { ...componentProps } = component.props as any;
+
+  return (
+    <tr {...props} {...componentProps}>
+      {component.children?.map((child) => renderTree(child))}
+    </tr>
+  );
 };
 
 export const TableHeaderCell = ({ renderTree, component, ...props }: Props) => {

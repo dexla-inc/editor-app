@@ -1051,7 +1051,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <TableRow component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: [],
+    modifiers: ["size"],
     actionTriggers: [],
     sequentialTriggers: [],
   },
