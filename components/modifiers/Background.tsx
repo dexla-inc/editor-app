@@ -1,3 +1,4 @@
+import { GradientPicker } from "@/components/GradientSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
@@ -67,6 +68,10 @@ export const Modifier = withModifier(
                 bg: value,
               });
             }}
+          />
+          <GradientPicker
+            getValue={() => form.getInputProps("background").value}
+            setFieldValue={setFieldValue}
           />
           <TextInput
             label="Image"

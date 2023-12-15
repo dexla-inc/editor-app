@@ -140,6 +140,8 @@ export const requiredModifiers: RequiredModifiers = {
     backgroundPositionX: "0%",
     backgroundPositionY: "0%",
     backgroundAttachment: "scroll",
+    background:
+      "linear-gradient(90deg, #ffffff00 0%, #00000000 50%, #00ff0000 100%)",
   },
   input: {
     size: "sm",
