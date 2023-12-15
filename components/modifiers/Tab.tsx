@@ -6,18 +6,24 @@ import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutKanban } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconLayoutKanban;
 export const label = "Tab";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.tab, {
-        value: selectedComponent?.props?.value,
-        icon: selectedComponent?.props?.icon,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.tab, {
+          value: selectedComponent?.props?.value,
+          icon: selectedComponent?.props?.icon,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>
@@ -35,7 +41,7 @@ export const Modifier = withModifier(
           />
           <IconSelector
             topLabel="Icon"
-            selectedIcon={form.values.icon}
+            selectedIcon={form.values.icon as string}
             onIconSelect={(value: string) => {
               form.setFieldValue("icon", value);
               debouncedTreeUpdate(selectedComponentIds, {

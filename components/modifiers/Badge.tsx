@@ -7,22 +7,28 @@ import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconIdBadge } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconIdBadge;
 export const label = "Badge";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.badge, {
-        value: selectedComponent.props?.children,
-        type: selectedComponent.props?.type,
-        variant: selectedComponent.props?.variant,
-        size: selectedComponent.props?.size,
-        radius: selectedComponent.props?.radius,
-        color: selectedComponent.props?.color,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.badge, {
+          value: selectedComponent.props?.children,
+          type: selectedComponent.props?.type,
+          variant: selectedComponent.props?.variant,
+          size: selectedComponent.props?.size,
+          radius: selectedComponent.props?.radius,
+          color: selectedComponent.props?.color,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>

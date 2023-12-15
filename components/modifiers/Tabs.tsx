@@ -8,22 +8,28 @@ import { Group, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutKanban } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconLayoutKanban;
 export const label = "Tabs";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.tabs, {
-        defaultValue: selectedComponent?.props?.defaultValue,
-        variant: selectedComponent?.props?.variant,
-        orientation: selectedComponent?.props?.orientation,
-        radius: selectedComponent?.props?.radius,
-        color: selectedComponent?.props?.color,
-        grow: selectedComponent?.props?.grow,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.tabs, {
+          defaultValue: selectedComponent?.props?.defaultValue,
+          variant: selectedComponent?.props?.variant,
+          orientation: selectedComponent?.props?.orientation,
+          radius: selectedComponent?.props?.radius,
+          color: selectedComponent?.props?.color,
+          grow: selectedComponent?.props?.grow,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>

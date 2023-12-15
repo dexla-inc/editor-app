@@ -16,6 +16,7 @@ import { Flex, SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconShadow } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconShadow;
 export const label = "Shadow";
@@ -42,16 +43,21 @@ export const Modifier = withModifier(
     const spread = values[4];
     const color = values.slice(5).join(" ");
 
-    const form = useForm({
-      initialValues: merge({}, defaultBoxShadowValues, {
-        inset,
-        xOffset,
-        yOffset,
-        blur,
-        spread,
-        color: getThemeColor(theme, color),
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, defaultBoxShadowValues, {
+          inset,
+          xOffset,
+          yOffset,
+          blur,
+          spread,
+          color: getThemeColor(theme, color),
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     const themeShadowColor = (_value: string) => {
       const [color, index] = _value.split(".");

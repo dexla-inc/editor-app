@@ -15,6 +15,7 @@ import {
   IconLayoutColumns,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const initialValues = requiredModifiers.gridColumn;
 
@@ -23,13 +24,18 @@ export const icon = IconLayoutColumns;
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, initialValues, {
-        alignSelf: selectedComponent.props?.style?.alignSelf,
-        gridAutoFlow: selectedComponent.props?.style?.gridAutoFlow,
-        gap: selectedComponent.props?.style?.gap,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, initialValues, {
+          alignSelf: selectedComponent.props?.style?.alignSelf,
+          gridAutoFlow: selectedComponent.props?.style?.gridAutoFlow,
+          gap: selectedComponent.props?.style?.gap,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>
