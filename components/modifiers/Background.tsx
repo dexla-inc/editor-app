@@ -56,7 +56,7 @@ export const Modifier = withModifier(
         }),
       );
       setBackgroundType(
-        selectedComponent.props?.bg.includes("gradient")
+        selectedComponent.props?.bg?.includes("gradient")
           ? "gradient"
           : "single",
       );

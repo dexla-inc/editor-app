@@ -130,6 +130,8 @@ const sectionMapper: SectionsMapper = {
 
 type Tab = "design" | "actions";
 
+const excludeComponentsForState = ["Text", "Title"];
+
 export const EditorAsideSections = () => {
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,
@@ -167,6 +169,8 @@ export const EditorAsideSections = () => {
     () => getComponentById(editorTree.root, selectedComponentId as string),
     [editorTree.root, selectedComponentId],
   );
+  const componentName = component?.name ?? "content-wrapper";
+
   const components = useMemo(
     () => getAllComponentsByIds(editorTree.root, selectedComponentIds!),
     [editorTree.root, selectedComponentIds],
@@ -203,8 +207,6 @@ export const EditorAsideSections = () => {
 
   const sections = mappedModifiers?.map((id) => {
     const modifier = sectionMapper[id];
-
-    const componentName = component?.name ?? "content-wrapper";
 
     return {
       id: id,
@@ -340,86 +342,90 @@ export const EditorAsideSections = () => {
       </Flex>
       {tab === "design" && (
         <Stack spacing="xs">
-          {selectedComponentId && (
-            <Stack spacing="xs" px="md">
-              {createState === undefined && (
-                <Flex gap="10px" align="flex-end">
-                  <Select
-                    style={{ flex: "1" }}
-                    value={currentState}
-                    size="xs"
-                    label="State"
-                    data={getComponentsStates()}
-                    placeholder="Select State"
-                    nothingFound="Nothing found"
-                    searchable
-                    onChange={(value: string) => {
-                      setTreeComponentCurrentState(selectedComponentId, value);
-                    }}
-                    {...AUTOCOMPLETE_OFF_PROPS}
-                  />
-                  <ActionIconDefault
-                    iconName="IconPlus"
-                    tooltip="Create new state"
-                    onClick={() => {
-                      setCreateState("");
-                    }}
-                  />
-                  {currentState !== "default" && (
-                    <ActionIconDefault
-                      iconName="IconRefresh"
-                      tooltip="Revert to default settings"
-                      onClick={onClickResetToDefault}
-                    />
-                  )}
-                </Flex>
-              )}
-              {createState !== undefined && (
-                <Flex gap="10px" align="flex-end">
-                  <TextInput
-                    style={{ flex: "1" }}
-                    size="xs"
-                    label="State Name"
-                    placeholder="My New State"
-                    value={createState}
-                    onChange={(event) => {
-                      setCreateState(event.currentTarget.value);
-                    }}
-                  />
-                  <Tooltip label={`Cancel`}>
-                    <ActionIcon
-                      variant="default"
-                      size="1.875rem"
-                      onClick={() => setCreateState(undefined)}
-                    >
-                      <IconX size="1rem" />
-                    </ActionIcon>
-                  </Tooltip>
-                  <Tooltip label={`Save new state`}>
-                    <ActionIcon
-                      color="teal"
-                      variant="filled"
-                      size="1.875rem"
-                      onClick={() => {
+          {selectedComponentId &&
+            !excludeComponentsForState.includes(componentName) && (
+              <Stack spacing="xs" px="md">
+                {createState === undefined && (
+                  <Flex gap="10px" align="flex-end">
+                    <Select
+                      style={{ flex: "1" }}
+                      value={currentState}
+                      size="xs"
+                      label="State"
+                      data={getComponentsStates()}
+                      placeholder="Select State"
+                      nothingFound="Nothing found"
+                      searchable
+                      onChange={(value: string) => {
                         setTreeComponentCurrentState(
                           selectedComponentId,
-                          createState,
+                          value,
                         );
-                        updateTreeComponent({
-                          componentId: selectedComponentId,
-                          props: {},
-                          save: true,
-                        });
-                        setCreateState(undefined);
                       }}
-                    >
-                      <IconCheck size="1rem" />
-                    </ActionIcon>
-                  </Tooltip>
-                </Flex>
-              )}
-            </Stack>
-          )}
+                      {...AUTOCOMPLETE_OFF_PROPS}
+                    />
+                    <ActionIconDefault
+                      iconName="IconPlus"
+                      tooltip="Create new state"
+                      onClick={() => {
+                        setCreateState("");
+                      }}
+                    />
+                    {currentState !== "default" && (
+                      <ActionIconDefault
+                        iconName="IconRefresh"
+                        tooltip="Revert to default settings"
+                        onClick={onClickResetToDefault}
+                      />
+                    )}
+                  </Flex>
+                )}
+                {createState !== undefined && (
+                  <Flex gap="10px" align="flex-end">
+                    <TextInput
+                      style={{ flex: "1" }}
+                      size="xs"
+                      label="State Name"
+                      placeholder="My New State"
+                      value={createState}
+                      onChange={(event) => {
+                        setCreateState(event.currentTarget.value);
+                      }}
+                    />
+                    <Tooltip label={`Cancel`}>
+                      <ActionIcon
+                        variant="default"
+                        size="1.875rem"
+                        onClick={() => setCreateState(undefined)}
+                      >
+                        <IconX size="1rem" />
+                      </ActionIcon>
+                    </Tooltip>
+                    <Tooltip label={`Save new state`}>
+                      <ActionIcon
+                        color="teal"
+                        variant="filled"
+                        size="1.875rem"
+                        onClick={() => {
+                          setTreeComponentCurrentState(
+                            selectedComponentId,
+                            createState,
+                          );
+                          updateTreeComponent({
+                            componentId: selectedComponentId,
+                            props: {},
+                            save: true,
+                          });
+                          setCreateState(undefined);
+                        }}
+                      >
+                        <IconCheck size="1rem" />
+                      </ActionIcon>
+                    </Tooltip>
+                  </Flex>
+                )}
+              </Stack>
+            )}
 
           <Stack spacing="xs">{designSections}</Stack>
         </Stack>
