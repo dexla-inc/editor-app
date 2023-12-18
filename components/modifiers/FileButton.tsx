@@ -8,7 +8,7 @@ import merge from "lodash.merge";
 import { ChangeEvent, useEffect } from "react";
 
 export const icon = IconFileUpload;
-export const label = "File";
+export const label = "File Upload";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
