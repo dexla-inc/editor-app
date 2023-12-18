@@ -1,3 +1,4 @@
+import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { SidebarSection } from "@/components/SidebarSection";
 import { ActionsFlow } from "@/components/actions/ActionsFlow";
 import * as AccordionModifier from "@/components/modifiers/Accordion";
@@ -71,10 +72,9 @@ import {
   IconCheck,
   IconX,
 } from "@tabler/icons-react";
+import intersection from "lodash.intersection";
 import startCase from "lodash.startcase";
-import intersection from "lodash/intersection";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { ActionIconDefault } from "../ActionIconDefault";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
