@@ -1,3 +1,4 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
@@ -16,7 +17,6 @@ import {
 } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { IconTrash } from "@tabler/icons-react";
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
 type Props = {
   form: UseFormReturnType<FormValues>;
@@ -88,7 +88,7 @@ export const TogglePropsFlowActionForm = ({ form }: Props) => {
                   size="xs"
                   label={
                     <Flex justify="space-between" align="center">
-                      Toggle when{" "}
+                      Toggle when
                       <ActionIcon
                         onClick={() => {
                           form.removeListItem("conditionRules", i);

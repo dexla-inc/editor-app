@@ -8,12 +8,12 @@ import {
   Component,
   addComponent,
   debouncedTreeUpdate,
+  debouncedTreeUpdateStates,
   getComponentById,
   getComponentIndex,
   getComponentParent,
   removeComponent,
   removeComponentFromParent,
-  debouncedTreeUpdateStates,
 } from "@/utils/editor";
 import {
   IconBoxMargin,
@@ -26,8 +26,8 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
-import { useCallback } from "react";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
+import { useCallback } from "react";
 
 const determinePasteTarget = (selectedId: string | undefined) => {
   if (!selectedId) return "content-wrapper";
@@ -112,9 +112,11 @@ export const useComponentContextMenu = () => {
 
   const deleteComponent = useCallback(
     (component: Component) => {
+      console.log(component);
       if (
         component.id &&
         component.id !== "root" &&
+        component.id !== "main-content" &&
         component.id !== "content-wrapper"
       ) {
         const copy = cloneDeep(editorTree);
