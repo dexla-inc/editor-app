@@ -207,7 +207,6 @@ export const ChangeHistoryPopover: FC = () => {
                         {item.name}
                       </Text>
                       <Text component="span" size="xs" color={color}>
-                        {" "}
                         (
                         {convertTimestampToTimeTaken(
                           item.timestamp || Date.now(),

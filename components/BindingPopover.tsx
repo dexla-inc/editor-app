@@ -1,11 +1,17 @@
 import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea";
 import { Icon } from "@/components/Icon";
+import { ObjectDetails } from "@/components/PropsListing";
+import { listVariables } from "@/requests/variables/queries";
+import { useEditorStore } from "@/stores/editor";
+import { getAllComponentsByName } from "@/utils/editor";
 import {
   ActionIcon,
   Box,
+  Button,
   Center,
   Flex,
   Popover,
+  ScrollArea,
   SegmentedControl,
   Stack,
   Text,
@@ -13,18 +19,11 @@ import {
   Textarea,
   Title,
   useMantineTheme,
-  Button,
-  List,
-  ScrollArea,
 } from "@mantine/core";
-import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { listVariables } from "@/requests/variables/queries";
-import { useRouter } from "next/router";
-import { ObjectDetails } from "@/components/PropsListing";
 import { pick } from "next/dist/lib/pick";
-import { getAllComponentsByName } from "@/utils/editor";
-import { useEditorStore } from "@/stores/editor";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 const TAB_TEXT_SIZE = "xs";
 const ML = 10;
@@ -178,7 +177,7 @@ export default function BindingPopover({
             <ActionIcon variant="light" radius="xl">
               <Icon name="IconCopy" />
             </ActionIcon>
-          </Flex>{" "}
+          </Flex>
           <Box>
             <Text size="sm" fw={500} pb={2}>
               {bindingType}
