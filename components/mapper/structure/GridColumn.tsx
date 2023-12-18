@@ -13,7 +13,7 @@ export const jsonStructure = (props?: any): Component => {
       span: GRID_SIZE / 2,
       style: {
         ...initialValues,
-        height: "auto",
+        height: "100%",
         outline: GRAY_OUTLINE,
         outlineOffset: "-2px",
       },

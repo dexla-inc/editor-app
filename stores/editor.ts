@@ -42,6 +42,7 @@ export const emptyEditorTree = {
         description: "Body",
         props: {
           gridSize: GRID_SIZE,
+          gridDirection: "column",
           style: {
             gap: "0",
             minHeight: "20px",

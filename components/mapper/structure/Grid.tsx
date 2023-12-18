@@ -14,6 +14,7 @@ export const jsonStructure = (props?: any): Component => {
       m: 0,
       p: 0,
       gridSize: GRID_SIZE,
+      gridDirection: "column",
       gap: "xs",
       style: {
         ...initialGridValues,
@@ -30,7 +31,7 @@ export const jsonStructure = (props?: any): Component => {
           span: GRID_SIZE / 2,
           style: {
             ...initialGridColumnValues,
-            height: "auto",
+            height: "100%",
             outline: GRAY_OUTLINE,
             outlineOffset: "-2px",
           },
@@ -44,7 +45,7 @@ export const jsonStructure = (props?: any): Component => {
           span: GRID_SIZE / 2,
           style: {
             ...initialGridColumnValues,
-            height: "auto",
+            height: "100%",
             outline: GRAY_OUTLINE,
             outlineOffset: "-2px",
           },

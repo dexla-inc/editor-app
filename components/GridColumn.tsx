@@ -48,6 +48,9 @@ export const GridColumn = forwardRef(
         : parent?.props?.gap ?? theme.spacing.xs,
     );
 
+    const isParentGridDirectionColumn =
+      parent?.props?.gridDirection === "column";
+
     return (
       <>
         <Box
@@ -57,6 +60,9 @@ export const GridColumn = forwardRef(
           display="grid"
           style={{
             gridColumn: `span ${isResizing ? columnSpans[props.id] : span}`,
+            gridRow: !isParentGridDirectionColumn
+              ? `span ${isResizing ? columnSpans[props.id] : span}`
+              : undefined,
             gap: theme.spacing.xs,
             ...(style ?? {}),
           }}

@@ -884,7 +884,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <GridColumn component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["gridColumn", "spacing", "background", "effects"],
+    modifiers: ["gridColumn", "size", "spacing", "background", "effects"],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

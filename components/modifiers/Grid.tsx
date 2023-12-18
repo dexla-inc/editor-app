@@ -1,8 +1,11 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeComponentStyleUpdate } from "@/utils/editor";
+import {
+  debouncedTreeComponentStyleUpdate,
+  debouncedTreeUpdate,
+} from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Stack } from "@mantine/core";
+import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutGrid } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -22,6 +25,7 @@ export const Modifier = withModifier(
         merge({}, initialValues, {
           gap: selectedComponent?.props?.style?.gap,
           alignSelf: selectedComponent?.props?.style?.alignSelf,
+          gridDirection: selectedComponent?.props?.gridDirection,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -37,6 +41,28 @@ export const Modifier = withModifier(
               form.setFieldValue("gap", value as string);
               debouncedTreeComponentStyleUpdate(selectedComponentIds, {
                 gap: value as string,
+              });
+            }}
+          />
+          <Select
+            label="Direction"
+            data={[
+              {
+                label: "Column",
+                value: "column",
+              },
+              {
+                label: "Row",
+                value: "row",
+              },
+            ]}
+            size="xs"
+            {...form.getInputProps("gridDirection")}
+            onChange={(value) => {
+              form.setFieldValue("gridDirection", value as string);
+              console.log({ value });
+              debouncedTreeUpdate(selectedComponentIds, {
+                gridDirection: value as string,
               });
             }}
           />

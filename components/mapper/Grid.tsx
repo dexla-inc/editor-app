@@ -19,14 +19,20 @@ const GridComponent = forwardRef(
     const theme = useMantineTheme();
     const editorTree = useEditorStore((state) => state.tree);
     const setEditorTree = useEditorStore((state) => state.setTree);
-    const { style = {}, gridSize, navbarWidth } = component.props!;
+    const {
+      style = {},
+      gridSize,
+      gridDirection,
+      navbarWidth,
+    } = component.props!;
 
-    const defaultGridTemplateColumns = `repeat(${gridSize ?? GRID_SIZE}, 1fr)`;
+    const isColumns = gridDirection === "column";
+    const defaultGridTemplate = `repeat(${gridSize ?? GRID_SIZE}, 1fr)`;
 
-    const gridTemplateColumns =
+    const gridTemplate =
       navbarWidth !== undefined && component.id === "content-wrapper"
-        ? `${navbarWidth} ${defaultGridTemplateColumns}`
-        : defaultGridTemplateColumns;
+        ? `${navbarWidth} ${defaultGridTemplate}`
+        : defaultGridTemplate;
 
     const gap = props?.style?.gap
       ? theme.spacing[props.style?.gap as string]
@@ -57,8 +63,9 @@ const GridComponent = forwardRef(
           ...props.style,
           ...style,
           gap: gapValue,
-          gridTemplateColumns:
-            gridTemplateColumns ?? defaultGridTemplateColumns,
+          ...(isColumns
+            ? { gridTemplateColumns: gridTemplate ?? defaultGridTemplate }
+            : { gridTemplateRows: gridTemplate ?? defaultGridTemplate }),
         }}
       >
         {component.children &&
