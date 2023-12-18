@@ -14,7 +14,7 @@ import {
 import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
 import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
-import { HEADER_HEIGHT } from "@/utils/config";
+import { CURSOR_COLORS, HEADER_HEIGHT } from "@/utils/config";
 import {
   Component,
   addComponent,
@@ -38,11 +38,22 @@ const EditableComponentContainer = ({ children, component }: any) => {
     (state) => state.selectedComponentIds?.includes(component.id),
   );
 
+  const selectedByOther = useEditorStore((state) => {
+    const other = state.liveblocks?.others?.find(({ presence }: any) => {
+      return presence.selectedComponentIds?.includes(component.id);
+    });
+
+    if (!other) return null;
+
+    return CURSOR_COLORS[other.connectionId % CURSOR_COLORS.length];
+  });
+
   return (
     <EditableComponent
       id={component.id!}
       component={component}
       isSelected={isSelected}
+      selectedByOther={selectedByOther ?? undefined}
     >
       {children}
     </EditableComponent>
@@ -53,6 +64,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const undo = useTemporalStore((state) => state.undo);
   const redo = useTemporalStore((state) => state.redo);
   const pastStates = useTemporalStore((state) => state.pastStates);
+  const setCursor = useEditorStore((state) => state.setCursor);
   const copiedComponent = useEditorStore((state) => state.copiedComponent);
   const setCopiedComponent = useEditorStore(
     (state) => state.setCopiedComponent,
@@ -362,6 +374,14 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
           overflow: "hidden",
         }}
         p={0}
+        onPointerMove={(event) => {
+          event.preventDefault();
+          setCursor({
+            x: Math.round(event.clientX),
+            y: Math.round(event.clientY),
+          });
+        }}
+        onPointerLeave={() => setCursor(undefined)}
       >
         <IFrame projectId={projectId}>{renderTree(treeRoot)}</IFrame>
       </Box>

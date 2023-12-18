@@ -15,3 +15,13 @@ export const GPT4_VISION_MODEL = "gpt-4-vision-preview";
 export const GPT35_TURBO_1106_MODEL = "gpt-3.5-turbo-1106";
 export const GPT35_TURBO_16K_MODEL = "gpt-3.5-turbo-16k";
 export const GPT35_TURBO_MODEL = "gpt-3.5-turbo";
+export const CURSOR_COLORS = [
+  "#E57373",
+  "#9575CD",
+  "#4FC3F7",
+  "#81C784",
+  "#FFF176",
+  "#FF8A65",
+  "#F06292",
+  "#7986CB",
+];

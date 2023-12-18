@@ -39,6 +39,7 @@ export default function InitialPane({
 }: InitialPaneProps) {
   const theme = useMantineTheme();
   const resetTree = useEditorStore((state) => state.resetTree);
+  const liveblocks = useEditorStore((state) => state.liveblocks);
   const { color, background, hoveredBackground, hoveredColor, whiteColor } = {
     color: theme.colorScheme === "dark" ? GRAY_WHITE_COLOR : theme.black,
     background: theme.colorScheme === "dark" ? DARK_COLOR : GRAY_WHITE_COLOR,
@@ -72,6 +73,8 @@ export default function InitialPane({
               component={Link}
               href={`/projects/${projectId}/editor/${page.id}`}
               onClick={() => {
+                liveblocks.leaveRoom();
+                resetTree();
                 currentPage !== page.id && resetTree();
               }}
             >

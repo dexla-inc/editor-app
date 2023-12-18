@@ -17,6 +17,8 @@
     "@faker-js/faker": "6.1.2",
     "@formkit/auto-animate": "^0.8.0",
     "@iarna/toml": "^2.2.5",
+    "@liveblocks/client": "^1.8.2",
+    "@liveblocks/zustand": "^1.8.2",
     "@mantine/core": "^6.0.21",
     "@mantine/dates": "6.0.21",
     "@mantine/dropzone": "6.0.21",

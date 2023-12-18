@@ -7,10 +7,12 @@ import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { globalStyles } from "@/utils/branding";
 import {
   ASIDE_WIDTH,
+  CURSOR_COLORS,
   HEADER_HEIGHT,
   NAVBAR_MIN_WIDTH,
   NAVBAR_WIDTH,
@@ -29,6 +31,7 @@ import {
 } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
+import { Cursor } from "@/components/Cursor";
 
 type Props = {
   projectId: string;
@@ -36,10 +39,12 @@ type Props = {
 };
 
 export const Editor = ({ projectId, pageId }: Props) => {
+  const liveblocks = useEditorStore((state) => state.liveblocks);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
+  const setCurrentUser = useEditorStore((state) => state.setCurrentUser);
 
   const isLoading = useAppStore((state) => state.isLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
@@ -47,6 +52,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
+  const user = usePropelAuthStore((state) => state.user);
 
   useGetPageData({ projectId, pageId });
 
@@ -73,6 +79,22 @@ export const Editor = ({ projectId, pageId }: Props) => {
     // we don't unnnecessary rerendering of the editor
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setEditorTree]);
+
+  useEffect(() => {
+    if (pageId) {
+      liveblocks.leaveRoom();
+      liveblocks.enterRoom(pageId);
+    }
+
+    return () => {
+      liveblocks.leaveRoom();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageId]);
+
+  useEffect(() => {
+    setCurrentUser(user);
+  }, [user, setCurrentUser]);
 
   return (
     <>
@@ -152,6 +174,28 @@ export const Editor = ({ projectId, pageId }: Props) => {
         )}
         <EditorCanvas projectId={projectId} />
       </Shell>
+      {
+        /**
+         * Iterate over other users and display a cursor based on their presence
+         */
+        liveblocks.others.map(({ connectionId, presence }) => {
+          const cursor = presence.cursor as { x: number; y: number };
+          if (!cursor) {
+            return null;
+          }
+
+          return (
+            <Cursor
+              key={`cursor-${connectionId}`}
+              // connectionId is an integer that is incremented at every new connections
+              // Assigning a color with a modulo makes sure that a specific user has the same colors on every clients
+              color={CURSOR_COLORS[connectionId % CURSOR_COLORS.length]}
+              x={cursor.x}
+              y={cursor.y}
+            />
+          );
+        })
+      }
     </>
   );
 };

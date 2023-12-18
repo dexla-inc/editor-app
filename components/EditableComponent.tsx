@@ -29,6 +29,7 @@ type Props = {
   id: string;
   component: Component;
   isSelected?: boolean;
+  selectedByOther?: string;
 } & BoxProps;
 
 const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
@@ -38,9 +39,9 @@ export const EditableComponent = ({
   children,
   component,
   isSelected,
+  selectedByOther,
 }: PropsWithChildren<Props>) => {
   const router = useRouter();
-
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setComponentToBind = useEditorStore(
@@ -171,7 +172,11 @@ export const EditableComponent = ({
   const isPicking = pickingComponentToBindFrom || pickingComponentToBindTo;
   const isOver = currentTargetId === id;
   const isHighlighted = highlightedComponentId === id;
-  const baseShadow = isPicking ? ORANGE_BASE_SHADOW : GREEN_BASE_SHADOW;
+  const baseShadow = isPicking
+    ? ORANGE_BASE_SHADOW
+    : selectedByOther
+    ? `0 0 0 2px ${selectedByOther}`
+    : GREEN_BASE_SHADOW;
   const thinBaseShadow = isPicking
     ? THIN_ORANGE_BASE_SHADOW
     : THIN_GREEN_BASE_SHADOW;
@@ -184,18 +189,26 @@ export const EditableComponent = ({
     ? {
         boxShadow:
           edge === "top"
-            ? `0 -${DROP_INDICATOR_WIDTH}px 0 0 ${GREEN_COLOR}, ${baseShadow}`
+            ? `0 -${DROP_INDICATOR_WIDTH}px 0 0 ${
+                selectedByOther ?? GREEN_COLOR
+              }, ${baseShadow}`
             : edge === "bottom"
-            ? `0 ${DROP_INDICATOR_WIDTH}px 0 0 ${GREEN_COLOR}, ${baseShadow}`
+            ? `0 ${DROP_INDICATOR_WIDTH}px 0 0 ${
+                selectedByOther ?? GREEN_COLOR
+              }, ${baseShadow}`
             : edge === "left"
-            ? `-${DROP_INDICATOR_WIDTH}px 0 0 0 ${GREEN_COLOR}, ${baseShadow}`
+            ? `-${DROP_INDICATOR_WIDTH}px 0 0 0 ${
+                selectedByOther ?? GREEN_COLOR
+              }, ${baseShadow}`
             : edge === "right"
-            ? `${DROP_INDICATOR_WIDTH}px 0 0 0 ${GREEN_COLOR}, ${baseShadow}`
+            ? `${DROP_INDICATOR_WIDTH}px 0 0 0 ${
+                selectedByOther ?? GREEN_COLOR
+              }, ${baseShadow}`
             : baseShadow,
-        background: edge === "center" ? GREEN_COLOR : "none",
+        background: edge === "center" ? selectedByOther ?? GREEN_COLOR : "none",
         opacity: edge === "center" ? 0.4 : 1,
       }
-    : isSelected
+    : isSelected || selectedByOther
     ? { boxShadow: baseShadow }
     : {};
 
