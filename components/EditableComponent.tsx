@@ -79,6 +79,17 @@ export const EditableComponent = ({
   const { componentContextMenu, forceDestroyContextMenu } =
     useComponentContextMenu();
 
+  const handleContextMenu = (event: any) => {
+    // Open the default context menu if the user is holding down a key
+    if (event.shiftKey || event.ctrlKey || event.metaKey) {
+      return;
+    }
+
+    // Open our own context menu
+    event.preventDefault();
+    componentContextMenu(component)(event);
+  };
+
   const actions: Action[] = component.actions ?? [];
   const onMountAction: Action | undefined = actions.find(
     (action: Action) => action.trigger === "onMount",
@@ -363,7 +374,7 @@ export const EditableComponent = ({
           ...(isPreviewMode
             ? {}
             : {
-                // onContextMenu: componentContextMenu(component),
+                onContextMenu: handleContextMenu,
               }),
         },
       )}
