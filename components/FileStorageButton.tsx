@@ -35,6 +35,7 @@ export const FileStorageButton = () => {
         onClose={close}
         scrollAreaComponent={ScrollArea.Autosize}
         xOffset={10}
+        zIndex={300}
       >
         <Modal.Overlay />
         <Modal.Content h="100%">
