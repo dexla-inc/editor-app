@@ -251,93 +251,48 @@ export const Modifier = withModifier(
               }}
             />
           </Group>
-          <Group noWrap>
-            <Stack w="100%" spacing={2}>
-              <TopLabel text="Text Wrap" />
-              <SegmentedControl
-                size="xs"
-                data={[
-                  {
-                    label: (
-                      <StylingPaneItemIcon
-                        label="Off"
-                        icon={<IconX size={14} />}
-                      />
-                    ),
-                    value: "nowrap",
-                  },
-                  {
-                    label: (
-                      <StylingPaneItemIcon
-                        label="On"
-                        icon={<IconCheck size={14} />}
-                      />
-                    ),
-                    value: "normal",
-                  },
-                ]}
-                styles={{
-                  label: {
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
-                  },
-                }}
-                {...form.getInputProps("textWrap")}
-                onChange={(value) => {
-                  form.setFieldValue("textWrap", value as string);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    style: { whiteSpace: value },
-                  });
-                }}
-              />
-            </Stack>
-            {showTruncateProp && (
-              <Stack w="100%" spacing={2}>
-                <TopLabel text="Ellipsis" />
-                <SegmentedControl
-                  size="xs"
-                  data={[
-                    {
-                      label: (
-                        <StylingPaneItemIcon
-                          label="Off"
-                          icon={<IconX size={14} />}
-                        />
-                      ),
-                      value: "false",
-                    },
-                    {
-                      label: (
-                        <StylingPaneItemIcon
-                          label="On"
-                          icon={<IconCheck size={14} />}
-                        />
-                      ),
-                      value: "true",
-                    },
-                  ]}
-                  styles={{
-                    label: {
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100%",
-                    },
-                  }}
-                  {...form.getInputProps("truncate")}
-                  onChange={(value) => {
-                    form.setFieldValue("truncate", value as string);
-                    const _value = value === "true" ? true : false;
-                    debouncedTreeUpdate(selectedComponentIds, {
-                      truncate: _value,
-                    });
-                  }}
-                />
-              </Stack>
-            )}
-          </Group>
+          <Stack w="100%" spacing={2}>
+            <TopLabel text="Text Wrap" />
+            <SegmentedControl
+              size="xs"
+              data={[
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Off"
+                      icon={<IconX size={14} />}
+                    />
+                  ),
+                  value: "nowrap",
+                },
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="On"
+                      icon={<IconCheck size={14} />}
+                    />
+                  ),
+                  value: "normal",
+                },
+              ]}
+              styles={{
+                label: {
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                },
+              }}
+              {...form.getInputProps("textWrap")}
+              onChange={(value) => {
+                form.setFieldValue("textWrap", value as string);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  style: { whiteSpace: value },
+                  truncate: value === "normal" ? false : true,
+                });
+              }}
+            />
+          </Stack>
           <Stack spacing={2}>
             <TopLabel text="Alignment" />
             <SegmentedControl

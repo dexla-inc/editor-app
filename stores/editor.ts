@@ -68,7 +68,6 @@ export const emptyEditorTree = {
                 outline: GRAY_OUTLINE,
                 outlineOffset: "-2px",
                 height: "100vh",
-                background: "Background.6",
               },
             },
           },

@@ -1,8 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { Component, checkIfIsChild } from "@/utils/editor";
 import { Modal as MantineModal, ModalProps } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { useEffect } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -19,7 +17,7 @@ export const Modal = ({ renderTree, component, ...props }: Props) => {
   // const updateTreeComponent = useEditorStore(
   //   (state) => state.updateTreeComponent,
   // );
-  console.log(component);
+
   const { children, title, opened, forceHide, size, ...componentProps } =
     component.props as any;
 

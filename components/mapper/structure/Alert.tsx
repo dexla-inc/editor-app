@@ -23,6 +23,9 @@ export const jsonStructure = (props?: any): Component => {
         props: {
           order: 6,
           children: "Alert title",
+          style: {
+            marginBottom: "8px",
+          },
         },
       },
       {
@@ -39,6 +42,8 @@ export const jsonStructure = (props?: any): Component => {
         height: "auto",
         padding: "18px",
       },
+      icon: "IconAlertCircle",
+      color: "Danger.6",
       ...(props.props || {}),
     },
   };

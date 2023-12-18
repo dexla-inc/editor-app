@@ -1,3 +1,4 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { Icon } from "@/components/Icon";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
@@ -23,7 +24,6 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTrash } from "@tabler/icons-react";
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
 type Props = {
   id: string;
@@ -130,7 +130,7 @@ export const TogglePropsActionForm = ({ id }: Props) => {
                   size="xs"
                   label={
                     <Flex justify="space-between" align="center">
-                      Toggle when{" "}
+                      Toggle when
                       <ActionIcon
                         onClick={() => {
                           form.removeListItem("conditionRules", i);

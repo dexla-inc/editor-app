@@ -11,7 +11,6 @@ import {
   useEditorStore,
   useTemporalStore,
 } from "@/stores/editor";
-import { useUserConfigStore } from "@/stores/userConfig";
 import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
 import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
@@ -95,6 +94,8 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       const comp = getComponentById(copy.root, selectedComponentId);
       const parent = getComponentParent(copy.root, selectedComponentId);
       const grandParent = getComponentParent(copy.root, parent?.id!);
+
+      if (comp?.id === "content-wrapper" || comp?.id === "main-content") return;
 
       if (
         comp?.name === "GridColumn" &&

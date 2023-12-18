@@ -15,7 +15,7 @@ type Props = {
   ReactElement<"Button">;
 
 const ButtonComponent = forwardRef(
-  ({ renderTree, component, isPreviewMode, ...props }: Props, ref) => {
+  ({ renderTree, component, isPreviewMode, style, ...props }: Props, ref) => {
     const theme = useEditorStore((state) => state.theme);
 
     const {
@@ -25,7 +25,6 @@ const ButtonComponent = forwardRef(
       rightIcon,
       loading,
       textColor,
-      color,
       ...componentProps
     } = component.props as any;
 
@@ -38,17 +37,11 @@ const ButtonComponent = forwardRef(
         };
 
     const labelTextColor = getColorFromTheme(theme, textColor);
-    const backgroundColor = getColorFromTheme(theme, color);
 
     const borderColor = getColorFromTheme(theme, "Border.6");
-    const customStyle = merge(
-      { borderColor, borderWidth: "0px" },
-      props.style,
-      {
-        backgroundColor,
-        color: labelTextColor,
-      },
-    );
+    const customStyle = merge({ borderColor, borderWidth: "0px" }, style, {
+      color: labelTextColor,
+    });
 
     return (
       <MantineButton

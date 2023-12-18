@@ -8,7 +8,7 @@ import merge from "lodash.merge";
 import { ChangeEvent, useEffect } from "react";
 
 export const icon = IconFileUpload;
-export const label = "File";
+export const label = "File Upload";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
@@ -39,15 +39,13 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          {selectedComponent?.name === "fileButton" && (
-            <TextInput
-              size="xs"
-              label="Name"
-              name="name"
-              {...form.getInputProps("name")}
-              onChange={(e) => handleChange(e)}
-            />
-          )}
+          <TextInput
+            size="xs"
+            label="Name"
+            name="name"
+            {...form.getInputProps("name")}
+            onChange={(e) => handleChange(e)}
+          />
           <TextInput
             size="xs"
             label="Accept"
