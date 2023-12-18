@@ -135,6 +135,7 @@ const THIN_GRAY_OUTLINE = `1px solid ${GRAY_BORDER_COLOR}`;
 const THIN_GREEN_OUTLINE = `1px solid ${theme.colors.teal[6]}`;
 const THIN_DARK_OUTLINE = `1px solid ${theme.colors.dark[5]}`;
 const SELECTED = `1px solid ${GREEN_COLOR}`;
+const IDENTIFIER = `1px dashed ${GRAY_BORDER_COLOR}`;
 const HOVERED = theme.colors.gray[1];
 const DARK_MODE = theme.colors.dark[7];
 const DARK_COLOR = theme.colors.dark[6];
@@ -225,7 +226,7 @@ const hoverStyles = (styles: any) => {
       ...position,
       width: `calc(${position.width} + ${marginLeft ?? margin} + ${
         marginRight ?? margin
-      } + ${marginLeft ?? margin} + ${marginRight ?? margin})`,
+      })`,
       height: `calc(${position.height} + ${marginTop ?? margin} + ${
         marginBottom ?? margin
       })`,
@@ -257,6 +258,7 @@ export {
   GREEN_BORDER_COLOR,
   GREEN_COLOR,
   HOVERED,
+  IDENTIFIER,
   LIGHT_MODE,
   LINK_COLOR,
   ORANGE_BASE_SHADOW,
