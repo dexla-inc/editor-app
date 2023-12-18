@@ -32,7 +32,7 @@ import { SaveTemplateButton } from "@/components/SaveTemplateButton";
 import { VariablesButton } from "@/components/variables/VariablesButton";
 import { getPageList } from "@/requests/pages/queries";
 import { PageListResponse } from "@/requests/pages/types";
-import { useEditorStore } from "@/stores/editor";
+import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { flexStyles } from "@/utils/branding";
 import { useQuery } from "@tanstack/react-query";
@@ -57,6 +57,8 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   });
 
   const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
+  const clear = useTemporalStore((state) => state.clear);
+  console.log(router.query);
 
   return (
     <AppShell
@@ -66,8 +68,8 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
         <Header height={HEADER_HEIGHT} sx={{ zIndex: 110 }}>
           <Group h={HEADER_HEIGHT} px="xs" align="center" position="apart">
             <Group>
-              <Tooltip label="Back to dashboard" fz="xs">
-                <Link href="/projects">
+              <Tooltip withinPortal label="Back to dashboard" fz="xs">
+                <Link onClick={() => clear()} href="/projects">
                   <Logo />
                 </Link>
               </Tooltip>
