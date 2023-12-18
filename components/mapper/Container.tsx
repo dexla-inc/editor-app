@@ -1,6 +1,7 @@
 import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
+import { IDENTIFIER } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import isEmpty from "lodash.isempty";
@@ -14,6 +15,7 @@ type Props = {
 export const ContainerComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
     const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+    const isLive = useEditorStore((state) => state.isLive);
 
     const {
       children,
@@ -27,6 +29,13 @@ export const ContainerComponent = forwardRef(
     } = component.props as any;
 
     const data = !isPreviewMode ? undefined : dataProp?.value ?? dataProp;
+    const hasBorder =
+      componentProps?.style?.borderWidth ||
+      componentProps?.style?.borderTopWidth ||
+      componentProps?.style?.borderBottomWidth ||
+      componentProps?.style?.borderLeftWidth ||
+      componentProps?.style?.borderRightWidth;
+    const shouldRemoveBorder = isLive || isPreviewMode || hasBorder;
 
     if (loading) {
       return <MantineSkeleton height={300} />;
@@ -38,7 +47,11 @@ export const ContainerComponent = forwardRef(
         {...props}
         {...componentProps}
         {...triggers}
-        style={{ width: "100%", ...props.style }}
+        style={{
+          width: "100%",
+          ...props.style,
+          ...(shouldRemoveBorder ? {} : { border: IDENTIFIER }),
+        }}
         bg={bg}
       >
         <LoadingOverlay visible={loading} overlayBlur={2} />
