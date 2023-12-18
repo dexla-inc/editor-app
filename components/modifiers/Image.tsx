@@ -5,6 +5,7 @@ import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconPhoto } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconPhoto;
 export const label = "Image";
@@ -13,13 +14,18 @@ export const defaultImageValues = requiredModifiers.image;
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, defaultImageValues, {
-        src: selectedComponent?.props?.src,
-        alt: selectedComponent?.props?.alt,
-        fit: selectedComponent?.props?.style?.fit,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, defaultImageValues, {
+          src: selectedComponent?.props?.src,
+          alt: selectedComponent?.props?.alt,
+          fit: selectedComponent?.props?.style?.fit,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>

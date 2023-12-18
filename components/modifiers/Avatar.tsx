@@ -7,22 +7,28 @@ import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconUser } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconUser;
 export const label = "Avatar";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.avatar, {
-        value: selectedComponent.props?.children,
-        variant: selectedComponent.props?.variant,
-        src: selectedComponent.props?.src,
-        radius: selectedComponent.props?.radius,
-        size: selectedComponent.props?.size,
-        color: selectedComponent.props?.color,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.avatar, {
+          value: selectedComponent.props?.children,
+          variant: selectedComponent.props?.variant,
+          src: selectedComponent.props?.src,
+          radius: selectedComponent.props?.radius,
+          size: selectedComponent.props?.size,
+          color: selectedComponent.props?.color,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     const variantOptions: Record<string, string> = {
       Default: "default",

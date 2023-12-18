@@ -24,6 +24,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import { merge } from "lodash";
+import { useEffect } from "react";
 
 export const icon = IconLayout2;
 export const label = "Layout";
@@ -35,18 +36,23 @@ export const defaultLayoutValues = requiredModifiers.layout;
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, defaultLayoutValues, {
-        gap: selectedComponent.props?.gap ?? "xs",
-        flex: SHRINK_FLEX_DEFAULT,
-        display: selectedComponent.props?.style?.display,
-        position: selectedComponent.props?.style?.position,
-        flexWrap: selectedComponent.props?.style?.flexWrap,
-        flexDirection: selectedComponent.props?.style?.flexDirection,
-        alignItems: selectedComponent.props?.style?.alignItems,
-        justifyContent: selectedComponent.props?.style?.justifyContent,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, defaultLayoutValues, {
+          gap: selectedComponent.props?.gap ?? "xs",
+          flex: SHRINK_FLEX_DEFAULT,
+          display: selectedComponent.props?.style?.display,
+          position: selectedComponent.props?.style?.position,
+          flexWrap: selectedComponent.props?.style?.flexWrap,
+          flexDirection: selectedComponent.props?.style?.flexDirection,
+          alignItems: selectedComponent.props?.style?.alignItems,
+          justifyContent: selectedComponent.props?.style?.justifyContent,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form key={selectedComponent?.id}>

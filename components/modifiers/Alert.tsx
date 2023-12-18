@@ -7,18 +7,24 @@ import { useForm } from "@mantine/form";
 import { IconExclamationMark } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { IconSelector } from "../IconSelector";
+import { useEffect } from "react";
 
 export const icon = IconExclamationMark;
 export const label = "Alert";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.alert, {
-        color: selectedComponent.props?.color,
-        icon: selectedComponent.props?.icon,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.alert, {
+          color: selectedComponent.props?.color,
+          icon: selectedComponent.props?.icon,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>

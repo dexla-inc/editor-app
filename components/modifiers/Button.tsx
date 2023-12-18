@@ -11,6 +11,7 @@ import { SegmentedControl, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconClick;
 export const label = "Button";
@@ -18,28 +19,34 @@ export const label = "Button";
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const theme = useEditorStore((state) => state.theme);
-    const form = useForm({
-      initialValues: merge(
-        {},
-        requiredModifiers.button,
-        {
-          color: "Primary.6",
-          textColor: "PrimaryText.6",
-          compact: theme.hasCompactButtons,
-        },
-        {
-          value: selectedComponent.props?.children,
-          type: selectedComponent.props?.type,
-          variant: selectedComponent.props?.variant,
-          size: selectedComponent.props?.size,
-          icon: selectedComponent.props?.leftIcon,
-          compact: selectedComponent.props?.compact,
-          color: selectedComponent.props?.color,
-          textColor: selectedComponent.props?.textColor,
-          width: selectedComponent.props?.style?.width,
-        },
-      ),
-    });
+    // console.log(selectedComponent);
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge(
+          {},
+          requiredModifiers.button,
+          {
+            color: "Primary.6",
+            textColor: "PrimaryText.6",
+            compact: theme.hasCompactButtons,
+          },
+          {
+            value: selectedComponent.props?.children,
+            type: selectedComponent.props?.type,
+            variant: selectedComponent.props?.variant,
+            size: selectedComponent.props?.size,
+            icon: selectedComponent.props?.leftIcon,
+            compact: selectedComponent.props?.compact,
+            color: selectedComponent.props?.color,
+            textColor: selectedComponent.props?.textColor,
+            width: selectedComponent.props?.style?.width,
+          },
+        ),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>

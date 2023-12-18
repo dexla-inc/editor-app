@@ -30,6 +30,7 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import startCase from "lodash.startcase";
+import { useEffect } from "react";
 
 export const icon = IconBorderStyle;
 export const label = "Border";
@@ -62,57 +63,64 @@ export const Modifier = withModifier(
       style?.borderTopLeftRadius === style?.borderBottomLeftRadius &&
       style?.borderTopLeftRadius === style?.borderBottomRightRadius;
 
-    const form = useForm<Record<string, any>>({
-      initialValues: merge(
-        {},
-        {
-          showBorder: "all",
-          showRadius: isBorderRadiusAllSame ? "radius-all" : "radius-sides",
-          ...defaultBorderValues,
-        },
-        {
-          borderStyle: selectedComponent.props?.style?.borderStyle,
-          borderTopStyle: selectedComponent.props?.style?.borderTopStyle,
-          borderRightStyle: selectedComponent.props?.style?.borderRightStyle,
-          borderBottomStyle: selectedComponent.props?.style?.borderBottomStyle,
-          borderLeftStyle: selectedComponent.props?.style?.borderLeftStyle,
-          borderColor: getThemeColor(
-            theme,
-            selectedComponent.props?.style?.borderColor,
-          ),
-          borderTopColor: getThemeColor(
-            theme,
-            selectedComponent.props?.style?.borderTopColor,
-          ),
-          borderRightColor: getThemeColor(
-            theme,
-            selectedComponent.props?.style?.borderRightColor,
-          ),
-          borderBottomColor: getThemeColor(
-            theme,
-            selectedComponent.props?.style?.borderBottomColor,
-          ),
-          borderLeftColor: getThemeColor(
-            theme,
-            selectedComponent.props?.style?.borderLeftColor,
-          ),
-          borderRadius: selectedComponent.props?.style?.borderRadius,
-          borderTopLeftRadius:
-            selectedComponent.props?.style?.borderTopLeftRadius,
-          borderTopRightRadius:
-            selectedComponent.props?.style?.borderTopRightRadius,
-          borderBottomLeftRadius:
-            selectedComponent.props?.style?.borderBottomLeftRadius,
-          borderBottomRightRadius:
-            selectedComponent.props?.style?.borderBottomRightRadius,
-          borderWidth: selectedComponent.props?.style?.borderWidth,
-          borderTopWidth: selectedComponent.props?.style?.borderTopWidth,
-          borderRightWidth: selectedComponent.props?.style?.borderRightWidth,
-          borderBottomWidth: selectedComponent.props?.style?.borderBottomWidth,
-          borderLeftWidth: selectedComponent.props?.style?.borderLeftWidth,
-        },
-      ),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge(
+          {},
+          {
+            showBorder: "all",
+            showRadius: isBorderRadiusAllSame ? "radius-all" : "radius-sides",
+            ...defaultBorderValues,
+          },
+          {
+            borderStyle: selectedComponent.props?.style?.borderStyle,
+            borderTopStyle: selectedComponent.props?.style?.borderTopStyle,
+            borderRightStyle: selectedComponent.props?.style?.borderRightStyle,
+            borderBottomStyle:
+              selectedComponent.props?.style?.borderBottomStyle,
+            borderLeftStyle: selectedComponent.props?.style?.borderLeftStyle,
+            borderColor: getThemeColor(
+              theme,
+              selectedComponent.props?.style?.borderColor,
+            ),
+            borderTopColor: getThemeColor(
+              theme,
+              selectedComponent.props?.style?.borderTopColor,
+            ),
+            borderRightColor: getThemeColor(
+              theme,
+              selectedComponent.props?.style?.borderRightColor,
+            ),
+            borderBottomColor: getThemeColor(
+              theme,
+              selectedComponent.props?.style?.borderBottomColor,
+            ),
+            borderLeftColor: getThemeColor(
+              theme,
+              selectedComponent.props?.style?.borderLeftColor,
+            ),
+            borderRadius: selectedComponent.props?.style?.borderRadius,
+            borderTopLeftRadius:
+              selectedComponent.props?.style?.borderTopLeftRadius,
+            borderTopRightRadius:
+              selectedComponent.props?.style?.borderTopRightRadius,
+            borderBottomLeftRadius:
+              selectedComponent.props?.style?.borderBottomLeftRadius,
+            borderBottomRightRadius:
+              selectedComponent.props?.style?.borderBottomRightRadius,
+            borderWidth: selectedComponent.props?.style?.borderWidth,
+            borderTopWidth: selectedComponent.props?.style?.borderTopWidth,
+            borderRightWidth: selectedComponent.props?.style?.borderRightWidth,
+            borderBottomWidth:
+              selectedComponent.props?.style?.borderBottomWidth,
+            borderLeftWidth: selectedComponent.props?.style?.borderLeftWidth,
+          },
+        ),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     const changeBorderColor = (_value: string) => {
       const [color, index] = _value.split(".");
@@ -132,7 +140,7 @@ export const Modifier = withModifier(
         form.setFieldValue("borderBottomColor", _value);
         form.setFieldValue("borderLeftColor", _value);
       } else {
-        const key = `border${startCase(form.values.showBorder)}Color`;
+        const key = `border${startCase(form.values.showBorder as string)}Color`;
         form.setFieldValue("borderColor", _value);
         form.setFieldValue(key, _value);
         borderColor = {
@@ -150,9 +158,9 @@ export const Modifier = withModifier(
       const key =
         form.values.showBorder === "all"
           ? "borderColor"
-          : `border${startCase(form.values.showBorder)}Color`;
+          : `border${startCase(form.values.showBorder as string)}Color`;
       let borderColor = {};
-      const [color, index] = form.values[key].split(".");
+      const [color, index] = form.getInputProps(key).value.split(".");
       const borderValue = index ? theme.colors[color][index] : color;
       borderColor = {
         [key]: borderValue,
@@ -175,7 +183,7 @@ export const Modifier = withModifier(
 
         // @ts-ignore
       } else {
-        const key = `border${startCase(form.values.showBorder)}Style`;
+        const key = `border${startCase(form.values.showBorder as string)}Style`;
         form.setFieldValue("borderStyle", value);
         form.setFieldValue(key, value);
         borderStyle = {
@@ -191,7 +199,7 @@ export const Modifier = withModifier(
       if (form.values.showBorder === "all") {
         return `border${startCase(val)}`;
       }
-      return `border${startCase(form.values.showBorder)}${val}`;
+      return `border${startCase(form.values.showBorder as string)}${val}`;
     };
 
     return (
@@ -360,7 +368,9 @@ export const Modifier = withModifier(
                   form.setFieldValue("borderBottomWidth", value);
                   form.setFieldValue("borderLeftWidth", value);
                 } else {
-                  const key = `border${startCase(form.values.showBorder)}Width`;
+                  const key = `border${startCase(
+                    form.values.showBorder as string,
+                  )}Width`;
                   form.setFieldValue("borderWidth", value);
                   form.setFieldValue(key, value);
                   borderWidth = {

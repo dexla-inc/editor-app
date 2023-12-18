@@ -501,7 +501,6 @@ export const closeDrawerAction = ({ action }: OpenDrawerActionParams) => {
 
 export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  console.log("action", action);
   updateTreeComponent({
     componentId: action.popOverId,
     props: { opened: true },

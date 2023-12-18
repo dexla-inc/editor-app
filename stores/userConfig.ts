@@ -59,13 +59,11 @@ export const useUserConfigStore = create<UserConfigState>()(
                 newValue.push(modifierName);
               }
 
-              const result = merge({}, initiallyOpenedModifiersByComponent, {
-                [componentType]: newValue,
-              });
+              initiallyOpenedModifiersByComponent[componentType] = newValue;
 
               return {
                 ...state,
-                initiallyOpenedModifiersByComponent: result,
+                initiallyOpenedModifiersByComponent,
               };
             },
             false,

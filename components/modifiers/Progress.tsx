@@ -8,20 +8,26 @@ import { IconLoader2 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { SizeSelector } from "../SizeSelector";
 import { SwitchSelector } from "../SwitchSelector";
+import { useEffect } from "react";
 
 export const icon = IconLoader2;
 export const label = "Progress";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.progress, {
-        color: selectedComponent.props?.color,
-        size: selectedComponent.props?.size,
-        value: selectedComponent.props?.value,
-        animate: selectedComponent.props?.animate,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.progress, {
+          color: selectedComponent.props?.color,
+          size: selectedComponent.props?.size,
+          value: selectedComponent.props?.value,
+          animate: selectedComponent.props?.animate,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>

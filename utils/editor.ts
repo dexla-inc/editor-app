@@ -572,7 +572,7 @@ export const updateTreeComponent = (
 
   const translatableFields = pickBy(props, pickTranslatableFields);
   const styleFields = pickBy(props, pickStyleFields);
-  const alwaysDefaultFields = omit(props, [
+  const alwaysDefaultFields = omit(props ?? {}, [
     ...translatableFieldsKeys,
     ...styleFieldsKeys,
   ]);

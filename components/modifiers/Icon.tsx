@@ -13,6 +13,7 @@ import { useForm } from "@mantine/form";
 import { IconTexture } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { SizeSelector } from "../SizeSelector";
+import { useEffect } from "react";
 
 export const icon = IconTexture;
 export const label = "Icon";
@@ -21,14 +22,19 @@ export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const theme = useEditorStore((state) => state.theme);
 
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.icon, {
-        color: getThemeColor(theme, selectedComponent.props?.color),
-        bg: selectedComponent.props?.bg,
-        icon: selectedComponent.props?.name,
-        size: selectedComponent.props?.size,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.icon, {
+          color: getThemeColor(theme, selectedComponent.props?.color),
+          bg: selectedComponent.props?.bg,
+          icon: selectedComponent.props?.name,
+          size: selectedComponent.props?.size,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     const handleColorChange = (_value: string) => {
       const [color, index] = _value.split(".");

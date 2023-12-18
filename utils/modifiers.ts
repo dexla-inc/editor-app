@@ -225,8 +225,8 @@ export const requiredModifiers: RequiredModifiers = {
     tooltip: "",
   },
   modal: {
-    title: "Modal Title",
     forceHide: false,
+    size: "md",
   },
   boxShadow: {
     inset: "",
@@ -346,18 +346,15 @@ export const requiredModifiers: RequiredModifiers = {
   dateInput: {
     label: "",
     placeholder: "DD MMM YYYY",
+    valueFormat: "DD MMM YYYY",
     description: "",
     radius: "sm",
     size: "sm",
     disabled: false,
     withAsterisk: false,
     clearable: false,
-    valueFormat: "",
     icon: "",
     labelSize: "sm",
-    labelWeight: "normal",
-    labelAlign: "left",
-    labelSpacing: "0",
   },
   chart: {
     data: "",

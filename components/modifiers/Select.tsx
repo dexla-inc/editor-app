@@ -8,26 +8,32 @@ import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconSelect } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconSelect;
 export const label = "Select";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.select, {
-        name: selectedComponent?.props?.name,
-        size: selectedComponent?.props?.size,
-        placeholder: selectedComponent?.props?.placeholder,
-        icon: selectedComponent?.props?.icon,
-        data: selectedComponent?.props?.data,
-        withAsterisk: selectedComponent?.props?.withAsterisk,
-        clearable: selectedComponent?.props?.clearable,
-        customText: selectedComponent?.props?.customText,
-        customLinkText: selectedComponent?.props?.customLinkText,
-        customLinkUrl: selectedComponent?.props?.customLinkUrl,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.select, {
+          name: selectedComponent?.props?.name,
+          size: selectedComponent?.props?.size,
+          placeholder: selectedComponent?.props?.placeholder,
+          icon: selectedComponent?.props?.icon,
+          data: selectedComponent?.props?.data,
+          withAsterisk: selectedComponent?.props?.withAsterisk,
+          clearable: selectedComponent?.props?.clearable,
+          customText: selectedComponent?.props?.customText,
+          customLinkText: selectedComponent?.props?.customLinkText,
+          customLinkUrl: selectedComponent?.props?.customLinkUrl,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     const setFieldValue = (key: any, value: any) => {
       form.setFieldValue(key, value);

@@ -5,17 +5,23 @@ import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutKanban } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconLayoutKanban;
 export const label = "Tabs Panel";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.tab, {
-        value: selectedComponent?.props?.value,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.tab, {
+          value: selectedComponent?.props?.value,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form>

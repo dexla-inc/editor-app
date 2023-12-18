@@ -6,22 +6,28 @@ import { Group, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconResize } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconResize;
 export const label = "Size";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.size, {
-        width: selectedComponent.props?.style?.width,
-        height: selectedComponent.props?.style?.height,
-        minWidth: selectedComponent.props?.style?.minWidth,
-        minHeight: selectedComponent.props?.style?.minHeight,
-        maxWidth: selectedComponent.props?.style?.maxWidth,
-        maxHeight: selectedComponent.props?.style?.maxHeight,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.size, {
+          width: selectedComponent.props?.style?.width,
+          height: selectedComponent.props?.style?.height,
+          minWidth: selectedComponent.props?.style?.minWidth,
+          minHeight: selectedComponent.props?.style?.minHeight,
+          maxWidth: selectedComponent.props?.style?.maxWidth,
+          maxHeight: selectedComponent.props?.style?.maxHeight,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form key={selectedComponent?.id}>

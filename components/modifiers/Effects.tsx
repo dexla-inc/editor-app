@@ -6,20 +6,26 @@ import { NumberInput, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTransform } from "@tabler/icons-react";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 export const icon = IconTransform;
 export const label = "Effects";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm({
-      initialValues: merge({}, requiredModifiers.effects, {
-        cursor: selectedComponent.props?.style?.cursor,
-        overflow: selectedComponent.props?.style?.overflow,
-        opacity: selectedComponent.props?.style?.opacity,
-        tooltip: selectedComponent.props?.tooltip,
-      }),
-    });
+    const form = useForm();
+
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.effects, {
+          cursor: selectedComponent.props?.style?.cursor,
+          overflow: selectedComponent.props?.style?.overflow,
+          opacity: selectedComponent.props?.style?.opacity,
+          tooltip: selectedComponent.props?.tooltip,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
     return (
       <form key={selectedComponent?.id}>

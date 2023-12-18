@@ -1,7 +1,7 @@
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import crawl from "tree-crawl";
-import { theme } from "./branding";
+import { theme } from "@/utils/branding";
 import { px } from "@mantine/core";
 
 export const calculateGridSizes = (tree: Component) => {

@@ -43,6 +43,7 @@ const GridColumnComponent = forwardRef(
     );
   },
 );
+
 GridColumnComponent.displayName = "GridColumn";
 
 export const GridColumn = memo(

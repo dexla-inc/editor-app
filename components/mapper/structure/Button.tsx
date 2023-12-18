@@ -18,6 +18,8 @@ export const jsonStructure = (props?: any): Component => {
       ...requiredModifiers.button,
       style: {
         width: "fit-content",
+        paddingLeft: "18px",
+        paddingRight: "18px",
       },
       color: color ?? "Primary.6",
       textColor: textColor ?? "PrimaryText.6",

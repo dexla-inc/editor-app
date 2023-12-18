@@ -362,9 +362,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
         }}
         p={0}
       >
-        <IFrame key={editorTree.timestamp} projectId={projectId}>
-          {renderTree(treeRoot)}
-        </IFrame>
+        <IFrame projectId={projectId}>{renderTree(treeRoot)}</IFrame>
       </Box>
       {isCustomComponentModalOpen && (
         <CustomComponentModal
