@@ -23,7 +23,7 @@ import {
   IconTextWrap,
   IconX,
 } from "@tabler/icons-react";
-import { merge } from "lodash";
+import merge from "lodash.merge";
 import { useEffect } from "react";
 
 export const icon = IconLayout2;

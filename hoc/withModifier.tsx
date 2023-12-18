@@ -1,8 +1,10 @@
 import { useEditorStore } from "@/stores/editor";
 import { Component, getAllComponentsByIds } from "@/utils/editor";
-import _ from "lodash";
 import cloneDeep from "lodash.clonedeep";
+import get from "lodash.get";
 import merge from "lodash.merge";
+import set from "lodash.set";
+
 import { ComponentType, useMemo } from "react";
 
 type WithModifier = {
@@ -10,27 +12,27 @@ type WithModifier = {
   selectedComponent: Component;
 };
 
-function getObjectPaths(obj: Component, parentKey = ""): string[] {
-  return _.flatMap(_.keys(obj), (key: any) => {
+function getObjectPaths(obj: any, parentKey = ""): string[] {
+  return Object.keys(obj).flatMap((key: string) => {
     const path = parentKey ? `${parentKey}.${key}` : key;
-    return _.isObject(obj[key as keyof {}])
-      ? getObjectPaths(obj[key as keyof {}], path)
+    return typeof obj[key] === "object" && obj[key] !== null
+      ? getObjectPaths(obj[key], path)
       : path;
   });
 }
 
 function findIntersectedKeyValues(objects: Component[]) {
-  const updatedObject = _.cloneDeep(objects[0]);
-  const mergedObject = _.merge({}, ...objects);
+  const updatedObject = cloneDeep(objects[0]);
+  const mergedObject = merge({}, ...objects);
   const paths = getObjectPaths(mergedObject);
 
   objects.slice(1).forEach((obj) => {
     paths.forEach((path) => {
-      const sourceValue = _.get(updatedObject, path);
-      const value = _.get(obj, path);
+      const sourceValue = get(updatedObject, path);
+      const value = get(obj, path);
 
       if (sourceValue !== value) {
-        _.set(updatedObject, path, null);
+        set(updatedObject, path, null);
       }
     });
   });

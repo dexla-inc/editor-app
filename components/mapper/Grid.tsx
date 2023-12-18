@@ -6,7 +6,7 @@ import { Component } from "@/utils/editor";
 import { calculateGridSizes } from "@/utils/grid";
 import { Box, BoxProps, useMantineTheme } from "@mantine/core";
 import { usePrevious } from "@mantine/hooks";
-import { cloneDeep } from "lodash";
+import cloneDeep from "lodash.clonedeep";
 import { forwardRef, memo, useEffect } from "react";
 
 export type GridProps = {

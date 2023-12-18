@@ -27,7 +27,7 @@ import {
   IconPinned,
   IconPinnedOff,
 } from "@tabler/icons-react";
-import { merge } from "lodash";
+import merge from "lodash.merge";
 import startCase from "lodash.startcase";
 import { PropsWithChildren, useEffect } from "react";
 

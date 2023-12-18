@@ -19,10 +19,10 @@ import {
   updateTreeComponentWithOmitProps,
 } from "@/utils/editor";
 import { MantineNumberSize, MantineTheme } from "@mantine/core";
-import { merge } from "lodash";
 import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
 import isEqual from "lodash.isequal";
+import merge from "lodash.merge";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
