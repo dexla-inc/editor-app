@@ -54,6 +54,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const undo = useTemporalStore((state) => state.undo);
   const redo = useTemporalStore((state) => state.redo);
   const pastStates = useTemporalStore((state) => state.pastStates);
+  const setCursor = useEditorStore((state) => state.setCursor);
   const copiedComponent = useEditorStore((state) => state.copiedComponent);
   const setCopiedComponent = useEditorStore(
     (state) => state.setCopiedComponent,
@@ -361,6 +362,14 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
           overflow: "hidden",
         }}
         p={0}
+        onPointerMove={(event) => {
+          event.preventDefault();
+          setCursor({
+            x: Math.round(event.clientX),
+            y: Math.round(event.clientY),
+          });
+        }}
+        onPointerLeave={() => setCursor(undefined)}
       >
         <IFrame projectId={projectId}>{renderTree(treeRoot)}</IFrame>
       </Box>

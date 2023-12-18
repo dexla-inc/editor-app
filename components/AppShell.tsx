@@ -38,6 +38,7 @@ import { flexStyles } from "@/utils/branding";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
+import { OtherAvatars } from "@/components/OtherAvatars";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const resetTree = useEditorStore((state) => state.resetTree);
@@ -72,6 +73,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                 </Link>
               </Tooltip>
               <AIPromptTextInput />
+              <OtherAvatars />
             </Group>
             <Group noWrap position="right" spacing="xs">
               <Select

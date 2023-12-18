@@ -26,6 +26,13 @@ import merge from "lodash.merge";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
+import { createClient } from "@liveblocks/client";
+import { liveblocks, WithLiveblocks } from "@liveblocks/zustand";
+import { User } from "@propelauth/react";
+
+const client = createClient({
+  publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
+});
 
 const initialTimestamp = Date.now();
 export const emptyEditorTree = {
@@ -218,468 +225,505 @@ export type EditorState = {
   setIsWindowError: (isWindowError: boolean) => void;
   collapsedItemsCount: number;
   setCollapsedItemsCount: (collapsedItemsCount: number) => void;
+  currentUser?: User;
+  setCurrentUser: (user?: User) => void;
+  cursor?: {
+    x: number;
+    y: number;
+  };
+  setCursor: (cursor?: { x: number; y: number }) => void;
 };
 
 export const debouncedUpdatePageState = debounce(updatePageState, 2000);
 
 // creates a store with undo/redo capability
-export const useEditorStore = create<EditorState>()(
-  devtools(
-    temporal(
-      (set) => ({
-        collapsedItemsCount: 0,
-        tree: emptyEditorTree,
-        theme: defaultTheme,
-        pages: [],
-        onMountActionsRan: [],
-        selectedComponentId: "content-wrapper",
-        selectedComponentIds: ["content-wrapper"],
-        language: "default",
-        addOnMountActionsRan: (onMountAction) =>
-          set(
-            (state) => ({
-              ...state,
-              onMountActionsRan: state.onMountActionsRan.concat(onMountAction),
-            }),
-            false,
-            "editor/addOnMountActionsRan",
-          ),
-        removeOnMountActionsRan: (onMountAction) =>
-          set(
-            (state) => ({
-              ...state,
-              onMountActionsRan: state.onMountActionsRan.filter(
-                (action) => action !== onMountAction,
-              ),
-            }),
-            false,
-            "editor/removeOnMountActionsRan",
-          ),
-        resetOnMountActionsRan: () =>
-          set(
-            { onMountActionsRan: [] },
-            false,
-            "editor/resetOnMountActionsRan",
-          ),
-        setCopiedProperties: (copiedProperties) =>
-          set({ copiedProperties }, false, "editor/setCopiedProperties"),
-        setDefaultComponentWidth: (defaultComponentWidth) =>
-          set(
-            { defaultComponentWidth },
-            false,
-            "editor/setDefaultComponentWidth",
-          ),
-        setOpenAction: (openAction) =>
-          set({ openAction }, false, "editor/setOpenAction"),
-        setPages: (pages) => set({ pages }, false, "editor/setPages"),
-        setPickingComponentToBindFrom: (pickingComponentToBindFrom) =>
-          set(
-            { pickingComponentToBindFrom },
-            false,
-            "editor/setPickingComponentToBindFrom",
-          ),
-        setPickingComponentToBindTo: (pickingComponentToBindTo) =>
-          set(
-            { pickingComponentToBindTo },
-            false,
-            "editor/setPickingComponentToBindTo",
-          ),
-        setSequentialTo: (sequentialTo) =>
-          set({ sequentialTo }, false, "editor/setSequentialTo"),
-        setComponentToBind: (componentToBind) => {
-          set(
-            (state) => {
-              componentToBind &&
-                state.pickingComponentToBindTo?.onPick &&
-                state.pickingComponentToBindTo?.onPick(componentToBind);
-              return { componentToBind };
-            },
-            false,
-            "editor/setComponentToBind",
-          );
-        },
-        setCopiedComponent: (copiedComponent) =>
-          set({ copiedComponent }, false, "editor/setCopiedComponent"),
-        setTheme: (theme) =>
-          set(
-            (prev) => ({ theme: merge(prev.theme, theme) }),
-            false,
-            "editor/setTheme",
-          ),
-        setIframeWindow: (iframeWindow) =>
-          set({ iframeWindow }, false, "editor/setIframeWindow"),
-        setCurrentTargetId: (currentTargetId) =>
-          set({ currentTargetId }, false, "editor/setCurrentTargetId"),
-        isSaving: false,
-        // any component's move or reordering
-        setTree: (tree, options) => {
-          set(
-            (state: EditorState) => {
-              if (!options?.onLoad) {
+export const useEditorStore = create<WithLiveblocks<EditorState>>()(
+  // @ts-ignore
+  liveblocks(
+    devtools(
+      temporal(
+        (set) => ({
+          collapsedItemsCount: 0,
+          tree: emptyEditorTree,
+          theme: defaultTheme,
+          pages: [],
+          onMountActionsRan: [],
+          selectedComponentId: "content-wrapper",
+          selectedComponentIds: ["content-wrapper"],
+          language: "default",
+          addOnMountActionsRan: (onMountAction) =>
+            set(
+              (state) => ({
+                ...state,
+                onMountActionsRan:
+                  state.onMountActionsRan.concat(onMountAction),
+              }),
+              false,
+              "editor/addOnMountActionsRan",
+            ),
+          removeOnMountActionsRan: (onMountAction) =>
+            set(
+              (state) => ({
+                ...state,
+                onMountActionsRan: state.onMountActionsRan.filter(
+                  (action) => action !== onMountAction,
+                ),
+              }),
+              false,
+              "editor/removeOnMountActionsRan",
+            ),
+          resetOnMountActionsRan: () =>
+            set(
+              { onMountActionsRan: [] },
+              false,
+              "editor/resetOnMountActionsRan",
+            ),
+          setCopiedProperties: (copiedProperties) =>
+            set({ copiedProperties }, false, "editor/setCopiedProperties"),
+          setDefaultComponentWidth: (defaultComponentWidth) =>
+            set(
+              { defaultComponentWidth },
+              false,
+              "editor/setDefaultComponentWidth",
+            ),
+          setOpenAction: (openAction) =>
+            set({ openAction }, false, "editor/setOpenAction"),
+          setPages: (pages) => set({ pages }, false, "editor/setPages"),
+          setPickingComponentToBindFrom: (pickingComponentToBindFrom) =>
+            set(
+              { pickingComponentToBindFrom },
+              false,
+              "editor/setPickingComponentToBindFrom",
+            ),
+          setPickingComponentToBindTo: (pickingComponentToBindTo) =>
+            set(
+              { pickingComponentToBindTo },
+              false,
+              "editor/setPickingComponentToBindTo",
+            ),
+          setSequentialTo: (sequentialTo) =>
+            set({ sequentialTo }, false, "editor/setSequentialTo"),
+          setComponentToBind: (componentToBind) => {
+            set(
+              (state) => {
+                componentToBind &&
+                  state.pickingComponentToBindTo?.onPick &&
+                  state.pickingComponentToBindTo?.onPick(componentToBind);
+                return { componentToBind };
+              },
+              false,
+              "editor/setComponentToBind",
+            );
+          },
+          setCopiedComponent: (copiedComponent) =>
+            set({ copiedComponent }, false, "editor/setCopiedComponent"),
+          setTheme: (theme) =>
+            set(
+              (prev) => ({ theme: merge(prev.theme, theme) }),
+              false,
+              "editor/setTheme",
+            ),
+          setIframeWindow: (iframeWindow) =>
+            set({ iframeWindow }, false, "editor/setIframeWindow"),
+          setCurrentTargetId: (currentTargetId) =>
+            set({ currentTargetId }, false, "editor/setCurrentTargetId"),
+          isSaving: false,
+          // any component's move or reordering
+          setTree: (tree, options) => {
+            set(
+              (state: EditorState) => {
+                if (!options?.onLoad) {
+                  debouncedUpdatePageState(
+                    encodeSchema(JSON.stringify(tree)),
+                    state.currentProjectId ?? "",
+                    state.currentPageId ?? "",
+                    state.setIsSaving,
+                  );
+                }
+
+                return {
+                  tree: {
+                    ...tree,
+                    name: options?.action || "Generic move",
+                    timestamp: Date.now(),
+                  },
+                };
+              },
+              false,
+              "editor/setTree",
+            );
+          },
+          resetTree: () => {
+            const timestamp = Date.now();
+            set(
+              {
+                tree: { ...emptyEditorTree, timestamp },
+              },
+              false,
+              "editor/resetTree",
+            );
+          },
+          // any props change
+          updateTreeComponent: ({
+            componentId,
+            props,
+            forceState,
+            save = true,
+          }) => {
+            set(
+              (prev) => {
+                const copy = cloneDeep(prev.tree);
+                const currentState =
+                  prev.currentTreeComponentsStates?.[componentId] ?? "default";
+                const currentLanguage = forceState ?? prev.language;
+
+                updateTreeComponent(
+                  copy.root,
+                  componentId,
+                  props,
+                  currentState,
+                  currentLanguage,
+                );
+                if (save) {
+                  debouncedUpdatePageState(
+                    encodeSchema(JSON.stringify(copy)),
+                    prev.currentProjectId ?? "",
+                    prev.currentPageId ?? "",
+                    prev.setIsSaving,
+                  );
+                }
+
+                const component = getComponentById(copy.root, componentId);
+
+                return {
+                  tree: {
+                    ...copy,
+                    name: `Edited ${component?.name}`,
+                    timestamp: Date.now(),
+                  },
+                };
+              },
+              false,
+              "editor/updateTreeComponent",
+            );
+          },
+          updateTreeComponents: (componentIds, props, save = true) => {
+            set(
+              (prev) => {
+                const lastComponentId = componentIds[componentIds.length - 1];
+                const copy = cloneDeep(prev.tree);
+                const currentState =
+                  prev.currentTreeComponentsStates?.[lastComponentId] ??
+                  "default";
+                const currentLanguage = prev.language;
+
+                updateTreeComponent(
+                  copy.root,
+                  componentIds,
+                  props,
+                  currentState,
+                  currentLanguage,
+                );
+                if (save) {
+                  debouncedUpdatePageState(
+                    encodeSchema(JSON.stringify(copy)),
+                    prev.currentProjectId ?? "",
+                    prev.currentPageId ?? "",
+                    prev.setIsSaving,
+                  );
+                }
+
+                return {
+                  tree: {
+                    ...cloneDeep(copy),
+                    name: `Edited multiple components`,
+                    timestamp: Date.now(),
+                  },
+                };
+              },
+              false,
+              "editor/updateTreeComponents",
+            );
+          },
+          updateTreeComponentStates: (componentId, states, save = true) => {
+            set(
+              (prev) => {
+                const copy = cloneDeep(prev.tree);
+
+                updateTreeComponentStates(copy.root, componentId, states);
+                if (save) {
+                  debouncedUpdatePageState(
+                    encodeSchema(JSON.stringify(copy)),
+                    prev.currentProjectId ?? "",
+                    prev.currentPageId ?? "",
+                    prev.setIsSaving,
+                  );
+                }
+
+                const component = getComponentById(copy.root, componentId);
+
+                return {
+                  tree: {
+                    ...cloneDeep(copy),
+                    name: `Edited ${component?.name}`,
+                    timestamp: Date.now(),
+                  },
+                };
+              },
+              false,
+              "editor/updateTreeComponentStates",
+            );
+          },
+          // anything out of .props that changes .children[]
+          updateTreeComponentChildren: (componentId, children, save = true) => {
+            set(
+              (state) => {
+                const copy = cloneDeep(state.tree);
+                updateTreeComponentChildren(copy.root, componentId, children);
+
+                if (save) {
+                  const toBeSavedCopy = cloneDeep(copy);
+                  updateTreeComponentWithOmitProps(toBeSavedCopy.root);
+                  debouncedUpdatePageState(
+                    encodeSchema(JSON.stringify(toBeSavedCopy)),
+                    state.currentProjectId ?? "",
+                    state.currentPageId ?? "",
+                    state.setIsSaving,
+                  );
+                }
+
+                const component = getComponentById(copy.root, componentId);
+
+                return {
+                  tree: {
+                    ...copy,
+                    name: `Edited ${component?.name}`,
+                    timestamp: Date.now(),
+                  },
+                };
+              },
+              false,
+              "editor/updateTreeComponentChildren",
+            );
+          },
+          // any action change
+          updateTreeComponentActions: (componentId, actions) => {
+            set(
+              (state) => {
+                const copy = cloneDeep(state.tree);
+                updateTreeComponentActions(copy.root, componentId, actions);
                 debouncedUpdatePageState(
-                  encodeSchema(JSON.stringify(tree)),
+                  encodeSchema(JSON.stringify(copy)),
                   state.currentProjectId ?? "",
                   state.currentPageId ?? "",
                   state.setIsSaving,
                 );
-              }
 
-              return {
-                tree: {
-                  ...tree,
-                  name: options?.action || "Generic move",
-                  timestamp: Date.now(),
-                },
-              };
-            },
-            false,
-            "editor/setTree",
-          );
-        },
-        resetTree: () => {
-          const timestamp = Date.now();
-          set(
-            {
-              tree: { ...emptyEditorTree, timestamp },
-            },
-            false,
-            "editor/resetTree",
-          );
-        },
-        // any props change
-        updateTreeComponent: ({
-          componentId,
-          props,
-          forceState,
-          save = true,
-        }) => {
-          set(
-            (prev) => {
-              const copy = cloneDeep(prev.tree);
-              const currentState =
-                prev.currentTreeComponentsStates?.[componentId] ?? "default";
-              const currentLanguage = forceState ?? prev.language;
+                const component = getComponentById(copy.root, componentId);
 
-              updateTreeComponent(
-                copy.root,
-                componentId,
-                props,
-                currentState,
-                currentLanguage,
-              );
-              if (save) {
+                return {
+                  tree: {
+                    ...copy,
+                    name: `Edited ${component?.name}`,
+                    timestamp: Date.now(),
+                  },
+                };
+              },
+              false,
+              "editor/updateTreeComponentActions",
+            );
+          },
+          updateTreeComponentDescription: (componentId, description) => {
+            set(
+              (state) => {
+                const copy = cloneDeep(state.tree);
+
+                updateTreeComponentDescription(
+                  copy.root,
+                  componentId,
+                  description,
+                );
                 debouncedUpdatePageState(
                   encodeSchema(JSON.stringify(copy)),
-                  prev.currentProjectId ?? "",
-                  prev.currentPageId ?? "",
-                  prev.setIsSaving,
-                );
-              }
-
-              const component = getComponentById(copy.root, componentId);
-
-              return {
-                tree: {
-                  ...copy,
-                  name: `Edited ${component?.name}`,
-                  timestamp: Date.now(),
-                },
-              };
-            },
-            false,
-            "editor/updateTreeComponent",
-          );
-        },
-        updateTreeComponents: (componentIds, props, save = true) => {
-          set(
-            (prev) => {
-              const lastComponentId = componentIds[componentIds.length - 1];
-              const copy = cloneDeep(prev.tree);
-              const currentState =
-                prev.currentTreeComponentsStates?.[lastComponentId] ??
-                "default";
-              const currentLanguage = prev.language;
-
-              updateTreeComponent(
-                copy.root,
-                componentIds,
-                props,
-                currentState,
-                currentLanguage,
-              );
-              if (save) {
-                debouncedUpdatePageState(
-                  encodeSchema(JSON.stringify(copy)),
-                  prev.currentProjectId ?? "",
-                  prev.currentPageId ?? "",
-                  prev.setIsSaving,
-                );
-              }
-
-              return {
-                tree: {
-                  ...cloneDeep(copy),
-                  name: `Edited multiple components`,
-                  timestamp: Date.now(),
-                },
-              };
-            },
-            false,
-            "editor/updateTreeComponents",
-          );
-        },
-        updateTreeComponentStates: (componentId, states, save = true) => {
-          set(
-            (prev) => {
-              const copy = cloneDeep(prev.tree);
-
-              updateTreeComponentStates(copy.root, componentId, states);
-              if (save) {
-                debouncedUpdatePageState(
-                  encodeSchema(JSON.stringify(copy)),
-                  prev.currentProjectId ?? "",
-                  prev.currentPageId ?? "",
-                  prev.setIsSaving,
-                );
-              }
-
-              const component = getComponentById(copy.root, componentId);
-
-              return {
-                tree: {
-                  ...cloneDeep(copy),
-                  name: `Edited ${component?.name}`,
-                  timestamp: Date.now(),
-                },
-              };
-            },
-            false,
-            "editor/updateTreeComponentStates",
-          );
-        },
-        // anything out of .props that changes .children[]
-        updateTreeComponentChildren: (componentId, children, save = true) => {
-          set(
-            (state) => {
-              const copy = cloneDeep(state.tree);
-              updateTreeComponentChildren(copy.root, componentId, children);
-
-              if (save) {
-                const toBeSavedCopy = cloneDeep(copy);
-                updateTreeComponentWithOmitProps(toBeSavedCopy.root);
-                debouncedUpdatePageState(
-                  encodeSchema(JSON.stringify(toBeSavedCopy)),
                   state.currentProjectId ?? "",
                   state.currentPageId ?? "",
                   state.setIsSaving,
                 );
-              }
 
-              const component = getComponentById(copy.root, componentId);
+                return {
+                  tree: copy,
+                };
+              },
+              false,
+              "editor/updateTreeComponentDescription",
+            );
+          },
+          updateTreeComponentAttrs: (
+            componentIds: string[],
+            attrs: Partial<Component>,
+          ) => {
+            set(
+              (state) => {
+                const copy = cloneDeep(state.tree);
 
-              return {
-                tree: {
-                  ...copy,
-                  name: `Edited ${component?.name}`,
-                  timestamp: Date.now(),
-                },
-              };
-            },
-            false,
-            "editor/updateTreeComponentChildren",
-          );
-        },
-        // any action change
-        updateTreeComponentActions: (componentId, actions) => {
-          set(
-            (state) => {
-              const copy = cloneDeep(state.tree);
-              updateTreeComponentActions(copy.root, componentId, actions);
-              debouncedUpdatePageState(
-                encodeSchema(JSON.stringify(copy)),
-                state.currentProjectId ?? "",
-                state.currentPageId ?? "",
-                state.setIsSaving,
-              );
+                updateTreeComponentAttrs(copy.root, componentIds, attrs);
+                debouncedUpdatePageState(
+                  encodeSchema(JSON.stringify(copy)),
+                  state.currentProjectId ?? "",
+                  state.currentPageId ?? "",
+                  state.setIsSaving,
+                );
 
-              const component = getComponentById(copy.root, componentId);
-
-              return {
-                tree: {
-                  ...copy,
-                  name: `Edited ${component?.name}`,
-                  timestamp: Date.now(),
-                },
-              };
-            },
-            false,
-            "editor/updateTreeComponentActions",
-          );
+                return {
+                  tree: copy,
+                };
+              },
+              false,
+              "editor/updateTreeComponentAttrs",
+            );
+          },
+          setTreeComponentCurrentState: (
+            componentId,
+            currentState = "default",
+          ) => {
+            set(
+              (prev) => {
+                return {
+                  currentTreeComponentsStates: {
+                    ...prev.currentTreeComponentsStates,
+                    [componentId]: currentState,
+                  },
+                };
+              },
+              false,
+              "editor/setTreeComponentCurrentState",
+            );
+          },
+          setCurrentProjectId: (currentProjectId) =>
+            set({ currentProjectId }, false, "editor/setCurrentProjectId"),
+          setCurrentPageId: (currentPageId) =>
+            set({ currentPageId }, false, "editor/setCurrentPageId"),
+          setComponentToAdd: (componentToAdd) =>
+            set({ componentToAdd }, false, "editor/setComponentToAdd"),
+          setSelectedComponentId: (selectedComponentId) =>
+            set(
+              { selectedComponentId },
+              false,
+              "editor/setSelectedComponentId",
+            ),
+          setSelectedComponentIds: (cb) => {
+            return set(
+              (state) => {
+                const selectedComponentIds = cb(
+                  state.selectedComponentIds ?? [],
+                );
+                return { selectedComponentIds };
+              },
+              false,
+              "editor/setSelectedComponentIds",
+            );
+          },
+          clearSelection: (id) =>
+            set(
+              { selectedComponentId: id ?? "content-wrapper" },
+              false,
+              "editor/clearSelection",
+            ),
+          clearSelections: (ids) =>
+            set(
+              { selectedComponentIds: ids ?? ["content-wrapper"] },
+              false,
+              "editor/clearSelections",
+            ),
+          setIsSaving: (isSaving) =>
+            set({ isSaving }, false, "editor/setIsSaving"),
+          isPreviewMode: false,
+          isLive: false,
+          isNavBarVisible: true,
+          isStructureCollapsed: false,
+          setActiveTab: (activeTab) =>
+            set({ activeTab }, false, "editor/setActiveTab"),
+          setPreviewMode: (value) =>
+            set(
+              { isPreviewMode: value, currentTreeComponentsStates: {} },
+              false,
+              "editor/setPreviewMode",
+            ),
+          setIsLive: (value) =>
+            set({ isLive: value }, false, "editor/setIsLive"),
+          setIsPageStructure: (isPageStructure) =>
+            set({ isPageStructure }, false, "editor/setIsPageStructure"),
+          setIsStructureCollapsed: (value) =>
+            set(
+              { isStructureCollapsed: value },
+              false,
+              "editor/setIsStructureCollapsed",
+            ),
+          setIsNavBarVisible: () =>
+            set(
+              (state) => ({ isNavBarVisible: !state.isNavBarVisible }),
+              false,
+              "editor/setIsNavBarVisible",
+            ),
+          setCopiedAction: (copiedAction) =>
+            set({ copiedAction }, false, "editor/setCopiedAction"),
+          setLanguage: (language) =>
+            set({ language }, false, "editor/setLanguage"),
+          setIsWindowError: (isWindowError) =>
+            set({ isWindowError }, false, "editor/setIsWindowError"),
+          setHighlightedComponentId: (componentId) =>
+            set(
+              { highlightedComponentId: componentId },
+              false,
+              "editor/setHighlightedComponentId",
+            ),
+          setHoveredComponentId: (hoveredComponentId) =>
+            set({ hoveredComponentId }, false, "editor/setHoveredComponentId"),
+          setIsResizing: (isResizing) =>
+            set({ isResizing }, false, "editor/setIsResizing"),
+          setColumnSpan: (id, span) =>
+            set(
+              (state) => ({
+                columnSpans: { ...(state.columnSpans ?? {}), [id]: span },
+              }),
+              false,
+              "editor/setColumnSpan",
+            ),
+          setCollapsedItemsCount: (collapsedItemsCount) =>
+            set(
+              { collapsedItemsCount },
+              false,
+              "editor/setCollapsedItemsCount",
+            ),
+          setCurrentUser: (currentUser) =>
+            set({ currentUser }, false, "editor/setCurrentUser"),
+          setCursor: (cursor) => set({ cursor }, false, "editor/setCursor"),
+        }),
+        {
+          partialize: (state) => {
+            const { tree, columnSpans } = state;
+            return { tree, columnSpans };
+          },
+          limit: 500,
+          equality(currentState, pastState) {
+            return isEqual(currentState.tree, pastState.tree);
+          },
         },
-        updateTreeComponentDescription: (componentId, description) => {
-          set(
-            (state) => {
-              const copy = cloneDeep(state.tree);
-
-              updateTreeComponentDescription(
-                copy.root,
-                componentId,
-                description,
-              );
-              debouncedUpdatePageState(
-                encodeSchema(JSON.stringify(copy)),
-                state.currentProjectId ?? "",
-                state.currentPageId ?? "",
-                state.setIsSaving,
-              );
-
-              return {
-                tree: copy,
-              };
-            },
-            false,
-            "editor/updateTreeComponentDescription",
-          );
-        },
-        updateTreeComponentAttrs: (
-          componentIds: string[],
-          attrs: Partial<Component>,
-        ) => {
-          set(
-            (state) => {
-              const copy = cloneDeep(state.tree);
-
-              updateTreeComponentAttrs(copy.root, componentIds, attrs);
-              debouncedUpdatePageState(
-                encodeSchema(JSON.stringify(copy)),
-                state.currentProjectId ?? "",
-                state.currentPageId ?? "",
-                state.setIsSaving,
-              );
-
-              return {
-                tree: copy,
-              };
-            },
-            false,
-            "editor/updateTreeComponentAttrs",
-          );
-        },
-        setTreeComponentCurrentState: (
-          componentId,
-          currentState = "default",
-        ) => {
-          set(
-            (prev) => {
-              return {
-                currentTreeComponentsStates: {
-                  ...prev.currentTreeComponentsStates,
-                  [componentId]: currentState,
-                },
-              };
-            },
-            false,
-            "editor/setTreeComponentCurrentState",
-          );
-        },
-        setCurrentProjectId: (currentProjectId) =>
-          set({ currentProjectId }, false, "editor/setCurrentProjectId"),
-        setCurrentPageId: (currentPageId) =>
-          set({ currentPageId }, false, "editor/setCurrentPageId"),
-        setComponentToAdd: (componentToAdd) =>
-          set({ componentToAdd }, false, "editor/setComponentToAdd"),
-        setSelectedComponentId: (selectedComponentId) =>
-          set({ selectedComponentId }, false, "editor/setSelectedComponentId"),
-        setSelectedComponentIds: (cb) => {
-          return set(
-            (state) => {
-              const selectedComponentIds = cb(state.selectedComponentIds ?? []);
-              return { selectedComponentIds };
-            },
-            false,
-            "editor/setSelectedComponentIds",
-          );
-        },
-        clearSelection: (id) =>
-          set(
-            { selectedComponentId: id ?? "content-wrapper" },
-            false,
-            "editor/clearSelection",
-          ),
-        clearSelections: (ids) =>
-          set(
-            { selectedComponentIds: ids ?? ["content-wrapper"] },
-            false,
-            "editor/clearSelections",
-          ),
-        setIsSaving: (isSaving) =>
-          set({ isSaving }, false, "editor/setIsSaving"),
-        isPreviewMode: false,
-        isLive: false,
-        isNavBarVisible: true,
-        isStructureCollapsed: false,
-        setActiveTab: (activeTab) =>
-          set({ activeTab }, false, "editor/setActiveTab"),
-        setPreviewMode: (value) =>
-          set(
-            { isPreviewMode: value, currentTreeComponentsStates: {} },
-            false,
-            "editor/setPreviewMode",
-          ),
-        setIsLive: (value) => set({ isLive: value }, false, "editor/setIsLive"),
-        setIsPageStructure: (isPageStructure) =>
-          set({ isPageStructure }, false, "editor/setIsPageStructure"),
-        setIsStructureCollapsed: (value) =>
-          set(
-            { isStructureCollapsed: value },
-            false,
-            "editor/setIsStructureCollapsed",
-          ),
-        setIsNavBarVisible: () =>
-          set(
-            (state) => ({ isNavBarVisible: !state.isNavBarVisible }),
-            false,
-            "editor/setIsNavBarVisible",
-          ),
-        setCopiedAction: (copiedAction) =>
-          set({ copiedAction }, false, "editor/setCopiedAction"),
-        setLanguage: (language) =>
-          set({ language }, false, "editor/setLanguage"),
-        setIsWindowError: (isWindowError) =>
-          set({ isWindowError }, false, "editor/setIsWindowError"),
-        setHighlightedComponentId: (componentId) =>
-          set(
-            { highlightedComponentId: componentId },
-            false,
-            "editor/setHighlightedComponentId",
-          ),
-        setHoveredComponentId: (hoveredComponentId) =>
-          set({ hoveredComponentId }, false, "editor/setHoveredComponentId"),
-        setIsResizing: (isResizing) =>
-          set({ isResizing }, false, "editor/setIsResizing"),
-        setColumnSpan: (id, span) =>
-          set(
-            (state) => ({
-              columnSpans: { ...(state.columnSpans ?? {}), [id]: span },
-            }),
-            false,
-            "editor/setColumnSpan",
-          ),
-        setCollapsedItemsCount: (collapsedItemsCount) =>
-          set({ collapsedItemsCount }, false, "editor/setCollapsedItemsCount"),
-      }),
-      {
-        partialize: (state) => {
-          const { tree, columnSpans } = state;
-          return { tree, columnSpans };
-        },
-        limit: 500,
-        equality(currentState, pastState) {
-          return isEqual(currentState.tree, pastState.tree);
-        },
-      },
+      ),
+      { name: "Editor store" },
     ),
-    { name: "Editor store" },
+    {
+      client,
+      storageMapping: {
+        tree: true,
+      },
+      presenceMapping: {
+        selectedComponentIds: true,
+        selectedComponentId: true,
+        currentUser: true,
+        cursor: true,
+      },
+    },
   ),
 );
 

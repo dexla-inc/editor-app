@@ -40,6 +40,7 @@ export const EditableComponent = ({
   isSelected,
 }: PropsWithChildren<Props>) => {
   const router = useRouter();
+  const liveblocks = useEditorStore((state) => state.liveblocks);
 
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
