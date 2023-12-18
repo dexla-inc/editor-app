@@ -14,8 +14,8 @@ import {
 import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { TopLabel } from "../TopLabel";
 import { useEffect } from "react";
+import { TopLabel } from "../TopLabel";
 
 export const icon = IconForms;
 export const label = "Date Input";
@@ -97,7 +97,11 @@ export const Modifier = withModifier(
           <Select
             label="Format"
             size="xs"
-            data={[{ label: "DD MMM YYYY", value: "DD MMM YYYY" }]}
+            data={[
+              { label: "DD MMM YYYY", value: "DD MMM YYYY" },
+              { label: "DD MM YYYY", value: "DD MM YYYY" },
+              { label: "MM DD YYYY", value: "MM DD YYYY" },
+            ]}
             {...form.getInputProps("valueFormat")}
             onChange={(value) => {
               form.setFieldValue("valueFormat", value as string);

@@ -1,3 +1,4 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { Icon } from "@/components/Icon";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
@@ -7,6 +8,7 @@ import {
   useActionData,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
+import { useComponentStates } from "@/hooks/useComponentStates";
 import { useEditorStore } from "@/stores/editor";
 import { ChangeStateAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
@@ -24,8 +26,6 @@ import {
 import { useForm } from "@mantine/form";
 import { IconTrash } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { useComponentStates } from "@/hooks/useComponentStates";
 
 type Props = {
   id: string;
@@ -144,7 +144,7 @@ export const ChangeStateActionForm = ({ id }: Props) => {
                   size="xs"
                   label={
                     <Flex justify="space-between" align="center">
-                      State{" "}
+                      State
                       <ActionIcon
                         onClick={() => {
                           form.removeListItem("conditionRules", i);
