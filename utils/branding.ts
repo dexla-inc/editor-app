@@ -201,6 +201,7 @@ const hoverStyles = (styles: any) => {
     display,
   } = styles;
   return {
+    position: "relative",
     "&::before": {
       content: '""',
       ...position,
