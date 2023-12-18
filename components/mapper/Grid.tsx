@@ -2,10 +2,11 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { GRID_SIZE } from "@/utils/config";
-import { Component, getComponentById } from "@/utils/editor";
+import { Component } from "@/utils/editor";
 import { calculateGridSizes } from "@/utils/grid";
 import { Box, BoxProps, useMantineTheme } from "@mantine/core";
 import { usePrevious } from "@mantine/hooks";
+import { cloneDeep } from "lodash";
 import { forwardRef, memo, useEffect } from "react";
 
 export type GridProps = {
@@ -17,7 +18,7 @@ const GridComponent = forwardRef(
   ({ renderTree, component, ...props }: GridProps, ref) => {
     const theme = useMantineTheme();
     const editorTree = useEditorStore((state) => state.tree);
-    const componentFromTree = getComponentById(editorTree.root, component.id!);
+    const setEditorTree = useEditorStore((state) => state.setTree);
     const { style = {}, gridSize, navbarWidth } = component.props!;
 
     const defaultGridTemplateColumns = `repeat(${gridSize ?? GRID_SIZE}, 1fr)`;
@@ -32,13 +33,16 @@ const GridComponent = forwardRef(
       : 0;
 
     const gapValue = props?.style?.gap ? gap : theme.spacing.xs;
-    const prevGap = usePrevious(gapValue);
+    const prevGapValue = usePrevious(gapValue);
 
     useEffect(() => {
-      if (prevGap !== gapValue && componentFromTree) {
-        calculateGridSizes(componentFromTree);
+      if (prevGapValue !== gapValue) {
+        const copy = cloneDeep(editorTree);
+        calculateGridSizes(copy.root);
+        setEditorTree(copy);
       }
-    }, [gapValue, prevGap, componentFromTree]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [gapValue, prevGapValue, setEditorTree]);
 
     return (
       <Box
@@ -52,7 +56,7 @@ const GridComponent = forwardRef(
         style={{
           ...props.style,
           ...style,
-          gap: props?.style?.gap ? gap : theme.spacing.xs,
+          gap: gapValue,
           gridTemplateColumns:
             gridTemplateColumns ?? defaultGridTemplateColumns,
         }}
