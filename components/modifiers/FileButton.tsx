@@ -39,15 +39,13 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          {selectedComponent?.name === "fileButton" && (
-            <TextInput
-              size="xs"
-              label="Name"
-              name="name"
-              {...form.getInputProps("name")}
-              onChange={(e) => handleChange(e)}
-            />
-          )}
+          <TextInput
+            size="xs"
+            label="Name"
+            name="name"
+            {...form.getInputProps("name")}
+            onChange={(e) => handleChange(e)}
+          />
           <TextInput
             size="xs"
             label="Accept"

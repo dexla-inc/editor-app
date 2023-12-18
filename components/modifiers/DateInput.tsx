@@ -1,6 +1,7 @@
 import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
+import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -15,7 +16,6 @@ import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { TopLabel } from "../TopLabel";
 
 export const icon = IconForms;
 export const label = "Date Input";
@@ -27,9 +27,7 @@ export const Modifier = withModifier(
     useEffect(() => {
       form.setValues(
         merge({}, requiredModifiers.dateInput, {
-          label: selectedComponent?.props?.label,
           type: selectedComponent?.props?.type,
-          labelSize: selectedComponent?.props?.labelProps?.size,
           placeholder: selectedComponent?.props?.placeholder,
           description: selectedComponent?.props?.description,
           radius: selectedComponent?.props?.radius,
@@ -47,26 +45,6 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          <TextInput
-            size="xs"
-            label="Label"
-            {...form.getInputProps("label")}
-            onChange={(e) => {
-              form.setFieldValue("label", e.target.value);
-              const _value = !!e.target.value ? e.target.value : null;
-              debouncedTreeUpdate(selectedComponentIds, { label: _value });
-            }}
-          />
-          <SizeSelector
-            label="Label Size"
-            {...form.getInputProps("labelSize")}
-            onChange={(value) => {
-              form.setFieldValue("labelSize", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                labelProps: { size: value },
-              });
-            }}
-          />
           <Stack spacing={2}>
             <TopLabel text="Type" />
             <SegmentedControl
