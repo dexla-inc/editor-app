@@ -192,7 +192,7 @@ const GradientSelector = ({ getValue, setFieldValue }: GradientPickerProps) => {
           />
           <Stack spacing="0">
             <Text fz="xs" color="dimmed" fw="bold">
-              COLOUR CODE
+              COLOR CODE
             </Text>
             <Input
               size="xs"
@@ -227,7 +227,7 @@ const GradientSelector = ({ getValue, setFieldValue }: GradientPickerProps) => {
         <Stack spacing={50}>
           <Stack>
             <Group sx={{ justifyContent: "space-between" }} noWrap>
-              <TopLabel text="GRADIENT COLOURS" />
+              <TopLabel text="GRADIENT COLORS" />
               <ActionIcon
                 size="xs"
                 onClick={addNewColorToColors}
