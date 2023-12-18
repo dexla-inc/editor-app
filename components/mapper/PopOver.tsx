@@ -1,6 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import { componentMapper } from "@/utils/componentMapper";
 import { Component, checkIfIsChild } from "@/utils/editor";
 import { Box, Popover as MantinePopOver, PopoverProps } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -74,7 +73,6 @@ const PopOverComponent = ({
 
   return (
     <MantinePopOver
-      keepMounted
       withinPortal
       trapFocus={false}
       opened={isOpened}
@@ -103,4 +101,4 @@ const PopOverComponent = ({
   );
 };
 
-export const PopOver = PopOverComponent;
+export const PopOver = memo(PopOverComponent, isSame);

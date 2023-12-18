@@ -379,7 +379,7 @@ export const useEditorStore = create<EditorState>()(
 
               return {
                 tree: {
-                  ...cloneDeep(copy),
+                  ...copy,
                   name: `Edited ${component?.name}`,
                   timestamp: Date.now(),
                 },

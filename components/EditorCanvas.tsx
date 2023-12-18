@@ -64,7 +64,6 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const currentProjectId = useEditorStore((state) => state.currentProjectId);
   const currentPageId = useEditorStore((state) => state.currentPageId);
   const setIsSaving = useEditorStore((state) => state.setIsSaving);
-  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
@@ -363,7 +362,9 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
         }}
         p={0}
       >
-        <IFrame projectId={projectId}>{renderTree(treeRoot)}</IFrame>
+        <IFrame key={editorTree.timestamp} projectId={projectId}>
+          {renderTree(treeRoot)}
+        </IFrame>
       </Box>
       {isCustomComponentModalOpen && (
         <CustomComponentModal
