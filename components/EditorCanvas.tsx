@@ -15,7 +15,7 @@ import { useUserConfigStore } from "@/stores/userConfig";
 import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
 import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
-import { HEADER_HEIGHT } from "@/utils/config";
+import { CURSOR_COLORS, HEADER_HEIGHT } from "@/utils/config";
 import {
   Component,
   addComponent,
@@ -39,11 +39,22 @@ const EditableComponentContainer = ({ children, component }: any) => {
     (state) => state.selectedComponentIds?.includes(component.id),
   );
 
+  const selectedByOther = useEditorStore((state) => {
+    const other = state.liveblocks?.others?.find(({ presence }: any) => {
+      return presence.selectedComponentIds?.includes(component.id);
+    });
+
+    if (!other) return null;
+
+    return CURSOR_COLORS[other.connectionId % CURSOR_COLORS.length];
+  });
+
   return (
     <EditableComponent
       id={component.id!}
       component={component}
       isSelected={isSelected}
+      selectedByOther={selectedByOther ?? undefined}
     >
       {children}
     </EditableComponent>

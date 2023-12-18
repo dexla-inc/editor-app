@@ -59,7 +59,6 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
 
   const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
   const clear = useTemporalStore((state) => state.clear);
-  console.log(router.query);
 
   return (
     <AppShell
