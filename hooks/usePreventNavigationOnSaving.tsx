@@ -9,6 +9,8 @@ export const usePreventNavigationOnSaving = () => {
   const router = useRouter();
   const isSaving = useEditorStore((state) => state.isSaving);
   const isSavingRef = useRef(isSaving);
+  const resetTree = useEditorStore((state) => state.resetTree);
+  const liveblocks = useEditorStore((state) => state.liveblocks);
 
   useEffect(() => {
     isSavingRef.current = isSaving;
@@ -17,7 +19,6 @@ export const usePreventNavigationOnSaving = () => {
   useEffect(() => {
     const handleBeforeUnload = (e: any) => {
       if (isSavingRef.current) {
-        e.preventDefault();
         e.returnValue = message;
         return message;
       }
@@ -25,12 +26,17 @@ export const usePreventNavigationOnSaving = () => {
 
     window.addEventListener("beforeunload", handleBeforeUnload);
 
-    const handleRouteChange = () => {
+    const handleRouteChange = (url: string, options: { shallow: boolean }) => {
       if (isSaving) {
         const leave = confirm(message);
         if (!leave) {
           router.events.emit("routeChangeError");
           throw errorMessage;
+        }
+
+        liveblocks.leaveRoom();
+        if (!options.shallow) {
+          resetTree();
         }
       }
     };
@@ -41,5 +47,5 @@ export const usePreventNavigationOnSaving = () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
       router.events.off("routeChangeStart", handleRouteChange);
     };
-  }, [isSaving, router.events]);
+  }, [isSaving, router.events, resetTree]);
 };
