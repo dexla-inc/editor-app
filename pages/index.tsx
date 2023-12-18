@@ -1,12 +1,13 @@
-import { GetServerSidePropsContext } from "next";
-import { isMatchingUrl } from "./[page]";
-import { getByDomain } from "@/requests/projects/queries";
+import { Live } from "@/components/Live";
+import { isMatchingUrl } from "@/pages/[page]";
 import { getMostRecentDeployment } from "@/requests/deployments/queries";
 import { PageResponse } from "@/requests/pages/types";
+import { getByDomain } from "@/requests/projects/queries";
 import { useEditorStore } from "@/stores/editor";
-import { useEffect } from "react";
+import { decodeSchema } from "@/utils/compression";
+import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
-import { Live } from "@/components/Live";
+import { useEffect } from "react";
 
 export const getServerSideProps = async ({
   req,
@@ -69,13 +70,15 @@ const HomePage = ({ id, page }: Props) => {
     setIsLive,
   ]);
 
+  const state = JSON.parse(decodeSchema(page?.pageState ?? "") ?? "{}");
+
   return (
     <>
       <Head>
         <title>{page?.title}</title>
         <meta name="description" content={page?.title} />
       </Head>
-      <Live key={page?.id} pageId={page?.id} projectId={id} />;
+      <Live key={state?.timestamp} pageId={page?.id} projectId={id} />;
     </>
   );
 };

@@ -1,4 +1,5 @@
 import { defaultBorderValues } from "@/components/modifiers/Border";
+import { tileMapper } from "@/components/templates/tiles";
 import {
   getDataSourceEndpoints,
   getDataSources,
@@ -9,7 +10,6 @@ import { structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
-import { tileMapper } from "./tiles";
 
 type Button = {
   name: "button";

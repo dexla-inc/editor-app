@@ -1,124 +1,88 @@
-import { getTheme } from "@/requests/themes/queries";
-import { MantineThemeExtended, useEditorStore } from "@/stores/editor";
+import { useUserTheme } from "@/hooks/useUserTheme";
+import { getProject } from "@/requests/projects/queries";
+import { useAppStore } from "@/stores/app";
+import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
+import { decodeSchema } from "@/utils/compression";
+import { HEADER_HEIGHT, NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
 import createCache from "@emotion/cache";
 import {
   Box,
   BoxProps,
-  DEFAULT_THEME,
+  Loader,
   MantineProvider,
+  Paper,
   ScrollArea,
+  Stack,
+  Text,
 } from "@mantine/core";
-import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
-export const defaultTheme: MantineThemeExtended = {
-  ...DEFAULT_THEME,
-  fontFamily: "Arial, sans-serif",
-  headings: {
-    ...DEFAULT_THEME.headings,
-    fontFamily: "Arial, sans-serif",
-  },
-  primaryColor: "teal",
-  defaultFont: "Arial, sans-serif",
-  hasCompactButtons: true,
-  //focusRing: "DEFAULT",  Need to do focusRingStyles: {     styles(theme: MantineThemeBase): CSSObject;
-  loader: "oval",
-  cardStyle: "OUTLINED_ROUNDED",
-  defaultSpacing: "md",
-  defaultRadius: "md",
-};
-
 type Props = {
-  onClick?: () => void;
-  isLive?: boolean;
   projectId: string;
 } & BoxProps;
 
-export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
+export const IFrame = ({ children, projectId, ...props }: Props) => {
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
+  const [customCode, setCustomCode] = useState<any | null>(null);
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
-  const setIsStructureCollapsed = useEditorStore(
-    (state) => state.setIsStructureCollapsed,
-  );
-  const isStructureCollapsed = useEditorStore(
-    (state) => state.isStructureCollapsed,
-  );
+  const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const isLoading = useAppStore((state) => state.isLoading);
 
-  const theme = useEditorStore((state) => state.theme);
-  const setTheme = useEditorStore((state) => state.setTheme);
-
-  const userTheme = useQuery({
-    queryKey: ["theme"],
-    queryFn: () => getTheme(projectId),
-    enabled: !!projectId,
-  });
-
-  useEffect(() => {
-    if (userTheme.isFetched) {
-      setTheme({
-        ...theme,
-        colors: {
-          ...theme.colors,
-          ...userTheme.data?.colors.reduce((userColors, color) => {
-            const hex = color.hex.substring(0, 7);
-            return {
-              ...userColors,
-              [color.name]: [
-                theme.fn.lighten(hex, 0.9),
-                theme.fn.lighten(hex, 0.8),
-                theme.fn.lighten(hex, 0.7),
-                theme.fn.lighten(hex, 0.6),
-                theme.fn.lighten(hex, 0.5),
-                theme.fn.lighten(hex, 0.4),
-                color.hex,
-                theme.fn.darken(hex, 0.1),
-                theme.fn.darken(hex, 0.2),
-                theme.fn.darken(hex, 0.3),
-              ],
-            };
-          }, {}),
-        },
-        primaryColor: "Primary",
-        logoUrl: userTheme.data?.logoUrl,
-        faviconUrl: userTheme.data?.faviconUrl,
-        logos: userTheme.data?.logos,
-        hasCompactButtons: userTheme.data?.hasCompactButtons,
-        cardStyle: userTheme.data?.cardStyle,
-        defaultFont: userTheme.data?.defaultFont,
-        defaultSpacing:
-          userTheme.data?.defaultSpacing ?? defaultTheme.spacing.md,
-        defaultRadius: userTheme.data?.defaultRadius ?? defaultTheme.radius.md,
-        // loader: userTheme.data?.loader?
-        // focusRing: userTheme.data?.focusRing,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userTheme.isFetched, userTheme.data?.colors, setTheme]);
-
+  const theme = useUserTheme(projectId);
   const w = contentRef?.contentWindow;
   const mountNode = w?.document.body;
   const insertionTarget = w?.document.head;
 
-  let cssString = "";
+  useEffect(() => {
+    mountNode?.setAttribute(
+      "style",
+      `overflow: visible; margin: 10px 0px 10px 10px;`,
+    );
 
-  // Add styles depending on the `isLive` prop
-  !isLive
-    ? (cssString = `
-        overflow: visible; margin: 10px 0px 10px 10px;    
-    `)
-    : (cssString = `margin: 0px;`);
+    const styleTag = document.createElement("style");
+    styleTag.textContent = `* { box-sizing: border-box; }`;
+    insertionTarget?.appendChild(styleTag);
 
-  mountNode?.setAttribute("style", cssString);
+    // add head custom code
+    if (customCode?.headCode) {
+      // check if head code already exists
+      const existingHeadCode = w?.document.getElementById("footer-code");
+      if (!existingHeadCode) {
+        const scriptTag = w?.document.createElement("script");
 
-  const styleTag = document.createElement("style");
-  styleTag.textContent = `* { box-sizing: border-box; }`;
-  insertionTarget?.appendChild(styleTag);
+        if (scriptTag) {
+          scriptTag!.textContent = customCode.headCode;
+          scriptTag!.setAttribute("id", "head-code");
+          insertionTarget?.appendChild(scriptTag!);
+        }
+      }
+    }
+
+    // add footer custom code
+    if (customCode?.footerCode) {
+      // check if footer code already exists
+      const existingFooterCode = w?.document.getElementById("footer-code");
+      if (!existingFooterCode) {
+        const scriptTag = w?.document.createElement("script");
+        if (scriptTag) {
+          scriptTag.textContent = customCode.footerCode;
+          scriptTag.setAttribute("id", "footer-code");
+          mountNode?.appendChild(scriptTag!);
+        }
+      }
+    }
+  }, [
+    customCode?.footerCode,
+    customCode?.headCode,
+    insertionTarget,
+    mountNode,
+    w?.document,
+  ]);
 
   useEffect(() => {
     const w = contentRef?.contentWindow;
@@ -127,20 +91,16 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
     }
   }, [contentRef, setIframeWindow]);
 
-  const getContainerStyles = (
-    isLive: boolean | undefined,
-    isPreviewMode: boolean,
-    isTabPinned: boolean,
-  ) => {
+  const getContainerStyles = (isPreviewMode: boolean, isTabPinned: boolean) => {
     const containerStyles = {
-      overflow: isLive ? "hidden" : "visible",
+      overflow: "visible",
       border: "none",
       width: "100%",
-      height: isLive ? "100vh" : "100%",
+      height: "100%",
       marginLeft: 0 as string | number,
     };
 
-    if (!isLive && !isPreviewMode) {
+    if (!isPreviewMode) {
       containerStyles.width = isTabPinned
         ? `calc(100% - ${NAVBAR_WIDTH}px)`
         : `calc(100% - ${NAVBAR_MIN_WIDTH - 50}px)`; // Weird sizing issue that I haven't got time to investigate, had to hack it
@@ -153,7 +113,7 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
     return containerStyles;
   };
 
-  const styles = getContainerStyles(isLive, isPreviewMode, isTabPinned);
+  const styles = getContainerStyles(isPreviewMode, isTabPinned);
 
   const handleMouseDown = useCallback(() => {
     if (isTabPinned) {
@@ -161,15 +121,55 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
     } else {
       setActiveTab(undefined);
     }
-    isStructureCollapsed && setIsStructureCollapsed(false);
-  }, [
-    isTabPinned,
-    isStructureCollapsed,
-    setActiveTab,
-    setIsStructureCollapsed,
-  ]);
+  }, [isTabPinned, setActiveTab]);
 
-  return (
+  useEffect(() => {
+    const fetchProject = async () => {
+      const project = await getProject(projectId);
+      const customCode = project.customCode
+        ? JSON.parse(decodeSchema(project.customCode))
+        : undefined;
+      if (customCode) {
+        setCustomCode(customCode);
+      }
+      setIsLoading(false);
+    };
+
+    fetchProject();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId]);
+
+  if (!theme) {
+    return null;
+  }
+
+  return isLoading ? (
+    <Box
+      pos="relative"
+      style={{ minHeight: `calc(100vh - ${HEADER_HEIGHT}px)` }}
+      ml={isTabPinned ? NAVBAR_WIDTH : NAVBAR_MIN_WIDTH - 50} // Weird sizing issue that I haven't got time to investigate, had to hack it
+      p="sm"
+    >
+      <Paper
+        pos="relative"
+        shadow="xs"
+        sx={{
+          width: "100%",
+          minHeight: "400px",
+          justifyContent: "center",
+          alignItems: "center",
+          display: "flex",
+        }}
+      >
+        <Stack align="center">
+          <Text color="teal.6" size="sm" weight="bold">
+            Loading the page
+          </Text>
+          <Loader />
+        </Stack>
+      </Paper>
+    </Box>
+  ) : (
     <Box
       id="iframe-canvas"
       onMouseDown={handleMouseDown}
@@ -192,7 +192,7 @@ export const IFrame = ({ children, projectId, isLive, ...props }: Props) => {
           >
             <Box
               // @ts-ignore
-              component={!isLive ? ScrollArea : "div"}
+              component={ScrollArea}
               offsetScrollbars
               id="iframe-content"
             >

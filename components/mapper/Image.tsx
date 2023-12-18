@@ -3,14 +3,15 @@ import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { ImageProps, Image as MantineImage } from "@mantine/core";
 import get from "lodash.get";
-import { memo } from "react";
+import { forwardRef, memo } from "react";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & ImageProps;
 
-const ImageComponent = ({ component, ...props }: Props) => {
+const ImageComponent = forwardRef(({ component, ...props }: Props, ref) => {
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
 
   const {
@@ -35,6 +36,7 @@ const ImageComponent = ({ component, ...props }: Props) => {
 
   return (
     <MantineImage
+      ref={ref}
       id={component.id}
       alt={alt}
       imageProps={{ src: value, style }}
@@ -45,6 +47,7 @@ const ImageComponent = ({ component, ...props }: Props) => {
       {...triggers}
     />
   );
-};
+});
+ImageComponent.displayName = "Image";
 
-export const Image = memo(ImageComponent, isSame);
+export const Image = memo(withComponentWrapper<Props>(ImageComponent), isSame);

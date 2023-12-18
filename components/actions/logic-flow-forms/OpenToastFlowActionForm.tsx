@@ -1,11 +1,12 @@
-import { useFlowStore } from "@/stores/flow";
-import { OpenToastAction } from "@/utils/actions";
-import { Button, Stack } from "@mantine/core";
-import { UseFormReturnType } from "@mantine/form";
-import { ApiType } from "@/utils/dashboardTypes";
-import React from "react";
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { useEditorStore } from "@/stores/editor";
+import { useFlowStore } from "@/stores/flow";
+import { OpenToastAction } from "@/utils/actions";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
+import { ApiType } from "@/utils/dashboardTypes";
+import { Button, Stack } from "@mantine/core";
+import { UseFormReturnType } from "@mantine/form";
+import React from "react";
 
 type Props = {
   form: UseFormReturnType<FormValues>;
@@ -48,9 +49,7 @@ export const OpenToastFlowActionForm = ({ form }: Props) => {
               }}
               size="xs"
               label={title}
-              autoComplete="off"
-              data-lpignore="true"
-              data-form-type="other"
+              {...AUTOCOMPLETE_OFF_PROPS}
               {...form.getInputProps(name)}
             />
           </React.Fragment>

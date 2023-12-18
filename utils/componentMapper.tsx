@@ -9,6 +9,8 @@ import { Avatar } from "@/components/mapper/Avatar";
 import { Badge } from "@/components/mapper/Badge";
 import { Breadcrumb } from "@/components/mapper/Breadcrumb";
 import { Button } from "@/components/mapper/Button";
+import { Progress } from "@/components/mapper/Progress";
+
 import { ButtonIcon } from "@/components/mapper/ButtonIcon";
 import { Card } from "@/components/mapper/Card";
 import { Checkbox } from "@/components/mapper/Checkbox";
@@ -37,7 +39,14 @@ import { Select } from "@/components/mapper/Select";
 import { Stepper } from "@/components/mapper/Stepper";
 import { Switch } from "@/components/mapper/Switch";
 import { Tab } from "@/components/mapper/Tab";
-import { Table } from "@/components/mapper/Table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
+} from "@/components/mapper/Table2/Table";
 import { Tabs } from "@/components/mapper/Tabs";
 import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";
@@ -76,13 +85,13 @@ import * as NavLinkStructure from "@/components/mapper/structure/NavLink";
 import * as NavbarStructure from "@/components/mapper/structure/Navbar";
 import * as PaginationStructure from "@/components/mapper/structure/Pagination";
 import * as PopOverStructure from "@/components/mapper/structure/PopOver";
+import * as ProgressStructure from "@/components/mapper/structure/Progress";
 import * as RadioGroupStructure from "@/components/mapper/structure/RadioGroup";
 import * as RatingStructure from "@/components/mapper/structure/Rating";
 import * as SelectStructure from "@/components/mapper/structure/Select";
 import * as StepperStructure from "@/components/mapper/structure/Stepper";
 import * as StepperStepStructure from "@/components/mapper/structure/StepperStep";
 import * as SwitchStructure from "@/components/mapper/structure/Switch";
-import * as TableStructure from "@/components/mapper/structure/Table";
 import * as TabsStructure from "@/components/mapper/structure/Tabs";
 import * as TextStructure from "@/components/mapper/structure/Text";
 import * as TextareaStructure from "@/components/mapper/structure/Textarea";
@@ -93,6 +102,7 @@ import * as LineChartStructure from "@/components/mapper/structure/charts/LineCh
 import * as PieChartStructure from "@/components/mapper/structure/charts/PieChart";
 import * as RadarChartStructure from "@/components/mapper/structure/charts/RadarChart";
 import * as RadialChartStructure from "@/components/mapper/structure/charts/RadialChart";
+import * as TableStructure from "@/components/mapper/structure/table/Table";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 
@@ -138,6 +148,7 @@ import {
   IconLayoutSidebar,
   IconLayoutSidebarLeftCollapse,
   IconLink,
+  IconLoader2,
   IconMapPin,
   IconPageBreak,
   IconPhoto,
@@ -746,6 +757,17 @@ export const structureMapper: StructureMapper = {
     category: "Feedback",
     icon: <IconIdBadge size={ICON_SIZE} />,
   },
+  Progress: {
+    structure: (props: any) => ProgressStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Progress"
+        icon={<IconLoader2 size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Feedback",
+    icon: <IconLoader2 size={ICON_SIZE} />,
+  },
   Modal: {
     structure: (props: any) => ModalStructure.jsonStructure(props),
     Draggable: () => (
@@ -853,7 +875,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Grid component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["effects"],
+    modifiers: ["grid", "spacing", "background", "border", "effects"],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
     allowedParentTypes: ["Grid", "GridColumn"],
@@ -862,7 +884,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <GridColumn component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: ["effects"],
+    modifiers: ["gridColumn", "size", "spacing", "background", "effects"],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -875,10 +897,10 @@ export const componentMapper: ComponentMapper = {
       "background",
       "spacing",
       "size",
-      "position",
-      "effects",
       "border",
       "boxShadow",
+      "effects",
+      "position",
     ],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
@@ -981,27 +1003,21 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <Icon component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: [
-      "icon",
-      "background",
-      "spacing",
-      "size",
-      "effects",
-      "border",
-      "position",
-    ],
+    modifiers: ["icon", "spacing", "effects", "border"],
     actionTriggers: ["onMount"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  Progress: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Progress component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["progress"],
+    actionTriggers: ["onMount", "onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Table: {
     Component: (props: { component: Component; renderTree: any }) => (
-      <Table
-        key={`${JSON.stringify(
-          props.component?.props?.config ?? {},
-        )}-${JSON.stringify(props.component?.props?.headers ?? {})}`}
-        component={props.component}
-        renderTree={props.renderTree}
-      />
+      <Table component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["table", "spacing", "size", "border"],
     actionTriggers: [
@@ -1014,6 +1030,49 @@ export const componentMapper: ComponentMapper = {
       "onFilterApplied",
     ],
     sequentialTriggers: ["onSuccess", "onError"],
+  },
+  TableHead: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <TableHead component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: [],
+    actionTriggers: [],
+    sequentialTriggers: [],
+  },
+  TableBody: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <TableBody component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: [],
+    actionTriggers: [],
+    sequentialTriggers: [],
+  },
+  TableRow: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <TableRow component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["size"],
+    actionTriggers: [],
+    sequentialTriggers: [],
+  },
+  TableCell: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <TableCell component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: [],
+    actionTriggers: [],
+    sequentialTriggers: [],
+  },
+  TableHeaderCell: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <TableHeaderCell
+        component={props.component}
+        renderTree={props.renderTree}
+      />
+    ),
+    modifiers: [],
+    actionTriggers: [],
+    sequentialTriggers: [],
   },
   FileUpload: {
     Component: (props: { component: Component; renderTree: any }) => {
@@ -1045,7 +1104,10 @@ export const componentMapper: ComponentMapper = {
         onChange={(files) => {
           const updateTreeComponent =
             useEditorStore.getState().updateTreeComponent;
-          updateTreeComponent(props.component.id!, files);
+          updateTreeComponent({
+            componentId: props.component.id!,
+            props: files,
+          });
         }}
         component={props.component}
         renderTree={props.renderTree}
@@ -1279,14 +1341,7 @@ export const componentMapper: ComponentMapper = {
         children={props.component.children as any}
       />
     ),
-    modifiers: [
-      "layout",
-      "background",
-      "spacing",
-      "size",
-      "position",
-      "border",
-    ],
+    modifiers: ["navbar", "spacing", "border"],
     actionTriggers: ["onMount"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
@@ -1347,18 +1402,18 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Button: {
-    Component: (props: { component: Component; renderTree: any }) => (
-      // @ts-ignore
-      <Button component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props: { component: Component; renderTree: any }) => {
+      return (
+        <Button component={props.component} renderTree={props.renderTree} />
+      );
+    },
     modifiers: [
       "button",
       "spacing",
-      "size",
       "border",
+      "boxShadow",
       "effects",
       "position",
-      "boxShadow",
     ],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],

@@ -1,22 +1,17 @@
-import { get } from "@/utils/api";
-
-export type CustomComponentResponse = {
-  id: string;
-  type: string;
-  name: string;
-  scope: string;
-  content: string;
-  description: string;
-};
+import { CustomComponentResponse } from "@/requests/components/types";
+import { getWithoutAuth } from "@/utils/apiNoAuth";
 
 type CustomComponentListResponse = {
   results: CustomComponentResponse[];
 };
 
-export const getComponentList = async (projectId: string) => {
-  const response = (await get<CustomComponentListResponse>(
-    `/projects/${projectId}/components`,
-    {}
+export const getComponentList = async (
+  projectId: string,
+  companyId: string,
+) => {
+  const response = (await getWithoutAuth<CustomComponentListResponse>(
+    `/projects/${projectId}/components?companyId=${companyId}`,
+    {},
   )) as CustomComponentListResponse;
 
   return response;

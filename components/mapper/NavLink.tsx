@@ -43,7 +43,9 @@ const NavLinkComponent = ({ renderTree, component, ...props }: Props) => {
   const textColor = getColorFromTheme(theme, color) ?? "#000";
   const backgroundColor = getColorFromTheme(theme, bg) ?? "transparent";
 
-  merge(componentProps, { style: { color: textColor, backgroundColor } });
+  merge(componentProps, {
+    style: { ...props.style, color: textColor, backgroundColor },
+  });
 
   return (
     <MantineNavLink

@@ -1,5 +1,12 @@
+import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { PageResponse } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
+import {
+  DARK_COLOR,
+  GRAY_COLOR,
+  GRAY_WHITE_COLOR,
+  HOVERED,
+} from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import {
   Button,
@@ -13,7 +20,6 @@ import {
 } from "@mantine/core";
 import { IconFileAnalytics, IconHome, IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
-import { ActionIconDefault } from "../ActionIconDefault";
 
 type InitialPaneProps = {
   projectId: string;
@@ -34,6 +40,14 @@ export default function InitialPane({
   const theme = useMantineTheme();
   const resetTree = useEditorStore((state) => state.resetTree);
   const liveblocks = useEditorStore((state) => state.liveblocks);
+  const { color, background, hoveredBackground, hoveredColor, whiteColor } = {
+    color: theme.colorScheme === "dark" ? GRAY_WHITE_COLOR : theme.black,
+    background: theme.colorScheme === "dark" ? DARK_COLOR : GRAY_WHITE_COLOR,
+    hoveredBackground: theme.colorScheme === "dark" ? DARK_COLOR : HOVERED,
+    hoveredColor: theme.colorScheme === "dark" ? GRAY_WHITE_COLOR : theme.black,
+    whiteColor:
+      theme.colorScheme === "dark" ? GRAY_COLOR : theme.colors.gray[7],
+  };
 
   return (
     <>
@@ -51,7 +65,7 @@ export default function InitialPane({
         }}
         size="xs"
       />
-      <Stack spacing={0}>
+      <Stack spacing={2}>
         {pages.map((page) => {
           return (
             <UnstyledButton
@@ -61,28 +75,27 @@ export default function InitialPane({
               onClick={() => {
                 liveblocks.leaveRoom();
                 resetTree();
+                currentPage !== page.id && resetTree();
               }}
             >
               <Group
-                p="xs"
+                px="xs"
+                py={4}
                 spacing="sm"
                 position="apart"
                 align="center"
                 sx={{
                   flexWrap: "nowrap",
-                  borderRadius: theme.radius.md,
+                  borderRadius: theme.radius.sm,
                   textDecoration: "none",
                   fontWeight: currentPage === page.id ? 500 : "normal",
-                  color:
-                    currentPage === page.id
-                      ? theme.black
-                      : theme.colors.gray[7],
+                  color: currentPage === page.id ? color : whiteColor,
                   backgroundColor:
-                    currentPage === page.id ? theme.colors.gray[0] : undefined,
+                    currentPage === page.id ? background : undefined,
 
                   "&:hover": {
-                    backgroundColor: theme.colors.gray[0],
-                    color: theme.black,
+                    backgroundColor: hoveredBackground,
+                    color: hoveredColor,
                   },
                 }}
               >

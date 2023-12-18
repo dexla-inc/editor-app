@@ -6,7 +6,10 @@ import {
   useEditorStore,
 } from "@/stores/editor";
 import { Action, ChangeStepAction } from "@/utils/actions";
+import { GRAY_OUTLINE } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
+import { GRID_SIZE } from "@/utils/config";
+import { calculateGridSizes } from "@/utils/grid";
 import { templatesMapper } from "@/utils/templatesMapper";
 import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
@@ -17,8 +20,6 @@ import { nanoid } from "nanoid";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
-import { GRID_SIZE } from "@/utils/config";
-import { calculateGridSizes } from "@/utils/grid";
 
 export type Component = {
   id?: string;
@@ -290,11 +291,11 @@ export const getNewComponents = (
 };
 
 export const getNewComponent = (
-  row: Row,
+  components: Component[],
   theme: MantineThemeExtended,
   pages: PageResponse[],
 ): Component => {
-  const firstComponent = row.components[0];
+  const firstComponent = components[0];
   const structureDefinition = structureMapper[firstComponent.name];
   const firstComponentStructure = structureDefinition.structure({
     ...firstComponent,
@@ -435,7 +436,6 @@ export const replaceTilesData = (
   crawl(
     tree.root,
     (node) => {
-      console.log(node);
       if (node.description?.endsWith(".tile")) {
         const name = node.description?.replace(".tile", "");
         const tile = tiles.find((t) => t.name === `${name}Tile`);
@@ -465,6 +465,25 @@ export const getComponentById = (
       if (node.id === id) {
         found = node as Component;
         context.break();
+      }
+    },
+    { order: "bfs" },
+  );
+
+  return found;
+};
+
+export const getAllComponentsByIds = (
+  treeRoot: Component,
+  ids: string[],
+): Component[] => {
+  let found: Component[] = [];
+
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (ids.includes(node.id!)) {
+        found.push(node);
       }
     },
     { order: "bfs" },
@@ -544,14 +563,16 @@ export const updateTreeComponentAttrs = (
 
 export const updateTreeComponent = (
   treeRoot: Component,
-  id: string,
+  ids: string | string[],
   props: any,
   state: string = "default",
   language: string = "default",
 ) => {
+  ids = Array.isArray(ids) ? ids : [ids];
+
   const translatableFields = pickBy(props, pickTranslatableFields);
   const styleFields = pickBy(props, pickStyleFields);
-  const alwaysDefaultFields = omit(props, [
+  const alwaysDefaultFields = omit(props ?? {}, [
     ...translatableFieldsKeys,
     ...styleFieldsKeys,
   ]);
@@ -559,7 +580,7 @@ export const updateTreeComponent = (
   crawl(
     treeRoot,
     (node, context) => {
-      if (node.id === id) {
+      if (ids.includes(node.id!)) {
         if (language === "default") {
           node.props = merge(node.props, translatableFields);
         } else {
@@ -577,6 +598,24 @@ export const updateTreeComponent = (
         }
 
         node.props = merge(node.props, alwaysDefaultFields);
+
+        // context.break();
+      }
+    },
+    { order: "bfs" },
+  );
+};
+
+export const updateTreeComponentStates = (
+  treeRoot: Component,
+  id: string,
+  states: any,
+) => {
+  crawl(
+    treeRoot,
+    (node, context) => {
+      if (node.id === id) {
+        node.states = merge(node.states, states);
 
         context.break();
       }
@@ -597,6 +636,23 @@ export const updateTreeComponentChildren = (
         node.children = children;
         context.break();
       }
+    },
+    { order: "bfs" },
+  );
+};
+
+export const updateTreeComponentWithOmitProps = (treeRoot: Component) => {
+  crawl(
+    treeRoot,
+    (node, context) => {
+      // @ts-ignore
+      delete node.collapsed;
+      // @ts-ignore
+      delete node.depth;
+      // @ts-ignore
+      delete node.index;
+      // @ts-ignore
+      delete node.parentId;
     },
     { order: "bfs" },
   );
@@ -796,6 +852,7 @@ export const resetContentWrapperWidth = (treeRoot: Component) => {
 };
 
 export const getComponentIndex = (parent: Component, id: string) => {
+  if (!parent) return -1;
   return (
     parent.children?.findIndex((child: Component) => child.id === id) ?? -1
   );
@@ -812,11 +869,23 @@ export const addComponent = (
   const directChildren = ["Modal", "Drawer", "Toast"];
   const isGrid = copy.name === "Grid";
   const isColumn = copy.name === "GridColumn";
+  const isNavbar = copy.name === "Navbar";
   let targetComponent = null;
 
   crawl(
     treeRoot,
     (node, context) => {
+      if (isNavbar) {
+        const contentWrapper = treeRoot.children?.find(
+          (child) => child.id === "content-wrapper",
+        );
+        if (contentWrapper) {
+          contentWrapper.props = {
+            ...contentWrapper.props,
+            navbarWidth: componentToAdd.props?.style.width,
+          };
+        }
+      }
       if ((isGrid || isColumn) && node.id === dropTarget.id) {
         targetComponent = addNodeToTarget(
           treeRoot,
@@ -859,7 +928,7 @@ export const addComponent = (
             if (isPopOver) {
               copy.props!.targetId = node.id;
               copy.children = [...(copy.children || []), node];
-              context.parent?.children?.splice(context.index, 0, copy);
+              context.parent?.children?.splice(context.index, 1, copy);
             } else {
               node.children = node.children ?? [];
 
@@ -907,47 +976,62 @@ export const getClosestEdge = (
 };
 
 export const debouncedTreeComponentChildrenUpdate = debounce(
-  (value: Component[]) => {
-    const { updateTreeComponentChildren, selectedComponentId } =
-      useEditorStore.getState();
+  (value: Component[], save = true) => {
+    const updateTreeComponentChildren =
+      useEditorStore.getState().updateTreeComponentChildren;
+    const selectedComponentId = useEditorStore.getState().selectedComponentId;
 
-    updateTreeComponentChildren(selectedComponentId as string, value);
-  },
-  300,
-);
-
-export const debouncedTreeComponentPropsUpdate = debounce(
-  (field: string, value: any) => {
-    const { updateTreeComponent, selectedComponentId } =
-      useEditorStore.getState();
-    if (selectedComponentId) {
-      updateTreeComponent(selectedComponentId, { [field]: value });
-    }
+    updateTreeComponentChildren(selectedComponentId as string, value, save);
   },
   300,
 );
 
 export const debouncedTreeComponentStyleUpdate = debounce(
-  (field: string, value: any) => {
-    const { updateTreeComponent, selectedComponentId } =
-      useEditorStore.getState();
-    updateTreeComponent(selectedComponentId as string, {
-      style: { [field]: value },
-    });
+  (...params: any[]) => {
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    const updateTreeComponents = useEditorStore.getState().updateTreeComponents;
+
+    if (Array.isArray(params[0])) {
+      const [componentIds, styleUpdate] = params;
+      updateTreeComponents(componentIds, { style: { ...styleUpdate } });
+    } else {
+      const [componentId, styleUpdate] = params;
+      updateTreeComponent({
+        componentId: componentId,
+        props: { style: { ...styleUpdate } },
+      });
+    }
   },
   300,
 );
 
-export const debouncedTreeUpdate = debounce((...params: any[]) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+export const debouncedTreeUpdate = debounce(
+  (componentId, props, save = true) => {
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    const updateTreeComponents = useEditorStore.getState().updateTreeComponents;
+    if (Array.isArray(componentId)) {
+      // @ts-ignore
+      updateTreeComponents(componentId, props, save);
+    } else {
+      // @ts-ignore
+      updateTreeComponent(componentId, props, save);
+    }
+  },
+  300,
+);
+
+export const debouncedTreeUpdateStates = debounce((...params: any[]) => {
+  const updateTreeComponentStates =
+    useEditorStore.getState().updateTreeComponentStates;
   // @ts-ignore
-  updateTreeComponent(...params);
+  updateTreeComponentStates(...params);
 }, 300);
 
 export const debouncedTreeComponentDescriptionpdate = debounce(
   (value: string) => {
-    const { updateTreeComponentDescription, selectedComponentId } =
-      useEditorStore.getState();
+    const updateTreeComponentDescription =
+      useEditorStore.getState().updateTreeComponentDescription;
+    const selectedComponentId = useEditorStore.getState().selectedComponentId;
 
     updateTreeComponentDescription(selectedComponentId!, value);
   },
@@ -955,9 +1039,12 @@ export const debouncedTreeComponentDescriptionpdate = debounce(
 );
 
 export const debouncedTreeRootChildrenUpdate = debounce(
-  (value: Component[]) => {
-    const { updateTreeComponentChildren, tree } = useEditorStore.getState();
-    updateTreeComponentChildren(tree.root.id as string, value);
+  (value: Component[], save = true) => {
+    const updateTreeComponentChildren =
+      useEditorStore.getState().updateTreeComponentChildren;
+    const tree = useEditorStore.getState().tree;
+
+    updateTreeComponentChildren(tree.root.id as string, value, save);
   },
   300,
 );
@@ -1152,11 +1239,10 @@ const addNodeToTarget = (
     description: "GridColumn",
     props: {
       span: GRID_SIZE,
-      bg: "white",
       style: {
         height: "auto",
-        minHeight: "50px",
-        border: "2px dotted #ddd",
+        outline: GRAY_OUTLINE,
+        outlineOffset: "-2px",
       },
     },
     children: [copy],

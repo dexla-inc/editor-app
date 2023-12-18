@@ -1,12 +1,11 @@
-import { createContext, useContext, useState } from "react";
-// import { ContextMenuPortal } from "./ContextMenuPortal";
+import { ContextMenuPortal } from "mantine-contextmenu";
+import { ContextMenuInstanceOptions } from "mantine-contextmenu/dist/ContextMenu";
 import {
   ContextMenuOptions,
   ContextMenuProviderProps,
   ShowContextMenuFunction,
 } from "mantine-contextmenu/dist/types";
-import { ContextMenuInstanceOptions } from "mantine-contextmenu/dist/ContextMenu";
-import { ContextMenuPortal } from "mantine-contextmenu";
+import { createContext, useContext, useState } from "react";
 
 export const MenuContext = createContext<{
   showContextMenu: ShowContextMenuFunction;

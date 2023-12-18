@@ -1,3 +1,4 @@
+import { WarningAlert } from "@/components/Alerts";
 import { Icon } from "@/components/Icon";
 import {
   createDataSourceEndpoint,
@@ -37,7 +38,6 @@ import { Editor } from "@monaco-editor/react";
 import { useQueryClient } from "@tanstack/react-query";
 import debounce from "lodash.debounce";
 import { useEffect, useReducer, useState } from "react";
-import { WarningAlert } from "../Alerts";
 
 const MethodTypeArray: MethodTypes[] = [
   "GET",

@@ -1,4 +1,4 @@
-import { CardStyle, FocusRing, LoaderType } from "../projects/types";
+import { CardStyle, FocusRing, LoaderType } from "@/requests/projects/types";
 
 export type ThemeQueryParams = {
   websiteUrl?: string;
@@ -18,6 +18,7 @@ export type ThemeMutationParams = {
   focusRing?: FocusRing;
   loader?: LoaderType;
   cardStyle: CardStyle;
+  theme: "LIGHT" | "DARK";
 };
 
 export interface ThemeResponse extends ThemeMutationParams {

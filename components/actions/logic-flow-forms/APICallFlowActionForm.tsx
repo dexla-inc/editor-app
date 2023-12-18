@@ -9,6 +9,7 @@ import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { APICallAction, LoginAction } from "@/utils/actions";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { ApiType } from "@/utils/dashboardTypes";
 import {
@@ -241,9 +242,6 @@ export const APICallFlowActionForm = ({
                             { required: param.required }
                           : {})}
                         {...additionalProps}
-                        autoComplete="off"
-                        data-lpignore="true"
-                        data-form-type="other"
                         {...form.getInputProps(field)}
                         // @ts-ignore
                         value={form.values[field] ?? undefined}
@@ -253,6 +251,7 @@ export const APICallFlowActionForm = ({
                             [field]: e.currentTarget.value,
                           });
                         }}
+                        {...AUTOCOMPLETE_OFF_PROPS}
                       />
                     </Stack>
                   );

@@ -18,3 +18,9 @@ export const convertToBase64 = (file: FileWithPath): Promise<string> => {
 export function cleanJson(json: string | null) {
   return json?.replace("```json", "").replace("```", "");
 }
+
+export const AUTOCOMPLETE_OFF_PROPS = {
+  autoComplete: "off",
+  "data-lpignore": "true",
+  "data-form-type": "other",
+};

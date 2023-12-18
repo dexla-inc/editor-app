@@ -1,29 +1,25 @@
-import { defaultTheme } from "@/components/IFrame";
-import { defaultButtonValues } from "@/components/modifiers/Button";
+import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
   const { value, textColor, color, ...rest } = props.props ?? {};
 
-  // With no-code I think we should remove padding as a default on buttons and let compact / non-compact settings drive it
-  const paddingX = theme.hasCompactButtons ? `8px` : `18px`;
-  const paddingY = theme.hasCompactButtons ? `5px` : `10px`;
+  // const paddingX = theme.hasCompactButtons ? `0.5rem` : `1.125rem`;
+  // const height = theme.hasCompactButtons ? `1.625rem` : `2.25rem`;
 
   return {
     id: nanoid(),
     name: "Button",
     description: "Button",
     props: {
-      ...defaultButtonValues,
+      ...requiredModifiers.button,
       style: {
-        width: "auto",
-        height: "auto",
-        paddingTop: paddingY,
-        paddingBottom: paddingY,
-        paddingLeft: paddingX,
-        paddingRight: paddingX,
+        width: "fit-content",
+        paddingLeft: "18px",
+        paddingRight: "18px",
       },
       color: color ?? "Primary.6",
       textColor: textColor ?? "PrimaryText.6",

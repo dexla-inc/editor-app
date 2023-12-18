@@ -37,8 +37,11 @@ const TitleComponent = ({ renderTree, component, ...props }: Props) => {
     e.preventDefault();
     if (!isPreviewMode) {
       setIsEditable(false);
-      updateTreeComponent(component.id!, {
-        children: ref.current?.innerText,
+      updateTreeComponent({
+        componentId: component.id!,
+        props: {
+          children: ref.current?.innerText,
+        },
       });
     }
   };

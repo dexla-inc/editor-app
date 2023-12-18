@@ -1,5 +1,6 @@
 import AIPromptTextareaInput from "@/components/AIPromptTextareaInput";
 import { ErrorAlert } from "@/components/Alerts";
+import { TopLabel } from "@/components/TopLabel";
 import { anyPrompt } from "@/requests/ai/queries";
 import { AIResponseTypes } from "@/requests/ai/types";
 import {
@@ -22,7 +23,6 @@ import {
   SegmentedControl,
   Select,
   Stack,
-  Text,
 } from "@mantine/core";
 import { Prism } from "@mantine/prism";
 import { useEffect, useState } from "react";
@@ -54,14 +54,9 @@ export default function Playground() {
       setErrorText("");
 
       const result = await anyPrompt(model, prompt, base64Image);
-      console.log(result);
       setAiResponse(result);
     }
   };
-
-  useEffect(() => {
-    console.log(prompt);
-  }, [prompt]);
 
   useEffect(() => {
     let newPrompt;
@@ -142,9 +137,7 @@ export default function Playground() {
               size="xs"
             />
             <Stack spacing={2}>
-              <Text size="xs" fw={500}>
-                Response Type
-              </Text>
+              <TopLabel text="Response Type" />
               <SegmentedControl
                 value={responseType}
                 onChange={(value) => setResponseType(value as AIResponseTypes)}

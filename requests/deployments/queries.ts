@@ -3,13 +3,16 @@ import {
   DeploymentPageParams,
   DeploymentResponse,
 } from "@/requests/deployments/types";
+import { PagingResponse } from "@/requests/types";
 import { getWithoutAuth } from "@/utils/apiNoAuth";
 import { buildQueryString } from "@/utils/dashboardTypes";
-import { PagingResponse } from "../types";
 
-export const getMostRecentDeployment = async (projectId: string) => {
+export const getMostRecentDeployment = async (
+  projectId: string,
+  includeState: boolean = true,
+) => {
   const response = (await getWithoutAuth<DeploymentResponse>(
-    `/projects/${projectId}/deployments/recent`,
+    `/projects/${projectId}/deployments/recent?includeState=${includeState}`,
   )) as DeploymentResponse;
 
   return response;

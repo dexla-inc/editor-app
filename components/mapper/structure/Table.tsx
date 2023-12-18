@@ -1,10 +1,14 @@
-import { defaultButtonValues } from "@/components/modifiers/Button";
-import { defaultInputValues } from "@/components/modifiers/Input";
-import { defaultInputValues as defaultTextValues } from "@/components/modifiers/Text";
+import { structureMapper } from "@/utils/componentMapper";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
+  const select = structureMapper["Select"].structure({});
+  const defaultButton = structureMapper["Button"].structure({});
+
+  const { input: defaultInputValues, text: defaultTextValues } =
+    requiredModifiers;
   return {
     id: nanoid(),
     name: "Container",
@@ -70,8 +74,7 @@ export const jsonStructure = (props?: any): Component => {
             children: [
               {
                 id: nanoid(),
-                name: "Select",
-                description: "Select",
+                ...select,
                 props: {
                   style: {
                     width: "150px",
@@ -86,21 +89,10 @@ export const jsonStructure = (props?: any): Component => {
               },
               {
                 id: nanoid(),
-                name: "Button",
-                description: "Button",
+                ...defaultButton,
                 props: {
-                  style: {
-                    ...defaultButtonValues,
-                    width: "auto",
-                    height: "auto",
-                    padding: "9px",
-                    borderRadius: 8,
-                    borderColor: "rgba(179, 179, 179, 1)",
-                    borderStyle: "solid",
-                    borderWidth: "1px",
-                  },
-                  color: "transparent",
-                  textColor: "Black.7",
+                  color: "Primary.6",
+                  textColor: "PrimaryText.6",
                   children: "Export CSV",
                   leftIcon: "IconDownload",
                 },
@@ -172,8 +164,7 @@ export const jsonStructure = (props?: any): Component => {
           },
           {
             id: nanoid(),
-            name: "Select",
-            description: "Select",
+            ...select,
             props: {
               style: {
                 width: "70px",

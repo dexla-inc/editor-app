@@ -1,25 +1,30 @@
 import { SavingDisplay } from "@/components/SavingDisplay";
+import { usePreventNavigationOnSaving } from "@/hooks/usePreventNavigationOnSaving";
 import {
   debouncedUpdatePageState,
   useEditorStore,
   useTemporalStore,
 } from "@/stores/editor";
-import { encodeSchema } from "@/utils/compression";
-import { ICON_SIZE } from "@/utils/config";
 import {
-  ActionIcon,
+  DARK_COLOR,
+  DARK_MODE,
+  GRAY_COLOR,
+  GRAY_WHITE_COLOR,
+  THIN_DARK_OUTLINE,
+  THIN_GRAY_OUTLINE,
+} from "@/utils/branding";
+import { encodeSchema } from "@/utils/compression";
+import {
   Button,
   Flex,
   List,
   Popover,
   Text,
-  Tooltip,
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconArrowBackUp } from "@tabler/icons-react";
-import { FC } from "react";
-import { Icon } from "./Icon";
+import { FC, useEffect } from "react";
+import { ActionIconDefault } from "./ActionIconDefault";
 
 const convertTimestampToTimeTaken = (timestamp: number) => {
   const now = Date.now();
@@ -37,6 +42,8 @@ const convertTimestampToTimeTaken = (timestamp: number) => {
 };
 
 export const ChangeHistoryPopover: FC = () => {
+  usePreventNavigationOnSaving();
+
   const currentState = useEditorStore((state) => ({
     isSaving: state.isSaving,
     tree: {
@@ -44,7 +51,13 @@ export const ChangeHistoryPopover: FC = () => {
       timestamp: state.tree.timestamp,
     },
   }));
-  const { changeHistory, pastStates, undo, redo, futureStates } =
+
+  const pageId = useEditorStore((state) => state.currentPageId);
+  const tree = useEditorStore((state) => state.tree);
+  const currentProjectId = useEditorStore((state) => state.currentProjectId);
+  const setIsSaving = useEditorStore((state) => state.setIsSaving);
+
+  const { changeHistory, pastStates, undo, redo, futureStates, clear } =
     useTemporalStore((state) => ({
       changeHistory: [
         ...state.pastStates,
@@ -59,13 +72,23 @@ export const ChangeHistoryPopover: FC = () => {
                 timestamp: tree?.timestamp,
               });
         },
-        [] as Array<{ name?: string; timestamp?: number }>,
+        [] as Array<{
+          name?: string;
+          timestamp?: number;
+        }>,
       ),
       pastStates: state.pastStates,
       futureStates: state.futureStates,
       undo: state.undo,
       redo: state.redo,
+      clear: state.clear,
     }));
+
+  useEffect(
+    () => clear(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [pageId],
+  );
 
   const [opened, { close, open }] = useDisclosure(false);
   const theme = useMantineTheme();
@@ -74,12 +97,11 @@ export const ChangeHistoryPopover: FC = () => {
     operation: (steps?: number | undefined) => void,
   ) => {
     operation();
-    const currentState = useEditorStore.getState();
     debouncedUpdatePageState(
-      encodeSchema(JSON.stringify(currentState.tree)),
-      currentState.currentProjectId ?? "",
-      currentState.currentPageId ?? "",
-      currentState.setIsSaving,
+      encodeSchema(JSON.stringify(tree)),
+      currentProjectId ?? "",
+      pageId ?? "",
+      setIsSaving,
     );
   };
 
@@ -88,35 +110,30 @@ export const ChangeHistoryPopover: FC = () => {
       align="center"
       gap={4}
       p={4}
-      bg="gray.0"
       sx={(theme) => ({
-        border: `1px solid ${theme.colors.gray[3]}`,
+        border:
+          theme.colorScheme === "dark" ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE,
         borderRadius: theme.radius.sm,
+        background: theme.colorScheme === "dark" ? DARK_MODE : GRAY_WHITE_COLOR,
       })}
     >
       <Button.Group>
-        <Tooltip label="Undo" fz="xs">
-          <ActionIcon
-            variant="default"
-            onClick={() => handlePageStateChange(undo)}
-            disabled={pastStates.length < 2}
-            radius={"4px 0px 0px 4px"}
-            size="sm"
-          >
-            <IconArrowBackUp size={ICON_SIZE} />
-          </ActionIcon>
-        </Tooltip>
-        <Tooltip label="Redo" fz="xs">
-          <ActionIcon
-            variant="default"
-            onClick={() => handlePageStateChange(redo)}
-            disabled={futureStates.length === 0}
-            radius={"0px 4px 4px 0px"}
-            size="sm"
-          >
-            <Icon name="IconArrowForwardUp" />
-          </ActionIcon>
-        </Tooltip>
+        <ActionIconDefault
+          iconName="IconArrowBackUp"
+          tooltip="Undo"
+          onClick={() => handlePageStateChange(undo)}
+          disabled={pastStates.length < 2}
+          size="sm"
+          radius={"0px 4px 4px 0px"}
+        />
+        <ActionIconDefault
+          iconName="IconArrowForwardUp"
+          tooltip="Redo"
+          onClick={() => handlePageStateChange(redo)}
+          disabled={futureStates.length === 0}
+          radius={"0px 4px 4px 0px"}
+          size="sm"
+        />
       </Button.Group>
       <div onMouseEnter={open} onMouseLeave={close}>
         <Popover
@@ -150,17 +167,27 @@ export const ChangeHistoryPopover: FC = () => {
               {changeHistory
                 .map((item: any, index: number) => {
                   const currentHistoryIndex = pastStates.length - 1;
-                  const color =
-                    pastStates.length - 1 === index
-                      ? "indigo"
-                      : theme.colors.dark[9];
+                  const isCurrentHistory = currentHistoryIndex === index;
+                  const isDarkTheme = theme.colorScheme === "dark";
+
+                  let color;
+                  if (isCurrentHistory) {
+                    color = isDarkTheme ? "indigo" : "gray";
+                  } else {
+                    color = isDarkTheme ? GRAY_COLOR : theme.colors.dark[9];
+                  }
                   return (
                     <List.Item
                       px={3}
-                      sx={{
+                      sx={(theme) => ({
                         cursor: "pointer",
-                        "&:hover": { background: theme.colors.gray[0] },
-                      }}
+                        "&:hover": {
+                          background:
+                            theme.colorScheme === "dark"
+                              ? DARK_COLOR
+                              : GRAY_WHITE_COLOR,
+                        },
+                      })}
                       key={index}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -194,7 +221,7 @@ export const ChangeHistoryPopover: FC = () => {
             </List>
           </Popover.Dropdown>
         </Popover>
-      </div>{" "}
+      </div>
     </Flex>
   );
 };

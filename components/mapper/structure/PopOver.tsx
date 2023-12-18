@@ -1,8 +1,8 @@
 import { defaultPopOverValues } from "@/components/modifiers/PopOver";
+import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
-import { nanoid } from "nanoid";
 import { px } from "@mantine/core";
-import { defaultTheme } from "@/components/IFrame";
+import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
@@ -18,10 +18,10 @@ export const jsonStructure = (props?: any): Component => {
       {
         id: nanoid(),
         name: "Container",
-        description: "Table Container",
+        description: "Container",
         props: {
           style: {
-            width: "100%",
+            width: "auto",
             backgroundColor: "white.6",
           },
         },

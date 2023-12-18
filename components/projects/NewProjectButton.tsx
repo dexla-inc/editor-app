@@ -1,3 +1,13 @@
+import { Icon } from "@/components/Icon";
+import {
+  DARK_COLOR,
+  DARK_MODE,
+  GRAY_WHITE_COLOR,
+  GREEN_COLOR,
+  THIN_DARK_OUTLINE,
+  THIN_GRAY_OUTLINE,
+  THIN_GREEN_OUTLINE,
+} from "@/utils/branding";
 import { LARGE_ICON_SIZE } from "@/utils/config";
 import {
   Box,
@@ -8,7 +18,6 @@ import {
   UnstyledButtonProps,
   useMantineTheme,
 } from "@mantine/core";
-import { Icon } from "../Icon";
 
 type IconTitleDescriptionButtonProps = {
   icon: string;
@@ -31,6 +40,12 @@ export default function IconTitleDescriptionButton({
   ...props
 }: IconTitleDescriptionButtonProps) {
   const theme = useMantineTheme();
+
+  const background = theme.colorScheme === "dark" ? DARK_MODE : theme.white;
+  const textColor = theme.colorScheme === "dark" ? GREEN_COLOR : theme.black;
+  const _border =
+    theme.colorScheme === "dark" ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE;
+  const _hover = theme.colorScheme === "dark" ? DARK_COLOR : GRAY_WHITE_COLOR;
   return (
     <Tooltip label={tooltip} disabled={tooltip === undefined}>
       <UnstyledButton
@@ -38,16 +53,12 @@ export default function IconTitleDescriptionButton({
         sx={(theme) => ({
           padding: theme.spacing.md,
           borderRadius: theme.radius.sm,
-          border: `1px solid ${
-            color === "teal" ? theme.colors.teal[6] : theme.colors.gray[3]
-          }`,
-          color: color === "teal" ? theme.black : theme.black,
-          backgroundColor:
-            color === "teal" ? theme.colors.teal[5] : theme.white,
+          border: color === "teal" ? THIN_GREEN_OUTLINE : _border,
+          color: color === "teal" ? theme.black : textColor,
+          backgroundColor: color === "teal" ? theme.colors.teal[5] : background,
 
           "&:hover": {
-            backgroundColor:
-              color === "teal" ? theme.colors.teal[6] : theme.colors.gray[0],
+            backgroundColor: color === "teal" ? GREEN_COLOR : _hover,
           },
         })}
         onClick={onClick}

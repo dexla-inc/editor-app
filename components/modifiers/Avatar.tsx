@@ -1,125 +1,110 @@
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeComponentPropsUpdate } from "@/utils/editor";
+import { debouncedTreeUpdate } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconUser } from "@tabler/icons-react";
-import { pick } from "next/dist/lib/pick";
+import merge from "lodash.merge";
 import { useEffect } from "react";
-
-const defaultAvatarValues = {
-  variant: "filled",
-  src: "",
-  radius: "",
-  size: "md",
-  color: "Primary.6",
-  value: "",
-};
 
 export const icon = IconUser;
 export const label = "Avatar";
 
-export const Modifier = withModifier(({ selectedComponent }) => {
-  const form = useForm({
-    initialValues: defaultAvatarValues,
-  });
+export const Modifier = withModifier(
+  ({ selectedComponent, selectedComponentIds }) => {
+    const form = useForm();
 
-  useEffect(() => {
-    if (selectedComponent?.id) {
-      const data = pick(selectedComponent.props!, [
-        "variant",
-        "src",
-        "radius",
-        "size",
-        "color",
-        "children",
-      ]);
-      form.setValues({
-        variant: data.variant ?? defaultAvatarValues.variant,
-        src: data.src ?? defaultAvatarValues.src,
-        radius: data.radius ?? defaultAvatarValues.radius,
-        size: data.size ?? defaultAvatarValues.size,
-        color: data.color ?? defaultAvatarValues.color,
-        value: data.children ?? defaultAvatarValues.value,
-      });
-    }
-    // Disabling the lint here because we don't want this to be updated every time the form changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedComponent]);
+    useEffect(() => {
+      form.setValues(
+        merge({}, requiredModifiers.avatar, {
+          value: selectedComponent.props?.children,
+          variant: selectedComponent.props?.variant,
+          src: selectedComponent.props?.src,
+          radius: selectedComponent.props?.radius,
+          size: selectedComponent.props?.size,
+          color: selectedComponent.props?.color,
+        }),
+      );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedComponent]);
 
-  const variantOptions: Record<string, string> = {
-    Default: "default",
-    White: "white",
-    Filled: "filled",
-    Light: "light",
-    Outline: "outline",
-    Transparent: "transparent",
-  };
+    const variantOptions: Record<string, string> = {
+      Default: "default",
+      White: "white",
+      Filled: "filled",
+      Light: "light",
+      Outline: "outline",
+      Transparent: "transparent",
+    };
 
-  return (
-    <form>
-      <Stack spacing="xs">
-        <TextInput
-          label="Text"
-          type="text"
-          size="xs"
-          {...form.getInputProps("value")}
-          onChange={(e) => {
-            form.setFieldValue("value", e.target.value);
-            const val = !!e.target.value ? e.target.value : null;
-            debouncedTreeComponentPropsUpdate("children", val);
-          }}
-        />
-        <TextInput
-          label="Source"
-          placeholder="https://example.com/image.png"
-          type="url"
-          size="xs"
-          {...form.getInputProps("src")}
-          onChange={(e) => {
-            form.setFieldValue("src", e.target.value);
-            debouncedTreeComponentPropsUpdate("src", e.target.value);
-          }}
-        />
-        <Select
-          label="Variant"
-          size="xs"
-          data={Object.keys(variantOptions).map((key) => ({
-            label: key,
-            value: variantOptions[key],
-          }))}
-          {...form.getInputProps("variant")}
-          onChange={(value) => {
-            form.setFieldValue("variant", value as string);
-            debouncedTreeComponentPropsUpdate("variant", value);
-          }}
-        />
-        <ThemeColorSelector
-          label="Color"
-          {...form.getInputProps("color")}
-          onChange={(value: string) => {
-            form.setFieldValue("color", value);
-            debouncedTreeComponentPropsUpdate("color", value);
-          }}
-        />
-        <SizeSelector
-          label="Size"
-          {...form.getInputProps("size")}
-          onChange={(value) => {
-            form.setFieldValue("size", value as string);
-            debouncedTreeComponentPropsUpdate("size", value);
-          }}
-        />
-        <SizeSelector
-          label="Radius"
-          {...form.getInputProps("radius")}
-          onChange={(value) => {
-            form.setFieldValue("radius", value as string);
-            debouncedTreeComponentPropsUpdate("radius", value);
-          }}
-        />
-      </Stack>
-    </form>
-  );
-});
+    return (
+      <form>
+        <Stack spacing="xs">
+          <TextInput
+            label="Text"
+            type="text"
+            size="xs"
+            {...form.getInputProps("value")}
+            onChange={(e) => {
+              form.setFieldValue("value", e.target.value);
+              const val = !!e.target.value ? e.target.value : null;
+              debouncedTreeUpdate(selectedComponentIds, { children: val });
+            }}
+          />
+          <TextInput
+            label="Source"
+            placeholder="https://example.com/image.png"
+            type="url"
+            size="xs"
+            {...form.getInputProps("src")}
+            onChange={(e) => {
+              form.setFieldValue("src", e.target.value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                src: e.target.value,
+              });
+            }}
+          />
+          <Select
+            label="Variant"
+            size="xs"
+            data={Object.keys(variantOptions).map((key) => ({
+              label: key,
+              value: variantOptions[key],
+            }))}
+            {...form.getInputProps("variant")}
+            onChange={(value) => {
+              form.setFieldValue("variant", value as string);
+              debouncedTreeUpdate(selectedComponentIds, { variant: value });
+            }}
+          />
+          <ThemeColorSelector
+            label="Color"
+            {...form.getInputProps("color")}
+            onChange={(value: string) => {
+              form.setFieldValue("color", value);
+              debouncedTreeUpdate(selectedComponentIds, { color: value });
+            }}
+          />
+          <SizeSelector
+            label="Size"
+            {...form.getInputProps("size")}
+            onChange={(value) => {
+              form.setFieldValue("size", value as string);
+              debouncedTreeUpdate(selectedComponentIds, { size: value });
+            }}
+          />
+          <SizeSelector
+            label="Radius"
+            {...form.getInputProps("radius")}
+            onChange={(value) => {
+              form.setFieldValue("radius", value as string);
+              debouncedTreeUpdate(selectedComponentIds, { radius: value });
+            }}
+          />
+        </Stack>
+      </form>
+    );
+  },
+);

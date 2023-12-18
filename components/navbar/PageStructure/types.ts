@@ -6,7 +6,7 @@ export interface TreeItem extends Component {
   collapsed?: boolean;
 }
 
-export type TreeItems = Component[];
+export type TreeItems = TreeItem[];
 
 export interface FlattenedItem extends TreeItem {
   parentId: UniqueIdentifier | null;

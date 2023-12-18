@@ -11,6 +11,7 @@ export interface ProjectParams extends ProjectUpdateParams {
   type: ProjectTypes;
   industry?: string;
   similarCompany?: string;
+  customCode?: string;
 }
 
 export type ProjectResponse = {
@@ -24,6 +25,7 @@ export type ProjectUpdateParams = {
   region?: RegionTypes;
   domain?: string;
   subDomain?: string;
+  customCode?: string;
 };
 
 export const createProject = async (

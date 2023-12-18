@@ -1,6 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { UnstyledButton } from "@mantine/core";
+import { Anchor } from "@mantine/core";
 
 export const OpenThemeButton = () => {
   const theme = useEditorStore((state) => state.theme);
@@ -11,19 +11,14 @@ export const OpenThemeButton = () => {
   const isTheme = activeTab === "theme";
   const _val = isTabPinned ? "layers" : undefined;
   return (
-    <UnstyledButton
-      sx={{
-        ":hover": {
-          textDecoration: "underline",
-          color: theme.colors.teal[9],
-        },
-        color: theme.colors.teal[6],
-        transition: "all 200ms ease",
-      }}
-      fz="xs"
+    <Anchor
+      component="button"
+      type="button"
       onClick={() => setActiveTab(isTheme ? _val : "theme")}
+      size="xs"
+      sx={{ alignSelf: "self-start" }}
     >
       Add new color
-    </UnstyledButton>
+    </Anchor>
   );
 };

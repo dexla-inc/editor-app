@@ -1,4 +1,9 @@
+import { CardStyleSelector } from "@/components/CardStyleSelector";
 import { ColorSelector } from "@/components/ColorSelector";
+import { FocusRingSelector } from "@/components/FocusRingSelector";
+import { LoaderSelector } from "@/components/LoaderSelector";
+import { SizeSelector } from "@/components/SizeSelector";
+import { SwitchSelector } from "@/components/SwitchSelector";
 import { UnitInput } from "@/components/UnitInput";
 import { CardStyle } from "@/requests/projects/types";
 import { saveTheme } from "@/requests/themes/mutations";
@@ -7,7 +12,7 @@ import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { INPUT_SIZE } from "@/utils/config";
-import { fonts } from "@/utils/dashboardTypes";
+import { getGoogleFonts } from "@/utils/googleFonts";
 import {
   Box,
   Button,
@@ -15,7 +20,6 @@ import {
   SegmentedControl,
   Select,
   Stack,
-  Text,
   TextInput,
   Title,
   useMantineTheme,
@@ -24,11 +28,6 @@ import { useForm } from "@mantine/form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { CardStyleSelector } from "../CardStyleSelector";
-import { FocusRingSelector } from "../FocusRingSelector";
-import { LoaderSelector } from "../LoaderSelector";
-import { SizeSelector } from "../SizeSelector";
-import { SwitchSelector } from "../SwitchSelector";
 
 const fontTags = [
   { label: "H1", value: "H1" },
@@ -63,6 +62,11 @@ export const EditorNavbarThemesSection = ({
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const [currentFontTag, setCurrentFontTag] = useState<string>("H1");
+  const [fonts, setFonts] = useState<string[]>([]);
+  const [allFonts, setAllFonts] = useState<string[]>([]);
+  const [fontSearch, setFontSearch] = useState("");
+  const [headingFonts, setHeadingFonts] = useState<string[]>([]);
+  const [headingFontSearch, setHeadingFontSearch] = useState("");
   const mantineTheme = useMantineTheme();
   const queryClient = useQueryClient();
 
@@ -104,6 +108,7 @@ export const EditorNavbarThemesSection = ({
       focusRing: "DEFAULT",
       hasCompactButtons: true,
       defaultFont: "Arial, sans-serif",
+      theme: "LIGHT",
     },
     validate: {},
   });
@@ -150,7 +155,46 @@ export const EditorNavbarThemesSection = ({
     });
   };
 
+  const setHeadingsFontFamily = (value: string) => {
+    fontTags.forEach((_, index) => {
+      form.setFieldValue(`fonts.${index}`, {
+        ...form.values.fonts[index],
+        fontFamily: value,
+      });
+    });
+  };
+
   const currentFont = form.values.fonts.find((f) => f.tag === currentFontTag);
+
+  useEffect(() => {
+    const getFonts = async () => {
+      try {
+        const googleFonts = await getGoogleFonts();
+        if (googleFonts) {
+          const fonts = googleFonts.map((f: any) => f.family);
+          setAllFonts(fonts);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getFonts();
+  }, []);
+
+  useEffect(() => {
+    const filteredFonts = allFonts
+      .filter((f) => f.toLowerCase().includes(fontSearch.toLowerCase()))
+      .slice(0, 10);
+    setFonts(filteredFonts);
+  }, [allFonts, fontSearch]);
+
+  useEffect(() => {
+    const filteredFonts = allFonts
+      .filter((f) => f.toLowerCase().includes(headingFontSearch.toLowerCase()))
+      .slice(0, 10);
+    setHeadingFonts(filteredFonts);
+  }, [allFonts, headingFontSearch]);
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
@@ -272,10 +316,36 @@ export const EditorNavbarThemesSection = ({
               size={INPUT_SIZE}
             />
           </Stack>
-          <Stack spacing={4}>
+          <Stack>
             <Title order={6} fw={600}>
               Fonts
             </Title>
+            <Select
+              label="Default Font Family"
+              placeholder="Type to search"
+              value={form?.values?.defaultFont}
+              data={fonts}
+              onChange={(value: string) => {
+                form.setFieldValue("defaultFont", value);
+              }}
+              searchable
+              searchValue={fontSearch}
+              onSearchChange={setFontSearch}
+              size={INPUT_SIZE}
+            />
+            <Select
+              label="Headings Font Family"
+              placeholder="Type to search"
+              value={currentFont?.fontFamily}
+              data={headingFonts}
+              onChange={(value: string) => {
+                setHeadingsFontFamily(value);
+              }}
+              searchable
+              searchValue={headingFontSearch}
+              onSearchChange={setHeadingFontSearch}
+              size={INPUT_SIZE}
+            />
             <SegmentedControl
               fullWidth
               size={INPUT_SIZE}
@@ -288,16 +358,6 @@ export const EditorNavbarThemesSection = ({
                 });
                 setCurrentFontTag(value);
               }}
-            />
-            <Select
-              label="Family"
-              placeholder="Type to search"
-              value={currentFont?.fontFamily}
-              data={fonts.map((f) => f)}
-              onChange={(value: string) => {
-                setFontValue("fontFamily", value);
-              }}
-              size={INPUT_SIZE}
             />
             <Flex gap="sm" align="center">
               <Select
@@ -338,10 +398,10 @@ export const EditorNavbarThemesSection = ({
             </Flex>
           </Stack>
           <Box>
-            <Text size={INPUT_SIZE} weight="500">
-              Responsive Breakpoints
-            </Text>
             <Stack spacing="xs">
+              <Title order={6} fw={600}>
+                Responsive Breakpoints
+              </Title>
               {form.values.responsiveBreakpoints &&
                 form.values.responsiveBreakpoints.map(
                   ({ type, breakpoint }, index) => (

@@ -1,12 +1,11 @@
+import { Icon } from "@/components/Icon";
 import { createDeployment } from "@/requests/deployments/mutations";
 import { getMostRecentDeployment } from "@/requests/deployments/queries";
 import { getProject } from "@/requests/projects/queries";
 import { useAppStore } from "@/stores/app";
-import { ICON_SIZE } from "@/utils/config";
 import { Button, Tooltip } from "@mantine/core";
-import { IconLink } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { Icon } from "./Icon";
+import { ActionIconDefault } from "./ActionIconDefault";
 
 type Props = {
   projectId: string;
@@ -67,12 +66,12 @@ export const DeployButton = ({ projectId, page }: Props) => {
 
     // Validity check
     if (
-      deployLink.origin.startsWith("http") ||
-      deployLink.origin.startsWith("https")
+      deployLink.href.startsWith("http") ||
+      deployLink.href.startsWith("https")
     ) {
-      window?.open(deployLink.origin, "_blank");
+      window?.open(deployLink.href, "_blank");
     } else {
-      console.error(`Invalid URL: ${deployLink.origin}`);
+      console.error(`Invalid URL: ${deployLink.href}`);
     }
   };
 
@@ -113,16 +112,22 @@ export const DeployButton = ({ projectId, page }: Props) => {
         </Button>
       </Tooltip>
       <Tooltip label="Preview" fz="xs">
-        <Button
-          variant="default"
-          compact
-          loading={isLoading}
-          loaderPosition="center"
-          disabled={!hasDeployed || isLoading}
+        {/* <ActionIcon
+            variant="default"
+            onClick={() => handlePageStateChange(redo)}
+            disabled={futureStates.length === 0}
+            radius={"0px 4px 4px 0px"}
+            size="sm"
+          >
+            <Icon name="IconArrowForwardUp" />
+          </ActionIcon> */}
+        <ActionIconDefault
+          iconName="IconLink"
           onClick={openDeployLink}
-        >
-          <IconLink size={ICON_SIZE} />
-        </Button>
+          tooltip="Preview your app"
+          loading={isLoading}
+          disabled={!hasDeployed || isLoading}
+        />
       </Tooltip>
     </Button.Group>
   );

@@ -236,39 +236,22 @@ export const getComponentScreenshotPrompt = ({
   theme,
 }: PromptParams) => `
 
-You are a Layout & Styling Component Generator System (LSCGS), your task is to generate a strict JSON representation of the provided layout screenshot 
-using the TypeScript Row type definition. The output should mirror the layout's flex structure, visual hierarchy, component styling, and component 
-types as seen in the screenshot, including any charts or iconography present. Map screenshot elements to Mantine UI v6 components and Tabler icons 
-where applicable. Strictly provide precise styling details in the JSON output to replicate the screenshot accurately. The JSON should be ready to parse 
-using JsonSerializer.Deserialize<Row>(response) without any comments or non-JSON syntax.
+You are a Layout & Styling Component Generator System (LSCGS), tasked with generating a strict JSON representation of a provided layout screenshot using the TypeScript Layout type definition. The output should accurately mirror the grid structure, visual hierarchy, component styling, and component types seen in the screenshot, including charts or iconography. Map screenshot elements to Mantine UI v6 components and Tabler icons where applicable. Provide precise styling details in the JSON output to replicate the screenshot accurately. The JSON should be ready to parse using JsonSerializer.Deserialize<Layout>(response) without any comments or non-JSON syntax.
 
 While examining the screenshot, adhere to these specific requirements:
 
+Detailed Grid Structure Analysis:
+- Grid Hierarchy: Ensure that Grid components only contain GridColumn components as direct children. This is essential for maintaining the correct structural hierarchy in the layout.
+- Component Nesting: Place other components, such as Card, within GridColumn components. Card or similar components should not be direct children of Grid but nested inside GridColumn.
+- Grid Structure: Reflect the layout's grid properties, including gridTemplateColumns, gridTemplateRows, gridColumnGap, gridRowGap, and others as seen in the screenshot.
+
 Visual Hierarchy Representation:
 - Reflect the visual hierarchy in the JSON with nested components where necessary, keeping the parent-child-sibling relationships intact.
-- You must replicate the exact layout of the screenshot using flex unless mentioned in Specific Requirements.
-- You must get all Components from the screenshots and return them as part of the JSON.
-- Examine how many columns there are in the screenshot and supply the same number of Containers direct children of the root Card or Container.
-- Make sure you replicate the correct flexDirection as per the screenshot.
-
-Detailed Flex Structure Analysis:
-- The JSON should reflect the layout's flex properties, which are critical for replicating the layout seen in the screenshot.
-- Analyze the screenshot to identify the layout structure and the flex properties of each component.
-- You should use Containers with the flex property for flex-grow, flex-shrink, flex-basis to replicate the screenshot layout and create dynamic 
-layouts consistening of multiple rows and columns.
-- Make sure you are not adding unnecessary Containers which will break the rowGap and columnGap you add.
-- You must replicate the rowGap and columnGap as per the screenshot.
-
-Card Component Styling:
-- You should identify how many cards are in the screenshot and include the same amount, if there are more than one then Cards should be an array of children of Container.
-- A 'Card' must not have a 'Card' Component as a property of children, grandchildren etc.
-- A 'Card' with multiple Containers as children should have flexDirection row.
-- Omit the boxShadow and border properties from the 'Card' component unless mentioned in Specific Requirements.
-- Make sure to get the correct padding from the screenshot.
+- You must replicate the exact layout of the screenshot using grid unless mentioned in Specific Requirements.
+- Make sure you replicate the correct gridTemplateRows and gridTemplateColumns as per the screenshot.
 
 Styling Precision:
-- Translate the styling of elements from the screenshot into JSON 'style' properties with exact values for all styling properties such as
-gaps between components, width, height, margins, paddings, font sizes, colors, etc.
+- Translate the styling of elements from the screenshot into JSON 'style' properties with exact values for all styling properties such as gaps between components, width, height, margins, paddings, font sizes, colors, etc.
 - Use the Color with the correct shade of Color, the 6th shade is the default.
 - The text color must adhere to the Web Content Accessibility Guidelines (WCAG) to ensure readability.
 - The hex colors are provided in the comments for each color for your reference on what color to choose, do not use the hex value, use the Color type properties.
@@ -295,7 +278,7 @@ Chart Components:
 - Do not explain or comment within the Chart JSON, so no need to comment on data, just strictly supply the data.
 
 JSON Parsing:
-- Return in JSON format only as I will parse the response using JsonSerializer.Deserialize<Row>(response).
+- Return in JSON format only as I will parse the response using JsonSerializer.Deserialize<Layout>(response).
 - Do not include the starting / ending JSON quotes.
 - Do not explain or comment, it MUST be JSON only.
 
@@ -303,16 +286,16 @@ Specific Requirements:
 - ${description ?? "Copy the screenshot to your best ability"}
 
 TypeScript Types:
-type Row = {
-  components: Card[] | Container[];
+type Layout = {
+  components: Grid[];
 };
 
 ${_componentTypes(theme)}
 
 Remember LSCGS, provide the JSON in a format that's directly usable with the provided type definitions, ensuring that the names of components 
-and properties match those expected by Mantine UI and the TypeScript Row type definition.
+and properties match those expected by Mantine UI and the TypeScript Layout type definition.
 
-- Return in JSON format only as I will parse the response using JsonSerializer.Deserialize<Row>(response).
+- Return in JSON format only as I will parse the response using JsonSerializer.Deserialize<Layout>(response).
 - The response type must be JSON.
 - Props and Style can't be empty, leave them out if they are not needed.
 `;
@@ -364,24 +347,34 @@ Remember LSCGS, you must:
 const _componentTypes = (theme?: MantineThemeExtended) => `
 
 
-type Container = BaseComponent & {
-  name: "Container";
+type Grid = BaseComponent & {
+  name: "Grid";
   props: {
     style: {
-      flexDirection: "row" | "column";
-      flex: "{number} {number} {auto | 'number'px | 'number'%}";
-      justifyContent:
-        | "flex-start"
-        | "flex-end"
-        | "center"
-        | "space-between"
-        | "space-around"
-        | "space-evenly";
-      alignItems: "flex-start" | "flex-end" | "center" | "stretch" | "baseline";
-      rowGap: "<number>px";
-      columnGap: "<number>px";
-      flexWrap: "nowrap" | "wrap";
-      padding: "<number>px";
+      gridTemplateColumns: string; // e.g., 'repeat(3, 1fr)' or '200px 1fr 200px'
+      gridTemplateRows?: string; // e.g., 'repeat(2, 100px)' or 'auto'
+      gridColumnGap: string; // e.g., '10px'
+      gridRowGap: string; // e.g., '10px'
+      justifyContent: 'start' | 'end' | 'center' | 'stretch' | 'space-around' | 'space-between' | 'space-evenly';
+      alignItems: 'start' | 'end' | 'center' | 'stretch';
+      padding: string;
+      [key: string]: any;
+    };
+  };
+  children: GridColumn[];
+};
+
+type GridColumn = BaseComponent & {
+  name: "GridColumn";
+  props: {
+    style: {
+      gridColumnStart?: string; // e.g., '1', '2', etc.
+      gridColumnEnd?: string; // e.g., 'span 2', '3', etc.
+      gridRowStart?: string; // Optional: Defines the row start for the item
+      gridRowEnd?: string; // Optional: Defines the row end for the item
+      justifyContent?: 'start' | 'end' | 'center' | 'stretch' | 'space-around' | 'space-between' | 'space-evenly'; // Optional: Horizontal alignment
+      alignSelf?: 'start' | 'end' | 'center'; // Optional: Vertical alignment
+      padding?: string;
       [key: string]: any;
     };
   };
@@ -389,7 +382,7 @@ type Container = BaseComponent & {
 };
 
 type CardChildren = Exclude<Component, Card>[];
-type Card = Container & {
+type Card = GridColumn & {
   name: "Card";
   children: CardChildren[];
 };
@@ -446,15 +439,31 @@ type AppBar = BaseComponent & {
   name: "AppBar";
   props: {
     style: {
-      flexDirection: "row";
-      justifyContent: "flex-start" | "flex-end" | "space-between";
-      alignItems: "center";
-      rowGap: "<number>px";
-      padding: "<number>px";
+      gridTemplateColumns: string; // e.g., 'auto 1fr auto'
+      justifyContent: 'start' | 'end' | 'center' | 'stretch' | 'space-around' | 'space-between' | 'space-evenly';
+      alignItems: 'center';
+      gridColumnGap: string; // e.g., '10px'
+      padding: string; // e.g., '10px'
       [key: string]: any;
     };
   };
-  children: Container[]; // Can include ButtonIcon, Title, Avatar, Link, Image within Container
+  children: GridColumn[]; // Can include ButtonIcon, Title, Avatar, Link, Image within GridColumn
+};
+
+
+type Navbar = BaseComponent & {
+  name: "Navbar";
+  props: {
+    style: {
+      gridTemplateRows: "auto 1fr auto",
+      justifyContent: 'start' | 'end' | 'center' | 'stretch' | 'space-around' | 'space-between' | 'space-evenly';
+      alignItems: 'center';
+      gap: string;
+      padding: string;
+      [key: string]: any;
+    };
+  };
+  children: GridColumn[]; // Should be three parts. One for logo, one for nav links, and one for profile footer
 };
 
 // You must use color and textColor on props and not style, that is why they are Omitted.
@@ -561,7 +570,7 @@ type FileButton = BaseComponent & {
 // This is Mantine's Dropzone
 type FileUpload = BaseComponent & {
   name: "FileUpload";
-  children: Container[];
+  children: [Grid];
 };
 
 type Title = BaseComponent & {
@@ -627,7 +636,7 @@ type Tab = BaseComponent & {
 type TabsList = BaseComponent & { name: "TabsList"; children: Tab[] };
 type TabsPanel = BaseComponent & {
   name: "TabsPanel";
-  children: Container[];
+  children: [Grid];
 };
 type Tabs = BaseComponent & {
   name: "Tabs";
@@ -684,31 +693,31 @@ type Component =
   | Button
   | ButtonIcon
   | Card
-  | Container
+  | Checkbox
+  | DateInput
   | Divider
   | FileButton
   | FileUpload
   | Form
-  | Checkbox
-  | DateInput
+  | Grid
+  | GridColumn
   | Input
+  | Icon
+  | Image
+  | Link
+  | Navbar
   | RadioGroup
   | Rating
   | Select
   | Switch
   | Textarea
-  | Icon
-  | Image
-  | Link
+  | Table
+  | Tabs
+  | Text
+  | Title
   | LineChart
   | PieChart
   | RadarChart
   | RadialChart
-  | Table
-  | Tabs
-  | Text
-  | Title;
-
-
 
 `;

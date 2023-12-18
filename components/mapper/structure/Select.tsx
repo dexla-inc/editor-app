@@ -1,9 +1,9 @@
-import { defaultSelectValues } from "@/components/modifiers/Select";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
-  const { ...defaultValues } = defaultSelectValues;
+  const defaultValues = requiredModifiers.select;
 
   return {
     id: nanoid(),
@@ -11,11 +11,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Select",
     props: {
       style: {
-        width: "auto",
-        height: "auto",
-        minWidth: "220px",
-        borderWidth: "1px",
-        borderStyle: "solid",
+        width: "220px",
       },
       ...defaultValues,
       ...(props.props || {}),

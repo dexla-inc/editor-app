@@ -1,5 +1,5 @@
 import { Icon } from "@/components/Icon";
-import { Button, ButtonProps } from "@mantine/core";
+import { Button, ButtonProps, useMantineTheme } from "@mantine/core";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -11,6 +11,12 @@ type Props = {
 
 export const SettingsButton = ({ iconName, text, href, ...props }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
+  const theme = useMantineTheme();
+  const { color, variant } =
+    theme.colorScheme === "dark"
+      ? { color: "dark", variant: "light" }
+      : { color: "dark", variant: "white" };
+
   return (
     <Button
       size="xs"
@@ -19,9 +25,12 @@ export const SettingsButton = ({ iconName, text, href, ...props }: Props) => {
       onClick={() => setIsLoading(true)}
       loading={isLoading}
       leftIcon={<Icon name={iconName} />}
-      variant="white"
-      color="dark"
-      sx={{ "&:hover": { textDecoration: "underline" } }}
+      variant={variant}
+      color={color}
+      sx={{
+        "&:hover": { textDecoration: "underline" },
+      }}
+      styles={{ inner: { justifyContent: "stretch" } }}
       {...props}
     >
       {text}

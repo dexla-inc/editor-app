@@ -1,23 +1,28 @@
+import { ActionIconTransparent } from "@/components/ActionIconTransparent";
 import { useDraggable } from "@/hooks/useDraggable";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
-import { theme } from "@/pages/_app";
 import { useEditorStore } from "@/stores/editor";
+import { theme } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
-import { ICON_SIZE } from "@/utils/config";
+import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import {
   addComponent,
   getComponentById,
   getComponentIndex,
   getComponentParent,
+  removeComponent,
   removeComponentFromParent,
 } from "@/utils/editor";
 import { Group, Text, Tooltip, UnstyledButton } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useCallback, useEffect, useMemo } from "react";
-import { ActionIconTransparent } from "./ActionIconTransparent";
 
-export const ComponentToolbox = () => {
+type Props = {
+  customComponentModal: any;
+};
+
+export const ComponentToolbox = ({ customComponentModal }: Props) => {
   const isResizing = useEditorStore((state) => state.isResizing);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
@@ -26,6 +31,9 @@ export const ComponentToolbox = () => {
   const setEditorTree = useEditorStore((state) => state.setTree);
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
+  );
+  const setSelectedComponentIds = useEditorStore(
+    (state) => state.setSelectedComponentIds,
   );
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
@@ -150,6 +158,7 @@ export const ComponentToolbox = () => {
             e.preventDefault();
             e.stopPropagation();
             setSelectedComponentId(parent.id as string);
+            setSelectedComponentIds(() => [parent.id!]);
           }}
         />
       )}
@@ -271,6 +280,24 @@ export const ComponentToolbox = () => {
             }}
           />
         </>
+      )}
+      <ActionIconTransparent
+        iconName={ICON_DELETE}
+        tooltip="Delete"
+        onClick={() => {
+          const copy = cloneDeep(editorTree);
+          removeComponent(copy.root, component?.id!);
+          setEditorTree(copy, { action: `Removed ${component?.name}` });
+        }}
+      />
+      {customComponentModal && (
+        <ActionIconTransparent
+          iconName="IconDeviceFloppy"
+          tooltip="Save as custom component"
+          onClick={() => {
+            customComponentModal.open();
+          }}
+        />
       )}
     </Group>
   );

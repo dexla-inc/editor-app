@@ -185,6 +185,7 @@ export type AppTypes = "PAGE" | "TEMPLATE" | "PROJECT";
 export type InputTypes =
   | "text"
   | "number"
+  | "numberRange"
   | "password"
   | "email"
   | "url"
@@ -194,6 +195,7 @@ export type InputTypes =
 export const INPUT_TYPES_DATA: { label: string; value: InputTypes }[] = [
   { label: "Text", value: "text" },
   { label: "Number", value: "number" },
+  { label: "Number Range", value: "numberRange" },
   { label: "Email", value: "email" },
   { label: "Password", value: "password" },
   { label: "Telephone", value: "tel" },

@@ -104,7 +104,6 @@ export const ColorSelector = ({
               withShadow={false}
               style={{
                 flex: "none",
-                border: "1px solid " + mantineTheme.colors.gray[4],
                 borderTopLeftRadius: mantineTheme.radius.sm,
                 borderBottomLeftRadius: mantineTheme.radius.sm,
                 borderRight: "0px",
@@ -118,6 +117,7 @@ export const ColorSelector = ({
             size={size ? "xs" : "sm"}
             value={hexa}
             mt="sm"
+            placeholder="#FFFFFF"
             onChange={(e) => {
               let _value = e.target.value;
               if (_value && !_value.startsWith("#")) {

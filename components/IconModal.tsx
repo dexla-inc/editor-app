@@ -3,7 +3,9 @@ import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
   Anchor,
+  Box,
   Col,
+  Flex,
   Grid,
   Input,
   Modal,
@@ -29,7 +31,7 @@ const allIconNames = Object.keys(Icons)
     (name) =>
       name !== "Icon" &&
       name !== "TablerIconsProps" &&
-      name !== "createReactComponent"
+      name !== "createReactComponent",
   )
   .map((name) => ({ original: name, spaced: toSpaced(name) }));
 
@@ -45,33 +47,51 @@ export const IconModal = ({ onIconSelect }: Props) => {
   const iconsPerPage = 30;
 
   const filteredIconNames = allIconNames.filter(({ spaced }) =>
-    spaced.toLowerCase().includes(searchQuery.toLowerCase())
+    spaced.toLowerCase().includes(searchQuery.toLowerCase()),
   );
   // Get current icons
   const indexOfLastIcon = currentPage * iconsPerPage;
   const indexOfFirstIcon = indexOfLastIcon - iconsPerPage;
   const currentIcons = filteredIconNames.slice(
     indexOfFirstIcon,
-    indexOfLastIcon
+    indexOfLastIcon,
   );
 
   const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-  const onIconClick = (iconName: string) => {
-    onIconSelect(iconName);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSearchQuery("");
+    setCurrentPage(1);
+  };
+
+  const onIconClick = (iconName: string | undefined) => {
+    if (iconName) onIconSelect(iconName);
+    else {
+      onIconSelect("");
+    }
     closeModal();
   };
 
   return (
-    <Stack>
-      <Anchor onClick={openModal} size="sm">
-        Change Icon <Icon name="IconExternalLink" size={ICON_SIZE} />
+    <Box>
+      <Anchor
+        component="button"
+        type="button"
+        onClick={openModal}
+        size="xs"
+        sx={{ alignSelf: "self-start" }}
+      >
+        <Flex gap="xs" wrap="nowrap">
+          Change icon
+          <Icon name="IconExternalLink" size={ICON_SIZE} />
+        </Flex>
       </Anchor>
       <Modal
         opened={isModalOpen}
         onClose={closeModal}
         title="Select an icon"
         size="70%"
+        zIndex={300}
       >
         <Stack spacing="lg">
           <Input
@@ -111,6 +131,6 @@ export const IconModal = ({ onIconSelect }: Props) => {
           />
         </Stack>
       </Modal>
-    </Stack>
+    </Box>
   );
 };

@@ -1,3 +1,4 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import { ActionsForm } from "@/components/actions/ActionsForm";
 import {
@@ -9,15 +10,18 @@ import {
 } from "@/components/actions/_BaseActionFunctions";
 import { colors } from "@/components/datasources/DataSourceEndpoint";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
+import { useVariable } from "@/hooks/useVariable";
 import {
   getDataSourceEndpoints,
   getDataSources,
 } from "@/requests/datasources/queries";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
+import { FrontEndTypes } from "@/requests/variables/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import { APICallAction, Action, LoginAction } from "@/utils/actions";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ApiType } from "@/utils/dashboardTypes";
 import { getComponentById } from "@/utils/editor";
 import {
@@ -35,9 +39,6 @@ import { useForm } from "@mantine/form";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import React, { forwardRef, useEffect, useState } from "react";
-import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
-import { useVariable } from "@/hooks/useVariable";
-import { FrontEndTypes } from "@/requests/variables/types";
 
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, any>(
@@ -335,10 +336,8 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                               { required: param.required }
                             : {})}
                           {...additionalProps}
-                          autoComplete="off"
-                          data-lpignore="true"
-                          data-form-type="other"
                           {...form.getInputProps(field)}
+                          {...AUTOCOMPLETE_OFF_PROPS}
                         />
                       </Stack>
                     );

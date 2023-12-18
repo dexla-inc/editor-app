@@ -1,35 +1,45 @@
+import { globalStyles } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
-import { Box } from "@mantine/core";
+import { Box, MantineSize } from "@mantine/core";
 import * as Icons from "@tabler/icons-react";
+import { forwardRef } from "react";
 
 type Props = {
   name: string;
-  size?: number;
+  size?: number | MantineSize;
   bg?: string;
 } & Icons.TablerIconsProps;
 
-export const Icon = ({ name, size = ICON_SIZE, ...props }: Props) => {
-  // @ts-ignore
-  const IconToRender = Icons[name];
+export const Icon = forwardRef(
+  ({ name, size = ICON_SIZE, ...props }: Props, ref) => {
+    // @ts-ignore
+    const IconToRender = Icons[name];
 
-  if (!IconToRender) {
-    return null;
-  }
+    if (!IconToRender) {
+      return null;
+    }
 
-  return (
-    <Box
-      unstyled
-      bg={props.bg}
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: props.style?.width,
-        height: props.style?.height,
-        borderRadius: props.style?.borderBottomLeftRadius,
-      }}
-    >
-      <IconToRender size={size} {...props} />
-    </Box>
-  );
-};
+    const sizeAsNumber =
+      typeof size === "number" ? size : globalStyles().sizing.icon[size];
+
+    return (
+      <Box
+        // @ts-ignore
+        ref={ref}
+        unstyled
+        bg={props.bg}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: props.style?.width,
+          height: props.style?.height,
+          borderRadius: props.style?.borderBottomLeftRadius,
+        }}
+      >
+        <IconToRender size={sizeAsNumber} {...props} />
+      </Box>
+    );
+  },
+);
+Icon.displayName = "Icon";

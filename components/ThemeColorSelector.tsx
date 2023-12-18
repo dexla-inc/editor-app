@@ -1,6 +1,7 @@
 import { OpenThemeButton } from "@/components/OpenThemeButton";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { GRAY_COLOR } from "@/utils/branding";
 import {
   ActionIcon,
   Avatar,
@@ -127,7 +128,13 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
   return (
     <Stack spacing={5}>
       <Stack spacing={0}>
-        <Text fw={500} fz="xs">
+        <Text
+          sx={(theme) =>
+            theme.colorScheme === "dark" ? { color: GRAY_COLOR } : {}
+          }
+          fw={500}
+          fz="xs"
+        >
           {label}
         </Text>
         <Group noWrap align="center">

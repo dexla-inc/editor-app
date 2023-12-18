@@ -75,19 +75,22 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
       values
         .binds!.filter((b) => !!b.component)
         .forEach((bind) => {
-          updateTreeComponent(bind.component!, {
-            dataPath: bind.value.startsWith("root[0].")
-              ? bind.value.split("root[0].")[1]
-              : bind.value.split("root.")[1],
-            exampleData: { value: bind.example },
-            headers: Array.isArray(bind.example)
-              ? Object.keys(bind.example[0]).reduce((acc, key) => {
-                  return {
-                    ...acc,
-                    [key]: typeof key === "string",
-                  };
-                }, {})
-              : {},
+          updateTreeComponent({
+            componentId: bind.component!,
+            props: {
+              dataPath: bind.value.startsWith("root[0].")
+                ? bind.value.split("root[0].")[1]
+                : bind.value.split("root.")[1],
+              exampleData: { value: bind.example },
+              headers: Array.isArray(bind.example)
+                ? Object.keys(bind.example[0]).reduce((acc, key) => {
+                    return {
+                      ...acc,
+                      [key]: typeof key === "string",
+                    };
+                  }, {})
+                : {},
+            },
           });
         });
 
@@ -105,17 +108,23 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
       }),
     );
 
-    updateTreeComponent(selectedComponentId!, {
-      data: undefined,
-      exampleData: undefined,
+    updateTreeComponent({
+      componentId: selectedComponentId!,
+      props: {
+        data: undefined,
+        exampleData: undefined,
+      },
     });
 
     form.values
       .binds!.filter((b) => !!b.component)
       .forEach((bind) => {
-        updateTreeComponent(bind.component!, {
-          data: undefined,
-          exampleData: undefined,
+        updateTreeComponent({
+          componentId: bind.component!,
+          props: {
+            data: undefined,
+            exampleData: undefined,
+          },
         });
       });
   };

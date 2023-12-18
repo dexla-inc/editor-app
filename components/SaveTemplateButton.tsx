@@ -1,3 +1,4 @@
+import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { getPage } from "@/requests/pages/queries";
 import { upsertTemplate } from "@/requests/templates/mutations";
 import { TemplateParams, TemplateTypes } from "@/requests/templates/types";
@@ -10,7 +11,6 @@ import { encodeSchema } from "@/utils/compression";
 import { getTileData, getTiles } from "@/utils/editor";
 import camelcase from "lodash.camelcase";
 import { useRouter } from "next/router";
-import { ActionIconDefault } from "./ActionIconDefault";
 
 export const SaveTemplateButton = () => {
   const router = useRouter();

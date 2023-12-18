@@ -1,7 +1,8 @@
 import { Icon } from "@/components/Icon";
+import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
 import { debouncedTreeUpdate } from "@/utils/editor";
-import { Flex, Group, SegmentedControl, Stack, Text } from "@mantine/core";
+import { Flex, Group, SegmentedControl, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { IconBoxModel2 } from "@tabler/icons-react";
 
@@ -11,10 +12,10 @@ export const label = "Spacing";
 type Props = {
   type: "Padding" | "Margin";
   form: UseFormReturnType<any>;
-  selectedComponentId: string | null;
+  selectedComponentIds: string[];
 };
 
-export const SpacingControl = ({ type, form, selectedComponentId }: Props) => {
+export const SpacingControl = ({ type, form, selectedComponentIds }: Props) => {
   const sideTypes = type === "Padding" ? "padding-sides" : "margin-sides";
   const allTypes = type === "Padding" ? "padding-all" : "margin-all";
 
@@ -31,7 +32,7 @@ export const SpacingControl = ({ type, form, selectedComponentId }: Props) => {
     };
     form.setValues(newValues);
 
-    debouncedTreeUpdate(selectedComponentId as string, {
+    debouncedTreeUpdate(selectedComponentIds, {
       style: newValues,
     });
   };
@@ -41,16 +42,15 @@ export const SpacingControl = ({ type, form, selectedComponentId }: Props) => {
     value: string,
   ) => {
     setTypeValue(`${type.toLowerCase()}${side}`, value);
-    debouncedTreeUpdate(selectedComponentId as string, {
+    debouncedTreeUpdate(selectedComponentIds, {
       style: { [`${type.toLowerCase()}${side}`]: value },
     });
   };
 
   return (
     <Stack spacing={4}>
-      <Text size="0.75rem" weight={500}>
-        {type}
-      </Text>
+      <TopLabel text={type} size="0.75rem" />
+      {showType}
       <Flex align="center" gap="sm" justify="space-between">
         <SegmentedControl
           fullWidth
@@ -86,6 +86,7 @@ export const SpacingControl = ({ type, form, selectedComponentId }: Props) => {
               });
             }
             // Update showType value
+            console.log(`show${type}`, newValue);
             setTypeValue(`show${type}`, newValue);
           }}
         />

@@ -1,6 +1,6 @@
-import crawl from "tree-crawl";
-import { Component } from "@/utils/editor";
 import { useEditorStore } from "@/stores/editor";
+import { Component } from "@/utils/editor";
+import crawl from "tree-crawl";
 
 export const calculateGridSizes = (tree: Component) => {
   const setColumnSpan = useEditorStore.getState().setColumnSpan;

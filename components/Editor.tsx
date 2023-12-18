@@ -1,12 +1,14 @@
 // The comment below force next to refresh the editor state every time we change something in the code
 // @refresh reset
 import { Shell } from "@/components/AppShell";
+import { EditorCanvas } from "@/components/EditorCanvas";
 import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { globalStyles } from "@/utils/branding";
 import {
   ASIDE_WIDTH,
   HEADER_HEIGHT,
@@ -24,11 +26,9 @@ import {
   ScrollArea,
   Stack,
   Text,
-  useMantineTheme,
 } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
-import { EditorCanvas } from "@/components/EditorCanvas";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 type Props = {
   projectId: string;
@@ -36,23 +36,29 @@ type Props = {
 };
 
 export const Editor = ({ projectId, pageId }: Props) => {
-  const theme = useMantineTheme();
   const liveblocks = useEditorStore((state) => state.liveblocks);
-  const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
+
   const isLoading = useAppStore((state) => state.isLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const stopLoading = useAppStore((state) => state.stopLoading);
+
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
+  const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
 
   useGetPageData({ projectId, pageId });
 
   const queryClient = useQueryClient();
 
-  const cancelGeneratePage = () => {
+  useEffect(() => {
+    setIsLoading(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const cancelGeneratePage = useCallback(() => {
     stopLoading({
       id: "page-generation",
       title: "Page Cancelled",
@@ -65,7 +71,9 @@ export const Editor = ({ projectId, pageId }: Props) => {
       action: "Initial State",
     });
     setIsLoading(false);
-  };
+    // we don't unnnecessary rerendering of the editor
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setEditorTree]);
 
   useEffect(() => {
     if (pageId) {
@@ -76,6 +84,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
     return () => {
       liveblocks.leaveRoom();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageId]);
 
   return (
@@ -116,20 +125,10 @@ export const Editor = ({ projectId, pageId }: Props) => {
           ) : undefined
         }
       >
-        <Global
-          styles={{
-            body: {
-              background: theme.colors.gray[0],
-              backgroundImage: `radial-gradient(${theme.colors.gray[4]} 1px, transparent 1px), radial-gradient( ${theme.colors.gray[4]} 1px, transparent 1px)`,
-              backgroundSize: "20px 20px",
-              backgroundPosition: "0 0, 50px 50px",
-            },
-          }}
-        />
+        <Global styles={globalStyles(isDarkTheme)} />
         {isLoading && editorTree.root.children?.length === 0 && (
           <Box
             pos="relative"
-            onClick={() => clearSelection()}
             style={{ minHeight: `calc(100vh - ${HEADER_HEIGHT}px)` }}
             ml={isTabPinned ? NAVBAR_WIDTH : NAVBAR_MIN_WIDTH - 50} // Weird sizing issue that I haven't got time to investigate, had to hack it
             p={"40px 10px"}
@@ -137,7 +136,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
             <Paper
               pos="relative"
               shadow="xs"
-              bg="white"
               sx={{
                 width: "100%",
                 minHeight: "400px",

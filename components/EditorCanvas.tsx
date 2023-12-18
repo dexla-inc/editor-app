@@ -6,9 +6,15 @@ import { Droppable } from "@/components/Droppable";
 import { EditableComponent } from "@/components/EditableComponent";
 import { IFrame } from "@/components/IFrame";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
-import { useEditorStore, useTemporalStore } from "@/stores/editor";
+import {
+  debouncedUpdatePageState,
+  useEditorStore,
+  useTemporalStore,
+} from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/userConfig";
 import { copyToClipboard, pasteFromClipboard } from "@/utils/clipboard";
-import { componentMapper } from "@/utils/componentMapper";
+import { componentMapper, structureMapper } from "@/utils/componentMapper";
+import { encodeSchema } from "@/utils/compression";
 import { HEADER_HEIGHT } from "@/utils/config";
 import {
   Component,
@@ -22,34 +28,55 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Paper } from "@mantine/core";
 import { useDisclosure, useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
-import { useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 
 type Props = {
   projectId: string;
 };
 
-export const EditorCanvas = ({ projectId }: Props) => {
+const EditableComponentContainer = ({ children, component }: any) => {
+  const isSelected = useEditorStore(
+    (state) => state.selectedComponentIds?.includes(component.id),
+  );
+
+  return (
+    <EditableComponent
+      id={component.id!}
+      component={component}
+      isSelected={isSelected}
+    >
+      {children}
+    </EditableComponent>
+  );
+};
+
+const EditorCanvasComponent = ({ projectId }: Props) => {
   const undo = useTemporalStore((state) => state.undo);
   const redo = useTemporalStore((state) => state.redo);
+  const pastStates = useTemporalStore((state) => state.pastStates);
   const copiedComponent = useEditorStore((state) => state.copiedComponent);
   const setCopiedComponent = useEditorStore(
     (state) => state.setCopiedComponent,
   );
-  const clearSelection = useEditorStore((state) => state.clearSelection);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
-  );
+  const currentProjectId = useEditorStore((state) => state.currentProjectId);
+  const currentPageId = useEditorStore((state) => state.currentPageId);
+  const setIsSaving = useEditorStore((state) => state.setIsSaving);
+
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
+  );
+  const setSelectedComponentIds = useEditorStore(
+    (state) => state.setSelectedComponentIds,
   );
   const [canvasRef] = useAutoAnimate();
   const [isCustomComponentModalOpen, customComponentModal] =
     useDisclosure(false);
 
   const deleteComponent = useCallback(() => {
+    const selectedComponentId = useEditorStore.getState().selectedComponentId;
     if (selectedComponentId && !isPreviewMode) {
       const copy = cloneDeep(editorTree);
 
@@ -77,14 +104,15 @@ export const EditorCanvas = ({ projectId }: Props) => {
       }
 
       setSelectedComponentId(undefined);
+      setSelectedComponentIds(() => []);
       setEditorTree(copy, { action: `Removed ${comp?.name}` });
     }
   }, [
-    editorTree,
-    selectedComponentId,
-    setEditorTree,
-    setSelectedComponentId,
     isPreviewMode,
+    editorTree,
+    setSelectedComponentId,
+    setSelectedComponentIds,
+    setEditorTree,
   ]);
 
   const copySelectedComponent = useCallback(() => {
@@ -108,40 +136,80 @@ export const EditorCanvas = ({ projectId }: Props) => {
     }
   }, [copySelectedComponent, deleteComponent, isPreviewMode]);
 
-  const determinePasteTarget = (selectedId: string | undefined) => {
-    if (!selectedId) return "content-wrapper";
-    if (selectedId === "root") return "content-wrapper";
-    return selectedId as string;
-  };
-
   const pasteCopiedComponent = useCallback(async () => {
     const clipboardContent = pasteFromClipboard();
     let componentToPaste =
       (clipboardContent as typeof copiedComponent) || copiedComponent;
     if (!componentToPaste || isPreviewMode) {
-      return; // Early exit if conditions aren't met
+      return;
     }
 
     const selectedComponentId = useEditorStore.getState().selectedComponentId;
-
     const copy = cloneDeep(editorTree);
-    const targetId = determinePasteTarget(selectedComponentId);
-    const parentComponent = getComponentParent(copy.root, targetId);
+
+    if (!selectedComponentId || selectedComponentId === "root")
+      return "content-wrapper";
+    const component = getComponentById(editorTree.root, selectedComponentId);
+    let targetId = selectedComponentId;
+    let componentIndex = 0;
+
+    const isSpecialComponents = ["GridColumn", "Alert", "Accordion"].includes(
+      componentToPaste.name,
+    );
+    const isGridItems = ["Grid", "GridColumn"].includes(componentToPaste.name);
+    const isTargetGridItems = ["Grid", "GridColumn"].includes(component?.name!);
+    const isLayoutCategory =
+      structureMapper[componentToPaste.name!].category === "Layout";
+    const isAllowedGridMatch =
+      isGridItems === isTargetGridItems &&
+      component?.name === componentToPaste.name;
+    const isAllowedSibling = isLayoutCategory && !isTargetGridItems;
+
+    const addAsSiblingFlag =
+      component?.blockDroppingChildrenInside ||
+      isSpecialComponents ||
+      isAllowedSibling ||
+      isAllowedGridMatch;
+
+    if (addAsSiblingFlag) {
+      const parentComponent = getComponentParent(
+        editorTree.root,
+        selectedComponentId,
+      );
+      targetId = parentComponent?.id as string;
+      componentIndex =
+        getComponentIndex(parentComponent!, selectedComponentId!) + 1;
+    } else {
+      componentIndex = component?.children?.length ?? 0;
+    }
 
     const newSelectedId = addComponent(
       copy.root,
       componentToPaste,
       {
-        id: parentComponent!.id as string,
-        edge: "right",
+        id: targetId,
+        edge: isGridItems ? "center" : "top",
       },
-      getComponentIndex(parentComponent!, selectedComponentId!) + 1,
+      componentIndex,
     );
 
-    await setEditorTree(copy, { action: `Pasted ${componentToPaste.name}` });
+    setEditorTree(copy, { action: `Pasted ${componentToPaste.name}` });
     setSelectedComponentId(newSelectedId);
+    setSelectedComponentIds(() => [newSelectedId]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [copiedComponent, editorTree, isPreviewMode, setEditorTree]);
+
+  const handlePageStateChange = (
+    operation: (steps?: number | undefined) => void,
+  ) => {
+    operation();
+    debouncedUpdatePageState(
+      encodeSchema(JSON.stringify(editorTree)),
+      currentProjectId ?? "",
+      currentPageId ?? "",
+      setIsSaving,
+    );
+  };
 
   useHotkeys([
     ["backspace", deleteComponent],
@@ -153,7 +221,8 @@ export const EditorCanvas = ({ projectId }: Props) => {
       "mod+Z",
       () => {
         if (!isPreviewMode) {
-          undo();
+          if (pastStates.length <= 1) return; // to avoid rendering a blank page
+          handlePageStateChange(undo);
         }
       },
     ],
@@ -204,7 +273,8 @@ export const EditorCanvas = ({ projectId }: Props) => {
       "mod+Z",
       () => {
         if (!isPreviewMode) {
-          undo();
+          if (pastStates.length <= 1) return; // to avoid rendering a blank page
+          handlePageStateChange(undo);
         }
       },
     ],
@@ -212,7 +282,7 @@ export const EditorCanvas = ({ projectId }: Props) => {
       "mod+shift+Z",
       () => {
         if (!isPreviewMode) {
-          redo();
+          handlePageStateChange(redo);
         }
       },
     ],
@@ -220,74 +290,60 @@ export const EditorCanvas = ({ projectId }: Props) => {
       "mod+Y",
       () => {
         if (!isPreviewMode) {
-          redo();
+          handlePageStateChange(redo);
         }
       },
     ],
   ]);
 
-  const EditableComponentContainer = ({ children, component }: any) => {
-    const isSelected = useEditorStore(
-      (state) => state.selectedComponentId === component.id,
-    );
+  const renderTree = useCallback(
+    (component: Component) => {
+      if (component.id === "root") {
+        return (
+          <Droppable
+            key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
+            id={component.id}
+            m={0}
+            p={2}
+            miw={980}
+          >
+            <Paper
+              shadow="xs"
+              ref={canvasRef}
+              bg="gray.0"
+              display="flex"
+              sx={{ flexDirection: "column" }}
+            >
+              {component.children?.map((child) => renderTree(child))}
+            </Paper>
+          </Droppable>
+        );
+      }
 
-    return (
-      <EditableComponent
-        id={component.id!}
-        component={component}
-        customComponentModal={customComponentModal}
-        isSelected={isSelected}
-      >
-        {children}
-      </EditableComponent>
-    );
-  };
+      const componentToRender = componentMapper[component.name];
 
-  const renderTree = (component: Component) => {
-    if (component.id === "root") {
-      return (
-        <Droppable
-          key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
-          id={component.id}
-          m={0}
-          p={2}
-          miw={980}
-        >
-          <Paper
-            shadow="xs"
-            ref={canvasRef}
-            bg="gray.0"
-            display="flex"
-            sx={{ flexDirection: "column" }}
+      if (!componentToRender) {
+        return (
+          <EditableComponentContainer
+            key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
+            component={component}
           >
             {component.children?.map((child) => renderTree(child))}
-          </Paper>
-        </Droppable>
-      );
-    }
+          </EditableComponentContainer>
+        );
+      }
 
-    const componentToRender = componentMapper[component.name];
-
-    if (!componentToRender) {
       return (
         <EditableComponentContainer
           key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
           component={component}
         >
-          {component.children?.map((child) => renderTree(child))}
+          {componentToRender?.Component({ component, renderTree })}
         </EditableComponentContainer>
       );
-    }
-
-    return (
-      <EditableComponentContainer
-        key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
-        component={component}
-      >
-        {componentToRender?.Component({ component, renderTree })}
-      </EditableComponentContainer>
-    );
-  };
+    },
+    [canvasRef, isPreviewMode],
+  );
 
   const treeRoot = useMemo(() => editorTree.root, [editorTree.root]);
 
@@ -299,7 +355,6 @@ export const EditorCanvas = ({ projectId }: Props) => {
     <>
       <Box
         pos="relative"
-        onClick={() => clearSelection()}
         style={{
           minHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
           height: "100%",
@@ -307,9 +362,7 @@ export const EditorCanvas = ({ projectId }: Props) => {
         }}
         p={0}
       >
-        <IFrame onClick={clearSelection} projectId={projectId}>
-          {renderTree(treeRoot)}
-        </IFrame>
+        <IFrame projectId={projectId}>{renderTree(treeRoot)}</IFrame>
       </Box>
       {isCustomComponentModalOpen && (
         <CustomComponentModal
@@ -317,7 +370,9 @@ export const EditorCanvas = ({ projectId }: Props) => {
           isCustomComponentModalOpen={isCustomComponentModalOpen}
         />
       )}
-      <ComponentToolbox />
+      <ComponentToolbox customComponentModal={customComponentModal} />
     </>
   );
 };
+
+export const EditorCanvas = memo(EditorCanvasComponent);

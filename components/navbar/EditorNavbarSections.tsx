@@ -2,18 +2,26 @@ import { EditorNavbarComponentsSection } from "@/components/navbar/EditorNavbarC
 import { EditorNavbarPagesSection } from "@/components/navbar/EditorNavbarPagesSection";
 import { EditorNavbarThemesSection } from "@/components/navbar/EditorNavbarThemesSection";
 import { EditorSettingsSection } from "@/components/navbar/EditorSettingsSection";
-import { NavbarLayersSection } from "@/components/navbar/NavbarLayersSection";
+import { EditorNavbarCustomCodeSection } from "@/components/navbar/EditorNavbarCustomCodeSection";
 import { NavbarSection } from "@/components/navbar/NavbarSection";
+import { NavbarLayersSection } from "@/components/navbar/PageStructure/SortableTree";
 import { useEditorStore } from "@/stores/editor";
 import {
   IconBrush,
+  IconCode,
   IconComponents,
   IconFileInvoice,
   IconLayoutDashboard,
   IconSettings,
 } from "@tabler/icons-react";
 
-type SectionId = "pages" | "layers" | "components" | "theme" | "settings";
+type SectionId =
+  | "pages"
+  | "layers"
+  | "components"
+  | "theme"
+  | "customCode"
+  | "settings";
 
 const sections = [
   {
@@ -38,6 +46,11 @@ const sections = [
     icon: IconBrush,
   },
   {
+    id: "customCode" as SectionId,
+    label: "Custom Code",
+    icon: IconCode,
+  },
+  {
     id: "settings" as SectionId,
     label: "Settings",
     icon: IconSettings,
@@ -55,6 +68,7 @@ export const sectionMapper: SectionsMapper = {
   layers: (props: any) => <NavbarLayersSection {...props} />,
   components: (props: any) => <EditorNavbarComponentsSection {...props} />,
   theme: (props: any) => <EditorNavbarThemesSection {...props} />,
+  customCode: (props: any) => <EditorNavbarCustomCodeSection {...props} />,
   settings: (props: any) => <EditorSettingsSection {...props} />,
   // Do not need this any longer as actions handle it. We do need a way to map things like headers though from a global level. Maybe this can be done here.
   //datasources: (props: any) => <EditorNavbarDataSourcesSection {...props} />,

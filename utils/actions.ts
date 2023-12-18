@@ -1,5 +1,3 @@
-import { transpile } from "typescript";
-import { createBrowserHistory } from "history";
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { BindPlaceDataActionForm } from "@/components/actions/BindPlaceDataActionForm";
 import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
@@ -31,9 +29,12 @@ import { CloseModalFlowActionForm } from "@/components/actions/logic-flow-forms/
 import { ClosePopOverFlowActionForm } from "@/components/actions/logic-flow-forms/ClosePopOverFlowActionForm";
 import { CustomJavascriptFlowActionForm } from "@/components/actions/logic-flow-forms/CustomJavascriptFlowActionForm";
 import { DebugFlowActionForm } from "@/components/actions/logic-flow-forms/DebugFlowActionForm";
+import { createBrowserHistory } from "history";
+import { transpile } from "typescript";
 
 import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableActionForm";
 import { BindVariableToChartFlowActionForm } from "@/components/actions/logic-flow-forms/BindVariableToChartFlowActionForm";
+import { ChangeVariableFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeVariableFlowActionForm";
 import { GoToUrlFlowActionForm } from "@/components/actions/logic-flow-forms/GoToUrlFlowActionForm";
 import { LoginFlowActionForm } from "@/components/actions/logic-flow-forms/LoginFlowActionForm";
 import { NavigationFlowActionForm } from "@/components/actions/logic-flow-forms/NavigationFlowActionForm";
@@ -43,7 +44,6 @@ import { OpenPopOverFlowActionForm } from "@/components/actions/logic-flow-forms
 import { OpenToastFlowActionForm } from "@/components/actions/logic-flow-forms/OpenToastFlowActionForm";
 import { ReloadComponentFlowActionForm } from "@/components/actions/logic-flow-forms/ReloadComponentFlowActionForm";
 import { TogglePropsFlowActionForm } from "@/components/actions/logic-flow-forms/TogglePropsFlowActionForm";
-import { ChangeVariableFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeVariableFlowActionForm";
 import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components/actions/logic-flow-forms/TriggerLogicFlowActionForm";
 import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { Options } from "@/components/modifiers/GoogleMap";
@@ -351,7 +351,7 @@ export const navigationAction = ({
   action,
   router,
 }: NavigationActionParams) => {
-  const { isLive } = useEditorStore.getState();
+  const isLive = useEditorStore.getState().isLive;
   const projectId = router.query.id as string;
   let url = isLive
     ? `/${action.pageId}`
@@ -373,7 +373,7 @@ export const goToUrlAction = async ({ action, component }: GoToUrlParams) => {
   const { url, openInNewTab } = action;
   let value = url;
   if (url.startsWith("var_")) {
-    const { currentProjectId } = useEditorStore.getState();
+    const currentProjectId = useEditorStore.getState().currentProjectId;
     value = url.split("var_")[1];
     const isObj = value.startsWith("{") && value.endsWith("}");
     const variableResponse = await getVariable(
@@ -465,32 +465,56 @@ export type ChangeLanguageActionParams = ActionParams & {
 
 export const openModalAction = ({ action }: OpenModalActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent(action.modalId, { opened: true }, false);
+  updateTreeComponent({
+    componentId: action.modalId,
+    props: { opened: true },
+    save: false,
+  });
 };
 
 export const closeModalAction = ({ action }: OpenModalActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent(action.modalId, { opened: false }, false);
+  updateTreeComponent({
+    componentId: action.modalId,
+    props: { opened: false },
+    save: false,
+  });
 };
 
 export const openDrawerAction = ({ action }: OpenDrawerActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent(action.drawerId, { opened: true }, false);
+  updateTreeComponent({
+    componentId: action.drawerId,
+    props: { opened: true },
+    save: false,
+  });
 };
 
 export const closeDrawerAction = ({ action }: OpenDrawerActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent(action.drawerId, { opened: false }, false);
+  updateTreeComponent({
+    componentId: action.drawerId,
+    props: { opened: false },
+    save: false,
+  });
 };
 
 export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent(action.popOverId, { opened: true }, false);
+  updateTreeComponent({
+    componentId: action.popOverId,
+    props: { opened: true },
+    save: false,
+  });
 };
 
 export const closePopOverAction = ({ action }: OpenPopOverActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent(action.popOverId, { opened: false }, false);
+  updateTreeComponent({
+    componentId: action.popOverId,
+    props: { opened: false },
+    save: false,
+  });
 };
 
 export const changeStepAction = ({ action }: ChangeStepActionParams) => {
@@ -517,38 +541,45 @@ export const changeStepAction = ({ action }: ChangeStepActionParams) => {
     activeStep += 1;
   }
 
-  updateTreeComponent(action.stepperId, { activeStep }, false);
+  updateTreeComponent({
+    componentId: action.stepperId,
+    props: { activeStep },
+    save: false,
+  });
 };
 export const togglePropsAction = ({
   action,
   event,
 }: TogglePropsActionParams) => {
-  const { updateTreeComponent, tree } = useEditorStore.getState();
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+
   let componentId = "";
   action.conditionRules.forEach((item) => {
     if (item.condition === event) {
       componentId = item.componentId;
     }
 
-    updateTreeComponent(
-      item.componentId,
-      {
+    updateTreeComponent({
+      componentId: item.componentId,
+      props: {
         style: { display: "none" },
       },
-      false,
-    );
+      save: false,
+    });
   });
 
-  updateTreeComponent(
-    componentId,
-    {
+  updateTreeComponent({
+    componentId: componentId,
+    props: {
       style: { display: "flex" },
     },
-    false,
-  );
+    save: false,
+  });
 };
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
-  const { updateTreeComponent, tree: editorTree } = useEditorStore.getState();
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const editorTree = useEditorStore.getState().tree;
+
   const selectedComponent = editorTree.root.children?.find(
     (tree) => tree.name === "Navbar",
   );
@@ -563,19 +594,25 @@ export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
     {} as Component,
   );
 
-  const isExpanded = selectedComponent?.props?.style.width !== "100px";
+  const isExpanded = selectedComponent?.props?.style?.width !== "100px";
   const name = isExpanded ? "IconChevronRight" : "IconChevronLeft";
   const width = isExpanded ? "100px" : "260px";
   const flexDirection = isExpanded ? "column" : "row";
   const justifyContent = isExpanded ? "center" : "flex-start";
 
-  updateTreeComponent(buttonIcon?.id!, { name });
+  updateTreeComponent({ componentId: buttonIcon?.id!, props: { name } });
   linksComponent?.children?.forEach((child) => {
-    updateTreeComponent(child?.id as string, {
-      style: { flexDirection, justifyContent },
+    updateTreeComponent({
+      componentId: child?.id as string,
+      props: {
+        style: { flexDirection, justifyContent },
+      },
     });
   });
-  updateTreeComponent(selectedComponent?.id!, { style: { width } });
+  updateTreeComponent({
+    componentId: selectedComponent?.id!,
+    props: { style: { width } },
+  });
 };
 
 const getVariableValueFromVariableId = async (variableId = "") => {
@@ -627,7 +664,8 @@ export const changeStateAction = ({
   action,
   event,
 }: ChangeStateActionParams) => {
-  const { setTreeComponentCurrentState } = useEditorStore.getState();
+  const setTreeComponentCurrentState =
+    useEditorStore.getState().setTreeComponentCurrentState;
   const skipPreviousList: string[] = [];
   (action.conditionRules || []).forEach((item) => {
     if (!skipPreviousList.includes(item.componentId)) {
@@ -868,13 +906,13 @@ export const loginAction = async ({
   const { endpoint, url, body } = await prepareRequestData(router, action);
 
   try {
-    updateTreeComponent(
-      component.id!,
-      {
+    updateTreeComponent({
+      componentId: component.id!,
+      props: {
         loading: action.showLoader,
       },
-      false,
-    );
+      save: false,
+    });
 
     const response = await fetch(url, {
       method: endpoint?.methodType,
@@ -901,8 +939,8 @@ export const loginAction = async ({
 
     const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
 
-    const authStore = useAuthStore.getState();
-    authStore.setAuthTokens(mergedAuthConfig);
+    const setAuthTokens = useAuthStore.getState().setAuthTokens;
+    setAuthTokens(mergedAuthConfig);
 
     await handleSuccess(
       responseJson,
@@ -944,20 +982,21 @@ export const apiCallAction = async ({
   const { endpoint, url, body } = await prepareRequestData(router, action);
 
   try {
-    updateTreeComponent(
-      component.id!,
-      {
+    updateTreeComponent({
+      componentId: component.id!,
+      props: {
         loading: action.showLoader,
       },
-      false,
-    );
+      save: false,
+    });
 
-    const authStore = useAuthStore.getState();
-    authStore.refreshAccessToken();
+    const refreshAccessToken = useAuthStore.getState().refreshAccessToken;
+    const getAccessToken = useAuthStore.getState().getAccessToken;
+    refreshAccessToken();
 
     let authHeaderKey =
       endpoint?.authenticationScheme === "BEARER"
-        ? "Bearer " + authStore.getAccessToken()
+        ? "Bearer " + getAccessToken()
         : "";
 
     const fetchUrl = endpoint?.isServerRequest
@@ -1023,16 +1062,16 @@ export const bindResponseToComponentAction = ({
     if (bind.component && bind.value) {
       const dataFlatten = flattenKeysWithRoot(data);
       const value = get(dataFlatten, bind.value);
-      updateTreeComponent(
-        bind.component,
-        {
+      updateTreeComponent({
+        componentId: bind.component,
+        props: {
           data: { value, base: data },
           dataPath: bind.value.startsWith("root[0].")
             ? bind.value.split("root[0].")[1]
             : bind.value.split("root.")[1],
         },
-        false,
-      );
+        save: false,
+      });
     }
   });
 };
@@ -1087,9 +1126,9 @@ export const bindVariableToChartAction = async ({
       labelsValue = get(dataFlatten, (labelsVar as any).path);
     }
 
-    updateTreeComponent(
-      action.component,
-      {
+    updateTreeComponent({
+      componentId: action.component,
+      props: {
         data: {
           series: {
             value: seriesValue,
@@ -1109,8 +1148,8 @@ export const bindVariableToChartAction = async ({
           },
         },
       },
-      false,
-    );
+      save: false,
+    });
   }
 };
 
@@ -1149,9 +1188,9 @@ export const bindVariableToComponentAction = async ({
       defaultValue = get(defaultValueFlatten, (_var as any).path);
     }
 
-    updateTreeComponent(
-      action.component,
-      {
+    updateTreeComponent({
+      componentId: action.component,
+      props: {
         data: {
           value,
           base:
@@ -1176,8 +1215,8 @@ export const bindVariableToComponentAction = async ({
           : {},
         dataPath: (_var as any)?.path ?? undefined,
       },
-      false,
-    );
+      save: false,
+    });
   }
 };
 
@@ -1282,8 +1321,9 @@ export const bindPlaceGeometryAction = ({
   action: { key },
 }: BindPlaceGeometryActionParams) => {
   const editorTree = useEditorStore.getState().tree;
-  const { updateTreeComponentChildren, updateTreeComponent } =
-    useEditorStore.getState();
+  const updateTreeComponentChildren =
+    useEditorStore.getState().updateTreeComponentChildren;
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   const searchResults = getAllComponentsByName(editorTree.root, "Text").filter(
     (component) => component.description === "Search Address In Map",
   );
@@ -1321,18 +1361,18 @@ export const bindPlaceGeometryAction = ({
     },
     blockDroppingChildrenInside: true,
   } as Component;
-  updateTreeComponent(
-    ancestor.children![0].id!,
-    { value: formatted_address },
-    true,
-  );
+  updateTreeComponent({
+    componentId: ancestor.children![0].id!,
+    props: { value: formatted_address },
+    save: true,
+  });
   updateTreeComponentChildren(parent.id!, [child]);
 };
 
 export const changeLanguageAction = ({
   action,
 }: ChangeLanguageActionParams) => {
-  const { setLanguage } = useEditorStore.getState();
+  const setLanguage = useEditorStore.getState().setLanguage;
   setLanguage(action.language);
 };
 
@@ -1349,11 +1389,9 @@ export type ChangeVariableActionParams = ActionParams & {
 export const changeVariableAction = async ({
   action,
 }: ChangeVariableActionParams) => {
-  const {
-    currentProjectId,
-    currentPageId,
-    tree: editorTree,
-  } = useEditorStore.getState();
+  const currentProjectId = useEditorStore.getState().currentProjectId;
+  const currentPageId = useEditorStore.getState().currentPageId;
+  const editorTree = useEditorStore.getState().tree;
   let isPreviewValueObject = false;
   let isPreviewValueArray = false;
 

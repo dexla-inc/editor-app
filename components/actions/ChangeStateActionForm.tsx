@@ -25,6 +25,7 @@ import { useForm } from "@mantine/form";
 import { IconTrash } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { useComponentStates } from "@/hooks/useComponentStates";
 
 type Props = {
   id: string;
@@ -57,6 +58,7 @@ export const ChangeStateActionForm = ({ id }: Props) => {
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
+  const { getComponentsStates } = useComponentStates();
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
 
@@ -153,29 +155,7 @@ export const ChangeStateActionForm = ({ id }: Props) => {
                     </Flex>
                   }
                   onChange={(val) => onChange(val, "state", i)}
-                  data={[
-                    { label: "Default", value: "default" },
-                    { label: "Hover", value: "hover" },
-                    { label: "Disabled", value: "disabled" },
-                    { label: "Checked", value: "checked" },
-                    { label: "Hidden", value: "hidden" },
-                    ...Object.keys(
-                      componentId
-                        ? getComponentById(editorTree.root, componentId!)
-                            ?.states ?? {}
-                        : {},
-                    ).reduce((acc, key) => {
-                      if (
-                        ["hover", "disabled", "checked", "hidden"].includes(key)
-                      )
-                        return acc;
-
-                      return acc.concat({
-                        label: key,
-                        value: key,
-                      });
-                    }, [] as any[]),
-                  ]}
+                  data={getComponentsStates()}
                   placeholder="Select State"
                   nothingFound="Nothing found"
                   searchable

@@ -1,7 +1,7 @@
 import { InformationAlert } from "@/components/Alerts";
+import { Icon } from "@/components/Icon";
 import { Button, Stack } from "@mantine/core";
 import Link from "next/link";
-import { Icon } from "../Icon";
 
 type EmptyDatasourcesPlaceholderProps = {
   projectId: string;

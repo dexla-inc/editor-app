@@ -1,5 +1,7 @@
 import { IconModal } from "@/components/IconModal";
-import { Box, Flex, Text } from "@mantine/core";
+import { GRAY_COLOR } from "@/utils/branding";
+import { ActionIcon, Box, Flex, Text, Tooltip } from "@mantine/core";
+import { Icon } from "./Icon";
 
 type Props = {
   topLabel: string;
@@ -14,12 +16,27 @@ export const IconSelector = ({
 }: Props) => {
   return (
     <Box>
-      <Text size="xs" fw={500}>
+      <Text
+        sx={(theme) =>
+          theme.colorScheme === "dark" ? { color: GRAY_COLOR } : {}
+        }
+        size="xs"
+        fw={500}
+      >
         {topLabel}
       </Text>
-      <Flex gap="md" align="center">
-        <IconModal onIconSelect={onIconSelect} />
-        {selectedIcon}
+      <Flex gap="md" align="center" justify="space-between">
+        <>
+          <IconModal onIconSelect={onIconSelect} />
+          <Icon name={selectedIcon} />
+        </>
+        {selectedIcon && (
+          <Tooltip label="Delete" withArrow fz="xs">
+            <ActionIcon onClick={() => onIconSelect("X")}>
+              <Icon name="IconX" />
+            </ActionIcon>
+          </Tooltip>
+        )}
       </Flex>
     </Box>
   );

@@ -1,15 +1,24 @@
+import classNames from "classnames";
 import React, {
   forwardRef,
   HTMLAttributes,
   KeyboardEvent,
+  useCallback,
   useEffect,
   useRef,
 } from "react";
-import classNames from "classnames";
 
-import styles from "./TreeItem.module.scss";
+import { Icon } from "@/components/Icon";
+import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
+import { useEditorStore } from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/userConfig";
+import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
-import { IconChevronDown } from "@tabler/icons-react";
+import {
+  Component,
+  debouncedTreeComponentDescriptionpdate,
+  removeComponent,
+} from "@/utils/editor";
 import {
   ActionIcon,
   Card,
@@ -18,13 +27,11 @@ import {
   TextInput,
   useMantineTheme,
 } from "@mantine/core";
-import { debouncedTreeComponentDescriptionpdate } from "@/utils/editor";
-import { Icon } from "@/components/Icon";
-import { structureMapper } from "@/utils/componentMapper";
-import { useDisclosure } from "@mantine/hooks";
-import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 import { useForm } from "@mantine/form";
-import { useEditorStore } from "@/stores/editor";
+import { useDisclosure } from "@mantine/hooks";
+import { IconChevronDown } from "@tabler/icons-react";
+import cloneDeep from "lodash.clonedeep";
+import styles from "./TreeItem.module.scss";
 
 export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   id: any;
@@ -72,16 +79,42 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     },
     ref,
   ) => {
-    const customRef = useRef(null);
+    const customRef = useRef<HTMLDivElement>(null!);
     const theme = useMantineTheme();
     const [editable, { toggle: toggleEdit, close: closeEdit }] =
       useDisclosure(false);
     const editFieldRef = useRef<HTMLInputElement>(null);
     const isSelected = useEditorStore(
-      (state) => state.selectedComponentId === id,
+      (state) => state.selectedComponentIds?.includes(id),
     );
     const setSelectedComponentId = useEditorStore(
       (state) => state.setSelectedComponentId,
+    );
+    const setSelectedComponentIds = useEditorStore(
+      (state) => state.setSelectedComponentIds,
+    );
+    const isWindowError = useEditorStore((state) => state.isWindowError);
+    const editorTree = useEditorStore((state) => state.tree);
+    const setEditorTree = useEditorStore((state) => state.setTree);
+    const clearSelection = useEditorStore((state) => state.clearSelection);
+    const clearSelections = useEditorStore((state) => state.clearSelections);
+    const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
+
+    const deleteComponent = useCallback(
+      (component: Component) => {
+        if (
+          component.id &&
+          component.id !== "root" &&
+          component.id !== "content-wrapper"
+        ) {
+          const copy = cloneDeep(editorTree);
+          removeComponent(copy.root, component.id);
+          setEditorTree(copy, { action: `Removed ${component?.name}` });
+          clearSelection();
+          clearSelections();
+        }
+      },
+      [clearSelection, clearSelections, editorTree, setEditorTree],
     );
 
     const { componentContextMenu, forceDestroyContextMenu } =
@@ -93,13 +126,33 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       },
     });
 
-    const handleSelection = (id: string) => {
+    const handleSelection = (
+      e: React.MouseEvent<HTMLLIElement>,
+      id: string,
+    ) => {
       if (id !== "root") {
         setSelectedComponentId(id as string);
+        if (e.ctrlKey || e.metaKey) {
+          setSelectedComponentIds((prev) => {
+            if (prev.includes(id)) {
+              return prev.filter((p) => p !== id);
+            }
+            return [...prev, id];
+          });
+        } else {
+          setSelectedComponentIds(() => [id]);
+        }
       }
     };
+
+    const isComponentDeletableOnError =
+      !editable && isWindowError && isSelected;
+
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === "Enter" || e.key === "Escape") closeEdit();
+      const isDeleteKey = e.key === "Delete" || e.key === "Backspace";
+      if (isComponentDeletableOnError && isDeleteKey)
+        deleteComponent(component);
     };
 
     const icon = structureMapper[name as string]?.icon;
@@ -108,8 +161,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
     useEffect(() => {
       const isRootOrContentWrapper = id === "root" || id === "content-wrapper";
 
-      if (isSelected) {
-        // @ts-ignore
+      if (isSelected && !isRootOrContentWrapper) {
         customRef.current?.scrollIntoView({
           behavior: "smooth",
           block: "center",
@@ -141,7 +193,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           e.stopPropagation();
           forceDestroyContextMenu();
           if (!editable) {
-            handleSelection(id as string);
+            handleSelection(e, id as string);
           }
         }}
         onDoubleClick={(e) => {
@@ -153,7 +205,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
         onContextMenu={componentContextMenu(component)}
       >
         <div
-          className={styles.TreeItem}
+          className={classNames(styles.TreeItem, isDarkTheme && styles.dark)}
           ref={ref}
           style={{
             ...style,
@@ -199,7 +251,13 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                   {" "}
                 </Card>
               )}
-              {id !== "root" && icon}
+              {id !== "root" && (
+                <div
+                  className={classNames(isDarkTheme && styles.darkThemeIcon)}
+                >
+                  {icon}
+                </div>
+              )}
               {id === "root" || id === "content-wrapper" ? (
                 <Text
                   id={`layer-${id}`}
@@ -207,7 +265,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                   lineClamp={1}
                   sx={{ cursor: "move", width: "100%" }}
                 >
-                  {id === "root" ? "Body" : "Content Wrapper"}
+                  Body
                 </Text>
               ) : editable ? (
                 <TextInput

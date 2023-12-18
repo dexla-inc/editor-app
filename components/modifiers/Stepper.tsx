@@ -1,31 +1,29 @@
+import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
+import { useEditorStore } from "@/stores/editor";
+import { structureMapper } from "@/utils/componentMapper";
 import {
   Component,
   debouncedTreeComponentChildrenUpdate,
   debouncedTreeUpdate,
   getComponentById,
 } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconArrowAutofitContent } from "@tabler/icons-react";
 import { pick } from "next/dist/lib/pick";
 import { useEffect } from "react";
-import { UnitInput } from "@/components/UnitInput";
-import { structureMapper } from "@/utils/componentMapper";
-import { useEditorStore } from "@/stores/editor";
 
 export const icon = IconArrowAutofitContent;
 export const label = "Stepper";
 
-export const defaultStepperValues = {
-  activeStep: "0",
-  numberOfSteps: 3,
-};
+const defaultStepperValues = requiredModifiers.stepper;
 
-const editorStore = useEditorStore.getState();
+const theme = useEditorStore.getState().theme;
 const createStepper = () => (stepperId: string) => {
   return structureMapper["StepperStep"].structure({
-    theme: editorStore.theme,
+    theme,
     stepperId,
   });
 };

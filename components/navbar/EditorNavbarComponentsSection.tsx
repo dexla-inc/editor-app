@@ -1,12 +1,14 @@
 import { DraggableComponent } from "@/components/DraggableComponent";
-import { CustomComponentResponse } from "@/requests/components/mutations";
+import { GenerateComponentsAIButton } from "@/components/GenerateComponentsAIButton";
 import { getComponentList } from "@/requests/components/queries";
+import { CustomComponentResponse } from "@/requests/components/types";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import {
   ComponentCategoryType,
   structureMapper,
 } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
-import { ICON_SIZE } from "@/utils/config";
+import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { toSpaced } from "@/utils/dashboardTypes";
 import {
   Center,
@@ -17,11 +19,10 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { IconSearch } from "@tabler/icons-react";
+import { IconFrustum, IconSearch } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { GenerateComponentsAIButton } from "../GenerateComponentsAIButton";
 
 type DraggableComponentData = {
   id: string;
@@ -34,10 +35,12 @@ export const EditorNavbarComponentsSection = () => {
   const [componentTypeToShow, setComponentTypeToShow] =
     useState<string>("default");
   const router = useRouter();
+  const activeCompany = usePropelAuthStore((state) => state.activeCompany);
 
   const componentList = useQuery({
     queryKey: ["components"],
-    queryFn: () => getComponentList(router.query.id as string),
+    queryFn: () =>
+      getComponentList(router.query.id as string, activeCompany.orgId),
     enabled: !!router.query.id && componentTypeToShow === "custom",
   });
 
@@ -92,7 +95,7 @@ export const EditorNavbarComponentsSection = () => {
             ([category, components]) => {
               // Filter the components based on the query before rendering
               const filteredComponents = components.filter(({ id }) =>
-                query ? new RegExp(query, "i").test(id) : true,
+                query ? id.toLowerCase().includes(query.toLowerCase()) : true,
               );
 
               if (filteredComponents.length === 0) {
@@ -126,23 +129,27 @@ export const EditorNavbarComponentsSection = () => {
               </Text>
             </Center>
           )}
-          {(query
-            ? customComponents.filter((sc) =>
-                new RegExp(query, "i").test(sc.id),
-              )
-            : customComponents
-          ).map(
-            ({ id, content, description, type }: CustomComponentResponse) => {
-              return (
-                <DraggableComponent
-                  key={type}
-                  id={id}
-                  text={description}
-                  data={JSON.parse(decodeSchema(content))}
-                />
-              );
-            },
-          )}
+          <Grid gutter="xs">
+            {(query
+              ? customComponents.filter((cc) =>
+                  new RegExp(query, "i").test(cc.description),
+                )
+              : customComponents
+            ).map(
+              ({ id, content, description, type }: CustomComponentResponse) => {
+                return (
+                  <Grid.Col span={6} key={id}>
+                    <DraggableComponent
+                      icon={<IconFrustum size={LARGE_ICON_SIZE} />}
+                      id={id}
+                      text={description}
+                      data={JSON.parse(decodeSchema(content))}
+                    />
+                  </Grid.Col>
+                );
+              },
+            )}
+          </Grid>
         </Stack>
       )}
     </Stack>

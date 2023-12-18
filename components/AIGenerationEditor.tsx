@@ -4,7 +4,6 @@ import {
   Component,
   DropTarget,
   EditorTree,
-  Row,
   addComponent,
   getComponentBeingAddedId,
   getNewComponent,
@@ -37,8 +36,8 @@ export const createComponentEditorHandler = ({
   tree,
   dropTarget,
 }: Props) => {
-  return function (row: Row) {
-    const newComponents = getNewComponent(row, theme, pages);
+  return function (components: Component[]) {
+    const newComponents = getNewComponent(components, theme, pages);
     const id = getComponentBeingAddedId(tree.root);
 
     if (!id) {

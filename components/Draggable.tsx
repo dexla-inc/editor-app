@@ -1,16 +1,17 @@
 import { useDraggable } from "@/hooks/useDraggable";
 import { deleteCustomComponent } from "@/requests/components/mutations";
 import { useEditorStore } from "@/stores/editor";
-import { ICON_SIZE } from "@/utils/config";
+import { usePropelAuthStore } from "@/stores/propelAuth";
 import {
   ActionIcon,
   Box,
   BoxProps,
   Card,
   Group,
+  Tooltip,
   useMantineTheme,
 } from "@mantine/core";
-import { IconX } from "@tabler/icons-react";
+import { IconTrash } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { PropsWithChildren, useCallback } from "react";
@@ -33,6 +34,7 @@ export const Draggable = ({
   const theme = useMantineTheme();
 
   const setComponentToAdd = useEditorStore((state) => state.setComponentToAdd);
+  const activeCompany = usePropelAuthStore((state) => state.activeCompany);
 
   const onDragStart = useCallback(() => {
     setComponentToAdd(data);
@@ -78,25 +80,39 @@ export const Draggable = ({
           },
         }}
       >
+        {isDeletable && (
+          <Card.Section>
+            <Group position="right" noWrap>
+              <ActionIcon
+                size="xs"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  mutate({
+                    projectId: router.query.id as string,
+                    companyId: activeCompany.orgId,
+                    id,
+                  });
+                }}
+              >
+                <Tooltip label="Delete" withArrow fz="xs" withinPortal>
+                  <IconTrash
+                    size={12}
+                    style={{
+                      position: "absolute",
+                      right: 10,
+                      top: 10,
+                    }}
+                  />
+                </Tooltip>
+              </ActionIcon>
+            </Group>
+          </Card.Section>
+        )}
         <Group position="apart" noWrap sx={{ textAlign: "center" }}>
           <Box {...draggable} w="100%">
             {children}
           </Box>
-          {isDeletable && (
-            <ActionIcon
-              size="xs"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                mutate({
-                  projectId: router.query.id as string,
-                  id,
-                });
-              }}
-            >
-              <IconX size={ICON_SIZE} />
-            </ActionIcon>
-          )}
         </Group>
       </Card>
     </Box>

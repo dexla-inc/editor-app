@@ -1,4 +1,4 @@
-import { GenerateStylesAIButton } from "@/components/GenerateStylesAIButton";
+import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { SidebarSection } from "@/components/SidebarSection";
 import { ActionsFlow } from "@/components/actions/ActionsFlow";
 import * as AccordionModifier from "@/components/modifiers/Accordion";
@@ -19,6 +19,8 @@ import * as DrawerModifier from "@/components/modifiers/Drawer";
 import * as EffectsModifier from "@/components/modifiers/Effects";
 import * as FileButtonModifier from "@/components/modifiers/FileButton";
 import * as GoogleMapModifier from "@/components/modifiers/GoogleMap";
+import * as GridModifier from "@/components/modifiers/Grid";
+import * as GridColumnModifier from "@/components/modifiers/GridColumn";
 import * as IconModifier from "@/components/modifiers/Icon";
 import * as ImageModifier from "@/components/modifiers/Image";
 import * as InputModifier from "@/components/modifiers/Input";
@@ -26,8 +28,10 @@ import * as LayoutModifier from "@/components/modifiers/Layout";
 import * as LinkModifier from "@/components/modifiers/Link";
 import * as ModalModifier from "@/components/modifiers/Modal";
 import * as NavLinkModifier from "@/components/modifiers/NavLink";
+import * as NavbarModifier from "@/components/modifiers/Navbar";
 import * as PopOverModifier from "@/components/modifiers/PopOver";
 import * as PositionModifier from "@/components/modifiers/Position";
+import * as ProgressModifier from "@/components/modifiers/Progress";
 import * as RadioModifier from "@/components/modifiers/Radio";
 import * as RadioItemModifier from "@/components/modifiers/RadioItem";
 import * as SelectModifier from "@/components/modifiers/Select";
@@ -42,13 +46,16 @@ import * as TabsPanelModifier from "@/components/modifiers/TabsPanel";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TextareaModifier from "@/components/modifiers/Textaarea";
 import * as ChartModifier from "@/components/modifiers/chart/Chart";
+import { useComponentStates } from "@/hooks/useComponentStates";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { Action, actionMapper } from "@/utils/actions";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { componentMapper } from "@/utils/componentMapper";
-import { getComponentById } from "@/utils/editor";
+import { getAllComponentsByIds, getComponentById } from "@/utils/editor";
 import { Modifiers } from "@/utils/modifiers";
 import {
+  ActionIcon,
   Box,
   Center,
   Flex,
@@ -56,10 +63,18 @@ import {
   Select,
   Stack,
   Text,
+  TextInput,
+  Tooltip,
 } from "@mantine/core";
-import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
+import {
+  IconArrowBadgeRight,
+  IconBolt,
+  IconCheck,
+  IconX,
+} from "@tabler/icons-react";
+import intersection from "lodash.intersection";
 import startCase from "lodash.startcase";
-import { useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -107,6 +122,10 @@ const sectionMapper: SectionsMapper = {
   badge: BadgeModifier,
   dateInput: DateInputModifier,
   chart: ChartModifier,
+  grid: GridModifier,
+  gridColumn: GridColumnModifier,
+  navbar: NavbarModifier,
+  progress: ProgressModifier,
 };
 
 type Tab = "design" | "actions";
@@ -122,8 +141,11 @@ export const EditorAsideSections = () => {
   const setTreeComponentCurrentState = useEditorStore(
     (state) => state.setTreeComponentCurrentState,
   );
-  const selectedComponentId = useEditorStore(
+  const _selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
+  );
+  const selectedComponentIds = useEditorStore(
+    (state) => state.selectedComponentIds,
   );
   const editorTree = useEditorStore((state) => state.tree);
   const openAction = useEditorStore((state) => state.openAction);
@@ -138,10 +160,20 @@ export const EditorAsideSections = () => {
     (state) => state.setInitiallyOpenedModifiersByComponent,
   );
   const [tab, setTab] = useState<Tab>("design");
+  const selectedComponentId = useDeferredValue(_selectedComponentId);
+  const [createState, setCreateState] = useState<undefined | string>(undefined);
 
   const component = useMemo(
     () => getComponentById(editorTree.root, selectedComponentId as string),
     [editorTree.root, selectedComponentId],
+  );
+  const components = useMemo(
+    () => getAllComponentsByIds(editorTree.root, selectedComponentIds!),
+    [editorTree.root, selectedComponentIds],
+  );
+  const { getComponentsStates } = useComponentStates();
+  const isMappedComponent = components.some(
+    (c) => componentMapper[c?.name as string],
   );
 
   useEffect(() => {
@@ -152,13 +184,12 @@ export const EditorAsideSections = () => {
 
   const isContentWrapperSelected = selectedComponentId === "content-wrapper";
 
-  if (!selectedComponentId || isContentWrapperSelected) {
+  if (!isMappedComponent || isContentWrapperSelected) {
     return (
       <Box p="xl">
         <Center>
           <Text size="xs" color="dimmed" align="center">
-            You are unable to edit this Content Wrapper. Select another
-            component to edit.
+            You are unable to edit the Body. Select another component to edit.
           </Text>
         </Center>
       </Box>
@@ -166,20 +197,24 @@ export const EditorAsideSections = () => {
   }
 
   const componentActions = component?.actions ?? [];
-  const mappedComponent = componentMapper[component?.name as string];
+  const mappedModifiers = intersection(
+    ...components.map((c) => componentMapper[c?.name as string]?.modifiers),
+  );
 
-  const sections = mappedComponent?.modifiers?.map((id) => {
+  const sections = mappedModifiers?.map((id) => {
     const modifier = sectionMapper[id];
+
+    const componentName = component?.name ?? "content-wrapper";
 
     return {
       id: id,
       label: modifier.label,
       icon: modifier.icon,
       initiallyOpened:
-        initiallyOpenedModifiersByComponent[component!.name]?.includes(id),
+        initiallyOpenedModifiersByComponent[componentName]?.includes(id),
       Component: modifier.Modifier,
       onClick: (id: string, isOpen: boolean) => {
-        setInitiallyOpenedModifiersByComponent(component!.name, id, isOpen);
+        setInitiallyOpenedModifiersByComponent(componentName, id, isOpen);
       },
     };
   });
@@ -247,6 +282,14 @@ export const EditorAsideSections = () => {
     );
   };
 
+  const onClickResetToDefault = () => {
+    updateTreeComponent({
+      componentId: selectedComponentId!,
+      props: component?.props,
+      forceState: currentState,
+    });
+  };
+
   const actionsSections = componentActions.map((action: Action) => {
     const isSequential = !!action.sequentialTo;
     const actionName = action.action.name;
@@ -282,7 +325,11 @@ export const EditorAsideSections = () => {
           style={{ width: "100%" }}
           data={[
             { label: "Design", value: "design" },
-            { label: "Actions", value: "actions" },
+            {
+              label: "Actions",
+              value: "actions",
+              disabled: (selectedComponentIds ?? []).length > 1,
+            },
           ]}
           onChange={(value) => {
             setTab(value as Tab);
@@ -291,70 +338,93 @@ export const EditorAsideSections = () => {
           value={tab}
         />
       </Flex>
-      <Stack key={selectedComponentId} spacing="xs">
-        {tab === "design" && (
-          <Stack>
-            {selectedComponentId && (
-              <>
-                <GenerateStylesAIButton />
-                <Select
-                  px="md"
-                  value={currentState}
-                  size="xs"
-                  label="State"
-                  data={[
-                    { label: "Default", value: "default" },
-                    { label: "Hover", value: "hover" },
-                    { label: "Disabled", value: "disabled" },
-                    { label: "Checked", value: "checked" },
-                    { label: "Hidden", value: "hidden" },
-                    { label: "Active", value: "Active" },
-                    { label: "Complete", value: "Complete" },
-                    ...Object.keys(component?.states ?? {}).reduce(
-                      (acc, key) => {
-                        if (
-                          key === "hover" ||
-                          key === "disabled" ||
-                          key === "checked" ||
-                          key === "hidden" ||
-                          key === "Active" ||
-                          key === "Complete"
-                        )
-                          return acc;
-
-                        return acc.concat({
-                          label: key,
-                          value: key,
+      {tab === "design" && (
+        <Stack spacing="xs">
+          {selectedComponentId && (
+            <Stack spacing="xs" px="md">
+              {createState === undefined && (
+                <Flex gap="10px" align="flex-end">
+                  <Select
+                    style={{ flex: "1" }}
+                    value={currentState}
+                    size="xs"
+                    label="State"
+                    data={getComponentsStates()}
+                    placeholder="Select State"
+                    nothingFound="Nothing found"
+                    searchable
+                    onChange={(value: string) => {
+                      setTreeComponentCurrentState(selectedComponentId, value);
+                    }}
+                    {...AUTOCOMPLETE_OFF_PROPS}
+                  />
+                  <ActionIconDefault
+                    iconName="IconPlus"
+                    tooltip="Create new state"
+                    onClick={() => {
+                      setCreateState("");
+                    }}
+                  />
+                  {currentState !== "default" && (
+                    <ActionIconDefault
+                      iconName="IconRefresh"
+                      tooltip="Revert to default settings"
+                      onClick={onClickResetToDefault}
+                    />
+                  )}
+                </Flex>
+              )}
+              {createState !== undefined && (
+                <Flex gap="10px" align="flex-end">
+                  <TextInput
+                    style={{ flex: "1" }}
+                    size="xs"
+                    label="State Name"
+                    placeholder="My New State"
+                    value={createState}
+                    onChange={(event) => {
+                      setCreateState(event.currentTarget.value);
+                    }}
+                  />
+                  <Tooltip label={`Cancel`}>
+                    <ActionIcon
+                      variant="default"
+                      size="1.875rem"
+                      onClick={() => setCreateState(undefined)}
+                    >
+                      <IconX size="1rem" />
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label={`Save new state`}>
+                    <ActionIcon
+                      color="teal"
+                      variant="filled"
+                      size="1.875rem"
+                      onClick={() => {
+                        setTreeComponentCurrentState(
+                          selectedComponentId,
+                          createState,
+                        );
+                        updateTreeComponent({
+                          componentId: selectedComponentId,
+                          props: {},
+                          save: true,
                         });
-                      },
-                      [] as any[],
-                    ),
-                  ]}
-                  placeholder="Select State"
-                  nothingFound="Nothing found"
-                  searchable
-                  creatable
-                  getCreateLabel={(query) => `+ Custom State "${query}"`}
-                  onCreate={(query) => {
-                    const item = { value: query, label: query };
-                    setTreeComponentCurrentState(selectedComponentId, query);
-                    updateTreeComponent(selectedComponentId, {}, true);
-                    return item;
-                  }}
-                  onChange={(value: string) => {
-                    setTreeComponentCurrentState(selectedComponentId, value);
-                  }}
-                  autoComplete="off"
-                  data-lpignore="true"
-                  data-form-type="other"
-                />
-              </>
-            )}
-            {designSections}
-          </Stack>
-        )}
-        {tab === "actions" && <ActionsFlow actionsSections={actionsSections} />}
-      </Stack>
+                        setCreateState(undefined);
+                      }}
+                    >
+                      <IconCheck size="1rem" />
+                    </ActionIcon>
+                  </Tooltip>
+                </Flex>
+              )}
+            </Stack>
+          )}
+
+          <Stack spacing="xs">{designSections}</Stack>
+        </Stack>
+      )}
+      {tab === "actions" && <ActionsFlow actionsSections={actionsSections} />}
     </Stack>
   );
 };

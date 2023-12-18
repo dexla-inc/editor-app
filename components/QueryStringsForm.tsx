@@ -1,3 +1,4 @@
+import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { Icon } from "@/components/Icon";
 import { QueryStringListItem } from "@/requests/pages/types";
@@ -7,7 +8,6 @@ import { usePropelAuthStore } from "@/stores/propelAuth";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Flex, Group, Select, Text, TextInput } from "@mantine/core";
 import { Dispatch, SetStateAction, useState } from "react";
-import { ActionIconDefault } from "./ActionIconDefault";
 
 type QueryStringsFormProps = {
   queryStringState: [

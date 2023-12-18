@@ -1,8 +1,7 @@
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import { componentMapper } from "@/utils/componentMapper";
 import { Component, checkIfIsChild } from "@/utils/editor";
-import { Popover as MantinePopOver, PopoverProps } from "@mantine/core";
+import { Box, Popover as MantinePopOver, PopoverProps } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { memo, useEffect } from "react";
 
@@ -25,10 +24,10 @@ const PopOverComponent = ({
     (state) => state.updateTreeComponent,
   );
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
+  const isLive = useEditorStore((state) => state.isLive);
 
   const {
     children,
-    title,
     opened: propOpened,
     targetId,
     loading,
@@ -50,8 +49,12 @@ const PopOverComponent = ({
 
   const handleClose = () => {
     close();
-    propOnClose && propOnClose();
-    updateTreeComponent(component.id!, { opened: false }, false);
+    propOnClose?.();
+    updateTreeComponent({
+      componentId: component.id!,
+      props: { opened: false },
+      save: false,
+    });
   };
 
   useEffect(() => {
@@ -64,29 +67,32 @@ const PopOverComponent = ({
     : selectedComponentId === component.id ||
       checkIfIsChild(component, selectedComponentId as string);
 
+  const target = (isLive ? window : iframeWindow)?.document.getElementById(
+    "iframe-content",
+  );
+
   return (
     <MantinePopOver
       withinPortal
       trapFocus={false}
       opened={isOpened}
+      width="auto"
       portalProps={{
-        target: iframeWindow?.document.getElementById("iframe-content"),
+        target: target,
       }}
+      middlewares={{ flip: false, shift: false, inline: true }}
       onClose={isPreviewMode ? handleClose : () => {}}
       {...props}
       {...componentProps}
+      maw="fit-content"
     >
       {targetComponent && (
         <MantinePopOver.Target>
-          {/* @ts-ignore */}
-          {componentMapper[targetComponent?.name || ""].Component({
-            component: targetComponent,
-            renderTree,
-          })}
+          <Box id="popover-target">{renderTree(targetComponent)}</Box>
         </MantinePopOver.Target>
       )}
 
-      <MantinePopOver.Dropdown>
+      <MantinePopOver.Dropdown w="auto">
         {childrenWithoutTarget && childrenWithoutTarget.length > 0
           ? childrenWithoutTarget?.map((child: any) => renderTree(child))
           : children}

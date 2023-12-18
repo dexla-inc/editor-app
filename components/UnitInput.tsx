@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { DARK_COLOR, GRAY_BORDER_COLOR } from "@/utils/branding";
 import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
 import {
   NumberInput,
@@ -43,12 +44,26 @@ export const UnitInput = ({
   ];
 
   const [splitValue, splitUnit] = splitValueAndUnit(
-    fetchedValue.toString(),
+    !!fetchedValue ? (fetchedValue as string).toString() : "",
   ) ?? [0, "auto"];
 
   const [value, setValue] = useState<number | "auto">();
   const [textValue, setTextValue] = useState<string>();
   const [unit, setUnit] = useState<Unit>();
+
+  const convertUnits = (value: any, currentUnit: Unit, targetUnit: Unit) => {
+    const baseFontSize = 16; // Assuming 1rem = 16px
+    let newValue = parseFloat(value);
+    if (isNaN(newValue)) return value;
+
+    if (currentUnit === "rem" && targetUnit === "px") {
+      newValue = newValue * baseFontSize;
+    } else if (currentUnit === "px" && targetUnit === "rem") {
+      newValue = newValue / baseFontSize;
+    }
+
+    return newValue;
+  };
 
   useEffect(() => {
     if (
@@ -81,27 +96,23 @@ export const UnitInput = ({
       size="xs"
       variant="filled"
       value={unit ?? splitUnit}
-      onChange={(val: Unit) => {
-        setUnit(val);
-        if (val === "%" || val === "vh" || val === "vw") {
+      onChange={(newUnit: Unit) => {
+        // Perform conversion only if the current unit and value are defined
+        if (typeof value !== "undefined" && unit) {
+          const convertedValue = convertUnits(value, unit, newUnit);
+          setValue(convertedValue); // Update the value state with converted value
+        }
+        setUnit(newUnit); // Update the unit state
+
+        // If the new unit is a special case like %, vh, vw, handle them accordingly
+        if (newUnit === "%" || newUnit === "vh" || newUnit === "vw") {
           setValue(100);
-        } else if (val === "px") {
-          if (value === undefined) {
-            setValue(modifierType === "size" ? defaultComponentWidth : 0);
-          } else {
-            setValue(
-              value === "auto"
-                ? modifierType === "size"
-                  ? defaultComponentWidth
-                  : 0
-                : value,
-            );
-          }
-        } else if (value === "auto" || val === "auto") {
+        } else if (newUnit === "auto") {
           setValue("auto");
           setTextValue("auto");
-        } else {
-          setValue(value ?? splitValue);
+        } else if (newUnit === "px" && value === "auto") {
+          // Example: Defaulting to a specific value when switching to 'px'
+          setValue(modifierType === "size" ? defaultComponentWidth : 0);
         }
       }}
       data={options.filter((o) => !disabledUnits?.includes(o.value as Unit))}
@@ -112,10 +123,10 @@ export const UnitInput = ({
           paddingRight: "1rem",
           borderTopLeftRadius: 0,
           borderBottomLeftRadius: 0,
-          border: `1px solid ${theme.colors.gray[3]}`,
           borderLeft: "none",
           "&:focus": {
-            borderColor: theme.colors.gray[3],
+            borderColor:
+              theme.colorScheme === "light" ? GRAY_BORDER_COLOR : DARK_COLOR,
           },
         },
         item: {
@@ -142,6 +153,14 @@ export const UnitInput = ({
         }}
         rightSection={RightSection}
         rightSectionWidth={53}
+        sx={{
+          input: {
+            "&:focus": {
+              borderColor:
+                theme.colorScheme === "light" ? GRAY_BORDER_COLOR : DARK_COLOR,
+            },
+          },
+        }}
       />
     );
   } else {
@@ -149,6 +168,9 @@ export const UnitInput = ({
       <NumberInput
         size="xs"
         hideControls
+        precision={3}
+        parser={(value) => parseFloat(value).toString()}
+        formatter={(value) => parseFloat(value).toString()}
         value={(value ?? splitValue) as number}
         onChange={(val: number) => {
           handleChange(val.toString());
@@ -156,6 +178,14 @@ export const UnitInput = ({
         {...props}
         rightSection={RightSection}
         rightSectionWidth={53}
+        sx={{
+          input: {
+            "&:focus": {
+              borderColor:
+                theme.colorScheme === "light" ? GRAY_BORDER_COLOR : DARK_COLOR,
+            },
+          },
+        }}
       />
     );
   }

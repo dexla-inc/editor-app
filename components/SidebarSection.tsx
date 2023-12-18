@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { DARK_COLOR, HOVERED } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
@@ -29,22 +30,22 @@ export function SidebarSection({
   id,
   icon: Icon,
   label,
-  initiallyOpened,
+  initiallyOpened: isExpanded = false,
   children,
   onClick,
   isAction,
   removeAction,
 }: PropsWithChildren<SidebarSectionProps>) {
   const theme = useMantineTheme();
-  const [opened, setOpened] = useState(initiallyOpened || false);
 
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
 
   const handleSectionClick = () => {
-    setOpened((o) => !o);
-    onClick && onClick(id, !opened);
+    onClick && onClick(id, !isExpanded);
     setOpenAction({ actionId: undefined, componentId: undefined });
   };
+
+  const isDarkTheme = theme.colorScheme === "dark";
 
   return (
     <>
@@ -54,7 +55,8 @@ export function SidebarSection({
           color: theme.black,
 
           "&:hover": {
-            backgroundColor: theme.colors.gray[1],
+            backgroundColor:
+              theme.colorScheme === "dark" ? DARK_COLOR : HOVERED,
             color: theme.black,
           },
         }}
@@ -70,7 +72,11 @@ export function SidebarSection({
         >
           <Group position="apart" spacing={0} noWrap>
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <ThemeIcon color="teal" variant="light" size={30}>
+              <ThemeIcon
+                color="teal"
+                variant={isDarkTheme ? "default" : "light"}
+                size={30}
+              >
                 <Icon size={ICON_SIZE} />
               </ThemeIcon>
               <Text size="xs" ml="md">
@@ -83,7 +89,7 @@ export function SidebarSection({
                 stroke={1.5}
                 style={{
                   transition: "transform 200ms ease",
-                  transform: opened ? `none` : "rotate(-90deg)",
+                  transform: isExpanded ? `none` : "rotate(-90deg)",
                 }}
               />
             )}
@@ -103,7 +109,7 @@ export function SidebarSection({
         )}
       </Group>
       {children ? (
-        <Collapse in={opened}>
+        <Collapse in={isExpanded}>
           <Box px="md">{children}</Box>
         </Collapse>
       ) : null}

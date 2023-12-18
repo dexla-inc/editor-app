@@ -1,3 +1,5 @@
+import BackButton from "@/components/BackButton";
+import { Icon } from "@/components/Icon";
 import RegionSelect from "@/components/RegionSelect";
 import { patchProject } from "@/requests/projects/mutations";
 import { RegionTypes } from "@/requests/projects/queries";
@@ -8,8 +10,6 @@ import {
 } from "@/utils/dashboardTypes";
 import { Button, Divider, Flex, Group, Stack, TextInput } from "@mantine/core";
 import { useRouter } from "next/router";
-import BackButton from "../BackButton";
-import { Icon } from "../Icon";
 
 interface ProjectInfoStepProps extends LoadingStore, PreviousStepperClickEvent {
   projectId: string;

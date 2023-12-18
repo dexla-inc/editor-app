@@ -1,3 +1,4 @@
+import { DARK_COLOR, DARK_MODE, GRAY_WHITE_COLOR } from "@/utils/branding";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Box, Flex, Stack, Text, UnstyledButton } from "@mantine/core";
 import { OrgMemberInfo } from "@propelauth/react";
@@ -23,12 +24,11 @@ const DashboardCompanySelectorPopover = forwardRef<
     <Box
       ref={ref}
       m="xs"
-      bg="white"
       sx={(theme) => ({
         margin: "0 auto",
-        borderTop: "1px solid " + theme.colors.gray[3],
         boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
         borderRadius: theme.radius.sm,
+        background: theme.colorScheme === "dark" ? DARK_MODE : theme.white,
       })}
       {...props}
     >
@@ -39,7 +39,8 @@ const DashboardCompanySelectorPopover = forwardRef<
           borderRadius: theme.radius.sm,
 
           "&:hover": {
-            backgroundColor: theme.colors.gray[0],
+            backgroundColor:
+              theme.colorScheme === "dark" ? DARK_COLOR : GRAY_WHITE_COLOR,
           },
         })}
         px="sm"

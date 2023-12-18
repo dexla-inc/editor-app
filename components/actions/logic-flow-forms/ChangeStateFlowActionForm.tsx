@@ -1,4 +1,7 @@
+import { ActionIconDefault } from "@/components/ActionIconDefault";
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { Icon } from "@/components/Icon";
+import { useComponentStates } from "@/hooks/useComponentStates";
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
@@ -7,7 +10,6 @@ import { decodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
 import {
-  ActionIcon,
   Button,
   Flex,
   Select,
@@ -17,10 +19,8 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { IconTrash } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { useEffect } from "react";
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
 type Props = {
   form: UseFormReturnType<FormValues>;
@@ -53,6 +53,7 @@ export const ChangeStateActionFlowForm = ({ form }: Props) => {
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
+  const { getComponentsStates } = useComponentStates();
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
 
@@ -111,40 +112,19 @@ export const ChangeStateActionFlowForm = ({ form }: Props) => {
                 size="xs"
                 label={
                   <Flex justify="space-between" align="center">
-                    State{" "}
-                    <ActionIcon
+                    State
+                    <ActionIconDefault
+                      iconName="IconTrash"
+                      tooltip="Delete"
                       onClick={() => {
                         form.removeListItem("conditionRules", i);
                       }}
-                    >
-                      <IconTrash size={ICON_SIZE} color="red" />
-                    </ActionIcon>
+                      color="red"
+                    />
                   </Flex>
                 }
                 onChange={(val) => onChange(val, "state", i)}
-                data={[
-                  { label: "Default", value: "default" },
-                  { label: "Hover", value: "hover" },
-                  { label: "Disabled", value: "disabled" },
-                  { label: "Checked", value: "checked" },
-                  { label: "Hidden", value: "hidden" },
-                  ...Object.keys(
-                    componentId
-                      ? getComponentById(editorTree.root, componentId!)
-                          ?.states ?? {}
-                      : {},
-                  ).reduce((acc, key) => {
-                    if (
-                      ["hover", "disabled", "checked", "hidden"].includes(key)
-                    )
-                      return acc;
-
-                    return acc.concat({
-                      label: key,
-                      value: key,
-                    });
-                  }, [] as any[]),
-                ]}
+                data={getComponentsStates()}
                 placeholder="Select State"
                 nothingFound="Nothing found"
                 searchable

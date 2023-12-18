@@ -1,4 +1,6 @@
+import { InformationAlert } from "@/components/Alerts";
 import BackButton from "@/components/BackButton";
+import { Icon } from "@/components/Icon";
 import NextButton from "@/components/NextButton";
 import {
   createDataSource,
@@ -29,8 +31,6 @@ import { IconPlus, IconSparkles } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
 import { SetStateAction } from "react";
 import slugify from "slugify";
-import { InformationAlert } from "../Alerts";
-import { Icon } from "../Icon";
 
 export const getServerSideProps = async ({
   query,
@@ -215,7 +215,7 @@ export default function PagesStep({
       setIsLoading(false);
       return createdPages;
     } catch (error) {
-      console.log({ error });
+      console.error({ error });
       stopLoading({
         id: "creating-pages",
         title: "Error Creating Pages",

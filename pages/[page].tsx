@@ -8,7 +8,12 @@ import Head from "next/head";
 import { useEffect } from "react";
 
 export function isMatchingUrl(url: string): boolean {
-  const pattern = /^.*\.dexla\.io$/;
+  // check if url follow the pattern: 7eacfa0cbb8b406cbc2b40085b9c37a4.dexla.io or 7eacfa0cbb8b406cbc2b40085b9c37a4.dexla.ai
+  // where 7eacfa0cbb8b406cbc2b40085b9c37a4 is the project id and can be any string that contains only letters and numbers,
+  // but always has 32 characters and a mix of letters and numbers
+  const pattern = new RegExp(
+    "^[a-zA-Z0-9]{32}\\.dexla\\.(io|ai|localhost:3000)$",
+  );
   return pattern.test(url);
 }
 
@@ -17,7 +22,6 @@ export const getServerSideProps = async ({
   query,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host;
-
   let id = "";
   if (isMatchingUrl(url!) || url?.endsWith(".localhost:3000")) {
     id = url?.split(".")[0] as string;
@@ -27,7 +31,7 @@ export const getServerSideProps = async ({
   }
 
   const page = await getMostRecentDeploymentByPage(id as string, {
-    slug: query.page as string,
+    page: query.page as string,
   });
 
   return {

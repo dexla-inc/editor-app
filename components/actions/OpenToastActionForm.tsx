@@ -1,3 +1,4 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
@@ -6,13 +7,13 @@ import {
   useActionData,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
+import { useEditorStore } from "@/stores/editor";
 import { OpenToastAction } from "@/utils/actions";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
+import { ApiType } from "@/utils/dashboardTypes";
 import { Stack, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { ApiType } from "@/utils/dashboardTypes";
 import React from "react";
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   id: string;
@@ -97,10 +98,8 @@ export const OpenToastActionForm = ({ id }: Props) => {
                 }}
                 size="xs"
                 label={title}
-                autoComplete="off"
-                data-lpignore="true"
-                data-form-type="other"
                 {...form.getInputProps(name)}
+                {...AUTOCOMPLETE_OFF_PROPS}
               />
             </React.Fragment>
           );

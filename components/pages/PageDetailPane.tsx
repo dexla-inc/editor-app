@@ -1,3 +1,4 @@
+import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { QueryStringsForm } from "@/components/QueryStringsForm";
 import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
 import {
@@ -7,6 +8,7 @@ import {
 } from "@/requests/pages/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Flex, Group, Stack, TextInput } from "@mantine/core";
@@ -17,7 +19,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import slugify from "slugify";
-import { ActionIconDefault } from "../ActionIconDefault";
 
 type PageDetailPaneProps = {
   page?: PageResponse | null | undefined;
@@ -245,10 +246,8 @@ export default function PageDetailPane({
                 form.setFieldValue("slug", newSlug);
                 form.setTouched({ slug: false });
               }}
-              autoComplete="off"
-              data-lpignore="true"
-              data-form-type="other"
               size="xs"
+              {...AUTOCOMPLETE_OFF_PROPS}
             />
             <TextInput
               label="Slug"

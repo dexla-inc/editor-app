@@ -17,6 +17,7 @@ import {
   Table,
   TextInput,
   Title,
+  useMantineTheme,
 } from "@mantine/core";
 import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
 import Image from "next/image";
@@ -34,17 +35,14 @@ export default function TeamSettings({ projectId }: Props) {
   const [isInviteModalOpen, setInviteModalOpen] = useState(false);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
+  const theme = useMantineTheme();
 
   const openInviteModal = () => setInviteModalOpen(true);
   const closeInviteModal = () => setInviteModalOpen(false);
 
-  const { company, companyId, userPermissions } = usePropelAuthStore(
-    (state) => ({
-      company: state.activeCompany,
-      companyId: state.activeCompanyId,
-      userPermissions: state.userPermissions,
-    }),
-  );
+  const company = usePropelAuthStore((state) => state.activeCompany);
+  const companyId = usePropelAuthStore((state) => state.activeCompanyId);
+  const userPermissions = usePropelAuthStore((state) => state.userPermissions);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,6 +99,7 @@ export default function TeamSettings({ projectId }: Props) {
       <Stack spacing="xl">
         <Flex justify="space-between">
           <Title order={3}>Members</Title>
+
           {userPermissions.includes("propelauth::can_invite") && (
             <Button
               onClick={openInviteModal}
@@ -144,7 +143,7 @@ export default function TeamSettings({ projectId }: Props) {
                   {user.enabled ? (
                     <IconCircleCheck
                       size={LARGE_ICON_SIZE}
-                      style={{ color: "green" }}
+                      style={{ color: theme.colors.teal[6] }}
                     />
                   ) : (
                     <IconCircleX

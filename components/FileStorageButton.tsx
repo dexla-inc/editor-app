@@ -1,3 +1,4 @@
+import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { Images } from "@/components/storage/Images";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -16,7 +17,6 @@ import {
   IconPhoto,
   IconVideo,
 } from "@tabler/icons-react";
-import { ActionIconDefault } from "./ActionIconDefault";
 
 export const FileStorageButton = () => {
   const [openStorageModal, { open, close }] = useDisclosure(false);
@@ -25,7 +25,7 @@ export const FileStorageButton = () => {
     <>
       <ActionIconDefault
         iconName="IconCloudStorm"
-        tooltip="File Storage"
+        tooltip="Assets"
         onClick={open}
       />
       <Modal.Root
@@ -35,6 +35,7 @@ export const FileStorageButton = () => {
         onClose={close}
         scrollAreaComponent={ScrollArea.Autosize}
         xOffset={10}
+        zIndex={300}
       >
         <Modal.Overlay />
         <Modal.Content h="100%">

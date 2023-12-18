@@ -24,7 +24,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import debounce from "lodash.debounce";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Projects() {
   //const [projects, setProjects] = useState<ProjectResponse[]>([]);
@@ -92,32 +92,32 @@ export default function Projects() {
     router.push(url);
   };
 
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!user) {
+  //     return;
+  //   }
 
-    const intercomSettings = {
-      app_id: "co2c3gri",
-      email: user.email,
-      user_id: user.userId,
-      name: user.firstName + " " + user.lastName,
-      created_at: user.createdAt,
-      avatar: {
-        type: "avatar",
-        image_url: user.pictureUrl,
-      },
-      company: {
-        id: company.orgId,
-        name: company.orgName,
-        plan: "free",
-        monthly_spend: 0,
-      },
-    };
+  //   const intercomSettings = {
+  //     app_id: "co2c3gri",
+  //     email: user.email,
+  //     user_id: user.userId,
+  //     name: user.firstName + " " + user.lastName,
+  //     created_at: user.createdAt,
+  //     avatar: {
+  //       type: "avatar",
+  //       image_url: user.pictureUrl,
+  //     },
+  //     company: {
+  //       id: company.orgId,
+  //       name: company.orgName,
+  //       plan: "free",
+  //       monthly_spend: 0,
+  //     },
+  //   };
 
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push(intercomSettings);
-  }, [user, company]);
+  //   window.dataLayer = window.dataLayer || [];
+  //   window.dataLayer.push(intercomSettings);
+  // }, [user, company]);
 
   return (
     <DashboardShell>
@@ -134,7 +134,6 @@ export default function Projects() {
                     icon="IconSparkles"
                     title="Create new project"
                     description="Type what you want to build and customise"
-                    color="teal"
                   />
                 </Link>
                 <IconTitleDescriptionButton

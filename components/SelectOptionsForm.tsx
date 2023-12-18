@@ -1,6 +1,7 @@
 import { Icon } from "@/components/Icon";
+import { TopLabel } from "@/components/TopLabel";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
-import { Button, Flex, Group, Text, TextInput } from "@mantine/core";
+import { Button, Flex, Group, TextInput } from "@mantine/core";
 import { useState } from "react";
 
 export const SelectOptionsForm = ({
@@ -16,15 +17,12 @@ export const SelectOptionsForm = ({
   return (
     <>
       <Flex justify="space-between" gap="xl" sx={{ marginTop: "0.5rem" }}>
-        <Text fz="xs" weight="500">
-          Options
-        </Text>
-
+        <TopLabel text="Options" />
         <Button
           type="button"
           compact
           onClick={() => {
-            setFieldValue("data", getValue().concat({ label, value }));
+            setFieldValue("data", getValue()?.concat({ label, value }));
             setKey("");
             setValue("");
           }}
@@ -38,7 +36,7 @@ export const SelectOptionsForm = ({
 
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         {/* @ts-ignore*/}
-        {getValue().map(({ label, value }, index) => {
+        {getValue()?.map(({ label, value }, index) => {
           return (
             <Group key={index} style={{ flexWrap: "nowrap" }}>
               <TextInput

@@ -39,7 +39,11 @@ export type Modifiers =
   | "alert"
   | "badge"
   | "dateInput"
-  | "chart";
+  | "chart"
+  | "grid"
+  | "gridColumn"
+  | "navbar"
+  | "progress";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -112,12 +116,11 @@ export const requiredModifiers: RequiredModifiers = {
   },
   layout: {
     display: "flex",
-    flexWrap: "wrap",
-    flexDirection: "column",
-    rowGap: "20px",
-    columnGap: "20px",
-    alignItems: "center",
-    justifyContent: "center",
+    flexWrap: "nowrap",
+    flexDirection: "row",
+    gap: "xs",
+    alignItems: "stretch",
+    justifyContent: "flex-start",
     position: "relative",
   },
   position: {
@@ -127,10 +130,18 @@ export const requiredModifiers: RequiredModifiers = {
     bottom: "auto",
     left: "auto",
     zIndex: 0,
+    alignSelf: "center",
   },
   background: {
     bg: "transparent",
+    bgGradient:
+      "linear-gradient(90deg, #ffffffff 0%, #000000ff 50%, #00ff00ff 100%)",
     backgroundImage: "",
+    backgroundSize: "contain",
+    backgroundRepeat: "repeat",
+    backgroundPositionX: "0%",
+    backgroundPositionY: "0%",
+    backgroundAttachment: "scroll",
   },
   input: {
     size: "sm",
@@ -148,6 +159,8 @@ export const requiredModifiers: RequiredModifiers = {
     label: "",
     icon: { props: { name: "" } },
     withAsterisk: false,
+    hideIfDataIsEmpty: false,
+    autosize: false,
     labelSpacing: "0",
     name: "Textarea",
   },
@@ -158,7 +171,6 @@ export const requiredModifiers: RequiredModifiers = {
     size: "sm",
     radius: "sm",
     leftIcon: "",
-    compact: false,
   },
   image: {
     src: "https://www.contentviewspro.com/wp-content/uploads/2017/07/default_image.png",
@@ -169,18 +181,19 @@ export const requiredModifiers: RequiredModifiers = {
   link: {
     value: "New Link",
     size: "md",
-    color: "teal",
+    color: "Primary.6",
   },
   icon: {
     color: "Black.6",
     icon: "",
+    size: "sm",
   },
   divider: {
     color: "Neutral.9",
     label: "Divider",
     labelPosition: "center",
     orientation: "horizontal",
-    size: "md",
+    size: "xs",
     variant: "solid",
   },
   select: {
@@ -191,6 +204,7 @@ export const requiredModifiers: RequiredModifiers = {
     label: "A label",
     icon: "",
     withAsterisk: false,
+    clearable: false,
     labelSize: "sm",
     labelWeight: "normal",
     labelAlign: "left",
@@ -202,6 +216,9 @@ export const requiredModifiers: RequiredModifiers = {
       { label: "Option 1", value: "option-1" },
       { label: "Option 2", value: "option-2" },
     ],
+    customText: "",
+    customLinkText: "",
+    customLinkUrl: "",
   },
   effects: {
     cursor: "auto",
@@ -210,8 +227,8 @@ export const requiredModifiers: RequiredModifiers = {
     tooltip: "",
   },
   modal: {
-    title: "Modal Title",
     forceHide: false,
+    size: "md",
   },
   boxShadow: {
     inset: "",
@@ -220,6 +237,7 @@ export const requiredModifiers: RequiredModifiers = {
     blur: "0px",
     spread: "0px",
     color: "Black.9",
+    boxShadow: "",
   },
   checkbox: {
     name: "Checkbox",
@@ -230,9 +248,13 @@ export const requiredModifiers: RequiredModifiers = {
     labelSpacing: "0",
   },
   table: {
-    data: "",
-    headers: {},
-    config: {},
+    highlightOnHover: true,
+    horizontalCellSpacing: "sm",
+    verticalCellSpacing: "sm",
+    striped: false,
+    withBorder: false,
+    withColumnBorder: false,
+    style: { width: "100%" },
   },
   radio: {
     label: "",
@@ -276,8 +298,7 @@ export const requiredModifiers: RequiredModifiers = {
     disabled: false,
   },
   popOver: {
-    title: "PopOver Title",
-    position: "left",
+    position: "bottom",
   },
   navLink: {
     label: "Nav link",
@@ -288,12 +309,12 @@ export const requiredModifiers: RequiredModifiers = {
   accordionItem: {
     value: "first",
   },
-  accordion: { variant: "default" },
+  accordion: { variant: "default", icon: "" },
   avatar: {
     variant: "filled",
     src: "",
     radius: "",
-    size: "",
+    size: "md",
     color: "Primary.6",
     value: "",
   },
@@ -327,18 +348,15 @@ export const requiredModifiers: RequiredModifiers = {
   dateInput: {
     label: "",
     placeholder: "DD MMM YYYY",
+    valueFormat: "DD MMM YYYY",
     description: "",
     radius: "sm",
     size: "sm",
     disabled: false,
     withAsterisk: false,
     clearable: false,
-    valueFormat: "",
     icon: "",
     labelSize: "sm",
-    labelWeight: "normal",
-    labelAlign: "left",
-    labelSpacing: "0",
   },
   chart: {
     data: "",
@@ -356,6 +374,26 @@ export const requiredModifiers: RequiredModifiers = {
     ],
     labelColor: "SecondaryText.5",
     foreColor: "Secondary.5",
+  },
+  grid: {
+    gap: "xs",
+  },
+  gridColumn: {
+    alignSelf: "start",
+    gap: "xs",
+  },
+  navbar: {
+    width: "260px",
+    gridTemplateRows: "auto 1fr auto",
+    height: "100vh",
+    position: "sticky",
+    top: "0",
+  },
+  progress: {
+    color: "Primary.6",
+    size: "xs",
+    value: 50,
+    animate: true,
   },
 };
 

@@ -1,18 +1,98 @@
-import { defaultTheme } from "@/components/IFrame";
-import { defaultInputValues } from "@/components/modifiers/Input";
-import { defaultModalValues } from "@/components/modifiers/Modal";
+import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
+  const { order = 1 } = props.props || {};
+  const { input: defaultInputValues, modal: defaultModalValues } =
+    requiredModifiers;
+  const size = theme.headings.sizes[`h5`];
+  const modalId = nanoid();
 
   const defaultChildren = [
     {
       id: nanoid(),
       name: "Container",
-      description: "Table Container",
+      description: "Modal Header Container",
+      props: {
+        style: {
+          width: "100%",
+          backgroundColor: "white.6",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        },
+      },
+      children: [
+        {
+          id: nanoid(),
+          name: "Title",
+          description: "Title",
+          props: {
+            order,
+            color: "Black.6",
+            children: "Modal Title",
+            style: {
+              fontWeight: "bold",
+              fontSize: size.fontSize,
+              lineHeight: size.lineHeight,
+              width: "auto",
+              height: "auto",
+            },
+          },
+          blockDroppingChildrenInside: true,
+        },
+        {
+          id: nanoid(),
+          name: "ButtonIcon",
+          description: "ButtonIcon",
+          props: {
+            style: {
+              width: "auto",
+              height: "auto",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+            color: "Primary",
+          },
+          blockDroppingChildrenInside: true,
+          actions: [
+            {
+              id: nanoid(),
+              trigger: "onClick",
+              action: {
+                name: "closeModal",
+                modalId,
+              },
+            },
+          ],
+          children: [
+            {
+              id: nanoid(),
+              name: "Icon",
+              description: "Icon",
+              props: {
+                style: {
+                  width: "auto",
+                  height: "auto",
+                },
+                name: "IconX",
+              },
+              children: [],
+              blockDroppingChildrenInside: true,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: nanoid(),
+      name: "Container",
+      description: "Modal Container",
       props: {
         style: {
           width: "100%",
@@ -25,7 +105,7 @@ export const jsonStructure = (props?: any): Component => {
         {
           id: nanoid(),
           name: "Container",
-          description: "Name Table Container",
+          description: "Name Modal Container",
           props: {
             style: {
               width: "100%",
@@ -109,68 +189,52 @@ export const jsonStructure = (props?: any): Component => {
           },
           blockDroppingChildrenInside: true,
         },
-        {
-          id: nanoid(),
-          name: "Checkbox",
-          description: "Checkbox",
-          props: {
-            label: "I agree with the terms and conditions",
-            style: {
-              width: "100%",
-            },
-          },
-          blockDroppingChildrenInside: true,
-        },
-        {
-          id: nanoid(),
-          name: "Container",
-          description: "Actions Table Container",
-          props: {
-            style: {
-              width: "100%",
-              backgroundColor: "white.6",
-              gap: "10px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            },
-          },
-          children: [
-            {
-              id: nanoid(),
-              name: "Link",
-              description: "Link",
-              props: {
-                children: "Have an account? Login",
-                color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-                style: {
-                  fontSize: `${px(theme.fontSizes.sm)}px`,
-                },
-              },
-              blockDroppingChildrenInside: true,
-            },
-            {
-              id: nanoid(),
-              name: "Button",
-              description: "Button",
-              props: {
-                style: {
-                  width: "auto",
-                  padding: px(theme.spacing.sm),
-                },
-                textColor: "White.6",
-                children: "Register",
-              },
-              blockDroppingChildrenInside: true,
-            },
-          ],
-        },
       ],
+    },
+    {
+      id: nanoid(),
+      name: "Checkbox",
+      description: "Checkbox",
+      props: {
+        label: "I agree with the terms and conditions",
+        style: {
+          width: "100%",
+        },
+      },
+      blockDroppingChildrenInside: true,
+    },
+    {
+      id: nanoid(),
+      name: "Link",
+      description: "Link",
+      props: {
+        children: "Have an account? Login",
+        color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+        style: {
+          fontSize: `${px(theme.fontSizes.sm)}px`,
+        },
+      },
+      blockDroppingChildrenInside: true,
+    },
+    {
+      id: nanoid(),
+      name: "Button",
+      description: "Button",
+      props: {
+        style: {
+          width: "fit-content",
+          padding: px(theme.spacing.sm),
+          alignSelf: "center",
+        },
+        textColor: "White.6",
+        children: "Register",
+      },
+      blockDroppingChildrenInside: true,
     },
   ];
 
   return {
-    id: nanoid(),
+    id: modalId,
     name: "Modal",
     description: "Modal",
     props: {
@@ -180,6 +244,21 @@ export const jsonStructure = (props?: any): Component => {
         padding: "0px",
       },
     },
-    children: props.children ?? defaultChildren,
+    children: [
+      {
+        id: nanoid(),
+        name: "Container",
+        description: "Modal Container",
+        props: {
+          style: {
+            gap: "10px",
+            width: "100%",
+            flexDirection: "column",
+            justifyContent: "center",
+          },
+        },
+        children: props.children ?? defaultChildren,
+      },
+    ],
   };
 };
