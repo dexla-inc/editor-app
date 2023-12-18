@@ -928,7 +928,7 @@ export const addComponent = (
             if (isPopOver) {
               copy.props!.targetId = node.id;
               copy.children = [...(copy.children || []), node];
-              context.parent?.children?.splice(context.index, 0, copy);
+              context.parent?.children?.splice(context.index, 1, copy);
             } else {
               node.children = node.children ?? [];
 

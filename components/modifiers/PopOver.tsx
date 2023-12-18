@@ -2,7 +2,7 @@ import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Stack, Textarea } from "@mantine/core";
+import { SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutSidebarLeftCollapse } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -16,7 +16,6 @@ export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm({
       initialValues: merge({}, defaultPopOverValues, {
-        title: selectedComponent?.props?.title,
         position: selectedComponent?.props?.position,
       }),
     });
@@ -24,18 +23,6 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          <Textarea
-            autosize
-            label="Title"
-            size="xs"
-            {...form.getInputProps("title")}
-            onChange={(e) => {
-              form.setFieldValue("title", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                title: e.target.value,
-              });
-            }}
-          />
           <Stack spacing={2}>
             <TopLabel text="Position" />
             <SegmentedControl

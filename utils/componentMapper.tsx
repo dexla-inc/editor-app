@@ -1402,10 +1402,11 @@ export const componentMapper: ComponentMapper = {
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Button: {
-    Component: (props: { component: Component; renderTree: any }) => (
-      // @ts-ignore
-      <Button component={props.component} renderTree={props.renderTree} />
-    ),
+    Component: (props: { component: Component; renderTree: any }) => {
+      return (
+        <Button component={props.component} renderTree={props.renderTree} />
+      );
+    },
     modifiers: [
       "button",
       "spacing",

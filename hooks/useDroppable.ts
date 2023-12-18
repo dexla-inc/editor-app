@@ -38,11 +38,14 @@ const debouncedDragEnter = debounce((event: any, id: string) => {
   }
 
   const isGrid = activeComponent?.name === "Grid";
+  const isPopOver = activeComponent?.name === "PopOver";
 
   const isAllowed = isGrid
     ? componentMapper[
         activeComponent?.name as string
       ].allowedParentTypes?.includes(comp?.name as string)
+    : isPopOver
+    ? true
     : !comp?.props?.blockDroppingChildrenInside;
 
   if (!isTryingToDropInsideItself && activeComponent && isAllowed) {
@@ -81,7 +84,6 @@ export const useDroppable = ({
   const [edge, setEdge] = useState<Edge>();
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const componentToAdd = useEditorStore((state) => state.componentToAdd);
-
   const component = getComponentById(editorTree.root, id);
 
   const handleDrop = useCallback(
@@ -115,15 +117,19 @@ export const useDroppable = ({
     threshold: number,
   ) => {
     const { leftDist, rightDist, topDist, bottomDist } = distances;
+    const isPopOver = componentToAdd?.name === "PopOver";
+    const isAllowed = !component?.blockDroppingChildrenInside || isPopOver;
+
     if (
       leftDist > threshold &&
       rightDist > threshold &&
       topDist > threshold &&
       bottomDist > threshold &&
-      !component?.blockDroppingChildrenInside
+      isAllowed
     ) {
       // If not within 5 pixels of top and bottom edge, set edge to center.
       setEdge("center");
+      console.log("center");
     } else {
       // Check the closest edge and set it accordingly.
       const { edge } = getClosestEdge(leftDist, rightDist, topDist, bottomDist);
@@ -162,6 +168,7 @@ export const useDroppable = ({
       currentTargetId,
       component?.blockDroppingChildrenInside,
       isResizing,
+      isPageStructure,
     ],
   );
 

@@ -18,10 +18,10 @@ export const jsonStructure = (props?: any): Component => {
       {
         id: nanoid(),
         name: "Container",
-        description: "Table Container",
+        description: "Container",
         props: {
           style: {
-            width: "100%",
+            width: "auto",
             backgroundColor: "white.6",
           },
         },

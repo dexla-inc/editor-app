@@ -296,8 +296,7 @@ export const requiredModifiers: RequiredModifiers = {
     disabled: false,
   },
   popOver: {
-    title: "PopOver Title",
-    position: "left",
+    position: "bottom",
   },
   navLink: {
     label: "Nav link",

@@ -371,7 +371,7 @@ export const EditableComponent = ({
           ...(isPreviewMode
             ? {}
             : {
-                onContextMenu: componentContextMenu(component),
+                // onContextMenu: componentContextMenu(component),
               }),
         },
       )}

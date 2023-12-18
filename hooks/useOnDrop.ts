@@ -154,7 +154,8 @@ export const useOnDrop = () => {
     componentToAdd: Component,
   ) {
     const targetParent = getComponentParent(copy.root, dropTarget.id);
-    if (!targetComponent?.blockDroppingChildrenInside) {
+    const isPopOver = componentToAdd.name === "PopOver";
+    if (!targetComponent?.blockDroppingChildrenInside || isPopOver) {
       const newSelectedId = addComponent(copy.root, componentToAdd, dropTarget);
 
       if (dropTarget.edge !== "center") {
