@@ -108,6 +108,7 @@
     "husky": "^8.0.0",
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.3",
+    "react-nu-anglepicker": "^1.0.2",
     "tsc-files": "^1.1.4"
   }
 }

@@ -1,3 +1,4 @@
+import { GradientPicker } from "@/components/GradientSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
@@ -35,6 +36,8 @@ export const Modifier = withModifier(
         defaultBackgroundValues.backgroundSize,
     );
 
+    const [backgroundType, setBackgroundType] = useState("single");
+
     useEffect(() => {
       form.setValues(
         merge({}, defaultBackgroundValues, {
@@ -52,22 +55,59 @@ export const Modifier = withModifier(
           backgroundRepeat: selectedComponent?.props?.style?.backgroundRepeat,
         }),
       );
+      setBackgroundType(
+        selectedComponent.props?.bg.includes("gradient")
+          ? "gradient"
+          : "single",
+      );
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedComponent]);
+
+    const setFieldValue = (key: any, value: any) => {
+      form.setFieldValue(key, value);
+      debouncedTreeUpdate(selectedComponentIds, { [key]: value });
+    };
 
     return (
       <form>
         <Stack spacing="xs">
-          <ThemeColorSelector
-            label="Color"
-            {...form.getInputProps("bg")}
-            onChange={(value: string) => {
-              form.setFieldValue("bg", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                bg: value,
-              });
-            }}
-          />
+          <Stack spacing={0}>
+            <TopLabel text="Background Type" />
+            <SegmentedControl
+              size="xs"
+              data={[
+                { label: "Single", value: "single" },
+                { label: "Gradient", value: "gradient" },
+              ]}
+              value={backgroundType}
+              onChange={(value) => {
+                setBackgroundType(value as string);
+                if (value === "single") {
+                  setFieldValue("bg", "White.6");
+                } else {
+                  setFieldValue("bg", defaultBackgroundValues.bgGradient);
+                }
+              }}
+            />
+          </Stack>
+          {backgroundType === "single" ? (
+            <ThemeColorSelector
+              label="Color"
+              {...form.getInputProps("bg")}
+              onChange={(value: string) => {
+                form.setFieldValue("bg", value);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  bg: value,
+                });
+              }}
+            />
+          ) : (
+            <GradientPicker
+              getValue={() => form.getInputProps("bg").value}
+              setFieldValue={setFieldValue}
+            />
+          )}
+
           <TextInput
             label="Image"
             size="xs"
