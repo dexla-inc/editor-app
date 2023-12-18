@@ -4226,6 +4226,11 @@ react-nestable@^3.0.1:
     react-addons-update "^15.6.3"
     react-dom "^18.2.0"
 
+react-nu-anglepicker@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-nu-anglepicker/-/react-nu-anglepicker-1.0.2.tgz#ba4490eebc171afb6d8633ab3d27a1f27b44cc7b"
+  integrity sha512-RkMzSkgDJsi7Yg84s4L8PA5diRouDqWyhcsm4u/Kb7p6/7kmKcmicmKIlkbGHnWHWwYXrrXbCyRN1lYvmSTd3Q==
+
 react-property@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/react-property/-/react-property-2.0.0.tgz#2156ba9d85fa4741faf1918b38efc1eae3c6a136"

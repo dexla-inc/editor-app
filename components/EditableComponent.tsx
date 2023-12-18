@@ -205,7 +205,6 @@ export const EditableComponent = ({
     position: {},
     padding: {},
     margin: {},
-    content: {},
   });
 
   // Function to update overlays based on the target element
@@ -229,7 +228,6 @@ export const EditableComponent = ({
         paddingBottom: computedStyle.paddingBottom,
         paddingLeft: computedStyle.paddingLeft,
         padding: computedStyle.padding,
-        border: "2px dashed purple", // Padding overlay color
       },
       margin: {
         marginTop: computedStyle.marginTop,
@@ -237,12 +235,6 @@ export const EditableComponent = ({
         marginBottom: computedStyle.marginBottom,
         marginLeft: computedStyle.marginLeft,
         margin: computedStyle.margin,
-        border: "2px dashed purple", // Padding overlay color
-      },
-      content: {
-        width: `calc(100% - ${computedStyle.paddingLeft} - ${computedStyle.paddingRight})`,
-        height: `calc(100% - ${computedStyle.paddingTop} - ${computedStyle.paddingBottom})`,
-        backgroundColor: "rgba(173, 216, 230, 0.5)", // Content overlay color
       },
     });
   };
@@ -286,7 +278,7 @@ export const EditableComponent = ({
             onMouseLeave: leaveHoverStateFunc,
           }
         : {
-            onMouseEnter: handleMouseEnter,
+            onMouseOver: handleMouseEnter,
             onMouseLeave: handleMouseLeave,
           },
     },

@@ -40,13 +40,9 @@ export default function TeamSettings({ projectId }: Props) {
   const openInviteModal = () => setInviteModalOpen(true);
   const closeInviteModal = () => setInviteModalOpen(false);
 
-  const { company, companyId, userPermissions } = usePropelAuthStore(
-    (state) => ({
-      company: state.activeCompany,
-      companyId: state.activeCompanyId,
-      userPermissions: state.userPermissions,
-    }),
-  );
+  const company = usePropelAuthStore((state) => state.activeCompany);
+  const companyId = usePropelAuthStore((state) => state.activeCompanyId);
+  const userPermissions = usePropelAuthStore((state) => state.userPermissions);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -103,6 +99,7 @@ export default function TeamSettings({ projectId }: Props) {
       <Stack spacing="xl">
         <Flex justify="space-between">
           <Title order={3}>Members</Title>
+
           {userPermissions.includes("propelauth::can_invite") && (
             <Button
               onClick={openInviteModal}

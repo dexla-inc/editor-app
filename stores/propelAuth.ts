@@ -41,13 +41,6 @@ export const usePropelAuthStore = create<AuthState>()(
         }
       },
       initializeAuth: async (authInfo: WithAuthInfoProps) => {
-        // const authClient = createClient({
-        //   authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
-        //   enableBackgroundTokenRefresh: true,
-        // });
-
-        //const authInfo = await authClient.getAuthenticationInfoOrNull();
-
         const companies = authInfo?.orgHelper?.getOrgs() || [];
         const activeCompanyId = get().activeCompanyId;
         const activeCompany = activeCompanyId
@@ -62,6 +55,7 @@ export const usePropelAuthStore = create<AuthState>()(
           activeCompanyId: activeCompanyId || activeCompany?.orgId || "",
           isDexlaAdmin:
             activeCompany?.userAssignedRole?.includes("DEXLA_ADMIN") || false,
+          userPermissions: activeCompany?.userPermissions || [],
         });
       },
     }),

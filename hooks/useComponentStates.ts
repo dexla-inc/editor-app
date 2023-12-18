@@ -8,13 +8,16 @@ export const useComponentStates = () => {
   const editorTreeRoot = useEditorStore((state) => state.tree.root);
 
   const statesByComponent = {
-    Default: [
-      { label: "Default", value: "default" },
+    _: [{ label: "Default", value: "default" }],
+    Common: [
       { label: "Hover", value: "hover" },
       { label: "Disabled", value: "disabled" },
+      { label: "Focused", value: "focused" },
     ],
+    Button: [{ label: "Selected", value: "selected" }],
+    Select: [{ label: "Selected", value: "selected" }],
     Checkbox: [{ label: "Checked", value: "checked" }],
-    Navbar: [{ label: "Collapse", value: "collapse" }],
+    Navbar: [{ label: "Collapsed", value: "collapsed" }],
   };
 
   const handleChildOf = (childOf: string) => {
@@ -44,13 +47,14 @@ export const useComponentStates = () => {
       (acc, name) => {
         const componentStates =
           statesByComponent[name as keyof typeof statesByComponent];
-        if (componentStates) {
-          return acc.concat(...componentStates);
+        // Append component-specific states if available, otherwise use Common states
+        if (componentStates && componentStates.length > 0) {
+          return acc.concat(componentStates);
+        } else {
+          return acc.concat(statesByComponent.Common);
         }
-
-        return acc;
       },
-      [...statesByComponent.Default],
+      [...statesByComponent._], // Starting with the states under '_'
     );
 
     if (isStepperHeaderChild) {
