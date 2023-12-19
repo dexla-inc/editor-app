@@ -105,8 +105,8 @@ export const Modifier = withModifier(
             <SegmentedControl
               size="xs"
               data={[
-                { label: "Fit to Content", value: "fit-content" },
-                { label: "Full Width", value: "100%" },
+                { label: "Fit Content", value: "fit-content" },
+                { label: "Auto", value: "auto" },
               ]}
               {...form.getInputProps("width")}
               onChange={(value) => {

@@ -47,17 +47,17 @@ const theme: MantineTheme = {
   primaryColor: "teal",
   components: {
     Input: {
-      styles: (theme) => ({
+      styles: () => ({
         input: { borderColor: GRAY_BORDER_COLOR },
       }),
     },
     Select: {
-      styles: (theme) => ({
+      styles: () => ({
         input: { borderColor: GRAY_BORDER_COLOR },
       }),
     },
     Card: {
-      defaultProps: (theme) => ({
+      defaultProps: () => ({
         style: { borderColor: GRAY_BORDER_COLOR },
       }),
     },
@@ -67,9 +67,12 @@ const theme: MantineTheme = {
       }),
     },
     Tooltip: {
-      defaultProps: (theme) => ({
+      defaultProps: () => ({
         fz: "xs",
       }),
+    },
+    Avatar: {
+      defaultProps: () => ({ size: "sm" }),
     },
   },
 };
@@ -95,7 +98,7 @@ const darkTheme: MantineTheme = {
       styles: (theme) => ({
         tooltip: { background: theme.colors.dark[4], color: theme.white },
       }),
-      defaultProps: (theme) => ({
+      defaultProps: () => ({
         fz: "xs",
       }),
     },
@@ -110,10 +113,13 @@ const darkTheme: MantineTheme = {
       }),
     },
     Title: {
-      defaultProps: (theme) => ({ color: GRAY_WHITE_COLOR }),
+      defaultProps: () => ({ color: GRAY_WHITE_COLOR }),
     },
     Text: {
-      defaultProps: (theme) => ({ color: GRAY_WHITE_COLOR }),
+      defaultProps: () => ({ color: GRAY_WHITE_COLOR }),
+    },
+    Avatar: {
+      defaultProps: () => ({ size: "sm" }),
     },
   },
 };

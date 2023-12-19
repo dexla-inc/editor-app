@@ -42,13 +42,14 @@ export const Modifier = withModifier(
       form.setValues(
         merge({}, defaultLayoutValues, {
           gap: selectedComponent.props?.gap ?? "xs",
-          flex: SHRINK_FLEX_DEFAULT,
+          flex: selectedComponent.props?.style?.flex,
           display: selectedComponent.props?.style?.display,
           position: selectedComponent.props?.style?.position,
           flexWrap: selectedComponent.props?.style?.flexWrap,
           flexDirection: selectedComponent.props?.style?.flexDirection,
           alignItems: selectedComponent.props?.style?.alignItems,
           justifyContent: selectedComponent.props?.style?.justifyContent,
+          width: selectedComponent.props?.style?.width,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -323,6 +324,23 @@ export const Modifier = withModifier(
                 form.setFieldValue("flexWrap", value as string);
                 debouncedTreeUpdate(selectedComponent?.id as string, {
                   style: { flexWrap: value },
+                });
+              }}
+            />
+          </Stack>
+          <Stack spacing={2}>
+            <TopLabel text="Width" />
+            <SegmentedControl
+              size="xs"
+              data={[
+                { label: "Fit Content", value: "fit-content" },
+                { label: "Auto", value: "auto" },
+              ]}
+              {...form.getInputProps("width")}
+              onChange={(value) => {
+                form.setFieldValue("width", value as string);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  style: { width: value },
                 });
               }}
             />
