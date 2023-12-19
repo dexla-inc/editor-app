@@ -137,7 +137,6 @@ export const Modifier = withModifier(
               });
             }}
           />
-
           {!isTitle && (
             <>
               <Checkbox
@@ -166,7 +165,7 @@ export const Modifier = withModifier(
             </>
           )}
           <Group noWrap>
-            {isTitle ? (
+            {isTitle && (
               <Select
                 label="Order"
                 size="xs"
@@ -192,64 +191,7 @@ export const Modifier = withModifier(
                   });
                 }}
               />
-            ) : (
-              <Select
-                label="Weight"
-                size="xs"
-                data={[
-                  { label: "Normal", value: "normal" },
-                  { label: "Bold", value: "bold" },
-                ]}
-                {...form.getInputProps("weight")}
-                onChange={(value) => {
-                  form.setFieldValue("weight", value as string);
-                  debouncedTreeUpdate(selectedComponentIds, { weight: value });
-                }}
-              />
             )}
-            <UnitInput
-              label="Word Spacing"
-              disabledUnits={["%", "auto", "vh", "vw"]}
-              {...form.getInputProps("wordSpacing")}
-              onChange={(value) => {
-                form.setFieldValue("wordSpacing", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: {
-                    wordSpacing: value,
-                  },
-                });
-              }}
-            />
-          </Group>
-          <Group noWrap>
-            {!isTitle && (
-              <UnitInput
-                label="Line Height"
-                {...form.getInputProps("lineHeight")}
-                onChange={(value) => {
-                  form.setFieldValue("lineHeight", value as string);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    style: {
-                      lineHeight: value,
-                    },
-                  });
-                }}
-              />
-            )}
-            <UnitInput
-              w={!isTitle ? "100%" : "50%"}
-              label="Letter Spacing"
-              disabledUnits={["%", "auto", "vh", "vw"]}
-              {...form.getInputProps("letterSpacing")}
-              onChange={(value) => {
-                form.setFieldValue("letterSpacing", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: {
-                    letterSpacing: value,
-                  },
-                });
-              }}
-            />
           </Group>
           <Stack w="100%" spacing={2}>
             <TopLabel text="Text Wrap" />

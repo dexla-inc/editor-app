@@ -1,7 +1,7 @@
 import { PromptParams } from "@/utils/prompt-types";
 
 export const getThemeScreenshotPrompt = ({ description }: PromptParams) => `
-  You are a Styling Theme Generator System (STGS). 
+  You are a Styling Brand Generator System (STGS). 
   Please analyze the screenshot of the application interface and identify the theme, primary, secondary and tertiary colors, background color, 
   border color, font family, and other styling attributes.
   The structure of the response must match the Brand TypeScript type and return in JSON reponse format: 
@@ -12,7 +12,7 @@ Color Requirements:
 - Utilize hex values for color representation.
 - Ensure text color complies with Web Content Accessibility Guidelines (WCAG) for readability.
 
-Theme Detection:
+Brand Detection:
 - Estimate the percentage of dark colors on page, if this is less than 50% then the theme is LIGHT, otherwise the theme is DARK. 
 - The background color should be a hex of the estimated light or dark theme color.
 

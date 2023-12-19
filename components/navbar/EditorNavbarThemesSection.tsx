@@ -123,9 +123,9 @@ export const EditorNavbarThemesSection = ({
   const onSubmit = async (values: ThemeResponse) => {
     try {
       startLoading({
-        id: "saving-theme",
-        title: "Saving Theme",
-        message: "Wait while your theme is being saved",
+        id: "saving-brand",
+        title: "Saving Brand",
+        message: "Wait while your brand is being saved",
       });
 
       form.validate();
@@ -133,15 +133,15 @@ export const EditorNavbarThemesSection = ({
       await mutate({ params: values, projectId: projectId });
 
       stopLoading({
-        id: "saving-theme",
-        title: "Theme Saved",
-        message: "The theme was saved successfully",
+        id: "saving-brand",
+        title: "Brand Saved",
+        message: "The brand was saved successfully",
       });
     } catch (error) {
       console.error(error);
       stopLoading({
-        id: "saving-theme",
-        title: "Saving Theme Failed",
+        id: "saving-brand",
+        title: "Saving Brand Failed",
         message: "Validation failed",
       });
     }
