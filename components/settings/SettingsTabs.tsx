@@ -58,6 +58,30 @@ export const SettingsTabs = () => {
           Domain
         </Tabs.Tab>
       </Link>
+      <Link
+        href={`/projects/${id}/settings/typography?name=${name}`}
+        style={{ textDecoration: "none" }}
+      >
+        <Tabs.Tab
+          value="typography"
+          icon={<Icon name="IconWorldWww" size={ICON_SIZE} />}
+          px="xl"
+        >
+          Typography
+        </Tabs.Tab>
+      </Link>
+      <Link
+        href={`/projects/${id}/settings/colours?name=${name}`}
+        style={{ textDecoration: "none" }}
+      >
+        <Tabs.Tab
+          value="colours"
+          icon={<Icon name="IconWorldWww" size={ICON_SIZE} />}
+          px="xl"
+        >
+          Colours
+        </Tabs.Tab>
+      </Link>
     </Tabs.List>
   );
 };
