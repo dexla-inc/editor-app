@@ -9,7 +9,6 @@ import { useForm } from "@mantine/form";
 import { IconTexture } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { SizeSelector } from "../SizeSelector";
 
 export const icon = IconTexture;
 export const label = "Icon";
