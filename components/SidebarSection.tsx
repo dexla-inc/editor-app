@@ -1,4 +1,4 @@
-import { useEditorStore } from "@/stores/editor";
+import { OpenAction, useEditorStore } from "@/stores/editor";
 import { DARK_COLOR, HOVERED } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -13,7 +13,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { IconChevronDown, IconTrash } from "@tabler/icons-react";
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren } from "react";
 
 type SidebarSectionProps = {
   id: string;
@@ -24,6 +24,8 @@ type SidebarSectionProps = {
   onClick?: (id: string, isOpen: boolean) => void;
   isAction?: boolean;
   removeAction?: (id: string) => void;
+  componentId?: string;
+  openAction?: OpenAction;
 };
 
 export function SidebarSection({
@@ -35,14 +37,21 @@ export function SidebarSection({
   onClick,
   isAction,
   removeAction,
+  componentId,
+  openAction,
 }: PropsWithChildren<SidebarSectionProps>) {
   const theme = useMantineTheme();
 
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
+  const isActionTarget = openAction?.actionId === id;
 
   const handleSectionClick = () => {
     onClick && onClick(id, !isExpanded);
-    setOpenAction({ actionId: undefined, componentId: undefined });
+    setOpenAction(
+      isActionTarget
+        ? { actionId: undefined, componentId: undefined }
+        : { actionId: id, componentId },
+    );
   };
 
   const isDarkTheme = theme.colorScheme === "dark";

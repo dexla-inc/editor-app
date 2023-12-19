@@ -1,4 +1,5 @@
 import { IconSelector } from "@/components/IconSelector";
+import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";

@@ -14,29 +14,19 @@ export const Modal = ({ renderTree, component, ...props }: Props) => {
   const theme = useEditorStore((state) => state.theme);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
-  // const updateTreeComponent = useEditorStore(
-  //   (state) => state.updateTreeComponent,
-  // );
+  const updateTreeComponent = useEditorStore(
+    (state) => state.updateTreeComponent,
+  );
 
-  const { children, title, opened, forceHide, size, ...componentProps } =
-    component.props as any;
-
-  // const [opened, { open, close }] = useDisclosure(propOpened);
-
-  // const handleClose = () => {
-  //   close();
-  //   propOnClose && propOnClose();
-  //   updateTreeComponent({
-  //     componentId: component.id!,
-  //     props: { opened: false },
-  //     save: false,
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   if (propOpened) open();
-  //   if (!propOpened) close();
-  // }, [close, open, propOpened]);
+  const {
+    children,
+    title,
+    opened,
+    onclose,
+    forceHide,
+    size,
+    ...componentProps
+  } = component.props as any;
 
   const target = iframeWindow?.document.getElementById("iframe-content");
 
@@ -48,6 +38,15 @@ export const Modal = ({ renderTree, component, ...props }: Props) => {
     : {
         size,
       };
+
+  const handleClose = () => {
+    onclose && onclose();
+    updateTreeComponent({
+      componentId: component.id!,
+      props: { opened: false },
+      save: false,
+    });
+  };
 
   return (
     <MantineModal
@@ -67,7 +66,7 @@ export const Modal = ({ renderTree, component, ...props }: Props) => {
       }
       {...props}
       {...componentProps}
-      onClose={() => {}}
+      onClose={handleClose}
       styles={{
         content: props.style ?? {},
         body: { height: "fit-content" },

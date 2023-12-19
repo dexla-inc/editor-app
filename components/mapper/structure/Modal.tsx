@@ -57,7 +57,6 @@ export const jsonStructure = (props?: any): Component => {
               alignItems: "center",
               justifyContent: "center",
             },
-            color: "Primary",
           },
           blockDroppingChildrenInside: true,
           actions: [
@@ -81,6 +80,7 @@ export const jsonStructure = (props?: any): Component => {
                   height: "auto",
                 },
                 name: "IconX",
+                color: theme.colors.Secondary[7] ?? "rgba(195, 195, 195, 1)",
               },
               children: [],
               blockDroppingChildrenInside: true,
