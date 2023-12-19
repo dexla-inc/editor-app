@@ -4,7 +4,7 @@ import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon"
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Stack } from "@mantine/core";
+import { SegmentedControl, SegmentedControlItem, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconArrowNarrowDown,
@@ -12,11 +12,9 @@ import {
   IconArrowsDiff,
   IconArrowsHorizontal,
   IconLayout2,
-  IconLayoutAlignBottom,
   IconLayoutAlignCenter,
   IconLayoutAlignLeft,
   IconLayoutAlignRight,
-  IconLayoutDistributeHorizontal,
   IconLayoutDistributeVertical,
   IconLayoutList,
   IconRotate2,
@@ -24,7 +22,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const icon = IconLayout2;
 export const label = "Layout";
@@ -34,9 +32,91 @@ export let SHRINK_FLEX_DEFAULT = "0 1 auto";
 
 export const defaultLayoutValues = requiredModifiers.layout;
 
+const justifyContentData = [
+  {
+    label: (
+      <StylingPaneItemIcon
+        label="Start"
+        icon={<IconLayoutAlignLeft size={14} />}
+      />
+    ),
+    value: "flex-start",
+  },
+  {
+    label: (
+      <StylingPaneItemIcon
+        label="Center"
+        icon={<IconLayoutAlignCenter size={14} />}
+      />
+    ),
+    value: "center",
+  },
+  {
+    label: (
+      <StylingPaneItemIcon
+        label="End"
+        icon={<IconLayoutAlignRight size={14} />}
+      />
+    ),
+    value: "flex-end",
+  },
+  {
+    label: (
+      <StylingPaneItemIcon
+        label="Space Between"
+        icon={<IconLayoutList size={14} />}
+      />
+    ),
+    value: "space-between",
+  },
+  {
+    label: (
+      <StylingPaneItemIcon
+        label="Space Around"
+        icon={<IconLayoutDistributeVertical size={14} />}
+      />
+    ),
+    value: "space-around",
+  },
+];
+const alignItemsData = [
+  {
+    label: (
+      <StylingPaneItemIcon
+        label="Start"
+        icon={<IconLayoutAlignLeft size={14} />}
+      />
+    ),
+    value: "flex-start",
+  },
+  {
+    label: (
+      <StylingPaneItemIcon
+        label="Center"
+        icon={<IconLayoutAlignCenter size={14} />}
+      />
+    ),
+    value: "center",
+  },
+  {
+    label: (
+      <StylingPaneItemIcon
+        label="End"
+        icon={<IconLayoutAlignRight size={14} />}
+      />
+    ),
+    value: "flex-end",
+  },
+];
+
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm();
+    const [justifyContent, setJustifyContent] =
+      useState<SegmentedControlItem[]>(justifyContentData);
+
+    let isFlexDirectionColumn =
+      selectedComponent.props?.style?.flexDirection === "column";
 
     useEffect(() => {
       form.setValues(
@@ -54,6 +134,15 @@ export const Modifier = withModifier(
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedComponent]);
+
+    const rowJustifyContentData = justifyContentData.filter((item) => {
+      // Include flex-start, center, and flex-end if flexDirection is column
+      if (selectedComponent.props?.style?.flexDirection === "row") {
+        return ["space-between", "space-around"].includes(item.value);
+      }
+      // Otherwise, include all items
+      return true;
+    });
 
     return (
       <form key={selectedComponent?.id}>
@@ -102,57 +191,45 @@ export const Modifier = withModifier(
             }}
           />
           <Stack spacing={2}>
-            <TopLabel text="Alignment" />
-            {selectedComponent.props?.style?.flexDirection === "column" ? (
+            <TopLabel
+              text={
+                isFlexDirectionColumn
+                  ? "Alignment (Horizontal)"
+                  : "Alignment (Vertical)"
+              }
+            />
+            <SegmentedControl
+              size="xs"
+              data={alignItemsData}
+              styles={{
+                label: {
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                },
+              }}
+              {...form.getInputProps("alignItems")}
+              onChange={(value) => {
+                form.setFieldValue("alignItems", value as string);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  style: { alignItems: value },
+                });
+              }}
+            />
+          </Stack>
+          <Stack spacing={2}>
+            <TopLabel
+              text={
+                isFlexDirectionColumn
+                  ? "Alignment (Vertical)"
+                  : "Alignment (Horizontal)"
+              }
+            />
+            {isFlexDirectionColumn ? (
               <SegmentedControl
                 size="xs"
-                data={[
-                  {
-                    label: (
-                      <StylingPaneItemIcon
-                        label="Stretch"
-                        icon={<IconLayoutDistributeHorizontal size={14} />}
-                      />
-                    ),
-                    value: "stretch",
-                  },
-                  {
-                    label: (
-                      <StylingPaneItemIcon
-                        label="Start"
-                        icon={<IconLayoutAlignLeft size={14} />}
-                      />
-                    ),
-                    value: "flex-start",
-                  },
-                  {
-                    label: (
-                      <StylingPaneItemIcon
-                        label="Center"
-                        icon={<IconLayoutAlignCenter size={14} />}
-                      />
-                    ),
-                    value: "center",
-                  },
-                  {
-                    label: (
-                      <StylingPaneItemIcon
-                        label="End"
-                        icon={<IconLayoutAlignRight size={14} />}
-                      />
-                    ),
-                    value: "flex-end",
-                  },
-                  {
-                    label: (
-                      <StylingPaneItemIcon
-                        label="Baseline"
-                        icon={<IconLayoutAlignBottom size={14} />}
-                      />
-                    ),
-                    value: "baseline",
-                  },
-                ]}
+                data={rowJustifyContentData}
                 styles={{
                   label: {
                     display: "flex",
@@ -161,64 +238,18 @@ export const Modifier = withModifier(
                     height: "100%",
                   },
                 }}
-                {...form.getInputProps("alignItems")}
+                {...form.getInputProps("justifyContent")}
                 onChange={(value) => {
-                  form.setFieldValue("alignItems", value as string);
+                  form.setFieldValue("justifyContent", value as string);
                   debouncedTreeUpdate(selectedComponentIds, {
-                    style: { alignItems: value },
+                    style: { justifyContent: value },
                   });
                 }}
               />
             ) : (
               <SegmentedControl
                 size="xs"
-                data={[
-                  {
-                    label: (
-                      <StylingPaneItemIcon
-                        label="Start"
-                        icon={<IconLayoutAlignLeft size={14} />}
-                      />
-                    ),
-                    value: "flex-start",
-                  },
-                  {
-                    label: (
-                      <StylingPaneItemIcon
-                        label="Center"
-                        icon={<IconLayoutAlignCenter size={14} />}
-                      />
-                    ),
-                    value: "center",
-                  },
-                  {
-                    label: (
-                      <StylingPaneItemIcon
-                        label="End"
-                        icon={<IconLayoutAlignRight size={14} />}
-                      />
-                    ),
-                    value: "flex-end",
-                  },
-                  {
-                    label: (
-                      <StylingPaneItemIcon
-                        label="Space Between"
-                        icon={<IconLayoutList size={14} />}
-                      />
-                    ),
-                    value: "space-between",
-                  },
-                  {
-                    label: (
-                      <StylingPaneItemIcon
-                        label="Space Around"
-                        icon={<IconLayoutDistributeVertical size={14} />}
-                      />
-                    ),
-                    value: "space-around",
-                  },
-                ]}
+                data={justifyContentData}
                 styles={{
                   label: {
                     display: "flex",

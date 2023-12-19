@@ -47,15 +47,12 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
   },
 );
 
-type SelectedColorProps = {
-  color: any;
-};
+// Create me a type called Props that extends Omit<SelectProps, "data"> on the line below
+type Props = {
+  excludeTransparent?: boolean;
+} & Omit<SelectProps, "data">;
 
-const SelectedColor: React.FC<SelectedColorProps> = ({ color }) => (
-  <Paper p="xs" bg={color} />
-);
-
-export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
+export const ThemeColorSelector = (props: Props) => {
   const theme = useEditorStore((state) => state.theme);
   const isShadesActive = useUserConfigStore((state) => state.isShadesActive);
   const setIsShadesActive = useUserConfigStore(
@@ -142,11 +139,14 @@ export const ThemeColorSelector = (props: Omit<SelectProps, "data">) => {
             w="100%"
             size="xs"
             {...selectProps}
-            // value={_value}
-            data={data.concat({
-              label: "transparent",
-              value: "transparent",
-            })}
+            data={
+              props.excludeTransparent
+                ? data
+                : data.concat({
+                    label: "transparent",
+                    value: "transparent",
+                  })
+            }
             itemComponent={SelectItem}
             searchable
             icon={bgColor}
