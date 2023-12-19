@@ -10,7 +10,7 @@ import merge from "lodash.merge";
 import { useEffect } from "react";
 
 export const icon = IconClick;
-export const label = "NavLink";
+export const label = "Nav Link";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
@@ -22,6 +22,9 @@ export const Modifier = withModifier(
           label: selectedComponent?.props?.label,
           icon: selectedComponent?.props?.icon,
           color: selectedComponent?.props?.color,
+          iconColor:
+            selectedComponent?.props?.iconColor ??
+            selectedComponent?.props?.color,
           align: selectedComponent?.props?.style?.align,
         }),
       );
@@ -76,6 +79,16 @@ export const Modifier = withModifier(
               form.setFieldValue("icon", value);
               debouncedTreeUpdate(selectedComponentIds, {
                 icon: value,
+              });
+            }}
+          />
+          <ThemeColorSelector
+            label="Icon Color"
+            {...form.getInputProps("iconColor")}
+            onChange={(value: string) => {
+              form.setFieldValue("iconColor", value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                iconColor: value,
               });
             }}
           />

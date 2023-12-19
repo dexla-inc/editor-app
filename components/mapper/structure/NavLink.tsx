@@ -1,4 +1,5 @@
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -10,12 +11,7 @@ export const jsonStructure = (props?: any): Component => {
       icon: "IconLayoutDashboard",
       label: "Nav Link",
       style: {
-        width: "100%",
-        height: "auto",
-        display: "flex",
-        alignItems: "center",
-        padding: "10px",
-        color: "Black.6",
+        ...requiredModifiers.navLink,
       },
       ...(props.props || {}),
     },

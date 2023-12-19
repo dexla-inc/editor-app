@@ -1,7 +1,7 @@
 import { Icon as BaseIconComponent } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { MantineThemeExtended, useEditorStore } from "@/stores/editor";
-import { globalStyles } from "@/utils/branding";
+import { useEditorStore } from "@/stores/editor";
+import { getColorValue, globalStyles } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { forwardRef, memo } from "react";
@@ -9,20 +9,6 @@ import { forwardRef, memo } from "react";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-};
-
-export const getColorValue = (theme: MantineThemeExtended, value?: string) => {
-  console.log(value);
-  if (value == undefined) return "transparent";
-  const [color, index] = value.split(".");
-
-  const _value =
-    value != "transparent"
-      ? // @ts-ignore
-        theme.colors[color][index]
-      : value;
-
-  return _value;
 };
 
 const IconComponent = forwardRef(
