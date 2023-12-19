@@ -336,12 +336,13 @@ export const requiredModifiers: RequiredModifiers = {
   tab: {
     value: "first",
     icon: null,
+    iconColor: "Primary.6",
   },
   tabsPanel: { value: "first" },
   tabsList: { position: "left" },
   alert: {
     title: "Alert",
-    color: "Black.6",
+    color: "Danger.6",
   },
   badge: {
     value: "New Badge",
