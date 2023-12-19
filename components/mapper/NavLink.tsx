@@ -51,13 +51,15 @@ const NavLinkComponent = ({ renderTree, component, ...props }: Props) => {
 
   return (
     <MantineNavLink
-      icon={
-        <Icon
-          name={icon}
-          size={20}
-          {...(iconColor ? { color: getColorValue(theme, iconColor) } : null)}
-        />
-      }
+      {...(icon && {
+        icon: (
+          <Icon
+            name={icon}
+            size={20}
+            {...(iconColor ? { color: getColorValue(theme, iconColor) } : null)}
+          />
+        ),
+      })}
       childrenOffset={isNested ? 20 : 0}
       rightSection={isNested ? <Icon name="IconChevronRight" /> : null}
       active={active}
@@ -65,7 +67,9 @@ const NavLinkComponent = ({ renderTree, component, ...props }: Props) => {
       {...componentProps}
       {...triggers}
       styles={{
-        ...(!icon && { icon: { marginRight: 0 } }),
+        ...(!icon && {
+          icon: { marginRight: 0 },
+        }),
         children: { paddingLeft: 0 },
         root: {
           padding: 0,
