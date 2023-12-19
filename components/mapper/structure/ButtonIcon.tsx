@@ -8,13 +8,13 @@ export const jsonStructure = (props?: any): Component => {
     description: "ButtonIcon",
     props: {
       style: {
-        width: "auto",
+        width: "fit-content",
         height: "auto",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
       },
-      color: "Primary",
+      bg: "Primary.6",
     },
     blockDroppingChildrenInside: true,
     children: [
@@ -28,6 +28,7 @@ export const jsonStructure = (props?: any): Component => {
             height: "auto",
           },
           name: "IconSettings",
+          color: "PrimaryText.6",
         },
         children: [],
         blockDroppingChildrenInside: true,

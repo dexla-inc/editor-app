@@ -2,14 +2,15 @@ import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Stack } from "@mantine/core";
+import { SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconColorFilter } from "@tabler/icons-react";
+import { IconCircleDot } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { TopLabel } from "../TopLabel";
 
-export const icon = IconColorFilter;
-export const label = "Background";
+export const icon = IconCircleDot;
+export const label = "Button Icon";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
@@ -19,6 +20,7 @@ export const Modifier = withModifier(
       form.setValues(
         merge({}, requiredModifiers.buttonIcon, {
           bg: selectedComponent.props?.bg,
+          width: selectedComponent.props?.style?.width,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -35,6 +37,23 @@ export const Modifier = withModifier(
               debouncedTreeUpdate(selectedComponentIds, { bg: value });
             }}
           />
+          <Stack spacing={2}>
+            <TopLabel text="Width" />
+            <SegmentedControl
+              size="xs"
+              data={[
+                { label: "Fit Content", value: "fit-content" },
+                { label: "Auto", value: "auto" },
+              ]}
+              {...form.getInputProps("width")}
+              onChange={(value) => {
+                form.setFieldValue("width", value as string);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  style: { width: value },
+                });
+              }}
+            />
+          </Stack>
         </Stack>
       </form>
     );
