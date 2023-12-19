@@ -1,6 +1,7 @@
 import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
 import { NavigationAction } from "@/utils/actions";
+import { getColorValue } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
@@ -36,6 +37,7 @@ const NavLinkComponent = ({ renderTree, component, ...props }: Props) => {
     triggers,
     icon,
     color = "",
+    iconColor = "",
     bg = "",
     ...componentProps
   } = merge({}, component.props, activeProps) as any;
@@ -49,7 +51,13 @@ const NavLinkComponent = ({ renderTree, component, ...props }: Props) => {
 
   return (
     <MantineNavLink
-      icon={<Icon name={icon} size={20} />}
+      icon={
+        <Icon
+          name={icon}
+          size={20}
+          {...(iconColor ? { color: getColorValue(theme, iconColor) } : null)}
+        />
+      }
       childrenOffset={isNested ? 20 : 0}
       rightSection={isNested ? <Icon name="IconChevronRight" /> : null}
       active={active}

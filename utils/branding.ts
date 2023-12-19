@@ -247,6 +247,19 @@ const hoverStyles = (styles: any) => {
   };
 };
 
+export const getColorValue = (theme: MantineThemeExtended, value?: string) => {
+  if (value == undefined) return "transparent";
+  const [color, index] = value.split(".");
+
+  const _value =
+    value != "transparent"
+      ? // @ts-ignore
+        theme.colors[color][index]
+      : value;
+
+  return _value;
+};
+
 export {
   DARK_COLOR,
   DARK_MODE,

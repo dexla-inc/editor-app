@@ -302,10 +302,14 @@ export const requiredModifiers: RequiredModifiers = {
     position: "bottom",
   },
   navLink: {
-    label: "Nav link",
-    color: "transparent",
+    color: "Black.6",
+    iconColor: "Black.6",
     align: "left",
-    icon: "",
+    width: "100%",
+    height: "auto",
+    display: "flex",
+    alignItems: "center",
+    padding: "10px",
   },
   accordionItem: {
     value: "first",
