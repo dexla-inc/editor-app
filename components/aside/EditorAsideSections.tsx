@@ -251,6 +251,8 @@ export const EditorAsideSections = () => {
     isAction: true,
     removeAction,
     copyAction,
+    componentId: _selectedComponentId,
+    openAction,
   };
 
   const renderSequentialActions = (action: Action) => {

@@ -1,4 +1,5 @@
 import { IconSelector } from "@/components/IconSelector";
+import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
@@ -8,7 +9,6 @@ import { useForm } from "@mantine/form";
 import { IconTexture } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { SizeSelector } from "../SizeSelector";
 
 export const icon = IconTexture;
 export const label = "Icon";

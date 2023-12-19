@@ -1,11 +1,11 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import {
   ActionIconProps,
   ActionIcon as MantineActionIcon,
 } from "@mantine/core";
-import { ReactElement, memo, forwardRef } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { ReactElement, forwardRef, memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;

@@ -6,11 +6,11 @@ import {
   useActionData,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
+import { useEditorStore } from "@/stores/editor";
 import { OpenModalAction } from "@/utils/actions";
 import { Component, getAllComponentsByName } from "@/utils/editor";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   id: string;
@@ -39,6 +39,8 @@ export const OpenModalActionForm = ({ id }: Props) => {
     },
   });
 
+  const isActionOpenModal = action.action.name === "openModal";
+
   const onSubmit = (values: FormValues) => {
     handleLoadingStart({ startLoading });
 
@@ -64,7 +66,7 @@ export const OpenModalActionForm = ({ id }: Props) => {
       <Stack spacing="xs">
         <Select
           size="xs"
-          label="Modal to Open"
+          label={`Modal to ${isActionOpenModal ? "Open" : "Close"}`}
           placeholder="Select a modal"
           data={modals.map((modal: Component) => {
             return {
