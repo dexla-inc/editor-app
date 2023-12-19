@@ -1410,7 +1410,6 @@ export const componentMapper: ComponentMapper = {
     modifiers: [
       "button",
       "spacing",
-      "size",
       "border",
       "boxShadow",
       "effects",
