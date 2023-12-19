@@ -178,7 +178,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
             if (container.props && container.props.style) {
               container.props.style = {
                 ...container.props.style,
-                width: "auto",
+                width: "fit-content",
                 padding: "0px",
               };
             }

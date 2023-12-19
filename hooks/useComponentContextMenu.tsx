@@ -142,7 +142,7 @@ export const useComponentContextMenu = () => {
         component,
         {
           id: parentComponent!.id as string,
-          edge: "center",
+          edge: "bottom",
         },
         getComponentIndex(parentComponent!, componentId) + 1,
       );
