@@ -18,17 +18,7 @@ const ButtonIconComponent = forwardRef(
     const { children, triggers, ...componentProps } = component.props as any;
 
     return (
-      <MantineActionIcon
-        ref={ref}
-        {...props}
-        {...componentProps}
-        {...triggers}
-        sx={{
-          "&:hover": {
-            backgroundColor: "unset",
-          },
-        }}
-      >
+      <MantineActionIcon ref={ref} {...props} {...componentProps} {...triggers}>
         {component.children && component.children.length > 0
           ? component.children?.map((child) =>
               renderTree({

@@ -14,7 +14,9 @@ export const jsonStructure = (props?: any): Component => {
         alignItems: "center",
         justifyContent: "center",
       },
-      bg: "Primary.6",
+      variant: "filled",
+      color: "Primary.6",
+      size: "md",
     },
     blockDroppingChildrenInside: true,
     children: [

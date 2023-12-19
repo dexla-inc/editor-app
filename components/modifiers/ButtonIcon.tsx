@@ -2,12 +2,12 @@ import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Stack } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconCircleDot } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { TopLabel } from "../TopLabel";
+import { SizeSelector } from "../SizeSelector";
 
 export const icon = IconCircleDot;
 export const label = "Button Icon";
@@ -19,8 +19,8 @@ export const Modifier = withModifier(
     useEffect(() => {
       form.setValues(
         merge({}, requiredModifiers.buttonIcon, {
-          bg: selectedComponent.props?.bg,
-          width: selectedComponent.props?.style?.width,
+          color: selectedComponent.props?.color,
+          size: selectedComponent.props?.size,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -30,30 +30,21 @@ export const Modifier = withModifier(
       <form>
         <Stack spacing="xs">
           <ThemeColorSelector
-            label="Background Color"
-            {...form.getInputProps("bg")}
+            label="Color"
+            {...form.getInputProps("color")}
             onChange={(value: string) => {
-              form.setFieldValue("bg", value);
-              debouncedTreeUpdate(selectedComponentIds, { bg: value });
+              form.setFieldValue("color", value);
+              debouncedTreeUpdate(selectedComponentIds, { color: value });
             }}
           />
-          <Stack spacing={2}>
-            <TopLabel text="Width" />
-            <SegmentedControl
-              size="xs"
-              data={[
-                { label: "Fit Content", value: "fit-content" },
-                { label: "Auto", value: "auto" },
-              ]}
-              {...form.getInputProps("width")}
-              onChange={(value) => {
-                form.setFieldValue("width", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { width: value },
-                });
-              }}
-            />
-          </Stack>
+          <SizeSelector
+            label="Size"
+            {...form.getInputProps("size")}
+            onChange={(value) => {
+              form.setFieldValue("size", value as string);
+              debouncedTreeUpdate(selectedComponentIds, { size: value });
+            }}
+          />
         </Stack>
       </form>
     );
