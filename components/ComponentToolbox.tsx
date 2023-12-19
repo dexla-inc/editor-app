@@ -47,6 +47,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
   const id = component?.id;
   const isGrid = component?.name === "Grid";
   const isColumn = component?.name === "GridColumn";
+  const isMainContent = component?.id === "main-content";
 
   const parent = useMemo(
     () => (id ? getComponentParent(editorTree.root, id) : null),
@@ -251,45 +252,47 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
       )}
       {isColumn && (
         <>
-          <ActionIconTransparent
-            iconName="IconLayoutColumns"
-            tooltip="Insert Grid"
-            onClick={() => {
-              const copy = cloneDeep(editorTree);
-              addComponent(copy.root, GridSchema, {
-                id: component.id!,
-                edge: "center",
-              });
+          {!isMainContent ? (
+            <ActionIconTransparent
+              iconName="IconColumnInsertRight"
+              tooltip="Add column"
+              onClick={() => {
+                const copy = cloneDeep(editorTree);
+                const parentComponent = getComponentParent(
+                  copy.root,
+                  component.id!,
+                );
 
-              setEditorTree(copy);
-            }}
-          />
+                addComponent(
+                  copy.root,
+                  {
+                    ...ColumnSchema,
+                    props: { ...ColumnSchema.props, resetTargetResized: true },
+                  },
+                  {
+                    id: parentComponent?.id!,
+                    edge: "center",
+                  },
+                );
 
-          <ActionIconTransparent
-            iconName="IconColumnInsertRight"
-            tooltip="Add column"
-            onClick={() => {
-              const copy = cloneDeep(editorTree);
-              const parentComponent = getComponentParent(
-                copy.root,
-                component.id!,
-              );
-
-              addComponent(
-                copy.root,
-                {
-                  ...ColumnSchema,
-                  props: { ...ColumnSchema.props, resetTargetResized: true },
-                },
-                {
-                  id: parentComponent?.id!,
+                setEditorTree(copy);
+              }}
+            />
+          ) : (
+            <ActionIconTransparent
+              iconName="IconLayoutGrid"
+              tooltip="Insert grid"
+              onClick={() => {
+                const copy = cloneDeep(editorTree);
+                addComponent(copy.root, GridSchema, {
+                  id: component.id!,
                   edge: "center",
-                },
-              );
+                });
 
-              setEditorTree(copy);
-            }}
-          />
+                setEditorTree(copy);
+              }}
+            />
+          )}
 
           <ActionIconTransparent
             iconName="IconRowInsertBottom"

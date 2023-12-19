@@ -106,7 +106,7 @@ export const Modifier = withModifier(
               size="xs"
               data={[
                 { label: "Fit Content", value: "fit-content" },
-                { label: "Auto", value: "auto" },
+                { label: "100%", value: "100%" },
               ]}
               {...form.getInputProps("width")}
               onChange={(value) => {

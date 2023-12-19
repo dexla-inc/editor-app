@@ -387,6 +387,7 @@ export const requiredModifiers: RequiredModifiers = {
   gridColumn: {
     alignSelf: "start",
     gap: "xs",
+    padding: "8px",
   },
   navbar: {
     width: "260px",
