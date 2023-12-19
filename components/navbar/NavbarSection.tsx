@@ -7,7 +7,12 @@ import {
   LIGHT_MODE,
   scrollbarStyles,
 } from "@/utils/branding";
-import { HEADER_HEIGHT, ICON_SIZE, NAVBAR_MIN_WIDTH } from "@/utils/config";
+import {
+  HEADER_HEIGHT,
+  ICON_SIZE,
+  NAVBAR_MIN_WIDTH,
+  NAVBAR_WIDTH,
+} from "@/utils/config";
 import {
   ActionIcon,
   Flex,
@@ -189,7 +194,7 @@ export const NavbarSection = ({
       top={HEADER_HEIGHT}
       p={10}
       left={NAVBAR_MIN_WIDTH}
-      w={250}
+      w={NAVBAR_WIDTH}
       h={`calc(100vh - ${HEADER_HEIGHT}px )`}
       spacing="xs"
       align="flex-start"
@@ -200,7 +205,7 @@ export const NavbarSection = ({
           sx={(theme) => ({
             color: theme.colorScheme === "dark" ? LIGHT_MODE : DARK_COLOR,
           })}
-          order={4}
+          order={5}
         >
           {startCase(currentSection?.label)}
         </Title>

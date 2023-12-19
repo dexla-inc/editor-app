@@ -10,7 +10,7 @@ import { getThemeColor } from "@/components/modifiers/Border";
 import { withModifier } from "@/hoc/withModifier";
 import { CardStyle } from "@/requests/projects/types";
 import { useEditorStore } from "@/stores/editor";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import { debouncedTreeUpdate, getColorFromTheme } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Flex, SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -58,11 +58,6 @@ export const Modifier = withModifier(
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedComponent]);
-
-    const themeShadowColor = (_value: string) => {
-      const [color, index] = _value.split(".");
-      return theme.colors[color][Number(index)];
-    };
 
     return (
       <form key={selectedComponent?.id}>
@@ -184,7 +179,7 @@ export const Modifier = withModifier(
               label="Color"
               {...form.getInputProps("color")}
               onChange={(_value: string) => {
-                const value = themeShadowColor(_value);
+                const value = getColorFromTheme(theme, _value);
                 form.setFieldValue("color", _value);
                 const boxShadow = `${inset} ${xOffset} ${yOffset} ${blur} ${spread} ${value}`;
 
