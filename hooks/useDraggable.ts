@@ -1,19 +1,18 @@
 import { useEditorStore } from "@/stores/editor";
-import { useUserConfigStore } from "@/stores/userConfig";
-import { NAVBAR_WIDTH } from "@/utils/config";
 import { useCallback } from "react";
 
 export const useDraggable = ({
   id,
   onDragStart,
   currentWindow,
+  ghostImagePosition,
 }: {
   id: string;
   onDragStart: (id: string) => void;
   currentWindow?: Window;
+  ghostImagePosition?: number;
 }) => {
   const isResizing = useEditorStore((state) => state.isResizing);
-  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
 
   const handleDragStart = useCallback(
     (event: React.DragEvent) => {
@@ -27,7 +26,7 @@ export const useDraggable = ({
         let left = event.pageX - rect.left - w.scrollX;
         const top = event.pageY - rect.top - w.scrollY;
 
-        if (isTabPinned) left = left - NAVBAR_WIDTH;
+        if (ghostImagePosition) left = left - ghostImagePosition;
 
         event.dataTransfer.setDragImage(el, left, top);
         event.dataTransfer.effectAllowed = "copyMove";
@@ -35,7 +34,7 @@ export const useDraggable = ({
 
       onDragStart(id);
     },
-    [id, onDragStart, currentWindow, isResizing, isTabPinned],
+    [id, onDragStart, currentWindow, isResizing, ghostImagePosition],
   );
 
   return {

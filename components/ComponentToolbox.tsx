@@ -2,9 +2,10 @@ import { ActionIconTransparent } from "@/components/ActionIconTransparent";
 import { useDraggable } from "@/hooks/useDraggable";
 import { useOnDragStart } from "@/hooks/useOnDragStart";
 import { useEditorStore } from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/userConfig";
 import { theme } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
-import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
+import { ICON_DELETE, ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
 import {
   addComponent,
   getComponentById,
@@ -39,6 +40,8 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
     (state) => state.selectedComponentId,
   );
 
+  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
+
   const component = getComponentById(editorTree.root, selectedComponentId!);
 
   const id = component?.id;
@@ -56,6 +59,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
     id: id || "",
     onDragStart,
     currentWindow: iframeWindow,
+    ghostImagePosition: isTabPinned ? NAVBAR_WIDTH : 0,
   });
 
   const calculatePosition = useCallback(() => {
