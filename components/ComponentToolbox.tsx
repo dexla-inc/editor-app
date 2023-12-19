@@ -253,13 +253,39 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
         <>
           <ActionIconTransparent
             iconName="IconLayoutColumns"
-            tooltip="Split columns"
+            tooltip="Insert Grid"
             onClick={() => {
               const copy = cloneDeep(editorTree);
               addComponent(copy.root, GridSchema, {
                 id: component.id!,
                 edge: "center",
               });
+
+              setEditorTree(copy);
+            }}
+          />
+
+          <ActionIconTransparent
+            iconName="IconColumnInsertRight"
+            tooltip="Add column"
+            onClick={() => {
+              const copy = cloneDeep(editorTree);
+              const parentComponent = getComponentParent(
+                copy.root,
+                component.id!,
+              );
+
+              addComponent(
+                copy.root,
+                {
+                  ...ColumnSchema,
+                  props: { ...ColumnSchema.props, resetTargetResized: true },
+                },
+                {
+                  id: parentComponent?.id!,
+                  edge: "center",
+                },
+              );
 
               setEditorTree(copy);
             }}
