@@ -66,7 +66,7 @@ export const descriptionPlaceholderMapping: Record<
   THEME: {
     description: "",
     placeholder: "",
-    replaceText: "Theme",
+    replaceText: "Brand",
   },
 };
 

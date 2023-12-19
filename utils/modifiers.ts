@@ -184,9 +184,10 @@ export const requiredModifiers: RequiredModifiers = {
     color: "Primary.6",
   },
   icon: {
-    color: "Black.6",
-    icon: "",
-    size: "sm",
+    size: "md",
+    name: "IconArrowNarrowRight",
+    color: "Primary.6",
+    bg: "transparent",
   },
   divider: {
     color: "Neutral.9",

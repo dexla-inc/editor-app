@@ -1,8 +1,8 @@
 import { EditorNavbarComponentsSection } from "@/components/navbar/EditorNavbarComponentsSection";
+import { EditorNavbarCustomCodeSection } from "@/components/navbar/EditorNavbarCustomCodeSection";
 import { EditorNavbarPagesSection } from "@/components/navbar/EditorNavbarPagesSection";
 import { EditorNavbarThemesSection } from "@/components/navbar/EditorNavbarThemesSection";
 import { EditorSettingsSection } from "@/components/navbar/EditorSettingsSection";
-import { EditorNavbarCustomCodeSection } from "@/components/navbar/EditorNavbarCustomCodeSection";
 import { NavbarSection } from "@/components/navbar/NavbarSection";
 import { NavbarLayersSection } from "@/components/navbar/PageStructure/SortableTree";
 import { useEditorStore } from "@/stores/editor";
@@ -42,7 +42,7 @@ const sections = [
   },
   {
     id: "theme" as SectionId,
-    label: "Theme",
+    label: "Brand",
     icon: IconBrush,
   },
   {

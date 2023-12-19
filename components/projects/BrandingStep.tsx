@@ -204,14 +204,14 @@ export default function BrandingStep({
 
       stopLoading({
         id: "saving",
-        title: "Theme Saved",
+        title: "Brand Saved",
         message: "Your brand was saved successfully",
       });
       nextStep();
     } catch (error) {
       stopLoading({
         id: "saving",
-        title: "Theme Failed",
+        title: "Brand Failed",
         message: "Validation failed",
         isError: true,
       });
@@ -255,13 +255,13 @@ export default function BrandingStep({
 
       stopLoading({
         id: "creating",
-        title: "Theme Fetched",
+        title: "Brand Fetched",
         message: "Your brand was fetched successfully",
       });
     } catch (error) {
       stopLoading({
         id: "creating",
-        title: "Theme Failed",
+        title: "Brand Failed",
         message: "Validation failed",
       });
     } finally {
