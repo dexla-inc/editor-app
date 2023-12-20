@@ -116,6 +116,13 @@ import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import { Modifiers } from "@/utils/modifiers";
 
 import {
+  addAccordionItemToolboxAction,
+  addColumnToParentToolboxAction,
+  addColumnToolboxAction,
+  insertGridToolboxAction,
+  insertRowToolboxAction,
+} from "@/utils/toolboxActions";
+import {
   IconArrowAutofitContent,
   IconBoxModel,
   IconBrandChrome,
@@ -162,13 +169,6 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import { useRouter } from "next/router";
-import {
-  addAccordionItemToolboxAction,
-  addColumnToParentToolboxAction,
-  addColumnToolboxAction,
-  insertGridToolboxAction,
-  insertRowToolboxAction,
-} from "@/utils/toolboxActions";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -894,7 +894,7 @@ export const componentMapper: ComponentMapper = {
     modifiers: ["grid", "spacing", "background", "border", "effects"],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
-    allowedParentTypes: ["Grid", "GridColumn"],
+    allowedParentTypes: ["Grid", "GridColumn", "Container", "Card"],
     toolboxActions: [
       {
         id: "add-column",
