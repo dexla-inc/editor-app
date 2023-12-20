@@ -2,6 +2,7 @@ import cloneDeep from "lodash.clonedeep";
 import { addComponent } from "@/utils/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import { useEditorStore } from "@/stores/editor";
+import { jsonStructure as accordionItemSchema } from "@/components/mapper/structure/AccordionItem";
 
 export const addColumnToolboxAction = ({ component }: any) => {
   const editorTree = useEditorStore.getState().tree;
@@ -75,6 +76,20 @@ export const insertGridToolboxAction = ({ component }: any) => {
   const GridSchema = structureMapper["Grid"].structure({});
 
   addComponent(copy.root, GridSchema, {
+    id: component.id!,
+    edge: "center",
+  });
+
+  setEditorTree(copy);
+};
+
+export const addAccordionItemToolboxAction = ({ component }: any) => {
+  const editorTree = useEditorStore.getState().tree;
+  const setEditorTree = useEditorStore.getState().setTree;
+
+  const copy = cloneDeep(editorTree);
+
+  addComponent(copy.root, accordionItemSchema({}), {
     id: component.id!,
     edge: "center",
   });

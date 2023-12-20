@@ -163,6 +163,7 @@ import {
 } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import {
+  addAccordionItemToolboxAction,
   addColumnToParentToolboxAction,
   addColumnToolboxAction,
   insertGridToolboxAction,
@@ -1342,6 +1343,14 @@ export const componentMapper: ComponentMapper = {
     modifiers: ["accordion", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onOpen", "onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
+    toolboxActions: [
+      {
+        id: "add-accordion-item",
+        name: "Add Accordion Item",
+        icon: "IconLayoutBottombarCollapse",
+        onClick: addAccordionItemToolboxAction,
+      },
+    ],
   },
   AccordionItem: {
     Component: (props: { component: Component; renderTree: any }) => (
