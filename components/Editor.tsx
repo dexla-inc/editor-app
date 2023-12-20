@@ -1,6 +1,7 @@
 // The comment below force next to refresh the editor state every time we change something in the code
 // @refresh reset
 import { Shell } from "@/components/AppShell";
+import { Cursor } from "@/components/Cursor";
 import { EditorCanvas } from "@/components/EditorCanvas";
 import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
@@ -31,7 +32,6 @@ import {
 } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
-import { Cursor } from "@/components/Cursor";
 
 type Props = {
   projectId: string;
@@ -192,6 +192,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
               color={CURSOR_COLORS[connectionId % CURSOR_COLORS.length]}
               x={cursor.x}
               y={cursor.y}
+              name={user.firstName ?? ""}
             />
           );
         })
