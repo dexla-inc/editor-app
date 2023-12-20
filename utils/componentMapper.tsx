@@ -162,6 +162,12 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import { useRouter } from "next/router";
+import {
+  addColumnToParentToolboxAction,
+  addColumnToolboxAction,
+  insertGridToolboxAction,
+  insertRowToolboxAction,
+} from "@/utils/toolboxActions";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -814,12 +820,21 @@ export const structureMapper: StructureMapper = {
   },
 };
 
+export type ToolboxAction = {
+  id: string;
+  name: string;
+  icon: string;
+  onClick: (params: any) => void;
+};
+
 export type ComponentDefinition = {
   Component: any;
   modifiers: Modifiers[];
   actionTriggers: ActionTrigger[];
   sequentialTriggers: SequentialTrigger[];
   allowedParentTypes?: string[];
+  toolboxActions?: ToolboxAction[];
+  blockedToolboxActions?: string[];
   // TODO: Add actions: Action[]. Filter all possible actions for a component
 };
 
@@ -879,6 +894,21 @@ export const componentMapper: ComponentMapper = {
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
     allowedParentTypes: ["Grid", "GridColumn"],
+    toolboxActions: [
+      {
+        id: "add-column",
+        name: "Add column",
+        icon: "IconColumnInsertRight",
+        onClick: addColumnToolboxAction,
+      },
+      {
+        id: "insert-row",
+        name: "Insert Row",
+        icon: "IconRowInsertBottom",
+        onClick: insertRowToolboxAction,
+      },
+    ],
+    blockedToolboxActions: ["wrap-with-container"],
   },
   GridColumn: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -887,6 +917,27 @@ export const componentMapper: ComponentMapper = {
     modifiers: ["gridColumn", "size", "spacing", "background", "effects"],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
+    toolboxActions: [
+      {
+        id: "insert-grid",
+        name: "Insert Grid",
+        icon: "IconLayoutColumns",
+        onClick: insertGridToolboxAction,
+      },
+      {
+        id: "add-column-to-parent",
+        name: "Add column",
+        icon: "IconColumnInsertRight",
+        onClick: addColumnToParentToolboxAction,
+      },
+      {
+        id: "insert-row",
+        name: "Insert Row",
+        icon: "IconRowInsertBottom",
+        onClick: insertRowToolboxAction,
+      },
+    ],
+    blockedToolboxActions: ["wrap-with-container"],
   },
   Container: {
     Component: (props: { component: Component; renderTree: any }) => (
