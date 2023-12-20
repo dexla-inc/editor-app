@@ -64,6 +64,7 @@ export const GridColumn = forwardRef(
               ? `span ${isResizing ? columnSpans[props.id] : span}`
               : undefined,
             gap: theme.spacing.xs,
+            overflow: "auto",
             ...(style ?? {}),
           }}
           pos="relative"
