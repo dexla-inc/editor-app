@@ -30,6 +30,7 @@ export const Modifier = withModifier(
       form.setValues(
         merge({}, initialValues, {
           alignSelf: selectedComponent.props?.style?.alignSelf,
+          justifyContent: selectedComponent.props?.style?.justifyContent,
           gridAutoFlow: selectedComponent.props?.style?.gridAutoFlow,
           gap: selectedComponent.props?.style?.gap,
         }),
@@ -128,6 +129,59 @@ export const Modifier = withModifier(
                 debouncedTreeUpdate(selectedComponentIds, {
                   style: {
                     alignSelf: value,
+                  },
+                });
+              }}
+            />
+          </Stack>
+          <Stack spacing={2}>
+            <TopLabel text="Align Horizontally" />
+            <SegmentedControl
+              size="xs"
+              data={[
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Left"
+                      icon={<IconLayoutAlignLeft size={14} />}
+                    />
+                  ),
+                  value: "start",
+                },
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Middle"
+                      icon={<IconLayoutAlignCenter size={14} />}
+                    />
+                  ),
+                  value: "center",
+                },
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Right"
+                      icon={<IconLayoutAlignRight size={14} />}
+                    />
+                  ),
+                  value: "end",
+                },
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Stretch"
+                      icon={<IconLayoutAlignRight size={14} />}
+                    />
+                  ),
+                  value: "stretch",
+                },
+              ]}
+              {...form.getInputProps("justifyContent")}
+              onChange={(value) => {
+                form.setFieldValue("justifyContent", value as string);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  style: {
+                    justifyContent: value,
                   },
                 });
               }}
