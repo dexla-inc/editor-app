@@ -50,7 +50,20 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
 
   const id = component?.id;
   const componentData = componentMapper[component?.name || ""];
-  const toolboxActions = componentData?.toolboxActions || [];
+  let toolboxActions = componentData?.toolboxActions || [];
+
+  const isBody = component?.id === "content-wrapper";
+  const isMainContent = component?.id === "main-content";
+
+  if (isMainContent) {
+    toolboxActions = toolboxActions.filter(
+      (action) =>
+        action.id !== "add-column-to-parent" && action.id !== "insert-row",
+    );
+  } else if (isBody) {
+    toolboxActions = [];
+  }
+
   const blockedToolboxActions = componentData?.blockedToolboxActions || [];
 
   const parent = useMemo(
@@ -107,9 +120,6 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
   if (!component || isPreviewMode || !id || isResizing) {
     return null;
   }
-
-  const ColumnSchema = structureMapper["GridColumn"].structure({});
-  const GridSchema = structureMapper["Grid"].structure({});
 
   const haveNonRootParent = parent && parent.id !== "root";
 
@@ -228,23 +238,27 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
           />
         );
       })}
-      <ActionIconTransparent
-        iconName={ICON_DELETE}
-        tooltip="Delete"
-        onClick={() => {
-          const copy = cloneDeep(editorTree);
-          removeComponent(copy.root, component?.id!);
-          setEditorTree(copy, { action: `Removed ${component?.name}` });
-        }}
-      />
-      {customComponentModal && (
-        <ActionIconTransparent
-          iconName="IconDeviceFloppy"
-          tooltip="Save as custom component"
-          onClick={() => {
-            customComponentModal.open();
-          }}
-        />
+      {!isMainContent && !isBody && (
+        <>
+          <ActionIconTransparent
+            iconName={ICON_DELETE}
+            tooltip="Delete"
+            onClick={() => {
+              const copy = cloneDeep(editorTree);
+              removeComponent(copy.root, component?.id!);
+              setEditorTree(copy, { action: `Removed ${component?.name}` });
+            }}
+          />
+          {customComponentModal && (
+            <ActionIconTransparent
+              iconName="IconDeviceFloppy"
+              tooltip="Save as custom component"
+              onClick={() => {
+                customComponentModal.open();
+              }}
+            />
+          )}
+        </>
       )}
     </Group>
   );
