@@ -51,6 +51,10 @@ export const fontWeightLabels = {
   900: "Black",
 };
 
+export const pixelMetrics = Array.from({ length: 26 }, (_, index) =>
+  String(index * 4),
+);
+
 export const EditorNavbarThemesSection =
   ({}: EditorNavbarThemesSectionProps) => {
     const router = useRouter();
@@ -264,7 +268,7 @@ export const EditorNavbarThemesSection =
               <SegmentedControl
                 fullWidth
                 size={INPUT_SIZE}
-                data={form.values.fonts.map((f) => f.tag)}
+                data={form.values.fonts.map((f) => f.tag).filter(Boolean)}
                 value={form.values.fonts[currentFontIndex]?.tag}
                 onChange={(value: string) => {
                   const index = form.values.fonts.findIndex(
@@ -282,22 +286,25 @@ export const EditorNavbarThemesSection =
                   )}
                   size={INPUT_SIZE}
                 />
-                <UnitInput
+                <Select
                   label="Size"
+                  data={pixelMetrics}
                   {...form.getInputProps(`fonts.${currentFontIndex}.fontSize`)}
                   size={INPUT_SIZE}
                 />
               </Flex>
               <Flex align="center" gap="sm">
-                <UnitInput
+                <Select
                   label="Line Height"
+                  data={pixelMetrics}
                   {...form.getInputProps(
                     `fonts.${currentFontIndex}.lineHeight`,
                   )}
                   size={INPUT_SIZE}
                 />
-                <UnitInput
+                <Select
                   label="Letter Spacing"
+                  data={pixelMetrics}
                   {...form.getInputProps(
                     `fonts.${currentFontIndex}.letterSpacing`,
                   )}

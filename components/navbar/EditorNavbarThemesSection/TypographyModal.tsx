@@ -17,7 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getGoogleFonts } from "@/utils/googleFonts";
 import { ThemeResponse } from "@/requests/themes/types";
 import { UseFormReturnType } from "@mantine/form";
-import { fontWeightLabels } from "@/components/navbar/EditorNavbarThemesSection";
+import { pixelMetrics } from "@/components/navbar/EditorNavbarThemesSection";
 
 type TypographyModalProps = {
   controls: { opened: boolean; close: () => void };
@@ -87,23 +87,20 @@ export const TypographyModal = ({
               </thead>
               <tbody>
                 {form.values.fonts.map((font, index) => {
-                  const { variants = [] } =
-                    googleFontsData.find(
-                      (f: any) => f.family === font.fontFamily,
-                    ) ?? {};
-
                   return (
                     <tr key={index}>
                       <td style={{ paddingTop: 0, paddingBottom: 0 }}>
                         <Text
                           component={font.tag as any}
-                          fz={font.fontSize}
+                          fz={`${font.fontSize}px`}
                           fw={font.fontWeight}
                           sx={{
+                            outline: "none !important",
                             fontFamily: font.fontFamily,
-                            lineHeight: font.lineHeight,
-                            letterSpacing: font.letterSpacing,
+                            lineHeight: `${font.lineHeight}px`,
+                            letterSpacing: `${font.letterSpacing}px`,
                           }}
+                          styles={{ root: { outline: "none !important" } }}
                           contentEditable
                           onInput={(e: any) =>
                             form.setFieldValue(
@@ -117,28 +114,32 @@ export const TypographyModal = ({
                       </td>
                       <td>
                         <Select
+                          size={INPUT_SIZE}
                           {...form.getInputProps(`fonts.${index}.fontWeight`)}
                           data={weightsList}
                         />
                       </td>
                       <td>
-                        <UnitInput
-                          size={INPUT_SIZE}
+                        <Select
+                          data={pixelMetrics}
                           {...form.getInputProps(`fonts.${index}.fontSize`)}
+                          size={INPUT_SIZE}
                         />
                       </td>
                       <td>
-                        <UnitInput
-                          size={INPUT_SIZE}
+                        <Select
+                          data={pixelMetrics}
                           {...form.getInputProps(`fonts.${index}.lineHeight`)}
+                          size={INPUT_SIZE}
                         />
                       </td>
                       <td>
-                        <UnitInput
-                          size={INPUT_SIZE}
+                        <Select
+                          data={pixelMetrics}
                           {...form.getInputProps(
                             `fonts.${index}.letterSpacing`,
                           )}
+                          size={INPUT_SIZE}
                         />
                       </td>
                     </tr>
