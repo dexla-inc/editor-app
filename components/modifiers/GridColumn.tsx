@@ -82,6 +82,8 @@ export const Modifier = withModifier(
                 debouncedTreeUpdate(selectedComponentIds, {
                   style: {
                     gridAutoFlow: value,
+                    // gridTemplateColumns:
+                    //   value === "column" ? "inherit" : "auto",
                   },
                 });
               }}

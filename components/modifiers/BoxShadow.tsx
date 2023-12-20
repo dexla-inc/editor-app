@@ -119,7 +119,6 @@ export const Modifier = withModifier(
                 }}
                 options={[
                   { value: "px", label: "PX" },
-                  { value: "rem", label: "REM" },
                   { value: "%", label: "%" },
                 ]}
               />
@@ -135,7 +134,6 @@ export const Modifier = withModifier(
                 }}
                 options={[
                   { value: "px", label: "PX" },
-                  { value: "rem", label: "REM" },
                   { value: "%", label: "%" },
                 ]}
               />
@@ -153,7 +151,6 @@ export const Modifier = withModifier(
                 }}
                 options={[
                   { value: "px", label: "PX" },
-                  { value: "rem", label: "REM" },
                   { value: "%", label: "%" },
                 ]}
               />
@@ -170,7 +167,6 @@ export const Modifier = withModifier(
                 }}
                 options={[
                   { value: "px", label: "PX" },
-                  { value: "rem", label: "REM" },
                   { value: "%", label: "%" },
                 ]}
               />

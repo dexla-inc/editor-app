@@ -36,7 +36,6 @@ export const UnitInput = ({
 
   const options = customOptions ?? [
     { value: "px", label: "PX" },
-    { value: "rem", label: "REM" },
     { value: "%", label: "%" },
     { value: "vh", label: "VH" },
     { value: "vw", label: "VW" },
