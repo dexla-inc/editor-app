@@ -25,7 +25,7 @@ export const Modifier = withModifier(
           iconColor:
             selectedComponent?.props?.iconColor ??
             selectedComponent?.props?.color,
-          align: selectedComponent?.props?.style?.align,
+          textAlign: selectedComponent?.props?.style?.textAlign,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -54,9 +54,9 @@ export const Modifier = withModifier(
               { label: "Center", value: "center" },
               { label: "Right", value: "right" },
             ]}
-            {...form.getInputProps("align")}
+            {...form.getInputProps("textAlign")}
             onChange={(value) => {
-              form.setFieldValue("align", value as string);
+              form.setFieldValue("textAlign", value as string);
               debouncedTreeUpdate(selectedComponentIds, {
                 style: { textAlign: value },
               });

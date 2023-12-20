@@ -255,7 +255,7 @@ export const requiredModifiers: RequiredModifiers = {
     striped: false,
     withBorder: false,
     withColumnBorder: false,
-    style: { width: "100%" },
+    style: { width: "100%", overflowX: "scroll" },
   },
   radio: {
     label: "",
@@ -304,7 +304,7 @@ export const requiredModifiers: RequiredModifiers = {
   navLink: {
     color: "Black.6",
     iconColor: "Black.6",
-    align: "left",
+    textAlign: "left",
     width: "100%",
     height: "auto",
     display: "flex",
@@ -387,6 +387,7 @@ export const requiredModifiers: RequiredModifiers = {
   gridColumn: {
     alignSelf: "start",
     gap: "xs",
+    padding: "8px",
   },
   navbar: {
     width: "260px",

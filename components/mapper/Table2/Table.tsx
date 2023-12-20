@@ -1,6 +1,6 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { Table as MantineTable, TableProps } from "@mantine/core";
+import { Table as MantineTable, ScrollArea, TableProps } from "@mantine/core";
 import { memo } from "react";
 
 type Props = {
@@ -12,9 +12,11 @@ export const TableComponent = ({ renderTree, component, ...props }: Props) => {
   const { children, ...componentProps } = component.props as any;
 
   return (
-    <MantineTable {...props} {...componentProps}>
-      {component.children?.map((child) => renderTree(child))}
-    </MantineTable>
+    <ScrollArea w={props.style?.width ?? "100%"}>
+      <MantineTable {...props} {...componentProps}>
+        {component.children?.map((child) => renderTree(child))}
+      </MantineTable>
+    </ScrollArea>
   );
 };
 

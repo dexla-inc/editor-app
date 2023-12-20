@@ -47,6 +47,7 @@ type Font = {
   fontSize: number;
   lineHeight: number;
   letterSpacing: number;
+  note: string;
 };
 
 type ResponsiveBreakpoint = {
