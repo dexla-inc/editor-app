@@ -1,8 +1,10 @@
 import cloneDeep from "lodash.clonedeep";
-import { addComponent } from "@/utils/editor";
+import { Component, addComponent } from "@/utils/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import { useEditorStore } from "@/stores/editor";
 import { jsonStructure as accordionItemSchema } from "@/components/mapper/structure/AccordionItem";
+import { jsonStructure as tabsPanelSchema } from "@/components/mapper/structure/TabsPanel";
+import { jsonStructure as tabSchema } from "@/components/mapper/structure/Tab";
 
 export const addColumnToolboxAction = ({ component }: any) => {
   const editorTree = useEditorStore.getState().tree;
@@ -91,6 +93,29 @@ export const addAccordionItemToolboxAction = ({ component }: any) => {
 
   addComponent(copy.root, accordionItemSchema({}), {
     id: component.id!,
+    edge: "center",
+  });
+
+  setEditorTree(copy);
+};
+
+export const addTabToolboxAction = ({ component }: any) => {
+  const editorTree = useEditorStore.getState().tree;
+  const setEditorTree = useEditorStore.getState().setTree;
+
+  const tabList = component.children.find(
+    (child: Component) => child.name === "TabsList",
+  );
+
+  const copy = cloneDeep(editorTree);
+
+  addComponent(copy.root, tabsPanelSchema({ props: { value: "new-tab" } }), {
+    id: component.id!,
+    edge: "center",
+  });
+
+  addComponent(copy.root, tabSchema({ props: { value: "new-tab" } }), {
+    id: tabList.id!,
     edge: "center",
   });
 

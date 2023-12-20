@@ -119,6 +119,7 @@ import {
   addAccordionItemToolboxAction,
   addColumnToParentToolboxAction,
   addColumnToolboxAction,
+  addTabToolboxAction,
   insertGridToolboxAction,
   insertRowToolboxAction,
 } from "@/utils/toolboxActions";
@@ -1288,6 +1289,14 @@ export const componentMapper: ComponentMapper = {
     modifiers: ["tabs", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
+    toolboxActions: [
+      {
+        id: "add-tab",
+        name: "Add tab",
+        icon: "IconColumnInsertRight",
+        onClick: addTabToolboxAction,
+      },
+    ],
   },
   Tab: {
     Component: (props: { component: Component; renderTree: any }) => (
