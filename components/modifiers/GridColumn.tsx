@@ -166,15 +166,6 @@ export const Modifier = withModifier(
                   ),
                   value: "end",
                 },
-                {
-                  label: (
-                    <StylingPaneItemIcon
-                      label="Stretch"
-                      icon={<IconLayoutAlignRight size={14} />}
-                    />
-                  ),
-                  value: "stretch",
-                },
               ]}
               {...form.getInputProps("justifyContent")}
               onChange={(value) => {
