@@ -386,7 +386,7 @@ export const requiredModifiers: RequiredModifiers = {
   },
   gridColumn: {
     alignSelf: "start",
-    justifyContent: "start",
+    justifyContent: "stretch",
     gap: "xs",
     padding: "8px",
   },

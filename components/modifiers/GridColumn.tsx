@@ -13,6 +13,7 @@ import {
   IconLayoutAlignLeft,
   IconLayoutAlignRight,
   IconLayoutColumns,
+  IconLayoutDistributeHorizontal,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
@@ -79,12 +80,12 @@ export const Modifier = withModifier(
               ]}
               {...form.getInputProps("gridAutoFlow")}
               onChange={(value) => {
-                form.setFieldValue(" gridAutoFlow", value as string);
+                form.setFieldValue("gridAutoFlow", value as string);
                 debouncedTreeUpdate(selectedComponentIds, {
                   style: {
                     gridAutoFlow: value,
-                    // gridTemplateColumns:
-                    //   value === "column" ? "inherit" : "auto",
+                    gridAutoRows: value === "row" ? "max-content" : "auto", // This is to stop the grid column stretching
+                    justifyContent: value === "row" ? "stretch" : "start",
                   },
                 });
               }}
@@ -139,6 +140,15 @@ export const Modifier = withModifier(
             <SegmentedControl
               size="xs"
               data={[
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Default"
+                      icon={<IconLayoutDistributeHorizontal size={14} />}
+                    />
+                  ),
+                  value: "stretch",
+                },
                 {
                   label: (
                     <StylingPaneItemIcon

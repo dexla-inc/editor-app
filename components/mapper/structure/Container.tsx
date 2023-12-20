@@ -14,7 +14,7 @@ export const jsonStructure = (props?: any): Component => {
       gap: defaultLayoutValues.gap,
       style: {
         ...defaultLayoutValues,
-        width: "auto",
+        width: "100%",
         height: "auto",
         minHeight: "20px",
         ...(style || {}),
