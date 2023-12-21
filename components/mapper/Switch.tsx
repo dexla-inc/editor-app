@@ -1,17 +1,28 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Switch as MantineSwitch, SwitchProps } from "@mantine/core";
-import { memo } from "react";
+import { forwardRef, memo } from "react";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & SwitchProps;
 
-const SwitchComponent = ({ renderTree, component, ...props }: Props) => {
-  const { label, ...componentProps } = component.props as any;
+const SwitchComponent = forwardRef(
+  ({ renderTree, component, ...props }: Props, ref) => {
+    const { label, ...componentProps } = component.props as any;
 
-  return <MantineSwitch {...props} {...componentProps} label={undefined} />;
-};
+    return (
+      <MantineSwitch
+        ref={ref}
+        {...props}
+        {...componentProps}
+        label={undefined}
+      />
+    );
+  },
+);
+SwitchComponent.displayName = "Switch";
 
-export const Switch = memo(SwitchComponent, isSame);
+export const Switch = memo(withComponentWrapper(SwitchComponent), isSame);

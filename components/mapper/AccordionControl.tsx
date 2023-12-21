@@ -4,27 +4,30 @@ import {
   AccordionControlProps,
   Accordion as MantineAccordion,
 } from "@mantine/core";
-import { memo } from "react";
+import { forwardRef, memo } from "react";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & AccordionControlProps;
 
-const AccordionControlComponent = ({
-  renderTree,
-  component,
-  ...props
-}: Props) => {
-  const { children, ...componentProps } = component.props as any;
+const AccordionControlComponent = forwardRef(
+  ({ renderTree, component, ...props }: Props, ref) => {
+    const { children, ...componentProps } = component.props as any;
 
-  return (
-    <MantineAccordion.Control {...props} {...componentProps}>
-      {component.children && component.children.length > 0
-        ? component.children?.map((child) => renderTree(child))
-        : children}
-    </MantineAccordion.Control>
-  );
-};
+    return (
+      <MantineAccordion.Control ref={ref} {...props} {...componentProps}>
+        {component.children && component.children.length > 0
+          ? component.children?.map((child) => renderTree(child))
+          : children}
+      </MantineAccordion.Control>
+    );
+  },
+);
+AccordionControlComponent.displayName = "AccordionControl";
 
-export const AccordionControl = memo(AccordionControlComponent, isSame);
+export const AccordionControl = memo(
+  withComponentWrapper<Props>(AccordionControlComponent),
+  isSame,
+);

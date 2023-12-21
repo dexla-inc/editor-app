@@ -1,8 +1,8 @@
 import { Chart, getChartColor } from "@/components/mapper/charts/Chart";
-import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
+import { Skeleton } from "@mantine/core";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -73,8 +73,9 @@ export const RadialChart = (props: Props) => {
     },
   });
 
-  if (loading) {
-    return <MantineSkeleton circle height={300} />;
-  }
-  return <Chart {...customProps} />;
+  return (
+    <Skeleton visible={loading}>
+      <Chart {...customProps} />
+    </Skeleton>
+  );
 };

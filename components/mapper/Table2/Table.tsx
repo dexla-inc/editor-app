@@ -1,24 +1,28 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Table as MantineTable, ScrollArea, TableProps } from "@mantine/core";
-import { memo } from "react";
+import { forwardRef, memo } from "react";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & TableProps;
 
-export const TableComponent = ({ renderTree, component, ...props }: Props) => {
-  const { children, ...componentProps } = component.props as any;
+export const TableComponent = forwardRef(
+  ({ renderTree, component, ...props }: Props, ref) => {
+    const { children, ...componentProps } = component.props as any;
 
-  return (
-    <ScrollArea w={props.style?.width ?? "100%"}>
-      <MantineTable {...props} {...componentProps}>
-        {component.children?.map((child) => renderTree(child))}
-      </MantineTable>
-    </ScrollArea>
-  );
-};
+    return (
+      <ScrollArea w={props.style?.width ?? "100%"}>
+        <MantineTable ref={ref} {...props} {...componentProps}>
+          {component.children?.map((child) => renderTree(child))}
+        </MantineTable>
+      </ScrollArea>
+    );
+  },
+);
+TableComponent.displayName = "Table";
 
 export const TableHead = ({ renderTree, component }: Props) => {
   return <thead>{component.children?.map((child) => renderTree(child))}</thead>;
@@ -60,4 +64,4 @@ export const TableCell = ({ renderTree, component, ...props }: Props) => {
   );
 };
 
-export const Table = memo(TableComponent, isSame);
+export const Table = memo(withComponentWrapper<Props>(TableComponent), isSame);
