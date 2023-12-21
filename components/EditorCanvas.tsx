@@ -18,6 +18,8 @@ import { CURSOR_COLORS, HEADER_HEIGHT } from "@/utils/config";
 import {
   Component,
   addComponent,
+  checkIfIsChildDeep,
+  getAllComponentsByName,
   getComponentById,
   getComponentIndex,
   getComponentParent,
@@ -87,38 +89,53 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     useDisclosure(false);
 
   const deleteComponent = useCallback(() => {
-    const selectedComponentId = useEditorStore.getState().selectedComponentId;
-    if (selectedComponentId && !isPreviewMode) {
+    const selectedComponentIds = useEditorStore.getState().selectedComponentIds;
+    if (
+      selectedComponentIds &&
+      selectedComponentIds.length > 0 &&
+      !isPreviewMode
+    ) {
       const copy = cloneDeep(editorTree);
+      const modals = getAllComponentsByName(copy.root, "Modal");
+      const targetModal = modals.find((modal) =>
+        checkIfIsChildDeep(modal, selectedComponentIds[0]),
+      );
+      selectedComponentIds.map((selectedComponentId) => {
+        const comp = getComponentById(copy.root, selectedComponentId);
+        const parent = getComponentParent(copy.root, selectedComponentId);
+        const grandParent = getComponentParent(copy.root, parent?.id!);
 
-      const comp = getComponentById(copy.root, selectedComponentId);
-      const parent = getComponentParent(copy.root, selectedComponentId);
-      const grandParent = getComponentParent(copy.root, parent?.id!);
+        if (comp?.id === "content-wrapper" || comp?.id === "main-content")
+          return;
 
-      if (comp?.id === "content-wrapper" || comp?.id === "main-content") return;
+        if (
+          comp?.name === "GridColumn" &&
+          parent?.name === "Grid" &&
+          parent?.children?.length === 1 &&
+          grandParent?.id === "root"
+        ) {
+          return;
+        }
 
-      if (
-        comp?.name === "GridColumn" &&
-        parent?.name === "Grid" &&
-        parent?.children?.length === 1 &&
-        grandParent?.id === "root"
-      ) {
-        return;
-      }
+        removeComponent(copy.root, selectedComponentId);
 
-      removeComponent(copy.root, selectedComponentId);
+        if (
+          comp?.name === "GridColumn" &&
+          parent?.name === "Grid" &&
+          parent?.children?.length === 0
+        ) {
+          removeComponent(copy.root, parent.id!);
+        }
 
-      if (
-        comp?.name === "GridColumn" &&
-        parent?.name === "Grid" &&
-        parent?.children?.length === 0
-      ) {
-        removeComponent(copy.root, parent.id!);
-      }
-
-      setSelectedComponentId(undefined);
-      setSelectedComponentIds(() => []);
-      setEditorTree(copy, { action: `Removed ${comp?.name}` });
+        if (targetModal) {
+          setSelectedComponentId(targetModal.id!);
+          setSelectedComponentIds(() => [targetModal.id!]);
+        } else {
+          setSelectedComponentId(undefined);
+          setSelectedComponentIds(() => []);
+        }
+        setEditorTree(copy, { action: `Removed ${comp?.name}` });
+      });
     }
   }, [
     isPreviewMode,

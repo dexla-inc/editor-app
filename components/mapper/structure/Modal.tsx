@@ -1,7 +1,9 @@
 import { defaultTheme } from "@/utils/branding";
+import { structureMapper } from "@/utils/componentMapper";
 import { Component } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { px } from "@mantine/core";
+import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -11,6 +13,8 @@ export const jsonStructure = (props?: any): Component => {
     requiredModifiers;
   const size = theme.headings.sizes[`h5`];
   const modalId = nanoid();
+
+  const containerItem = structureMapper["Container"].structure({ theme });
 
   const defaultChildren = [
     {
@@ -233,6 +237,14 @@ export const jsonStructure = (props?: any): Component => {
     },
   ];
 
+  const modalContainerProps = merge({}, containerItem.props, {
+    style: {
+      width: "100%",
+      flexDirection: "column",
+      justifyContent: "center",
+    },
+  });
+
   return {
     id: modalId,
     name: "Modal",
@@ -250,12 +262,7 @@ export const jsonStructure = (props?: any): Component => {
         name: "Container",
         description: "Modal Container",
         props: {
-          style: {
-            gap: "10px",
-            width: "100%",
-            flexDirection: "column",
-            justifyContent: "center",
-          },
+          ...modalContainerProps,
         },
         children: props.children ?? defaultChildren,
       },
