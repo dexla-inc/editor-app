@@ -254,14 +254,11 @@ const hoverStyles = (styles: any) => {
 };
 
 export const getColorValue = (theme: MantineThemeExtended, value?: string) => {
-  if (value == undefined) return "transparent";
-  const [color, index] = value.split(".");
+  if (value === undefined) return "transparent";
+  const [color, index] = value?.split(".");
 
   const _value =
-    value != "transparent"
-      ? // @ts-ignore
-        theme.colors[color][index]
-      : value;
+    value !== "transparent" ? theme.colors[color][Number(index)] : value;
 
   return _value;
 };
