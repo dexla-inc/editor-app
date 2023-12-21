@@ -12,12 +12,12 @@ import {
 } from "@mantine/core";
 import { UnitInput } from "@/components/UnitInput";
 import { INPUT_SIZE } from "@/utils/config";
-import { SelectFont } from "@/components/navbar/SelectFont";
+import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
 import { useQuery } from "@tanstack/react-query";
 import { getGoogleFonts } from "@/utils/googleFonts";
 import { ThemeResponse } from "@/requests/themes/types";
 import { UseFormReturnType } from "@mantine/form";
-import { pixelMetrics } from "@/components/navbar/EditorNavbarThemesSection";
+import { pixelMetrics } from "@/components/navbar/EditorNavbarThemesSection/index";
 
 type TypographyModalProps = {
   controls: { opened: boolean; close: () => void };
