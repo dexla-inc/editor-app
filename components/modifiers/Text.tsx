@@ -185,7 +185,7 @@ export const Modifier = withModifier(
                   debouncedTreeUpdate(selectedComponentIds, {
                     order: parseInt(value as string, 10),
                     style: {
-                      fontSize: size.fontSize,
+                      fontSize: `${size.fontSize}px`,
                       lineHeight: size.lineHeight,
                     },
                   });
