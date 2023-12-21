@@ -1,4 +1,3 @@
-import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { IDENTIFIER } from "@/utils/branding";
@@ -36,10 +35,6 @@ export const ContainerComponent = forwardRef(
       componentProps?.style?.borderLeftWidth ||
       componentProps?.style?.borderRightWidth;
     const shouldRemoveBorder = isLive || isPreviewMode || hasBorder;
-
-    if (loading) {
-      return <MantineSkeleton height={300} />;
-    }
 
     return (
       <MantineFlex
