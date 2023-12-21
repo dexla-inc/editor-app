@@ -5,10 +5,12 @@ import { getColorValue, globalStyles } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { forwardRef, memo } from "react";
+import { CSSObject } from "@mantine/core";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
+  style: CSSObject;
 };
 
 const IconComponent = forwardRef(
@@ -25,7 +27,7 @@ const IconComponent = forwardRef(
         {...componentProps}
         color={getColorValue(theme, color)}
         bg={getColorValue(theme, bg)}
-        style={{ width: width, height: width }}
+        style={{ ...props.style, width: width, height: width }}
         ref={ref}
       >
         {component.children && component.children.length > 0

@@ -97,7 +97,6 @@ export const TypographyModal = ({
                               fontSize: `${font.fontSize}px`,
                               fontWeight: Number(font.fontWeight),
                               fontFamily: font.fontFamily,
-                              lineHeight: `${font.lineHeight}px`,
                               letterSpacing: `${font.letterSpacing}px`,
                               border: "none",
                               marginTop: `calc(${font.lineHeight}px / 2)`,
@@ -124,6 +123,21 @@ export const TypographyModal = ({
                         <Select
                           data={pixelMetrics}
                           {...form.getInputProps(`fonts.${index}.lineHeight`)}
+                          value={
+                            font.lineHeight === 1
+                              ? "0"
+                              : String(
+                                  Math.round(
+                                    (Number(font.lineHeight) - 1) * 100,
+                                  ),
+                                )
+                          }
+                          onChange={(value) => {
+                            form.setFieldValue(
+                              `fonts.${index}.lineHeight`,
+                              String(Number(value) / 100 + 1),
+                            );
+                          }}
                           size={INPUT_SIZE}
                         />
                       </td>
