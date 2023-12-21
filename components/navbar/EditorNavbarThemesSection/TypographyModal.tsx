@@ -7,10 +7,9 @@ import {
   SelectItem,
   Stack,
   Table,
-  Text,
+  TextInput,
   Title,
 } from "@mantine/core";
-import { UnitInput } from "@/components/UnitInput";
 import { INPUT_SIZE } from "@/utils/config";
 import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
 import { useQuery } from "@tanstack/react-query";
@@ -90,27 +89,22 @@ export const TypographyModal = ({
                   return (
                     <tr key={index}>
                       <td style={{ paddingTop: 0, paddingBottom: 0 }}>
-                        <Text
-                          component={font.tag as any}
-                          fz={`${font.fontSize}px`}
-                          fw={font.fontWeight}
-                          sx={{
-                            outline: "none !important",
-                            fontFamily: font.fontFamily,
-                            lineHeight: `${font.lineHeight}px`,
-                            letterSpacing: `${font.letterSpacing}px`,
+                        <TextInput
+                          {...form.getInputProps(`fonts.${index}.tag`)}
+                          styles={{
+                            root: { width: "100px" },
+                            input: {
+                              fontSize: `${font.fontSize}px`,
+                              fontWeight: Number(font.fontWeight),
+                              fontFamily: font.fontFamily,
+                              lineHeight: `${font.lineHeight}px`,
+                              letterSpacing: `${font.letterSpacing}px`,
+                              border: "none",
+                              marginTop: `calc(${font.lineHeight}px / 2)`,
+                              marginBottom: `calc(${font.lineHeight}px / 2)`,
+                            },
                           }}
-                          styles={{ root: { outline: "none !important" } }}
-                          contentEditable
-                          onInput={(e: any) =>
-                            form.setFieldValue(
-                              `fonts.${index}.tag`,
-                              e.target.textContent,
-                            )
-                          }
-                        >
-                          {font.tag}
-                        </Text>
+                        />
                       </td>
                       <td>
                         <Select
