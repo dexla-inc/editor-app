@@ -1,7 +1,6 @@
 import { MarkerItem, Options } from "@/components/modifiers/GoogleMap";
-import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { Component } from "@/utils/editor";
-import { BoxProps, Text } from "@mantine/core";
+import { BoxProps, Skeleton, Text } from "@mantine/core";
 import {
   GoogleMap,
   InfoWindow,
@@ -100,7 +99,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
   }
 
   return (
-    <MantineSkeleton visible={loading}>
+    <Skeleton visible={loading}>
       <GoogleMap
         key={apiKey}
         center={center}
@@ -130,6 +129,6 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
             </Marker>
           ))}
       </GoogleMap>
-    </MantineSkeleton>
+    </Skeleton>
   );
 };

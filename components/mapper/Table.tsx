@@ -1,4 +1,3 @@
-import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getAllComponentsByName } from "@/utils/editor";
