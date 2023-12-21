@@ -22,7 +22,6 @@ export const Icon = forwardRef(
 
     const sizeAsNumber =
       typeof size === "number" ? size : globalStyles().sizing.icon[size];
-    console.log(props);
     return (
       <Box
         // @ts-ignore

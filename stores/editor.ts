@@ -65,6 +65,7 @@ export const emptyEditorTree = {
               gap: "sm",
               style: {
                 alignSelf: "start",
+                alignContent: "baseline",
                 outline: GRAY_OUTLINE,
                 outlineOffset: "-2px",
                 height: "100vh",

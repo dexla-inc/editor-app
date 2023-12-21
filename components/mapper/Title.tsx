@@ -52,9 +52,7 @@ const TitleComponent = ({ renderTree, component, ...props }: Props) => {
     const path = dataPath.replaceAll("[0]", `[${repeatedIndex}]`);
     value = get(data?.base ?? {}, path) ?? children;
   }
-  // if (children === "User Cards") {
-  //   console.log(props.style, props.sx);
-  // }
+
   return (
     <MantineTitle
       ref={ref}
