@@ -1,8 +1,8 @@
 import { Chart } from "@/components/mapper/charts/Chart";
-import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
+import { Skeleton } from "@mantine/core";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -12,10 +12,6 @@ type Props = {
 export const RadarChart = (props: Props) => {
   const { loading } = props.component.props as any;
   const theme = useEditorStore((state) => state.theme);
-
-  if (loading) {
-    return <MantineSkeleton height={300} />;
-  }
 
   const customProps = merge({}, props, {
     component: {
@@ -37,5 +33,9 @@ export const RadarChart = (props: Props) => {
     },
   });
 
-  return <Chart {...customProps} />;
+  return (
+    <Skeleton visible={loading}>
+      <Chart {...customProps} />
+    </Skeleton>
+  );
 };

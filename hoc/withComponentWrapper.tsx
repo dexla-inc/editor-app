@@ -1,4 +1,4 @@
-import { Tooltip } from "@mantine/core";
+import { Skeleton, Tooltip } from "@mantine/core";
 import { ComponentType, Fragment } from "react";
 
 export const withComponentWrapper = <T extends {}>(
@@ -6,7 +6,8 @@ export const withComponentWrapper = <T extends {}>(
 ) => {
   const Config = (props: any) => {
     const hasTooltip = !!props.component?.props?.tooltip;
-    const Wrapper = hasTooltip ? Tooltip : Fragment;
+    const isLoading = props.component.props?.loading;
+    const Wrapper = hasTooltip ? Tooltip : isLoading ? Skeleton : Fragment;
 
     return (
       // @ts-ignore
@@ -17,6 +18,8 @@ export const withComponentWrapper = <T extends {}>(
               color: props.component?.props?.tooltipColor,
               withArrow: true,
             }
+          : isLoading
+          ? { visible: true }
           : {})}
       >
         <Component {...props} />

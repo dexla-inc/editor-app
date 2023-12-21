@@ -5,6 +5,9 @@ import {
   Text as MantineText,
   ScrollArea,
 } from "@mantine/core";
+import { forwardRef, memo } from "react";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { isSame } from "@/utils/componentComparison";
 
 type LinkProps = { text: string; link: string; url: string };
 
@@ -27,18 +30,26 @@ const FixedLink = ({ text, link, url }: LinkProps) => (
   </MantineGroup>
 );
 
-export const CustomDropdown = ({ children, components, ...props }: any) => {
-  const isComponent = components.customText || components.customLinkText;
-  return (
-    <MantineBox component={ScrollArea} {...props}>
-      {children}
-      {isComponent && (
-        <FixedLink
-          text={components.customText}
-          link={components.customLinkText}
-          url={components.customLinkUrl}
-        />
-      )}
-    </MantineBox>
-  );
-};
+const CustomDropdownComponent = forwardRef(
+  ({ children, components, ...props }: any, ref) => {
+    const isComponent = components.customText || components.customLinkText;
+    return (
+      <MantineBox ref={ref} component={ScrollArea} {...props}>
+        {children}
+        {isComponent && (
+          <FixedLink
+            text={components.customText}
+            link={components.customLinkText}
+            url={components.customLinkUrl}
+          />
+        )}
+      </MantineBox>
+    );
+  },
+);
+CustomDropdownComponent.displayName = "CustomDropdown";
+
+export const CustomDropdown = memo(
+  withComponentWrapper<any>(CustomDropdownComponent),
+  isSame,
+);

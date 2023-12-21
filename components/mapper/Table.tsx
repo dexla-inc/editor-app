@@ -13,144 +13,145 @@ import {
   MantineReactTable,
   useMantineReactTable,
 } from "mantine-react-table";
-import { memo, useEffect, useState } from "react";
+import { forwardRef, memo, useEffect, useState } from "react";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & TableProps;
 
-const TableComponent = ({ renderTree, component, ...props }: Props) => {
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+const TableComponent = forwardRef(
+  ({ renderTree, component, ...props }: Props, ref) => {
+    const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
 
-  const {
-    children,
-    data: dataProp,
-    exampleData = {},
-    headers = {},
-    config = {},
-    dataPath = "",
-    repeatedIndex,
-    triggers,
-    ...componentProps
-  } = component.props as any;
+    const {
+      children,
+      data: dataProp,
+      exampleData = {},
+      headers = {},
+      config = {},
+      dataPath = "",
+      repeatedIndex,
+      triggers,
+      ...componentProps
+    } = component.props as any;
 
-  const { onSort, onRowSelect, ...tableTriggers } = triggers ?? {};
+    const { onSort, onRowSelect, ...tableTriggers } = triggers ?? {};
 
-  const [sorting, setSorting] = useState<MRT_SortingState>([]);
-  const [rowsSelected, setRowsSelected] = useState<any>([]);
+    const [sorting, setSorting] = useState<MRT_SortingState>([]);
+    const [rowsSelected, setRowsSelected] = useState<any>([]);
 
-  useEffect(() => {
-    const sortingString = sorting
-      .map((item) => (!item.desc ? "" : "-") + item.id)
-      .reverse()
-      .join(",");
+    useEffect(() => {
+      const sortingString = sorting
+        .map((item) => (!item.desc ? "" : "-") + item.id)
+        .reverse()
+        .join(",");
 
-    onSort && onSort(sortingString);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sorting]);
+      onSort && onSort(sortingString);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sorting]);
 
-  useEffect(() => {
-    onRowSelect && onRowSelect(Object.keys(rowsSelected));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rowsSelected]);
+    useEffect(() => {
+      onRowSelect && onRowSelect(Object.keys(rowsSelected));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [rowsSelected]);
 
-  let data = [];
+    let data = [];
 
-  if (isPreviewMode) {
-    data = cloneDeep(
-      dataProp?.value ?? dataProp ?? exampleData.value ?? exampleData,
+    if (isPreviewMode) {
+      data = cloneDeep(
+        dataProp?.value ?? dataProp ?? exampleData.value ?? exampleData,
+      );
+      if (dataPath) {
+        const path = dataPath.replaceAll("[0]", "");
+        data = get(dataProp, `base.${path}`, dataProp?.value ?? dataProp);
+      }
+    } else {
+      data = exampleData.value ?? exampleData;
+      if (dataPath) {
+        const path = dataPath.replaceAll("[0]", "");
+        data = get(data, path, data);
+      }
+    }
+
+    const dataSample = ((data as any) ?? [])?.[0];
+    const isAllHeadersHidden = Object.values(headers).every((val) => !val);
+    const columns = dataSample
+      ? Object.keys(dataSample).reduce((acc: any[], key: string) => {
+          if (isEmpty(headers) || isAllHeadersHidden || headers?.[key]) {
+            return acc.concat({
+              header: startCase(key),
+              accessorKey: key,
+              columnDefType: "display",
+              enableSorting: config?.sorting,
+              enablePagination: true,
+              Cell: ({ row }: any) => {
+                const val = row.original[key];
+                return typeof val === "object" ? JSON.stringify(val) : val;
+              },
+            });
+          }
+
+          return acc;
+        }, [])
+      : [];
+
+    const table = useMantineReactTable({
+      data: data ?? [],
+      columns,
+      initialState: { pagination: { pageIndex: 1, pageSize: 5 } },
+      enableSorting: config?.sorting,
+      enableRowSelection: config?.select,
+      enableBottomToolbar: false,
+      enableTopToolbar: false,
+      enableColumnActions: false,
+      enableDensityToggle: false,
+      enableFullScreenToggle: false,
+      enableHiding: false,
+      enableColumnFilters: false,
+      state: {
+        isLoading: componentProps.loading,
+        sorting,
+        rowSelection: rowsSelected,
+      },
+      manualSorting: true,
+      manualPagination: true,
+      isMultiSortEvent: () => true,
+      onSortingChange: setSorting,
+      onRowSelectionChange: setRowsSelected,
+      mantineTableProps: {
+        striped: true,
+        withColumnBorders: true,
+        sx: props.style as any,
+      },
+      mantineTableHeadRowProps: { sx: { backgroundColor: "lightgrey" } },
+    });
+
+    const paginationChildren = getAllComponentsByName(component, "Pagination");
+    if (paginationChildren[0] && dataProp?.base) {
+      paginationChildren[0]!.props!.total = exampleData?.base?.total_pages;
+      paginationChildren[0]!.props!.value = exampleData?.base?.page;
+    }
+
+    return (
+      <ScrollArea
+        w={props.style?.width ?? "100%"}
+        h={props.style?.height ?? "auto"}
+      >
+        <MantineReactTable
+          ref={ref}
+          {...props}
+          {...componentProps}
+          {...tableTriggers}
+          table={table}
+        />
+        {dataProp?.base &&
+          component.children?.map((child) => renderTree(merge(child)))}
+      </ScrollArea>
     );
-    if (dataPath) {
-      const path = dataPath.replaceAll("[0]", "");
-      data = get(dataProp, `base.${path}`, dataProp?.value ?? dataProp);
-    }
-  } else {
-    data = exampleData.value ?? exampleData;
-    if (dataPath) {
-      const path = dataPath.replaceAll("[0]", "");
-      data = get(data, path, data);
-    }
-  }
+  },
+);
+TableComponent.displayName = "Table";
 
-  const dataSample = ((data as any) ?? [])?.[0];
-  const isAllHeadersHidden = Object.values(headers).every((val) => !val);
-  const columns = dataSample
-    ? Object.keys(dataSample).reduce((acc: any[], key: string) => {
-        if (isEmpty(headers) || isAllHeadersHidden || headers?.[key]) {
-          return acc.concat({
-            header: startCase(key),
-            accessorKey: key,
-            columnDefType: "display",
-            enableSorting: config?.sorting,
-            enablePagination: true,
-            Cell: ({ row }: any) => {
-              const val = row.original[key];
-              return typeof val === "object" ? JSON.stringify(val) : val;
-            },
-          });
-        }
-
-        return acc;
-      }, [])
-    : [];
-
-  const table = useMantineReactTable({
-    data: data ?? [],
-    columns,
-    initialState: { pagination: { pageIndex: 1, pageSize: 5 } },
-    enableSorting: config?.sorting,
-    enableRowSelection: config?.select,
-    enableBottomToolbar: false,
-    enableTopToolbar: false,
-    enableColumnActions: false,
-    enableDensityToggle: false,
-    enableFullScreenToggle: false,
-    enableHiding: false,
-    enableColumnFilters: false,
-    state: {
-      isLoading: componentProps.loading,
-      sorting,
-      rowSelection: rowsSelected,
-    },
-    manualSorting: true,
-    manualPagination: true,
-    isMultiSortEvent: () => true,
-    onSortingChange: setSorting,
-    onRowSelectionChange: setRowsSelected,
-    mantineTableProps: {
-      striped: true,
-      withColumnBorders: true,
-      sx: props.style as any,
-    },
-    mantineTableHeadRowProps: { sx: { backgroundColor: "lightgrey" } },
-  });
-
-  if (componentProps.loading) {
-    return <MantineSkeleton height={300} />;
-  }
-
-  const paginationChildren = getAllComponentsByName(component, "Pagination");
-  if (paginationChildren[0] && dataProp?.base) {
-    paginationChildren[0]!.props!.total = exampleData?.base?.total_pages;
-    paginationChildren[0]!.props!.value = exampleData?.base?.page;
-  }
-
-  return (
-    <ScrollArea
-      w={props.style?.width ?? "100%"}
-      h={props.style?.height ?? "auto"}
-    >
-      <MantineReactTable
-        {...props}
-        {...componentProps}
-        {...tableTriggers}
-        table={table}
-      />
-      {dataProp?.base &&
-        component.children?.map((child) => renderTree(merge(child)))}
-    </ScrollArea>
-  );
-};
-
-export const Table = memo(TableComponent, isSame);
+export const Table = memo(withComponentWrapper<Props>(TableComponent), isSame);
