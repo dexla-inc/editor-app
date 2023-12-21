@@ -8,7 +8,7 @@ type Props = {
   name: string;
   size?: number | MantineSize;
   bg?: string;
-  sx: CSSObject;
+  sx?: CSSObject;
 } & Icons.TablerIconsProps;
 
 export const Icon = forwardRef(
