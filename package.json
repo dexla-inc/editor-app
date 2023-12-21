@@ -15,6 +15,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
     "@faker-js/faker": "6.1.2",
+    "@flyyer/use-googlefonts": "^0.4.2",
     "@formkit/auto-animate": "^0.8.0",
     "@iarna/toml": "^2.2.5",
     "@liveblocks/client": "^1.8.2",

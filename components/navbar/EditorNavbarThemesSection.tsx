@@ -11,12 +11,13 @@ import { getTheme } from "@/requests/themes/queries";
 import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
-import { INPUT_SIZE } from "@/utils/config";
+import { ICON_SIZE, INPUT_SIZE } from "@/utils/config";
 import { getGoogleFonts } from "@/utils/googleFonts";
 import {
-  Box,
+  ActionIcon,
   Button,
   Flex,
+  Group,
   SegmentedControl,
   Select,
   Stack,
@@ -27,410 +28,355 @@ import {
 import { useForm } from "@mantine/form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-
-const fontTags = [
-  { label: "H1", value: "H1" },
-  { label: "H2", value: "H2" },
-  { label: "H3", value: "H3" },
-  { label: "H4", value: "H4" },
-  { label: "H5", value: "H5" },
-  { label: "H6", value: "H6" },
-  { label: "P", value: "p" },
-];
-
-const fontWeights = [
-  "100",
-  "200",
-  "300",
-  "400",
-  "500",
-  "600",
-  "700",
-  "800",
-  "900",
-];
+import { useState } from "react";
+import { IconArrowsDiagonal2 } from "@tabler/icons-react";
+import { useGoogleFonts } from "@flyyer/use-googlefonts";
+import { SelectFont } from "@/components/navbar/SelectFont";
+import { TypographyModal } from "@/components/navbar/EditorNavbarThemesSection/TypographyModal";
+import { useDisclosure } from "@mantine/hooks";
 
 type EditorNavbarThemesSectionProps = {
   isActive: boolean;
 };
 
-export const EditorNavbarThemesSection = ({
-  isActive,
-}: EditorNavbarThemesSectionProps) => {
-  const router = useRouter();
-  const startLoading = useAppStore((state) => state.startLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
-  const [currentFontTag, setCurrentFontTag] = useState<string>("H1");
-  const [fonts, setFonts] = useState<string[]>([]);
-  const [allFonts, setAllFonts] = useState<string[]>([]);
-  const [fontSearch, setFontSearch] = useState("");
-  const [headingFonts, setHeadingFonts] = useState<string[]>([]);
-  const [headingFontSearch, setHeadingFontSearch] = useState("");
-  const mantineTheme = useMantineTheme();
-  const queryClient = useQueryClient();
+export const fontWeightLabels = {
+  100: "Thin",
+  200: "Extra Light",
+  300: "Light",
+  400: "Regular",
+  500: "Medium",
+  600: "Semi Bold",
+  700: "Bold",
+  800: "Extra Bold",
+  900: "Black",
+};
 
-  const { usersTheme, setUsersTheme } = useEditorStore((state) => ({
-    usersTheme: state.theme,
-    setUsersTheme: state.setTheme,
-  }));
+export const pixelMetrics = Array.from({ length: 26 }, (_, index) =>
+  String(index * 4),
+);
 
-  const projectId = router.query.id as string;
+export const EditorNavbarThemesSection =
+  ({}: EditorNavbarThemesSectionProps) => {
+    const router = useRouter();
+    const startLoading = useAppStore((state) => state.startLoading);
+    const stopLoading = useAppStore((state) => state.stopLoading);
+    const [currentFontIndex, setCurrentFontIndex] = useState<number>(0);
+    const mantineTheme = useMantineTheme();
+    const queryClient = useQueryClient();
+    const [opened, { open, close }] = useDisclosure(false);
 
-  const userTheme = useQuery({
-    queryKey: ["theme"],
-    queryFn: () => getTheme(projectId),
-    enabled: !!projectId && isActive,
-  });
+    const { usersTheme, setUsersTheme } = useEditorStore((state) => ({
+      usersTheme: state.theme,
+      setUsersTheme: state.setTheme,
+    }));
 
-  const { mutate } = useMutation(saveTheme, {
-    onSettled(_, err) {
-      if (err) {
-        console.error(err);
-      }
+    const projectId = router.query.id as string;
 
-      queryClient.invalidateQueries(["theme"]);
-    },
-  });
-
-  const form = useForm<ThemeResponse>({
-    initialValues: {
-      colors: [],
-      fonts: [],
-      responsiveBreakpoints: [],
-      faviconUrl: "",
-      logoUrl: "",
-      logos: [],
-      defaultRadius: "sm",
-      defaultSpacing: "md",
-      cardStyle: "OUTLINED_ROUNDED",
-      loader: "OVAL",
-      focusRing: "DEFAULT",
-      hasCompactButtons: true,
-      defaultFont: "Arial, sans-serif",
-      theme: "LIGHT",
-    },
-    validate: {},
-  });
-
-  useEffect(() => {
-    if (userTheme.isFetched) {
-      form.setValues(userTheme.data as ThemeResponse);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userTheme.isFetched]);
-
-  const onSubmit = async (values: ThemeResponse) => {
-    try {
-      startLoading({
-        id: "saving-brand",
-        title: "Saving Brand",
-        message: "Wait while your brand is being saved",
-      });
-
-      form.validate();
-
-      await mutate({ params: values, projectId: projectId });
-
-      stopLoading({
-        id: "saving-brand",
-        title: "Brand Saved",
-        message: "The brand was saved successfully",
-      });
-    } catch (error) {
-      console.error(error);
-      stopLoading({
-        id: "saving-brand",
-        title: "Saving Brand Failed",
-        message: "Validation failed",
-      });
-    }
-  };
-
-  const setFontValue = (key: string, value: string) => {
-    const index = fontTags.findIndex((ft) => ft.value === currentFontTag);
-    form.setFieldValue(`fonts.${index}`, {
-      ...form.values.fonts[index],
-      [key]: value,
+    useQuery({
+      queryKey: ["theme"],
+      queryFn: async () => {
+        const theme = await getTheme(projectId);
+        form.setValues(theme);
+      },
+      enabled: !!projectId,
     });
-  };
 
-  const setHeadingsFontFamily = (value: string) => {
-    fontTags.forEach((_, index) => {
-      form.setFieldValue(`fonts.${index}`, {
-        ...form.values.fonts[index],
-        fontFamily: value,
-      });
+    const { data: googleFontsData = [] } = useQuery({
+      queryKey: ["fonts"],
+      queryFn: () => getGoogleFonts(),
     });
-  };
 
-  const currentFont = form.values.fonts.find((f) => f.tag === currentFontTag);
+    const { mutate } = useMutation(saveTheme, {
+      onMutate: () => {
+        startLoading({
+          id: "saving-brand",
+          title: "Saving Brand",
+          message: "Wait while your brand is being saved",
+        });
 
-  useEffect(() => {
-    const getFonts = async () => {
-      try {
-        const googleFonts = await getGoogleFonts();
-        if (googleFonts) {
-          const fonts = googleFonts.map((f: any) => f.family);
-          setAllFonts(fonts);
-        }
-      } catch (error) {
-        console.log(error);
-      }
+        form.validate();
+
+        return {};
+      },
+      onError: (error) => {
+        console.error(error);
+        stopLoading({
+          id: "saving-brand",
+          title: "Saving Brand Failed",
+          message: "Validation failed",
+        });
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries(["theme"]);
+        stopLoading({
+          id: "saving-brand",
+          title: "Brand Saved",
+          message: "The brand was saved successfully",
+        });
+      },
+    });
+
+    const form = useForm<ThemeResponse>({
+      initialValues: {
+        colors: [],
+        fonts: [],
+        responsiveBreakpoints: [],
+        faviconUrl: "",
+        logoUrl: "",
+        logos: [],
+        defaultRadius: "sm",
+        defaultSpacing: "md",
+        cardStyle: "OUTLINED_ROUNDED",
+        loader: "OVAL",
+        focusRing: "DEFAULT",
+        hasCompactButtons: true,
+        defaultFont: "Arial, sans-serif",
+        theme: "LIGHT",
+      },
+      validate: {},
+    });
+
+    useGoogleFonts(
+      [form.values.defaultFont, form.values.fonts[0]?.fontFamily]
+        .filter(Boolean)
+        .map((family) => ({ family: family ?? "", styles: ["100...900"] })),
+    );
+
+    const onSubmit = async (values: ThemeResponse) => {
+      mutate({ params: values, projectId: projectId });
     };
 
-    getFonts();
-  }, []);
+    const selectedTagFontWeights =
+      googleFontsData
+        .find(
+          (f: any) =>
+            f.family === form.values.fonts[currentFontIndex]?.fontFamily,
+        )
+        ?.variants?.filter((v: string) => !isNaN(Number(v))) || [];
 
-  useEffect(() => {
-    const filteredFonts = allFonts
-      .filter((f) => f.toLowerCase().includes(fontSearch.toLowerCase()))
-      .slice(0, 10);
-    setFonts(filteredFonts);
-  }, [allFonts, fontSearch]);
+    const weightsList = selectedTagFontWeights.map(
+      (v: keyof typeof fontWeightLabels) => ({
+        label: fontWeightLabels[v],
+        value: v,
+      }),
+    );
 
-  useEffect(() => {
-    const filteredFonts = allFonts
-      .filter((f) => f.toLowerCase().includes(headingFontSearch.toLowerCase()))
-      .slice(0, 10);
-    setHeadingFonts(filteredFonts);
-  }, [allFonts, headingFontSearch]);
-
-  return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
-      <>
-        <Stack spacing="xl">
-          <Stack spacing={4}>
-            <Title order={6} fw={600}>
-              Color palette
-            </Title>
-            {form.values?.colors &&
-              form.values?.colors.map(({ friendlyName, hex, name }, index) => (
-                <ColorSelector
-                  size={30}
-                  key={`color-${name}`}
-                  friendlyName={friendlyName}
-                  hex={hex}
-                  isDefault={form.values.colors[index].isDefault}
-                  mantineTheme={mantineTheme}
-                  onValueChange={(value) => {
-                    form.setFieldValue(
-                      `colors.${index}.friendlyName`,
-                      value.friendlyName,
-                    );
-                    form.setFieldValue(`colors.${index}.hex`, value.hex);
-                    if (!form.values.colors[index].isDefault) {
-                      form.setFieldValue(
-                        `colors.${index}.name`,
-                        value.friendlyName,
-                      );
-                    }
-                  }}
-                  deleteColor={() => {
-                    if (!form.values.colors[index].isDefault) {
-                      form.removeListItem("colors", index);
-                    }
-                  }}
-                />
-              ))}
-
-            <Button
-              mt="md"
-              type="button"
-              variant="outline"
-              fullWidth
-              compact
-              onClick={() =>
-                form.insertListItem("colors", {
-                  name: "",
-                  friendlyName: "",
-                  hex: "",
-                  brightness: 0,
-                  isDefault: false,
-                })
-              }
-            >
-              Add Color
-            </Button>
-            <Button type="submit" size="sm" fullWidth compact>
-              Save
-            </Button>
-          </Stack>
-          <Stack spacing={4}>
-            <Title order={6} fw={600}>
-              General defaults
-            </Title>
-            <CardStyleSelector
-              defaultValue={form.values.cardStyle}
-              {...form.getInputProps("cardStyle")}
-              onChange={(value) => {
-                form.setFieldValue("cardStyle", value as CardStyle);
-                setUsersTheme({
-                  ...usersTheme,
-                  cardStyle: value as CardStyle,
-                });
-              }}
-              size={INPUT_SIZE}
-            />
-
-            <SizeSelector
-              label="Default border edges"
-              defaultValue={form.values.defaultRadius}
-              {...form.getInputProps("defaultRadius")}
-              size={INPUT_SIZE}
-            />
-            <SizeSelector
-              label="Default spacing"
-              defaultValue={form.values.defaultSpacing}
-              {...form.getInputProps("defaultSpacing")}
-              size={INPUT_SIZE}
-            />
-            <SwitchSelector
-              topLabel="Compact buttons"
-              checked={form.values.hasCompactButtons}
-              {...form.getInputProps("hasCompactButtons")}
-            />
-            <LoaderSelector
-              defaultValue={form.values.loader}
-              {...form.getInputProps("loader")}
-              size={INPUT_SIZE}
-            />
-            <FocusRingSelector
-              defaultValue={form.values.focusRing}
-              {...form.getInputProps("focusRing")}
-              size={INPUT_SIZE}
-            />
-
-            <TextInput
-              label="Favicon"
-              placeholder="https://example.com/favicon.ico"
-              defaultValue={form.values.faviconUrl}
-              {...form.getInputProps("faviconUrl")}
-              size={INPUT_SIZE}
-            />
-            <TextInput
-              label="Logo"
-              placeholder="https://example.com/logo.png"
-              defaultValue={form.values.logoUrl}
-              {...form.getInputProps("logoUrl")}
-              size={INPUT_SIZE}
-            />
-          </Stack>
-          <Stack>
-            <Title order={6} fw={600}>
-              Fonts
-            </Title>
-            <Select
-              label="Default Font Family"
-              placeholder="Type to search"
-              value={form?.values?.defaultFont}
-              data={fonts}
-              onChange={(value: string) => {
-                form.setFieldValue("defaultFont", value);
-              }}
-              searchable
-              searchValue={fontSearch}
-              onSearchChange={setFontSearch}
-              size={INPUT_SIZE}
-            />
-            <Select
-              label="Headings Font Family"
-              placeholder="Type to search"
-              value={currentFont?.fontFamily}
-              data={headingFonts}
-              onChange={(value: string) => {
-                setHeadingsFontFamily(value);
-              }}
-              searchable
-              searchValue={headingFontSearch}
-              onSearchChange={setHeadingFontSearch}
-              size={INPUT_SIZE}
-            />
-            <SegmentedControl
-              fullWidth
-              size={INPUT_SIZE}
-              data={fontTags}
-              onChange={(value: string) => {
-                const index = fontTags.findIndex((ft) => ft.value === value);
-                form.setFieldValue(`fonts.${index}`, {
-                  ...form.values.fonts[index],
-                  tag: value,
-                });
-                setCurrentFontTag(value);
-              }}
-            />
-            <Flex gap="sm" align="center">
-              <Select
-                value={currentFont?.fontWeight}
-                label="Weight"
-                data={fontWeights}
-                onChange={(value: string) => {
-                  setFontValue("fontWeight", value);
-                }}
-                size={INPUT_SIZE}
-              />
-              <UnitInput
-                label="Size"
-                defaultValue={currentFont?.fontSize}
-                onChange={(value: string) => {
-                  setFontValue("fontSize", value);
-                }}
-                size={INPUT_SIZE}
-              />
-            </Flex>
-            <Flex align="center" gap="sm">
-              <UnitInput
-                label="Line Height"
-                defaultValue={currentFont?.lineHeight}
-                onChange={(value: string) => {
-                  setFontValue("lineHeight", value);
-                }}
-                size={INPUT_SIZE}
-              />
-              <UnitInput
-                label="Letter Spacing"
-                defaultValue={currentFont?.letterSpacing}
-                onChange={(value: string) => {
-                  setFontValue("letterSpacing", value);
-                }}
-                size={INPUT_SIZE}
-              />
-            </Flex>
-          </Stack>
-          <Box>
-            <Stack spacing="xs">
+    return (
+      <form onSubmit={form.onSubmit(onSubmit)}>
+        <>
+          <TypographyModal
+            controls={{ opened, close }}
+            form={form}
+            onSubmit={form.onSubmit(onSubmit)}
+            weightsList={weightsList}
+          />
+          <Stack spacing="xl">
+            <Stack spacing={4}>
               <Title order={6} fw={600}>
-                Responsive Breakpoints
+                Color palette
               </Title>
-              {form.values.responsiveBreakpoints &&
-                form.values.responsiveBreakpoints.map(
-                  ({ type, breakpoint }, index) => (
-                    <Flex key={index} align="center" gap="sm">
-                      <Flex direction="column">
-                        <TextInput value={type} disabled size={INPUT_SIZE} />
-                      </Flex>
-                      <Flex direction="column">
-                        <UnitInput
-                          value={breakpoint as any}
-                          onChange={(value) =>
-                            form.setFieldValue(
-                              `responsiveBreakpoints.${index}.breakpoint`,
-                              value,
-                            )
-                          }
-                          size={INPUT_SIZE}
-                        />
-                      </Flex>
-                    </Flex>
+              {form.values?.colors &&
+                form.values?.colors.map(
+                  ({ friendlyName, hex, name }, index) => (
+                    <ColorSelector
+                      size={30}
+                      key={`color-${name}`}
+                      friendlyName={friendlyName}
+                      hex={hex}
+                      isDefault={form.values.colors[index].isDefault}
+                      mantineTheme={mantineTheme}
+                      onValueChange={(value) => {
+                        form.setFieldValue(
+                          `colors.${index}.friendlyName`,
+                          value.friendlyName,
+                        );
+                        form.setFieldValue(`colors.${index}.hex`, value.hex);
+                        if (!form.values.colors[index].isDefault) {
+                          form.setFieldValue(
+                            `colors.${index}.name`,
+                            value.friendlyName,
+                          );
+                        }
+                      }}
+                      deleteColor={() => {
+                        if (!form.values.colors[index].isDefault) {
+                          form.removeListItem("colors", index);
+                        }
+                      }}
+                    />
                   ),
                 )}
+
+              <Button
+                mt="md"
+                type="button"
+                variant="outline"
+                fullWidth
+                compact
+                onClick={() =>
+                  form.insertListItem("colors", {
+                    name: "",
+                    friendlyName: "",
+                    hex: "",
+                    brightness: 0,
+                    isDefault: false,
+                  })
+                }
+              >
+                Add Color
+              </Button>
+              <Button type="submit" size="sm" fullWidth compact>
+                Save
+              </Button>
             </Stack>
-          </Box>
-        </Stack>
-        <Button type="submit" size="sm" fullWidth my="xl" compact>
-          Save
-        </Button>
-      </>
-    </form>
-  );
-};
+            <Stack>
+              <Group position="apart">
+                <Title order={6} fw={600}>
+                  Typography
+                </Title>
+
+                <ActionIcon onClick={open} variant="default" radius="xs">
+                  <IconArrowsDiagonal2
+                    style={{ transform: "rotate(45deg)" }}
+                    size={ICON_SIZE}
+                  />
+                </ActionIcon>
+              </Group>
+              <SelectFont
+                label="Default Font Family"
+                {...form.getInputProps("defaultFont")}
+                onChange={(value: string) => {
+                  form.setFieldValue(`defaultFont`, value);
+                  form.values.fonts.forEach((font, index) => {
+                    if (!font.tag.toLowerCase().startsWith("h")) {
+                      form.setFieldValue(`fonts.${index}.fontFamily`, value);
+                    }
+                  });
+                }}
+              />
+              <SelectFont
+                label="Headings Font Family"
+                value={form.values.fonts[0]?.fontFamily}
+                onChange={(value: string) => {
+                  form.values.fonts.forEach((font, index) => {
+                    if (font.tag.toLowerCase().startsWith("h")) {
+                      form.setFieldValue(`fonts.${index}.fontFamily`, value);
+                    }
+                  });
+                }}
+              />
+              <SegmentedControl
+                fullWidth
+                size={INPUT_SIZE}
+                data={form.values.fonts.map((f) => f.tag).filter(Boolean)}
+                value={form.values.fonts[currentFontIndex]?.tag}
+                onChange={(value: string) => {
+                  const index = form.values.fonts.findIndex(
+                    (ft) => ft.tag === value,
+                  );
+                  setCurrentFontIndex(index);
+                }}
+              />
+              <Flex gap="sm" align="center">
+                <Select
+                  label="Weight"
+                  data={weightsList}
+                  {...form.getInputProps(
+                    `fonts.${currentFontIndex}.fontWeight`,
+                  )}
+                  size={INPUT_SIZE}
+                />
+                <Select
+                  label="Size"
+                  data={pixelMetrics}
+                  {...form.getInputProps(`fonts.${currentFontIndex}.fontSize`)}
+                  size={INPUT_SIZE}
+                />
+              </Flex>
+              <Flex align="center" gap="sm">
+                <Select
+                  label="Line Height"
+                  data={pixelMetrics}
+                  {...form.getInputProps(
+                    `fonts.${currentFontIndex}.lineHeight`,
+                  )}
+                  size={INPUT_SIZE}
+                />
+                <Select
+                  label="Letter Spacing"
+                  data={pixelMetrics}
+                  {...form.getInputProps(
+                    `fonts.${currentFontIndex}.letterSpacing`,
+                  )}
+                  size={INPUT_SIZE}
+                />
+              </Flex>
+            </Stack>
+            <Stack spacing={4}>
+              <Title order={6} fw={600}>
+                General defaults
+              </Title>
+              <CardStyleSelector
+                defaultValue={form.values.cardStyle}
+                {...form.getInputProps("cardStyle")}
+                onChange={(value) => {
+                  form.setFieldValue("cardStyle", value as CardStyle);
+                  setUsersTheme({
+                    ...usersTheme,
+                    cardStyle: value as CardStyle,
+                  });
+                }}
+                size={INPUT_SIZE}
+              />
+
+              <SizeSelector
+                label="Default border edges"
+                defaultValue={form.values.defaultRadius}
+                {...form.getInputProps("defaultRadius")}
+                size={INPUT_SIZE}
+              />
+              <SizeSelector
+                label="Default spacing"
+                defaultValue={form.values.defaultSpacing}
+                {...form.getInputProps("defaultSpacing")}
+                size={INPUT_SIZE}
+              />
+              <SwitchSelector
+                topLabel="Compact buttons"
+                checked={form.values.hasCompactButtons}
+                {...form.getInputProps("hasCompactButtons")}
+              />
+              <LoaderSelector
+                defaultValue={form.values.loader}
+                {...form.getInputProps("loader")}
+                size={INPUT_SIZE}
+              />
+              <FocusRingSelector
+                defaultValue={form.values.focusRing}
+                {...form.getInputProps("focusRing")}
+                size={INPUT_SIZE}
+              />
+
+              <TextInput
+                label="Favicon"
+                placeholder="https://example.com/favicon.ico"
+                defaultValue={form.values.faviconUrl}
+                {...form.getInputProps("faviconUrl")}
+                size={INPUT_SIZE}
+              />
+              <TextInput
+                label="Logo"
+                placeholder="https://example.com/logo.png"
+                defaultValue={form.values.logoUrl}
+                {...form.getInputProps("logoUrl")}
+                size={INPUT_SIZE}
+              />
+            </Stack>
+          </Stack>
+          <Button type="submit" size="sm" fullWidth my="xl" compact>
+            Save
+          </Button>
+        </>
+      </form>
+    );
+  };
