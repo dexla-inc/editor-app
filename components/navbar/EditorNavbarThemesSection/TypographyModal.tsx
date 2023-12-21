@@ -7,10 +7,9 @@ import {
   SelectItem,
   Stack,
   Table,
-  Text,
+  TextInput,
   Title,
 } from "@mantine/core";
-import { UnitInput } from "@/components/UnitInput";
 import { INPUT_SIZE } from "@/utils/config";
 import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
 import { useQuery } from "@tanstack/react-query";
@@ -90,27 +89,21 @@ export const TypographyModal = ({
                   return (
                     <tr key={index}>
                       <td style={{ paddingTop: 0, paddingBottom: 0 }}>
-                        <Text
-                          component={font.tag as any}
-                          fz={`${font.fontSize}px`}
-                          fw={font.fontWeight}
-                          sx={{
-                            outline: "none !important",
-                            fontFamily: font.fontFamily,
-                            lineHeight: `${font.lineHeight}px`,
-                            letterSpacing: `${font.letterSpacing}px`,
+                        <TextInput
+                          {...form.getInputProps(`fonts.${index}.tag`)}
+                          styles={{
+                            root: { width: "100px" },
+                            input: {
+                              fontSize: `${font.fontSize}px`,
+                              fontWeight: Number(font.fontWeight),
+                              fontFamily: font.fontFamily,
+                              letterSpacing: `${font.letterSpacing}px`,
+                              border: "none",
+                              marginTop: `calc(${font.lineHeight}px / 2)`,
+                              marginBottom: `calc(${font.lineHeight}px / 2)`,
+                            },
                           }}
-                          styles={{ root: { outline: "none !important" } }}
-                          contentEditable
-                          onInput={(e: any) =>
-                            form.setFieldValue(
-                              `fonts.${index}.tag`,
-                              e.target.textContent,
-                            )
-                          }
-                        >
-                          {font.tag}
-                        </Text>
+                        />
                       </td>
                       <td>
                         <Select
@@ -130,6 +123,21 @@ export const TypographyModal = ({
                         <Select
                           data={pixelMetrics}
                           {...form.getInputProps(`fonts.${index}.lineHeight`)}
+                          value={
+                            font.lineHeight === 1
+                              ? "0"
+                              : String(
+                                  Math.round(
+                                    (Number(font.lineHeight) - 1) * 100,
+                                  ),
+                                )
+                          }
+                          onChange={(value) => {
+                            form.setFieldValue(
+                              `fonts.${index}.lineHeight`,
+                              String(Number(value) / 100 + 1),
+                            );
+                          }}
                           size={INPUT_SIZE}
                         />
                       </td>

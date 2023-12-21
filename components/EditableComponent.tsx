@@ -175,7 +175,7 @@ export const EditableComponent = ({
   const baseShadow = isPicking
     ? ORANGE_BASE_SHADOW
     : selectedByOther
-    ? `0 0 0 2px ${selectedByOther}`
+    ? `inset 0 0 0 2px ${selectedByOther}`
     : GREEN_BASE_SHADOW;
   const thinBaseShadow = isPicking
     ? THIN_ORANGE_BASE_SHADOW

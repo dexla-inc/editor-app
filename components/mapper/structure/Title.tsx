@@ -25,7 +25,7 @@ export const jsonStructure = (props?: any): Component => {
       order: order,
       style: {
         fontWeight: "bold",
-        fontSize: size.fontSize,
+        fontSize: `${size.fontSize}px`,
         lineHeight: size.lineHeight,
         width: "auto",
         height: "auto",

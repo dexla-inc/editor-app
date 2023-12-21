@@ -134,8 +134,8 @@ const ORANGE_BORDER_COLOR = "orange";
 const GREEN_BORDER_COLOR = "teal";
 const THIN_ORANGE_BASE_SHADOW = `0 0 0 1px ${theme.colors.orange[4]}`;
 const ORANGE_BASE_SHADOW = `0 0 0 2px ${theme.colors.orange[6]}`;
-const THIN_GREEN_BASE_SHADOW = `0 0 0 1px ${theme.colors.teal[4]}`;
-const GREEN_BASE_SHADOW = `0 0 0 2px ${theme.colors.teal[6]}`;
+const THIN_GREEN_BASE_SHADOW = `inset 0 0 0 1px ${theme.colors.teal[4]}`;
+const GREEN_BASE_SHADOW = `inset 0 0 0 2px ${theme.colors.teal[6]}`;
 const GRAY_OUTLINE = `2px dashed ${GRAY_BORDER_COLOR}`;
 const THIN_GRAY_OUTLINE = `1px solid ${GRAY_BORDER_COLOR}`;
 const THIN_GREEN_OUTLINE = `1px solid ${theme.colors.teal[6]}`;
@@ -254,14 +254,11 @@ const hoverStyles = (styles: any) => {
 };
 
 export const getColorValue = (theme: MantineThemeExtended, value?: string) => {
-  if (value == undefined) return "transparent";
-  const [color, index] = value.split(".");
+  if (value === undefined) return "transparent";
+  const [color, index] = value?.split(".");
 
   const _value =
-    value != "transparent"
-      ? // @ts-ignore
-        theme.colors[color][index]
-      : value;
+    value !== "transparent" ? theme.colors[color][Number(index)] : value;
 
   return _value;
 };

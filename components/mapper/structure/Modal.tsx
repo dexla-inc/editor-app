@@ -80,7 +80,7 @@ export const jsonStructure = (props?: any): Component => {
                   height: "auto",
                 },
                 name: "IconX",
-                color: theme.colors.Secondary[7] ?? "rgba(195, 195, 195, 1)",
+                color: "Secondary.7",
               },
               children: [],
               blockDroppingChildrenInside: true,

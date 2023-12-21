@@ -300,6 +300,25 @@ export const EditorNavbarThemesSection =
                   {...form.getInputProps(
                     `fonts.${currentFontIndex}.lineHeight`,
                   )}
+                  value={
+                    form.values.fonts[currentFontIndex]?.lineHeight === 1
+                      ? "0"
+                      : String(
+                          Math.round(
+                            (Number(
+                              form.values.fonts[currentFontIndex]?.lineHeight,
+                            ) -
+                              1) *
+                              100,
+                          ),
+                        )
+                  }
+                  onChange={(value) => {
+                    form.setFieldValue(
+                      `fonts.${currentFontIndex}.lineHeight`,
+                      String(Number(value) / 100 + 1),
+                    );
+                  }}
                   size={INPUT_SIZE}
                 />
                 <Select
