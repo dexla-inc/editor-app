@@ -31,7 +31,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { IconArrowsDiagonal2 } from "@tabler/icons-react";
 import { useGoogleFonts } from "@flyyer/use-googlefonts";
-import { SelectFont } from "@/components/navbar/SelectFont";
+import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
 import { TypographyModal } from "@/components/navbar/EditorNavbarThemesSection/TypographyModal";
 import { useDisclosure } from "@mantine/hooks";
 
