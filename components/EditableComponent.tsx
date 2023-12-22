@@ -311,8 +311,8 @@ export const EditableComponent = ({
   );
 
   const childStyles = {
+    position: "relative",
     ...propsWithOverwrites.style,
-    ...(showShadows ? shadows : {}),
 
     outline:
       isPreviewMode && propsWithOverwrites.style?.outline === GRAY_OUTLINE
@@ -376,11 +376,26 @@ export const EditableComponent = ({
           isPreviewMode,
           style: childStyles,
           sx: {
+            "&:before": {
+              ...(showShadows ? shadows : {}),
+              content: '""',
+              position: "absolute",
+              left: 0,
+              top: 0,
+              right: 0,
+              bottom: 0,
+              width: "100%",
+              height: "100%",
+              zIndex: 1,
+              pointerEvents: "none",
+            },
             "&:hover": {
               ...(!isPreviewMode
                 ? {
                     boxShadow: thinBaseShadow,
-                    ...(shouldDisplayOverlay && hoverStyles(overlayStyles)),
+                    ...(shouldDisplayOverlay &&
+                      !isSelected &&
+                      hoverStyles(overlayStyles)),
                   }
                 : {}),
             },
