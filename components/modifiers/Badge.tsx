@@ -1,5 +1,7 @@
+import { GradientPicker } from "@/components/GradientSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
+import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -8,8 +10,6 @@ import { useForm } from "@mantine/form";
 import { IconIdBadge } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect, useState } from "react";
-import { GradientPicker } from "../GradientSelector";
-import { TopLabel } from "../TopLabel";
 
 export const icon = IconIdBadge;
 export const label = "Badge";
