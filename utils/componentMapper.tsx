@@ -57,6 +57,7 @@ import { LineChart } from "@/components/mapper/charts/LineChart";
 import { PieChart } from "@/components/mapper/charts/PieChart";
 import { RadarChart } from "@/components/mapper/charts/RadarChart";
 import * as AccordionStructure from "@/components/mapper/structure/Accordion";
+import * as AccordionItemStructure from "@/components/mapper/structure/AccordionItem";
 import * as AlertStructure from "@/components/mapper/structure/Alert";
 import * as AppBarStructure from "@/components/mapper/structure/AppBar";
 import * as AvatarStructure from "@/components/mapper/structure/Avatar";
@@ -560,6 +561,17 @@ export const structureMapper: StructureMapper = {
     Draggable: () => (
       <DraggableComponent
         id="Accordion"
+        icon={<IconLayoutBottombarCollapse size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+    icon: <IconLayoutBottombarCollapse size={ICON_SIZE} />,
+  },
+  AccordionItem: {
+    structure: (props: any) => AccordionItemStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="AccordionItem"
         icon={<IconLayoutBottombarCollapse size={LARGE_ICON_SIZE} />}
       />
     ),

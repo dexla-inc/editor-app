@@ -8,37 +8,36 @@ export const jsonStructure = (props?: any): Component => {
 
   return {
     id: nanoid(),
-    name: "Container",
-    description: "Accordion Container",
+    name: "Accordion",
+    description: "Accordion",
     props: {
+      defaultValue: "first",
+      variant: "separated",
+      icon: "IconPlus",
       style: {
-        padding: px(theme.spacing.xl),
         width: "100%",
         height: "auto",
       },
+      ...(props.props || {}),
     },
     children: [
       {
         id: nanoid(),
-        name: "Accordion",
-        description: "Accordion",
+        name: "AccordionItem",
+        description: "Accordion Item",
         props: {
-          defaultValue: "first",
-          variant: "separated",
-          icon: "IconPlus",
+          value: "first",
           style: {
             width: "100%",
             height: "auto",
           },
-          ...(props.props || {}),
         },
         children: [
           {
             id: nanoid(),
-            name: "AccordionItem",
-            description: "Accordion Item",
+            name: "AccordionControl",
+            description: "Accordion Control",
             props: {
-              value: "first",
               style: {
                 width: "100%",
                 height: "auto",
@@ -47,12 +46,14 @@ export const jsonStructure = (props?: any): Component => {
             children: [
               {
                 id: nanoid(),
-                name: "AccordionControl",
-                description: "Accordion Control",
+                name: "Container",
+                description: "Container",
                 props: {
                   style: {
-                    width: "100%",
-                    height: "auto",
+                    alignItems: "center",
+                    height: "50px",
+                    paddingLeft: "20px",
+                    paddingRight: "20px",
                   },
                 },
                 children: [
@@ -77,47 +78,13 @@ export const jsonStructure = (props?: any): Component => {
                   },
                 ],
               },
-              {
-                id: nanoid(),
-                name: "AccordionPanel",
-                description: "Accordion Panel",
-                props: {
-                  style: {
-                    width: "100%",
-                    height: "auto",
-                  },
-                },
-                children: [
-                  {
-                    id: nanoid(),
-                    name: "Text",
-                    description: "Accordion Text",
-                    children: [],
-                    props: {
-                      children:
-                        "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugit, consequatur cupiditate expedita vero quas rerum eos voluptatem possimus, illo maiores quis! Tempora autem cum itaque dicta officiis vitae enim rerum magni in facilis ullam corporis sint praesentium, aspernatur sit doloremque? Suscipit veniam nobis corrupti, odio adipisci laborum neque! Rerum, amet.",
-                      color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-                      style: {
-                        fontSize: `${px(theme.fontSizes.sm)}px`,
-                        fontWeight: "normal",
-                        lineHeight: "150%",
-                        letterSpacing: "0px",
-                        width: "auto",
-                        height: "auto",
-                      },
-                    },
-                    blockDroppingChildrenInside: true,
-                  },
-                ],
-              },
             ],
           },
           {
             id: nanoid(),
-            name: "AccordionItem",
-            description: "Accordion Item",
+            name: "AccordionPanel",
+            description: "Accordion Panel",
             props: {
-              value: "second",
               style: {
                 width: "100%",
                 height: "auto",
@@ -126,12 +93,61 @@ export const jsonStructure = (props?: any): Component => {
             children: [
               {
                 id: nanoid(),
-                name: "AccordionControl",
-                description: "Accordion Control",
+                name: "Text",
+                description: "Accordion Text",
+                children: [],
+                props: {
+                  children:
+                    "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugit, consequatur cupiditate expedita vero quas rerum eos voluptatem possimus, illo maiores quis! Tempora autem cum itaque dicta officiis vitae enim rerum magni in facilis ullam corporis sint praesentium, aspernatur sit doloremque? Suscipit veniam nobis corrupti, odio adipisci laborum neque! Rerum, amet.",
+                  color: `${theme.colors.Black ? "Black.6" : "dark"}`,
+                  style: {
+                    fontSize: `${px(theme.fontSizes.sm)}px`,
+                    fontWeight: "normal",
+                    lineHeight: "150%",
+                    letterSpacing: "0px",
+                    width: "auto",
+                    height: "auto",
+                  },
+                },
+                blockDroppingChildrenInside: true,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: nanoid(),
+        name: "AccordionItem",
+        description: "Accordion Item",
+        props: {
+          value: "second",
+          style: {
+            width: "100%",
+            height: "auto",
+          },
+        },
+        children: [
+          {
+            id: nanoid(),
+            name: "AccordionControl",
+            description: "Accordion Control",
+            props: {
+              style: {
+                width: "100%",
+                height: "auto",
+              },
+            },
+            children: [
+              {
+                id: nanoid(),
+                name: "Container",
+                description: "Container",
                 props: {
                   style: {
-                    width: "100%",
-                    height: "auto",
+                    alignItems: "center",
+                    height: "50px",
+                    paddingLeft: "20px",
+                    paddingRight: "20px",
                   },
                 },
                 children: [
@@ -156,38 +172,38 @@ export const jsonStructure = (props?: any): Component => {
                   },
                 ],
               },
+            ],
+          },
+          {
+            id: nanoid(),
+            name: "AccordionPanel",
+            description: "Accordion Panel",
+            props: {
+              style: {
+                width: "100%",
+                height: "auto",
+              },
+            },
+            children: [
               {
                 id: nanoid(),
-                name: "AccordionPanel",
-                description: "Accordion Panel",
+                name: "Text",
+                description: "Accordion Text",
+                children: [],
                 props: {
+                  children:
+                    "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugit, consequatur cupiditate expedita vero quas rerum eos voluptatem possimus, illo maiores quis! Tempora autem cum itaque dicta officiis vitae enim rerum magni in facilis ullam corporis sint praesentium, aspernatur sit doloremque? Suscipit veniam nobis corrupti, odio adipisci laborum neque! Rerum, amet.",
+                  color: `${theme.colors.Black ? "Black.6" : "dark"}`,
                   style: {
-                    width: "100%",
+                    fontSize: `${px(theme.fontSizes.sm)}px`,
+                    fontWeight: "normal",
+                    lineHeight: "150%",
+                    letterSpacing: "0px",
+                    width: "auto",
                     height: "auto",
                   },
                 },
-                children: [
-                  {
-                    id: nanoid(),
-                    name: "Text",
-                    description: "Accordion Text",
-                    children: [],
-                    props: {
-                      children:
-                        "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugit, consequatur cupiditate expedita vero quas rerum eos voluptatem possimus, illo maiores quis! Tempora autem cum itaque dicta officiis vitae enim rerum magni in facilis ullam corporis sint praesentium, aspernatur sit doloremque? Suscipit veniam nobis corrupti, odio adipisci laborum neque! Rerum, amet.",
-                      color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-                      style: {
-                        fontSize: `${px(theme.fontSizes.sm)}px`,
-                        fontWeight: "normal",
-                        lineHeight: "150%",
-                        letterSpacing: "0px",
-                        width: "auto",
-                        height: "auto",
-                      },
-                    },
-                    blockDroppingChildrenInside: true,
-                  },
-                ],
+                blockDroppingChildrenInside: true,
               },
             ],
           },

@@ -16,10 +16,11 @@ const AccordionComponent = forwardRef(
 
     return (
       <MantineAccordion
+        chevron={null}
         ref={ref}
-        {...(icon && { chevron: <Icon name={icon} /> })}
         {...props}
         {...componentProps}
+        styles={{ label: { padding: 0 }, chevron: { display: "none" } }}
       >
         {component.children && component.children.length > 0
           ? component.children?.map((child) => renderTree(child))

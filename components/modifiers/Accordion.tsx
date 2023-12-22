@@ -1,19 +1,43 @@
 import { IconSelector } from "@/components/IconSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import {
+  Component,
+  debouncedTreeComponentChildrenUpdate,
+  debouncedTreeUpdate,
+} from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutBottombarCollapse } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { structureMapper } from "@/utils/componentMapper";
+import { useEditorStore } from "@/stores/editor";
+import { UnitInput } from "@/components/UnitInput";
 
 export const icon = IconLayoutBottombarCollapse;
 export const label = "Accordion";
 
+const editorStore = useEditorStore.getState();
+const createItem = (id: string) => () => {
+  return structureMapper["AccordionItem"].structure({
+    theme: editorStore.theme,
+    props: {
+      value: `Item-${id}`,
+      style: {},
+    },
+  });
+};
+
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const form = useForm();
+    const form = useForm({
+      initialValues: {
+        variant: "default",
+        value: selectedComponent.children?.[0]?.props?.value,
+        numberOfItems: selectedComponent.children?.length,
+      },
+    });
 
     const data: Record<string, string> = {
       Default: "default",
@@ -26,17 +50,32 @@ export const Modifier = withModifier(
       form.setValues(
         merge({}, requiredModifiers.accordion, {
           variant: selectedComponent.props?.variant,
-          icon: selectedComponent.props?.icon,
+          value: selectedComponent.props?.value,
+          numberOfItems: selectedComponent.children?.length,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedComponent]);
 
+    const addCarouselSlide = (accordion: Component, id: string) => {
+      const newItem = createItem(id)();
+      const updatedChildren = [
+        ...Array.from(accordion?.children ?? []),
+        newItem,
+      ];
+      debouncedTreeComponentChildrenUpdate(updatedChildren);
+    };
+
+    const removeItem = (accordion: Component, newSize: string) => {
+      const updatedChildren = accordion?.children?.slice(0, Number(newSize));
+      debouncedTreeComponentChildrenUpdate(updatedChildren!);
+    };
+
     return (
       <form>
         <Stack spacing="xs">
           <Select
-            label="Value"
+            label="Variant"
             size="xs"
             data={Object.keys(data).map((key) => ({
               label: key,
@@ -48,12 +87,31 @@ export const Modifier = withModifier(
               debouncedTreeUpdate(selectedComponentIds, { variant: value });
             }}
           />
-          <IconSelector
-            topLabel="Icon"
-            selectedIcon={form.values.icon as string}
-            onIconSelect={(value: string) => {
-              form.setFieldValue("icon", value);
-              debouncedTreeUpdate(selectedComponentIds, { icon: value });
+          <Select
+            label="Default Value"
+            size="xs"
+            data={
+              selectedComponent.children?.map(
+                (key) => key.props?.value!,
+              ) as string[]
+            }
+            {...form.getInputProps("value")}
+            onChange={(value) => {
+              form.setFieldValue("value", value as string);
+              debouncedTreeUpdate(selectedComponentIds, { value });
+            }}
+          />
+          <UnitInput
+            label="Number of Items"
+            disabledUnits={["%", "vh", "vw", "rem", "px", "auto"]}
+            {...form.getInputProps("numberOfItems")}
+            onChange={(value) => {
+              if (Number(value) > form.values.numberOfItems!) {
+                addCarouselSlide(selectedComponent!, value);
+              } else {
+                removeItem(selectedComponent!, value);
+              }
+              form.setFieldValue("numberOfItems", Number(value));
             }}
           />
         </Stack>
