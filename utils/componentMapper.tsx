@@ -12,6 +12,7 @@ import { Button } from "@/components/mapper/Button";
 import { Progress } from "@/components/mapper/Progress";
 
 import { ButtonIcon } from "@/components/mapper/ButtonIcon";
+import { UnstyledButton } from "@/components/mapper/UnstyledButton";
 import { Card } from "@/components/mapper/Card";
 import { Checkbox } from "@/components/mapper/Checkbox";
 import { Container } from "@/components/mapper/Container";
@@ -65,6 +66,7 @@ import * as BadgeStructure from "@/components/mapper/structure/Badge";
 import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
 import * as ButtonStructure from "@/components/mapper/structure/Button";
 import * as ButtonIconStructure from "@/components/mapper/structure/ButtonIcon";
+import * as UnstyledButtonStructure from "@/components/mapper/structure/UnstyledButton";
 import * as CardStructure from "@/components/mapper/structure/Card";
 import * as CheckboxStructure from "@/components/mapper/structure/Checkbox";
 import * as ContainerStructure from "@/components/mapper/structure/Container";
@@ -165,6 +167,7 @@ import {
   IconSelect,
   IconSeparator,
   IconSlash,
+  IconSquare,
   IconStackPop,
   IconTable,
   IconToggleLeft,
@@ -356,6 +359,17 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconCircleDot size={ICON_SIZE} />,
+  },
+  UnstyledButton: {
+    structure: (props: any) => UnstyledButtonStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="UnstyledButton"
+        icon={<IconSquare size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconSquare size={ICON_SIZE} />,
   },
   Rating: {
     structure: (props: any) => RatingStructure.jsonStructure(props),
@@ -1517,6 +1531,29 @@ export const componentMapper: ComponentMapper = {
       "effects",
       "border",
       "position",
+    ],
+    actionTriggers: ["onMount", "onClick", "onHover"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  UnstyledButton: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <UnstyledButton
+        component={props.component}
+        renderTree={props.renderTree}
+        // @ts-ignore
+        onClick={(e) => {
+          e.preventDefault();
+        }}
+      />
+    ),
+    modifiers: [
+      "layout",
+      "background",
+      "spacing",
+      "size",
+      "effects",
+      "border",
+      "boxShadow",
     ],
     actionTriggers: ["onMount", "onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
