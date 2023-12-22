@@ -150,6 +150,7 @@ export const requiredModifiers: RequiredModifiers = {
     label: "",
     icon: { props: { name: "" } },
     withAsterisk: false,
+    clearable: false,
     labelSpacing: "0",
     name: "Input",
   },
