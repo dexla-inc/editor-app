@@ -60,7 +60,6 @@ export const Modifier = withModifier(
             {...form.getInputProps("gridDirection")}
             onChange={(value) => {
               form.setFieldValue("gridDirection", value as string);
-              console.log({ value });
               debouncedTreeUpdate(selectedComponentIds, {
                 gridDirection: value as string,
               });

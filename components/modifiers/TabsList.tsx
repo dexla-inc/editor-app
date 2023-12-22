@@ -3,7 +3,7 @@ import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon"
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Stack } from "@mantine/core";
+import { Checkbox, SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconLayoutAlignCenter,
@@ -26,6 +26,7 @@ export const Modifier = withModifier(
       form.setValues(
         merge({}, requiredModifiers.tabsList, {
           position: selectedComponent.props?.position,
+          disableLine: selectedComponent.props?.disableLine,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -33,61 +34,74 @@ export const Modifier = withModifier(
 
     return (
       <form>
-        <Stack spacing={2}>
-          <TopLabel text="Position" />
-          <SegmentedControl
+        <Stack spacing="xs">
+          <Stack spacing={2}>
+            <TopLabel text="Position" />
+            <SegmentedControl
+              size="xs"
+              data={[
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Left"
+                      icon={<IconLayoutAlignLeft size={14} />}
+                    />
+                  ),
+                  value: "left",
+                },
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Center"
+                      icon={<IconLayoutAlignCenter size={14} />}
+                    />
+                  ),
+                  value: "center",
+                },
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Right"
+                      icon={<IconLayoutAlignRight size={14} />}
+                    />
+                  ),
+                  value: "right",
+                },
+                {
+                  label: (
+                    <StylingPaneItemIcon
+                      label="Apart"
+                      icon={<IconLayoutDistributeHorizontal size={14} />}
+                    />
+                  ),
+                  value: "apart",
+                },
+              ]}
+              styles={{
+                label: {
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                },
+              }}
+              {...form.getInputProps("position")}
+              onChange={(value) => {
+                form.setFieldValue("position", value as string);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  position: value,
+                });
+              }}
+            />
+          </Stack>
+          <Checkbox
             size="xs"
-            data={[
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="Left"
-                    icon={<IconLayoutAlignLeft size={14} />}
-                  />
-                ),
-                value: "left",
-              },
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="Center"
-                    icon={<IconLayoutAlignCenter size={14} />}
-                  />
-                ),
-                value: "center",
-              },
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="Right"
-                    icon={<IconLayoutAlignRight size={14} />}
-                  />
-                ),
-                value: "right",
-              },
-              {
-                label: (
-                  <StylingPaneItemIcon
-                    label="Apart"
-                    icon={<IconLayoutDistributeHorizontal size={14} />}
-                  />
-                ),
-                value: "apart",
-              },
-            ]}
-            styles={{
-              label: {
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
-              },
-            }}
-            {...form.getInputProps("position")}
-            onChange={(value) => {
-              form.setFieldValue("position", value as string);
+            label="Disable line"
+            {...form.getInputProps("disableLine", { type: "checkbox" })}
+            onChange={(e) => {
+              form.setFieldValue("disableLine", e.target.checked);
               debouncedTreeUpdate(selectedComponentIds, {
-                position: value,
+                disableLine: e.target.checked,
               });
             }}
           />

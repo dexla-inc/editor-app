@@ -11,10 +11,18 @@ type Props = {
 
 const TabsListComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
-    const { children, ...componentProps } = component.props as any;
+    const { children, tabVariant, disableLine, ...componentProps } =
+      component.props as any;
+
+    const removeLine = tabVariant === "default" && disableLine;
 
     return (
-      <MantineTabs.List ref={ref} {...props} {...componentProps}>
+      <MantineTabs.List
+        ref={ref}
+        {...props}
+        {...componentProps}
+        sx={{ borderBottom: removeLine ? "none" : undefined }}
+      >
         {component.children && component.children.length > 0
           ? component.children?.map((child) => renderTree(child))
           : children}

@@ -79,6 +79,7 @@ const TitleComponent = forwardRef(
     );
   },
 );
+
 TitleComponent.displayName = "Title";
 
 export const Title = memo(withComponentWrapper<Props>(TitleComponent), isSame);

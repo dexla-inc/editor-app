@@ -58,6 +58,7 @@ export const GridColumn = forwardRef(
           component={Resizable}
           p="xs"
           display="grid"
+          size={{ height: style?.height }}
           style={{
             gridColumn: `span ${isResizing ? columnSpans[props.id] : span}`,
             gridRow: !isParentGridDirectionColumn
