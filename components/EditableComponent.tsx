@@ -220,7 +220,9 @@ export const EditableComponent = ({
   };
   const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
-    setTreeComponentCurrentState(id, "default");
+    if (currentState === "hover") {
+      setTreeComponentCurrentState(e.currentTarget.id, "default");
+    }
   };
 
   // State hooks for overlays

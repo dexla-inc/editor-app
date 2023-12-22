@@ -1,21 +1,25 @@
 import { Icon } from "@/components/Icon";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import { Component, getColorFromTheme } from "@/utils/editor";
 import {
+  Component,
+  getColorFromTheme,
+  updateTreeComponent,
+} from "@/utils/editor";
+import {
+  ActionIcon,
+  Group,
   Loader,
   TextInput as MantineInput,
   NumberInput as MantineNumberInput,
   NumberInputProps,
   TextInputProps,
-  Group,
-  ActionIcon,
 } from "@mantine/core";
 import debounce from "lodash.debounce";
 import merge from "lodash.merge";
-import { forwardRef, memo, useCallback, useState } from "react";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { forwardRef, memo, useCallback, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -26,11 +30,29 @@ type Props = {
 const InputComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
     const theme = useEditorStore((state) => state.theme);
+    const editorTree = useEditorStore((state) => state.tree);
+    const iframeWindow = useEditorStore((state) => state.iframeWindow);
     const borderColor = getColorFromTheme(theme, "Border.6");
-    const { children, icon, triggers, value, loading, ...componentProps } =
-      component.props as any;
+    const {
+      children,
+      icon,
+      triggers,
+      value,
+      loading,
+      clearable,
+      ...componentProps
+    } = component.props as any;
     const { name: iconName } = icon && icon!.props!;
     const [inputValue, setInputValue] = useState(value);
+
+    const isClearable = clearable && inputValue && inputValue?.length > 0;
+
+    const clearInput = () => {
+      setInputValue("");
+      updateTreeComponent(editorTree.root, component.id!, { value: "" });
+      const el = iframeWindow?.document.getElementById(component.id!);
+      el?.focus();
+    };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedOnChange = useCallback(
@@ -150,7 +172,13 @@ const InputComponent = forwardRef(
               setInputValue(e.target.value);
               triggers?.onChange ? debouncedOnChange(e) : undefined;
             }}
-            rightSection={loading ? <Loader size="xs" /> : null}
+            rightSection={
+              loading ? (
+                <Loader size="xs" />
+              ) : isClearable ? (
+                <Icon onClick={clearInput} name="IconX" />
+              ) : null
+            }
             label={undefined}
           />
         )}
