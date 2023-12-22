@@ -348,10 +348,10 @@ export const requiredModifiers: RequiredModifiers = {
   },
   badge: {
     value: "New Badge",
-    color: "Primary.6",
+    color: "PrimaryText.6",
+    bg: "Primary.6",
     size: "md",
     radius: "xl",
-    variant: "filled",
   },
   dateInput: {
     label: "",

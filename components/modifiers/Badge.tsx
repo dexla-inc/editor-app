@@ -3,11 +3,13 @@ import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Select, Stack, TextInput } from "@mantine/core";
+import { SegmentedControl, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconIdBadge } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { GradientPicker } from "../GradientSelector";
+import { TopLabel } from "../TopLabel";
 
 export const icon = IconIdBadge;
 export const label = "Badge";
@@ -16,19 +18,32 @@ export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm();
 
+    const [backgroundType, setBackgroundType] = useState("single");
+
     useEffect(() => {
       form.setValues(
         merge({}, requiredModifiers.badge, {
           value: selectedComponent.props?.children,
           type: selectedComponent.props?.type,
-          variant: selectedComponent.props?.variant,
           size: selectedComponent.props?.size,
           radius: selectedComponent.props?.radius,
           color: selectedComponent.props?.color,
+          bg: selectedComponent.props?.bg,
         }),
+      );
+
+      setBackgroundType(
+        selectedComponent.props?.bg?.includes("gradient")
+          ? "gradient"
+          : "single",
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedComponent]);
+
+    const setFieldValue = (key: any, value: any) => {
+      form.setFieldValue(key, value);
+      debouncedTreeUpdate(selectedComponentIds, { [key]: value });
+    };
 
     return (
       <form>
@@ -41,24 +56,6 @@ export const Modifier = withModifier(
               form.setFieldValue("value", e.target.value);
               debouncedTreeUpdate(selectedComponentIds, {
                 children: e.target.value,
-              });
-            }}
-          />
-          <Select
-            label="Variant"
-            size="xs"
-            data={[
-              { label: "Filled", value: "filled" },
-              { label: "Light", value: "light" },
-              { label: "Outline", value: "outline" },
-              { label: "Default", value: "default" },
-              { label: "Dot", value: "dot" },
-            ]}
-            {...form.getInputProps("variant")}
-            onChange={(value) => {
-              form.setFieldValue("variant", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                variant: value,
               });
             }}
           />
@@ -92,6 +89,42 @@ export const Modifier = withModifier(
               });
             }}
           />
+          <Stack spacing={0}>
+            <TopLabel text="Background Type" />
+            <SegmentedControl
+              size="xs"
+              data={[
+                { label: "Single", value: "single" },
+                { label: "Gradient", value: "gradient" },
+              ]}
+              value={backgroundType}
+              onChange={(value) => {
+                setBackgroundType(value as string);
+                if (value === "single") {
+                  setFieldValue("bg", "White.6");
+                } else {
+                  setFieldValue("bg", requiredModifiers.background.bgGradient);
+                }
+              }}
+            />
+          </Stack>
+          {backgroundType === "single" ? (
+            <ThemeColorSelector
+              label="Background"
+              {...form.getInputProps("bg")}
+              onChange={(value: string) => {
+                form.setFieldValue("bg", value);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  bg: value,
+                });
+              }}
+            />
+          ) : (
+            <GradientPicker
+              getValue={() => form.getInputProps("bg").value}
+              setFieldValue={setFieldValue}
+            />
+          )}
         </Stack>
       </form>
     );

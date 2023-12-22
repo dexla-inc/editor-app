@@ -18,10 +18,10 @@ export const jsonStructure = (props?: any): Component => {
     children: [],
     props: {
       children: content,
-      variant: "filled",
       radius: "xl",
       size: "md",
-      color: "Primary.6",
+      color: "PrimaryText.6",
+      bg: "Primary.6",
       ...(props.props || {}),
     },
     blockDroppingChildrenInside: true,

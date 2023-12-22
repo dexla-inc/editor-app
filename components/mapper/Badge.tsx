@@ -1,8 +1,10 @@
-import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
-import { BadgeProps, Badge as MantineBadge } from "@mantine/core";
-import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useEditorStore } from "@/stores/editor";
+import { isSame } from "@/utils/componentComparison";
+import { Component, getColorFromTheme } from "@/utils/editor";
+import { BadgeProps, Badge as MantineBadge } from "@mantine/core";
+import merge from "lodash.merge";
+import { forwardRef, memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -11,10 +13,22 @@ type Props = {
 
 const BadgeComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
-    const { children, ...componentProps } = component.props as any;
+    const { children, style, color, ...componentProps } =
+      component.props as any;
     let value = children;
+    const theme = useEditorStore((state) => state.theme);
+    const customStyle = merge({}, style, {
+      color: getColorFromTheme(theme, color),
+      textTransform: "none",
+    });
+
     return (
-      <MantineBadge ref={ref} {...props} {...componentProps}>
+      <MantineBadge
+        ref={ref}
+        styles={{ inner: customStyle }}
+        {...props}
+        {...componentProps}
+      >
         {component.children && component.children.length > 0
           ? component.children?.map((child) => renderTree(child))
           : value}
