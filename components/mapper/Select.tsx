@@ -1,4 +1,5 @@
 import { CustomDropdown } from "@/components/mapper/CustomSelectDropdown";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getColorFromTheme } from "@/utils/editor";
@@ -7,7 +8,6 @@ import cloneDeep from "lodash.clonedeep";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = {
   renderTree: (component: Component) => any;
