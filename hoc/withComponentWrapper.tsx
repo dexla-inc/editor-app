@@ -6,7 +6,7 @@ export const withComponentWrapper = <T extends {}>(
 ) => {
   const Config = (props: any) => {
     const hasTooltip = !!props.component?.props?.tooltip;
-    const isLoading = props.component.props?.loading;
+    const isLoading = props.component?.props?.loading;
     const Wrapper = hasTooltip ? Tooltip : isLoading ? Skeleton : Fragment;
 
     return (

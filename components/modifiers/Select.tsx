@@ -4,14 +4,48 @@ import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Stack, TextInput } from "@mantine/core";
+import { SegmentedControl, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconSelect } from "@tabler/icons-react";
+import {
+  IconArrowBarDown,
+  IconArrowBarUp,
+  IconArrowsMoveVertical,
+  IconSelect,
+} from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { TopLabel } from "../TopLabel";
+import { StylingPaneItemIcon } from "./StylingPaneItemIcon";
 
 export const icon = IconSelect;
 export const label = "Select";
+
+const dropdownData = [
+  {
+    label: (
+      <StylingPaneItemIcon label="Top" icon={<IconArrowBarUp size={14} />} />
+    ),
+    value: "top",
+  },
+  {
+    label: (
+      <StylingPaneItemIcon
+        label="Bottom"
+        icon={<IconArrowBarDown size={14} />}
+      />
+    ),
+    value: "bottom",
+  },
+  {
+    label: (
+      <StylingPaneItemIcon
+        label="Flip"
+        icon={<IconArrowsMoveVertical size={14} />}
+      />
+    ),
+    value: "flip",
+  },
+];
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
@@ -30,6 +64,7 @@ export const Modifier = withModifier(
           customText: selectedComponent?.props?.customText,
           customLinkText: selectedComponent?.props?.customLinkText,
           customLinkUrl: selectedComponent?.props?.customLinkUrl,
+          dropdownPosition: selectedComponent?.props?.dropdownPosition,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,6 +116,25 @@ export const Modifier = withModifier(
             setFieldValue={setFieldValue}
           />
 
+          <Stack spacing={2}>
+            <TopLabel text="Dropdown Position" />
+            <SegmentedControl
+              size="xs"
+              data={dropdownData}
+              styles={{
+                label: {
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                },
+              }}
+              {...form.getInputProps("dropdownPosition")}
+              onChange={(value) => {
+                setFieldValue("dropdownPosition", value);
+              }}
+            />
+          </Stack>
           <TextInput
             label="Custom Text"
             size="xs"
