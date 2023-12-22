@@ -16,7 +16,12 @@ const TabsComponent = forwardRef(
     return (
       <MantineTabs ref={ref} {...props} {...componentProps}>
         {component.children && component.children.length > 0
-          ? component.children?.map((child) => renderTree(child))
+          ? component.children?.map((child) =>
+              renderTree({
+                ...child,
+                props: { ...child.props, tabVariant: componentProps.variant },
+              }),
+            )
           : children}
       </MantineTabs>
     );
