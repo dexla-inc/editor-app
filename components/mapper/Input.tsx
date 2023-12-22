@@ -73,12 +73,7 @@ const InputComponent = forwardRef(
             <Group
               spacing={0}
               {...props}
-              styles={merge(
-                {},
-                {
-                  root: { ...customStyle },
-                },
-              )}
+              style={{ ...customStyle, background: "white" }}
             >
               <ActionIcon
                 size={props.size}
@@ -99,8 +94,16 @@ const InputComponent = forwardRef(
                 id={component.id}
                 {...omit(componentProps, ["type"])}
                 styles={{
-                  root: { display: "inline", flexGrow: 1 },
-                  input: { border: "none", textAlign: "center" },
+                  root: {
+                    display: "inline",
+                    flex: "1 !important",
+                    width: "min-content",
+                  },
+                  input: {
+                    border: "none",
+                    textAlign: "center",
+                    height: customStyle.height,
+                  },
                 }}
                 size={props.size}
                 value={inputValue}
