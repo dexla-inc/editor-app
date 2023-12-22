@@ -1,7 +1,7 @@
 import { Chart } from "@/components/mapper/charts/Chart";
-import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
+import { Skeleton } from "@mantine/core";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -10,10 +10,6 @@ type Props = {
 
 export const PieChart = (props: Props) => {
   const { loading } = props.component.props as any;
-
-  if (loading) {
-    return <MantineSkeleton circle height={300} />;
-  }
 
   const customProps = merge({}, props, {
     component: {
@@ -79,5 +75,9 @@ export const PieChart = (props: Props) => {
     },
   });
 
-  return <Chart {...customProps} />;
+  return (
+    <Skeleton visible={loading}>
+      <Chart {...customProps} />
+    </Skeleton>
+  );
 };

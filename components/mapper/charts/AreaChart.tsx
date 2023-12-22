@@ -1,6 +1,6 @@
 import { Chart } from "@/components/mapper/charts/Chart";
-import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { Component } from "@/utils/editor";
+import { Skeleton } from "@mantine/core";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -10,9 +10,9 @@ type Props = {
 export const AreaChart = (props: Props) => {
   const { loading } = props.component.props as any;
 
-  if (loading) {
-    return <MantineSkeleton height={300} />;
-  }
-
-  return <Chart {...props} />;
+  return (
+    <Skeleton visible={loading}>
+      <Chart {...props} />
+    </Skeleton>
+  );
 };

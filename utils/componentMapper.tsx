@@ -981,7 +981,7 @@ export const componentMapper: ComponentMapper = {
         component={props.component}
         renderTree={props.renderTree}
         data={["Option 1", "Option 2"]}
-        onClick={(e) => {
+        onClick={(e: any) => {
           e.preventDefault();
         }}
       />
@@ -1183,7 +1183,7 @@ export const componentMapper: ComponentMapper = {
       <Switch
         component={props.component}
         renderTree={props.renderTree}
-        onClick={(e) => {
+        onClick={(e: any) => {
           e.preventDefault();
         }}
       />
@@ -1226,7 +1226,7 @@ export const componentMapper: ComponentMapper = {
       <Rating
         component={props.component}
         renderTree={props.renderTree}
-        onClick={(e) => {
+        onClick={(e: any) => {
           e.preventDefault();
         }}
       />

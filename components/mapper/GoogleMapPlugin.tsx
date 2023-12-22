@@ -1,7 +1,6 @@
 import { MarkerItem, Options } from "@/components/modifiers/GoogleMap";
-import { MantineSkeleton } from "@/components/skeleton/Skeleton";
 import { Component } from "@/utils/editor";
-import { BoxProps, Text } from "@mantine/core";
+import { BoxProps, Skeleton, Text } from "@mantine/core";
 import {
   GoogleMap,
   InfoWindow,
@@ -99,39 +98,37 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
     return LOADING_TEXT;
   }
 
-  if (loading) {
-    return <MantineSkeleton height={500} />;
-  }
-
   return (
-    <GoogleMap
-      key={apiKey}
-      center={center}
-      onLoad={onLoad}
-      onUnmount={unMount}
-      zoom={(internalZoom ?? 0) as any}
-      onClick={() => setActiveMarkerId(null)}
-      mapContainerStyle={containerStyle}
-      {...componentProps}
-      {...props}
-      {...googleStyles}
-    >
-      {markers &&
-        markers.length > 0 &&
-        (markers as MarkerItem[]).map(({ id, name, position }) => (
-          <Marker
-            key={id}
-            position={position}
-            onMouseOver={() => handleActiveMarker(id)}
-            onMouseOut={() => setActiveMarkerId(null)}
-          >
-            {activeMarkerId === id && (
-              <InfoWindow onCloseClick={() => setActiveMarkerId(null)}>
-                <Text>{name}</Text>
-              </InfoWindow>
-            )}
-          </Marker>
-        ))}
-    </GoogleMap>
+    <Skeleton visible={loading}>
+      <GoogleMap
+        key={apiKey}
+        center={center}
+        onLoad={onLoad}
+        onUnmount={unMount}
+        zoom={(internalZoom ?? 0) as any}
+        onClick={() => setActiveMarkerId(null)}
+        mapContainerStyle={containerStyle}
+        {...componentProps}
+        {...props}
+        {...googleStyles}
+      >
+        {markers &&
+          markers.length > 0 &&
+          (markers as MarkerItem[]).map(({ id, name, position }) => (
+            <Marker
+              key={id}
+              position={position}
+              onMouseOver={() => handleActiveMarker(id)}
+              onMouseOut={() => setActiveMarkerId(null)}
+            >
+              {activeMarkerId === id && (
+                <InfoWindow onCloseClick={() => setActiveMarkerId(null)}>
+                  <Text>{name}</Text>
+                </InfoWindow>
+              )}
+            </Marker>
+          ))}
+      </GoogleMap>
+    </Skeleton>
   );
 };

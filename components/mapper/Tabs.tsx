@@ -1,23 +1,27 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Tabs as MantineTabs, TabsProps } from "@mantine/core";
-import { memo } from "react";
+import { forwardRef, memo } from "react";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
 } & TabsProps;
 
-const TabsComponent = ({ renderTree, component, ...props }: Props) => {
-  const { children, ...componentProps } = component.props as any;
+const TabsComponent = forwardRef(
+  ({ renderTree, component, ...props }: Props, ref) => {
+    const { children, ...componentProps } = component.props as any;
 
-  return (
-    <MantineTabs {...props} {...componentProps}>
-      {component.children && component.children.length > 0
-        ? component.children?.map((child) => renderTree(child))
-        : children}
-    </MantineTabs>
-  );
-};
+    return (
+      <MantineTabs ref={ref} {...props} {...componentProps}>
+        {component.children && component.children.length > 0
+          ? component.children?.map((child) => renderTree(child))
+          : children}
+      </MantineTabs>
+    );
+  },
+);
+TabsComponent.displayName = "Tabs";
 
-export const Tabs = memo(TabsComponent, isSame);
+export const Tabs = memo(withComponentWrapper(TabsComponent), isSame);
