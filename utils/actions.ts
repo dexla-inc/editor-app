@@ -11,6 +11,7 @@ import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { LoginActionForm } from "@/components/actions/LoginActionForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
 import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm";
+import { ToggleAccordionItemActionForm } from "@/components/actions/ToggleAccordionItemActionForm";
 import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
 import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
@@ -124,6 +125,11 @@ export const actions: ActionInfo[] = [
   { name: "goToUrl", group: "Navigation", icon: "IconLink" },
   { name: "navigateToPage", group: "Navigation", icon: "IconFileInvoice" },
   { name: "changeStep", group: "Navigation", icon: "IconStatusChange" },
+  {
+    name: "toggleAccordionItem",
+    group: "Navigation",
+    icon: "IconStatusChange",
+  },
   { name: "openDrawer", group: "Modal & Overlays" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
   { name: "closeDrawer", group: "Modal & Overlays" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
   { name: "openModal", group: "Modal & Overlays" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
@@ -178,6 +184,12 @@ export interface AlertAction extends BaseAction {
 export interface OpenModalAction extends BaseAction {
   name: "openModal";
   modalId: string;
+}
+
+export interface ToggleAccordionItemAction extends BaseAction {
+  name: "openModal";
+  accordionId: string;
+  accordionItemId: string;
 }
 
 export interface OpenDrawerAction extends BaseAction {
@@ -313,6 +325,7 @@ export type Action = {
     | OpenModalAction
     | OpenDrawerAction
     | OpenPopOverAction
+    | ToggleAccordionItemAction
     | TogglePropsAction
     | OpenToastAction
     | ChangeStateAction
@@ -422,6 +435,10 @@ export type OpenDrawerActionParams = ActionParams & {
   action: OpenDrawerAction;
 };
 
+export type ToggleAccordionItemActionParams = ActionParams & {
+  action: ToggleAccordionItemAction;
+};
+
 export type TriggerLogicFlowActionParams = ActionParams & {
   action: TriggerLogicFlowAction;
 };
@@ -486,6 +503,26 @@ export const openDrawerAction = ({ action }: OpenDrawerActionParams) => {
   updateTreeComponent({
     componentId: action.drawerId,
     props: { opened: true },
+    save: false,
+  });
+};
+
+export const toggleAccordionItemAction = ({
+  action,
+}: ToggleAccordionItemActionParams) => {
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const editorTree = useEditorStore.getState().tree;
+
+  const accordion = getComponentById(editorTree.root, action.accordionId);
+
+  updateTreeComponent({
+    componentId: action.accordionId,
+    props: {
+      value:
+        accordion?.props?.value === action.accordionItemId
+          ? ""
+          : action.accordionItemId,
+    },
     save: false,
   });
 };
@@ -1568,6 +1605,10 @@ export const actionMapper = {
     action: togglePropsAction,
     form: TogglePropsActionForm,
     flowForm: TogglePropsFlowActionForm,
+  },
+  toggleAccordionItem: {
+    action: toggleAccordionItemAction,
+    form: ToggleAccordionItemActionForm,
   },
   reloadComponent: {
     action: reloadComponentAction,

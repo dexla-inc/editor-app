@@ -17,7 +17,12 @@ const AccordionControlComponent = forwardRef(
     const { children, ...componentProps } = component.props as any;
 
     return (
-      <MantineAccordion.Control ref={ref} {...props} {...componentProps}>
+      <MantineAccordion.Control
+        ref={ref}
+        {...props}
+        {...componentProps}
+        style={{ padding: 0 }}
+      >
         {component.children && component.children.length > 0
           ? component.children?.map((child) => renderTree(child))
           : children}
