@@ -309,8 +309,6 @@ export const requiredModifiers: RequiredModifiers = {
     textAlign: "left",
     width: "100%",
     height: "auto",
-    display: "flex",
-    alignItems: "center",
     padding: "10px",
   },
   accordionItem: {
@@ -364,6 +362,7 @@ export const requiredModifiers: RequiredModifiers = {
     withAsterisk: false,
     clearable: false,
     icon: "",
+    iconPosition: "left",
     labelSize: "sm",
   },
   chart: {
