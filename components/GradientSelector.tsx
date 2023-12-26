@@ -231,7 +231,7 @@ const GradientSelector = ({ getValue, setFieldValue }: GradientPickerProps) => {
               <ActionIcon
                 size="xs"
                 onClick={addNewColorToColors}
-                disabled={_colors.length >= 3}
+                disabled={_colors.length >= 4}
               >
                 <IconPlus />
               </ActionIcon>

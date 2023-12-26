@@ -37,6 +37,7 @@ export const Modifier = withModifier(
           clearable: selectedComponent?.props?.clearable,
           valueFormat: selectedComponent?.props?.valueFormat,
           icon: selectedComponent?.props?.icon,
+          iconPosition: selectedComponent?.props?.iconPosition,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -160,6 +161,29 @@ export const Modifier = withModifier(
               });
             }}
           />
+          <Stack spacing={2}>
+            <TopLabel text="Icon Position" />
+            <SegmentedControl
+              size="xs"
+              data={[
+                {
+                  label: "Left",
+                  value: "left",
+                },
+                {
+                  label: "Right",
+                  value: "right",
+                },
+              ]}
+              {...form.getInputProps("iconPosition")}
+              onChange={(value) => {
+                form.setFieldValue("iconPosition", value as string);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  iconPosition: value as string,
+                });
+              }}
+            />
+          </Stack>
         </Stack>
       </form>
     );

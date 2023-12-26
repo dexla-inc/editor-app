@@ -26,6 +26,7 @@ const DateInputComponent = ({
     isDisabled,
     disabled,
     icon: iconName,
+    iconPosition,
     triggers,
     styles,
     ...componentProps
@@ -38,9 +39,14 @@ const DateInputComponent = ({
     input: customInputStyle,
   });
 
+  const isPositionLeft =
+    !iconPosition || (iconPosition && iconPosition === "left");
+
   return (
     <MantineDatePickerInput
-      icon={iconName ? <Icon name={iconName} /> : null}
+      {...(iconName && isPositionLeft && { icon: <Icon name={iconName} /> })}
+      {...(iconName &&
+        !isPositionLeft && { rightSection: <Icon name={iconName} /> })}
       disabled={isDisabled ? true : false}
       styles={customStyles}
       {...props}
