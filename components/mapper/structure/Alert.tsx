@@ -44,6 +44,7 @@ export const jsonStructure = (props?: any): Component => {
       },
       icon: "IconAlertCircle",
       color: "Danger.6",
+      iconColor: "Danger.6",
       ...(props.props || {}),
     },
   };

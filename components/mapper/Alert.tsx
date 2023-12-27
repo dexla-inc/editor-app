@@ -4,6 +4,9 @@ import { Component } from "@/utils/editor";
 import { AlertProps, Alert as MantineAlert } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useUserTheme } from "@/hooks/useUserTheme";
+import { useEditorStore } from "@/stores/editor";
+import get from "lodash.get";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -12,12 +15,18 @@ type Props = {
 
 const AlertComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
-    const { children, icon, ...componentProps } = component.props as any;
+    const { children, icon, iconColor, ...componentProps } =
+      component.props as any;
+    const currentProjectId = useEditorStore((state) => state.currentProjectId);
+    const theme = useUserTheme(currentProjectId!);
+    const iconColorHex = get(theme.colors, iconColor);
 
     return (
       <MantineAlert
         ref={ref}
-        {...(icon && { icon: <Icon name={icon} /> })}
+        {...(icon && {
+          icon: <Icon name={icon} color={iconColorHex} />,
+        })}
         {...props}
         {...componentProps}
         style={{ ...props.style }}

@@ -21,6 +21,7 @@ export const Modifier = withModifier(
         merge({}, requiredModifiers.alert, {
           color: selectedComponent.props?.color,
           icon: selectedComponent.props?.icon,
+          iconColor: selectedComponent.props?.iconColor,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,6 +46,16 @@ export const Modifier = withModifier(
             onIconSelect={(value: string) => {
               form.setFieldValue("icon", value);
               debouncedTreeUpdate(selectedComponentIds, { icon: value });
+            }}
+          />
+          <ThemeColorSelector
+            label="Icon Color"
+            {...form.getInputProps("iconColor")}
+            onChange={(value: string) => {
+              form.setFieldValue("iconColor", value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                iconColor: value,
+              });
             }}
           />
         </Stack>
