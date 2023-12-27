@@ -1,4 +1,5 @@
 import { Icon } from "@/components/Icon";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { NavigationAction } from "@/utils/actions";
 import { getColorValue } from "@/utils/branding";
@@ -8,7 +9,6 @@ import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { useRouter } from "next/router";
 import { forwardRef, memo } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = {
   renderTree: (component: Component) => any;

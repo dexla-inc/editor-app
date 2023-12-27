@@ -73,33 +73,31 @@ export const Modifier = withModifier(
               }}
             />
           </Group>
-          <Group noWrap>
-            <Select
-              label="Orientation"
-              size="xs"
-              data={[
-                { label: "Horizontal", value: "horizontal" },
-                { label: "Vertical", value: "vertical" },
-              ]}
-              {...form.getInputProps("orientation")}
-              onChange={(value) => {
-                form.setFieldValue("orientation", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  orientation: value,
-                });
-              }}
-            />
-            <ThemeColorSelector
-              label="Color"
-              {...form.getInputProps("color")}
-              onChange={(value: string) => {
-                form.setFieldValue("color", value);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  color: value,
-                });
-              }}
-            />
-          </Group>
+          <Select
+            label="Orientation"
+            size="xs"
+            data={[
+              { label: "Horizontal", value: "horizontal" },
+              { label: "Vertical", value: "vertical" },
+            ]}
+            {...form.getInputProps("orientation")}
+            onChange={(value) => {
+              form.setFieldValue("orientation", value as string);
+              debouncedTreeUpdate(selectedComponentIds, {
+                orientation: value,
+              });
+            }}
+          />
+          <ThemeColorSelector
+            label="Color"
+            {...form.getInputProps("color")}
+            onChange={(value: string) => {
+              form.setFieldValue("color", value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                color: value,
+              });
+            }}
+          />
           <SwitchSelector
             topLabel="Grow"
             {...form.getInputProps("grow")}

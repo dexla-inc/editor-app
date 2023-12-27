@@ -11,11 +11,11 @@ import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { LoginActionForm } from "@/components/actions/LoginActionForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
 import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm";
-import { ToggleAccordionItemActionForm } from "@/components/actions/ToggleAccordionItemActionForm";
 import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
 import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
+import { ToggleAccordionItemActionForm } from "@/components/actions/ToggleAccordionItemActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
 import { APICallFlowActionForm } from "@/components/actions/logic-flow-forms/APICallFlowActionForm";
@@ -749,7 +749,7 @@ function getQueryElementValue(value: string, iframeWindow: any): string {
 const getVariablesValue = async (objs: Record<string, string>) => {
   return await Object.values(objs).reduce(async (acc, key) => {
     const result = await acc;
-    let value = "";
+    let value = key;
     const iframeWindow = useEditorStore.getState().iframeWindow;
 
     if (key.startsWith(`valueOf_`)) {
