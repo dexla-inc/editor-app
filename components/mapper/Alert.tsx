@@ -1,12 +1,12 @@
 import { Icon } from "@/components/Icon";
-import { isSame } from "@/utils/componentComparison";
-import { Component } from "@/utils/editor";
-import { AlertProps, Alert as MantineAlert } from "@mantine/core";
-import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useUserTheme } from "@/hooks/useUserTheme";
 import { useEditorStore } from "@/stores/editor";
+import { isSame } from "@/utils/componentComparison";
+import { Component } from "@/utils/editor";
+import { AlertProps, Alert as MantineAlert } from "@mantine/core";
 import get from "lodash.get";
+import { forwardRef, memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -19,7 +19,7 @@ const AlertComponent = forwardRef(
       component.props as any;
     const currentProjectId = useEditorStore((state) => state.currentProjectId);
     const theme = useUserTheme(currentProjectId!);
-    const iconColorHex = get(theme.colors, iconColor);
+    const iconColorHex = get(theme?.colors, iconColor);
 
     return (
       <MantineAlert
