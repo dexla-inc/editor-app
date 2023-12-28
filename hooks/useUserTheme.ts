@@ -90,23 +90,8 @@ export const useUserTheme = (projectId: string) => {
     };
 
     updateTheme();
-  }, [
-    iframeWindow,
-    isLive,
-    setTheme,
-    userTheme.data?.cardStyle,
-    userTheme.data?.colors,
-    userTheme.data?.defaultFont,
-    userTheme.data?.defaultRadius,
-    userTheme.data?.defaultSpacing,
-    userTheme.data?.faviconUrl,
-    userTheme.data?.fonts,
-    userTheme.data?.hasCompactButtons,
-    userTheme.data?.logoUrl,
-    userTheme.data?.logos,
-    userTheme.data?.theme,
-    userTheme.isFetched,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [iframeWindow, isLive, userTheme.isFetched]);
 
   useEffect(() => {
     if (internalTheme) {

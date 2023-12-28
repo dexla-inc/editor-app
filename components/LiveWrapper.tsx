@@ -1,6 +1,5 @@
 import { useUserTheme } from "@/hooks/useUserTheme";
 import { getProject } from "@/requests/projects/queries";
-import { useEditorStore } from "@/stores/editor";
 import { decodeSchema } from "@/utils/compression";
 import createCache from "@emotion/cache";
 import { Box, BoxProps, MantineProvider } from "@mantine/core";

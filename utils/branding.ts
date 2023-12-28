@@ -257,7 +257,7 @@ export const getColorValue = (theme: MantineThemeExtended, value?: string) => {
   if (value === undefined || value === "transparent") return "transparent";
   const [color, index] = value?.split(".");
 
-  const _value = index ? theme.colors[color][Number(index)] : color;
+  const _value = index ? theme.colors[color]?.[Number(index)] : color;
 
   return _value;
 };

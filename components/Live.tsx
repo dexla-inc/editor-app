@@ -89,7 +89,7 @@ export const Live = ({ projectId, pageId }: Props) => {
       }}
       p={0}
     >
-      <LiveWrapper key={editorTree.timestamp} projectId={projectId}>
+      <LiveWrapper projectId={projectId}>
         {renderTree(editorTree.root)}
       </LiveWrapper>
     </Box>
