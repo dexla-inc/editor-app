@@ -28,9 +28,10 @@ import { DeployButton } from "@/components/DeployButton";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
 import { FileStorageButton } from "@/components/FileStorageButton";
 import { Icon } from "@/components/Icon";
+import { OtherAvatars } from "@/components/OtherAvatars";
 import { SaveTemplateButton } from "@/components/SaveTemplateButton";
 import { VariablesButton } from "@/components/variables/VariablesButton";
-import { getPageList } from "@/requests/pages/queries";
+import { getPageList } from "@/requests/pages/queries-noauth";
 import { PageListResponse } from "@/requests/pages/types";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
@@ -38,7 +39,6 @@ import { flexStyles } from "@/utils/branding";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
-import { OtherAvatars } from "@/components/OtherAvatars";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const resetTree = useEditorStore((state) => state.resetTree);

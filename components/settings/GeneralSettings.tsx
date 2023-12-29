@@ -3,7 +3,8 @@ import {
   ProjectUpdateParams,
   patchProject,
 } from "@/requests/projects/mutations";
-import { RegionTypes, getProject } from "@/requests/projects/queries";
+import { getProject } from "@/requests/projects/queries-noauth";
+import { RegionTypes } from "@/requests/projects/types";
 import { useAppStore } from "@/stores/app";
 import { convertToPatchParams } from "@/utils/dashboardTypes";
 import {

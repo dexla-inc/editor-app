@@ -1,5 +1,5 @@
 import { patchProject } from "@/requests/projects/mutations";
-import { getProject } from "@/requests/projects/queries";
+import { getProject } from "@/requests/projects/queries-noauth";
 import { decodeSchema, encodeSchema } from "@/utils/compression";
 import { convertToPatchParams } from "@/utils/dashboardTypes";
 import { Button, Card, Stack, Text } from "@mantine/core";

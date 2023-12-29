@@ -1,5 +1,5 @@
 import { useUserTheme } from "@/hooks/useUserTheme";
-import { getProject } from "@/requests/projects/queries";
+import { getProject } from "@/requests/projects/queries-noauth";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";

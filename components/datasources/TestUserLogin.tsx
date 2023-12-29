@@ -1,5 +1,5 @@
 import { ErrorAlert, SuccessAlert } from "@/components/Alerts";
-import { getDataSourceAuth } from "@/requests/datasources/queries";
+import { getDataSourceAuth } from "@/requests/datasources/queries-noauth";
 import {
   DataSourceAuthResponse,
   RequestBody,

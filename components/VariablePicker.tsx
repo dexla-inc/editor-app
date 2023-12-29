@@ -1,5 +1,5 @@
 import { JSONSelector } from "@/components/JSONSelector";
-import { listVariables } from "@/requests/variables/queries";
+import { listVariables } from "@/requests/variables/queries-noauth";
 import { ICON_SIZE } from "@/utils/config";
 import {
   Accordion,

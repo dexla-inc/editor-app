@@ -1,7 +1,7 @@
 import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea";
 import { Icon } from "@/components/Icon";
 import { ObjectDetails } from "@/components/PropsListing";
-import { listVariables } from "@/requests/variables/queries";
+import { listVariables } from "@/requests/variables/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
 import { getAllComponentsByName } from "@/utils/editor";
 import {

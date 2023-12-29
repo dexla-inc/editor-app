@@ -1,5 +1,5 @@
 import { deleteFile, uploadFile } from "@/requests/storage/mutations";
-import { getAllFiles } from "@/requests/storage/queries";
+import { getAllFiles } from "@/requests/storage/queries-noauth";
 import {
   UploadMultipleResponse,
   UploadResponse,

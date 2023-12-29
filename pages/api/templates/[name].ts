@@ -1,4 +1,4 @@
-import { getTemplate } from "@/requests/templates/queries";
+import { getTemplate } from "@/requests/templates/queries-noauth";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(

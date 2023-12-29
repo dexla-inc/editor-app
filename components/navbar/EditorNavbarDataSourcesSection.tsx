@@ -2,7 +2,7 @@ import { WarningAlert } from "@/components/Alerts";
 import { DataSourceListItem } from "@/components/datasources/DataSourceListItem";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import PaneHeading from "@/components/navbar/PaneHeading";
-import { getDataSources } from "@/requests/datasources/queries";
+import { getDataSources } from "@/requests/datasources/queries-noauth";
 import { Stack, Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";

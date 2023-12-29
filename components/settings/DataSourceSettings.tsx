@@ -1,6 +1,6 @@
 import { DataSourceItem } from "@/components/datasources/DataSourceItem";
 import IconTitleDescriptionButton from "@/components/projects/NewProjectButton";
-import { getDataSources } from "@/requests/datasources/queries";
+import { getDataSources } from "@/requests/datasources/queries-noauth";
 import { DataSourceResponse } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { ICON_SIZE } from "@/utils/config";

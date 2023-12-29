@@ -1,8 +1,8 @@
 import { Live } from "@/components/Live";
 import { isMatchingUrl } from "@/pages/[page]";
-import { getMostRecentDeployment } from "@/requests/deployments/queries";
+import { getMostRecentDeployment } from "@/requests/deployments/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
-import { getByDomain } from "@/requests/projects/queries";
+import { getByDomain } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
 import { decodeSchema } from "@/utils/compression";
 import { GetServerSidePropsContext } from "next";

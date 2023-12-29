@@ -8,7 +8,7 @@ import {
   AuthenticationSchemeLabels,
   RequestBody,
 } from "@/requests/datasources/types";
-import { getPageList } from "@/requests/pages/queries";
+import { getPageList } from "@/requests/pages/queries-noauth";
 import { DataSourceStepperWithoutNextProps } from "@/utils/dashboardTypes";
 import {
   Col,

@@ -4,11 +4,10 @@ import {
   createLogicFlow,
   deleteLogicFlow,
 } from "@/requests/logicflows/mutations";
-import { listLogicFlows } from "@/requests/logicflows/queries";
+import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
-import { initialEdges, initialNodes, useFlowStore } from "@/stores/flow";
-import { encodeSchema } from "@/utils/compression";
+import { useFlowStore } from "@/stores/flow";
 import { ASIDE_WIDTH, HEADER_HEIGHT } from "@/utils/config";
 import {
   Box,

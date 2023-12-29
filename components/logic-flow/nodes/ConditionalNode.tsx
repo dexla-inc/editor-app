@@ -1,6 +1,6 @@
 import { OutputForm } from "@/components/logic-flow/OutputForm";
 import { CustomNode, NodeData } from "@/components/logic-flow/nodes/CustomNode";
-import { listVariables } from "@/requests/variables/queries";
+import { listVariables } from "@/requests/variables/queries-noauth";
 import { useFlowStore } from "@/stores/flow";
 import { Button, Select, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";

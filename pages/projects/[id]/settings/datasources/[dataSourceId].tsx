@@ -18,11 +18,11 @@ import { TestUserLogin } from "@/components/datasources/TestUserLogin";
 import { SettingsTabHeader } from "@/components/settings/SettingsTabHeader";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
 import { updateDataSource } from "@/requests/datasources/mutations";
+import { getSwagger } from "@/requests/datasources/queries";
 import {
   getDataSource,
   getDataSourceEndpoints,
-  getSwagger,
-} from "@/requests/datasources/queries";
+} from "@/requests/datasources/queries-noauth";
 import {
   AuthenticationSchemes,
   DataSourceParams,

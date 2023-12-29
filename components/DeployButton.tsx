@@ -1,7 +1,7 @@
 import { Icon } from "@/components/Icon";
 import { createDeployment } from "@/requests/deployments/mutations";
-import { getMostRecentDeployment } from "@/requests/deployments/queries";
-import { getProject } from "@/requests/projects/queries";
+import { getMostRecentDeployment } from "@/requests/deployments/queries-noauth";
+import { getProject } from "@/requests/projects/queries-noauth";
 import { useAppStore } from "@/stores/app";
 import { Button, Tooltip } from "@mantine/core";
 import { useEffect, useState } from "react";

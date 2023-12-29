@@ -1,5 +1,5 @@
-import { analyseTemplateToUse, getPage } from "@/requests/pages/queries";
-import { getTemplate } from "@/requests/templates/queries";
+import { analyseTemplateToUse, getPage } from "@/requests/pages/queries-noauth";
+import { getTemplate } from "@/requests/templates/queries-noauth";
 import { useAppStore } from "@/stores/app";
 import { emptyEditorTree, useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";

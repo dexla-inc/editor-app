@@ -1,7 +1,10 @@
-import { getDataSources } from "@/requests/datasources/queries";
-import { listLogicFlows } from "@/requests/logicflows/queries";
-import { getPage } from "@/requests/pages/queries";
-import { getVariable, listVariables } from "@/requests/variables/queries";
+import { getDataSources } from "@/requests/datasources/queries-noauth";
+import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
+import { getPage } from "@/requests/pages/queries-noauth";
+import {
+  getVariable,
+  listVariables,
+} from "@/requests/variables/queries-noauth";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 

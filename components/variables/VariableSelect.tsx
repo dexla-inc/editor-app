@@ -1,4 +1,4 @@
-import { listVariables } from "@/requests/variables/queries";
+import { listVariables } from "@/requests/variables/queries-noauth";
 import { VariableResponse } from "@/requests/variables/types";
 import { Select, SelectProps } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
