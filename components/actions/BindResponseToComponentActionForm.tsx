@@ -56,7 +56,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      binds: action.action.binds ?? [],
+      binds: action.action?.binds ?? [],
     },
   });
 

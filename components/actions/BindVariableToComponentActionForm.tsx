@@ -1,3 +1,4 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { VariablePicker } from "@/components/VariablePicker";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
@@ -11,7 +12,6 @@ import { useEditorStore } from "@/stores/editor";
 import { BindVariableToComponentAction } from "@/utils/actions";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
 type Props = {
   id: string;
@@ -43,8 +43,8 @@ export const BindVariableToComponentActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      component: action.action.component,
-      variable: action.action.variable,
+      component: action.action?.component,
+      variable: action.action?.variable,
     },
   });
 

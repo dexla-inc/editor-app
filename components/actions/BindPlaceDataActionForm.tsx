@@ -109,15 +109,15 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      showLoader: action.action.showLoader ?? true,
-      endpoint: action.action.endpoint,
+      showLoader: action.action?.showLoader ?? true,
+      endpoint: action.action?.endpoint,
       binds: {
-        header: action.action.binds?.header ?? {},
-        parameter: action.action.binds?.parameter ?? {},
-        body: action.action.binds?.body ?? {},
+        header: action.action?.binds?.header ?? {},
+        parameter: action.action?.binds?.parameter ?? {},
+        body: action.action?.binds?.body ?? {},
       },
-      datasources: action.action.datasources,
-      componentId: action.action.componentId ?? "",
+      datasources: action.action?.datasources,
+      componentId: action.action?.componentId ?? "",
     },
   });
 

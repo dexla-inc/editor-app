@@ -44,8 +44,8 @@ export const OpenToastActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      title: action.action.title,
-      message: action.action.message,
+      title: action.action?.title,
+      message: action.action?.message,
     },
   });
 

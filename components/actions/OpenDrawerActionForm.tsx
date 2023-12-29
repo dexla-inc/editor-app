@@ -6,11 +6,11 @@ import {
   useActionData,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
+import { useEditorStore } from "@/stores/editor";
 import { OpenDrawerAction } from "@/utils/actions";
 import { Component, getAllComponentsByName } from "@/utils/editor";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   id: string;
@@ -35,7 +35,7 @@ export const OpenDrawerActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      drawerId: action.action.drawerId,
+      drawerId: action.action?.drawerId,
     },
   });
 
@@ -65,7 +65,7 @@ export const OpenDrawerActionForm = ({ id }: Props) => {
         <Select
           size="xs"
           label={
-            action.action.name === "openDrawer"
+            action.action?.name === "openDrawer"
               ? "Drawer to Open"
               : "Drawer to Close"
           }

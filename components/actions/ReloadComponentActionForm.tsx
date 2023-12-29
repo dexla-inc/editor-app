@@ -46,8 +46,8 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      componentId: reloadAction.componentId ?? "",
-      onMountActionId: reloadAction.onMountActionId ?? "",
+      componentId: reloadAction?.componentId ?? "",
+      onMountActionId: reloadAction?.onMountActionId ?? "",
     },
   });
 

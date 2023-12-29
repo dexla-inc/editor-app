@@ -1,5 +1,4 @@
 import { useAppStore } from "@/stores/app";
-import { useEditorStore } from "@/stores/editor";
 import { Action, BaseAction } from "@/utils/actions";
 import { EditorTree, getComponentById } from "@/utils/editor";
 
@@ -71,7 +70,7 @@ export function useActionData<T extends BaseAction>({
     action: {
       ...action,
       // @ts-ignore
-      action: action.action as T,
+      action: action?.action as T,
     },
   };
 }

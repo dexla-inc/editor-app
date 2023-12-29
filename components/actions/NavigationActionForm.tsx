@@ -37,15 +37,15 @@ export const NavigationActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      pageId: action.action.pageId,
+      pageId: action.action?.pageId,
     },
   });
 
   const pageId = form.getInputProps("pageId").value;
 
   const pageQueryStrings = useMemo(() => {
-    if (action.action.pageId === pageId && action.action.queryStrings) {
-      return action.action.queryStrings;
+    if (action.action?.pageId === pageId && action.action?.queryStrings) {
+      return action.action?.queryStrings;
     }
 
     return pages.find((page) => page.id === pageId)?.queryStrings ?? {};

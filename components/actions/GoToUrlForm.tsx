@@ -39,8 +39,8 @@ export const GoToUrlForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      url: action.action.url,
-      openInNewTab: action.action.openInNewTab,
+      url: action.action?.url,
+      openInNewTab: action.action?.openInNewTab,
     },
   });
 
