@@ -103,7 +103,7 @@ export default function BindingPopover({
   ]).reduce(
     (acc, component) => {
       const value = component?.props?.value;
-      component.name = component.description!;
+      component = { ...component, name: component.description! };
       acc.list[component?.id!] = component;
       acc[component?.id!] = value ? JSON.parse(value) : value;
       return acc;
