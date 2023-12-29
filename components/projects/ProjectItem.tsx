@@ -1,8 +1,8 @@
 import { Icon } from "@/components/Icon";
-import { getPageList } from "@/requests/pages/queries";
+import { getPageList } from "@/requests/pages/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
 import { deleteProject } from "@/requests/projects/mutations";
-import { ProjectResponse } from "@/requests/projects/queries";
+import { ProjectResponse } from "@/requests/projects/types";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { THIN_DARK_OUTLINE, THIN_GRAY_OUTLINE } from "@/utils/branding";
 import { ICON_DELETE, ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";

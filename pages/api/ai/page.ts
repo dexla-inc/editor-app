@@ -1,5 +1,5 @@
-import { listTemplates } from "@/requests/templates/queries";
-import { listTiles } from "@/requests/tiles/queries";
+import { listTemplates } from "@/requests/templates/queries-noauth";
+import { listTiles } from "@/requests/tiles/queries-noauth";
 import { GPT4_PREVIEW_MODEL } from "@/utils/config";
 import { openai } from "@/utils/openai";
 import { prisma } from "@/utils/prisma";

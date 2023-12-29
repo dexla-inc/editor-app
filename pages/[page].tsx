@@ -1,7 +1,7 @@
 import { Live } from "@/components/Live";
-import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries";
+import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
-import { getByDomain } from "@/requests/projects/queries";
+import { getByDomain } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";

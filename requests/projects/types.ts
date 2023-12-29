@@ -1,3 +1,31 @@
+import { UserRoles } from "@/utils/dashboardTypes";
+import { ProjectTypes } from "@/utils/projectTypes";
+
+export type RegionTypes = "FRANCE_CENTRAL" | "US_CENTRAL" | "UK_SOUTH";
+export type ProjectResponse = {
+  id: string;
+  name: string;
+  friendlyName: string;
+  region: {
+    type: RegionTypes;
+    name: string;
+  };
+  type: ProjectTypes;
+  industry: string;
+  description: string;
+  similarCompany: string;
+  accessLevel: UserRoles;
+  isOwner: boolean;
+  deployed: boolean;
+  domain: string;
+  subDomain: string;
+  customCode?: string;
+};
+
+export type ProjectListResponse = {
+  results: ProjectResponse[];
+};
+
 export type BrandingAITheme = {
   fontFamily: string;
   colors: {

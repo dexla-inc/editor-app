@@ -3,7 +3,7 @@ import { ColorSelector } from "@/components/ColorSelector";
 import NextButton from "@/components/NextButton";
 import { generateThemeFromScreenshot } from "@/requests/ai/queries";
 import { saveBasicTheme, saveTheme } from "@/requests/themes/mutations";
-import { getTheme } from "@/requests/themes/queries";
+import { getTheme } from "@/requests/themes/queries-noauth";
 import { Color, ThemeResponse } from "@/requests/themes/types";
 import { useEditorStore } from "@/stores/editor";
 import { convertToBase64 } from "@/utils/common";

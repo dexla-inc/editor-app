@@ -1,7 +1,8 @@
 // The comment below force next to refresh the editor state every time we change something in the code
 // @refresh reset
 import { EditableComponent } from "@/components/EditableComponent";
-import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries";
+import { LiveWrapper } from "@/components/LiveWrapper";
+import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries-noauth";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
@@ -9,7 +10,6 @@ import { decodeSchema } from "@/utils/compression";
 import { Component } from "@/utils/editor";
 import { Box } from "@mantine/core";
 import { useCallback, useEffect } from "react";
-import { LiveWrapper } from "@/components/LiveWrapper";
 
 type Props = {
   projectId: string;

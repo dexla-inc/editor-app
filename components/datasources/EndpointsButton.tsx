@@ -1,4 +1,4 @@
-import { getPageList } from "@/requests/pages/queries";
+import { getPageList } from "@/requests/pages/queries-noauth";
 import { ICON_SIZE } from "@/utils/config";
 import { LoadingStore } from "@/utils/dashboardTypes";
 import { Button } from "@mantine/core";

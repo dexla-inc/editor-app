@@ -12,7 +12,7 @@ import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourc
 import {
   getDataSourceEndpoints,
   getDataSources,
-} from "@/requests/datasources/queries";
+} from "@/requests/datasources/queries-noauth";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { useEditorStore } from "@/stores/editor";

@@ -1,6 +1,6 @@
 import { InformationAlert, SuccessAlert } from "@/components/Alerts";
 import { patchProject } from "@/requests/projects/mutations";
-import { getProject } from "@/requests/projects/queries";
+import { getProject } from "@/requests/projects/queries-noauth";
 import { useAppStore } from "@/stores/app";
 import { convertToPatchParams } from "@/utils/dashboardTypes";
 import {

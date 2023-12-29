@@ -14,7 +14,7 @@ import { useVariable } from "@/hooks/useVariable";
 import {
   getDataSourceEndpoints,
   getDataSources,
-} from "@/requests/datasources/queries";
+} from "@/requests/datasources/queries-noauth";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { FrontEndTypes } from "@/requests/variables/types";

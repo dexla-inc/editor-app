@@ -1,5 +1,5 @@
 import { DataSourceResponse } from "@/requests/datasources/types";
-import { RegionTypes } from "@/requests/projects/queries";
+import { RegionTypes } from "@/requests/projects/types";
 import { PatchParams } from "@/requests/types";
 import { DexlaNotificationProps } from "@/stores/app";
 

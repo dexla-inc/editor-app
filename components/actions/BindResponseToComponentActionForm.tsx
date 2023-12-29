@@ -7,7 +7,7 @@ import {
   useActionData,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
-import { getDataSourceEndpoints } from "@/requests/datasources/queries";
+import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
 import { Action, BindResponseToComponentAction } from "@/utils/actions";
 import { getComponentById } from "@/utils/editor";

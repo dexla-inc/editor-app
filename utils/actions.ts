@@ -51,10 +51,13 @@ import { Options } from "@/components/modifiers/GoogleMap";
 import {
   getDataSourceAuth,
   getDataSourceEndpoints,
-} from "@/requests/datasources/queries";
+} from "@/requests/datasources/queries-noauth";
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
 import { createVariable } from "@/requests/variables/mutations";
-import { getVariable, listVariables } from "@/requests/variables/queries";
+import {
+  getVariable,
+  listVariables,
+} from "@/requests/variables/queries-noauth";
 import { FrontEndTypes } from "@/requests/variables/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";

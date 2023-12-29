@@ -1,6 +1,6 @@
 import InitialPane from "@/components/pages/InitialPane";
 import PageDetailPane from "@/components/pages/PageDetailPane";
-import { getPageList } from "@/requests/pages/queries";
+import { getPageList } from "@/requests/pages/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
 import { Stack } from "@mantine/core";

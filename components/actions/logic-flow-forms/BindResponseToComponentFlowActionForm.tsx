@@ -1,6 +1,6 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { useRequestProp } from "@/hooks/useRequestProp";
-import { getDataSourceEndpoints } from "@/requests/datasources/queries";
+import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { BindResponseToComponentAction } from "@/utils/actions";

@@ -1,9 +1,9 @@
 import { useUserTheme } from "@/hooks/useUserTheme";
-import { getProject } from "@/requests/projects/queries";
+import { getProject } from "@/requests/projects/queries-noauth";
 import { decodeSchema } from "@/utils/compression";
 import createCache from "@emotion/cache";
 import { Box, BoxProps, MantineProvider } from "@mantine/core";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   projectId: string;

@@ -1,4 +1,4 @@
-import { RegionTypes } from "@/requests/projects/queries";
+import { RegionTypes } from "@/requests/projects/types";
 import { PatchParams } from "@/requests/types";
 import { del, getAuthToken, patch, post } from "@/utils/api";
 import { buildQueryString } from "@/utils/dashboardTypes";

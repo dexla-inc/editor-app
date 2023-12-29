@@ -2,7 +2,7 @@ import BackButton from "@/components/BackButton";
 import { Icon } from "@/components/Icon";
 import RegionSelect from "@/components/RegionSelect";
 import { patchProject } from "@/requests/projects/mutations";
-import { RegionTypes } from "@/requests/projects/queries";
+import { RegionTypes } from "@/requests/projects/types";
 import {
   LoadingStore,
   PreviousStepperClickEvent,

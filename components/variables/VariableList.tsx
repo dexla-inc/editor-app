@@ -1,6 +1,6 @@
 import { VariableForm } from "@/components/variables/VariableForm";
 import { deleteVariable } from "@/requests/variables/mutations";
-import { listVariables } from "@/requests/variables/queries";
+import { listVariables } from "@/requests/variables/queries-noauth";
 import {
   ActionIcon,
   Center,

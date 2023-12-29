@@ -2,7 +2,7 @@ import {
   createLogicFlow,
   patchLogicFlow,
 } from "@/requests/logicflows/mutations";
-import { getLogicFlow } from "@/requests/logicflows/queries";
+import { getLogicFlow } from "@/requests/logicflows/queries-noauth";
 import { LogicFlowParams } from "@/requests/logicflows/types";
 import { useAppStore } from "@/stores/app";
 import { initialEdges, initialNodes, useFlowStore } from "@/stores/flow";

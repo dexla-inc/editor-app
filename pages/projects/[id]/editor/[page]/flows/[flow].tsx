@@ -2,7 +2,7 @@ import { FlowNode } from "@/components/logic-flow/FlowNode";
 import { LogicFlow } from "@/components/logic-flow/LogicFlow";
 import { LogicFlowShell } from "@/components/logic-flow/LogicFlowShell";
 import { patchLogicFlow } from "@/requests/logicflows/mutations";
-import { getLogicFlow } from "@/requests/logicflows/queries";
+import { getLogicFlow } from "@/requests/logicflows/queries-noauth";
 import { LogicFlowParams } from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
 import { FlowData, useFlowStore } from "@/stores/flow";

@@ -4,15 +4,17 @@ import { FocusRingSelector } from "@/components/FocusRingSelector";
 import { LoaderSelector } from "@/components/LoaderSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
-import { UnitInput } from "@/components/UnitInput";
+import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
+import { TypographyModal } from "@/components/navbar/EditorNavbarThemesSection/TypographyModal";
 import { CardStyle } from "@/requests/projects/types";
 import { saveTheme } from "@/requests/themes/mutations";
-import { getTheme } from "@/requests/themes/queries";
+import { getTheme } from "@/requests/themes/queries-noauth";
 import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE, INPUT_SIZE } from "@/utils/config";
 import { getGoogleFonts } from "@/utils/googleFonts";
+import { useGoogleFonts } from "@flyyer/use-googlefonts";
 import {
   ActionIcon,
   Button,
@@ -26,14 +28,11 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
+import { IconArrowsDiagonal2 } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { IconArrowsDiagonal2 } from "@tabler/icons-react";
-import { useGoogleFonts } from "@flyyer/use-googlefonts";
-import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
-import { TypographyModal } from "@/components/navbar/EditorNavbarThemesSection/TypographyModal";
-import { useDisclosure } from "@mantine/hooks";
 
 type EditorNavbarThemesSectionProps = {
   isActive: boolean;

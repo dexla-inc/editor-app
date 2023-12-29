@@ -2,7 +2,7 @@ import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput"
 import { colors } from "@/components/datasources/DataSourceEndpoint";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import { useRequestProp } from "@/hooks/useRequestProp";
-import { getDataSourceEndpoints } from "@/requests/datasources/queries";
+import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { useEditorStore } from "@/stores/editor";

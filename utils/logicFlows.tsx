@@ -3,7 +3,7 @@ import * as ConditionalNodeExports from "@/components/logic-flow/nodes/Condition
 import { NodeOutput } from "@/components/logic-flow/nodes/CustomNode";
 import * as StartNodeExports from "@/components/logic-flow/nodes/StartNode";
 import { computeNodeMapper } from "@/components/logic-flow/nodes/compute";
-import { getLogicFlow } from "@/requests/logicflows/queries";
+import { getLogicFlow } from "@/requests/logicflows/queries-noauth";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { FlowData } from "@/stores/flow";
 import { decodeSchema } from "@/utils/compression";

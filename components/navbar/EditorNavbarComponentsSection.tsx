@@ -1,7 +1,7 @@
 import { DraggableComponent } from "@/components/DraggableComponent";
 import { GenerateComponentsAIButton } from "@/components/GenerateComponentsAIButton";
 import { useUserTheme } from "@/hooks/useUserTheme";
-import { getComponentList } from "@/requests/components/queries";
+import { getComponentList } from "@/requests/components/queries-noauth";
 import { CustomComponentResponse } from "@/requests/components/types";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import {
@@ -12,6 +12,8 @@ import {
 import { decodeSchema } from "@/utils/compression";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { toSpaced } from "@/utils/dashboardTypes";
+import { Component } from "@/utils/editor";
+import createCache from "@emotion/cache";
 import {
   Center,
   Grid,
@@ -27,8 +29,6 @@ import { IconFrustum, IconSearch } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useCallback, useRef, useState } from "react";
-import createCache from "@emotion/cache";
-import { Component } from "@/utils/editor";
 
 type DraggableComponentData = {
   id: string;

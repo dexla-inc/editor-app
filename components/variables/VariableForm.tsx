@@ -1,5 +1,5 @@
 import { useVariable } from "@/hooks/useVariable";
-import { getVariable } from "@/requests/variables/queries";
+import { getVariable } from "@/requests/variables/queries-noauth";
 import { VariableTypesOptions } from "@/requests/variables/types";
 import {
   Button,

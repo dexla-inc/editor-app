@@ -1,4 +1,4 @@
-import { listTemplates } from "@/requests/templates/queries";
+import { listTemplates } from "@/requests/templates/queries-noauth";
 import { TemplateDetail } from "@/requests/templates/types";
 import { cleanJson } from "@/utils/common";
 import { GPT4_PREVIEW_MODEL } from "@/utils/config";

@@ -1,5 +1,5 @@
 import { isMatchingUrl } from "@/pages/[page]";
-import { getByDomain } from "@/requests/projects/queries";
+import { getByDomain } from "@/requests/projects/queries-noauth";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
