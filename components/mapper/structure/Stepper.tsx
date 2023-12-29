@@ -1,5 +1,6 @@
 import { structureMapper } from "@/utils/componentMapper";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -31,6 +32,7 @@ export const jsonStructure = (props?: any): Component => {
         name: "Stepper",
         description: "New Stepper",
         props: {
+          ...requiredModifiers.stepper,
           activeStep: 0,
           breakpoint: "sm",
           style: {

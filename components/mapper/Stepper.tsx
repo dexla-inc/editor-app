@@ -1,9 +1,9 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
+import { isSame } from "@/utils/componentComparison";
 import { Component, getAllChildrenComponents } from "@/utils/editor";
 import { Stepper as MantineStepper, StepperProps } from "@mantine/core";
 import { forwardRef, memo, useEffect, useState } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { isSame } from "@/utils/componentComparison";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -18,6 +18,7 @@ const StepperComponent = forwardRef(
       children,
       triggers,
       icon,
+      color,
       ...componentProps
     } = component.props as any;
 
@@ -25,6 +26,8 @@ const StepperComponent = forwardRef(
     const setTreeComponentCurrentState = useEditorStore(
       (state) => state.setTreeComponentCurrentState,
     );
+
+    const isVertical = component.props?.orientation === "vertical";
 
     useEffect(() => {
       // Reflect any external changes to the activeStep property
@@ -56,12 +59,17 @@ const StepperComponent = forwardRef(
         breakpoint={breakpoint}
         {...componentProps}
         {...triggers}
-        styles={{
-          stepIcon: { display: "none" },
-          separator: { display: "none" },
-          step: { width: `calc(100% / ${component?.children?.length})` },
-          stepBody: { width: "100%", marginLeft: 0 },
-        }}
+        {...(isVertical && { color })}
+        {...(!isVertical
+          ? {
+              styles: {
+                stepIcon: { display: "none" },
+                separator: { display: "none" },
+                step: { width: `calc(100% / ${component?.children?.length})` },
+                stepBody: { width: "100%", marginLeft: 0 },
+              },
+            }
+          : {})}
       >
         {(component?.children ?? []).map((child: Component, index: number) => {
           const { header, content } = (child.children ?? []).reduce(

@@ -272,6 +272,8 @@ export const requiredModifiers: RequiredModifiers = {
   stepper: {
     activeStep: "0",
     numberOfSteps: 3,
+    orientation: "horizontal",
+    color: "Primary.6",
   },
   drawer: {
     title: "Drawer Title",
