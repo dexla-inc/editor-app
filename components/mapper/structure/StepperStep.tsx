@@ -26,6 +26,7 @@ export const jsonStructure = (props?: any): Component => {
             props: {
               style: {
                 ...defaultLayoutValues,
+                flexDirection: "column",
                 padding: "3px",
                 paddingTop: "3px",
                 paddingBottom: "3px",
