@@ -7,7 +7,7 @@ import {
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
-import { OpenModalAction, ToggleAccordionItemAction } from "@/utils/actions";
+import { ToggleAccordionItemAction } from "@/utils/actions";
 import { Component, getAllComponentsByName } from "@/utils/editor";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -37,8 +37,8 @@ export const ToggleAccordionItemActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      accordionId: action.action.accordionId,
-      accordionItemId: action.action.accordionItemId,
+      accordionId: action.action?.accordionId,
+      accordionItemId: action.action?.accordionItemId,
     },
   });
 

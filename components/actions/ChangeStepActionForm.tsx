@@ -6,11 +6,11 @@ import {
   useActionData,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
+import { useEditorStore } from "@/stores/editor";
 import { ChangeStepAction } from "@/utils/actions";
 import { Component, getAllComponentsByName } from "@/utils/editor";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   id: string;
@@ -40,8 +40,8 @@ export const ChangeStepActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      stepperId: action.action.stepperId,
-      control: action.action.control ?? "next",
+      stepperId: action.action?.stepperId,
+      control: action.action?.control ?? "next",
     },
   });
 

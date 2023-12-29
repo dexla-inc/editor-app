@@ -6,10 +6,10 @@ import {
   useActionData,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
+import { useEditorStore } from "@/stores/editor";
 import { ChangeLanguageAction } from "@/utils/actions";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   id: string;
@@ -34,7 +34,7 @@ export const ChangeLanguageActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      language: action.action.language,
+      language: action.action?.language,
     },
   });
 

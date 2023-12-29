@@ -35,11 +35,11 @@ export const OpenModalActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      modalId: action.action.modalId,
+      modalId: action.action?.modalId,
     },
   });
 
-  const isActionOpenModal = action.action.name === "openModal";
+  const isActionOpenModal = action.action?.name === "openModal";
 
   const onSubmit = (values: FormValues) => {
     handleLoadingStart({ startLoading });

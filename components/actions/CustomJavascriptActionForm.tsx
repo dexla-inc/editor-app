@@ -6,6 +6,7 @@ import {
   useActionData,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
+import { useEditorStore } from "@/stores/editor";
 import { CustomJavascriptAction } from "@/utils/actions";
 import { Button, Card, Flex, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -13,7 +14,6 @@ import Editor from "@monaco-editor/react";
 import { IconPlayerPlayFilled } from "@tabler/icons-react";
 import { useState } from "react";
 import { transpile } from "typescript";
-import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   id: string;
@@ -40,7 +40,7 @@ export const CustomJavascriptActionForm = ({ id }: Props) => {
   const form = useForm<FormValues>({
     initialValues: {
       // @ts-ignore
-      code: action.action.code,
+      code: action.action?.code,
     },
   });
 

@@ -6,10 +6,10 @@ import {
   useActionData,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
+import { useEditorStore } from "@/stores/editor";
 import { AlertAction } from "@/utils/actions";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   id: string;
@@ -34,7 +34,7 @@ export const DebugActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      message: action.action.message,
+      message: action.action?.message,
     },
   });
 

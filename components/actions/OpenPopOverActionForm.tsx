@@ -6,11 +6,11 @@ import {
   useActionData,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
+import { useEditorStore } from "@/stores/editor";
 import { OpenPopOverAction } from "@/utils/actions";
 import { Component, getAllComponentsByName } from "@/utils/editor";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   id: string;
@@ -35,7 +35,7 @@ export const OpenPopOverActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      popOverId: action.action.popOverId,
+      popOverId: action.action?.popOverId,
     },
   });
 
@@ -65,7 +65,7 @@ export const OpenPopOverActionForm = ({ id }: Props) => {
         <Select
           size="xs"
           label={
-            action.action.name === "openPopOver"
+            action.action?.name === "openPopOver"
               ? "PopOver to Open"
               : "PopOver to Close"
           }
