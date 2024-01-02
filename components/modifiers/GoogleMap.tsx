@@ -21,13 +21,18 @@ import { IconMapPin, IconPlus, IconTrash } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
+import { SwitchSelector } from "../SwitchSelector";
 
 export const icon = IconMapPin;
 export const label = "Map Settings";
 
 export type MarkerItem = { id: string; name: string } & Position;
 export type Styler = Record<string, string | Record<string, any>[]>;
-export type Options = { mapTypeId: string; styles: Styler[] };
+export type Options = {
+  mapTypeId: string;
+  styles: Styler[];
+  mapTypeControl: boolean;
+};
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
@@ -42,6 +47,7 @@ export const Modifier = withModifier(
           options: selectedComponent.props?.options,
           zoom: selectedComponent.props?.zoom,
           markers: selectedComponent.props?.markers,
+          fade: selectedComponent.props?.fade,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,10 +89,9 @@ export const Modifier = withModifier(
         elementType: "all",
         stylers: [
           {
-            color: "",
-          },
-          {
-            lightness: null! as number,
+            saturation: 0,
+            lightness: 0,
+            gamma: 1,
           },
         ],
       };
@@ -208,7 +213,6 @@ export const Modifier = withModifier(
                   ),
                 )}
               </Stack>
-
               <Select
                 size="xs"
                 label="Map Type"
@@ -251,6 +255,33 @@ export const Modifier = withModifier(
                     form.setFieldValue("language", value as string);
                     debouncedTreeUpdate(selectedComponentIds, {
                       language: value,
+                    });
+                  }}
+                />
+              </Group>
+              <Group noWrap>
+                <SwitchSelector
+                  topLabel="Show Control"
+                  {...form.getInputProps("options.mapTypeControl")}
+                  checked={form.getInputProps("options.mapTypeControl").value}
+                  onChange={(event) => {
+                    form.setFieldValue(
+                      "options.mapTypeControl",
+                      event.currentTarget.checked,
+                    );
+                    debouncedTreeUpdate(selectedComponentIds, {
+                      options: { mapTypeControl: event.currentTarget.checked },
+                    });
+                  }}
+                />
+                <SwitchSelector
+                  topLabel="fade"
+                  {...form.getInputProps("fade")}
+                  checked={form.getInputProps("fade").value}
+                  onChange={(event) => {
+                    form.setFieldValue("fade", event.currentTarget.checked);
+                    debouncedTreeUpdate(selectedComponentIds, {
+                      fade: event.currentTarget.checked,
                     });
                   }}
                 />
@@ -348,7 +379,55 @@ export const Modifier = withModifier(
                             updateMapStyle(index, "elementType", e as string)
                           }
                         />
-                        <Divider my="sm" />
+                        {child.stylers.map((style: any, styleIndex: any) => {
+                          return (
+                            <Stack spacing="xs" key={styleIndex}>
+                              <Group noWrap>
+                                <NumberInput
+                                  size="xs"
+                                  label="Saturation"
+                                  value={style.saturation as number}
+                                  onChange={(value) => {
+                                    const _stylers = [...child.stylers];
+                                    _stylers[styleIndex] = {
+                                      ...style,
+                                      saturation: value as number,
+                                    };
+                                    updateMapStyle(index, "stylers", _stylers);
+                                  }}
+                                />
+                                <NumberInput
+                                  size="xs"
+                                  label="Lightness"
+                                  value={style.lightness as number}
+                                  onChange={(value) => {
+                                    const _stylers = [...child.stylers];
+                                    _stylers[styleIndex] = {
+                                      ...style,
+                                      lightness: value as number,
+                                    };
+                                    updateMapStyle(index, "stylers", _stylers);
+                                  }}
+                                />
+                              </Group>
+                              <NumberInput
+                                size="xs"
+                                label="Gamma"
+                                precision={2}
+                                step={0.05}
+                                value={style.gamma as number}
+                                onChange={(value) => {
+                                  const _stylers = [...child.stylers];
+                                  _stylers[styleIndex] = {
+                                    ...style,
+                                    gamma: value as number,
+                                  };
+                                  updateMapStyle(index, "stylers", _stylers);
+                                }}
+                              />
+                            </Stack>
+                          );
+                        })}
                       </Box>
                     );
                   },

@@ -290,10 +290,18 @@ export const requiredModifiers: RequiredModifiers = {
       lng: 0.0,
     },
     options: {
-      mapTypeId: "SATELITE",
-      styles: [],
+      mapTypeId: "ROADMAP",
+      mapTypeControl: true,
+      styles: [
+        {
+          featureType: "all",
+          elementType: "all",
+          stylers: [{ saturation: 0, lightness: 0, gamma: 1 }],
+        },
+      ],
     },
-    zoom: 10,
+    zoom: 3,
+    fade: false,
     markers: [],
   },
   fileButton: {
