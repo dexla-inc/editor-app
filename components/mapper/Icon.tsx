@@ -4,8 +4,9 @@ import { useEditorStore } from "@/stores/editor";
 import { getColorValue, globalStyles } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { forwardRef, memo } from "react";
 import { CSSObject } from "@mantine/core";
+import merge from "lodash.merge";
+import { forwardRef, memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -25,9 +26,12 @@ const IconComponent = forwardRef(
         {...props}
         {...triggers}
         {...componentProps}
-        color={getColorValue(theme, color)}
         bg={getColorValue(theme, bg)}
-        style={{ ...props.style, width: width, height: width }}
+        style={merge({}, props.style, {
+          width,
+          height: width,
+          color: getColorValue(theme, color),
+        })}
         ref={ref}
       >
         {component.children && component.children.length > 0
