@@ -11,6 +11,7 @@ import { PageAIResponse, PageBody } from "@/requests/pages/types";
 import { createVariable } from "@/requests/variables/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
+import { GRAY_WHITE_COLOR } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import {
   NextStepperClickEvent,
@@ -250,7 +251,9 @@ export default function PagesStep({
                 >
                   <Group
                     position="apart"
-                    {...(theme.colorScheme === "dark" ? {} : { bg: "gray.0" })}
+                    {...(theme.colorScheme === "dark"
+                      ? {}
+                      : { bg: GRAY_WHITE_COLOR })}
                     p="sm"
                     sx={(theme) => ({
                       borderRadius: theme.radius.sm,
