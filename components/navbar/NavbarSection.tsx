@@ -185,7 +185,9 @@ export const NavbarSection = ({
       onMouseLeave={() => setIsPageStructure(false)}
       sx={(theme) =>
         merge(
-          { background: theme.colorScheme === "dark" ? DARK_MODE : LIGHT_MODE },
+          {
+            background: theme.colorScheme === "dark" ? DARK_MODE : LIGHT_MODE,
+          },
           scrollbarStyles,
         )
       }
@@ -211,7 +213,7 @@ export const NavbarSection = ({
         </Title>
         {activeTab === "layers" && actionButtons}
       </Flex>
-      <Flex w="100%" direction="column" gap={2}>
+      <Flex direction="column" gap={2}>
         {children}
       </Flex>
     </Stack>

@@ -11,12 +11,11 @@ const isDarkTheme = useUserConfigStore.getState().isDarkTheme;
 
 // Default scrollbar style for the editor
 const scrollbarStyles = {
-  overflowX: "hidden",
-  overflowY: "scroll",
+  overflow: "scroll",
   scrollbarWidth: "thin",
   scrollbarColor: "transparent transparent",
   msOverflowStyle: "-ms-autohiding-scrollbar",
-  "::-webkit-scrollbar": { width: "5px", borderRadius: "10px" },
+  "::-webkit-scrollbar": { width: "5px", borderRadius: "10px", height: "5px" },
   "::-webkit-scrollbar-thumb": {
     backgroundColor: "transparent",
     borderRadius: "10px",
