@@ -67,7 +67,6 @@ export const Modifier = withModifier(
     ]);
 
     const form = useForm();
-    console.log(form.values);
 
     useEffect(() => {
       form.setValues(
