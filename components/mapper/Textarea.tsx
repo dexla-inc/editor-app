@@ -8,6 +8,7 @@ import {
 import debounce from "lodash.debounce";
 import { forwardRef, memo, useCallback, useEffect, useState } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import merge from "lodash.merge";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -32,13 +33,31 @@ const TextareaComponent = forwardRef(
       setInputValue(value);
     }, [value]);
 
+    const customStyle = merge({}, props.style);
+
     return (
       <MantineTextarea
         ref={ref}
         id={component.id}
-        styles={{ root: { display: "block !important" } }}
         {...props}
         {...componentProps}
+        style={{}}
+        styles={{
+          root: {
+            position: "relative",
+            width: customStyle.width,
+            height: customStyle.height,
+            minHeight: customStyle.minHeight,
+            minWidth: customStyle.minWidth,
+          },
+          input: {
+            ...customStyle,
+            width: "-webkit-fill-available",
+            height: "-webkit-fill-available",
+            minHeight: "-webkit-fill-available",
+            minWidth: "-webkit-fill-available",
+          },
+        }}
         value={inputValue}
         onChange={(e) => {
           setInputValue(e.target.value);

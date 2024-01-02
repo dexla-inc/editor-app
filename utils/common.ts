@@ -24,3 +24,9 @@ export const AUTOCOMPLETE_OFF_PROPS = {
   "data-lpignore": "true",
   "data-form-type": "other",
 };
+
+export const allEqual = <T>(array: T[]): boolean => {
+  if (array.length === 0) return true;
+
+  return array.every((element) => element === array[0]);
+};

@@ -33,7 +33,7 @@ export const CardComponent = forwardRef(
         {...props}
         {...componentProps}
         {...triggers}
-        style={{ width: "100%", ...props.style }}
+        style={{ ...props.style }}
         bg={bg}
       >
         <LoadingOverlay visible={loading} overlayBlur={2} />

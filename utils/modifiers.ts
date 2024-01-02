@@ -145,6 +145,7 @@ export const requiredModifiers: RequiredModifiers = {
   },
   input: {
     size: "sm",
+    showBorder: "all",
     placeholder: "Input",
     type: "text",
     label: "",

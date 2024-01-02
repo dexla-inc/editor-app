@@ -34,16 +34,20 @@ const ImageComponent = forwardRef(({ component, ...props }: Props, ref) => {
     value = get(data?.base ?? {}, path) ?? src;
   }
 
+  console.log(props.style);
+
   return (
     <MantineImage
       ref={ref}
       id={component.id}
       alt={alt}
-      imageProps={{ src: value, style }}
+      imageProps={{ src: value }}
       {...props}
       {...componentProps}
-      width={width ?? "100px"}
-      height={height ?? "100px"}
+      style={{}}
+      styles={{ root: { position: "relative" }, image: style }}
+      width={width}
+      height={height}
       {...triggers}
     />
   );

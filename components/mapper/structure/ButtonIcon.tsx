@@ -13,6 +13,7 @@ export const jsonStructure = (props?: any): Component => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        borderRadius: "4px",
       },
       variant: "filled",
       color: "Primary.6",

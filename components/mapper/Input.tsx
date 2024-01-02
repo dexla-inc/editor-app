@@ -2,11 +2,7 @@ import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import {
-  Component,
-  getColorFromTheme,
-  updateTreeComponent,
-} from "@/utils/editor";
+import { Component, updateTreeComponent } from "@/utils/editor";
 import {
   ActionIcon,
   Group,
@@ -29,10 +25,8 @@ type Props = {
 
 const InputComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
-    const theme = useEditorStore((state) => state.theme);
     const editorTree = useEditorStore((state) => state.tree);
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
-    const borderColor = getColorFromTheme(theme, "Border.6");
     const {
       children,
       icon,
@@ -64,7 +58,7 @@ const InputComponent = forwardRef(
 
     const type = (componentProps.type as string) || "text";
 
-    const customStyle = merge({}, { borderColor }, props.style);
+    const customStyle = merge({}, props.style);
 
     return (
       <>
@@ -73,7 +67,11 @@ const InputComponent = forwardRef(
             <Group
               spacing={0}
               {...props}
-              style={{ ...customStyle, background: "white" }}
+              style={{
+                background: "white",
+                ...customStyle,
+                position: "relative",
+              }}
             >
               <ActionIcon
                 size={props.size}
@@ -129,19 +127,30 @@ const InputComponent = forwardRef(
           </>
         ) : type === "number" ? (
           <MantineNumberInput
+            {...props}
+            {...componentProps}
             ref={ref}
             autoComplete="off"
             id={component.id}
             icon={iconName ? <Icon name={iconName} /> : null}
-            styles={merge(
-              {},
-              {
-                root: { display: "block !important" },
-                input: { ...customStyle },
+            style={{}}
+            styles={{
+              root: {
+                position: "relative",
+                display: "block !important",
+                width: customStyle.width,
+                height: customStyle.height,
+                minHeight: customStyle.minHeight,
+                minWidth: customStyle.minWidth,
               },
-            )}
-            {...props}
-            {...componentProps}
+              input: {
+                ...customStyle,
+                width: "-webkit-fill-available",
+                height: "-webkit-fill-available",
+                minHeight: "-webkit-fill-available",
+                minWidth: "-webkit-fill-available",
+              },
+            }}
             min={0}
             value={props.value || value || undefined}
             onChange={triggers?.onChange ? debouncedOnChange : undefined}
@@ -149,27 +158,29 @@ const InputComponent = forwardRef(
           />
         ) : (
           <MantineInput
+            {...props}
+            {...componentProps}
             ref={ref}
             id={component.id}
             icon={iconName ? <Icon name={iconName} /> : null}
+            style={{}}
             styles={{
               root: {
+                position: "relative",
                 display: "block !important",
-                width: "-webkit-fill-available",
-                height: "-webkit-fill-available",
-              },
-              wrapper: {
-                width: "-webkit-fill-available",
-                height: "-webkit-fill-available",
+                width: customStyle.width,
+                height: customStyle.height,
+                minHeight: customStyle.minHeight,
+                minWidth: customStyle.minWidth,
               },
               input: {
-                minHeight: "auto",
                 ...customStyle,
                 width: "-webkit-fill-available",
+                height: "-webkit-fill-available",
+                minHeight: "-webkit-fill-available",
+                minWidth: "-webkit-fill-available",
               },
             }}
-            {...props}
-            {...componentProps}
             value={inputValue}
             onChange={(e) => {
               setInputValue(e.target.value);
