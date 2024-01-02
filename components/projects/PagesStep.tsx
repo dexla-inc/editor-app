@@ -26,6 +26,7 @@ import {
   TextInput,
   Textarea,
   Tooltip,
+  useMantineTheme,
 } from "@mantine/core";
 import { IconPlus, IconSparkles } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
@@ -64,6 +65,7 @@ export default function PagesStep({
   setHomePageId,
 }: PagesStepProps) {
   const resetTree = useEditorStore((state) => state.resetTree);
+  const theme = useMantineTheme();
   // const initiallPageGeneration = useRef(false);
   // const updatePage = (index: number, value: string) => {
   //   const updatedPages = [...pages];
@@ -240,8 +242,6 @@ export default function PagesStep({
               <>
                 {/* Added div with key */}
                 <Stack
-                  // p="md"
-                  // bg="gray.0"
                   sx={(theme) => ({
                     border: `1px solid ${theme.colors.gray[2]}`,
                     borderRadius: theme.radius.sm,
@@ -250,7 +250,7 @@ export default function PagesStep({
                 >
                   <Group
                     position="apart"
-                    bg="gray.0"
+                    {...(theme.colorScheme === "dark" ? {} : { bg: "gray.0" })}
                     p="sm"
                     sx={(theme) => ({
                       borderRadius: theme.radius.sm,
