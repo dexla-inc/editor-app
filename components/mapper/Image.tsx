@@ -34,8 +34,6 @@ const ImageComponent = forwardRef(({ component, ...props }: Props, ref) => {
     value = get(data?.base ?? {}, path) ?? src;
   }
 
-  console.log(props.style);
-
   return (
     <MantineImage
       ref={ref}

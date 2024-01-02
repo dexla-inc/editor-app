@@ -3,7 +3,7 @@ import { initialValues } from "@/components/modifiers/Navbar";
 import { PageResponse } from "@/requests/pages/types";
 import { MantineThemeExtended } from "@/stores/editor";
 import { defaultTheme } from "@/utils/branding";
-import { Component } from "@/utils/editor";
+import { Component, getColorFromTheme } from "@/utils/editor";
 import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 
@@ -60,6 +60,7 @@ export const jsonStructure = (props?: any): Component => {
         name: "Container",
         description: "Logo",
         props: {
+          showBorder: "bottom",
           style: {
             display: "flex",
             flexDirection: "row",
@@ -69,8 +70,8 @@ export const jsonStructure = (props?: any): Component => {
             borderBottomStyle: "solid",
             borderBottomWidth: "1px",
             borderBottomColor: isDarkTheme
-              ? theme.colors.gray[5]
-              : theme.colors.gray[3],
+              ? getColorFromTheme(theme, "Border.6")
+              : getColorFromTheme(theme, "Border.4"),
           },
         },
         children: [
