@@ -1,12 +1,13 @@
-import { MarkerItem, Options } from "@/components/modifiers/GoogleMap";
+import { MarkerItem } from "@/components/modifiers/GoogleMap";
 import { Component } from "@/utils/editor";
-import { BoxProps, Skeleton, Text } from "@mantine/core";
+import { Box, BoxProps, Overlay, Skeleton, Text } from "@mantine/core";
 import {
   GoogleMap,
   InfoWindow,
   Marker,
   useLoadScript,
 } from "@react-google-maps/api";
+import merge from "lodash.merge";
 import { useCallback, useEffect, useState } from "react";
 
 type Props = {
@@ -16,7 +17,7 @@ type Props = {
 
 type GoogleMapProps = {
   markers: MarkerItem[];
-  options: Options;
+  options: any;
   style?: { width?: string; height?: string; [key: string]: any };
   apiKey: string;
   language?: string;
@@ -43,6 +44,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
     zoom,
     center,
     loading,
+    fade,
     ...componentProps
   } = component.props as GoogleMapProps;
 
@@ -102,35 +104,44 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
     return <Skeleton height={300} visible />;
   }
 
+  const customOptions = merge({}, options, {
+    // @ts-ignore
+    mapTypeId: google.maps.MapTypeId[options?.mapTypeId],
+  });
+
   return (
-    <GoogleMap
-      key={apiKey}
-      center={center}
-      onLoad={onLoad}
-      onUnmount={unMount}
-      zoom={(internalZoom ?? 0) as any}
-      onClick={() => setActiveMarkerId(null)}
-      mapContainerStyle={containerStyle}
-      {...componentProps}
-      {...props}
-      {...googleStyles}
-    >
-      {markers &&
-        markers.length > 0 &&
-        (markers as MarkerItem[]).map(({ id, name, position }) => (
-          <Marker
-            key={id}
-            position={position}
-            onMouseOver={() => handleActiveMarker(id)}
-            onMouseOut={() => setActiveMarkerId(null)}
-          >
-            {activeMarkerId === id && (
-              <InfoWindow onCloseClick={() => setActiveMarkerId(null)}>
-                <Text>{name}</Text>
-              </InfoWindow>
-            )}
-          </Marker>
-        ))}
-    </GoogleMap>
+    <Box pos="relative" style={containerStyle}>
+      <GoogleMap
+        key={apiKey}
+        center={center}
+        options={customOptions}
+        onLoad={onLoad}
+        onUnmount={unMount}
+        zoom={(internalZoom ?? 0) as any}
+        onClick={() => setActiveMarkerId(null)}
+        mapContainerStyle={containerStyle}
+        {...componentProps}
+        {...props}
+        {...googleStyles}
+      >
+        {markers &&
+          markers.length > 0 &&
+          (markers as MarkerItem[]).map(({ id, name, position }) => (
+            <Marker
+              key={id}
+              position={position}
+              onMouseOver={() => handleActiveMarker(id)}
+              onMouseOut={() => setActiveMarkerId(null)}
+            >
+              {activeMarkerId === id && (
+                <InfoWindow onCloseClick={() => setActiveMarkerId(null)}>
+                  <Text>{name}</Text>
+                </InfoWindow>
+              )}
+            </Marker>
+          ))}
+      </GoogleMap>
+      {fade && <Overlay color="#fff" opacity={0.7} blur={0.5} zIndex={1} />}
+    </Box>
   );
 };

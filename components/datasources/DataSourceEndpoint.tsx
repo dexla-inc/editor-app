@@ -73,11 +73,13 @@ export const DataSourceEndpoint = ({
       <UnstyledButton onClick={toggle} sx={{ width: "100%" }}>
         <Group
           position="apart"
-          sx={{
+          sx={(theme) => ({
             border: colors[endpoint.methodType].color + " 1px solid",
-            background: colors[endpoint.methodType].background,
+            ...(theme.colorScheme === "dark"
+              ? {}
+              : { background: colors[endpoint.methodType].background }),
             borderRadius: "4px",
-          }}
+          })}
           mx={0}
           p="6px"
         >

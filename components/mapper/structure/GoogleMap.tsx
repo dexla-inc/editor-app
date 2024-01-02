@@ -1,5 +1,5 @@
-import { Options } from "@/components/modifiers/GoogleMap";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -13,13 +13,7 @@ export const jsonStructure = (props?: any): Component => {
         width: "100%",
         height: "500px",
       },
-      center: {
-        lat: 0,
-        lng: 0,
-      },
-      language: "en",
-      markers: [],
-      options: { mapTypeId: "SATELITE", styles: [] } as Options,
+      ...requiredModifiers.mapSettings,
       ...(props.props || {}),
     },
     blockDroppingChildrenInside: true,

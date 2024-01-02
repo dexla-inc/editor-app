@@ -1397,7 +1397,11 @@ export const bindPlaceGeometryAction = ({
           position: location as Position,
         },
       ],
-      options: { mapTypeId: "SATELITE", styles: [] } as Options,
+      options: {
+        mapTypeId: "SATELITE",
+        styles: [],
+        mapTypeControl: true,
+      } as Options,
     },
     blockDroppingChildrenInside: true,
   } as Component;
