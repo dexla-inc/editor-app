@@ -38,15 +38,13 @@ const FormComponent = forwardRef(
         {...otherTriggers}
         pos="relative"
       >
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) => {
-              updateInputFieldsWithFormData(child, onChangeField);
-              return renderTree({
-                ...child!,
-                props: { ...child.props, ...triggers },
-              });
-            })
-          : children}
+        {component.children?.map((child) => {
+          updateInputFieldsWithFormData(child, onChangeField);
+          return renderTree({
+            ...child!,
+            props: { ...child.props, ...triggers },
+          });
+        })}
         <LoadingOverlay visible={loading} zIndex={1000} radius="sm" />
       </MantineFlex>
     );

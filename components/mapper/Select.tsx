@@ -1,8 +1,7 @@
 import { CustomDropdown } from "@/components/mapper/CustomSelectDropdown";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import { Component, getColorFromTheme } from "@/utils/editor";
+import { Component } from "@/utils/editor";
 import { Loader, Select as MantineSelect, SelectProps } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import get from "lodash.get";
@@ -32,11 +31,7 @@ const SelectComponent = forwardRef(
       customLinkUrl,
       ...componentProps
     } = component.props as any;
-    const theme = useEditorStore((state) => state.theme);
-    const borderColor = getColorFromTheme(theme, "Border.6");
-
-    const { height, width, ...style } = props.style ?? {};
-    const customStyle = merge({}, { borderColor }, style);
+    const customStyle = merge({}, props.style);
 
     let data = [];
 
@@ -66,9 +61,22 @@ const SelectComponent = forwardRef(
         {...props}
         {...componentProps}
         {...triggers}
+        style={{}}
         styles={{
-          input: { height, width: "100%", ...customStyle },
-          root: { width },
+          root: {
+            position: "relative",
+            width: customStyle.width,
+            height: customStyle.height,
+            minHeight: customStyle.minHeight,
+            minWidth: customStyle.minWidth,
+          },
+          input: {
+            ...customStyle,
+            width: "-webkit-fill-available",
+            height: "-webkit-fill-available",
+            minHeight: "-webkit-fill-available",
+            minWidth: "-webkit-fill-available",
+          },
         }}
         withinPortal={false}
         maxDropdownHeight={150}
