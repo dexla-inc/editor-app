@@ -45,7 +45,9 @@ const GridComponent = forwardRef(
       if (prevGapValue !== gapValue) {
         const copy = cloneDeep(editorTree);
         calculateGridSizes(copy.root);
-        setEditorTree(copy);
+        setEditorTree(copy, {
+          onLoad: true,
+        });
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gapValue, prevGapValue, setEditorTree]);
