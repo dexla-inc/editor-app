@@ -45,6 +45,7 @@ const GTM_ID = "GTM-P3DVFXMS";
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
   const isLive = useCheckIfIsLive();
+  console.log("isLive", isLive);
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
 
   const [loadTagManager, setLoadTagManager] = useState(false);

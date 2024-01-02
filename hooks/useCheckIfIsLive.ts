@@ -7,7 +7,7 @@ export const useCheckIfIsLive = () => {
   const router = useRouter();
 
   const url = typeof window !== "undefined" ? window.location.host : "";
-  let initialIsLive = false;
+  let initialIsLive = true;
 
   if (
     router?.asPath === "/[page]" ||
@@ -15,6 +15,8 @@ export const useCheckIfIsLive = () => {
     url.endsWith(".localhost:3000")
   ) {
     initialIsLive = true;
+  } else {
+    initialIsLive = false;
   }
 
   const [isLive, setIsLive] = useState(initialIsLive);
