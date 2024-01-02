@@ -300,7 +300,7 @@ export const EditableComponent = ({
       triggers: isPreviewMode
         ? {
             ...triggers,
-            onMouseEnter: triggers?.onHover ?? hoverStateFunc,
+            onMouseOver: triggers?.onHover ?? hoverStateFunc,
             onMouseLeave: leaveHoverStateFunc,
           }
         : {
