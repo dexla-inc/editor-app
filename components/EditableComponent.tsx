@@ -213,13 +213,11 @@ export const EditableComponent = ({
     : {};
 
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation();
     if (currentState === "default") {
       setTreeComponentCurrentState(e.currentTarget.id, "hover");
     }
   };
   const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation();
     if (currentState === "hover") {
       setTreeComponentCurrentState(e.currentTarget.id, "default");
     }
