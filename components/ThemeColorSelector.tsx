@@ -7,11 +7,14 @@ import {
   Group,
   Paper,
   Select,
+  SelectItem,
   SelectProps,
   Stack,
 } from "@mantine/core";
 import { forwardRef } from "react";
 import { TopLabel } from "./TopLabel";
+
+type ColorsArray = Array<{ label: string; value: string | null | undefined }>;
 
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, any>(
@@ -95,18 +98,15 @@ export const ThemeColorSelector = (props: Props) => {
 
   const { label, ...selectProps } = props;
 
-  const data: any[] = (Object.keys(theme.colors) ?? [])
+  const data: ColorsArray = (Object.keys(theme.colors) ?? [])
     .filter((color) => !excludeColors.has(color))
-    .reduce((all, color: string) => {
+    .reduce<ColorsArray>((all, color: string) => {
       const [compColor, compIndex] = selectProps.value?.split(".") ?? [];
       const isColorIndexNotSame = compColor === color && compIndex !== "6";
       const colorValue = isColorIndexNotSame ? selectProps.value : `${color}.6`;
       const _data = [{ label: color, value: colorValue }];
 
-      return all.concat(
-        // @ts-ignore
-        _data,
-      );
+      return all.concat(_data);
     }, []);
 
   const colors = theme.colors[selectedColor];
@@ -125,12 +125,12 @@ export const ThemeColorSelector = (props: Props) => {
             size="xs"
             {...selectProps}
             data={
-              props.excludeTransparent
+              (props.excludeTransparent
                 ? data
                 : data.concat({
                     label: "transparent",
                     value: "transparent",
-                  })
+                  })) as SelectItem[]
             }
             itemComponent={SelectItem}
             searchable
