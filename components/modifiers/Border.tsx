@@ -39,6 +39,7 @@ export const label = "Border";
 export const defaultBorderValues = requiredModifiers.border;
 
 export const getThemeColor = (theme: any, hex: string) => {
+  hex = hex.replace("!important", "").trim();
   if (hex === "transparent") return hex;
   return Object.keys(theme.colors).reduce((themeColor: string, key: string) => {
     const colorIndex = theme.colors[key].findIndex((c: string) => c === hex);
@@ -67,7 +68,7 @@ export const Modifier = withModifier(
     ]);
 
     const form = useForm();
-
+    console.log(selectedComponent?.props);
     useEffect(() => {
       form.setValues(
         merge(
@@ -136,7 +137,7 @@ export const Modifier = withModifier(
       let borderColor = {};
       if (form.values.showBorder === "all") {
         borderColor = {
-          // borderColor: value,
+          borderColor: value,
           borderTopColor: value,
           borderRightColor: value,
           borderBottomColor: value,
@@ -201,7 +202,7 @@ export const Modifier = withModifier(
       }
       return `border${startCase(form.values.showBorder as string)}${val}`;
     };
-
+    //console.log(form.values);
     return (
       <form key={selectedComponent?.id}>
         {selectedComponent?.name === "Card" ? (
