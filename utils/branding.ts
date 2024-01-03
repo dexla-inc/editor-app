@@ -146,6 +146,11 @@ const DARK_MODE = theme.colors.dark[7];
 const DARK_COLOR = theme.colors.dark[6];
 const LIGHT_MODE = "white";
 const LINK_COLOR = isDarkTheme ? "teal" : "white";
+const FLEX_HOVER = isDarkTheme ? theme.colors.dark[4] : HOVERED;
+const BORDER = isDarkTheme ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE;
+const BINDER_BACKGROUND = isDarkTheme ? theme.colors.dark[5] : undefined;
+const LOGICFLOW_BACKGROUND = isDarkTheme ? undefined : GRAY_WHITE_COLOR;
+const DEFAULT_TEXTCOLOR = isDarkTheme ? "white" : DARK_COLOR;
 
 // Global styles for the editor
 const globalStyles = (isDarkTheme?: boolean) => ({
@@ -262,8 +267,12 @@ export const getColorValue = (theme: MantineThemeExtended, value?: string) => {
 };
 
 export {
+  BINDER_BACKGROUND,
+  BORDER,
   DARK_COLOR,
   DARK_MODE,
+  DEFAULT_TEXTCOLOR,
+  FLEX_HOVER,
   GRAY_BORDER_COLOR,
   GRAY_COLOR,
   GRAY_OUTLINE,
@@ -275,6 +284,7 @@ export {
   IDENTIFIER,
   LIGHT_MODE,
   LINK_COLOR,
+  LOGICFLOW_BACKGROUND,
   ORANGE_BASE_SHADOW,
   ORANGE_BORDER_COLOR,
   PRIMARY_COLOR,

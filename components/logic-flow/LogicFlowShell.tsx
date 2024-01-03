@@ -20,6 +20,7 @@ import { VariablesButton } from "@/components/variables/VariablesButton";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
+import { DEFAULT_TEXTCOLOR } from "@/utils/branding";
 import { ErrorBoundary } from "react-error-boundary";
 
 export interface ShellProps extends AppShellProps {
@@ -57,7 +58,7 @@ export const LogicFlowShell = ({
                 <Breadcrumbs>
                   <Anchor
                     size="sm"
-                    color="dark"
+                    color={DEFAULT_TEXTCOLOR}
                     component={Link}
                     href={`/projects/${projectId}/editor/${pageId}/flows`}
                   >

@@ -6,6 +6,7 @@ import { getLogicFlow } from "@/requests/logicflows/queries-noauth";
 import { LogicFlowParams } from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
 import { FlowData, useFlowStore } from "@/stores/flow";
+import { LOGICFLOW_BACKGROUND } from "@/utils/branding";
 import { decodeSchema, encodeSchema } from "@/utils/compression";
 import { ASIDE_WIDTH, HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
 import { convertToPatchParams } from "@/utils/dashboardTypes";
@@ -287,7 +288,7 @@ export default function LogicFlowsPage({ id, pageId, flowId }: Props) {
         style={{
           width: `calc(100vw - ${NAVBAR_WIDTH}px - ${ASIDE_WIDTH}px)`,
           height: `calc(100vh - ${HEADER_HEIGHT}px)`,
-          backgroundColor: theme.colors.gray[0],
+          backgroundColor: LOGICFLOW_BACKGROUND,
         }}
       >
         <LogicFlow key={flow?.id} wrapperRef={reactFlowWrapper} />

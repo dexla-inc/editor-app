@@ -1,3 +1,4 @@
+import BindingPopover from "@/components/BindingPopover";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
@@ -7,11 +8,10 @@ import {
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { VariableSelect } from "@/components/variables/VariableSelect";
+import { useEditorStore } from "@/stores/editor";
 import { ChangeVariableAction } from "@/utils/actions";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEditorStore } from "@/stores/editor";
-import BindingPopover from "@/components/BindingPopover";
 import { useDisclosure } from "@mantine/hooks";
 import merge from "lodash.merge";
 
@@ -43,7 +43,8 @@ export const ChangeVariableActionForm = ({ id }: Props) => {
     editorTree,
     selectedComponentId,
   });
-  const [isBindable, { toggle: onTogglePopover }] = useDisclosure(false);
+  const [isBindable, { toggle: onTogglePopover, close: onClosePopover }] =
+    useDisclosure(false);
 
   const form = useForm<FormValues>({
     initialValues: merge({}, defaultValues, action.action),
@@ -82,6 +83,7 @@ export const ChangeVariableActionForm = ({ id }: Props) => {
         <BindingPopover
           opened={isBindable}
           onTogglePopover={onTogglePopover}
+          onClosePopover={onClosePopover}
           bindingType={form.values.bindingType as any}
           onChangeBindingType={(bindingType: any) => {
             form.setFieldValue("bindingType", bindingType);

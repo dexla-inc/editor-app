@@ -8,6 +8,7 @@ import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
+import { LOGICFLOW_BACKGROUND } from "@/utils/branding";
 import { ASIDE_WIDTH, HEADER_HEIGHT } from "@/utils/config";
 import {
   Box,
@@ -93,7 +94,7 @@ export default function LogicFlowsPage({ id, page }: Props) {
         style={{
           width: `calc(100vw - ${selectedFlowNode ? ASIDE_WIDTH : 0}px)`,
           height: `calc(100vh - ${HEADER_HEIGHT}px)`,
-          backgroundColor: theme.colors.gray[0],
+          backgroundColor: LOGICFLOW_BACKGROUND,
         }}
         p="xl"
       >

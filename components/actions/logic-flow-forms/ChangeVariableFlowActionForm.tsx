@@ -1,9 +1,9 @@
+import BindingPopover from "@/components/BindingPopover";
 import { VariableSelect } from "@/components/variables/VariableSelect";
 import { useFlowStore } from "@/stores/flow";
 import { ChangeVariableAction } from "@/utils/actions";
 import { Button, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import BindingPopover from "@/components/BindingPopover";
 import { useDisclosure } from "@mantine/hooks";
 
 type Props = {
@@ -14,7 +14,8 @@ type FormValues = Omit<ChangeVariableAction, "name">;
 
 export const ChangeVariableFlowActionForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const [isBindable, { toggle: onTogglePopover }] = useDisclosure(false);
+  const [isBindable, { toggle: onTogglePopover, close: onClosePopover }] =
+    useDisclosure(false);
 
   return (
     <Stack spacing="xs">
@@ -30,6 +31,7 @@ export const ChangeVariableFlowActionForm = ({ form }: Props) => {
       <BindingPopover
         opened={isBindable}
         onTogglePopover={onTogglePopover}
+        onClosePopover={onClosePopover}
         bindingType={form.values.bindingType ?? "Formula"}
         onChangeBindingType={(bindingType: any) => {
           form.setFieldValue("bindingType", bindingType);

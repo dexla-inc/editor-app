@@ -1,5 +1,6 @@
 import { SortableTreeItem } from "@/components/SortableTreeItem";
 import { useEditorStore } from "@/stores/editor";
+import { FLEX_HOVER } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
@@ -91,10 +92,10 @@ const ListItem = ({ component, children, level = 0, onSelectItem }: any) => {
       <Flex
         w="100%"
         p={level > 1 ? 2 : 0}
-        sx={(theme) => ({
+        sx={{
           cursor: "pointer",
-          "&:hover": { background: theme.colors.gray[1] },
-        })}
+          "&:hover": { background: FLEX_HOVER },
+        }}
       >
         <Group
           position="apart"

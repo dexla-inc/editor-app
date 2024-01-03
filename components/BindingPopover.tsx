@@ -3,12 +3,14 @@ import { Icon } from "@/components/Icon";
 import { ObjectDetails } from "@/components/PropsListing";
 import { listVariables } from "@/requests/variables/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
+import { BINDER_BACKGROUND, BORDER } from "@/utils/branding";
 import { getAllComponentsByName } from "@/utils/editor";
 import {
   ActionIcon,
   Box,
   Button,
   Center,
+  CloseButton,
   Flex,
   Popover,
   ScrollArea,
@@ -36,6 +38,7 @@ type Props = {
   bindingType: any;
   opened: boolean;
   onTogglePopover: any;
+  onClosePopover: any;
   onChangeBindingType: any;
   onChangeJavascriptCode: any;
   javascriptCode: string;
@@ -46,6 +49,7 @@ export default function BindingPopover({
   bindingType,
   opened,
   onTogglePopover,
+  onClosePopover,
   onChangeBindingType,
   onChangeJavascriptCode,
   javascriptCode,
@@ -140,15 +144,17 @@ export default function BindingPopover({
       <Popover.Dropdown sx={{ maxHeight: "98%" }}>
         <Stack
           w={500}
-          bg={"#fff"}
           p="md"
           sx={{
-            border: "1px solid " + theme.colors.gray[3],
+            border: BORDER,
             borderRadius: theme.radius.md,
           }}
         >
-          {/* Pass in the name of the thing that us being bound */}
-          <Title order={5}>Binder</Title>
+          {/* Pass in the name of the thing that is being bound */}
+          <Flex justify="space-between" align="center">
+            <Title order={5}>Binder</Title>
+            <CloseButton onClick={onClosePopover} />
+          </Flex>
           <Flex justify="space-between" align="center">
             <SegmentedControl
               value={bindingType}
@@ -184,6 +190,7 @@ export default function BindingPopover({
             </Text>
             {bindingType === "Formula" ? (
               <Textarea
+                styles={{ input: { background: BINDER_BACKGROUND } }}
                 value={formulaEntry}
                 onChange={(event) => setFormulaEntry(event.currentTarget.value)}
               />
@@ -200,6 +207,7 @@ export default function BindingPopover({
           </Box>
           <TextInput
             label="Current Value"
+            styles={{ input: { background: BINDER_BACKGROUND } }}
             value={newValue}
             readOnly
             // onChange={(event) => setCurrentValue(event.currentTarget.value)}
@@ -260,6 +268,7 @@ export default function BindingPopover({
           />
           <TextInput
             size="xs"
+            styles={{ input: { background: BINDER_BACKGROUND } }}
             placeholder="Search"
             icon={<Icon name="IconSearch" />}
             value={filterKeyword}
