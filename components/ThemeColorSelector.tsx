@@ -93,10 +93,15 @@ export const ThemeColorSelector = (props: Props) => {
       />
     );
 
+  const { label, ...selectProps } = props;
+
   const data: any[] = (Object.keys(theme.colors) ?? [])
     .filter((color) => !excludeColors.has(color))
     .reduce((all, color: string) => {
-      const _data = [{ label: color, value: `${color}.${selectedIndex}` }];
+      const [compColor, compIndex] = selectProps.value?.split(".") ?? [];
+      const isColorIndexNotSame = compColor === color && compIndex !== "6";
+      const colorValue = isColorIndexNotSame ? selectProps.value : `${color}.6`;
+      const _data = [{ label: color, value: colorValue }];
 
       return all.concat(
         // @ts-ignore
@@ -109,8 +114,6 @@ export const ThemeColorSelector = (props: Props) => {
     label: `${index}`,
     value: `${selectedColor}.${index}`,
   }));
-
-  const { label, ...selectProps } = props;
 
   return (
     <Stack spacing={5}>
