@@ -8,6 +8,7 @@ import { NavbarLayersSection } from "@/components/navbar/PageStructure/SortableT
 import { useEditorStore } from "@/stores/editor";
 import {
   IconBrush,
+  IconCloudStorm,
   IconCode,
   IconComponents,
   IconFileInvoice,
@@ -21,7 +22,8 @@ type SectionId =
   | "components"
   | "theme"
   | "customCode"
-  | "settings";
+  | "settings"
+  | "upload";
 
 const sections = [
   {
@@ -46,6 +48,11 @@ const sections = [
     icon: IconBrush,
   },
   {
+    id: "upload" as SectionId,
+    label: "Upload",
+    icon: IconCloudStorm,
+  },
+  {
     id: "customCode" as SectionId,
     label: "Custom Code",
     icon: IconCode,
@@ -68,6 +75,7 @@ export const sectionMapper: SectionsMapper = {
   layers: (props: any) => <NavbarLayersSection {...props} />,
   components: (props: any) => <EditorNavbarComponentsSection {...props} />,
   theme: (props: any) => <EditorNavbarThemesSection {...props} />,
+  upload: undefined,
   customCode: (props: any) => <EditorNavbarCustomCodeSection {...props} />,
   settings: (props: any) => <EditorSettingsSection {...props} />,
   // Do not need this any longer as actions handle it. We do need a way to map things like headers though from a global level. Maybe this can be done here.

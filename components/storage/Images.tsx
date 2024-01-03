@@ -39,6 +39,7 @@ export const Images = ({ expand }: Props) => {
   const [storedImages, setStoredImages] = useState<FileObj[]>([]);
   const [copied, setCopied] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [errorMessage, setErrorMessage] = useState("No images found");
   const [loading, { open: onLoading, close: offLoading }] =
     useDisclosure(false);
 
@@ -116,10 +117,19 @@ export const Images = ({ expand }: Props) => {
 
   useEffect(() => {
     const loadData = async () => {
-      onLoading();
-      const response = await getAllFiles(projectId);
-      handleImageStorage(response as UploadMultipleResponse);
-      offLoading();
+      try {
+        onLoading();
+        const response = await getAllFiles(projectId);
+        if (response.files.length === 0) {
+          setErrorMessage("No images found");
+        }
+        handleImageStorage(response as UploadMultipleResponse);
+      } catch (error) {
+        console.error("Error getting files: ", error);
+        setErrorMessage("Error getting images");
+      } finally {
+        offLoading();
+      }
     };
 
     loadData();
@@ -152,9 +162,7 @@ export const Images = ({ expand }: Props) => {
       {isImagesEmpty ? (
         <Group mt={10}>
           <Text italic lineClamp={1}>
-            {filteredImages.length === 0
-              ? "No images found"
-              : "There are no images in the storage"}
+            {errorMessage}
           </Text>
         </Group>
       ) : (

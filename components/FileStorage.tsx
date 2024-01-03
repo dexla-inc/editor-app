@@ -1,4 +1,3 @@
-import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { Images } from "@/components/storage/Images";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -18,21 +17,20 @@ import {
   IconVideo,
 } from "@tabler/icons-react";
 
-export const FileStorageButton = () => {
-  const [openStorageModal, { open, close }] = useDisclosure(false);
+type Props = {
+  uploadModal: boolean;
+  closeUploadModal: () => void;
+};
+
+export const FileStorage = ({ uploadModal, closeUploadModal }: Props) => {
   const [expand, { toggle: toggleExpand }] = useDisclosure(false);
   return (
     <>
-      <ActionIconDefault
-        iconName="IconCloudStorm"
-        tooltip="Assets"
-        onClick={open}
-      />
       <Modal.Root
         fullScreen={expand}
         size="xl"
-        opened={openStorageModal}
-        onClose={close}
+        opened={uploadModal}
+        onClose={closeUploadModal}
         scrollAreaComponent={ScrollArea.Autosize}
         xOffset={10}
         zIndex={300}
@@ -40,7 +38,9 @@ export const FileStorageButton = () => {
         <Modal.Overlay />
         <Modal.Content h="100%">
           <Modal.Header>
-            <Modal.Title>User File Storage</Modal.Title>
+            <Modal.Title fw="bolder" fz="xl">
+              Uploads
+            </Modal.Title>
             <Group sx={{ gap: 0 }} noWrap>
               <Tooltip
                 fz={10}

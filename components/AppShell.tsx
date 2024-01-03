@@ -26,7 +26,6 @@ import { ChangeHistoryPopover } from "@/components/ChangeHistoryPopover";
 import { ChangeThemeButton } from "@/components/ChangeThemeButton";
 import { DeployButton } from "@/components/DeployButton";
 import { EditorPreviewModeToggle } from "@/components/EditorPreviewModeToggle";
-import { FileStorageButton } from "@/components/FileStorageButton";
 import { Icon } from "@/components/Icon";
 import { OtherAvatars } from "@/components/OtherAvatars";
 import { SaveTemplateButton } from "@/components/SaveTemplateButton";
@@ -102,7 +101,6 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                 href={`/projects/${projectId}/editor/${currentPageId}/flows`}
               />
               <VariablesButton projectId={projectId} pageId={currentPageId} />
-              <FileStorageButton />
               <ChangeHistoryPopover />
               <EditorPreviewModeToggle
                 isPreviewMode={isPreviewMode}
