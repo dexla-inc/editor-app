@@ -308,6 +308,13 @@ export const EditableComponent = ({
     },
   );
 
+  if (currentState === "hidden") {
+    propsWithOverwrites.style = {
+      ...propsWithOverwrites.style,
+      display: "none",
+    };
+  }
+
   const childStyles = {
     position: "relative",
     ...propsWithOverwrites.style,
