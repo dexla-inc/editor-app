@@ -3,6 +3,7 @@ import { Component } from "@/utils/editor";
 import { Checkbox as MantineCheckbox, CheckboxProps } from "@mantine/core";
 import { memo, useState } from "react";
 import merge from "lodash.merge";
+import { useInputsStore } from "@/stores/inputs";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -19,6 +20,7 @@ const CheckboxComponent = ({
   const { label, value, triggers, ...componentProps } = component.props as any;
   const { children, ...rest } = props;
   const [checked, setChecked] = useState(false);
+  const setStoreInputValue = useInputsStore((state) => state.setInputValue);
 
   const toggle = () => {
     setChecked((state) => !state);
@@ -64,6 +66,15 @@ const CheckboxComponent = ({
       value={value}
       checked={checked}
       {...triggers}
+      onChange={(e) => {
+        setStoreInputValue(component.id!, e.target.checked);
+
+        if (triggers?.onChange) {
+          triggers?.onChange?.(e);
+        } else {
+          defaultTriggers.onChange(e);
+        }
+      }}
     />
   );
 };

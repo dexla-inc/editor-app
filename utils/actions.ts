@@ -75,6 +75,7 @@ import get from "lodash.get";
 import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
+import { getParsedJSCode } from "@/utils/variables";
 
 const triggers = [
   "onClick",
@@ -426,7 +427,7 @@ export type DebugActionParams = ActionParams & {
   action: AlertAction;
 };
 
-export const debugAction = ({ action }: DebugActionParams) => {
+export const debugAction = async ({ action }: DebugActionParams) => {
   alert(action.message);
 };
 
@@ -1459,27 +1460,33 @@ export const changeVariableAction = async ({
   );
 
   if (action.bindingType === "JavaScript") {
-    const variables = await listVariables(currentProjectId!, {
-      pageId: currentPageId!,
-    }).then(({ results }) => {
-      return results.reduce(
-        (acc, variable) => {
-          const value = variable.value ?? variable.defaultValue;
-          acc.list[variable.id] = variable;
-          acc[variable.id] = value ? JSON.parse(value) : value;
-          acc[variable.name] = value ? JSON.parse(value) : value;
-          return acc;
-        },
-        { list: {} } as Record<string, any>,
-      );
-    });
-
     try {
+      const variables = await listVariables(currentProjectId!, {
+        pageId: currentPageId!,
+      }).then(({ results }) => {
+        return results.reduce(
+          (acc, variable) => {
+            const value = variable.value ?? variable.defaultValue;
+            acc.list[variable.id] = variable;
+
+            const isObject = typeof value === "object";
+
+            acc[variable.id] = isObject ? JSON.parse(value ?? "{}") : value;
+            acc[variable.name] = isObject ? JSON.parse(value ?? "{}") : value;
+            return acc;
+          },
+          { list: {} } as Record<string, any>,
+        );
+      });
+
       if (action.javascriptCode === "return variables") {
         return;
       }
+
+      const parsedCode = getParsedJSCode(action.javascriptCode);
+
       let previewNewValue = eval(
-        `function autoRunJavascriptCode() { ${action.javascriptCode}}; autoRunJavascriptCode()`,
+        `function autoRunJavascriptCode() { ${parsedCode}}; autoRunJavascriptCode()`,
       );
 
       isPreviewValueObject = typeof previewNewValue === "object";
@@ -1497,19 +1504,20 @@ export const changeVariableAction = async ({
           typeof previewNewValue === "string"
             ? previewNewValue
             : JSON.stringify(previewNewValue),
-        type: isPreviewValueObject
-          ? "OBJECT"
-          : isPreviewValueArray
+        type: isPreviewValueArray
           ? "ARRAY"
+          : isPreviewValueObject
+          ? "OBJECT"
           : "TEXT",
-        isGlobal: false,
+        isGlobal: variable.isGlobal ?? false,
         pageId: currentPageId!,
         defaultValue:
           typeof previewNewValue === "string"
             ? previewNewValue
             : JSON.stringify(previewNewValue),
       });
-    } catch {
+    } catch (error) {
+      console.log({ error });
       return;
     }
   }

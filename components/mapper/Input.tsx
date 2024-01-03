@@ -1,6 +1,7 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
+import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component, updateTreeComponent } from "@/utils/editor";
 import {
@@ -38,6 +39,7 @@ const InputComponent = forwardRef(
     } = component.props as any;
     const { name: iconName } = icon && icon!.props!;
     const [inputValue, setInputValue] = useState(value);
+    const setStoreInputValue = useInputsStore((state) => state.setInputValue);
 
     const isClearable = clearable && inputValue && inputValue?.length > 0;
 
@@ -52,8 +54,9 @@ const InputComponent = forwardRef(
     const debouncedOnChange = useCallback(
       debounce((e) => {
         triggers?.onChange(e);
+        setStoreInputValue(component.id!, e.target.value);
       }, 400),
-      [debounce],
+      [debounce, component.id],
     );
 
     const type = (componentProps.type as string) || "text";

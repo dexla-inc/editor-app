@@ -3,8 +3,10 @@ import { Icon } from "@/components/Icon";
 import { ObjectDetails } from "@/components/PropsListing";
 import { listVariables } from "@/requests/variables/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
+import { useInputsStore } from "@/stores/inputs";
 import { BINDER_BACKGROUND, BORDER } from "@/utils/branding";
 import { getAllComponentsByName } from "@/utils/editor";
+import { getParsedJSCode } from "@/utils/variables";
 import {
   ActionIcon,
   Box,
@@ -62,6 +64,7 @@ export default function BindingPopover({
   const [tab, setTab] = useState<BindingTab>(bindingTab ?? "components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
   const theme = useMantineTheme();
+  const inputsStore = useInputsStore();
 
   const browser = useRouter();
   const projectId = browser.query.id as string;
@@ -106,10 +109,10 @@ export default function BindingPopover({
     "Textarea",
   ]).reduce(
     (acc, component) => {
-      const value = component?.props?.value;
+      const value = inputsStore[component?.id!];
       component = { ...component, name: component.description! };
       acc.list[component?.id!] = component;
-      acc[component?.id!] = value ? JSON.parse(value) : value;
+      acc[component?.id!] = value;
       return acc;
     },
     { list: {} } as Record<string, any>,
@@ -120,8 +123,11 @@ export default function BindingPopover({
       if (javascriptCode === "return variables") {
         setNewValue("undefined");
       }
+
+      const parsedCode = getParsedJSCode(javascriptCode);
+
       let newValue = eval(
-        `function autoRunJavascriptCode() { ${javascriptCode}}; autoRunJavascriptCode()`,
+        `function autoRunJavascriptCode() { ${parsedCode}}; autoRunJavascriptCode()`,
       );
       setNewValue(JSON.stringify(newValue));
     } catch {
