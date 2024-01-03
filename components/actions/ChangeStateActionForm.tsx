@@ -11,6 +11,7 @@ import {
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { useEditorStore } from "@/stores/editor";
 import { ChangeStateAction } from "@/utils/actions";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
 import {
@@ -161,6 +162,7 @@ export const ChangeStateActionForm = ({ id }: Props) => {
                   searchable
                   value={state}
                   styles={{ label: { width: "100%" } }}
+                  {...AUTOCOMPLETE_OFF_PROPS}
                 />
 
                 <ComponentToBindFromInput

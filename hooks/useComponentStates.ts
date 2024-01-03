@@ -1,5 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
-import { getAllComponentsByIds, getAllComponentsByName } from "@/utils/editor";
+import { getAllComponentsByIds } from "@/utils/editor";
 
 export const useComponentStates = () => {
   const selectedComponentIds = useEditorStore(
@@ -7,27 +7,83 @@ export const useComponentStates = () => {
   );
   const editorTreeRoot = useEditorStore((state) => state.tree.root);
 
-  const statesByComponent = {
-    _: [{ label: "Default", value: "default" }],
+  type ComponentAppearence = {
+    label: string;
+    value: string;
+  };
+
+  type ComponentAppearences = {
+    [componentName: string]: ComponentAppearence[];
+  };
+
+  const appearencesForAllComponents = [
+    { label: "Default", value: "default" },
+    { label: "Hidden", value: "hidden" },
+  ];
+
+  const appearencesByComponent: ComponentAppearences = {
     Common: [
       { label: "Hover", value: "hover" },
       { label: "Disabled", value: "disabled" },
-      { label: "Focused", value: "focused" },
+      { label: "Selected", value: "selected" },
     ],
-    Button: [{ label: "Selected", value: "selected" }],
-    Select: [{ label: "Selected", value: "selected" }],
-    Checkbox: [{ label: "Checked", value: "checked" }],
+    Checkbox: [
+      { label: "Hover", value: "hover" },
+      { label: "Disabled", value: "disabled" },
+      { label: "Checked", value: "checked" },
+    ],
+    Switch: [
+      { label: "Hover", value: "hover" },
+      { label: "Disabled", value: "disabled" },
+      { label: "Checked", value: "checked" },
+    ],
+    Text: [{ label: "Hover", value: "hover" }],
+    Title: [{ label: "Hover", value: "hover" }],
     Navbar: [{ label: "Collapsed", value: "collapsed" }],
-  };
-
-  const handleChildOf = (childOf: string) => {
-    const allParents = getAllComponentsByName(editorTreeRoot, childOf);
-
-    return allParents
-      .flatMap((parent) => {
-        return getAllComponentsByIds(parent, selectedComponentIds);
-      })
-      .some((component) => component !== null);
+    NavLink: [
+      { label: "Hover", value: "hover" },
+      { label: "Disabled", value: "disabled" },
+      { label: "Active", value: "active" },
+    ],
+    StepperStepHeader: [
+      { label: "Active", value: "Active" },
+      { label: "Complete", value: "Complete" },
+    ],
+    Modal: [
+      { label: "Closed", value: "default" },
+      { label: "Opened", value: "opened" },
+    ],
+    Popover: [
+      { label: "Closed", value: "default" },
+      { label: "Opened", value: "opened" },
+    ],
+    Toast: [
+      { label: "Closed", value: "default" },
+      { label: "Opened", value: "opened" },
+    ],
+    Drawer: [
+      { label: "Closed", value: "default" },
+      { label: "Opened", value: "opened" },
+    ],
+    BarChart: [],
+    LineChart: [],
+    PieChart: [],
+    AreaChart: [],
+    RadarChart: [],
+    RadialChart: [],
+    AppBar: [],
+    Progress: [
+      { label: "Loading", value: "loading" },
+      { label: "Complete", value: "complete" },
+    ],
+    FileUpload: [
+      { label: "Uploading", value: "uploading" },
+      { label: "Uploaded", value: "uploaded" },
+    ],
+    FileButton: [
+      { label: "Uploading", value: "uploading" },
+      { label: "Uploaded", value: "uploaded" },
+    ],
   };
 
   const getComponentsStates = () => {
@@ -36,55 +92,40 @@ export const useComponentStates = () => {
       selectedComponentIds,
     );
 
-    const isStepperHeaderChild = handleChildOf("StepperStepHeader");
-    const isNavbarChild = handleChildOf("Navbar");
-
     const componentNames = [
       ...new Set(components?.map((component) => component?.name)),
     ];
 
-    const statesList = componentNames?.reduce(
-      (acc, name) => {
-        const componentStates =
-          statesByComponent[name as keyof typeof statesByComponent];
-        // Append component-specific states if available, otherwise use Common states
-        if (componentStates && componentStates.length > 0) {
-          return acc.concat(componentStates);
-        } else {
-          return acc.concat(statesByComponent.Common);
-        }
-      },
-      [...statesByComponent._], // Starting with the states under '_'
-    );
+    const appearencesList = componentNames?.reduce((acc, name) => {
+      const initialAcc = ["Toast", "Drawer", "Popover", "Modal"].includes(name)
+        ? [...acc]
+        : [...acc, ...appearencesForAllComponents];
 
-    if (isStepperHeaderChild) {
-      statesList.push(
-        ...[
-          { label: "Active", value: "Active" },
-          { label: "Complete", value: "Complete" },
-        ],
-      );
-    }
+      const componentSpecificAppearences =
+        appearencesByComponent[name as keyof typeof appearencesByComponent];
+      const combinedComponentAppearences = componentSpecificAppearences
+        ? componentSpecificAppearences
+        : appearencesByComponent.Common;
 
-    if (isNavbarChild) {
-      statesList.push(...statesByComponent.Navbar);
-    }
+      // Combine the states ensuring no duplicates
+      return [...new Set([...initialAcc, ...combinedComponentAppearences])];
+    }, [] as ComponentAppearence[]);
 
-    const statesListValues = statesList.map((state) => state.value);
+    const appearencesListValues = appearencesList.map((state) => state.value);
 
-    const customStates = [
+    const customAppearences = [
       ...new Set(
         components?.reduce((acc, component) => {
-          const componentCustomStates = Object.keys(
+          const componentCustomAppearences = Object.keys(
             component?.states ?? {},
-          )?.filter((state) => !statesListValues.includes(state));
-          acc.push(...componentCustomStates);
+          )?.filter((state) => !appearencesListValues.includes(state));
+          acc.push(...componentCustomAppearences);
           return acc;
         }, [] as string[]),
       ),
     ].map((state) => ({ label: state, value: state }));
 
-    return statesList.concat(...(customStates ?? []));
+    return appearencesList.concat(...(customAppearences ?? []));
   };
 
   return {
