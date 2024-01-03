@@ -1,5 +1,6 @@
 import { CustomDropdown } from "@/components/mapper/CustomSelectDropdown";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Loader, Select as MantineSelect, SelectProps } from "@mantine/core";
@@ -32,6 +33,7 @@ const SelectComponent = forwardRef(
       ...componentProps
     } = component.props as any;
     const customStyle = merge({}, props.style);
+    const setInputValue = useInputsStore((state) => state.setInputValue);
 
     let data = [];
 
@@ -94,6 +96,10 @@ const SelectComponent = forwardRef(
         )}
         rightSection={loading ? <Loader size="xs" /> : null}
         label={undefined}
+        onChange={(value) => {
+          triggers.onChange?.(value);
+          setInputValue(component.id!, value);
+        }}
       />
     );
   },

@@ -3,6 +3,7 @@ import { Component } from "@/utils/editor";
 import { Switch as MantineSwitch, SwitchProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useInputsStore } from "@/stores/inputs";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -12,6 +13,7 @@ type Props = {
 const SwitchComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
     const { label, ...componentProps } = component.props as any;
+    const setInputValue = useInputsStore((state) => state.setInputValue);
 
     return (
       <MantineSwitch
@@ -19,6 +21,11 @@ const SwitchComponent = forwardRef(
         {...props}
         {...componentProps}
         label={undefined}
+        onChange={(e) => {
+          componentProps.onChange?.(e);
+          componentProps.triggers?.onChange?.(e);
+          setInputValue(component.id!, e.target.checked);
+        }}
       />
     );
   },

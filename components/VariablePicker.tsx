@@ -62,7 +62,7 @@ export const VariablePicker = (props: Props) => {
       <Popover.Dropdown p={0} miw={300}>
         <Accordion chevronPosition="left" styles={{ content: { padding: 0 } }}>
           {variables?.results.map((variable) => {
-            if (variable.type !== "OBJECT") {
+            if (variable.type !== "OBJECT" || typeof variable !== "object") {
               return (
                 <Card key={variable.id} p="xs">
                   <Group noWrap>

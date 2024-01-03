@@ -9,6 +9,7 @@ import debounce from "lodash.debounce";
 import { forwardRef, memo, useCallback, useEffect, useState } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import merge from "lodash.merge";
+import { useInputsStore } from "@/stores/inputs";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -20,13 +21,15 @@ const TextareaComponent = forwardRef(
     const { children, triggers, value, loading, ...componentProps } =
       component.props as any;
     const [inputValue, setInputValue] = useState(value);
+    const setStoreInputValue = useInputsStore((state) => state.setInputValue);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedOnChange = useCallback(
       debounce((e) => {
         triggers?.onChange(e);
+        setStoreInputValue(component.id!, e.target.value);
       }, 400),
-      [debounce],
+      [debounce, component.id],
     );
 
     useEffect(() => {

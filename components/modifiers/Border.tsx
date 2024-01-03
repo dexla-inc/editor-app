@@ -68,7 +68,6 @@ export const Modifier = withModifier(
     ]);
 
     const form = useForm();
-    console.log(selectedComponent?.props);
     useEffect(() => {
       form.setValues(
         merge(
@@ -202,7 +201,6 @@ export const Modifier = withModifier(
       }
       return `border${startCase(form.values.showBorder as string)}${val}`;
     };
-    //console.log(form.values);
     return (
       <form key={selectedComponent?.id}>
         {selectedComponent?.name === "Card" ? (

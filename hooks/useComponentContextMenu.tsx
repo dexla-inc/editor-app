@@ -112,7 +112,6 @@ export const useComponentContextMenu = () => {
 
   const deleteComponent = useCallback(
     (component: Component) => {
-      console.log(component);
       if (
         component.id &&
         component.id !== "root" &&
