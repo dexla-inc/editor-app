@@ -110,7 +110,7 @@ export const ThemeColorSelector = (props: Props) => {
     }, []);
 
   const colors = theme.colors[selectedColor];
-  const _dataWithShades = colors.map((_, index) => ({
+  const _dataWithShades = colors?.map((_, index) => ({
     label: `${index}`,
     value: `${selectedColor}.${index}`,
   }));

@@ -10,6 +10,7 @@ import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon"
 import { withModifier } from "@/hoc/withModifier";
 import { CardStyle } from "@/requests/projects/types";
 import { useEditorStore } from "@/stores/editor";
+import { allEqual } from "@/utils/common";
 import { INPUT_SIZE } from "@/utils/config";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -31,7 +32,6 @@ import {
 import merge from "lodash.merge";
 import startCase from "lodash.startcase";
 import { useEffect } from "react";
-import { allEqual } from "@/utils/common";
 
 export const icon = IconBorderStyle;
 export const label = "Border";
@@ -72,20 +72,17 @@ export const Modifier = withModifier(
       form.setValues(
         merge(
           {},
+          defaultBorderValues,
           {
             showRadius: isBorderRadiusAllSame ? "radius-all" : "radius-sides",
           },
           {
             showBorder: selectedComponent?.props?.showBorder ?? "all",
-            borderStyle: style?.borderStyle ?? defaultBorderValues.borderStyle,
-            borderTopStyle:
-              style?.borderTopStyle ?? defaultBorderValues.borderTopStyle,
-            borderRightStyle:
-              style?.borderRightStyle ?? defaultBorderValues.borderRightStyle,
-            borderBottomStyle:
-              style?.borderBottomStyle ?? defaultBorderValues.borderBottomStyle,
-            borderLeftStyle:
-              style?.borderLeftStyle ?? defaultBorderValues.borderLeftStyle,
+            borderStyle: style?.borderStyle,
+            borderTopStyle: style?.borderTopStyle,
+            borderRightStyle: style?.borderRightStyle,
+            borderBottomStyle: style?.borderBottomStyle,
+            borderLeftStyle: style?.borderLeftStyle,
             borderColor: style?.borderColor
               ? getThemeColor(theme, style.borderColor)
               : defaultBorderValues.borderTopColor,
@@ -101,29 +98,16 @@ export const Modifier = withModifier(
             borderLeftColor: style?.borderLeftColor
               ? getThemeColor(theme, style.borderLeftColor)
               : defaultBorderValues.borderLeftColor,
-            borderRadius:
-              style?.borderRadius ?? defaultBorderValues.borderRadius,
-            borderTopLeftRadius:
-              style?.borderTopLeftRadius ??
-              defaultBorderValues.borderTopLeftRadius,
-            borderTopRightRadius:
-              style?.borderTopRightRadius ??
-              defaultBorderValues.borderTopRightRadius,
-            borderBottomLeftRadius:
-              style?.borderBottomLeftRadius ??
-              defaultBorderValues.borderBottomLeftRadius,
-            borderBottomRightRadius:
-              style?.borderBottomRightRadius ??
-              defaultBorderValues.borderBottomRightRadius,
-            borderWidth: style?.borderWidth ?? defaultBorderValues.borderWidth,
-            borderTopWidth:
-              style?.borderTopWidth ?? defaultBorderValues.borderTopWidth,
-            borderRightWidth:
-              style?.borderRightWidth ?? defaultBorderValues.borderRightWidth,
-            borderBottomWidth:
-              style?.borderBottomWidth ?? defaultBorderValues.borderBottomWidth,
-            borderLeftWidth:
-              style?.borderLeftWidth ?? defaultBorderValues.borderLeftWidth,
+            borderRadius: style?.borderRadius,
+            borderTopLeftRadius: style?.borderTopLeftRadius,
+            borderTopRightRadius: style?.borderTopRightRadius,
+            borderBottomLeftRadius: style?.borderBottomLeftRadius,
+            borderBottomRightRadius: style?.borderBottomRightRadius,
+            borderWidth: style?.borderWidth,
+            borderTopWidth: style?.borderTopWidth,
+            borderRightWidth: style?.borderRightWidth,
+            borderBottomWidth: style?.borderBottomWidth,
+            borderLeftWidth: style?.borderLeftWidth,
           },
         ),
       );
@@ -134,6 +118,7 @@ export const Modifier = withModifier(
       const [color, index] = _value.split(".");
       const value = index ? theme.colors[color][Number(index)] : color;
       let borderColor = {};
+      let borderColorForForm = {};
       if (form.values.showBorder === "all") {
         borderColor = {
           borderColor: value,
@@ -142,15 +127,24 @@ export const Modifier = withModifier(
           borderBottomColor: value,
           borderLeftColor: value,
         };
+        borderColorForForm = {
+          borderColor: _value,
+          borderTopColor: _value,
+          borderRightColor: _value,
+          borderBottomColor: _value,
+          borderLeftColor: _value,
+        };
       } else {
         const key = `border${startCase(form.values.showBorder as string)}Color`;
         form.setFieldValue("borderColor", _value);
         borderColor = {
           [key]: `${value}!important`,
         };
+        borderColorForForm = {
+          [key]: _value,
+        };
       }
-
-      form.setValues(borderColor);
+      form.setValues(borderColorForForm);
 
       debouncedTreeUpdate(selectedComponentIds, {
         style: borderColor,
