@@ -20,7 +20,7 @@ export const EditorNavbarPagesSection = () => {
 
   const getPages = useCallback(async () => {
     const pageList = await getPageList(projectId, { search });
-    setPages(pageList.results.sort((a, b) => a.title.localeCompare(b.title)));
+    setPages(pageList.results);
   }, [projectId, search, setPages]);
 
   useEffect(() => {
