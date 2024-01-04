@@ -17,7 +17,9 @@ import { IconCopy, IconDots, IconEdit, IconTrashX } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useRouter } from "next/router";
-import { Edge, Node } from "reactflow";
+import { Edge, Node, ReactFlowProvider } from "reactflow";
+import { modals } from "@mantine/modals";
+import { LogicFlowsPage } from "@/components/logic-flow/LogicFlowsPage";
 
 dayjs.extend(relativeTime);
 
@@ -26,6 +28,7 @@ type FlowCardProps = {
   onDelete?: () => void;
   onDuplicate?: () => void;
   onEdit?: () => void;
+  onClick?: () => void;
 };
 
 export const LogicFlowCard = ({
@@ -33,6 +36,7 @@ export const LogicFlowCard = ({
   onDelete,
   onDuplicate,
   onEdit,
+  onClick,
 }: FlowCardProps) => {
   const theme = useMantineTheme();
   const router = useRouter();
@@ -72,11 +76,13 @@ export const LogicFlowCard = ({
       key={flow.id}
       radius="md"
       w={300}
-      onClick={() =>
-        router.push(
-          `/projects/${router.query.id}/editor/${router.query.page}/flows/${flow.id}`,
-        )
-      }
+      onClick={onClick}
+      // onClick={() =>
+      //   router.push(
+      //     `/projects/${router.query.id}/editor/${router.query.page}/flows/${flow.id}`,
+      //   )
+      // }
+
       sx={{
         cursor: "pointer",
         "&:hover": {

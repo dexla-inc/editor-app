@@ -90,9 +90,9 @@ export const LogicFlowFormModal = () => {
           message: "Logic flow saved successfully",
         });
 
-        router.push(
-          `/projects/${router.query.id}/editor/${router.query.page}/flows/${data.id}`,
-        );
+        // router.push(
+        //   `/projects/${router.query.id}/editor/${router.query.page}/flows/${data.id}`,
+        // );
       }
     },
   });
@@ -161,6 +161,7 @@ export const LogicFlowFormModal = () => {
         setShowFormModal(false);
       }}
       title={currentFlowId ? "Edit Logic Flow" : "Create Logic Flow"}
+      styles={{ overlay: { zIndex: 400 }, inner: { zIndex: 400 } }}
     >
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack>

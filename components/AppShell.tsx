@@ -38,6 +38,7 @@ import { flexStyles } from "@/utils/branding";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
+import { modals } from "@mantine/modals";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const resetTree = useEditorStore((state) => state.resetTree);
@@ -98,7 +99,17 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               <ActionIconDefault
                 iconName="IconGitBranch"
                 tooltip="Logic Flows"
-                href={`/projects/${projectId}/editor/${currentPageId}/flows`}
+                onClick={() =>
+                  modals.openContextModal({
+                    modal: "logicFlows",
+                    size: "auto",
+                    styles: {
+                      overlay: { zIndex: 300 },
+                      inner: { zIndex: 300 },
+                    },
+                    innerProps: {},
+                  })
+                }
               />
               <VariablesButton projectId={projectId} pageId={currentPageId} />
               <ChangeHistoryPopover />

@@ -40,7 +40,7 @@ export const LogicFlowShell = ({
 
   return (
     <AppShell
-      fixed
+      // fixed
       padding={0}
       header={
         <Header height={HEADER_HEIGHT} sx={{ zIndex: 110 }}>
@@ -51,9 +51,9 @@ export const LogicFlowShell = ({
             justify="space-between"
           >
             <Group>
-              <Link href="/projects">
-                <Logo />
-              </Link>
+              {/*<Link href="/projects">*/}
+              {/*  <Logo />*/}
+              {/*</Link>*/}
               {flow && (
                 <Breadcrumbs>
                   <Anchor
@@ -75,14 +75,14 @@ export const LogicFlowShell = ({
                 Create Logic Flow
               </Button>
               <VariablesButton pageId={pageId!} projectId={projectId!} />
-              <Button
-                component={Link}
-                variant="default"
-                href={`/projects/${projectId}/editor/${pageId}`}
-                compact
-              >
-                Back to Editor
-              </Button>
+              {/*<Button*/}
+              {/*  component={Link}*/}
+              {/*  variant="default"*/}
+              {/*  href={`/projects/${projectId}/editor/${pageId}`}*/}
+              {/*  compact*/}
+              {/*>*/}
+              {/*  Back to Editor*/}
+              {/*</Button>*/}
             </Group>
           </Flex>
         </Header>
@@ -93,13 +93,14 @@ export const LogicFlowShell = ({
         main: {
           minHeight: "100vh",
           paddingLeft: "var(--mantine-navbar-width, 0px)",
+          paddingRight: "var(--mantine-navbar-width, 0px)",
         },
       }}
     >
       <ErrorBoundary
         FallbackComponent={() => (
           <Box
-            w={`calc(100vw - ${ASIDE_WIDTH}px - ${NAVBAR_WIDTH}px)`}
+            // w={`calc(100vw - ${ASIDE_WIDTH}px - ${NAVBAR_WIDTH}px)`}
             h={`calc(100vh - ${HEADER_HEIGHT}px)`}
             sx={{
               display: "flex",
