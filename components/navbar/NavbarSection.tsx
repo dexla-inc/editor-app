@@ -220,9 +220,9 @@ export const NavbarSection = ({
         </Title>
         {activeTab === "layers" && actionButtons}
       </Flex>
-      <Flex direction="column" gap={2}>
+      <Stack spacing={2} w="100%">
         {children}
-      </Flex>
+      </Stack>
     </Stack>
   );
 
@@ -235,7 +235,7 @@ export const NavbarSection = ({
         sx={{ zIndex: 100 }}
         id="navbar-sections"
       >
-        <Stack h="100%" spacing="md">
+        <Stack w="100%" h="100%" spacing="md">
           {sectionToRender}
         </Stack>
         {(activeTab || (isTabPinned && activeTab === "layers")) && (

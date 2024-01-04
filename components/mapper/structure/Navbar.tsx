@@ -227,7 +227,7 @@ export const jsonStructure = (props?: any): Component => {
                 borderRadius: theme.spacing.sm,
               },
             },
-            hover: {
+            Hover: {
               bg: "Neutral.5",
               style: {
                 borderRadius: theme.spacing.sm,
