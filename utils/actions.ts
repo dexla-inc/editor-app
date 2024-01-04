@@ -241,7 +241,7 @@ export interface APICallAction extends BaseAction {
     parameter: { [key: string]: any };
     body: { [key: string]: any };
   };
-  isLogin: boolean;
+  isLogin?: boolean;
 }
 
 export interface BindPlaceDataAction extends Omit<APICallAction, "name"> {

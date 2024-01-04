@@ -8,7 +8,7 @@ import { MethodTypes } from "@/requests/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
-import { APICallAction, LoginAction } from "@/utils/actions";
+import { APICallAction } from "@/utils/actions";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { ApiType } from "@/utils/dashboardTypes";
@@ -51,7 +51,7 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
   ),
 );
 
-type FormValues = Omit<APICallAction | LoginAction, "name" | "datasource">;
+type FormValues = Omit<APICallAction, "name" | "datasource">;
 
 type Props = {
   actionName?: string;
@@ -165,7 +165,12 @@ export const APICallFlowActionForm = ({
           }
         />
         <Switch
-          size="xs"
+          label="Is Login Endpoint"
+          labelPosition="left"
+          {...form.getInputProps("isLogin", { type: "checkbox" })}
+          sx={{ fontWeight: 500 }}
+        />
+        <Switch
           label="Show Loader"
           labelPosition="left"
           {...form.getInputProps("showLoader", { type: "checkbox" })}
