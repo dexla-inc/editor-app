@@ -138,7 +138,7 @@ export const Modifier = withModifier(
         const key = `border${startCase(form.values.showBorder as string)}Color`;
         form.setFieldValue("borderColor", _value);
         borderColor = {
-          [key]: `${value}!important`,
+          [key]: value,
         };
         borderColorForForm = {
           [key]: _value,
