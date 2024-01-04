@@ -1,21 +1,20 @@
 import { OpenThemeButton } from "@/components/OpenThemeButton";
 import { useEditorStore } from "@/stores/editor";
-import { useUserConfigStore } from "@/stores/userConfig";
-import { GRAY_COLOR } from "@/utils/branding";
 import {
-  ActionIcon,
-  Avatar,
   Box,
   ColorSwatch,
+  Divider,
   Group,
   Paper,
   Select,
+  SelectItem,
   SelectProps,
   Stack,
-  Text,
-  Tooltip,
 } from "@mantine/core";
 import { forwardRef } from "react";
+import { TopLabel } from "./TopLabel";
+
+type ColorsArray = Array<{ label: string; value: string | null | undefined }>;
 
 // eslint-disable-next-line react/display-name
 const SelectItem = forwardRef<HTMLDivElement, any>(
@@ -24,8 +23,7 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
 
     if (value === "transparent") {
       return (
-        <Group ref={ref} noWrap {...other}>
-          {/* <Box w={10} h={10} bg="transparent" /> */}
+        <Group ref={ref} noWrap align="center" spacing={8} {...other}>
           <ColorSwatch
             radius="xs"
             size={10}
@@ -39,7 +37,7 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
     const [color, index] = value.split(".");
 
     return (
-      <Group ref={ref} noWrap {...other}>
+      <Group ref={ref} noWrap align="center" spacing={8} {...other}>
         <Box w={10} h={10} bg={theme.colors[color][index]} />
         {label}
       </Group>
@@ -54,10 +52,7 @@ type Props = {
 
 export const ThemeColorSelector = (props: Props) => {
   const theme = useEditorStore((state) => state.theme);
-  const isShadesActive = useUserConfigStore((state) => state.isShadesActive);
-  const setIsShadesActive = useUserConfigStore(
-    (state) => state.setIsShadesActive,
-  );
+
   const excludeColors = new Set([
     "blue",
     "cyan",
@@ -101,74 +96,58 @@ export const ThemeColorSelector = (props: Props) => {
       />
     );
 
-  const data: any[] = (Object.keys(theme.colors) ?? [])
-    .filter((color) => !excludeColors.has(color))
-    .reduce((all, color: string) => {
-      const colors = theme.colors[color];
-      const _dataWithShades = colors.map((_, index) => ({
-        label: `${color}-${index}`,
-        value: `${color}.${index}`,
-      }));
-      const _data = isShadesActive
-        ? _dataWithShades
-        : [{ label: color, value: `${color}.${selectedIndex}` }];
+  const { label, ...selectProps } = props;
 
-      return all.concat(
-        // @ts-ignore
-        _data,
-      );
+  const data: ColorsArray = (Object.keys(theme.colors) ?? [])
+    .filter((color) => !excludeColors.has(color))
+    .reduce<ColorsArray>((all, color: string) => {
+      const [compColor, compIndex] = selectProps.value?.split(".") ?? [];
+      const isColorIndexNotSame = compColor === color && compIndex !== "6";
+      const colorValue = isColorIndexNotSame ? selectProps.value : `${color}.6`;
+      const _data = [{ label: color, value: colorValue }];
+
+      return all.concat(_data);
     }, []);
 
-  const boxShadow = `0 0 5px 0.625px ${theme.colors.teal[6]}`;
-  const { label, ...selectProps } = props;
+  const colors = theme.colors[selectedColor];
+  const _dataWithShades = colors.map((_, index) => ({
+    label: `${index}`,
+    value: `${selectedColor}.${index}`,
+  }));
 
   return (
     <Stack spacing={5}>
       <Stack spacing={0}>
-        <Text
-          sx={(theme) =>
-            theme.colorScheme === "dark" ? { color: GRAY_COLOR } : {}
-          }
-          fw={500}
-          fz="xs"
-        >
-          {label}
-        </Text>
-        <Group noWrap align="center">
+        <TopLabel text={label as string} />
+        <Group noWrap spacing={2} align="center">
           <Select
             w="100%"
             size="xs"
             {...selectProps}
             data={
-              props.excludeTransparent
+              (props.excludeTransparent
                 ? data
                 : data.concat({
                     label: "transparent",
                     value: "transparent",
-                  })
+                  })) as SelectItem[]
             }
             itemComponent={SelectItem}
             searchable
             icon={bgColor}
           />
-          <Tooltip
-            withArrow
-            withinPortal
-            position="left"
-            offset={0}
-            fz="xs"
-            p="2px 4px"
-            label={isShadesActive ? "Turn off shades" : "Turn on shades"}
-          >
-            <ActionIcon onClick={() => setIsShadesActive(!isShadesActive)}>
-              <Avatar
-                sx={isShadesActive ? { boxShadow } : {}}
-                radius="xl"
-                size={24}
-                src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Color_circle_%28RGB%29.svg"
+          {selectProps.value !== "transparent" && (
+            <Group w="35%" spacing={2} noWrap>
+              <Divider w={20} color="gray" />
+              <Select
+                size="xs"
+                {...selectProps}
+                data={_dataWithShades}
+                itemComponent={SelectItem}
+                searchable
               />
-            </ActionIcon>
-          </Tooltip>
+            </Group>
+          )}
         </Group>
       </Stack>
       <OpenThemeButton />
