@@ -1436,28 +1436,8 @@ export const changeVariableAction = async ({
 }: ChangeVariableActionParams) => {
   const currentProjectId = useEditorStore.getState().currentProjectId;
   const currentPageId = useEditorStore.getState().currentPageId;
-  const editorTree = useEditorStore.getState().tree;
   let isPreviewValueObject = false;
   let isPreviewValueArray = false;
-
-  const browser = createBrowserHistory();
-
-  const inputComponents = getAllComponentsByName(editorTree.root, [
-    "Input",
-    "Select",
-    "Checkbox",
-    "RadioGroup",
-    "Switch",
-    "Textarea",
-  ]).reduce(
-    (acc, component) => {
-      const value = component?.props?.value;
-      acc.list[component?.id!] = component;
-      acc[component?.id!] = value ? JSON.parse(value) : value;
-      return acc;
-    },
-    { list: {} } as Record<string, any>,
-  );
 
   if (action.bindingType === "JavaScript") {
     try {
@@ -1498,7 +1478,7 @@ export const changeVariableAction = async ({
 
       const variable = variables.list[action.variableId];
 
-      await createVariable(currentProjectId!, {
+      createVariable(currentProjectId!, {
         name: variable.name,
         value:
           typeof previewNewValue === "string"
