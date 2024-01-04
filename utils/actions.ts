@@ -58,7 +58,7 @@ import {
   getVariable,
   listVariables,
 } from "@/requests/variables/queries-noauth";
-import { FrontEndTypes } from "@/requests/variables/types";
+import { FrontEndTypes, VariableParams } from "@/requests/variables/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import { readDataFromStream } from "@/utils/api";
@@ -76,6 +76,7 @@ import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
 import { getParsedJSCode } from "@/utils/variables";
+import { useVariableStore } from "@/stores/variables";
 
 const triggers = [
   "onClick",
@@ -1202,9 +1203,9 @@ export const bindVariableToComponentAction = async ({
   action,
 }: BindVariableToComponentActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  const currentProjectId = useEditorStore.getState().currentProjectId;
   const actionVariable = action.variable.split(`var_`)[1];
-  let _var: string | { id: string; path: string } = actionVariable;
+  let _var: string | { id: string; variable: VariableParams; path: string } =
+    actionVariable;
   if (actionVariable.startsWith("{") && actionVariable.endsWith("}")) {
     _var = JSON.parse(actionVariable);
   }
@@ -1212,10 +1213,8 @@ export const bindVariableToComponentAction = async ({
   const isObject = typeof _var === "object";
 
   if (action.component && _var) {
-    const variable = await getVariable(
-      currentProjectId!,
-      isObject ? (_var as any).id : _var,
-    );
+    const variables = useVariableStore.getState();
+    const variable = variables[isObject ? (_var as any).variable.name : _var];
 
     let value = variable.value;
     let defaultValue = variable.defaultValue;
