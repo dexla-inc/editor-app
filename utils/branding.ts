@@ -159,6 +159,7 @@ const DARK_COLOR = theme.colors.dark[6];
 const LIGHT_MODE = "white";
 const LINK_COLOR = isDarkTheme ? "teal" : "white";
 const FLEX_HOVER = isDarkTheme ? theme.colors.dark[4] : HOVERED;
+const BUTTON_HOVER = isDarkTheme ? theme.colors.dark[6] : HOVERED;
 const BORDER = isDarkTheme ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE;
 const BINDER_BACKGROUND = isDarkTheme ? theme.colors.dark[5] : undefined;
 const LOGICFLOW_BACKGROUND = isDarkTheme ? undefined : GRAY_WHITE_COLOR;
@@ -281,6 +282,7 @@ export const getColorValue = (theme: MantineThemeExtended, value?: string) => {
 export {
   BINDER_BACKGROUND,
   BORDER,
+  BUTTON_HOVER,
   DARK_COLOR,
   DARK_MODE,
   DEFAULT_TEXTCOLOR,

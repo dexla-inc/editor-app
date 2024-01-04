@@ -1,3 +1,4 @@
+import { BUTTON_HOVER } from "@/utils/branding";
 import {
   Paper,
   Stack,
@@ -41,7 +42,7 @@ export default function MantineStyledButton({
         shadow="xs"
         sx={{
           width: "100%",
-          "&:hover": { backgroundColor: theme.colors.gray[1] },
+          "&:hover": { backgroundColor: BUTTON_HOVER },
         }}
       >
         <Stack align="center">
