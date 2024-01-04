@@ -309,7 +309,6 @@ export const requiredModifiers: RequiredModifiers = {
     name: "Upload Button",
     accept: "",
     multiple: false,
-    disabled: false,
   },
   popOver: {
     position: "bottom",

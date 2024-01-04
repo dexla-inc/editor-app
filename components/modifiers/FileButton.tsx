@@ -20,7 +20,6 @@ export const Modifier = withModifier(
           name: selectedComponent.props?.name,
           accept: selectedComponent.props?.accept,
           multiple: selectedComponent.props?.multiple,
-          disabled: selectedComponent.props?.disabled,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -48,7 +47,8 @@ export const Modifier = withModifier(
           />
           <TextInput
             size="xs"
-            label="Accept"
+            label="Allowed File Type(s)"
+            placeholder="*/png, */pdf, */docx"
             name="accept"
             {...form.getInputProps("accept")}
             onChange={(e) => handleChange(e)}
@@ -57,22 +57,11 @@ export const Modifier = withModifier(
             size="xs"
             checked={form.values.multiple}
             {...form.getInputProps("multiple")}
-            label="Multiple"
+            label="Allow multiple file upload"
             onChange={(e) => {
               form.setFieldValue("multiple", e.currentTarget.checked);
               debouncedTreeUpdate(selectedComponentIds, {
                 multiple: e.currentTarget.checked,
-              });
-            }}
-          />
-          <Switch
-            size="xs"
-            checked={form.values.disabled as boolean}
-            label="Disabled"
-            onChange={(e) => {
-              form.setFieldValue("disabled", e.currentTarget.checked);
-              debouncedTreeUpdate(selectedComponentIds, {
-                disabled: e.currentTarget.checked,
               });
             }}
           />

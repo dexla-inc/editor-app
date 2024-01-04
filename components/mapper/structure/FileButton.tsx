@@ -1,5 +1,6 @@
 import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -12,11 +13,11 @@ export const jsonStructure = (props?: any): Component => {
     description: "Upload Files",
     props: {
       style: {
-        // ...defaultBorderValues,
         width: "auto",
         ...(style || {}),
       },
       size: "sm",
+      ...requiredModifiers.fileButton,
       name: name ?? "Upload button",
       ...(rest || {}),
     },
