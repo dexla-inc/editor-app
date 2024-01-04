@@ -73,6 +73,12 @@ const theme: MantineTheme = {
     Avatar: {
       defaultProps: () => ({ size: "sm" }),
     },
+    Checkbox: {
+      defaultProps: () => ({ size: "xs" }),
+    },
+    Switch: {
+      defaultProps: () => ({ size: "xs" }),
+    },
   },
 };
 
@@ -119,6 +125,12 @@ const darkTheme: MantineTheme = {
     },
     Avatar: {
       defaultProps: () => ({ size: "sm" }),
+    },
+    Checkbox: {
+      defaultProps: () => ({ size: "xs" }),
+    },
+    Switch: {
+      defaultProps: () => ({ size: "xs" }),
     },
   },
 };
