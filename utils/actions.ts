@@ -8,7 +8,6 @@ import { ChangeStepActionForm } from "@/components/actions/ChangeStepActionForm"
 import { CustomJavascriptActionForm } from "@/components/actions/CustomJavascriptActionForm";
 import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
-import { LoginActionForm } from "@/components/actions/LoginActionForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
 import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm";
 import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
@@ -37,7 +36,6 @@ import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableAct
 import { BindVariableToChartFlowActionForm } from "@/components/actions/logic-flow-forms/BindVariableToChartFlowActionForm";
 import { ChangeVariableFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeVariableFlowActionForm";
 import { GoToUrlFlowActionForm } from "@/components/actions/logic-flow-forms/GoToUrlFlowActionForm";
-import { LoginFlowActionForm } from "@/components/actions/logic-flow-forms/LoginFlowActionForm";
 import { NavigationFlowActionForm } from "@/components/actions/logic-flow-forms/NavigationFlowActionForm";
 import { OpenDrawerFlowActionForm } from "@/components/actions/logic-flow-forms/OpenDrawerFlowActionForm";
 import { OpenModalFlowActionForm } from "@/components/actions/logic-flow-forms/OpenModalFlowActionForm";
@@ -103,14 +101,17 @@ const triggers = [
 ] as const;
 
 type ActionGroup =
-  | "API, Data & Logic"
+  | "Data"
+  | "Logic"
+  | "Design"
   | "Binding"
   | "Navigation"
   | "Modal & Overlays"
   | "Style & Props"
   | "Feedback"
   | "Utilities & Tools"
-  | "Third-Party Plugins";
+  | "Third-Party Plugins"
+  | "Z Delete";
 
 type ActionInfo = {
   name: string;
@@ -119,41 +120,40 @@ type ActionInfo = {
 };
 
 export const actions: ActionInfo[] = [
-  { name: "apiCall", group: "API, Data & Logic", icon: "IconApi" },
-  { name: "login", group: "API, Data & Logic", icon: "IconLogin" },
-  { name: "triggerLogicFlow", group: "API, Data & Logic", icon: "IconFlow" },
-  { name: "reloadComponent", group: "API, Data & Logic", icon: "IconReload" },
-  { name: "bindResponse", group: "Binding" },
-  { name: "bindVariable", group: "Binding" }, // Merge bindVariable, changeVariable and bindVariableToChart
-  { name: "bindVariableToChart", group: "Binding" }, // Merge bindVariable, changeVariable and bindVariableToChart
-  { name: "changeVariable", group: "Binding" },
-  { name: "goToUrl", group: "Navigation", icon: "IconLink" },
+  { name: "apiCall", group: "Data", icon: "IconApi" },
+  { name: "changeVariable", group: "Data" }, // Merge bindVariable, changeVariable and bindVariableToChart
+  { name: "bindResponse", group: "Data" }, // Merge bindVariable, changeVariable and bindVariableToChart
+  { name: "changeState", group: "Design", icon: "IconTransform" },
+  { name: "triggerLogicFlow", group: "Logic", icon: "IconFlow" },
   { name: "navigateToPage", group: "Navigation", icon: "IconFileInvoice" },
-  { name: "changeStep", group: "Navigation", icon: "IconStatusChange" },
-  {
-    name: "toggleAccordionItem",
-    group: "Navigation",
-    icon: "IconStatusChange",
-  },
-  { name: "openDrawer", group: "Modal & Overlays" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
-  { name: "closeDrawer", group: "Modal & Overlays" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
-  { name: "openModal", group: "Modal & Overlays" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
-  { name: "closeModal", group: "Modal & Overlays" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
-  { name: "openPopOver", group: "Modal & Overlays" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
-  { name: "closePopOver", group: "Modal & Overlays" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
-  { name: "toggleVisibility", group: "Style & Props" },
+  { name: "goToUrl", group: "Navigation", icon: "IconLink" },
+  { name: "openToast", group: "Feedback" },
   { name: "alert", group: "Feedback", icon: "IconAlert" },
-  { name: "changeState", group: "Feedback", icon: "IconTransform" },
-  { name: "openToast", group: "Feedback" }, // Merge opening and closing drawers, modals, popovers, toasts into one action
+  { name: "customJavascript", group: "Utilities & Tools", icon: "IconCode" },
   { name: "copyToClipboard", group: "Utilities & Tools", icon: "IconCopy" },
   {
     name: "changeLanguage",
     group: "Utilities & Tools",
     icon: "IconMessageLanguage",
   },
-  { name: "customJavascript", group: "Utilities & Tools", icon: "IconCode" },
-  { name: "bindPlaceData", group: "Third-Party Plugins", icon: "IconMap" },
-  { name: "bindPlaceGeometry", group: "Third-Party Plugins", icon: "IconMap" },
+  { name: "bindVariable", group: "Z Delete" }, // Merge bindVariable, changeVariable and bindVariableToChart
+  { name: "bindVariableToChart", group: "Z Delete" },
+  { name: "reloadComponent", group: "Z Delete", icon: "IconReload" },
+  { name: "changeStep", group: "Z Delete", icon: "IconStatusChange" },
+  {
+    name: "toggleAccordionItem",
+    group: "Z Delete",
+    icon: "IconStatusChange",
+  },
+  { name: "openDrawer", group: "Z Delete" },
+  { name: "closeDrawer", group: "Z Delete" },
+  { name: "openModal", group: "Z Delete" },
+  { name: "closeModal", group: "Z Delete" },
+  { name: "openPopOver", group: "Z Delete" },
+  { name: "closePopOver", group: "Z Delete" },
+  { name: "toggleVisibility", group: "Z Delete" },
+  { name: "bindPlaceData", group: "Z Delete", icon: "IconMap" },
+  { name: "bindPlaceGeometry", group: "Z Delete", icon: "IconMap" },
 ];
 
 type ActionTriggerAll = (typeof triggers)[number];
@@ -242,10 +242,7 @@ export interface APICallAction extends BaseAction {
     parameter: { [key: string]: any };
     body: { [key: string]: any };
   };
-}
-
-export interface LoginAction extends Omit<APICallAction, "name"> {
-  name: "login";
+  isLogin?: boolean;
 }
 
 export interface BindPlaceDataAction extends Omit<APICallAction, "name"> {
@@ -326,7 +323,6 @@ export type Action = {
     | APICallAction
     | BindResponseToComponentAction
     | GoToUrlAction
-    | LoginAction
     | OpenModalAction
     | OpenDrawerAction
     | OpenPopOverAction
@@ -782,10 +778,6 @@ export type APICallActionParams = ActionParams & {
   action: APICallAction;
 };
 
-export type LoginActionParams = ActionParams & {
-  action: LoginAction;
-};
-
 let cachedEndpoints: Endpoint[] | undefined;
 
 const getCachedEndpoint = async (projectId: string) => {
@@ -935,81 +927,33 @@ const handleSuccess = async (
   });
 };
 
-export const loginAction = async ({
-  actionId,
-  action,
-  router,
-  onSuccess,
-  onError,
-  component,
-  ...rest
-}: LoginActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  const { endpoint, url, body } = await prepareRequestData(router, action);
+function constructHeaders(endpoint?: Endpoint, authHeaderKey = "") {
+  return {
+    "Content-Type": endpoint?.mediaType ?? "application/json",
+    ...(authHeaderKey ? { Authorization: authHeaderKey } : {}),
+  };
+}
 
-  try {
-    updateTreeComponent({
-      componentId: component.id!,
-      props: {
-        loading: action.showLoader,
-      },
-      save: false,
-    });
+// Function to perform the fetch operation
+async function performFetch(
+  url: string,
+  endpoint?: Endpoint,
+  body?: any,
+  authHeaderKey?: string,
+) {
+  const response = await fetch(url, {
+    method: endpoint?.methodType,
+    headers: constructHeaders(endpoint, authHeaderKey),
+    ...(!!body ? { body: JSON.stringify(body) } : {}),
+  });
 
-    const response = await fetch(url, {
-      method: endpoint?.methodType,
-      headers: {
-        "Content-Type": endpoint?.mediaType ?? "application/json",
-      },
-      ...(!!body ? { body: JSON.stringify(body) } : {}),
-    });
-
-    if (response.status.toString().startsWith("5")) {
-      const error = await readDataFromStream(response.body);
-
-      throw new Error(error);
-    }
-
-    const responseJson = await response.json();
-
-    const projectId = router.query.id as string;
-
-    const dataSourceAuthConfig = await getDataSourceAuth(
-      projectId,
-      endpoint?.dataSourceId!,
-    );
-
-    const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
-
-    const setAuthTokens = useAuthStore.getState().setAuthTokens;
-    setAuthTokens(mergedAuthConfig);
-
-    await handleSuccess(
-      responseJson,
-      onSuccess,
-      actionId,
-      router,
-      rest,
-      component,
-      endpoint,
-      action,
-      actionMapper,
-      updateTreeComponent,
-    );
-  } catch (error) {
-    await handleError(
-      error,
-      onError,
-      actionId,
-      router,
-      rest,
-      component,
-      endpoint,
-      actionMapper,
-      updateTreeComponent,
-    );
+  if (response.status.toString().startsWith("5")) {
+    const error = await readDataFromStream(response.body);
+    throw new Error(error);
   }
-};
+
+  return response.json();
+}
 
 export const apiCallAction = async ({
   actionId,
@@ -1032,36 +976,40 @@ export const apiCallAction = async ({
       save: false,
     });
 
-    const refreshAccessToken = useAuthStore.getState().refreshAccessToken;
-    const getAccessToken = useAuthStore.getState().getAccessToken;
-    refreshAccessToken();
+    let responseJson;
+    if (action.isLogin) {
+      responseJson = await performFetch(url, endpoint, body);
 
-    let authHeaderKey =
-      endpoint?.authenticationScheme === "BEARER"
-        ? "Bearer " + getAccessToken()
-        : "";
+      // router.query will not work on live apps, this needs to change
+      const projectId = router.query.id as string;
+      const dataSourceAuthConfig = await getDataSourceAuth(
+        projectId,
+        endpoint?.dataSourceId!,
+      );
+      const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
+      const setAuthTokens = useAuthStore.getState().setAuthTokens;
+      setAuthTokens(mergedAuthConfig);
+    } else {
+      const refreshAccessToken = useAuthStore.getState().refreshAccessToken;
+      const getAccessToken = useAuthStore.getState().getAccessToken;
+      refreshAccessToken();
 
-    const fetchUrl = endpoint?.isServerRequest
-      ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
-      : url;
+      let authHeaderKey =
+        endpoint?.authenticationScheme === "BEARER"
+          ? "Bearer " + getAccessToken()
+          : "";
 
-    const response = await fetch(fetchUrl, {
-      method: endpoint?.methodType,
-      headers: {
-        // Will need to build up headers from endpoint.headers in future
-        "Content-Type": endpoint?.mediaType ?? "application/json",
-        ...(authHeaderKey ? { Authorization: authHeaderKey } : {}),
-      },
-      ...(!!body ? { body: JSON.stringify(body) } : {}),
-    });
+      const fetchUrl = endpoint?.isServerRequest
+        ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
+        : url;
 
-    if (response.status.toString().startsWith("5")) {
-      const error = await readDataFromStream(response.body);
-
-      throw new Error(error);
+      responseJson = await performFetch(
+        fetchUrl,
+        endpoint,
+        body,
+        authHeaderKey,
+      );
     }
-
-    const responseJson = await response.json();
 
     await handleSuccess(
       responseJson,
@@ -1544,11 +1492,6 @@ export const actionMapper = {
     action: goToUrlAction,
     form: GoToUrlForm,
     flowForm: GoToUrlFlowActionForm,
-  },
-  login: {
-    action: loginAction,
-    form: LoginActionForm,
-    flowForm: LoginFlowActionForm,
   },
   openModal: {
     action: openModalAction,
