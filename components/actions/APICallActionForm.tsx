@@ -20,7 +20,7 @@ import { MethodTypes } from "@/requests/types";
 import { FrontEndTypes } from "@/requests/variables/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
-import { APICallAction, Action, LoginAction } from "@/utils/actions";
+import { APICallAction, Action } from "@/utils/actions";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ApiType } from "@/utils/dashboardTypes";
 import { getComponentById } from "@/utils/editor";
@@ -65,7 +65,7 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
   ),
 );
 
-type FormValues = Omit<APICallAction | LoginAction, "name" | "datasource">;
+type FormValues = Omit<APICallAction, "name" | "datasource">;
 
 type Props = {
   actionName?: string;
@@ -81,9 +81,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   const updateTreeComponentActions = useEditorStore(
     (state) => state.updateTreeComponentActions,
   );
-  const { componentActions, action } = useActionData<
-    LoginAction | APICallAction
-  >({
+  const { componentActions, action } = useActionData<APICallAction>({
     actionId: id,
     editorTree,
     selectedComponentId,
@@ -126,6 +124,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
         body: action.action?.binds?.body ?? {},
       },
       datasources: action.action?.datasources,
+      isLogin: action.action?.isLogin ?? false,
     },
   });
 
@@ -133,7 +132,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     try {
       handleLoadingStart({ startLoading });
 
-      updateActionInTree<LoginAction | APICallAction>({
+      updateActionInTree<APICallAction>({
         selectedComponentId: selectedComponentId!,
         componentActions,
         id,
@@ -142,6 +141,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
           showLoader: values.showLoader,
           datasources: dataSources.data!.results,
           binds: values.binds,
+          isLogin: values.isLogin,
         },
         updateTreeComponentActions,
       });
@@ -200,6 +200,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   const accessToken = useAuthStore((state) => state.getAccessToken);
 
   const showLoaderInputProps = form.getInputProps("showLoader");
+  const isLoginInputProps = form.getInputProps("isLogin");
 
   return endpoints && endpoints.length > 0 ? (
     <>
@@ -250,7 +251,16 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
             }
           />
           <Switch
-            size="xs"
+            label="Is Login Endpoint"
+            labelPosition="left"
+            {...isLoginInputProps}
+            checked={isLoginInputProps.value}
+            onChange={(event) => {
+              isLoginInputProps.onChange(event);
+            }}
+            sx={{ fontWeight: 500 }}
+          />
+          <Switch
             label="Show Loader"
             labelPosition="left"
             {...showLoaderInputProps}
