@@ -12,7 +12,6 @@ import { Button } from "@/components/mapper/Button";
 import { Progress } from "@/components/mapper/Progress";
 
 import { ButtonIcon } from "@/components/mapper/ButtonIcon";
-import { UnstyledButton } from "@/components/mapper/UnstyledButton";
 import { Card } from "@/components/mapper/Card";
 import { Checkbox } from "@/components/mapper/Checkbox";
 import { Container } from "@/components/mapper/Container";
@@ -52,6 +51,7 @@ import { Tabs } from "@/components/mapper/Tabs";
 import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";
 import { Title } from "@/components/mapper/Title";
+import { UnstyledButton } from "@/components/mapper/UnstyledButton";
 import { AreaChart } from "@/components/mapper/charts/AreaChart";
 import { BarChart } from "@/components/mapper/charts/BarChart";
 import { LineChart } from "@/components/mapper/charts/LineChart";
@@ -66,7 +66,6 @@ import * as BadgeStructure from "@/components/mapper/structure/Badge";
 import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
 import * as ButtonStructure from "@/components/mapper/structure/Button";
 import * as ButtonIconStructure from "@/components/mapper/structure/ButtonIcon";
-import * as UnstyledButtonStructure from "@/components/mapper/structure/UnstyledButton";
 import * as CardStructure from "@/components/mapper/structure/Card";
 import * as CheckboxStructure from "@/components/mapper/structure/Checkbox";
 import * as ContainerStructure from "@/components/mapper/structure/Container";
@@ -99,6 +98,7 @@ import * as TabsStructure from "@/components/mapper/structure/Tabs";
 import * as TextStructure from "@/components/mapper/structure/Text";
 import * as TextareaStructure from "@/components/mapper/structure/Textarea";
 import * as TitleStructure from "@/components/mapper/structure/Title";
+import * as UnstyledButtonStructure from "@/components/mapper/structure/UnstyledButton";
 import * as AreaChartStructure from "@/components/mapper/structure/charts/AreaChart";
 import * as BarChartStructure from "@/components/mapper/structure/charts/BarChart";
 import * as LineChartStructure from "@/components/mapper/structure/charts/LineChart";
@@ -1185,7 +1185,9 @@ export const componentMapper: ComponentMapper = {
             useEditorStore.getState().updateTreeComponent;
           updateTreeComponent({
             componentId: props.component.id!,
-            props: files,
+            props: {
+              files: [...(props.component.props?.files ?? []), files],
+            },
           });
         }}
         component={props.component}

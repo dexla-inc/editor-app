@@ -329,29 +329,27 @@ export const EditableComponent = ({
 
   const handleClick = useCallback(
     (e: any) => {
-      if (!isPreviewMode) {
-        e.stopPropagation();
+      e.stopPropagation();
 
-        if (isPicking) {
-          setComponentToBind(id);
+      if (isPicking) {
+        setComponentToBind(id);
+      } else {
+        setSelectedComponentId(id);
+        if (e.ctrlKey || e.metaKey) {
+          setSelectedComponentIds((prev) => {
+            if (prev.includes(id)) {
+              return prev.filter((p) => p !== id);
+            }
+            return [...prev, id];
+          });
         } else {
-          setSelectedComponentId(id);
-          if (e.ctrlKey || e.metaKey) {
-            setSelectedComponentIds((prev) => {
-              if (prev.includes(id)) {
-                return prev.filter((p) => p !== id);
-              }
-              return [...prev, id];
-            });
-          } else {
-            setSelectedComponentIds(() => [id]);
-          }
+          setSelectedComponentIds(() => [id]);
         }
-
-        // @ts-ignore
-        propsWithOverwrites.onClick?.(e);
-        forceDestroyContextMenu();
       }
+
+      // @ts-ignore
+      propsWithOverwrites.onClick?.(e);
+      forceDestroyContextMenu();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
@@ -405,7 +403,7 @@ export const EditableComponent = ({
                 : {}),
             },
           },
-          onClick: handleClick,
+          ...(isPreviewMode ? {} : { onClick: handleClick }),
           ...(isPreviewMode
             ? {}
             : {
