@@ -48,7 +48,7 @@ export const Modifier = withModifier(
           <TextInput
             size="xs"
             label="Allowed File Type(s)"
-            placeholder="*.png, *.pdf, *.docx"
+            placeholder="*/png, */pdf, */docx"
             name="accept"
             {...form.getInputProps("accept")}
             onChange={(e) => handleChange(e)}
