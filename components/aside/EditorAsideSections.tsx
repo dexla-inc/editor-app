@@ -244,6 +244,13 @@ export const EditorAsideSections = () => {
     const updatedActions = componentActions.filter(
       (a: Action) => a.id !== id && a.sequentialTo !== id,
     );
+
+    setOpenAction({
+      ...openAction,
+      actionIds: openAction?.actionIds?.filter(
+        (a) => a !== id && a !== `seq_${id}`,
+      ),
+    });
     updateTreeComponentActions(selectedComponentId!, updatedActions);
   };
 
