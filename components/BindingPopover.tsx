@@ -4,13 +4,13 @@ import { ObjectDetails } from "@/components/PropsListing";
 import { listVariables } from "@/requests/variables/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
-import { BG_COLOR, BINDER_BACKGROUND } from "@/utils/branding";
+import { BINDER_BACKGROUND } from "@/utils/branding";
+import { ICON_SIZE } from "@/utils/config";
 import { getAllComponentsByName } from "@/utils/editor";
 import { getParsedJSCode } from "@/utils/variables";
 import {
   ActionIcon,
   Box,
-  Button,
   Center,
   CloseButton,
   Flex,
@@ -24,6 +24,7 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
+import { IconExternalLink } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
@@ -139,13 +140,13 @@ export default function BindingPopover({
     <Popover
       opened={opened}
       withinPortal
-      position="left-end"
+      position="top-end"
       arrowPosition="center"
     >
       <Popover.Target>
-        <Button size="xs" onClick={onTogglePopover}>
-          Binder
-        </Button>
+        <ActionIcon onClick={onTogglePopover} size="xs">
+          <IconExternalLink size={ICON_SIZE} />
+        </ActionIcon>
       </Popover.Target>
       <Popover.Dropdown
         sx={(theme) => ({
