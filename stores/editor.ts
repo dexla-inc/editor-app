@@ -18,7 +18,10 @@ import {
   updateTreeComponentStates,
   updateTreeComponentWithOmitProps,
 } from "@/utils/editor";
+import { createClient } from "@liveblocks/client";
+import { WithLiveblocks, liveblocks } from "@liveblocks/zustand";
 import { MantineNumberSize, MantineTheme } from "@mantine/core";
+import { User } from "@propelauth/react";
 import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
 import isEqual from "lodash.isequal";
@@ -26,9 +29,6 @@ import merge from "lodash.merge";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
-import { createClient } from "@liveblocks/client";
-import { liveblocks, WithLiveblocks } from "@liveblocks/zustand";
-import { User } from "@propelauth/react";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -99,7 +99,7 @@ export type ComponentToBind = {
 };
 
 export type OpenAction = {
-  actionId?: string;
+  actionIds?: string[];
   componentId?: string;
 };
 

@@ -26,6 +26,7 @@ type SidebarSectionProps = {
   removeAction?: (id: string) => void;
   componentId?: string;
   openAction?: OpenAction;
+  isSequential?: boolean;
 };
 
 export function SidebarSection({
@@ -39,18 +40,34 @@ export function SidebarSection({
   removeAction,
   componentId,
   openAction,
+  isSequential,
 }: PropsWithChildren<SidebarSectionProps>) {
   const theme = useMantineTheme();
 
   const setOpenAction = useEditorStore((state) => state.setOpenAction);
-  const isActionTarget = openAction?.actionId === id;
+  const isActionTarget =
+    openAction?.actionIds?.includes(id) ||
+    openAction?.actionIds?.includes(`seq_${id}`);
+  const isActionSequentialTarget = openAction?.actionIds?.includes(`seq_${id}`);
+  const canAddActionToList =
+    openAction?.componentId === componentId && isSequential;
+  const newActionIds = openAction?.actionIds?.filter(
+    (actionId) => actionId !== `seq_${id}`,
+  );
 
   const handleSectionClick = () => {
     onClick && onClick(id, !isExpanded);
     setOpenAction(
       isActionTarget
-        ? { actionId: undefined, componentId: undefined }
-        : { actionId: id, componentId },
+        ? isActionSequentialTarget
+          ? { ...openAction, actionIds: newActionIds }
+          : { actionIds: undefined, componentId: undefined }
+        : canAddActionToList
+        ? {
+            ...openAction,
+            actionIds: [...openAction?.actionIds!, `seq_${id}`],
+          }
+        : { actionIds: [id], componentId },
     );
   };
 

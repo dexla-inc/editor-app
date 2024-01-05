@@ -182,7 +182,7 @@ export const EditorAsideSections = () => {
 
   useEffect(() => {
     selectedComponentId !== openAction?.componentId &&
-      setOpenAction({ actionId: undefined, componentId: undefined });
+      setOpenAction({ actionIds: undefined, componentId: undefined });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId]);
 
@@ -264,10 +264,13 @@ export const EditorAsideSections = () => {
         const item = {
           ...baseItem,
           id: sequentialAction.id,
+          isSequential: true,
           label: `${startCase(sequentialAction.trigger)}: ${startCase(
             sequentialAction.action.name,
           )}`,
-          initiallyOpened: openAction?.actionId === sequentialAction.id,
+          initiallyOpened: openAction?.actionIds?.includes(
+            `seq_${sequentialAction.id}`,
+          ),
           my: 20,
         };
 
@@ -303,7 +306,7 @@ export const EditorAsideSections = () => {
           ...baseItem,
           id: action.id,
           label: `${startCase(action.trigger)}: ${startCase(actionName)}`,
-          initiallyOpened: openAction?.actionId === action.id,
+          initiallyOpened: openAction?.actionIds?.includes(action.id),
         }
       : undefined;
 
@@ -337,7 +340,7 @@ export const EditorAsideSections = () => {
           ]}
           onChange={(value) => {
             setTab(value as Tab);
-            setOpenAction({ actionId: undefined, componentId: undefined });
+            setOpenAction({ actionIds: undefined, componentId: undefined });
           }}
           value={tab}
         />
