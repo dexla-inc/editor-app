@@ -196,7 +196,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     }
   }, [endpoints, form.values.endpoint, selectedEndpoint]);
 
-  useAuthStore((state) => state.refreshAccessToken);
   const accessToken = useAuthStore((state) => state.getAccessToken);
 
   const showLoaderInputProps = form.getInputProps("showLoader");
@@ -207,7 +206,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack spacing="xs">
           <Select
-            size="xs"
             label="Endpoint"
             placeholder="The endpoint to call"
             searchable
@@ -228,7 +226,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
               setSelectedEndpoint(endpoints?.find((e) => e.id === selected));
             }}
             icon={
-              <Flex gap="lg">
+              <Flex>
                 <Box
                   p={2}
                   sx={{
@@ -241,7 +239,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                       selectedEndpoint?.methodType &&
                       colors[selectedEndpoint.methodType].color,
                     borderRadius: "4px",
-                    width: 20,
+                    width: 28,
                     textAlign: "center",
                   }}
                 >
@@ -356,7 +354,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
               ))}
             </Stack>
           )}
-
           <ActionButtons
             actionId={id}
             componentActions={componentActions}

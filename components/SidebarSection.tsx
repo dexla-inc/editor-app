@@ -47,6 +47,7 @@ export function SidebarSection({
 
   const handleSectionClick = () => {
     onClick && onClick(id, !isExpanded);
+    console.log("handleSectionClick", id, isActionTarget);
     setOpenAction(
       isActionTarget
         ? { actionId: undefined, componentId: undefined }
