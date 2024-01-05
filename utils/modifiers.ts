@@ -400,6 +400,7 @@ export const requiredModifiers: RequiredModifiers = {
     justifyContent: "stretch",
     gap: "xs",
     padding: "8px",
+    flexWrap: "wrap",
   },
   navbar: {
     width: "260px",
