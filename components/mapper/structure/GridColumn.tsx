@@ -16,7 +16,6 @@ export const jsonStructure = (props?: any): Component => {
         height: "100%",
         outline: GRAY_OUTLINE,
         outlineOffset: "-2px",
-        overflow: "auto",
       },
     },
   };

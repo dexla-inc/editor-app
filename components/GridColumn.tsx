@@ -9,7 +9,7 @@ import { calculateGridSizes } from "@/utils/grid";
 import { Box, Text, px, useMantineTheme } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import { Resizable } from "re-resizable";
-import { forwardRef, PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, forwardRef, useEffect, useState } from "react";
 
 export const GridColumn = forwardRef(
   ({ children, style, span, ...props }: PropsWithChildren<any>, ref) => {
@@ -65,7 +65,6 @@ export const GridColumn = forwardRef(
               ? `span ${isResizing ? columnSpans[props.id] : span}`
               : undefined,
             gap: theme.spacing.xs,
-            overflow: "auto",
             ...(style ?? {}),
           }}
           pos="relative"
