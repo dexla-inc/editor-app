@@ -67,7 +67,6 @@ export const GridColumn = forwardRef(
           ref={ref}
           component={Resizable}
           p="xs"
-          // display="grid"
           size={{ height: style?.height }}
           style={{
             display: isDirectionHorizontal ? "flex" : "grid",
