@@ -55,8 +55,6 @@ export function SidebarSection({
     (actionId) => actionId !== `seq_${id}`,
   );
 
-  console.log(openAction);
-
   const handleSectionClick = () => {
     onClick && onClick(id, !isExpanded);
     setOpenAction(
