@@ -4,7 +4,7 @@ import { ObjectDetails } from "@/components/PropsListing";
 import { listVariables } from "@/requests/variables/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
-import { BINDER_BACKGROUND, BORDER } from "@/utils/branding";
+import { BG_COLOR, BINDER_BACKGROUND } from "@/utils/branding";
 import { getAllComponentsByName } from "@/utils/editor";
 import { getParsedJSCode } from "@/utils/variables";
 import {
@@ -147,15 +147,13 @@ export default function BindingPopover({
           Binder
         </Button>
       </Popover.Target>
-      <Popover.Dropdown sx={{ maxHeight: "98%" }}>
-        <Stack
-          w={500}
-          p="md"
-          sx={{
-            border: BORDER,
-            borderRadius: theme.radius.md,
-          }}
-        >
+      <Popover.Dropdown
+        sx={(theme) => ({
+          maxHeight: "98%",
+          backgroundColor: BG_COLOR,
+        })}
+      >
+        <Stack w={500}>
           {/* Pass in the name of the thing that is being bound */}
           <Flex justify="space-between" align="center">
             <Title order={5}>Binder</Title>
@@ -167,15 +165,6 @@ export default function BindingPopover({
               onChange={onChangeBindingType}
               data={[
                 {
-                  value: "Formula",
-                  label: (
-                    <Center>
-                      <Icon name="IconVariable" />
-                      <Text ml={ML}>Formula</Text>
-                    </Center>
-                  ),
-                },
-                {
                   value: "JavaScript",
                   label: (
                     <Center>
@@ -183,6 +172,16 @@ export default function BindingPopover({
                       <Text ml={ML}>JavaScript</Text>
                     </Center>
                   ),
+                },
+                {
+                  value: "Formula",
+                  label: (
+                    <Center>
+                      <Icon name="IconVariable" />
+                      <Text ml={ML}>Formula</Text>
+                    </Center>
+                  ),
+                  disabled: true,
                 },
               ]}
             />
@@ -216,11 +215,7 @@ export default function BindingPopover({
             styles={{ input: { background: BINDER_BACKGROUND } }}
             value={newValue}
             readOnly
-            // onChange={(event) => setCurrentValue(event.currentTarget.value)}
-            // Color does not change due to a bug which has been fixed in v7
-            sx={{
-              color: currentValue === undefined ? "grey" : "inherit",
-            }}
+            onChange={(event) => setCurrentValue(event.currentTarget.value)}
           />
           <SegmentedControl
             value={tab}
@@ -288,7 +283,7 @@ export default function BindingPopover({
                   variables={Object.values(inputComponents?.list)}
                   onItemSelection={(item: string) => {
                     setSelectedItem(
-                      `components[/* ${inputComponents?.list[item].description} */'${item}']`,
+                      `return components[/* ${inputComponents?.list[item].description} */'${item}']`,
                     );
                   }}
                 />
@@ -307,13 +302,14 @@ export default function BindingPopover({
                         ? ""
                         : ".";
                       setSelectedItem(
-                        `variables[/* ${variables?.list[parsed.id].name} */'${
-                          parsed.id
-                        }']${pathStartsWithBracket}${parsed.path}`,
+                        `return variables[/* ${variables?.list[parsed.id]
+                          .name} */'${parsed.id}']${pathStartsWithBracket}${
+                          parsed.path
+                        }`,
                       );
                     } catch {
                       setSelectedItem(
-                        `variables[/* ${variables?.list[item].name} */'${item}']`,
+                        `return variables[/* ${variables?.list[item].name} */'${item}']`,
                       );
                     }
                   }}

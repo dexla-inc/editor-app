@@ -32,7 +32,7 @@ export const ChangeVariableFlowActionForm = ({ form }: Props) => {
         opened={isBindable}
         onTogglePopover={onTogglePopover}
         onClosePopover={onClosePopover}
-        bindingType={form.values.bindingType ?? "Formula"}
+        bindingType={form.values.bindingType ?? "JavaScript"}
         onChangeBindingType={(bindingType: any) => {
           form.setFieldValue("bindingType", bindingType);
         }}

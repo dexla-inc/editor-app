@@ -1,3 +1,4 @@
+import { BG_COLOR, BUTTON_HOVER, FLEX_HOVER } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
@@ -11,7 +12,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure, useHover } from "@mantine/hooks";
-import { IconCheck, IconChevronDown } from "@tabler/icons-react";
+import { IconChevronDown } from "@tabler/icons-react";
 
 type Item = {
   key: string;
@@ -99,7 +100,7 @@ const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
         ref={ref}
         w="100%"
         p={0}
-        bg={hovered ? "gray.1" : undefined}
+        bg={hovered ? BUTTON_HOVER : BG_COLOR}
         sx={{
           cursor: "pointer",
           display: "flex",
@@ -107,7 +108,19 @@ const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
         }}
       >
         <Group position="apart" noWrap w="100%">
-          <Group spacing={4} noWrap w="100%">
+          <Group
+            spacing={4}
+            noWrap
+            w="100%"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onSelectValue?.(item);
+            }}
+            sx={{
+              border: `1px solid ${FLEX_HOVER}`,
+            }}
+          >
             <ActionIcon
               onClick={(e) => {
                 e.preventDefault();
@@ -141,11 +154,11 @@ const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
                   {item.key}
                 </Text>
                 {item.key !== "root" && (
-                  <Box maw={100}>
+                  <Box maw={200}>
                     <Text
                       size="xs"
                       ml="xs"
-                      bg={theme.fn.lighten(primaryColor, 0.9)}
+                      bg={BUTTON_HOVER}
                       color={primaryColor}
                       py={2}
                       px={4}
@@ -156,17 +169,6 @@ const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
                   </Box>
                 )}
               </Group>
-              {hovered && (
-                <ActionIcon
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onSelectValue?.(item);
-                  }}
-                >
-                  <IconCheck size={ICON_SIZE} />
-                </ActionIcon>
-              )}
             </Group>
           </Group>
         </Group>

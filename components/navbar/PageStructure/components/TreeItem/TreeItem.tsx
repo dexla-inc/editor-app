@@ -11,6 +11,7 @@ import { Icon } from "@/components/Icon";
 import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { DARK_COLOR, GRAY_WHITE_COLOR } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import { debouncedTreeComponentDescriptionpdate } from "@/utils/editor";
@@ -186,7 +187,12 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
               noWrap
               w="100%"
               align="center"
-              sx={{ backgroundColor: `${editable && "white"}` }}
+              sx={(theme) => ({
+                backgroundColor: `${
+                  editable &&
+                  (theme.colorScheme === "dark" ? DARK_COLOR : GRAY_WHITE_COLOR)
+                }`,
+              })}
             >
               {onCollapse && (
                 <ActionIcon

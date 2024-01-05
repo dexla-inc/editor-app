@@ -23,7 +23,7 @@ type FormValues = Omit<ChangeVariableAction, "name">;
 
 const defaultValues = {
   variableId: "",
-  bindingType: "Formula",
+  bindingType: "JavaScript",
   javascriptCode: "return ",
   formulaCondition: "",
   formulaValue: "",

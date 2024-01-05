@@ -1,15 +1,5 @@
-import React from "react";
-import {
-  Accordion,
-  ActionIcon,
-  Card,
-  Group,
-  ScrollArea,
-  Text,
-} from "@mantine/core";
-import { IconCheck } from "@tabler/icons-react";
-import { ICON_SIZE } from "@/utils/config";
 import { JSONSelector } from "@/components/JSONSelector";
+import { Accordion, Button, ScrollArea, Text } from "@mantine/core";
 
 export function ObjectDetails({
   variables,
@@ -17,7 +7,7 @@ export function ObjectDetails({
   filterKeyword = "",
 }: any) {
   return (
-    <Accordion chevronPosition="left" styles={{ content: { padding: 0 } }}>
+    <Accordion chevronPosition="right">
       {variables
         .filter((variable: any) => {
           return filterKeyword === "" || variable.name.includes(filterKeyword);
@@ -25,18 +15,15 @@ export function ObjectDetails({
         .map((variable: any) => {
           if (variable.type !== "OBJECT") {
             return (
-              <Card key={variable.id} p="xs">
-                <Group noWrap>
-                  <ActionIcon
-                    onClick={() => {
-                      onItemSelection(`${variable.id}`);
-                    }}
-                  >
-                    <IconCheck size={ICON_SIZE} />
-                  </ActionIcon>
-                  <Text size="xs">{variable.name}</Text>
-                </Group>
-              </Card>
+              <Button
+                key={variable.id}
+                onClick={() => {
+                  onItemSelection(`${variable.id}`);
+                }}
+                variant="default"
+              >
+                {variable.name}
+              </Button>
             );
           }
 
@@ -46,7 +33,7 @@ export function ObjectDetails({
                 <Text size="xs">{variable.name}</Text>
               </Accordion.Control>
               <Accordion.Panel p={0}>
-                <ScrollArea h={250} p="xs">
+                <ScrollArea h={250} p={0}>
                   <JSONSelector
                     data={JSON.parse(
                       variable.value ?? variable.defaultValue ?? "{}",

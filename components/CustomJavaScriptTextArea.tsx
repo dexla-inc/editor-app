@@ -1,7 +1,9 @@
+import { useMantineTheme } from "@mantine/core";
 import Editor from "@monaco-editor/react";
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
+import debounce from "lodash.debounce";
 import { pick } from "next/dist/lib/pick";
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type JsProps = {
   language: "javascript" | "typescript" | "json";
@@ -25,7 +27,17 @@ export function CustomJavaScriptTextArea({
   const monacoRef = useRef<any>(null);
   const browser = useRouter();
 
+  const theme = useMantineTheme();
+
   const [completionDisposable, setCompletionDisposable] = useState<any>();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedOnChange = useCallback(
+    debounce((value) => {
+      onChange(value);
+    }, 200),
+    [],
+  );
 
   useEffect(() => {
     return () => {
@@ -51,6 +63,7 @@ export function CustomJavaScriptTextArea({
 
       onChange(lines.join("\n"));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedItem]);
 
   return (
@@ -58,10 +71,11 @@ export function CustomJavaScriptTextArea({
       width="100%"
       height="150px"
       defaultLanguage={defaultLanguage ?? "javascript"}
-      onChange={onChange}
+      onChange={debouncedOnChange}
       onMount={(editor) => {
         monacoRef.current = editor;
       }}
+      theme={theme.colorScheme === "dark" ? "vs-dark" : "light"}
       value={value}
       options={{
         automaticLayout: true,

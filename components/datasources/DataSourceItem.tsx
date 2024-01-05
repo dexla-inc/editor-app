@@ -2,6 +2,7 @@ import { Icon } from "@/components/Icon";
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
 import { deleteDataSource } from "@/requests/datasources/mutations";
 import { DataSourceResponse } from "@/requests/datasources/types";
+import { THIN_DARK_OUTLINE, THIN_GRAY_OUTLINE } from "@/utils/branding";
 import { ICON_DELETE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
   Box,
@@ -41,7 +42,10 @@ export function DataSourceItem({
       <Box
         sx={{
           borderRadius: theme.radius.sm,
-          border: "1px solid " + theme.colors.gray[3],
+          border:
+            theme.colorScheme === "dark"
+              ? THIN_DARK_OUTLINE
+              : THIN_GRAY_OUTLINE,
         }}
       >
         <Box p="md" sx={{ ...buttonHoverStyles(theme) }}>
@@ -71,7 +75,10 @@ export function DataSourceItem({
           py="xs"
           px="md"
           sx={{
-            borderTop: "1px solid " + theme.colors.gray[3],
+            borderTop:
+              theme.colorScheme === "dark"
+                ? THIN_DARK_OUTLINE
+                : THIN_GRAY_OUTLINE,
             width: "100%",
           }}
         >

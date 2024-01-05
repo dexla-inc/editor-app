@@ -49,11 +49,13 @@ const theme: MantineTheme = {
       styles: () => ({
         input: { borderColor: GRAY_BORDER_COLOR },
       }),
+      defaultProps: () => ({ size: "xs" }),
     },
     Select: {
       styles: () => ({
         input: { borderColor: GRAY_BORDER_COLOR },
       }),
+      defaultProps: () => ({ size: "xs" }),
     },
     Card: {
       defaultProps: () => ({
@@ -79,6 +81,9 @@ const theme: MantineTheme = {
     Switch: {
       defaultProps: () => ({ size: "xs" }),
     },
+    Button: {
+      defaultProps: () => ({ size: "sm", compact: true }),
+    },
   },
 };
 
@@ -93,11 +98,13 @@ const darkTheme: MantineTheme = {
           borderColor: theme.colors.dark[5],
         },
       }),
+      defaultProps: () => ({ size: "xs" }),
     },
     Select: {
       styles: (theme) => ({
         input: { borderColor: theme.colors.dark[5] },
       }),
+      defaultProps: () => ({ size: "xs" }),
     },
     Tooltip: {
       styles: (theme) => ({
@@ -132,6 +139,9 @@ const darkTheme: MantineTheme = {
     Switch: {
       defaultProps: () => ({ size: "xs" }),
     },
+    Button: {
+      defaultProps: () => ({ size: "sm", compact: true }),
+    },
   },
 };
 
@@ -157,6 +167,7 @@ const HOVERED = theme.colors.gray[1];
 const DARK_MODE = theme.colors.dark[7];
 const DARK_COLOR = theme.colors.dark[6];
 const LIGHT_MODE = "white";
+const BG_COLOR = isDarkTheme ? DARK_MODE : LIGHT_MODE;
 const LINK_COLOR = isDarkTheme ? "teal" : "white";
 const FLEX_HOVER = isDarkTheme ? theme.colors.dark[4] : HOVERED;
 const BUTTON_HOVER = isDarkTheme ? theme.colors.dark[6] : HOVERED;
@@ -280,6 +291,7 @@ export const getColorValue = (theme: MantineThemeExtended, value?: string) => {
 };
 
 export {
+  BG_COLOR,
   BINDER_BACKGROUND,
   BORDER,
   BUTTON_HOVER,
