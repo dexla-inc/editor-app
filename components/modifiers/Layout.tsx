@@ -353,7 +353,7 @@ export const Modifier = withModifier(
               {...form.getInputProps("flexWrap")}
               onChange={(value) => {
                 form.setFieldValue("flexWrap", value as string);
-                debouncedTreeUpdate(selectedComponent?.id as string, {
+                debouncedTreeUpdate(selectedComponentIds, {
                   style: { flexWrap: value },
                 });
               }}
