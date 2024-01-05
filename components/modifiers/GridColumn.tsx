@@ -14,6 +14,9 @@ import {
   IconLayoutAlignRight,
   IconLayoutColumns,
   IconLayoutDistributeHorizontal,
+  IconRotate2,
+  IconTextWrap,
+  IconX,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
@@ -34,6 +37,7 @@ export const Modifier = withModifier(
           justifyContent: selectedComponent.props?.style?.justifyContent,
           gridAutoFlow: selectedComponent.props?.style?.gridAutoFlow,
           gap: selectedComponent.props?.style?.gap,
+          flexWrap: selectedComponent.props?.style?.flexWrap,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,6 +95,58 @@ export const Modifier = withModifier(
               }}
             />
           </Stack>
+          {form.values.gridAutoFlow === "column" && (
+            <Stack spacing={2}>
+              <TopLabel text="Wrap" />
+              <SegmentedControl
+                size="xs"
+                data={[
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="No Wrap"
+                        icon={<IconX size={14} />}
+                      />
+                    ),
+                    value: "nowrap",
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Wrap"
+                        icon={<IconTextWrap size={14} />}
+                      />
+                    ),
+                    value: "wrap",
+                  },
+                  {
+                    label: (
+                      <StylingPaneItemIcon
+                        label="Reverse Wrap"
+                        icon={<IconRotate2 size={14} />}
+                      />
+                    ),
+                    value: "wrap-reverse",
+                  },
+                ]}
+                styles={{
+                  label: {
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  },
+                }}
+                {...form.getInputProps("flexWrap")}
+                onChange={(value) => {
+                  form.setFieldValue("flexWrap", value as string);
+                  debouncedTreeUpdate(selectedComponentIds, {
+                    style: { flexWrap: value },
+                  });
+                }}
+              />
+            </Stack>
+          )}
           <Stack spacing={2}>
             <TopLabel text="Align Vertically" />
             <SegmentedControl

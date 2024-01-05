@@ -12,7 +12,16 @@ import { Resizable } from "re-resizable";
 import { PropsWithChildren, forwardRef, useEffect, useState } from "react";
 
 export const GridColumn = forwardRef(
-  ({ children, style, span, ...props }: PropsWithChildren<any>, ref) => {
+  (
+    {
+      children,
+      style: gridColumnStyles,
+      span,
+      ...props
+    }: PropsWithChildren<any>,
+    ref,
+  ) => {
+    const { flexWrap, ...style } = gridColumnStyles;
     const theme = useMantineTheme();
     const editorTree = useEditorStore((state) => state.tree);
     const setEditorTree = useEditorStore((state) => state.setTree);
@@ -35,6 +44,7 @@ export const GridColumn = forwardRef(
       compIndex < siblings.length - 1 ? siblings[compIndex + 1] : null;
     const isLast = siblings[siblings.length - 1]?.id === props.id;
     const isOnlyChild = siblings.length === 1;
+    const isDirectionHorizontal = style?.gridAutoFlow === "column";
 
     useEffect(() => {
       if (columnSpans[props.id] === undefined) {
@@ -57,9 +67,11 @@ export const GridColumn = forwardRef(
           ref={ref}
           component={Resizable}
           p="xs"
-          display="grid"
+          // display="grid"
           size={{ height: style?.height }}
           style={{
+            display: isDirectionHorizontal ? "flex" : "grid",
+            ...(isDirectionHorizontal ? { flexWrap: flexWrap ?? "wrap" } : {}),
             gridColumn: `span ${isResizing ? columnSpans[props.id] : span}`,
             gridRow: !isParentGridDirectionColumn
               ? `span ${isResizing ? columnSpans[props.id] : span}`
