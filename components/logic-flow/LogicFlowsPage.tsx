@@ -259,7 +259,8 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
                   </Text>
                 </Center>
               )}
-              {selectedNode?.id === "start-node" && (
+              {(selectedNode?.id === "start-node" ||
+                selectedNode?.id === "add-node") && (
                 <Center>
                   <Text size="sm" color="dimmed">
                     You can&apos;t edit the Start Node

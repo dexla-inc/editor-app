@@ -6,7 +6,9 @@ import { nanoid } from "nanoid";
 interface StartNodeData extends NodeData {}
 
 export const StartNode = (node: NodeProps<StartNodeData>) => {
-  return <CustomNode {...node} avatar={NodeAvatar} />;
+  return (
+    <CustomNode {...node} avatar={NodeAvatar} style={{ borderRadius: 50 }} />
+  );
 };
 
 export const data: StartNodeData = {

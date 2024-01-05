@@ -2,6 +2,7 @@ import * as ActionNodeExports from "@/components/logic-flow/nodes/ActionNode";
 import * as ConditionalNodeExports from "@/components/logic-flow/nodes/ConditionalNode";
 import { NodeOutput } from "@/components/logic-flow/nodes/CustomNode";
 import * as StartNodeExports from "@/components/logic-flow/nodes/StartNode";
+import * as AddNodeExports from "@/components/logic-flow/nodes/AddNode";
 import { computeNodeMapper } from "@/components/logic-flow/nodes/compute";
 import { getLogicFlow } from "@/requests/logicflows/queries-noauth";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
@@ -10,6 +11,7 @@ import { decodeSchema } from "@/utils/compression";
 import { checkIfValid } from "@/utils/triggerConditions";
 import { Edge, Node, NodeProps } from "reactflow";
 
+const { AddNode, data: addNodeData, ...addNode } = AddNodeExports;
 const { StartNode, data: startNodeData, ...startNode } = StartNodeExports;
 const { ActionNode, data: actionNodeData, ...actionNode } = ActionNodeExports;
 const {
@@ -19,6 +21,7 @@ const {
 } = ConditionalNodeExports;
 
 export const nodesData = {
+  addNode: { data: addNodeData, ...addNode },
   startNode: { data: startNodeData, ...startNode },
   actionNode: { data: actionNodeData, ...actionNode },
   conditionalNode: { data: conditionalNodeData, ...conditionalNode },
@@ -29,6 +32,7 @@ export type PossibleNodes = keyof typeof nodesData;
 export const nodes: {
   [key in PossibleNodes]: ({ data }: NodeProps) => JSX.Element;
 } = {
+  addNode: AddNode,
   startNode: StartNode,
   actionNode: ActionNode,
   conditionalNode: ConditionalNode,

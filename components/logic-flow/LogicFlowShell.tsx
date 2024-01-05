@@ -20,7 +20,7 @@ import { VariablesButton } from "@/components/variables/VariablesButton";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
-import { DEFAULT_TEXTCOLOR } from "@/utils/branding";
+import { DEFAULT_TEXTCOLOR, LOGICFLOW_BACKGROUND } from "@/utils/branding";
 import { ErrorBoundary } from "react-error-boundary";
 
 export interface ShellProps extends AppShellProps {
@@ -91,9 +91,11 @@ export const LogicFlowShell = ({
       navbar={navbar}
       styles={{
         main: {
-          minHeight: "100vh",
-          paddingLeft: "var(--mantine-navbar-width, 0px)",
-          paddingRight: "var(--mantine-navbar-width, 0px)",
+          backgroundColor: LOGICFLOW_BACKGROUND,
+          minHeight: "60vh",
+          paddingLeft: 0,
+          paddingRight: 0,
+          paddingTop: 0,
         },
       }}
     >

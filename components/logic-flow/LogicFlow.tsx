@@ -83,7 +83,7 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
     },
     [flowInstance, onAddNode, wrapperRef],
   );
-  console.log({ nodes, edges });
+
   return (
     <ReactFlow
       nodes={nodes}

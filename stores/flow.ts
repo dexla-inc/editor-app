@@ -86,9 +86,22 @@ export const initialNodes = [
     },
     position: { x: 0, y: 0 },
   },
+  {
+    id: "add-node",
+    type: "addNode",
+    data: {
+      label: "Add",
+      description: "Add two numbers",
+      inputs: [{ id: nanoid(), name: "" }],
+      outputs: [],
+    },
+    position: { x: 200, y: 200 },
+  },
 ] as Node[];
 
-export const initialEdges = [] as Edge[];
+export const initialEdges = [
+  { id: nanoid(), source: "start-node", target: "add-node" },
+] as Edge[];
 
 export const useFlowStore = create<FlowState>()(
   devtools(

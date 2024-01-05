@@ -1,6 +1,13 @@
 import { useFlowStore } from "@/stores/flow";
 import { NodeTriggerCondition } from "@/utils/triggerConditions";
-import { Box, Card, Stack, Text, useMantineTheme } from "@mantine/core";
+import {
+  Box,
+  Card,
+  CSSObject,
+  Stack,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
 import { IconBoxModel2 } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
 import { Handle, NodeProps, Position } from "reactflow";
@@ -27,13 +34,14 @@ export type NodeData = {
 
 export interface CustomNodeProps extends NodeProps<NodeData> {
   avatar?: React.FunctionComponent;
+  style?: CSSObject;
 }
 
-export const CustomNode = (node: CustomNodeProps) => {
+export const CustomNode = (props: CustomNodeProps) => {
   const theme = useMantineTheme();
   const setSelectedNode = useFlowStore((state) => state.setSelectedNode);
-  const { data, selected } = node;
-  const Avatar = node.avatar;
+  const { data, selected, avatar: Avatar } = props;
+  const { style, ...node } = props;
 
   const selectNode = () => {
     setSelectedNode(node);
@@ -54,6 +62,7 @@ export const CustomNode = (node: CustomNodeProps) => {
           outline: "4px solid",
           outlineColor: theme.fn.rgba("gray", 0.05),
         },
+        ...style,
       }}
     >
       <Stack spacing={4}>

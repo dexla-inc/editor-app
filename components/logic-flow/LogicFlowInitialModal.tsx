@@ -107,8 +107,6 @@ export default function LogicFlowInitialModal({
 
   return (
     <Tabs value={activeTab}>
-      <button onClick={() => setActiveTab("default")}>Default</button>
-      <button onClick={() => setActiveTab("global")}>Global</button>
       <Tabs.Panel value={"default"}>
         <LogicFlowShell>
           {logicFlows?.length === 0 && !isLoading && (
@@ -128,7 +126,7 @@ export default function LogicFlowInitialModal({
               </Stack>
             </Box>
           )}
-          <Group>
+          <Group sx={{ padding: "20px" }}>
             {logicFlows?.map((flow: LogicFlowResponse) => {
               return (
                 <LogicFlowCard
