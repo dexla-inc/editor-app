@@ -1,4 +1,3 @@
-import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
@@ -109,11 +108,6 @@ export const Modifier = withModifier(
             onChange={(value) => {
               setFieldValue("size", value as string);
             }}
-          />
-
-          <SelectOptionsForm
-            getValue={() => form.getInputProps("data").value}
-            setFieldValue={setFieldValue}
           />
 
           <Stack spacing={2}>

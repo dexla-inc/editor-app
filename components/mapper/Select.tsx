@@ -51,7 +51,7 @@ const SelectComponent = forwardRef(
       data = get(data, path, data);
     } else {
       data = cloneDeep(
-        dataProp?.value ?? dataProp ?? exampleData.value ?? exampleData,
+        dataProp?.value ?? dataProp ?? exampleData.value ?? exampleData ?? [],
       );
     }
 
@@ -82,12 +82,14 @@ const SelectComponent = forwardRef(
         }}
         withinPortal={false}
         maxDropdownHeight={150}
-        data={data.map((d: any) => {
-          return {
-            label: d.label ?? d[keys[1]],
-            value: d.value ?? d[keys[0]],
-          };
-        })}
+        data={
+          data?.map((d: any) => {
+            return {
+              label: d.label ?? d[keys[1]],
+              value: d.value ?? d[keys[0]],
+            };
+          }) ?? []
+        }
         dropdownComponent={(props: any) => (
           <CustomDropdown
             {...props}

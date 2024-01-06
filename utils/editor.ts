@@ -1014,7 +1014,7 @@ export const debouncedTreeUpdate = debounce(
       updateTreeComponents(componentId, props, save);
     } else {
       // @ts-ignore
-      updateTreeComponent(componentId, props, save);
+      updateTreeComponent({ componentId, props, save });
     }
   },
   300,
