@@ -4,13 +4,14 @@ import { ObjectDetails } from "@/components/PropsListing";
 import { listVariables } from "@/requests/variables/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
-import { BINDER_BACKGROUND } from "@/utils/branding";
+import { BG_COLOR, BINDER_BACKGROUND } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import { getAllComponentsByName } from "@/utils/editor";
 import { getParsedJSCode } from "@/utils/variables";
 import {
   ActionIcon,
   Box,
+  Button,
   Center,
   CloseButton,
   Flex,
@@ -26,6 +27,7 @@ import {
 } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
+import debounce from "lodash.debounce";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -45,6 +47,9 @@ type Props = {
   onChangeBindingType: any;
   onChangeJavascriptCode: any;
   javascriptCode: string;
+  onOpenPopover?: any;
+  bindedValue?: string;
+  onPickComponent?: any;
 };
 
 export default function BindingPopover({
@@ -56,6 +61,9 @@ export default function BindingPopover({
   onChangeBindingType,
   onChangeJavascriptCode,
   javascriptCode,
+  onOpenPopover,
+  bindedValue,
+  onPickComponent,
 }: Props) {
   const editorTree = useEditorStore((state) => state.tree);
   const [formulaEntry, setFormulaEntry] = useState<string>();
@@ -136,24 +144,48 @@ export default function BindingPopover({
     }
   }, [javascriptCode, variables]);
 
+  const openPopover = debounce(() => onOpenPopover && onOpenPopover(), 1000);
+  const handleBinder = () => {
+    const isSingleAtSign = bindedValue === "@";
+    const isDoubleAtSign = bindedValue === "@@";
+    if (!isSingleAtSign && !isDoubleAtSign) return;
+    setTab(isSingleAtSign ? "components" : "variables");
+    openPopover();
+  };
+
+  useEffect(
+    () => handleBinder(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [bindedValue],
+  );
+
+  useEffect(() => {
+    // If bindingTab prop is provided and differs from the internal state, update it
+    if (bindingTab && bindingTab !== tab) {
+      setTab(bindingTab);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bindingTab, tab]);
+
   return (
     <Popover
       opened={opened}
       withinPortal
-      position="top-end"
+      position="left-end"
       arrowPosition="center"
     >
       <Popover.Target>
-        <ActionIcon onClick={onTogglePopover} size="xs">
-          <IconExternalLink size={ICON_SIZE} />
-        </ActionIcon>
+        {onPickComponent ? (
+          <ActionIcon onClick={onTogglePopover} size="xs">
+            <IconExternalLink size={ICON_SIZE} />
+          </ActionIcon>
+        ) : (
+          <Button size="xs" onClick={onTogglePopover}>
+            Binder
+          </Button>
+        )}
       </Popover.Target>
-      <Popover.Dropdown
-        sx={(theme) => ({
-          maxHeight: "98%",
-          backgroundColor: BG_COLOR,
-        })}
-      >
+      <Popover.Dropdown sx={{ maxHeight: "98%", backgroundColor: BG_COLOR }}>
         <Stack w={500}>
           {/* Pass in the name of the thing that is being bound */}
           <Flex justify="space-between" align="center">
@@ -166,15 +198,6 @@ export default function BindingPopover({
               onChange={onChangeBindingType}
               data={[
                 {
-                  value: "JavaScript",
-                  label: (
-                    <Center>
-                      <Icon name="IconCode" />
-                      <Text ml={ML}>JavaScript</Text>
-                    </Center>
-                  ),
-                },
-                {
                   value: "Formula",
                   label: (
                     <Center>
@@ -182,7 +205,15 @@ export default function BindingPopover({
                       <Text ml={ML}>Formula</Text>
                     </Center>
                   ),
-                  disabled: true,
+                },
+                {
+                  value: "JavaScript",
+                  label: (
+                    <Center>
+                      <Icon name="IconCode" />
+                      <Text ml={ML}>JavaScript</Text>
+                    </Center>
+                  ),
                 },
               ]}
             />
@@ -216,7 +247,11 @@ export default function BindingPopover({
             styles={{ input: { background: BINDER_BACKGROUND } }}
             value={newValue}
             readOnly
-            onChange={(event) => setCurrentValue(event.currentTarget.value)}
+            // onChange={(event) => setCurrentValue(event.currentTarget.value)}
+            // Color does not change due to a bug which has been fixed in v7
+            sx={{
+              color: currentValue === undefined ? "grey" : "inherit",
+            }}
           />
           <SegmentedControl
             value={tab}
@@ -284,7 +319,7 @@ export default function BindingPopover({
                   variables={Object.values(inputComponents?.list)}
                   onItemSelection={(item: string) => {
                     setSelectedItem(
-                      `return components[/* ${inputComponents?.list[item].description} */'${item}']`,
+                      `components[/* ${inputComponents?.list[item].description} */'${item}']`,
                     );
                   }}
                 />
@@ -303,14 +338,13 @@ export default function BindingPopover({
                         ? ""
                         : ".";
                       setSelectedItem(
-                        `return variables[/* ${variables?.list[parsed.id]
-                          .name} */'${parsed.id}']${pathStartsWithBracket}${
-                          parsed.path
-                        }`,
+                        `variables[/* ${variables?.list[parsed.id].name} */'${
+                          parsed.id
+                        }']${pathStartsWithBracket}${parsed.path}`,
                       );
                     } catch {
                       setSelectedItem(
-                        `return variables[/* ${variables?.list[item].name} */'${item}']`,
+                        `variables[/* ${variables?.list[item].name} */'${item}']`,
                       );
                     }
                   }}
