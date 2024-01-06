@@ -215,18 +215,16 @@ export const BindPlaceDataFlowActionForm = ({ form }: Props) => {
                   return (
                     <Stack key={param.name}>
                       <ComponentToBindFromInput
+                        isLogicFlow={true}
                         onPickComponent={(componentToBind: string) => {
                           form.setFieldValue(
-                            `binds.${type}.${param.name}`,
+                            field,
                             `valueOf_${componentToBind}`,
                           );
                           setComponentToBind(undefined);
                         }}
                         onPickVariable={(variable: string) => {
-                          form.setFieldValue(
-                            `binds.${type}.${param.name}`,
-                            variable,
-                          );
+                          form.setFieldValue(field, variable);
                         }}
                         size="xs"
                         label={param.name}

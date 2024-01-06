@@ -120,6 +120,7 @@ export const TogglePropsFlowActionForm = ({ form }: Props) => {
                 />
               )}
               <ComponentToBindFromInput
+                isLogicFlow={true}
                 value={componentId}
                 onPickComponent={(componentToBind: string) => {
                   form.setFieldValue(
@@ -129,6 +130,12 @@ export const TogglePropsFlowActionForm = ({ form }: Props) => {
 
                   setPickingComponentToBindTo(undefined);
                   setComponentToBind(undefined);
+                }}
+                onChange={(e) => {
+                  form.setFieldValue(
+                    `conditionRules.${i}.componentId`,
+                    e.currentTarget.value,
+                  );
                 }}
               />
             </div>

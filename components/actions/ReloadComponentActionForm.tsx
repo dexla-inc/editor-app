@@ -91,6 +91,9 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
             size="xs"
             label="Component to reload"
             {...form.getInputProps("componentId")}
+            onChange={(e) => {
+              form.setFieldValue("componentId", e.currentTarget.value);
+            }}
           />
           <ActionButtons
             actionId={action.id}

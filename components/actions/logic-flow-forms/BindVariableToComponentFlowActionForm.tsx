@@ -1,3 +1,4 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { VariablePicker } from "@/components/VariablePicker";
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { useEditorStore } from "@/stores/editor";
@@ -7,7 +8,6 @@ import { decodeSchema } from "@/utils/compression";
 import { Button, Stack, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useEffect } from "react";
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
 type Props = {
   form: UseFormReturnType<FormValues>;
@@ -36,6 +36,7 @@ export const BindVariableToComponentFlowActionForm = ({ form }: Props) => {
   return (
     <Stack spacing="xs">
       <ComponentToBindFromInput
+        isLogicFlow={true}
         onPickComponent={(componentToBind: string) => {
           form.setFieldValue("component", componentToBind);
 
@@ -43,6 +44,9 @@ export const BindVariableToComponentFlowActionForm = ({ form }: Props) => {
           setComponentToBind(undefined);
         }}
         {...form.getInputProps("component")}
+        onChange={(e) => {
+          form.setFieldValue("component", e.currentTarget.value);
+        }}
       />
 
       <TextInput

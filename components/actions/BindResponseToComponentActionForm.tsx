@@ -171,7 +171,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
               key={bind.value}
               componentId={component?.id!}
               onPickComponent={(componentToBind: string) => {
-                form.setFieldValue(`binds.${index}`, {
+                form.setFieldValue(field, {
                   ...form.getInputProps("bind"),
                   component: componentToBind,
                   value: bind,
@@ -179,7 +179,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
                 setComponentToBind(undefined);
               }}
               onPickVariable={(variable: string) => {
-                form.setFieldValue(`binds.${index}`, {
+                form.setFieldValue(field, {
                   ...form.getInputProps("bind"),
                   component: variable,
                   value: bind,

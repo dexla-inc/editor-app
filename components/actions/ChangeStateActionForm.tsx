@@ -177,6 +177,12 @@ export const ChangeStateActionForm = ({ id }: Props) => {
                     setPickingComponentToBindTo(undefined);
                     setComponentToBind(undefined);
                   }}
+                  onChange={(e) => {
+                    form.setFieldValue(
+                      `conditionRules.${i}.componentId`,
+                      e.currentTarget.value,
+                    );
+                  }}
                 />
 
                 {["Radio", "Select"].includes(component!.name) ? (

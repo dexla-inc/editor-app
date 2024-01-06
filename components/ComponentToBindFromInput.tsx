@@ -3,8 +3,8 @@ import { ICON_SIZE } from "@/utils/config";
 import { ActionIcon, Group, TextInput, TextInputProps } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCurrentLocation } from "@tabler/icons-react";
-import { useCallback, useEffect, useState } from "react";
-import BindingPopover, { BindingTab } from "./BindingPopover";
+import { useState } from "react";
+import BindingPopover from "./BindingPopover";
 
 type Props = TextInputProps & {
   componentId?: string;
@@ -12,6 +12,7 @@ type Props = TextInputProps & {
   index?: number;
   onPickComponent?: (value: string) => void;
   onPickVariable?: (value: string) => void;
+  isLogicFlow?: boolean;
 };
 
 export const ComponentToBindFromInput = ({
@@ -22,6 +23,7 @@ export const ComponentToBindFromInput = ({
   bindAttributes,
   placeholder = "",
   label = "Component to bind",
+  isLogicFlow,
   ...rest
 }: Props) => {
   const setPickingComponentToBindTo = useEditorStore(
@@ -38,25 +40,12 @@ export const ComponentToBindFromInput = ({
     });
   };
 
-  const [bindingTab, setBindingTab] = useState<BindingTab>("components");
   const [bindedValue, setBindedValue] = useState("");
   const [
     opened,
     { toggle: onTogglePopover, close: onClosePopover, open: onOpenPopover },
   ] = useDisclosure(false);
   const [javaScriptCode, setJavaScriptCode] = useState("return ");
-
-  const handleBinder = useCallback(() => {
-    const isSingleAtSign = bindedValue === "@";
-    const isDoubleAtSign = bindedValue === "@@";
-    if (!isSingleAtSign && !isDoubleAtSign) return;
-    setBindingTab(isSingleAtSign ? "components" : "variables");
-  }, [bindedValue]);
-
-  useEffect(() => {
-    handleBinder();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bindedValue]);
 
   return (
     <TextInput
@@ -75,7 +64,6 @@ export const ComponentToBindFromInput = ({
             opened={opened}
             onTogglePopover={onTogglePopover}
             onClosePopover={onClosePopover}
-            bindingTab={bindingTab}
             bindingType="JavaScript"
             onChangeBindingType={() => {}}
             javascriptCode={javaScriptCode}
@@ -85,8 +73,9 @@ export const ComponentToBindFromInput = ({
             onOpenPopover={onOpenPopover}
             bindedValue={bindedValue}
             onPickComponent={onPickComponent}
+            onPickVariable={onPickVariable}
           />
-          {onPickComponent && (
+          {onPickComponent && !isLogicFlow && (
             <>
               <ActionIcon onClick={onBindComponent} size="xs">
                 <IconCurrentLocation size={ICON_SIZE} />
@@ -97,10 +86,13 @@ export const ComponentToBindFromInput = ({
       }
       styles={{
         input: { paddingRight: "3.65rem" },
-        rightSection: { width: "3.65rem" },
+        ...(!isLogicFlow && { rightSection: { width: "3.65rem" } }),
       }}
       {...rest}
-      onChange={(e) => setBindedValue(e.target.value)}
+      onChange={(e) => {
+        setBindedValue(e.target.value);
+        if (rest?.onChange) rest.onChange(e);
+      }}
     />
   );
 };

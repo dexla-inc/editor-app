@@ -319,18 +319,12 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                             )
                               ? componentToBind
                               : `valueOf_${componentToBind}`;
-                            form.setFieldValue(
-                              `binds.${type}.${param.name}`,
-                              value,
-                            );
+                            form.setFieldValue(field, value);
                             setPickingComponentToBindTo(undefined);
                             setComponentToBind(undefined);
                           }}
                           onPickVariable={(variable: string) => {
-                            form.setFieldValue(
-                              `binds.${type}.${param.name}`,
-                              variable,
-                            );
+                            form.setFieldValue(field, variable);
                           }}
                           size="xs"
                           label={param.name}
@@ -345,6 +339,9 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                             : {})}
                           {...additionalProps}
                           {...form.getInputProps(field)}
+                          onChange={(e) => {
+                            form.setFieldValue(field, e.currentTarget.value);
+                          }}
                           {...AUTOCOMPLETE_OFF_PROPS}
                         />
                       </Stack>

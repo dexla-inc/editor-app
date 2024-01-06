@@ -76,9 +76,10 @@ export const BindResponseToComponentFlowActionForm = ({ form }: Props) => {
         const field = `binds.${index}`;
         return (
           <ComponentToBindFromInput
+            isLogicFlow={true}
             key={bind.value}
             onPickComponent={(componentToBind: string) => {
-              form.setFieldValue(`binds.${index}`, {
+              form.setFieldValue(field, {
                 ...form.getInputProps("bind"),
                 component: componentToBind,
                 value: bind,
@@ -87,7 +88,7 @@ export const BindResponseToComponentFlowActionForm = ({ form }: Props) => {
               setPickingComponentToBindTo(undefined);
             }}
             onPickVariable={(variable: string) => {
-              form.setFieldValue(`binds.${index}`, {
+              form.setFieldValue(field, {
                 ...form.getInputProps("bind"),
                 component: variable,
                 value: bind,

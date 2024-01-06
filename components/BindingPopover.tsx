@@ -50,6 +50,7 @@ type Props = {
   onOpenPopover?: any;
   bindedValue?: string;
   onPickComponent?: any;
+  onPickVariable?: any;
 };
 
 export default function BindingPopover({
@@ -64,6 +65,7 @@ export default function BindingPopover({
   onOpenPopover,
   bindedValue,
   onPickComponent,
+  onPickVariable,
 }: Props) {
   const editorTree = useEditorStore((state) => state.tree);
   const [formulaEntry, setFormulaEntry] = useState<string>();
@@ -321,6 +323,7 @@ export default function BindingPopover({
                     setSelectedItem(
                       `components[/* ${inputComponents?.list[item].description} */'${item}']`,
                     );
+                    onPickComponent && onPickComponent(item);
                   }}
                 />
               </ScrollArea.Autosize>
@@ -334,6 +337,9 @@ export default function BindingPopover({
                   onItemSelection={(item: string) => {
                     try {
                       const parsed = JSON.parse(item);
+                      const isObjectType =
+                        typeof parsed === "object" ||
+                        variables?.list[parsed.id].type === "OBJECT";
                       const pathStartsWithBracket = parsed.path.startsWith("[")
                         ? ""
                         : ".";
@@ -342,10 +348,22 @@ export default function BindingPopover({
                           parsed.id
                         }']${pathStartsWithBracket}${parsed.path}`,
                       );
+                      onPickVariable &&
+                        onPickVariable(
+                          isObjectType
+                            ? `var_${JSON.stringify({
+                                id: parsed.id,
+                                variable: variables?.list[parsed.id],
+                                path: parsed.path,
+                              })}`
+                            : `var_${variables?.list[parsed.id].name}`,
+                        );
                     } catch {
                       setSelectedItem(
                         `variables[/* ${variables?.list[item].name} */'${item}']`,
                       );
+                      onPickVariable &&
+                        onPickVariable(`var_${variables?.list[item].name}`);
                     }
                   }}
                 />
