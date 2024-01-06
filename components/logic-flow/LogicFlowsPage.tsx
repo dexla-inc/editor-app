@@ -1,4 +1,3 @@
-import { FlowNode } from "@/components/logic-flow/FlowNode";
 import { LogicFlow } from "@/components/logic-flow/LogicFlow";
 import { LogicFlowShell } from "@/components/logic-flow/LogicFlowShell";
 import { patchLogicFlow } from "@/requests/logicflows/mutations";
@@ -10,23 +9,19 @@ import { LOGICFLOW_BACKGROUND } from "@/utils/branding";
 import { decodeSchema, encodeSchema } from "@/utils/compression";
 import { ASIDE_WIDTH, HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
 import { convertToPatchParams } from "@/utils/dashboardTypes";
-import { matchQuery } from "@/utils/filter";
-import { PossibleNodes, nodes, nodesData } from "@/utils/logicFlows";
+import { nodesData } from "@/utils/logicFlows";
 import { removeKeysRecursive } from "@/utils/removeKeys";
 import {
   Aside,
   Box,
   Center,
-  Navbar,
   ScrollArea,
   Stack,
   Text,
   TextInput,
-  useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useDebouncedState, usePrevious } from "@mantine/hooks";
-import { IconSearch } from "@tabler/icons-react";
+import { usePrevious } from "@mantine/hooks";
 import {
   QueryClient,
   dehydrate,
@@ -62,15 +57,11 @@ export const getServerSideProps = async ({
 };
 
 type Props = {
-  // id: string;
-  // pageId: string;
   flowId: string;
 };
 
 export const LogicFlowsPage = ({ flowId }: Props) => {
-  const theme = useMantineTheme();
   const reactFlowWrapper = useRef(null);
-  const [filter, setFilter] = useDebouncedState("", 250);
   const setCurrentProjectId = useEditorStore(
     (state) => state.setCurrentProjectId,
   );
@@ -130,15 +121,6 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
       setCurrentPageId(pageId);
     }
   }, [id, pageId, setCurrentPageId, setCurrentProjectId]);
-
-  const filterNodes = () => {
-    return Object.keys(nodes).filter((key) => {
-      const data = nodesData[key as keyof typeof nodesData].data;
-      return (
-        matchQuery(filter, data.label) || matchQuery(filter, data.description)
-      );
-    });
-  };
 
   const hasChanges = useCallback(() => {
     const flowData = flow?.data as unknown as FlowData;
@@ -210,39 +192,8 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
   return (
     <LogicFlowShell
       flow={flow}
-      navbar={
-        <Navbar
-          width={{ base: NAVBAR_WIDTH }}
-          sx={{
-            height: `calc(100% - ${HEADER_HEIGHT}px)`,
-          }}
-        >
-          <Navbar.Section grow component={ScrollArea}>
-            <Stack px="md" py="lg">
-              <TextInput
-                placeholder="Search"
-                mb="xs"
-                icon={<IconSearch size={14} />}
-                defaultValue={filter}
-                onChange={(event) => setFilter(event.currentTarget.value)}
-              />
-              <Stack mb="lg">
-                {filterNodes().map((key: string) => {
-                  return <FlowNode key={key} type={key as PossibleNodes} />;
-                })}
-              </Stack>
-            </Stack>
-          </Navbar.Section>
-        </Navbar>
-      }
       aside={
-        <Aside
-          key={selectedNode?.id}
-          width={{ base: ASIDE_WIDTH }}
-          sx={{
-            height: `calc(100% - ${HEADER_HEIGHT}px)`,
-          }}
-        >
+        <Aside key={selectedNode?.id} width={{ base: ASIDE_WIDTH }}>
           <Aside.Section grow component={ScrollArea}>
             <Stack px="md" py="lg">
               {!selectedNode && (

@@ -86,6 +86,61 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
     ]);
   };
 
+  const onClickAddConditional = async () => {
+    const conditionalId = nanoid();
+    const addId = nanoid();
+    const edge = edges.find((edge) => edge.target === node.id);
+
+    await onNodesChange([
+      {
+        item: {
+          id: conditionalId,
+          type: "conditionalNode",
+          position: { x: node.xPos - 30, y: node.yPos },
+          data: {
+            label: "Conditional",
+            description: "Execute actions conditionally",
+            inputs: [{ id: nanoid(), name: "Input" }],
+            outputs: [{ id: nanoid(), name: "Output" }],
+          },
+        },
+        type: "add",
+      },
+    ]);
+
+    await onEdgesChange([
+      {
+        item: { ...edge, id: nanoid(), target: conditionalId },
+        type: "add",
+      } as EdgeAddChange,
+    ]);
+
+    await onNodesChange([
+      {
+        item: {
+          id: addId,
+          type: "addNode",
+          position: { x: node.xPos, y: node.yPos + 150 },
+          data: {
+            inputs: [{ id: nanoid() }],
+          },
+        },
+        type: "add",
+      },
+      {
+        id: node.id,
+        type: "remove",
+      },
+    ]);
+
+    await onEdgesChange([
+      {
+        item: { id: nanoid(), target: addId, source: conditionalId },
+        type: "add",
+      },
+    ]);
+  };
+
   return (
     <Card
       p={0}
@@ -129,7 +184,7 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
 
           <Menu.Dropdown>
             <Menu.Item onClick={onClickAddAction}>Action</Menu.Item>
-            <Menu.Item>Conditional</Menu.Item>
+            <Menu.Item onClick={onClickAddConditional}>Conditional</Menu.Item>
           </Menu.Dropdown>
         </Menu>
       </Stack>

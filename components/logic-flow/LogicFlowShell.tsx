@@ -31,64 +31,17 @@ export const LogicFlowShell = ({
   children,
   navbar,
   aside,
+  header,
   flow,
 }: ShellProps) => {
-  const projectId = useEditorStore((state) => state.currentProjectId);
-  const pageId = useEditorStore((state) => state.currentPageId);
   const resetTree = useEditorStore((state) => state.resetTree);
-  const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
 
   return (
     <AppShell
-      // fixed
       padding={0}
-      header={
-        <Header height={HEADER_HEIGHT} sx={{ zIndex: 110 }}>
-          <Flex
-            h={HEADER_HEIGHT}
-            px="lg"
-            align="center"
-            justify="space-between"
-          >
-            <Group>
-              {/*<Link href="/projects">*/}
-              {/*  <Logo />*/}
-              {/*</Link>*/}
-              {flow && (
-                <Breadcrumbs>
-                  <Anchor
-                    size="sm"
-                    color={DEFAULT_TEXTCOLOR}
-                    component={Link}
-                    href={`/projects/${projectId}/editor/${pageId}/flows`}
-                  >
-                    Logic Flows
-                  </Anchor>
-                  <Text size="xs" color="dimmed">
-                    {flow.name}
-                  </Text>
-                </Breadcrumbs>
-              )}
-            </Group>
-            <Group>
-              <Button onClick={() => setShowFormModal(true)} compact>
-                Create Logic Flow
-              </Button>
-              <VariablesButton pageId={pageId!} projectId={projectId!} />
-              {/*<Button*/}
-              {/*  component={Link}*/}
-              {/*  variant="default"*/}
-              {/*  href={`/projects/${projectId}/editor/${pageId}`}*/}
-              {/*  compact*/}
-              {/*>*/}
-              {/*  Back to Editor*/}
-              {/*</Button>*/}
-            </Group>
-          </Flex>
-        </Header>
-      }
       aside={aside}
       navbar={navbar}
+      header={header}
       styles={{
         main: {
           backgroundColor: LOGICFLOW_BACKGROUND,
@@ -102,7 +55,6 @@ export const LogicFlowShell = ({
       <ErrorBoundary
         FallbackComponent={() => (
           <Box
-            // w={`calc(100vw - ${ASIDE_WIDTH}px - ${NAVBAR_WIDTH}px)`}
             h={`calc(100vh - ${HEADER_HEIGHT}px)`}
             sx={{
               display: "flex",

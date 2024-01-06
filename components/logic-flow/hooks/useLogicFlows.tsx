@@ -2,9 +2,13 @@ import { modals } from "@mantine/modals";
 import { ActionIcon, Button, Flex } from "@mantine/core";
 import { IconArrowBack } from "@tabler/icons-react";
 import { useFlowStore } from "@/stores/flow";
+import { VariablesButton } from "@/components/variables/VariablesButton";
+import { useEditorStore } from "@/stores/editor";
 
 export const useLogicFlows = () => {
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
+  const pageId = useEditorStore((state) => state.currentPageId);
+  const projectId = useEditorStore((state) => state.currentProjectId);
 
   const openLogicFlowsModal = () =>
     modals.openContextModal({
@@ -18,9 +22,12 @@ export const useLogicFlows = () => {
             </ActionIcon>
           </Flex>
 
-          <Button onClick={() => setShowFormModal(true)} compact>
-            Create Logic Flow
-          </Button>
+          <Flex align="center" gap={5}>
+            <Button onClick={() => setShowFormModal(true)} compact>
+              Create Logic Flow
+            </Button>
+            <VariablesButton pageId={pageId!} projectId={projectId!} />
+          </Flex>
         </Flex>
       ),
       size: "auto",
