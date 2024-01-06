@@ -52,6 +52,7 @@ import { useUserConfigStore } from "@/stores/userConfig";
 import { Action, actionMapper } from "@/utils/actions";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { componentMapper } from "@/utils/componentMapper";
+import { dataMapper } from "@/utils/dataMapper";
 import { getAllComponentsByIds, getComponentById } from "@/utils/editor";
 import { Modifiers } from "@/utils/modifiers";
 import {
@@ -128,7 +129,7 @@ const sectionMapper: SectionsMapper = {
   progress: ProgressModifier,
 };
 
-type Tab = "design" | "actions";
+type Tab = "design" | "actions" | "data";
 
 const excludeComponentsForState = ["Text", "Title"];
 
@@ -183,6 +184,7 @@ export const EditorAsideSections = () => {
   useEffect(() => {
     selectedComponentId !== openAction?.componentId &&
       setOpenAction({ actionIds: undefined, componentId: undefined });
+    setTab("design");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedComponentId]);
 
@@ -331,20 +333,34 @@ export const EditorAsideSections = () => {
     );
   });
 
+  const tabs = [
+    { label: "Design", value: "design" },
+    {
+      label: "Actions",
+      value: "actions",
+      disabled: (selectedComponentIds ?? []).length > 1,
+    },
+  ];
+
+  // @ts-ignore
+  const DataSection = dataMapper[componentName];
+
+  if (DataSection) {
+    tabs.push({
+      label: "Data",
+      value: "data",
+      disabled: (selectedComponentIds ?? []).length > 1,
+    });
+  }
+
   return (
     <Stack>
       <Flex px="md">
         <SegmentedControl
+          key={JSON.stringify(tabs)}
           size="xs"
           style={{ width: "100%" }}
-          data={[
-            { label: "Design", value: "design" },
-            {
-              label: "Actions",
-              value: "actions",
-              disabled: (selectedComponentIds ?? []).length > 1,
-            },
-          ]}
+          data={tabs}
           onChange={(value) => {
             setTab(value as Tab);
             setOpenAction({ actionIds: undefined, componentId: undefined });
@@ -440,6 +456,13 @@ export const EditorAsideSections = () => {
             )}
 
           <Stack spacing="xs">{designSections}</Stack>
+        </Stack>
+      )}
+      {tab === "data" && DataSection && component && (
+        <Stack>
+          <Box px="md">
+            <DataSection key={component?.id} component={component} />
+          </Box>
         </Stack>
       )}
       {tab === "actions" && <ActionsFlow actionsSections={actionsSections} />}
