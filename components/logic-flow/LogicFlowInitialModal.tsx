@@ -133,6 +133,7 @@ export default function LogicFlowInitialModal({
                   key={flow.id}
                   flow={flow}
                   onDelete={async () => {
+                    // const flow.name === "start-noode";
                     await deleteFlow.mutate(flow.id);
                   }}
                   onEdit={() => {

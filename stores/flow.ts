@@ -14,6 +14,7 @@ import {
   NodeAddChange,
   ReactFlowInstance,
   EdgeAddChange,
+  NodeRemoveChange,
 } from "reactflow";
 import { nanoid } from "nanoid";
 import { devtools } from "zustand/middleware";
@@ -74,6 +75,7 @@ const edgeProps: Partial<Edge> = {
   type: "smoothstep",
 };
 
+const addNodeId = nanoid();
 export const initialNodes = [
   {
     id: "start-node",
@@ -85,22 +87,22 @@ export const initialNodes = [
       outputs: [{ id: nanoid(), name: "Initial Trigger" }],
     },
     position: { x: 0, y: 0 },
+    deletable: false,
   },
   {
-    id: "add-node",
+    id: addNodeId,
     type: "addNode",
     data: {
-      label: "Add",
-      description: "Add two numbers",
-      inputs: [{ id: nanoid(), name: "" }],
+      inputs: [{ id: nanoid() }],
       outputs: [],
     },
-    position: { x: 200, y: 200 },
+    position: { x: 30, y: 150 },
+    deletable: false,
   },
 ] as Node[];
 
 export const initialEdges = [
-  { id: nanoid(), source: "start-node", target: "add-node" },
+  { id: nanoid(), source: "start-node", target: addNodeId, type: "smoothstep" },
 ] as Edge[];
 
 export const useFlowStore = create<FlowState>()(

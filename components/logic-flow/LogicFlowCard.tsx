@@ -145,7 +145,7 @@ export const LogicFlowCard = ({
               .map((a) => {
                 const NodeAvatar =
                   a.type !== "counter"
-                    ? nodesData[a.type as keyof typeof nodesData].NodeAvatar
+                    ? nodesData[a.type as keyof typeof nodesData]?.NodeAvatar
                     : undefined;
 
                 return (

@@ -1,42 +1,98 @@
-import { Handle, NodeProps, Position } from "reactflow";
+import {
+  EdgeAddChange,
+  EdgeResetChange,
+  Handle,
+  NodeProps,
+  Position,
+  useReactFlow,
+} from "reactflow";
 import { IconPlus } from "@tabler/icons-react";
-import {
-  CustomNode,
-  NodeData,
-  NodeInput,
-  NodeOutput,
-} from "@/components/logic-flow/nodes/CustomNode";
-import {
-  ActionIcon,
-  Box,
-  Card,
-  Menu,
-  Stack,
-  Text,
-  useMantineTheme,
-} from "@mantine/core";
-import { useFlowStore } from "@/stores/flow";
+import { NodeData, NodeInput } from "@/components/logic-flow/nodes/CustomNode";
+import { ActionIcon, Card, Menu, Stack, useMantineTheme } from "@mantine/core";
+import { FlowState, useFlowStore } from "@/stores/flow";
+import { nanoid } from "nanoid";
 
 interface AddNodeData extends NodeData {}
 
+const selector = (state: FlowState) => ({
+  nodes: state.nodes,
+  edges: state.edges,
+  onNodesChange: state.onNodesChange,
+  onEdgesChange: state.onEdgesChange,
+  onConnect: state.onConnect,
+  onAddNode: state.onAddNode,
+  setFlowInstance: state.setFlowInstance,
+  flowInstance: state.flowInstance,
+  setIsDragging: state.setIsDragging,
+});
+
 export const AddNode = (node: NodeProps<AddNodeData>) => {
   const theme = useMantineTheme();
-  const setSelectedNode = useFlowStore((state) => state.setSelectedNode);
-  const { data, selected: Avatar } = node;
+  const { data } = node;
+  const { onNodesChange, onEdgesChange, edges } = useFlowStore(selector);
 
-  const selectNode = () => {
-    setSelectedNode(node);
+  const onClickAddAction = async () => {
+    const actionId = nanoid();
+    const addId = nanoid();
+    const edge = edges.find((edge) => edge.target === node.id);
+
+    await onNodesChange([
+      {
+        item: {
+          id: actionId,
+          type: "actionNode",
+          position: { x: node.xPos - 30, y: node.yPos },
+          data: {
+            label: "Action",
+            description: "Execute an action",
+            inputs: [{ id: nanoid(), name: "Input" }],
+            outputs: [{ id: nanoid(), name: "Output" }],
+          },
+        },
+        type: "add",
+      },
+    ]);
+
+    await onEdgesChange([
+      {
+        item: { ...edge, id: nanoid(), target: actionId },
+        type: "add",
+      } as EdgeAddChange,
+    ]);
+
+    await onNodesChange([
+      {
+        item: {
+          id: addId,
+          type: "addNode",
+          position: { x: node.xPos, y: node.yPos + 150 },
+          data: {
+            inputs: [{ id: nanoid() }],
+          },
+        },
+        type: "add",
+      },
+      {
+        id: node.id,
+        type: "remove",
+      },
+    ]);
+
+    await onEdgesChange([
+      {
+        item: { id: nanoid(), target: addId, source: actionId },
+        type: "add",
+      },
+    ]);
   };
 
   return (
     <Card
       p={0}
-      //onClick={selectNode}
       sx={{
         borderRadius: 50,
         border: "1px solid",
         borderColor: theme.colors.gray[3],
-        // minWidth: "100px",
         width: "20px",
         height: "20px",
 
@@ -52,9 +108,8 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
             key={input.id}
             id={input.id}
             type="target"
-            position={Position.Left}
+            position={Position.Top}
             style={{
-              marginLeft: "-4px",
               backgroundColor: theme.colors.gray[4],
               border: "none",
               borderRadius: 0,
@@ -73,11 +128,8 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
           </Menu.Target>
 
           <Menu.Dropdown>
-            <Menu.Label>Application</Menu.Label>
-
-            <Menu.Divider />
-
-            <Menu.Label>Danger zone</Menu.Label>
+            <Menu.Item onClick={onClickAddAction}>Action</Menu.Item>
+            <Menu.Item>Conditional</Menu.Item>
           </Menu.Dropdown>
         </Menu>
       </Stack>

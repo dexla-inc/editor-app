@@ -11,7 +11,6 @@ import {
   AppShellProps,
   Box,
   Button,
-  Flex,
   Group,
   Header,
   Select,
@@ -39,8 +38,7 @@ import { flexStyles } from "@/utils/branding";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
-import { modals } from "@mantine/modals";
-import { useFlowStore } from "@/stores/flow";
+import { useLogicFlows } from "@/components/logic-flow/hooks/useLogicFlows";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const resetTree = useEditorStore((state) => state.resetTree);
@@ -61,7 +59,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
 
   const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
   const clear = useTemporalStore((state) => state.clear);
-  const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
+  const { openLogicFlowsModal } = useLogicFlows();
 
   return (
     <AppShell
@@ -102,26 +100,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               <ActionIconDefault
                 iconName="IconGitBranch"
                 tooltip="Logic Flows"
-                onClick={() =>
-                  modals.openContextModal({
-                    modal: "logicFlows",
-                    title: (
-                      <Flex justify="space-between">
-                        Logic Flows{" "}
-                        <Button onClick={() => setShowFormModal(true)} compact>
-                          Create Logic Flow
-                        </Button>
-                      </Flex>
-                    ),
-                    size: "auto",
-                    styles: {
-                      title: { width: "100%" },
-                      overlay: { zIndex: 300 },
-                      inner: { zIndex: 300 },
-                    },
-                    innerProps: {},
-                  })
-                }
+                onClick={openLogicFlowsModal}
               />
               <VariablesButton projectId={projectId} pageId={currentPageId} />
               <ChangeHistoryPopover />

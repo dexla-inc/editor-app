@@ -131,13 +131,6 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
     }
   }, [id, pageId, setCurrentPageId, setCurrentProjectId]);
 
-  // useEffect(() => {
-  //   if (flow?.data) {
-  //     const data = JSON.parse(decodeSchema(flow.data as string));
-  //     restoreFlow(data as any);
-  //   }
-  // }, [flow?.data, restoreFlow]);
-
   const filterNodes = () => {
     return Object.keys(nodes).filter((key) => {
       const data = nodesData[key as keyof typeof nodesData].data;
