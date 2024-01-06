@@ -129,7 +129,7 @@ const sectionMapper: SectionsMapper = {
   progress: ProgressModifier,
 };
 
-type Tab = "design" | "actions" | "data";
+type Tab = "design" | "data" | "actions";
 
 const excludeComponentsForState = ["Text", "Title"];
 
@@ -346,7 +346,7 @@ export const EditorAsideSections = () => {
   const DataSection = dataMapper[componentName];
 
   if (DataSection) {
-    tabs.push({
+    tabs.splice(1, 0, {
       label: "Data",
       value: "data",
       disabled: (selectedComponentIds ?? []).length > 1,
