@@ -23,7 +23,6 @@ import {
   TextInput,
   Textarea,
   Title,
-  useMantineTheme,
 } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
@@ -74,7 +73,6 @@ export default function BindingPopover({
   const [newValue, setNewValue] = useState<string>();
   const [tab, setTab] = useState<BindingTab>(bindingTab ?? "components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
-  const theme = useMantineTheme();
   const inputsStore = useInputsStore();
 
   const browser = useRouter();
@@ -114,7 +112,6 @@ export default function BindingPopover({
       }),
     enabled: !!projectId && !!pageId,
   });
-  console.log(variables);
 
   const inputComponents = getAllComponentsByName(editorTree.root, [
     "Input",
@@ -172,6 +169,60 @@ export default function BindingPopover({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bindingTab, tab]);
+
+  const onSetItem = (itemType: BindingTab, item: string) => {
+    // setting Javascript code returned by the binder and also any input field
+    if (itemType === "components") {
+      setSelectedItem(
+        `${
+          !javascriptCode?.startsWith("return") ? "return " : undefined
+        }components[/* ${inputComponents?.list[item].description} */'${item}']`,
+      );
+      onPickComponent && onPickComponent(item);
+    }
+    if (itemType === "variables") {
+      try {
+        const parsed = JSON.parse(item);
+        const isObjectType =
+          typeof parsed === "object" ||
+          variables?.list[parsed.id].type === "OBJECT";
+        const pathStartsWithBracket = parsed.path.startsWith("[") ? "" : ".";
+        setSelectedItem(
+          `${
+            !javascriptCode?.startsWith("return") ? "return " : " "
+          }variables[/* ${variables?.list[parsed.id].name} */'${
+            parsed.id
+          }']${pathStartsWithBracket}${parsed.path}`,
+        );
+        onPickVariable &&
+          onPickVariable(
+            isObjectType
+              ? `var_${JSON.stringify({
+                  id: parsed.id,
+                  variable: variables?.list[parsed.id],
+                  path: parsed.path,
+                })}`
+              : `var_${variables?.list[parsed.id].name}`,
+          );
+      } catch {
+        setSelectedItem(
+          `${
+            !javascriptCode?.startsWith("return") ? "return " : " "
+          }variables[/* ${variables?.list[item].name} */'${item}']`,
+        );
+        onPickVariable && onPickVariable(`var_${variables?.list[item].name}`);
+      }
+    }
+
+    if (itemType === "browser") {
+      try {
+        const parsed = JSON.parse(item);
+        setSelectedItem(`browser['${parsed.id}'].${parsed.path}`);
+      } catch {
+        setSelectedItem(`browser['${item}']`);
+      }
+    }
+  };
 
   return (
     <Popover
@@ -323,15 +374,7 @@ export default function BindingPopover({
                 <ObjectDetails
                   filterKeyword={filterKeyword}
                   variables={Object.values(inputComponents?.list)}
-                  onItemSelection={(item: string) => {
-                    setSelectedItem(
-                      `${
-                        !javascriptCode?.startsWith("return") && "return "
-                      }components[/* ${inputComponents?.list[item]
-                        .description} */'${item}']`,
-                    );
-                    onPickComponent && onPickComponent(item);
-                  }}
+                  onItemSelection={(item: string) => onSetItem(tab, item)}
                 />
               </ScrollArea.Autosize>
             </Stack>
@@ -341,43 +384,7 @@ export default function BindingPopover({
                 <ObjectDetails
                   filterKeyword={filterKeyword}
                   variables={Object.values(variables?.list)}
-                  onItemSelection={(item: string) => {
-                    try {
-                      const parsed = JSON.parse(item);
-                      const isObjectType =
-                        typeof parsed === "object" ||
-                        variables?.list[parsed.id].type === "OBJECT";
-                      const pathStartsWithBracket = parsed.path.startsWith("[")
-                        ? ""
-                        : ".";
-                      setSelectedItem(
-                        `${
-                          !javascriptCode?.startsWith("return") && "return "
-                        }variables[/* ${variables?.list[parsed.id].name} */'${
-                          parsed.id
-                        }']${pathStartsWithBracket}${parsed.path}`,
-                      );
-                      onPickVariable &&
-                        onPickVariable(
-                          isObjectType
-                            ? `var_${JSON.stringify({
-                                id: parsed.id,
-                                variable: variables?.list[parsed.id],
-                                path: parsed.path,
-                              })}`
-                            : `var_${variables?.list[parsed.id].name}`,
-                        );
-                    } catch {
-                      setSelectedItem(
-                        `${
-                          !javascriptCode?.startsWith("return") && "return "
-                        }variables[/* ${variables?.list[item]
-                          .name} */'${item}']`,
-                      );
-                      onPickVariable &&
-                        onPickVariable(`var_${variables?.list[item].name}`);
-                    }
-                  }}
+                  onItemSelection={(item: string) => onSetItem(tab, item)}
                 />
               </ScrollArea.Autosize>
             </Stack>
@@ -389,14 +396,7 @@ export default function BindingPopover({
                 <ObjectDetails
                   filterKeyword={filterKeyword}
                   variables={browserList}
-                  onItemSelection={(item: string) => {
-                    try {
-                      const parsed = JSON.parse(item);
-                      setSelectedItem(`browser['${parsed.id}'].${parsed.path}`);
-                    } catch {
-                      setSelectedItem(`browser['${item}']`);
-                    }
-                  }}
+                  onItemSelection={(item: string) => onSetItem(tab, item)}
                 />
               </ScrollArea.Autosize>
             </Stack>
