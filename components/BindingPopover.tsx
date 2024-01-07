@@ -99,10 +99,14 @@ export default function BindingPopover({
       listVariables(projectId, { pageId }).then(({ results }) => {
         return results.reduce(
           (acc, variable) => {
-            const value = variable.value ?? variable.defaultValue;
+            let value = variable.value ?? variable.defaultValue;
+            const isText = variable.type === "TEXT";
+            const isBoolean = variable.type === "BOOLEAN";
+            const parsedValue =
+              value && (isText || isBoolean ? value : JSON.parse(value));
             acc.list[variable.id] = variable;
-            acc[variable.id] = value ? JSON.parse(value) : value;
-            acc[variable.name] = value ? JSON.parse(value) : value;
+            acc[variable.id] = parsedValue;
+            acc[variable.name] = parsedValue;
             return acc;
           },
           { list: {} } as Record<string, any>,
@@ -110,6 +114,7 @@ export default function BindingPopover({
       }),
     enabled: !!projectId && !!pageId,
   });
+  console.log(variables);
 
   const inputComponents = getAllComponentsByName(editorTree.root, [
     "Input",
@@ -128,7 +133,6 @@ export default function BindingPopover({
     },
     { list: {} } as Record<string, any>,
   );
-
   useEffect(() => {
     try {
       if (javascriptCode === "return variables") {
@@ -321,7 +325,10 @@ export default function BindingPopover({
                   variables={Object.values(inputComponents?.list)}
                   onItemSelection={(item: string) => {
                     setSelectedItem(
-                      `components[/* ${inputComponents?.list[item].description} */'${item}']`,
+                      `${
+                        !javascriptCode?.startsWith("return") && "return "
+                      }components[/* ${inputComponents?.list[item]
+                        .description} */'${item}']`,
                     );
                     onPickComponent && onPickComponent(item);
                   }}
@@ -344,7 +351,9 @@ export default function BindingPopover({
                         ? ""
                         : ".";
                       setSelectedItem(
-                        `variables[/* ${variables?.list[parsed.id].name} */'${
+                        `${
+                          !javascriptCode?.startsWith("return") && "return "
+                        }variables[/* ${variables?.list[parsed.id].name} */'${
                           parsed.id
                         }']${pathStartsWithBracket}${parsed.path}`,
                       );
@@ -360,7 +369,10 @@ export default function BindingPopover({
                         );
                     } catch {
                       setSelectedItem(
-                        `variables[/* ${variables?.list[item].name} */'${item}']`,
+                        `${
+                          !javascriptCode?.startsWith("return") && "return "
+                        }variables[/* ${variables?.list[item]
+                          .name} */'${item}']`,
                       );
                       onPickVariable &&
                         onPickVariable(`var_${variables?.list[item].name}`);

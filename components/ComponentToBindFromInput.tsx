@@ -45,7 +45,7 @@ export const ComponentToBindFromInput = ({
     opened,
     { toggle: onTogglePopover, close: onClosePopover, open: onOpenPopover },
   ] = useDisclosure(false);
-  const [javaScriptCode, setJavaScriptCode] = useState("return ");
+  const [javaScriptCode, setJavaScriptCode] = useState("");
 
   return (
     <TextInput
