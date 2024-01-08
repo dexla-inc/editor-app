@@ -336,7 +336,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           setTree: (tree, options) => {
             set(
               (state: EditorState) => {
-                if (!options?.onLoad) {
+                if (!options?.onLoad && !state.isPreviewMode) {
                   debouncedUpdatePageState(
                     encodeSchema(JSON.stringify(tree)),
                     state.currentProjectId ?? "",
@@ -375,7 +375,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
             save = true,
           }) => {
             set(
-              (prev) => {
+              (prev: EditorState) => {
                 const copy = cloneDeep(prev.tree);
                 const currentState =
                   prev.currentTreeComponentsStates?.[componentId] ?? "default";
@@ -388,7 +388,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   currentState,
                   currentLanguage,
                 );
-                if (save) {
+                if (save && !prev.isPreviewMode) {
                   debouncedUpdatePageState(
                     encodeSchema(JSON.stringify(copy)),
                     prev.currentProjectId ?? "",
@@ -413,7 +413,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           },
           updateTreeComponents: (componentIds, props, save = true) => {
             set(
-              (prev) => {
+              (prev: EditorState) => {
                 const lastComponentId = componentIds[componentIds.length - 1];
                 const copy = cloneDeep(prev.tree);
                 const currentState =
@@ -428,7 +428,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   currentState,
                   currentLanguage,
                 );
-                if (save) {
+                if (save && !prev.isPreviewMode) {
                   debouncedUpdatePageState(
                     encodeSchema(JSON.stringify(copy)),
                     prev.currentProjectId ?? "",
@@ -451,11 +451,11 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           },
           updateTreeComponentStates: (componentId, states, save = true) => {
             set(
-              (prev) => {
+              (prev: EditorState) => {
                 const copy = cloneDeep(prev.tree);
 
                 updateTreeComponentStates(copy.root, componentId, states);
-                if (save) {
+                if (save && !prev.isPreviewMode) {
                   debouncedUpdatePageState(
                     encodeSchema(JSON.stringify(copy)),
                     prev.currentProjectId ?? "",
@@ -481,11 +481,11 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           // anything out of .props that changes .children[]
           updateTreeComponentChildren: (componentId, children, save = true) => {
             set(
-              (state) => {
+              (state: EditorState) => {
                 const copy = cloneDeep(state.tree);
                 updateTreeComponentChildren(copy.root, componentId, children);
 
-                if (save) {
+                if (save && !state.isPreviewMode) {
                   const toBeSavedCopy = cloneDeep(copy);
                   updateTreeComponentWithOmitProps(toBeSavedCopy.root);
                   debouncedUpdatePageState(
@@ -513,15 +513,16 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           // any action change
           updateTreeComponentActions: (componentId, actions) => {
             set(
-              (state) => {
+              (state: EditorState) => {
                 const copy = cloneDeep(state.tree);
                 updateTreeComponentActions(copy.root, componentId, actions);
-                debouncedUpdatePageState(
-                  encodeSchema(JSON.stringify(copy)),
-                  state.currentProjectId ?? "",
-                  state.currentPageId ?? "",
-                  state.setIsSaving,
-                );
+                if (!state.isPreviewMode)
+                  debouncedUpdatePageState(
+                    encodeSchema(JSON.stringify(copy)),
+                    state.currentProjectId ?? "",
+                    state.currentPageId ?? "",
+                    state.setIsSaving,
+                  );
 
                 const component = getComponentById(copy.root, componentId);
 
@@ -539,7 +540,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           },
           updateTreeComponentDescription: (componentId, description) => {
             set(
-              (state) => {
+              (state: EditorState) => {
                 const copy = cloneDeep(state.tree);
 
                 updateTreeComponentDescription(
@@ -547,12 +548,13 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   componentId,
                   description,
                 );
-                debouncedUpdatePageState(
-                  encodeSchema(JSON.stringify(copy)),
-                  state.currentProjectId ?? "",
-                  state.currentPageId ?? "",
-                  state.setIsSaving,
-                );
+                if (!state.isPreviewMode)
+                  debouncedUpdatePageState(
+                    encodeSchema(JSON.stringify(copy)),
+                    state.currentProjectId ?? "",
+                    state.currentPageId ?? "",
+                    state.setIsSaving,
+                  );
 
                 return {
                   tree: copy,
@@ -567,16 +569,17 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
             attrs: Partial<Component>,
           ) => {
             set(
-              (state) => {
+              (state: EditorState) => {
                 const copy = cloneDeep(state.tree);
 
                 updateTreeComponentAttrs(copy.root, componentIds, attrs);
-                debouncedUpdatePageState(
-                  encodeSchema(JSON.stringify(copy)),
-                  state.currentProjectId ?? "",
-                  state.currentPageId ?? "",
-                  state.setIsSaving,
-                );
+                if (!state.isPreviewMode)
+                  debouncedUpdatePageState(
+                    encodeSchema(JSON.stringify(copy)),
+                    state.currentProjectId ?? "",
+                    state.currentPageId ?? "",
+                    state.setIsSaving,
+                  );
 
                 return {
                   tree: copy,
