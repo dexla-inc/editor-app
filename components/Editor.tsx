@@ -6,10 +6,12 @@ import { EditorCanvas } from "@/components/EditorCanvas";
 import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
+import { listVariables } from "@/requests/variables/queries-noauth";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { useVariableStore } from "@/stores/variables";
 import { globalStyles } from "@/utils/branding";
 import {
   ASIDE_WIDTH,
@@ -30,7 +32,7 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
 
 type Props = {
@@ -53,10 +55,21 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const user = usePropelAuthStore((state) => state.user);
+  const initializeVariableList = useVariableStore(
+    (state) => state.initializeVariableList,
+  );
 
   useGetPageData({ projectId, pageId });
 
   const queryClient = useQueryClient();
+
+  const { data: variables, isLoading: isVariablesFetching } = useQuery({
+    queryKey: ["variables", projectId, pageId],
+    queryFn: async () => {
+      return await listVariables(projectId, { pageId });
+    },
+    enabled: !!projectId && !!pageId,
+  });
 
   useEffect(() => {
     setIsLoading(true);
@@ -84,6 +97,9 @@ export const Editor = ({ projectId, pageId }: Props) => {
     if (pageId) {
       liveblocks.leaveRoom();
       liveblocks.enterRoom(pageId);
+      if (!isVariablesFetching && variables) {
+        initializeVariableList(variables);
+      }
     }
 
     return () => {

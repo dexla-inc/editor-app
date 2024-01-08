@@ -30,7 +30,7 @@ const requiredFieldValidator = (fieldName: string) => (value: string) => {
   if (!value) {
     return `${fieldName} is required`;
   }
-  return true;
+  return null;
 };
 
 export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
@@ -40,7 +40,7 @@ export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
     enabled: !!variableId,
   });
 
-  const { createVariablesMutation } = useVariable();
+  const { createVariablesMutation, updateVariablesMutation } = useVariable();
 
   const form = useForm<VariablesFormValues>({
     initialValues: {
@@ -56,6 +56,9 @@ export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
   });
 
   const onSubmit = async (values: VariablesFormValues) => {
+    if (variableId) {
+      updateVariablesMutation.mutate({ id: variableId, values });
+    }
     createVariablesMutation.mutate({
       ...values,
     });

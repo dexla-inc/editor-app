@@ -1,4 +1,4 @@
-import { upsertVariable } from "@/requests/variables/mutations";
+import { updateVariable, upsertVariable } from "@/requests/variables/mutations";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
@@ -26,7 +26,25 @@ export const useVariable = () => {
     },
   });
 
+  const updateVariablesMutation = useMutation(
+    async ({ id, values }: { id: string; values: any }) => {
+      return await updateVariable(id, projectId, {
+        ...values,
+        pageId,
+      });
+    },
+    {
+      onSettled: () => {
+        client.refetchQueries(["variables", projectId, pageId]);
+      },
+      onError: (error) => {
+        console.error({ error });
+      },
+    },
+  );
+
   return {
     createVariablesMutation,
+    updateVariablesMutation,
   };
 };
