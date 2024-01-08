@@ -102,7 +102,10 @@ export const CustomNode = (props: CustomNodeProps) => {
       </Stack>
       <Stack w="100%" justify="center" align="center" spacing={2} my="sm">
         {Avatar ? <Avatar /> : <NodeAvatar />}
-        <Text size={6}>{data.label}</Text>
+        <Text size={6}>
+          {data.label}
+          {data?.form?.action && ` - ${data.form.action}`}
+        </Text>
       </Stack>
       <Stack spacing={4}>
         {data.outputs.map((output: NodeOutput) => {

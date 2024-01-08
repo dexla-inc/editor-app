@@ -1,9 +1,19 @@
 import { EdgeAddChange, Handle, NodeProps, Position } from "reactflow";
 import { IconPlus } from "@tabler/icons-react";
 import { NodeData, NodeInput } from "@/components/logic-flow/nodes/CustomNode";
-import { ActionIcon, Card, Menu, Stack, useMantineTheme } from "@mantine/core";
+import {
+  ActionIcon,
+  Card,
+  Menu,
+  Popover,
+  ScrollArea,
+  Stack,
+  useMantineTheme,
+} from "@mantine/core";
 import { FlowState, useFlowStore } from "@/stores/flow";
 import { nanoid } from "nanoid";
+import { actions } from "@/utils/actions";
+import groupBy from "lodash.groupby";
 
 interface AddNodeData extends NodeData {}
 
@@ -23,8 +33,9 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
   const theme = useMantineTheme();
   const { data } = node;
   const { onNodesChange, onEdgesChange, edges } = useFlowStore(selector);
+  const groupedActions = groupBy(actions, (action) => action.group);
 
-  const onClickAddAction = async () => {
+  const onClickAddAction = async (actionName: string) => {
     const actionId = nanoid();
     const addId = nanoid();
     const edge = edges.find((edge) => edge.target === node.id);
@@ -37,6 +48,7 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
           position: { x: node.xPos - 30, y: node.yPos },
           data: {
             label: "Action",
+            form: { action: actionName },
             description: "Execute an action",
             inputs: [{ id: nanoid(), name: "Input" }],
             outputs: [{ id: nanoid(), name: "Output" }],
@@ -174,18 +186,42 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
         );
       })}
       <Stack w="100%" h="100%" justify="center" align="center">
-        <Menu shadow="md" width={200} withinPortal>
-          <Menu.Target>
+        <Popover withinPortal withArrow>
+          <Popover.Target>
             <ActionIcon>
               <IconPlus size="15px" />
             </ActionIcon>
-          </Menu.Target>
+          </Popover.Target>
 
-          <Menu.Dropdown>
-            <Menu.Item onClick={onClickAddAction}>Action</Menu.Item>
-            <Menu.Item onClick={onClickAddConditional}>Conditional</Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
+          <Popover.Dropdown>
+            <Menu opened shadow="md" width={200}>
+              <Menu.Dropdown>
+                <ScrollArea h={200}>
+                  <Menu.Label>Conditions</Menu.Label>
+                  <Menu.Item onClick={onClickAddConditional}>
+                    Conditional
+                  </Menu.Item>
+                  <Menu.Label>Action</Menu.Label>
+                  {Object.entries(groupedActions).map(([key, value]) => {
+                    return (
+                      <>
+                        <Menu.Label key={key}>{key}</Menu.Label>
+                        {value.map((item) => (
+                          <Menu.Item
+                            key={item.name}
+                            onClick={() => onClickAddAction(item.name)}
+                          >
+                            {item.name}
+                          </Menu.Item>
+                        ))}
+                      </>
+                    );
+                  })}
+                </ScrollArea>
+              </Menu.Dropdown>
+            </Menu>
+          </Popover.Dropdown>
+        </Popover>
       </Stack>
     </Card>
   );
