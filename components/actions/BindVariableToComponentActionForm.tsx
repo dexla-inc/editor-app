@@ -78,6 +78,9 @@ export const BindVariableToComponentActionForm = ({ id }: Props) => {
             setComponentToBind(undefined);
           }}
           {...form.getInputProps("component")}
+          onChange={(e) => {
+            form.setFieldValue("component", e.currentTarget.value);
+          }}
         />
 
         <TextInput

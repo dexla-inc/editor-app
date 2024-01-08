@@ -5,6 +5,7 @@ import { listVariables } from "@/requests/variables/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { BG_COLOR, BINDER_BACKGROUND } from "@/utils/branding";
+import { ICON_SIZE } from "@/utils/config";
 import { getAllComponentsByName } from "@/utils/editor";
 import { getParsedJSCode } from "@/utils/variables";
 import {
@@ -22,9 +23,10 @@ import {
   TextInput,
   Textarea,
   Title,
-  useMantineTheme,
 } from "@mantine/core";
+import { IconExternalLink } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
+import debounce from "lodash.debounce";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -44,6 +46,10 @@ type Props = {
   onChangeBindingType: any;
   onChangeJavascriptCode: any;
   javascriptCode: string;
+  onOpenPopover?: any;
+  bindedValue?: string;
+  onPickComponent?: any;
+  onPickVariable?: any;
 };
 
 export default function BindingPopover({
@@ -55,6 +61,10 @@ export default function BindingPopover({
   onChangeBindingType,
   onChangeJavascriptCode,
   javascriptCode,
+  onOpenPopover,
+  bindedValue,
+  onPickComponent,
+  onPickVariable,
 }: Props) {
   const editorTree = useEditorStore((state) => state.tree);
   const [formulaEntry, setFormulaEntry] = useState<string>();
@@ -63,7 +73,6 @@ export default function BindingPopover({
   const [newValue, setNewValue] = useState<string>();
   const [tab, setTab] = useState<BindingTab>(bindingTab ?? "components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
-  const theme = useMantineTheme();
   const inputsStore = useInputsStore();
 
   const browser = useRouter();
@@ -88,10 +97,14 @@ export default function BindingPopover({
       listVariables(projectId, { pageId }).then(({ results }) => {
         return results.reduce(
           (acc, variable) => {
-            const value = variable.value ?? variable.defaultValue;
+            let value = variable.value ?? variable.defaultValue;
+            const isText = variable.type === "TEXT";
+            const isBoolean = variable.type === "BOOLEAN";
+            const parsedValue =
+              value && (isText || isBoolean ? value : JSON.parse(value));
             acc.list[variable.id] = variable;
-            acc[variable.id] = value ? JSON.parse(value) : value;
-            acc[variable.name] = value ? JSON.parse(value) : value;
+            acc[variable.id] = parsedValue;
+            acc[variable.name] = parsedValue;
             return acc;
           },
           { list: {} } as Record<string, any>,
@@ -117,7 +130,6 @@ export default function BindingPopover({
     },
     { list: {} } as Record<string, any>,
   );
-
   useEffect(() => {
     try {
       if (javascriptCode === "return variables") {
@@ -135,6 +147,92 @@ export default function BindingPopover({
     }
   }, [javascriptCode, variables]);
 
+  const openPopover = debounce(() => onOpenPopover && onOpenPopover(), 1000);
+  const handleBinder = () => {
+    const isSingleAtSign = bindedValue === "@";
+    const isDoubleAtSign = bindedValue === "@@";
+    if (!isSingleAtSign && !isDoubleAtSign) return;
+    setTab(isSingleAtSign ? "components" : "variables");
+    openPopover();
+  };
+
+  useEffect(
+    () => handleBinder(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [bindedValue],
+  );
+
+  useEffect(() => {
+    // If bindingTab prop is provided and differs from the internal state, update it
+    if (bindingTab && bindingTab !== tab) {
+      setTab(bindingTab);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bindingTab, tab]);
+
+  const prefixWithReturnIfNeeded = (code: string) =>
+    !code?.startsWith("return") ? "return " : " ";
+
+  const handleComponents = (item: string) => {
+    setSelectedItem(
+      `${prefixWithReturnIfNeeded(
+        javascriptCode,
+      )}components[/* ${inputComponents?.list[item].description} */'${item}']`,
+    );
+    onPickComponent && onPickComponent(item);
+  };
+
+  const handleVariables = (item: string) => {
+    try {
+      const parsed = JSON.parse(item);
+      const isObjectType =
+        typeof parsed === "object" ||
+        variables?.list[parsed.id].type === "OBJECT";
+      const pathStartsWithBracket = parsed.path.startsWith("[") ? "" : ".";
+      setSelectedItem(
+        `${prefixWithReturnIfNeeded(javascriptCode)}variables[/* ${variables
+          ?.list[parsed.id].name} */'${parsed.id}']${pathStartsWithBracket}${
+          parsed.path
+        }`,
+      );
+      onPickVariable &&
+        onPickVariable(
+          isObjectType
+            ? `var_${JSON.stringify({
+                id: parsed.id,
+                variable: variables?.list[parsed.id],
+                path: parsed.path,
+              })}`
+            : `var_${variables?.list[parsed.id].name}`,
+        );
+    } catch {
+      setSelectedItem(
+        `${prefixWithReturnIfNeeded(javascriptCode)}variables[/* ${variables
+          ?.list[item].name} */'${item}']`,
+      );
+      onPickVariable && onPickVariable(`var_${variables?.list[item].name}`);
+    }
+  };
+
+  const handleBrowser = (item: string) => {
+    try {
+      const parsed = JSON.parse(item);
+      setSelectedItem(`browser['${parsed.id}'].${parsed.path}`);
+    } catch {
+      setSelectedItem(`browser['${item}']`);
+    }
+  };
+
+  const onSetItem = (itemType: BindingTab, item: string) => {
+    if (itemType === "components") {
+      handleComponents(item);
+    } else if (itemType === "variables") {
+      handleVariables(item);
+    } else if (itemType === "browser") {
+      handleBrowser(item);
+    }
+  };
+
   return (
     <Popover
       opened={opened}
@@ -143,16 +241,17 @@ export default function BindingPopover({
       arrowPosition="center"
     >
       <Popover.Target>
-        <Button size="xs" onClick={onTogglePopover}>
-          Binder
-        </Button>
+        {onPickComponent ? (
+          <ActionIcon onClick={onTogglePopover} size="xs">
+            <IconExternalLink size={ICON_SIZE} />
+          </ActionIcon>
+        ) : (
+          <Button size="xs" onClick={onTogglePopover}>
+            Binder
+          </Button>
+        )}
       </Popover.Target>
-      <Popover.Dropdown
-        sx={(theme) => ({
-          maxHeight: "98%",
-          backgroundColor: BG_COLOR,
-        })}
-      >
+      <Popover.Dropdown sx={{ maxHeight: "98%", backgroundColor: BG_COLOR }}>
         <Stack w={500}>
           {/* Pass in the name of the thing that is being bound */}
           <Flex justify="space-between" align="center">
@@ -165,15 +264,6 @@ export default function BindingPopover({
               onChange={onChangeBindingType}
               data={[
                 {
-                  value: "JavaScript",
-                  label: (
-                    <Center>
-                      <Icon name="IconCode" />
-                      <Text ml={ML}>JavaScript</Text>
-                    </Center>
-                  ),
-                },
-                {
                   value: "Formula",
                   label: (
                     <Center>
@@ -181,7 +271,15 @@ export default function BindingPopover({
                       <Text ml={ML}>Formula</Text>
                     </Center>
                   ),
-                  disabled: true,
+                },
+                {
+                  value: "JavaScript",
+                  label: (
+                    <Center>
+                      <Icon name="IconCode" />
+                      <Text ml={ML}>JavaScript</Text>
+                    </Center>
+                  ),
                 },
               ]}
             />
@@ -215,7 +313,11 @@ export default function BindingPopover({
             styles={{ input: { background: BINDER_BACKGROUND } }}
             value={newValue}
             readOnly
-            onChange={(event) => setCurrentValue(event.currentTarget.value)}
+            // onChange={(event) => setCurrentValue(event.currentTarget.value)}
+            // Color does not change due to a bug which has been fixed in v7
+            sx={{
+              color: currentValue === undefined ? "grey" : "inherit",
+            }}
           />
           <SegmentedControl
             value={tab}
@@ -281,11 +383,7 @@ export default function BindingPopover({
                 <ObjectDetails
                   filterKeyword={filterKeyword}
                   variables={Object.values(inputComponents?.list)}
-                  onItemSelection={(item: string) => {
-                    setSelectedItem(
-                      `return components[/* ${inputComponents?.list[item].description} */'${item}']`,
-                    );
-                  }}
+                  onItemSelection={(item: string) => onSetItem(tab, item)}
                 />
               </ScrollArea.Autosize>
             </Stack>
@@ -295,24 +393,7 @@ export default function BindingPopover({
                 <ObjectDetails
                   filterKeyword={filterKeyword}
                   variables={Object.values(variables?.list)}
-                  onItemSelection={(item: string) => {
-                    try {
-                      const parsed = JSON.parse(item);
-                      const pathStartsWithBracket = parsed.path.startsWith("[")
-                        ? ""
-                        : ".";
-                      setSelectedItem(
-                        `return variables[/* ${variables?.list[parsed.id]
-                          .name} */'${parsed.id}']${pathStartsWithBracket}${
-                          parsed.path
-                        }`,
-                      );
-                    } catch {
-                      setSelectedItem(
-                        `return variables[/* ${variables?.list[item].name} */'${item}']`,
-                      );
-                    }
-                  }}
+                  onItemSelection={(item: string) => onSetItem(tab, item)}
                 />
               </ScrollArea.Autosize>
             </Stack>
@@ -324,14 +405,7 @@ export default function BindingPopover({
                 <ObjectDetails
                   filterKeyword={filterKeyword}
                   variables={browserList}
-                  onItemSelection={(item: string) => {
-                    try {
-                      const parsed = JSON.parse(item);
-                      setSelectedItem(`browser['${parsed.id}'].${parsed.path}`);
-                    } catch {
-                      setSelectedItem(`browser['${item}']`);
-                    }
-                  }}
+                  onItemSelection={(item: string) => onSetItem(tab, item)}
                 />
               </ScrollArea.Autosize>
             </Stack>

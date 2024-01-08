@@ -99,6 +99,9 @@ export const OpenToastActionForm = ({ id }: Props) => {
                 size="xs"
                 label={title}
                 {...form.getInputProps(name)}
+                onChange={(e) => {
+                  form.setFieldValue(name, e.currentTarget.value);
+                }}
                 {...AUTOCOMPLETE_OFF_PROPS}
               />
             </React.Fragment>

@@ -38,6 +38,7 @@ export const OpenToastFlowActionForm = ({ form }: Props) => {
         return (
           <React.Fragment key={title}>
             <ComponentToBindFromInput
+              isLogicFlow={true}
               onPickComponent={(componentToBind: string) => {
                 form.setFieldValue(name, `valueOf_${componentToBind}`);
 
@@ -51,6 +52,9 @@ export const OpenToastFlowActionForm = ({ form }: Props) => {
               label={title}
               {...AUTOCOMPLETE_OFF_PROPS}
               {...form.getInputProps(name)}
+              onChange={(e) => {
+                form.setFieldValue(name, e.currentTarget.value);
+              }}
             />
           </React.Fragment>
         );

@@ -1,9 +1,10 @@
-import { ComponentToBindActionsPopover } from "@/components/ComponentToBindActionsPopover";
-import { VariablePicker } from "@/components/VariablePicker";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import { ActionIcon, Group, TextInput, TextInputProps } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { IconCurrentLocation } from "@tabler/icons-react";
+import { useState } from "react";
+import BindingPopover from "./BindingPopover";
 
 type Props = TextInputProps & {
   componentId?: string;
@@ -11,6 +12,7 @@ type Props = TextInputProps & {
   index?: number;
   onPickComponent?: (value: string) => void;
   onPickVariable?: (value: string) => void;
+  isLogicFlow?: boolean;
 };
 
 export const ComponentToBindFromInput = ({
@@ -21,6 +23,7 @@ export const ComponentToBindFromInput = ({
   bindAttributes,
   placeholder = "",
   label = "Component to bind",
+  isLogicFlow,
   ...rest
 }: Props) => {
   const setPickingComponentToBindTo = useEditorStore(
@@ -37,6 +40,13 @@ export const ComponentToBindFromInput = ({
     });
   };
 
+  const [bindedValue, setBindedValue] = useState("");
+  const [
+    opened,
+    { toggle: onTogglePopover, close: onClosePopover, open: onOpenPopover },
+  ] = useDisclosure(false);
+  const [javaScriptCode, setJavaScriptCode] = useState("");
+
   return (
     <TextInput
       size="xs"
@@ -50,11 +60,23 @@ export const ComponentToBindFromInput = ({
       }}
       rightSection={
         <Group noWrap spacing={0}>
-          {onPickVariable && <VariablePicker onSelectValue={onPickVariable} />}
-          {onPickComponent && (
+          <BindingPopover
+            opened={opened}
+            onTogglePopover={onTogglePopover}
+            onClosePopover={onClosePopover}
+            bindingType="JavaScript"
+            onChangeBindingType={() => {}}
+            javascriptCode={javaScriptCode}
+            onChangeJavascriptCode={(javascriptCode: any) =>
+              setJavaScriptCode(javascriptCode)
+            }
+            onOpenPopover={onOpenPopover}
+            bindedValue={bindedValue}
+            onPickComponent={onPickComponent}
+            onPickVariable={onPickVariable}
+          />
+          {onPickComponent && !isLogicFlow && (
             <>
-              <ComponentToBindActionsPopover onPick={onPickComponent} />
-
               <ActionIcon onClick={onBindComponent} size="xs">
                 <IconCurrentLocation size={ICON_SIZE} />
               </ActionIcon>
@@ -64,9 +86,13 @@ export const ComponentToBindFromInput = ({
       }
       styles={{
         input: { paddingRight: "3.65rem" },
-        rightSection: { width: "3.65rem" },
+        ...(!isLogicFlow && { rightSection: { width: "3.65rem" } }),
       }}
       {...rest}
+      onChange={(e) => {
+        setBindedValue(e.target.value);
+        if (rest?.onChange) rest.onChange(e);
+      }}
     />
   );
 };
