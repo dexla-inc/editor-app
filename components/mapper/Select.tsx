@@ -58,8 +58,6 @@ const SelectComponent = forwardRef(
 
     const keys = Object.keys(get(data, "[0]", {}));
 
-    console.log("select", props.style);
-
     return (
       <MantineSelect
         ref={ref}

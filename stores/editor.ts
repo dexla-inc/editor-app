@@ -1,3 +1,4 @@
+import { Endpoint } from "@/requests/datasources/types";
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
 import { CardStyle } from "@/requests/projects/types";
@@ -141,7 +142,7 @@ export type EditorState = {
   defaultComponentWidth?: number;
   isPageStructure?: boolean;
   copiedProperties?: ClipboardProps;
-
+  endpoints: Endpoint[];
   setCopiedProperties: (copiedProperties: ClipboardProps) => void;
   setIsPageStructure: (isPageStructure: boolean) => void;
   setDefaultComponentWidth: (defaultComponentWidth: number) => void;
@@ -236,6 +237,7 @@ export type EditorState = {
     y: number;
   };
   setCursor: (cursor?: { x: number; y: number }) => void;
+  initializeEndpoints: (endpoints: Endpoint[]) => void;
 };
 
 export const debouncedUpdatePageState = debounce(updatePageState, 2000);
@@ -255,6 +257,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           selectedComponentId: "content-wrapper",
           selectedComponentIds: ["content-wrapper"],
           language: "default",
+          endpoints: [],
           addOnMountActionsRan: (onMountAction) =>
             set(
               (state) => ({
@@ -705,6 +708,8 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           setCurrentUser: (currentUser) =>
             set({ currentUser }, false, "editor/setCurrentUser"),
           setCursor: (cursor) => set({ cursor }, false, "editor/setCursor"),
+          initializeEndpoints: (endpoints) =>
+            set({ endpoints }, false, "editor/setEndpoints"),
         }),
         {
           partialize: (state) => {
