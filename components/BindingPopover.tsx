@@ -170,57 +170,66 @@ export default function BindingPopover({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bindingTab, tab]);
 
-  const onSetItem = (itemType: BindingTab, item: string) => {
-    // setting Javascript code returned by the binder and also any input field
-    if (itemType === "components") {
-      setSelectedItem(
-        `${
-          !javascriptCode?.startsWith("return") ? "return " : undefined
-        }components[/* ${inputComponents?.list[item].description} */'${item}']`,
-      );
-      onPickComponent && onPickComponent(item);
-    }
-    if (itemType === "variables") {
-      try {
-        const parsed = JSON.parse(item);
-        const isObjectType =
-          typeof parsed === "object" ||
-          variables?.list[parsed.id].type === "OBJECT";
-        const pathStartsWithBracket = parsed.path.startsWith("[") ? "" : ".";
-        setSelectedItem(
-          `${
-            !javascriptCode?.startsWith("return") ? "return " : " "
-          }variables[/* ${variables?.list[parsed.id].name} */'${
-            parsed.id
-          }']${pathStartsWithBracket}${parsed.path}`,
-        );
-        onPickVariable &&
-          onPickVariable(
-            isObjectType
-              ? `var_${JSON.stringify({
-                  id: parsed.id,
-                  variable: variables?.list[parsed.id],
-                  path: parsed.path,
-                })}`
-              : `var_${variables?.list[parsed.id].name}`,
-          );
-      } catch {
-        setSelectedItem(
-          `${
-            !javascriptCode?.startsWith("return") ? "return " : " "
-          }variables[/* ${variables?.list[item].name} */'${item}']`,
-        );
-        onPickVariable && onPickVariable(`var_${variables?.list[item].name}`);
-      }
-    }
+  const prefixWithReturnIfNeeded = (code: string) =>
+    !code?.startsWith("return") ? "return " : " ";
 
-    if (itemType === "browser") {
-      try {
-        const parsed = JSON.parse(item);
-        setSelectedItem(`browser['${parsed.id}'].${parsed.path}`);
-      } catch {
-        setSelectedItem(`browser['${item}']`);
-      }
+  const handleComponents = (item: string) => {
+    setSelectedItem(
+      `${prefixWithReturnIfNeeded(
+        javascriptCode,
+      )}components[/* ${inputComponents?.list[item].description} */'${item}']`,
+    );
+    onPickComponent && onPickComponent(item);
+  };
+
+  const handleVariables = (item: string) => {
+    try {
+      const parsed = JSON.parse(item);
+      const isObjectType =
+        typeof parsed === "object" ||
+        variables?.list[parsed.id].type === "OBJECT";
+      const pathStartsWithBracket = parsed.path.startsWith("[") ? "" : ".";
+      setSelectedItem(
+        `${prefixWithReturnIfNeeded(javascriptCode)}variables[/* ${variables
+          ?.list[parsed.id].name} */'${parsed.id}']${pathStartsWithBracket}${
+          parsed.path
+        }`,
+      );
+      onPickVariable &&
+        onPickVariable(
+          isObjectType
+            ? `var_${JSON.stringify({
+                id: parsed.id,
+                variable: variables?.list[parsed.id],
+                path: parsed.path,
+              })}`
+            : `var_${variables?.list[parsed.id].name}`,
+        );
+    } catch {
+      setSelectedItem(
+        `${prefixWithReturnIfNeeded(javascriptCode)}variables[/* ${variables
+          ?.list[item].name} */'${item}']`,
+      );
+      onPickVariable && onPickVariable(`var_${variables?.list[item].name}`);
+    }
+  };
+
+  const handleBrowser = (item: string) => {
+    try {
+      const parsed = JSON.parse(item);
+      setSelectedItem(`browser['${parsed.id}'].${parsed.path}`);
+    } catch {
+      setSelectedItem(`browser['${item}']`);
+    }
+  };
+
+  const onSetItem = (itemType: BindingTab, item: string) => {
+    if (itemType === "components") {
+      handleComponents(item);
+    } else if (itemType === "variables") {
+      handleVariables(item);
+    } else if (itemType === "browser") {
+      handleBrowser(item);
     }
   };
 
