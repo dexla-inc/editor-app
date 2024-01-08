@@ -45,10 +45,7 @@ import { TogglePropsFlowActionForm } from "@/components/actions/logic-flow-forms
 import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components/actions/logic-flow-forms/TriggerLogicFlowActionForm";
 import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { Options } from "@/components/modifiers/GoogleMap";
-import {
-  getDataSourceAuth,
-  getDataSourceEndpoints,
-} from "@/requests/datasources/queries-noauth";
+import { getDataSourceAuth } from "@/requests/datasources/queries-noauth";
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
 import { upsertVariable } from "@/requests/variables/mutations";
 import {
@@ -777,16 +774,6 @@ export type APICallActionParams = ActionParams & {
   action: APICallAction;
 };
 
-let cachedEndpoints: Endpoint[] | undefined;
-
-const getCachedEndpoint = async (projectId: string) => {
-  if (!cachedEndpoints) {
-    const { results } = await getDataSourceEndpoints(projectId);
-    cachedEndpoints = results;
-  }
-  return cachedEndpoints;
-};
-
 const getUrl = (
   keys: string[],
   apiUrl: string,
@@ -830,9 +817,8 @@ const getBody = (endpoint: any, action: any, variableValues: any) => {
     : undefined;
 };
 
-const prepareRequestData = async (router: any, action: any) => {
-  const projectId = router.query.id as string;
-  const cachedEndpoints = await getCachedEndpoint(projectId);
+const prepareRequestData = async (action: any) => {
+  const cachedEndpoints = useEditorStore.getState().endpoints;
   const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
 
   const keys = Object.keys(action.binds?.parameter ?? {});
@@ -964,7 +950,7 @@ export const apiCallAction = async ({
   ...rest
 }: APICallActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  const { endpoint, url, body } = await prepareRequestData(router, action);
+  const { endpoint, url, body } = await prepareRequestData(action);
 
   try {
     updateTreeComponent({
