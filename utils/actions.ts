@@ -972,7 +972,6 @@ export const apiCallAction = async ({
       props: {
         loading: action.showLoader,
       },
-      save: false,
     });
 
     let responseJson;
@@ -1009,6 +1008,13 @@ export const apiCallAction = async ({
         authHeaderKey,
       );
     }
+
+    updateTreeComponent({
+      componentId: component.id!,
+      props: {
+        loading: false,
+      },
+    });
 
     await handleSuccess(
       responseJson,

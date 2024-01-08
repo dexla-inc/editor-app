@@ -6,8 +6,12 @@ export const withComponentWrapper = <T extends {}>(
 ) => {
   const Config = (props: any) => {
     const hasTooltip = !!props.component?.props?.tooltip;
-    const isLoading = props.component?.props?.loading;
-    const Wrapper = hasTooltip ? Tooltip : isLoading ? Skeleton : Fragment;
+    const initiallyLoading = props.component?.props?.initiallyLoading;
+    const Wrapper = hasTooltip
+      ? Tooltip
+      : initiallyLoading
+      ? Skeleton
+      : Fragment;
 
     return (
       // @ts-ignore
@@ -18,7 +22,7 @@ export const withComponentWrapper = <T extends {}>(
               color: props.component?.props?.tooltipColor,
               withArrow: true,
             }
-          : isLoading
+          : initiallyLoading
           ? { visible: true }
           : {})}
       >

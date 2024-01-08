@@ -3,11 +3,12 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { Loader, Select as MantineSelect, SelectProps } from "@mantine/core";
+import { Select as MantineSelect, SelectProps } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
+import { InputLoader } from "../InputLoader";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -57,6 +58,8 @@ const SelectComponent = forwardRef(
 
     const keys = Object.keys(get(data, "[0]", {}));
 
+    console.log("select", props.style);
+
     return (
       <MantineSelect
         ref={ref}
@@ -96,7 +99,7 @@ const SelectComponent = forwardRef(
             components={{ customText, customLinkText, customLinkUrl }}
           />
         )}
-        rightSection={loading ? <Loader size="xs" /> : null}
+        rightSection={loading ? <InputLoader /> : null}
         label={undefined}
         onChange={(value) => {
           triggers.onChange?.(value);

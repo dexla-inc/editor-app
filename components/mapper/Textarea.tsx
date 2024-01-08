@@ -1,3 +1,5 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import {
@@ -6,10 +8,8 @@ import {
   TextareaProps,
 } from "@mantine/core";
 import debounce from "lodash.debounce";
-import { forwardRef, memo, useCallback, useEffect, useState } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import merge from "lodash.merge";
-import { useInputsStore } from "@/stores/inputs";
+import { forwardRef, memo, useCallback, useEffect, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;

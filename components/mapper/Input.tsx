@@ -7,7 +7,6 @@ import { Component, updateTreeComponent } from "@/utils/editor";
 import {
   ActionIcon,
   Group,
-  Loader,
   TextInput as MantineInput,
   NumberInput as MantineNumberInput,
   NumberInputProps,
@@ -17,6 +16,7 @@ import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo, useCallback, useState } from "react";
+import { InputLoader } from "../InputLoader";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -157,6 +157,13 @@ const InputComponent = forwardRef(
             min={0}
             value={props.value || value || undefined}
             onChange={triggers?.onChange ? debouncedOnChange : undefined}
+            rightSection={
+              loading ? (
+                <InputLoader />
+              ) : isClearable ? (
+                <Icon onClick={clearInput} name="IconX" />
+              ) : null
+            }
             label={undefined}
           />
         ) : (
@@ -191,7 +198,7 @@ const InputComponent = forwardRef(
             }}
             rightSection={
               loading ? (
-                <Loader size="xs" />
+                <InputLoader />
               ) : isClearable ? (
                 <Icon onClick={clearInput} name="IconX" />
               ) : null

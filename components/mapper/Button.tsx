@@ -1,11 +1,11 @@
 import { Icon } from "@/components/Icon";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import merge from "lodash.merge";
-import { ReactElement, memo, forwardRef } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { ReactElement, forwardRef, memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
