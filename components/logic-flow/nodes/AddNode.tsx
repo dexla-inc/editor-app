@@ -1,11 +1,4 @@
-import {
-  EdgeAddChange,
-  EdgeResetChange,
-  Handle,
-  NodeProps,
-  Position,
-  useReactFlow,
-} from "reactflow";
+import { EdgeAddChange, Handle, NodeProps, Position } from "reactflow";
 import { IconPlus } from "@tabler/icons-react";
 import { NodeData, NodeInput } from "@/components/logic-flow/nodes/CustomNode";
 import { ActionIcon, Card, Menu, Stack, useMantineTheme } from "@mantine/core";
@@ -91,6 +84,7 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
     const addId = nanoid();
     const edge = edges.find((edge) => edge.target === node.id);
 
+    const outputConnectorId = nanoid();
     await onNodesChange([
       {
         item: {
@@ -101,7 +95,7 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
             label: "Conditional",
             description: "Execute actions conditionally",
             inputs: [{ id: nanoid(), name: "Input" }],
-            outputs: [{ id: nanoid(), name: "Output" }],
+            outputs: [{ id: outputConnectorId, name: "Output" }],
           },
         },
         type: "add",
@@ -110,7 +104,12 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
 
     await onEdgesChange([
       {
-        item: { ...edge, id: nanoid(), target: conditionalId },
+        item: {
+          ...edge,
+          id: nanoid(),
+          target: conditionalId,
+          sourceHandle: outputConnectorId,
+        },
         type: "add",
       } as EdgeAddChange,
     ]);

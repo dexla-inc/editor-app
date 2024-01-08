@@ -32,7 +32,8 @@ import isEqual from "lodash.isequal";
 import startCase from "lodash.startcase";
 import { GetServerSidePropsContext } from "next";
 import { useCallback, useEffect, useRef } from "react";
-import { useUpdateNodeInternals } from "reactflow";
+import { getOutgoers, Node, useUpdateNodeInternals } from "reactflow";
+import { nanoid } from "nanoid";
 
 export const getServerSideProps = async ({
   query,
@@ -75,6 +76,8 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
   const state = useFlowStore((state) => ({
     nodes: state.nodes,
     edges: state.edges,
+    onNodesChange: state.onNodesChange,
+    onEdgesChange: state.onEdgesChange,
   }));
   const updateNodeInternals = useUpdateNodeInternals();
   const previousSelectedNode = usePrevious(selectedNode);
@@ -174,6 +177,9 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
 
   const onSubmit = async ({ label, ...values }: any) => {
     const isConditionalNode = selectedNode?.type === "conditionalNode";
+    const connectedEdges = state.edges.filter(
+      (edge) => edge.source === selectedNode?.id,
+    );
 
     updateNodeData({
       id: selectedNode?.id,
@@ -184,6 +190,43 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
       },
     });
     updateNodeInternals(selectedNode?.id!);
+    values.outputs?.forEach((output: any, index: number) => {
+      const connectedEdge = connectedEdges.find(
+        (edge) => edge.sourceHandle === output.id,
+      );
+
+      if (!connectedEdge) {
+        const addId = nanoid();
+        state.onNodesChange([
+          {
+            item: {
+              id: addId,
+              type: "addNode",
+              position: {
+                x: (selectedNode as any).xPos + 100,
+                y: (selectedNode as any).yPos + 100 * index,
+              },
+              data: {
+                inputs: [{ id: nanoid() }],
+              },
+            },
+            type: "add",
+          },
+        ]);
+
+        state.onEdgesChange([
+          {
+            item: {
+              id: nanoid(),
+              target: addId,
+              source: selectedNode?.id!,
+              sourceHandle: output.id,
+            },
+            type: "add",
+          },
+        ]);
+      }
+    });
   };
 
   const nodeData = nodesData[selectedNode?.type as keyof typeof nodesData];
@@ -196,22 +239,20 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
         <Aside key={selectedNode?.id} width={{ base: ASIDE_WIDTH }}>
           <Aside.Section grow component={ScrollArea}>
             <Stack px="md" py="lg">
-              {!selectedNode && (
+              {!selectedNode ? (
                 <Center>
                   <Text size="sm" color="dimmed">
                     Click a node to select it
                   </Text>
                 </Center>
-              )}
-              {(selectedNode?.id === "start-node" ||
-                selectedNode?.id === "add-node") && (
+              ) : selectedNode?.id === "start-node" ||
+                selectedNode?.id === "add-node" ? (
                 <Center>
                   <Text size="sm" color="dimmed">
                     You can&apos;t edit the Start Node
                   </Text>
                 </Center>
-              )}
-              {selectedNode && selectedNode?.id !== "start-node" && (
+              ) : (
                 <Stack>
                   <Text size="sm">
                     Edit {startCase(selectedNode.data?.label)} Node
