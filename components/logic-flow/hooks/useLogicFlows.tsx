@@ -4,20 +4,28 @@ import { IconArrowBack } from "@tabler/icons-react";
 import { useFlowStore } from "@/stores/flow";
 import { VariablesButton } from "@/components/variables/VariablesButton";
 import { useEditorStore } from "@/stores/editor";
+import { useState } from "react";
 
 export const useLogicFlows = () => {
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
   const pageId = useEditorStore((state) => state.currentPageId);
   const projectId = useEditorStore((state) => state.currentProjectId);
+  const setSelectedTabView = useEditorStore(
+    (state) => state.setSelectedTabView,
+  );
+  const selectedTabView = useEditorStore((state) => state.selectedTabView);
 
   const openLogicFlowsModal = () =>
     modals.openContextModal({
       modal: "logicFlows",
+      onClose: () => {
+        setSelectedTabView("list");
+      },
       title: (
         <Flex justify="space-between" mr={10}>
           <Flex align="center" gap={10}>
-            Logic Flows{" "}
-            <ActionIcon>
+            Logic Flows {selectedTabView}
+            <ActionIcon onClick={() => setSelectedTabView("list")}>
               <IconArrowBack />
             </ActionIcon>
           </Flex>

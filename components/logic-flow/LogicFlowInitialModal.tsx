@@ -11,8 +11,10 @@ import { useFlowStore } from "@/stores/flow";
 import { LOGICFLOW_BACKGROUND } from "@/utils/branding";
 import { ASIDE_WIDTH, HEADER_HEIGHT } from "@/utils/config";
 import {
+  ActionIcon,
   Box,
   Button,
+  Flex,
   Group,
   Modal,
   Stack,
@@ -27,6 +29,8 @@ import { useEditor } from "@tiptap/react";
 import { ContextModalProps, modals } from "@mantine/modals";
 import { LogicFlowsPage } from "@/components/logic-flow/LogicFlowsPage";
 import { ReactFlowProvider } from "reactflow";
+import { IconArrowBack } from "@tabler/icons-react";
+import { VariablesButton } from "@/components/variables/VariablesButton";
 
 export const getServerSideProps = async ({
   query,
@@ -50,7 +54,7 @@ export default function LogicFlowInitialModal({
   context,
   id,
   innerProps,
-}: ContextModalProps) {
+}: ContextModalProps<any>) {
   const theme = useMantineTheme();
   const setCurrentProjectId = useEditorStore(
     (state) => state.setCurrentProjectId,
@@ -61,6 +65,10 @@ export default function LogicFlowInitialModal({
   const resetFlow = useFlowStore((state) => state.resetFlow);
   const page = useEditorStore((state) => state.currentPageId ?? "");
   const projectId = useEditorStore((state) => state.currentProjectId ?? "");
+  const selectedTabView = useEditorStore((state) => state.selectedTabView);
+  const setSelectedTabView = useEditorStore(
+    (state) => state.setSelectedTabView,
+  );
 
   const client = useQueryClient();
   const { data, isLoading } = useQuery({
@@ -106,8 +114,8 @@ export default function LogicFlowInitialModal({
   const [flowId, setFlowId] = useState<string>("");
 
   return (
-    <Tabs value={activeTab}>
-      <Tabs.Panel value={"default"}>
+    <Tabs value={selectedTabView} onTabChange={setSelectedTabView}>
+      <Tabs.Panel value={"list"}>
         <LogicFlowShell>
           {logicFlows?.length === 0 && !isLoading && (
             <Box
@@ -133,7 +141,6 @@ export default function LogicFlowInitialModal({
                   key={flow.id}
                   flow={flow}
                   onDelete={async () => {
-                    // const flow.name === "start-noode";
                     await deleteFlow.mutate(flow.id);
                   }}
                   onEdit={() => {
@@ -148,7 +155,8 @@ export default function LogicFlowInitialModal({
                     });
                   }}
                   onClick={() => {
-                    setActiveTab("global");
+                    console.log("click");
+                    setSelectedTabView("flow");
                     setFlowId(flow.id);
                   }}
                 />
@@ -157,7 +165,7 @@ export default function LogicFlowInitialModal({
           </Group>
         </LogicFlowShell>
       </Tabs.Panel>
-      <Tabs.Panel value={"global"}>
+      <Tabs.Panel value={"flow"}>
         <ReactFlowProvider>
           <LogicFlowsPage flowId={flowId} />
         </ReactFlowProvider>
