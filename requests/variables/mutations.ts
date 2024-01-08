@@ -1,13 +1,46 @@
 import { SuccessResponse } from "@/requests/types";
 import { VariableParams, VariableResponse } from "@/requests/variables/types";
 import { useVariableStore } from "@/stores/variables";
-import { del, post } from "@/utils/api";
+import { del, post, put } from "@/utils/api";
 
 export const createVariable = async (
   projectId: string,
   params: VariableParams,
 ) => {
   let url = `/projects/${projectId}/variables`;
+  const setVariable = useVariableStore.getState().setVariable;
+  setVariable(params);
+
+  const response = (await post<VariableResponse>(
+    url,
+    params,
+  )) as VariableResponse;
+
+  return response;
+};
+
+export const updateVariable = async (
+  id: string,
+  projectId: string,
+  params: VariableParams,
+) => {
+  let url = `/projects/${projectId}/variables/${id}`;
+  const setVariable = useVariableStore.getState().setVariable;
+  setVariable(params);
+
+  const response = (await put<VariableResponse>(
+    url,
+    params,
+  )) as VariableResponse;
+
+  return response;
+};
+
+export const upsertVariable = async (
+  projectId: string,
+  params: VariableParams,
+) => {
+  let url = `/projects/${projectId}/variables/upsert`;
   const setVariable = useVariableStore.getState().setVariable;
   setVariable(params);
 

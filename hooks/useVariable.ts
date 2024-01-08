@@ -1,5 +1,5 @@
+import { upsertVariable } from "@/requests/variables/mutations";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createVariable } from "@/requests/variables/mutations";
 import { useRouter } from "next/router";
 
 export const useVariable = () => {
@@ -13,7 +13,7 @@ export const useVariable = () => {
   const createVariablesMutation = useMutation({
     mutationKey: ["variables", projectId, pageId],
     mutationFn: async (values: any) => {
-      return await createVariable(projectId, {
+      return await upsertVariable(projectId, {
         ...values,
         pageId,
       });

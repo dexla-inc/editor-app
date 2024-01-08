@@ -4,7 +4,7 @@ export type VariableParams = {
   name: string;
   type: FrontEndTypes;
   defaultValue: string | null;
-  value?: string;
+  value?: string; // THIS IS OBSOLETE. DELETE THIS.
   isGlobal?: boolean;
   pageId: string;
 };
