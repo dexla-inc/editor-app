@@ -8,7 +8,7 @@ import {
 } from "@/requests/datasources/mutations";
 import { createPageList, createPages } from "@/requests/pages/mutations";
 import { PageAIResponse, PageBody } from "@/requests/pages/types";
-import { createVariable } from "@/requests/variables/mutations";
+import { upsertVariable } from "@/requests/variables/mutations";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { GRAY_WHITE_COLOR } from "@/utils/branding";
@@ -199,7 +199,7 @@ export default function PagesStep({
         baseUrl,
       });
 
-      await createVariable(projectId, {
+      await upsertVariable(projectId, {
         name: "GET Project Data",
         type: "OBJECT",
         value: exampleResponse,

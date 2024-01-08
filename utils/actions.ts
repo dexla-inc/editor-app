@@ -29,7 +29,6 @@ import { CloseModalFlowActionForm } from "@/components/actions/logic-flow-forms/
 import { ClosePopOverFlowActionForm } from "@/components/actions/logic-flow-forms/ClosePopOverFlowActionForm";
 import { CustomJavascriptFlowActionForm } from "@/components/actions/logic-flow-forms/CustomJavascriptFlowActionForm";
 import { DebugFlowActionForm } from "@/components/actions/logic-flow-forms/DebugFlowActionForm";
-import { createBrowserHistory } from "history";
 import { transpile } from "typescript";
 
 import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableActionForm";
@@ -51,7 +50,7 @@ import {
   getDataSourceEndpoints,
 } from "@/requests/datasources/queries-noauth";
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
-import { createVariable } from "@/requests/variables/mutations";
+import { upsertVariable } from "@/requests/variables/mutations";
 import {
   getVariable,
   listVariables,
@@ -59,6 +58,7 @@ import {
 import { FrontEndTypes, VariableParams } from "@/requests/variables/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
+import { useVariableStore } from "@/stores/variables";
 import { readDataFromStream } from "@/utils/api";
 import {
   Component,
@@ -68,13 +68,12 @@ import {
 } from "@/utils/editor";
 import { flattenKeys, flattenKeysWithRoot } from "@/utils/flattenKeys";
 import { executeFlow } from "@/utils/logicFlows";
+import { getParsedJSCode } from "@/utils/variables";
 import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
-import { getParsedJSCode } from "@/utils/variables";
-import { useVariableStore } from "@/stores/variables";
 
 const triggers = [
   "onClick",
@@ -875,7 +874,7 @@ const handleError = async (
 
   const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}-error`;
   const varValue = JSON.stringify(JSON.parse(error.message));
-  await createVariable(router.query.id as string, {
+  await upsertVariable(router.query.id as string, {
     name: varName,
     value: varValue,
     type: "OBJECT" as FrontEndTypes,
@@ -917,7 +916,7 @@ const handleSuccess = async (
   const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}`;
   const varValue = JSON.stringify(responseJson);
 
-  await createVariable(router.query.id as string, {
+  await upsertVariable(router.query.id as string, {
     name: varName,
     value: varValue,
     defaultValue: null,
@@ -1425,7 +1424,7 @@ export const changeVariableAction = async ({
 
       const variable = variables.list[action.variableId];
 
-      createVariable(currentProjectId!, {
+      upsertVariable(currentProjectId!, {
         name: variable.name,
         value:
           typeof previewNewValue === "string"

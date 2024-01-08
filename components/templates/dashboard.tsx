@@ -5,7 +5,7 @@ import {
   getDataSources,
 } from "@/requests/datasources/queries-noauth";
 import { createLogicFlow } from "@/requests/logicflows/mutations";
-import { createVariable } from "@/requests/variables/mutations";
+import { upsertVariable } from "@/requests/variables/mutations";
 import { structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { px } from "@mantine/core";
@@ -329,7 +329,7 @@ export const template = async (
 
         const ex = JSON.stringify(projectData.data[key], null, 2);
 
-        const _var = await createVariable(projectId, {
+        const _var = await upsertVariable(projectId, {
           name: `GET ${key} Data`,
           type: "OBJECT",
           value: ex,

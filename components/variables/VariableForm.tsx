@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type VariablesFormValues = {
   name: string;
@@ -24,6 +24,13 @@ type Props = {
   projectId: string;
   pageId: string;
   variableId?: string;
+};
+
+const requiredFieldValidator = (fieldName: string) => (value: string) => {
+  if (!value) {
+    return `${fieldName} is required`;
+  }
+  return true;
 };
 
 export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
@@ -42,6 +49,10 @@ export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
       defaultValue: "",
       isGlobal: false,
     },
+    validate: {
+      name: requiredFieldValidator("Name"),
+      type: requiredFieldValidator("Type"),
+    },
   });
 
   const onSubmit = async (values: VariablesFormValues) => {
@@ -50,16 +61,19 @@ export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
     });
   };
 
+  const [isInitialized, setIsInitialized] = useState(false);
+
   useEffect(() => {
-    if (variable && form.values.name === "") {
+    if (variable && !isInitialized) {
       form.setValues({
         name: variable.name,
         type: variable.type,
         defaultValue: variable.defaultValue ?? "",
         isGlobal: variable.isGlobal,
       });
+      setIsInitialized(true);
     }
-  }, [form, variable]);
+  }, [form, variable, isInitialized]);
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
@@ -83,7 +97,6 @@ export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
           label="Is Global?"
           {...form.getInputProps("isGlobal", { type: "checkbox" })}
         />
-
         <Button
           type="submit"
           loading={createVariablesMutation.isLoading}
