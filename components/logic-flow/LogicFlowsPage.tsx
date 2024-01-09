@@ -63,10 +63,6 @@ type Props = {
 
 export const LogicFlowsPage = ({ flowId }: Props) => {
   const reactFlowWrapper = useRef(null);
-  const setCurrentProjectId = useEditorStore(
-    (state) => state.setCurrentProjectId,
-  );
-  const setCurrentPageId = useEditorStore((state) => state.setCurrentPageId);
   const restoreFlow = useFlowStore((state) => state.restoreFlow);
   const selectedNode = useFlowStore((state) => state.selectedNode);
   const isRestored = useFlowStore((state) => state.isRestored);
@@ -78,15 +74,17 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
     edges: state.edges,
     onNodesChange: state.onNodesChange,
     onEdgesChange: state.onEdgesChange,
+    setIsRestored: state.setIsRestored,
   }));
   const updateNodeInternals = useUpdateNodeInternals();
   const previousSelectedNode = usePrevious(selectedNode);
   const pageId = useEditorStore((state) => state.currentPageId ?? "");
   const id = useEditorStore((state) => state.currentProjectId ?? "");
 
-  const { data: flow } = useQuery({
-    queryKey: ["logic-flow", id, pageId],
+  const { data: flow, isLoading: isFlowDataLoading } = useQuery({
+    queryKey: ["logic-flow", id, pageId, flowId],
     queryFn: async () => {
+      state.setIsRestored(false);
       const result = await getLogicFlow(id, flowId);
 
       if (result?.data) {
@@ -118,13 +116,6 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
     },
   });
 
-  useEffect(() => {
-    if (id && pageId) {
-      setCurrentProjectId(id);
-      setCurrentPageId(pageId);
-    }
-  }, [id, pageId, setCurrentPageId, setCurrentProjectId]);
-
   const hasChanges = useCallback(() => {
     const flowData = flow?.data as unknown as FlowData;
     const nodes = state.nodes.map((n) =>
@@ -138,7 +129,7 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
   }, [flow?.data, state.edges, state.nodes]);
 
   useEffect(() => {
-    if (isRestored && !isDragging && hasChanges()) {
+    if (isRestored && !isDragging && hasChanges() && !isFlowDataLoading) {
       const nodes = state.nodes.map((n) =>
         removeKeysRecursive(n, ["width", "height"]),
       ) as FlowData["nodes"];
@@ -153,6 +144,7 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
     isDragging,
     isRestored,
     hasChanges,
+    isFlowDataLoading,
     state.nodes,
     state.edges,
     updateFlow,

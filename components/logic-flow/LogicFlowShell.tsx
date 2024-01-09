@@ -1,26 +1,10 @@
-import { Logo } from "@/components/Logo";
-
-import { ASIDE_WIDTH, HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
-import {
-  Anchor,
-  AppShell,
-  AppShellProps,
-  Box,
-  Breadcrumbs,
-  Button,
-  Flex,
-  Group,
-  Header,
-  Text,
-} from "@mantine/core";
-import Link from "next/link";
+import { HEADER_HEIGHT } from "@/utils/config";
+import { AppShell, AppShellProps, Box } from "@mantine/core";
 
 import { LogicFlowFormModal } from "@/components/logic-flow/LogicFlowFormModal";
-import { VariablesButton } from "@/components/variables/VariablesButton";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
-import { useFlowStore } from "@/stores/flow";
-import { DEFAULT_TEXTCOLOR, LOGICFLOW_BACKGROUND } from "@/utils/branding";
+import { LOGICFLOW_BACKGROUND } from "@/utils/branding";
 import { ErrorBoundary } from "react-error-boundary";
 
 export interface ShellProps extends AppShellProps {
@@ -32,7 +16,6 @@ export const LogicFlowShell = ({
   navbar,
   aside,
   header,
-  flow,
 }: ShellProps) => {
   const resetTree = useEditorStore((state) => state.resetTree);
 

@@ -4,7 +4,6 @@ import { IconArrowBack } from "@tabler/icons-react";
 import { useFlowStore } from "@/stores/flow";
 import { VariablesButton } from "@/components/variables/VariablesButton";
 import { useEditorStore } from "@/stores/editor";
-import { useState } from "react";
 
 export const useLogicFlows = () => {
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);

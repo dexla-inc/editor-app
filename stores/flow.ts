@@ -71,6 +71,7 @@ export type FlowState = {
   setShowFormModal: (shouldShowFormModal?: boolean, flowId?: string) => void;
   selectedTabView: "list" | "flow";
   setSelectedTabView: (selectedTabView: "list" | "flow") => void;
+  setIsRestored: (isRestored: boolean) => void;
 };
 
 const edgeProps: Partial<Edge> = {
@@ -116,6 +117,9 @@ export const useFlowStore = create<FlowState>()(
       },
       isDragging: false,
       isRestored: false,
+      setIsRestored: (isRestored) => {
+        set({ isRestored }, false, "flow/setIsRestored");
+      },
       isUpdating: false,
       shouldShowFormModal: false,
       nodes: [],

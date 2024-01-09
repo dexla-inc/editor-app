@@ -9,14 +9,10 @@ import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { LOGICFLOW_BACKGROUND } from "@/utils/branding";
-import { ASIDE_WIDTH, HEADER_HEIGHT } from "@/utils/config";
 import {
-  ActionIcon,
   Box,
   Button,
-  Flex,
   Group,
-  Modal,
   Stack,
   Tabs,
   Text,
@@ -25,12 +21,9 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import { useEffect, useState } from "react";
-import { useEditor } from "@tiptap/react";
-import { ContextModalProps, modals } from "@mantine/modals";
+import { ContextModalProps } from "@mantine/modals";
 import { LogicFlowsPage } from "@/components/logic-flow/LogicFlowsPage";
 import { ReactFlowProvider } from "reactflow";
-import { IconArrowBack } from "@tabler/icons-react";
-import { VariablesButton } from "@/components/variables/VariablesButton";
 
 export const getServerSideProps = async ({
   query,
@@ -43,29 +36,14 @@ export const getServerSideProps = async ({
   };
 };
 
-type Props = {
-  // id: string;
-  // page: string;
-  opened: boolean;
-  onClose: () => void;
-};
-
-export default function LogicFlowInitialModal({
-  context,
-  id,
-  innerProps,
-}: ContextModalProps<any>) {
-  const theme = useMantineTheme();
-  const setCurrentProjectId = useEditorStore(
-    (state) => state.setCurrentProjectId,
-  );
-  const setCurrentPageId = useEditorStore((state) => state.setCurrentPageId);
+export default function LogicFlowInitialModal({}: ContextModalProps) {
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
   const resetFlow = useFlowStore((state) => state.resetFlow);
   const page = useEditorStore((state) => state.currentPageId ?? "");
   const projectId = useEditorStore((state) => state.currentProjectId ?? "");
   const selectedTabView = useFlowStore((state) => state.selectedTabView);
   const setSelectedTabView = useFlowStore((state) => state.setSelectedTabView);
+  const setIsRestored = useFlowStore((state) => state.setIsRestored);
 
   const client = useQueryClient();
   const { data, isLoading } = useQuery({
@@ -101,11 +79,9 @@ export default function LogicFlowInitialModal({
 
   useEffect(() => {
     if (projectId && page) {
-      setCurrentProjectId(projectId);
-      setCurrentPageId(page);
       resetFlow();
     }
-  }, [projectId, page, setCurrentPageId, setCurrentProjectId, resetFlow]);
+  }, [projectId, page, resetFlow]);
 
   const [flowId, setFlowId] = useState<string>("");
 
@@ -154,6 +130,7 @@ export default function LogicFlowInitialModal({
                   onClick={() => {
                     setSelectedTabView("flow");
                     setFlowId(flow.id);
+                    setIsRestored(false);
                   }}
                 />
               );
