@@ -6,7 +6,6 @@ import { EditorCanvas } from "@/components/EditorCanvas";
 import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
-import { listVariables } from "@/requests/variables/queries-noauth";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
@@ -32,7 +31,7 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
 
 type Props = {
@@ -63,14 +62,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
   const queryClient = useQueryClient();
 
-  const { data: variables, isLoading: isVariablesFetching } = useQuery({
-    queryKey: ["variables", projectId, pageId],
-    queryFn: async () => {
-      return await listVariables(projectId, { pageId });
-    },
-    enabled: !!projectId && !!pageId,
-  });
-
   useEffect(() => {
     setIsLoading(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -94,19 +85,19 @@ export const Editor = ({ projectId, pageId }: Props) => {
   }, [setEditorTree]);
 
   useEffect(() => {
+    const initializeVariables = async () =>
+      await initializeVariableList(projectId, pageId);
     if (pageId) {
       liveblocks.leaveRoom();
       liveblocks.enterRoom(pageId);
-      if (!isVariablesFetching && variables) {
-        initializeVariableList(variables);
-      }
+      initializeVariables();
     }
 
     return () => {
       liveblocks.leaveRoom();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageId, variables, isVariablesFetching]);
+  }, [pageId]);
 
   useEffect(() => {
     setCurrentUser(user);

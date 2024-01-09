@@ -27,12 +27,12 @@ export const updateVariable = async (
   params: VariableParams,
 ) => {
   let url = `/projects/${projectId}/variables/${id}`;
-  setVariable(params, id);
 
   const response = (await put<VariableResponse>(
     url,
     params,
   )) as VariableResponse;
+  setVariable(params, response.id);
 
   return response;
 };
