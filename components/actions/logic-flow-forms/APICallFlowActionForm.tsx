@@ -236,6 +236,16 @@ export const APICallFlowActionForm = ({
                             [field]: variable,
                           });
                         }}
+                        javascriptCode={form.values.actionCode}
+                        onChangeJavascriptCode={(
+                          javascriptCode: string,
+                          label: string,
+                        ) =>
+                          form.setFieldValue(
+                            `actionCode.${label}`,
+                            javascriptCode,
+                          )
+                        }
                         size="xs"
                         label={param.name}
                         description={`${

@@ -125,6 +125,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
       },
       datasources: action.action?.datasources,
       isLogin: action.action?.isLogin ?? false,
+      actionCode: action.action?.actionCode ?? {},
     },
   });
 
@@ -142,6 +143,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
           datasources: dataSources.data!.results,
           binds: values.binds,
           isLogin: values.isLogin,
+          actionCode: values.actionCode,
         },
         updateTreeComponentActions,
       });
@@ -326,6 +328,16 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                           onPickVariable={(variable: string) => {
                             form.setFieldValue(field, variable);
                           }}
+                          javascriptCode={form.values.actionCode}
+                          onChangeJavascriptCode={(
+                            javascriptCode: string,
+                            label: string,
+                          ) =>
+                            form.setFieldValue(
+                              `actionCode.${label}`,
+                              javascriptCode,
+                            )
+                          }
                           size="xs"
                           label={param.name}
                           description={`${

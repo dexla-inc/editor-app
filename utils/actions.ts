@@ -52,7 +52,7 @@ import {
   getVariable,
   listVariables,
 } from "@/requests/variables/queries-noauth";
-import { FrontEndTypes, VariableParams } from "@/requests/variables/types";
+import { VariableParams } from "@/requests/variables/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
@@ -163,6 +163,7 @@ export type SequentialTrigger = Extract<
 export interface BaseAction {
   name: string;
   data?: any;
+  actionCode?: Record<string, string>;
 }
 
 export interface NavigationAction extends BaseAction {
@@ -649,8 +650,8 @@ export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   });
 };
 
-const getVariableValueFromVariableId = async (variableId = "") => {
-  const currentProjectId = useEditorStore.getState().currentProjectId;
+const getVariableValueFromVariableId = (variableId = "") => {
+  const variableList = useVariableStore.getState().variableList;
   const actionVariable = variableId.split(`var_`)[1];
 
   if (!actionVariable) {
@@ -665,18 +666,20 @@ const getVariableValueFromVariableId = async (variableId = "") => {
   const isObject = typeof _var === "object";
 
   if (_var) {
-    const variable = await getVariable(
-      currentProjectId!,
-      isObject ? (_var as any).id : _var,
+    const variableId = isObject ? (_var as any).id : _var;
+    const variable = variableList.find(
+      (v) => v.id === variableId || v.name === variableId,
     );
 
-    let value = variable.value;
+    if (!variable) return;
+    let value = variable.value ?? variable.defaultValue;
     if (isObject) {
-      const dataFlatten = flattenKeys(JSON.parse(variable.value ?? "{}"));
+      const dataFlatten = flattenKeys(
+        JSON.parse(variable.value ?? variable.defaultValue ?? "{}"),
+      );
 
       value = get(dataFlatten, (_var as any).path);
     }
-
     return value;
   }
 };
@@ -758,7 +761,7 @@ const getVariablesValue = async (objs: Record<string, string>) => {
     }
 
     if (key.startsWith(`var_`)) {
-      value = (await getVariableValueFromVariableId(key)) as string;
+      value = getVariableValueFromVariableId(key) as string;
     }
 
     if (value) {
@@ -820,7 +823,6 @@ const getBody = (endpoint: any, action: any, variableValues: any) => {
 const prepareRequestData = async (action: any) => {
   const cachedEndpoints = useEditorStore.getState().endpoints;
   const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
-
   const keys = Object.keys(action.binds?.parameter ?? {});
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
   const variableValues = await getVariablesValue(
@@ -840,7 +842,6 @@ const handleError = async (
   router: any,
   rest: any,
   component: any,
-  endpoint: any,
   actionMapper: any,
   updateTreeComponent: any,
 ) => {
@@ -857,17 +858,6 @@ const handleError = async (
   }
 
   updateTreeComponent(component.id!, { loading: false }, false);
-
-  const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}-error`;
-  const varValue = JSON.stringify(JSON.parse(error.message));
-  await upsertVariable(router.query.id as string, {
-    name: varName,
-    value: varValue,
-    type: "OBJECT" as FrontEndTypes,
-    isGlobal: false,
-    pageId: router.query.page as string,
-    defaultValue: varValue,
-  });
 };
 
 const handleSuccess = async (
@@ -877,7 +867,6 @@ const handleSuccess = async (
   router: any,
   rest: any,
   component: any,
-  endpoint: any,
   action: any,
   actionMapper: any,
   updateTreeComponent: any,
@@ -898,18 +887,6 @@ const handleSuccess = async (
   }
 
   updateTreeComponent(component.id!, { loading: false }, false);
-
-  const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}`;
-  const varValue = JSON.stringify(responseJson);
-
-  await upsertVariable(router.query.id as string, {
-    name: varName,
-    value: varValue,
-    defaultValue: null,
-    type: "OBJECT" as FrontEndTypes,
-    isGlobal: false,
-    pageId: router.query.page as string,
-  });
 };
 
 function constructHeaders(endpoint?: Endpoint, authHeaderKey = "") {
@@ -1009,7 +986,6 @@ export const apiCallAction = async ({
       router,
       rest,
       component,
-      endpoint,
       action,
       actionMapper,
       updateTreeComponent,
@@ -1022,7 +998,6 @@ export const apiCallAction = async ({
       router,
       rest,
       component,
-      endpoint,
       actionMapper,
       updateTreeComponent,
     );
@@ -1396,6 +1371,7 @@ export const changeVariableAction = async ({
           { list: {} } as Record<string, any>,
         );
       });
+      if (!action.javascriptCode) return;
 
       if (action.javascriptCode === "return variables") {
         return;

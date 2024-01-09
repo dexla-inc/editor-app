@@ -43,6 +43,10 @@ export const ReloadComponentFlowActionForm = ({ form }: Props) => {
           onChange={(e) => {
             form.setFieldValue("componentId", e.currentTarget.value);
           }}
+          javascriptCode={form.values.actionCode}
+          onChangeJavascriptCode={(javascriptCode: string, label: string) =>
+            form.setFieldValue(`actionCode.${label}`, javascriptCode)
+          }
         />
 
         <Button type="submit" size="xs" loading={isUpdating}>

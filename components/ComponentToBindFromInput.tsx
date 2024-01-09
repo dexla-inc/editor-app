@@ -13,6 +13,8 @@ type Props = TextInputProps & {
   onPickComponent?: (value: string) => void;
   onPickVariable?: (value: string) => void;
   isLogicFlow?: boolean;
+  javascriptCode?: Record<string, string>;
+  onChangeJavascriptCode?: (javascriptCode: string, label: string) => void;
 };
 
 export const ComponentToBindFromInput = ({
@@ -24,6 +26,8 @@ export const ComponentToBindFromInput = ({
   placeholder = "",
   label = "Component to bind",
   isLogicFlow,
+  javascriptCode,
+  onChangeJavascriptCode,
   ...rest
 }: Props) => {
   const setPickingComponentToBindTo = useEditorStore(
@@ -41,11 +45,17 @@ export const ComponentToBindFromInput = ({
   };
 
   const [bindedValue, setBindedValue] = useState("");
+  const _code = javascriptCode![label as string] ?? javascriptCode?.code ?? "";
   const [
     opened,
     { toggle: onTogglePopover, close: onClosePopover, open: onOpenPopover },
   ] = useDisclosure(false);
-  const [javaScriptCode, setJavaScriptCode] = useState("");
+
+  const onCodeChange = (javascriptCode: string) => {
+    label = label === "Component to bind" ? "code" : label;
+    onChangeJavascriptCode &&
+      onChangeJavascriptCode(javascriptCode, label as string);
+  };
 
   return (
     <TextInput
@@ -66,10 +76,8 @@ export const ComponentToBindFromInput = ({
             onClosePopover={onClosePopover}
             bindingType="JavaScript"
             onChangeBindingType={() => {}}
-            javascriptCode={javaScriptCode}
-            onChangeJavascriptCode={(javascriptCode: any) =>
-              setJavaScriptCode(javascriptCode)
-            }
+            javascriptCode={_code}
+            onChangeJavascriptCode={onCodeChange}
             onOpenPopover={onOpenPopover}
             bindedValue={bindedValue}
             onPickComponent={onPickComponent}
