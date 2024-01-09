@@ -4,7 +4,6 @@ import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourc
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
-import { useAuthStore } from "@/stores/auth";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
@@ -100,8 +99,7 @@ export const APICallFlowActionForm = ({
     }
   }, [endpoints, form.values.endpoint, selectedEndpoint]);
 
-  useAuthStore((state) => state.refreshAccessToken);
-  const accessToken = useAuthStore((state) => state.getAccessToken);
+  const accessToken = useDataSourceStore((state) => state.accessToken);
 
   useEffect(() => {
     if (page?.pageState) {
@@ -199,10 +197,9 @@ export const APICallFlowActionForm = ({
                     param.name === "Authorization" &&
                     param.type === "BEARER"
                   ) {
-                    const token = accessToken();
-                    if (token) {
+                    if (accessToken) {
                       additionalProps = {
-                        defaultValue: token.substring(0, 35) + "...",
+                        defaultValue: accessToken.substring(0, 35) + "...",
                         disabled: true,
                       };
                     }

@@ -4,7 +4,7 @@ import {
   DataSourceAuthResponse,
   RequestBody,
 } from "@/requests/datasources/types";
-import { useAuthStore } from "@/stores/auth";
+import { useDataSourceStore } from "@/stores/datasource";
 import { Button, Stack, TextInput, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
 
@@ -68,7 +68,7 @@ export const TestUserLogin = ({
 
     const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
 
-    const setAuthTokens = useAuthStore.getState().setAuthTokens;
+    const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
     setAuthTokens(mergedAuthConfig);
 
     setUserLoggedIn(true);

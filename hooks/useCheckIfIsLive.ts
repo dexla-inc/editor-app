@@ -1,5 +1,6 @@
 import { isMatchingUrl } from "@/pages/[page]";
 import { getByDomain } from "@/requests/projects/queries-noauth";
+import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -11,6 +12,8 @@ export const useCheckIfIsLive = () => {
   const setCurrentProjectId = useEditorStore(
     (state) => state.setCurrentProjectId,
   );
+
+  const fetchEndpoints = useDataSourceStore((state) => state.fetchEndpoints);
 
   const url = typeof window !== "undefined" ? window.location.host : "";
   const initialIsLive =
@@ -30,6 +33,7 @@ export const useCheckIfIsLive = () => {
           setIsLive(!!project.id);
         }
         setCurrentProjectId(_projectId);
+        fetchEndpoints(_projectId);
       } catch (error) {
         console.error("Error checking if live:", error);
       }

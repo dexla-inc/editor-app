@@ -85,6 +85,12 @@ export default function AuthenticationBearer({
 }: BearerTokenAuthenticationProps) {
   const router = useRouter();
   const projectId = router.query.id as string;
+  const clearApiAuthConfig = useDataSourceStore(
+    (state) => state.clearApiAuthConfig,
+  );
+  const setApiAuthConfig = useDataSourceStore(
+    (state) => state.fetchApiAuthConfig,
+  );
 
   const form = useForm<AuthenticationBearerTokenParams>({
     validateInputOnBlur: true,
@@ -126,6 +132,7 @@ export default function AuthenticationBearer({
       });
 
       setIsLoading && setIsLoading(true);
+      clearApiAuthConfig();
 
       const {
         loginEndpointId,
@@ -166,7 +173,7 @@ export default function AuthenticationBearer({
         );
       }
 
-      useDataSourceStore.getState().clearApiAuthConfig();
+      setApiAuthConfig(projectId, dataSource.id);
 
       nextStep && nextStep();
 
