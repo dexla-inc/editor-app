@@ -863,7 +863,6 @@ export type ComponentDefinition = {
   allowedParentTypes?: string[];
   toolboxActions?: ToolboxAction[];
   blockedToolboxActions?: string[];
-  // TODO: Add actions: Action[]. Filter all possible actions for a component
 };
 
 export type ComponentMapper = {

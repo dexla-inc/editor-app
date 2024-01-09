@@ -45,7 +45,6 @@ import { TogglePropsFlowActionForm } from "@/components/actions/logic-flow-forms
 import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components/actions/logic-flow-forms/TriggerLogicFlowActionForm";
 import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { Options } from "@/components/modifiers/GoogleMap";
-import { getDataSourceAuth } from "@/requests/datasources/queries-noauth";
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
 import { upsertVariable } from "@/requests/variables/mutations";
 import {
@@ -54,6 +53,7 @@ import {
 } from "@/requests/variables/queries-noauth";
 import { VariableParams } from "@/requests/variables/types";
 import { useAuthStore } from "@/stores/auth";
+import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
 import { readDataFromStream } from "@/utils/api";
@@ -363,7 +363,8 @@ export const navigationAction = ({
   router,
 }: NavigationActionParams) => {
   const isLive = useEditorStore.getState().isLive;
-  const projectId = router.query.id as string;
+  const projectId = useEditorStore.getState().currentProjectId;
+
   let url = isLive
     ? `/${action.pageId}`
     : `/projects/${projectId}/editor/${action.pageId}`;
@@ -821,7 +822,7 @@ const getBody = (endpoint: any, action: any, variableValues: any) => {
 };
 
 const prepareRequestData = async (action: any) => {
-  const cachedEndpoints = useEditorStore.getState().endpoints;
+  const cachedEndpoints = useDataSourceStore.getState().endpoints as Endpoint[];
   const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
   const keys = Object.keys(action.binds?.parameter ?? {});
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
@@ -928,6 +929,7 @@ export const apiCallAction = async ({
 }: APICallActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   const { endpoint, url, body } = await prepareRequestData(action);
+  const apiAuthConfig = useDataSourceStore.getState().apiAuthConfig;
 
   try {
     updateTreeComponent({
@@ -941,18 +943,13 @@ export const apiCallAction = async ({
     if (action.isLogin) {
       responseJson = await performFetch(url, endpoint, body);
 
-      // router.query will not work on live apps, this needs to change
-      const projectId = router.query.id as string;
-      const dataSourceAuthConfig = await getDataSourceAuth(
-        projectId,
-        endpoint?.dataSourceId!,
-      );
-      const mergedAuthConfig = { ...responseJson, ...dataSourceAuthConfig };
+      const mergedAuthConfig = { ...responseJson, ...apiAuthConfig };
       const setAuthTokens = useAuthStore.getState().setAuthTokens;
       setAuthTokens(mergedAuthConfig);
     } else {
       const refreshAccessToken = useAuthStore.getState().refreshAccessToken;
       const getAccessToken = useAuthStore.getState().getAccessToken;
+
       refreshAccessToken();
 
       let authHeaderKey =
@@ -1425,7 +1422,6 @@ export const actionMapper = {
   },
   changeVariable: {
     action: changeVariableAction,
-    // TODO: Create a proper form for action outside flow
     form: ChangeVariableActionForm,
     flowForm: ChangeVariableFlowActionForm,
   },
@@ -1451,7 +1447,6 @@ export const actionMapper = {
   },
   bindVariableToChart: {
     action: bindVariableToChartAction,
-    // TODO: Create a proper form for action outside flow
     form: BindVariableToComponentActionForm,
     flowForm: BindVariableToChartFlowActionForm,
   },
