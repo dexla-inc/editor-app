@@ -193,8 +193,8 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
               id: addId,
               type: "connectionCreatorNode",
               position: {
-                x: (selectedNode as any).xPos + 100,
-                y: (selectedNode as any).yPos + 100 * index,
+                x: selectedNode?.position?.x! + 100 * index,
+                y: selectedNode?.position?.y! + 90,
               },
               data: {
                 inputs: [{ id: nanoid() }],

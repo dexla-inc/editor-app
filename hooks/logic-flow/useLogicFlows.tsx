@@ -5,6 +5,9 @@ import { ActionIcon, Button, Flex } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { IconArrowBack } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { nanoid } from "nanoid";
+import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
+import { NodeProps } from "reactflow";
 
 export const useLogicFlows = () => {
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
@@ -12,6 +15,8 @@ export const useLogicFlows = () => {
   const projectId = useEditorStore((state) => state.currentProjectId);
   const setSelectedTabView = useFlowStore((state) => state.setSelectedTabView);
   const selectedTabView = useFlowStore((state) => state.selectedTabView);
+  const onNodesChange = useFlowStore((state) => state.onNodesChange);
+  const onEdgesChange = useFlowStore((state) => state.onEdgesChange);
   const client = useQueryClient();
 
   const openLogicFlowsModal = () =>
@@ -51,7 +56,40 @@ export const useLogicFlows = () => {
       innerProps: {},
     });
 
+  const addConnectionCreatorNode = (
+    node: NodeProps<NodeData>,
+    parentNodeId: string,
+  ) => {
+    const addId = nanoid();
+    onNodesChange([
+      {
+        item: {
+          id: addId,
+          type: "connectionCreatorNode",
+          position: { x: (node as any).xPos - 2, y: (node as any).yPos + 90 },
+          data: {
+            inputs: [{ id: nanoid() }],
+          },
+          deletable: false,
+        },
+        type: "add",
+      },
+      {
+        id: node.id,
+        type: "remove",
+      },
+    ]);
+
+    onEdgesChange([
+      {
+        item: { id: nanoid(), target: addId, source: parentNodeId },
+        type: "add",
+      },
+    ]);
+  };
+
   return {
     openLogicFlowsModal,
+    addConnectionCreatorNode,
   };
 };

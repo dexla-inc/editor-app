@@ -3,6 +3,7 @@ import {
   Box,
   Card,
   CSSObject,
+  Flex,
   Stack,
   Text,
   useMantineTheme,
@@ -11,6 +12,7 @@ import { IconBoxModel2 } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
 import { Handle, NodeProps, Position } from "reactflow";
 import { useFlowStore } from "@/stores/flow";
+import startCase from "lodash.startcase";
 
 export type NodeInput = {
   id: string;
@@ -33,7 +35,7 @@ export type NodeData = {
 };
 
 export interface CustomNodeProps extends NodeProps<NodeData> {
-  avatar?: React.FunctionComponent;
+  avatar?: React.FunctionComponent<{ size: number }>;
   style?: CSSObject;
 }
 
@@ -42,17 +44,18 @@ export const CustomNode = (props: CustomNodeProps) => {
   const { data, selected, avatar: Avatar, ...node } = props;
   const { style } = props;
   const { selectedNode } = useFlowStore();
-
+  console.log(selectedNode?.id, node.id);
   return (
     <Card
-      p="sm"
+      p={0}
       sx={{
         border: "1px solid",
-        borderColor:
+        borderColor: `${
           selectedNode?.id === node.id
-            ? theme.colors[theme.primaryColor][6]
-            : theme.colors.gray[3],
-        minWidth: "100px",
+            ? theme.colors.gray[6]
+            : theme.colors.gray[3]
+        } !important`,
+        minWidth: "70px",
 
         "&:hover": {
           outline: "4px solid",
@@ -64,78 +67,43 @@ export const CustomNode = (props: CustomNodeProps) => {
       <Stack spacing={4}>
         {data.inputs.map((input: NodeInput) => {
           return (
-            <Card.Section key={input.id}>
-              <Box
-                pos="relative"
-                left={0}
-                p={1}
-                bg={theme.colors.gray[1]}
-                w="90%"
-                sx={{
-                  borderTopRightRadius: theme.radius.xl,
-                  borderBottomRightRadius: theme.radius.xl,
-                }}
-              >
-                <Handle
-                  id={input.id}
-                  type="target"
-                  position={Position.Left}
-                  style={{
-                    marginLeft: "4px",
-                    backgroundColor: theme.colors.gray[4],
-                    border: "none",
-                    borderRadius: 0,
-                    minHeight: "11px",
-                  }}
-                />
-                <Text size={6} color="dark" ml="xs">
-                  {input.name}
-                </Text>
-              </Box>
-            </Card.Section>
+            <Handle
+              key={input.id}
+              id={input.id}
+              type="target"
+              position={Position.Top}
+              style={{
+                backgroundColor: theme.colors.gray[4],
+                border: "none",
+                borderRadius: 0,
+                minHeight: "3px",
+              }}
+            />
           );
         })}
       </Stack>
-      <Stack w="100%" justify="center" align="center" spacing={2} my="sm">
-        {Avatar ? <Avatar /> : <NodeAvatar />}
-        <Text size={6}>
-          {data.label}
-          {data?.form?.action && ` - ${data.form.action}`}
+      <Stack justify="center" align="center" spacing={2} mt="8px" mb="4px">
+        {Avatar ? <Avatar size={14} /> : <NodeAvatar size={14} />}
+        <Text size={6} weight="bold" w="90%" ta="center">
+          {node.type === "conditionalNode" && "Conditional"}
+          {startCase(data.form.action)}
         </Text>
       </Stack>
-      <Stack spacing={4}>
+      <Stack spacing={4} mb={4} align="flex-end">
         {data.outputs.map((output: NodeOutput) => {
           return (
-            <Card.Section key={output.id}>
-              <Box
-                pos="relative"
-                left="10%"
-                p={1}
-                bg={theme.colors.gray[1]}
-                w="90%"
-                sx={{
-                  borderTopLeftRadius: theme.radius.xl,
-                  borderBottomLeftRadius: theme.radius.xl,
-                }}
-              >
-                <Handle
-                  key={output.id}
-                  id={output.id}
-                  type="source"
-                  position={Position.Right}
-                  style={{
-                    marginRight: "4px",
-                    backgroundColor: theme.colors.gray[4],
-                    border: "none",
-                    borderRadius: 0,
-                    minHeight: "11px",
-                  }}
-                />
-                <Text size={6} color="dark" ml="xs">
-                  {output.name}
-                </Text>
-              </Box>
-            </Card.Section>
+            <Handle
+              key={output.id}
+              id={output.id}
+              type="source"
+              position={Position.Bottom}
+              style={{
+                backgroundColor: theme.colors.gray[4],
+                border: "none",
+                borderRadius: 0,
+                minHeight: "3px",
+              }}
+            />
           );
         })}
       </Stack>
@@ -150,6 +118,6 @@ export const data: NodeData = {
   outputs: [{ id: nanoid(), name: "Output" }],
 };
 
-export const NodeAvatar = () => {
-  return <IconBoxModel2 />;
+export const NodeAvatar = (props: { size: number }) => {
+  return <IconBoxModel2 {...props} />;
 };

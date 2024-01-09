@@ -17,7 +17,7 @@ export const StartNode = (node: NodeProps<StartNodeData>) => {
         borderColor: node.selected
           ? theme.colors[theme.primaryColor][6]
           : theme.colors.gray[3],
-        minWidth: "90px",
+        minWidth: "50px",
 
         "&:hover": {
           outline: "4px solid",
@@ -26,9 +26,9 @@ export const StartNode = (node: NodeProps<StartNodeData>) => {
         borderRadius: 50,
       }}
     >
-      <Stack w="100%" justify="center" align="center" spacing={2} my="sm">
-        <NodeAvatar />
-        <Text size={6}>
+      <Stack justify="center" align="center" spacing={2}>
+        <NodeAvatar size={14} />
+        <Text size={6} weight="bold">
           {data.label}
           {data?.form?.action && ` - ${data.form.action}`}
         </Text>

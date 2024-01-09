@@ -90,6 +90,7 @@ export const initialNodes = [
     },
     position: { x: 0, y: 0 },
     deletable: false,
+    draggable: false,
   },
   {
     id: addNodeId,
@@ -98,7 +99,7 @@ export const initialNodes = [
       inputs: [{ id: nanoid() }],
       outputs: [],
     },
-    position: { x: 30, y: 150 },
+    position: { x: 20, y: 100 },
     deletable: false,
   },
 ] as Node[];
