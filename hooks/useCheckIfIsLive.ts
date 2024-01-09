@@ -1,6 +1,5 @@
 import { isMatchingUrl } from "@/pages/[page]";
 import { getByDomain } from "@/requests/projects/queries-noauth";
-import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -8,9 +7,7 @@ import { useEffect, useState } from "react";
 export const useCheckIfIsLive = () => {
   const router = useRouter();
   const projectId = router.query.id;
-  const initializeEndpoints = useDataSourceStore(
-    (state) => state.initializeEndpoints,
-  );
+
   const setCurrentProjectId = useEditorStore(
     (state) => state.setCurrentProjectId,
   );
@@ -32,8 +29,6 @@ export const useCheckIfIsLive = () => {
         if (project.id) {
           setIsLive(!!project.id);
         }
-        // TODO: Move this when endpoints are saved
-        initializeEndpoints(_projectId);
         setCurrentProjectId(_projectId);
       } catch (error) {
         console.error("Error checking if live:", error);

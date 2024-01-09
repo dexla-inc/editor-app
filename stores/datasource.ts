@@ -10,7 +10,8 @@ type DataSourceState = {
   apiAuthConfig?: DataSourceAuthResponse;
   setApiAuthConfig: (projectId: string, dataSourceId: string) => void;
   endpoints?: Endpoint[];
-  initializeEndpoints: (projectId: string) => void;
+  fetchEndpoints: (projectId: string) => void;
+  clearEndpoints: () => void;
 };
 
 export const useDataSourceStore = create<DataSourceState>()(
@@ -29,7 +30,7 @@ export const useDataSourceStore = create<DataSourceState>()(
             set({ apiAuthConfig }, false, "datasource/setApiAuthConfig");
           }
         },
-        initializeEndpoints: async (projectId) => {
+        fetchEndpoints: async (projectId) => {
           const currentEndpoints = get().endpoints;
           if (currentEndpoints === undefined) {
             const endpoints = await getDataSourceEndpoints(projectId);
@@ -40,6 +41,9 @@ export const useDataSourceStore = create<DataSourceState>()(
               "datasource/setEndpoints",
             );
           }
+        },
+        clearEndpoints: () => {
+          set({ endpoints: undefined }, false, "datasource/clearEndpoints");
         },
       }),
       {

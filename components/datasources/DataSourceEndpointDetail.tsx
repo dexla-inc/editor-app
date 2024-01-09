@@ -16,6 +16,7 @@ import {
 } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { useAppStore } from "@/stores/app";
+import { useDataSourceStore } from "@/stores/datasource";
 import { ICON_DELETE } from "@/utils/config";
 import { ApiType } from "@/utils/dashboardTypes";
 import {
@@ -310,6 +311,7 @@ export const DataSourceEndpointDetail = ({
           : await createDataSourceEndpoint(projectId, dataSourceId, payload);
 
       queryClient.refetchQueries(["endpoints"]);
+      useDataSourceStore.getState().clearEndpoints();
 
       setEndpointDetailVisible && setEndpointDetailVisible(false);
 

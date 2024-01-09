@@ -2,10 +2,10 @@ import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput"
 import { colors } from "@/components/datasources/DataSourceEndpoint";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import { useRequestProp } from "@/hooks/useRequestProp";
-import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { useAuthStore } from "@/stores/auth";
+import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { APICallAction } from "@/utils/actions";
@@ -70,9 +70,8 @@ export const APICallFlowActionForm = ({
   );
   const setTree = useEditorStore((state) => state.setTree);
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
-    undefined,
-  );
+  const endpoints = useDataSourceStore((state) => state.endpoints);
+  const fetchEndpoints = useDataSourceStore((state) => state.fetchEndpoints);
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
   >(undefined);
@@ -82,19 +81,12 @@ export const APICallFlowActionForm = ({
 
   const { dataSources, page } = useRequestProp();
 
-  const isLogin = actionName === "login";
   useEffect(() => {
-    const getEndpoints = async () => {
-      const { results } = await getDataSourceEndpoints(projectId, {
-        authOnly: isLogin,
-      });
-      setEndpoints(results);
-    };
-
     if ((dataSources.data?.results ?? []).length > 0) {
-      getEndpoints();
+      fetchEndpoints(projectId);
     }
-  }, [dataSources.data, projectId, isLogin]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataSources.data, projectId]);
 
   useEffect(() => {
     if (

@@ -10,6 +10,7 @@ import { createPageList, createPages } from "@/requests/pages/mutations";
 import { PageAIResponse, PageBody } from "@/requests/pages/types";
 import { upsertVariable } from "@/requests/variables/mutations";
 import { useAppStore } from "@/stores/app";
+import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { GRAY_WHITE_COLOR } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
@@ -198,6 +199,8 @@ export default function PagesStep({
         isServerRequest: false,
         baseUrl,
       });
+
+      useDataSourceStore.getState().clearEndpoints();
 
       await upsertVariable(projectId, {
         name: "GET Project Data",
