@@ -118,6 +118,7 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
       },
       datasources: action.action?.datasources,
       componentId: action.action?.componentId ?? "",
+      actionCode: action.action?.actionCode ?? {},
     },
   });
 
@@ -298,6 +299,16 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
                           onPickVariable={(variable: string) => {
                             form.setFieldValue(field, variable);
                           }}
+                          javascriptCode={form.values.actionCode}
+                          onChangeJavascriptCode={(
+                            javascriptCode: string,
+                            label: string,
+                          ) =>
+                            form.setFieldValue(
+                              `actionCode.${label}`,
+                              javascriptCode,
+                            )
+                          }
                           size="xs"
                           label={param.name}
                           description={`${

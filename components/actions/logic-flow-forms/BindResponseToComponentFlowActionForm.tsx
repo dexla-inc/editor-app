@@ -94,6 +94,10 @@ export const BindResponseToComponentFlowActionForm = ({ form }: Props) => {
                 value: bind,
               });
             }}
+            javascriptCode={form.values.actionCode}
+            onChangeJavascriptCode={(javascriptCode: string, label: string) =>
+              form.setFieldValue(`actionCode.${label}`, javascriptCode)
+            }
             size="xs"
             label="Component to bind"
             description={`Binding to ${bind.value}`}

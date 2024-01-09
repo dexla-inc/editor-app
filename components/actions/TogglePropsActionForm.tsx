@@ -59,6 +59,7 @@ export const TogglePropsActionForm = ({ id }: Props) => {
   const form = useForm<FormValues>({
     initialValues: {
       conditionRules: action.action?.conditionRules ?? [],
+      actionCode: action.action?.actionCode ?? {},
     },
   });
 
@@ -179,6 +180,11 @@ export const TogglePropsActionForm = ({ id }: Props) => {
                     e.currentTarget.value,
                   );
                 }}
+                javascriptCode={form.values.actionCode}
+                onChangeJavascriptCode={(
+                  javascriptCode: string,
+                  label: string,
+                ) => form.setFieldValue(`actionCode.${label}`, javascriptCode)}
               />
             </div>
           );

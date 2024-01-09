@@ -48,6 +48,7 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
     initialValues: {
       componentId: reloadAction?.componentId ?? "",
       onMountActionId: reloadAction?.onMountActionId ?? "",
+      actionCode: action.action?.actionCode ?? {},
     },
   });
 
@@ -88,6 +89,10 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
             onPickVariable={(variable: string) => {
               form.setFieldValue("componentId", variable);
             }}
+            javascriptCode={form.values.actionCode}
+            onChangeJavascriptCode={(javascriptCode: string, label: string) =>
+              form.setFieldValue(`actionCode.${label}`, javascriptCode)
+            }
             size="xs"
             label="Component to reload"
             {...form.getInputProps("componentId")}

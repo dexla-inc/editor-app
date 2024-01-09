@@ -106,7 +106,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
       liveblocks.leaveRoom();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageId]);
+  }, [pageId, variables, isVariablesFetching]);
 
   useEffect(() => {
     setCurrentUser(user);

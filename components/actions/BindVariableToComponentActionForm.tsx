@@ -45,6 +45,7 @@ export const BindVariableToComponentActionForm = ({ id }: Props) => {
     initialValues: {
       component: action.action?.component,
       variable: action.action?.variable,
+      actionCode: action.action?.actionCode ?? {},
     },
   });
 
@@ -81,6 +82,10 @@ export const BindVariableToComponentActionForm = ({ id }: Props) => {
           onChange={(e) => {
             form.setFieldValue("component", e.currentTarget.value);
           }}
+          javascriptCode={form.values.actionCode}
+          onChangeJavascriptCode={(javascriptCode: string, label: string) =>
+            form.setFieldValue(`actionCode.${label}`, javascriptCode)
+          }
         />
 
         <TextInput

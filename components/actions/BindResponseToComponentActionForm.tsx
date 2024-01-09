@@ -57,6 +57,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
   const form = useForm<FormValues>({
     initialValues: {
       binds: action.action?.binds ?? [],
+      actionCode: action.action?.actionCode ?? {},
     },
   });
 
@@ -185,6 +186,10 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
                   value: bind,
                 });
               }}
+              javascriptCode={form.values.actionCode}
+              onChangeJavascriptCode={(javascriptCode: string, label: string) =>
+                form.setFieldValue(`actionCode.${label}`, javascriptCode)
+              }
               size="xs"
               label="Component to bind"
               description={`Binding to ${bind.value}`}

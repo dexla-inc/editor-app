@@ -226,6 +226,16 @@ export const BindPlaceDataFlowActionForm = ({ form }: Props) => {
                         onPickVariable={(variable: string) => {
                           form.setFieldValue(field, variable);
                         }}
+                        javascriptCode={form.values.actionCode}
+                        onChangeJavascriptCode={(
+                          javascriptCode: string,
+                          label: string,
+                        ) =>
+                          form.setFieldValue(
+                            `actionCode.${label}`,
+                            javascriptCode,
+                          )
+                        }
                         size="xs"
                         label={param.name}
                         description={`${

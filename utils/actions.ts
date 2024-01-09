@@ -163,6 +163,7 @@ export type SequentialTrigger = Extract<
 export interface BaseAction {
   name: string;
   data?: any;
+  actionCode?: Record<string, string>;
 }
 
 export interface NavigationAction extends BaseAction {
@@ -649,8 +650,8 @@ export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   });
 };
 
-const getVariableValueFromVariableId = async (variableId = "") => {
-  const currentProjectId = useEditorStore.getState().currentProjectId;
+const getVariableValueFromVariableId = (variableId = "") => {
+  const variableList = useVariableStore.getState().variableList;
   const actionVariable = variableId.split(`var_`)[1];
 
   if (!actionVariable) {
@@ -665,18 +666,18 @@ const getVariableValueFromVariableId = async (variableId = "") => {
   const isObject = typeof _var === "object";
 
   if (_var) {
-    const variable = await getVariable(
-      currentProjectId!,
-      isObject ? (_var as any).id : _var,
-    );
+    const variableId = isObject ? (_var as any).id : _var;
+    const variable = variableList.find((v) => v.id === variableId);
 
-    let value = variable.value;
+    if (!variable) return;
+    let value = variable.value ?? variable.defaultValue;
     if (isObject) {
-      const dataFlatten = flattenKeys(JSON.parse(variable.value ?? "{}"));
+      const dataFlatten = flattenKeys(
+        JSON.parse(variable.value ?? variable.defaultValue ?? "{}"),
+      );
 
       value = get(dataFlatten, (_var as any).path);
     }
-
     return value;
   }
 };
@@ -758,7 +759,7 @@ const getVariablesValue = async (objs: Record<string, string>) => {
     }
 
     if (key.startsWith(`var_`)) {
-      value = (await getVariableValueFromVariableId(key)) as string;
+      value = getVariableValueFromVariableId(key) as string;
     }
 
     if (value) {
@@ -820,7 +821,6 @@ const getBody = (endpoint: any, action: any, variableValues: any) => {
 const prepareRequestData = async (action: any) => {
   const cachedEndpoints = useEditorStore.getState().endpoints;
   const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
-
   const keys = Object.keys(action.binds?.parameter ?? {});
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
   const variableValues = await getVariablesValue(
@@ -1396,6 +1396,7 @@ export const changeVariableAction = async ({
           { list: {} } as Record<string, any>,
         );
       });
+      if (!action.javascriptCode) return;
 
       if (action.javascriptCode === "return variables") {
         return;

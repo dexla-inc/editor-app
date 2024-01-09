@@ -46,6 +46,7 @@ export const OpenToastActionForm = ({ id }: Props) => {
     initialValues: {
       title: action.action?.title,
       message: action.action?.message,
+      actionCode: action.action?.actionCode ?? {},
     },
   });
 
@@ -96,6 +97,11 @@ export const OpenToastActionForm = ({ id }: Props) => {
                 onPickVariable={(variable: string) => {
                   form.setFieldValue(name, variable);
                 }}
+                javascriptCode={form.values.actionCode}
+                onChangeJavascriptCode={(
+                  javascriptCode: string,
+                  label: string,
+                ) => form.setFieldValue(`actionCode.${label}`, javascriptCode)}
                 size="xs"
                 label={title}
                 {...form.getInputProps(name)}

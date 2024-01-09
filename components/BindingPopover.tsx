@@ -1,9 +1,9 @@
 import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea";
 import { Icon } from "@/components/Icon";
 import { ObjectDetails } from "@/components/PropsListing";
-import { listVariables } from "@/requests/variables/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
+import { useVariableStore } from "@/stores/variables";
 import { BG_COLOR, BINDER_BACKGROUND } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import { getAllComponentsByName } from "@/utils/editor";
@@ -25,7 +25,6 @@ import {
   Title,
 } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
 import debounce from "lodash.debounce";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
@@ -74,10 +73,23 @@ export default function BindingPopover({
   const [tab, setTab] = useState<BindingTab>(bindingTab ?? "components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
   const inputsStore = useInputsStore();
+  const variablesList = useVariableStore((state) => state.variableList);
+  const variables = variablesList.reduce(
+    (acc, variable) => {
+      let value = variable.value ?? variable.defaultValue;
+      const isText = variable.type === "TEXT";
+      const isBoolean = variable.type === "BOOLEAN";
+      const parsedValue =
+        value && (isText || isBoolean ? value : JSON.parse(value));
+      acc.list[variable.id] = variable;
+      acc[variable.id] = parsedValue;
+      acc[variable.name] = parsedValue;
+      return acc;
+    },
+    { list: {} } as Record<string, any>,
+  );
 
   const browser = useRouter();
-  const projectId = browser.query.id as string;
-  const pageId = browser.query.page as string;
 
   const browserList = Object.entries(
     pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
@@ -89,28 +101,6 @@ export default function BindingPopover({
       value: isObject ? JSON.stringify(value) : value,
       type: isObject ? "OBJECT" : "STRING",
     };
-  });
-
-  const { data: variables, isLoading: isVariablesReqLoading } = useQuery({
-    queryKey: ["variablesObj", projectId, pageId],
-    queryFn: () =>
-      listVariables(projectId, { pageId }).then(({ results }) => {
-        return results.reduce(
-          (acc, variable) => {
-            let value = variable.value ?? variable.defaultValue;
-            const isText = variable.type === "TEXT";
-            const isBoolean = variable.type === "BOOLEAN";
-            const parsedValue =
-              value && (isText || isBoolean ? value : JSON.parse(value));
-            acc.list[variable.id] = variable;
-            acc[variable.id] = parsedValue;
-            acc[variable.name] = parsedValue;
-            return acc;
-          },
-          { list: {} } as Record<string, any>,
-        );
-      }),
-    enabled: !!projectId && !!pageId,
   });
 
   const inputComponents = getAllComponentsByName(editorTree.root, [
@@ -186,14 +176,12 @@ export default function BindingPopover({
     try {
       const parsed = JSON.parse(item);
       const isObjectType =
-        typeof parsed === "object" ||
-        variables?.list[parsed.id].type === "OBJECT";
+        typeof parsed === "object" || variables[parsed.id].type === "OBJECT";
       const pathStartsWithBracket = parsed.path.startsWith("[") ? "" : ".";
       setSelectedItem(
-        `${prefixWithReturnIfNeeded(javascriptCode)}variables[/* ${variables
-          ?.list[parsed.id].name} */'${parsed.id}']${pathStartsWithBracket}${
-          parsed.path
-        }`,
+        `${prefixWithReturnIfNeeded(javascriptCode)}variables[/* ${
+          variables[parsed.id].name
+        } */'${parsed.id}']${pathStartsWithBracket}${parsed.path}`,
       );
       onPickVariable &&
         onPickVariable(
@@ -203,14 +191,14 @@ export default function BindingPopover({
                 variable: variables?.list[parsed.id],
                 path: parsed.path,
               })}`
-            : `var_${variables?.list[parsed.id].name}`,
+            : `var_${variables?.list[parsed.id].id}`,
         );
     } catch {
       setSelectedItem(
         `${prefixWithReturnIfNeeded(javascriptCode)}variables[/* ${variables
           ?.list[item].name} */'${item}']`,
       );
-      onPickVariable && onPickVariable(`var_${variables?.list[item].name}`);
+      onPickVariable && onPickVariable(`var_${variables?.list[item].id}`);
     }
   };
 
@@ -301,7 +289,7 @@ export default function BindingPopover({
               <CustomJavaScriptTextArea
                 language="typescript"
                 value={javascriptCode}
-                variables={variables?.list}
+                variables={variables.list}
                 components={inputComponents.list}
                 onChange={onChangeJavascriptCode}
                 selectedItem={selectedItem}
@@ -392,7 +380,7 @@ export default function BindingPopover({
               <ScrollArea.Autosize mah={300}>
                 <ObjectDetails
                   filterKeyword={filterKeyword}
-                  variables={Object.values(variables?.list)}
+                  variables={Object.values(variables.list)}
                   onItemSelection={(item: string) => onSetItem(tab, item)}
                 />
               </ScrollArea.Autosize>

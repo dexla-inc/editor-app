@@ -66,6 +66,7 @@ export const ChangeStateActionForm = ({ id }: Props) => {
   const form = useForm<FormValues>({
     initialValues: {
       conditionRules: action.action?.conditionRules ?? [],
+      actionCode: action.action?.actionCode ?? {},
     },
   });
 
@@ -183,6 +184,13 @@ export const ChangeStateActionForm = ({ id }: Props) => {
                       e.currentTarget.value,
                     );
                   }}
+                  javascriptCode={form.values.actionCode}
+                  onChangeJavascriptCode={(
+                    javascriptCode: string,
+                    label: string,
+                  ) =>
+                    form.setFieldValue(`actionCode.${label}`, javascriptCode)
+                  }
                 />
 
                 {["Radio", "Select"].includes(component!.name) ? (
