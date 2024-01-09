@@ -80,6 +80,9 @@ export const LogicFlowFormModal = () => {
           message: "Logic flow saved successfully",
         });
         setShowFormModal(false);
+        form.setValues({
+          name: "",
+        });
       }
     },
   });
@@ -104,10 +107,6 @@ export const LogicFlowFormModal = () => {
       } else {
         createFlow.mutate(values);
       }
-
-      form.setValues({
-        name: "",
-      });
     } catch (error) {
       console.error({ error });
       stopLoading({

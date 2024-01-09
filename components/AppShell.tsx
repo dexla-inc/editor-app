@@ -38,7 +38,7 @@ import { flexStyles } from "@/utils/branding";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
-import { useLogicFlows } from "@/components/logic-flow/hooks/useLogicFlows";
+import { useLogicFlows } from "@/hooks/logic-flow/useLogicFlows";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const resetTree = useEditorStore((state) => state.resetTree);
