@@ -58,7 +58,11 @@ export const OpenToastActionForm = ({ id }: Props) => {
         selectedComponentId: selectedComponentId!,
         componentActions,
         id,
-        updateValues: { title: values.title, message: values.message },
+        updateValues: {
+          title: values.title,
+          message: values.message,
+          actionCode: values.actionCode,
+        },
         updateTreeComponentActions,
       });
 

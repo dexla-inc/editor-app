@@ -136,6 +136,7 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
           datasources: dataSources.data!.results,
           binds: values.binds,
           componentId: values.componentId!,
+          actionCode: values.actionCode,
         },
         updateTreeComponentActions,
       });

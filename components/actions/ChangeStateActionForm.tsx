@@ -80,6 +80,7 @@ export const ChangeStateActionForm = ({ id }: Props) => {
         id,
         updateValues: {
           conditionRules: values.conditionRules ?? [],
+          actionCode: values.actionCode,
         },
         updateTreeComponentActions,
       });

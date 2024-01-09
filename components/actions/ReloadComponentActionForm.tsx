@@ -63,6 +63,7 @@ export const ReloadComponentActionForm = ({ id }: Props) => {
         updateValues: {
           componentId: values.componentId,
           onMountActionId: values.onMountActionId,
+          actionCode: values.actionCode,
         },
         updateTreeComponentActions,
       });

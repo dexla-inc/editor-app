@@ -69,7 +69,7 @@ export const BindResponseToComponentActionForm = ({ id }: Props) => {
         selectedComponentId: selectedComponentId!,
         componentActions,
         id,
-        updateValues: { binds: values.binds },
+        updateValues: { binds: values.binds, actionCode: values.actionCode },
         updateTreeComponentActions,
       });
 

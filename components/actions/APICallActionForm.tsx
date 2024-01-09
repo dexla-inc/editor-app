@@ -143,6 +143,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
           datasources: dataSources.data!.results,
           binds: values.binds,
           isLogin: values.isLogin,
+          actionCode: values.actionCode,
         },
         updateTreeComponentActions,
       });
