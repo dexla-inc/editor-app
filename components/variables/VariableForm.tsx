@@ -1,9 +1,8 @@
 import { useVariable } from "@/hooks/useVariable";
-import { getVariable } from "@/requests/variables/queries-noauth";
 import { VariableTypesOptions } from "@/requests/variables/types";
+import { useVariableStore } from "@/stores/variables";
 import { Button, Select, Stack, TextInput, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 type VariablesFormValues = {
@@ -13,7 +12,6 @@ type VariablesFormValues = {
 };
 
 type Props = {
-  projectId: string;
   variableId?: string;
 };
 
@@ -24,14 +22,11 @@ const requiredFieldValidator = (fieldName: string) => (value: string) => {
   return null;
 };
 
-export const VariableForm = ({ projectId, variableId }: Props) => {
-  const { data: variable } = useQuery({
-    queryKey: ["variable", variableId],
-    queryFn: async () => getVariable(projectId, variableId!),
-    enabled: !!variableId,
-  });
-
+export const VariableForm = ({ variableId }: Props) => {
+  const variableList = useVariableStore((state) => state.variableList);
   const { createVariablesMutation, updateVariablesMutation } = useVariable();
+
+  const variable = variableList.find((v) => v.id === variableId);
 
   const form = useForm<VariablesFormValues>({
     initialValues: {

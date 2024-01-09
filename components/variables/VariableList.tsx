@@ -1,6 +1,6 @@
 import { VariableForm } from "@/components/variables/VariableForm";
 import { deleteVariable } from "@/requests/variables/mutations";
-import { listVariables } from "@/requests/variables/queries-noauth";
+import { useVariableStore } from "@/stores/variables";
 import {
   ActionIcon,
   Center,
@@ -14,52 +14,19 @@ import {
 } from "@mantine/core";
 import { useDebouncedState, useDisclosure } from "@mantine/hooks";
 import { IconEdit, IconSearch, IconX } from "@tabler/icons-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type Props = {
   projectId: string;
-  pageId: string;
 };
 
-export const VariableList = ({ projectId, pageId }: Props) => {
+export const VariableList = ({ projectId }: Props) => {
   const [opened, modal] = useDisclosure(false);
   const [filter, setFilter] = useDebouncedState("", 250);
   const [variableToEdit, setVariableToEdit] = useState(undefined);
-  const client = useQueryClient();
+  const variableList = useVariableStore((state) => state.variableList);
 
-  const { data: variables, refetch } = useQuery({
-    queryKey: ["variables", projectId, pageId],
-    queryFn: async () => {
-      const response = await listVariables(
-        projectId,
-        // @ts-ignore
-        {
-          search: filter,
-          pageId,
-        },
-      );
-      return response;
-    },
-    enabled: !!projectId && !!pageId,
-  });
-
-  const deleteVariableMutation = useMutation({
-    mutationKey: ["variables", projectId, pageId],
-    mutationFn: async (id: string) => {
-      const response = await deleteVariable(projectId, id);
-      return response;
-    },
-    onSettled: () => {
-      client.refetchQueries(["variables", projectId, pageId]);
-    },
-  });
-
-  useEffect(() => {
-    refetch();
-  }, [filter, refetch]);
-
-  const rows = (variables?.results ?? [])?.map((variable: any) => (
+  const rows = (variableList ?? [])?.map((variable: any) => (
     <tr key={variable.id}>
       <td>{variable.name}</td>
       <td>{variable.type}</td>
@@ -77,7 +44,7 @@ export const VariableList = ({ projectId, pageId }: Props) => {
           </ActionIcon>
           <ActionIcon
             size="xs"
-            onClick={() => deleteVariableMutation.mutate(variable.id)}
+            onClick={async () => await deleteVariable(projectId, variable.id)}
           >
             <IconX />
           </ActionIcon>
@@ -124,7 +91,7 @@ export const VariableList = ({ projectId, pageId }: Props) => {
         )}
       </ScrollArea>
       <Modal title="Edit Variable" opened={opened} onClose={modal.close}>
-        <VariableForm projectId={projectId} variableId={variableToEdit} />
+        <VariableForm variableId={variableToEdit} />
       </Modal>
     </>
   );

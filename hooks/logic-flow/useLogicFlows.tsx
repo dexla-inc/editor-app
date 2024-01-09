@@ -1,9 +1,9 @@
-import { modals } from "@mantine/modals";
-import { ActionIcon, Button, Flex } from "@mantine/core";
-import { IconArrowBack } from "@tabler/icons-react";
-import { useFlowStore } from "@/stores/flow";
 import { VariablesButton } from "@/components/variables/VariablesButton";
 import { useEditorStore } from "@/stores/editor";
+import { useFlowStore } from "@/stores/flow";
+import { ActionIcon, Button, Flex } from "@mantine/core";
+import { modals } from "@mantine/modals";
+import { IconArrowBack } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const useLogicFlows = () => {
@@ -38,7 +38,7 @@ export const useLogicFlows = () => {
             <Button onClick={() => setShowFormModal(true)} compact>
               Create Logic Flow
             </Button>
-            <VariablesButton pageId={pageId!} projectId={projectId!} />
+            <VariablesButton projectId={projectId!} />
           </Flex>
         </Flex>
       ),

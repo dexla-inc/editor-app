@@ -1,3 +1,4 @@
+import { listVariables } from "@/requests/variables/queries-noauth";
 import { VariableParams, VariableResponse } from "@/requests/variables/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -6,7 +7,7 @@ type VariableList = Array<VariableResponse>;
 
 type VariablesState = {
   variableList: VariableList;
-  initializeVariableList: (response: any) => void;
+  initializeVariableList: (projectId: string, pageId: string) => void;
   setVariable: (variable: VariableParams, id: string) => void;
   deleteVariable: (variableId: string) => void;
 };
@@ -14,21 +15,23 @@ type VariablesState = {
 export const useVariableStore = create<VariablesState>()(
   persist(
     (set, get) => ({
-      variableList: [] as VariableList,
-      initializeVariableList: (response) => {
-        const variableList = (response?.results || []) as VariableList;
+      variableList: [],
+      initializeVariableList: async (projectId, pageId) => {
+        const variablesResponse = await listVariables(projectId, { pageId });
+        const variableList = variablesResponse?.results || [];
         set({ variableList });
       },
       setVariable: (variable, id) => {
         const _variableList = get().variableList;
+
         const index = _variableList.findIndex((item) => item?.id === id);
         if (index >= 0) {
           _variableList[index] = { id, ...variable };
           set({ variableList: [..._variableList] });
-        }
-        set({
-          variableList: [..._variableList, { id, ...variable }],
-        });
+        } else
+          set({
+            variableList: [..._variableList, { id, ...variable }],
+          });
       },
       deleteVariable: (variableId) => {
         const _variableList = get().variableList;
@@ -36,8 +39,8 @@ export const useVariableStore = create<VariablesState>()(
           (item) => item?.id === variableId,
         );
         if (index >= 0) {
-          _variableList.splice(index, 1);
-          set({ variableList: [..._variableList] });
+          _variableList?.splice(index, 1);
+          set({ variableList: [...(_variableList ?? [])] });
         }
       },
     }),

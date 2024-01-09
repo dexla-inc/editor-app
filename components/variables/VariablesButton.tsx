@@ -6,11 +6,10 @@ import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 
 type Props = ButtonProps & {
-  pageId: string;
   projectId: string;
 };
 
-export const VariablesButton = ({ projectId, pageId }: Props) => {
+export const VariablesButton = ({ projectId }: Props) => {
   const [opened, modal] = useDisclosure(false);
   const [mode, setMode] = useState("list");
 
@@ -41,12 +40,12 @@ export const VariablesButton = ({ projectId, pageId }: Props) => {
         />
         {mode === "create" && (
           <Stack mt="xl">
-            <VariableForm projectId={projectId} />
+            <VariableForm />
           </Stack>
         )}
         {mode === "list" && (
           <Stack mt="xl">
-            <VariableList projectId={projectId} pageId={pageId} />
+            <VariableList projectId={projectId} />
           </Stack>
         )}
       </Modal>
