@@ -76,7 +76,7 @@ export default function BindingPopover({
   const variablesList = useVariableStore((state) => state.variableList);
   const variables = variablesList.reduce(
     (acc, variable) => {
-      let value = variable.value ?? variable.defaultValue;
+      let value = variable.defaultValue;
       const isText = variable.type === "TEXT";
       const isBoolean = variable.type === "BOOLEAN";
       const parsedValue =

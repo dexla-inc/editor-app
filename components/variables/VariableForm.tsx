@@ -1,14 +1,7 @@
 import { useVariable } from "@/hooks/useVariable";
 import { getVariable } from "@/requests/variables/queries-noauth";
 import { VariableTypesOptions } from "@/requests/variables/types";
-import {
-  Button,
-  Checkbox,
-  Select,
-  Stack,
-  TextInput,
-  Textarea,
-} from "@mantine/core";
+import { Button, Select, Stack, TextInput, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -17,12 +10,10 @@ type VariablesFormValues = {
   name: string;
   type: string;
   defaultValue: string;
-  isGlobal: boolean;
 };
 
 type Props = {
   projectId: string;
-  pageId: string;
   variableId?: string;
 };
 
@@ -33,7 +24,7 @@ const requiredFieldValidator = (fieldName: string) => (value: string) => {
   return null;
 };
 
-export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
+export const VariableForm = ({ projectId, variableId }: Props) => {
   const { data: variable } = useQuery({
     queryKey: ["variable", variableId],
     queryFn: async () => getVariable(projectId, variableId!),
@@ -47,7 +38,6 @@ export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
       name: "",
       type: "",
       defaultValue: "",
-      isGlobal: false,
     },
     validate: {
       name: requiredFieldValidator("Name"),
@@ -72,7 +62,6 @@ export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
         name: variable.name,
         type: variable.type,
         defaultValue: variable.defaultValue ?? "",
-        isGlobal: variable.isGlobal,
       });
       setIsInitialized(true);
     }
@@ -94,11 +83,6 @@ export const VariableForm = ({ projectId, pageId, variableId }: Props) => {
           size="sm"
           label="Default Value"
           {...form.getInputProps("defaultValue")}
-        />
-        <Checkbox
-          size="sm"
-          label="Is Global?"
-          {...form.getInputProps("isGlobal", { type: "checkbox" })}
         />
         <Button
           type="submit"

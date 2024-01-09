@@ -41,7 +41,7 @@ export const VariablesButton = ({ projectId, pageId }: Props) => {
         />
         {mode === "create" && (
           <Stack mt="xl">
-            <VariableForm projectId={projectId} pageId={pageId} />
+            <VariableForm projectId={projectId} />
           </Stack>
         )}
         {mode === "list" && (

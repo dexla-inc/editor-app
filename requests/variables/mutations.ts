@@ -37,22 +37,6 @@ export const updateVariable = async (
   return response;
 };
 
-export const upsertVariable = async (
-  projectId: string,
-  params: VariableParams,
-) => {
-  let url = `/projects/${projectId}/variables/upsert`;
-
-  const response = (await post<VariableResponse>(
-    url,
-    params,
-  )) as VariableResponse;
-
-  setVariable(params, response.id);
-
-  return response;
-};
-
 export const deleteVariable = async (projectId: string, id: string) => {
   let url = `/projects/${projectId}/variables/${id}`;
   onDeleteVariable(id);

@@ -43,7 +43,7 @@ export const checkIfValid = ({
   const variable = data?.form?.variable ? JSON.parse(data?.form?.variable) : "";
   const variables = useVariableStore.getState().variableList;
   const _var = variables[variable?.name ?? ""];
-  let value = _var?.value ?? _var?.defaultValue ?? "";
+  let value = _var?.defaultValue ?? "";
 
   switch (condition) {
     case "equal":

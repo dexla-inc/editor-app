@@ -46,11 +46,7 @@ import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components
 import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { Options } from "@/components/modifiers/GoogleMap";
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
-import { upsertVariable } from "@/requests/variables/mutations";
-import {
-  getVariable,
-  listVariables,
-} from "@/requests/variables/queries-noauth";
+import { updateVariable } from "@/requests/variables/mutations";
 import { VariableParams } from "@/requests/variables/types";
 import { useAuthStore } from "@/stores/auth";
 import { useDataSourceStore } from "@/stores/datasource";
@@ -385,18 +381,17 @@ export const goToUrlAction = async ({ action, component }: GoToUrlParams) => {
   const { url, openInNewTab } = action;
   let value = url;
   if (url.startsWith("var_")) {
-    const currentProjectId = useEditorStore.getState().currentProjectId;
+    const variablesList = useVariableStore.getState().variableList;
     value = url.split("var_")[1];
     const isObj = value.startsWith("{") && value.endsWith("}");
-    const variableResponse = await getVariable(
-      currentProjectId!,
-      isObj ? JSON.parse(value).id : value,
+    const variableId = isObj ? JSON.parse(value).id : value;
+    const variableResponse = variablesList.find(
+      (variable) => variable.id === variableId || variable.name === variableId,
     );
+    if (!variableResponse) return;
     if (variableResponse.type === "OBJECT") {
       const variable = JSON.parse(value);
-      const val = JSON.parse(
-        variableResponse?.value ?? variableResponse?.defaultValue ?? "{}",
-      );
+      const val = JSON.parse(variableResponse?.defaultValue ?? "{}");
       if (typeof component?.props?.repeatedIndex !== "undefined") {
         const path = (variable.path ?? "").replace(
           "[0]",
@@ -407,7 +402,7 @@ export const goToUrlAction = async ({ action, component }: GoToUrlParams) => {
         value = get(val ?? {}, variable.path ?? "") ?? "";
       }
     } else {
-      value = variableResponse?.value ?? variableResponse?.defaultValue ?? "";
+      value = variableResponse?.defaultValue ?? "";
     }
   }
 
@@ -673,10 +668,10 @@ const getVariableValueFromVariableId = (variableId = "") => {
     );
 
     if (!variable) return;
-    let value = variable.value ?? variable.defaultValue;
+    let value = variable.defaultValue;
     if (isObject) {
       const dataFlatten = flattenKeys(
-        JSON.parse(variable.value ?? variable.defaultValue ?? "{}"),
+        JSON.parse(variable.defaultValue ?? "{}"),
       );
 
       value = get(dataFlatten, (_var as any).path);
@@ -1037,7 +1032,7 @@ export const bindVariableToChartAction = async ({
   action,
 }: BindVariableToChartActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  const currentProjectId = useEditorStore.getState().currentProjectId;
+  const variableList = useVariableStore.getState().variableList;
   const seriesVariable = action.series.split(`var_`)[1];
   let seriesVar: string | number[] = seriesVariable;
   if (seriesVariable.startsWith("{") && seriesVariable.endsWith("}")) {
@@ -1055,26 +1050,30 @@ export const bindVariableToChartAction = async ({
   const isLabelsObject = typeof labelsVar === "object";
 
   if (action.component && seriesVar) {
-    const variableSeries = await getVariable(
-      currentProjectId!,
-      isSeriesObject ? (seriesVar as any).id : seriesVar,
+    const seriesId = isSeriesObject ? (seriesVar as any).id : seriesVar;
+    const labelsId = isLabelsObject ? (labelsVar as any).id : labelsVar;
+    const variableSeries = variableList.find(
+      (variable) => variable.id === seriesId || variable.name === seriesId,
     );
-
-    let seriesValue = variableSeries.value;
+    if (!variableSeries) return;
+    let seriesValue = variableSeries.defaultValue;
     if (variableSeries.type === "OBJECT") {
-      const dataFlatten = flattenKeys(JSON.parse(variableSeries.value ?? "{}"));
+      const dataFlatten = flattenKeys(
+        JSON.parse(variableSeries.defaultValue ?? "{}"),
+      );
 
       seriesValue = get(dataFlatten, (seriesVar as any).path);
     }
-
-    const variableLabels = await getVariable(
-      currentProjectId!,
-      isLabelsObject ? (labelsVar as any).id : labelsVar,
+    const variableLabels = variableList.find(
+      (variable) => variable.id === labelsId || variable.name === labelsId,
     );
+    if (!variableLabels) return;
 
-    let labelsValue = variableLabels.value;
+    let labelsValue = variableLabels.defaultValue;
     if (variableLabels.type === "OBJECT") {
-      const dataFlatten = flattenKeys(JSON.parse(variableLabels.value ?? "{}"));
+      const dataFlatten = flattenKeys(
+        JSON.parse(variableLabels.defaultValue ?? "{}"),
+      );
 
       labelsValue = get(dataFlatten, (labelsVar as any).path);
     }
@@ -1087,7 +1086,7 @@ export const bindVariableToChartAction = async ({
             value: seriesValue,
             base:
               variableSeries.type === "OBJECT"
-                ? JSON.parse(variableSeries.value ?? "{}")
+                ? JSON.parse(variableSeries.defaultValue ?? "{}")
                 : undefined,
             path: (seriesVar as any)?.path ?? undefined,
           },
@@ -1095,7 +1094,7 @@ export const bindVariableToChartAction = async ({
             value: labelsValue,
             base:
               variableLabels.type === "OBJECT"
-                ? JSON.parse(variableLabels.value ?? "{}")
+                ? JSON.parse(variableLabels.defaultValue ?? "{}")
                 : undefined,
             path: (labelsVar as any)?.path ?? undefined,
           },
@@ -1114,6 +1113,7 @@ export const bindVariableToComponentAction = async ({
   action,
 }: BindVariableToComponentActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  const variableList = useVariableStore.getState().variableList;
   const actionVariable = action.variable.split(`var_`)[1];
   let _var: string | { id: string; variable: VariableParams; path: string } =
     actionVariable;
@@ -1124,19 +1124,16 @@ export const bindVariableToComponentAction = async ({
   const isObject = typeof _var === "object";
 
   if (action.component && _var) {
-    const variables = useVariableStore.getState().variableList;
-    const variable = variables[isObject ? (_var as any).variable.name : _var];
+    const variableId = isObject ? (_var as any).id : _var;
+    const variable = variableList.find(
+      (variable) => variable.id === variableId || variable.name === variableId,
+    );
+    if (!variable) return;
 
-    let value = variable.value;
-    let defaultValue = variable.defaultValue;
+    let value = variable.defaultValue;
     if (variable.type === "OBJECT") {
-      const valueFlatten = flattenKeys(JSON.parse(variable.value || "{}"));
+      const valueFlatten = flattenKeys(JSON.parse(value || "{}"));
       value = get(valueFlatten, (_var as any).path);
-
-      const defaultValueFlatten = flattenKeys(
-        JSON.parse(variable.defaultValue || "{}"),
-      );
-      defaultValue = get(defaultValueFlatten, (_var as any).path);
     }
 
     updateTreeComponent({
@@ -1146,11 +1143,11 @@ export const bindVariableToComponentAction = async ({
           value,
           base:
             variable.type === "OBJECT"
-              ? JSON.parse(variable.value || "{}")
+              ? JSON.parse(variable.defaultValue || "{}")
               : undefined,
         },
         exampleData: {
-          value: defaultValue,
+          value,
           base:
             variable.type === "OBJECT"
               ? JSON.parse(variable.defaultValue || "{}")
@@ -1345,29 +1342,26 @@ export const changeVariableAction = async ({
   action,
 }: ChangeVariableActionParams) => {
   const currentProjectId = useEditorStore.getState().currentProjectId;
-  const currentPageId = useEditorStore.getState().currentPageId;
+  const variablesList = useVariableStore.getState().variableList;
   let isPreviewValueObject = false;
   let isPreviewValueArray = false;
 
   if (action.bindingType === "JavaScript") {
     try {
-      const variables = await listVariables(currentProjectId!, {
-        pageId: currentPageId!,
-      }).then(({ results }) => {
-        return results.reduce(
-          (acc, variable) => {
-            const value = variable.value ?? variable.defaultValue;
-            acc.list[variable.id] = variable;
-
-            const isObject = typeof value === "object";
-
-            acc[variable.id] = isObject ? JSON.parse(value ?? "{}") : value;
-            acc[variable.name] = isObject ? JSON.parse(value ?? "{}") : value;
-            return acc;
-          },
-          { list: {} } as Record<string, any>,
-        );
-      });
+      const variables = variablesList.reduce(
+        (acc, variable) => {
+          let value = variable.defaultValue;
+          const isText = variable.type === "TEXT";
+          const isBoolean = variable.type === "BOOLEAN";
+          const parsedValue =
+            value && (isText || isBoolean ? value : JSON.parse(value));
+          acc.list[variable.id] = variable;
+          acc[variable.id] = parsedValue;
+          acc[variable.name] = parsedValue;
+          return acc;
+        },
+        { list: {} } as Record<string, any>,
+      );
       if (!action.javascriptCode) return;
 
       if (action.javascriptCode === "return variables") {
@@ -1389,19 +1383,13 @@ export const changeVariableAction = async ({
 
       const variable = variables.list[action.variableId];
 
-      upsertVariable(currentProjectId!, {
+      updateVariable(action.variableId, currentProjectId!, {
         name: variable.name,
-        value:
-          typeof previewNewValue === "string"
-            ? previewNewValue
-            : JSON.stringify(previewNewValue),
         type: isPreviewValueArray
           ? "ARRAY"
           : isPreviewValueObject
           ? "OBJECT"
           : "TEXT",
-        isGlobal: variable.isGlobal ?? false,
-        pageId: currentPageId!,
         defaultValue:
           typeof previewNewValue === "string"
             ? previewNewValue
