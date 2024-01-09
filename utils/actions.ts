@@ -46,7 +46,6 @@ import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components
 import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { Options } from "@/components/modifiers/GoogleMap";
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
-import { updateVariable } from "@/requests/variables/mutations";
 import { VariableParams } from "@/requests/variables/types";
 
 import { useDataSourceStore } from "@/stores/datasource";
@@ -1344,8 +1343,8 @@ export type ChangeVariableActionParams = ActionParams & {
 export const changeVariableAction = async ({
   action,
 }: ChangeVariableActionParams) => {
-  const currentProjectId = useEditorStore.getState().currentProjectId;
   const variablesList = useVariableStore.getState().variableList;
+  const setVariable = useVariableStore.getState().setVariable;
   let isPreviewValueObject = false;
   let isPreviewValueArray = false;
 
@@ -1386,18 +1385,21 @@ export const changeVariableAction = async ({
 
       const variable = variables.list[action.variableId];
 
-      updateVariable(action.variableId, currentProjectId!, {
-        name: variable.name,
-        type: isPreviewValueArray
-          ? "ARRAY"
-          : isPreviewValueObject
-          ? "OBJECT"
-          : "TEXT",
-        defaultValue:
-          typeof previewNewValue === "string"
-            ? previewNewValue
-            : JSON.stringify(previewNewValue),
-      });
+      setVariable(
+        {
+          name: variable.name,
+          type: isPreviewValueArray
+            ? "ARRAY"
+            : isPreviewValueObject
+            ? "OBJECT"
+            : "TEXT",
+          defaultValue:
+            typeof previewNewValue === "string"
+              ? previewNewValue
+              : JSON.stringify(previewNewValue),
+        },
+        action.variableId,
+      );
     } catch (error) {
       console.log({ error });
       return;
