@@ -15,6 +15,7 @@ import { nanoid } from "nanoid";
 import { actions } from "@/utils/actions";
 import groupBy from "lodash.groupby";
 import startCase from "lodash.startcase";
+import { useLogicFlows } from "@/hooks/logic-flow/useLogicFlows";
 
 interface ConnectionCreatorNodeData extends NodeData {}
 
@@ -38,10 +39,10 @@ export const ConnectionCreatorNode = (
   const { onNodesChange, onEdgesChange, edges } = useFlowStore(selector);
   const setSelectedNode = useFlowStore((state) => state.setSelectedNode);
   const groupedActions = groupBy(actions, (action) => action.group);
+  const { addConnectionCreatorNode } = useLogicFlows();
 
   const onClickAddAction = async (actionName: string) => {
     const actionId = nanoid();
-    const addId = nanoid();
     const edge = edges.find((edge) => edge.target === node.id);
 
     const newActionNode = {
@@ -71,31 +72,7 @@ export const ConnectionCreatorNode = (
       } as EdgeAddChange,
     ]);
 
-    onNodesChange([
-      {
-        item: {
-          id: addId,
-          type: "connectionCreatorNode",
-          position: { x: node.xPos, y: node.yPos + 150 },
-          data: {
-            inputs: [{ id: nanoid() }],
-          },
-          deletable: false,
-        },
-        type: "add",
-      },
-      {
-        id: node.id,
-        type: "remove",
-      },
-    ]);
-
-    onEdgesChange([
-      {
-        item: { id: nanoid(), target: addId, source: actionId },
-        type: "add",
-      },
-    ]);
+    addConnectionCreatorNode(node, actionId);
 
     setSelectedNode(newActionNode);
   };
@@ -146,7 +123,7 @@ export const ConnectionCreatorNode = (
         item: {
           id: addId,
           type: "connectionCreatorNode",
-          position: { x: node.xPos, y: node.yPos + 150 },
+          position: { x: node.xPos, y: node.yPos + 100 },
           data: {
             inputs: [{ id: nanoid() }],
           },
@@ -182,8 +159,8 @@ export const ConnectionCreatorNode = (
         borderRadius: 50,
         border: "1px solid",
         borderColor: theme.colors.gray[3],
-        width: "20px",
-        height: "20px",
+        width: "15px",
+        height: "15px",
 
         "&:hover": {
           outline: "4px solid",
@@ -202,8 +179,7 @@ export const ConnectionCreatorNode = (
               backgroundColor: theme.colors.gray[4],
               border: "none",
               borderRadius: 0,
-              minHeight: "0px",
-              minWidth: "0px",
+              minHeight: "3px",
             }}
           />
         );
@@ -212,7 +188,7 @@ export const ConnectionCreatorNode = (
         <Popover withinPortal withArrow>
           <Popover.Target>
             <ActionIcon>
-              <IconPlus size="15px" />
+              <IconPlus size="10px" />
             </ActionIcon>
           </Popover.Target>
 
