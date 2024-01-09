@@ -62,33 +62,4 @@ export const calculateGridSizes = (tree: Component) => {
     },
     { order: "pre" },
   );
-
-  // TODO: Implement this taking in consideration the resized columns. Also, do this in a single pass
-
-  // recalculate column sizes if the sum of all columns is less than the grid size
-  // take in consideration the resized columns
-  /* crawl(
-    tree,
-    (node) => {
-      if (node.name === "Grid") {
-        const sum = (node.children ?? []).reduce((acc, child) => {
-          return acc + (child.props?.span ?? 0);
-        }, 0);
-
-        if (sum < node.props?.gridSize) {
-          const firstColumn = node.children?.find((child) => {
-            return child.name === "GridColumn";
-          })!;
-
-          if (firstColumn) {
-            const newSpanSize =
-              firstColumn.props!.span + node.props?.gridSize - sum;
-            firstColumn.props!.span = newSpanSize;
-            setColumnSpan(firstColumn.id!, newSpanSize);
-          }
-        }
-      }
-    },
-    { order: "pre" },
-  ); */
 };

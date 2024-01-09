@@ -1,5 +1,4 @@
 import { isMatchingUrl } from "@/pages/[page]";
-import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { getByDomain } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
 import { useRouter } from "next/router";
@@ -8,22 +7,16 @@ import { useEffect, useState } from "react";
 export const useCheckIfIsLive = () => {
   const router = useRouter();
   const projectId = router.query.id;
-  const initializeEndpoints = useEditorStore(
-    (state) => state.initializeEndpoints,
+
+  const setCurrentProjectId = useEditorStore(
+    (state) => state.setCurrentProjectId,
   );
 
   const url = typeof window !== "undefined" ? window.location.host : "";
-  let initialIsLive = true;
-
-  if (
+  const initialIsLive =
     router?.asPath === "/[page]" ||
     isMatchingUrl(url) ||
-    url.endsWith(".localhost:3000")
-  ) {
-    initialIsLive = true;
-  } else {
-    initialIsLive = false;
-  }
+    url.endsWith(".localhost:3000");
 
   const [isLive, setIsLive] = useState(initialIsLive);
 
@@ -31,20 +24,15 @@ export const useCheckIfIsLive = () => {
     const setLiveIfHasCustomDomain = async () => {
       try {
         const project = await getByDomain(url);
+        const _projectId = project.id ?? projectId;
 
         if (project.id) {
           setIsLive(!!project.id);
         }
-        await getCachedEndpoints(project.id ?? projectId);
+        setCurrentProjectId(_projectId);
       } catch (error) {
         console.error("Error checking if live:", error);
       }
-    };
-
-    const getCachedEndpoints = async (projectId: string) => {
-      const { results } = await getDataSourceEndpoints(projectId);
-
-      initializeEndpoints(results);
     };
 
     setLiveIfHasCustomDomain();

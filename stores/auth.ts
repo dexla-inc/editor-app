@@ -105,11 +105,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const accessToken = state.getAccessToken();
     const refreshToken = state.getRefreshToken();
 
+    console.log("hasTokenExpired", state.hasTokenExpired());
     if (accessToken && !state.hasTokenExpired()) {
       return;
     }
 
-    const response = await fetch(`${state.getApiConfig()?.refreshTokenUrl}`, {
+    const apiConfig = state.getApiConfig();
+
+    const url = apiConfig?.refreshTokenUrl as string;
+
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

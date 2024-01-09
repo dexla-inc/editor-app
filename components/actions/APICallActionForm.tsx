@@ -11,14 +11,12 @@ import {
 import { colors } from "@/components/datasources/DataSourceEndpoint";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import { useVariable } from "@/hooks/useVariable";
-import {
-  getDataSourceEndpoints,
-  getDataSources,
-} from "@/requests/datasources/queries-noauth";
+import { getDataSources } from "@/requests/datasources/queries-noauth";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { FrontEndTypes } from "@/requests/variables/types";
 import { useAuthStore } from "@/stores/auth";
+import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { APICallAction, Action } from "@/utils/actions";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
@@ -96,9 +94,9 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   );
   const sequentialTo = useEditorStore((state) => state.sequentialTo);
 
-  const [endpoints, setEndpoints] = useState<Array<Endpoint> | undefined>(
-    undefined,
-  );
+  const endpoints = useDataSourceStore((state) => state.endpoints);
+  const fetchEndpoints = useDataSourceStore((state) => state.fetchEndpoints);
+
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
   >(undefined);
@@ -172,19 +170,12 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     );
   };
 
-  const isLogin = actionName === "login";
   useEffect(() => {
-    const getEndpoints = async () => {
-      const { results } = await getDataSourceEndpoints(projectId, {
-        authOnly: isLogin,
-      });
-      setEndpoints(results);
-    };
-
     if ((dataSources.data?.results ?? []).length > 0) {
-      getEndpoints();
+      fetchEndpoints(projectId);
     }
-  }, [dataSources.data, projectId, isLogin]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataSources.data, projectId]);
 
   useEffect(() => {
     if (
