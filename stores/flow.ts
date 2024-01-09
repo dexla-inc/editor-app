@@ -69,6 +69,8 @@ export type FlowState = {
   getNodeById: (id?: string) => Partial<Node>;
   setCurrentFlowId: (currentFlowId?: string) => void;
   setShowFormModal: (shouldShowFormModal?: boolean, flowId?: string) => void;
+  selectedTabView: "list" | "flow";
+  setSelectedTabView: (selectedTabView: "list" | "flow") => void;
 };
 
 const edgeProps: Partial<Edge> = {
@@ -108,6 +110,10 @@ export const initialEdges = [
 export const useFlowStore = create<FlowState>()(
   devtools(
     (set, get) => ({
+      selectedTabView: "list",
+      setSelectedTabView: (selectedTabView) => {
+        set({ selectedTabView }, false, "editor/setSelectedTabView");
+      },
       isDragging: false,
       isRestored: false,
       isUpdating: false,

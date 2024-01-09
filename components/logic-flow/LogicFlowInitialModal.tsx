@@ -60,15 +60,12 @@ export default function LogicFlowInitialModal({
     (state) => state.setCurrentProjectId,
   );
   const setCurrentPageId = useEditorStore((state) => state.setCurrentPageId);
-  const selectedFlowNode = useFlowStore((state) => state.selectedNode);
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
   const resetFlow = useFlowStore((state) => state.resetFlow);
   const page = useEditorStore((state) => state.currentPageId ?? "");
   const projectId = useEditorStore((state) => state.currentProjectId ?? "");
-  const selectedTabView = useEditorStore((state) => state.selectedTabView);
-  const setSelectedTabView = useEditorStore(
-    (state) => state.setSelectedTabView,
-  );
+  const selectedTabView = useFlowStore((state) => state.selectedTabView);
+  const setSelectedTabView = useFlowStore((state) => state.setSelectedTabView);
 
   const client = useQueryClient();
   const { data, isLoading } = useQuery({

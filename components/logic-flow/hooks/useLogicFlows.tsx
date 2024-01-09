@@ -10,10 +10,8 @@ export const useLogicFlows = () => {
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
   const pageId = useEditorStore((state) => state.currentPageId);
   const projectId = useEditorStore((state) => state.currentProjectId);
-  const setSelectedTabView = useEditorStore(
-    (state) => state.setSelectedTabView,
-  );
-  const selectedTabView = useEditorStore((state) => state.selectedTabView);
+  const setSelectedTabView = useFlowStore((state) => state.setSelectedTabView);
+  const selectedTabView = useFlowStore((state) => state.selectedTabView);
 
   const openLogicFlowsModal = () =>
     modals.openContextModal({
