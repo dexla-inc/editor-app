@@ -667,7 +667,9 @@ const getVariableValueFromVariableId = (variableId = "") => {
 
   if (_var) {
     const variableId = isObject ? (_var as any).id : _var;
-    const variable = variableList.find((v) => v.id === variableId);
+    const variable = variableList.find(
+      (v) => v.id === variableId || v.name === variableId,
+    );
 
     if (!variable) return;
     let value = variable.value ?? variable.defaultValue;

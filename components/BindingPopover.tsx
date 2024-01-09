@@ -191,14 +191,14 @@ export default function BindingPopover({
                 variable: variables?.list[parsed.id],
                 path: parsed.path,
               })}`
-            : `var_${variables?.list[parsed.id].id}`,
+            : `var_${variables?.list[parsed.id].name}`,
         );
     } catch {
       setSelectedItem(
         `${prefixWithReturnIfNeeded(javascriptCode)}variables[/* ${variables
           ?.list[item].name} */'${item}']`,
       );
-      onPickVariable && onPickVariable(`var_${variables?.list[item].id}`);
+      onPickVariable && onPickVariable(`var_${variables?.list[item].name}`);
     }
   };
 
