@@ -939,7 +939,6 @@ export const apiCallAction = async ({
       responseJson = await performFetch(url, endpoint, body);
 
       const mergedAuthConfig = { ...responseJson, ...apiAuthConfig };
-      console.log("mergedAuthConfig", mergedAuthConfig);
       const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
       setAuthTokens(mergedAuthConfig);
     } else {

@@ -83,7 +83,7 @@ export type Endpoint = {
 export type EndpointParams = Omit<Endpoint, "id" | "authentication">;
 
 type AuthenticationEndpoint = {
-  endpointType: string;
+  endpointType: "REFRESH" | "ACCESS" | "USER";
   tokenKey: string;
   tokenSecondaryKey: string;
 };

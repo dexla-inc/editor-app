@@ -88,9 +88,6 @@ export default function AuthenticationBearer({
   const clearApiAuthConfig = useDataSourceStore(
     (state) => state.clearApiAuthConfig,
   );
-  const setApiAuthConfig = useDataSourceStore(
-    (state) => state.fetchApiAuthConfig,
-  );
 
   const form = useForm<AuthenticationBearerTokenParams>({
     validateInputOnBlur: true,
@@ -172,8 +169,6 @@ export default function AuthenticationBearer({
           "USER",
         );
       }
-
-      setApiAuthConfig(projectId, dataSource.id);
 
       nextStep && nextStep();
 
