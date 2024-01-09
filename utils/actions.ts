@@ -1124,7 +1124,7 @@ export const bindVariableToComponentAction = async ({
   const isObject = typeof _var === "object";
 
   if (action.component && _var) {
-    const variables = useVariableStore.getState();
+    const variables = useVariableStore.getState().variableList;
     const variable = variables[isObject ? (_var as any).variable.name : _var];
 
     let value = variable.value;
