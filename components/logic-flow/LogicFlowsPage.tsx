@@ -32,7 +32,7 @@ import isEqual from "lodash.isequal";
 import startCase from "lodash.startcase";
 import { GetServerSidePropsContext } from "next";
 import { useCallback, useEffect, useRef } from "react";
-import { getOutgoers, Node, useUpdateNodeInternals } from "reactflow";
+import { useUpdateNodeInternals } from "reactflow";
 import { nanoid } from "nanoid";
 
 export const getServerSideProps = async ({
@@ -49,7 +49,6 @@ export const getServerSideProps = async ({
     props: JSON.parse(
       JSON.stringify({
         id: query.id,
-        pageId: query.page,
         flowId,
         dehydratedState: dehydrate(queryClient),
       }),
@@ -78,11 +77,10 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
   }));
   const updateNodeInternals = useUpdateNodeInternals();
   const previousSelectedNode = usePrevious(selectedNode);
-  const pageId = useEditorStore((state) => state.currentPageId ?? "");
   const id = useEditorStore((state) => state.currentProjectId ?? "");
 
   const { data: flow, isLoading: isFlowDataLoading } = useQuery({
-    queryKey: ["logic-flow", id, pageId, flowId],
+    queryKey: ["logic-flow", id, flowId],
     queryFn: async () => {
       state.setIsRestored(false);
       const result = await getLogicFlow(id, flowId);
@@ -193,7 +191,7 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
           {
             item: {
               id: addId,
-              type: "addNode",
+              type: "connectionCreatorNode",
               position: {
                 x: (selectedNode as any).xPos + 100,
                 y: (selectedNode as any).yPos + 100 * index,

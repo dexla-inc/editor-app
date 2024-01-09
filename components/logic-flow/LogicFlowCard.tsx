@@ -17,44 +17,59 @@ import {
 import { IconCopy, IconDots, IconEdit, IconTrashX } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useRouter } from "next/router";
 import { Edge, Node } from "reactflow";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  createLogicFlow,
+  deleteLogicFlow,
+} from "@/requests/logicflows/mutations";
+import { useEditorStore } from "@/stores/editor";
 
 dayjs.extend(relativeTime);
 
 type FlowCardProps = {
   flow: Partial<LogicFlowResponse>;
-  onDelete?: () => void;
-  onDuplicate?: () => void;
   onEdit?: () => void;
   onClick?: () => void;
-  isLoading: boolean;
 };
 
-export const LogicFlowCard = ({
-  flow,
-  onDelete,
-  onDuplicate,
-  onEdit,
-  onClick,
-  isLoading,
-}: FlowCardProps) => {
+export const LogicFlowCard = ({ flow, onEdit, onClick }: FlowCardProps) => {
   const theme = useMantineTheme();
-  const router = useRouter();
+  const client = useQueryClient();
 
-  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onDelete?.();
-  };
+  const projectId = useEditorStore((state) => state.currentProjectId ?? "");
 
   const data = JSON.parse(decodeSchema(flow.data as string)) as unknown as {
     nodes: Node[];
     edges: Edge[];
   };
 
+  const deleteFlow = useMutation({
+    mutationKey: ["logic-flow"],
+    mutationFn: async (flowId: string) => {
+      return await deleteLogicFlow(projectId, flowId);
+    },
+    onSettled: async () => {
+      await client.refetchQueries(["logic-flows", projectId]);
+    },
+  });
+
+  const duplicateFlow = useMutation({
+    mutationKey: ["logic-flow"],
+    mutationFn: async (values: any) => {
+      return createLogicFlow(projectId as string, values);
+    },
+    onSettled: async () => {
+      await client.refetchQueries(["logic-flows", projectId]);
+    },
+  });
+
   const avatars = data.nodes.reduce(
     (avatars: any[], node: any) => {
+      if (node.type === "connectionCreatorNode") {
+        return avatars;
+      }
+
       if (avatars.find((a) => a.type === node.type)) {
         const counterIndex = avatars.findIndex((a) => a.type === "counter");
         const newAvatars = [...avatars];
@@ -86,7 +101,10 @@ export const LogicFlowCard = ({
         },
       }}
     >
-      <LoadingOverlay visible={isLoading} overlayBlur={2} />
+      <LoadingOverlay
+        visible={deleteFlow.isLoading || duplicateFlow.isLoading}
+        overlayBlur={2}
+      />
       <Group position="apart" align="flex-start">
         <Stack spacing={0}>
           <Text size="sm">{flow.name}</Text>
@@ -106,7 +124,10 @@ export const LogicFlowCard = ({
               icon={<IconCopy size={14} />}
               onClick={(e) => {
                 e.stopPropagation();
-                onDuplicate?.();
+                duplicateFlow.mutate({
+                  name: flow.name!,
+                  data: flow.data,
+                });
               }}
             >
               Duplicate
@@ -120,7 +141,14 @@ export const LogicFlowCard = ({
             >
               Edit
             </Menu.Item>
-            <Menu.Item icon={<IconTrashX size={14} />} onClick={handleDelete}>
+            <Menu.Item
+              icon={<IconTrashX size={14} />}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                deleteFlow.mutate(flow?.id!);
+              }}
+            >
               Delete
             </Menu.Item>
           </Menu.Dropdown>

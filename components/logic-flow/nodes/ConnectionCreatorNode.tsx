@@ -14,8 +14,9 @@ import { FlowState, useFlowStore } from "@/stores/flow";
 import { nanoid } from "nanoid";
 import { actions } from "@/utils/actions";
 import groupBy from "lodash.groupby";
+import startCase from "lodash.startcase";
 
-interface AddNodeData extends NodeData {}
+interface ConnectionCreatorNodeData extends NodeData {}
 
 const selector = (state: FlowState) => ({
   nodes: state.nodes,
@@ -29,10 +30,13 @@ const selector = (state: FlowState) => ({
   setIsDragging: state.setIsDragging,
 });
 
-export const AddNode = (node: NodeProps<AddNodeData>) => {
+export const ConnectionCreatorNode = (
+  node: NodeProps<ConnectionCreatorNodeData>,
+) => {
   const theme = useMantineTheme();
   const { data } = node;
   const { onNodesChange, onEdgesChange, edges } = useFlowStore(selector);
+  const setSelectedNode = useFlowStore((state) => state.setSelectedNode);
   const groupedActions = groupBy(actions, (action) => action.group);
 
   const onClickAddAction = async (actionName: string) => {
@@ -40,40 +44,43 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
     const addId = nanoid();
     const edge = edges.find((edge) => edge.target === node.id);
 
-    await onNodesChange([
+    const newActionNode = {
+      id: actionId,
+      type: "actionNode",
+      position: { x: node.xPos - 30, y: node.yPos },
+      data: {
+        label: "Action",
+        form: { action: actionName },
+        description: "Execute an action",
+        inputs: [{ id: nanoid(), name: "Input" }],
+        outputs: [{ id: nanoid(), name: "Output" }],
+      },
+    };
+
+    onNodesChange([
       {
-        item: {
-          id: actionId,
-          type: "actionNode",
-          position: { x: node.xPos - 30, y: node.yPos },
-          data: {
-            label: "Action",
-            form: { action: actionName },
-            description: "Execute an action",
-            inputs: [{ id: nanoid(), name: "Input" }],
-            outputs: [{ id: nanoid(), name: "Output" }],
-          },
-        },
+        item: newActionNode,
         type: "add",
       },
     ]);
 
-    await onEdgesChange([
+    onEdgesChange([
       {
         item: { ...edge, id: nanoid(), target: actionId },
         type: "add",
       } as EdgeAddChange,
     ]);
 
-    await onNodesChange([
+    onNodesChange([
       {
         item: {
           id: addId,
-          type: "addNode",
+          type: "connectionCreatorNode",
           position: { x: node.xPos, y: node.yPos + 150 },
           data: {
             inputs: [{ id: nanoid() }],
           },
+          deletable: false,
         },
         type: "add",
       },
@@ -83,12 +90,14 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
       },
     ]);
 
-    await onEdgesChange([
+    onEdgesChange([
       {
         item: { id: nanoid(), target: addId, source: actionId },
         type: "add",
       },
     ]);
+
+    setSelectedNode(newActionNode);
   };
 
   const onClickAddConditional = async () => {
@@ -100,27 +109,28 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
       id: nanoid(),
       name: "Output",
     };
-    await onNodesChange([
-      {
-        item: {
-          id: conditionalId,
-          type: "conditionalNode",
-          position: { x: node.xPos - 30, y: node.yPos },
-          data: {
-            label: "Conditional",
-            description: "Execute actions conditionally",
-            inputs: [{ id: nanoid(), name: "Input" }],
-            outputs: [defaultOutput],
-            form: {
-              outputs: [defaultOutput],
-            },
-          },
+    const newConditionalNode = {
+      id: conditionalId,
+      type: "conditionalNode",
+      position: { x: node.xPos - 30, y: node.yPos },
+      data: {
+        label: "Conditional",
+        description: "Execute actions conditionally",
+        inputs: [{ id: nanoid(), name: "Input" }],
+        outputs: [defaultOutput],
+        form: {
+          outputs: [defaultOutput],
         },
+      },
+    };
+    onNodesChange([
+      {
+        item: newConditionalNode,
         type: "add",
       },
     ]);
 
-    await onEdgesChange([
+    onEdgesChange([
       {
         item: {
           ...edge,
@@ -131,15 +141,16 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
       } as EdgeAddChange,
     ]);
 
-    await onNodesChange([
+    onNodesChange([
       {
         item: {
           id: addId,
-          type: "addNode",
+          type: "connectionCreatorNode",
           position: { x: node.xPos, y: node.yPos + 150 },
           data: {
             inputs: [{ id: nanoid() }],
           },
+          deletable: false,
         },
         type: "add",
       },
@@ -149,7 +160,7 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
       },
     ]);
 
-    await onEdgesChange([
+    onEdgesChange([
       {
         item: {
           id: nanoid(),
@@ -160,6 +171,8 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
         type: "add",
       },
     ]);
+
+    setSelectedNode(newConditionalNode);
   };
 
   return (
@@ -221,7 +234,7 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
                             key={item.name}
                             onClick={() => onClickAddAction(item.name)}
                           >
-                            {item.name}
+                            {startCase(item.name)}
                           </Menu.Item>
                         ))}
                       </>
@@ -237,7 +250,7 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
   );
 };
 
-export const data: AddNodeData = {
+export const data: ConnectionCreatorNodeData = {
   label: "Add",
   description: "",
   inputs: [],

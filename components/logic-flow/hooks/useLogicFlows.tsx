@@ -4,6 +4,7 @@ import { IconArrowBack } from "@tabler/icons-react";
 import { useFlowStore } from "@/stores/flow";
 import { VariablesButton } from "@/components/variables/VariablesButton";
 import { useEditorStore } from "@/stores/editor";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useLogicFlows = () => {
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
@@ -11,6 +12,7 @@ export const useLogicFlows = () => {
   const projectId = useEditorStore((state) => state.currentProjectId);
   const setSelectedTabView = useFlowStore((state) => state.setSelectedTabView);
   const selectedTabView = useFlowStore((state) => state.selectedTabView);
+  const client = useQueryClient();
 
   const openLogicFlowsModal = () =>
     modals.openContextModal({
@@ -22,7 +24,12 @@ export const useLogicFlows = () => {
         <Flex justify="space-between" mr={10}>
           <Flex align="center" gap={10}>
             Logic Flows {selectedTabView}
-            <ActionIcon onClick={() => setSelectedTabView("list")}>
+            <ActionIcon
+              onClick={async () => {
+                setSelectedTabView("list");
+                await client.refetchQueries(["logic-flows", projectId]);
+              }}
+            >
               <IconArrowBack />
             </ActionIcon>
           </Flex>

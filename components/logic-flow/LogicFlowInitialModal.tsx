@@ -1,16 +1,12 @@
 import { LogicFlowCard } from "@/components/logic-flow/LogicFlowCard";
 import { LogicFlowShell } from "@/components/logic-flow/LogicFlowShell";
-import {
-  createLogicFlow,
-  deleteLogicFlow,
-} from "@/requests/logicflows/mutations";
 import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { LOGICFLOW_BACKGROUND } from "@/utils/branding";
 import { Box, Button, Group, Stack, Tabs, Text } from "@mantine/core";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import { useEffect, useState } from "react";
 import { ContextModalProps } from "@mantine/modals";
@@ -31,49 +27,27 @@ export const getServerSideProps = async ({
 export default function LogicFlowInitialModal({}: ContextModalProps) {
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
   const resetFlow = useFlowStore((state) => state.resetFlow);
-  const page = useEditorStore((state) => state.currentPageId ?? "");
   const projectId = useEditorStore((state) => state.currentProjectId ?? "");
   const selectedTabView = useFlowStore((state) => state.selectedTabView);
   const setSelectedTabView = useFlowStore((state) => state.setSelectedTabView);
   const setIsRestored = useFlowStore((state) => state.setIsRestored);
 
-  const client = useQueryClient();
   const { data, isLoading } = useQuery({
-    queryKey: ["logic-flows", projectId, page],
+    queryKey: ["logic-flows", projectId],
     queryFn: async () => {
-      const response = await listLogicFlows(projectId, { pageId: page });
+      const response = await listLogicFlows(projectId);
       return response.results ?? [];
     },
-    enabled: !!projectId && !!page,
-  });
-
-  const duplicateFlow = useMutation({
-    mutationKey: ["logic-flow"],
-    mutationFn: async (values: any) => {
-      return createLogicFlow(projectId as string, values);
-    },
-    onSettled: async () => {
-      await client.refetchQueries(["logic-flows", projectId, page]);
-    },
-  });
-
-  const deleteFlow = useMutation({
-    mutationKey: ["logic-flow"],
-    mutationFn: async (flowId: string) => {
-      return await deleteLogicFlow(projectId, flowId);
-    },
-    onSettled: async () => {
-      await client.refetchQueries(["logic-flows", projectId, page]);
-    },
+    enabled: !!projectId,
   });
 
   const logicFlows = (data ?? []) as LogicFlowResponse[];
 
   useEffect(() => {
-    if (projectId && page) {
+    if (projectId) {
       resetFlow();
     }
-  }, [projectId, page, resetFlow]);
+  }, [projectId, resetFlow]);
 
   const [flowId, setFlowId] = useState<string>("");
 
@@ -104,20 +78,8 @@ export default function LogicFlowInitialModal({}: ContextModalProps) {
                 <LogicFlowCard
                   key={flow.id}
                   flow={flow}
-                  isLoading={deleteFlow.isLoading || duplicateFlow.isLoading}
-                  onDelete={async () => {
-                    await deleteFlow.mutate(flow.id);
-                  }}
                   onEdit={() => {
                     setShowFormModal(true, flow.id);
-                  }}
-                  onDuplicate={async () => {
-                    await duplicateFlow.mutate({
-                      name: flow.name!,
-                      data: flow.data,
-                      pageId: flow.pageId,
-                      isGlobal: flow.isGlobal ?? false,
-                    });
                   }}
                   onClick={() => {
                     setSelectedTabView("flow");

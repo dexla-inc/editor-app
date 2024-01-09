@@ -14,7 +14,6 @@ import {
   NodeAddChange,
   ReactFlowInstance,
   EdgeAddChange,
-  NodeRemoveChange,
 } from "reactflow";
 import { nanoid } from "nanoid";
 import { devtools } from "zustand/middleware";
@@ -94,7 +93,7 @@ export const initialNodes = [
   },
   {
     id: addNodeId,
-    type: "addNode",
+    type: "connectionCreatorNode",
     data: {
       inputs: [{ id: nanoid() }],
       outputs: [],
