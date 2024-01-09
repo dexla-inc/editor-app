@@ -26,6 +26,8 @@ import TagManager from "react-gtm-module";
 import { ReactFlowProvider } from "reactflow";
 import AuthProvider from "./AuthProvider";
 import InstantiatePropelAuthStore from "./InstantiatePropelAuthStore";
+import LogicFlowInitialModal from "@/components/logic-flow/LogicFlowInitialModal";
+import { ModalsProvider } from "@mantine/modals";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -117,50 +119,53 @@ export default function App(props: AppProps) {
           <main className={inter.variable}>
             <QueryClientProvider client={queryClient}>
               <Hydrate state={pageProps.dehydratedState}>
-                <Notifications />
-                <Global
-                  styles={{
-                    "*, *::before, *::after": {
-                      boxSizing: "border-box",
-                    },
-                    body: {
-                      margin: 0,
-                      padding: 0,
-                      ...theme.fn.fontStyles(),
-                      lineHeight: theme.lineHeight,
-                      maxHeight: "100vh",
-                      minHeight: "100vh",
-                      background:
-                        !isLive && isDarkTheme ? DARK_MODE : LIGHT_MODE,
-                      color: !isLive && isDarkTheme ? GREEN_COLOR : theme.black,
-                      // For WebKit browsers (e.g., Chrome, Safari)
-                      "::-webkit-scrollbar": {
-                        width: isLive ? "0px" : "8px",
-                        height: isLive && "0px",
+                <ModalsProvider modals={{ logicFlows: LogicFlowInitialModal }}>
+                  <Notifications />
+                  <Global
+                    styles={{
+                      "*, *::before, *::after": {
+                        boxSizing: "border-box",
                       },
-                      "::-webkit-scrollbar-thumb": {
-                        backgroundColor: !isLive && "#888",
-                        borderRadius: !isLive && "10px",
+                      body: {
+                        margin: 0,
+                        padding: 0,
+                        ...theme.fn.fontStyles(),
+                        lineHeight: theme.lineHeight,
+                        maxHeight: "100vh",
+                        minHeight: "100vh",
+                        background:
+                          !isLive && isDarkTheme ? DARK_MODE : LIGHT_MODE,
+                        color:
+                          !isLive && isDarkTheme ? GREEN_COLOR : theme.black,
+                        // For WebKit browsers (e.g., Chrome, Safari)
+                        "::-webkit-scrollbar": {
+                          width: isLive ? "0px" : "8px",
+                          height: isLive && "0px",
+                        },
+                        "::-webkit-scrollbar-thumb": {
+                          backgroundColor: !isLive && "#888",
+                          borderRadius: !isLive && "10px",
+                        },
+
+                        // For Firefox
+                        scrollbarWidth: isLive ? "none" : "thin",
+                        scrollbarColor: !isLive && "#888 transparent",
+
+                        // For IE and Edge
+                        msOverflowStyle: isLive
+                          ? "none"
+                          : "-ms-autohiding-scrollbar",
                       },
 
-                      // For Firefox
-                      scrollbarWidth: isLive ? "none" : "thin",
-                      scrollbarColor: !isLive && "#888 transparent",
-
-                      // For IE and Edge
-                      msOverflowStyle: isLive
-                        ? "none"
-                        : "-ms-autohiding-scrollbar",
-                    },
-
-                    html: {
-                      maxHeight: "-webkit-fill-available",
-                    },
-                  }}
-                />
-                <ReactFlowProvider>
-                  <Component {...pageProps} />
-                </ReactFlowProvider>
+                      html: {
+                        maxHeight: "-webkit-fill-available",
+                      },
+                    }}
+                  />
+                  <ReactFlowProvider>
+                    <Component {...pageProps} />
+                  </ReactFlowProvider>
+                </ModalsProvider>
               </Hydrate>
             </QueryClientProvider>
             <SpeedInsights />

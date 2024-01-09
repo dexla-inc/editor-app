@@ -38,6 +38,7 @@ import { flexStyles } from "@/utils/branding";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
+import { useLogicFlows } from "@/hooks/logic-flow/useLogicFlows";
 
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const resetTree = useEditorStore((state) => state.resetTree);
@@ -58,6 +59,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
 
   const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
   const clear = useTemporalStore((state) => state.clear);
+  const { openLogicFlowsModal } = useLogicFlows();
 
   return (
     <AppShell
@@ -98,7 +100,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               <ActionIconDefault
                 iconName="IconGitBranch"
                 tooltip="Logic Flows"
-                href={`/projects/${projectId}/editor/${currentPageId}/flows`}
+                onClick={openLogicFlowsModal}
               />
               <VariablesButton projectId={projectId} pageId={currentPageId} />
               <ChangeHistoryPopover />

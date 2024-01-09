@@ -41,17 +41,16 @@ type NodeFormType = {
 export const NodeForm = ({ form, data }: NodeFormType) => {
   const router = useRouter();
   const projectId = router.query.id as string;
-  const pageId = router.query.page as string;
   const selectedNode = useFlowStore((state) => state.selectedNode);
   const isUpdating = useFlowStore((state) => state.isUpdating);
 
   const { data: variables } = useQuery({
-    queryKey: ["variables", projectId, pageId],
+    queryKey: ["variables", projectId],
     queryFn: async () => {
-      const response = await listVariables(projectId, { pageId });
+      const response = await listVariables(projectId);
       return response;
     },
-    enabled: !!projectId && !!pageId,
+    enabled: !!projectId,
   });
 
   useEffect(() => {
@@ -87,7 +86,6 @@ export const NodeForm = ({ form, data }: NodeFormType) => {
         size="xs"
         loading={isUpdating}
         loaderPosition="center"
-        disabled={isUpdating}
       >
         Save
       </Button>

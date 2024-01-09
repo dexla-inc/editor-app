@@ -8,7 +8,7 @@ import { useAppStore } from "@/stores/app";
 import { initialEdges, initialNodes, useFlowStore } from "@/stores/flow";
 import { encodeSchema } from "@/utils/compression";
 import { convertToPatchParams } from "@/utils/dashboardTypes";
-import { Button, Checkbox, Modal, Stack, TextInput } from "@mantine/core";
+import { Button, Modal, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
@@ -39,11 +39,7 @@ export const LogicFlowFormModal = () => {
       );
     },
     onSettled: async () => {
-      await client.refetchQueries([
-        "logic-flows",
-        router.query.id,
-        router.query.page,
-      ]);
+      await client.refetchQueries(["logic-flows", router.query.id]);
       setShowFormModal(false);
       stopLoading({
         id: "logic-flows",
@@ -65,22 +61,16 @@ export const LogicFlowFormModal = () => {
       return createLogicFlow(router.query.id as string, {
         ...values,
         data: encodeSchema(JSON.stringify(newFlow)),
-        pageId: router.query.page,
       });
     },
-    onSettled: async (data) => {
-      await client.refetchQueries([
-        "logic-flows",
-        router.query.id,
-        router.query.page,
-      ]);
-      setShowFormModal(false);
+    onSettled: async (data, error) => {
+      await client.refetchQueries(["logic-flows", router.query.id]);
 
       if (!data?.id) {
         stopLoading({
           id: "logic-flows",
           title: "Oops",
-          message: "Something went wrong",
+          message: (error as string) ?? "Something went wrong",
           isError: true,
         });
       } else {
@@ -89,10 +79,10 @@ export const LogicFlowFormModal = () => {
           title: "Logic flow saved",
           message: "Logic flow saved successfully",
         });
-
-        router.push(
-          `/projects/${router.query.id}/editor/${router.query.page}/flows/${data.id}`,
-        );
+        setShowFormModal(false);
+        form.setValues({
+          name: "",
+        });
       }
     },
   });
@@ -100,7 +90,6 @@ export const LogicFlowFormModal = () => {
   const form = useForm({
     initialValues: {
       name: "",
-      isGlobal: false,
     },
   });
 
@@ -139,7 +128,6 @@ export const LogicFlowFormModal = () => {
 
         form.setValues({
           name: flow.name,
-          isGlobal: flow.isGlobal,
         });
       };
 
@@ -147,7 +135,6 @@ export const LogicFlowFormModal = () => {
     } else {
       form.setValues({
         name: "",
-        isGlobal: false,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -159,8 +146,12 @@ export const LogicFlowFormModal = () => {
       opened={shouldShowFormModal ?? false}
       onClose={() => {
         setShowFormModal(false);
+        form.setValues({
+          name: "",
+        });
       }}
       title={currentFlowId ? "Edit Logic Flow" : "Create Logic Flow"}
+      styles={{ overlay: { zIndex: 300 }, inner: { zIndex: 400 } }}
     >
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack>
@@ -169,10 +160,6 @@ export const LogicFlowFormModal = () => {
             label="Name"
             {...form.getInputProps("name")}
             withAsterisk={false}
-          />
-          <Checkbox
-            label="Is Global"
-            {...form.getInputProps("isGlobal", { type: "checkbox" })}
           />
           <Button type="submit" loading={isLoading} compact>
             {currentFlowId ? "Save" : "Create"}

@@ -85,7 +85,6 @@ export const SpacingControl = ({ type, form, selectedComponentIds }: Props) => {
               });
             }
             // Update showType value
-            console.log(`show${type}`, newValue);
             setTypeValue(`show${type}`, newValue);
           }}
         />

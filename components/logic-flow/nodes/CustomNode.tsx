@@ -1,9 +1,16 @@
-import { useFlowStore } from "@/stores/flow";
 import { NodeTriggerCondition } from "@/utils/triggerConditions";
-import { Box, Card, Stack, Text, useMantineTheme } from "@mantine/core";
+import {
+  Box,
+  Card,
+  CSSObject,
+  Stack,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
 import { IconBoxModel2 } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
 import { Handle, NodeProps, Position } from "reactflow";
+import { useFlowStore } from "@/stores/flow";
 
 export type NodeInput = {
   id: string;
@@ -27,33 +34,31 @@ export type NodeData = {
 
 export interface CustomNodeProps extends NodeProps<NodeData> {
   avatar?: React.FunctionComponent;
+  style?: CSSObject;
 }
 
-export const CustomNode = (node: CustomNodeProps) => {
+export const CustomNode = (props: CustomNodeProps) => {
   const theme = useMantineTheme();
-  const setSelectedNode = useFlowStore((state) => state.setSelectedNode);
-  const { data, selected } = node;
-  const Avatar = node.avatar;
-
-  const selectNode = () => {
-    setSelectedNode(node);
-  };
+  const { data, selected, avatar: Avatar, ...node } = props;
+  const { style } = props;
+  const { selectedNode } = useFlowStore();
 
   return (
     <Card
       p="sm"
-      onClick={selectNode}
       sx={{
         border: "1px solid",
-        borderColor: selected
-          ? theme.colors[theme.primaryColor][6]
-          : theme.colors.gray[3],
+        borderColor:
+          selectedNode?.id === node.id
+            ? theme.colors[theme.primaryColor][6]
+            : theme.colors.gray[3],
         minWidth: "100px",
 
         "&:hover": {
           outline: "4px solid",
           outlineColor: theme.fn.rgba("gray", 0.05),
         },
+        ...style,
       }}
     >
       <Stack spacing={4}>
@@ -93,7 +98,10 @@ export const CustomNode = (node: CustomNodeProps) => {
       </Stack>
       <Stack w="100%" justify="center" align="center" spacing={2} my="sm">
         {Avatar ? <Avatar /> : <NodeAvatar />}
-        <Text size={6}>{data.label}</Text>
+        <Text size={6}>
+          {data.label}
+          {data?.form?.action && ` - ${data.form.action}`}
+        </Text>
       </Stack>
       <Stack spacing={4}>
         {data.outputs.map((output: NodeOutput) => {

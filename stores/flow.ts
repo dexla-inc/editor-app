@@ -68,12 +68,16 @@ export type FlowState = {
   getNodeById: (id?: string) => Partial<Node>;
   setCurrentFlowId: (currentFlowId?: string) => void;
   setShowFormModal: (shouldShowFormModal?: boolean, flowId?: string) => void;
+  selectedTabView: "list" | "flow";
+  setSelectedTabView: (selectedTabView: "list" | "flow") => void;
+  setIsRestored: (isRestored: boolean) => void;
 };
 
 const edgeProps: Partial<Edge> = {
   type: "smoothstep",
 };
 
+const addNodeId = nanoid();
 export const initialNodes = [
   {
     id: "start-node",
@@ -85,16 +89,36 @@ export const initialNodes = [
       outputs: [{ id: nanoid(), name: "Initial Trigger" }],
     },
     position: { x: 0, y: 0 },
+    deletable: false,
+  },
+  {
+    id: addNodeId,
+    type: "connectionCreatorNode",
+    data: {
+      inputs: [{ id: nanoid() }],
+      outputs: [],
+    },
+    position: { x: 30, y: 150 },
+    deletable: false,
   },
 ] as Node[];
 
-export const initialEdges = [] as Edge[];
+export const initialEdges = [
+  { id: nanoid(), source: "start-node", target: addNodeId, type: "smoothstep" },
+] as Edge[];
 
 export const useFlowStore = create<FlowState>()(
   devtools(
     (set, get) => ({
+      selectedTabView: "list",
+      setSelectedTabView: (selectedTabView) => {
+        set({ selectedTabView }, false, "editor/setSelectedTabView");
+      },
       isDragging: false,
       isRestored: false,
+      setIsRestored: (isRestored) => {
+        set({ isRestored }, false, "flow/setIsRestored");
+      },
       isUpdating: false,
       shouldShowFormModal: false,
       nodes: [],
