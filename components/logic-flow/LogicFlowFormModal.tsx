@@ -63,15 +63,14 @@ export const LogicFlowFormModal = () => {
         data: encodeSchema(JSON.stringify(newFlow)),
       });
     },
-    onSettled: async (data) => {
+    onSettled: async (data, error) => {
       await client.refetchQueries(["logic-flows", router.query.id]);
-      setShowFormModal(false);
 
       if (!data?.id) {
         stopLoading({
           id: "logic-flows",
           title: "Oops",
-          message: "Something went wrong",
+          message: (error as string) ?? "Something went wrong",
           isError: true,
         });
       } else {
@@ -80,6 +79,7 @@ export const LogicFlowFormModal = () => {
           title: "Logic flow saved",
           message: "Logic flow saved successfully",
         });
+        setShowFormModal(false);
       }
     },
   });
@@ -152,7 +152,7 @@ export const LogicFlowFormModal = () => {
         });
       }}
       title={currentFlowId ? "Edit Logic Flow" : "Create Logic Flow"}
-      styles={{ overlay: { zIndex: 400 }, inner: { zIndex: 400 } }}
+      styles={{ overlay: { zIndex: 300 }, inner: { zIndex: 400 } }}
     >
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack>
