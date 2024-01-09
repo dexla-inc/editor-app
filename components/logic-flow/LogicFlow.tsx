@@ -17,6 +17,7 @@ const selector = (state: FlowState) => ({
   setFlowInstance: state.setFlowInstance,
   flowInstance: state.flowInstance,
   setIsDragging: state.setIsDragging,
+  setSelectedNode: state.setSelectedNode,
 });
 
 type FlowProps = {
@@ -34,6 +35,7 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
     setFlowInstance,
     onAddNode,
     setIsDragging,
+    setSelectedNode,
   } = useFlowStore(selector);
 
   const onDragOver = useCallback((event: any) => {
@@ -91,8 +93,11 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
       onInit={setFlowInstance}
       onConnect={onConnect}
       onNodesChange={onNodesChange}
-      onNodeDragStart={() => {
+      onNodeDragStart={(e, node) => {
         setIsDragging(true);
+        if (node.type === "connectionCreatorNode") {
+          setSelectedNode(undefined);
+        }
       }}
       onNodeDragStop={() => {
         setIsDragging(false);
@@ -103,6 +108,7 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
       nodeTypes={nodeTypes}
       fitView
       deleteKeyCode={["Backspace", "Delete"]}
+      selectionOnDrag
     >
       <Controls showInteractive={false} />
       <Background />
