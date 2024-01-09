@@ -99,6 +99,11 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
           setSelectedNode(undefined);
         }
       }}
+      onNodeClick={(e, node) => {
+        if (node.type !== "connectionCreatorNode") {
+          setSelectedNode(node);
+        }
+      }}
       onNodeDragStop={() => {
         setIsDragging(false);
       }}

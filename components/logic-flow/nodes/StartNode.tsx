@@ -3,21 +3,15 @@ import { IconPlayerPlay } from "@tabler/icons-react";
 import { NodeData, NodeOutput } from "@/components/logic-flow/nodes/CustomNode";
 import { nanoid } from "nanoid";
 import { Card, Stack, Text, useMantineTheme } from "@mantine/core";
-import { useFlowStore } from "@/stores/flow";
 
 interface StartNodeData extends NodeData {}
 
 export const StartNode = (node: NodeProps<StartNodeData>) => {
   const theme = useMantineTheme();
-  const setSelectedNode = useFlowStore((state) => state.setSelectedNode);
-  const selectNode = () => {
-    setSelectedNode(node);
-  };
 
   return (
     <Card
       p="sm"
-      onClick={selectNode}
       sx={{
         border: "1px solid",
         borderColor: node.selected

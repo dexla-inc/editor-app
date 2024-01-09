@@ -177,7 +177,6 @@ export const ConnectionCreatorNode = (
 
   return (
     <Card
-      onClick={() => setSelectedNode(undefined)}
       p={0}
       sx={{
         borderRadius: 50,

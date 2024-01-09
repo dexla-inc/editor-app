@@ -1,4 +1,3 @@
-import { useFlowStore } from "@/stores/flow";
 import { NodeTriggerCondition } from "@/utils/triggerConditions";
 import {
   Box,
@@ -39,18 +38,12 @@ export interface CustomNodeProps extends NodeProps<NodeData> {
 
 export const CustomNode = (props: CustomNodeProps) => {
   const theme = useMantineTheme();
-  const setSelectedNode = useFlowStore((state) => state.setSelectedNode);
   const { data, selected, avatar: Avatar } = props;
-  const { style, ...node } = props;
-
-  const selectNode = () => {
-    setSelectedNode(node);
-  };
+  const { style } = props;
 
   return (
     <Card
       p="sm"
-      onClick={selectNode}
       sx={{
         border: "1px solid",
         borderColor: selected
