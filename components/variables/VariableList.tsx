@@ -64,8 +64,6 @@ export const VariableList = ({ projectId, pageId }: Props) => {
       <td>{variable.name}</td>
       <td>{variable.type}</td>
       <td>{variable.defaultValue}</td>
-      <td>{variable.value}</td>
-      <td>{variable.isGlobal ? "True" : "False"}</td>
       <td>
         <Group>
           <ActionIcon
@@ -108,8 +106,6 @@ export const VariableList = ({ projectId, pageId }: Props) => {
                   <th>Name</th>
                   <th>Type</th>
                   <th>Default Value</th>
-                  <th>Current Value</th>
-                  <th>Is Global</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -128,11 +124,7 @@ export const VariableList = ({ projectId, pageId }: Props) => {
         )}
       </ScrollArea>
       <Modal title="Edit Variable" opened={opened} onClose={modal.close}>
-        <VariableForm
-          projectId={projectId}
-          pageId={pageId}
-          variableId={variableToEdit}
-        />
+        <VariableForm projectId={projectId} variableId={variableToEdit} />
       </Modal>
     </>
   );

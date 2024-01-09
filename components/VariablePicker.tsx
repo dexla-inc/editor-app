@@ -88,9 +88,7 @@ export const VariablePicker = (props: Props) => {
                 <Accordion.Panel p={0}>
                   <ScrollArea h={250} p="xs">
                     <JSONSelector
-                      data={JSON.parse(
-                        variable.value ?? variable.defaultValue ?? "{}",
-                      )}
+                      data={JSON.parse(variable.defaultValue ?? "{}")}
                       onSelectValue={(selected) => {
                         props.onSelectValue?.(
                           `var_${JSON.stringify({

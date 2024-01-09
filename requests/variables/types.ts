@@ -4,9 +4,6 @@ export type VariableParams = {
   name: string;
   type: FrontEndTypes;
   defaultValue: string | null;
-  value?: string; // THIS IS OBSOLETE. DELETE THIS.
-  isGlobal?: boolean;
-  pageId: string;
 };
 
 export type FrontEndTypes = "TEXT" | "NUMBER" | "BOOLEAN" | "OBJECT" | "ARRAY";

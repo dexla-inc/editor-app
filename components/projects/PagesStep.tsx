@@ -8,7 +8,7 @@ import {
 } from "@/requests/datasources/mutations";
 import { createPageList, createPages } from "@/requests/pages/mutations";
 import { PageAIResponse, PageBody } from "@/requests/pages/types";
-import { upsertVariable } from "@/requests/variables/mutations";
+import { createVariable } from "@/requests/variables/mutations";
 import { useAppStore } from "@/stores/app";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
@@ -202,13 +202,10 @@ export default function PagesStep({
 
       useDataSourceStore.getState().clearEndpoints();
 
-      await upsertVariable(projectId, {
+      await createVariable(projectId, {
         name: "GET Project Data",
         type: "OBJECT",
-        value: exampleResponse,
         defaultValue: exampleResponse,
-        isGlobal: true,
-        pageId: createdPages.homePageId,
       });
 
       setHomePageId(createdPages.homePageId);
