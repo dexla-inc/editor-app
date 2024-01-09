@@ -14,6 +14,7 @@ import {
 } from "@/components/datasources/AuthenticationInputs";
 import TextInputComponent from "@/components/datasources/TextInputComponent";
 import { Endpoint, RequestBody } from "@/requests/datasources/types";
+import { useDataSourceStore } from "@/stores/datasource";
 import { DataSourceStepperProps } from "@/utils/dashboardTypes";
 import {
   Anchor,
@@ -164,6 +165,8 @@ export default function AuthenticationBearer({
           "USER",
         );
       }
+
+      useDataSourceStore.getState().clearApiAuthConfig();
 
       nextStep && nextStep();
 

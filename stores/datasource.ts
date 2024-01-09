@@ -9,6 +9,7 @@ import { devtools, persist } from "zustand/middleware";
 type DataSourceState = {
   apiAuthConfig?: DataSourceAuthResponse;
   setApiAuthConfig: (projectId: string, dataSourceId: string) => void;
+  clearApiAuthConfig: () => void;
   endpoints?: Endpoint[];
   fetchEndpoints: (projectId: string) => void;
   clearEndpoints: () => void;
@@ -44,6 +45,13 @@ export const useDataSourceStore = create<DataSourceState>()(
         },
         clearEndpoints: () => {
           set({ endpoints: undefined }, false, "datasource/clearEndpoints");
+        },
+        clearApiAuthConfig: () => {
+          set(
+            { apiAuthConfig: undefined },
+            false,
+            "datasource/clearApiAuthConfig",
+          );
         },
       }),
       {
