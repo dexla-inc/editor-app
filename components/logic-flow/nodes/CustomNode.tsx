@@ -10,6 +10,7 @@ import {
 import { IconBoxModel2 } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
 import { Handle, NodeProps, Position } from "reactflow";
+import { useFlowStore } from "@/stores/flow";
 
 export type NodeInput = {
   id: string;
@@ -38,17 +39,19 @@ export interface CustomNodeProps extends NodeProps<NodeData> {
 
 export const CustomNode = (props: CustomNodeProps) => {
   const theme = useMantineTheme();
-  const { data, selected, avatar: Avatar } = props;
+  const { data, selected, avatar: Avatar, ...node } = props;
   const { style } = props;
+  const { selectedNode } = useFlowStore();
 
   return (
     <Card
       p="sm"
       sx={{
         border: "1px solid",
-        borderColor: selected
-          ? theme.colors[theme.primaryColor][6]
-          : theme.colors.gray[3],
+        borderColor:
+          selectedNode?.id === node.id
+            ? theme.colors[theme.primaryColor][6]
+            : theme.colors.gray[3],
         minWidth: "100px",
 
         "&:hover": {

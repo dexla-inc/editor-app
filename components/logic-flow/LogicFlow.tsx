@@ -4,7 +4,15 @@ import { FlowState, useFlowStore } from "@/stores/flow";
 import { nodes as nodeTypes } from "@/utils/logicFlows";
 import { nanoid } from "nanoid";
 import { MutableRefObject, useCallback } from "react";
-import ReactFlow, { Background, Controls, Node } from "reactflow";
+import ReactFlow, {
+  Background,
+  Controls,
+  getConnectedEdges,
+  getIncomers,
+  getOutgoers,
+  Node,
+  useReactFlow,
+} from "reactflow";
 import "reactflow/dist/style.css";
 
 const selector = (state: FlowState) => ({
@@ -37,6 +45,7 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
     setIsDragging,
     setSelectedNode,
   } = useFlowStore(selector);
+  const { setEdges } = useReactFlow();
 
   const onDragOver = useCallback((event: any) => {
     event.preventDefault();
@@ -86,6 +95,35 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
     [flowInstance, onAddNode, wrapperRef],
   );
 
+  const onNodesDelete = useCallback(
+    (deleted: Node[]) => {
+      setEdges(
+        deleted.reduce((acc, node) => {
+          const incomers = getIncomers(node, nodes, edges);
+          const outgoers = getOutgoers(node, nodes, edges);
+          const connectedEdges = getConnectedEdges([node], edges);
+
+          const remainingEdges = acc.filter(
+            (edge) => !connectedEdges.includes(edge),
+          );
+
+          const createdEdges = incomers.flatMap(({ id: source }) =>
+            outgoers.map(({ id: target }) => ({
+              id: nanoid(),
+              source,
+              target,
+              type: "smoothstep",
+            })),
+          );
+
+          return [...remainingEdges, ...createdEdges];
+        }, edges),
+      );
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [nodes, edges],
+  );
+
   return (
     <ReactFlow
       nodes={nodes}
@@ -93,6 +131,7 @@ export const LogicFlow = ({ wrapperRef }: FlowProps) => {
       onInit={setFlowInstance}
       onConnect={onConnect}
       onNodesChange={onNodesChange}
+      onNodesDelete={onNodesDelete}
       onNodeDragStart={(e, node) => {
         setIsDragging(true);
         if (node.type === "connectionCreatorNode") {
