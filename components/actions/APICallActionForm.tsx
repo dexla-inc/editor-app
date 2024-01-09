@@ -15,7 +15,6 @@ import { getDataSources } from "@/requests/datasources/queries-noauth";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { FrontEndTypes } from "@/requests/variables/types";
-import { useAuthStore } from "@/stores/auth";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { APICallAction, Action } from "@/utils/actions";
@@ -189,7 +188,7 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     }
   }, [endpoints, form.values.endpoint, selectedEndpoint]);
 
-  const accessToken = useAuthStore((state) => state.getAccessToken);
+  const accessToken = useDataSourceStore((state) => state.accessToken);
 
   const showLoaderInputProps = form.getInputProps("showLoader");
   const isLoginInputProps = form.getInputProps("isLogin");
@@ -292,10 +291,9 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
                       param.name === "Authorization" &&
                       param.type === "BEARER"
                     ) {
-                      const token = accessToken();
-                      if (token) {
+                      if (accessToken) {
                         additionalProps = {
-                          defaultValue: token.substring(0, 35) + "...",
+                          defaultValue: accessToken.substring(0, 35) + "...",
                           disabled: true,
                         };
                       }

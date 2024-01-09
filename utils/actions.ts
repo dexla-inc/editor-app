@@ -48,7 +48,7 @@ import { Options } from "@/components/modifiers/GoogleMap";
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
 import { updateVariable } from "@/requests/variables/mutations";
 import { VariableParams } from "@/requests/variables/types";
-import { useAuthStore } from "@/stores/auth";
+
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
@@ -817,8 +817,8 @@ const getBody = (endpoint: any, action: any, variableValues: any) => {
 };
 
 const prepareRequestData = async (action: any) => {
-  const cachedEndpoints = useDataSourceStore.getState().endpoints as Endpoint[];
-  const endpoint = cachedEndpoints.find((e) => e.id === action.endpoint);
+  const endpoints = useDataSourceStore.getState().endpoints as Endpoint[];
+  const endpoint = endpoints.find((e) => e.id === action.endpoint);
   const keys = Object.keys(action.binds?.parameter ?? {});
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
   const variableValues = await getVariablesValue(
@@ -935,21 +935,24 @@ export const apiCallAction = async ({
     });
 
     let responseJson;
+
     if (action.isLogin) {
       responseJson = await performFetch(url, endpoint, body);
 
       const mergedAuthConfig = { ...responseJson, ...apiAuthConfig };
-      const setAuthTokens = useAuthStore.getState().setAuthTokens;
+      console.log("mergedAuthConfig", mergedAuthConfig);
+      const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
       setAuthTokens(mergedAuthConfig);
     } else {
-      const refreshAccessToken = useAuthStore.getState().refreshAccessToken;
-      const getAccessToken = useAuthStore.getState().getAccessToken;
+      const refreshAccessToken =
+        useDataSourceStore.getState().refreshAccessToken;
+      const accessToken = useDataSourceStore.getState().accessToken;
 
       refreshAccessToken();
 
       let authHeaderKey =
         endpoint?.authenticationScheme === "BEARER"
-          ? "Bearer " + getAccessToken()
+          ? "Bearer " + accessToken
           : "";
 
       const fetchUrl = endpoint?.isServerRequest
