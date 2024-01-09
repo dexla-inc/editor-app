@@ -89,10 +89,6 @@ export const LogicFlowFormModal = () => {
           title: "Logic flow saved",
           message: "Logic flow saved successfully",
         });
-
-        // router.push(
-        //   `/projects/${router.query.id}/editor/${router.query.page}/flows/${data.id}`,
-        // );
       }
     },
   });

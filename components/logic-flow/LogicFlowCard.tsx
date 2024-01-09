@@ -18,9 +18,7 @@ import { IconCopy, IconDots, IconEdit, IconTrashX } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useRouter } from "next/router";
-import { Edge, Node, ReactFlowProvider } from "reactflow";
-import { modals } from "@mantine/modals";
-import { LogicFlowsPage } from "@/components/logic-flow/LogicFlowsPage";
+import { Edge, Node } from "reactflow";
 
 dayjs.extend(relativeTime);
 

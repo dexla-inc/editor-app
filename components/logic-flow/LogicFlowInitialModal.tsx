@@ -9,15 +9,7 @@ import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { LOGICFLOW_BACKGROUND } from "@/utils/branding";
-import {
-  Box,
-  Button,
-  Group,
-  Stack,
-  Tabs,
-  Text,
-  useMantineTheme,
-} from "@mantine/core";
+import { Box, Button, Group, Stack, Tabs, Text } from "@mantine/core";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { GetServerSidePropsContext } from "next";
 import { useEffect, useState } from "react";
