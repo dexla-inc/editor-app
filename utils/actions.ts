@@ -52,7 +52,7 @@ import {
   getVariable,
   listVariables,
 } from "@/requests/variables/queries-noauth";
-import { FrontEndTypes, VariableParams } from "@/requests/variables/types";
+import { VariableParams } from "@/requests/variables/types";
 import { useAuthStore } from "@/stores/auth";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
@@ -842,7 +842,6 @@ const handleError = async (
   router: any,
   rest: any,
   component: any,
-  endpoint: any,
   actionMapper: any,
   updateTreeComponent: any,
 ) => {
@@ -859,17 +858,6 @@ const handleError = async (
   }
 
   updateTreeComponent(component.id!, { loading: false }, false);
-
-  const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}-error`;
-  const varValue = JSON.stringify(JSON.parse(error.message));
-  await upsertVariable(router.query.id as string, {
-    name: varName,
-    value: varValue,
-    type: "OBJECT" as FrontEndTypes,
-    isGlobal: false,
-    pageId: router.query.page as string,
-    defaultValue: varValue,
-  });
 };
 
 const handleSuccess = async (
@@ -879,7 +867,6 @@ const handleSuccess = async (
   router: any,
   rest: any,
   component: any,
-  endpoint: any,
   action: any,
   actionMapper: any,
   updateTreeComponent: any,
@@ -900,18 +887,6 @@ const handleSuccess = async (
   }
 
   updateTreeComponent(component.id!, { loading: false }, false);
-
-  const varName = `${endpoint?.methodType} ${endpoint?.relativeUrl}`;
-  const varValue = JSON.stringify(responseJson);
-
-  await upsertVariable(router.query.id as string, {
-    name: varName,
-    value: varValue,
-    defaultValue: null,
-    type: "OBJECT" as FrontEndTypes,
-    isGlobal: false,
-    pageId: router.query.page as string,
-  });
 };
 
 function constructHeaders(endpoint?: Endpoint, authHeaderKey = "") {
@@ -1011,7 +986,6 @@ export const apiCallAction = async ({
       router,
       rest,
       component,
-      endpoint,
       action,
       actionMapper,
       updateTreeComponent,
@@ -1024,7 +998,6 @@ export const apiCallAction = async ({
       router,
       rest,
       component,
-      endpoint,
       actionMapper,
       updateTreeComponent,
     );
