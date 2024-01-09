@@ -110,7 +110,6 @@ export default function LogicFlowInitialModal({
     }
   }, [projectId, page, setCurrentPageId, setCurrentProjectId, resetFlow]);
 
-  const [activeTab, setActiveTab] = useState<string>("default");
   const [flowId, setFlowId] = useState<string>("");
 
   return (
@@ -140,6 +139,7 @@ export default function LogicFlowInitialModal({
                 <LogicFlowCard
                   key={flow.id}
                   flow={flow}
+                  isLoading={deleteFlow.isLoading || duplicateFlow.isLoading}
                   onDelete={async () => {
                     await deleteFlow.mutate(flow.id);
                   }}
@@ -155,7 +155,6 @@ export default function LogicFlowInitialModal({
                     });
                   }}
                   onClick={() => {
-                    console.log("click");
                     setSelectedTabView("flow");
                     setFlowId(flow.id);
                   }}

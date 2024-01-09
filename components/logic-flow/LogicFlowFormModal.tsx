@@ -118,6 +118,11 @@ export const LogicFlowFormModal = () => {
       } else {
         createFlow.mutate(values);
       }
+
+      form.setValues({
+        name: "",
+        isGlobal: false,
+      });
     } catch (error) {
       console.error({ error });
       stopLoading({
@@ -159,6 +164,10 @@ export const LogicFlowFormModal = () => {
       opened={shouldShowFormModal ?? false}
       onClose={() => {
         setShowFormModal(false);
+        form.setValues({
+          name: "",
+          isGlobal: false,
+        });
       }}
       title={currentFlowId ? "Edit Logic Flow" : "Create Logic Flow"}
       styles={{ overlay: { zIndex: 400 }, inner: { zIndex: 400 } }}

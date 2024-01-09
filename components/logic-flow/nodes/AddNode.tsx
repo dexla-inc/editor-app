@@ -96,7 +96,10 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
     const addId = nanoid();
     const edge = edges.find((edge) => edge.target === node.id);
 
-    const outputConnectorId = nanoid();
+    const defaultOutput = {
+      id: nanoid(),
+      name: "Output",
+    };
     await onNodesChange([
       {
         item: {
@@ -107,7 +110,10 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
             label: "Conditional",
             description: "Execute actions conditionally",
             inputs: [{ id: nanoid(), name: "Input" }],
-            outputs: [{ id: outputConnectorId, name: "Output" }],
+            outputs: [defaultOutput],
+            form: {
+              outputs: [defaultOutput],
+            },
           },
         },
         type: "add",
@@ -120,7 +126,6 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
           ...edge,
           id: nanoid(),
           target: conditionalId,
-          sourceHandle: outputConnectorId,
         },
         type: "add",
       } as EdgeAddChange,
@@ -146,7 +151,12 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
 
     await onEdgesChange([
       {
-        item: { id: nanoid(), target: addId, source: conditionalId },
+        item: {
+          id: nanoid(),
+          target: addId,
+          source: conditionalId,
+          sourceHandle: defaultOutput.id,
+        },
         type: "add",
       },
     ]);
@@ -201,7 +211,7 @@ export const AddNode = (node: NodeProps<AddNodeData>) => {
                   <Menu.Item onClick={onClickAddConditional}>
                     Conditional
                   </Menu.Item>
-                  <Menu.Label>Action</Menu.Label>
+                  <Menu.Label>Actions</Menu.Label>
                   {Object.entries(groupedActions).map(([key, value]) => {
                     return (
                       <>

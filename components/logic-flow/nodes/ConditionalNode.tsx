@@ -87,7 +87,6 @@ export const NodeForm = ({ form, data }: NodeFormType) => {
         size="xs"
         loading={isUpdating}
         loaderPosition="center"
-        disabled={isUpdating}
       >
         Save
       </Button>

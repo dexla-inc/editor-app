@@ -8,6 +8,7 @@ import {
   Card,
   Divider,
   Group,
+  LoadingOverlay,
   Menu,
   Stack,
   Text,
@@ -29,6 +30,7 @@ type FlowCardProps = {
   onDuplicate?: () => void;
   onEdit?: () => void;
   onClick?: () => void;
+  isLoading: boolean;
 };
 
 export const LogicFlowCard = ({
@@ -37,6 +39,7 @@ export const LogicFlowCard = ({
   onDuplicate,
   onEdit,
   onClick,
+  isLoading,
 }: FlowCardProps) => {
   const theme = useMantineTheme();
   const router = useRouter();
@@ -77,12 +80,6 @@ export const LogicFlowCard = ({
       radius="md"
       w={300}
       onClick={onClick}
-      // onClick={() =>
-      //   router.push(
-      //     `/projects/${router.query.id}/editor/${router.query.page}/flows/${flow.id}`,
-      //   )
-      // }
-
       sx={{
         cursor: "pointer",
         "&:hover": {
@@ -91,6 +88,7 @@ export const LogicFlowCard = ({
         },
       }}
     >
+      <LoadingOverlay visible={isLoading} overlayBlur={2} />
       <Group position="apart" align="flex-start">
         <Stack spacing={0}>
           <Text size="sm">{flow.name}</Text>
