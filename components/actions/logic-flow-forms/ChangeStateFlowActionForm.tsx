@@ -154,7 +154,13 @@ export const ChangeStateActionFlowForm = ({ form }: Props) => {
                 onChangeJavascriptCode={(
                   javascriptCode: string,
                   label: string,
-                ) => form.setFieldValue(`actionCode.${label}`, javascriptCode)}
+                ) => {
+                  const actionCode = form.values.actionCode;
+                  form.setFieldValue(`actionCode`, {
+                    ...actionCode,
+                    [label]: javascriptCode,
+                  });
+                }}
               />
 
               {["Radio", "Select"].includes(component!.name) ? (

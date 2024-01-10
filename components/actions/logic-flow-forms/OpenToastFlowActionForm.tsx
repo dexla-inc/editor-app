@@ -49,9 +49,16 @@ export const OpenToastFlowActionForm = ({ form }: Props) => {
                 form.setFieldValue(name, variable);
               }}
               javascriptCode={form.values.actionCode}
-              onChangeJavascriptCode={(javascriptCode: string, label: string) =>
-                form.setFieldValue(`actionCode.${label}`, javascriptCode)
-              }
+              onChangeJavascriptCode={(
+                javascriptCode: string,
+                label: string,
+              ) => {
+                const actionCode = form.values.actionCode;
+                form.setFieldValue(`actionCode`, {
+                  ...actionCode,
+                  [label]: javascriptCode,
+                });
+              }}
               size="xs"
               label={title}
               {...AUTOCOMPLETE_OFF_PROPS}

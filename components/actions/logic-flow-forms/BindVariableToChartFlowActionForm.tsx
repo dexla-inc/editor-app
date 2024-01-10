@@ -61,9 +61,13 @@ export const BindVariableToChartFlowActionForm = ({ form }: Props) => {
           form.setFieldValue("component", e.currentTarget.value);
         }}
         javascriptCode={form.values.actionCode}
-        onChangeJavascriptCode={(javascriptCode: string, label: string) =>
-          form.setFieldValue(`actionCode.${label}`, javascriptCode)
-        }
+        onChangeJavascriptCode={(javascriptCode: string, label: string) => {
+          const actionCode = form.values.actionCode;
+          form.setFieldValue(`actionCode`, {
+            ...actionCode,
+            [label]: javascriptCode,
+          });
+        }}
       />
 
       <TextInput

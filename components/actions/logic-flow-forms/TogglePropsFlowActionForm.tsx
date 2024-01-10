@@ -141,7 +141,13 @@ export const TogglePropsFlowActionForm = ({ form }: Props) => {
                 onChangeJavascriptCode={(
                   javascriptCode: string,
                   label: string,
-                ) => form.setFieldValue(`actionCode.${label}`, javascriptCode)}
+                ) => {
+                  const actionCode = form.values.actionCode;
+                  form.setFieldValue(`actionCode`, {
+                    ...actionCode,
+                    [label]: javascriptCode,
+                  });
+                }}
               />
             </div>
           );
