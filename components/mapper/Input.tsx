@@ -3,7 +3,7 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
-import { Component, updateTreeComponent } from "@/utils/editor";
+import { Component } from "@/utils/editor";
 import {
   ActionIcon,
   Group,
@@ -15,7 +15,7 @@ import {
 import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { forwardRef, memo, useCallback, useState } from "react";
+import { ChangeEvent, forwardRef, memo, useCallback, useState } from "react";
 import { InputLoader } from "../InputLoader";
 
 type Props = {
@@ -26,7 +26,6 @@ type Props = {
 
 const InputComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
-    const editorTree = useEditorStore((state) => state.tree);
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
     const {
       children,
@@ -38,26 +37,36 @@ const InputComponent = forwardRef(
       ...componentProps
     } = component.props as any;
     const { name: iconName } = icon && icon!.props!;
-    const [inputValue, setInputValue] = useState(value);
+    const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setStoreInputValue = useInputsStore((state) => state.setInputValue);
+    const [localInputValue, setLocalInputValue] = useState(inputValue ?? "");
 
-    const isClearable = clearable && inputValue && inputValue?.length > 0;
+    const isClearable = clearable && !!inputValue;
 
+    // clear input field
     const clearInput = () => {
-      setInputValue("");
-      updateTreeComponent(editorTree.root, component.id!, { value: "" });
+      setLocalInputValue("");
+      setStoreInputValue(component.id!, "");
       const el = iframeWindow?.document.getElementById(component.id!);
       el?.focus();
     };
 
+    // update values in store
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedOnChange = useCallback(
-      debounce((e) => {
-        triggers?.onChange(e);
-        setStoreInputValue(component.id!, e.target.value);
+      debounce((value) => {
+        setStoreInputValue(component.id!, value);
       }, 400),
-      [debounce, component.id],
+      [component.id],
     );
+
+    // handle changes to input field
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+      const newValue = e.target.value;
+      setLocalInputValue(newValue);
+      debouncedOnChange(newValue);
+      triggers?.onChange && triggers?.onChange(e);
+    };
 
     const type = (componentProps.type as string) || "text";
 
@@ -156,7 +165,7 @@ const InputComponent = forwardRef(
             }}
             min={0}
             value={props.value || value || undefined}
-            onChange={triggers?.onChange ? debouncedOnChange : undefined}
+            onChange={debouncedOnChange}
             rightSection={
               loading ? (
                 <InputLoader />
@@ -191,11 +200,8 @@ const InputComponent = forwardRef(
                 minWidth: "-webkit-fill-available",
               },
             }}
-            value={inputValue}
-            onChange={(e) => {
-              setInputValue(e.target.value);
-              triggers?.onChange ? debouncedOnChange(e) : undefined;
-            }}
+            value={localInputValue}
+            onChange={handleInputChange}
             rightSection={
               loading ? (
                 <InputLoader />

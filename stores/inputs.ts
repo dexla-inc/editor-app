@@ -1,10 +1,14 @@
 import { create } from "zustand";
 
 type InputsState = {
-  [key: string]: any;
+  inputValues: Record<string, any>;
   setInputValue: (id: string, value: any) => void;
+  getValue: (id: string) => any;
 };
 
-export const useInputsStore = create<InputsState>((set) => ({
-  setInputValue: (id, value) => set({ [id]: value }),
+export const useInputsStore = create<InputsState>((set, get) => ({
+  inputValues: {},
+  setInputValue: (id, value) =>
+    set({ inputValues: { ...get().inputValues, [id]: value } }),
+  getValue: (id) => get().inputValues[id],
 }));
