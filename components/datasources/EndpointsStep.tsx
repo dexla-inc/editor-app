@@ -8,7 +8,6 @@ import {
   AuthenticationSchemeLabels,
   RequestBody,
 } from "@/requests/datasources/types";
-import { getPageList } from "@/requests/pages/queries-noauth";
 import { DataSourceStepperWithoutNextProps } from "@/utils/dashboardTypes";
 import {
   Col,
@@ -49,18 +48,6 @@ export default function EndpointsStep({
 }: AuthenticationStepParams) {
   const router = useRouter();
   const projectId = router.query.id as string;
-
-  const goToEditor = async (projectId: string) => {
-    startLoading({
-      id: "endpoints-step",
-      title: "Editor Is Loading",
-      message: "Wait while the editor is loading",
-    });
-
-    const result = await getPageList(projectId, { isHome: true });
-
-    router.push(`/projects/${projectId}/editor/${result.results[0].id}`);
-  };
 
   return (
     <Stack mb={100}>
