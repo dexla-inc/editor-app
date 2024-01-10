@@ -1,6 +1,6 @@
 import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea";
+import { DataTree } from "@/components/DataTree";
 import { Icon } from "@/components/Icon";
-import { DataTree } from "@/components/PropsListing";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
