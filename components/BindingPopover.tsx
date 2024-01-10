@@ -53,6 +53,7 @@ type Props = {
   bindedValue?: string;
   onPickComponent?: any;
   onPickVariable?: any;
+  actionData?: any;
 };
 
 export default function BindingPopover({
@@ -68,6 +69,7 @@ export default function BindingPopover({
   bindedValue,
   onPickComponent,
   onPickVariable,
+  actionData,
 }: Props) {
   const editorTree = useEditorStore((state) => state.tree);
   const [formulaEntry, setFormulaEntry] = useState<string>();
@@ -215,6 +217,16 @@ export default function BindingPopover({
     }
   };
 
+  const handleActions = (item: string) => {
+    try {
+      const parsed = JSON.parse(item);
+      setSelectedItem(`actions['${parsed.id}'].${parsed.path}`);
+    } catch {
+      setSelectedItem(`actions['${item}']`);
+      onPickVariable && onPickVariable(item);
+    }
+  };
+
   const onSetItem = (itemType: BindingTab, item: string) => {
     if (itemType === "components") {
       handleComponents(item);
@@ -222,6 +234,8 @@ export default function BindingPopover({
       handleVariables(item);
     } else if (itemType === "browser") {
       handleBrowser(item);
+    } else if (itemType === "actions") {
+      handleActions(item);
     }
   };
 
@@ -233,15 +247,9 @@ export default function BindingPopover({
       arrowPosition="center"
     >
       <Popover.Target>
-        {onPickComponent ? (
-          <ActionIcon onClick={onTogglePopover} size="xs">
-            <IconExternalLink size={ICON_SIZE} />
-          </ActionIcon>
-        ) : (
-          <Button size="xs" onClick={onTogglePopover}>
-            Binder
-          </Button>
-        )}
+        <ActionIcon onClick={onTogglePopover} size="xs">
+          <IconExternalLink size={ICON_SIZE} />
+        </ActionIcon>
       </Popover.Target>
       <Popover.Dropdown sx={{ maxHeight: "98%", backgroundColor: BG_COLOR }}>
         <Stack w={500}>
@@ -338,7 +346,7 @@ export default function BindingPopover({
                 ),
               },
               {
-                value: "Actions",
+                value: "actions",
                 label: (
                   <Center>
                     <Icon name="IconBolt" />
@@ -395,7 +403,7 @@ export default function BindingPopover({
           ) : tab === "actions" ? (
             <DataTree
               filterKeyword={filterKeyword}
-              //variables={Object.values(actionResponses.list)}
+              variables={actionData}
               onItemSelection={(item: string) => onSetItem(tab, item)}
             />
           ) : tab === "datasources" ? (

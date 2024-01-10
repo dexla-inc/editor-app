@@ -15,6 +15,7 @@ type Props = TextInputProps & {
   isLogicFlow?: boolean;
   javascriptCode?: Record<string, string>;
   onChangeJavascriptCode?: (javascriptCode: string, label: string) => void;
+  actionData?: any;
 };
 
 export const ComponentToBindFromInput = ({
@@ -22,6 +23,7 @@ export const ComponentToBindFromInput = ({
   index,
   onPickComponent,
   onPickVariable,
+  actionData,
   bindAttributes,
   placeholder = "",
   label = "Component to bind",
@@ -70,7 +72,7 @@ export const ComponentToBindFromInput = ({
         setHighlightedComponentId(null);
       }}
       rightSection={
-        <Group noWrap spacing={0}>
+        <Group noWrap spacing={0} pr={4}>
           <BindingPopover
             opened={opened}
             onTogglePopover={onTogglePopover}
@@ -83,6 +85,7 @@ export const ComponentToBindFromInput = ({
             bindedValue={bindedValue}
             onPickComponent={onPickComponent}
             onPickVariable={onPickVariable}
+            actionData={actionData}
           />
           {onPickComponent && !isLogicFlow && (
             <>
@@ -95,7 +98,9 @@ export const ComponentToBindFromInput = ({
       }
       styles={{
         input: { paddingRight: "3.65rem" },
-        ...(!isLogicFlow && { rightSection: { width: "3.65rem" } }),
+        ...(!isLogicFlow && {
+          rightSection: { width: "3.65rem", justifyContent: "flex-end" },
+        }),
       }}
       {...rest}
       onChange={(e) => {

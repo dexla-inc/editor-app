@@ -11,9 +11,8 @@ export function DataTree({
       <Stack align="flex-start" spacing="xs">
         {variables
           .filter((variable: any) => {
-            return (
-              filterKeyword === "" || variable.name.includes(filterKeyword)
-            );
+            const regex = new RegExp(filterKeyword, "i");
+            return filterKeyword === "" || regex.test(variable.name);
           })
           .map((variable: any) => {
             if (variable.type !== "OBJECT") {
