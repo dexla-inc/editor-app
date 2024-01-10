@@ -30,10 +30,10 @@ import {
 } from "@tanstack/react-query";
 import isEqual from "lodash.isequal";
 import startCase from "lodash.startcase";
+import { nanoid } from "nanoid";
 import { GetServerSidePropsContext } from "next";
 import { useCallback, useEffect, useRef } from "react";
 import { useUpdateNodeInternals } from "reactflow";
-import { nanoid } from "nanoid";
 
 export const getServerSideProps = async ({
   query,

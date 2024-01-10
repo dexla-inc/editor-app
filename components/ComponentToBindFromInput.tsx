@@ -45,7 +45,8 @@ export const ComponentToBindFromInput = ({
   };
 
   const [bindedValue, setBindedValue] = useState("");
-  const _code = javascriptCode![label as string] ?? javascriptCode?.code ?? "";
+  const _jsCode = javascriptCode ?? {};
+  const _code = _jsCode[label as string] ?? _jsCode.code ?? "";
   const [
     opened,
     { toggle: onTogglePopover, close: onClosePopover, open: onOpenPopover },
