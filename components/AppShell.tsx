@@ -47,6 +47,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const setPreviewMode = useEditorStore((state) => state.setPreviewMode);
   const language = useEditorStore((state) => state.language);
   const setLanguage = useEditorStore((state) => state.setLanguage);
+  const setPages = useEditorStore((state) => state.setPages);
 
   const router = useRouter();
   const projectId = router.query.id as string;
@@ -56,6 +57,8 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
     queryKey: ["pages"],
     queryFn: () => getPageList(projectId),
   });
+
+  setPages(pageResponse.data?.results ?? []);
 
   const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
   const clear = useTemporalStore((state) => state.clear);

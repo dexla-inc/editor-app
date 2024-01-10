@@ -6,7 +6,7 @@ import { useEditorStore } from "@/stores/editor";
 import { Stack } from "@mantine/core";
 import debounce from "lodash.debounce";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 export const EditorNavbarPagesSection = () => {
   const router = useRouter();
@@ -20,12 +20,9 @@ export const EditorNavbarPagesSection = () => {
 
   const getPages = useCallback(async () => {
     const pageList = await getPageList(projectId, { search });
+
     setPages(pageList.results);
   }, [projectId, search, setPages]);
-
-  useEffect(() => {
-    getPages();
-  }, [projectId, getPages]);
 
   return (
     <Stack spacing="xs" w="100%">
