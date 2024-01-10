@@ -1,8 +1,9 @@
-import { BG_COLOR, BUTTON_HOVER, FLEX_HOVER } from "@/utils/branding";
+import { BG_COLOR, BUTTON_HOVER } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
   Box,
+  Button,
   Card,
   CardProps,
   Collapse,
@@ -91,14 +92,12 @@ const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
   return (
     <Group
       unstyled
-      w="100%"
       style={{
         borderLeft: "1px solid transparent",
       }}
     >
       <Card
         ref={ref}
-        w="100%"
         p={0}
         bg={hovered ? BUTTON_HOVER : BG_COLOR}
         sx={{
@@ -115,18 +114,10 @@ const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              onSelectValue?.(item);
-            }}
-            sx={{
-              border: `1px solid ${FLEX_HOVER}`,
+              toggle();
             }}
           >
             <ActionIcon
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                toggle();
-              }}
               sx={{
                 visibility: canExpand ? "visible" : "hidden",
                 pointerEvents: canExpand ? "all" : "none",
@@ -145,14 +136,24 @@ const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
             </ActionIcon>
             <Group noWrap>
               <Group noWrap spacing={0}>
-                <Text
-                  id={item.key}
-                  size="xs"
-                  lineClamp={1}
-                  sx={{ cursor: "pointer", width: "100%", flex: 1 }}
-                >
-                  {item.key}
-                </Text>
+                {canExpand ? (
+                  <Text id={item.key} size="xs" lineClamp={1}>
+                    {item.key}
+                  </Text>
+                ) : (
+                  <Button
+                    id={item.key}
+                    size="xs"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onSelectValue?.(item);
+                    }}
+                  >
+                    {item.key}
+                  </Button>
+                )}
+
                 {item.key !== "root" && (
                   <Box maw={200}>
                     <Text
@@ -227,7 +228,12 @@ export const JSONSelector = ({ data, onSelectValue }: Props) => {
     }
 
     return (
-      <ListItemWrapper key={item.key} item={item} onSelectValue={onSelectValue}>
+      <ListItemWrapper
+        key={item.key}
+        item={item}
+        onSelectValue={onSelectValue}
+        sx={{ width: "100%" }}
+      >
         {item.children?.map((child: any) => {
           return renderList(child);
         })}
@@ -236,15 +242,7 @@ export const JSONSelector = ({ data, onSelectValue }: Props) => {
   };
 
   return (
-    <List
-      size="xs"
-      listStyleType="none"
-      styles={{
-        itemWrapper: {
-          width: "100%",
-        },
-      }}
-    >
+    <List w="100%" size="xs" listStyleType="none">
       {renderList({
         key: "root",
         path: "[0]",

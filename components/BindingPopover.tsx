@@ -1,6 +1,6 @@
 import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea";
 import { Icon } from "@/components/Icon";
-import { ObjectDetails } from "@/components/PropsListing";
+import { DataTree } from "@/components/PropsListing";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
@@ -16,7 +16,6 @@ import {
   CloseButton,
   Flex,
   Popover,
-  ScrollArea,
   SegmentedControl,
   Stack,
   Text,
@@ -34,7 +33,12 @@ const TAB_TEXT_SIZE = "xs";
 const ML = 10;
 
 export type BindingType = "formula" | "js";
-export type BindingTab = "components" | "variables" | "datasources" | "browser";
+export type BindingTab =
+  | "components"
+  | "variables"
+  | "actions"
+  | "datasources"
+  | "browser";
 
 type Props = {
   bindingTab?: BindingTab;
@@ -334,6 +338,17 @@ export default function BindingPopover({
                 ),
               },
               {
+                value: "Actions",
+                label: (
+                  <Center>
+                    <Icon name="IconBolt" />
+                    <Text ml={ML} size={TAB_TEXT_SIZE}>
+                      Actions
+                    </Text>
+                  </Center>
+                ),
+              },
+              {
                 value: "datasources",
                 label: (
                   <Center>
@@ -366,37 +381,32 @@ export default function BindingPopover({
             onChange={(event) => setFilterKeyword(event.currentTarget.value)}
           />
           {tab === "components" ? (
-            <Stack>
-              <ScrollArea.Autosize mah={300}>
-                <ObjectDetails
-                  filterKeyword={filterKeyword}
-                  variables={Object.values(inputComponents?.list)}
-                  onItemSelection={(item: string) => onSetItem(tab, item)}
-                />
-              </ScrollArea.Autosize>
-            </Stack>
+            <DataTree
+              filterKeyword={filterKeyword}
+              variables={Object.values(inputComponents?.list)}
+              onItemSelection={(item: string) => onSetItem(tab, item)}
+            />
           ) : tab === "variables" ? (
-            <Stack>
-              <ScrollArea.Autosize mah={300}>
-                <ObjectDetails
-                  filterKeyword={filterKeyword}
-                  variables={Object.values(variables.list)}
-                  onItemSelection={(item: string) => onSetItem(tab, item)}
-                />
-              </ScrollArea.Autosize>
-            </Stack>
+            <DataTree
+              filterKeyword={filterKeyword}
+              variables={Object.values(variables.list)}
+              onItemSelection={(item: string) => onSetItem(tab, item)}
+            />
+          ) : tab === "actions" ? (
+            <DataTree
+              filterKeyword={filterKeyword}
+              //variables={Object.values(actionResponses.list)}
+              onItemSelection={(item: string) => onSetItem(tab, item)}
+            />
           ) : tab === "datasources" ? (
-            <Stack>Create a tree for datasources</Stack>
+            <Stack>Create a DataTree for datasources</Stack>
           ) : tab === "browser" ? (
-            <Stack>
-              <ScrollArea.Autosize mah={300}>
-                <ObjectDetails
-                  filterKeyword={filterKeyword}
-                  variables={browserList}
-                  onItemSelection={(item: string) => onSetItem(tab, item)}
-                />
-              </ScrollArea.Autosize>
-            </Stack>
+            // We may get rid of browser and store it in data
+            <DataTree
+              filterKeyword={filterKeyword}
+              variables={browserList}
+              onItemSelection={(item: string) => onSetItem(tab, item)}
+            />
           ) : null}
         </Stack>
       </Popover.Dropdown>
