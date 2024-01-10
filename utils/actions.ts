@@ -904,8 +904,18 @@ async function performFetch(
     ...(!!body ? { body: JSON.stringify(body) } : {}),
   });
 
-  if (response.status.toString().startsWith("5")) {
+  const responseString = response.status.toString();
+  const handledError = responseString.startsWith("4");
+
+  if (handledError) {
     const error = await readDataFromStream(response.body);
+    throw new Error(error);
+  }
+
+  const unhandledError = responseString.startsWith("5");
+  if (unhandledError) {
+    const error = await readDataFromStream(response.body);
+    console.error(error);
     throw new Error(error);
   }
 
@@ -922,7 +932,6 @@ export const apiCallAction = async ({
   ...rest
 }: APICallActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  const { endpoint, url, body } = await prepareRequestData(action);
   const apiAuthConfig = useDataSourceStore.getState().apiAuthConfig;
 
   try {
@@ -932,6 +941,8 @@ export const apiCallAction = async ({
         loading: action.showLoader,
       },
     });
+
+    const { endpoint, url, body } = await prepareRequestData(action);
 
     let responseJson;
 
@@ -964,14 +975,6 @@ export const apiCallAction = async ({
         authHeaderKey,
       );
     }
-
-    updateTreeComponent({
-      componentId: component.id!,
-      props: {
-        loading: false,
-      },
-    });
-
     await handleSuccess(
       responseJson,
       onSuccess,
@@ -994,6 +997,13 @@ export const apiCallAction = async ({
       actionMapper,
       updateTreeComponent,
     );
+  } finally {
+    updateTreeComponent({
+      componentId: component.id!,
+      props: {
+        loading: false,
+      },
+    });
   }
 };
 
