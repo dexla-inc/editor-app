@@ -15,7 +15,7 @@ type DataSourceState = {
   setAuthTokens: (response: any) => void;
   clearAuthTokens: () => void;
   endpoints?: Endpoint[];
-  fetchEndpoints: (projectId: string) => void;
+  fetchEndpoints: (projectId: string, force?: boolean) => void;
   clearEndpoints: () => void;
 };
 
@@ -88,9 +88,9 @@ export const useDataSourceStore = create<DataSourceState>()(
             expiresAt: undefined,
           });
         },
-        fetchEndpoints: async (projectId) => {
+        fetchEndpoints: async (projectId, force = false) => {
           const currentEndpoints = get().endpoints;
-          if (currentEndpoints === undefined) {
+          if (currentEndpoints === undefined || force) {
             const endpoints = await getDataSourceEndpoints(projectId);
 
             set(
@@ -123,7 +123,7 @@ export const useDataSourceStore = create<DataSourceState>()(
           }
         },
         clearEndpoints: () => {
-          set({ endpoints: undefined }, false, "datasource/clearEndpoints");
+          set({ endpoints: undefined }, true, "datasource/clearEndpoints");
         },
         clearApiAuthConfig: () => {
           set(

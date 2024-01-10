@@ -124,7 +124,7 @@ export const ChangeHistoryPopover: FC = () => {
           onClick={() => handlePageStateChange(undo)}
           disabled={pastStates.length < 2}
           size="sm"
-          radius={"0px 4px 4px 0px"}
+          radius={"4px 0px 0px 4px"}
         />
         <ActionIconDefault
           iconName="IconArrowForwardUp"

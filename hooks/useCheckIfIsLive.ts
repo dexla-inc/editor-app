@@ -33,7 +33,7 @@ export const useCheckIfIsLive = () => {
           setIsLive(!!project.id);
         }
         setCurrentProjectId(_projectId);
-        fetchEndpoints(_projectId);
+        fetchEndpoints(_projectId, true);
       } catch (error) {
         console.error("Error checking if live:", error);
       }
