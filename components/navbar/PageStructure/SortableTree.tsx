@@ -23,16 +23,13 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { useEditorStore } from "@/stores/editor";
-import { debouncedTreeRootChildrenUpdate } from "@/utils/editor";
-import { CSS } from "@dnd-kit/utilities";
-import { SortableTreeItem } from "./components";
+import { SortableTreeItem } from "@/components/navbar/PageStructure/components";
 import type {
   FlattenedItem,
   SensorContext,
   TreeItem,
   TreeItems,
-} from "./types";
+} from "@/components/navbar/PageStructure/types";
 import {
   buildTree,
   flattenTree,
@@ -41,7 +38,10 @@ import {
   getProjection,
   removeChildrenOf,
   setProperty,
-} from "./utilities";
+} from "@/components/navbar/PageStructure/utilities";
+import { useEditorStore } from "@/stores/editor";
+import { debouncedTreeRootChildrenUpdate } from "@/utils/editor";
+import { CSS } from "@dnd-kit/utilities";
 import { usePrevious } from "@mantine/hooks";
 
 const measuring = {
