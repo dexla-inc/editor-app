@@ -360,6 +360,11 @@ export const navigationAction = ({
   const isLive = useEditorStore.getState().isLive;
   const projectId = useEditorStore.getState().currentProjectId;
 
+  if (!action.pageId) {
+    console.error("Page Id is not defined");
+    return;
+  }
+
   let url = isLive
     ? `/${action.pageId}`
     : `/projects/${projectId}/editor/${action.pageId}`;
@@ -818,7 +823,7 @@ const getBody = (endpoint: any, action: any, variableValues: any) => {
 const prepareRequestData = async (action: any) => {
   const endpoints = useDataSourceStore.getState().endpoints as Endpoint[];
   const endpoint = endpoints.find((e) => e.id === action.endpoint);
-  const keys = Object.keys(action.binds?.parameter ?? {});
+  const keys = action.binds?.parameter ?? Object.keys(action.binds?.parameter);
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
   const variableValues = await getVariablesValue(
     merge(action.binds?.body ?? {}, action.binds?.parameter ?? {}),
@@ -872,6 +877,7 @@ const handleSuccess = async (
       (a: Action) => a.trigger === "onSuccess",
     );
     const onSuccessActionMapped = actionMapper[onSuccess.action.name];
+
     onSuccessActionMapped.action({
       action: onSuccessAction?.action,
       binds: action.binds,
@@ -906,14 +912,12 @@ async function performFetch(
 
   const responseString = response.status.toString();
   const handledError = responseString.startsWith("4");
+  const unhandledError = responseString.startsWith("5");
 
   if (handledError) {
     const error = await readDataFromStream(response.body);
     throw new Error(error);
-  }
-
-  const unhandledError = responseString.startsWith("5");
-  if (unhandledError) {
+  } else if (unhandledError) {
     const error = await readDataFromStream(response.body);
     console.error(error);
     throw new Error(error);
@@ -948,7 +952,6 @@ export const apiCallAction = async ({
 
     if (action.isLogin) {
       responseJson = await performFetch(url, endpoint, body);
-
       const mergedAuthConfig = { ...responseJson, ...apiAuthConfig };
       const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
       setAuthTokens(mergedAuthConfig);
