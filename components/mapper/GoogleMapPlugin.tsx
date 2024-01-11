@@ -13,7 +13,7 @@ import { useCallback, useEffect, useState } from "react";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-  onClick: (e: any) => void;
+  onClick?: (e: any) => void;
 } & BoxProps;
 
 type GoogleMapProps = {
@@ -73,9 +73,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
   };
 
   const handleClick = (e: any) => {
-    if (onClick) {
-      onClick(e);
-    }
+    onClick && onClick(e);
     setActiveMarkerId(null);
   };
 
