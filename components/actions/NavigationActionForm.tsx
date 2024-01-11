@@ -10,6 +10,7 @@ import {
 import { QueryStringListItem } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
 import { NavigationAction } from "@/utils/actions";
+import { requiredFieldValidator } from "@/utils/common";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useMemo, useState } from "react";
@@ -38,6 +39,9 @@ export const NavigationActionForm = ({ id }: Props) => {
   const form = useForm<FormValues>({
     initialValues: {
       pageId: action.action?.pageId,
+    },
+    validate: {
+      pageId: requiredFieldValidator("Page"),
     },
   });
 
@@ -103,6 +107,7 @@ export const NavigationActionForm = ({ id }: Props) => {
               value: page.id,
             };
           })}
+          //required
           {...form.getInputProps("pageId")}
         />
         {!!queryStringState[0].length && (

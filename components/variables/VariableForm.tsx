@@ -1,6 +1,7 @@
 import { useVariable } from "@/hooks/useVariable";
 import { VariableTypesOptions } from "@/requests/variables/types";
 import { useVariableStore } from "@/stores/variables";
+import { requiredFieldValidator } from "@/utils/common";
 import { Button, Select, Stack, TextInput, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
@@ -13,13 +14,6 @@ type VariablesFormValues = {
 
 type Props = {
   variableId?: string;
-};
-
-const requiredFieldValidator = (fieldName: string) => (value: string) => {
-  if (!value) {
-    return `${fieldName} is required`;
-  }
-  return null;
 };
 
 export const VariableForm = ({ variableId }: Props) => {
