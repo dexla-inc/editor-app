@@ -1,25 +1,8 @@
-import { ActionIconDefault } from "@/components/ActionIconDefault";
+import { PageItem } from "@/components/pages/PageItem";
 import { PageResponse } from "@/requests/pages/types";
-import {
-  DARK_COLOR,
-  GRAY_COLOR,
-  GRAY_WHITE_COLOR,
-  HOVERED,
-} from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
-import {
-  Button,
-  Flex,
-  Group,
-  Stack,
-  Text,
-  TextInput,
-  UnstyledButton,
-  useMantineTheme,
-} from "@mantine/core";
-import { IconFileAnalytics, IconHome, IconPlus } from "@tabler/icons-react";
-import Link from "next/link";
-import { useTemporalStore } from "@/stores/editor";
+import { Button, Stack, TextInput } from "@mantine/core";
+import { IconPlus } from "@tabler/icons-react";
 
 type InitialPaneProps = {
   projectId: string;
@@ -37,17 +20,6 @@ export default function InitialPane({
   currentPage,
   debouncedSearch,
 }: InitialPaneProps) {
-  const theme = useMantineTheme();
-  const clear = useTemporalStore((state) => state.clear);
-  const { color, background, hoveredBackground, hoveredColor, whiteColor } = {
-    color: theme.colorScheme === "dark" ? GRAY_WHITE_COLOR : theme.black,
-    background: theme.colorScheme === "dark" ? DARK_COLOR : GRAY_WHITE_COLOR,
-    hoveredBackground: theme.colorScheme === "dark" ? DARK_COLOR : HOVERED,
-    hoveredColor: theme.colorScheme === "dark" ? GRAY_WHITE_COLOR : theme.black,
-    whiteColor:
-      theme.colorScheme === "dark" ? GRAY_COLOR : theme.colors.gray[7],
-  };
-
   return (
     <>
       <Button
@@ -67,60 +39,13 @@ export default function InitialPane({
       <Stack spacing={2}>
         {pages.map((page) => {
           return (
-            <UnstyledButton
+            <PageItem
               key={page.id}
-              component={Link}
-              href={`/projects/${projectId}/editor/${page.id}`}
-              onClick={clear}
-            >
-              <Group
-                px="xs"
-                py={4}
-                spacing="sm"
-                position="apart"
-                align="center"
-                sx={{
-                  flexWrap: "nowrap",
-                  borderRadius: theme.radius.sm,
-                  textDecoration: "none",
-                  fontWeight: currentPage === page.id ? 500 : "normal",
-                  color: currentPage === page.id ? color : whiteColor,
-                  backgroundColor:
-                    currentPage === page.id ? background : undefined,
-
-                  "&:hover": {
-                    backgroundColor: hoveredBackground,
-                    color: hoveredColor,
-                  },
-                }}
-              >
-                <Flex gap="xs" sx={{ maxWidth: 164 }}>
-                  <Flex style={{ flex: "0 0 auto" }}>
-                    {page.isHome ? (
-                      <IconHome
-                        size={ICON_SIZE}
-                        style={{ flex: "flex-grow" }}
-                      />
-                    ) : (
-                      <IconFileAnalytics size={ICON_SIZE} />
-                    )}
-                  </Flex>
-                  <Text size="xs" truncate>
-                    {page.title}
-                  </Text>
-                </Flex>
-                <ActionIconDefault
-                  iconName="IconSettings"
-                  tooltip="Page Settings"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setPage(page);
-                  }}
-                  color="white"
-                />
-              </Group>
-            </UnstyledButton>
+              page={page}
+              setPage={setPage}
+              projectId={projectId}
+              currentPage={currentPage}
+            />
           );
         })}
       </Stack>
