@@ -9,21 +9,6 @@ import {
 
 const isDarkTheme = useUserConfigStore.getState().isDarkTheme;
 
-// Default scrollbar style for the editor
-const scrollbarStyles = {
-  overflow: "scroll",
-  scrollbarWidth: "thin",
-  scrollbarColor: "transparent transparent",
-  msOverflowStyle: "-ms-autohiding-scrollbar",
-  "::-webkit-scrollbar": { width: "5px", borderRadius: "10px", height: "5px" },
-  "::-webkit-scrollbar-thumb": {
-    backgroundColor: "transparent",
-    borderRadius: "10px",
-  },
-  ":hover": { scrollbarColor: "#aaa transparent" },
-  ":hover::-webkit-scrollbar-thumb": { backgroundColor: "#aaa" },
-} as CSSObject;
-
 // Nestable styles for the page structure items
 const nestable = {
   ".nestable": { padding: 0, margin: 0 },
@@ -175,6 +160,21 @@ const BORDER = isDarkTheme ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE;
 const BINDER_BACKGROUND = isDarkTheme ? theme.colors.dark[5] : undefined;
 const LOGICFLOW_BACKGROUND = isDarkTheme ? undefined : GRAY_WHITE_COLOR;
 const DEFAULT_TEXTCOLOR = isDarkTheme ? "white" : DARK_COLOR;
+
+// Default scrollbar style for the editor
+const scrollbarStyles = {
+  overflow: "scroll",
+  scrollbarWidth: "thin",
+  scrollbarColor: "transparent transparent",
+  msOverflowStyle: "-ms-autohiding-scrollbar",
+  "::-webkit-scrollbar": { width: "5px", borderRadius: "10px", height: "5px" },
+  "::-webkit-scrollbar-thumb": {
+    backgroundColor: "transparent",
+    borderRadius: "10px",
+  },
+  ":hover": { scrollbarColor: BG_COLOR + " transparent" },
+  ":hover::-webkit-scrollbar-thumb": { backgroundColor: BG_COLOR },
+} as CSSObject;
 
 // Global styles for the editor
 const globalStyles = (isDarkTheme?: boolean) => ({
