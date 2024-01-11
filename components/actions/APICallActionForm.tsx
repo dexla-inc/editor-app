@@ -1,4 +1,5 @@
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
+import { EndpointSelect } from "@/components/EndpointSelect";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import { ActionsForm } from "@/components/actions/ActionsForm";
 import {
@@ -8,68 +9,27 @@ import {
   useActionData,
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
-import { colors } from "@/components/datasources/DataSourceEndpoint";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import { useVariable } from "@/hooks/useVariable";
 import { getDataSources } from "@/requests/datasources/queries-noauth";
 import { Endpoint } from "@/requests/datasources/types";
-import { MethodTypes } from "@/requests/types";
 import { FrontEndTypes } from "@/requests/variables/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { APICallAction, Action } from "@/utils/actions";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
-import { ApiType } from "@/utils/dashboardTypes";
-import { getComponentById } from "@/utils/editor";
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Select,
-  Stack,
-  Switch,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Button, Divider, Stack, Switch } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import React, { forwardRef, useEffect, useState } from "react";
-
-// eslint-disable-next-line react/display-name
-const SelectItem = forwardRef<HTMLDivElement, any>(
-  ({ method, label, ...others }: any, ref) => (
-    <Flex ref={ref} gap="xs" {...others}>
-      <Box
-        p={2}
-        sx={{
-          fontSize: 8,
-          color: "white",
-          border: colors[method as MethodTypes].color + " 1px solid",
-          background: colors[method as MethodTypes].color,
-          borderRadius: "4px",
-          width: 38,
-          textAlign: "center",
-        }}
-      >
-        {method}
-      </Box>
-      <Text size="xs" truncate>
-        {label}
-      </Text>
-    </Flex>
-  ),
-);
+import { useEffect, useState } from "react";
 
 type FormValues = Omit<APICallAction, "name" | "datasource">;
 
 type Props = {
-  actionName?: string;
   id: string;
 };
 
-export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
+export const APICallActionForm = ({ id }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
@@ -85,16 +45,8 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   });
   const { createVariablesMutation } = useVariable();
 
-  const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo,
-  );
-  const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind,
-  );
   const sequentialTo = useEditorStore((state) => state.sequentialTo);
-
   const endpoints = useDataSourceStore((state) => state.endpoints);
-  const fetchEndpoints = useDataSourceStore((state) => state.fetchEndpoints);
 
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
@@ -108,8 +60,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     queryFn: () => getDataSources(projectId, {}),
     enabled: !!projectId,
   });
-
-  const component = getComponentById(editorTree.root, selectedComponentId!);
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -170,13 +120,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
   };
 
   useEffect(() => {
-    if ((dataSources.data?.results ?? []).length > 0) {
-      fetchEndpoints(projectId);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataSources.data, projectId]);
-
-  useEffect(() => {
     if (
       form.values.endpoint &&
       !selectedEndpoint &&
@@ -188,8 +131,6 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     }
   }, [endpoints, form.values.endpoint, selectedEndpoint]);
 
-  const accessToken = useDataSourceStore((state) => state.accessToken);
-
   const showLoaderInputProps = form.getInputProps("showLoader");
   const isLoginInputProps = form.getInputProps("isLogin");
 
@@ -197,48 +138,12 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
     <>
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack spacing="xs">
-          <Select
-            label="Endpoint"
-            placeholder="The endpoint to call"
-            searchable
-            clearable
-            data={
-              endpoints?.map((endpoint) => {
-                return {
-                  label: endpoint.relativeUrl,
-                  value: endpoint.id,
-                  method: endpoint.methodType,
-                };
-              }) ?? []
-            }
-            itemComponent={SelectItem}
+          <EndpointSelect
             {...form.getInputProps("endpoint")}
             onChange={(selected) => {
               form.setFieldValue("endpoint", selected!);
               setSelectedEndpoint(endpoints?.find((e) => e.id === selected));
             }}
-            icon={
-              <Flex>
-                <Box
-                  p={2}
-                  sx={{
-                    fontSize: 8,
-                    color: "white",
-                    border:
-                      selectedEndpoint?.methodType &&
-                      colors[selectedEndpoint.methodType].color + " 1px solid",
-                    background:
-                      selectedEndpoint?.methodType &&
-                      colors[selectedEndpoint.methodType].color,
-                    borderRadius: "4px",
-                    width: 28,
-                    textAlign: "center",
-                  }}
-                >
-                  {selectedEndpoint?.methodType}
-                </Box>
-              </Flex>
-            }
           />
           <Switch
             label="Is Login Endpoint"
@@ -261,96 +166,10 @@ export const APICallActionForm = ({ id, actionName = "apiCall" }: Props) => {
             sx={{ fontWeight: 500 }}
           />
           {selectedEndpoint && (
-            <Stack spacing={2}>
-              {[
-                {
-                  title: "Headers",
-                  type: "header" as ApiType,
-                  items: selectedEndpoint.headers,
-                },
-                {
-                  title: "Request Body",
-                  type: "body" as ApiType,
-                  items: selectedEndpoint.requestBody,
-                },
-                {
-                  title: "Query Strings",
-                  type: "parameter" as ApiType,
-                  items: selectedEndpoint.parameters,
-                },
-              ].map(({ title, type, items }) => (
-                <React.Fragment key={title}>
-                  {items.length > 0 && (
-                    <Title order={5} mt="md">
-                      {title}
-                    </Title>
-                  )}
-                  {items.map((param) => {
-                    let additionalProps = {};
-                    if (
-                      param.name === "Authorization" &&
-                      param.type === "BEARER"
-                    ) {
-                      if (accessToken) {
-                        additionalProps = {
-                          defaultValue: accessToken.substring(0, 35) + "...",
-                          disabled: true,
-                        };
-                      }
-                    }
-
-                    const field = `binds.${type}.${param.name}`;
-                    return (
-                      <Stack key={param.name}>
-                        <ComponentToBindFromInput
-                          componentId={component?.id!}
-                          onPickComponent={(componentToBind: string) => {
-                            const value = componentToBind.startsWith(
-                              "queryString_pass_",
-                            )
-                              ? componentToBind
-                              : `valueOf_${componentToBind}`;
-                            form.setFieldValue(field, value);
-                            setPickingComponentToBindTo(undefined);
-                            setComponentToBind(undefined);
-                          }}
-                          onPickVariable={(variable: string) => {
-                            form.setFieldValue(field, variable);
-                          }}
-                          javascriptCode={form.values.actionCode}
-                          onChangeJavascriptCode={(
-                            javascriptCode: string,
-                            label: string,
-                          ) =>
-                            form.setFieldValue(
-                              `actionCode.${label}`,
-                              javascriptCode,
-                            )
-                          }
-                          size="xs"
-                          label={param.name}
-                          description={`${
-                            // @ts-ignore
-                            param.location ? `${param.location} - ` : ""
-                          }${param.type}`}
-                          type={param.type}
-                          {...(param.name !== "Authorization"
-                            ? // @ts-ignore
-                              { required: param.required }
-                            : {})}
-                          {...additionalProps}
-                          {...form.getInputProps(field)}
-                          onChange={(e) => {
-                            form.setFieldValue(field, e.currentTarget.value);
-                          }}
-                          {...AUTOCOMPLETE_OFF_PROPS}
-                        />
-                      </Stack>
-                    );
-                  })}
-                </React.Fragment>
-              ))}
-            </Stack>
+            <EndpointRequestInputs
+              selectedEndpoint={selectedEndpoint}
+              form={form}
+            />
           )}
           <ActionButtons
             actionId={id}

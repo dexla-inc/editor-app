@@ -1,4 +1,5 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { EndpointSelect } from "@/components/EndpointSelect";
 import { colors } from "@/components/datasources/DataSourceEndpoint";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import { useRequestProp } from "@/hooks/useRequestProp";
@@ -11,16 +12,7 @@ import { APICallAction } from "@/utils/actions";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { ApiType } from "@/utils/dashboardTypes";
-import {
-  Box,
-  Button,
-  Flex,
-  Select,
-  Stack,
-  Switch,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Box, Button, Flex, Stack, Switch, Text, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useRouter } from "next/router";
 import React, { forwardRef, useEffect, useState } from "react";
@@ -110,49 +102,12 @@ export const APICallFlowActionForm = ({
   return endpoints && endpoints.length > 0 ? (
     <>
       <Stack spacing="xs">
-        <Select
-          size="xs"
-          label="Endpoint"
-          placeholder="The endpoint to call"
-          searchable
-          clearable
-          data={
-            endpoints?.map((endpoint) => {
-              return {
-                label: endpoint.relativeUrl,
-                value: endpoint.id,
-                method: endpoint.methodType,
-              };
-            }) ?? []
-          }
-          itemComponent={SelectItem}
+        <EndpointSelect
           {...form.getInputProps("endpoint")}
           onChange={(selected) => {
             form.setFieldValue("endpoint", selected!);
             setSelectedEndpoint(endpoints?.find((e) => e.id === selected));
           }}
-          icon={
-            <Flex gap="lg">
-              <Box
-                p={2}
-                sx={{
-                  fontSize: 8,
-                  color: "white",
-                  border:
-                    selectedEndpoint?.methodType &&
-                    colors[selectedEndpoint.methodType].color + " 1px solid",
-                  background:
-                    selectedEndpoint?.methodType &&
-                    colors[selectedEndpoint.methodType].color,
-                  borderRadius: "4px",
-                  width: 20,
-                  textAlign: "center",
-                }}
-              >
-                {selectedEndpoint?.methodType}
-              </Box>
-            </Flex>
-          }
         />
         <Switch
           label="Is Login Endpoint"
