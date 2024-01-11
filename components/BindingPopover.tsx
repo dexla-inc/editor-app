@@ -222,7 +222,7 @@ export default function BindingPopover({
     }
   };
 
-  const handleActions = (item: string) => {
+  const handleDataSources = (item: string) => {
     try {
       const parsed = JSON.parse(item);
       setSelectedItem(
@@ -234,7 +234,7 @@ export default function BindingPopover({
         onPickVariable(
           JSON.stringify({
             id: parsed.id,
-            variable: inputsStore[parsed.id],
+            variable: variables?.list[parsed.id],
             path: parsed.path,
           }),
         );
@@ -253,8 +253,8 @@ export default function BindingPopover({
       handleVariables(item);
     } else if (itemType === "browser") {
       handleBrowser(item);
-    } else if (itemType === "actions") {
-      handleActions(item);
+    } else if (itemType === "datasources") {
+      handleDataSources(item);
     }
   };
 
@@ -420,13 +420,13 @@ export default function BindingPopover({
               onItemSelection={(item: string) => onSetItem(tab, item)}
             />
           ) : tab === "actions" ? (
+            <Stack>Create a DataTree for actions</Stack>
+          ) : tab === "datasources" ? (
             <DataTree
               filterKeyword={filterKeyword}
               variables={actionData}
               onItemSelection={(item: string) => onSetItem(tab, item)}
             />
-          ) : tab === "datasources" ? (
-            <Stack>Create a DataTree for datasources</Stack>
           ) : tab === "browser" ? (
             // We may get rid of browser and store it in data
             <DataTree

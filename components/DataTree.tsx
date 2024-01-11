@@ -9,7 +9,7 @@ export function DataTree({
   return (
     <ScrollArea.Autosize mah={300}>
       <Stack align="flex-start" spacing="xs">
-        {variables
+        {(variables ?? {})
           .filter((variable: any) => {
             const regex = new RegExp(filterKeyword, "i");
             return filterKeyword === "" || regex.test(variable.name);
