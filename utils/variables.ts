@@ -9,7 +9,7 @@ export const getParsedJSCode = (code: string) => {
     componentsRegex,
     (_, componentName, componentId) => {
       const value = inputsValues[componentId];
-
+      console.log(value);
       if (value === undefined) {
         return `undefined`;
       }

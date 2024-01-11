@@ -44,6 +44,7 @@ export const SelectData = ({ component }: Props) => {
   const actionData =
     exampleResponse.length &&
     Object.keys(exampleResponse[0])?.map((item: string) => {
+      console.log(item);
       return {
         id: item,
         name: item,

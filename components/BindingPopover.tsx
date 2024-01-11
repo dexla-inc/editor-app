@@ -11,7 +11,6 @@ import { getParsedJSCode } from "@/utils/variables";
 import {
   ActionIcon,
   Box,
-  Button,
   Center,
   CloseButton,
   Flex,
@@ -211,18 +210,38 @@ export default function BindingPopover({
   const handleBrowser = (item: string) => {
     try {
       const parsed = JSON.parse(item);
-      setSelectedItem(`browser['${parsed.id}'].${parsed.path}`);
+      setSelectedItem(
+        `${prefixWithReturnIfNeeded(javascriptCode)}browser['${parsed.id}'].${
+          parsed.path
+        }`,
+      );
     } catch {
-      setSelectedItem(`browser['${item}']`);
+      setSelectedItem(
+        `${prefixWithReturnIfNeeded(javascriptCode)}browser['${item}']`,
+      );
     }
   };
 
   const handleActions = (item: string) => {
     try {
       const parsed = JSON.parse(item);
-      setSelectedItem(`actions['${parsed.id}'].${parsed.path}`);
+      setSelectedItem(
+        `${prefixWithReturnIfNeeded(javascriptCode)}context.item['${
+          parsed.id
+        }'].${parsed.path}`,
+      );
+      onPickVariable &&
+        onPickVariable(
+          JSON.stringify({
+            id: parsed.id,
+            variable: inputsStore[parsed.id],
+            path: parsed.path,
+          }),
+        );
     } catch {
-      setSelectedItem(`actions['${item}']`);
+      setSelectedItem(
+        `${prefixWithReturnIfNeeded(javascriptCode)}context.item['${item}']`,
+      );
       onPickVariable && onPickVariable(item);
     }
   };
