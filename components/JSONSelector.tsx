@@ -26,6 +26,7 @@ type Item = {
 type ListItemProps = {
   item: Item;
   onSelectValue?: (value: any) => void;
+  name?: string;
 } & CardProps;
 
 const findPathForKeyValue = (
@@ -155,7 +156,7 @@ const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
                 )}
 
                 {item.key !== "root" && (
-                  <Box maw={200}>
+                  <Box w={200} maw={200}>
                     <Text
                       size="xs"
                       ml="xs"
@@ -181,10 +182,15 @@ const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
   );
 };
 
-const ListItemWrapper = ({ item, children, onSelectValue }: ListItemProps) => {
+const ListItemWrapper = ({
+  item,
+  children,
+  onSelectValue,
+  name,
+}: ListItemProps) => {
   return (
     <List
-      withPadding={item.key !== "root"}
+      withPadding={item.key !== name}
       size="xs"
       listStyleType="none"
       styles={{
@@ -217,9 +223,11 @@ const ListItemWrapper = ({ item, children, onSelectValue }: ListItemProps) => {
 type Props = {
   data?: any;
   onSelectValue?: (value: any) => void;
+  name?: string;
 };
 
-export const JSONSelector = ({ data, onSelectValue }: Props) => {
+export const JSONSelector = ({ data, onSelectValue, name }: Props) => {
+  name = name ?? "data";
   const items: Item[] = objToItems(data, data);
 
   const renderList = (item: any) => {
@@ -233,6 +241,7 @@ export const JSONSelector = ({ data, onSelectValue }: Props) => {
         item={item}
         onSelectValue={onSelectValue}
         sx={{ width: "100%" }}
+        name={name}
       >
         {item.children?.map((child: any) => {
           return renderList(child);
@@ -244,7 +253,7 @@ export const JSONSelector = ({ data, onSelectValue }: Props) => {
   return (
     <List w="100%" size="xs" listStyleType="none">
       {renderList({
-        key: "root",
+        key: name,
         path: "[0]",
         value: JSON.stringify(items),
         children: items,

@@ -4,6 +4,7 @@ import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { Box, Flex, Select, SelectProps, Text } from "@mantine/core";
 import { forwardRef } from "react";
+import { EndpointExampleResponsePreview } from "./EndpointExampleResponsePreview";
 
 const SelectItem = forwardRef<HTMLDivElement, any>(
   ({ method, label, ...others }: any, ref) => (
@@ -46,45 +47,48 @@ export const EndpointSelect = ({ value, ...props }: Props) => {
   const selectedEndpoint = endpoints?.find((e) => e.id === value);
 
   return (
-    <Select
-      label="Endpoint"
-      placeholder="The endpoint to call"
-      searchable
-      clearable
-      itemComponent={SelectItem}
-      data={
-        endpoints?.map((endpoint) => {
-          return {
-            label: endpoint.relativeUrl,
-            value: endpoint.id,
-            method: endpoint.methodType,
-          };
-        }) ?? []
-      }
-      icon={
-        <Flex>
-          <Box
-            p={2}
-            sx={{
-              fontSize: 8,
-              color: "white",
-              border:
-                selectedEndpoint?.methodType &&
-                colors[selectedEndpoint.methodType].color + " 1px solid",
-              background:
-                selectedEndpoint?.methodType &&
-                colors[selectedEndpoint.methodType].color,
-              borderRadius: "4px",
-              width: 28,
-              textAlign: "center",
-            }}
-          >
-            {selectedEndpoint?.methodType}
-          </Box>
-        </Flex>
-      }
-      value={value}
-      {...props}
-    />
+    <>
+      <Select
+        label="Endpoint"
+        placeholder="The endpoint to call"
+        searchable
+        clearable
+        itemComponent={SelectItem}
+        data={
+          endpoints?.map((endpoint) => {
+            return {
+              label: endpoint.relativeUrl,
+              value: endpoint.id,
+              method: endpoint.methodType,
+            };
+          }) ?? []
+        }
+        icon={
+          <Flex>
+            <Box
+              p={2}
+              sx={{
+                fontSize: 8,
+                color: "white",
+                border:
+                  selectedEndpoint?.methodType &&
+                  colors[selectedEndpoint.methodType].color + " 1px solid",
+                background:
+                  selectedEndpoint?.methodType &&
+                  colors[selectedEndpoint.methodType].color,
+                borderRadius: "4px",
+                width: 28,
+                textAlign: "center",
+              }}
+            >
+              {selectedEndpoint?.methodType}
+            </Box>
+          </Flex>
+        }
+        value={value}
+        {...props}
+      />
+      <EndpointExampleResponsePreview endpoint={selectedEndpoint} />
+    </>
   );
 };
