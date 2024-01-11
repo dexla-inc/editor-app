@@ -76,7 +76,7 @@ export default function BindingPopover({
   const [newValue, setNewValue] = useState<string>();
   const [tab, setTab] = useState<BindingTab>(bindingTab ?? "components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
-  const inputsStore = useInputsStore();
+  const inputsStore = useInputsStore((state) => state.inputValues);
   const variablesList = useVariableStore((state) => state.variableList);
   const variables = variablesList.reduce(
     (acc, variable) => {

@@ -15,7 +15,7 @@ import {
 import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { ChangeEvent, forwardRef, memo, useCallback, useState } from "react";
+import { forwardRef, memo, useCallback, useState } from "react";
 import { InputLoader } from "../InputLoader";
 
 type Props = {
@@ -37,16 +37,22 @@ const InputComponent = forwardRef(
       ...componentProps
     } = component.props as any;
     const { name: iconName } = icon && icon!.props!;
+    const type = (componentProps.type as string) || "text";
+
+    const _defaultValue = type === "number" || type === "numberRange" ? 0 : "";
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setStoreInputValue = useInputsStore((state) => state.setInputValue);
-    const [localInputValue, setLocalInputValue] = useState(inputValue ?? "");
+
+    const [localInputValue, setLocalInputValue] = useState(
+      inputValue ?? _defaultValue,
+    );
 
     const isClearable = clearable && !!inputValue;
 
     // clear input field
     const clearInput = () => {
-      setLocalInputValue("");
-      setStoreInputValue(component.id!, "");
+      setLocalInputValue(_defaultValue);
+      setStoreInputValue(component.id!, _defaultValue);
       const el = iframeWindow?.document.getElementById(component.id!);
       el?.focus();
     };
@@ -61,14 +67,28 @@ const InputComponent = forwardRef(
     );
 
     // handle changes to input field
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-      const newValue = e.target.value;
+    const handleInputChange = (e: any) => {
+      const newValue = e.target ? e.target.value : e;
       setLocalInputValue(newValue);
       debouncedOnChange(newValue);
       triggers?.onChange && triggers?.onChange(e);
     };
 
-    const type = (componentProps.type as string) || "text";
+    // handle increase number range
+    const increaseNumber = () => {
+      let val = localInputValue;
+      if (val === undefined) val = 1;
+      else val += 1;
+      handleInputChange(val);
+    };
+
+    // handle decrease number range
+    const decreaseNumber = () => {
+      let val = localInputValue;
+      if (val === undefined) val = -1;
+      else val -= 1;
+      handleInputChange(val);
+    };
 
     const customStyle = merge({}, props.style);
 
@@ -89,10 +109,7 @@ const InputComponent = forwardRef(
                 size={props.size}
                 variant="default"
                 style={{ border: "none" }}
-                onClick={() => {
-                  setInputValue((prev: number) => (!prev ? -1 : prev - 1));
-                  triggers?.onChange && debouncedOnChange(value);
-                }}
+                onClick={decreaseNumber}
               >
                 –
               </ActionIcon>
@@ -116,11 +133,8 @@ const InputComponent = forwardRef(
                   },
                 }}
                 size={props.size}
-                value={inputValue}
-                onChange={(e) => {
-                  setInputValue(e);
-                  triggers?.onChange ? debouncedOnChange(e) : undefined;
-                }}
+                value={localInputValue}
+                onChange={handleInputChange}
                 label={undefined}
               />
 
@@ -128,10 +142,7 @@ const InputComponent = forwardRef(
                 size={props.size}
                 variant="default"
                 style={{ border: "none" }}
-                onClick={() => {
-                  setInputValue((prev: number) => (!prev ? 1 : prev + 1));
-                  triggers?.onChange && debouncedOnChange(value);
-                }}
+                onClick={increaseNumber}
               >
                 +
               </ActionIcon>
@@ -164,15 +175,9 @@ const InputComponent = forwardRef(
               },
             }}
             min={0}
-            value={props.value || value || undefined}
-            onChange={debouncedOnChange}
-            rightSection={
-              loading ? (
-                <InputLoader />
-              ) : isClearable ? (
-                <Icon onClick={clearInput} name="IconX" />
-              ) : null
-            }
+            value={localInputValue}
+            onChange={handleInputChange}
+            rightSection={loading ? <InputLoader /> : null}
             label={undefined}
           />
         ) : (
