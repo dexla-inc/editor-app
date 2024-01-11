@@ -136,7 +136,7 @@ export const ThemeColorSelector = (props: Props) => {
             searchable
             icon={bgColor}
           />
-          {selectProps.value !== "transparent" && (
+          {selectProps.value !== "transparent" && _dataWithShades && (
             <Group w="35%" spacing={2} noWrap>
               <Divider w={20} color="gray" />
               <Select
