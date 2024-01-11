@@ -1,5 +1,7 @@
-import { IconSelector } from "@/components/IconSelector";
+import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
+import { useEditorStore } from "@/stores/editor";
+import { structureMapper } from "@/utils/componentMapper";
 import {
   Component,
   debouncedTreeComponentChildrenUpdate,
@@ -11,17 +13,14 @@ import { useForm } from "@mantine/form";
 import { IconLayoutBottombarCollapse } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { structureMapper } from "@/utils/componentMapper";
-import { useEditorStore } from "@/stores/editor";
-import { UnitInput } from "@/components/UnitInput";
 
 export const icon = IconLayoutBottombarCollapse;
 export const label = "Accordion";
 
-const editorStore = useEditorStore.getState();
+const theme = useEditorStore.getState().theme;
 const createItem = (id: string) => () => {
   return structureMapper["AccordionItem"].structure({
-    theme: editorStore.theme,
+    theme: theme,
     props: {
       value: `Item-${id}`,
       style: {},
