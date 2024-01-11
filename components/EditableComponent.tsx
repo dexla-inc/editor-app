@@ -329,7 +329,7 @@ export const EditableComponent = ({
 
   const handleClick = useCallback(
     (e: any) => {
-      e.stopPropagation();
+      e.stopPropagation && e.stopPropagation();
 
       if (isPicking) {
         setComponentToBind(id);
@@ -374,7 +374,7 @@ export const EditableComponent = ({
             ...component,
             props: propsWithOverwrites,
           },
-          ...(isResizing ? {} : droppable),
+          ...(isResizing || isPreviewMode ? {} : droppable),
           id: component.id,
           isPreviewMode,
           style: childStyles,

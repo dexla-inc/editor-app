@@ -13,6 +13,7 @@ import { useCallback, useEffect, useState } from "react";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
+  onClick: (e: any) => void;
 } & BoxProps;
 
 type GoogleMapProps = {
@@ -47,6 +48,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
     fade,
     ...componentProps
   } = component.props as GoogleMapProps;
+  const { onClick, ...customProps } = props;
 
   const [internalZoom, setInternalZoom] = useState<number>(zoom);
   const MAP_SCRIPT_DELAY_DURATION = 800;
@@ -68,6 +70,13 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
     if (markerId !== activeMarkerId) {
       setActiveMarkerId(markerId);
     }
+  };
+
+  const handleClick = (e: any) => {
+    if (onClick) {
+      onClick(e);
+    }
+    setActiveMarkerId(null);
   };
 
   const onLoad = useCallback(
@@ -118,10 +127,10 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
         onLoad={onLoad}
         onUnmount={unMount}
         zoom={(internalZoom ?? 0) as any}
-        onClick={() => setActiveMarkerId(null)}
+        onClick={handleClick}
         mapContainerStyle={containerStyle}
         {...componentProps}
-        {...props}
+        {...customProps}
         {...googleStyles}
       >
         {markers &&
