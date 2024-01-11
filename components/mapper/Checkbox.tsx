@@ -1,9 +1,10 @@
+import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { Checkbox as MantineCheckbox, CheckboxProps } from "@mantine/core";
-import { memo, useState } from "react";
+import { CheckboxProps, Checkbox as MantineCheckbox } from "@mantine/core";
+import debounce from "lodash.debounce";
 import merge from "lodash.merge";
-import { useInputsStore } from "@/stores/inputs";
+import { ChangeEvent, memo, useCallback, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -19,30 +20,31 @@ const CheckboxComponent = ({
 }: Props) => {
   const { label, value, triggers, ...componentProps } = component.props as any;
   const { children, ...rest } = props;
-  const [checked, setChecked] = useState(false);
+  const inputValue = useInputsStore((state) => state.getValue(component.id!));
   const setStoreInputValue = useInputsStore((state) => state.setInputValue);
+  const [checked, setChecked] = useState(inputValue ?? false);
 
-  const toggle = () => {
-    setChecked((state) => !state);
+  // update values in store
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedOnChange = useCallback(
+    debounce((value) => {
+      setStoreInputValue(component.id!, value);
+    }, 400),
+    [component.id],
+  );
+
+  // handle changes to input field
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.checked;
+    setChecked(newValue);
+    debouncedOnChange(newValue);
+    triggers?.onChange && triggers?.onChange(e);
   };
-
-  const defaultTriggers = isPreviewMode
-    ? {
-        onChange: (e: any) => {
-          toggle();
-        },
-      }
-    : {
-        onChange: (e: any) => {
-          e.preventDefault();
-        },
-      };
 
   const customStyle = merge({}, props.style);
 
   return (
     <MantineCheckbox
-      {...defaultTriggers}
       {...rest}
       {...componentProps}
       style={{}}
@@ -66,15 +68,7 @@ const CheckboxComponent = ({
       value={value}
       checked={checked}
       {...triggers}
-      onChange={(e) => {
-        setStoreInputValue(component.id!, e.target.checked);
-
-        if (triggers?.onChange) {
-          triggers?.onChange?.(e);
-        } else {
-          defaultTriggers.onChange(e);
-        }
-      }}
+      onChange={handleInputChange}
     />
   );
 };

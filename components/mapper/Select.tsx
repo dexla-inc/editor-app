@@ -5,9 +5,10 @@ import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Select as MantineSelect, SelectProps } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
+import debounce from "lodash.debounce";
 import get from "lodash.get";
 import merge from "lodash.merge";
-import { forwardRef, memo } from "react";
+import { forwardRef, memo, useCallback, useState } from "react";
 import { InputLoader } from "../InputLoader";
 
 type Props = {
@@ -34,7 +35,25 @@ const SelectComponent = forwardRef(
       ...componentProps
     } = component.props as any;
     const customStyle = merge({}, props.style);
+    const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setInputValue = useInputsStore((state) => state.setInputValue);
+    const [localInputValue, setLocalInputValue] = useState(inputValue ?? "");
+
+    // update values in store
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const debouncedOnChange = useCallback(
+      debounce((value) => {
+        setInputValue(component.id!, value);
+      }, 400),
+      [component.id],
+    );
+
+    // handle changes to input field
+    const handleInputChange = (value: any) => {
+      setLocalInputValue(value);
+      debouncedOnChange(value);
+      triggers?.onChange && triggers?.onChange(value);
+    };
 
     let data = [];
 
@@ -99,10 +118,8 @@ const SelectComponent = forwardRef(
         )}
         rightSection={loading ? <InputLoader /> : null}
         label={undefined}
-        onChange={(value) => {
-          triggers.onChange?.(value);
-          setInputValue(component.id!, value);
-        }}
+        value={localInputValue}
+        onChange={handleInputChange}
       />
     );
   },

@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import debounce from "lodash.debounce";
 import merge from "lodash.merge";
-import { forwardRef, memo, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, forwardRef, memo, useCallback, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -20,21 +20,27 @@ const TextareaComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
     const { children, triggers, value, loading, ...componentProps } =
       component.props as any;
-    const [inputValue, setInputValue] = useState(value);
+    const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setStoreInputValue = useInputsStore((state) => state.setInputValue);
 
+    const [localInputValue, setLocalInputValue] = useState(inputValue ?? "");
+
+    // update values in store
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedOnChange = useCallback(
-      debounce((e) => {
-        triggers?.onChange(e);
-        setStoreInputValue(component.id!, e.target.value);
+      debounce((value) => {
+        setStoreInputValue(component.id!, value);
       }, 400),
-      [debounce, component.id],
+      [component.id],
     );
 
-    useEffect(() => {
-      setInputValue(value);
-    }, [value]);
+    // handle changes to input field
+    const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+      const newValue = e.target.value;
+      setLocalInputValue(newValue);
+      debouncedOnChange(newValue);
+      triggers?.onChange && triggers?.onChange(e);
+    };
 
     const customStyle = merge({}, props.style);
 
@@ -61,11 +67,8 @@ const TextareaComponent = forwardRef(
             minWidth: "-webkit-fill-available",
           },
         }}
-        value={inputValue}
-        onChange={(e) => {
-          setInputValue(e.target.value);
-          triggers?.onChange ? debouncedOnChange(e) : undefined;
-        }}
+        value={localInputValue}
+        onChange={handleInputChange}
         rightSection={loading ? <Loader size="xs" /> : null}
         label={undefined}
       >
