@@ -10,11 +10,11 @@ import {
   TextInput as MantineInput,
   NumberInput as MantineNumberInput,
   NumberInputProps,
+  PasswordInput,
   TextInputProps,
 } from "@mantine/core";
 import debounce from "lodash.debounce";
 import merge from "lodash.merge";
-import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo, useCallback, useState } from "react";
 import { InputLoader } from "../InputLoader";
 
@@ -37,7 +37,8 @@ const InputComponent = forwardRef(
       ...componentProps
     } = component.props as any;
     const { name: iconName } = icon && icon!.props!;
-    const type = (componentProps.type as string) || "text";
+    // const type = (componentProps.type as string) || "text";
+    const { type, ...restComponentProps } = componentProps;
 
     const _defaultValue = type === "number" || type === "numberRange" ? 0 : "";
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
@@ -68,7 +69,10 @@ const InputComponent = forwardRef(
 
     // handle changes to input field
     const handleInputChange = (e: any) => {
-      const newValue = e.target ? e.target.value : e;
+      let newValue = e.target ? e.target.value : e;
+      if (type === "number") {
+        newValue = newValue ? Number(newValue) : 0;
+      }
       setLocalInputValue(newValue);
       debouncedOnChange(newValue);
       triggers?.onChange && triggers?.onChange(e);
@@ -88,6 +92,11 @@ const InputComponent = forwardRef(
       if (val === undefined) val = -1;
       else val -= 1;
       handleInputChange(val);
+    };
+
+    const parseToNumber = (value: any) => {
+      const number = Number(value);
+      return isNaN(number) ? 0 : number;
     };
 
     const customStyle = merge({}, props.style);
@@ -119,7 +128,7 @@ const InputComponent = forwardRef(
                 type="number"
                 autoComplete="off"
                 id={component.id}
-                {...omit(componentProps, ["type"])}
+                {...restComponentProps}
                 styles={{
                   root: {
                     display: "inline",
@@ -133,7 +142,7 @@ const InputComponent = forwardRef(
                   },
                 }}
                 size={props.size}
-                value={localInputValue}
+                value={parseToNumber(localInputValue)}
                 onChange={handleInputChange}
                 label={undefined}
               />
@@ -151,7 +160,7 @@ const InputComponent = forwardRef(
         ) : type === "number" ? (
           <MantineNumberInput
             {...props}
-            {...componentProps}
+            {...restComponentProps}
             ref={ref}
             autoComplete="off"
             id={component.id}
@@ -175,10 +184,41 @@ const InputComponent = forwardRef(
               },
             }}
             min={0}
-            value={localInputValue}
+            value={parseToNumber(localInputValue)}
             onChange={handleInputChange}
             rightSection={loading ? <InputLoader /> : null}
             label={undefined}
+          />
+        ) : type === "password" ? (
+          <PasswordInput
+            {...props}
+            {...restComponentProps}
+            ref={ref}
+            id={component.id}
+            icon={iconName ? <Icon name={iconName} /> : null}
+            style={{}}
+            styles={{
+              root: {
+                position: "relative",
+                display: "block !important",
+                width: customStyle.width,
+                minWidth: customStyle.minWidth,
+              },
+              input: {
+                height: customStyle.height,
+                minHeight: customStyle.minHeight,
+                ...customStyle,
+              },
+            }}
+            value={localInputValue}
+            onChange={handleInputChange}
+            rightSection={
+              loading ? (
+                <InputLoader />
+              ) : isClearable ? (
+                <Icon onClick={clearInput} name="IconX" />
+              ) : null
+            }
           />
         ) : (
           <MantineInput

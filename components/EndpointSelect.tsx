@@ -88,7 +88,9 @@ export const EndpointSelect = ({ value, ...props }: Props) => {
         value={value}
         {...props}
       />
-      <EndpointExampleResponsePreview endpoint={selectedEndpoint} />
+      {selectedEndpoint?.exampleResponse ? (
+        <EndpointExampleResponsePreview endpoint={selectedEndpoint} />
+      ) : null}
     </>
   );
 };

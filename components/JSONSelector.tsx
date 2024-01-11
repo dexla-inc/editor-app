@@ -63,6 +63,7 @@ const isArrayIndex = (prop: string): boolean => {
 };
 
 const objToItems = (obj: any, root: any): Item[] => {
+  if (!obj) return [];
   return Object.entries(obj).map(([key, value]) => {
     let path = findPathForKeyValue(root, key, value);
     if (Array.isArray(value) && !path?.includes("[")) {
