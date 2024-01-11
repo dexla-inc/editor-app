@@ -4,7 +4,7 @@ import { scrollbarStyles } from "@/utils/branding";
 import { Anchor, Popover, ScrollArea } from "@mantine/core";
 
 type Props = {
-  endpoint?: Endpoint;
+  endpoint: Endpoint;
 };
 
 export const EndpointExampleResponsePreview = ({ endpoint }: Props) => {
@@ -23,11 +23,11 @@ export const EndpointExampleResponsePreview = ({ endpoint }: Props) => {
         <ScrollArea.Autosize mah={300}>
           <JSONSelector
             data={
-              endpoint?.exampleResponse
-                ? JSON.parse(endpoint?.exampleResponse)
-                : endpoint?.exampleResponse
+              endpoint.exampleResponse
+                ? JSON.parse(endpoint.exampleResponse)
+                : endpoint.exampleResponse
             }
-            name={endpoint?.relativeUrl}
+            name={endpoint.relativeUrl}
           />
         </ScrollArea.Autosize>
       </Popover.Dropdown>
