@@ -23,7 +23,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { ActionIconDefault } from "./ActionIconDefault";
 
 const convertTimestampToTimeTaken = (timestamp: number) => {
@@ -57,7 +57,7 @@ export const ChangeHistoryPopover: FC = () => {
   const currentProjectId = useEditorStore((state) => state.currentProjectId);
   const setIsSaving = useEditorStore((state) => state.setIsSaving);
 
-  const { changeHistory, pastStates, undo, redo, futureStates, clear } =
+  const { changeHistory, pastStates, undo, redo, futureStates } =
     useTemporalStore((state) => ({
       changeHistory: [
         ...state.pastStates,
@@ -81,14 +81,7 @@ export const ChangeHistoryPopover: FC = () => {
       futureStates: state.futureStates,
       undo: state.undo,
       redo: state.redo,
-      clear: state.clear,
     }));
-
-  useEffect(
-    () => clear(),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [pageId],
-  );
 
   const [opened, { close, open }] = useDisclosure(false);
   const theme = useMantineTheme();
@@ -151,6 +144,7 @@ export const ChangeHistoryPopover: FC = () => {
           </Popover.Target>
           <Popover.Dropdown
             sx={{
+              display: changeHistory.length ? "block" : "none",
               padding: "10px 5px",
               width: "auto!important",
             }}

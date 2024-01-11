@@ -19,6 +19,7 @@ import {
 } from "@mantine/core";
 import { IconFileAnalytics, IconHome, IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
+import { useTemporalStore } from "@/stores/editor";
 
 type InitialPaneProps = {
   projectId: string;
@@ -37,6 +38,7 @@ export default function InitialPane({
   debouncedSearch,
 }: InitialPaneProps) {
   const theme = useMantineTheme();
+  const clear = useTemporalStore((state) => state.clear);
   const { color, background, hoveredBackground, hoveredColor, whiteColor } = {
     color: theme.colorScheme === "dark" ? GRAY_WHITE_COLOR : theme.black,
     background: theme.colorScheme === "dark" ? DARK_COLOR : GRAY_WHITE_COLOR,
@@ -69,6 +71,7 @@ export default function InitialPane({
               key={page.id}
               component={Link}
               href={`/projects/${projectId}/editor/${page.id}`}
+              onClick={clear}
             >
               <Group
                 px="xs"
