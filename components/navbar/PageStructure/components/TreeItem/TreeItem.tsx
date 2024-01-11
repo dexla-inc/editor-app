@@ -8,6 +8,7 @@ import React, {
 } from "react";
 
 import { Icon } from "@/components/Icon";
+import styles from "@/components/navbar/PageStructure/components/TreeItem/TreeItem.module.scss";
 import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
@@ -26,7 +27,6 @@ import {
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
-import styles from "./TreeItem.module.scss";
 
 export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   id: any;
@@ -253,6 +253,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                     debouncedTreeComponentDescriptionpdate(e.target.value);
                   }}
                   onBlur={closeEdit}
+                  autoFocus
                 />
               ) : (
                 <Text
