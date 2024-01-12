@@ -14,7 +14,7 @@ import {
 } from "@/utils/branding";
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
 import { Component } from "@/utils/editor";
-import { BoxProps } from "@mantine/core";
+import { BoxProps, CSSObject } from "@mantine/core";
 import merge from "lodash.merge";
 import { Router, useRouter } from "next/router";
 import React, {
@@ -212,6 +212,15 @@ export const EditableComponent = ({
     ? { boxShadow: baseShadow }
     : {};
 
+  const handleBackground = (styles: CSSObject) => {
+    const isGradient = component.props?.bg?.includes("gradient");
+    const hasImage = !!styles.backgroundImage;
+
+    if (isGradient && hasImage) {
+      styles.backgroundImage = `${styles.backgroundImage}, ${component.props?.bg}`;
+    }
+  };
+
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
     if (currentState === "default") {
       setTreeComponentCurrentState(e.currentTarget.id, "hover");
@@ -324,6 +333,8 @@ export const EditableComponent = ({
         ? "none"
         : propsWithOverwrites.style?.outline,
   };
+
+  handleBackground(childStyles);
 
   delete propsWithOverwrites.style;
 
