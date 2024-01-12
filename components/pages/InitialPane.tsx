@@ -6,11 +6,10 @@ import { IconPlus } from "@tabler/icons-react";
 
 type InitialPaneProps = {
   projectId: string;
-  pages: PageResponse[];
   setPage: (page?: PageResponse | null) => void;
   currentPage: string;
+  pages?: PageResponse[];
   debouncedSearch: (query: string) => void;
-  search: string;
 };
 
 export default function InitialPane({
@@ -37,7 +36,7 @@ export default function InitialPane({
         size="xs"
       />
       <Stack spacing={2}>
-        {pages.map((page) => {
+        {pages?.map((page) => {
           return (
             <PageItem
               key={page.id}

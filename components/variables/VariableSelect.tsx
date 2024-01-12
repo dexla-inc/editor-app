@@ -12,14 +12,13 @@ type Props = Omit<SelectProps, "data"> & {
 export const VariableSelect = ({ onPick, ...props }: Props) => {
   const router = useRouter();
   const projectId = router.query.id as string;
-  const pageId = router.query.page as string;
 
   const { data: variables } = useQuery({
-    queryKey: ["variables", projectId, pageId],
+    queryKey: ["variables", projectId],
     queryFn: async () => {
-      return await listVariables(projectId, { pageId });
+      return await listVariables(projectId);
     },
-    enabled: !!projectId && !!pageId,
+    enabled: !!projectId,
   });
 
   return (

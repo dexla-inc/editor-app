@@ -1,6 +1,6 @@
 import { Icon } from "@/components/Icon";
-import { getPageList } from "@/requests/pages/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
+import { usePageListQuery } from "@/requests/pages/usePageListQuery";
 import { deleteProject } from "@/requests/projects/mutations";
 import { ProjectResponse } from "@/requests/projects/types";
 import { usePropelAuthStore } from "@/stores/propelAuth";
@@ -31,7 +31,7 @@ import {
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type ProjectItemProps = {
   project: ProjectResponse;
@@ -60,15 +60,18 @@ export function ProjectItem({
     company: state.activeCompany,
   }));
 
-  const goToEditorHomePage = async () => {
-    const pages = await getPageList(project.id);
-    setPages(pages.results);
+  const { data: pageListQuery, invalidate } = usePageListQuery(project.id);
 
-    const homePage = pages.results.find((page) => page.isHome);
+  useEffect(() => {
+    setPages(pageListQuery?.results || []);
+  }, [pageListQuery]);
+
+  const goToEditorHomePage = async () => {
+    const homePage = pages.find((page) => page.isHome);
     let pageId: string | undefined = homePage?.id;
 
-    if (!pageId && pages.results.length > 0) {
-      pageId = pages.results[0].id;
+    if (!pageId && pages.length > 0) {
+      pageId = pages[0].id;
     }
 
     if (pageId !== undefined) {
@@ -77,11 +80,6 @@ export function ProjectItem({
       const newProjectUrl = `/projects/new?company=${company.orgId}&projectId=${project.id}&step=2`;
       router.push(newProjectUrl);
     }
-  };
-
-  const getPages = async () => {
-    const pages = await getPageList(project.id);
-    setPages(pages.results);
   };
 
   const deleteProjectFn = async () => {
@@ -135,7 +133,7 @@ export function ProjectItem({
             </Text>
             <Avatar src={regionTypeFlags[project.region.type]} size="sm" />
           </Flex>
-          <Menu width={250} withArrow offset={20} onOpen={getPages}>
+          <Menu width={250} withArrow offset={20} onOpen={invalidate}>
             <Menu.Target>
               <UnstyledButton
                 sx={{

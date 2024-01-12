@@ -24,14 +24,13 @@ export const VariablePicker = (props: Props) => {
   const [showVariablePicker, variablePicker] = useDisclosure(false);
   const router = useRouter();
   const projectId = router.query.id as string;
-  const pageId = router.query.page as string;
 
   const { data: variables, isLoading } = useQuery({
-    queryKey: ["variables", projectId, pageId],
+    queryKey: ["variables", projectId],
     queryFn: async () => {
-      return await listVariables(projectId, { pageId });
+      return await listVariables(projectId);
     },
-    enabled: !!projectId && !!pageId,
+    enabled: !!projectId,
   });
 
   return (

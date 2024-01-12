@@ -25,7 +25,4 @@ export type VariableResponse = VariableParams & {
   id: string;
 };
 
-export type VariablePagingParams = PagingParams & {
-  pageId?: string;
-  isGlobal?: boolean;
-};
+export type VariablePagingParams = PagingParams & {};

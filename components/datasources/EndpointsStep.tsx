@@ -245,7 +245,6 @@ export const BackAndEndpointsButtonGroup = ({
         startLoading={startLoading}
         stopLoading={stopLoading}
         isLoading={isLoading}
-        text="Go to Editor"
       ></EndpointsButton>
     </Group>
   );

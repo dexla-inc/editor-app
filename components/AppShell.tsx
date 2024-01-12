@@ -31,12 +31,10 @@ import { OtherAvatars } from "@/components/OtherAvatars";
 import { SaveTemplateButton } from "@/components/SaveTemplateButton";
 import { VariablesButton } from "@/components/variables/VariablesButton";
 import { useLogicFlows } from "@/hooks/logic-flow/useLogicFlows";
-import { getPageList } from "@/requests/pages/queries-noauth";
-import { PageListResponse } from "@/requests/pages/types";
+import { usePageListQuery } from "@/requests/pages/usePageListQuery";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { flexStyles } from "@/utils/branding";
-import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -53,12 +51,9 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const projectId = router.query.id as string;
   const currentPageId = router.query.page as string;
 
-  const pageResponse = useQuery<PageListResponse, Error>({
-    queryKey: ["pages"],
-    queryFn: () => getPageList(projectId),
-  });
+  const { data: pageListQuery } = usePageListQuery(projectId);
 
-  setPages(pageResponse.data?.results ?? []);
+  setPages(pageListQuery?.results ?? []);
 
   const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
   const clear = useTemporalStore((state) => state.clear);
@@ -123,7 +118,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               </Button>
               <DeployButton
                 projectId={projectId}
-                page={pageResponse.data?.results?.find(
+                page={pageListQuery?.results?.find(
                   (p) => p.id === currentPageId,
                 )}
               />

@@ -217,7 +217,6 @@ export default function DataSourcePage() {
                       startLoading={startLoading}
                       stopLoading={stopLoading}
                       isLoading={isLoading}
-                      text="Go To Editor"
                     ></EndpointsButton>
                   </Group>
                 )}
