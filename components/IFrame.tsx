@@ -1,5 +1,5 @@
+import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { useUserTheme } from "@/hooks/useUserTheme";
-import { getProject } from "@/requests/projects/queries-noauth";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
@@ -30,8 +30,8 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
-  const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isLoading = useAppStore((state) => state.isLoading);
+  const { data: project } = useProjectQuery(projectId);
 
   const theme = useUserTheme(projectId);
   const w = contentRef?.contentWindow;
@@ -124,20 +124,15 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
   }, [isTabPinned, setActiveTab]);
 
   useEffect(() => {
-    const fetchProject = async () => {
-      const project = await getProject(projectId);
+    if (project) {
       const customCode = project.customCode
         ? JSON.parse(decodeSchema(project.customCode))
         : undefined;
       if (customCode) {
         setCustomCode(customCode);
       }
-      setIsLoading(false);
-    };
-
-    fetchProject();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId]);
+    }
+  }, [project]);
 
   if (!theme) {
     return null;

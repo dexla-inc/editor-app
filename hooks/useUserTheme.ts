@@ -1,7 +1,6 @@
-import { getTheme } from "@/requests/themes/queries-noauth";
+import { useGetThemeQuery } from "@/hooks/reactQuery/useThemeQuery";
 import { useEditorStore } from "@/stores/editor";
 import { defaultTheme } from "@/utils/branding";
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 export const useUserTheme = (projectId: string) => {
@@ -9,12 +8,7 @@ export const useUserTheme = (projectId: string) => {
   const [internalTheme, setInternalTheme] = useState<any>(null);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const isLive = useEditorStore((state) => state.isLive);
-
-  const userTheme = useQuery({
-    queryKey: ["theme"],
-    queryFn: () => getTheme(projectId),
-    enabled: !!projectId,
-  });
+  const userTheme = useGetThemeQuery(projectId);
 
   useEffect(() => {
     const updateTheme = async () => {

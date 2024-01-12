@@ -1,9 +1,10 @@
-import { useVariable } from "@/hooks/useVariable";
+import { useVariable } from "@/hooks/reactQuery/useVariable";
 import { VariableTypesOptions } from "@/requests/variables/types";
 import { useVariableStore } from "@/stores/variables";
 import { requiredFieldValidator } from "@/utils/common";
 import { Button, Select, Stack, TextInput, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 type VariablesFormValues = {
@@ -18,7 +19,10 @@ type Props = {
 
 export const VariableForm = ({ variableId }: Props) => {
   const variableList = useVariableStore((state) => state.variableList);
-  const { createVariablesMutation, updateVariablesMutation } = useVariable();
+  const router = useRouter();
+  const projectId = router.query.id as string;
+  const { createVariablesMutation, updateVariablesMutation } =
+    useVariable(projectId);
 
   const variable = variableList.find((v) => v.id === variableId);
 

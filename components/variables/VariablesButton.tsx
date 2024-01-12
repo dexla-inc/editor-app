@@ -26,7 +26,7 @@ export const VariablesButton = ({ projectId }: Props) => {
         opened={opened}
         onClose={modal.close}
         centered
-        size="lg"
+        size="xl"
       >
         <SegmentedControl
           size="sm"

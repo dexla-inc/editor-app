@@ -1,9 +1,9 @@
 import RegionSelect from "@/components/RegionSelect";
+import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import {
   ProjectUpdateParams,
   patchProject,
 } from "@/requests/projects/mutations";
-import { getProject } from "@/requests/projects/queries-noauth";
 import { RegionTypes } from "@/requests/projects/types";
 import { useAppStore } from "@/stores/app";
 import { convertToPatchParams } from "@/utils/dashboardTypes";
@@ -28,6 +28,7 @@ export default function GeneralSettings({ projectId }: Props) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
+  const { data: project, refetch } = useProjectQuery(projectId);
 
   const form = useForm<ProjectUpdateParams>({
     initialValues: {
@@ -53,7 +54,7 @@ export default function GeneralSettings({ projectId }: Props) {
 
       const patchParams = convertToPatchParams<ProjectUpdateParams>(values);
       await patchProject(projectId, patchParams);
-
+      refetch();
       stopLoading({
         id: "updating-project",
         title: "Project Updated",
@@ -71,15 +72,12 @@ export default function GeneralSettings({ projectId }: Props) {
   };
 
   useEffect(() => {
-    const fetch = async () => {
-      const project = await getProject(projectId);
+    if (project) {
       form.setFieldValue("friendlyName", project.friendlyName);
       form.setFieldValue("region", project.region.type);
-    };
-
-    fetch();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId]);
+  }, [project]);
 
   useEffect(() => {
     setSelectedRegion(form.values.region as RegionTypes);

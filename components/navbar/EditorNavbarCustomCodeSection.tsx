@@ -1,5 +1,5 @@
+import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { patchProject } from "@/requests/projects/mutations";
-import { getProject } from "@/requests/projects/queries-noauth";
 import { decodeSchema, encodeSchema } from "@/utils/compression";
 import { convertToPatchParams } from "@/utils/dashboardTypes";
 import { Button, Card, Stack, Text } from "@mantine/core";
@@ -12,6 +12,7 @@ export const EditorNavbarCustomCodeSection = () => {
   const router = useRouter();
   const projectId = router.query.id as string;
   const [isSaving, setIsSaving] = useState(false);
+  const { data: project } = useProjectQuery(projectId);
 
   const form = useForm({
     initialValues: {
@@ -35,19 +36,16 @@ export const EditorNavbarCustomCodeSection = () => {
   };
 
   useEffect(() => {
-    const fetchProject = async () => {
-      const project = await getProject(projectId);
+    if (project) {
       const customCode = project.customCode
         ? JSON.parse(decodeSchema(project.customCode))
         : undefined;
       if (customCode) {
         form.setValues(customCode);
       }
-    };
-
-    fetchProject();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId]);
+  }, [project]);
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>

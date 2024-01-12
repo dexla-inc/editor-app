@@ -1,6 +1,6 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
-import { getChatHistoryList } from "@/requests/ai/queries";
+import { useAutomationsQuery } from "@/hooks/reactQuery/useAutomationsQuery";
 import { LARGE_ICON_SIZE } from "@/utils/config";
 import TOML from "@iarna/toml";
 import {
@@ -18,7 +18,6 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { Prism } from "@mantine/prism";
 import { IconJson, IconToml } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 type Props = {
@@ -34,14 +33,10 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
   const [contentOpened, setContentOpened] = useState<ContentOpenedType>({});
   const [tooltipText, setTooltipText] = useState("Copy to clipboard");
 
-  const chatHistoryList = useQuery({
-    queryKey: ["chatHistory"],
-    queryFn: () => getChatHistoryList(projectId),
-  });
-
-  const refreshChatHistory = () => {
-    chatHistoryList.refetch();
-  };
+  const { data: chatHistoryList, refetch } = useAutomationsQuery(
+    projectId,
+    opened,
+  );
 
   const toggle = (id: string) => {
     setContentOpened((prev: ContentOpenedType) => ({
@@ -60,7 +55,7 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
     }, 3000);
   };
 
-  const rows = chatHistoryList.data?.results.map((element) => (
+  const rows = chatHistoryList?.results.map((element) => (
     <tr key={element.id}>
       <td>
         <Badge>{element.role}</Badge>
@@ -150,7 +145,7 @@ export const AIChatHistoryButton = ({ projectId }: Props) => {
         iconName="IconHistory"
         tooltip="AI History"
         onClick={() => {
-          refreshChatHistory();
+          refetch();
           open();
         }}
         color="indigo"

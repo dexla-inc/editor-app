@@ -30,7 +30,7 @@ export const ActionIconDefault = ({
   ...props
 }: Props) => {
   return (
-    <Tooltip label={tooltip} withArrow fz="xs">
+    <Tooltip label={tooltip} withArrow>
       {href ? (
         <ActionIcon
           component={Link}

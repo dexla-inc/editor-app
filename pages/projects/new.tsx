@@ -3,9 +3,9 @@ import BrandingStep from "@/components/projects/BrandingStep";
 import PagesStep from "@/components/projects/PagesStep";
 import ProjectInfoStep from "@/components/projects/ProjectInfoStep";
 import ProjectStep from "@/components/projects/ProjectStep";
+import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
+import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { PageAIResponse, PageResponse } from "@/requests/pages/types";
-import { usePageListQuery } from "@/requests/pages/usePageListQuery";
-import { getProject } from "@/requests/projects/queries-noauth";
 import { RegionTypes } from "@/requests/projects/types";
 import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
@@ -22,7 +22,6 @@ export default function New() {
   const stopLoading = useAppStore((state) => state.stopLoading);
 
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
-
   const nextStep = () =>
     setActiveStep((current) => (current < 3 ? current + 1 : current));
   const prevStep = () =>
@@ -31,6 +30,8 @@ export default function New() {
 
   const projectId =
     (router.query.id as string) || (router.query.projectId as string);
+  const projectIdFromQuery = router.query.projectId;
+  const { data: project } = useProjectQuery(projectIdFromQuery);
 
   const [description, setDescription] = useState("");
   const [industry, setIndustry] = useState("");
@@ -45,7 +46,6 @@ export default function New() {
   const [region, setRegion] = useState<RegionTypes>("US_CENTRAL");
 
   const company = router.query.company as string;
-  const projectIdFromQuery = router.query.projectId;
   const stepFromQuery = router.query.step;
   const { data: pageListQuery } = usePageListQuery(
     projectIdFromQuery as string,
@@ -65,19 +65,13 @@ export default function New() {
   }, [pageListQuery, stepFromQuery]);
 
   useEffect(() => {
-    if (projectIdFromQuery) {
-      const fetchProject = async () => {
-        const project = await getProject(projectIdFromQuery as string);
-
-        setDescription(project.description);
-        setIndustry(project.industry);
-        setFriendlyName(project.friendlyName);
-        setRegion(project.region.type);
-      };
-
-      fetchProject();
+    if (projectIdFromQuery && project) {
+      setDescription(project.description);
+      setIndustry(project.industry);
+      setFriendlyName(project.friendlyName);
+      setRegion(project.region.type);
     }
-  }, [projectIdFromQuery, stepFromQuery]);
+  }, [projectIdFromQuery, project]);
 
   return (
     <DashboardShell>

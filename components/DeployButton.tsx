@@ -1,11 +1,11 @@
+import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { Icon } from "@/components/Icon";
+import { useDeploymentsRecentQuery } from "@/hooks/reactQuery/useDeploymentsRecentQuery";
+import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { createDeployment } from "@/requests/deployments/mutations";
-import { getMostRecentDeployment } from "@/requests/deployments/queries-noauth";
-import { getProject } from "@/requests/projects/queries-noauth";
 import { useAppStore } from "@/stores/app";
 import { Button, Tooltip } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { ActionIconDefault } from "./ActionIconDefault";
 
 type Props = {
   projectId: string;
@@ -22,6 +22,11 @@ export const DeployButton = ({ projectId, page }: Props) => {
   const [customDomain, setCustomDomain] = useState("");
   const [hasDeployed, setHasDeployed] = useState(false);
 
+  const { data: recentDeployment, invalidate } =
+    useDeploymentsRecentQuery(projectId);
+
+  const { data: project } = useProjectQuery(projectId);
+
   const handleDeploy = async (forceProduction: boolean) => {
     try {
       startLoading({
@@ -30,6 +35,7 @@ export const DeployButton = ({ projectId, page }: Props) => {
         message: "Deploying your app...",
       });
       await createDeployment(projectId, { forceProduction: forceProduction });
+      invalidate();
       setHasDeployed(true);
       stopLoading({
         id: "deploy",
@@ -76,10 +82,7 @@ export const DeployButton = ({ projectId, page }: Props) => {
   };
 
   useEffect(() => {
-    const fetchProject = async () => {
-      const project = await getProject(projectId);
-      const deployments = await getMostRecentDeployment(projectId);
-
+    if (project) {
       const fullDomain = project.subDomain
         ? `${project.subDomain}.${project.domain}`
         : project.domain;
@@ -87,46 +90,36 @@ export const DeployButton = ({ projectId, page }: Props) => {
       if (fullDomain) {
         setCustomDomain(fullDomain);
       }
+    }
+  }, [project]);
 
-      if (deployments.id) {
-        setHasDeployed(true);
-      }
-    };
-
-    fetchProject();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId]);
+  useEffect(() => {
+    if (recentDeployment?.id) {
+      setHasDeployed(true);
+    }
+  }, [recentDeployment]);
 
   return (
     <Button.Group>
-      <Tooltip label="Deploy" fz="xs">
+      <Tooltip label="Deploy">
         <Button
           loading={isLoading}
           loaderPosition="center"
           disabled={isLoading}
           onClick={() => handleDeploy(true)}
-          compact
           leftIcon={<Icon name="IconRocket" />}
         >
           Deploy
         </Button>
       </Tooltip>
-      <Tooltip label="Preview" fz="xs">
-        {/* <ActionIcon
-            variant="default"
-            onClick={() => handlePageStateChange(redo)}
-            disabled={futureStates.length === 0}
-            radius={"0px 4px 4px 0px"}
-            size="sm"
-          >
-            <Icon name="IconArrowForwardUp" />
-          </ActionIcon> */}
+      <Tooltip label="Preview">
         <ActionIconDefault
           iconName="IconLink"
           onClick={openDeployLink}
           tooltip="Preview your app"
           loading={isLoading}
           disabled={!hasDeployed || isLoading}
+          sx={{ borderRadius: "0px 4px 4px 0px" }}
         />
       </Tooltip>
     </Button.Group>
