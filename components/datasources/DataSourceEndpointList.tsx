@@ -1,8 +1,7 @@
 import { AddNewDataSourceEndpoint } from "@/components/datasources/AddNewDataSourceEndpoint";
 import { DataSourceEndpoint } from "@/components/datasources/DataSourceEndpoint";
-import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { Title } from "@mantine/core";
-import { useQuery } from "@tanstack/react-query";
 
 type DataSourceEndpointListProps = {
   projectId: string;
@@ -15,17 +14,13 @@ export const DataSourceEndpointList = ({
   dataSourceId,
   baseUrl,
 }: DataSourceEndpointListProps) => {
-  const endpoints = useQuery({
-    queryKey: ["endpoints"],
-    queryFn: () => getDataSourceEndpoints(projectId, { dataSourceId }),
-    enabled: !!projectId,
-  });
+  const { data: endpoints } = useDataSourceEndpoints(projectId);
 
   return (
     <>
       <Title order={5}>API Endpoints</Title>
       <AddNewDataSourceEndpoint baseUrl={baseUrl} dataSourceId={dataSourceId} />
-      {endpoints.data?.results.map((endpoint) => {
+      {endpoints?.results.map((endpoint) => {
         return (
           <DataSourceEndpoint
             baseUrl={baseUrl}

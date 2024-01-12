@@ -2,6 +2,7 @@ import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput"
 import { EndpointSelect } from "@/components/EndpointSelect";
 import { colors } from "@/components/datasources/DataSourceEndpoint";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
@@ -49,10 +50,7 @@ type Props = {
   form: UseFormReturnType<FormValues>;
 };
 
-export const APICallFlowActionForm = ({
-  form,
-  actionName = "apiCall",
-}: Props) => {
+export const APICallFlowActionForm = ({ form }: Props) => {
   const setPickingComponentToBindTo = useEditorStore(
     (state) => state.setPickingComponentToBindTo,
   );
@@ -61,35 +59,37 @@ export const APICallFlowActionForm = ({
   );
   const setTree = useEditorStore((state) => state.setTree);
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const endpoints = useDataSourceStore((state) => state.endpoints);
-  const fetchEndpoints = useDataSourceStore((state) => state.fetchEndpoints);
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
   >(undefined);
 
   const router = useRouter();
   const projectId = router.query.id as string;
+  const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const setApiAuthConfig = useDataSourceStore(
+    (state) => state.setApiAuthConfig,
+  );
 
-  const { dataSources, page } = useRequestProp();
-
-  useEffect(() => {
-    if ((dataSources.data?.results ?? []).length > 0) {
-      fetchEndpoints(projectId);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataSources.data, projectId]);
+  const { page } = useRequestProp();
 
   useEffect(() => {
     if (
       form.values.endpoint &&
       !selectedEndpoint &&
-      (endpoints ?? [])?.length > 0
+      (endpoints?.results ?? [])?.length > 0
     ) {
-      setSelectedEndpoint(
-        endpoints?.find((e) => e.id === form.values.endpoint),
+      const selectedEndpoint = endpoints?.results?.find(
+        (e) => e.id === form.values.endpoint,
       );
+      setSelectedEndpoint(selectedEndpoint);
     }
   }, [endpoints, form.values.endpoint, selectedEndpoint]);
+
+  useEffect(() => {
+    if (endpoints?.results) {
+      setApiAuthConfig(endpoints.results);
+    }
+  }, [endpoints?.results]);
 
   const accessToken = useDataSourceStore((state) => state.accessToken);
 
@@ -99,14 +99,16 @@ export const APICallFlowActionForm = ({
     }
   }, [page?.pageState, setTree]);
 
-  return endpoints && endpoints.length > 0 ? (
+  return endpoints && endpoints.results.length > 0 ? (
     <>
       <Stack spacing="xs">
         <EndpointSelect
           {...form.getInputProps("endpoint")}
           onChange={(selected) => {
             form.setFieldValue("endpoint", selected!);
-            setSelectedEndpoint(endpoints?.find((e) => e.id === selected));
+            setSelectedEndpoint(
+              endpoints?.results.find((e) => e.id === selected),
+            );
           }}
         />
         <Switch

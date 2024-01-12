@@ -14,7 +14,7 @@ export const useAutomationsQuery = (projectId: string, opened: boolean) => {
     queryKey: queryKey,
     queryFn: () => getChatHistoryList(projectId),
     staleTime: cacheTime,
-    enabled: opened,
+    enabled: opened && !!projectId,
   });
 
   const refetch = () => {

@@ -10,8 +10,9 @@ import {
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { useDataSources } from "@/hooks/reactQuery/useDataSources";
 import { useVariable } from "@/hooks/reactQuery/useVariable";
-import { getDataSources } from "@/requests/datasources/queries-noauth";
 import { Endpoint } from "@/requests/datasources/types";
 import { FrontEndTypes } from "@/requests/variables/types";
 import { useDataSourceStore } from "@/stores/datasource";
@@ -19,7 +20,6 @@ import { useEditorStore } from "@/stores/editor";
 import { APICallAction, Action } from "@/utils/actions";
 import { Button, Divider, Stack, Switch } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -48,22 +48,28 @@ export const APICallActionForm = ({ id }: Props) => {
   const { createVariablesMutation } = useVariable(projectId);
 
   const sequentialTo = useEditorStore((state) => state.sequentialTo);
-  const endpoints = useDataSourceStore((state) => state.endpoints);
 
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
   >(undefined);
 
-  const dataSources = useQuery({
-    queryKey: ["datasources"],
-    queryFn: () => getDataSources(projectId, {}),
-    enabled: !!projectId,
-  });
+  const { data: dataSources } = useDataSources(projectId);
+  const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const setApiAuthConfig = useDataSourceStore(
+    (state) => state.setApiAuthConfig,
+  );
+
+  useEffect(() => {
+    if (endpoints?.results) {
+      setApiAuthConfig(endpoints.results);
+    }
+  }, [endpoints?.results]);
 
   const form = useForm<FormValues>({
     initialValues: {
       showLoader: action.action?.showLoader ?? true,
       endpoint: action.action?.endpoint,
+      selectedEndpoint: action.action?.selectedEndpoint,
       binds: {
         header: action.action?.binds?.header ?? {},
         parameter: action.action?.binds?.parameter ?? {},
@@ -85,8 +91,9 @@ export const APICallActionForm = ({ id }: Props) => {
         id,
         updateValues: {
           endpoint: values.endpoint,
+          selectedEndpoint: selectedEndpoint!,
           showLoader: values.showLoader,
-          datasources: dataSources.data!.results,
+          datasources: dataSources!.results,
           binds: values.binds,
           isLogin: values.isLogin,
           actionCode: values.actionCode,
@@ -122,10 +129,10 @@ export const APICallActionForm = ({ id }: Props) => {
     if (
       form.values.endpoint &&
       !selectedEndpoint &&
-      (endpoints ?? [])?.length > 0
+      (endpoints?.results ?? [])?.length > 0
     ) {
       setSelectedEndpoint(
-        endpoints?.find((e) => e.id === form.values.endpoint),
+        endpoints?.results?.find((e) => e.id === form.values.endpoint),
       );
     }
   }, [endpoints, form.values.endpoint, selectedEndpoint]);
@@ -133,7 +140,7 @@ export const APICallActionForm = ({ id }: Props) => {
   const showLoaderInputProps = form.getInputProps("showLoader");
   const isLoginInputProps = form.getInputProps("isLogin");
 
-  return endpoints && endpoints.length > 0 ? (
+  return endpoints && endpoints.results.length > 0 ? (
     <>
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack spacing="xs">
@@ -141,7 +148,9 @@ export const APICallActionForm = ({ id }: Props) => {
             {...form.getInputProps("endpoint")}
             onChange={(selected) => {
               form.setFieldValue("endpoint", selected!);
-              setSelectedEndpoint(endpoints?.find((e) => e.id === selected));
+              setSelectedEndpoint(
+                endpoints.results?.find((e) => e.id === selected),
+              );
             }}
           />
           <Switch

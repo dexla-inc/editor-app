@@ -1,9 +1,11 @@
 import { colors } from "@/components/datasources/DataSourceEndpoint";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { Box, Flex, Select, SelectProps, Text } from "@mantine/core";
-import { forwardRef } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { EndpointExampleResponsePreview } from "./EndpointExampleResponsePreview";
 
 const SelectItem = forwardRef<HTMLDivElement, any>(
@@ -36,15 +38,21 @@ type Props = {
 } & Omit<SelectProps, "data">;
 
 export const EndpointSelect = ({ value, ...props }: Props) => {
-  const endpoints = useDataSourceStore((state) => state.endpoints);
-  const fetchEndpoints = useDataSourceStore((state) => state.fetchEndpoints);
+  const setApiAuthConfig = useDataSourceStore(
+    (state) => state.setApiAuthConfig,
+  );
   const projectId = useEditorStore((state) => state.currentProjectId);
+  const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint>();
 
-  if (!endpoints) {
-    if (projectId) fetchEndpoints(projectId);
-  }
+  useEffect(() => {
+    if (endpoints?.results) {
+      setApiAuthConfig(endpoints.results);
+      const selectedEndpoint = endpoints.results.find((e) => e.id === value);
 
-  const selectedEndpoint = endpoints?.find((e) => e.id === value);
+      setSelectedEndpoint(selectedEndpoint);
+    }
+  }, [endpoints?.results]);
 
   return (
     <>
@@ -55,7 +63,7 @@ export const EndpointSelect = ({ value, ...props }: Props) => {
         clearable
         itemComponent={SelectItem}
         data={
-          endpoints?.map((endpoint) => {
+          endpoints?.results?.map((endpoint) => {
             return {
               label: endpoint.relativeUrl,
               value: endpoint.id,

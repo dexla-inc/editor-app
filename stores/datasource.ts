@@ -1,4 +1,3 @@
-import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { DataSourceAuthResponse, Endpoint } from "@/requests/datasources/types";
 import Cookies from "js-cookie";
 import { create } from "zustand";
@@ -7,6 +6,7 @@ import { devtools, persist } from "zustand/middleware";
 type DataSourceState = {
   apiAuthConfig?: Omit<DataSourceAuthResponse, "type">;
   clearApiAuthConfig: () => void;
+  setApiAuthConfig: (endpoints: Endpoint[]) => void;
   accessToken?: string;
   refreshToken?: string;
   expiresAt?: number;
@@ -14,9 +14,6 @@ type DataSourceState = {
   refreshAccessToken: () => Promise<void>;
   setAuthTokens: (response: any) => void;
   clearAuthTokens: () => void;
-  endpoints?: Endpoint[];
-  fetchEndpoints: (projectId: string, force?: boolean) => void;
-  clearEndpoints: () => void;
 };
 
 export const useDataSourceStore = create<DataSourceState>()(
@@ -88,42 +85,22 @@ export const useDataSourceStore = create<DataSourceState>()(
             expiresAt: undefined,
           });
         },
-        fetchEndpoints: async (projectId, force = false) => {
-          const currentEndpoints = get().endpoints;
-          if (currentEndpoints === undefined || force) {
-            const endpoints = await getDataSourceEndpoints(projectId);
+        setApiAuthConfig: async (endpoints) => {
+          const accessEndpoint = findEndpointByType(endpoints, "ACCESS");
+          const refreshEndpoint = findEndpointByType(endpoints, "REFRESH");
+          const userEndpoint = findEndpointByType(endpoints, "USER");
 
-            set(
-              { endpoints: endpoints.results },
-              false,
-              "datasource/setEndpoints",
-            );
+          const apiAuthConfig = {
+            accessTokenUrl: accessEndpoint?.url as string,
+            refreshTokenUrl: refreshEndpoint?.url as string,
+            userEndpointUrl: userEndpoint?.url as string,
+            accessTokenProperty: accessEndpoint?.authentication.tokenKey,
+            refreshTokenProperty: refreshEndpoint?.authentication.tokenKey,
+            expiryTokenProperty:
+              accessEndpoint?.authentication.tokenSecondaryKey,
+          };
 
-            const accessEndpoint = findEndpointByType(
-              endpoints.results,
-              "ACCESS",
-            );
-            const refreshEndpoint = findEndpointByType(
-              endpoints.results,
-              "REFRESH",
-            );
-            const userEndpoint = findEndpointByType(endpoints.results, "USER");
-
-            const apiAuthConfig = {
-              accessTokenUrl: accessEndpoint?.url as string,
-              refreshTokenUrl: refreshEndpoint?.url as string,
-              userEndpointUrl: userEndpoint?.url as string,
-              accessTokenProperty: accessEndpoint?.authentication.tokenKey,
-              refreshTokenProperty: refreshEndpoint?.authentication.tokenKey,
-              expiryTokenProperty:
-                accessEndpoint?.authentication.tokenSecondaryKey,
-            };
-
-            set({ apiAuthConfig });
-          }
-        },
-        clearEndpoints: () => {
-          set({ endpoints: undefined }, true, "datasource/clearEndpoints");
+          set({ apiAuthConfig });
         },
         clearApiAuthConfig: () => {
           set(
@@ -137,7 +114,6 @@ export const useDataSourceStore = create<DataSourceState>()(
         name: "datasource",
         partialize: (state: DataSourceState) => ({
           apiAuthConfig: state.apiAuthConfig,
-          endpoints: state.endpoints,
           accessToken: state.accessToken,
         }),
       },

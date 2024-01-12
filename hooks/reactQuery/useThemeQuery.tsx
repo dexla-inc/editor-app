@@ -13,6 +13,7 @@ export const useGetThemeQuery = (projectId: string) => {
     queryKey: queryKey,
     queryFn: () => getTheme(projectId),
     staleTime: cacheTime,
+    enabled: !!projectId,
   });
 
   const invalidate = () => {
