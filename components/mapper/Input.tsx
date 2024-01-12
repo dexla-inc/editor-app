@@ -37,7 +37,6 @@ const InputComponent = forwardRef(
       ...componentProps
     } = component.props as any;
     const { name: iconName } = icon && icon!.props!;
-    // const type = (componentProps.type as string) || "text";
     const { type, ...restComponentProps } = componentProps;
 
     const _defaultValue = type === "number" || type === "numberRange" ? 0 : "";

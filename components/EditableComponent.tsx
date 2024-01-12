@@ -13,17 +13,19 @@ import {
   THIN_ORANGE_BASE_SHADOW,
 } from "@/utils/branding";
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
-import { Component } from "@/utils/editor";
+import { Component, updateTreeComponent } from "@/utils/editor";
 import { BoxProps, CSSObject } from "@mantine/core";
 import merge from "lodash.merge";
 import { Router, useRouter } from "next/router";
 import React, {
+  ChangeEvent,
   cloneElement,
   PropsWithChildren,
   useCallback,
   useEffect,
   useState,
 } from "react";
+import { removeKeysRecursive } from "@/utils/removeKeys";
 
 type Props = {
   id: string;
@@ -63,6 +65,9 @@ export const EditableComponent = ({
   const addOnMountActionsRan = useEditorStore(
     (state) => state.addOnMountActionsRan,
   );
+  const updateTreeComponent = useEditorStore(
+    (state) => state.updateTreeComponent,
+  );
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const isResizing = useEditorStore((state) => state.isResizing);
   const isLive = useEditorStore((state) => state.isLive);
@@ -76,6 +81,7 @@ export const EditableComponent = ({
   const pickingComponentToBindTo = useEditorStore(
     (state) => state.pickingComponentToBindTo,
   );
+  const isEditorMode = !isPreviewMode && !isLive;
 
   const { componentContextMenu, forceDestroyContextMenu } =
     useComponentContextMenu();
@@ -136,6 +142,26 @@ export const EditableComponent = ({
     },
     {} as Record<ActionTrigger, any>,
   );
+
+  const { onChange, onSubmit } = triggers;
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    onChange && onChange(e);
+    if (component.props?.error) {
+      updateTreeComponent({
+        componentId: id,
+        props: { error: "" },
+        save: false,
+      });
+    }
+  };
+
+  const handleOnSubmit = (e: any) => {
+    isEditorMode && e.preventDefault();
+    !isEditorMode && onSubmit && onSubmit(e);
+  };
+
+  triggers.onChange = handleOnChange;
+  triggers.onSubmit = handleOnSubmit;
 
   useEffect(() => {
     if (
@@ -297,7 +323,9 @@ export const EditableComponent = ({
 
   const propsWithOverwrites = merge(
     {},
-    component.props,
+    isEditorMode
+      ? removeKeysRecursive(component.props ?? {}, ["error"])
+      : component.props,
     component.languages?.[language],
     component.states?.[currentState],
     {
@@ -340,7 +368,9 @@ export const EditableComponent = ({
 
   const handleClick = useCallback(
     (e: any) => {
-      e.stopPropagation && e.stopPropagation();
+      if (!isPreviewMode && !isLive) {
+        e.stopPropagation && e.stopPropagation();
+      }
 
       if (isPicking) {
         setComponentToBind(id);

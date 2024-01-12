@@ -31,7 +31,7 @@ export const Modifier = withModifier(
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComponent]);
+    }, [selectedComponent, selectedComponentIds]);
 
     return (
       <form>

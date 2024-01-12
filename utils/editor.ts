@@ -20,6 +20,8 @@ import { nanoid } from "nanoid";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
+import every from "lodash.every";
+import get from "lodash.get";
 
 export type Component = {
   id?: string;
@@ -800,9 +802,17 @@ export const getComponentParent = (
   return parent;
 };
 
+function objectsIntersect(
+  obj: { [key: string]: any },
+  criteriaObject: Record<string, any>,
+) {
+  return every(criteriaObject, (value, key) => get(obj, key) === value);
+}
+
 export const getAllComponentsByName = (
   treeRoot: Component,
   componentName: string | string[],
+  propCriterias = {},
 ): Component[] => {
   const components: Component[] = [];
 
@@ -813,7 +823,10 @@ export const getAllComponentsByName = (
   crawl(
     treeRoot,
     (node) => {
-      if (componentName.includes(node.name)) {
+      if (
+        componentName.includes(node.name) &&
+        objectsIntersect(node.props!, propCriterias)
+      ) {
         components.push(node);
       }
     },

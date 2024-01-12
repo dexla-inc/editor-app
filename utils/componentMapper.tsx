@@ -863,6 +863,7 @@ export type ComponentDefinition = {
   allowedParentTypes?: string[];
   toolboxActions?: ToolboxAction[];
   blockedToolboxActions?: string[];
+  isValidatable?: boolean;
 };
 
 export type ComponentMapper = {
@@ -1022,6 +1023,7 @@ export const componentMapper: ComponentMapper = {
     modifiers: ["input", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange", "onFocus", "onBlur"],
     sequentialTriggers: ["onSuccess", "onError"],
+    isValidatable: true,
   },
   DateInput: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -1036,6 +1038,7 @@ export const componentMapper: ComponentMapper = {
     modifiers: ["dateInput", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange", "onFocus", "onBlur"],
     sequentialTriggers: ["onSuccess", "onError"],
+    isValidatable: true,
   },
   Text: {
     Component: (props: { component: Component; renderTree: any }) => (
@@ -1060,6 +1063,7 @@ export const componentMapper: ComponentMapper = {
     modifiers: ["textarea", "spacing", "size", "border"],
     actionTriggers: ["onMount", "onChange", "onFocus", "onBlur"],
     sequentialTriggers: ["onSuccess", "onError"],
+    isValidatable: true,
   },
   Link: {
     Component: (props: { component: Component; renderTree: any }) => (
