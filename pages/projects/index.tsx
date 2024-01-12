@@ -2,9 +2,9 @@ import { DashboardShell } from "@/components/DashboardShell";
 import IconTitleDescriptionButton from "@/components/projects/NewProjectButton";
 import { ProjectItem } from "@/components/projects/ProjectItem";
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
-import { createProject, deleteProject } from "@/requests/projects/mutations";
-import { getProjects } from "@/requests/projects/queries";
-import { ProjectListResponse } from "@/requests/projects/queries-noauth";
+import { useProjectListQuery } from "@/hooks/reactQuery/useProjectListQuery";
+import { useProjectMutatation } from "@/hooks/reactQuery/useProjectMutation";
+import { createProject } from "@/requests/projects/mutations";
 import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";
@@ -21,7 +21,6 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import debounce from "lodash.debounce";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -55,27 +54,17 @@ export default function Projects() {
     router.push(`/projects/${projectId}/editor/${pageId}`);
   };
 
-  const projectsQuery = useQuery<ProjectListResponse, Error>({
-    queryKey: ["projects", company.orgId, search],
-    queryFn: () => getProjects(company.orgId, search),
-  });
+  const { data: projectsQuery, invalidate } = useProjectListQuery(
+    company.orgId,
+    search,
+  );
 
-  const queryClient = useQueryClient();
+  const { mutate } = useProjectMutatation();
 
-  const { mutate } = useMutation(deleteProject, {
-    onSettled(_, err) {
-      if (err) {
-        console.error(err);
-      }
-
-      queryClient.invalidateQueries(["projects"]);
-    },
-  });
-
-  const ownedProjects = projectsQuery.data?.results.filter(
+  const ownedProjects = projectsQuery?.results.filter(
     (project) => project.isOwner,
   );
-  const sharedProjects = projectsQuery.data?.results.filter(
+  const sharedProjects = projectsQuery?.results.filter(
     (project) => !project.isOwner,
   );
 
@@ -88,6 +77,7 @@ export default function Projects() {
 
     setPageCancelled(true);
     const project = await createProject({ companyId: company.orgId }, true);
+    invalidate();
     const url = `/projects/${project.id}/editor/${project.homePageId}`;
 
     router.push(url);
@@ -156,7 +146,7 @@ export default function Projects() {
             )}
           </Flex>
 
-          {projectsQuery.data?.results && (
+          {projectsQuery?.results && (
             <TextInput
               placeholder="Search a project"
               icon={<IconSearch size={ICON_SIZE} />}
