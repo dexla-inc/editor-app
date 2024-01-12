@@ -13,6 +13,7 @@ import {
   validateTokenProperty,
 } from "@/components/datasources/AuthenticationInputs";
 import TextInputComponent from "@/components/datasources/TextInputComponent";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { Endpoint, RequestBody } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { DataSourceStepperProps } from "@/utils/dashboardTypes";
@@ -88,6 +89,7 @@ export default function AuthenticationBearer({
   const clearApiAuthConfig = useDataSourceStore(
     (state) => state.clearApiAuthConfig,
   );
+  const { invalidate } = useDataSourceEndpoints(projectId);
 
   const form = useForm<AuthenticationBearerTokenParams>({
     validateInputOnBlur: true,
@@ -129,7 +131,6 @@ export default function AuthenticationBearer({
       });
 
       setIsLoading && setIsLoading(true);
-      clearApiAuthConfig();
 
       const {
         loginEndpointId,
@@ -169,6 +170,9 @@ export default function AuthenticationBearer({
           "USER",
         );
       }
+
+      clearApiAuthConfig();
+      invalidate();
 
       nextStep && nextStep();
 

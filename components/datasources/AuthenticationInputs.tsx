@@ -1,6 +1,5 @@
 import { patchDataSourceEndpoint } from "@/requests/datasources/mutations";
 import { Endpoint, RequestBody } from "@/requests/datasources/types";
-import { useDataSourceStore } from "@/stores/datasource";
 
 type EndpointDropdown = {
   value: string;
@@ -95,7 +94,6 @@ export async function patchDataSourceWithParams(
     endpointId,
     patchParams,
   );
-  useDataSourceStore.getState().clearEndpoints();
 }
 
 type EndpointSetter = (value: string | null) => void;

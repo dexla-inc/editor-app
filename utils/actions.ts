@@ -227,6 +227,7 @@ export interface ChangeStateAction extends BaseAction {
 export interface APICallAction extends BaseAction {
   name: "apiCall";
   endpoint: string;
+  selectedEndpoint: Endpoint;
   showLoader?: boolean;
   datasources: DataSourceResponse[];
   binds?: {
@@ -775,6 +776,7 @@ const getVariablesValue = async (objs: Record<string, string>) => {
 
 export type APICallActionParams = ActionParams & {
   action: APICallAction;
+  endpoint: Endpoint;
 };
 
 const getUrl = (
@@ -820,9 +822,7 @@ const getBody = (endpoint: any, action: any, variableValues: any) => {
     : undefined;
 };
 
-const prepareRequestData = async (action: any) => {
-  const endpoints = useDataSourceStore.getState().endpoints as Endpoint[];
-  const endpoint = endpoints.find((e) => e.id === action.endpoint);
+const prepareRequestData = async (action: any, endpoint: Endpoint) => {
   const keys = action.binds?.parameter ?? Object.keys(action.binds?.parameter);
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
   const variableValues = await getVariablesValue(
@@ -832,7 +832,7 @@ const prepareRequestData = async (action: any) => {
   const url = getUrl(keys, apiUrl, action, variableValues);
   const body = getBody(endpoint, action, variableValues);
 
-  return { endpoint, url, body };
+  return { url, body };
 };
 
 const handleError = async (
@@ -946,12 +946,15 @@ export const apiCallAction = async ({
       },
     });
 
-    const { endpoint, url, body } = await prepareRequestData(action);
+    const { url, body } = await prepareRequestData(
+      action,
+      action.selectedEndpoint,
+    );
 
     let responseJson;
 
     if (action.isLogin) {
-      responseJson = await performFetch(url, endpoint, body);
+      responseJson = await performFetch(url, action.selectedEndpoint, body);
       const mergedAuthConfig = { ...responseJson, ...apiAuthConfig };
       const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
       setAuthTokens(mergedAuthConfig);
@@ -963,17 +966,17 @@ export const apiCallAction = async ({
       refreshAccessToken();
 
       let authHeaderKey =
-        endpoint?.authenticationScheme === "BEARER"
+        action.selectedEndpoint?.authenticationScheme === "BEARER"
           ? "Bearer " + accessToken
           : "";
 
-      const fetchUrl = endpoint?.isServerRequest
+      const fetchUrl = action.selectedEndpoint?.isServerRequest
         ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
         : url;
 
       responseJson = await performFetch(
         fetchUrl,
-        endpoint,
+        action.selectedEndpoint,
         body,
         authHeaderKey,
       );

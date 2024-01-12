@@ -567,6 +567,11 @@
   resolved "https://registry.yarnpkg.com/@propelauth/javascript/-/javascript-2.0.10.tgz#e2cb32a619574b696ff21ecb8caee25511946c5a"
   integrity sha512-dsli7iYp0hKVOglZW1Kkx7elKzLWRx2PZ8Jr9wRUBCx/2t9lAxnfgsfIyQDukMe6s8fOyA0w59KIIPfWw97/3g==
 
+"@propelauth/javascript@^2.0.11":
+  version "2.0.11"
+  resolved "https://registry.yarnpkg.com/@propelauth/javascript/-/javascript-2.0.11.tgz#274d8c39d41f41cc86500d29bd38af7ef6b92a36"
+  integrity sha512-IOndnGsN15mP8Wz5izewvByb6n7/mbhdowh+cV3eoRQLVDgM/mYrEWQaeH9v/JWSPIrN8NqO1hm8dnyxkkK0LA==
+
 "@propelauth/node@^2.1.7":
   version "2.1.7"
   resolved "https://registry.yarnpkg.com/@propelauth/node/-/node-2.1.7.tgz#841ce5e27ad2bc7de377ea6fa6b7d1e7779ba948"

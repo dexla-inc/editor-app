@@ -13,6 +13,7 @@ export const usePageListQuery = (projectId: string, search?: string) => {
     queryKey: queryKey,
     queryFn: () => getPageList(projectId, { search }),
     staleTime: cacheTime,
+    enabled: !!projectId,
   });
 
   const invalidate = () => {

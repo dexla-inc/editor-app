@@ -1,5 +1,6 @@
 import { WarningAlert } from "@/components/Alerts";
 import { Icon } from "@/components/Icon";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import {
   createDataSourceEndpoint,
   deleteDataSourceEndpoint,
@@ -16,7 +17,6 @@ import {
 } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { useAppStore } from "@/stores/app";
-import { useDataSourceStore } from "@/stores/datasource";
 import { ICON_DELETE } from "@/utils/config";
 import { ApiType } from "@/utils/dashboardTypes";
 import {
@@ -36,7 +36,6 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Editor } from "@monaco-editor/react";
-import { useQueryClient } from "@tanstack/react-query";
 import debounce from "lodash.debounce";
 import { useEffect, useReducer, useState } from "react";
 
@@ -154,9 +153,9 @@ export const DataSourceEndpointDetail = ({
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string | null>("example");
   const [activeBodyType, setActiveBodyType] = useState<"raw" | "fields">("raw");
+  const { invalidate } = useDataSourceEndpoints(projectId);
 
   const theme = useMantineTheme();
-  const queryClient = useQueryClient();
 
   useEffect(() => {
     // Reset the state by dispatching an action or directly setting it
@@ -310,8 +309,7 @@ export const DataSourceEndpointDetail = ({
             )
           : await createDataSourceEndpoint(projectId, dataSourceId, payload);
 
-      queryClient.refetchQueries(["endpoints"]);
-      useDataSourceStore.getState().clearEndpoints();
+      invalidate();
 
       setEndpointDetailVisible && setEndpointDetailVisible(false);
 
@@ -349,7 +347,7 @@ export const DataSourceEndpointDetail = ({
         await deleteDataSourceEndpoint(projectId, dataSourceId, endpoint.id);
       }
 
-      queryClient.refetchQueries(["endpoints"]);
+      invalidate();
       setEndpointDetailVisible && setEndpointDetailVisible(false);
 
       stopLoading({

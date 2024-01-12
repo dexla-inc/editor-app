@@ -111,6 +111,7 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
     initialValues: {
       showLoader: action.action?.showLoader ?? true,
       endpoint: action.action?.endpoint,
+      selectedEndpoint: action.action?.selectedEndpoint,
       binds: {
         header: action.action?.binds?.header ?? {},
         parameter: action.action?.binds?.parameter ?? {},
@@ -132,6 +133,7 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
         id,
         updateValues: {
           endpoint: values.endpoint,
+          selectedEndpoint: selectedEndpoint!,
           showLoader: values.showLoader,
           datasources: dataSources.data!.results,
           binds: values.binds,

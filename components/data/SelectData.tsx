@@ -1,8 +1,9 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { EndpointSelect } from "@/components/EndpointSelect";
 import { SelectOptionsForm } from "@/components/SelectOptionsForm";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { Endpoint } from "@/requests/datasources/types";
-import { useDataSourceStore } from "@/stores/datasource";
+import { useEditorStore } from "@/stores/editor";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { Component, debouncedTreeUpdate } from "@/utils/editor";
 import { SegmentedControl, Stack, TextInput } from "@mantine/core";
@@ -16,6 +17,7 @@ type Props = {
 type Tab = "static" | "dynamic";
 
 export const SelectData = ({ component }: Props) => {
+  const projectId = useEditorStore((state) => state.currentProjectId);
   const form = useForm({
     initialValues: {
       data: component.props?.data ?? [],
@@ -27,7 +29,8 @@ export const SelectData = ({ component }: Props) => {
     },
   });
 
-  const endpoints = useDataSourceStore((state) => state.endpoints);
+  const { data: endpoints } = useDataSourceEndpoints(projectId);
+
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
   >(undefined);
@@ -73,7 +76,7 @@ export const SelectData = ({ component }: Props) => {
                 onChange={(selected) => {
                   form.setFieldValue("endpoint", selected!);
                   setSelectedEndpoint(
-                    endpoints?.find((e) => e.id === selected),
+                    endpoints?.results?.find((e) => e.id === selected),
                   );
                 }}
               />

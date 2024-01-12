@@ -14,6 +14,7 @@ export const useVariableListQuery = (projectId: string) => {
     queryKey: queryKey,
     queryFn: () => listVariables(projectId),
     staleTime: cacheTime,
+    enabled: !!projectId,
   });
 
   const invalidate = () => {

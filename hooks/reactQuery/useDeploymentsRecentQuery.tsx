@@ -13,6 +13,7 @@ export const useDeploymentsRecentQuery = (projectId: string) => {
     queryKey: queryKey,
     queryFn: () => getMostRecentDeployment(projectId),
     staleTime: cacheTime,
+    enabled: !!projectId,
   });
 
   const invalidate = () => {

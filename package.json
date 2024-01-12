@@ -33,6 +33,7 @@
     "@microsoft/fetch-event-source": "^2.0.1",
     "@monaco-editor/react": "^4.5.2",
     "@prisma/client": "^5.4.2",
+    "@propelauth/javascript": "^2.0.11",
     "@propelauth/node": "^2.1.7",
     "@propelauth/react": "^2.0.14",
     "@react-google-maps/api": "^2.19.2",

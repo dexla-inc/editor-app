@@ -12,8 +12,8 @@ export const useProjectListQuery = (orgId: string, search: string) => {
   const queryResult = useQuery<ProjectListResponse, Error>({
     queryKey: queryKey,
     queryFn: () => getProjects(orgId, search),
-    enabled: !!orgId,
     staleTime: cacheTime,
+    enabled: !!orgId,
   });
 
   const invalidate = () => {

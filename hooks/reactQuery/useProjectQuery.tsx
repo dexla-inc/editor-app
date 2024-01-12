@@ -13,6 +13,7 @@ export const useProjectQuery = (projectId: string) => {
     queryKey: queryKey,
     queryFn: () => getProject(projectId),
     staleTime: cacheTime,
+    enabled: !!projectId,
   });
 
   const refetch = () => {
