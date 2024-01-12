@@ -1,12 +1,11 @@
 import InitialPane from "@/components/pages/InitialPane";
 import PageDetailPane from "@/components/pages/PageDetailPane";
-import { getPageList } from "@/requests/pages/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
-import { useEditorStore } from "@/stores/editor";
+import { usePageListQuery } from "@/requests/pages/usePageListQuery";
 import { Stack } from "@mantine/core";
 import debounce from "lodash.debounce";
 import { useRouter } from "next/router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export const EditorNavbarPagesSection = () => {
   const router = useRouter();
@@ -14,15 +13,22 @@ export const EditorNavbarPagesSection = () => {
   const currentPage = router.query.page as string;
   const [page, setPage] = useState<PageResponse | undefined | null>();
   const [search, setSearch] = useState<string>("");
-  const debouncedSearch = debounce((query) => setSearch(query), 150);
-  const pages = useEditorStore((state) => state.pages);
-  const setPages = useEditorStore((state) => state.setPages);
+  const { data: pageListQuery, invalidate } = usePageListQuery(projectId);
+  const [pages, setPages] = useState<PageResponse[] | undefined>();
 
-  const getPages = useCallback(async () => {
-    const pageList = await getPageList(projectId, { search });
+  const debouncedSearch = useCallback(
+    debounce((query) => setSearch(query), 150),
+    [],
+  );
 
-    setPages(pageList.results);
-  }, [projectId, search, setPages]);
+  useEffect(() => {
+    if (pageListQuery?.results) {
+      const filteredPages = pageListQuery.results.filter((p) =>
+        p.title.toLowerCase().includes(search.toLowerCase()),
+      );
+      setPages(filteredPages);
+    }
+  }, [pageListQuery, search]);
 
   return (
     <Stack spacing="xs" w="100%">
@@ -30,13 +36,16 @@ export const EditorNavbarPagesSection = () => {
         <InitialPane
           projectId={projectId}
           setPage={setPage}
-          pages={pages}
           currentPage={currentPage}
+          pages={pages}
           debouncedSearch={debouncedSearch}
-          search={search}
         />
       ) : (
-        <PageDetailPane page={page} setPage={setPage} getPages={getPages} />
+        <PageDetailPane
+          page={page}
+          setPage={setPage}
+          invalidateQuery={invalidate}
+        />
       )}
     </Stack>
   );

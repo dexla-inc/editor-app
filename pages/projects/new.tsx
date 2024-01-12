@@ -3,8 +3,8 @@ import BrandingStep from "@/components/projects/BrandingStep";
 import PagesStep from "@/components/projects/PagesStep";
 import ProjectInfoStep from "@/components/projects/ProjectInfoStep";
 import ProjectStep from "@/components/projects/ProjectStep";
-import { getPageList } from "@/requests/pages/queries-noauth";
 import { PageAIResponse, PageResponse } from "@/requests/pages/types";
+import { usePageListQuery } from "@/requests/pages/usePageListQuery";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { RegionTypes } from "@/requests/projects/types";
 import { ThemeResponse } from "@/requests/themes/types";
@@ -37,7 +37,7 @@ export default function New() {
   const [screenshots, setScreenshots] = useState<File[]>([]);
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [themeResponse, setThemeResponse] = useState<ThemeResponse>();
-  const [pages, setPages] = useState<PageAIResponse[]>([]);
+  const [aiPages, setAiPages] = useState<PageAIResponse[]>([]);
   const [hasPagesCreated, setHasPagesCreated] = useState(false);
   const [projectCreated, setProjectCreated] = useState(false);
   const [homePageId, setHomePageId] = useState("");
@@ -47,6 +47,22 @@ export default function New() {
   const company = router.query.company as string;
   const projectIdFromQuery = router.query.projectId;
   const stepFromQuery = router.query.step;
+  const { data: pageListQuery } = usePageListQuery(
+    projectIdFromQuery as string,
+  );
+
+  useEffect(() => {
+    const pages = pageListQuery?.results || [];
+    const pageAiResult: PageAIResponse[] = pages.map((page: PageResponse) => ({
+      name: page.title,
+      features: page.description?.split(",") || [],
+    }));
+
+    setAiPages(pageAiResult);
+    if (stepFromQuery) {
+      setActiveStep(parseInt(stepFromQuery as string));
+    }
+  }, [pageListQuery, stepFromQuery]);
 
   useEffect(() => {
     if (projectIdFromQuery) {
@@ -59,25 +75,7 @@ export default function New() {
         setRegion(project.region.type);
       };
 
-      const fetchPages = async () => {
-        const pages = await getPageList(projectIdFromQuery as string);
-
-        const pageAiResult: PageAIResponse[] = pages.results.map(
-          (page: PageResponse) => ({
-            name: page.title,
-            features: page.description?.split(",") || [],
-          }),
-        );
-
-        setPages(pageAiResult);
-
-        if (stepFromQuery) {
-          setActiveStep(parseInt(stepFromQuery as string));
-        }
-      };
-
       fetchProject();
-      fetchPages();
     }
   }, [projectIdFromQuery, stepFromQuery]);
 
@@ -132,8 +130,8 @@ export default function New() {
                 prevStep={prevStep}
                 nextStep={nextStep}
                 projectId={projectId}
-                pages={pages}
-                setPages={setPages}
+                pages={aiPages}
+                setPages={setAiPages}
                 hasPagesCreated={hasPagesCreated}
                 setHasPagesCreated={setHasPagesCreated}
                 setHomePageId={setHomePageId}

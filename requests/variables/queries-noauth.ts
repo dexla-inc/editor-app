@@ -12,9 +12,9 @@ export const listVariables = async (
 ) => {
   let url = `/projects/${projectId}/variables`;
 
-  const { search, pageId, isGlobal, offset, limit } = params || {};
+  const { search, offset, limit } = params || {};
 
-  url += buildQueryString({ search, pageId, isGlobal, offset, limit });
+  url += buildQueryString({ search, offset, limit });
 
   const response = (await getWithoutAuth<PagingResponse<VariableResponse>>(
     url,

@@ -1,4 +1,4 @@
-import { getPageList } from "@/requests/pages/queries-noauth";
+import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import { LoadingStore } from "@/utils/dashboardTypes";
 import { Button } from "@mantine/core";
@@ -7,7 +7,6 @@ import { useRouter } from "next/router";
 
 interface EndpointsButtonProps extends LoadingStore {
   projectId: string;
-  text?: string | undefined;
 }
 
 export default function EndpointsButton({
@@ -15,9 +14,9 @@ export default function EndpointsButton({
   startLoading,
   stopLoading,
   projectId,
-  text,
 }: EndpointsButtonProps) {
   const router = useRouter();
+  const pages = useEditorStore((state) => state.pages);
 
   const goToEditor = async (projectId: string) => {
     startLoading({
@@ -26,19 +25,7 @@ export default function EndpointsButton({
       message: "Wait while the editor is loading",
     });
 
-    const result = await getPageList(projectId, { isHome: true });
-
-    if (result.results.length === 0) {
-      stopLoading({
-        id: "editor-load",
-        title: "There was a problem",
-        message: "You need to create a project with some pages first",
-      });
-
-      return;
-    }
-
-    router.push(`/projects/${projectId}/editor/${result.results[0].id}`);
+    router.push(`/projects/${projectId}/editor/${pages[0].id}`);
   };
 
   return (

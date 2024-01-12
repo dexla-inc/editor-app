@@ -23,13 +23,13 @@ import slugify from "slugify";
 type PageDetailPaneProps = {
   page?: PageResponse | null | undefined;
   setPage: (page?: PageResponse | null | undefined) => void;
-  getPages: () => void;
+  invalidateQuery: () => void;
 };
 
 export default function PageDetailPane({
   page,
   setPage,
-  getPages,
+  invalidateQuery,
 }: PageDetailPaneProps) {
   const { copy, copied } = useClipboard();
   const [isLoading, setIsLoading] = useState(false);
@@ -87,7 +87,7 @@ export default function PageDetailPane({
 
       await deletePage(projectId, page?.id as string);
       queryClient.invalidateQueries(["pages"]);
-      getPages();
+
       setIsLoading(false);
 
       stopLoading({
@@ -135,8 +135,8 @@ export default function PageDetailPane({
         resetTree();
       }
 
-      queryClient.invalidateQueries(["pages"]);
-      getPages();
+      invalidateQuery();
+
       stopLoading({
         id: "mutating",
         title: "Page Saved",

@@ -7,7 +7,7 @@ type VariableList = Array<VariableResponse>;
 
 type VariablesState = {
   variableList: VariableList;
-  initializeVariableList: (projectId: string, pageId: string) => void;
+  initializeVariableList: (projectId: string) => void;
   setVariable: (variable: VariableParams, id: string) => void;
   deleteVariable: (variableId: string) => void;
 };
@@ -16,8 +16,8 @@ export const useVariableStore = create<VariablesState>()(
   persist(
     (set, get) => ({
       variableList: [],
-      initializeVariableList: async (projectId, pageId) => {
-        const variablesResponse = await listVariables(projectId, { pageId });
+      initializeVariableList: async (projectId) => {
+        const variablesResponse = await listVariables(projectId);
         const variableList = variablesResponse?.results || [];
         set({ variableList });
       },

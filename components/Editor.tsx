@@ -85,8 +85,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   }, [setEditorTree]);
 
   useEffect(() => {
-    const initializeVariables = async () =>
-      await initializeVariableList(projectId, pageId);
+    const initializeVariables = async () => initializeVariableList(projectId);
     if (pageId) {
       liveblocks.leaveRoom();
       liveblocks.enterRoom(pageId);
