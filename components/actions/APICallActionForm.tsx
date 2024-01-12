@@ -14,7 +14,6 @@ import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoint
 import { useDataSources } from "@/hooks/reactQuery/useDataSources";
 import { useVariable } from "@/hooks/reactQuery/useVariable";
 import { Endpoint } from "@/requests/datasources/types";
-import { FrontEndTypes } from "@/requests/variables/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { APICallAction, Action } from "@/utils/actions";
@@ -84,7 +83,7 @@ export const APICallActionForm = ({ id }: Props) => {
   const onSubmit = (values: FormValues) => {
     try {
       handleLoadingStart({ startLoading });
-
+      console.log(values);
       updateActionInTree<APICallAction>({
         selectedComponentId: selectedComponentId!,
         componentActions,
@@ -99,14 +98,6 @@ export const APICallActionForm = ({ id }: Props) => {
           actionCode: values.actionCode,
         },
         updateTreeComponentActions,
-      });
-
-      createVariablesMutation.mutate({
-        name: `${selectedEndpoint?.methodType} ${selectedEndpoint?.relativeUrl}`,
-        defaultValue: selectedEndpoint?.exampleResponse,
-        type: "OBJECT" as FrontEndTypes,
-        isGlobal: false,
-        pageId: router.query.page,
       });
 
       handleLoadingStop({ stopLoading });

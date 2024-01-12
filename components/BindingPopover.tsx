@@ -131,7 +131,7 @@ export default function BindingPopover({
         setNewValue("undefined");
       }
 
-      const parsedCode = getParsedJSCode(javascriptCode);
+      const parsedCode = getParsedJSCode(javascriptCode, actionData);
 
       let newValue = eval(
         `function autoRunJavascriptCode() { ${parsedCode}}; autoRunJavascriptCode()`,
@@ -140,7 +140,7 @@ export default function BindingPopover({
     } catch {
       setNewValue("undefined");
     }
-  }, [javascriptCode, variables]);
+  }, [javascriptCode, variables, actionData]);
 
   const openPopover = debounce(() => onOpenPopover && onOpenPopover(), 1000);
   const handleBinder = () => {

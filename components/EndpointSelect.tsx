@@ -7,6 +7,7 @@ import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { Box, Flex, Select, SelectProps, Text } from "@mantine/core";
 import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
+import { EndpointExampleResponseTest } from "./EndpointExampleResponseTest";
 
 const selectItemStyles = (method: MethodTypes) => ({
   fontSize: 8,
@@ -107,8 +108,14 @@ export const EndpointSelect = ({ value, ...props }: EndpointSelectProps) => {
         onChange={handleChange}
         {...props}
       />
-      {selectedEndpoint?.exampleResponse ? (
+      <Group noWrap>
+        <EndpointExampleResponseTest
+          endpoint={selectedEndpoint}
+          projectId={projectId}
+        />
+        {selectedEndpoint?.exampleResponse ? (
         <EndpointExampleResponsePreview endpoint={selectedEndpoint} />
+      </Group>
       ) : null}
     </>
   );

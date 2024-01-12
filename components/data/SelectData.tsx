@@ -8,7 +8,7 @@ import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { Component, debouncedTreeUpdate } from "@/utils/editor";
 import { SegmentedControl, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   component: Component;
@@ -30,26 +30,49 @@ export const SelectData = ({ component }: Props) => {
   });
 
   const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const selectedComponentIds = useEditorStore(
+    (state) => state.selectedComponentIds,
+  );
+
+  const getSelectedEndpoint = (selected: any) =>
+    endpoints?.results.find((e) => e.id === selected);
 
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
-  >(undefined);
+  >(getSelectedEndpoint(form.values.endpoint));
 
-  const setFieldValue = (key: any, value: any) => {
+  const setFieldValue = (key: any, value: any, endpoint?: any) => {
     form.setFieldValue(key, value);
-    debouncedTreeUpdate(component.id, { [key]: value });
+    debouncedTreeUpdate(selectedComponentIds, { [key]: value });
+    endpoint && setSelectedEndpoint(endpoint);
   };
 
   const exampleResponse = JSON.parse(selectedEndpoint?.exampleResponse ?? "[]");
   const actionData =
     exampleResponse.length &&
     Object.keys(exampleResponse[0])?.map((item: string) => {
-      console.log(item);
       return {
         id: item,
         name: item,
       };
     });
+
+  const updateDataArray = (key: string, value: string) => {
+    const _data = exampleResponse.map((item: any) => {
+      return {
+        label: item[key],
+        value: item[value],
+      };
+    });
+    setFieldValue("data", _data);
+  };
+
+  const allowUpdate = !!form.values.dataLabelKey && !!form.values.dataValueKey;
+  useEffect(() => {
+    allowUpdate &&
+      updateDataArray(form.values.dataLabelKey, form.values.dataValueKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.values.dataLabelKey, form.values.dataValueKey]);
 
   return (
     <form>
@@ -62,6 +85,9 @@ export const SelectData = ({ component }: Props) => {
             { label: "Dynamic", value: "dynamic" },
           ]}
           {...form.getInputProps("dataType")}
+          onChange={(value) => {
+            setFieldValue("dataType", value);
+          }}
         />
         <Stack spacing="xs">
           {form.values.dataType === "static" && (
@@ -75,9 +101,10 @@ export const SelectData = ({ component }: Props) => {
               <EndpointSelect
                 {...form.getInputProps("endpoint")}
                 onChange={(selected) => {
-                  form.setFieldValue("endpoint", selected!);
-                  setSelectedEndpoint(
-                    endpoints?.results?.find((e) => e.id === selected),
+                  setFieldValue(
+                    "endpoint",
+                    selected!,
+                    getSelectedEndpoint(selected!),
                   );
                 }}
               />
@@ -89,41 +116,38 @@ export const SelectData = ({ component }: Props) => {
               <ComponentToBindFromInput
                 componentId={component?.id!}
                 onPickVariable={(variable: string) => {
-                  console.log("onpickvariable");
-                  form.setFieldValue("dataLabelKey", variable);
+                  setFieldValue("dataLabelKey", variable);
                 }}
                 actionData={actionData}
                 javascriptCode={form.values.actionCode}
                 onChangeJavascriptCode={(
                   javascriptCode: string,
                   label: string,
-                ) => form.setFieldValue(`actionCode.${label}`, javascriptCode)}
+                ) => setFieldValue(`actionCode.${label}`, javascriptCode)}
                 size="xs"
                 label={"Label"}
                 {...form.getInputProps("dataLabelKey")}
                 onChange={(e) => {
-                  form.setFieldValue("dataLabelKey", e.currentTarget.value);
+                  setFieldValue("dataLabelKey", e.currentTarget.value);
                 }}
                 {...AUTOCOMPLETE_OFF_PROPS}
               />
               <ComponentToBindFromInput
                 componentId={component?.id!}
                 onPickVariable={(variable: string) => {
-                  form.setFieldValue("dataValueKey", variable);
+                  setFieldValue("dataValueKey", variable);
                 }}
                 actionData={actionData}
-                javascriptCode={{}}
-                // onChangeJavascriptCode={(
-                //   javascriptCode: string,
-                //   label: string,
-                // ) =>
-                //   form.setFieldValue(`actionCode.${label}`, javascriptCode)
-                // }
+                javascriptCode={form.values.actionCode}
+                onChangeJavascriptCode={(
+                  javascriptCode: string,
+                  label: string,
+                ) => setFieldValue(`actionCode.${label}`, javascriptCode)}
                 size="xs"
                 label={"Value"}
                 {...form.getInputProps("dataValueKey")}
                 onChange={(e) => {
-                  form.setFieldValue("dataValueKey", e.currentTarget.value);
+                  setFieldValue("dataValueKey", e.currentTarget.value);
                 }}
                 {...AUTOCOMPLETE_OFF_PROPS}
               />

@@ -1,0 +1,91 @@
+import { Icon } from "@/components/Icon";
+import { updateDataSourceEndpoint } from "@/requests/datasources/mutations";
+import { Endpoint } from "@/requests/datasources/types";
+import { useDataSourceStore } from "@/stores/datasource";
+import { GREEN_COLOR } from "@/utils/branding";
+import { Button } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
+
+type Props = {
+  endpoint?: Endpoint;
+  projectId?: string;
+};
+
+export const EndpointExampleResponseTest = ({ endpoint, projectId }: Props) => {
+  const [isLoading, { open: onLoading, close: offLoading }] =
+    useDisclosure(false);
+  const refreshAccessToken = useDataSourceStore(
+    (state) => state.refreshAccessToken,
+  );
+  const accessToken = useDataSourceStore((state) => state.accessToken);
+
+  const handleTestEndpoint = async () => {
+    try {
+      onLoading();
+      refreshAccessToken();
+      const authHeaderKey =
+        endpoint?.authenticationScheme === "BEARER"
+          ? "Bearer " + accessToken
+          : "";
+
+      // Prepare request headers
+      const requestHeaders: Record<string, string> = {
+        "Content-Type": endpoint?.mediaType!,
+        Accept: "*/*",
+      };
+
+      for (const header of endpoint?.headers ?? []) {
+        if (header.value !== null) {
+          requestHeaders[header.name] = header.value.toString();
+        }
+        if (header.name === "Authorization" && header.type === "BEARER") {
+          requestHeaders[header.name] = authHeaderKey;
+        }
+      }
+      const response = await fetch(endpoint?.url ?? "", {
+        method: endpoint?.methodType,
+        headers: requestHeaders,
+        ...(endpoint?.body ? { body: endpoint.body } : {}),
+      }).then((response) => response.json());
+      if (projectId && endpoint) {
+        await updateDataSourceEndpoint(
+          projectId,
+          endpoint.dataSourceId,
+          endpoint.id,
+          {
+            ...omit(endpoint, ["authentication", "id"]),
+            exampleResponse: JSON.stringify(response),
+          },
+        );
+      }
+    } catch (error) {
+      console.log(error);
+      if (projectId && endpoint)
+        await updateDataSourceEndpoint(
+          projectId,
+          endpoint.dataSourceId,
+          endpoint.id,
+          {
+            ...omit(endpoint, ["authentication", "id"]),
+            errorExampleResponse: JSON.stringify(error),
+          },
+        );
+    } finally {
+      offLoading();
+    }
+  };
+  return (
+    endpoint && (
+      <Button
+        onClick={handleTestEndpoint}
+        color={GREEN_COLOR}
+        size="xs"
+        leftIcon={<Icon name="IconClick" />}
+        loading={isLoading}
+      >
+        Test
+      </Button>
+    )
+  );
+};
