@@ -31,7 +31,7 @@ export default function New() {
   const projectId =
     (router.query.id as string) || (router.query.projectId as string);
   const projectIdFromQuery = router.query.projectId;
-  const { data: project } = useProjectQuery(projectIdFromQuery);
+  const { data: project } = useProjectQuery(projectId);
 
   const [description, setDescription] = useState("");
   const [industry, setIndustry] = useState("");
