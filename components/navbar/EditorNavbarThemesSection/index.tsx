@@ -6,9 +6,9 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
 import { TypographyModal } from "@/components/navbar/EditorNavbarThemesSection/TypographyModal";
+import { useGetThemeQuery } from "@/hooks/reactQuery/useThemeQuery";
 import { CardStyle } from "@/requests/projects/types";
 import { saveTheme } from "@/requests/themes/mutations";
-import { getTheme } from "@/requests/themes/queries-noauth";
 import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
@@ -30,9 +30,9 @@ import {
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowsDiagonal2 } from "@tabler/icons-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type EditorNavbarThemesSectionProps = {
   isActive: boolean;
@@ -61,7 +61,7 @@ export const EditorNavbarThemesSection =
     const stopLoading = useAppStore((state) => state.stopLoading);
     const [currentFontIndex, setCurrentFontIndex] = useState<number>(0);
     const mantineTheme = useMantineTheme();
-    const queryClient = useQueryClient();
+
     const [opened, { open, close }] = useDisclosure(false);
 
     const { usersTheme, setUsersTheme } = useEditorStore((state) => ({
@@ -71,14 +71,12 @@ export const EditorNavbarThemesSection =
 
     const projectId = router.query.id as string;
 
-    useQuery({
-      queryKey: ["theme"],
-      queryFn: async () => {
-        const theme = await getTheme(projectId);
-        form.setValues(theme);
-      },
-      enabled: !!projectId,
-    });
+    const { data: userTheme, invalidate } = useGetThemeQuery(projectId);
+
+    useEffect(() => {
+      if (userTheme) form.setValues(userTheme);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [userTheme]);
 
     const { data: googleFontsData = [] } = useQuery({
       queryKey: ["fonts"],
@@ -106,7 +104,7 @@ export const EditorNavbarThemesSection =
         });
       },
       onSuccess: () => {
-        queryClient.invalidateQueries(["theme"]);
+        invalidate();
         stopLoading({
           id: "saving-brand",
           title: "Brand Saved",

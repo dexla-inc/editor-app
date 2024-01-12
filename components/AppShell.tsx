@@ -31,7 +31,7 @@ import { OtherAvatars } from "@/components/OtherAvatars";
 import { SaveTemplateButton } from "@/components/SaveTemplateButton";
 import { VariablesButton } from "@/components/variables/VariablesButton";
 import { useLogicFlows } from "@/hooks/logic-flow/useLogicFlows";
-import { usePageListQuery } from "@/requests/pages/usePageListQuery";
+import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
 import { useEditorStore, useTemporalStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { flexStyles } from "@/utils/branding";
@@ -106,16 +106,18 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
                 isPreviewMode={isPreviewMode}
                 setPreviewMode={setPreviewMode}
               />
-              <Button
-                component={Link}
-                href={`/projects/${projectId}/settings/team`}
-                leftIcon={<Icon name="IconUserPlus" size={ICON_SIZE} />}
-                compact
-                variant="default"
-                target="_blank"
-              >
-                Invite
-              </Button>
+              <Tooltip label="Invite team">
+                <Button
+                  component={Link}
+                  href={`/projects/${projectId}/settings/team`}
+                  leftIcon={<Icon name="IconUserPlus" size={ICON_SIZE} />}
+                  compact
+                  variant="default"
+                  target="_blank"
+                >
+                  Invite
+                </Button>
+              </Tooltip>
               <DeployButton
                 projectId={projectId}
                 page={pageListQuery?.results?.find(

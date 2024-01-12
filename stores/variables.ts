@@ -1,4 +1,3 @@
-import { listVariables } from "@/requests/variables/queries-noauth";
 import { VariableParams, VariableResponse } from "@/requests/variables/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -7,7 +6,7 @@ type VariableList = Array<VariableResponse>;
 
 type VariablesState = {
   variableList: VariableList;
-  initializeVariableList: (projectId: string) => void;
+  initializeVariableList: (variableList: VariableList) => void;
   setVariable: (variable: VariableParams, id: string) => void;
   deleteVariable: (variableId: string) => void;
 };
@@ -16,9 +15,7 @@ export const useVariableStore = create<VariablesState>()(
   persist(
     (set, get) => ({
       variableList: [],
-      initializeVariableList: async (projectId) => {
-        const variablesResponse = await listVariables(projectId);
-        const variableList = variablesResponse?.results || [];
+      initializeVariableList: async (variableList) => {
         set({ variableList });
       },
       setVariable: (variable, id) => {

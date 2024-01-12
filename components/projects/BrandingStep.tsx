@@ -1,9 +1,9 @@
 import BackButton from "@/components/BackButton";
 import { ColorSelector } from "@/components/ColorSelector";
 import NextButton from "@/components/NextButton";
+import { useGetThemeQuery } from "@/hooks/reactQuery/useThemeQuery";
 import { generateThemeFromScreenshot } from "@/requests/ai/queries";
 import { saveBasicTheme, saveTheme } from "@/requests/themes/mutations";
-import { getTheme } from "@/requests/themes/queries-noauth";
 import { Color, ThemeResponse } from "@/requests/themes/types";
 import { useEditorStore } from "@/stores/editor";
 import { convertToBase64 } from "@/utils/common";
@@ -36,7 +36,6 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconBrush } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
 import { SetStateAction, useEffect, useState } from "react";
 
 export interface BrandingStepProps
@@ -116,12 +115,7 @@ export default function BrandingStep({
   const linkComponent = componentMapper["Link"];
   const theme = useEditorStore((state) => state.theme);
   const setTheme = useEditorStore((state) => state.setTheme);
-
-  const userTheme = useQuery({
-    queryKey: ["theme"],
-    queryFn: () => getTheme(projectId),
-    enabled: !!themeResponse,
-  });
+  const userTheme = useGetThemeQuery(projectId);
 
   const previews = screenshots.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);

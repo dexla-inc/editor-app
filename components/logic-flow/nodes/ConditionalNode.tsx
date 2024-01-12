@@ -1,11 +1,10 @@
 import { OutputForm } from "@/components/logic-flow/OutputForm";
 import { CustomNode, NodeData } from "@/components/logic-flow/nodes/CustomNode";
-import { listVariables } from "@/requests/variables/queries-noauth";
+import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 import { useFlowStore } from "@/stores/flow";
 import { Button, Select, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { IconArrowFork } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -44,14 +43,7 @@ export const NodeForm = ({ form, data }: NodeFormType) => {
   const selectedNode = useFlowStore((state) => state.selectedNode);
   const isUpdating = useFlowStore((state) => state.isUpdating);
 
-  const { data: variables } = useQuery({
-    queryKey: ["variables", projectId],
-    queryFn: async () => {
-      const response = await listVariables(projectId);
-      return response;
-    },
-    enabled: !!projectId,
-  });
+  const { data: variables } = useVariableListQuery(projectId);
 
   useEffect(() => {
     if (!form.values.variable && !form.isTouched("variable")) {

@@ -1,7 +1,7 @@
 import InitialPane from "@/components/pages/InitialPane";
 import PageDetailPane from "@/components/pages/PageDetailPane";
+import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
 import { PageResponse } from "@/requests/pages/types";
-import { usePageListQuery } from "@/requests/pages/usePageListQuery";
 import { Stack } from "@mantine/core";
 import debounce from "lodash.debounce";
 import { useRouter } from "next/router";

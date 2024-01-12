@@ -1,5 +1,5 @@
+import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { useUserTheme } from "@/hooks/useUserTheme";
-import { getProject } from "@/requests/projects/queries-noauth";
 import { decodeSchema } from "@/utils/compression";
 import createCache from "@emotion/cache";
 import { Box, BoxProps, MantineProvider } from "@mantine/core";
@@ -12,6 +12,7 @@ type Props = {
 export const LiveWrapper = ({ children, projectId, ...props }: Props) => {
   const [customCode, setCustomCode] = useState<any | null>(null);
   const theme = useUserTheme(projectId);
+  const { data: project } = useProjectQuery(projectId);
 
   const w = typeof window !== "undefined" ? window : undefined;
   const mountNode = w?.document.body;
@@ -60,19 +61,15 @@ export const LiveWrapper = ({ children, projectId, ...props }: Props) => {
   ]);
 
   useEffect(() => {
-    const fetchProject = async () => {
-      const project = await getProject(projectId);
+    if (project) {
       const customCode = project.customCode
         ? JSON.parse(decodeSchema(project.customCode))
         : undefined;
       if (customCode) {
         setCustomCode(customCode);
       }
-    };
-
-    fetchProject();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId]);
+    }
+  }, [project]);
 
   if (!theme) {
     return null;

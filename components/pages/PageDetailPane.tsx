@@ -86,7 +86,7 @@ export default function PageDetailPane({
       });
 
       await deletePage(projectId, page?.id as string);
-      queryClient.invalidateQueries(["pages"]);
+      invalidateQuery();
 
       setIsLoading(false);
 

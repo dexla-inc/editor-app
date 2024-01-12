@@ -1,6 +1,6 @@
 import { Icon } from "@/components/Icon";
+import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
 import { PageResponse } from "@/requests/pages/types";
-import { usePageListQuery } from "@/requests/pages/usePageListQuery";
 import { deleteProject } from "@/requests/projects/mutations";
 import { ProjectResponse } from "@/requests/projects/types";
 import { usePropelAuthStore } from "@/stores/propelAuth";

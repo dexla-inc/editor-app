@@ -1,5 +1,5 @@
 import { JSONSelector } from "@/components/JSONSelector";
-import { listVariables } from "@/requests/variables/queries-noauth";
+import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 import { ICON_SIZE } from "@/utils/config";
 import {
   Accordion,
@@ -13,7 +13,6 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCheck, IconDatabase } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
 type Props = {
@@ -24,14 +23,7 @@ export const VariablePicker = (props: Props) => {
   const [showVariablePicker, variablePicker] = useDisclosure(false);
   const router = useRouter();
   const projectId = router.query.id as string;
-
-  const { data: variables, isLoading } = useQuery({
-    queryKey: ["variables", projectId],
-    queryFn: async () => {
-      return await listVariables(projectId);
-    },
-    enabled: !!projectId,
-  });
+  const { data: variables, isLoading } = useVariableListQuery(projectId);
 
   return (
     <Popover

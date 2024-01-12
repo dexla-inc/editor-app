@@ -1,6 +1,6 @@
 import { InformationAlert, SuccessAlert } from "@/components/Alerts";
+import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { patchProject } from "@/requests/projects/mutations";
-import { getProject } from "@/requests/projects/queries-noauth";
 import { useAppStore } from "@/stores/app";
 import { convertToPatchParams } from "@/utils/dashboardTypes";
 import {
@@ -27,8 +27,9 @@ type FormProps = {
 export default function DomainSettings({ projectId }: Props) {
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
-  const [verificationStatus, setVerificationStatus] = useState("");
+  const { data: project } = useProjectQuery(projectId);
 
+  const [verificationStatus, setVerificationStatus] = useState("");
   const form = useForm<FormProps>({
     initialValues: {
       domain: "",
@@ -75,22 +76,23 @@ export default function DomainSettings({ projectId }: Props) {
 
   useEffect(() => {
     const fetchProject = async () => {
-      const project = await getProject(projectId);
-      form.setFieldValue("domain", project.domain ?? "");
-      form.setFieldValue("subDomain", project.subDomain ?? "");
+      if (project) {
+        form.setFieldValue("domain", project.domain ?? "");
+        form.setFieldValue("subDomain", project.subDomain ?? "");
 
-      const fullDomain = project.subDomain
-        ? `${project.subDomain}.${project.domain}`
-        : project.domain;
+        const fullDomain = project.subDomain
+          ? `${project.subDomain}.${project.domain}`
+          : project.domain;
 
-      try {
-        const verifyResponse = await fetch(
-          `/api/domain/verify?domain=${fullDomain}`,
-        );
-        const json = await verifyResponse.json();
-        setVerificationStatus(json.status);
-      } catch (error) {
-        console.error({ error });
+        try {
+          const verifyResponse = await fetch(
+            `/api/domain/verify?domain=${fullDomain}`,
+          );
+          const json = await verifyResponse.json();
+          setVerificationStatus(json.status);
+        } catch (error) {
+          console.error({ error });
+        }
       }
     };
 

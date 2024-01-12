@@ -55,6 +55,7 @@ const theme: MantineTheme = {
     Tooltip: {
       defaultProps: () => ({
         fz: "xs",
+        withArrow: true,
       }),
     },
     Avatar: {
@@ -97,6 +98,7 @@ const darkTheme: MantineTheme = {
       }),
       defaultProps: () => ({
         fz: "xs",
+        withArrow: true,
       }),
     },
     Card: {

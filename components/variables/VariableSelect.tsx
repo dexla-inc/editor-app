@@ -1,7 +1,6 @@
-import { listVariables } from "@/requests/variables/queries-noauth";
+import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 import { VariableResponse } from "@/requests/variables/types";
 import { Select, SelectProps } from "@mantine/core";
-import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
 type Props = Omit<SelectProps, "data"> & {
@@ -13,13 +12,7 @@ export const VariableSelect = ({ onPick, ...props }: Props) => {
   const router = useRouter();
   const projectId = router.query.id as string;
 
-  const { data: variables } = useQuery({
-    queryKey: ["variables", projectId],
-    queryFn: async () => {
-      return await listVariables(projectId);
-    },
-    enabled: !!projectId,
-  });
+  const { data: variables } = useVariableListQuery(projectId);
 
   return (
     <Select

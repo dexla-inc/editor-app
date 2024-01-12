@@ -5,6 +5,7 @@ import { Cursor } from "@/components/Cursor";
 import { EditorCanvas } from "@/components/EditorCanvas";
 import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
+import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
@@ -58,6 +59,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
     (state) => state.initializeVariableList,
   );
 
+  const { data: variables } = useVariableListQuery(projectId);
+
   useGetPageData({ projectId, pageId });
 
   const queryClient = useQueryClient();
@@ -85,7 +88,9 @@ export const Editor = ({ projectId, pageId }: Props) => {
   }, [setEditorTree]);
 
   useEffect(() => {
-    const initializeVariables = async () => initializeVariableList(projectId);
+    const initializeVariables = async () =>
+      initializeVariableList(variables?.results || []);
+
     if (pageId) {
       liveblocks.leaveRoom();
       liveblocks.enterRoom(pageId);

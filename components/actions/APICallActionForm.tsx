@@ -10,7 +10,7 @@ import {
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
-import { useVariable } from "@/hooks/useVariable";
+import { useVariable } from "@/hooks/reactQuery/useVariable";
 import { getDataSources } from "@/requests/datasources/queries-noauth";
 import { Endpoint } from "@/requests/datasources/types";
 import { FrontEndTypes } from "@/requests/variables/types";
@@ -43,7 +43,9 @@ export const APICallActionForm = ({ id }: Props) => {
     editorTree,
     selectedComponentId,
   });
-  const { createVariablesMutation } = useVariable();
+  const router = useRouter();
+  const projectId = router.query.id as string;
+  const { createVariablesMutation } = useVariable(projectId);
 
   const sequentialTo = useEditorStore((state) => state.sequentialTo);
   const endpoints = useDataSourceStore((state) => state.endpoints);
@@ -51,9 +53,6 @@ export const APICallActionForm = ({ id }: Props) => {
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
   >(undefined);
-
-  const router = useRouter();
-  const projectId = router.query.id as string;
 
   const dataSources = useQuery({
     queryKey: ["datasources"],

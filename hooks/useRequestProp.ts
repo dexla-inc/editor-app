@@ -1,7 +1,6 @@
 import { getDataSources } from "@/requests/datasources/queries-noauth";
 import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
 import { getPage } from "@/requests/pages/queries-noauth";
-import { listVariables } from "@/requests/variables/queries-noauth";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
@@ -13,12 +12,6 @@ export const useRequestProp = (val?: string) => {
   const { data: page } = useQuery({
     queryKey: ["page", projectId, pageId],
     queryFn: () => getPage(projectId, pageId),
-    enabled: !!projectId && !!pageId,
-  });
-
-  const { data: variables } = useQuery({
-    queryKey: ["variables", projectId, pageId],
-    queryFn: () => listVariables(projectId),
     enabled: !!projectId && !!pageId,
   });
 
@@ -37,5 +30,5 @@ export const useRequestProp = (val?: string) => {
     enabled: !!projectId && !!pageId,
   });
 
-  return { page, variables, dataSources, flows };
+  return { page, dataSources, flows };
 };
