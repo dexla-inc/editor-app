@@ -53,7 +53,6 @@ export const Modifier = withModifier(
     useEffect(() => {
       form.setValues(
         merge({}, requiredModifiers.select, {
-          name: selectedComponent?.props?.name,
           size: selectedComponent?.props?.size,
           placeholder: selectedComponent?.props?.placeholder,
           icon: selectedComponent?.props?.icon,
@@ -77,17 +76,6 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          <TextInput
-            label="Name"
-            size="xs"
-            {...form.getInputProps("name")}
-            onChange={(e) => {
-              form.setFieldValue("name", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                name: e.target.value,
-              });
-            }}
-          />
           <SwitchSelector
             topLabel="Clearable"
             checked={form.getInputProps("clearable").value}

@@ -26,7 +26,6 @@ export const Modifier = withModifier(
           type: selectedComponent?.props?.type,
           icon: selectedComponent?.props?.icon,
           withAsterisk: selectedComponent?.props?.withAsterisk,
-          name: selectedComponent?.props?.name,
           clearable: selectedComponent?.props?.clearable,
         }),
       );
@@ -56,17 +55,6 @@ export const Modifier = withModifier(
               form.setFieldValue("type", value as string);
               debouncedTreeUpdate(selectedComponentIds, {
                 type: value,
-              });
-            }}
-          />
-          <TextInput
-            label="Name"
-            size="xs"
-            {...form.getInputProps("name")}
-            onChange={(e) => {
-              form.setFieldValue("name", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                name: e.target.value,
               });
             }}
           />

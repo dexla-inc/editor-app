@@ -57,7 +57,7 @@ const FormComponent = forwardRef(
       validatableComponents.map((component) => {
         return updateTreeComponent({
           componentId: component.id!,
-          props: { error: `${component?.props?.name} is required` },
+          props: { error: `${component?.description} is required` },
           save: false,
         });
       });
