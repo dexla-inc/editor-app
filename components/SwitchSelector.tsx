@@ -3,6 +3,7 @@ import { Box, Switch, SwitchProps, Text } from "@mantine/core";
 
 interface SwitchSelectorProps extends SwitchProps {
   topLabel: string;
+  checked?: boolean;
 }
 
 export const SwitchSelector = ({ topLabel, ...props }: SwitchSelectorProps) => {

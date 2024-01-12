@@ -31,7 +31,7 @@ export const Modifier = withModifier(
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComponent, selectedComponentIds]);
+    }, [selectedComponent]);
 
     return (
       <form>
@@ -83,6 +83,7 @@ export const Modifier = withModifier(
             <SwitchSelector
               topLabel="Required"
               {...form.getInputProps("withAsterisk")}
+              checked={form.values.withAsterisk as boolean}
               onChange={(event) => {
                 form.setFieldValue("withAsterisk", event.currentTarget.checked);
                 debouncedTreeUpdate(selectedComponentIds, {
@@ -93,6 +94,7 @@ export const Modifier = withModifier(
             <SwitchSelector
               topLabel="Clearable"
               {...form.getInputProps("clearable")}
+              checked={form.values.clearable as boolean}
               onChange={(event) => {
                 form.setFieldValue("clearable", event.currentTarget.checked);
                 debouncedTreeUpdate(selectedComponentIds, {
