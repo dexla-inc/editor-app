@@ -15,23 +15,24 @@ export const EndpointExampleResponsePreview = ({ endpoint }: Props) => {
           {/* <ActionIcon variant="default">
           <Icon name="IconJson" />
         </ActionIcon> */}
-        <Anchor size="xs">Preview Response</Anchor>
-      </Popover.Target>
-      <Popover.Dropdown
-        w={300}
-        sx={{ overflowX: "hidden", ...scrollbarStyles }}
-      >
-        <ScrollArea.Autosize mah={300}>
-          <JSONSelector
-            data={
-              endpoint.exampleResponse
-                ? JSON.parse(endpoint.exampleResponse)
-                : endpoint.exampleResponse
-            }
-            name={endpoint.relativeUrl}
-          />
-        </ScrollArea.Autosize>
-      </Popover.Dropdown>
-    </Popover>
+          <Anchor size="xs">Preview Response</Anchor>
+        </Popover.Target>
+        <Popover.Dropdown
+          w={300}
+          sx={{ overflowX: "hidden", ...scrollbarStyles }}
+        >
+          <ScrollArea.Autosize mah={300}>
+            <JSONSelector
+              data={
+                endpoint.exampleResponse
+                  ? JSON.parse(endpoint.exampleResponse)
+                  : endpoint.exampleResponse
+              }
+              name={endpoint.relativeUrl}
+            />
+          </ScrollArea.Autosize>
+        </Popover.Dropdown>
+      </Popover>
+    )
   );
 };

@@ -1,11 +1,10 @@
 import { Icon } from "@/components/Icon";
-import { updateDataSourceEndpoint } from "@/requests/datasources/mutations";
 import { Endpoint } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
+import { useDataStore } from "@/stores/fetchedData";
 import { GREEN_COLOR } from "@/utils/branding";
 import { Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { omit } from "next/dist/shared/lib/router/utils/omit";
 
 type Props = {
   endpoint?: Endpoint;
@@ -19,6 +18,7 @@ export const EndpointExampleResponseTest = ({ endpoint, projectId }: Props) => {
     (state) => state.refreshAccessToken,
   );
   const accessToken = useDataSourceStore((state) => state.accessToken);
+  const setDataResponse = useDataStore((state) => state.setDataResponse);
 
   const handleTestEndpoint = async () => {
     try {
@@ -48,29 +48,18 @@ export const EndpointExampleResponseTest = ({ endpoint, projectId }: Props) => {
         headers: requestHeaders,
         ...(endpoint?.body ? { body: endpoint.body } : {}),
       }).then((response) => response.json());
-      if (projectId && endpoint) {
-        await updateDataSourceEndpoint(
-          projectId,
-          endpoint.dataSourceId,
-          endpoint.id,
-          {
-            ...omit(endpoint, ["authentication", "id"]),
-            exampleResponse: JSON.stringify(response),
-          },
-        );
-      }
+      setDataResponse(
+        endpoint?.id!,
+        "exampleResponse",
+        JSON.stringify(response),
+      );
     } catch (error) {
       console.log(error);
-      if (projectId && endpoint)
-        await updateDataSourceEndpoint(
-          projectId,
-          endpoint.dataSourceId,
-          endpoint.id,
-          {
-            ...omit(endpoint, ["authentication", "id"]),
-            errorExampleResponse: JSON.stringify(error),
-          },
-        );
+      setDataResponse(
+        endpoint?.id!,
+        "errorExampleResponse",
+        JSON.stringify(error),
+      );
     } finally {
       offLoading();
     }

@@ -2,8 +2,8 @@ import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput"
 import { EndpointSelect } from "@/components/EndpointSelect";
 import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
-import { Endpoint } from "@/requests/datasources/types";
 import { useEditorStore } from "@/stores/editor";
+import { DataResponse } from "@/stores/fetchedData";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { Component, debouncedTreeUpdate } from "@/utils/editor";
 import { SegmentedControl, Stack, TextInput } from "@mantine/core";
@@ -37,40 +37,40 @@ export const SelectData = ({ component }: Props) => {
   const getSelectedEndpoint = (selected: any) =>
     endpoints?.results.find((e) => e.id === selected);
 
-  const [selectedEndpoint, setSelectedEndpoint] = useState<
-    Endpoint | undefined
-  >(getSelectedEndpoint(form.values.endpoint));
+  const [dataResponse, setdataResponse] = useState<DataResponse | undefined>(
+    undefined,
+  );
 
-  const setFieldValue = (key: any, value: any, endpoint?: any) => {
+  useEffect(() => {
+    setdataResponse(getdataResponse(form.values.endpoint));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataList, form.values.endpoint]);
+
+  const setFieldValue = (key: any, value: any) => {
     form.setFieldValue(key, value);
     debouncedTreeUpdate(selectedComponentIds, { [key]: value });
-    endpoint && setSelectedEndpoint(endpoint);
   };
 
-  const exampleResponse = JSON.parse(selectedEndpoint?.exampleResponse ?? "[]");
-  const actionData =
-    exampleResponse.length &&
-    Object.keys(exampleResponse[0])?.map((item: string) => {
-      return {
-        id: item,
-        name: item,
-      };
-    });
+  const actiondataResponse =
+    dataResponse && JSON.parse(dataResponse["exampleResponse"]);
 
-  const updateDataArray = (key: string, value: string) => {
-    const _data = exampleResponse.map((item: any) => {
+  const updatedataResponseArray = (key: string, value: string) => {
+    const _dataResponse = actiondataResponse.map((item: any) => {
       return {
         label: item[key],
         value: item[value],
       };
     });
-    setFieldValue("data", _data);
+    setFieldValue("data", _dataResponse);
   };
 
   const allowUpdate = !!form.values.dataLabelKey && !!form.values.dataValueKey;
   useEffect(() => {
     allowUpdate &&
-      updateDataArray(form.values.dataLabelKey, form.values.dataValueKey);
+      updatedataResponseArray(
+        form.values.dataLabelKey,
+        form.values.dataValueKey,
+      );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values.dataLabelKey, form.values.dataValueKey]);
 
@@ -101,11 +101,7 @@ export const SelectData = ({ component }: Props) => {
               <EndpointSelect
                 {...form.getInputProps("endpoint")}
                 onChange={(selected) => {
-                  setFieldValue(
-                    "endpoint",
-                    selected!,
-                    getSelectedEndpoint(selected!),
-                  );
+                  setFieldValue("endpoint", selected!);
                 }}
               />
               <TextInput
@@ -118,7 +114,7 @@ export const SelectData = ({ component }: Props) => {
                 onPickVariable={(variable: string) => {
                   setFieldValue("dataLabelKey", variable);
                 }}
-                actionData={actionData}
+                actionData={{}}
                 javascriptCode={form.values.actionCode}
                 onChangeJavascriptCode={(
                   javascriptCode: string,
@@ -137,7 +133,7 @@ export const SelectData = ({ component }: Props) => {
                 onPickVariable={(variable: string) => {
                   setFieldValue("dataValueKey", variable);
                 }}
-                actionData={actionData}
+                actionData={actiondataResponse}
                 javascriptCode={form.values.actionCode}
                 onChangeJavascriptCode={(
                   javascriptCode: string,

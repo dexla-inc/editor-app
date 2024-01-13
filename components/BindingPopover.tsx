@@ -108,6 +108,17 @@ export default function BindingPopover({
     };
   });
 
+  // const dataList = actionData?.reduce(
+  //   (acc: any, item: any) => {
+  //     const type = typeof item === "object" ? "OBJECT" : "STRING";
+  //     acc.list[item.id] = item;
+  //     acc[item.id] = item;
+  //     return acc;
+  //   },
+  //   { list: {} } as Record<string, any>,
+  // );
+
+  console.log(actionData);
   const inputComponents = getAllComponentsByName(editorTree.root, [
     "Input",
     "Select",
@@ -125,6 +136,7 @@ export default function BindingPopover({
     },
     { list: {} } as Record<string, any>,
   );
+
   useEffect(() => {
     try {
       if (javascriptCode === "return variables") {
@@ -424,7 +436,7 @@ export default function BindingPopover({
           ) : tab === "datasources" ? (
             <DataTree
               filterKeyword={filterKeyword}
-              variables={actionData}
+              variables={[]}
               onItemSelection={(item: string) => onSetItem(tab, item)}
             />
           ) : tab === "browser" ? (

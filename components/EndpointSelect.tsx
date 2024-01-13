@@ -108,14 +108,14 @@ export const EndpointSelect = ({ value, ...props }: EndpointSelectProps) => {
         onChange={handleChange}
         {...props}
       />
-      <Group noWrap>
-        <EndpointExampleResponseTest
-          endpoint={selectedEndpoint}
-          projectId={projectId}
-        />
-        {selectedEndpoint?.exampleResponse ? (
-        <EndpointExampleResponsePreview endpoint={selectedEndpoint} />
-      </Group>
+      {selectedEndpoint?.exampleResponse ? (
+        <Group noWrap>
+          <EndpointExampleResponseTest
+            endpoint={selectedEndpoint}
+            projectId={projectId}
+          />
+          <EndpointExampleResponsePreview endpoint={selectedEndpoint} />
+        </Group>
       ) : null}
     </>
   );
