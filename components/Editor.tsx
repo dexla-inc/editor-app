@@ -122,7 +122,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
                 zIndex: 300,
               }}
             >
-              <Navbar.Section grow component={ScrollArea} py="sm">
+              <Navbar.Section grow py="sm">
                 <EditorNavbarSections />
               </Navbar.Section>
             </Navbar>

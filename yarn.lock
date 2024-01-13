@@ -562,11 +562,6 @@
   resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-5.4.2.tgz#ba2b7faeb227c76e423e88f962afe6a031319f3f"
   integrity sha512-fqeucJ3LH0e1eyFdT0zRx+oETLancu5+n4lhiYECyEz6H2RDskPJHJYHkVc0LhkU4Uv7fuEnppKU3nVKNzMh8g==
 
-"@propelauth/javascript@^2.0.10":
-  version "2.0.10"
-  resolved "https://registry.yarnpkg.com/@propelauth/javascript/-/javascript-2.0.10.tgz#e2cb32a619574b696ff21ecb8caee25511946c5a"
-  integrity sha512-dsli7iYp0hKVOglZW1Kkx7elKzLWRx2PZ8Jr9wRUBCx/2t9lAxnfgsfIyQDukMe6s8fOyA0w59KIIPfWw97/3g==
-
 "@propelauth/javascript@^2.0.11":
   version "2.0.11"
   resolved "https://registry.yarnpkg.com/@propelauth/javascript/-/javascript-2.0.11.tgz#274d8c39d41f41cc86500d29bd38af7ef6b92a36"
@@ -579,12 +574,12 @@
   dependencies:
     jsonwebtoken "^9.0.0"
 
-"@propelauth/react@^2.0.14":
-  version "2.0.14"
-  resolved "https://registry.yarnpkg.com/@propelauth/react/-/react-2.0.14.tgz#da87e5e112f019157c83c3c74cfce7a17a1a391d"
-  integrity sha512-5QXLocg9EPEdcvpv2Xv4l8eVGlcem9emf45m9xG1fmw6B6x246iucoW5ynxFT7koBXqqeJNt1IGLWIoVJMli5A==
+"@propelauth/react@^2.0.15":
+  version "2.0.15"
+  resolved "https://registry.yarnpkg.com/@propelauth/react/-/react-2.0.15.tgz#bc1f12720f9ccd0adda2545a13c013ad12f00f15"
+  integrity sha512-TUlSLZVMcJdfemEmqiCG4G55+sYoCgFD7uMPpiJC/02DQ9vUHPdIFdQ2XfMi4VRqqR1BsgO+4esdTHsJZxyz7Q==
   dependencies:
-    "@propelauth/javascript" "^2.0.10"
+    "@propelauth/javascript" "^2.0.11"
     hoist-non-react-statics "^3.3.2"
     utility-types "^3.10.0"
 

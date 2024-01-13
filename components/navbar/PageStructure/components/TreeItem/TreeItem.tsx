@@ -225,6 +225,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
               {id !== "root" && (
                 <div
                   className={classNames(isDarkTheme && styles.darkThemeIcon)}
+                  style={{ height: 22 }}
                 >
                   {icon}
                 </div>
