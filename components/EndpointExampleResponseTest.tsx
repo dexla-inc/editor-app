@@ -47,12 +47,16 @@ export const EndpointExampleResponseTest = ({ endpoint, projectId }: Props) => {
         method: endpoint?.methodType,
         headers: requestHeaders,
         ...(endpoint?.body ? { body: endpoint.body } : {}),
-      }).then((response) => response.json());
-      setDataResponse(
-        endpoint?.id!,
-        "exampleResponse",
-        JSON.stringify(response),
-      );
+      });
+      // Check response status
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Set exampleResponse for successful response
+      setDataResponse(endpoint?.id!, "exampleResponse", JSON.stringify(data));
     } catch (error) {
       console.log(error);
       setDataResponse(

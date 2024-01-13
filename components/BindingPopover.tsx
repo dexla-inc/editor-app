@@ -7,6 +7,7 @@ import { useVariableStore } from "@/stores/variables";
 import { BG_COLOR, BINDER_BACKGROUND } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import { getAllComponentsByName } from "@/utils/editor";
+import { transformActionData } from "@/utils/transformData";
 import { getParsedJSCode } from "@/utils/variables";
 import {
   ActionIcon,
@@ -108,17 +109,8 @@ export default function BindingPopover({
     };
   });
 
-  // const dataList = actionData?.reduce(
-  //   (acc: any, item: any) => {
-  //     const type = typeof item === "object" ? "OBJECT" : "STRING";
-  //     acc.list[item.id] = item;
-  //     acc[item.id] = item;
-  //     return acc;
-  //   },
-  //   { list: {} } as Record<string, any>,
-  // );
+  const dataList = transformActionData(actionData);
 
-  console.log(actionData);
   const inputComponents = getAllComponentsByName(editorTree.root, [
     "Input",
     "Select",
@@ -143,7 +135,7 @@ export default function BindingPopover({
         setNewValue("undefined");
       }
 
-      const parsedCode = getParsedJSCode(javascriptCode, actionData);
+      const parsedCode = getParsedJSCode(javascriptCode, dataList);
 
       let newValue = eval(
         `function autoRunJavascriptCode() { ${parsedCode}}; autoRunJavascriptCode()`,
@@ -152,7 +144,7 @@ export default function BindingPopover({
     } catch {
       setNewValue("undefined");
     }
-  }, [javascriptCode, variables, actionData]);
+  }, [javascriptCode, variables, dataList]);
 
   const openPopover = debounce(() => onOpenPopover && onOpenPopover(), 1000);
   const handleBinder = () => {
@@ -246,7 +238,7 @@ export default function BindingPopover({
         onPickVariable(
           JSON.stringify({
             id: parsed.id,
-            variable: variables?.list[parsed.id],
+            variable: dataList[parsed.id],
             path: parsed.path,
           }),
         );
@@ -436,7 +428,7 @@ export default function BindingPopover({
           ) : tab === "datasources" ? (
             <DataTree
               filterKeyword={filterKeyword}
-              variables={[]}
+              variables={dataList}
               onItemSelection={(item: string) => onSetItem(tab, item)}
             />
           ) : tab === "browser" ? (

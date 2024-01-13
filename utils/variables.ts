@@ -27,13 +27,18 @@ const getParsedContextItemCode = (
   contextItemRegex: RegExp,
   contextValues: any,
 ) => {
-  return code.replace(contextItemRegex, (_, itemId) => {
-    const item = contextValues?.find((item: any) => item[itemId]);
-    const value = item[itemId];
+  return code.replace(contextItemRegex, (_, itemId, itemProp) => {
+    const item = contextValues?.find((item: any) => item.id === itemId);
+    let value;
 
-    if (value === undefined) {
-      return `undefined`;
+    if (itemProp) {
+      const _item = JSON.parse(item.value);
+      value = item && _item[itemProp];
+    } else {
+      value = item;
     }
+
+    console.log(value);
 
     const isObject = typeof value === "object";
     const isArray = Array.isArray(value);
@@ -50,7 +55,7 @@ export const getParsedJSCode = (code: string, actionData?: any) => {
   // check for components in the code and replace them with their values
   // components pattern: components[/* Select */'HhAFGI99Hr6GfGzW_NxyH']
   const componentsRegex = /components\[\/\* ([\w]+) \*\/'([\w]+)'\]/g;
-  const contextItemRegex = /context\.item\['([^']+)'\]/;
+  const contextItemRegex = /context\.item\['([^']+)'\](?:\.(\w+))?/g;
   const inputsValues = useInputsStore.getState().inputValues;
   let parsedCode = "";
   if (componentsRegex.test(code))

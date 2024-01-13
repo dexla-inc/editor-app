@@ -44,7 +44,7 @@ export const SelectData = ({ component }: Props) => {
   };
 
   const [dataResponse, setdataResponse] = useState<string | undefined>(
-    undefined,
+    getSelectedEndpoint(form.values.endpoint) || undefined,
   );
 
   useEffect(() => {
@@ -140,7 +140,7 @@ export const SelectData = ({ component }: Props) => {
                 onPickVariable={(variable: string) => {
                   setFieldValue("dataValueKey", variable);
                 }}
-                actionData={dataResponse}
+                actionData={actiondataResponse}
                 javascriptCode={form.values.actionCode}
                 onChangeJavascriptCode={(
                   javascriptCode: string,
