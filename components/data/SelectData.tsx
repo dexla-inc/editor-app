@@ -3,7 +3,7 @@ import { EndpointSelect } from "@/components/EndpointSelect";
 import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useEditorStore } from "@/stores/editor";
-import { DataResponse } from "@/stores/fetchedData";
+import { useDataStore } from "@/stores/fetchedData";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { Component, debouncedTreeUpdate } from "@/utils/editor";
 import { SegmentedControl, Stack, TextInput } from "@mantine/core";
@@ -33,16 +33,22 @@ export const SelectData = ({ component }: Props) => {
   const selectedComponentIds = useEditorStore(
     (state) => state.selectedComponentIds,
   );
+  const dataList = useDataStore((state) => state.dataList);
 
-  const getSelectedEndpoint = (selected: any) =>
-    endpoints?.results.find((e) => e.id === selected);
+  const getSelectedEndpoint = (selected: any) => {
+    const resp = endpoints?.results.find((e) => e.id === selected);
+    const data = dataList.find((d) => d.id === selected);
+    return data && data["exampleResponse"]
+      ? data["exampleResponse"]
+      : resp?.exampleResponse;
+  };
 
-  const [dataResponse, setdataResponse] = useState<DataResponse | undefined>(
+  const [dataResponse, setdataResponse] = useState<string | undefined>(
     undefined,
   );
 
   useEffect(() => {
-    setdataResponse(getdataResponse(form.values.endpoint));
+    setdataResponse(getSelectedEndpoint(form.values.endpoint));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataList, form.values.endpoint]);
 
@@ -51,8 +57,9 @@ export const SelectData = ({ component }: Props) => {
     debouncedTreeUpdate(selectedComponentIds, { [key]: value });
   };
 
-  const actiondataResponse =
-    dataResponse && JSON.parse(dataResponse["exampleResponse"]);
+  const actiondataResponse = dataResponse
+    ? JSON.parse(dataResponse)
+    : dataResponse;
 
   const updatedataResponseArray = (key: string, value: string) => {
     const _dataResponse = actiondataResponse.map((item: any) => {
@@ -114,7 +121,7 @@ export const SelectData = ({ component }: Props) => {
                 onPickVariable={(variable: string) => {
                   setFieldValue("dataLabelKey", variable);
                 }}
-                actionData={{}}
+                actionData={actiondataResponse}
                 javascriptCode={form.values.actionCode}
                 onChangeJavascriptCode={(
                   javascriptCode: string,
@@ -133,7 +140,7 @@ export const SelectData = ({ component }: Props) => {
                 onPickVariable={(variable: string) => {
                   setFieldValue("dataValueKey", variable);
                 }}
-                actionData={actiondataResponse}
+                actionData={dataResponse}
                 javascriptCode={form.values.actionCode}
                 onChangeJavascriptCode={(
                   javascriptCode: string,
