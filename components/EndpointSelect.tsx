@@ -1,13 +1,13 @@
 import { EndpointExampleResponsePreview } from "@/components/EndpointExampleResponsePreview";
+import { EndpointExampleResponseTest } from "@/components/EndpointExampleResponseTest";
 import { colors } from "@/components/datasources/DataSourceEndpoint";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
-import { Box, Flex, Select, SelectProps, Text } from "@mantine/core";
+import { Box, Flex, Group, Select, SelectProps, Text } from "@mantine/core";
 import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
-import { EndpointExampleResponseTest } from "./EndpointExampleResponseTest";
 
 const selectItemStyles = (method: MethodTypes) => ({
   fontSize: 8,
