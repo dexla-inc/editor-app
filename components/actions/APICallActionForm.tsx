@@ -21,7 +21,7 @@ import { APICallAction, Action } from "@/utils/actions";
 import { Button, Divider, Stack, Switch } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type FormValues = Omit<APICallAction, "name" | "datasource">;
 
@@ -125,17 +125,22 @@ export const APICallActionForm = ({ id }: Props) => {
     );
   };
 
-  useEffect(() => {
-    if (
-      form.values.endpoint &&
-      !selectedEndpoint &&
-      (endpoints?.results ?? [])?.length > 0
-    ) {
-      setSelectedEndpoint(
-        endpoints?.results?.find((e) => e.id === form.values.endpoint),
+  const updateSelectedEndpoint = useCallback(
+    (endpointId: string) => {
+      const foundEndpoint = endpoints?.results?.find(
+        (e) => e.id === endpointId,
       );
+      setSelectedEndpoint(foundEndpoint);
+    },
+    [endpoints],
+  );
+
+  // useEffect to update selectedEndpoint when form.values.endpoint changes
+  useEffect(() => {
+    if (form.values.endpoint) {
+      updateSelectedEndpoint(form.values.endpoint);
     }
-  }, [endpoints, form.values.endpoint, selectedEndpoint]);
+  }, [form.values.endpoint, updateSelectedEndpoint]);
 
   const showLoaderInputProps = form.getInputProps("showLoader");
   const isLoginInputProps = form.getInputProps("isLogin");
@@ -147,10 +152,8 @@ export const APICallActionForm = ({ id }: Props) => {
           <EndpointSelect
             {...form.getInputProps("endpoint")}
             onChange={(selected) => {
-              form.setFieldValue("endpoint", selected!);
-              setSelectedEndpoint(
-                endpoints.results?.find((e) => e.id === selected),
-              );
+              form.setFieldValue("endpoint", selected as string);
+              updateSelectedEndpoint(selected as string);
             }}
           />
           <Switch
