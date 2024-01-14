@@ -2,7 +2,7 @@
 // @refresh reset
 import { EditableComponent } from "@/components/EditableComponent";
 import { LiveWrapper } from "@/components/LiveWrapper";
-import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries-noauth";
+import { useDeploymentsPageQuery } from "@/hooks/reactQuery/useDeploymentsPageQuery";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
@@ -29,28 +29,19 @@ export const Live = ({ projectId, pageId }: Props) => {
   const setEditorTree = useEditorStore((state) => state.setTree);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isLoading = useAppStore((state) => state.isLoading);
+  const { data: page } = useDeploymentsPageQuery(projectId, pageId);
 
   useEffect(() => {
-    const getPageData = async () => {
-      setIsLoading(true);
-      const page = await getMostRecentDeploymentByPage(projectId as string, {
-        page: pageId,
+    if (page?.pageState) {
+      const decodedSchema = decodeSchema(page.pageState);
+      const state = JSON.parse(decodedSchema);
+      setEditorTree(state, {
+        onLoad: true,
+        action: "Initial State",
       });
-      if (page.pageState) {
-        const decodedSchema = decodeSchema(page.pageState);
-        const state = JSON.parse(decodedSchema);
-        setEditorTree(state, {
-          onLoad: true,
-          action: "Initial State",
-        });
-        setIsLoading(false);
-      }
-    };
-
-    if (projectId && pageId) {
-      getPageData();
+      setIsLoading(false);
     }
-  }, [projectId, pageId, setEditorTree, setIsLoading]);
+  }, [page, setEditorTree, setIsLoading]);
 
   const renderTree = useCallback((component: Component) => {
     if (component.id === "root") {

@@ -1305,7 +1305,7 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["alert", "spacing", "size", "border"],
-    actionTriggers: ["onMount"],
+    actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Tabs: {

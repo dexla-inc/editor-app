@@ -36,6 +36,12 @@ const theme: MantineTheme = {
       }),
       defaultProps: () => ({ size: "xs" }),
     },
+    TextInput: {
+      styles: () => ({
+        input: { borderColor: GRAY_BORDER_COLOR },
+      }),
+      defaultProps: () => ({ size: "xs" }),
+    },
     Select: {
       styles: () => ({
         input: { borderColor: GRAY_BORDER_COLOR },
@@ -79,6 +85,14 @@ const darkTheme: MantineTheme = {
   colorScheme: "dark",
   components: {
     Input: {
+      styles: (theme) => ({
+        input: {
+          borderColor: theme.colors.dark[5],
+        },
+      }),
+      defaultProps: () => ({ size: "xs" }),
+    },
+    TextInput: {
       styles: (theme) => ({
         input: {
           borderColor: theme.colors.dark[5],

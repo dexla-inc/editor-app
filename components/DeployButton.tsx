@@ -1,5 +1,6 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { Icon } from "@/components/Icon";
+import { useDeploymentsPageQuery } from "@/hooks/reactQuery/useDeploymentsPageQuery";
 import { useDeploymentsRecentQuery } from "@/hooks/reactQuery/useDeploymentsRecentQuery";
 import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { createDeployment } from "@/requests/deployments/mutations";
@@ -22,8 +23,10 @@ export const DeployButton = ({ projectId, page }: Props) => {
   const [customDomain, setCustomDomain] = useState("");
   const [hasDeployed, setHasDeployed] = useState(false);
 
-  const { data: recentDeployment, invalidate } =
+  const { data: recentDeployment, invalidate: invalidateDeployment } =
     useDeploymentsRecentQuery(projectId);
+
+  const { invalidate: invalidatePage } = useDeploymentsPageQuery(projectId, "");
 
   const { data: project } = useProjectQuery(projectId);
 
@@ -35,7 +38,8 @@ export const DeployButton = ({ projectId, page }: Props) => {
         message: "Deploying your app...",
       });
       await createDeployment(projectId, { forceProduction: forceProduction });
-      invalidate();
+      invalidateDeployment();
+      invalidatePage();
       setHasDeployed(true);
       stopLoading({
         id: "deploy",
