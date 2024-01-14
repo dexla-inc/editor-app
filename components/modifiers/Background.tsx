@@ -142,48 +142,45 @@ export const Modifier = withModifier(
             />
           </Stack>
           {backgroundSize !== "contain" && backgroundSize !== "cover" ? (
-            <>
-              <UnitInput
-                label="Percent"
-                size="xs"
-                options={[{ value: "%", label: "%" }]}
-                value={backgroundSize as any}
-                onChange={(value) => {
-                  form.setFieldValue("backgroundSize", value as any);
-                  setBackgroundSize(value as string);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    style: { backgroundSize: value },
-                  });
-                }}
-              />
-
-              <UnitInput
-                label="Position X"
-                {...form.getInputProps("backgroundPositionX")}
-                onChange={(value) => {
-                  form.setFieldValue("backgroundPositionX", value as any);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    style: { backgroundPositionX: value },
-                  });
-                }}
-              />
-              <UnitInput
-                label="Position Y"
-                {...form.getInputProps("backgroundPositionY")}
-                onChange={(value) => {
-                  form.setFieldValue("backgroundPositionY", value as any);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    style: { backgroundPositionY: value },
-                  });
-                }}
-              />
-            </>
+            <UnitInput
+              label="Percent"
+              size="xs"
+              options={[{ value: "%", label: "%" }]}
+              value={backgroundSize as any}
+              onChange={(value) => {
+                form.setFieldValue("backgroundSize", value as any);
+                setBackgroundSize(value as string);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  style: { backgroundSize: value },
+                });
+              }}
+            />
           ) : (
             <TextInput
               {...form.getInputProps("backgroundSize")}
               display="none"
             />
           )}
+          <UnitInput
+            label="Position X"
+            {...form.getInputProps("backgroundPositionX")}
+            onChange={(value) => {
+              form.setFieldValue("backgroundPositionX", value as any);
+              debouncedTreeUpdate(selectedComponentIds, {
+                style: { backgroundPositionX: value },
+              });
+            }}
+          />
+          <UnitInput
+            label="Position Y"
+            {...form.getInputProps("backgroundPositionY")}
+            onChange={(value) => {
+              form.setFieldValue("backgroundPositionY", value as any);
+              debouncedTreeUpdate(selectedComponentIds, {
+                style: { backgroundPositionY: value },
+              });
+            }}
+          />
           <Stack spacing={2}>
             <TopLabel text="Repeat" />
             <SegmentedControl
