@@ -1,5 +1,8 @@
 import { useVariable } from "@/hooks/reactQuery/useVariable";
-import { VariableTypesOptions } from "@/requests/variables/types";
+import {
+  FrontEndTypes,
+  VariableTypesOptions,
+} from "@/requests/variables/types";
 import { useVariableStore } from "@/stores/variables";
 import { requiredFieldValidator } from "@/utils/common";
 import { Button, Select, Stack, TextInput, Textarea } from "@mantine/core";
@@ -9,7 +12,7 @@ import { useEffect, useState } from "react";
 
 type VariablesFormValues = {
   name: string;
-  type: string;
+  type: FrontEndTypes;
   defaultValue: string;
 };
 
@@ -29,7 +32,7 @@ export const VariableForm = ({ variableId }: Props) => {
   const form = useForm<VariablesFormValues>({
     initialValues: {
       name: "",
-      type: "",
+      type: "TEXT",
       defaultValue: "",
     },
     validate: {

@@ -25,12 +25,20 @@ export const VariableList = ({ projectId }: Props) => {
   const [filter, setFilter] = useDebouncedState("", 250);
   const [variableToEdit, setVariableToEdit] = useState(undefined);
   const variableList = useVariableStore((state) => state.variableList);
+  // This gets the latest variables. We need the store just to load the current value
+  //const { data: variableList, invalidate } = useVariableListQuery(projectId);
+
+  const deleteVar = async (variableId: string) => {
+    await deleteVariable(projectId, variableId);
+    //invalidate();
+  };
 
   const rows = (variableList ?? [])?.map((variable: any) => (
     <tr key={variable.id}>
       <td>{variable.name}</td>
       <td>{variable.type}</td>
       <td>{variable.defaultValue}</td>
+      <td>{variable.value}</td>
       <td>
         <Group>
           <ActionIcon
@@ -42,10 +50,7 @@ export const VariableList = ({ projectId }: Props) => {
           >
             <IconEdit />
           </ActionIcon>
-          <ActionIcon
-            size="xs"
-            onClick={async () => await deleteVariable(projectId, variable.id)}
-          >
+          <ActionIcon size="xs" onClick={() => deleteVar(variable.id)}>
             <IconX />
           </ActionIcon>
         </Group>
@@ -73,7 +78,8 @@ export const VariableList = ({ projectId }: Props) => {
                   <th>Name</th>
                   <th>Type</th>
                   <th>Default Value</th>
-                  <th>Actions</th>
+                  <th>Current Value</th>
+                  <th style={{ width: 80 }}>Actions</th>
                 </tr>
               </thead>
               <tbody>{rows}</tbody>
