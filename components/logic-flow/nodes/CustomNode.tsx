@@ -44,7 +44,7 @@ export const CustomNode = (props: CustomNodeProps) => {
   const { data, selected, avatar: Avatar, ...node } = props;
   const { style } = props;
   const { selectedNode } = useFlowStore();
-  console.log(selectedNode?.id, node.id);
+
   return (
     <Card
       p={0}

@@ -5,8 +5,9 @@ import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
-import { Box, Flex, Select, SelectProps, Text } from "@mantine/core";
+import { Box, Flex, Group, Select, SelectProps, Text } from "@mantine/core";
 import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
+import { EndpointExampleResponseTest } from "@/components/EndpointExampleResponseTest";
 
 const selectItemStyles = (method: MethodTypes) => ({
   fontSize: 8,
@@ -48,8 +49,6 @@ export const EndpointSelect = ({ value, ...props }: EndpointSelectProps) => {
   const projectId = useEditorStore((state) => state.currentProjectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint>();
-
-  // const { onChange, ...rest } = props;
 
   const selectData = useMemo(() => {
     return (
@@ -108,7 +107,13 @@ export const EndpointSelect = ({ value, ...props }: EndpointSelectProps) => {
         {...props}
       />
       {selectedEndpoint?.exampleResponse ? (
-        <EndpointExampleResponsePreview endpoint={selectedEndpoint} />
+        <Group noWrap>
+          <EndpointExampleResponseTest
+            endpoint={selectedEndpoint}
+            projectId={projectId}
+          />
+          <EndpointExampleResponsePreview endpoint={selectedEndpoint} />
+        </Group>
       ) : null}
     </>
   );
