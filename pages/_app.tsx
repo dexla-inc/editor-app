@@ -1,5 +1,9 @@
+import LogicFlowInitialModal from "@/components/logic-flow/LogicFlowInitialModal";
 import { ContextMenuProvider } from "@/contexts/ContextMenuProvider";
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
+import AuthProvider from "@/pages/AuthProvider";
+import InitializeVariables from "@/pages/InitializeVariables";
+import InstantiatePropelAuthStore from "@/pages/InstantiatePropelAuthStore";
 import { useUserConfigStore } from "@/stores/userConfig";
 import {
   DARK_MODE,
@@ -10,6 +14,7 @@ import {
 } from "@/utils/branding";
 import { cache } from "@/utils/emotionCache";
 import { Global, MantineProvider } from "@mantine/core";
+import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
 import {
   Hydrate,
@@ -24,10 +29,6 @@ import Script from "next/script";
 import { useEffect, useState } from "react";
 import TagManager from "react-gtm-module";
 import { ReactFlowProvider } from "reactflow";
-import AuthProvider from "./AuthProvider";
-import InstantiatePropelAuthStore from "./InstantiatePropelAuthStore";
-import LogicFlowInitialModal from "@/components/logic-flow/LogicFlowInitialModal";
-import { ModalsProvider } from "@mantine/modals";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -118,6 +119,7 @@ export default function App(props: AppProps) {
           )}
           <main className={inter.variable}>
             <QueryClientProvider client={queryClient}>
+              <InitializeVariables isLive={isLive} pageProps={pageProps} />
               <Hydrate state={pageProps.dehydratedState}>
                 <ModalsProvider modals={{ logicFlows: LogicFlowInitialModal }}>
                   <Notifications />

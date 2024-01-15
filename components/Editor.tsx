@@ -5,13 +5,11 @@ import { Cursor } from "@/components/Cursor";
 import { EditorCanvas } from "@/components/EditorCanvas";
 import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
-import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { useVariableStore } from "@/stores/variables";
 import { globalStyles } from "@/utils/branding";
 import {
   ASIDE_WIDTH,
@@ -55,12 +53,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const user = usePropelAuthStore((state) => state.user);
-  const initializeVariableList = useVariableStore(
-    (state) => state.initializeVariableList,
-  );
-
-  const { data: variables, isLoading: isVariablesFetching } =
-    useVariableListQuery(projectId);
 
   useGetPageData({ projectId, pageId });
 
@@ -87,12 +79,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
     // we don't unnnecessary rerendering of the editor
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setEditorTree]);
-
-  useEffect(() => {
-    if (!isVariablesFetching && variables?.results)
-      initializeVariableList(variables?.results);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variables, pageId]);
 
   useEffect(() => {
     if (pageId) {
