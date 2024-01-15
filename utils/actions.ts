@@ -652,6 +652,8 @@ export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
 
 const getVariableValueFromVariableId = (variableId = "") => {
   const variableList = useVariableStore.getState().variableList;
+  // TODO: Williams, variableList is empty on deployed apps.
+  console.log("variableList", variableList);
   const actionVariable = variableId.split(`var_`)[1];
 
   if (!actionVariable) {
@@ -686,8 +688,8 @@ const getVariableValueFromVariableId = (variableId = "") => {
 
 export const openToastAction = async ({ action }: OpenToastActionParams) => {
   showNotification({
-    title: await getVariableValueFromVariableId(action.title),
-    message: await getVariableValueFromVariableId(action.message),
+    title: getVariableValueFromVariableId(action.title),
+    message: getVariableValueFromVariableId(action.message),
   });
 };
 
@@ -716,9 +718,20 @@ export const changeStateAction = ({
   });
 };
 
-function getElementValue(value: string, iframeWindow: any): string {
+function getCurrentDocument() {
+  const isLive = useEditorStore.getState().isLive;
+  if (isLive) return document;
+
+  const iframeWindow = useEditorStore.getState().iframeWindow;
+  if (iframeWindow) return iframeWindow.document;
+
+  console.error("iframe is empty", iframeWindow);
+}
+
+function getElementValue(value: string): string {
+  const currentDocument = getCurrentDocument();
   const _id = value.split("valueOf_")[1];
-  let el = iframeWindow?.document.getElementById(_id);
+  let el = currentDocument?.getElementById(_id);
   const tag = el?.tagName?.toLowerCase();
 
   if (tag !== "input") {
@@ -739,8 +752,9 @@ function getElementValue(value: string, iframeWindow: any): string {
   return (el as HTMLInputElement)?.value ?? "";
 }
 
-function getQueryElementValue(value: string, iframeWindow: any): string {
-  const el = iframeWindow?.document.querySelector(
+function getQueryElementValue(value: string): string {
+  const currentDocument = getCurrentDocument();
+  const el = currentDocument?.querySelector(
     `input#${value.split("queryString_pass_")[1]}`,
   ) as HTMLInputElement;
   return el?.value ?? "";
@@ -750,14 +764,13 @@ const getVariablesValue = async (objs: Record<string, string>) => {
   return await Object.values(objs).reduce(async (acc, key) => {
     const result = await acc;
     let value = key;
-    const iframeWindow = useEditorStore.getState().iframeWindow;
 
     if (key.startsWith(`valueOf_`)) {
-      value = getElementValue(key, iframeWindow);
+      value = getElementValue(key);
     }
 
     if (key?.startsWith(`queryString_pass_`)) {
-      value = getQueryElementValue(key, iframeWindow);
+      value = getQueryElementValue(key);
     }
 
     if (key.startsWith(`var_`)) {
@@ -806,7 +819,7 @@ const getUrl = (
     : apiUrl;
 };
 
-const getBody = (endpoint: any, action: any, variableValues: any) => {
+const getBody = (endpoint: Endpoint, action: any, variableValues: any) => {
   return endpoint?.methodType === "POST"
     ? Object.keys(action.binds?.body ?? {}).reduce((body: any, key: string) => {
         let value = action.binds.body[key] as string;
@@ -830,7 +843,6 @@ const prepareRequestData = async (action: any, endpoint: Endpoint) => {
 
   const url = getUrl(keys, apiUrl, action, variableValues);
   const body = getBody(endpoint, action, variableValues);
-
   return { url, body };
 };
 
@@ -1416,7 +1428,7 @@ export const changeVariableAction = async ({
         action.variableId,
       );
     } catch (error) {
-      console.log({ error });
+      console.error({ error });
       return;
     }
   }
