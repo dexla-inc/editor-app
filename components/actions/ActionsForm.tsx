@@ -8,6 +8,7 @@ import { ActionIcon, Button, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import startCase from "lodash.startcase";
 import { nanoid } from "nanoid";
+import { useEffect, useMemo } from "react";
 
 type ActionProps = {
   sequentialTo?: string;
@@ -33,27 +34,36 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
   });
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
-  const componentName = component?.name;
   const componentActions = component?.actions ?? [];
 
-  const isSequential = !!sequentialTo;
   const isCopiedAction = !!copiedAction && !!copiedAction.length;
 
-  if (!componentName) return null;
+  const componentName = component?.name;
+  const isSequential = !!sequentialTo;
+  const availableTriggers = useMemo(() => {
+    if (!componentName) return [];
 
-  const ComponentDefinition = componentMapper[componentName];
-  const availableTriggers = isSequential
-    ? ComponentDefinition.sequentialTriggers.filter(
-        (t) =>
-          !(component?.actions ?? []).find(
-            (a: Action) =>
-              (a.trigger as SequentialTrigger) === t &&
-              a.sequentialTo === sequentialTo,
-          ),
-      )
-    : ComponentDefinition.actionTriggers.filter(
-        (t) => !(component?.actions ?? []).find((a: Action) => a.trigger === t),
-      );
+    const ComponentDefinition = componentMapper[componentName];
+    const triggers = isSequential
+      ? ComponentDefinition.sequentialTriggers
+      : ComponentDefinition.actionTriggers;
+
+    return triggers.filter(
+      (t) =>
+        !(component?.actions ?? []).find((a: Action) =>
+          isSequential
+            ? (a.trigger as SequentialTrigger) === t &&
+              a.sequentialTo === sequentialTo
+            : a.trigger === t,
+        ),
+    );
+  }, [componentName, isSequential, sequentialTo]);
+
+  useEffect(() => {
+    if (availableTriggers.length > 0) {
+      form.setFieldValue("trigger", availableTriggers[0]);
+    }
+  }, [availableTriggers, form]);
 
   const pasteAction = (copiedAction: Action[]) => {
     updateTreeComponentActions(
