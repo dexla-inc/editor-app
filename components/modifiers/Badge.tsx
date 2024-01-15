@@ -5,7 +5,7 @@ import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Stack, TextInput } from "@mantine/core";
+import { SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconIdBadge } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -23,7 +23,6 @@ export const Modifier = withModifier(
     useEffect(() => {
       form.setValues(
         merge({}, requiredModifiers.badge, {
-          value: selectedComponent.props?.children,
           type: selectedComponent.props?.type,
           size: selectedComponent.props?.size,
           radius: selectedComponent.props?.radius,
@@ -48,17 +47,6 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          <TextInput
-            label="Value"
-            size="xs"
-            {...form.getInputProps("value")}
-            onChange={(e) => {
-              form.setFieldValue("value", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                children: e.target.value,
-              });
-            }}
-          />
           <SizeSelector
             {...form.getInputProps("size")}
             onChange={(value) => {

@@ -46,6 +46,7 @@ import * as TabsPanelModifier from "@/components/modifiers/TabsPanel";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TextareaModifier from "@/components/modifiers/Textaarea";
 import * as ChartModifier from "@/components/modifiers/chart/Chart";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
@@ -162,6 +163,10 @@ export const EditorAsideSections = () => {
   const setInitiallyOpenedModifiersByComponent = useUserConfigStore(
     (state) => state.setInitiallyOpenedModifiersByComponent,
   );
+
+  const projectId = useEditorStore((state) => state.currentProjectId);
+  const { data: endpoints } = useDataSourceEndpoints(projectId);
+
   const [tab, setTab] = useState<Tab>("design");
   const selectedComponentId = useDeferredValue(_selectedComponentId);
   const [createState, setCreateState] = useState<undefined | string>(undefined);
@@ -461,7 +466,11 @@ export const EditorAsideSections = () => {
       {tab === "data" && DataSection && component && (
         <Stack>
           <Box px="md">
-            <DataSection key={component?.id} component={component} />
+            <DataSection
+              key={component?.id}
+              component={component}
+              endpoints={endpoints}
+            />
           </Box>
         </Stack>
       )}

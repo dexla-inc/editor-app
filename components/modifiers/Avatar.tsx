@@ -3,7 +3,7 @@ import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Select, Stack, TextInput } from "@mantine/core";
+import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconUser } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -19,9 +19,7 @@ export const Modifier = withModifier(
     useEffect(() => {
       form.setValues(
         merge({}, requiredModifiers.avatar, {
-          value: selectedComponent.props?.children,
           variant: selectedComponent.props?.variant,
-          src: selectedComponent.props?.src,
           radius: selectedComponent.props?.radius,
           size: selectedComponent.props?.size,
           color: selectedComponent.props?.color,
@@ -42,30 +40,6 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          <TextInput
-            label="Text"
-            type="text"
-            size="xs"
-            {...form.getInputProps("value")}
-            onChange={(e) => {
-              form.setFieldValue("value", e.target.value);
-              const val = !!e.target.value ? e.target.value : null;
-              debouncedTreeUpdate(selectedComponentIds, { children: val });
-            }}
-          />
-          <TextInput
-            label="Source"
-            placeholder="https://example.com/image.png"
-            type="url"
-            size="xs"
-            {...form.getInputProps("src")}
-            onChange={(e) => {
-              form.setFieldValue("src", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                src: e.target.value,
-              });
-            }}
-          />
           <Select
             label="Variant"
             size="xs"

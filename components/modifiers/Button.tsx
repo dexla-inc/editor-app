@@ -7,7 +7,7 @@ import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Select, Stack, TextInput } from "@mantine/core";
+import { SegmentedControl, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -32,7 +32,6 @@ export const Modifier = withModifier(
             compact: theme.hasCompactButtons,
           },
           {
-            value: selectedComponent.props?.children,
             type: selectedComponent.props?.type,
             variant: selectedComponent.props?.variant,
             size: selectedComponent.props?.size,
@@ -50,17 +49,6 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          <TextInput
-            label="Value"
-            size="xs"
-            {...form.getInputProps("value")}
-            onChange={(e) => {
-              form.setFieldValue("value", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                children: e.target.value,
-              });
-            }}
-          />
           {/* <Select
             label="Variant"
             size="xs"
