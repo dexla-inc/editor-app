@@ -270,7 +270,7 @@ export const GradientPicker = ({
   getValue,
   setFieldValue,
 }: GradientPickerProps) => {
-  const [opened, { toggle }] = useDisclosure(false);
+  const [opened, { toggle, close }] = useDisclosure(false);
 
   const gradientSwatch = (
     <Paper
@@ -288,10 +288,11 @@ export const GradientPicker = ({
       <Popover opened={opened} withinPortal position="left">
         <Popover.Target>
           <TextInput
-            onClick={toggle}
+            onFocus={toggle}
+            onBlur={close}
             icon={gradientSwatch}
-            readOnly
             value={getValue()}
+            onChange={(e) => setFieldValue("bg", e.target.value)}
           />
         </Popover.Target>
         <Popover.Dropdown p={0}>
