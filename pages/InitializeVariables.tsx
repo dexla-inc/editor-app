@@ -26,5 +26,5 @@ export const InitializeVariables = ({ isLive, pageProps }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_pageId, variables]);
 
-  return null;
+  return <></>;
 };
