@@ -1,4 +1,5 @@
 import { VariableParams, VariableResponse } from "@/requests/variables/types";
+import isEqual from "lodash.isequal";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -15,8 +16,10 @@ export const useVariableStore = create<VariablesState>()(
   persist(
     (set, get) => ({
       variableList: [],
-      initializeVariableList: async (variableList) => {
-        set({ variableList });
+      initializeVariableList: (variableList) => {
+        const _variableList = get().variableList;
+        const isArraysEqual = isEqual(_variableList, variableList);
+        if (!isArraysEqual) set({ variableList });
       },
       setVariable: (variable, id) => {
         const _variableList = get().variableList;

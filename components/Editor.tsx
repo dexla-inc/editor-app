@@ -59,7 +59,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
     (state) => state.initializeVariableList,
   );
 
-  const { data: variables } = useVariableListQuery(projectId);
+  const { data: variables, isLoading: isVariablesFetching } =
+    useVariableListQuery(projectId);
 
   useGetPageData({ projectId, pageId });
 
@@ -88,13 +89,15 @@ export const Editor = ({ projectId, pageId }: Props) => {
   }, [setEditorTree]);
 
   useEffect(() => {
-    const initializeVariables = async () =>
-      initializeVariableList(variables?.results || []);
+    if (!isVariablesFetching && variables?.results)
+      initializeVariableList(variables?.results);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variables, pageId]);
 
+  useEffect(() => {
     if (pageId) {
       liveblocks.leaveRoom();
       liveblocks.enterRoom(pageId);
-      initializeVariables();
     }
 
     return () => {
