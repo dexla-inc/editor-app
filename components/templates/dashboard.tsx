@@ -304,16 +304,6 @@ export const template = async (
           flexWrap: "wrap",
         },
       },
-      actions: [
-        {
-          id: nanoid(),
-          trigger: "onMount",
-          action: {
-            name: "triggerLogicFlow",
-            logicFlowId: logicFlow.id,
-          },
-        },
-      ],
       children: stats,
     };
   }
@@ -444,16 +434,6 @@ export const template = async (
               flexWrap: "wrap",
             },
           },
-          actions: [
-            {
-              id: nanoid(),
-              trigger: "onMount",
-              action: {
-                name: "triggerLogicFlow",
-                logicFlowId: logicFlow.id,
-              },
-            },
-          ],
           children: _people,
         });
       }),

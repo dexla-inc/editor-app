@@ -13,7 +13,8 @@ import {
   THIN_ORANGE_BASE_SHADOW,
 } from "@/utils/branding";
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
-import { Component, updateTreeComponent } from "@/utils/editor";
+import { Component } from "@/utils/editor";
+import { removeKeysRecursive } from "@/utils/removeKeys";
 import { BoxProps, CSSObject } from "@mantine/core";
 import merge from "lodash.merge";
 import { Router, useRouter } from "next/router";
@@ -25,7 +26,6 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { removeKeysRecursive } from "@/utils/removeKeys";
 
 type Props = {
   id: string;
@@ -34,7 +34,7 @@ type Props = {
   selectedByOther?: string;
 } & BoxProps;
 
-const nonDefaultActionTriggers = ["onMount", "onSuccess", "onError"];
+const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
 export const EditableComponent = ({
   id,
@@ -98,7 +98,10 @@ export const EditableComponent = ({
   };
 
   const actions: Action[] = component.actions ?? [];
+
+  // TODO: This should be the new way of binding data through the data tab
   const onMountAction: Action | undefined = actions.find(
+    // @ts-ignore
     (action: Action) => action.trigger === "onMount",
   );
 

@@ -71,7 +71,6 @@ const triggers = [
   "onClick",
   "onHover",
   "onDoubleClick", // Do not think we need this, can just use onClick
-  "onMount",
   "onChange",
   "onFocus",
   "onBlur",
@@ -1193,9 +1192,10 @@ export const reloadComponentAction = ({
     useEditorStore.getState().removeOnMountActionsRan;
   const component = getComponentById(editorTree.root, action.componentId);
 
-  const onMountActionId = component?.actions?.find(
-    (a) => a.trigger === "onMount",
-  )?.id;
+  const onMountActionId = "";
+  // const onMountActionId = component?.actions?.find(
+  //   (a) => a.trigger === "onMount",
+  // )?.id;
 
   if (onMountActionId) {
     removeOnMountActionsRan(onMountActionId);
