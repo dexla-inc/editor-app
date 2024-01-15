@@ -14,11 +14,8 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
       children: component.props?.children ?? "",
       src: component.props?.src ?? "",
       hideIfDataIsEmpty: component.props?.hideIfDataIsEmpty ?? false,
-      dataType: component.props?.dataType ?? "static",
       endpoint: component.props?.endpoint ?? undefined,
       actionCode: component.props?.actionCode ?? {},
-      valueKey: component.props?.valueKey ?? "",
-      sourceKey: component.props?.sourceKey ?? "",
     },
   });
 
