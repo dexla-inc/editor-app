@@ -1,9 +1,8 @@
-import { DataTabSelect } from "@/components/data/DataTabSelect";
 import { DataProps } from "@/components/data/type";
 import { Endpoint } from "@/requests/datasources/types";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { debouncedTreeUpdate } from "@/utils/editor";
-import { Checkbox, Stack, TextInput, Textarea } from "@mantine/core";
+import { Checkbox, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useState } from "react";
 import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
@@ -20,10 +19,8 @@ export const TextData = ({ component, endpoints }: DataProps) => {
     initialValues: {
       [itemKey]: component.props?.[itemKey] ?? "",
       hideIfDataIsEmpty: component.props?.hideIfDataIsEmpty ?? false,
-      dataType: component.props?.dataType ?? "static",
       endpoint: component.props?.endpoint ?? undefined,
       actionCode: component.props?.actionCode ?? {},
-      valueKey: component.props?.valueKey ?? "",
     },
   });
 
@@ -39,62 +36,43 @@ export const TextData = ({ component, endpoints }: DataProps) => {
   return (
     <form>
       <Stack spacing="xs">
-        <DataTabSelect
-          {...form.getInputProps("dataType")}
-          setFieldValue={setFieldValue}
+        <EndpointSelect
+          {...form.getInputProps("endpoint")}
+          onChange={(selected) => {
+            setFieldValue("endpoint", selected!);
+            setSelectedEndpoint(
+              endpoints?.results?.find((e) => e.id === selected),
+            );
+          }}
         />
-        {form.values.dataType === "static" && (
-          <>
-            <Textarea
-              autosize
-              label="Value"
-              size="xs"
-              {...form.getInputProps(itemKey)}
-              onChange={(e) => setFieldValue(itemKey, e.target.value)}
-            />
-            {isTextComponent && (
-              <Checkbox
-                size="xs"
-                label="Hide text when data is empty"
-                {...form.getInputProps("hideIfDataIsEmpty", {
-                  type: "checkbox",
-                })}
-                onChange={(e) =>
-                  setFieldValue("hideIfDataIsEmpty", e.target.checked)
-                }
-              />
-            )}
-          </>
-        )}
-        {form.values.dataType === "dynamic" && (
-          <>
-            <EndpointSelect
-              {...form.getInputProps("endpoint")}
-              onChange={(selected) => {
-                setFieldValue("endpoint", selected!);
-                setSelectedEndpoint(
-                  endpoints?.results?.find((e) => e.id === selected),
-                );
-              }}
-            />
-            <TextInput size="xs" label="Results key" placeholder="user.list" />
-            <ComponentToBindFromInput
-              componentId={component?.id!}
-              onPickVariable={(variable: string) =>
-                setFieldValue("valueKey", variable)
-              }
-              actionData={[]}
-              javascriptCode={form.values.actionCode}
-              onChangeJavascriptCode={(javascriptCode: string, label: string) =>
-                setFieldValue(`actionCode.${label}`, javascriptCode)
-              }
-              size="xs"
-              label="Value"
-              {...form.getInputProps("valueKey")}
-              onChange={(e) => setFieldValue("valueKey", e.currentTarget.value)}
-              {...AUTOCOMPLETE_OFF_PROPS}
-            />
-          </>
+        <TextInput size="xs" label="Results key" placeholder="user.list" />
+        <ComponentToBindFromInput
+          componentId={component?.id!}
+          onPickVariable={(variable: string) =>
+            setFieldValue(itemKey, variable)
+          }
+          actionData={[]}
+          javascriptCode={form.values.actionCode}
+          onChangeJavascriptCode={(javascriptCode: string, label: string) =>
+            setFieldValue(`actionCode.${label}`, javascriptCode)
+          }
+          size="xs"
+          label="Value"
+          {...form.getInputProps(itemKey)}
+          onChange={(e) => setFieldValue(itemKey, e.currentTarget.value)}
+          {...AUTOCOMPLETE_OFF_PROPS}
+        />
+        {isTextComponent && (
+          <Checkbox
+            size="xs"
+            label="Hide text when data is empty"
+            {...form.getInputProps("hideIfDataIsEmpty", {
+              type: "checkbox",
+            })}
+            onChange={(e) =>
+              setFieldValue("hideIfDataIsEmpty", e.target.checked)
+            }
+          />
         )}
       </Stack>
     </form>

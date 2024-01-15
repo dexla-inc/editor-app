@@ -26,6 +26,7 @@ export const ComponentToBindFromInput = ({
   actionData,
   bindAttributes,
   placeholder = "",
+  type = "text",
   label = "Component to bind",
   isLogicFlow,
   javascriptCode,
@@ -65,6 +66,7 @@ export const ComponentToBindFromInput = ({
       size="xs"
       placeholder={placeholder}
       label={label}
+      type={type}
       onFocus={(e) => {
         setHighlightedComponentId(e.target.value);
       }}

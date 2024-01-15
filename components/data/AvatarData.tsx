@@ -1,9 +1,8 @@
-import { DataTabSelect } from "@/components/data/DataTabSelect";
 import { DataProps } from "@/components/data/type";
 import { Endpoint } from "@/requests/datasources/types";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { debouncedTreeUpdate } from "@/utils/editor";
-import { Stack, TextInput, Textarea } from "@mantine/core";
+import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useState } from "react";
 import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
@@ -35,63 +34,36 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
   return (
     <form>
       <Stack spacing="xs">
-        <DataTabSelect
-          {...form.getInputProps("dataType")}
-          setFieldValue={setFieldValue}
+        <EndpointSelect
+          {...form.getInputProps("endpoint")}
+          onChange={(selected) => {
+            setFieldValue("endpoint", selected!);
+            setSelectedEndpoint(
+              endpoints?.results?.find((e) => e.id === selected),
+            );
+          }}
         />
-        {form.values.dataType === "static" && (
-          <>
-            <Textarea
-              autosize
-              label="Value"
-              size="xs"
-              {...form.getInputProps("children")}
-              onChange={(e) => setFieldValue("children", e.target.value)}
-            />
-            <TextInput
-              label="Source"
-              placeholder="https://example.com/image.png"
-              type="url"
-              size="xs"
-              {...form.getInputProps("src")}
-              onChange={(e) => setFieldValue("src", e.target.value)}
-            />
-          </>
-        )}
-        {form.values.dataType === "dynamic" && (
-          <>
-            <EndpointSelect
-              {...form.getInputProps("endpoint")}
-              onChange={(selected) => {
-                setFieldValue("endpoint", selected!);
-                setSelectedEndpoint(
-                  endpoints?.results?.find((e) => e.id === selected),
-                );
-              }}
-            />
-            <TextInput size="xs" label="Results key" placeholder="user.list" />
-            {["valueKey", "sourceKey"].map((key) => (
-              <ComponentToBindFromInput
-                key={key}
-                componentId={component?.id!}
-                onPickVariable={(variable: string) =>
-                  setFieldValue(key, variable)
-                }
-                actionData={[]}
-                javascriptCode={form.values.actionCode}
-                onChangeJavascriptCode={(
-                  javascriptCode: string,
-                  label: string,
-                ) => setFieldValue(`actionCode.${label}`, javascriptCode)}
-                size="xs"
-                label={key === "valueKey" ? "Value" : "Source"}
-                {...form.getInputProps(key)}
-                onChange={(e) => setFieldValue(key, e.currentTarget.value)}
-                {...AUTOCOMPLETE_OFF_PROPS}
-              />
-            ))}
-          </>
-        )}
+        <TextInput size="xs" label="Results key" placeholder="user.list" />
+        {["children", "src"].map((key) => (
+          <ComponentToBindFromInput
+            key={key}
+            componentId={component?.id!}
+            onPickVariable={(variable: string) => setFieldValue(key, variable)}
+            actionData={[]}
+            javascriptCode={form.values.actionCode}
+            onChangeJavascriptCode={(javascriptCode: string, label: string) =>
+              setFieldValue(`actionCode.${label}`, javascriptCode)
+            }
+            size="xs"
+            label={key === "children" ? "Value" : "Source"}
+            {...(key === "children"
+              ? {}
+              : { placeholder: "https://example.com/image.png", type: "url" })}
+            {...form.getInputProps(key)}
+            onChange={(e) => setFieldValue(key, e.currentTarget.value)}
+            {...AUTOCOMPLETE_OFF_PROPS}
+          />
+        ))}
       </Stack>
     </form>
   );
