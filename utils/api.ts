@@ -11,12 +11,12 @@ type FetchType = {
 };
 
 export const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+const authClient = createClient({
+  authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
+  enableBackgroundTokenRefresh: true,
+});
 
 export async function getAuthToken() {
-  const authClient = createClient({
-    authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
-    enableBackgroundTokenRefresh: true,
-  });
   const authInfo = await authClient.getAuthenticationInfoOrNull();
   return authInfo?.accessToken;
 }
