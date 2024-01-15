@@ -88,13 +88,13 @@ export const Editor = ({ projectId, pageId }: Props) => {
   }, [setEditorTree]);
 
   useEffect(() => {
-    const initializeVariables = async () =>
-      initializeVariableList(variables?.results || []);
+    variables?.results && initializeVariableList(variables?.results);
+  }, [variables, pageId]);
 
+  useEffect(() => {
     if (pageId) {
       liveblocks.leaveRoom();
       liveblocks.enterRoom(pageId);
-      initializeVariables();
     }
 
     return () => {
