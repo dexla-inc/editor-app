@@ -8,7 +8,7 @@ type Props = {
   pageProps: any;
 };
 
-export const InitializeVariables = ({ isLive, pageProps }: Props) => {
+const InitializeVariables = ({ isLive, pageProps }: Props) => {
   const projectId = useEditorStore((state) => state.currentProjectId);
   const pageId = useEditorStore((state) => state.currentPageId);
   const _projectId = pageProps.id || projectId;
@@ -26,5 +26,7 @@ export const InitializeVariables = ({ isLive, pageProps }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_pageId, variables]);
 
-  return <></>;
+  return null;
 };
+
+export default InitializeVariables;
