@@ -189,7 +189,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     const isGridItems = ["Grid", "GridColumn"].includes(componentToPaste.name);
     const isTargetGridItems = ["Grid", "GridColumn"].includes(component?.name!);
     const isLayoutCategory =
-      structureMapper[componentToPaste.name!].category === "Layout";
+      structureMapper[componentToPaste.name]?.category === "Layout";
     const isAllowedGridMatch =
       isGridItems === isTargetGridItems &&
       component?.name === componentToPaste.name;
