@@ -1,5 +1,5 @@
 import { PatchParams } from "@/requests/types";
-import { createClient } from "@propelauth/javascript";
+import { IAuthClient, createClient } from "@propelauth/javascript";
 
 type FetchType = {
   url: string;
@@ -11,13 +11,21 @@ type FetchType = {
 };
 
 export const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
-const authClient = createClient({
-  authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
-  enableBackgroundTokenRefresh: true,
-});
+let authClient: IAuthClient;
+
+const initializeAuthClient = () => {
+  if (!authClient) {
+    authClient = createClient({
+      authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
+      enableBackgroundTokenRefresh: true,
+    });
+  }
+  return authClient;
+};
 
 export async function getAuthToken() {
-  const authInfo = await authClient.getAuthenticationInfoOrNull();
+  const client = initializeAuthClient();
+  const authInfo = await client.getAuthenticationInfoOrNull();
   return authInfo?.accessToken;
 }
 
