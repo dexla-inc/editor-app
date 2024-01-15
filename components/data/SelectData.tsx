@@ -1,16 +1,13 @@
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { EndpointSelect } from "@/components/EndpointSelect";
 import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 import { DataTabSelect } from "@/components/data/DataTabSelect";
 import { DataProps } from "@/components/data/type";
 import { Endpoint } from "@/requests/datasources/types";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { debouncedTreeUpdate } from "@/utils/editor";
-import { Stack, TextInput } from "@mantine/core";
+import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useState } from "react";
-
-type Tab = "static" | "dynamic";
+import get from "lodash.get";
 
 export const SelectData = ({ component, endpoints }: DataProps) => {
   const form = useForm({
@@ -21,12 +18,13 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
       actionCode: component.props?.actionCode ?? {},
       dataLabelKey: component.props?.dataLabelKey ?? "",
       dataValueKey: component.props?.dataValueKey ?? "",
+      resultsKey: component.props?.resultsKey ?? "",
     },
   });
 
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
-  >(form.values.endpoint);
+  >(endpoints?.results?.find((e) => e.id === component.props?.endpoint));
 
   const setFieldValue = (key: any, value: any) => {
     form.setFieldValue(key, value);
@@ -34,14 +32,9 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
   };
 
   const exampleResponse = JSON.parse(selectedEndpoint?.exampleResponse ?? "[]");
-  const actionData =
-    exampleResponse.length &&
-    Object.keys(exampleResponse[0])?.map((item: string) => {
-      return {
-        id: item,
-        name: item,
-      };
-    });
+  const keysList = Object.keys(
+    get(exampleResponse, form.values.resultsKey || "[0]", {}),
+  );
 
   return (
     <form>
@@ -72,27 +65,27 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
                 size="xs"
                 label="Results key"
                 placeholder="user.list"
+                {...form.getInputProps("resultsKey")}
+                onChange={(e) => {
+                  setFieldValue("resultsKey", e.target.value);
+                }}
               />
-              {["dataLabelKey", "dataValueKey"].map((key) => (
-                <ComponentToBindFromInput
-                  key={key}
-                  componentId={component?.id!}
-                  onPickVariable={(variable: string) =>
-                    setFieldValue(key, variable)
-                  }
-                  actionData={actionData}
-                  javascriptCode={form.values.actionCode}
-                  onChangeJavascriptCode={(
-                    javascriptCode: string,
-                    label: string,
-                  ) => setFieldValue(`actionCode.${label}`, javascriptCode)}
-                  size="xs"
-                  label={key === "dataLabelKey" ? "Label" : "Value"}
-                  {...form.getInputProps(key)}
-                  onChange={(e) => setFieldValue(key, e.currentTarget.value)}
-                  {...AUTOCOMPLETE_OFF_PROPS}
-                />
-              ))}
+              <Select
+                label="Label"
+                data={keysList}
+                {...form.getInputProps("dataLabelKey")}
+                onChange={(selected) => {
+                  setFieldValue("dataLabelKey", selected);
+                }}
+              />
+              <Select
+                label="Value"
+                data={keysList}
+                {...form.getInputProps("dataValueKey")}
+                onChange={(selected) => {
+                  setFieldValue("dataValueKey", selected);
+                }}
+              />
             </>
           )}
         </Stack>

@@ -11,9 +11,6 @@ export const EndpointExampleResponsePreview = ({ endpoint }: Props) => {
   return (
     <Popover width={300} position="bottom-end" withArrow withinPortal>
       <Popover.Target>
-        {/* <ActionIcon variant="default">
-          <Icon name="IconJson" />
-        </ActionIcon> */}
         <Anchor size="xs">Preview Response</Anchor>
       </Popover.Target>
       <Popover.Dropdown

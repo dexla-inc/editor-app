@@ -10,6 +10,7 @@ import get from "lodash.get";
 import merge from "lodash.merge";
 import { forwardRef, memo, useCallback, useState } from "react";
 import { InputLoader } from "../InputLoader";
+import { useFetchedDataStore } from "@/stores/fetchedData";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -24,9 +25,6 @@ const SelectComponent = forwardRef(
   ) => {
     const {
       children,
-      data: dataProp,
-      exampleData = {},
-      dataPath,
       triggers,
       loading,
       customText,
@@ -38,6 +36,7 @@ const SelectComponent = forwardRef(
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setInputValue = useInputsStore((state) => state.setInputValue);
     const [localInputValue, setLocalInputValue] = useState(inputValue ?? "");
+    const dataList = useFetchedDataStore((state) => state.dataList);
 
     // update values in store
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,26 +55,17 @@ const SelectComponent = forwardRef(
     };
 
     let data = [];
-
-    if (isPreviewMode) {
-      data = cloneDeep(
-        dataProp?.value ?? dataProp ?? exampleData.value ?? exampleData,
-      );
-      if (dataPath) {
-        const path = dataPath.replaceAll("[0]", "");
-        data = get(dataProp, `base.${path}`, dataProp?.value ?? dataProp);
-      }
-    } else if (dataPath) {
-      data = exampleData.value ?? exampleData ?? dataProp?.value ?? dataProp;
-      const path = dataPath.replaceAll("[0]", "");
-      data = get(data, path, data);
-    } else {
-      data = cloneDeep(
-        dataProp?.value ?? dataProp ?? exampleData.value ?? exampleData ?? [],
-      );
+    if (component.props?.dataType === "static") {
+      data = component.props?.data ?? [];
+    } else if (component.props?.dataType === "dynamic") {
+      const exampleResponse = dataList.find(
+        (d) => d.id === component.props?.endpoint,
+      )?.exampleResponse;
+      data = JSON.parse(exampleResponse ?? "[]").map((item: any) => ({
+        label: item[component.props?.dataLabelKey ?? ""],
+        value: item[component.props?.dataValueKey ?? ""],
+      }));
     }
-
-    const keys = Object.keys(get(data, "[0]", {}));
 
     return (
       <MantineSelect
@@ -102,14 +92,7 @@ const SelectComponent = forwardRef(
         }}
         withinPortal={false}
         maxDropdownHeight={150}
-        data={
-          data?.map((d: any) => {
-            return {
-              label: d.label ?? d[keys[1]],
-              value: d.value ?? d[keys[0]],
-            };
-          }) ?? []
-        }
+        data={data}
         dropdownComponent={(props: any) => (
           <CustomDropdown
             {...props}
