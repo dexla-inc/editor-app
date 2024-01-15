@@ -17,7 +17,6 @@ export const Modifier = withModifier(
     useEffect(() => {
       form.setValues(
         merge({}, requiredModifiers.fileButton, {
-          name: selectedComponent.props?.name,
           accept: selectedComponent.props?.accept,
           multiple: selectedComponent.props?.multiple,
         }),
@@ -38,13 +37,6 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          <TextInput
-            size="xs"
-            label="Name"
-            name="name"
-            {...form.getInputProps("name")}
-            onChange={(e) => handleChange(e)}
-          />
           <TextInput
             size="xs"
             label="Allowed File Type(s)"

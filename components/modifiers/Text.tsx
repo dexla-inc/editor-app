@@ -11,14 +11,12 @@ import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import {
   ActionIcon,
-  Checkbox,
   Flex,
   Group,
   SegmentedControl,
   Select,
   Stack,
   Text,
-  Textarea,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
@@ -91,7 +89,6 @@ export const Modifier = withModifier(
     useEffect(() => {
       form.setValues(
         merge({}, defaultInputValues, {
-          value: data.children ?? defaultInputValues.value,
           order: data.order?.toString() ?? defaultInputValues.order,
           color: data.color ?? defaultInputValues.color,
           size: data.size ?? defaultInputValues.size,
@@ -125,44 +122,17 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          <Textarea
-            autosize
-            label="Value"
-            size="xs"
-            {...form.getInputProps("value")}
-            onChange={(e) => {
-              form.setFieldValue("value", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                children: e.target.value,
-              });
-            }}
-          />
           {!isTitle && (
-            <>
-              <Checkbox
-                size="xs"
-                label="Hide text when data is empty"
-                {...form.getInputProps("hideIfDataIsEmpty", {
-                  type: "checkbox",
-                })}
-                onChange={(e) => {
-                  form.setFieldValue("hideIfDataIsEmpty", e.target.checked);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    hideIfDataIsEmpty: e.target.checked,
-                  });
-                }}
-              />
-              <SizeSelector
-                label="Size"
-                {...form.getInputProps("size")}
-                onChange={(value) => {
-                  form.setFieldValue("size", value as string);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    size: value,
-                  });
-                }}
-              />
-            </>
+            <SizeSelector
+              label="Size"
+              {...form.getInputProps("size")}
+              onChange={(value) => {
+                form.setFieldValue("size", value as string);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  size: value,
+                });
+              }}
+            />
           )}
           <Group noWrap>
             {isTitle && (
