@@ -9,6 +9,7 @@ import merge from "lodash.merge";
 import { forwardRef, memo, useCallback, useEffect, useState } from "react";
 import { InputLoader } from "../InputLoader";
 import { useEndpoint } from "@/hooks/useEndpoint";
+import get from "lodash.get";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -38,28 +39,60 @@ const SelectComponent = forwardRef(
     const [data, setData] = useState(component.props?.data ?? []);
 
     useEffect(() => {
-      if (component.props?.dataType === "dynamic") {
-        apiCall(component.props?.endpointId).then((result = []) => {
+      const { dataType, endpointId, dataLabelKey, dataValueKey, resultsKey } =
+        component.props!;
+      if (
+        dataType === "dynamic" &&
+        endpointId &&
+        dataLabelKey &&
+        dataValueKey
+      ) {
+        apiCall(endpointId).then((response) => {
+          const result = resultsKey
+            ? get(response, component.props?.resultsKey)
+            : response;
+
+          if (!result) {
+            setLocalInputValue("");
+            return setData([]);
+          }
+
           if (Array.isArray(result)) {
             setData(
-              (result ?? []).map((item: any) => ({
-                label: item[component.props?.dataLabelKey ?? ""],
-                value: item[component.props?.dataValueKey ?? ""],
-              })),
+              (result ?? []).reduce((acc, item: any) => {
+                acc.push({
+                  label: item[dataLabelKey],
+                  value: item[dataValueKey],
+                });
+
+                return acc;
+              }, []),
             );
+          } else {
+            setData({
+              label: result[dataLabelKey],
+              value: result[dataValueKey],
+            });
           }
         });
       } else {
-        setData(component.props?.data ?? []);
+        setLocalInputValue("");
+        setData([]);
       }
-    }, [
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      component.props?.data,
+    }, [
       component.props?.endpointId,
+      component.props?.resultsKey,
       component.props?.dataType,
       component.props?.dataLabelKey,
       component.props?.dataValueKey,
     ]);
+
+    useEffect(() => {
+      if (component.props?.dataType === "static") {
+        setData(component.props?.data ?? []);
+      }
+    }, [component.props?.data, component.props?.dataType]);
 
     // update values in store
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -72,6 +105,7 @@ const SelectComponent = forwardRef(
 
     // handle changes to input field
     const handleInputChange = (value: any) => {
+      console.log(value);
       setLocalInputValue(value);
       debouncedOnChange(value);
       triggers?.onChange && triggers?.onChange(value);

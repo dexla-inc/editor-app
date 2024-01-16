@@ -94,12 +94,6 @@ export const EditableComponent = ({
 
   const actions: Action[] = component.actions ?? [];
 
-  // TODO: This should be the new way of binding data through the data tab
-  const onMountAction: Action | undefined = actions.find(
-    // @ts-ignore
-    (action: Action) => action.trigger === "onMount",
-  );
-
   const onSuccessActions: Action[] = actions.filter(
     (action: Action) => action.trigger === "onSuccess",
   );
@@ -180,8 +174,7 @@ export const EditableComponent = ({
   const thinBaseShadow = isPicking
     ? THIN_ORANGE_BASE_SHADOW
     : THIN_GREEN_BASE_SHADOW;
-  const shouldDisplayOverlay = hoveredComponentId === id;
-  const showShadows = !isPreviewMode && !isLive;
+  const shouldDisplayOverlay = hoveredComponentId === id && isEditorMode;
 
   const shadows = isHighlighted
     ? { boxShadow: ORANGE_BASE_SHADOW }
@@ -306,7 +299,7 @@ export const EditableComponent = ({
       disabled:
         component.props?.disabled ??
         (currentState === "disabled" && !!component.states?.disabled),
-      triggers: isPreviewMode
+      triggers: !isEditorMode
         ? {
             ...triggers,
             onMouseOver: triggers?.onHover ?? hoverStateFunc,
@@ -319,19 +312,13 @@ export const EditableComponent = ({
     },
   );
 
-  if (currentState === "hidden") {
-    propsWithOverwrites.style = {
-      ...propsWithOverwrites.style,
-      display: "none",
-    };
-  }
-
   const childStyles = {
     position: "relative",
     ...propsWithOverwrites.style,
+    ...(currentState === "hidden" && { display: "none" }),
 
     outline:
-      isPreviewMode && propsWithOverwrites.style?.outline === GRAY_OUTLINE
+      !isEditorMode && propsWithOverwrites.style?.outline === GRAY_OUTLINE
         ? "none"
         : propsWithOverwrites.style?.outline,
   };
@@ -342,7 +329,7 @@ export const EditableComponent = ({
 
   const tealOutline = {
     "&:before": {
-      ...(showShadows ? shadows : {}),
+      ...(isEditorMode ? shadows : {}),
       content: '""',
       position: "absolute",
       left: 0,
@@ -355,7 +342,7 @@ export const EditableComponent = ({
       pointerEvents: "none",
     },
     "&:hover": {
-      ...(!isPreviewMode
+      ...(isEditorMode
         ? {
             boxShadow: thinBaseShadow,
             ...(shouldDisplayOverlay &&
@@ -368,7 +355,7 @@ export const EditableComponent = ({
 
   const handleClick = useCallback(
     (e: any) => {
-      if (!isPreviewMode && !isLive) {
+      if (isEditorMode) {
         e.stopPropagation && e.stopPropagation();
       }
 
@@ -417,15 +404,13 @@ export const EditableComponent = ({
           },
           ...(isResizing || isPreviewMode ? {} : droppable),
           id: component.id,
-          isPreviewMode,
+          isPreviewMode: !isEditorMode,
           style: childStyles,
           sx: tealOutline,
-          ...(isPreviewMode ? {} : { onClick: handleClick }),
-          ...(isPreviewMode
-            ? {}
-            : {
-                onContextMenu: handleContextMenu,
-              }),
+          ...(isEditorMode && {
+            onClick: handleClick,
+            onContextMenu: handleContextMenu,
+          }),
         },
       )}
     </>

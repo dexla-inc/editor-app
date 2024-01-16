@@ -54,37 +54,49 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
               <EndpointSelect
                 {...form.getInputProps("endpointId")}
                 onChange={(selected) => {
-                  setFieldValue("endpointId", selected!);
+                  const newValues = {
+                    endpointId: selected,
+                    dataLabelKey: "",
+                    dataValueKey: "",
+                    resultsKey: "",
+                  };
+                  form.setValues(newValues);
+                  debouncedTreeUpdate(component.id, newValues);
+
                   setSelectedEndpoint(
                     endpoints?.results?.find((e) => e.id === selected),
                   );
                 }}
               />
-              <TextInput
-                size="xs"
-                label="Results key"
-                placeholder="user.list"
-                {...form.getInputProps("resultsKey")}
-                onChange={(e) => {
-                  setFieldValue("resultsKey", e.target.value);
-                }}
-              />
-              <Select
-                label="Label"
-                data={keysList}
-                {...form.getInputProps("dataLabelKey")}
-                onChange={(selected) => {
-                  setFieldValue("dataLabelKey", selected);
-                }}
-              />
-              <Select
-                label="Value"
-                data={keysList}
-                {...form.getInputProps("dataValueKey")}
-                onChange={(selected) => {
-                  setFieldValue("dataValueKey", selected);
-                }}
-              />
+              {form.values.endpointId && (
+                <>
+                  <TextInput
+                    size="xs"
+                    label="Results key"
+                    placeholder="user.list"
+                    {...form.getInputProps("resultsKey")}
+                    onChange={(e) => {
+                      setFieldValue("resultsKey", e.target.value);
+                    }}
+                  />
+                  <Select
+                    label="Label"
+                    data={keysList}
+                    {...form.getInputProps("dataLabelKey")}
+                    onChange={(selected) => {
+                      setFieldValue("dataLabelKey", selected);
+                    }}
+                  />
+                  <Select
+                    label="Value"
+                    data={keysList}
+                    {...form.getInputProps("dataValueKey")}
+                    onChange={(selected) => {
+                      setFieldValue("dataValueKey", selected);
+                    }}
+                  />
+                </>
+              )}
             </>
           )}
         </Stack>
