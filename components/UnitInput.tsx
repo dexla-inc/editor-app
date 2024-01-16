@@ -1,4 +1,3 @@
-import { useEditorStore } from "@/stores/editor";
 import { DARK_COLOR, GRAY_BORDER_COLOR } from "@/utils/branding";
 import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
 import {
@@ -11,10 +10,10 @@ import {
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 
-type Unit = "px" | "rem" | "%" | "vh" | "vw" | "auto";
+type Unit = "px" | "rem" | "%" | "vh" | "vw" | "auto" | "fit-content";
 
 type Props = {
-  value?: string;
+  value?: string | "auto" | "fit-content";
   onChange?: (value: string) => void;
   disabledUnits?: Unit[];
   options?: SelectItem[];
@@ -29,10 +28,11 @@ export const UnitInput = ({
   modifierType,
   ...props
 }: Props & Omit<NumberInputProps, "onChange">) => {
+  useEffect(() => {
+    console.log("UnitInput", fetchedValue);
+  }, [fetchedValue]);
+
   const theme = useMantineTheme();
-  const defaultComponentWidth = useEditorStore(
-    (state) => state.defaultComponentWidth,
-  );
 
   const options = customOptions ?? [
     { value: "px", label: "PX" },
@@ -40,13 +40,17 @@ export const UnitInput = ({
     { value: "vh", label: "VH" },
     { value: "vw", label: "VW" },
     { value: "auto", label: "auto" },
+    { value: "fit-content", label: "fit" },
   ];
 
-  const [splitValue, splitUnit] = splitValueAndUnit(
-    !!fetchedValue ? (fetchedValue as string).toString() : "",
-  ) ?? [0, "auto"];
+  const isUnit =
+    fetchedValue && fetchedValue !== "auto" && fetchedValue !== "fit-content";
 
-  const [value, setValue] = useState<number | "auto">();
+  const [splitValue, splitUnit] = isUnit
+    ? splitValueAndUnit(fetchedValue) || [0, "auto"]
+    : [0, fetchedValue === "" ? "auto" : (fetchedValue as Unit)];
+
+  const [value, setValue] = useState<number | "auto" | "fit-content">();
   const [textValue, setTextValue] = useState<string>();
   const [unit, setUnit] = useState<Unit>();
 
@@ -70,17 +74,41 @@ export const UnitInput = ({
       typeof value !== "undefined" &&
       typeof unit !== "undefined"
     ) {
-      onChange(unit === "auto" ? "auto" : `${value}${unit}`);
+      onChange(
+        unit === "auto"
+          ? "auto"
+          : unit === "fit-content"
+          ? "fit-content"
+          : `${value}${unit}`,
+      );
     }
     // Disable as we don't want to force an useCallback on every onChange being passed down
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, unit]);
 
-  const isAuto = (unit ?? splitUnit) === "auto";
+  useEffect(() => {
+    if (fetchedValue) {
+      switch (fetchedValue) {
+        case "auto":
+          setTextValue("auto");
+          break;
+        case "fit-content":
+          setTextValue("fit");
+          break;
+        default:
+          setTextValue(splitValue.toString());
+      }
+    } else {
+      setTextValue("auto");
+    }
+  }, [fetchedValue, splitValue, splitUnit]);
+
+  const isAutoOrFit =
+    (unit ?? splitUnit) === "auto" || (unit ?? splitUnit) === "fit-content";
 
   const handleChange = (val: string, isTextInput: boolean = false) => {
     if (!isNaN(Number(val))) {
-      if (unit === "auto" && val !== "") {
+      if ((unit === "auto" || unit === "fit-content") && val !== "") {
         setValue(Number(val));
         setUnit("px");
       } else {
@@ -109,9 +137,12 @@ export const UnitInput = ({
         } else if (newUnit === "auto") {
           setValue("auto");
           setTextValue("auto");
+        } else if (newUnit === "fit-content") {
+          setValue("fit-content");
+          setTextValue("fit");
         } else if (newUnit === "px" && value === "auto") {
           // Example: Defaulting to a specific value when switching to 'px'
-          setValue(modifierType === "size" ? defaultComponentWidth : 0);
+          setValue(modifierType === "size" ? "fit-content" : 0);
         }
       }}
       data={options.filter((o) => !disabledUnits?.includes(o.value as Unit))}
@@ -141,12 +172,12 @@ export const UnitInput = ({
     />
   );
 
-  if (isAuto) {
+  if (isAutoOrFit) {
     return (
       <TextInput
         size="xs"
         {...props}
-        value={textValue || "auto"}
+        value={textValue}
         onChange={(e) => {
           handleChange(e.target.value, true);
         }}

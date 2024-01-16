@@ -1,9 +1,8 @@
-import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
-  const theme = props.theme ?? defaultTheme;
   const content =
     props.props?.children ??
     props.props?.content ??
@@ -11,20 +10,15 @@ export const jsonStructure = (props?: any): Component => {
     props.props?.value ??
     "New link";
 
+  const defaultValues = requiredModifiers.link;
+
   return {
     id: nanoid(),
     name: "Link",
     description: "Link",
     props: {
       children: content,
-      size: "sm",
-      style: {
-        width: "auto",
-        height: "auto",
-        fontWeight: "normal",
-        lineHeight: "110%",
-        letterSpacing: "0px",
-      },
+      ...defaultValues,
       ...(props.props || {}),
     },
     blockDroppingChildrenInside: true,

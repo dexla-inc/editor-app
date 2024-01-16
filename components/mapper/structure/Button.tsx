@@ -12,7 +12,6 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       ...requiredModifiers.button,
       style: {
-        width: "fit-content",
         paddingLeft: "18px",
         paddingRight: "18px",
         borderRadius: "4px",

@@ -1,6 +1,6 @@
-import { defaultBorderValues } from "@/components/modifiers/Border";
 import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -14,6 +14,8 @@ export const jsonStructure = (props?: any): Component => {
     props.props?.value ??
     "New title";
 
+  const defaultValues = requiredModifiers.text;
+
   return {
     id: nanoid(),
     name: "Title",
@@ -24,12 +26,9 @@ export const jsonStructure = (props?: any): Component => {
       color: `${theme.colors.Black ? "Black.6" : "dark"}`,
       order: order,
       style: {
-        fontWeight: "bold",
+        ...defaultValues,
         fontSize: `${size.fontSize}px`,
         lineHeight: size.lineHeight,
-        width: "auto",
-        height: "auto",
-        ...defaultBorderValues,
       },
       ...(rest || {}),
     },

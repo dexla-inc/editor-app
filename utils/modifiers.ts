@@ -72,6 +72,8 @@ export const requiredModifiers: RequiredModifiers = {
   },
   text: {
     value: "New Text",
+    width: "fit-content",
+    height: "fit-content",
     size: "sm",
     weight: "normal",
     color: "Black.6",
@@ -168,6 +170,7 @@ export const requiredModifiers: RequiredModifiers = {
   },
   button: {
     value: "New Button",
+    width: "fit-content",
     type: "button",
     variant: "filled",
     size: "sm",
@@ -182,8 +185,15 @@ export const requiredModifiers: RequiredModifiers = {
   },
   link: {
     value: "New Link",
-    size: "md",
+    size: "sm",
     color: "Primary.6",
+    style: {
+      width: "fit-content",
+      height: "fit-content",
+      fontWeight: "normal",
+      lineHeight: "110%",
+      letterSpacing: "0px",
+    },
   },
   icon: {
     size: "md",
