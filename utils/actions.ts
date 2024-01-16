@@ -639,8 +639,6 @@ export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
 
 const getVariableValueFromVariableId = (variableId = "") => {
   const variableList = useVariableStore.getState().variableList;
-  // TODO: Williams, variableList is empty on deployed apps.
-  // console.log("variableList", variableList);
   const actionVariable = variableId.split(`var_`)[1];
 
   if (!actionVariable) {

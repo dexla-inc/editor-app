@@ -28,10 +28,6 @@ export const UnitInput = ({
   modifierType,
   ...props
 }: Props & Omit<NumberInputProps, "onChange">) => {
-  useEffect(() => {
-    console.log("UnitInput", fetchedValue);
-  }, [fetchedValue]);
-
   const theme = useMantineTheme();
 
   const options = customOptions ?? [

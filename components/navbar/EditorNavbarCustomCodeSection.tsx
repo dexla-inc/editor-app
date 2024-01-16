@@ -29,7 +29,7 @@ export const EditorNavbarCustomCodeSection = () => {
       });
       await patchProject(projectId, patchParams);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setIsSaving(false);
     }

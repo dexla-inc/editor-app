@@ -129,7 +129,6 @@ export const useDroppable = ({
     ) {
       // If not within 5 pixels of top and bottom edge, set edge to center.
       setEdge("center");
-      console.log("center");
     } else {
       // Check the closest edge and set it accordingly.
       const { edge } = getClosestEdge(leftDist, rightDist, topDist, bottomDist);
