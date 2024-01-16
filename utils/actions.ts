@@ -696,9 +696,12 @@ export const changeStateAction = ({
       if (item.condition === event || item.condition === "") {
         setTreeComponentCurrentState(item.componentId, item.state);
         skipPreviousList.push(item.componentId);
-      } else {
-        setTreeComponentCurrentState(item.componentId, "hidden");
       }
+      console.error(
+        "Condition not met changeStateAction",
+        item.condition,
+        event,
+      );
     }
   });
 };

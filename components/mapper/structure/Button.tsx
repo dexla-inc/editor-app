@@ -5,16 +5,18 @@ import { nanoid } from "nanoid";
 export const jsonStructure = (props?: any): Component => {
   const { value, textColor, color, ...rest } = props.props ?? {};
 
+  const defaultValues = requiredModifiers.button;
   return {
     id: nanoid(),
     name: "Button",
     description: "Button",
     props: {
-      ...requiredModifiers.button,
+      ...defaultValues,
       style: {
         paddingLeft: "18px",
         paddingRight: "18px",
         borderRadius: "4px",
+        width: "fit-content",
       },
       color: color ?? "Primary.6",
       textColor: textColor ?? "PrimaryText.6",
