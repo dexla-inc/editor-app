@@ -1,15 +1,17 @@
+import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
+import { getComponentInitialDisplayValue } from "@/utils/common";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { NumberInput, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconTransform } from "@tabler/icons-react";
+import { IconBrush } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 
-export const icon = IconTransform;
-export const label = "Effects";
+export const icon = IconBrush;
+export const label = "Appearence";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
@@ -18,6 +20,7 @@ export const Modifier = withModifier(
     useEffect(() => {
       form.setValues(
         merge({}, requiredModifiers.effects, {
+          display: selectedComponent.props?.style?.display,
           cursor: selectedComponent.props?.style?.cursor,
           overflow: selectedComponent.props?.style?.overflow,
           opacity: selectedComponent.props?.style?.opacity,
@@ -30,6 +33,28 @@ export const Modifier = withModifier(
     return (
       <form key={selectedComponent?.id}>
         <Stack spacing="xs">
+          <SegmentedControlInput
+            label="Visibility"
+            data={[
+              {
+                label: "Visible",
+                value: getComponentInitialDisplayValue(selectedComponent.name),
+              },
+              {
+                label: "Hidden",
+                value: "none",
+              },
+            ]}
+            {...form.getInputProps("display")}
+            onChange={(value) => {
+              form.setFieldValue("display", value as string);
+              debouncedTreeUpdate(selectedComponentIds, {
+                style: {
+                  display: value,
+                },
+              });
+            }}
+          />
           <Select
             label="Cursor"
             size="xs"

@@ -69,6 +69,8 @@ export const useComponentStates = () => {
     RadarChart: [],
     RadialChart: [],
     AppBar: [],
+    Grid: [],
+    GridColumn: [],
     Progress: [
       { label: "Loading", value: "loading" },
       { label: "Complete", value: "complete" },

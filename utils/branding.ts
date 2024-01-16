@@ -76,6 +76,9 @@ const theme: MantineTheme = {
     Button: {
       defaultProps: () => ({ size: "sm", compact: true }),
     },
+    SegmentedControl: {
+      defaultProps: () => ({ size: "xs" }),
+    },
   },
 };
 
@@ -142,6 +145,9 @@ const darkTheme: MantineTheme = {
     },
     Button: {
       defaultProps: () => ({ size: "sm", compact: true }),
+    },
+    SegmentedControl: {
+      defaultProps: () => ({ size: "xs" }),
     },
   },
 };
