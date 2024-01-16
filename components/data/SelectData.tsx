@@ -4,10 +4,11 @@ import { DataTabSelect } from "@/components/data/DataTabSelect";
 import { DataProps } from "@/components/data/type";
 import { Endpoint } from "@/requests/datasources/types";
 import { debouncedTreeUpdate } from "@/utils/editor";
-import { Select, Stack, TextInput } from "@mantine/core";
+import { Divider, Select, Stack, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useState } from "react";
+import React, { useState } from "react";
 import get from "lodash.get";
+import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
 
 function getObjectAndArrayKeys(obj: any, prefix = "") {
   let keys: string[] = [];
@@ -40,6 +41,8 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
       resultsKey: component.props?.resultsKey ?? "",
     },
   });
+
+  const endpointSettingsForm = useForm();
 
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
@@ -92,24 +95,35 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
                   );
                 }}
               />
+
               {form.values.endpointId && (
                 <>
-                  <Select
-                    clearable
-                    label="Results key"
-                    placeholder="user.list"
-                    data={resultsKeysList}
-                    {...form.getInputProps("resultsKey")}
-                    onChange={(selected) => {
-                      const newValues = {
-                        dataLabelKey: "",
-                        dataValueKey: "",
-                        resultsKey: selected,
-                      };
-                      form.setValues(newValues);
-                      debouncedTreeUpdate(component.id, newValues);
-                    }}
+                  <EndpointRequestInputs
+                    selectedEndpoint={selectedEndpoint!}
+                    form={endpointSettingsForm}
                   />
+                  <Divider mt="md" />
+                  <Title order={5} mt="xs">
+                    Input Settings
+                  </Title>
+                  {!Array.isArray(exampleResponse) && (
+                    <Select
+                      clearable
+                      label="Results key"
+                      placeholder="user.list"
+                      data={resultsKeysList}
+                      {...form.getInputProps("resultsKey")}
+                      onChange={(selected) => {
+                        const newValues = {
+                          dataLabelKey: "",
+                          dataValueKey: "",
+                          resultsKey: selected,
+                        };
+                        form.setValues(newValues);
+                        debouncedTreeUpdate(component.id, newValues);
+                      }}
+                    />
+                  )}
                   <Select
                     label="Label"
                     data={selectableObjectKeys}
