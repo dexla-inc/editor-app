@@ -18,8 +18,6 @@ export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm();
 
-    console.log(selectedComponent);
-
     useEffect(() => {
       form.setValues(
         merge({}, requiredModifiers.input, {

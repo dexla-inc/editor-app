@@ -36,6 +36,7 @@ export type Component = {
     target: string;
   };
   actions?: Action[];
+  onLoad?: any;
   states?: Record<string, any>;
   languages?: Record<string, any>;
 };
