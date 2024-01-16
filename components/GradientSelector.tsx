@@ -1,10 +1,11 @@
 import { TopLabel } from "@/components/TopLabel";
+import { useEditorStore } from "@/stores/editor";
 import { DARK_COLOR } from "@/utils/branding";
+import { getColorFromTheme } from "@/utils/editor";
 import {
   ActionIcon,
   Box,
   CloseButton,
-  ColorPicker,
   Divider,
   Flex,
   Group,
@@ -20,6 +21,8 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { NuAnglePicker } from "react-nu-anglepicker";
+import { ThemeColorSelector } from "./ThemeColorSelector";
+import { getThemeColor } from "./modifiers/Border";
 
 type GradientPickerProps = {
   getValue: any;
@@ -58,7 +61,7 @@ function parseGradientDetailed(gradient: string) {
   return { type, angle, colors };
 }
 
-const ColorItem = ({ color, index, ...rest }: any) => {
+const ColorItem = ({ color, index, theme, ...rest }: any) => {
   const { handleClick, isSelected, colors, setColors, setIndex } = rest;
 
   const handleChange = (key: string, value: string) => {
@@ -78,26 +81,19 @@ const ColorItem = ({ color, index, ...rest }: any) => {
       })}
       align="center"
     >
-      <Input
-        size="xs"
-        fz="xs"
-        value={color.color}
+      <ThemeColorSelector
+        value={getThemeColor(theme, color.color)}
+        isGradient={true}
         onClick={() => handleClick(index)}
         onChange={(e) => {
-          let _value = e.currentTarget.value;
-          if (_value && !_value.startsWith("#")) {
-            _value = `#${_value}`;
-          }
-          // Update the hexa value state only if the input is either empty or starts with a "#"
-          if (_value === "" || _value.startsWith("#")) {
-            handleChange("color", _value);
-          }
+          const _value = getColorFromTheme(theme, e as string);
+          handleChange("color", _value);
         }}
       />
       <Input
         size="xs"
         fz="xs"
-        w={80}
+        w={100}
         value={color.stop}
         onClick={() => handleClick(index)}
         onChange={(e) => {
@@ -133,19 +129,19 @@ const AngleItem = ({ angle, setAngle }: any) => {
   return (
     <Stack>
       <TopLabel text="ANGLE" />
-      <Group noWrap>
-        <NuAnglePicker
-          styles={{ background: DARK_COLOR }}
-          value={angle}
-          handleValueChange={setAngle}
-        />
-      </Group>
+      <NuAnglePicker
+        styles={{ background: DARK_COLOR, fontSize: "8px" }}
+        value={angle}
+        handleValueChange={setAngle}
+      />
+      <Group noWrap></Group>
     </Stack>
   );
 };
 
 const GradientSelector = ({ getValue, setFieldValue }: GradientPickerProps) => {
   const { type, angle, colors } = parseGradientDetailed(getValue());
+  const theme = useEditorStore((state) => state.theme);
   const angleValue = isNaN(Number(angle)) ? 0 : Number(angle);
   const [index, setIndex] = useState(0);
   const [_colors, setColors] = useState(colors);
@@ -173,44 +169,21 @@ const GradientSelector = ({ getValue, setFieldValue }: GradientPickerProps) => {
   }, [_colors, _angle, _type]);
 
   return (
-    <Paper shadow="md" p="sm" w={420} sx={{ justifyContent: "left" }}>
+    <Paper shadow="md" p="sm" w={450} sx={{ justifyContent: "left" }}>
       <Box>
         <Paper pos="relative" h={50} mb="md" sx={{ background: getValue() }} />
       </Box>
       <Group noWrap align="flex-start">
         <Stack spacing="lg">
-          <ColorPicker
-            w={150}
-            format="hexa"
-            value={selectedColor.color}
-            onChange={(color) => {
-              const newColors = _colors.map((c: any, i: number) =>
-                i === index ? { ...c, color } : c,
-              );
-              setColors(newColors);
-            }}
-          />
-          <Stack spacing="0">
+          <Stack spacing="0" w={120}>
             <Text fz="xs" color="dimmed" fw="bold">
               COLOR CODE
             </Text>
             <Input
               size="xs"
               value={selectedColor.color}
+              readOnly
               placeholder="#FFFFFFFF"
-              onChange={(e) => {
-                let _value = e.target.value;
-                if (_value && !_value.startsWith("#")) {
-                  _value = `#${_value}`;
-                }
-                // Update the hexa value state only if the input is either empty or starts with a "#"
-                if (_value === "" || _value.startsWith("#")) {
-                  const newColors = _colors.map((c: any, i: number) =>
-                    i === index ? { ...c, color: _value } : c,
-                  );
-                  setColors(newColors);
-                }
-              }}
             />
           </Stack>
           <SegmentedControl
@@ -222,6 +195,9 @@ const GradientSelector = ({ getValue, setFieldValue }: GradientPickerProps) => {
             value={_type}
             onChange={setType}
           />
+          {_type === "linear-gradient" && (
+            <AngleItem angle={_angle} setAngle={setAngle} />
+          )}
         </Stack>
         <Divider orientation="vertical" />
         <Stack spacing={50}>
@@ -249,14 +225,12 @@ const GradientSelector = ({ getValue, setFieldValue }: GradientPickerProps) => {
                     isSelected={isSelected}
                     colors={_colors}
                     setColors={setColors}
+                    theme={theme}
                   />
                 );
               })}
             </Stack>
           </Stack>
-          {_type === "linear-gradient" && (
-            <AngleItem angle={_angle} setAngle={setAngle} />
-          )}
         </Stack>
       </Group>
       <Paper fz="xs" shadow="xl" sx={{ textAlign: "center" }} mt="md" p="md">
@@ -270,7 +244,7 @@ export const GradientPicker = ({
   getValue,
   setFieldValue,
 }: GradientPickerProps) => {
-  const [opened, { toggle, close }] = useDisclosure(false);
+  const [opened, { toggle, open, close }] = useDisclosure(false);
 
   const gradientSwatch = (
     <Paper
@@ -288,8 +262,7 @@ export const GradientPicker = ({
       <Popover opened={opened} withinPortal position="left">
         <Popover.Target>
           <TextInput
-            onFocus={toggle}
-            onBlur={close}
+            onClick={toggle}
             icon={gradientSwatch}
             value={getValue()}
             onChange={(e) => setFieldValue("bg", e.target.value)}

@@ -48,9 +48,10 @@ const SelectItem = forwardRef<HTMLDivElement, any>(
 // Create me a type called Props that extends Omit<SelectProps, "data"> on the line below
 type Props = {
   excludeTransparent?: boolean;
+  isGradient?: boolean;
 } & Omit<SelectProps, "data">;
 
-export const ThemeColorSelector = (props: Props) => {
+export const ThemeColorSelector = ({ isGradient, ...props }: Props) => {
   const theme = useEditorStore((state) => state.theme);
 
   const excludeColors = new Set([
@@ -150,7 +151,7 @@ export const ThemeColorSelector = (props: Props) => {
           )}
         </Group>
       </Stack>
-      <OpenThemeButton />
+      {!isGradient && <OpenThemeButton />}
     </Stack>
   );
 };

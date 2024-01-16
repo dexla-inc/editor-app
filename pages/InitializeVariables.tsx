@@ -4,11 +4,10 @@ import { useVariableStore } from "@/stores/variables";
 import { useEffect } from "react";
 
 type Props = {
-  isLive: boolean;
   pageProps: any;
 };
 
-const InitializeVariables = ({ isLive, pageProps }: Props) => {
+const InitializeVariables = ({ pageProps }: Props) => {
   const projectId = useEditorStore((state) => state.currentProjectId);
   const pageId = useEditorStore((state) => state.currentPageId);
   const _projectId = pageProps.id || projectId;
