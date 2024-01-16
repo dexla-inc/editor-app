@@ -16,6 +16,7 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       ...defaultValues,
       style: {
+        ...defaultValues.style,
         ...defaultBorderStyle,
       },
       ...(props.props || {}),

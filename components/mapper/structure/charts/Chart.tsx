@@ -12,8 +12,8 @@ export const jsonStructure = (props?: any): Component => {
       type: "line",
       height: "auto",
       style: {
-        height: "auto",
-        width: "auto",
+        width: "fit-content",
+        height: "fit-content",
       },
       chartColors: [...requiredModifiers.chart.colors],
       series: [

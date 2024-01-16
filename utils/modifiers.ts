@@ -165,6 +165,9 @@ export const requiredModifiers: RequiredModifiers = {
     hideIfDataIsEmpty: false,
     withAsterisk: "false",
     autosize: "false",
+    style: {
+      height: "fit-content",
+    },
   },
   button: {
     value: "New Button",
@@ -211,15 +214,14 @@ export const requiredModifiers: RequiredModifiers = {
   },
   select: {
     name: "Select",
-    height: "fit-content",
     size: "sm",
     placeholder: "Select",
     type: "text",
     label: "A label",
     icon: "",
     dropdownPosition: "flip",
-    withAsterisk: false,
-    clearable: false,
+    withAsterisk: "false",
+    clearable: "false",
     labelSize: "sm",
     labelWeight: "normal",
     labelAlign: "left",
@@ -230,6 +232,10 @@ export const requiredModifiers: RequiredModifiers = {
     customText: "",
     customLinkText: "",
     customLinkUrl: "",
+    style: {
+      width: "220px",
+      height: "fit-content",
+    },
   },
   effects: {
     cursor: "auto",
@@ -289,6 +295,10 @@ export const requiredModifiers: RequiredModifiers = {
   },
   buttonIcon: {
     bg: "transparent",
+    style: {
+      width: "fit-content",
+      height: "fit-content",
+    },
   },
   mapSettings: {
     language: "en",
@@ -382,7 +392,7 @@ export const requiredModifiers: RequiredModifiers = {
     iconPosition: "left",
     labelSize: "sm",
     style: {
-      width: "fit-content",
+      width: "220px",
       height: "fit-content",
     },
   },

@@ -13,8 +13,9 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       style: {
         ...defaultLayoutValues,
-        width: "auto",
-        height: "auto",
+        alignItems: "center",
+        width: "fit-content",
+        height: "fit-content",
         flexDirection: "row",
         columnGap: "10px",
       },
@@ -26,8 +27,8 @@ export const jsonStructure = (props?: any): Component => {
         description: "Switch",
         props: {
           style: {
-            width: "auto",
-            height: "auto",
+            width: "fit-content",
+            height: "fit-content",
           },
           ...(props.props || {}),
         },
@@ -46,8 +47,8 @@ export const jsonStructure = (props?: any): Component => {
           style: {
             lineHeight: "110%",
             letterSpacing: "0px",
-            width: "auto",
-            height: "auto",
+            width: "fit-content",
+            height: "fit-content",
           },
           ...(props.props || {}),
         },

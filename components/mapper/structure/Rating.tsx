@@ -12,8 +12,8 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       readOnly: true,
       style: {
-        width: "100%",
-        height: "auto",
+        width: "fit-content",
+        height: "fit-content",
       },
       ...(props.props || {}),
     },

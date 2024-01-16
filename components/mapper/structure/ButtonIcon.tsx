@@ -9,7 +9,7 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       style: {
         width: "fit-content",
-        height: "auto",
+        height: "fit-content",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

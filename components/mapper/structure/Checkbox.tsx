@@ -11,8 +11,8 @@ export const jsonStructure = (props?: any): Component => {
     description: "Checkbox",
     props: {
       style: {
-        width: "auto",
-        height: "auto",
+        width: "fit-content",
+        height: "fit-content",
       },
       ...(props.props || {}),
     },

@@ -14,8 +14,8 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       name: radioGroupId,
       style: {
-        width: "auto",
-        height: "auto",
+        width: "fit-content",
+        height: "fit-content",
       },
       ...(props.props || {}),
     },

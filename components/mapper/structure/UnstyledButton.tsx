@@ -22,8 +22,8 @@ export const jsonStructure = (props?: any): Component => {
       ...(rest || {}),
       style: {
         ...defaultLayoutValues,
-        width: "100%",
-        height: "auto",
+        width: "fit-content",
+        height: "fit-content",
         minHeight: "100px",
         padding: "20px",
         flex: "1 0 auto",

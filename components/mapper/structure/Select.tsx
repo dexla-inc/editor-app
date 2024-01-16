@@ -12,11 +12,11 @@ export const jsonStructure = (props?: any): Component => {
     name: "Select",
     description: "Select",
     props: {
+      ...defaultValues,
       style: {
-        width: "220px",
+        ...defaultValues.style,
         ...defaultBorderStyle,
       },
-      ...defaultValues,
       ...(props.props || {}),
     },
     blockDroppingChildrenInside: true,

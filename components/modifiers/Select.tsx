@@ -1,6 +1,5 @@
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { SizeSelector } from "@/components/SizeSelector";
-import { SwitchSelector } from "@/components/SwitchSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
@@ -86,13 +85,6 @@ export const Modifier = withModifier(
                 clearable: value,
               });
             }}
-          />
-          <SwitchSelector
-            topLabel="Clearable"
-            checked={form.getInputProps("clearable").value}
-            onChange={(e) =>
-              setFieldValue("clearable", e.currentTarget.checked)
-            }
           />
           <TextInput
             label="Placeholder"

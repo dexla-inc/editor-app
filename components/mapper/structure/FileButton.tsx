@@ -13,7 +13,8 @@ export const jsonStructure = (props?: any): Component => {
     description: "Upload Files",
     props: {
       style: {
-        width: "auto",
+        width: "fit-content",
+        height: "fit-content",
         ...(style || {}),
       },
       size: "sm",

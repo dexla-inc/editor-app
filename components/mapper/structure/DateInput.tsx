@@ -18,6 +18,7 @@ export const jsonStructure = (props?: any): Component => {
       valueFormat: "DD MMM YYYY",
       size: "sm",
       style: {
+        ...defaultValues.style,
         ...defaultBorderStyle,
       },
       ...(props.props || {}),
