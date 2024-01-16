@@ -1,9 +1,9 @@
+import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { SizeSelector } from "@/components/SizeSelector";
-import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Stack, Switch, Text, TextInput } from "@mantine/core";
+import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTextPlus } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -21,7 +21,7 @@ export const Modifier = withModifier(
         merge({}, requiredModifiers.textarea, {
           placeholder: selectedComponent?.props?.placeholder,
           size: selectedComponent?.props?.size,
-          autosize: selectedComponent?.props?.style?.autosize,
+          autosize: selectedComponent?.props?.autosize,
           withAsterisk: selectedComponent?.props?.withAsterisk,
         }),
       );
@@ -62,34 +62,26 @@ export const Modifier = withModifier(
               });
             }}
           />
-          <SwitchSelector
-            topLabel="Required"
+          <SegmentedControlYesNo
+            label="Required"
             {...form.getInputProps("withAsterisk")}
-            onChange={(event) => {
-              form.setFieldValue("withAsterisk", event.currentTarget.checked);
+            onChange={(value) => {
+              form.setFieldValue("withAsterisk", value);
               debouncedTreeUpdate(selectedComponentIds, {
-                withAsterisk: event.currentTarget.checked,
+                withAsterisk: value,
               });
             }}
           />
-          <Stack spacing={2}>
-            <Text size="xs" fw={500}>
-              Autosize
-            </Text>
-            <Switch
-              {...form.getInputProps("autosize")}
-              size="xs"
-              onChange={(e) => {
-                form.setFieldValue(
-                  "autosize",
-                  e.currentTarget.checked as boolean,
-                );
-                debouncedTreeUpdate(selectedComponentIds, {
-                  autosize: e.currentTarget.checked,
-                });
-              }}
-            />
-          </Stack>
+          <SegmentedControlYesNo
+            label="Autosize"
+            {...form.getInputProps("autosize")}
+            onChange={(value) => {
+              form.setFieldValue("autosize", value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                autosize: value,
+              });
+            }}
+          />
         </Stack>
       </form>
     );

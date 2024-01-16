@@ -1,5 +1,8 @@
+import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { SizeSelector } from "@/components/SizeSelector";
 import { SwitchSelector } from "@/components/SwitchSelector";
+import { TopLabel } from "@/components/TopLabel";
+import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -13,8 +16,6 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { TopLabel } from "../TopLabel";
-import { StylingPaneItemIcon } from "./StylingPaneItemIcon";
 
 export const icon = IconSelect;
 export const label = "Select";
@@ -76,6 +77,16 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
+          <SegmentedControlYesNo
+            label="Clearable"
+            {...form.getInputProps("clearable")}
+            onChange={(value) => {
+              form.setFieldValue("clearable", value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                clearable: value,
+              });
+            }}
+          />
           <SwitchSelector
             topLabel="Clearable"
             checked={form.getInputProps("clearable").value}

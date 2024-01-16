@@ -13,12 +13,12 @@ export const jsonStructure = (props?: any): Component => {
     name: "Input",
     description: "Input",
     props: {
+      ...requiredModifiers.input,
       style: {
         width: "100%",
         height: "38px",
         ...defaultBorderStyle,
       },
-      ...requiredModifiers.input,
       ...(props.props || {}),
     },
     blockDroppingChildrenInside: true,

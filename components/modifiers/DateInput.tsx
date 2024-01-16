@@ -1,21 +1,16 @@
 import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
-import { SwitchSelector } from "@/components/SwitchSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import {
-  Flex,
-  SegmentedControl,
-  Select,
-  Stack,
-  TextInput,
-} from "@mantine/core";
+import { SegmentedControl, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { SegmentedControlInput } from "../SegmentedControlInput";
+import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
 export const icon = IconForms;
 export const label = "Date Input";
@@ -100,38 +95,6 @@ export const Modifier = withModifier(
               });
             }}
           />
-          <Flex justify="space-between">
-            <SwitchSelector
-              topLabel="Required"
-              checked={form.getInputProps("withAsterisk").value}
-              onChange={(e) => {
-                form.setFieldValue("withAsterisk", e.currentTarget.checked);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  withAsterisk: e.currentTarget.checked,
-                });
-              }}
-            />
-            <SwitchSelector
-              topLabel="Clearable"
-              checked={form.getInputProps("clearable").value}
-              onChange={(e) => {
-                form.setFieldValue("clearable", e.currentTarget.checked);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  clearable: e.currentTarget.checked,
-                });
-              }}
-            />
-            <SwitchSelector
-              topLabel="Disabled"
-              checked={form.getInputProps("disabled").value}
-              onChange={(e) => {
-                form.setFieldValue("disabled", e.currentTarget.checked);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  isDisabled: e.currentTarget.checked,
-                });
-              }}
-            />
-          </Flex>
           <SizeSelector
             {...form.getInputProps("size")}
             onChange={(e) => {
@@ -161,29 +124,57 @@ export const Modifier = withModifier(
               });
             }}
           />
-          <Stack spacing={2}>
-            <TopLabel text="Icon Position" />
-            <SegmentedControl
-              size="xs"
-              data={[
-                {
-                  label: "Left",
-                  value: "left",
-                },
-                {
-                  label: "Right",
-                  value: "right",
-                },
-              ]}
-              {...form.getInputProps("iconPosition")}
-              onChange={(value) => {
-                form.setFieldValue("iconPosition", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  iconPosition: value as string,
-                });
-              }}
-            />
-          </Stack>
+          <SegmentedControlInput
+            label="Icon Position"
+            size="xs"
+            data={[
+              {
+                label: "Left",
+                value: "left",
+              },
+              {
+                label: "Right",
+                value: "right",
+              },
+            ]}
+            {...form.getInputProps("iconPosition")}
+            onChange={(value) => {
+              form.setFieldValue("iconPosition", value as string);
+              debouncedTreeUpdate(selectedComponentIds, {
+                iconPosition: value as string,
+              });
+            }}
+          />
+          <SegmentedControlYesNo
+            label="Required"
+            {...form.getInputProps("withAsterisk")}
+            onChange={(value) => {
+              form.setFieldValue("withAsterisk", value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                withAsterisk: value,
+              });
+            }}
+          />
+          <SegmentedControlYesNo
+            label="Clearable"
+            {...form.getInputProps("clearable")}
+            onChange={(value) => {
+              form.setFieldValue("clearable", value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                clearable: value,
+              });
+            }}
+          />
+          <SegmentedControlYesNo
+            label="Disabled"
+            {...form.getInputProps("disabled")}
+            onChange={(value) => {
+              form.setFieldValue("disabled", value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                disabled: value,
+              });
+            }}
+          />
         </Stack>
       </form>
     );

@@ -1,6 +1,6 @@
 import { IconSelector } from "@/components/IconSelector";
+import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { SizeSelector } from "@/components/SizeSelector";
-import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
 import { debouncedTreeUpdate } from "@/utils/editor";
@@ -17,6 +17,8 @@ export const label = "Input";
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm();
+
+    console.log(selectedComponent);
 
     useEffect(() => {
       form.setValues(
@@ -78,25 +80,23 @@ export const Modifier = withModifier(
               });
             }}
           />
-          <SwitchSelector
-            topLabel="Required"
+          <SegmentedControlYesNo
+            label="Required"
             {...form.getInputProps("withAsterisk")}
-            checked={form.values.withAsterisk as boolean}
-            onChange={(event) => {
-              form.setFieldValue("withAsterisk", event.currentTarget.checked);
+            onChange={(value) => {
+              form.setFieldValue("withAsterisk", value);
               debouncedTreeUpdate(selectedComponentIds, {
-                withAsterisk: event.currentTarget.checked,
+                withAsterisk: value,
               });
             }}
           />
-          <SwitchSelector
-            topLabel="Clearable"
+          <SegmentedControlYesNo
+            label="Clearable"
             {...form.getInputProps("clearable")}
-            checked={form.values.clearable as boolean}
-            onChange={(event) => {
-              form.setFieldValue("clearable", event.currentTarget.checked);
+            onChange={(value) => {
+              form.setFieldValue("clearable", value);
               debouncedTreeUpdate(selectedComponentIds, {
-                clearable: event.currentTarget.checked,
+                clearable: value,
               });
             }}
           />
