@@ -155,7 +155,8 @@ const GRAY_WHITE_COLOR = theme.colors.gray[0];
 const ORANGE_BORDER_COLOR = "orange";
 const GREEN_BORDER_COLOR = "teal";
 const THIN_ORANGE_BASE_SHADOW = `0 0 0 1px ${theme.colors.orange[4]}`;
-const ORANGE_BASE_SHADOW = `0 0 0 2px ${theme.colors.orange[6]}`;
+const ORANGE_COLOR = `${theme.colors.orange[6]}`;
+const ORANGE_BASE_SHADOW = `0 0 0 2px ${ORANGE_COLOR}`;
 const THIN_GREEN_BASE_SHADOW = `0 0 0 1px ${theme.colors.teal[4]}`;
 const GREEN_BASE_SHADOW = `0 0 0 2px ${theme.colors.teal[6]}`;
 const GRAY_OUTLINE = `2px dashed ${GRAY_BORDER_COLOR}`;
@@ -329,6 +330,7 @@ export {
   LOGICFLOW_BACKGROUND,
   ORANGE_BASE_SHADOW,
   ORANGE_BORDER_COLOR,
+  ORANGE_COLOR,
   PRIMARY_COLOR,
   SELECTED,
   THIN_DARK_OUTLINE,

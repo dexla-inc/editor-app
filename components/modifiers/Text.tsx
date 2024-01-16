@@ -44,7 +44,7 @@ import { useEffect } from "react";
 export const icon = IconTextSize;
 export const label = "Content";
 
-const defaultInputValues = requiredModifiers.text;
+const defaultTextValues = requiredModifiers.text;
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
@@ -55,7 +55,7 @@ export const Modifier = withModifier(
       const textShadow =
         typeof shadow === "string"
           ? shadow
-          : Object.values(defaultInputValues.textShadow).join(" ");
+          : Object.values(defaultTextValues.textShadow).join(" ");
 
       const values = textShadow.split(/\s+/);
 
@@ -88,24 +88,24 @@ export const Modifier = withModifier(
 
     useEffect(() => {
       form.setValues(
-        merge({}, defaultInputValues, {
-          order: data.order?.toString() ?? defaultInputValues.order,
-          color: data.color ?? defaultInputValues.color,
-          size: data.size ?? defaultInputValues.size,
-          weight: data.weight ?? defaultInputValues.weight,
-          align: data.style?.textAlign ?? defaultInputValues.align,
-          textWrap: data.style?.whiteSpace ?? defaultInputValues.textWrap,
-          textTransform: data.tt ?? defaultInputValues.textTransform,
-          textDecoration: data.td ?? defaultInputValues.textDecoration,
-          truncate: data.truncate?.toString() ?? defaultInputValues.truncate,
-          xOffset: xOffset ?? defaultInputValues.textShadow.xOffset,
-          yOffset: yOffset ?? defaultInputValues.textShadow.yOffset,
-          blur: blur ?? defaultInputValues.textShadow.blur,
+        merge({}, defaultTextValues, {
+          order: data.order?.toString() ?? defaultTextValues.order,
+          color: data.color ?? defaultTextValues.color,
+          size: data.size ?? defaultTextValues.size,
+          weight: data.weight ?? defaultTextValues.weight,
+          align: data.style?.textAlign ?? defaultTextValues.align,
+          textWrap: data.style?.whiteSpace ?? defaultTextValues.textWrap,
+          textTransform: data.tt ?? defaultTextValues.textTransform,
+          textDecoration: data.td ?? defaultTextValues.textDecoration,
+          truncate: data.truncate?.toString() ?? defaultTextValues.truncate,
+          xOffset: xOffset ?? defaultTextValues.textShadow.xOffset,
+          yOffset: yOffset ?? defaultTextValues.textShadow.yOffset,
+          blur: blur ?? defaultTextValues.textShadow.blur,
           shadowColor:
             getThemeColor(theme, shadowColor) ??
-            defaultInputValues.textShadow.shadowColor,
+            defaultTextValues.textShadow.shadowColor,
           hideIfDataIsEmpty:
-            data.hideIfDataIsEmpty ?? defaultInputValues.hideIfDataIsEmpty,
+            data.hideIfDataIsEmpty ?? defaultTextValues.hideIfDataIsEmpty,
           ...data.style,
         }),
       );

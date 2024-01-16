@@ -57,7 +57,7 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
             : a.trigger === t,
         ),
     );
-  }, [componentName, isSequential, sequentialTo]);
+  }, [componentName, isSequential, component?.actions, sequentialTo]);
 
   useEffect(() => {
     if (availableTriggers.length > 0) {

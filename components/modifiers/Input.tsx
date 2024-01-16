@@ -5,7 +5,7 @@ import { withModifier } from "@/hoc/withModifier";
 import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Group, Select, Stack, TextInput } from "@mantine/core";
+import { Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -67,30 +67,6 @@ export const Modifier = withModifier(
               });
             }}
           />
-          <Group noWrap>
-            <SwitchSelector
-              topLabel="Required"
-              {...form.getInputProps("withAsterisk")}
-              checked={form.values.withAsterisk as boolean}
-              onChange={(event) => {
-                form.setFieldValue("withAsterisk", event.currentTarget.checked);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  withAsterisk: event.currentTarget.checked,
-                });
-              }}
-            />
-            <SwitchSelector
-              topLabel="Clearable"
-              {...form.getInputProps("clearable")}
-              checked={form.values.clearable as boolean}
-              onChange={(event) => {
-                form.setFieldValue("clearable", event.currentTarget.checked);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  clearable: event.currentTarget.checked,
-                });
-              }}
-            />
-          </Group>
           <IconSelector
             topLabel="Icon"
             selectedIcon={(form.values.icon as any)?.props?.name}
@@ -99,6 +75,28 @@ export const Modifier = withModifier(
               form.setFieldValue("icon.props.name", iconName);
               debouncedTreeUpdate(selectedComponentIds, {
                 icon,
+              });
+            }}
+          />
+          <SwitchSelector
+            topLabel="Required"
+            {...form.getInputProps("withAsterisk")}
+            checked={form.values.withAsterisk as boolean}
+            onChange={(event) => {
+              form.setFieldValue("withAsterisk", event.currentTarget.checked);
+              debouncedTreeUpdate(selectedComponentIds, {
+                withAsterisk: event.currentTarget.checked,
+              });
+            }}
+          />
+          <SwitchSelector
+            topLabel="Clearable"
+            {...form.getInputProps("clearable")}
+            checked={form.values.clearable as boolean}
+            onChange={(event) => {
+              form.setFieldValue("clearable", event.currentTarget.checked);
+              debouncedTreeUpdate(selectedComponentIds, {
+                clearable: event.currentTarget.checked,
               });
             }}
           />

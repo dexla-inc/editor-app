@@ -38,3 +38,17 @@ export const requiredFieldValidator =
     }
     return null;
   };
+
+export const isInput = (componentName: string) => {
+  const inputCategories = [
+    "Input",
+    "Checkbox",
+    "Radio",
+    "Switch",
+    "Select",
+    "RadioGroup",
+    "Textarea",
+    "DateInput",
+  ];
+  return inputCategories.some((category) => componentName.includes(category));
+};

@@ -9,9 +9,11 @@ import {
   GREEN_COLOR,
   hoverStyles,
   ORANGE_BASE_SHADOW,
+  ORANGE_COLOR,
   THIN_GREEN_BASE_SHADOW,
   THIN_ORANGE_BASE_SHADOW,
 } from "@/utils/branding";
+import { isInput } from "@/utils/common";
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
 import { Component } from "@/utils/editor";
 import { removeKeysRecursive } from "@/utils/removeKeys";
@@ -212,6 +214,20 @@ export const EditableComponent = ({
     ? { boxShadow: baseShadow }
     : {};
 
+  const outlineStyles = isHighlighted
+    ? { outline: `2px solid ${ORANGE_COLOR}` } // Replace with your orange color variable
+    : isSelected || selectedByOther
+    ? { outline: `2px solid ${GREEN_COLOR}` } // Define baseOutlineColor
+    : {};
+
+  if (isOver) {
+    // For the 'isOver' state, you might need to adjust this logic
+    // because outline doesn't support the complex positioning like boxShadow.
+    outlineStyles.outline = `2px solid ${selectedByOther ?? GREEN_COLOR}`; // Example
+    // Additional styles to simulate positioning might go here
+    // Note: This will be a simplification as exact boxShadow behavior can't be replicated with outline.
+  }
+
   const handleBackground = (styles: CSSObject) => {
     const isGradient = component.props?.bg?.includes("gradient");
     const hasImage = !!styles.backgroundImage;
@@ -338,6 +354,33 @@ export const EditableComponent = ({
 
   handleBackground(childStyles);
 
+  const greenBoxShadow = {
+    "&::before": {
+      ...(showShadows && isInput(component.name) ? shadows : {}),
+      display: "block",
+      content: '""',
+      position: "absolute",
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      width: "auto",
+      height: "auto",
+      zIndex: 1,
+      pointerEvents: "none",
+    },
+    "&:hover": {
+      ...(!isPreviewMode
+        ? {
+            boxShadow: thinBaseShadow,
+            ...(shouldDisplayOverlay &&
+              !isSelected &&
+              hoverStyles(overlayStyles)),
+          }
+        : {}),
+    },
+  };
+
   delete propsWithOverwrites.style;
 
   const handleClick = useCallback(
@@ -392,32 +435,11 @@ export const EditableComponent = ({
           ...(isResizing || isPreviewMode ? {} : droppable),
           id: component.id,
           isPreviewMode,
-          style: childStyles,
-          sx: {
-            "&:before": {
-              ...(showShadows ? shadows : {}),
-              content: '""',
-              position: "absolute",
-              left: 0,
-              top: 0,
-              right: 0,
-              bottom: 0,
-              width: "100%",
-              height: "100%",
-              zIndex: 1,
-              pointerEvents: "none",
-            },
-            "&:hover": {
-              ...(!isPreviewMode
-                ? {
-                    boxShadow: thinBaseShadow,
-                    ...(shouldDisplayOverlay &&
-                      !isSelected &&
-                      hoverStyles(overlayStyles)),
-                  }
-                : {}),
-            },
+          style: {
+            ...childStyles,
+            ...(!isPreviewMode ? outlineStyles : {}),
           },
+          sx: greenBoxShadow,
           ...(isPreviewMode ? {} : { onClick: handleClick }),
           ...(isPreviewMode
             ? {}

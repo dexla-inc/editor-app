@@ -137,12 +137,10 @@ export type EditorState = {
   copiedAction?: Action[];
   sequentialTo?: string;
   openAction?: OpenAction;
-  defaultComponentWidth?: number;
   isPageStructure?: boolean;
   copiedProperties?: ClipboardProps;
   setCopiedProperties: (copiedProperties: ClipboardProps) => void;
   setIsPageStructure: (isPageStructure: boolean) => void;
-  setDefaultComponentWidth: (defaultComponentWidth: number) => void;
   setOpenAction: (openAction: OpenAction) => void;
   setSequentialTo: (sequentialTo?: string) => void;
   setPickingComponentToBindTo: (
@@ -252,12 +250,6 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           projectId: "",
           setCopiedProperties: (copiedProperties) =>
             set({ copiedProperties }, false, "editor/setCopiedProperties"),
-          setDefaultComponentWidth: (defaultComponentWidth) =>
-            set(
-              { defaultComponentWidth },
-              false,
-              "editor/setDefaultComponentWidth",
-            ),
           setOpenAction: (openAction) =>
             set({ openAction }, false, "editor/setOpenAction"),
           setPages: (pages) => set({ pages }, false, "editor/setPages"),
