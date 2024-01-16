@@ -13,7 +13,6 @@ import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm"
 import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
 import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
-import { ReloadComponentActionForm } from "@/components/actions/ReloadComponentActionForm";
 import { ToggleAccordionItemActionForm } from "@/components/actions/ToggleAccordionItemActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
@@ -40,7 +39,6 @@ import { OpenDrawerFlowActionForm } from "@/components/actions/logic-flow-forms/
 import { OpenModalFlowActionForm } from "@/components/actions/logic-flow-forms/OpenModalFlowActionForm";
 import { OpenPopOverFlowActionForm } from "@/components/actions/logic-flow-forms/OpenPopOverFlowActionForm";
 import { OpenToastFlowActionForm } from "@/components/actions/logic-flow-forms/OpenToastFlowActionForm";
-import { ReloadComponentFlowActionForm } from "@/components/actions/logic-flow-forms/ReloadComponentFlowActionForm";
 import { TogglePropsFlowActionForm } from "@/components/actions/logic-flow-forms/TogglePropsFlowActionForm";
 import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components/actions/logic-flow-forms/TriggerLogicFlowActionForm";
 import { Position } from "@/components/mapper/GoogleMapPlugin";
@@ -128,7 +126,6 @@ export const actions: ActionInfo[] = [
   },
   { name: "bindVariable", group: "Z Delete" }, // Merge bindVariable, changeVariable and bindVariableToChart
   { name: "bindVariableToChart", group: "Z Delete" },
-  { name: "reloadComponent", group: "Z Delete", icon: "IconReload" },
   { name: "changeStep", group: "Z Delete", icon: "IconStatusChange" },
   {
     name: "toggleAccordionItem",
@@ -271,12 +268,6 @@ export interface BindVariableToChartAction extends BaseAction {
   labels: string;
 }
 
-export interface ReloadComponentAction extends BaseAction {
-  name: "reloadComponent";
-  componentId: string;
-  onMountActionId?: string;
-}
-
 export interface ToggleNavbarAction extends BaseAction {
   name: "toggleNavbar";
 }
@@ -322,7 +313,6 @@ export type Action = {
     | TogglePropsAction
     | OpenToastAction
     | ChangeStateAction
-    | ReloadComponentAction
     | ToggleNavbarAction
     | ChangeStepAction
     | BindPlaceDataAction
@@ -461,9 +451,6 @@ export type ToggleNavbarActionParams = ActionParams & {
 };
 export type ChangeStepActionParams = ActionParams & {
   action: ChangeStepAction;
-};
-export type ReloadComponentActionParams = ActionParams & {
-  action: ReloadComponentAction;
 };
 
 export type BindPlaceDataActionParams = ActionParams & {
@@ -1196,24 +1183,6 @@ export const bindVariableToComponentAction = async ({
   }
 };
 
-export const reloadComponentAction = ({
-  action,
-}: ReloadComponentActionParams) => {
-  const editorTree = useEditorStore.getState().tree;
-  const removeOnMountActionsRan =
-    useEditorStore.getState().removeOnMountActionsRan;
-  const component = getComponentById(editorTree.root, action.componentId);
-
-  const onMountActionId = "";
-  // const onMountActionId = component?.actions?.find(
-  //   (a) => a.trigger === "onMount",
-  // )?.id;
-
-  if (onMountActionId) {
-    removeOnMountActionsRan(onMountActionId);
-  }
-};
-
 export const bindPlaceDataAction = ({
   action,
   data,
@@ -1528,11 +1497,6 @@ export const actionMapper = {
   toggleAccordionItem: {
     action: toggleAccordionItemAction,
     form: ToggleAccordionItemActionForm,
-  },
-  reloadComponent: {
-    action: reloadComponentAction,
-    form: ReloadComponentActionForm,
-    flowForm: ReloadComponentFlowActionForm,
   },
   toggleNavbar: {
     action: toggleNavbarAction,

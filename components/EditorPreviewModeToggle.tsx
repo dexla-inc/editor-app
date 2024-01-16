@@ -1,4 +1,3 @@
-import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import { Group, Switch, Tooltip, useMantineTheme } from "@mantine/core";
 import { IconBrush, IconEye } from "@tabler/icons-react";
@@ -13,9 +12,6 @@ export const EditorPreviewModeToggle = ({
   setPreviewMode,
 }: EditorPreviewModeToggleProps) => {
   const theme = useMantineTheme();
-  const resetOnMountActionsRan = useEditorStore(
-    (state) => state.resetOnMountActionsRan,
-  );
 
   return (
     <Tooltip
@@ -32,7 +28,6 @@ export const EditorPreviewModeToggle = ({
           onChange={(event) => {
             const isPreviewMode = event.currentTarget.checked;
             setPreviewMode(isPreviewMode);
-            resetOnMountActionsRan();
           }}
         />
       </Group>

@@ -128,7 +128,6 @@ export type EditorState = {
   activeTab?: string;
   isStructureCollapsed: boolean;
   pages: PageResponse[];
-  onMountActionsRan: string[];
   pickingComponentToBindTo?: ComponentToBind;
   pickingComponentToBindFrom?: ComponentToBind;
   componentToBind?: string;
@@ -153,9 +152,6 @@ export type EditorState = {
     pickingComponentToBindFrom?: ComponentToBind,
   ) => void;
   setComponentToBind: (componentToBind?: string) => void;
-  addOnMountActionsRan: (action: string) => void;
-  removeOnMountActionsRan: (action: string) => void;
-  resetOnMountActionsRan: () => void;
   setCopiedComponent: (copiedComponent?: Component) => void;
   setPages: (pages: PageResponse[]) => void;
   setTheme: (theme: MantineThemeExtended) => void;
@@ -250,38 +246,10 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           tree: emptyEditorTree,
           theme: defaultTheme,
           pages: [],
-          onMountActionsRan: [],
           selectedComponentId: "content-wrapper",
           selectedComponentIds: ["content-wrapper"],
           language: "default",
           projectId: "",
-          addOnMountActionsRan: (onMountAction) =>
-            set(
-              (state) => ({
-                ...state,
-                onMountActionsRan:
-                  state.onMountActionsRan.concat(onMountAction),
-              }),
-              false,
-              "editor/addOnMountActionsRan",
-            ),
-          removeOnMountActionsRan: (onMountAction) =>
-            set(
-              (state) => ({
-                ...state,
-                onMountActionsRan: state.onMountActionsRan.filter(
-                  (action) => action !== onMountAction,
-                ),
-              }),
-              false,
-              "editor/removeOnMountActionsRan",
-            ),
-          resetOnMountActionsRan: () =>
-            set(
-              { onMountActionsRan: [] },
-              false,
-              "editor/resetOnMountActionsRan",
-            ),
           setCopiedProperties: (copiedProperties) =>
             set({ copiedProperties }, false, "editor/setCopiedProperties"),
           setDefaultComponentWidth: (defaultComponentWidth) =>

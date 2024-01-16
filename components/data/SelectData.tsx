@@ -14,8 +14,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
     initialValues: {
       data: component.props?.data ?? [],
       dataType: component.props?.dataType ?? "static",
-      endpoint: component.props?.endpoint ?? undefined,
-      actionCode: component.props?.actionCode ?? {},
+      endpointId: component.props?.endpointId ?? undefined,
       dataLabelKey: component.props?.dataLabelKey ?? "",
       dataValueKey: component.props?.dataValueKey ?? "",
       resultsKey: component.props?.resultsKey ?? "",
@@ -24,7 +23,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
 
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
-  >(endpoints?.results?.find((e) => e.id === component.props?.endpoint));
+  >(endpoints?.results?.find((e) => e.id === component.props?.endpointId));
 
   const setFieldValue = (key: any, value: any) => {
     form.setFieldValue(key, value);
@@ -33,7 +32,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
 
   const exampleResponse = JSON.parse(selectedEndpoint?.exampleResponse ?? "[]");
   const keysList = Object.keys(
-    get(exampleResponse, form.values.resultsKey || "[0]", {}),
+    get(exampleResponse, `${form.values.resultsKey}[0]`, {}),
   );
 
   return (
@@ -53,9 +52,9 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
           {form.values.dataType === "dynamic" && (
             <>
               <EndpointSelect
-                {...form.getInputProps("endpoint")}
+                {...form.getInputProps("endpointId")}
                 onChange={(selected) => {
-                  setFieldValue("endpoint", selected!);
+                  setFieldValue("endpointId", selected!);
                   setSelectedEndpoint(
                     endpoints?.results?.find((e) => e.id === selected),
                   );
