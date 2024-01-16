@@ -9,6 +9,26 @@ import { useForm } from "@mantine/form";
 import { useState } from "react";
 import get from "lodash.get";
 
+function getObjectAndArrayKeys(obj: any, prefix = "") {
+  let keys: string[] = [];
+
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const newKey = prefix ? `${prefix}.${key}` : key;
+
+      if (typeof obj[key] === "object" && obj[key] !== null) {
+        keys.push(newKey);
+
+        if (!Array.isArray(obj[key])) {
+          keys = keys.concat(getObjectAndArrayKeys(obj[key], newKey));
+        }
+      }
+    }
+  }
+
+  return keys;
+}
+
 export const SelectData = ({ component, endpoints }: DataProps) => {
   const form = useForm({
     initialValues: {
@@ -30,9 +50,13 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
     debouncedTreeUpdate(component.id, { [key]: value });
   };
 
-  const exampleResponse = JSON.parse(selectedEndpoint?.exampleResponse ?? "[]");
-  const keysList = Object.keys(
-    get(exampleResponse, `${form.values.resultsKey}[0]`, {}),
+  const exampleResponse = JSON.parse(selectedEndpoint?.exampleResponse ?? "{}");
+  const resultsKeysList = getObjectAndArrayKeys(exampleResponse);
+  const selectableObject = form.values.resultsKey
+    ? get(exampleResponse, form.values.resultsKey)
+    : exampleResponse;
+  const selectableObjectKeys = Object.keys(
+    Array.isArray(selectableObject) ? selectableObject[0] : selectableObject,
   );
 
   return (
@@ -70,18 +94,25 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
               />
               {form.values.endpointId && (
                 <>
-                  <TextInput
-                    size="xs"
+                  <Select
+                    clearable
                     label="Results key"
                     placeholder="user.list"
+                    data={resultsKeysList}
                     {...form.getInputProps("resultsKey")}
-                    onChange={(e) => {
-                      setFieldValue("resultsKey", e.target.value);
+                    onChange={(selected) => {
+                      const newValues = {
+                        dataLabelKey: "",
+                        dataValueKey: "",
+                        resultsKey: selected,
+                      };
+                      form.setValues(newValues);
+                      debouncedTreeUpdate(component.id, newValues);
                     }}
                   />
                   <Select
                     label="Label"
-                    data={keysList}
+                    data={selectableObjectKeys}
                     {...form.getInputProps("dataLabelKey")}
                     onChange={(selected) => {
                       setFieldValue("dataLabelKey", selected);
@@ -89,7 +120,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
                   />
                   <Select
                     label="Value"
-                    data={keysList}
+                    data={selectableObjectKeys}
                     {...form.getInputProps("dataValueKey")}
                     onChange={(selected) => {
                       setFieldValue("dataValueKey", selected);
