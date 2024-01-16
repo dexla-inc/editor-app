@@ -23,7 +23,6 @@ import React, {
   cloneElement,
   PropsWithChildren,
   useCallback,
-  useEffect,
   useState,
 } from "react";
 
@@ -60,10 +59,6 @@ export const EditableComponent = ({
   );
   const currentState = useEditorStore(
     (state) => state.currentTreeComponentsStates?.[component.id!] ?? "default",
-  );
-  const onMountActionsRan = useEditorStore((state) => state.onMountActionsRan);
-  const addOnMountActionsRan = useEditorStore(
-    (state) => state.addOnMountActionsRan,
   );
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,
@@ -165,30 +160,6 @@ export const EditableComponent = ({
 
   triggers.onChange = handleOnChange;
   triggers.onSubmit = handleOnSubmit;
-
-  useEffect(() => {
-    if (
-      onMountAction &&
-      isPreviewMode &&
-      !onMountActionsRan.includes(onMountAction.id)
-    ) {
-      addOnMountActionsRan(onMountAction.id);
-      actionMapper[onMountAction.action.name].action({
-        // @ts-ignore
-        action: onMountAction.action,
-        actionId: onMountAction.id,
-        router: router as Router,
-        onSuccess: onSuccessActions.find(
-          (sa) => sa.sequentialTo === onMountAction.id,
-        ),
-        onError: onErrorActions.find(
-          (ea) => ea.sequentialTo === onMountAction.id,
-        ),
-        component,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPreviewMode, onMountAction, onMountActionsRan]);
 
   const onDrop = useOnDrop();
 

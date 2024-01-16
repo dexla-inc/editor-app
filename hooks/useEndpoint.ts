@@ -1,28 +1,18 @@
-import { Icon } from "@/components/Icon";
-import { Endpoint } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
-import { useFetchedDataStore } from "@/stores/fetchedData";
-import { GREEN_COLOR } from "@/utils/branding";
-import { Button } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useEditorStore } from "@/stores/editor";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 
-type Props = {
-  endpoint?: Endpoint;
-  projectId?: string;
-};
-
-export const EndpointExampleResponseTest = ({ endpoint, projectId }: Props) => {
-  const [isLoading, { open: onLoading, close: offLoading }] =
-    useDisclosure(false);
+export const useEndpoint = () => {
   const refreshAccessToken = useDataSourceStore(
     (state) => state.refreshAccessToken,
   );
   const accessToken = useDataSourceStore((state) => state.accessToken);
-  const setDataResponse = useFetchedDataStore((state) => state.setDataResponse);
-
-  const handleTestEndpoint = async () => {
+  const projectId = useEditorStore((state) => state.currentProjectId);
+  const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const apiCall = async (endpointId: string) => {
     try {
-      onLoading();
+      const endpoint = endpoints?.results?.find((e) => e.id === endpointId);
+
       refreshAccessToken();
       const authHeaderKey =
         endpoint?.authenticationScheme === "BEARER"
@@ -48,37 +38,17 @@ export const EndpointExampleResponseTest = ({ endpoint, projectId }: Props) => {
         headers: requestHeaders,
         ...(endpoint?.body ? { body: endpoint.body } : {}),
       });
+
       // Check response status
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
-
-      // Set exampleResponse for successful response
-      setDataResponse(endpoint?.id!, "exampleResponse", JSON.stringify(data));
+      return await response.json();
     } catch (error) {
       console.log(error);
-      setDataResponse(
-        endpoint?.id!,
-        "errorExampleResponse",
-        JSON.stringify(error),
-      );
-    } finally {
-      offLoading();
     }
   };
-  return (
-    endpoint && (
-      <Button
-        onClick={handleTestEndpoint}
-        color={GREEN_COLOR}
-        size="xs"
-        leftIcon={<Icon name="IconClick" />}
-        loading={isLoading}
-      >
-        Test
-      </Button>
-    )
-  );
+
+  return { apiCall };
 };

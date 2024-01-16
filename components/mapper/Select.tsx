@@ -4,13 +4,11 @@ import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Select as MantineSelect, SelectProps } from "@mantine/core";
-import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
-import get from "lodash.get";
 import merge from "lodash.merge";
-import { forwardRef, memo, useCallback, useState } from "react";
+import { forwardRef, memo, useCallback, useEffect, useState } from "react";
 import { InputLoader } from "../InputLoader";
-import { useFetchedDataStore } from "@/stores/fetchedData";
+import { useEndpoint } from "@/hooks/useEndpoint";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -36,7 +34,32 @@ const SelectComponent = forwardRef(
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setInputValue = useInputsStore((state) => state.setInputValue);
     const [localInputValue, setLocalInputValue] = useState(inputValue ?? "");
-    const dataList = useFetchedDataStore((state) => state.dataList);
+    const { apiCall } = useEndpoint();
+    const [data, setData] = useState(component.props?.data ?? []);
+
+    useEffect(() => {
+      if (component.props?.dataType === "dynamic") {
+        apiCall(component.props?.endpointId).then((result = []) => {
+          if (Array.isArray(result)) {
+            setData(
+              (result ?? []).map((item: any) => ({
+                label: item[component.props?.dataLabelKey ?? ""],
+                value: item[component.props?.dataValueKey ?? ""],
+              })),
+            );
+          }
+        });
+      } else {
+        setData(component.props?.data ?? []);
+      }
+    }, [
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      component.props?.data,
+      component.props?.endpointId,
+      component.props?.dataType,
+      component.props?.dataLabelKey,
+      component.props?.dataValueKey,
+    ]);
 
     // update values in store
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,19 +76,6 @@ const SelectComponent = forwardRef(
       debouncedOnChange(value);
       triggers?.onChange && triggers?.onChange(value);
     };
-
-    let data = [];
-    if (component.props?.dataType === "static") {
-      data = component.props?.data ?? [];
-    } else if (component.props?.dataType === "dynamic") {
-      const exampleResponse = dataList.find(
-        (d) => d.id === component.props?.endpoint,
-      )?.exampleResponse;
-      data = JSON.parse(exampleResponse ?? "[]").map((item: any) => ({
-        label: item[component.props?.dataLabelKey ?? ""],
-        value: item[component.props?.dataValueKey ?? ""],
-      }));
-    }
 
     return (
       <MantineSelect
