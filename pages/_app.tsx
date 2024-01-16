@@ -119,7 +119,7 @@ export default function App(props: AppProps) {
           )}
           <main className={inter.variable}>
             <QueryClientProvider client={queryClient}>
-              <InitializeVariables isLive={isLive} pageProps={pageProps} />
+              <InitializeVariables pageProps={pageProps} />
               <Hydrate state={pageProps.dehydratedState}>
                 <ModalsProvider modals={{ logicFlows: LogicFlowInitialModal }}>
                   <Notifications />
