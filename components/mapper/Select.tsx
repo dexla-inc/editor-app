@@ -56,7 +56,7 @@ const SelectComponent = forwardRef(
             setLocalInputValue("");
             return setData([]);
           }
-
+          console.log({ result });
           if (Array.isArray(result)) {
             setData(
               (result ?? []).reduce((acc, item: any) => {
@@ -69,10 +69,12 @@ const SelectComponent = forwardRef(
               }, []),
             );
           } else {
-            setData({
-              label: result[dataLabelKey],
-              value: result[dataValueKey],
-            });
+            setData([
+              {
+                label: result[dataLabelKey],
+                value: result[dataValueKey],
+              },
+            ]);
           }
         });
       } else {

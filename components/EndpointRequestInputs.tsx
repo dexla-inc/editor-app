@@ -11,14 +11,9 @@ import React from "react";
 type Props = {
   selectedEndpoint: Endpoint;
   form: any;
-  isLogicFlow?: boolean;
 };
 
-export const EndpointRequestInputs = ({
-  selectedEndpoint,
-  form,
-  isLogicFlow,
-}: Props) => {
+export const EndpointRequestInputs = ({ selectedEndpoint, form }: Props) => {
   const accessToken = useDataSourceStore((state) => state.accessToken);
   const setPickingComponentToBindTo = useEditorStore(
     (state) => state.setPickingComponentToBindTo,
