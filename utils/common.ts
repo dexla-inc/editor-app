@@ -52,3 +52,13 @@ export const isInput = (componentName: string) => {
   ];
   return inputCategories.some((category) => componentName.includes(category));
 };
+
+export const getComponentInitialDisplayValue = (componentName: string) => {
+  const defaultDisplayValues: { [key: string]: string } = {
+    Grid: "grid",
+    GridColumn: "grid",
+    Container: "flex",
+  };
+
+  return defaultDisplayValues[componentName] || "block";
+};
