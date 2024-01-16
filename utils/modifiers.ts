@@ -170,12 +170,14 @@ export const requiredModifiers: RequiredModifiers = {
   },
   button: {
     value: "New Button",
-    width: "fit-content",
     type: "button",
     variant: "filled",
     size: "sm",
     radius: "sm",
     leftIcon: "",
+    style: {
+      width: "fit-content",
+    },
   },
   image: {
     src: "https://www.contentviewspro.com/wp-content/uploads/2017/07/default_image.png",
@@ -211,6 +213,7 @@ export const requiredModifiers: RequiredModifiers = {
   },
   select: {
     name: "Select",
+    height: "fit-content",
     size: "sm",
     placeholder: "Select",
     type: "text",

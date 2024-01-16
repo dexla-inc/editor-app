@@ -16,10 +16,7 @@ export const useComponentStates = () => {
     [componentName: string]: ComponentAppearence[];
   };
 
-  const appearencesForAllComponents = [
-    { label: "Default", value: "default" },
-    { label: "Hidden", value: "hidden" },
-  ];
+  const appearencesForAllComponents = [{ label: "Default", value: "default" }];
 
   const appearencesByComponent: ComponentAppearences = {
     Common: [
