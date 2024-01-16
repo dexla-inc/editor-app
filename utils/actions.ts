@@ -822,7 +822,7 @@ const getBody = (endpoint: Endpoint, action: any, variableValues: any) => {
     : undefined;
 };
 
-const prepareRequestData = async (action: any, endpoint: Endpoint) => {
+export const prepareRequestData = async (action: any, endpoint: Endpoint) => {
   const keys = action.binds?.parameter ?? Object.keys(action.binds?.parameter);
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
   const variableValues = await getVariablesValue(
@@ -897,7 +897,7 @@ function constructHeaders(endpoint?: Endpoint, authHeaderKey = "") {
 }
 
 // Function to perform the fetch operation
-async function performFetch(
+export async function performFetch(
   url: string,
   endpoint?: Endpoint,
   body?: any,
