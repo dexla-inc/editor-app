@@ -4,7 +4,6 @@ import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Select as MantineSelect, SelectProps } from "@mantine/core";
-import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { forwardRef, memo, useCallback, useEffect, useState } from "react";
 import { InputLoader } from "../InputLoader";
@@ -22,16 +21,8 @@ const SelectComponent = forwardRef(
     { renderTree, component, isPreviewMode, children: child, ...props }: Props,
     ref,
   ) => {
-    const {
-      children,
-      triggers,
-      loading,
-      customText,
-      customLinkText,
-      customLinkUrl,
-      dataType,
-      ...componentProps
-    } = component.props as any;
+    const { children, triggers, loading, dataType, ...componentProps } =
+      component.props as any;
     const {
       endpointId,
       dataLabelKey,
@@ -89,19 +80,8 @@ const SelectComponent = forwardRef(
       }
     }, [component.props?.data, dataType]);
 
-    // update values in store
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedOnChange = useCallback(
-      debounce((value) => {
-        setInputValue(component.id!, value);
-      }, 400),
-      [component.id],
-    );
-
-    // handle changes to input field
     const handleInputChange = (value: any) => {
       setInputValue(component.id!, value);
-      debouncedOnChange(value);
       triggers?.onChange && triggers?.onChange(value);
     };
 
@@ -131,12 +111,7 @@ const SelectComponent = forwardRef(
         withinPortal={false}
         maxDropdownHeight={150}
         data={data}
-        dropdownComponent={(props: any) => (
-          <CustomDropdown
-            {...props}
-            components={{ customText, customLinkText, customLinkUrl }}
-          />
-        )}
+        dropdownComponent={CustomDropdown}
         rightSection={loading ? <InputLoader /> : null}
         label={undefined}
         value={inputValue}

@@ -8,6 +8,8 @@ import {
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { isSame } from "@/utils/componentComparison";
+import { getComponentById } from "@/utils/editor";
+import { useEditorStore } from "@/stores/editor";
 
 type LinkProps = { text: string; link: string; url: string };
 
@@ -30,26 +32,24 @@ const FixedLink = ({ text, link, url }: LinkProps) => (
   </MantineGroup>
 );
 
-const CustomDropdownComponent = forwardRef(
-  ({ children, components, ...props }: any, ref) => {
-    const isComponent = components.customText || components.customLinkText;
-    return (
-      <MantineBox ref={ref} component={ScrollArea} {...props}>
-        {children}
-        {isComponent && (
-          <FixedLink
-            text={components.customText}
-            link={components.customLinkText}
-            url={components.customLinkUrl}
-          />
-        )}
-      </MantineBox>
-    );
-  },
-);
-CustomDropdownComponent.displayName = "CustomDropdown";
-
-export const CustomDropdown = memo(
-  withComponentWrapper<any>(CustomDropdownComponent),
-  isSame,
-);
+export const CustomDropdown = ({ children, ...props }: any) => {
+  const editorTree = useEditorStore((state) => state.tree);
+  const component = getComponentById(
+    editorTree.root,
+    props.id.split("-").at(0),
+  );
+  const isComponent =
+    component?.props?.customText || component?.props?.customLinkText;
+  return (
+    <MantineBox component={ScrollArea} {...props}>
+      {children}
+      {isComponent && (
+        <FixedLink
+          text={component?.props?.customText}
+          link={component?.props?.customLinkText}
+          url={component?.props?.customLinkUrl}
+        />
+      )}
+    </MantineBox>
+  );
+};
