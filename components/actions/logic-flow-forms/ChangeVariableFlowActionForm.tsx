@@ -40,6 +40,7 @@ export const ChangeVariableFlowActionForm = ({ form }: Props) => {
           form.setFieldValue("javascriptCode", javascriptCode);
         }}
         javascriptCode={form.values.javascriptCode ?? ""}
+        style="iconButton"
       />
 
       <Button type="submit" size="xs" loading={isUpdating}>

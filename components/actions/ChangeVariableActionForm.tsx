@@ -92,6 +92,7 @@ export const ChangeVariableActionForm = ({ id }: Props) => {
             form.setFieldValue("javascriptCode", javascriptCode);
           }}
           javascriptCode={form.values.javascriptCode!}
+          style="iconButton"
         />
 
         <ActionButtons
