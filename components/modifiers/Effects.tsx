@@ -11,7 +11,7 @@ import merge from "lodash.merge";
 import { useEffect } from "react";
 
 export const icon = IconBrush;
-export const label = "Appearence";
+export const label = "Appearance";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
