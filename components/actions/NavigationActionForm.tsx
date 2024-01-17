@@ -10,7 +10,7 @@ import {
 import { QueryStringListItem } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
 import { NavigationAction } from "@/utils/actions";
-import { requiredFieldValidator } from "@/utils/common";
+import { requiredFieldValidator } from "@/utils/validation";
 import { Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useMemo, useState } from "react";

@@ -58,6 +58,7 @@ export const APICallActionForm = ({ id }: Props) => {
   const setApiAuthConfig = useDataSourceStore(
     (state) => state.setApiAuthConfig,
   );
+  const apiAuthConfig = useDataSourceStore((state) => state.apiAuthConfig);
 
   useEffect(() => {
     if (endpoints?.results) {
@@ -70,6 +71,7 @@ export const APICallActionForm = ({ id }: Props) => {
       showLoader: action.action?.showLoader ?? true,
       endpoint: action.action?.endpoint,
       selectedEndpoint: action.action?.selectedEndpoint,
+      authConfig: action.action?.authConfig,
       binds: {
         header: action.action?.binds?.header ?? {},
         parameter: action.action?.binds?.parameter ?? {},
@@ -92,6 +94,7 @@ export const APICallActionForm = ({ id }: Props) => {
         updateValues: {
           endpoint: values.endpoint,
           selectedEndpoint: selectedEndpoint!,
+          authConfig: apiAuthConfig!,
           showLoader: values.showLoader,
           datasources: dataSources!.results,
           binds: values.binds,

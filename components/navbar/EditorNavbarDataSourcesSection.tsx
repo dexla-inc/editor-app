@@ -1,28 +1,40 @@
 import { WarningAlert } from "@/components/Alerts";
-import { DataSourceListItem } from "@/components/datasources/DataSourceListItem";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import PaneHeading from "@/components/navbar/PaneHeading";
-import { getDataSources } from "@/requests/datasources/queries-noauth";
-import { Stack, Text } from "@mantine/core";
-import { useQuery } from "@tanstack/react-query";
+import { useDataSources } from "@/hooks/reactQuery/useDataSources";
+import { DataSourceResponse } from "@/requests/datasources/types";
+import { Select, Stack, Text } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { DataSourceForm } from "../datasources/DataSourceForm";
+import { RedirectUrlForm } from "../datasources/RedirectUrlForm";
 
-type EditorNavbarDataSourcesSectionProps = {
-  isActive: boolean;
-};
-
-export const EditorNavbarDataSourcesSection = ({
-  isActive,
-}: EditorNavbarDataSourcesSectionProps) => {
+export const EditorNavbarDataSourcesSection = () => {
   const router = useRouter();
   const projectId = router.query.id as string;
 
-  const dataSources = useQuery({
-    queryKey: ["datasources"],
-    queryFn: () => getDataSources(projectId, {}),
-    enabled: !!projectId && isActive,
-  });
+  const [datasourceId, setDatasourceId] = useState<string>();
+  const [datasource, setDatasource] = useState<DataSourceResponse>();
+
+  const { data: dataSources } = useDataSources(projectId);
+
+  const onNameChange = (value: string) => {
+    setDatasource(dataSources?.results.find((ds) => ds.name === value));
+  };
+
+  useEffect(() => {
+    // auto select the first option in dataSources
+    if (dataSources?.results && dataSources.results.length > 0) {
+      setDatasourceId(dataSources.results[0].id);
+      setDatasource(dataSources.results[0]);
+    }
+  }, [dataSources?.results]);
+
+  useEffect(() => {
+    if (datasource) {
+    }
+  }, [datasource]);
 
   return (
     <>
@@ -34,9 +46,9 @@ export const EditorNavbarDataSourcesSection = ({
         onClose={() => true}
       ></PaneHeading>
       <Stack>
-        {dataSources?.data?.results && dataSources.data.results.length > 0 && (
+        {dataSources?.results && dataSources.results.length > 0 && (
           <WarningAlert isHtml>
-            <Text>
+            <Text size="xs">
               It is recommended you change configuration in your swagger file
               and refetch the latest changes in&nbsp;
               <Link
@@ -49,18 +61,23 @@ export const EditorNavbarDataSourcesSection = ({
             </Text>
           </WarningAlert>
         )}
-        {dataSources?.data?.results && dataSources.data.results.length > 0 ? (
-          dataSources.data.results.map((dataSource) => {
-            return (
-              <DataSourceListItem
-                baseUrl={dataSource.baseUrl}
-                key={dataSource.id}
-                projectId={projectId}
-                id={dataSource.id}
-                name={dataSource.name}
-              ></DataSourceListItem>
-            );
-          })
+
+        {dataSources?.results && dataSources.results.length > 0 ? (
+          <Stack spacing="md">
+            <Select
+              label="Name"
+              value={datasourceId}
+              onChange={(value) => onNameChange(value as string)}
+              data={dataSources.results.map((dataSource) => {
+                return {
+                  value: dataSource.id,
+                  label: dataSource.name,
+                };
+              })}
+            />
+            {datasource && <DataSourceForm datasource={datasource} />}
+            <RedirectUrlForm />
+          </Stack>
         ) : (
           <EmptyDatasourcesPlaceholder
             projectId={projectId}

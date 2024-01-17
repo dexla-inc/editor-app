@@ -23,19 +23,9 @@ export const useDataSourceStore = create<DataSourceState>()(
         apiAuthConfig: undefined,
         endpoints: undefined,
         setAuthTokens: (response) => {
-          const apiAuthConfig = get().apiAuthConfig as DataSourceAuthResponse;
-
-          if (
-            apiAuthConfig.accessTokenProperty === undefined ||
-            apiAuthConfig.refreshTokenProperty === undefined ||
-            apiAuthConfig.expiryTokenProperty === undefined
-          ) {
-            console.error("Missing auth config");
-            return;
-          }
-          const accessToken = response[apiAuthConfig.accessTokenProperty];
-          const refreshToken = response[apiAuthConfig.refreshTokenProperty];
-          const expirySeconds = response[apiAuthConfig.expiryTokenProperty];
+          const accessToken = response[response.accessTokenProperty];
+          const refreshToken = response[response.refreshTokenProperty];
+          const expirySeconds = response[response.expiryTokenProperty];
           const expiresAt = Date.now() + expirySeconds * 1000;
 
           Cookies.set("refreshToken", refreshToken, {

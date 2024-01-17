@@ -66,6 +66,7 @@ type Props = {
   id: string;
 };
 
+// TODO: This needs deleting
 export const BindPlaceDataActionForm = ({ id }: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
   const editorTree = useEditorStore((state) => state.tree);
@@ -108,6 +109,7 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
   const containers = getAllComponentsByName(editorTree.root, "Container");
 
   const form = useForm<FormValues>({
+    // @ts-ignore
     initialValues: {
       showLoader: action.action?.showLoader ?? true,
       endpoint: action.action?.endpoint,
@@ -131,6 +133,7 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
         selectedComponentId: selectedComponentId!,
         componentActions,
         id,
+        // @ts-ignore
         updateValues: {
           endpoint: values.endpoint,
           selectedEndpoint: selectedEndpoint!,
@@ -187,7 +190,12 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
 
   return endpoints && endpoints.length > 0 ? (
     <>
-      <form onSubmit={form.onSubmit(onSubmit)}>
+      <form
+        onSubmit={
+          // @ts-ignore
+          form.onSubmit(onSubmit)
+        }
+      >
         <Stack spacing="xs">
           <Select
             size="xs"

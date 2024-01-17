@@ -42,7 +42,11 @@ import { TogglePropsFlowActionForm } from "@/components/actions/logic-flow-forms
 import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components/actions/logic-flow-forms/TriggerLogicFlowActionForm";
 import { Position } from "@/components/mapper/GoogleMapPlugin";
 import { Options } from "@/components/modifiers/GoogleMap";
-import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
+import {
+  DataSourceAuthResponse,
+  DataSourceResponse,
+  Endpoint,
+} from "@/requests/datasources/types";
 import { VariableParams } from "@/requests/variables/types";
 
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
@@ -224,6 +228,7 @@ export interface APICallAction extends BaseAction {
   name: "apiCall";
   endpoint: string;
   selectedEndpoint: Endpoint;
+  authConfig: Omit<DataSourceAuthResponse, "type">;
   showLoader?: boolean;
   datasources: DataSourceResponse[];
   binds?: {
@@ -940,7 +945,6 @@ export const apiCallAction = async ({
   ...rest
 }: APICallActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  const apiAuthConfig = useDataSourceStore.getState().apiAuthConfig;
 
   try {
     updateTreeComponent({
@@ -959,8 +963,9 @@ export const apiCallAction = async ({
 
     if (action.isLogin) {
       responseJson = await performFetch(url, action.selectedEndpoint, body);
-      const mergedAuthConfig = { ...responseJson, ...apiAuthConfig };
+      const mergedAuthConfig = { ...responseJson, ...action.authConfig };
       const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
+
       setAuthTokens(mergedAuthConfig);
     } else {
       const refreshAccessToken =

@@ -4,7 +4,7 @@ import {
   VariableTypesOptions,
 } from "@/requests/variables/types";
 import { useVariableStore } from "@/stores/variables";
-import { requiredFieldValidator } from "@/utils/common";
+import { requiredFieldValidator } from "@/utils/validation";
 import { Button, Select, Stack, TextInput, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";

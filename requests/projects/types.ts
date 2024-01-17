@@ -2,6 +2,26 @@ import { UserRoles } from "@/utils/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
 
 export type RegionTypes = "FRANCE_CENTRAL" | "US_CENTRAL" | "UK_SOUTH";
+
+export interface ProjectParams extends ProjectUpdateParams {
+  id: string;
+  companyId: string;
+  description: string;
+  type: ProjectTypes;
+  industry?: string;
+  similarCompany?: string;
+  customCode?: string;
+}
+
+export type ProjectUpdateParams = {
+  friendlyName?: string;
+  region?: RegionTypes;
+  domain?: string;
+  subDomain?: string;
+  customCode?: string;
+  redirectSlug?: string;
+};
+
 export type ProjectResponse = {
   id: string;
   name: string;
@@ -19,7 +39,9 @@ export type ProjectResponse = {
   deployed: boolean;
   domain: string;
   subDomain: string;
+  homePageId?: string;
   customCode?: string;
+  redirectSlug?: string;
 };
 
 export type ProjectListResponse = {

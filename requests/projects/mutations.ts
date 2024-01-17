@@ -1,32 +1,7 @@
-import { RegionTypes } from "@/requests/projects/types";
+import { ProjectParams, ProjectResponse } from "@/requests/projects/types";
 import { PatchParams } from "@/requests/types";
 import { del, getAuthToken, patch, post } from "@/utils/api";
 import { buildQueryString } from "@/utils/dashboardTypes";
-import { ProjectTypes } from "@/utils/projectTypes";
-
-export interface ProjectParams extends ProjectUpdateParams {
-  id: string;
-  companyId: string;
-  description: string;
-  type: ProjectTypes;
-  industry?: string;
-  similarCompany?: string;
-  customCode?: string;
-}
-
-export type ProjectResponse = {
-  id: string;
-  homePageId?: string;
-  [key: string]: any;
-};
-
-export type ProjectUpdateParams = {
-  friendlyName?: string;
-  region?: RegionTypes;
-  domain?: string;
-  subDomain?: string;
-  customCode?: string;
-};
 
 export const createProject = async (
   params: ProjectParams | { companyId: string },

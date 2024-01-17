@@ -11,16 +11,19 @@ import {
   IconCloudStorm,
   IconCode,
   IconComponents,
+  IconDatabase,
   IconFileInvoice,
   IconLayoutDashboard,
   IconSettings,
 } from "@tabler/icons-react";
+import { EditorNavbarDataSourcesSection } from "./EditorNavbarDataSourcesSection";
 
 type SectionId =
   | "pages"
   | "layers"
   | "components"
   | "theme"
+  | "datasources"
   | "customCode"
   | "settings"
   | "upload";
@@ -46,6 +49,11 @@ const sections = [
     id: "theme" as SectionId,
     label: "Brand",
     icon: IconBrush,
+  },
+  {
+    id: "datasources" as SectionId,
+    label: "Datasources",
+    icon: IconDatabase,
   },
   {
     id: "upload" as SectionId,
@@ -75,6 +83,7 @@ export const sectionMapper: SectionsMapper = {
   layers: (props: any) => <NavbarLayersSection {...props} />,
   components: (props: any) => <EditorNavbarComponentsSection {...props} />,
   theme: (props: any) => <EditorNavbarThemesSection {...props} />,
+  datasources: (props: any) => <EditorNavbarDataSourcesSection {...props} />,
   upload: undefined,
   customCode: (props: any) => <EditorNavbarCustomCodeSection {...props} />,
   settings: (props: any) => <EditorSettingsSection {...props} />,
