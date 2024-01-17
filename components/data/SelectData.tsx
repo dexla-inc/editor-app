@@ -1,5 +1,6 @@
 import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
 import { EndpointSelect } from "@/components/EndpointSelect";
+import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 import { SidebarSection } from "@/components/SidebarSection";
 import { Appearance } from "@/components/data/Appearance";
@@ -13,7 +14,6 @@ import { useForm } from "@mantine/form";
 import { IconDatabase } from "@tabler/icons-react";
 import get from "lodash.get";
 import { useEffect, useState } from "react";
-import { SegmentedControlInput } from "../SegmentedControlInput";
 
 function getObjectAndArrayKeys(obj: any, prefix = "") {
   let keys: string[] = [];
