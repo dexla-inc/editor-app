@@ -15,6 +15,7 @@ import {
 } from "@mantine/core";
 import debounce from "lodash.debounce";
 import merge from "lodash.merge";
+import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo, useCallback, useState } from "react";
 import { InputLoader } from "../InputLoader";
 
@@ -168,19 +169,15 @@ const InputComponent = forwardRef(
             styles={{
               root: {
                 position: "relative",
-                display: "block !important",
-                width: customStyle.width,
-                height: customStyle.height,
-                minHeight: customStyle.minHeight,
-                minWidth: customStyle.minWidth,
+                ...pick(customStyle, [
+                  "display",
+                  "width",
+                  "height",
+                  "minHeight",
+                  "minWidth",
+                ]),
               },
-              input: {
-                ...customStyle,
-                width: "-webkit-fill-available",
-                height: "-webkit-fill-available",
-                minHeight: "-webkit-fill-available",
-                minWidth: "-webkit-fill-available",
-              },
+              input: customStyle,
             }}
             min={0}
             value={parseToNumber(localInputValue)}
@@ -199,15 +196,15 @@ const InputComponent = forwardRef(
             styles={{
               root: {
                 position: "relative",
-                display: "block !important",
-                width: customStyle.width,
-                minWidth: customStyle.minWidth,
+                ...pick(customStyle, [
+                  "display",
+                  "width",
+                  "height",
+                  "minHeight",
+                  "minWidth",
+                ]),
               },
-              input: {
-                height: customStyle.height,
-                minHeight: customStyle.minHeight,
-                ...customStyle,
-              },
+              input: customStyle,
             }}
             value={localInputValue}
             onChange={handleInputChange}
@@ -230,19 +227,15 @@ const InputComponent = forwardRef(
             styles={{
               root: {
                 position: "relative",
-                display: "block !important",
-                width: customStyle.width,
-                height: customStyle.height,
-                minHeight: customStyle.minHeight,
-                minWidth: customStyle.minWidth,
+                ...pick(customStyle, [
+                  "display",
+                  "width",
+                  "height",
+                  "minHeight",
+                  "minWidth",
+                ]),
               },
-              input: {
-                ...customStyle,
-                width: "-webkit-fill-available",
-                height: "-webkit-fill-available",
-                minHeight: "-webkit-fill-available",
-                minWidth: "-webkit-fill-available",
-              },
+              input: customStyle,
             }}
             value={localInputValue}
             onChange={handleInputChange}
