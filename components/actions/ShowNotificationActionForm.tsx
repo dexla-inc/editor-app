@@ -8,7 +8,7 @@ import {
   useLoadingState,
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
-import { OpenToastAction } from "@/utils/actions";
+import { ShowNotificationAction } from "@/utils/actions";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ApiType } from "@/utils/dashboardTypes";
 import { Stack, Title } from "@mantine/core";
@@ -19,9 +19,9 @@ type Props = {
   id: string;
 };
 
-type FormValues = Omit<OpenToastAction, "name">;
+type FormValues = Omit<ShowNotificationAction, "name">;
 
-export const OpenToastActionForm = ({ id }: Props) => {
+export const ShowNotificationActionForm = ({ id }: Props) => {
   const setPickingComponentToBindTo = useEditorStore(
     (state) => state.setPickingComponentToBindTo,
   );
@@ -36,7 +36,7 @@ export const OpenToastActionForm = ({ id }: Props) => {
   const updateTreeComponentActions = useEditorStore(
     (state) => state.updateTreeComponentActions,
   );
-  const { componentActions, action } = useActionData<OpenToastAction>({
+  const { componentActions, action } = useActionData<ShowNotificationAction>({
     actionId: id,
     editorTree,
     selectedComponentId,
@@ -54,7 +54,7 @@ export const OpenToastActionForm = ({ id }: Props) => {
     handleLoadingStart({ startLoading });
 
     try {
-      updateActionInTree<OpenToastAction>({
+      updateActionInTree<ShowNotificationAction>({
         selectedComponentId: selectedComponentId!,
         componentActions,
         id,

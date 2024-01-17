@@ -12,7 +12,6 @@ import { NavigationActionForm } from "@/components/actions/NavigationActionForm"
 import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm";
 import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
 import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
-import { OpenToastActionForm } from "@/components/actions/OpenToastActionForm";
 import { ToggleAccordionItemActionForm } from "@/components/actions/ToggleAccordionItemActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
@@ -38,7 +37,7 @@ import { NavigationFlowActionForm } from "@/components/actions/logic-flow-forms/
 import { OpenDrawerFlowActionForm } from "@/components/actions/logic-flow-forms/OpenDrawerFlowActionForm";
 import { OpenModalFlowActionForm } from "@/components/actions/logic-flow-forms/OpenModalFlowActionForm";
 import { OpenPopOverFlowActionForm } from "@/components/actions/logic-flow-forms/OpenPopOverFlowActionForm";
-import { OpenToastFlowActionForm } from "@/components/actions/logic-flow-forms/OpenToastFlowActionForm";
+import { ShowNotificationFlowActionForm } from "@/components/actions/logic-flow-forms/ShowNotificationFlowActionForm";
 import { TogglePropsFlowActionForm } from "@/components/actions/logic-flow-forms/TogglePropsFlowActionForm";
 import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components/actions/logic-flow-forms/TriggerLogicFlowActionForm";
 import { Position } from "@/components/mapper/GoogleMapPlugin";
@@ -46,6 +45,7 @@ import { Options } from "@/components/modifiers/GoogleMap";
 import { DataSourceResponse, Endpoint } from "@/requests/datasources/types";
 import { VariableParams } from "@/requests/variables/types";
 
+import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
@@ -64,6 +64,7 @@ import get from "lodash.get";
 import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
+import { getComponentInitialDisplayValue } from "./common";
 
 const triggers = [
   "onClick",
@@ -89,8 +90,7 @@ const triggers = [
 ] as const;
 
 type ActionGroup =
-  | "Data"
-  | "Logic"
+  | "Data & Logic"
   | "Design"
   | "Binding"
   | "Navigation"
@@ -108,14 +108,14 @@ type ActionInfo = {
 };
 
 export const actions: ActionInfo[] = [
-  { name: "apiCall", group: "Data", icon: "IconApi" },
-  { name: "changeVariable", group: "Data" }, // Merge bindVariable, changeVariable and bindVariableToChart
-  { name: "bindResponse", group: "Data" }, // Merge bindVariable, changeVariable and bindVariableToChart
+  { name: "apiCall", group: "Data & Logic", icon: "IconApi" },
+  { name: "changeVariable", group: "Data & Logic" },
+  { name: "triggerLogicFlow", group: "Data & Logic", icon: "IconFlow" },
   { name: "changeState", group: "Design", icon: "IconTransform" },
-  { name: "triggerLogicFlow", group: "Logic", icon: "IconFlow" },
+  { name: "changeVisibility", group: "Design", icon: "IconEyeOff" },
   { name: "navigateToPage", group: "Navigation", icon: "IconFileInvoice" },
   { name: "goToUrl", group: "Navigation", icon: "IconLink" },
-  { name: "openToast", group: "Feedback" },
+  { name: "showNotification", group: "Feedback" },
   { name: "alert", group: "Feedback", icon: "IconAlert" },
   { name: "customJavascript", group: "Utilities & Tools", icon: "IconCode" },
   { name: "copyToClipboard", group: "Utilities & Tools", icon: "IconCopy" },
@@ -124,7 +124,8 @@ export const actions: ActionInfo[] = [
     group: "Utilities & Tools",
     icon: "IconMessageLanguage",
   },
-  { name: "bindVariable", group: "Z Delete" }, // Merge bindVariable, changeVariable and bindVariableToChart
+  { name: "bindResponse", group: "Z Delete" },
+  { name: "bindVariable", group: "Z Delete" },
   { name: "bindVariableToChart", group: "Z Delete" },
   { name: "changeStep", group: "Z Delete", icon: "IconStatusChange" },
   {
@@ -138,7 +139,6 @@ export const actions: ActionInfo[] = [
   { name: "closeModal", group: "Z Delete" },
   { name: "openPopOver", group: "Z Delete" },
   { name: "closePopOver", group: "Z Delete" },
-  { name: "toggleVisibility", group: "Z Delete" },
   { name: "bindPlaceData", group: "Z Delete", icon: "IconMap" },
   { name: "bindPlaceGeometry", group: "Z Delete", icon: "IconMap" },
 ];
@@ -201,12 +201,12 @@ export interface OpenPopOverAction extends BaseAction {
 }
 
 export interface TogglePropsAction extends BaseAction {
-  name: "toggleVisibility";
+  name: "changeVisibility";
   conditionRules: Array<{ componentId: string; condition: string }>;
 }
 
-export interface OpenToastAction extends BaseAction {
-  name: "openToast";
+export interface ShowNotificationAction extends BaseAction {
+  name: "showNotification";
   title: string;
   message: string;
 }
@@ -311,7 +311,7 @@ export type Action = {
     | OpenPopOverAction
     | ToggleAccordionItemAction
     | TogglePropsAction
-    | OpenToastAction
+    | ShowNotificationAction
     | ChangeStateAction
     | ToggleNavbarAction
     | ChangeStepAction
@@ -435,8 +435,8 @@ export type OpenPopOverActionParams = ActionParams & {
   action: OpenPopOverAction;
 };
 
-export type OpenToastActionParams = ActionParams & {
-  action: OpenToastAction;
+export type ShowNotificationActionParams = ActionParams & {
+  action: ShowNotificationAction;
 };
 
 export type TogglePropsActionParams = ActionParams & {
@@ -569,35 +569,38 @@ export const changeStepAction = ({ action }: ChangeStepActionParams) => {
     save: false,
   });
 };
-export const togglePropsAction = ({
+
+export const changeVisibilityAction = ({
   action,
   event,
 }: TogglePropsActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
-  let componentId = "";
+  const tree = useEditorStore.getState().tree;
   action.conditionRules.forEach((item) => {
-    if (item.condition === event) {
-      componentId = item.componentId;
-    }
+    // Find the component to toggle visibility
+    const componentToToggle = getComponentById(tree, item.componentId);
 
+    // Determine the current display state of the component
+    const currentDisplay = componentToToggle?.props?.style?.display;
+
+    // Toggle between 'none' and the component's initial display value
+    const newDisplay =
+      currentDisplay === "none"
+        ? getComponentInitialDisplayValue(componentToToggle?.name ?? "")
+        : "none";
+
+    // Update the component with the new display value
     updateTreeComponent({
       componentId: item.componentId,
       props: {
-        style: { display: "none" },
+        style: { display: newDisplay },
       },
       save: false,
     });
   });
-
-  updateTreeComponent({
-    componentId: componentId,
-    props: {
-      style: { display: "flex" },
-    },
-    save: false,
-  });
 };
+
 export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   const editorTree = useEditorStore.getState().tree;
@@ -671,7 +674,9 @@ const getVariableValueFromVariableId = (variableId = "") => {
   }
 };
 
-export const openToastAction = async ({ action }: OpenToastActionParams) => {
+export const showNotificationAction = async ({
+  action,
+}: ShowNotificationActionParams) => {
   showNotification({
     title: getVariableValueFromVariableId(action.title),
     message: getVariableValueFromVariableId(action.message),
@@ -1480,18 +1485,18 @@ export const actionMapper = {
     form: OpenPopOverActionForm,
     flowForm: ClosePopOverFlowActionForm,
   },
-  openToast: {
-    action: openToastAction,
-    form: OpenToastActionForm,
-    flowForm: OpenToastFlowActionForm,
+  showNotification: {
+    action: showNotificationAction,
+    form: ShowNotificationActionForm,
+    flowForm: ShowNotificationFlowActionForm,
   },
   changeState: {
     action: changeStateAction,
     form: ChangeStateActionForm,
     flowForm: ChangeStateActionFlowForm,
   },
-  toggleVisibility: {
-    action: togglePropsAction,
+  changeVisibility: {
+    action: changeVisibilityAction,
     form: TogglePropsActionForm,
     flowForm: TogglePropsFlowActionForm,
   },

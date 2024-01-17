@@ -1,7 +1,7 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
-import { OpenToastAction } from "@/utils/actions";
+import { ShowNotificationAction } from "@/utils/actions";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ApiType } from "@/utils/dashboardTypes";
 import { Button, Stack } from "@mantine/core";
@@ -12,9 +12,9 @@ type Props = {
   form: UseFormReturnType<FormValues>;
 };
 
-type FormValues = Omit<OpenToastAction, "name">;
+type FormValues = Omit<ShowNotificationAction, "name">;
 
-export const OpenToastFlowActionForm = ({ form }: Props) => {
+export const ShowNotificationFlowActionForm = ({ form }: Props) => {
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );

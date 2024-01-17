@@ -21,10 +21,10 @@ export default function AIPromptTextInput() {
 
   // start of handleComponentGeneration props
 
-  const { editorTree, selectedComponentId } = useEditorStore((state) => ({
-    editorTree: state.tree,
-    selectedComponentId: state.selectedComponentId,
-  }));
+  const editorTree = useEditorStore((state) => state.tree);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentId,
+  );
 
   let selectedComponent = null;
   if (selectedComponentId) {
