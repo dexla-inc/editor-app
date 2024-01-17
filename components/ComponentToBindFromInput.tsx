@@ -77,11 +77,9 @@ export const ComponentToBindFromInput = ({
         rightSection={
           onPickComponent &&
           !isLogicFlow && (
-            <>
-              <ActionIcon onClick={onBindComponent} size="xs">
-                <IconCurrentLocation size={ICON_SIZE} />
-              </ActionIcon>
-            </>
+            <ActionIcon onClick={onBindComponent} size="xs">
+              <IconCurrentLocation size={ICON_SIZE} />
+            </ActionIcon>
           )
         }
         styles={{
