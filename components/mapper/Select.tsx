@@ -83,7 +83,7 @@ const SelectComponent = forwardRef(
     }, [resultsKey, dataLabelKey, dataValueKey, dataType, response]);
 
     useEffect(() => {
-      if (endpointId.length === 0 || !endpointId) {
+      if (!endpointId) {
         setData(component.props?.data ?? []);
       }
     }, [component.props?.data, endpointId]);

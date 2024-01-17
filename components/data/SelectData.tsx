@@ -1,6 +1,8 @@
 import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
 import { EndpointSelect } from "@/components/EndpointSelect";
 import { SelectOptionsForm } from "@/components/SelectOptionsForm";
+import { SidebarSection } from "@/components/SidebarSection";
+import { Appearance } from "@/components/data/Appearance";
 import { DataProps } from "@/components/data/type";
 import { Endpoint } from "@/requests/datasources/types";
 import { useEditorStore } from "@/stores/editor";
@@ -12,7 +14,6 @@ import { IconDatabase } from "@tabler/icons-react";
 import get from "lodash.get";
 import { useEffect, useState } from "react";
 import { SegmentedControlInput } from "../SegmentedControlInput";
-import { SidebarSection } from "../SidebarSection";
 
 function getObjectAndArrayKeys(obj: any, prefix = "") {
   let keys: string[] = [];
@@ -42,6 +43,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
   const form = useForm({
     initialValues: {
       data: component.props?.data ?? [],
+      display: component.props?.display,
       initiallyOpened: component.props?.initiallyOpened ?? false,
     },
   });
@@ -97,6 +99,19 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
         <SelectOptionsForm
           getValue={() => form.getInputProps("data").value}
           setFieldValue={setFormFieldValue}
+        />
+        <Appearance
+          selectedComponent={component}
+          form={onLoadForm}
+          onChange={(value: any) => {
+            form.setFieldValue("display", value as string);
+            debouncedTreeUpdate(component.id, {
+              style: {
+                display: value,
+              },
+            });
+          }}
+          debouncedTreeUpdate={debouncedTreeUpdate}
         />
         <SidebarSection
           id="data"

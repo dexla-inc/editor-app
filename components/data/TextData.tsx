@@ -1,6 +1,7 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { EndpointSelect } from "@/components/EndpointSelect";
 import { SidebarSection } from "@/components/SidebarSection";
+import { Appearance } from "@/components/data/Appearance";
 import { DataProps } from "@/components/data/type";
 import { Endpoint } from "@/requests/datasources/types";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
@@ -67,6 +68,11 @@ export const TextData = ({ component, endpoints }: DataProps) => {
             }
           />
         )}
+        <Appearance
+          selectedComponent={component}
+          form={form}
+          debouncedTreeUpdate={debouncedTreeUpdate}
+        />
         <SidebarSection
           id="data"
           initiallyOpened={form.values.initiallyOpened}
