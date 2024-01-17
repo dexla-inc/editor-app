@@ -758,9 +758,8 @@ function getQueryElementValue(value: string): string {
   return el?.value ?? "";
 }
 
-const getVariablesValue = async (objs: Record<string, string>) => {
-  return await Object.values(objs).reduce(async (acc, key) => {
-    const result = await acc;
+const getVariablesValue = (objs: Record<string, string>) => {
+  return Object.values(objs).reduce((acc, key) => {
     let value = key;
 
     if (key.startsWith(`valueOf_`)) {
@@ -777,11 +776,11 @@ const getVariablesValue = async (objs: Record<string, string>) => {
 
     if (value) {
       // @ts-ignore
-      result[key] = value;
+      acc[key] = value;
     }
 
-    return Promise.resolve(result);
-  }, Promise.resolve({}));
+    return acc;
+  }, {});
 };
 
 export type APICallActionParams = ActionParams & {
@@ -832,10 +831,15 @@ const getBody = (endpoint: Endpoint, action: any, variableValues: any) => {
     : undefined;
 };
 
-export const prepareRequestData = async (action: any, endpoint: Endpoint) => {
-  const keys = action.binds?.parameter ?? Object.keys(action.binds?.parameter);
+export const prepareRequestData = (action: any, endpoint: Endpoint) => {
+  if (!endpoint) {
+    return { url: "", body: {} };
+  }
+
+  const keys = action.binds?.parameter && Object.keys(action.binds?.parameter);
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
-  const variableValues = await getVariablesValue(
+
+  const variableValues = getVariablesValue(
     merge(action.binds?.body ?? {}, action.binds?.parameter ?? {}),
   );
 

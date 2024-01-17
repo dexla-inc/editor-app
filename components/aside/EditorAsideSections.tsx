@@ -338,25 +338,24 @@ export const EditorAsideSections = () => {
     );
   });
 
+  // @ts-ignore
+  const DataSection = dataMapper[componentName];
+
   const tabs = [
     { label: "Design", value: "design" },
+    {
+      label: "Data",
+      value: "data",
+      disabled: (selectedComponentIds ?? []).length > 1,
+    },
     {
       label: "Actions",
       value: "actions",
       disabled: (selectedComponentIds ?? []).length > 1,
     },
-  ];
-
-  // @ts-ignore
-  const DataSection = dataMapper[componentName];
-
-  if (DataSection) {
-    tabs.splice(1, 0, {
-      label: "Data",
-      value: "data",
-      disabled: (selectedComponentIds ?? []).length > 1,
-    });
-  }
+  ].filter(
+    (item) => item.value !== "data" || (item.value === "data" && DataSection),
+  );
 
   return (
     <Stack>
