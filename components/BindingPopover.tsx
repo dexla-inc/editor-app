@@ -11,7 +11,6 @@ import { getParsedJSCode } from "@/utils/variables";
 import {
   ActionIcon,
   Box,
-  Button,
   Center,
   CloseButton,
   Flex,
@@ -22,7 +21,9 @@ import {
   TextInput,
   Textarea,
   Title,
+  Tooltip,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { IconExternalLink } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { pick } from "next/dist/lib/pick";
@@ -54,6 +55,21 @@ type Props = {
   onPickComponent?: any;
   onPickVariable?: any;
   actionData?: any;
+  style: "input" | "iconButton";
+};
+
+export const useBindingPopover = () => {
+  const [
+    opened,
+    { toggle: onTogglePopover, close: onClosePopover, open: onOpenPopover },
+  ] = useDisclosure(false);
+
+  return {
+    opened,
+    onTogglePopover,
+    onClosePopover,
+    onOpenPopover,
+  };
 };
 
 export default function BindingPopover({
@@ -70,6 +86,7 @@ export default function BindingPopover({
   onPickComponent,
   onPickVariable,
   actionData,
+  style = "input",
 }: Props) {
   const editorTree = useEditorStore((state) => state.tree);
   const [formulaEntry, setFormulaEntry] = useState<string>();
@@ -243,15 +260,29 @@ export default function BindingPopover({
     <Popover
       opened={opened}
       withinPortal
-      position="left-end"
       arrowPosition="center"
+      position="right"
     >
       <Popover.Target>
-        <ActionIcon onClick={onTogglePopover} size="xs">
-          <IconExternalLink size={ICON_SIZE} />
-        </ActionIcon>
+        {style === "iconButton" ? (
+          <Tooltip label="Bind Logic" withArrow position="top-end">
+            <ActionIcon onClick={onTogglePopover} variant="default">
+              <IconExternalLink size={ICON_SIZE} />
+            </ActionIcon>
+          </Tooltip>
+        ) : (
+          <ActionIcon onClick={onTogglePopover} size="xs">
+            <IconExternalLink size={ICON_SIZE} />
+          </ActionIcon>
+        )}
       </Popover.Target>
-      <Popover.Dropdown sx={{ maxHeight: "98%", backgroundColor: BG_COLOR }}>
+      <Popover.Dropdown
+        sx={{
+          maxHeight: "98%",
+          backgroundColor: BG_COLOR,
+          right: "0px !important",
+        }}
+      >
         <Stack w={500}>
           {/* Pass in the name of the thing that is being bound */}
           <Flex justify="space-between" align="center">

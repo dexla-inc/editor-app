@@ -1,10 +1,15 @@
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
-import { ActionIcon, Group, TextInput, TextInputProps } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import {
+  ActionIcon,
+  Flex,
+  Group,
+  TextInput,
+  TextInputProps,
+} from "@mantine/core";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { useState } from "react";
-import BindingPopover from "./BindingPopover";
+import BindingPopover, { useBindingPopover } from "./BindingPopover";
 
 type Props = TextInputProps & {
   componentId?: string;
@@ -47,13 +52,14 @@ export const ComponentToBindFromInput = ({
     });
   };
 
+  // TODO: Williams, learn react custom hooks. More common logic may need to go in useBindingPopover.
+  // Always think about reusability, one component should be responsible for one thing https://stackify.com/solid-design-principles/.
+  const { opened, onTogglePopover, onClosePopover, onOpenPopover } =
+    useBindingPopover();
+
   const [bindedValue, setBindedValue] = useState("");
   const _jsCode = javascriptCode ?? {};
   const _code = _jsCode[label as string] ?? _jsCode.code ?? "";
-  const [
-    opened,
-    { toggle: onTogglePopover, close: onClosePopover, open: onOpenPopover },
-  ] = useDisclosure(false);
 
   const onCodeChange = (javascriptCode: string) => {
     label = label === "Component to bind" ? "code" : label;
@@ -62,53 +68,56 @@ export const ComponentToBindFromInput = ({
   };
 
   return (
-    <TextInput
-      size="xs"
-      placeholder={placeholder}
-      label={label}
-      type={type}
-      onFocus={(e) => {
-        setHighlightedComponentId(e.target.value);
-      }}
-      onBlur={() => {
-        setHighlightedComponentId(null);
-      }}
-      rightSection={
-        <Group noWrap spacing={0} pr={4}>
-          <BindingPopover
-            opened={opened}
-            onTogglePopover={onTogglePopover}
-            onClosePopover={onClosePopover}
-            bindingType="JavaScript"
-            onChangeBindingType={() => {}}
-            javascriptCode={_code}
-            onChangeJavascriptCode={onCodeChange}
-            onOpenPopover={onOpenPopover}
-            bindedValue={bindedValue}
-            onPickComponent={onPickComponent}
-            onPickVariable={onPickVariable}
-            actionData={actionData}
-          />
-          {onPickComponent && !isLogicFlow && (
-            <>
-              <ActionIcon onClick={onBindComponent} size="xs">
-                <IconCurrentLocation size={ICON_SIZE} />
-              </ActionIcon>
-            </>
-          )}
-        </Group>
-      }
-      styles={{
-        input: { paddingRight: "3.65rem" },
-        ...(!isLogicFlow && {
-          rightSection: { width: "3.65rem", justifyContent: "flex-end" },
-        }),
-      }}
-      {...rest}
-      onChange={(e) => {
-        setBindedValue(e.target.value);
-        if (rest?.onChange) rest.onChange(e);
-      }}
-    />
+    <Flex align="end" gap="xs">
+      <TextInput
+        size="xs"
+        placeholder={placeholder}
+        label={label}
+        type={type}
+        onFocus={(e) => {
+          setHighlightedComponentId(e.target.value);
+        }}
+        onBlur={() => {
+          setHighlightedComponentId(null);
+        }}
+        rightSection={
+          <Group noWrap spacing={0} pr={4}>
+            {onPickComponent && !isLogicFlow && (
+              <>
+                <ActionIcon onClick={onBindComponent} size="xs">
+                  <IconCurrentLocation size={ICON_SIZE} />
+                </ActionIcon>
+              </>
+            )}
+          </Group>
+        }
+        styles={{
+          input: { paddingRight: "3.65rem" },
+          ...(!isLogicFlow && {
+            rightSection: { width: "3.65rem", justifyContent: "flex-end" },
+          }),
+        }}
+        {...rest}
+        onChange={(e) => {
+          setBindedValue(e.target.value);
+          if (rest?.onChange) rest.onChange(e);
+        }}
+      />
+      <BindingPopover
+        opened={opened}
+        onTogglePopover={onTogglePopover}
+        onClosePopover={onClosePopover}
+        bindingType="JavaScript"
+        onChangeBindingType={() => {}}
+        javascriptCode={_code}
+        onChangeJavascriptCode={onCodeChange}
+        onOpenPopover={onOpenPopover}
+        bindedValue={bindedValue}
+        onPickComponent={onPickComponent}
+        onPickVariable={onPickVariable}
+        actionData={actionData}
+        style="iconButton"
+      />
+    </Flex>
   );
 };
