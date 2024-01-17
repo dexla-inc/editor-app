@@ -1,10 +1,7 @@
 import RegionSelect from "@/components/RegionSelect";
 import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
-import {
-  ProjectUpdateParams,
-  patchProject,
-} from "@/requests/projects/mutations";
-import { RegionTypes } from "@/requests/projects/types";
+import { patchProject } from "@/requests/projects/mutations";
+import { ProjectUpdateParams, RegionTypes } from "@/requests/projects/types";
 import { useAppStore } from "@/stores/app";
 import { convertToPatchParams } from "@/utils/dashboardTypes";
 import {

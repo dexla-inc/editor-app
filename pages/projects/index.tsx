@@ -27,14 +27,12 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 
 export default function Projects() {
-  //const [projects, setProjects] = useState<ProjectResponse[]>([]);
   const [search, setSearch] = useState<string>("");
   const debouncedSearch = debounce((query) => setSearch(query), 400);
   const theme = useMantineTheme();
-  const { user, company } = usePropelAuthStore((state) => ({
-    user: state.user,
-    company: state.activeCompany,
-  }));
+  const user = usePropelAuthStore((state) => state.user);
+  const company = usePropelAuthStore((state) => state.activeCompany);
+
   const manuallyCreatedProjectId = generateId();
 
   const startLoading = useAppStore((state) => state.startLoading);

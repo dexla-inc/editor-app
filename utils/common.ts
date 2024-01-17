@@ -31,14 +31,6 @@ export const allEqual = <T>(array: T[]): boolean => {
   return array.every((element) => element === array[0]);
 };
 
-export const requiredFieldValidator =
-  (fieldName: string) => (value: string) => {
-    if (!value) {
-      return `${fieldName} is required`;
-    }
-    return null;
-  };
-
 export const isInput = (componentName: string) => {
   const inputCategories = [
     "Input",

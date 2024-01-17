@@ -1,11 +1,11 @@
 import NextButton from "@/components/NextButton";
 import ScreenshotUploader from "@/components/projects/ScreenshotUploader";
 import {
-  ProjectParams,
   createEntities,
   createProject,
   patchProject,
 } from "@/requests/projects/mutations";
+import { ProjectParams } from "@/requests/projects/types";
 import { uploadFile } from "@/requests/storage/mutations";
 import { UploadMultipleResponse } from "@/requests/storage/types";
 import { PatchParams } from "@/requests/types";

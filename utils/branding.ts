@@ -18,6 +18,33 @@ const nestable = {
   ".nestable-item-name > div": { paddingLeft: 0 },
 };
 
+const defaultComponentProps = {
+  Title: {
+    defaultProps: () => ({ color: GRAY_WHITE_COLOR }),
+  },
+  Text: {
+    defaultProps: () => ({ color: GRAY_WHITE_COLOR }),
+  },
+  Avatar: {
+    defaultProps: () => ({ size: "sm" }),
+  },
+  Checkbox: {
+    defaultProps: () => ({ size: "xs" }),
+  },
+  Switch: {
+    defaultProps: () => ({ size: "xs" }),
+  },
+  Button: {
+    defaultProps: () => ({ size: "sm", compact: true }),
+  },
+  SegmentedControl: {
+    defaultProps: () => ({ size: "xs" }),
+  },
+  Stack: {
+    defaultProps: () => ({ spacing: "xs" }),
+  },
+};
+
 // App Theme
 const theme: MantineTheme = {
   ...DEFAULT_THEME,
@@ -64,21 +91,7 @@ const theme: MantineTheme = {
         withArrow: true,
       }),
     },
-    Avatar: {
-      defaultProps: () => ({ size: "sm" }),
-    },
-    Checkbox: {
-      defaultProps: () => ({ size: "xs" }),
-    },
-    Switch: {
-      defaultProps: () => ({ size: "xs" }),
-    },
-    Button: {
-      defaultProps: () => ({ size: "sm", compact: true }),
-    },
-    SegmentedControl: {
-      defaultProps: () => ({ size: "xs" }),
-    },
+    ...defaultComponentProps,
   },
 };
 
@@ -128,27 +141,7 @@ const darkTheme: MantineTheme = {
         root: { border: "1px solid " + theme.colors.dark[5] },
       }),
     },
-    Title: {
-      defaultProps: () => ({ color: GRAY_WHITE_COLOR }),
-    },
-    Text: {
-      defaultProps: () => ({ color: GRAY_WHITE_COLOR }),
-    },
-    Avatar: {
-      defaultProps: () => ({ size: "sm" }),
-    },
-    Checkbox: {
-      defaultProps: () => ({ size: "xs" }),
-    },
-    Switch: {
-      defaultProps: () => ({ size: "xs" }),
-    },
-    Button: {
-      defaultProps: () => ({ size: "sm", compact: true }),
-    },
-    SegmentedControl: {
-      defaultProps: () => ({ size: "xs" }),
-    },
+    ...defaultComponentProps,
   },
 };
 
