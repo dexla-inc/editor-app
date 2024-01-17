@@ -29,7 +29,6 @@ const SelectComponent = forwardRef(
       customText,
       customLinkText,
       customLinkUrl,
-      dataType,
       ...componentProps
     } = component.props as any;
     const {
@@ -84,10 +83,10 @@ const SelectComponent = forwardRef(
     }, [resultsKey, dataLabelKey, dataValueKey, dataType, response]);
 
     useEffect(() => {
-      if (dataType === "static") {
+      if (endpointId.length === 0 || !endpointId) {
         setData(component.props?.data ?? []);
       }
-    }, [component.props?.data, dataType]);
+    }, [component.props?.data, endpointId]);
 
     // update values in store
     // eslint-disable-next-line react-hooks/exhaustive-deps
