@@ -76,6 +76,7 @@ import {
 } from "@tabler/icons-react";
 import intersection from "lodash.intersection";
 import startCase from "lodash.startcase";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 
 type SectionsMapper = {
@@ -231,11 +232,13 @@ export const EditorAsideSections = () => {
   const currentState =
     currentTreeComponentsStates?.[selectedComponentId!] ?? "default";
 
-  const designSections = sections?.map(({ Component, ...item }) => (
-    <SidebarSection {...item} key={item.label}>
-      <Component key={currentState} initiallyOpened={item.initiallyOpened} />
-    </SidebarSection>
-  ));
+  const designSections = sections
+    ?.filter((section) => section.id !== "effects")
+    .map(({ Component, ...item }) => (
+      <SidebarSection {...item} key={item.label}>
+        <Component key={currentState} initiallyOpened={item.initiallyOpened} />
+      </SidebarSection>
+    ));
 
   const getActionsBySequentialToOrId = (id: string) => {
     return componentActions.filter(
@@ -357,6 +360,15 @@ export const EditorAsideSections = () => {
     (item) => item.value !== "data" || (item.value === "data" && DataSection),
   );
 
+  let { DataComponent, rest }: Record<string, any> = {};
+  const appearanceSection = sections?.find(
+    (section) => section.id === "effects",
+  );
+  if (appearanceSection) {
+    DataComponent = appearanceSection.Component;
+    rest = omit(appearanceSection, ["Component"]);
+  }
+
   return (
     <Stack>
       <Flex px="md">
@@ -470,6 +482,14 @@ export const EditorAsideSections = () => {
               component={component}
               endpoints={endpoints}
             />
+            {appearanceSection && (
+              <SidebarSection {...rest} key={rest.label}>
+                <DataComponent
+                  key={currentState}
+                  initiallyOpened={rest.initiallyOpened}
+                />
+              </SidebarSection>
+            )}
           </Box>
         </Stack>
       )}

@@ -1,21 +1,27 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { EndpointSelect } from "@/components/EndpointSelect";
+import { SidebarSection } from "@/components/SidebarSection";
 import { DataProps } from "@/components/data/type";
 import { Endpoint } from "@/requests/datasources/types";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { IconDatabase } from "@tabler/icons-react";
 import { useState } from "react";
-import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
-import { EndpointSelect } from "../EndpointSelect";
 
 export const AvatarData = ({ component, endpoints }: DataProps) => {
+  const isImageComponent = component.name === "Image";
+  const propsArray = isImageComponent ? ["src", "alt"] : ["children", "src"];
   const form = useForm({
     initialValues: {
-      children: component.props?.children ?? "",
+      ...(!isImageComponent && { children: component.props?.children ?? "" }),
+      ...(isImageComponent && { alt: component.props?.alt ?? "" }),
       src: component.props?.src ?? "",
       hideIfDataIsEmpty: component.props?.hideIfDataIsEmpty ?? false,
       endpoint: component.props?.endpoint ?? undefined,
       actionCode: component.props?.actionCode ?? {},
+      initiallyOpened: false,
     },
   });
 
@@ -31,17 +37,7 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
   return (
     <form>
       <Stack spacing="xs">
-        <EndpointSelect
-          {...form.getInputProps("endpoint")}
-          onChange={(selected) => {
-            setFieldValue("endpoint", selected!);
-            setSelectedEndpoint(
-              endpoints?.results?.find((e) => e.id === selected),
-            );
-          }}
-        />
-        <TextInput size="xs" label="Results key" placeholder="user.list" />
-        {["children", "src"].map((key) => (
+        {propsArray.map((key) => (
           <ComponentToBindFromInput
             key={key}
             componentId={component?.id!}
@@ -52,8 +48,14 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
               setFieldValue(`actionCode.${label}`, javascriptCode)
             }
             size="xs"
-            label={key === "children" ? "Value" : "Source"}
-            {...(key === "children"
+            label={
+              key === "children"
+                ? "Value"
+                : key === "alt"
+                ? "Alternative Text"
+                : "Source"
+            }
+            {...(key === "children" || key === "alt"
               ? {}
               : { placeholder: "https://example.com/image.png", type: "url" })}
             {...form.getInputProps(key)}
@@ -61,6 +63,26 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
             {...AUTOCOMPLETE_OFF_PROPS}
           />
         ))}
+        <SidebarSection
+          id="data"
+          initiallyOpened={form.values.initiallyOpened}
+          label="Load Data"
+          icon={IconDatabase}
+          onClick={(id: string, opened: boolean) =>
+            id === "data" && form.setFieldValue("initiallyOpened", opened)
+          }
+        >
+          <EndpointSelect
+            {...form.getInputProps("endpoint")}
+            onChange={(selected) => {
+              setFieldValue("endpoint", selected!);
+              setSelectedEndpoint(
+                endpoints?.results?.find((e) => e.id === selected),
+              );
+            }}
+          />
+          <TextInput size="xs" label="Results key" placeholder="user.list" />
+        </SidebarSection>
       </Stack>
     </form>
   );

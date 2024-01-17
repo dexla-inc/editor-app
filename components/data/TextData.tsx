@@ -1,12 +1,14 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { EndpointSelect } from "@/components/EndpointSelect";
+import { SidebarSection } from "@/components/SidebarSection";
 import { DataProps } from "@/components/data/type";
 import { Endpoint } from "@/requests/datasources/types";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { Checkbox, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { IconDatabase } from "@tabler/icons-react";
 import { useState } from "react";
-import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
-import { EndpointSelect } from "../EndpointSelect";
 
 export const TextData = ({ component, endpoints }: DataProps) => {
   const isTextComponent = component.name === "Text";
@@ -21,6 +23,7 @@ export const TextData = ({ component, endpoints }: DataProps) => {
       hideIfDataIsEmpty: component.props?.hideIfDataIsEmpty ?? false,
       endpoint: component.props?.endpoint ?? undefined,
       actionCode: component.props?.actionCode ?? {},
+      initiallyOpened: false,
     },
   });
 
@@ -36,16 +39,6 @@ export const TextData = ({ component, endpoints }: DataProps) => {
   return (
     <form>
       <Stack spacing="xs">
-        <EndpointSelect
-          {...form.getInputProps("endpoint")}
-          onChange={(selected) => {
-            setFieldValue("endpoint", selected!);
-            setSelectedEndpoint(
-              endpoints?.results?.find((e) => e.id === selected),
-            );
-          }}
-        />
-        <TextInput size="xs" label="Results key" placeholder="user.list" />
         <ComponentToBindFromInput
           componentId={component?.id!}
           onPickVariable={(variable: string) =>
@@ -74,6 +67,26 @@ export const TextData = ({ component, endpoints }: DataProps) => {
             }
           />
         )}
+        <SidebarSection
+          id="data"
+          initiallyOpened={form.values.initiallyOpened}
+          label="Load Data"
+          icon={IconDatabase}
+          onClick={(id: string, opened: boolean) =>
+            id === "data" && form.setFieldValue("initiallyOpened", opened)
+          }
+        >
+          <EndpointSelect
+            {...form.getInputProps("endpoint")}
+            onChange={(selected) => {
+              setFieldValue("endpoint", selected!);
+              setSelectedEndpoint(
+                endpoints?.results?.find((e) => e.id === selected),
+              );
+            }}
+          />
+          <TextInput size="xs" label="Results key" placeholder="user.list" />
+        </SidebarSection>
       </Stack>
     </form>
   );
