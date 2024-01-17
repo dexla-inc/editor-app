@@ -10,6 +10,8 @@ import React, { useEffect, useState } from "react";
 import get from "lodash.get";
 import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
 import { useEditorStore } from "@/stores/editor";
+import { useInputsStore } from "@/stores/inputs";
+import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 
 function getObjectAndArrayKeys(obj: any, prefix = "") {
   let keys: string[] = [];
@@ -35,6 +37,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
   const updateTreeComponentAttrs = useEditorStore(
     (state) => state.updateTreeComponentAttrs,
   );
+  const setInputValue = useInputsStore((state) => state.setInputValue);
   const form = useForm({
     initialValues: {
       data: component.props?.data ?? [],
@@ -49,6 +52,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
       dataValueKey: component.onLoad?.dataValueKey ?? "",
       resultsKey: component.onLoad?.resultsKey ?? "",
       actionCode: component.onLoad?.actionCode ?? {},
+      staleTime: component.onLoad?.staleTime ?? "0",
       binds: {
         header: component.onLoad?.binds?.header ?? {},
         parameter: component.onLoad?.binds?.parameter ?? {},
@@ -65,7 +69,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
 
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
-  >(endpoints?.results?.find((e) => e.id === component.props?.endpointId));
+  >(endpoints?.results?.find((e) => e.id === component.onLoad?.endpointId));
 
   const setFormFieldValue = (key: any, value: any) => {
     form.setFieldValue(key, value);
@@ -112,6 +116,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
                     resultsKey: "",
                   };
                   setOnLoadFormFieldValue(newValues);
+                  setInputValue(component.id!, "");
 
                   setSelectedEndpoint(
                     endpoints?.results?.find((e) => e.id === selected),
@@ -121,6 +126,17 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
 
               {onLoadForm.values.endpointId && (
                 <>
+                  <SegmentedControlInput
+                    label="Cache Request"
+                    data={[
+                      { label: "Yes", value: String(100 * 60 * 30) },
+                      { label: "No", value: "0" },
+                    ]}
+                    {...onLoadForm.getInputProps("staleTime")}
+                    onChange={(value) => {
+                      setOnLoadFormFieldValue({ staleTime: value });
+                    }}
+                  />
                   <EndpointRequestInputs
                     selectedEndpoint={selectedEndpoint!}
                     form={onLoadForm}
@@ -142,6 +158,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
                           dataValueKey: "",
                           resultsKey: selected,
                         };
+                        setInputValue(component.id!, "");
                         setOnLoadFormFieldValue(newValues);
                       }}
                     />

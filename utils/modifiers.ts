@@ -225,6 +225,7 @@ export const requiredModifiers: RequiredModifiers = {
     labelSize: "sm",
     labelWeight: "normal",
     labelAlign: "left",
+    dataType: "static",
     data: [
       { label: "Option 1", value: "option-1" },
       { label: "Option 2", value: "option-2" },

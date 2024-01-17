@@ -32,31 +32,33 @@ const SelectComponent = forwardRef(
       dataType,
       ...componentProps
     } = component.props as any;
-    const { endpointId, dataLabelKey, dataValueKey, resultsKey, binds } =
-      component.onLoad!;
+    const {
+      endpointId,
+      dataLabelKey,
+      dataValueKey,
+      resultsKey,
+      binds,
+      staleTime,
+    } = component.onLoad ?? {};
 
     const customStyle = merge({}, props.style);
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setInputValue = useInputsStore((state) => state.setInputValue);
-    const [localInputValue, setLocalInputValue] = useState(inputValue ?? "");
-    const { apiCall } = useEndpoint();
-    const [data, setData] = useState(component.props?.data ?? []);
+    const [data, setData] = useState(
+      dataType === "static" ? component.props?.data : [],
+    );
+
+    const { data: response } = useEndpoint({
+      endpointId,
+      requestSettings: { binds, dataType, staleTime },
+    });
 
     useEffect(() => {
-      if (
-        dataType === "dynamic" &&
-        endpointId &&
-        dataLabelKey &&
-        dataValueKey
-      ) {
-        apiCall(endpointId, { binds }).then((response) => {
-          const result = resultsKey ? get(response, resultsKey) : response;
-
-          if (!result) {
-            setLocalInputValue("");
-            return setData([]);
-          }
-
+      if (dataType === "dynamic") {
+        if (!response || !dataLabelKey || !dataValueKey) {
+          setData([]);
+        } else {
+          const result = get(response, resultsKey, response);
           if (Array.isArray(result)) {
             setData(
               (result ?? []).reduce((acc, item: any) => {
@@ -76,13 +78,10 @@ const SelectComponent = forwardRef(
               },
             ]);
           }
-        });
-      } else {
-        setLocalInputValue("");
-        setData([]);
+        }
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [endpointId, resultsKey, dataLabelKey, dataValueKey, dataType, binds]);
+    }, [resultsKey, dataLabelKey, dataValueKey, dataType, response]);
 
     useEffect(() => {
       if (dataType === "static") {
@@ -101,7 +100,7 @@ const SelectComponent = forwardRef(
 
     // handle changes to input field
     const handleInputChange = (value: any) => {
-      setLocalInputValue(value);
+      setInputValue(component.id!, value);
       debouncedOnChange(value);
       triggers?.onChange && triggers?.onChange(value);
     };
@@ -140,7 +139,7 @@ const SelectComponent = forwardRef(
         )}
         rightSection={loading ? <InputLoader /> : null}
         label={undefined}
-        value={localInputValue}
+        value={inputValue}
         onChange={handleInputChange}
       />
     );
