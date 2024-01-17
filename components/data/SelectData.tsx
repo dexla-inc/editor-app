@@ -4,6 +4,7 @@ import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 import { SidebarSection } from "@/components/SidebarSection";
 import { Appearance } from "@/components/data/Appearance";
+import { DataTabSelect } from "@/components/data/DataTabSelect";
 import { DataProps } from "@/components/data/type";
 import { Endpoint } from "@/requests/datasources/types";
 import { useEditorStore } from "@/stores/editor";
@@ -44,6 +45,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
     initialValues: {
       data: component.props?.data ?? [],
       display: component.props?.display,
+      dataType: component.props?.dataType ?? "static",
       initiallyOpened: component.props?.initiallyOpened ?? false,
     },
   });
@@ -96,107 +98,118 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
   return (
     <form>
       <Stack spacing="xs">
-        <SelectOptionsForm
-          getValue={() => form.getInputProps("data").value}
+        <DataTabSelect
+          {...form.getInputProps("dataType")}
           setFieldValue={setFormFieldValue}
         />
-        <Appearance
-          selectedComponent={component}
-          form={onLoadForm}
-          onChange={(value: any) => {
-            form.setFieldValue("display", value as string);
-            debouncedTreeUpdate(component.id, {
-              style: {
-                display: value,
-              },
-            });
-          }}
-          debouncedTreeUpdate={debouncedTreeUpdate}
-        />
-        <SidebarSection
-          id="data"
-          initiallyOpened={form.values.initiallyOpened}
-          label="Load Data"
-          icon={IconDatabase}
-          onClick={(id: string, opened: boolean) =>
-            id === "data" && form.setFieldValue("initiallyOpened", opened)
-          }
-        >
-          <EndpointSelect
-            {...onLoadForm.getInputProps("endpointId")}
-            onChange={(selected) => {
-              const newValues = {
-                endpointId: selected,
-                dataLabelKey: "",
-                dataValueKey: "",
-                resultsKey: "",
-              };
-              setOnLoadFormFieldValue(newValues);
-              setInputValue(component.id!, "");
-              setSelectedEndpoint(
-                endpoints?.results?.find((e) => e.id === selected),
-              );
-            }}
-          />
+        {form.values.dataType === "static" && (
+          <>
+            <SelectOptionsForm
+              getValue={() => form.getInputProps("data").value}
+              setFieldValue={setFormFieldValue}
+            />
+            <Appearance
+              selectedComponent={component}
+              form={onLoadForm}
+              onChange={(value: any) => {
+                form.setFieldValue("display", value as string);
+                debouncedTreeUpdate(component.id, {
+                  style: {
+                    display: value,
+                  },
+                });
+              }}
+              debouncedTreeUpdate={debouncedTreeUpdate}
+            />
+          </>
+        )}
+        {form.values.dataType === "dynamic" && (
+          <SidebarSection
+            noPadding={true}
+            id="data"
+            initiallyOpened={form.values.initiallyOpened}
+            label="Load Data"
+            icon={IconDatabase}
+            onClick={(id: string, opened: boolean) =>
+              id === "data" && form.setFieldValue("initiallyOpened", opened)
+            }
+          >
+            <EndpointSelect
+              {...onLoadForm.getInputProps("endpointId")}
+              onChange={(selected) => {
+                const newValues = {
+                  endpointId: selected,
+                  dataLabelKey: "",
+                  dataValueKey: "",
+                  resultsKey: "",
+                };
+                setOnLoadFormFieldValue(newValues);
+                setInputValue(component.id!, "");
+                setSelectedEndpoint(
+                  endpoints?.results?.find((e) => e.id === selected),
+                );
+              }}
+            />
 
-          {onLoadForm.values.endpointId && (
-            <>
-              <SegmentedControlInput
-                label="Cache Request"
-                data={[
-                  { label: "Yes", value: String(100 * 60 * 30) },
-                  { label: "No", value: "0" },
-                ]}
-                {...onLoadForm.getInputProps("staleTime")}
-                onChange={(value) => {
-                  setOnLoadFormFieldValue({ staleTime: value });
-                }}
-              />
-              <EndpointRequestInputs
-                selectedEndpoint={selectedEndpoint!}
-                form={onLoadForm}
-              />
-              <Divider mt="md" />
-              <Title order={5} mt="xs">
-                Input Settings
-              </Title>
-              {!Array.isArray(exampleResponse) && (
-                <Select
-                  clearable
-                  label="Results key"
-                  placeholder="user.list"
-                  data={resultsKeysList}
-                  {...onLoadForm.getInputProps("resultsKey")}
-                  onChange={(selected) => {
-                    const newValues = {
-                      dataLabelKey: "",
-                      dataValueKey: "",
-                      resultsKey: selected,
-                    };
-                    setInputValue(component.id!, "");
-                    setOnLoadFormFieldValue(newValues);
+            {onLoadForm.values.endpointId && (
+              <>
+                <SegmentedControlInput
+                  label="Cache Request"
+                  data={[
+                    { label: "Yes", value: String(100 * 60 * 30) },
+                    { label: "No", value: "0" },
+                  ]}
+                  {...onLoadForm.getInputProps("staleTime")}
+                  onChange={(value) => {
+                    setOnLoadFormFieldValue({ staleTime: value });
                   }}
                 />
-              )}
-              <Select
-                label="Label"
-                data={selectableObjectKeys}
-                {...onLoadForm.getInputProps("dataLabelKey")}
-                onChange={(selected) => {
-                  setOnLoadFormFieldValue({ dataLabelKey: selected });
-                }}
-              />
-              <Select
-                label="Value"
-                data={selectableObjectKeys}
-                {...onLoadForm.getInputProps("dataValueKey")}
-                onChange={(selected) => {
-                  setOnLoadFormFieldValue({ dataValueKey: selected });
-                }}
-              />
-            </>
-          )}
-        </SidebarSection>
+                <EndpointRequestInputs
+                  selectedEndpoint={selectedEndpoint!}
+                  form={onLoadForm}
+                />
+                <Divider mt="md" />
+                <Title order={5} mt="xs">
+                  Input Settings
+                </Title>
+                {!Array.isArray(exampleResponse) && (
+                  <Select
+                    clearable
+                    label="Results key"
+                    placeholder="user.list"
+                    data={resultsKeysList}
+                    {...onLoadForm.getInputProps("resultsKey")}
+                    onChange={(selected) => {
+                      const newValues = {
+                        dataLabelKey: "",
+                        dataValueKey: "",
+                        resultsKey: selected,
+                      };
+                      setInputValue(component.id!, "");
+                      setOnLoadFormFieldValue(newValues);
+                    }}
+                  />
+                )}
+                <Select
+                  label="Label"
+                  data={selectableObjectKeys}
+                  {...onLoadForm.getInputProps("dataLabelKey")}
+                  onChange={(selected) => {
+                    setOnLoadFormFieldValue({ dataLabelKey: selected });
+                  }}
+                />
+                <Select
+                  label="Value"
+                  data={selectableObjectKeys}
+                  {...onLoadForm.getInputProps("dataValueKey")}
+                  onChange={(selected) => {
+                    setOnLoadFormFieldValue({ dataValueKey: selected });
+                  }}
+                />
+              </>
+            )}
+          </SidebarSection>
+        )}
       </Stack>
     </form>
   );

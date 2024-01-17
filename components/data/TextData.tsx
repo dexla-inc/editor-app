@@ -1,14 +1,13 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { EndpointSelect } from "@/components/EndpointSelect";
-import { SidebarSection } from "@/components/SidebarSection";
 import { Appearance } from "@/components/data/Appearance";
+import { DataTabSelect } from "@/components/data/DataTabSelect";
+import { DynamicDataSettings } from "@/components/data/DynamicDataSettings";
 import { DataProps } from "@/components/data/type";
 import { Endpoint } from "@/requests/datasources/types";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { debouncedTreeUpdate } from "@/utils/editor";
-import { Checkbox, Stack, TextInput } from "@mantine/core";
+import { Checkbox, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconDatabase } from "@tabler/icons-react";
 import { useState } from "react";
 
 export const TextData = ({ component, endpoints }: DataProps) => {
@@ -24,6 +23,7 @@ export const TextData = ({ component, endpoints }: DataProps) => {
       hideIfDataIsEmpty: component.props?.hideIfDataIsEmpty ?? false,
       endpoint: component.props?.endpoint ?? undefined,
       actionCode: component.props?.actionCode ?? {},
+      dataType: component.props?.dataType ?? "static",
       initiallyOpened: false,
     },
   });
@@ -40,59 +40,62 @@ export const TextData = ({ component, endpoints }: DataProps) => {
   return (
     <form>
       <Stack spacing="xs">
-        <ComponentToBindFromInput
-          componentId={component?.id!}
-          onPickVariable={(variable: string) =>
-            setFieldValue(itemKey, variable)
-          }
-          actionData={[]}
-          javascriptCode={form.values.actionCode}
-          onChangeJavascriptCode={(javascriptCode: string, label: string) =>
-            setFieldValue(`actionCode.${label}`, javascriptCode)
-          }
-          size="xs"
-          label="Value"
-          {...form.getInputProps(itemKey)}
-          onChange={(e) => setFieldValue(itemKey, e.currentTarget.value)}
-          {...AUTOCOMPLETE_OFF_PROPS}
+        <DataTabSelect
+          {...form.getInputProps("dataType")}
+          setFieldValue={setFieldValue}
         />
-        {isTextComponent && (
-          <Checkbox
-            size="xs"
-            label="Hide text when data is empty"
-            {...form.getInputProps("hideIfDataIsEmpty", {
-              type: "checkbox",
-            })}
-            onChange={(e) =>
-              setFieldValue("hideIfDataIsEmpty", e.target.checked)
-            }
-          />
+        {form.values.dataType === "static" && (
+          <>
+            <ComponentToBindFromInput
+              componentId={component?.id!}
+              onPickVariable={(variable: string) =>
+                setFieldValue(itemKey, variable)
+              }
+              actionData={[]}
+              javascriptCode={form.values.actionCode}
+              onChangeJavascriptCode={(javascriptCode: string, label: string) =>
+                setFieldValue(`actionCode.${label}`, javascriptCode)
+              }
+              size="xs"
+              label="Value"
+              {...form.getInputProps(itemKey)}
+              onChange={(e) => setFieldValue(itemKey, e.currentTarget.value)}
+              {...AUTOCOMPLETE_OFF_PROPS}
+            />
+            {isTextComponent && (
+              <Checkbox
+                size="xs"
+                label="Hide text when data is empty"
+                {...form.getInputProps("hideIfDataIsEmpty", {
+                  type: "checkbox",
+                })}
+                onChange={(e) =>
+                  setFieldValue("hideIfDataIsEmpty", e.target.checked)
+                }
+              />
+            )}
+            <Appearance
+              selectedComponent={component}
+              form={form}
+              debouncedTreeUpdate={debouncedTreeUpdate}
+            />
+          </>
         )}
-        <Appearance
-          selectedComponent={component}
-          form={form}
-          debouncedTreeUpdate={debouncedTreeUpdate}
-        />
-        <SidebarSection
-          id="data"
-          initiallyOpened={form.values.initiallyOpened}
-          label="Load Data"
-          icon={IconDatabase}
-          onClick={(id: string, opened: boolean) =>
-            id === "data" && form.setFieldValue("initiallyOpened", opened)
-          }
-        >
-          <EndpointSelect
-            {...form.getInputProps("endpoint")}
+        {form.values.dataType === "dynamic" && (
+          <DynamicDataSettings
+            initiallyOpened={form.values.initiallyOpened}
+            onClick={(id: string, opened: boolean) =>
+              id === "data" && form.setFieldValue("initiallyOpened", opened)
+            }
             onChange={(selected) => {
               setFieldValue("endpoint", selected!);
               setSelectedEndpoint(
                 endpoints?.results?.find((e) => e.id === selected),
               );
             }}
+            endpointSelectProps={form.getInputProps("endpoint")}
           />
-          <TextInput size="xs" label="Results key" placeholder="user.list" />
-        </SidebarSection>
+        )}
       </Stack>
     </form>
   );

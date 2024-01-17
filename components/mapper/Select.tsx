@@ -29,6 +29,7 @@ const SelectComponent = forwardRef(
       customText,
       customLinkText,
       customLinkUrl,
+      dataType,
       ...componentProps
     } = component.props as any;
     const {
@@ -43,14 +44,7 @@ const SelectComponent = forwardRef(
     const customStyle = merge({}, props.style);
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setInputValue = useInputsStore((state) => state.setInputValue);
-    const isDynamic =
-      endpointId &&
-      dataLabelKey &&
-      dataValueKey &&
-      resultsKey &&
-      binds &&
-      staleTime;
-    const dataType = isDynamic ? "dynamic" : "static";
+
     const [data, setData] = useState(
       dataType === "static" ? component.props?.data : [],
     );

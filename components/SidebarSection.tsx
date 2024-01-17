@@ -27,6 +27,7 @@ type SidebarSectionProps = {
   componentId?: string;
   openAction?: OpenAction;
   isSequential?: boolean;
+  noPadding?: boolean;
 };
 
 export function SidebarSection({
@@ -41,6 +42,7 @@ export function SidebarSection({
   componentId,
   openAction,
   isSequential,
+  noPadding,
 }: PropsWithChildren<SidebarSectionProps>) {
   const theme = useMantineTheme();
 
@@ -77,7 +79,7 @@ export function SidebarSection({
     <>
       <Group
         spacing="xs"
-        pr="xs"
+        {...(!noPadding ? { pr: "xs" } : { mx: `-${theme.spacing.md}` })}
         {...(isSequential ? { mt: "md" } : {})}
         noWrap
         sx={{
@@ -139,7 +141,7 @@ export function SidebarSection({
       </Group>
       {children ? (
         <Collapse in={isExpanded}>
-          <Box px="md">{children}</Box>
+          <Box {...(!noPadding && { px: "md" })}>{children}</Box>
         </Collapse>
       ) : null}
     </>
