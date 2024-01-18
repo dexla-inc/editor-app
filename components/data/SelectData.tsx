@@ -46,7 +46,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
       data: component.props?.data ?? [],
       display: component.props?.display,
       dataType: component.props?.dataType ?? "static",
-      initiallyOpened: component.props?.initiallyOpened ?? false,
+      initiallyOpened: component.props?.initiallyOpened ?? true,
     },
   });
 

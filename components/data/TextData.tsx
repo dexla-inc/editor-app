@@ -24,7 +24,7 @@ export const TextData = ({ component, endpoints }: DataProps) => {
       endpoint: component.props?.endpoint ?? undefined,
       actionCode: component.props?.actionCode ?? {},
       dataType: component.props?.dataType ?? "static",
-      initiallyOpened: false,
+      initiallyOpened: true,
     },
   });
 
