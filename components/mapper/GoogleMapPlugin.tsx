@@ -55,8 +55,10 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
   const { width, height, ...googleStyles } = props.style ?? {};
   const containerStyle = { width, height };
 
+  const otherProps = omit(props, ["style"]);
+
   const LOADING_TEXT = (
-    <Text {...omit(props, ["style"])} w="100%" h="auto" pos="relative">
+    <Text {...otherProps} w="100%" h="auto" pos="relative">
       Enter API key and refresh the page...
     </Text>
   );
@@ -122,7 +124,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
   });
 
   return (
-    <Box pos="relative" {...props} style={containerStyle}>
+    <Box pos="relative" {...otherProps} style={containerStyle}>
       <GoogleMap
         key={apiKey}
         center={center}
