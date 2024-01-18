@@ -1,15 +1,9 @@
+import BindingPopover, { useBindingPopover } from "@/components/BindingPopover";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
-import {
-  ActionIcon,
-  Flex,
-  Group,
-  TextInput,
-  TextInputProps,
-} from "@mantine/core";
+import { ActionIcon, Flex, TextInput, TextInputProps } from "@mantine/core";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { useState } from "react";
-import BindingPopover, { useBindingPopover } from "./BindingPopover";
 
 type Props = TextInputProps & {
   componentId?: string;
@@ -81,18 +75,14 @@ export const ComponentToBindFromInput = ({
           setHighlightedComponentId(null);
         }}
         rightSection={
-          <Group noWrap spacing={0} pr={4}>
-            {onPickComponent && !isLogicFlow && (
-              <>
-                <ActionIcon onClick={onBindComponent} size="xs">
-                  <IconCurrentLocation size={ICON_SIZE} />
-                </ActionIcon>
-              </>
-            )}
-          </Group>
+          onPickComponent &&
+          !isLogicFlow && (
+            <ActionIcon onClick={onBindComponent} size="xs">
+              <IconCurrentLocation size={ICON_SIZE} />
+            </ActionIcon>
+          )
         }
         styles={{
-          input: { paddingRight: "3.65rem" },
           ...(!isLogicFlow && {
             rightSection: { width: "3.65rem", justifyContent: "flex-end" },
           }),

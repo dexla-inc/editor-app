@@ -1,14 +1,14 @@
 import { CustomDropdown } from "@/components/mapper/CustomSelectDropdown";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useEndpoint } from "@/hooks/useEndpoint";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Select as MantineSelect, SelectProps } from "@mantine/core";
+import get from "lodash.get";
 import merge from "lodash.merge";
 import { forwardRef, memo, useEffect, useState } from "react";
 import { InputLoader } from "../InputLoader";
-import { useEndpoint } from "@/hooks/useEndpoint";
-import get from "lodash.get";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -35,6 +35,7 @@ const SelectComponent = forwardRef(
     const customStyle = merge({}, props.style);
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setInputValue = useInputsStore((state) => state.setInputValue);
+
     const [data, setData] = useState(
       dataType === "static" ? component.props?.data : [],
     );

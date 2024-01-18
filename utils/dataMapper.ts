@@ -1,4 +1,7 @@
-import { AvatarData as Avatar } from "@/components/data/AvatarData";
+import {
+  AvatarData as Avatar,
+  AvatarData as Image,
+} from "@/components/data/AvatarData";
 import { SelectData as Select } from "@/components/data/SelectData";
 import { TextData as Text } from "@/components/data/TextData";
 import {
@@ -20,4 +23,5 @@ export const dataMapper = {
   NavLink,
   Badge,
   FileButton,
+  Image,
 };
