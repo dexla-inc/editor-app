@@ -1063,6 +1063,17 @@ export const debouncedTreeRootChildrenUpdate = debounce(
   300,
 );
 
+export const debouncedTreeComponentAttrsUpdate = debounce(
+  (value: Partial<Component>) => {
+    const updateTreeComponentAttrs =
+      useEditorStore.getState().updateTreeComponentAttrs;
+    const selectedComponentId = useEditorStore.getState().selectedComponentId;
+
+    updateTreeComponentAttrs([selectedComponentId!], value);
+  },
+  300,
+);
+
 export const getColorFromTheme = (
   theme: MantineThemeExtended,
   colorName = "",

@@ -9,7 +9,10 @@ import { DataProps } from "@/components/data/type";
 import { Endpoint } from "@/requests/datasources/types";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import {
+  debouncedTreeComponentAttrsUpdate,
+  debouncedTreeUpdate,
+} from "@/utils/editor";
 import { Divider, Select, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconDatabase } from "@tabler/icons-react";
@@ -67,9 +70,11 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
   });
 
   useEffect(() => {
-    updateTreeComponentAttrs([component.id!], {
-      onLoad: { binds: onLoadForm.values.binds },
-    });
+    if (onLoadForm.isTouched()) {
+      updateTreeComponentAttrs([component.id!], {
+        onLoad: { binds: onLoadForm.values.binds },
+      });
+    }
   }, [onLoadForm.values.binds]);
 
   const [selectedEndpoint, setSelectedEndpoint] = useState<
@@ -83,7 +88,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
 
   const setOnLoadFormFieldValue = (attrs: any) => {
     onLoadForm.setValues(attrs);
-    updateTreeComponentAttrs([component.id!], { onLoad: attrs });
+    debouncedTreeComponentAttrsUpdate({ onLoad: attrs });
   };
 
   const exampleResponse = JSON.parse(selectedEndpoint?.exampleResponse ?? "{}");
@@ -110,7 +115,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
             />
             <Appearance
               component={component}
-              form={onLoadForm}
+              form={form}
               onChange={(value: any) => {
                 form.setFieldValue("display", value as string);
                 debouncedTreeUpdate(component.id, {
@@ -164,11 +169,20 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
                 />
                 {onLoadForm.values.staleTime !== "0" && (
                   <TextInput
+                    mt={8}
+                    w="50%"
                     {...onLoadForm.getInputProps("staleTime")}
                     onChange={(e) => {
                       setOnLoadFormFieldValue({
-                        staleTime: e.target.value === "" ? "0" : e.target.value,
+                        staleTime: e.target.value,
                       });
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value === "") {
+                        setOnLoadFormFieldValue({
+                          staleTime: "0",
+                        });
+                      }
                     }}
                     styles={{ rightSection: { right: "1.25rem" } }}
                     rightSection={
@@ -204,30 +218,6 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
                     }}
                   />
                 )}
-                <Select
-                  label="Label"
-                  data={selectableObjectKeys}
-                  {...onLoadForm.getInputProps("dataLabelKey")}
-                  onChange={(selected) => {
-                    setOnLoadFormFieldValue({ dataLabelKey: selected });
-                  }}
-                />
-                <Select
-                  clearable
-                  label="Results key"
-                  placeholder="user.list"
-                  data={resultsKeysList}
-                  {...onLoadForm.getInputProps("resultsKey")}
-                  onChange={(selected) => {
-                    const newValues = {
-                      dataLabelKey: "",
-                      dataValueKey: "",
-                      resultsKey: selected,
-                    };
-                    setInputValue(component.id!, "");
-                    setOnLoadFormFieldValue(newValues);
-                  }}
-                />
                 <Select
                   label="Label"
                   data={selectableObjectKeys}

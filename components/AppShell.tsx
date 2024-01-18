@@ -41,8 +41,7 @@ import { ErrorBoundary } from "react-error-boundary";
 export const Shell = ({ children, navbar, aside }: AppShellProps) => {
   const resetTree = useEditorStore((state) => state.resetTree);
   const setIsWindowError = useEditorStore((state) => state.setIsWindowError);
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-  const setPreviewMode = useEditorStore((state) => state.setPreviewMode);
+
   const language = useEditorStore((state) => state.language);
   const setLanguage = useEditorStore((state) => state.setLanguage);
   const setPages = useEditorStore((state) => state.setPages);
@@ -102,10 +101,7 @@ export const Shell = ({ children, navbar, aside }: AppShellProps) => {
               />
               <VariablesButton projectId={projectId} />
               <ChangeHistoryPopover />
-              <EditorPreviewModeToggle
-                isPreviewMode={isPreviewMode}
-                setPreviewMode={setPreviewMode}
-              />
+              <EditorPreviewModeToggle />
               <Tooltip label="Invite team">
                 <Button
                   component={Link}

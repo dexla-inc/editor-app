@@ -13,9 +13,6 @@ export const useEndpoint = ({
   endpointId = "",
   requestSettings = { binds: {}, dataType: "", staleTime: 0 },
 }: UseEndpointProps) => {
-  const refreshAccessToken = useDataSourceStore(
-    (state) => state.refreshAccessToken,
-  );
   const accessToken = useDataSourceStore((state) => state.accessToken);
   const projectId = useEditorStore((state) => state.currentProjectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);
@@ -23,7 +20,10 @@ export const useEndpoint = ({
   const { url, body } = prepareRequestData(requestSettings, endpoint!);
 
   const apiCall = () => {
-    refreshAccessToken();
+    if (!accessToken) {
+      throw new Error("Unauthorized");
+    }
+
     const authHeaderKey =
       endpoint?.authenticationScheme === "BEARER"
         ? "Bearer " + accessToken
@@ -36,7 +36,7 @@ export const useEndpoint = ({
     return performFetch(fetchUrl, endpoint, body, authHeaderKey);
   };
 
-  return useQuery([url, body], apiCall, {
+  return useQuery([url, JSON.stringify(body), accessToken], apiCall, {
     staleTime: Number(requestSettings.staleTime) * 1000 * 60,
     enabled: !!endpoint && requestSettings.dataType === "dynamic",
   });

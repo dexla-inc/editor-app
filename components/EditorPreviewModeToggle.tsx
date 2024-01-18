@@ -1,17 +1,12 @@
+import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import { Group, Switch, Tooltip, useMantineTheme } from "@mantine/core";
 import { IconBrush, IconEye } from "@tabler/icons-react";
 
-type EditorPreviewModeToggleProps = {
-  isPreviewMode: boolean;
-  setPreviewMode: (value: boolean) => void;
-};
-
-export const EditorPreviewModeToggle = ({
-  isPreviewMode = false,
-  setPreviewMode,
-}: EditorPreviewModeToggleProps) => {
+export const EditorPreviewModeToggle = () => {
   const theme = useMantineTheme();
+  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const setPreviewMode = useEditorStore((state) => state.setPreviewMode);
 
   return (
     <Tooltip
