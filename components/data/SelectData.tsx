@@ -9,7 +9,10 @@ import { DataProps } from "@/components/data/type";
 import { Endpoint } from "@/requests/datasources/types";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
-import { debouncedTreeUpdate } from "@/utils/editor";
+import {
+  debouncedTreeComponentAttrsUpdate,
+  debouncedTreeUpdate,
+} from "@/utils/editor";
 import { Divider, Select, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconDatabase } from "@tabler/icons-react";
@@ -85,7 +88,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
 
   const setOnLoadFormFieldValue = (attrs: any) => {
     onLoadForm.setValues(attrs);
-    updateTreeComponentAttrs([component.id!], { onLoad: attrs });
+    debouncedTreeComponentAttrsUpdate({ onLoad: attrs });
   };
 
   const exampleResponse = JSON.parse(selectedEndpoint?.exampleResponse ?? "{}");
@@ -96,7 +99,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
   const selectableObjectKeys = Object.keys(
     Array.isArray(selectableObject) ? selectableObject[0] : selectableObject,
   );
-
+  console.log("test");
   return (
     <form>
       <Stack spacing="xs">
