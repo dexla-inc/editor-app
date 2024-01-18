@@ -35,6 +35,7 @@ export const TextData = ({ component, endpoints }: DataProps) => {
           onPickVariable={(variable: string) =>
             setFieldValue(itemKey, variable)
           }
+          passVariableValue={true}
           actionData={[]}
           javascriptCode={form.values.actionCode}
           onChangeJavascriptCode={(javascriptCode: string, label: string) =>

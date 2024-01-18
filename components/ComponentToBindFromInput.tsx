@@ -12,6 +12,7 @@ type Props = TextInputProps & {
   index?: number;
   onPickComponent?: (value: string) => void;
   onPickVariable?: (value: string) => void;
+  onBindValue?: (value: string) => void;
   isLogicFlow?: boolean;
   javascriptCode?: Record<string, string>;
   onChangeJavascriptCode?: (javascriptCode: string, label: string) => void;
@@ -31,6 +32,7 @@ export const ComponentToBindFromInput = ({
   isLogicFlow,
   javascriptCode,
   onChangeJavascriptCode,
+  onBindValue,
   ...rest
 }: Props) => {
   const setPickingComponentToBindTo = useEditorStore(
