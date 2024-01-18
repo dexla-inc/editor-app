@@ -36,7 +36,7 @@ export const useEndpoint = ({
     return performFetch(fetchUrl, endpoint, body, authHeaderKey);
   };
 
-  return useQuery([url, body], apiCall, {
+  return useQuery([url, JSON.stringify(body), accessToken], apiCall, {
     staleTime: Number(requestSettings.staleTime) * 1000 * 60,
     enabled: !!endpoint && requestSettings.dataType === "dynamic",
   });
