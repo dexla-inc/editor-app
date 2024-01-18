@@ -172,8 +172,15 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
                     {...onLoadForm.getInputProps("staleTime")}
                     onChange={(e) => {
                       setOnLoadFormFieldValue({
-                        staleTime: e.target.value === "" ? "0" : e.target.value,
+                        staleTime: e.target.value,
                       });
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value === "") {
+                        setOnLoadFormFieldValue({
+                          staleTime: "0",
+                        });
+                      }
                     }}
                     styles={{ rightSection: { right: "1.25rem" } }}
                     rightSection={
