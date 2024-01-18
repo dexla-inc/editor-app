@@ -29,7 +29,7 @@ export const CustomJavascriptFlowActionForm = ({ form }: Props) => {
           Custom Javascript
         </Text>
         <Button
-          color="indigo"
+          variant="default"
           sx={{ marginRight: 0 }}
           size="xs"
           leftIcon={<IconPlayerPlayFilled size={8} />}

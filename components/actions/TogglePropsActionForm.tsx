@@ -111,7 +111,7 @@ export const TogglePropsActionForm = ({ id }: Props) => {
                 condition: "",
               });
             }}
-            color="indigo"
+            variant="default"
             sx={{ marginRight: 0 }}
             leftIcon={<Icon name="IconPlus" size={ICON_SIZE} />}
           >

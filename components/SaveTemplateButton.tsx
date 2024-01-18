@@ -108,7 +108,7 @@ export const SaveTemplateButton = () => {
       iconName="IconTemplate"
       tooltip="Save Template"
       onClick={saveTemplate}
-      color="indigo"
+      variant="default"
     />
     // <Tooltip label="Save Template" withArrow fz="xs">
     //   <ActionIcon onClick={saveTemplate} variant="light" color="indigo">

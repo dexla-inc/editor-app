@@ -1,7 +1,7 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { Appearance } from "@/components/data/Appearance";
 import { DataTabSelect } from "@/components/data/DataTabSelect";
 import { DynamicDataSettings } from "@/components/data/DynamicDataSettings";
+import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { DataProps } from "@/components/data/type";
 import { Endpoint } from "@/requests/datasources/types";
 import { debouncedTreeUpdate } from "@/utils/editor";
@@ -74,7 +74,7 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
                 onChange={(e) => setFieldValue(key, e.currentTarget.value)}
               />
             ))}
-            <Appearance
+            <VisibilityModifier
               component={component}
               form={form}
               debouncedTreeUpdate={debouncedTreeUpdate}
