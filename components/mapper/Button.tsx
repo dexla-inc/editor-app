@@ -1,5 +1,6 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useContentEditable } from "@/hooks/useContentEditable";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getColorFromTheme } from "@/utils/editor";
@@ -16,8 +17,6 @@ type Props = {
 
 const ButtonComponent = forwardRef(
   ({ renderTree, component, isPreviewMode, style, ...props }: Props, ref) => {
-    const theme = useEditorStore((state) => state.theme);
-
     const {
       children,
       triggers,
@@ -27,6 +26,9 @@ const ButtonComponent = forwardRef(
       textColor,
       ...componentProps
     } = component.props as any;
+
+    const theme = useEditorStore((state) => state.theme);
+    const contentEditableProps = useContentEditable(component.id as string);
 
     const defaultTriggers = isPreviewMode
       ? {}
@@ -45,7 +47,7 @@ const ButtonComponent = forwardRef(
 
     return (
       <MantineButton
-        ref={ref}
+        {...contentEditableProps}
         {...(leftIcon && { leftIcon: <Icon name={leftIcon} /> })}
         {...(rightIcon && { rightIcon: <Icon name={rightIcon} /> })}
         loading={loading}

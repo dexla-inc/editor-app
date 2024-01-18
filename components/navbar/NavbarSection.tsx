@@ -106,15 +106,7 @@ export const NavbarSection = ({
     const isDarkTheme = theme.colorScheme === "dark";
 
     return (
-      <Tooltip
-        withinPortal
-        position="right"
-        fz="xs"
-        withArrow
-        key={label}
-        label={label}
-        zIndex={500}
-      >
+      <Tooltip withinPortal withArrow key={label} label={label} zIndex={500}>
         <UnstyledButton
           onClick={handleSectionClick}
           sx={{

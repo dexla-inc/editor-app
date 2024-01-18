@@ -1,24 +1,20 @@
-import { useEditorStore } from "@/stores/editor";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useContentEditable } from "@/hooks/useContentEditable";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
 import get from "lodash.get";
-import { forwardRef, memo, useImperativeHandle, useRef, useState } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { forwardRef, memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
+  isPreviewMode: boolean;
 } & TextProps;
 
 const TextComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref: any) => {
-    const innerRef = useRef<HTMLDivElement>(null);
-    const [isEditable, setIsEditable] = useState(false);
-    const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-    const updateTreeComponent = useEditorStore(
-      (state) => state.updateTreeComponent,
-    );
+  ({ renderTree, component, isPreviewMode, ...props }: Props, ref: any) => {
+    const contentEditableProps = useContentEditable(component.id as string);
     const {
       children,
       data,
@@ -28,30 +24,6 @@ const TextComponent = forwardRef(
       hideIfDataIsEmpty,
       ...componentProps
     } = component.props as any;
-
-    const handleDoubleClick = (e: any) => {
-      e.preventDefault();
-      if (!isPreviewMode) {
-        setIsEditable(true);
-      }
-    };
-
-    useImperativeHandle(ref, () => ({
-      innerText: innerRef?.current?.innerText,
-    }));
-
-    const handleBlur = (e: any) => {
-      e.preventDefault();
-      if (!isPreviewMode) {
-        setIsEditable(false);
-        updateTreeComponent({
-          componentId: component.id!,
-          props: {
-            children: innerRef?.current?.innerText,
-          },
-        });
-      }
-    };
 
     let value = isPreviewMode
       ? data?.value ?? (hideIfDataIsEmpty ? "" : children)
@@ -65,14 +37,10 @@ const TextComponent = forwardRef(
 
     return (
       <MantineText
-        ref={innerRef}
-        contentEditable={!isPreviewMode && isEditable}
-        onDoubleClick={handleDoubleClick}
-        onBlur={handleBlur}
+        {...contentEditableProps}
         {...props}
         {...componentProps}
         {...triggers}
-        suppressContentEditableWarning
         key={`${component.id}-${repeatedIndex}`}
       >
         {component.children && component.children.length > 0

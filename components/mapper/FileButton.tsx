@@ -1,4 +1,4 @@
-import { useEditorStore } from "@/stores/editor";
+import { useContentEditable } from "@/hooks/useContentEditable";
 import { Component } from "@/utils/editor";
 import {
   Button,
@@ -9,6 +9,7 @@ import {
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
+  isPreviewMode: boolean;
 } & FileButtonProps;
 
 export const FileButton = ({
@@ -17,8 +18,9 @@ export const FileButton = ({
   onChange,
   ...props
 }: Props) => {
-  const { name, triggers, ...componentProps } = component.props ?? {};
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const { name, triggers, isPreviewMode, ...componentProps } =
+    component.props ?? {};
+  const contentEditableProps = useContentEditable(component.id as string);
 
   return (
     <>
@@ -28,6 +30,7 @@ export const FileButton = ({
           onChange && onChange(e);
           triggers?.onChange && triggers.onChange?.(e);
         }}
+        {...contentEditableProps}
         {...componentProps}
         {...props}
       >

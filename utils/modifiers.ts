@@ -330,6 +330,11 @@ export const requiredModifiers: RequiredModifiers = {
     name: "Upload Button",
     accept: "",
     multiple: false,
+    size: "sm",
+    compact: true,
+    style: {
+      width: "fit-content",
+    },
   },
   popOver: {
     position: "bottom",

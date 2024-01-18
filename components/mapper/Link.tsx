@@ -1,8 +1,9 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useContentEditable } from "@/hooks/useContentEditable";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { AnchorProps, Anchor as MantineAnchor } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -13,8 +14,15 @@ const LinkComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
     const { children, triggers, ...componentProps } = component.props as any;
 
+    const contentEditable = useContentEditable(component.id as string);
+
     return (
-      <MantineAnchor ref={ref} {...props} {...componentProps} {...triggers}>
+      <MantineAnchor
+        {...contentEditable}
+        {...props}
+        {...componentProps}
+        {...triggers}
+      >
         {component.children && component.children.length > 0
           ? component.children?.map((child) =>
               renderTree({

@@ -12,12 +12,6 @@ export const jsonStructure = (props?: any): Component => {
     name: "FileButton",
     description: "Upload Files",
     props: {
-      style: {
-        width: "fit-content",
-        height: "fit-content",
-        ...(style || {}),
-      },
-      size: "sm",
       ...requiredModifiers.fileButton,
       name: name ?? "Upload button",
       ...(rest || {}),
