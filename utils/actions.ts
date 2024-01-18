@@ -847,7 +847,7 @@ export const prepareRequestData = (action: any, endpoint: Endpoint) => {
     merge(action.binds?.body ?? {}, action.binds?.parameter ?? {}),
   );
 
-  const url = getUrl(keys, apiUrl, action, variableValues);
+  const url = getUrl(keys ?? [], apiUrl, action, variableValues);
   const body = getBody(endpoint, action, variableValues);
   return { url, body };
 };
