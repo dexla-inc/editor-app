@@ -99,7 +99,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
   const selectableObjectKeys = Object.keys(
     Array.isArray(selectableObject) ? selectableObject[0] : selectableObject,
   );
-  console.log("test");
+
   return (
     <form>
       <Stack spacing="xs">
