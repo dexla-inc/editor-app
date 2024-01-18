@@ -10,7 +10,7 @@ import { Endpoint } from "@/requests/datasources/types";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { debouncedTreeUpdate } from "@/utils/editor";
-import { Divider, Select, Stack, TextInput, Title } from "@mantine/core";
+import { Divider, Select, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconDatabase } from "@tabler/icons-react";
 import get from "lodash.get";
@@ -171,7 +171,11 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
                       });
                     }}
                     styles={{ rightSection: { right: "1.25rem" } }}
-                    rightSection={<>minutes</>}
+                    rightSection={
+                      <Text size="xs" color="dimmed">
+                        mins
+                      </Text>
+                    }
                   />
                 )}
                 <EndpointRequestInputs
