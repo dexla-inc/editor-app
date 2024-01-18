@@ -4,9 +4,14 @@ import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
-import { BG_COLOR, BINDER_BACKGROUND } from "@/utils/branding";
+import {
+  BG_COLOR,
+  BINDER_BACKGROUND,
+  DEFAULT_TEXTCOLOR,
+} from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import { getAllComponentsByName } from "@/utils/editor";
+import { BindingTab, BindingType } from "@/utils/types";
 import { getParsedJSCode } from "@/utils/variables";
 import {
   ActionIcon,
@@ -24,7 +29,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconExternalLink } from "@tabler/icons-react";
+import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
@@ -33,17 +38,9 @@ import { useEffect, useState } from "react";
 const TAB_TEXT_SIZE = "xs";
 const ML = 10;
 
-export type BindingType = "formula" | "js";
-export type BindingTab =
-  | "components"
-  | "variables"
-  | "actions"
-  | "datasources"
-  | "browser";
-
 type Props = {
   bindingTab?: BindingTab;
-  bindingType: any;
+  bindingType: BindingType;
   opened: boolean;
   onTogglePopover: any;
   onClosePopover: any;
@@ -55,26 +52,25 @@ type Props = {
   onPickComponent?: any;
   onPickVariable?: any;
   actionData?: any;
-  style: "input" | "iconButton";
+  style?: "input" | "iconButton";
 };
 
 export const useBindingPopover = () => {
-  const [
-    opened,
-    { toggle: onTogglePopover, close: onClosePopover, open: onOpenPopover },
-  ] = useDisclosure(false);
+  const [opened, { toggle, close, open }] = useDisclosure(false);
 
-  return {
+  const bindingPopoverProps = {
     opened,
-    onTogglePopover,
-    onClosePopover,
-    onOpenPopover,
+    toggle,
+    close,
+    open,
   };
+
+  return bindingPopoverProps;
 };
 
 export default function BindingPopover({
   bindingTab,
-  bindingType,
+  bindingType = "JavaScript",
   opened,
   onTogglePopover,
   onClosePopover,
@@ -86,7 +82,7 @@ export default function BindingPopover({
   onPickComponent,
   onPickVariable,
   actionData,
-  style = "input",
+  style = "iconButton",
 }: Props) {
   const editorTree = useEditorStore((state) => state.tree);
   const [formulaEntry, setFormulaEntry] = useState<string>();
@@ -267,7 +263,7 @@ export default function BindingPopover({
         {style === "iconButton" ? (
           <Tooltip label="Bind Logic" withArrow position="top-end">
             <ActionIcon onClick={onTogglePopover} variant="default">
-              <IconExternalLink size={ICON_SIZE} />
+              <IconPlugConnected size={ICON_SIZE} />
             </ActionIcon>
           </Tooltip>
         ) : (
@@ -286,7 +282,10 @@ export default function BindingPopover({
         <Stack w={500}>
           {/* Pass in the name of the thing that is being bound */}
           <Flex justify="space-between" align="center">
-            <Title order={5}>Binder</Title>
+            <Flex align="center" gap="xs">
+              <Icon name="IconPlugConnected" color={DEFAULT_TEXTCOLOR} />
+              <Title order={5}>Binder</Title>
+            </Flex>
             <CloseButton onClick={onClosePopover} />
           </Flex>
           <Flex justify="space-between" align="center">

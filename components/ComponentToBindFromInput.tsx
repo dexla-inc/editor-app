@@ -1,5 +1,6 @@
 import BindingPopover, { useBindingPopover } from "@/components/BindingPopover";
 import { useEditorStore } from "@/stores/editor";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ICON_SIZE } from "@/utils/config";
 import { ActionIcon, Flex, TextInput, TextInputProps } from "@mantine/core";
 import { IconCurrentLocation } from "@tabler/icons-react";
@@ -48,8 +49,7 @@ export const ComponentToBindFromInput = ({
 
   // TODO: Williams, learn react custom hooks. More common logic may need to go in useBindingPopover.
   // Always think about reusability, one component should be responsible for one thing https://stackify.com/solid-design-principles/.
-  const { opened, onTogglePopover, onClosePopover, onOpenPopover } =
-    useBindingPopover();
+  const { opened, toggle, close, open } = useBindingPopover();
 
   const [bindedValue, setBindedValue] = useState("");
   const _jsCode = javascriptCode ?? {};
@@ -92,16 +92,17 @@ export const ComponentToBindFromInput = ({
           setBindedValue(e.target.value);
           if (rest?.onChange) rest.onChange(e);
         }}
+        {...AUTOCOMPLETE_OFF_PROPS}
       />
       <BindingPopover
         opened={opened}
-        onTogglePopover={onTogglePopover}
-        onClosePopover={onClosePopover}
+        onTogglePopover={toggle}
+        onClosePopover={close}
         bindingType="JavaScript"
         onChangeBindingType={() => {}}
         javascriptCode={_code}
         onChangeJavascriptCode={onCodeChange}
-        onOpenPopover={onOpenPopover}
+        onOpenPopover={open}
         bindedValue={bindedValue}
         onPickComponent={onPickComponent}
         onPickVariable={onPickVariable}

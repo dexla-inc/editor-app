@@ -2,7 +2,6 @@ import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput"
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { ShowNotificationAction } from "@/utils/actions";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ApiType } from "@/utils/dashboardTypes";
 import { Button, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
@@ -61,7 +60,6 @@ export const ShowNotificationFlowActionForm = ({ form }: Props) => {
               }}
               size="xs"
               label={title}
-              {...AUTOCOMPLETE_OFF_PROPS}
               {...form.getInputProps(name)}
               onChange={(e) => {
                 form.setFieldValue(name, e.currentTarget.value);

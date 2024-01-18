@@ -1,27 +1,24 @@
-import BindingPopover from "@/components/BindingPopover";
+import BindingPopover, { useBindingPopover } from "@/components/BindingPopover";
 import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { getComponentInitialDisplayValue } from "@/utils/common";
 import { Component } from "@/utils/editor";
 import { Group, Stack } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 
 type Props = {
   form: any;
-  selectedComponent: Component;
+  component: Component;
   debouncedTreeUpdate: any;
   onChange?: any;
 };
 
 export const Appearance = ({
-  selectedComponent,
+  component,
   form,
   debouncedTreeUpdate,
   onChange,
 }: Props) => {
-  const [
-    opened,
-    { toggle: onToggleBinder, open: onOpenBinder, close: onCloseBinder },
-  ] = useDisclosure(false);
+  const { opened, toggle, open, close } = useBindingPopover();
+
   return (
     <Group spacing="xs" noWrap align="end">
       <Stack w="100%">
@@ -30,7 +27,7 @@ export const Appearance = ({
           data={[
             {
               label: "Visible",
-              value: getComponentInitialDisplayValue(selectedComponent.name),
+              value: getComponentInitialDisplayValue(component.name),
             },
             {
               label: "Hidden",
@@ -42,7 +39,7 @@ export const Appearance = ({
             onChange && onChange(value);
             if (!onChange) {
               form.setFieldValue("display", value as string);
-              debouncedTreeUpdate(selectedComponent.id, {
+              debouncedTreeUpdate(component.id, {
                 style: {
                   display: value,
                 },
@@ -53,29 +50,21 @@ export const Appearance = ({
       </Stack>
       <BindingPopover
         opened={opened}
-        onTogglePopover={onToggleBinder}
-        onClosePopover={onCloseBinder}
+        onOpenPopover={open}
+        onTogglePopover={toggle}
+        onClosePopover={close}
         bindingType="JavaScript"
         onChangeBindingType={() => {}}
-        javascriptCode={
-          form.values.actionCode?.[selectedComponent.id!] as string
-        }
+        javascriptCode={form.values.actionCode?.[component.id!] as string}
         onChangeJavascriptCode={(javascriptCode: string, _: any) => {
-          form.setFieldValue(
-            `actionCode.${selectedComponent.id}`,
-            javascriptCode,
-          );
-          debouncedTreeUpdate(selectedComponent.id, {
+          form.setFieldValue(`actionCode.${component.id}`, javascriptCode);
+          debouncedTreeUpdate(component.id, {
             actionCode: {
               ...form.values.actionCode,
-              [selectedComponent.id!]: javascriptCode,
+              [component.id!]: javascriptCode,
             },
           });
         }}
-        onOpenPopover={onOpenBinder}
-        onPickComponent={{}}
-        onPickVariable={(variable: string) => {}}
-        style="iconButton"
       />
     </Group>
   );

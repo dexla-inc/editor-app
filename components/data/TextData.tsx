@@ -4,7 +4,6 @@ import { DataTabSelect } from "@/components/data/DataTabSelect";
 import { DynamicDataSettings } from "@/components/data/DynamicDataSettings";
 import { DataProps } from "@/components/data/type";
 import { Endpoint } from "@/requests/datasources/types";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { Checkbox, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -60,7 +59,6 @@ export const TextData = ({ component, endpoints }: DataProps) => {
               label="Value"
               {...form.getInputProps(itemKey)}
               onChange={(e) => setFieldValue(itemKey, e.currentTarget.value)}
-              {...AUTOCOMPLETE_OFF_PROPS}
             />
             {isTextComponent && (
               <Checkbox
@@ -75,7 +73,7 @@ export const TextData = ({ component, endpoints }: DataProps) => {
               />
             )}
             <Appearance
-              selectedComponent={component}
+              component={component}
               form={form}
               debouncedTreeUpdate={debouncedTreeUpdate}
             />

@@ -7,7 +7,6 @@ import React, {
   useRef,
 } from "react";
 
-import { Icon } from "@/components/Icon";
 import styles from "@/components/navbar/PageStructure/components/TreeItem/TreeItem.module.scss";
 import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 import { useEditorStore } from "@/stores/editor";
@@ -22,6 +21,7 @@ import {
 import {
   ActionIcon,
   Card,
+  Flex,
   Group,
   Text,
   TextInput,
@@ -29,7 +29,12 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { IconChevronDown } from "@tabler/icons-react";
+import {
+  IconBolt,
+  IconChevronDown,
+  IconDatabase,
+  IconEyeOff,
+} from "@tabler/icons-react";
 
 export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   id: any;
@@ -127,8 +132,6 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
     const icon = structureMapper[name as string]?.icon;
     const componentActions = component.actions;
-
-    console.log("onLoad", component.onLoad);
 
     useEffect(() => {
       const isRootOrContentWrapper = id === "root" || id === "content-wrapper";
@@ -273,21 +276,15 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
               )}
             </Group>
           </Group>
-          {componentActions && !!componentActions.length && (
-            <ActionIcon color="teal" variant="transparent" size={30}>
-              <Icon name="IconBolt" size={ICON_SIZE} />
-            </ActionIcon>
-          )}
-          {component.props?.style?.display === "none" && (
-            <ActionIcon color="dark" variant="transparent" size={30}>
-              <Icon name="IconEyeOff" size={ICON_SIZE} />
-            </ActionIcon>
-          )}
-          {component.onLoad?.endpointId && (
-            <ActionIcon color="dark" variant="transparent" size={30}>
-              <Icon name="IconDatabase" size={ICON_SIZE} />
-            </ActionIcon>
-          )}
+          <Flex gap={4}>
+            {componentActions && !!componentActions.length && (
+              <IconBolt size={ICON_SIZE} />
+            )}
+            {component.props?.style?.display === "none" && (
+              <IconEyeOff size={ICON_SIZE} />
+            )}
+            {component.onLoad?.endpointId && <IconDatabase size={ICON_SIZE} />}
+          </Flex>
         </div>
       </li>
     );

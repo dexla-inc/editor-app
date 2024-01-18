@@ -17,7 +17,6 @@ import { Endpoint } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { useEditorStore } from "@/stores/editor";
 import { Action, BindPlaceDataAction } from "@/utils/actions";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ApiType } from "@/utils/dashboardTypes";
 import { getAllComponentsByName, getComponentById } from "@/utils/editor";
 import {
@@ -335,7 +334,6 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
                           onChange={(e) => {
                             form.setFieldValue(field, e.currentTarget.value);
                           }}
-                          {...AUTOCOMPLETE_OFF_PROPS}
                         />
                       </Stack>
                     );

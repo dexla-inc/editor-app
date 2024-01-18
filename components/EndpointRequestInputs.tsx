@@ -2,7 +2,6 @@ import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput"
 import { Endpoint } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ApiType } from "@/utils/dashboardTypes";
 import { getComponentById } from "@/utils/editor";
 import { Stack, Title } from "@mantine/core";
@@ -105,7 +104,6 @@ export const EndpointRequestInputs = ({ selectedEndpoint, form }: Props) => {
                   onChange={(e) => {
                     form.setFieldValue(field, e.currentTarget.value);
                   }}
-                  {...AUTOCOMPLETE_OFF_PROPS}
                 />
               </Stack>
             );

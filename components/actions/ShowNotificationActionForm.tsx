@@ -9,7 +9,6 @@ import {
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
 import { ShowNotificationAction } from "@/utils/actions";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ApiType } from "@/utils/dashboardTypes";
 import { Stack, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -112,7 +111,6 @@ export const ShowNotificationActionForm = ({ id }: Props) => {
                 onChange={(e) => {
                   form.setFieldValue(name, e.currentTarget.value);
                 }}
-                {...AUTOCOMPLETE_OFF_PROPS}
               />
             </React.Fragment>
           );

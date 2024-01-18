@@ -69,6 +69,7 @@ import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 import { Router } from "next/router";
 import { getComponentInitialDisplayValue } from "./common";
+import { BindingType } from "./types";
 
 const triggers = [
   "onClick",
@@ -296,10 +297,11 @@ export interface CustomJavascriptAction extends BaseAction {
 export interface ChangeVariableAction extends BaseAction {
   name: "changeVariable";
   variableId: string;
-  bindingType: string;
+  bindingType?: BindingType;
   javascriptCode: string;
   formulaCondition: string;
   formulaValue: string;
+  value: string;
 }
 
 export type Action = {
