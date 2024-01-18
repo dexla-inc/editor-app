@@ -11,9 +11,10 @@ import { useEditorStore } from "@/stores/editor";
 import { ShowNotificationAction } from "@/utils/actions";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ApiType } from "@/utils/dashboardTypes";
-import { Stack, Title } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import React from "react";
+import { ThemeColorSelector } from "../ThemeColorSelector";
 
 type Props = {
   id: string;
@@ -47,6 +48,7 @@ export const ShowNotificationActionForm = ({ id }: Props) => {
       title: action.action?.title,
       message: action.action?.message,
       actionCode: action.action?.actionCode ?? {},
+      color: action.action?.color ?? "Primary.6",
     },
   });
 
@@ -62,6 +64,7 @@ export const ShowNotificationActionForm = ({ id }: Props) => {
           title: values.title,
           message: values.message,
           actionCode: values.actionCode,
+          color: values.color,
         },
         updateTreeComponentActions,
       });
@@ -87,10 +90,8 @@ export const ShowNotificationActionForm = ({ id }: Props) => {
         ].map(({ title, name }) => {
           return (
             <React.Fragment key={title}>
-              <Title order={5} mt="md">
-                {title}
-              </Title>
               <ComponentToBindFromInput
+                label={title}
                 componentId={selectedComponentId}
                 onPickComponent={(componentToBind: string) => {
                   form.setFieldValue(name, `valueOf_${componentToBind}`);
@@ -106,8 +107,6 @@ export const ShowNotificationActionForm = ({ id }: Props) => {
                   javascriptCode: string,
                   label: string,
                 ) => form.setFieldValue(`actionCode.${label}`, javascriptCode)}
-                size="xs"
-                label={title}
                 {...form.getInputProps(name)}
                 onChange={(e) => {
                   form.setFieldValue(name, e.currentTarget.value);
@@ -117,6 +116,14 @@ export const ShowNotificationActionForm = ({ id }: Props) => {
             </React.Fragment>
           );
         })}
+        <ThemeColorSelector
+          label="Color"
+          {...form.getInputProps("color")}
+          onChange={(value: string) => {
+            form.setFieldValue("color", value);
+          }}
+          excludeTransparent
+        />
       </Stack>
       <Stack spacing="xs">
         <ActionButtons
