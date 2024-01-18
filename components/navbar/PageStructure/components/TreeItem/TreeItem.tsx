@@ -15,7 +15,10 @@ import { useUserConfigStore } from "@/stores/userConfig";
 import { DARK_COLOR, GRAY_WHITE_COLOR } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
-import { debouncedTreeComponentDescriptionpdate } from "@/utils/editor";
+import {
+  Component,
+  debouncedTreeComponentDescriptionpdate,
+} from "@/utils/editor";
 import {
   ActionIcon,
   Card,
@@ -45,7 +48,7 @@ export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   onCollapse?(): void;
   onRemove?(): void;
   wrapperRef?(node: HTMLLIElement): void;
-  component: any;
+  component: Component;
 }
 
 // eslint-disable-next-line react/display-name
@@ -124,6 +127,8 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
 
     const icon = structureMapper[name as string]?.icon;
     const componentActions = component.actions;
+
+    console.log("onLoad", component.onLoad);
 
     useEffect(() => {
       const isRootOrContentWrapper = id === "root" || id === "content-wrapper";
@@ -276,6 +281,11 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
           {component.props?.style?.display === "none" && (
             <ActionIcon color="dark" variant="transparent" size={30}>
               <Icon name="IconEyeOff" size={ICON_SIZE} />
+            </ActionIcon>
+          )}
+          {component.onLoad?.endpointId && (
+            <ActionIcon color="dark" variant="transparent" size={30}>
+              <Icon name="IconDatabase" size={ICON_SIZE} />
             </ActionIcon>
           )}
         </div>
