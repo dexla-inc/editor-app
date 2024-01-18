@@ -1,5 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
+import { DISABLED_HOVER } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { BadgeProps, Badge as MantineBadge } from "@mantine/core";
@@ -25,7 +26,10 @@ const BadgeComponent = forwardRef(
     return (
       <MantineBadge
         ref={ref}
-        styles={{ inner: customStyle }}
+        styles={{
+          inner: customStyle,
+          root: DISABLED_HOVER,
+        }}
         {...props}
         {...componentProps}
       >

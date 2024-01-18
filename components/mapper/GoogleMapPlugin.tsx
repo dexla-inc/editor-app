@@ -8,6 +8,7 @@ import {
   useLoadScript,
 } from "@react-google-maps/api";
 import merge from "lodash.merge";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { useCallback, useEffect, useState } from "react";
 
 type Props = {
@@ -31,8 +32,6 @@ export type Position = {
   position: { lat: number; lng: number };
 };
 
-const LOADING_TEXT = <Text>Enter API key and refresh the page...</Text>;
-
 export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
   const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
   const [map, setMap] = useState<any | null>(null);
@@ -55,6 +54,14 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
 
   const { width, height, ...googleStyles } = props.style ?? {};
   const containerStyle = { width, height };
+
+  const otherProps = omit(props, ["style"]);
+
+  const LOADING_TEXT = (
+    <Text {...otherProps} w="100%" h="auto" pos="relative">
+      Enter API key and refresh the page...
+    </Text>
+  );
 
   const loadScript = useLoadScript({
     id: "google-map-script",
@@ -117,7 +124,7 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
   });
 
   return (
-    <Box pos="relative" style={containerStyle}>
+    <Box pos="relative" {...otherProps} style={containerStyle}>
       <GoogleMap
         key={apiKey}
         center={center}

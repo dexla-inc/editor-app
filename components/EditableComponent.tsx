@@ -296,9 +296,6 @@ export const EditableComponent = ({
     component.languages?.[language],
     component.states?.[currentState],
     {
-      disabled:
-        component.props?.disabled ??
-        (currentState === "disabled" && !!component.states?.disabled),
       triggers: !isEditorMode
         ? {
             ...triggers,
@@ -316,6 +313,8 @@ export const EditableComponent = ({
     position: "relative",
     ...propsWithOverwrites.style,
     ...(currentState === "hidden" && { display: "none" }),
+    ...(currentState === "disabled" &&
+      !isEditorMode && { PointerEvent: "none" }),
 
     outline:
       !isEditorMode && propsWithOverwrites.style?.outline === GRAY_OUTLINE

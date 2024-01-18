@@ -6,6 +6,7 @@ export const jsonStructure = (props?: any): Component => {
   const { value, textColor, color, ...rest } = props.props ?? {};
 
   const defaultValues = requiredModifiers.button;
+
   return {
     id: nanoid(),
     name: "Button",
@@ -22,6 +23,12 @@ export const jsonStructure = (props?: any): Component => {
       textColor: textColor ?? "PrimaryText.6",
       ...(rest || {}),
       children: value ?? "Button",
+    },
+    states: {
+      hover: { color: "Primary.7" },
+      disabled: {
+        color: "Secondary.6",
+      },
     },
     blockDroppingChildrenInside: true,
   };

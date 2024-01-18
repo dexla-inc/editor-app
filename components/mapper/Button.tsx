@@ -2,6 +2,7 @@ import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { useEditorStore } from "@/stores/editor";
+import { DISABLED_HOVER } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
@@ -56,6 +57,7 @@ const ButtonComponent = forwardRef(
         {...componentProps}
         {...triggers}
         style={customStyle}
+        styles={{ root: DISABLED_HOVER }}
       >
         {children}
       </MantineButton>
