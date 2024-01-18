@@ -37,7 +37,7 @@ export const useEndpoint = ({
   };
 
   return useQuery([url, body], apiCall, {
-    staleTime: requestSettings.staleTime,
+    staleTime: Number(requestSettings.staleTime) * 1000 * 60,
     enabled: !!endpoint && requestSettings.dataType === "dynamic",
   });
 };
