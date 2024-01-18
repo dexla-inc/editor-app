@@ -19,12 +19,6 @@ const nestable = {
 };
 
 const defaultComponentProps = {
-  Title: {
-    defaultProps: () => ({ color: GRAY_WHITE_COLOR }),
-  },
-  Text: {
-    defaultProps: () => ({ color: GRAY_WHITE_COLOR }),
-  },
   Avatar: {
     defaultProps: () => ({ size: "sm" }),
   },
@@ -140,6 +134,12 @@ const darkTheme: MantineTheme = {
       styles: (theme) => ({
         root: { border: "1px solid " + theme.colors.dark[5] },
       }),
+    },
+    Title: {
+      defaultProps: () => ({ color: GRAY_WHITE_COLOR }),
+    },
+    Text: {
+      defaultProps: () => ({ color: GRAY_WHITE_COLOR }),
     },
     ...defaultComponentProps,
   },
