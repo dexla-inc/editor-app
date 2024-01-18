@@ -57,7 +57,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
       dataValueKey: component.onLoad?.dataValueKey ?? "",
       resultsKey: component.onLoad?.resultsKey ?? "",
       actionCode: component.onLoad?.actionCode ?? {},
-      staleTime: component.onLoad?.staleTime ?? "0",
+      staleTime: component.onLoad?.staleTime ?? "30",
       binds: {
         header: component.onLoad?.binds?.header ?? {},
         parameter: component.onLoad?.binds?.parameter ?? {},
@@ -150,29 +150,65 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
                 );
               }}
             />
-
-            {onLoadForm.values.endpointId && (
-              <>
-                <SegmentedControlInput
-                  label="Cache Request"
-                  data={[
-                    { label: "Yes", value: String(100 * 60 * 30) },
-                    { label: "No", value: "0" },
-                  ]}
-                  {...onLoadForm.getInputProps("staleTime")}
-                  onChange={(value) => {
-                    setOnLoadFormFieldValue({ staleTime: value });
-                  }}
-                />
-                <EndpointRequestInputs
-                  selectedEndpoint={selectedEndpoint!}
-                  form={onLoadForm}
-                />
-                <Divider mt="md" />
-                <Title order={5} mt="xs">
-                  Input Settings
-                </Title>
-                {!Array.isArray(exampleResponse) && (
+              {onLoadForm.values.endpointId && (
+                <>
+                  <SegmentedControlInput
+                    label="Cache Request"
+                    value={onLoadForm.values.staleTime === "0" ? "No" : "Yes"}
+                    data={["Yes", "No"]}
+                    onChange={(value) => {
+                      setOnLoadFormFieldValue({
+                        staleTime: value === "No" ? "0" : "30",
+                      });
+                    }}
+                  />
+                  {onLoadForm.values.staleTime !== "0" && (
+                    <TextInput
+                      {...onLoadForm.getInputProps("staleTime")}
+                      onChange={(e) => {
+                        setOnLoadFormFieldValue({
+                          staleTime:
+                            e.target.value === "" ? "0" : e.target.value,
+                        });
+                      }}
+                      styles={{ rightSection: { right: "1.25rem" } }}
+                      rightSection={<>minutes</>}
+                    />
+                  )}
+                  <EndpointRequestInputs
+                    selectedEndpoint={selectedEndpoint!}
+                    form={onLoadForm}
+                  />
+                  <Divider mt="md" />
+                  <Title order={5} mt="xs">
+                    Input Settings
+                  </Title>
+                  {!Array.isArray(exampleResponse) && (
+                    <Select
+                      clearable
+                      label="Results key"
+                      placeholder="user.list"
+                      data={resultsKeysList}
+                      {...onLoadForm.getInputProps("resultsKey")}
+                      onChange={(selected) => {
+                        const newValues = {
+                          dataLabelKey: "",
+                          dataValueKey: "",
+                          resultsKey: selected,
+                        };
+                        setInputValue(component.id!, "");
+                        setOnLoadFormFieldValue(newValues);
+                      }}
+                    />
+                  )}
+                  <Select
+                    label="Label"
+                    data={selectableObjectKeys}
+                    {...onLoadForm.getInputProps("dataLabelKey")}
+                    onChange={(selected) => {
+                      setOnLoadFormFieldValue({ dataLabelKey: selected });
+                    }}
+                  />
                   <Select
                     clearable
                     label="Results key"
