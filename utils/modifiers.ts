@@ -230,6 +230,9 @@ export const requiredModifiers: RequiredModifiers = {
       { label: "Option 1", value: "option-1" },
       { label: "Option 2", value: "option-2" },
     ],
+    onLoad: {
+      staleTime: "30",
+    },
     customText: "",
     customLinkText: "",
     customLinkUrl: "",

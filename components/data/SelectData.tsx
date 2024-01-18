@@ -52,7 +52,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
       dataValueKey: component.onLoad?.dataValueKey ?? "",
       resultsKey: component.onLoad?.resultsKey ?? "",
       actionCode: component.onLoad?.actionCode ?? {},
-      staleTime: component.onLoad?.staleTime ?? "0",
+      staleTime: component.onLoad?.staleTime ?? "30",
       binds: {
         header: component.onLoad?.binds?.header ?? {},
         parameter: component.onLoad?.binds?.parameter ?? {},
@@ -128,15 +128,27 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
                 <>
                   <SegmentedControlInput
                     label="Cache Request"
-                    data={[
-                      { label: "Yes", value: String(100 * 60 * 30) },
-                      { label: "No", value: "0" },
-                    ]}
-                    {...onLoadForm.getInputProps("staleTime")}
+                    value={onLoadForm.values.staleTime === "0" ? "No" : "Yes"}
+                    data={["Yes", "No"]}
                     onChange={(value) => {
-                      setOnLoadFormFieldValue({ staleTime: value });
+                      setOnLoadFormFieldValue({
+                        staleTime: value === "No" ? "0" : "30",
+                      });
                     }}
                   />
+                  {onLoadForm.values.staleTime !== "0" && (
+                    <TextInput
+                      {...onLoadForm.getInputProps("staleTime")}
+                      onChange={(e) => {
+                        setOnLoadFormFieldValue({
+                          staleTime:
+                            e.target.value === "" ? "0" : e.target.value,
+                        });
+                      }}
+                      styles={{ rightSection: { right: "1.25rem" } }}
+                      rightSection={<>minutes</>}
+                    />
+                  )}
                   <EndpointRequestInputs
                     selectedEndpoint={selectedEndpoint!}
                     form={onLoadForm}

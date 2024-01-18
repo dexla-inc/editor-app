@@ -5,7 +5,7 @@ import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Select as MantineSelect, SelectProps } from "@mantine/core";
 import merge from "lodash.merge";
-import { forwardRef, memo, useCallback, useEffect, useState } from "react";
+import { forwardRef, memo, useEffect, useState } from "react";
 import { InputLoader } from "../InputLoader";
 import { useEndpoint } from "@/hooks/useEndpoint";
 import get from "lodash.get";
