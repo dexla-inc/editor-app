@@ -169,6 +169,8 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
                 />
                 {onLoadForm.values.staleTime !== "0" && (
                   <TextInput
+                    mt={8}
+                    w="50%"
                     {...onLoadForm.getInputProps("staleTime")}
                     onChange={(e) => {
                       setOnLoadFormFieldValue({
