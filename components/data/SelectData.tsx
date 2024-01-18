@@ -67,9 +67,11 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
   });
 
   useEffect(() => {
-    updateTreeComponentAttrs([component.id!], {
-      onLoad: { binds: onLoadForm.values.binds },
-    });
+    if (onLoadForm.isTouched()) {
+      updateTreeComponentAttrs([component.id!], {
+        onLoad: { binds: onLoadForm.values.binds },
+      });
+    }
   }, [onLoadForm.values.binds]);
 
   const [selectedEndpoint, setSelectedEndpoint] = useState<
@@ -110,7 +112,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
             />
             <Appearance
               component={component}
-              form={onLoadForm}
+              form={form}
               onChange={(value: any) => {
                 form.setFieldValue("display", value as string);
                 debouncedTreeUpdate(component.id, {
@@ -204,30 +206,6 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
                     }}
                   />
                 )}
-                <Select
-                  label="Label"
-                  data={selectableObjectKeys}
-                  {...onLoadForm.getInputProps("dataLabelKey")}
-                  onChange={(selected) => {
-                    setOnLoadFormFieldValue({ dataLabelKey: selected });
-                  }}
-                />
-                <Select
-                  clearable
-                  label="Results key"
-                  placeholder="user.list"
-                  data={resultsKeysList}
-                  {...onLoadForm.getInputProps("resultsKey")}
-                  onChange={(selected) => {
-                    const newValues = {
-                      dataLabelKey: "",
-                      dataValueKey: "",
-                      resultsKey: selected,
-                    };
-                    setInputValue(component.id!, "");
-                    setOnLoadFormFieldValue(newValues);
-                  }}
-                />
                 <Select
                   label="Label"
                   data={selectableObjectKeys}

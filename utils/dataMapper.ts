@@ -24,4 +24,5 @@ export const dataMapper = {
   Badge,
   FileButton,
   Image,
+  Container: Select,
 };
