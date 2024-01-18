@@ -8,7 +8,6 @@ import { MethodTypes } from "@/requests/types";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { BindPlaceDataAction } from "@/utils/actions";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { ApiType } from "@/utils/dashboardTypes";
 import { getAllComponentsByName } from "@/utils/editor";
@@ -250,7 +249,6 @@ export const BindPlaceDataFlowActionForm = ({ form }: Props) => {
                         onChange={(e) => {
                           form.setFieldValue(field, e.currentTarget.value);
                         }}
-                        {...AUTOCOMPLETE_OFF_PROPS}
                       />
                     </Stack>
                   );

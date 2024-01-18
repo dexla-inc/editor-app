@@ -1,4 +1,3 @@
-import BindingPopover from "@/components/BindingPopover";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
@@ -10,10 +9,12 @@ import {
 import { VariableSelect } from "@/components/variables/VariableSelect";
 import { useEditorStore } from "@/stores/editor";
 import { ChangeVariableAction } from "@/utils/actions";
+import { debouncedTreeUpdate } from "@/utils/editor";
+import { BindingType } from "@/utils/types";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
 import merge from "lodash.merge";
+import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
 
 type Props = {
   id: string;
@@ -23,10 +24,11 @@ type FormValues = Omit<ChangeVariableAction, "name">;
 
 const defaultValues = {
   variableId: "",
-  bindingType: "JavaScript",
+  bindingType: "JavaScript" as BindingType,
   javascriptCode: "return ",
   formulaCondition: "",
   formulaValue: "",
+  value: "",
 };
 
 export const ChangeVariableActionForm = ({ id }: Props) => {
@@ -43,8 +45,6 @@ export const ChangeVariableActionForm = ({ id }: Props) => {
     editorTree,
     selectedComponentId,
   });
-  const [isBindable, { toggle: onTogglePopover, close: onClosePopover }] =
-    useDisclosure(false);
 
   const form = useForm<FormValues>({
     initialValues: merge({}, defaultValues, action.action),
@@ -68,6 +68,11 @@ export const ChangeVariableActionForm = ({ id }: Props) => {
     }
   };
 
+  const setFieldValue = (key: any, value: any) => {
+    form.setFieldValue(key, value);
+    debouncedTreeUpdate(selectedComponentId, { [key]: value });
+  };
+
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
@@ -79,20 +84,20 @@ export const ChangeVariableActionForm = ({ id }: Props) => {
           }}
           {...form.getInputProps("variableId")}
         />
-
-        <BindingPopover
-          opened={isBindable}
-          onTogglePopover={onTogglePopover}
-          onClosePopover={onClosePopover}
-          bindingType={form.values.bindingType as any}
-          onChangeBindingType={(bindingType: any) => {
-            form.setFieldValue("bindingType", bindingType);
+        <ComponentToBindFromInput
+          label="Value"
+          componentId={selectedComponentId}
+          onPickVariable={(variable: string) =>
+            setFieldValue("value", variable)
+          }
+          actionData={[]}
+          javascriptCode={form.values.actionCode}
+          onChangeJavascriptCode={(javascriptCode: string, label: string) => {
+            setFieldValue(`actionCode.${label}`, javascriptCode);
           }}
-          onChangeJavascriptCode={(javascriptCode: any) => {
-            form.setFieldValue("javascriptCode", javascriptCode);
-          }}
-          javascriptCode={form.values.javascriptCode!}
-          style="iconButton"
+          {...form.getInputProps("value")}
+          onChange={(e) => setFieldValue("value", e.currentTarget.value)}
+          required
         />
 
         <ActionButtons

@@ -109,7 +109,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
               setFieldValue={setFormFieldValue}
             />
             <Appearance
-              selectedComponent={component}
+              component={component}
               form={onLoadForm}
               onChange={(value: any) => {
                 form.setFieldValue("display", value as string);

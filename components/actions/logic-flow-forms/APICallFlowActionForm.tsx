@@ -10,7 +10,6 @@ import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { APICallAction } from "@/utils/actions";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { ApiType } from "@/utils/dashboardTypes";
 import { Box, Button, Flex, Stack, Switch, Text, Title } from "@mantine/core";
@@ -214,7 +213,6 @@ export const APICallFlowActionForm = ({ form }: Props) => {
                             [field]: e.currentTarget.value,
                           });
                         }}
-                        {...AUTOCOMPLETE_OFF_PROPS}
                       />
                     </Stack>
                   );
