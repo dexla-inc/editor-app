@@ -214,6 +214,7 @@ export interface ShowNotificationAction extends BaseAction {
   name: "showNotification";
   title: string;
   message: string;
+  color: string;
 }
 
 export interface ChangeStateAction extends BaseAction {
@@ -687,6 +688,7 @@ export const showNotificationAction = async ({
   showNotification({
     title: getVariableValueFromVariableId(action.title),
     message: getVariableValueFromVariableId(action.message),
+    color: action.color,
   });
 };
 
