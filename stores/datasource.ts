@@ -42,8 +42,13 @@ export const useDataSourceStore = create<DataSourceState>()(
           return true;
         },
         refreshAccessToken: async () => {
-          const accessToken = get().accessToken;
           const refreshToken = Cookies.get("refreshToken");
+
+          if (!refreshToken) {
+            return;
+          }
+
+          const accessToken = get().accessToken;
           const apiAuthConfig = get().apiAuthConfig;
           const hasTokenExpired = get().hasTokenExpired;
           const setAuthTokens = get().setAuthTokens;
