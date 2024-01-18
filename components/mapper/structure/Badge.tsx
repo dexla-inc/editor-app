@@ -25,7 +25,7 @@ export const jsonStructure = (props?: any): Component => {
       ...(props.props || {}),
     },
     states: {
-      hover: { bg: "Primary.8" },
+      hover: { bg: "Primary.7" },
       disabled: {
         bg: "Secondary.6",
       },
