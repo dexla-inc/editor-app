@@ -176,6 +176,7 @@ const BORDER = isDarkTheme ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE;
 const BINDER_BACKGROUND = isDarkTheme ? theme.colors.dark[5] : undefined;
 const LOGICFLOW_BACKGROUND = isDarkTheme ? undefined : GRAY_WHITE_COLOR;
 const DEFAULT_TEXTCOLOR = isDarkTheme ? "white" : DARK_COLOR;
+const DISABLED_HOVER = { "&:hover": { backgroundColor: "none" } };
 
 // Default scrollbar style for the editor
 const scrollbarStyles = {
@@ -314,6 +315,7 @@ export {
   DARK_COLOR,
   DARK_MODE,
   DEFAULT_TEXTCOLOR,
+  DISABLED_HOVER,
   FLEX_HOVER,
   GRAY_BORDER_COLOR,
   GRAY_COLOR,
