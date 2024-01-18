@@ -11,7 +11,7 @@ type Props = {
   onChange?: any;
 };
 
-export const Appearance = ({
+export const VisibilityModifier = ({
   component,
   form,
   debouncedTreeUpdate,

@@ -1,49 +1,24 @@
 import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
-import { EndpointSelect } from "@/components/EndpointSelect";
-import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { SelectOptionsForm } from "@/components/SelectOptionsForm";
 import { SidebarSection } from "@/components/SidebarSection";
-import { Appearance } from "@/components/data/Appearance";
 import { DataTabSelect } from "@/components/data/DataTabSelect";
+import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { DataProps } from "@/components/data/type";
 import { Endpoint } from "@/requests/datasources/types";
 import { useEditorStore } from "@/stores/editor";
-import { useInputsStore } from "@/stores/inputs";
-import {
-  debouncedTreeComponentAttrsUpdate,
-  debouncedTreeUpdate,
-} from "@/utils/editor";
-import { Divider, Select, Stack, Text, TextInput, Title } from "@mantine/core";
+import { debouncedTreeUpdate } from "@/utils/editor";
+import { Divider, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconDatabase } from "@tabler/icons-react";
-import get from "lodash.get";
 import { useEffect, useState } from "react";
-
-function getObjectAndArrayKeys(obj: any, prefix = "") {
-  let keys: string[] = [];
-
-  for (let key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      const newKey = prefix ? `${prefix}.${key}` : key;
-
-      if (typeof obj[key] === "object" && obj[key] !== null) {
-        keys.push(newKey);
-
-        if (!Array.isArray(obj[key])) {
-          keys = keys.concat(getObjectAndArrayKeys(obj[key], newKey));
-        }
-      }
-    }
-  }
-
-  return keys;
-}
+import { EndpointData } from "./EndpointData";
+import { SelectOptions } from "./SelectOptions";
 
 export const SelectData = ({ component, endpoints }: DataProps) => {
   const updateTreeComponentAttrs = useEditorStore(
     (state) => state.updateTreeComponentAttrs,
   );
-  const setInputValue = useInputsStore((state) => state.setInputValue);
+
   const form = useForm({
     initialValues: {
       data: component.props?.data ?? [],
@@ -69,6 +44,11 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
     },
   });
 
+  const setFormFieldValue = (key: any, value: any) => {
+    form.setFieldValue(key, value);
+    debouncedTreeUpdate(component.id as string, { [key]: value });
+  };
+
   useEffect(() => {
     if (onLoadForm.isTouched()) {
       updateTreeComponentAttrs([component.id!], {
@@ -81,24 +61,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
     Endpoint | undefined
   >(endpoints?.results?.find((e) => e.id === component.onLoad?.endpointId));
 
-  const setFormFieldValue = (key: any, value: any) => {
-    form.setFieldValue(key, value);
-    debouncedTreeUpdate(component.id, { [key]: value });
-  };
-
-  const setOnLoadFormFieldValue = (attrs: any) => {
-    onLoadForm.setValues(attrs);
-    debouncedTreeComponentAttrsUpdate({ onLoad: attrs });
-  };
-
   const exampleResponse = JSON.parse(selectedEndpoint?.exampleResponse ?? "{}");
-  const resultsKeysList = getObjectAndArrayKeys(exampleResponse);
-  const selectableObject = onLoadForm.values.resultsKey
-    ? get(exampleResponse, onLoadForm.values.resultsKey)
-    : exampleResponse;
-  const selectableObjectKeys = Object.keys(
-    Array.isArray(selectableObject) ? selectableObject[0] : selectableObject,
-  );
 
   return (
     <form>
@@ -113,7 +76,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
               getValue={() => form.getInputProps("data").value}
               setFieldValue={setFormFieldValue}
             />
-            <Appearance
+            <VisibilityModifier
               component={component}
               form={form}
               onChange={(value: any) => {
@@ -139,103 +102,26 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
               id === "data" && form.setFieldValue("initiallyOpened", opened)
             }
           >
-            <EndpointSelect
-              {...onLoadForm.getInputProps("endpointId")}
-              onChange={(selected) => {
-                const newValues = {
-                  endpointId: selected,
-                  dataLabelKey: "",
-                  dataValueKey: "",
-                  resultsKey: "",
-                };
-                setOnLoadFormFieldValue(newValues);
-                setInputValue(component.id!, "");
-                setSelectedEndpoint(
-                  endpoints?.results?.find((e) => e.id === selected),
-                );
-              }}
-            />
-            {onLoadForm.values.endpointId && (
-              <>
-                <SegmentedControlInput
-                  label="Cache Request"
-                  value={onLoadForm.values.staleTime === "0" ? "No" : "Yes"}
-                  data={["Yes", "No"]}
-                  onChange={(value) => {
-                    setOnLoadFormFieldValue({
-                      staleTime: value === "No" ? "0" : "30",
-                    });
-                  }}
-                />
-                {onLoadForm.values.staleTime !== "0" && (
-                  <TextInput
-                    mt={8}
-                    w="50%"
-                    {...onLoadForm.getInputProps("staleTime")}
-                    onChange={(e) => {
-                      setOnLoadFormFieldValue({
-                        staleTime: e.target.value,
-                      });
-                    }}
-                    onBlur={(e) => {
-                      if (e.target.value === "") {
-                        setOnLoadFormFieldValue({
-                          staleTime: "0",
-                        });
-                      }
-                    }}
-                    styles={{ rightSection: { right: "1.25rem" } }}
-                    rightSection={
-                      <Text size="xs" color="dimmed">
-                        mins
-                      </Text>
-                    }
+            <Stack>
+              <EndpointData
+                response={exampleResponse}
+                form={onLoadForm}
+                componentId={component.id as string}
+                setSelectedEndpoint={setSelectedEndpoint}
+                endpoints={endpoints?.results ?? []}
+              />
+              {onLoadForm.values.endpointId && (
+                <>
+                  <SelectOptions response={exampleResponse} form={onLoadForm} />
+                  <Divider mt="md" />
+
+                  <EndpointRequestInputs
+                    selectedEndpoint={selectedEndpoint!}
+                    form={onLoadForm}
                   />
-                )}
-                <EndpointRequestInputs
-                  selectedEndpoint={selectedEndpoint!}
-                  form={onLoadForm}
-                />
-                <Divider mt="md" />
-                <Title order={5} mt="xs">
-                  Input Settings
-                </Title>
-                {!Array.isArray(exampleResponse) && (
-                  <Select
-                    clearable
-                    label="Results key"
-                    placeholder="user.list"
-                    data={resultsKeysList}
-                    {...onLoadForm.getInputProps("resultsKey")}
-                    onChange={(selected) => {
-                      const newValues = {
-                        dataLabelKey: "",
-                        dataValueKey: "",
-                        resultsKey: selected,
-                      };
-                      setInputValue(component.id!, "");
-                      setOnLoadFormFieldValue(newValues);
-                    }}
-                  />
-                )}
-                <Select
-                  label="Label"
-                  data={selectableObjectKeys}
-                  {...onLoadForm.getInputProps("dataLabelKey")}
-                  onChange={(selected) => {
-                    setOnLoadFormFieldValue({ dataLabelKey: selected });
-                  }}
-                />
-                <Select
-                  label="Value"
-                  data={selectableObjectKeys}
-                  {...onLoadForm.getInputProps("dataValueKey")}
-                  onChange={(selected) => {
-                    setOnLoadFormFieldValue({ dataValueKey: selected });
-                  }}
-                />
-              </>
-            )}
+                </>
+              )}
+            </Stack>
           </SidebarSection>
         )}
       </Stack>

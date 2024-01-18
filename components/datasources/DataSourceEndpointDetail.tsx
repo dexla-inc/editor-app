@@ -853,7 +853,7 @@ export const DataSourceEndpointDetail = ({
 
           <Button
             onClick={handleTestEndpoint}
-            color="indigo"
+            variant="default"
             leftIcon={<Icon name="IconClick"></Icon>}
             loading={isLoading}
           >

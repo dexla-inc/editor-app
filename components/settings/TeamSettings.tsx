@@ -104,7 +104,7 @@ export default function TeamSettings({ projectId }: Props) {
             <Button
               onClick={openInviteModal}
               leftIcon={<Icon name="IconPlus" size={ICON_SIZE}></Icon>}
-              color="indigo"
+              variant="default"
               compact
             >
               Invite Member
