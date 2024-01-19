@@ -226,19 +226,21 @@ export interface ChangeStateAction extends BaseAction {
   }>;
 }
 
+export type EndpointAuthType = "authenticated" | "login" | "logout";
+
 export interface APICallAction extends BaseAction {
   name: "apiCall";
   endpoint: string;
   selectedEndpoint: Endpoint;
   authConfig: Omit<DataSourceAuthResponse, "type">;
-  showLoader?: boolean;
+  showLoader?: string;
   datasources: DataSourceResponse[];
   binds?: {
     header: { [key: string]: any };
     parameter: { [key: string]: any };
     body: { [key: string]: any };
   };
-  isLogin?: boolean;
+  authType: EndpointAuthType;
 }
 
 export interface BindPlaceDataAction extends Omit<APICallAction, "name"> {
@@ -908,8 +910,10 @@ const handleSuccess = async (
 };
 
 function constructHeaders(endpoint?: Endpoint, authHeaderKey = "") {
+  const contentType = endpoint?.mediaType || "application/json";
+
   return {
-    "Content-Type": endpoint?.mediaType ?? "application/json",
+    "Content-Type": contentType,
     ...(authHeaderKey ? { Authorization: authHeaderKey } : {}),
   };
 }
@@ -926,6 +930,8 @@ export async function performFetch(
     headers: constructHeaders(endpoint, authHeaderKey),
     ...(!!body ? { body: JSON.stringify(body) } : {}),
   });
+
+  console.log(response);
 
   const responseString = response.status.toString();
   const handledError = responseString.startsWith("4");
@@ -962,20 +968,18 @@ export const apiCallAction = async ({
       },
     });
 
-    const { url, body } = await prepareRequestData(
-      action,
-      action.selectedEndpoint,
-    );
+    const { url, body } = prepareRequestData(action, action.selectedEndpoint);
 
     let responseJson;
-
-    if (action.isLogin) {
+    if (action.authType === "login") {
       responseJson = await performFetch(url, action.selectedEndpoint, body);
       const mergedAuthConfig = { ...responseJson, ...action.authConfig };
       const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
 
       setAuthTokens(mergedAuthConfig);
-    } else {
+    }
+    // TODO: Handle logout by passing in refresh token to the API call and add if statement. Also redirect to login page
+    else {
       const refreshAccessToken =
         useDataSourceStore.getState().refreshAccessToken;
       const accessToken = useDataSourceStore.getState().accessToken;
@@ -997,6 +1001,8 @@ export const apiCallAction = async ({
         body,
         authHeaderKey,
       );
+    }
+    if (action.authType === "logout") {
     }
     await handleSuccess(
       responseJson,

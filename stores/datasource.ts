@@ -23,6 +23,7 @@ export const useDataSourceStore = create<DataSourceState>()(
         apiAuthConfig: undefined,
         endpoints: undefined,
         setAuthTokens: (response) => {
+          console.log(response);
           const accessToken = response[response.accessTokenProperty];
           const refreshToken = response[response.refreshTokenProperty];
           const expirySeconds = response[response.expiryTokenProperty];
@@ -44,7 +45,7 @@ export const useDataSourceStore = create<DataSourceState>()(
         refreshAccessToken: async () => {
           const refreshToken = Cookies.get("refreshToken");
 
-          if (!refreshToken) {
+          if (!refreshToken || refreshToken === "undefined") {
             return;
           }
 

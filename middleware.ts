@@ -53,7 +53,7 @@ export async function middleware(request: NextRequest) {
 function checkUserAuthentication(request: NextRequest) {
   const refreshToken = request.cookies.get("refreshToken");
 
-  if (!refreshToken) {
+  if (!refreshToken && refreshToken === "undefined") {
     return false;
   }
   // Implement your authentication logic here

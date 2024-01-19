@@ -1,11 +1,11 @@
 import { EndpointSelect } from "@/components/EndpointSelect";
-import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 
 import { Endpoint } from "@/requests/datasources/types";
 import { useInputsStore } from "@/stores/inputs";
 import { getObjectAndArrayKeys } from "@/utils/common";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Box, Flex, Select, Text, TextInput } from "@mantine/core";
+import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
 type Props = {
   response: any;
@@ -52,10 +52,9 @@ export const EndpointData = ({
       {form.values.endpointId && (
         <>
           <Flex align="end" gap="xs" justify="space-between">
-            <SegmentedControlInput
+            <SegmentedControlYesNo
               label="Cache Request"
               value={form.values.staleTime === "0" ? "No" : "Yes"}
-              data={["Yes", "No"]}
               onChange={(value) => {
                 setOnLoadFormFieldValue({
                   staleTime: value === "No" ? "0" : "30",

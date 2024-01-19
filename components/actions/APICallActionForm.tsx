@@ -17,11 +17,13 @@ import { Endpoint } from "@/requests/datasources/types";
 import { FrontEndTypes } from "@/requests/variables/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
-import { APICallAction, Action } from "@/utils/actions";
-import { Button, Divider, Stack, Switch } from "@mantine/core";
+import { APICallAction, Action, EndpointAuthType } from "@/utils/actions";
+import { Button, Divider, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
+import { SegmentedControlInput } from "../SegmentedControlInput";
+import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
 type FormValues = Omit<APICallAction, "name" | "datasource">;
 
@@ -68,7 +70,7 @@ export const APICallActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      showLoader: action.action?.showLoader ?? true,
+      showLoader: action.action?.showLoader ?? "true",
       endpoint: action.action?.endpoint,
       selectedEndpoint: action.action?.selectedEndpoint,
       authConfig: action.action?.authConfig,
@@ -78,7 +80,7 @@ export const APICallActionForm = ({ id }: Props) => {
         body: action.action?.binds?.body ?? {},
       },
       datasources: action.action?.datasources,
-      isLogin: action.action?.isLogin ?? false,
+      authType: action.action?.authType ?? "authenticated",
       actionCode: action.action?.actionCode ?? {},
     },
   });
@@ -98,7 +100,7 @@ export const APICallActionForm = ({ id }: Props) => {
           showLoader: values.showLoader,
           datasources: dataSources!.results,
           binds: values.binds,
-          isLogin: values.isLogin,
+          authType: values.authType,
           actionCode: values.actionCode,
         },
         updateTreeComponentActions,
@@ -145,9 +147,6 @@ export const APICallActionForm = ({ id }: Props) => {
     }
   }, [form.values.endpoint, updateSelectedEndpoint]);
 
-  const showLoaderInputProps = form.getInputProps("showLoader");
-  const isLoginInputProps = form.getInputProps("isLogin");
-
   return endpoints && endpoints.results.length > 0 ? (
     <>
       <form onSubmit={form.onSubmit(onSubmit)}>
@@ -159,31 +158,41 @@ export const APICallActionForm = ({ id }: Props) => {
               updateSelectedEndpoint(selected as string);
             }}
           />
-          <Switch
-            label="Is Login Endpoint"
-            labelPosition="left"
-            {...isLoginInputProps}
-            checked={isLoginInputProps.value}
-            onChange={(event) => {
-              isLoginInputProps.onChange(event);
-            }}
-            sx={{ fontWeight: 500 }}
-          />
-          <Switch
-            label="Show Loader"
-            labelPosition="left"
-            {...showLoaderInputProps}
-            checked={showLoaderInputProps.value}
-            onChange={(event) => {
-              showLoaderInputProps.onChange(event);
-            }}
-            sx={{ fontWeight: 500 }}
-          />
           {selectedEndpoint && (
-            <EndpointRequestInputs
-              selectedEndpoint={selectedEndpoint}
-              form={form}
-            />
+            <>
+              <SegmentedControlInput
+                label="Auth Type"
+                data={[
+                  {
+                    label: "Default",
+                    value: "authenticated",
+                  },
+                  {
+                    label: "Login",
+                    value: "login",
+                  },
+                  {
+                    label: "Logout",
+                    value: "logout",
+                  },
+                ]}
+                {...form.getInputProps("authType")}
+                onChange={(value) => {
+                  form.setFieldValue("authType", value as EndpointAuthType);
+                }}
+              />
+              <SegmentedControlYesNo
+                label="Show Loader"
+                {...form.getInputProps("showLoader")}
+                onChange={(value) => {
+                  form.setFieldValue("showLoader", value);
+                }}
+              />
+              <EndpointRequestInputs
+                selectedEndpoint={selectedEndpoint}
+                form={form}
+              />
+            </>
           )}
           <ActionButtons
             actionId={id}
