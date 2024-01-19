@@ -186,6 +186,7 @@ export const requiredModifiers: RequiredModifiers = {
     },
   },
   image: {
+    dataType: "static",
     src: "https://www.contentviewspro.com/wp-content/uploads/2017/07/default_image.png",
     alt: "",
     fit: "contain",

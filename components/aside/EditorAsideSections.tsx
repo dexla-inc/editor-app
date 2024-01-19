@@ -77,6 +77,7 @@ import {
 import intersection from "lodash.intersection";
 import startCase from "lodash.startcase";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
+import { Data } from "@/components/data/Data";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -163,9 +164,6 @@ export const EditorAsideSections = () => {
   const setInitiallyOpenedModifiersByComponent = useUserConfigStore(
     (state) => state.setInitiallyOpenedModifiersByComponent,
   );
-
-  const projectId = useEditorStore((state) => state.currentProjectId);
-  const { data: endpoints } = useDataSourceEndpoints(projectId);
 
   const [tab, setTab] = useState<Tab>("design");
   const selectedComponentId = useDeferredValue(_selectedComponentId);
@@ -462,17 +460,7 @@ export const EditorAsideSections = () => {
           <Stack spacing="xs">{designSections}</Stack>
         </Stack>
       )}
-      {tab === "data" && DataSection && component && (
-        <Stack>
-          <Box px="md">
-            <DataSection
-              key={component?.id}
-              component={component}
-              endpoints={endpoints}
-            />
-          </Box>
-        </Stack>
-      )}
+      {tab === "data" && <Data component={component!} />}
       {tab === "actions" && <ActionsFlow actionsSections={actionsSections} />}
     </Stack>
   );
