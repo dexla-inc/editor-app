@@ -1,3 +1,5 @@
+import { GRAY_OUTLINE } from "./branding";
+
 export type Modifiers =
   | "spacing"
   | "size"
@@ -426,14 +428,28 @@ export const requiredModifiers: RequiredModifiers = {
     foreColor: "Secondary.5",
   },
   grid: {
-    gap: "xs",
+    m: 0,
+    p: 0,
+    gridDirection: "column",
+    style: {
+      gap: "xs",
+      width: "100%",
+      height: "auto",
+    },
   },
   gridColumn: {
-    alignSelf: "start",
-    justifyContent: "stretch",
-    gap: "xs",
-    padding: "8px",
-    flexWrap: "wrap",
+    style: {
+      gap: "xs",
+      alignSelf: "start",
+      justifyContent: "stretch",
+      padding: "8px",
+      flexWrap: "wrap",
+      height: "100%",
+      outline: GRAY_OUTLINE,
+      outlineOffset: "-2px",
+      gridAutoRows: "max-content",
+      gridAutoFlow: "row",
+    },
   },
   navbar: {
     width: "260px",

@@ -1,22 +1,18 @@
-import { initialValues } from "@/components/modifiers/GridColumn";
-import { GRAY_OUTLINE } from "@/utils/branding";
 import { GRID_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
+  const initialValues = requiredModifiers.gridColumn;
+
   return {
     id: nanoid(),
     name: "GridColumn",
     description: "GridColumn",
     props: {
       span: GRID_SIZE / 2,
-      style: {
-        ...initialValues,
-        height: "100%",
-        outline: GRAY_OUTLINE,
-        outlineOffset: "-2px",
-      },
+      ...initialValues,
     },
   };
 };
