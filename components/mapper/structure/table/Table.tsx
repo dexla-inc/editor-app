@@ -109,11 +109,6 @@ export const jsonStructure = (props?: any): Component => {
                         name: "Checkbox",
                         description: "Checkbox",
                         props: {
-                          style: {
-                            marginLeft: "10px",
-                            width: "auto",
-                            height: "auto",
-                          },
                           ...(props.props || {}),
                         },
                         blockDroppingChildrenInside: true,
@@ -177,11 +172,6 @@ export const jsonStructure = (props?: any): Component => {
                         name: "Checkbox",
                         description: "Checkbox",
                         props: {
-                          style: {
-                            marginLeft: "10px",
-                            width: "auto",
-                            height: "auto",
-                          },
                           ...(props.props || {}),
                         },
                         blockDroppingChildrenInside: true,
