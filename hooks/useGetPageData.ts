@@ -1,5 +1,4 @@
-import { analyseTemplateToUse, getPage } from "@/requests/pages/queries-noauth";
-import { getTemplate } from "@/requests/templates/queries-noauth";
+import { getPage } from "@/requests/pages/queries-noauth";
 import { useAppStore } from "@/stores/app";
 import { emptyEditorTree, useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
@@ -66,45 +65,43 @@ export const useGetPageData = ({
         message: "Your page has successfully loaded",
       });
     } else {
-      setIsLoading(true);
-      startLoading({
-        id: "page-generation",
-        title: "Generating Page",
-        message: "AI is generating your page",
-      });
-
-      const templateToUse = await analyseTemplateToUse(
-        page.name,
-        page.description ?? "",
-        undefined,
-        undefined,
-        { signal },
-      );
-
-      const template = await getTemplate(templateToUse.name, true);
-
-      // TODO: Replace tiles from template state with tiles from aiPageTemplate
-      const templateTreeState = JSON.parse(decodeSchema(template.state));
-      // const _project = await fetch(`/api/project/${projectId}`, {
-      //   method: "GET",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   signal,
-      // }).then((projectResponse) => projectResponse.json());
-      // TODO: Add tiles into AI response /api/ai/page
-      // const treeState = replaceTilesData(
-      //   templateTreeState,
-      //   template.tiles ?? [],
-      //   _project?.data,
+      setIsLoading(false);
+      // Commenting out AI page generation for now
+      // setIsLoading(true);
+      // startLoading({
+      //   id: "page-generation",
+      //   title: "Generating Page",
+      //   message: "AI is generating your page",
+      // });
+      // const templateToUse = await analyseTemplateToUse(
+      //   page.name,
+      //   page.description ?? "",
+      //   undefined,
+      //   undefined,
+      //   { signal },
       // );
-
-      setEditorTree(templateTreeState);
-      stopLoading({
-        id: "page-generation",
-        title: "Page Generated",
-        message: "Here's your page. We hope you like it",
-      });
+      // const template = await getTemplate(templateToUse.name, true);
+      // // TODO: Replace tiles from template state with tiles from aiPageTemplate
+      // const templateTreeState = JSON.parse(decodeSchema(template.state));
+      // // const _project = await fetch(`/api/project/${projectId}`, {
+      // //   method: "GET",
+      // //   headers: {
+      // //     "Content-Type": "application/json",
+      // //   },
+      // //   signal,
+      // // }).then((projectResponse) => projectResponse.json());
+      // // TODO: Add tiles into AI response /api/ai/page
+      // // const treeState = replaceTilesData(
+      // //   templateTreeState,
+      // //   template.tiles ?? [],
+      // //   _project?.data,
+      // // );
+      // setEditorTree(templateTreeState);
+      // stopLoading({
+      //   id: "page-generation",
+      //   title: "Page Generated",
+      //   message: "Here's your page. We hope you like it",
+      // });
     }
   };
 
