@@ -4,6 +4,7 @@ import { DataProps } from "@/components/data/type";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useEffect } from "react";
 
 export const TextData = ({ component, endpoints }: DataProps) => {
   const isNavLink = component.name === "NavLink";
@@ -27,19 +28,27 @@ export const TextData = ({ component, endpoints }: DataProps) => {
     debouncedTreeUpdate(component.id, { [key]: value });
   };
 
+  useEffect(() => {
+    debouncedTreeUpdate(component.id, { [itemKey]: form.values[itemKey] });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.values[itemKey]]);
+
   return (
     <form>
       <Stack spacing="xs">
         <ComponentToBindFromInput
           componentId={component?.id!}
           onPickVariable={(variable: string) =>
-            setFieldValue(itemKey, variable)
+            form.setFieldValue(itemKey, variable)
           }
-          passVariableValue={true}
+          category="data"
           actionData={[]}
           javascriptCode={form.values.actionCode}
           onChangeJavascriptCode={(javascriptCode: string, label: string) =>
-            setFieldValue(`actionCode.${label}`, javascriptCode)
+            setFieldValue(`actionCode`, {
+              ...form.values.actionCode,
+              [label]: javascriptCode,
+            })
           }
           size="xs"
           label="Value"

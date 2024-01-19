@@ -7,7 +7,7 @@ export function DataTree({
   filterKeyword = "",
 }: any) {
   return (
-    <ScrollArea.Autosize mah={300}>
+    <ScrollArea.Autosize mah={150}>
       <Stack align="flex-start" spacing="xs">
         {variables
           .filter((variable: any) => {

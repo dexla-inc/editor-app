@@ -55,7 +55,12 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
                 onChangeJavascriptCode={(
                   javascriptCode: string,
                   label: string,
-                ) => setFieldValue(`actionCode.${label}`, javascriptCode)}
+                ) =>
+                  setFieldValue(`actionCode`, {
+                    ...form.values.actionCode,
+                    [label]: javascriptCode,
+                  })
+                }
                 size="xs"
                 label={
                   key === "children"

@@ -1,6 +1,5 @@
 import BindingPopover, { useBindingPopover } from "@/components/BindingPopover";
 import { useEditorStore } from "@/stores/editor";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ICON_SIZE } from "@/utils/config";
 import { ActionIcon, Flex, TextInput, TextInputProps } from "@mantine/core";
 import { IconCurrentLocation } from "@tabler/icons-react";
@@ -12,7 +11,7 @@ type Props = TextInputProps & {
   index?: number;
   onPickComponent?: (value: string) => void;
   onPickVariable?: (value: string) => void;
-  onBindValue?: (value: string) => void;
+  category?: "data" | "actions";
   isLogicFlow?: boolean;
   javascriptCode?: Record<string, string>;
   onChangeJavascriptCode?: (javascriptCode: string, label: string) => void;
@@ -32,7 +31,7 @@ export const ComponentToBindFromInput = ({
   isLogicFlow,
   javascriptCode,
   onChangeJavascriptCode,
-  onBindValue,
+  category,
   ...rest
 }: Props) => {
   const setPickingComponentToBindTo = useEditorStore(
@@ -94,7 +93,6 @@ export const ComponentToBindFromInput = ({
           setBindedValue(e.target.value);
           if (rest?.onChange) rest.onChange(e);
         }}
-        {...AUTOCOMPLETE_OFF_PROPS}
       />
       <BindingPopover
         opened={opened}
@@ -109,6 +107,7 @@ export const ComponentToBindFromInput = ({
         onPickComponent={onPickComponent}
         onPickVariable={onPickVariable}
         actionData={actionData}
+        category={category}
         style="iconButton"
       />
     </Flex>

@@ -53,6 +53,7 @@ type Props = {
   onPickVariable?: any;
   actionData?: any;
   style?: "input" | "iconButton";
+  category?: "data" | "actions";
 };
 
 export const useBindingPopover = () => {
@@ -83,6 +84,7 @@ export default function BindingPopover({
   onPickVariable,
   actionData,
   style = "iconButton",
+  category = "actions",
 }: Props) {
   const editorTree = useEditorStore((state) => state.tree);
   const [formulaEntry, setFormulaEntry] = useState<string>();
@@ -191,6 +193,34 @@ export default function BindingPopover({
     onPickComponent && onPickComponent(item);
   };
 
+  const handleVariableType = (
+    item: string,
+    parsed?: any,
+    isObjectType?: boolean,
+    error?: boolean,
+  ) => {
+    if (category === "actions") {
+      !error &&
+        onPickVariable(
+          isObjectType
+            ? `var_${JSON.stringify({
+                id: parsed.id,
+                variable: variables?.list[parsed.id],
+                path: parsed.path,
+              })}`
+            : `var_${variables?.list[parsed.id].name}`,
+        );
+      error && onPickVariable(`var_${variables?.list[item].name}`);
+    }
+    if (category === "data") {
+      const value =
+        !newValue || newValue === undefined
+          ? variables?.list[item].defaultValue
+          : newValue;
+      onPickVariable(value);
+    }
+  };
+
   const handleVariables = (item: string) => {
     try {
       const parsed = JSON.parse(item);
@@ -202,22 +232,13 @@ export default function BindingPopover({
           variables[parsed.id].name
         } */'${parsed.id}']${pathStartsWithBracket}${parsed.path}`,
       );
-      onPickVariable &&
-        onPickVariable(
-          isObjectType
-            ? `var_${JSON.stringify({
-                id: parsed.id,
-                variable: variables?.list[parsed.id],
-                path: parsed.path,
-              })}`
-            : `var_${variables?.list[parsed.id].name}`,
-        );
+      onPickVariable && handleVariableType(item, parsed, isObjectType);
     } catch {
       setSelectedItem(
         `${prefixWithReturnIfNeeded(javascriptCode)}variables[/* ${variables
           ?.list[item].name} */'${item}']`,
       );
-      onPickVariable && onPickVariable(`var_${variables?.list[item].name}`);
+      onPickVariable && handleVariableType(item, undefined, undefined, true);
     }
   };
 
