@@ -1,6 +1,8 @@
+import ProgressBar from "@/components/ProgressBar";
 import LogicFlowInitialModal from "@/components/logic-flow/LogicFlowInitialModal";
 import { ContextMenuProvider } from "@/contexts/ContextMenuProvider";
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
+import useRouteChange from "@/hooks/useRouteChange";
 import AuthProvider from "@/pages/AuthProvider";
 import InitializeVariables from "@/pages/InitializeVariables";
 import InstantiatePropelAuthStore from "@/pages/InstantiatePropelAuthStore";
@@ -51,6 +53,7 @@ export default function App(props: AppProps) {
   const isLive = useCheckIfIsLive();
 
   const [loadTagManager, setLoadTagManager] = useState(false);
+  const isRouteChanging = useRouteChange();
 
   useEffect(() => {
     setLoadTagManager(!isLive && process.env.NODE_ENV !== "development");
@@ -84,7 +87,15 @@ export default function App(props: AppProps) {
     >
       <ContextMenuProvider>
         <AuthProvider isLive={isLive}>
-          {!isLive && <InstantiatePropelAuthStore />}
+          {!isLive && (
+            <>
+              <ProgressBar
+                isRouteChanging={isRouteChanging}
+                color={theme.colors.teal[6]}
+              />
+              <InstantiatePropelAuthStore />
+            </>
+          )}
           <Head>
             <title>Editor</title>
             <meta name="description" content="Dexla Editor" />
@@ -94,6 +105,7 @@ export default function App(props: AppProps) {
             />
             <link rel="icon" type="image/x-icon" href="/favicon.ico" />
           </Head>
+
           {/* Google Tag Manager */}
           {loadTagManager && (
             <Script id="google-analytics" strategy="afterInteractive">

@@ -38,6 +38,7 @@
     "@propelauth/react": "^2.0.15",
     "@react-google-maps/api": "^2.19.2",
     "@tabler/icons-react": "^2.45.0",
+    "@tanem/react-nprogress": "^5.0.51",
     "@tanstack/react-query": "^4.35.3",
     "@tiptap/extension-highlight": "^2.1.11",
     "@tiptap/extension-link": "^2.1.13",
