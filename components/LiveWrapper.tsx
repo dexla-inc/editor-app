@@ -1,11 +1,10 @@
 import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
-import useRouteChange from "@/hooks/useRouteChange";
 import { useUserTheme } from "@/hooks/useUserTheme";
 import { decodeSchema } from "@/utils/compression";
 import createCache from "@emotion/cache";
 import { Box, BoxProps, MantineProvider } from "@mantine/core";
 import { useEffect, useState } from "react";
-import ProgressBar from "./ProgressBar";
+import { ProgressBar } from "./ProgressBar";
 
 type Props = {
   projectId: string;
@@ -15,7 +14,7 @@ export const LiveWrapper = ({ children, projectId, ...props }: Props) => {
   const [customCode, setCustomCode] = useState<any | null>(null);
   const theme = useUserTheme(projectId);
   const { data: project } = useProjectQuery(projectId);
-  const isRouteChanging = useRouteChange();
+  // const isRouteChanging = useRouteChange();
 
   const w = typeof window !== "undefined" ? window : undefined;
   const mountNode = w?.document.body;
@@ -88,10 +87,7 @@ export const LiveWrapper = ({ children, projectId, ...props }: Props) => {
       })}
       {...props}
     >
-      <ProgressBar
-        isRouteChanging={isRouteChanging}
-        color={theme.colors.Primary[6]}
-      />
+      <ProgressBar color={theme.colors.Primary[6]} />
       <Box id="iframe-content">{children}</Box>
     </MantineProvider>
   );
