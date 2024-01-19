@@ -1,10 +1,10 @@
+import { ProgressBar } from "@/components/ProgressBar";
 import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { useUserTheme } from "@/hooks/useUserTheme";
 import { decodeSchema } from "@/utils/compression";
 import createCache from "@emotion/cache";
 import { Box, BoxProps, MantineProvider } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { ProgressBar } from "./ProgressBar";
 
 type Props = {
   projectId: string;
