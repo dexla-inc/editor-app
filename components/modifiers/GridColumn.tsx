@@ -21,8 +21,6 @@ import {
 import merge from "lodash.merge";
 import { useEffect } from "react";
 
-export const initialValues = requiredModifiers.gridColumn;
-
 export const label = "Grid Column";
 export const icon = IconLayoutColumns;
 
@@ -32,7 +30,7 @@ export const Modifier = withModifier(
 
     useEffect(() => {
       form.setValues(
-        merge({}, initialValues, {
+        merge({}, requiredModifiers.gridColumn, {
           alignSelf: selectedComponent.props?.style?.alignSelf,
           justifyContent: selectedComponent.props?.style?.justifyContent,
           gridAutoFlow: selectedComponent.props?.style?.gridAutoFlow,

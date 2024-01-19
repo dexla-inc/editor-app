@@ -11,8 +11,6 @@ import { IconLayoutGrid } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 
-export const initialValues = requiredModifiers.grid;
-
 export const label = "Grid";
 export const icon = IconLayoutGrid;
 
@@ -22,7 +20,7 @@ export const Modifier = withModifier(
 
     useEffect(() => {
       form.setValues(
-        merge({}, initialValues, {
+        merge({}, requiredModifiers.grid, {
           gap: selectedComponent?.props?.style?.gap,
           alignSelf: selectedComponent?.props?.style?.alignSelf,
           gridDirection: selectedComponent?.props?.gridDirection,

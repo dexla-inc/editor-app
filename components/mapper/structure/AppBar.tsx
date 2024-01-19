@@ -1,12 +1,14 @@
-import { initialValues as initialGridValues } from "@/components/modifiers/Grid";
-import { initialValues as initialGridColumnValues } from "@/components/modifiers/GridColumn";
 import { GRAY_OUTLINE, defaultTheme } from "@/utils/branding";
 import { GRID_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
+
+  const initialGridValues = requiredModifiers.grid;
+  const initialGridColumnValues = requiredModifiers.gridColumn;
 
   return {
     id: nanoid(),

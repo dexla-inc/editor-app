@@ -7,10 +7,10 @@ import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconLayoutSidebar } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { ThemeColorSelector } from "../ThemeColorSelector";
 import { useEffect } from "react";
+import { ThemeColorSelector } from "../ThemeColorSelector";
 
-export const initialValues = requiredModifiers.navbar;
+const initialValues = requiredModifiers.navbar;
 
 export const label = "Navbar";
 export const icon = IconLayoutSidebar;

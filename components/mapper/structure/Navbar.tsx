@@ -1,14 +1,15 @@
 import { defaultImageValues } from "@/components/modifiers/Image";
-import { initialValues } from "@/components/modifiers/Navbar";
 import { PageResponse } from "@/requests/pages/types";
 import { MantineThemeExtended } from "@/stores/editor";
 import { defaultTheme } from "@/utils/branding";
 import { Component, getColorFromTheme } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = (props.theme ?? defaultTheme) as MantineThemeExtended;
+  const initialValues = requiredModifiers.navbar;
 
   const pages = (
     props.pages && props.pages.length > 0
