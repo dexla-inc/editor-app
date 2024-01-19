@@ -1,3 +1,4 @@
+import { ProgressBar } from "@/components/ProgressBar";
 import LogicFlowInitialModal from "@/components/logic-flow/LogicFlowInitialModal";
 import { ContextMenuProvider } from "@/contexts/ContextMenuProvider";
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
@@ -84,7 +85,12 @@ export default function App(props: AppProps) {
     >
       <ContextMenuProvider>
         <AuthProvider isLive={isLive}>
-          {!isLive && <InstantiatePropelAuthStore />}
+          {!isLive && (
+            <>
+              <ProgressBar color={theme.colors.teal[6]} />
+              <InstantiatePropelAuthStore />
+            </>
+          )}
           <Head>
             <title>Editor</title>
             <meta name="description" content="Dexla Editor" />
@@ -94,6 +100,7 @@ export default function App(props: AppProps) {
             />
             <link rel="icon" type="image/x-icon" href="/favicon.ico" />
           </Head>
+
           {/* Google Tag Manager */}
           {loadTagManager && (
             <Script id="google-analytics" strategy="afterInteractive">
