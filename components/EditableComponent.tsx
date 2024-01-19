@@ -176,6 +176,7 @@ export const EditableComponent = ({
     component.languages?.[language],
     component.states?.[currentState],
     {
+      disabled: currentState === "disabled",
       triggers: !isEditorMode
         ? {
             ...triggers,
