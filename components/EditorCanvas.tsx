@@ -35,7 +35,11 @@ type Props = {
   projectId: string;
 };
 
-const EditableComponentContainer = ({ children, component }: any) => {
+const EditableComponentContainer = ({
+  children,
+  component,
+  shareableContent,
+}: any) => {
   const isSelected = useEditorStore(
     (state) => state.selectedComponentIds?.includes(component.id),
   );
@@ -56,6 +60,7 @@ const EditableComponentContainer = ({ children, component }: any) => {
       component={component}
       isSelected={isSelected}
       selectedByOther={selectedByOther ?? undefined}
+      shareableContent={shareableContent}
     >
       {children}
     </EditableComponent>
@@ -327,7 +332,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   ]);
 
   const renderTree = useCallback(
-    (component: Component) => {
+    (component: Component, shareableContent = {}) => {
       if (component.id === "root") {
         return (
           <Droppable
@@ -367,6 +372,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
         <EditableComponentContainer
           key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
           component={component}
+          shareableContent={shareableContent}
         >
           {componentToRender?.Component({ component, renderTree })}
         </EditableComponentContainer>

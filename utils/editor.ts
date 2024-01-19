@@ -37,6 +37,7 @@ export type Component = {
   };
   actions?: Action[];
   onLoad?: any;
+  parentDataComponentId?: any;
   states?: Record<string, any>;
   languages?: Record<string, any>;
 };

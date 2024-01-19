@@ -4,11 +4,14 @@ import { IDENTIFIER } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import isEmpty from "lodash.isempty";
-import { forwardRef } from "react";
+import { forwardRef, useEffect, useState } from "react";
+import { useEndpoint } from "@/hooks/useEndpoint";
+import get from "lodash.get";
 
 type Props = {
-  renderTree: (component: Component) => any;
+  renderTree: (component: Component, shareableContent: any) => any;
   component: Component;
+  shareableContent?: any;
 } & FlexProps;
 
 export const ContainerComponent = forwardRef(
@@ -16,18 +19,11 @@ export const ContainerComponent = forwardRef(
     const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
     const isLive = useEditorStore((state) => state.isLive);
 
-    const {
-      children,
-      bg,
-      triggers,
-      data: dataProp,
-      exampleData = {},
-      dataPath,
-      loading,
-      ...componentProps
-    } = component.props as any;
+    const { children, bg, triggers, dataType, loading, ...componentProps } =
+      component.props as any;
 
-    const data = !isPreviewMode ? undefined : dataProp?.value ?? dataProp;
+    const { endpointId, resultsKey, binds, staleTime } = component.onLoad ?? {};
+
     const hasBorder =
       componentProps?.style?.borderWidth ||
       componentProps?.style?.borderTopWidth ||
@@ -35,6 +31,27 @@ export const ContainerComponent = forwardRef(
       componentProps?.style?.borderLeftWidth ||
       componentProps?.style?.borderRightWidth;
     const shouldRemoveBorder = isLive || isPreviewMode || hasBorder;
+
+    const [data, setData] = useState(
+      dataType === "static" ? component.props?.data : [],
+    );
+
+    const { data: response } = useEndpoint({
+      endpointId,
+      requestSettings: { binds, dataType, staleTime },
+    });
+
+    useEffect(() => {
+      if (dataType === "dynamic") {
+        if (!response) {
+          setData([]);
+        } else {
+          const result = get(response, resultsKey, response);
+          setData(result);
+        }
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [resultsKey, dataType, response]);
 
     return (
       <MantineFlex
@@ -53,16 +70,23 @@ export const ContainerComponent = forwardRef(
         {data &&
           !isEmpty(data) &&
           data.length > 0 &&
-          data.map((_: any, repeatedIndex: number) => {
+          data.map((item: any, repeatedIndex: number) => {
             return component.children && component.children.length > 0
               ? component.children?.map((child) =>
-                  renderTree({
-                    ...child,
-                    props: {
-                      ...child.props,
-                      repeatedIndex,
+                  renderTree(
+                    {
+                      ...child,
+                      props: {
+                        ...child.props,
+                        repeatedIndex,
+                      },
                     },
-                  }),
+                    {
+                      ...props.shareableContent,
+                      parentDataComponentId: component.id,
+                      data: item,
+                    },
+                  ),
                 )
               : children;
           })}
@@ -70,10 +94,13 @@ export const ContainerComponent = forwardRef(
         component.children &&
         component.children.length > 0
           ? component.children?.map((child) =>
-              renderTree({
-                ...child,
-                props: { ...child.props },
-              }),
+              renderTree(
+                {
+                  ...child,
+                  props: { ...child.props },
+                },
+                props.shareableContent,
+              ),
             )
           : children}
       </MantineFlex>

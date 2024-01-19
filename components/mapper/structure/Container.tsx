@@ -19,6 +19,7 @@ export const jsonStructure = (props?: any): Component => {
         minHeight: "20px",
         ...(style || {}),
       },
+      data: [1, 2, 34, 4],
     },
   };
 };
