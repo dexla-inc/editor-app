@@ -49,7 +49,7 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
 
       <Flex direction="column" gap="10px">
         {/* @ts-ignore*/}
-        {getValue()?.map(({ label, value }, index) => {
+        {form.values.data.map(({ label, value }, index) => {
           return (
             <Group key={index} style={{ flexWrap: "nowrap" }}>
               <TextInput

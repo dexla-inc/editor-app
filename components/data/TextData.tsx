@@ -123,9 +123,9 @@ export const TextData = ({ component, endpoints }: DataProps) => {
         />
 
         <VisibilityModifier
-          component={component}
+          componentId={component.id!}
+          componentName={component.name}
           form={form}
-          debouncedTreeUpdate={debouncedTreeUpdate}
         />
       </Stack>
     </form>
