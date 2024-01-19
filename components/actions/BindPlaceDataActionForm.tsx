@@ -110,7 +110,7 @@ export const BindPlaceDataActionForm = ({ id }: Props) => {
   const form = useForm<FormValues>({
     // @ts-ignore
     initialValues: {
-      showLoader: action.action?.showLoader ?? true,
+      showLoader: action.action?.showLoader ?? "true",
       endpoint: action.action?.endpoint,
       selectedEndpoint: action.action?.selectedEndpoint,
       binds: {
