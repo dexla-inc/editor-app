@@ -43,7 +43,7 @@ type Props = {
   onPickVariable?: any;
   actionData?: any;
   style?: "input" | "iconButton";
-  category: Category;
+  category?: Category;
 };
 
 export default function BindingPopover({
