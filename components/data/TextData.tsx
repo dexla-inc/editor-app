@@ -1,6 +1,7 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { DataProps } from "@/components/data/type";
+import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -9,6 +10,7 @@ import { useEffect } from "react";
 export const TextData = ({ component, endpoints }: DataProps) => {
   const isNavLink = component.name === "NavLink";
   const isFileButton = component.name === "FileButton";
+  const { getSelectedVariable } = useBindingPopover();
 
   const itemKey = isNavLink ? "label" : isFileButton ? "name" : "children";
 
@@ -19,6 +21,7 @@ export const TextData = ({ component, endpoints }: DataProps) => {
       endpoint: component.props?.endpoint ?? undefined,
       actionCode: component.props?.actionCode ?? {},
       dataType: component.props?.dataType ?? "static",
+      variable: component.props?.variable ?? "",
       initiallyOpened: true,
     },
   });
@@ -28,10 +31,18 @@ export const TextData = ({ component, endpoints }: DataProps) => {
     debouncedTreeUpdate(component.id, { [key]: value });
   };
 
+  const selectedVariable = getSelectedVariable(form.values.variable);
+
+  const handleValueUpdate = () => {
+    if (selectedVariable) {
+      setFieldValue(itemKey, selectedVariable.defaultValue);
+    }
+  };
+
   useEffect(() => {
-    debouncedTreeUpdate(component.id, { [itemKey]: form.values[itemKey] });
+    handleValueUpdate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.values[itemKey]]);
+  }, [form.values.variable, selectedVariable]);
 
   return (
     <form>
@@ -39,7 +50,7 @@ export const TextData = ({ component, endpoints }: DataProps) => {
         <ComponentToBindFromInput
           componentId={component?.id!}
           onPickVariable={(variable: string) =>
-            form.setFieldValue(itemKey, variable)
+            form.setFieldValue("variable", variable)
           }
           category="data"
           actionData={[]}

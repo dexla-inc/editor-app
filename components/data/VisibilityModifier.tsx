@@ -1,4 +1,4 @@
-import BindingPopover, { useBindingPopover } from "@/components/BindingPopover";
+import BindingPopover from "@/components/BindingPopover";
 import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { getComponentInitialDisplayValue } from "@/utils/common";
 import { Component } from "@/utils/editor";
@@ -17,7 +17,10 @@ export const VisibilityModifier = ({
   debouncedTreeUpdate,
   onChange,
 }: Props) => {
-  const { opened, toggle, open, close } = useBindingPopover();
+  const setFieldValue = (value: string) => {
+    form.setFieldValue("display", value);
+    debouncedTreeUpdate(component.id, { style: { display: value } });
+  };
 
   return (
     <Group spacing="xs" noWrap align="end">
@@ -38,23 +41,16 @@ export const VisibilityModifier = ({
           onChange={(value) => {
             onChange && onChange(value);
             if (!onChange) {
-              form.setFieldValue("display", value as string);
-              debouncedTreeUpdate(component.id, {
-                style: {
-                  display: value,
-                },
-              });
+              setFieldValue(value);
             }
           }}
         />
       </Stack>
       <BindingPopover
-        opened={opened}
-        onOpenPopover={open}
-        onTogglePopover={toggle}
-        onClosePopover={close}
         bindingType="JavaScript"
+        category="appearance"
         onChangeBindingType={() => {}}
+        onPickVariable={(value: string) => setFieldValue(value)}
         javascriptCode={form.values.actionCode?.[component.id!] as string}
         onChangeJavascriptCode={(javascriptCode: string, _: any) => {
           form.setFieldValue(`actionCode.${component.id}`, javascriptCode);
