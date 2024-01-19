@@ -1,6 +1,6 @@
-import BindingPopover, { useBindingPopover } from "@/components/BindingPopover";
+import BindingPopover from "@/components/BindingPopover";
+import { Category } from "@/hooks/useBindingPopover";
 import { useEditorStore } from "@/stores/editor";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ICON_SIZE } from "@/utils/config";
 import { ActionIcon, Flex, TextInput, TextInputProps } from "@mantine/core";
 import { IconCurrentLocation } from "@tabler/icons-react";
@@ -12,6 +12,7 @@ type Props = TextInputProps & {
   index?: number;
   onPickComponent?: (value: string) => void;
   onPickVariable?: (value: string) => void;
+  category?: Category;
   isLogicFlow?: boolean;
   javascriptCode?: Record<string, string>;
   onChangeJavascriptCode?: (javascriptCode: string, label: string) => void;
@@ -31,6 +32,7 @@ export const ComponentToBindFromInput = ({
   isLogicFlow,
   javascriptCode,
   onChangeJavascriptCode,
+  category = "actions",
   ...rest
 }: Props) => {
   const setPickingComponentToBindTo = useEditorStore(
@@ -46,10 +48,6 @@ export const ComponentToBindFromInput = ({
       onPick: onPickComponent,
     });
   };
-
-  // TODO: Williams, learn react custom hooks. More common logic may need to go in useBindingPopover.
-  // Always think about reusability, one component should be responsible for one thing https://stackify.com/solid-design-principles/.
-  const { opened, toggle, close, open } = useBindingPopover();
 
   const [bindedValue, setBindedValue] = useState("");
   const _jsCode = javascriptCode ?? {};
@@ -92,21 +90,17 @@ export const ComponentToBindFromInput = ({
           setBindedValue(e.target.value);
           if (rest?.onChange) rest.onChange(e);
         }}
-        {...AUTOCOMPLETE_OFF_PROPS}
       />
       <BindingPopover
-        opened={opened}
-        onTogglePopover={toggle}
-        onClosePopover={close}
         bindingType="JavaScript"
         onChangeBindingType={() => {}}
         javascriptCode={_code}
         onChangeJavascriptCode={onCodeChange}
-        onOpenPopover={open}
         bindedValue={bindedValue}
         onPickComponent={onPickComponent}
         onPickVariable={onPickVariable}
         actionData={actionData}
+        category={category}
         style="iconButton"
       />
     </Flex>

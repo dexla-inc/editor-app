@@ -1,16 +1,13 @@
 import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea";
 import { DataTree } from "@/components/DataTree";
 import { Icon } from "@/components/Icon";
-import { useEditorStore } from "@/stores/editor";
-import { useInputsStore } from "@/stores/inputs";
-import { useVariableStore } from "@/stores/variables";
+import { Category, useBindingPopover } from "@/hooks/useBindingPopover";
 import {
   BG_COLOR,
   BINDER_BACKGROUND,
   DEFAULT_TEXTCOLOR,
 } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
-import { getAllComponentsByName } from "@/utils/editor";
 import { BindingTab, BindingType } from "@/utils/types";
 import { getParsedJSCode } from "@/utils/variables";
 import {
@@ -28,11 +25,8 @@ import {
   Title,
   Tooltip,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
-import { pick } from "next/dist/lib/pick";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 const TAB_TEXT_SIZE = "xs";
@@ -41,104 +35,51 @@ const ML = 10;
 type Props = {
   bindingTab?: BindingTab;
   bindingType: BindingType;
-  opened: boolean;
-  onTogglePopover: any;
-  onClosePopover: any;
   onChangeBindingType: any;
   onChangeJavascriptCode: any;
   javascriptCode: string;
-  onOpenPopover?: any;
   bindedValue?: string;
   onPickComponent?: any;
   onPickVariable?: any;
   actionData?: any;
   style?: "input" | "iconButton";
-};
-
-export const useBindingPopover = () => {
-  const [opened, { toggle, close, open }] = useDisclosure(false);
-
-  const bindingPopoverProps = {
-    opened,
-    toggle,
-    close,
-    open,
-  };
-
-  return bindingPopoverProps;
+  category?: Category;
 };
 
 export default function BindingPopover({
   bindingTab,
   bindingType = "JavaScript",
-  opened,
-  onTogglePopover,
-  onClosePopover,
   onChangeBindingType,
   onChangeJavascriptCode,
   javascriptCode,
-  onOpenPopover,
   bindedValue,
   onPickComponent,
   onPickVariable,
   actionData,
   style = "iconButton",
+  category = "actions",
 }: Props) {
-  const editorTree = useEditorStore((state) => state.tree);
   const [formulaEntry, setFormulaEntry] = useState<string>();
   const [currentValue, setCurrentValue] = useState<string>();
-  const [selectedItem, setSelectedItem] = useState<string>();
   const [newValue, setNewValue] = useState<string>();
   const [tab, setTab] = useState<BindingTab>(bindingTab ?? "components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
-  const inputsStore = useInputsStore((state) => state.inputValues);
-  const variablesList = useVariableStore((state) => state.variableList);
-  const variables = variablesList.reduce(
-    (acc, variable) => {
-      let value = variable.defaultValue;
-      const isText = variable.type === "TEXT";
-      const isBoolean = variable.type === "BOOLEAN";
-      const parsedValue =
-        value && (isText || isBoolean ? value : JSON.parse(value));
-      acc.list[variable.id] = variable;
-      acc[variable.id] = parsedValue;
-      acc[variable.name] = parsedValue;
-      return acc;
-    },
-    { list: {} } as Record<string, any>,
-  );
 
-  const browser = useRouter();
+  const {
+    variables,
+    inputComponents,
+    browserList,
+    handleVariables,
+    selectedItem,
+    handleComponents,
+    handleBrowser,
+    handleActions,
+    opened,
+    toggle: onTogglePopover,
+    close: onClosePopover,
+    open: onOpenPopover,
+  } = useBindingPopover();
 
-  const browserList = Object.entries(
-    pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
-  ).map(([key, value]) => {
-    const isObject = typeof value === "object";
-    return {
-      id: key,
-      name: key,
-      value: isObject ? JSON.stringify(value) : value,
-      type: isObject ? "OBJECT" : "STRING",
-    };
-  });
-
-  const inputComponents = getAllComponentsByName(editorTree.root, [
-    "Input",
-    "Select",
-    "Checkbox",
-    "RadioGroup",
-    "Switch",
-    "Textarea",
-  ]).reduce(
-    (acc, component) => {
-      const value = inputsStore[component?.id!];
-      component = { ...component, name: component.description! };
-      acc.list[component?.id!] = component;
-      acc[component?.id!] = value;
-      return acc;
-    },
-    { list: {} } as Record<string, any>,
-  );
   useEffect(() => {
     try {
       if (javascriptCode === "return variables") {
@@ -154,6 +95,7 @@ export default function BindingPopover({
     } catch {
       setNewValue("undefined");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [javascriptCode, variables]);
 
   const openPopover = debounce(() => onOpenPopover && onOpenPopover(), 1000);
@@ -179,76 +121,15 @@ export default function BindingPopover({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bindingTab, tab]);
 
-  const prefixWithReturnIfNeeded = (code: string) =>
-    !code?.startsWith("return") ? "return " : " ";
-
-  const handleComponents = (item: string) => {
-    setSelectedItem(
-      `${prefixWithReturnIfNeeded(
-        javascriptCode,
-      )}components[/* ${inputComponents?.list[item].description} */'${item}']`,
-    );
-    onPickComponent && onPickComponent(item);
-  };
-
-  const handleVariables = (item: string) => {
-    try {
-      const parsed = JSON.parse(item);
-      const isObjectType =
-        typeof parsed === "object" || variables[parsed.id].type === "OBJECT";
-      const pathStartsWithBracket = parsed.path.startsWith("[") ? "" : ".";
-      setSelectedItem(
-        `${prefixWithReturnIfNeeded(javascriptCode)}variables[/* ${
-          variables[parsed.id].name
-        } */'${parsed.id}']${pathStartsWithBracket}${parsed.path}`,
-      );
-      onPickVariable &&
-        onPickVariable(
-          isObjectType
-            ? `var_${JSON.stringify({
-                id: parsed.id,
-                variable: variables?.list[parsed.id],
-                path: parsed.path,
-              })}`
-            : `var_${variables?.list[parsed.id].name}`,
-        );
-    } catch {
-      setSelectedItem(
-        `${prefixWithReturnIfNeeded(javascriptCode)}variables[/* ${variables
-          ?.list[item].name} */'${item}']`,
-      );
-      onPickVariable && onPickVariable(`var_${variables?.list[item].name}`);
-    }
-  };
-
-  const handleBrowser = (item: string) => {
-    try {
-      const parsed = JSON.parse(item);
-      setSelectedItem(`browser['${parsed.id}'].${parsed.path}`);
-    } catch {
-      setSelectedItem(`browser['${item}']`);
-    }
-  };
-
-  const handleActions = (item: string) => {
-    try {
-      const parsed = JSON.parse(item);
-      setSelectedItem(`actions['${parsed.id}'].${parsed.path}`);
-    } catch {
-      setSelectedItem(`actions['${item}']`);
-      onPickVariable && onPickVariable(item);
-    }
-  };
-
   const onSetItem = (itemType: BindingTab, item: string) => {
     if (itemType === "components") {
-      handleComponents(item);
+      handleComponents({ item, onPickComponent, javascriptCode });
     } else if (itemType === "variables") {
-      handleVariables(item);
+      handleVariables({ item, category, onPickVariable, javascriptCode });
     } else if (itemType === "browser") {
       handleBrowser(item);
     } else if (itemType === "actions") {
-      handleActions(item);
+      handleActions({ item, onPickVariable });
     }
   };
 
