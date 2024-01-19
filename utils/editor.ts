@@ -13,6 +13,8 @@ import { calculateGridSizes } from "@/utils/grid";
 import { templatesMapper } from "@/utils/templatesMapper";
 import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
+import every from "lodash.every";
+import get from "lodash.get";
 import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import pickBy from "lodash.pickby";
@@ -20,8 +22,6 @@ import { nanoid } from "nanoid";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
-import every from "lodash.every";
-import get from "lodash.get";
 
 export type Component = {
   id?: string;
@@ -410,7 +410,6 @@ const replaceTileData = (node: Component, tile: any, entities: object) => {
     if (node.name.endsWith("Chart")) {
       try {
         const data = typeof val === "string" ? JSON.parse(val).data : val.data;
-        // @ts-ignore
         node.props = {
           ...node.props,
           ...data,
@@ -443,7 +442,6 @@ export const replaceTilesData = (
         const name = node.description?.replace(".tile", "");
         const tile = tiles.find((t) => t.name === `${name}Tile`);
 
-        // @ts-ignore
         node.children =
           node.children?.map((child) =>
             replaceTileData(child, tile, entities as object),
@@ -1024,10 +1022,8 @@ export const debouncedTreeUpdate = debounce(
     const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
     const updateTreeComponents = useEditorStore.getState().updateTreeComponents;
     if (Array.isArray(componentId)) {
-      // @ts-ignore
       updateTreeComponents(componentId, props, save);
     } else {
-      // @ts-ignore
       updateTreeComponent({ componentId, props, save });
     }
   },

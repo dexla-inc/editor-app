@@ -21,8 +21,8 @@ const ButtonComponent = forwardRef(
     const {
       children,
       triggers,
-      leftIcon,
-      rightIcon,
+      icon,
+      iconPosition,
       loading,
       textColor,
       ...componentProps
@@ -49,8 +49,10 @@ const ButtonComponent = forwardRef(
     return (
       <MantineButton
         {...contentEditableProps}
-        {...(leftIcon && { leftIcon: <Icon name={leftIcon} /> })}
-        {...(rightIcon && { rightIcon: <Icon name={rightIcon} /> })}
+        {...(icon &&
+          iconPosition === "left" && { leftIcon: <Icon name={icon} /> })}
+        {...(icon &&
+          iconPosition === "right" && { rightIcon: <Icon name={icon} /> })}
         loading={loading}
         {...defaultTriggers}
         {...props}
