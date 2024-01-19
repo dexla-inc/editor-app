@@ -175,9 +175,12 @@ export const requiredModifiers: RequiredModifiers = {
     variant: "filled",
     size: "sm",
     radius: "sm",
-    leftIcon: "",
+    icon: "",
     style: {
       width: "fit-content",
+      paddingLeft: "18px",
+      paddingRight: "18px",
+      borderRadius: "4px",
     },
   },
   image: {

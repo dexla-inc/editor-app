@@ -1,25 +1,35 @@
 import { IconSelector } from "@/components/IconSelector";
+import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { SizeSelector } from "@/components/SizeSelector";
-import { SwitchSelector } from "@/components/SwitchSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
-import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
-import { useEditorStore } from "@/stores/editor";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Select, Stack } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconClick } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export const icon = IconClick;
 export const label = "Button";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
-    const theme = useEditorStore((state) => state.theme);
     const form = useForm();
+    const [icon, setIcon] = useState(selectedComponent.props?.icon);
+
+    const changeIcon = useCallback(
+      (value?: string, iconPosition?: string) => {
+        debouncedTreeUpdate(selectedComponentIds, {
+          icon: value,
+          iconPosition: iconPosition,
+        });
+        setIcon(value);
+        form.setFieldValue("icon", value);
+      },
+      [selectedComponentIds, form],
+    );
 
     useEffect(() => {
       form.setValues(
@@ -29,14 +39,14 @@ export const Modifier = withModifier(
           {
             color: "Primary.6",
             textColor: "PrimaryText.6",
-            compact: theme.hasCompactButtons,
+            //compact: theme.hasCompactButtons?.toString(),
           },
           {
             type: selectedComponent.props?.type,
             variant: selectedComponent.props?.variant,
             size: selectedComponent.props?.size,
-            icon: selectedComponent.props?.leftIcon,
-            compact: selectedComponent.props?.compact,
+            icon: icon,
+            //compact: selectedComponent.props?.compact,
             color: selectedComponent.props?.color,
             textColor: selectedComponent.props?.textColor,
             width: selectedComponent.props?.style?.width,
@@ -67,6 +77,20 @@ export const Modifier = withModifier(
               });
             }}
           /> */}
+          <SegmentedControlInput
+            label="Type"
+            data={[
+              { label: "Button", value: "button" },
+              { label: "Submit", value: "submit" },
+            ]}
+            {...form.getInputProps("type")}
+            onChange={(value) => {
+              form.setFieldValue("type", value as string);
+              debouncedTreeUpdate(selectedComponentIds, {
+                type: value,
+              });
+            }}
+          />
           <ThemeColorSelector
             label="Background Color"
             {...form.getInputProps("color")}
@@ -88,67 +112,66 @@ export const Modifier = withModifier(
               });
             }}
           />
-          <Stack spacing={2}>
-            <TopLabel text="Width" />
-            <SegmentedControl
-              size="xs"
+          <SegmentedControlInput
+            label="Width"
+            data={[
+              { label: "Fit Content", value: "fit-content" },
+              { label: "100%", value: "100%" },
+            ]}
+            {...form.getInputProps("width")}
+            onChange={(value) => {
+              form.setFieldValue("width", value as string);
+              debouncedTreeUpdate(selectedComponentIds, {
+                style: { width: value },
+              });
+            }}
+          />
+          <IconSelector
+            topLabel="Icon"
+            selectedIcon={icon}
+            onIconSelect={(value: string) => {
+              changeIcon(
+                value,
+                selectedComponent.props?.iconPosition ?? "left",
+              );
+            }}
+            onIconDelete={() => {
+              changeIcon(undefined, undefined);
+            }}
+          />
+          {icon && (
+            <SegmentedControlInput
+              label="Icon Position"
               data={[
-                { label: "Fit Content", value: "fit-content" },
-                { label: "100%", value: "100%" },
+                { label: "Left", value: "left" },
+                { label: "Right", value: "right" },
               ]}
-              {...form.getInputProps("width")}
+              {...form.getInputProps("iconPosition")}
               onChange={(value) => {
-                form.setFieldValue("width", value as string);
+                form.setFieldValue("iconPosition", value as string);
                 debouncedTreeUpdate(selectedComponentIds, {
-                  style: { width: value },
+                  iconPosition: value,
                 });
               }}
             />
-          </Stack>
-          <SwitchSelector
-            topLabel="Compact"
+          )}
+          {/* <SegmentedControlYesNo
+            label="Compact"
             {...form.getInputProps("compact")}
-            onChange={(event) => {
-              form.setFieldValue("compact", event.currentTarget.checked);
-              debouncedTreeUpdate(selectedComponentIds, {
-                compact: event.currentTarget.checked,
-              });
-            }}
-          />
-          <Select
-            label="Type"
-            size="xs"
-            data={[
-              { label: "button", value: "button" },
-              { label: "submit", value: "submit" },
-            ]}
-            {...form.getInputProps("type")}
             onChange={(value) => {
-              form.setFieldValue("type", value as string);
+              form.setFieldValue("compact", value);
               debouncedTreeUpdate(selectedComponentIds, {
-                type: value,
+                compact: value,
               });
             }}
-          />
+          /> */}
+
           <SizeSelector
             {...form.getInputProps("size")}
             onChange={(value) => {
               form.setFieldValue("size", value as string);
               debouncedTreeUpdate(selectedComponentIds, {
                 size: value,
-              });
-            }}
-          />
-          {/* Adding a react component as a property doesn't work -
-        Error: Objects are not valid as a React child (found: object with keys {key, ref, props, _owner, _store}). 
-        If you meant to render a collection of children, use an array instead. */}
-          <IconSelector
-            topLabel="Icon"
-            selectedIcon={selectedComponent.props?.leftIcon}
-            onIconSelect={(value: string) => {
-              form.setFieldValue("leftIcon", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                leftIcon: value,
               });
             }}
           />

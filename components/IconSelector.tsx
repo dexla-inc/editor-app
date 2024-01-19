@@ -7,12 +7,14 @@ type Props = {
   topLabel: string;
   selectedIcon: string;
   onIconSelect: (iconName: string) => void;
+  onIconDelete?: () => void;
 };
 
 export const IconSelector = ({
   topLabel,
   selectedIcon,
   onIconSelect,
+  onIconDelete,
 }: Props) => {
   return (
     <Box>
@@ -32,7 +34,7 @@ export const IconSelector = ({
         </>
         {selectedIcon && (
           <Tooltip label="Delete" withArrow fz="xs">
-            <ActionIcon onClick={() => onIconSelect("X")}>
+            <ActionIcon onClick={onIconDelete}>
               <Icon name="IconX" />
             </ActionIcon>
           </Tooltip>
