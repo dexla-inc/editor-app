@@ -45,7 +45,9 @@ export type Modifiers =
   | "grid"
   | "gridColumn"
   | "navbar"
-  | "progress";
+  | "progress"
+  | "timeline"
+  | "timelineItem";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -463,6 +465,18 @@ export const requiredModifiers: RequiredModifiers = {
     size: "xs",
     value: 50,
     animate: true,
+  },
+  timeline: {
+    active: 1,
+    align: "left",
+    bulletSize: "24px",
+    color: "Primary.6",
+    lineWidth: "2px",
+  },
+  timelineItem: {
+    icon: "IconGitBranch",
+    title: "New branch",
+    lineVariant: "solid",
   },
 };
 

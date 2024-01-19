@@ -45,6 +45,8 @@ import * as TabsListModifier from "@/components/modifiers/TabsList";
 import * as TabsPanelModifier from "@/components/modifiers/TabsPanel";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TextareaModifier from "@/components/modifiers/Textaarea";
+import * as TimelineModifier from "@/components/modifiers/Timeline";
+import * as TimelineItemModifier from "@/components/modifiers/TimelineItem";
 import * as ChartModifier from "@/components/modifiers/chart/Chart";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useComponentStates } from "@/hooks/useComponentStates";
@@ -128,6 +130,8 @@ const sectionMapper: SectionsMapper = {
   gridColumn: GridColumnModifier,
   navbar: NavbarModifier,
   progress: ProgressModifier,
+  timeline: TimelineModifier,
+  timelineItem: TimelineItemModifier,
 };
 
 type Tab = "design" | "data" | "actions";

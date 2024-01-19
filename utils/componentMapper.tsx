@@ -9,8 +9,6 @@ import { Avatar } from "@/components/mapper/Avatar";
 import { Badge } from "@/components/mapper/Badge";
 import { Breadcrumb } from "@/components/mapper/Breadcrumb";
 import { Button } from "@/components/mapper/Button";
-import { Progress } from "@/components/mapper/Progress";
-
 import { ButtonIcon } from "@/components/mapper/ButtonIcon";
 import { Card } from "@/components/mapper/Card";
 import { Checkbox } from "@/components/mapper/Checkbox";
@@ -32,6 +30,7 @@ import { NavLink } from "@/components/mapper/NavLink";
 import { Navbar } from "@/components/mapper/Navbar";
 import { Pagination } from "@/components/mapper/Pagination";
 import { PopOver } from "@/components/mapper/PopOver";
+import { Progress } from "@/components/mapper/Progress";
 import { Radio } from "@/components/mapper/Radio";
 import { RadioItem } from "@/components/mapper/RadioItem";
 import { Rating } from "@/components/mapper/Rating";
@@ -50,6 +49,8 @@ import {
 import { Tabs } from "@/components/mapper/Tabs";
 import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";
+import { Timeline } from "@/components/mapper/Timeline";
+import { TimelineItem } from "@/components/mapper/TimelineItem";
 import { Title } from "@/components/mapper/Title";
 import { UnstyledButton } from "@/components/mapper/UnstyledButton";
 import { AreaChart } from "@/components/mapper/charts/AreaChart";
@@ -97,6 +98,8 @@ import * as SwitchStructure from "@/components/mapper/structure/Switch";
 import * as TabsStructure from "@/components/mapper/structure/Tabs";
 import * as TextStructure from "@/components/mapper/structure/Text";
 import * as TextareaStructure from "@/components/mapper/structure/Textarea";
+import * as TimelineStructure from "@/components/mapper/structure/Timeline";
+import * as TimelineItemStructure from "@/components/mapper/structure/TimelineItem";
 import * as TitleStructure from "@/components/mapper/structure/Title";
 import * as UnstyledButtonStructure from "@/components/mapper/structure/UnstyledButton";
 import * as AreaChartStructure from "@/components/mapper/structure/charts/AreaChart";
@@ -170,6 +173,8 @@ import {
   IconSquare,
   IconStackPop,
   IconTable,
+  IconTimeline,
+  IconTimelineEvent,
   IconToggleLeft,
   IconUser,
 } from "@tabler/icons-react";
@@ -591,6 +596,28 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Data Display",
     icon: <IconLayoutBottombarCollapse size={ICON_SIZE} />,
+  },
+  Timeline: {
+    structure: (props: any) => TimelineStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Timeline"
+        icon={<IconTimeline size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+    icon: <IconTimeline size={ICON_SIZE} />,
+  },
+  TimelineItem: {
+    structure: (props: any) => TimelineItemStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="TimelineItem"
+        icon={<IconTimelineEvent size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+    icon: <IconTimelineEvent size={ICON_SIZE} />,
   },
   Navbar: {
     structure: (props: any) => NavbarStructure.jsonStructure(props),
@@ -1417,6 +1444,32 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: ["accordionItem", "spacing", "size", "border", "effects"],
     actionTriggers: [],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  Timeline: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Timeline
+        component={props.component}
+        renderTree={props.renderTree}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+      />
+    ),
+    modifiers: ["timeline", "spacing", "size", "border"],
+    actionTriggers: ["onOpen", "onClose"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  TimelineItem: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <TimelineItem
+        component={props.component}
+        renderTree={props.renderTree}
+        // eslint-disable-next-line react/no-children-prop
+        children={props.component.children as any}
+      />
+    ),
+    modifiers: ["timelineItem", "spacing", "size", "border"],
+    actionTriggers: ["onOpen", "onClose"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   AccordionControl: {
