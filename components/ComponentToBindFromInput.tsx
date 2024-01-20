@@ -14,8 +14,8 @@ type Props = TextInputProps & {
   onPickVariable?: (value: string) => void;
   category?: Category;
   isLogicFlow?: boolean;
-  javascriptCode?: Record<string, string>;
-  onChangeJavascriptCode?: (javascriptCode: string, label: string) => void;
+  javascriptCode?: Record<string, string> | string;
+  onChangeJavascriptCode?: any;
   actionData?: any;
 };
 
@@ -50,13 +50,24 @@ export const ComponentToBindFromInput = ({
   };
 
   const [bindedValue, setBindedValue] = useState("");
-  const _jsCode = javascriptCode ?? {};
-  const _code = _jsCode[label as string] ?? _jsCode.code ?? "";
+  const isChangeVariable = category === "changeVariable";
+  let _code = "";
+  if (javascriptCode)
+    _code =
+      typeof javascriptCode === "string"
+        ? javascriptCode
+        : javascriptCode[label as string] ?? javascriptCode.code ?? "";
+
+  const passCodeToForm = (javascriptCode: string, func: any) => {
+    if (isChangeVariable) func(javascriptCode);
+    else func(javascriptCode, label as string);
+  };
 
   const onCodeChange = (javascriptCode: string) => {
     label = label === "Component to bind" ? "code" : label;
-    onChangeJavascriptCode &&
-      onChangeJavascriptCode(javascriptCode, label as string);
+    if (onChangeJavascriptCode) {
+      passCodeToForm(javascriptCode, onChangeJavascriptCode);
+    }
   };
 
   return (

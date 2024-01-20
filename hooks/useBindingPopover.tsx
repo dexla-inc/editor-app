@@ -1,13 +1,13 @@
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
-import { getAllComponentsByName } from "@/utils/editor";
+import { debouncedTreeUpdate, getAllComponentsByName } from "@/utils/editor";
 import { useDisclosure } from "@mantine/hooks";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-export type Category = "data" | "actions" | "appearance";
+export type Category = "data" | "actions" | "changeVariable" | "appearance";
 
 type VariableProps = {
   item: string;
@@ -116,6 +116,10 @@ export const useBindingPopover = () => {
     if (category === "data") {
       onPickVariable(variables?.list[item].id);
     }
+
+    if (category === "changeVariable") {
+      onPickVariable(`var_${variables?.list[item].name}`);
+    }
   };
 
   const handleVariables = ({
@@ -187,6 +191,14 @@ export const useBindingPopover = () => {
   const getSelectedVariable = (id: string) =>
     variablesList.find((varItem) => varItem.id === id);
 
+  const handleValueUpdate = (id: string, variable: any, key = "children") => {
+    if (variable) {
+      debouncedTreeUpdate(id, {
+        [key]: variable.defaultValue,
+      });
+    }
+  };
+
   const bindingPopoverProps = {
     opened,
     toggle,
@@ -202,6 +214,7 @@ export const useBindingPopover = () => {
     handleActions,
     getSelectedVariable,
     variablesList,
+    handleValueUpdate,
   };
 
   return bindingPopoverProps;

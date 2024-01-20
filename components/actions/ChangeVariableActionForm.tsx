@@ -25,7 +25,7 @@ type FormValues = Omit<ChangeVariableAction, "name">;
 const defaultValues = {
   variableId: "",
   bindingType: "JavaScript" as BindingType,
-  javascriptCode: "return ",
+  javascriptCode: "",
   formulaCondition: "",
   formulaValue: "",
   value: "",
@@ -90,10 +90,10 @@ export const ChangeVariableActionForm = ({ id }: Props) => {
           onPickVariable={(variable: string) =>
             setFieldValue("value", variable)
           }
-          actionData={[]}
-          javascriptCode={form.values.actionCode}
-          onChangeJavascriptCode={(javascriptCode: string, label: string) => {
-            setFieldValue(`actionCode.${label}`, javascriptCode);
+          category="changeVariable"
+          javascriptCode={form.values.javascriptCode}
+          onChangeJavascriptCode={(javascriptCode: string) => {
+            setFieldValue("javascriptCode", javascriptCode);
           }}
           {...form.getInputProps("value")}
           onChange={(e) => setFieldValue("value", e.currentTarget.value)}

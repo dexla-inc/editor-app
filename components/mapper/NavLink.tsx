@@ -1,5 +1,6 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { useEditorStore } from "@/stores/editor";
 import { NavigationAction } from "@/utils/actions";
 import { getColorValue } from "@/utils/branding";
@@ -8,7 +9,7 @@ import { Component, getColorFromTheme } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { useRouter } from "next/router";
-import { forwardRef, memo } from "react";
+import { forwardRef, memo, useEffect } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -42,8 +43,18 @@ const NavLinkComponent = forwardRef(
       color = "",
       iconColor = "",
       bg = "",
+      variable,
       ...componentProps
     } = merge({}, component.props, activeProps) as any;
+
+    const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
+    const selectedVariable = getSelectedVariable(variable);
+
+    useEffect(() => {
+      if (selectedVariable?.defaultValue === children) return;
+      handleValueUpdate(component.id as string, selectedVariable);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedVariable]);
 
     const textColor = getColorFromTheme(theme, color) ?? "#000";
     const backgroundColor = getColorFromTheme(theme, bg) ?? "transparent";
