@@ -1366,6 +1366,15 @@ export const changeVariableAction = async ({
 }: ChangeVariableActionParams) => {
   const variablesList = useVariableStore.getState().variableList;
   const setVariable = useVariableStore.getState().setVariable;
+  const noValueExist = !action.javascriptCode && !action.value;
+  const isGeneratedFromVariable =
+    action.value && action.value.startsWith("var_");
+  const isStaticValue =
+    (action.value && !action.javascriptCode) || !isGeneratedFromVariable;
+  const isDynamicValue =
+    action.javascriptCode &&
+    !action.javascriptCode.startsWith("return variables");
+
   let isPreviewValueObject = false;
   let isPreviewValueArray = false;
 
@@ -1385,23 +1394,36 @@ export const changeVariableAction = async ({
         },
         { list: {} } as Record<string, any>,
       );
-      if (!action.javascriptCode) return;
-
-      if (action.javascriptCode === "return variables") {
-        return;
+      if (noValueExist) return;
+      let previewNewValue = "";
+      if (isStaticValue) previewNewValue = action.value;
+      if (isGeneratedFromVariable) {
+        const _variable = variablesList.find(
+          (variable) => variable.name === action.value.split("var_")[1],
+        );
+        if (_variable) {
+          previewNewValue = _variable.defaultValue ?? "";
+          isPreviewValueObject = typeof previewNewValue === "object";
+          isPreviewValueArray = Array.isArray(previewNewValue);
+        }
       }
 
-      const parsedCode = getParsedJSCode(action.javascriptCode);
+      if (isDynamicValue) {
+        if (action.javascriptCode === "return variables") {
+          return;
+        }
+        const parsedCode = getParsedJSCode(action.javascriptCode);
 
-      let previewNewValue = eval(
-        `function autoRunJavascriptCode() { ${parsedCode}}; autoRunJavascriptCode()`,
-      );
+        previewNewValue = eval(
+          `function autoRunJavascriptCode() { ${parsedCode}}; autoRunJavascriptCode()`,
+        );
 
-      isPreviewValueObject = typeof previewNewValue === "object";
-      isPreviewValueArray = Array.isArray(previewNewValue);
+        isPreviewValueObject = typeof previewNewValue === "object";
+        isPreviewValueArray = Array.isArray(previewNewValue);
 
-      if (typeof previewNewValue !== "string") {
-        previewNewValue = JSON.stringify(previewNewValue);
+        if (typeof previewNewValue !== "string") {
+          previewNewValue = JSON.stringify(previewNewValue);
+        }
       }
 
       const variable = variables.list[action.variableId];

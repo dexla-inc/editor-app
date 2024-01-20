@@ -1,3 +1,4 @@
+import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { Component } from "@/utils/editor";
 import {
@@ -5,6 +6,7 @@ import {
   FileButtonProps,
   FileButton as MantineFileButton,
 } from "@mantine/core";
+import { useEffect } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -18,9 +20,17 @@ export const FileButton = ({
   onChange,
   ...props
 }: Props) => {
-  const { name, triggers, isPreviewMode, ...componentProps } =
+  const { name, triggers, isPreviewMode, variable, ...componentProps } =
     component.props ?? {};
   const contentEditableProps = useContentEditable(component.id as string);
+  const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
+  const selectedVariable = getSelectedVariable(variable);
+
+  useEffect(() => {
+    if (selectedVariable?.defaultValue === name) return;
+    handleValueUpdate(component.id as string, selectedVariable, "name");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedVariable]);
 
   return (
     <>

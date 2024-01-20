@@ -1,10 +1,11 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { CSSObject, Title as MantineTitle, TitleProps } from "@mantine/core";
 import get from "lodash.get";
-import { forwardRef, memo } from "react";
+import { forwardRef, memo, useEffect } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -23,8 +24,18 @@ const TitleComponent = forwardRef(
       triggers,
       repeatedIndex,
       dataPath,
+      variable,
       ...componentProps
     } = component.props as any;
+
+    const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
+    const selectedVariable = getSelectedVariable(variable);
+
+    useEffect(() => {
+      if (selectedVariable?.defaultValue === children) return;
+      handleValueUpdate(component.id as string, selectedVariable);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedVariable]);
 
     let value = isPreviewMode ? data?.value ?? children : children;
 
