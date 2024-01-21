@@ -1,12 +1,14 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { DataProps } from "@/components/data/type";
+import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 
 export const TextData = ({ component }: DataProps) => {
+  const { getSelectedVariable } = useBindingPopover();
   const isNavLink = component.name === "NavLink";
   const isFileButton = component.name === "FileButton";
 
@@ -20,6 +22,11 @@ export const TextData = ({ component }: DataProps) => {
     },
   });
 
+  const updateItemKey = (value: string) => {
+    const variable = getSelectedVariable(value);
+    form.setFieldValue(itemKey, variable?.defaultValue);
+  };
+
   useEffect(() => {
     debouncedTreeUpdate(component.id, form.values);
   }, [form.values]);
@@ -29,9 +36,10 @@ export const TextData = ({ component }: DataProps) => {
       <Stack spacing="xs">
         <ComponentToBindFromInput
           componentId={component?.id!}
-          onPickVariable={(variable: string) =>
-            form.setFieldValue("variable", variable)
-          }
+          onPickVariable={(variable: string) => {
+            form.setFieldValue("variable", variable);
+            updateItemKey(variable);
+          }}
           category="data"
           javascriptCode={form.values.actionCode}
           onChangeJavascriptCode={(javascriptCode: string, label: string) => {

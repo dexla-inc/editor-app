@@ -1,6 +1,7 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { DataProps } from "@/components/data/type";
+import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -9,6 +10,7 @@ import { useEffect } from "react";
 export const AvatarData = ({ component }: DataProps) => {
   const isImageComponent = component.name === "Image";
   const propsArray = isImageComponent ? ["src", "alt"] : ["children", "src"];
+  const { getSelectedVariable } = useBindingPopover();
 
   const form = useForm({
     initialValues: {
@@ -21,10 +23,15 @@ export const AvatarData = ({ component }: DataProps) => {
         altKey: component.props?.altKey ?? "",
       }),
       src: component.props?.src ?? "",
-      srcKey: component.onLoad?.srcKey ?? "",
+      srcKey: component.props?.srcKey ?? "",
       actionCode: component.props?.actionCode ?? {},
     },
   });
+
+  const updateItemKey = (key: string, value: string) => {
+    const variable = getSelectedVariable(value);
+    form.setFieldValue(key, variable?.defaultValue);
+  };
 
   useEffect(() => {
     debouncedTreeUpdate(component.id, form.values);
@@ -40,9 +47,10 @@ export const AvatarData = ({ component }: DataProps) => {
             category="data"
             key={key}
             componentId={component?.id!}
-            onPickVariable={(variable: string) =>
-              form.setFieldValue(`${key}Key`, variable)
-            }
+            onPickVariable={(variable: string) => {
+              form.setFieldValue(`${key}Key`, variable);
+              updateItemKey(key, variable);
+            }}
             javascriptCode={form.values.actionCode}
             onChangeJavascriptCode={(javascriptCode: string, label: string) =>
               form.setFieldValue(`actionCode`, {
