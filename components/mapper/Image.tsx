@@ -1,10 +1,11 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { ImageProps, Image as MantineImage } from "@mantine/core";
 import get from "lodash.get";
-import { forwardRef, memo } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { forwardRef, memo, useEffect } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -22,8 +23,26 @@ const ImageComponent = forwardRef(({ component, ...props }: Props, ref) => {
     repeatedIndex,
     dataPath,
     loading,
+    srcKey,
+    altKey,
     ...componentProps
   } = component.props as any;
+
+  const { getSelectedVariable, handleValuesUpdate } = useBindingPopover();
+  const sourceVariable = getSelectedVariable(srcKey);
+  const altTextVariable = getSelectedVariable(altKey);
+
+  const isVariablesSame =
+    sourceVariable?.defaultValue === src &&
+    altTextVariable?.defaultValue === alt;
+
+  useEffect(() => {
+    if (isVariablesSame) return;
+    handleValuesUpdate(component.id as string, {
+      src: sourceVariable?.defaultValue,
+      alt: altTextVariable?.defaultValue,
+    });
+  }, [sourceVariable, altTextVariable]);
 
   const { width, height, ...style } = props.style ?? {};
 

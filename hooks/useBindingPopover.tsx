@@ -199,6 +199,10 @@ export const useBindingPopover = () => {
     }
   };
 
+  const handleValuesUpdate = (id: string, values: Record<string, any>) => {
+    debouncedTreeUpdate(id, values);
+  };
+
   const bindingPopoverProps = {
     opened,
     toggle,
@@ -215,6 +219,7 @@ export const useBindingPopover = () => {
     getSelectedVariable,
     variablesList,
     handleValueUpdate,
+    handleValuesUpdate,
   };
 
   return bindingPopoverProps;

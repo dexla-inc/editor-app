@@ -1,10 +1,11 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { Avatar as MantineAvatar, AvatarProps } from "@mantine/core";
+import { AvatarProps, Avatar as MantineAvatar } from "@mantine/core";
 import get from "lodash.get";
-import { forwardRef, memo } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { forwardRef, memo, useEffect } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -22,8 +23,26 @@ const AvatarComponent = forwardRef(
       data,
       repeatedIndex,
       dataPath,
+      childrenKey,
+      srcKey,
       ...componentProps
     } = component.props as any;
+
+    const { getSelectedVariable, handleValuesUpdate } = useBindingPopover();
+    const sourceVariable = getSelectedVariable(srcKey);
+    const altTextVariable = getSelectedVariable(childrenKey);
+
+    const isVariablesSame =
+      sourceVariable?.defaultValue === src &&
+      altTextVariable?.defaultValue === children;
+
+    useEffect(() => {
+      if (isVariablesSame) return;
+      handleValuesUpdate(component.id as string, {
+        src: sourceVariable?.defaultValue,
+        children: altTextVariable?.defaultValue,
+      });
+    }, [sourceVariable, altTextVariable]);
 
     let value = isPreviewMode ? data?.value ?? src : src;
 
