@@ -43,7 +43,6 @@ const SelectComponent = forwardRef(
     const { data: response } = useEndpoint({
       endpointId,
       requestSettings: { binds, dataType, staleTime },
-      enabled: isPreviewMode,
     });
 
     useEffect(() => {
