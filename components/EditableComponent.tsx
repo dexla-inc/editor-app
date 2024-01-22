@@ -1,5 +1,6 @@
 import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 import { useDroppable } from "@/hooks/useDroppable";
+import { useHoverEvents } from "@/hooks/useHoverEvents";
 import { useOnDrop } from "@/hooks/useOnDrop";
 import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper, ActionTrigger } from "@/utils/actions";
@@ -18,12 +19,11 @@ import { removeKeysRecursive } from "@/utils/removeKeys";
 import { BoxProps, CSSObject } from "@mantine/core";
 import merge from "lodash.merge";
 import { Router, useRouter } from "next/router";
-import React, {
+import {
   ChangeEvent,
   cloneElement,
   PropsWithChildren,
   useCallback,
-  useState,
 } from "react";
 
 type Props = {
@@ -214,79 +214,11 @@ export const EditableComponent = ({
     }
   };
 
-  const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
-    if (currentState === "default") {
-      setTreeComponentCurrentState(e.currentTarget.id, "hover");
-    }
-  };
-  const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
-    if (currentState === "hover") {
-      setTreeComponentCurrentState(e.currentTarget.id, "default");
-    }
-  };
-
-  // State hooks for overlays
-  const [overlayStyles, setOverlayStyles] = useState({
-    display: "none", // By default, the overlays are not displayed
-    position: {},
-    padding: {},
-    margin: {},
-  });
-
-  // Function to update overlays based on the target element
-  const updateOverlays = (element: any, display?: string) => {
-    if (!element) return;
-
-    const rect = element.getBoundingClientRect();
-    const computedStyle = window.getComputedStyle(element);
-
-    setOverlayStyles({
-      display: display ?? "block", // Show the overlays
-      position: {
-        width: rect.width + "px",
-        height: rect.height + "px",
-        top: rect.top + "px",
-        left: rect.left + "px",
-      },
-      padding: {
-        paddingTop: computedStyle.paddingTop,
-        paddingRight: computedStyle.paddingRight,
-        paddingBottom: computedStyle.paddingBottom,
-        paddingLeft: computedStyle.paddingLeft,
-        padding: computedStyle.padding,
-      },
-      margin: {
-        marginTop: computedStyle.marginTop,
-        marginRight: computedStyle.marginRight,
-        marginBottom: computedStyle.marginBottom,
-        marginLeft: computedStyle.marginLeft,
-        margin: computedStyle.margin,
-      },
-    });
-  };
-
-  // Event handlers for mouse enter and leave
-  const handleMouseEnter = (e: any, id?: string) => {
-    e.stopPropagation();
-    const newHoveredId = e.currentTarget.id;
-    setHoveredComponentId(newHoveredId);
-    const element = (iframeWindow ?? window).document.getElementById(
-      id ?? newHoveredId,
-    );
-    updateOverlays(element);
-  };
-
-  const handleMouseLeave = (e: any) => {
-    e.stopPropagation(); // Stop the event from bubbling up to prevent child's onMouseLeave affecting parent
-    // Set a timeout to clear the hovered state
-    setTimeout(() => {
-      if (hoveredComponentId === e.currentTarget?.id) {
-        setHoveredComponentId("");
-        // ... Hide overlays
-        setOverlayStyles((prevStyles) => ({ ...prevStyles, display: "none" }));
-      }
-    }, 10);
-  };
+  const { overlayStyles, handleMouseEnter, handleMouseLeave } = useHoverEvents(
+    setHoveredComponentId,
+    hoveredComponentId,
+    iframeWindow,
+  );
 
   const propsWithOverwrites = merge(
     {},
@@ -299,8 +231,6 @@ export const EditableComponent = ({
       triggers: !isEditorMode
         ? {
             ...triggers,
-            onMouseOver: triggers?.onHover ?? hoverStateFunc,
-            onMouseLeave: leaveHoverStateFunc,
           }
         : {
             onMouseOver: handleMouseEnter,
@@ -344,9 +274,7 @@ export const EditableComponent = ({
       ...(isEditorMode
         ? {
             boxShadow: thinBaseShadow,
-            ...(shouldDisplayOverlay &&
-              !isSelected &&
-              hoverStyles(overlayStyles)),
+            ...(shouldDisplayOverlay && hoverStyles(overlayStyles)),
           }
         : {}),
     },
