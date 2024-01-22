@@ -1,6 +1,6 @@
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { performFetch, prepareRequestData } from "@/utils/actions";
 import { useQuery } from "@tanstack/react-query";
 
@@ -13,7 +13,9 @@ export const useEndpoint = ({
   endpointId = "",
   requestSettings = { binds: {}, dataType: "", staleTime: 0 },
 }: UseEndpointProps) => {
-  const accessToken = useDataSourceStore((state) => state.accessToken);
+  const accessToken = useDataSourceStore(
+    (state) => state.authState.accessToken,
+  );
   const projectId = useEditorStore((state) => state.currentProjectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const endpoint = endpoints?.results?.find((e) => e.id === endpointId);

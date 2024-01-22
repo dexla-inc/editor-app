@@ -3,5 +3,5 @@ export type BindingTab =
   | "components"
   | "variables"
   | "actions"
-  | "datasources"
+  | "auth"
   | "browser";

@@ -90,7 +90,9 @@ export const APICallFlowActionForm = ({ form }: Props) => {
     }
   }, [endpoints?.results]);
 
-  const accessToken = useDataSourceStore((state) => state.accessToken);
+  const accessToken = useDataSourceStore(
+    (state) => state.authState.accessToken,
+  );
 
   useEffect(() => {
     if (page?.pageState) {

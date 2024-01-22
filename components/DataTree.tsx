@@ -1,11 +1,19 @@
 import { JSONSelector } from "@/components/JSONSelector";
 import { Button, ScrollArea, Stack } from "@mantine/core";
 
+type Props = {
+  variables: any[];
+  onItemSelection: (selected: string) => void;
+  filterKeyword?: string;
+};
+
+// TODO: This needs refactoring as it currently only really supports variables as we are checking type, value and default value
+// This needs to be generic as I want to add support for auth such as access token, refresh token, etc
 export function DataTree({
   variables,
   onItemSelection,
   filterKeyword = "",
-}: any) {
+}: Props) {
   return (
     <ScrollArea.Autosize mah={150}>
       <Stack align="flex-start" spacing="xs">
@@ -14,8 +22,8 @@ export function DataTree({
             const regex = new RegExp(filterKeyword, "i");
             return filterKeyword === "" || regex.test(variable.name);
           })
-          .map((variable: any) => {
-            if (variable.type !== "OBJECT") {
+          .map((variable: any, index: number) => {
+            if (variable.type && variable.type !== "OBJECT") {
               return (
                 <Button
                   key={variable.id}
@@ -30,7 +38,7 @@ export function DataTree({
 
             return (
               <JSONSelector
-                key={variable.id}
+                key={variable.id ?? index}
                 data={JSON.parse(
                   variable.value ?? variable.defaultValue ?? "{}",
                 )}
