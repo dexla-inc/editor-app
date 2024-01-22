@@ -54,10 +54,10 @@ export const EndpointData = ({
           <Flex align="end" gap="xs" justify="space-between">
             <SegmentedControlYesNo
               label="Cache Request"
-              value={form.values.staleTime === "0" ? "No" : "Yes"}
+              value={form.values.staleTime === "0" ? "false" : "true"}
               onChange={(value) => {
                 setOnLoadFormFieldValue({
-                  staleTime: value === "No" ? "0" : "30",
+                  staleTime: value === "false" ? "0" : "30",
                 });
               }}
             />

@@ -1,10 +1,6 @@
 import { getByDomain } from "@/requests/projects/queries-noauth";
 import { NextRequest, NextResponse } from "next/server";
 
-// TODO: Add a page that will be redirected
-// Add datasource configuration pane back for general and auth, endpoints need to be configured in settings so add a link
-// Add a redirect to page when user is not signed in. This should only happen on deployed apps.
-
 export async function middleware(request: NextRequest) {
   // Implement your authentication check here
 

@@ -37,8 +37,6 @@ export const AvatarData = ({ component }: DataProps) => {
     debouncedTreeUpdate(component.id, form.values);
   }, [form.values]);
 
-  console.log(component.props);
-
   return (
     <form>
       <Stack spacing="xs">

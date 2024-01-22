@@ -13,7 +13,9 @@ type Props = {
 };
 
 export const EndpointRequestInputs = ({ selectedEndpoint, form }: Props) => {
-  const accessToken = useDataSourceStore((state) => state.accessToken);
+  const accessToken = useDataSourceStore(
+    (state) => state.authState.accessToken,
+  );
   const setPickingComponentToBindTo = useEditorStore(
     (state) => state.setPickingComponentToBindTo,
   );

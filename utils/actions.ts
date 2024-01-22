@@ -931,8 +931,6 @@ export async function performFetch(
     ...(!!body ? { body: JSON.stringify(body) } : {}),
   });
 
-  console.log(response);
-
   const responseString = response.status.toString();
   const handledError = responseString.startsWith("4");
   const unhandledError = responseString.startsWith("5");
@@ -977,12 +975,17 @@ export const apiCallAction = async ({
       const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
 
       setAuthTokens(mergedAuthConfig);
-    }
-    // TODO: Handle logout by passing in refresh token to the API call and add if statement. Also redirect to login page
-    else {
+      // TODO: Handle logout by passing in refresh token to the API call and add if statement. Also redirect to login page
+    } else if (action.authType === "logout") {
+      responseJson = await performFetch(url, action.selectedEndpoint, body);
+      const mergedAuthConfig = { ...responseJson, ...action.authConfig };
+      const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
+
+      setAuthTokens(mergedAuthConfig);
+    } else {
       const refreshAccessToken =
         useDataSourceStore.getState().refreshAccessToken;
-      const accessToken = useDataSourceStore.getState().accessToken;
+      const accessToken = useDataSourceStore.getState().authState.accessToken;
 
       refreshAccessToken();
 

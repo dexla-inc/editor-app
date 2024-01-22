@@ -2,6 +2,7 @@ import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea"
 import { DataTree } from "@/components/DataTree";
 import { Icon } from "@/components/Icon";
 import { Category, useBindingPopover } from "@/hooks/useBindingPopover";
+import { useDataSourceStore } from "@/stores/datasource";
 import {
   BG_COLOR,
   BINDER_BACKGROUND,
@@ -64,6 +65,12 @@ export default function BindingPopover({
   const [newValue, setNewValue] = useState<string>();
   const [tab, setTab] = useState<BindingTab>(bindingTab ?? "components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
+  const getAuthState = useDataSourceStore((state) => state.getAuthState);
+
+  const authState = getAuthState();
+
+  const authData = [];
+  authData.push(authState);
 
   const {
     variables,
@@ -268,12 +275,12 @@ export default function BindingPopover({
                 ),
               },
               {
-                value: "datasources",
+                value: "auth",
                 label: (
                   <Center>
-                    <Icon name="IconDatabase" />
+                    <Icon name="IconLogin" />
                     <Text ml={ML} size={TAB_TEXT_SIZE}>
-                      Data
+                      Auth
                     </Text>
                   </Center>
                 ),
@@ -317,8 +324,12 @@ export default function BindingPopover({
               variables={actionData}
               onItemSelection={(item: string) => onSetItem(tab, item)}
             />
-          ) : tab === "datasources" ? (
-            <Stack>Create a DataTree for datasources</Stack>
+          ) : tab === "auth" ? (
+            <DataTree
+              filterKeyword={filterKeyword}
+              variables={authData}
+              onItemSelection={(item: string) => onSetItem(tab, item)}
+            />
           ) : tab === "browser" ? (
             // We may get rid of browser and store it in data
             <DataTree

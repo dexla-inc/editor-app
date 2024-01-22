@@ -3,17 +3,21 @@ import Cookies from "js-cookie";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+type AuthState = {
+  accessToken?: string;
+  expiresAt?: number;
+};
+
 type DataSourceState = {
   apiAuthConfig?: Omit<DataSourceAuthResponse, "type">;
   clearApiAuthConfig: () => void;
   setApiAuthConfig: (endpoints: Endpoint[]) => void;
-  accessToken?: string;
-  refreshToken?: string;
-  expiresAt?: number;
   hasTokenExpired: () => boolean;
   refreshAccessToken: () => Promise<void>;
   setAuthTokens: (response: any) => void;
   clearAuthTokens: () => void;
+  authState: AuthState;
+  getAuthState: () => AuthState & { refreshToken?: string };
 };
 
 export const useDataSourceStore = create<DataSourceState>()(
@@ -22,8 +26,13 @@ export const useDataSourceStore = create<DataSourceState>()(
       (set, get) => ({
         apiAuthConfig: undefined,
         endpoints: undefined,
+        authState: {},
+        getAuthState: () => {
+          const { accessToken, expiresAt } = get().authState;
+          const refreshToken = Cookies.get("refreshToken");
+          return { accessToken, expiresAt, refreshToken };
+        },
         setAuthTokens: (response) => {
-          console.log(response);
           const accessToken = response[response.accessTokenProperty];
           const refreshToken = response[response.refreshTokenProperty];
           const expirySeconds = response[response.expiryTokenProperty];
@@ -33,10 +42,14 @@ export const useDataSourceStore = create<DataSourceState>()(
             expires: expirySeconds / 60 / 60 / 24,
           });
 
-          set({ accessToken, expiresAt }, false, "datasource/setAuthTokens");
+          set(
+            { authState: { accessToken, expiresAt } },
+            false,
+            "datasource/setAuthTokens",
+          );
         },
         hasTokenExpired: () => {
-          const expiresAt = get().expiresAt;
+          const expiresAt = get().authState.expiresAt;
           if (expiresAt) {
             return Date.now() > expiresAt;
           }
@@ -49,7 +62,7 @@ export const useDataSourceStore = create<DataSourceState>()(
             return;
           }
 
-          const accessToken = get().accessToken;
+          const accessToken = get().authState.accessToken;
           const apiAuthConfig = get().apiAuthConfig;
           const hasTokenExpired = get().hasTokenExpired;
           const setAuthTokens = get().setAuthTokens;
@@ -76,9 +89,10 @@ export const useDataSourceStore = create<DataSourceState>()(
           Cookies.remove("refreshToken");
 
           set({
-            accessToken: undefined,
-            refreshToken: undefined,
-            expiresAt: undefined,
+            authState: {
+              accessToken: undefined,
+              expiresAt: undefined,
+            },
           });
         },
         setApiAuthConfig: async (endpoints) => {
@@ -110,7 +124,10 @@ export const useDataSourceStore = create<DataSourceState>()(
         name: "datasource",
         partialize: (state: DataSourceState) => ({
           apiAuthConfig: state.apiAuthConfig,
-          accessToken: state.accessToken,
+          authState: {
+            accessToken: state.authState.accessToken,
+            expiresAt: state.authState.expiresAt,
+          },
         }),
       },
     ),
