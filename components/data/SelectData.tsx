@@ -6,6 +6,7 @@ import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { DataProps } from "@/components/data/type";
 import { Endpoint } from "@/requests/datasources/types";
 import { useEditorStore } from "@/stores/editor";
+import { DEFAULT_STALE_TIME } from "@/utils/config";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { Divider, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -35,7 +36,7 @@ export const SelectData = ({ component, endpoints }: DataProps) => {
       dataValueKey: component.onLoad?.dataValueKey ?? "",
       resultsKey: component.onLoad?.resultsKey ?? "",
       actionCode: component.onLoad?.actionCode ?? {},
-      staleTime: component.onLoad?.staleTime ?? "30",
+      staleTime: component.onLoad?.staleTime ?? DEFAULT_STALE_TIME,
       binds: {
         header: component.onLoad?.binds?.header ?? {},
         parameter: component.onLoad?.binds?.parameter ?? {},

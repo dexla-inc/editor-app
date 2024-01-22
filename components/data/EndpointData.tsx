@@ -3,6 +3,7 @@ import { EndpointSelect } from "@/components/EndpointSelect";
 import { Endpoint } from "@/requests/datasources/types";
 import { useInputsStore } from "@/stores/inputs";
 import { getObjectAndArrayKeys } from "@/utils/common";
+import { DEFAULT_STALE_TIME } from "@/utils/config";
 import { debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Box, Flex, Select, Text, TextInput } from "@mantine/core";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
@@ -38,6 +39,7 @@ export const EndpointData = ({
         onChange={(selected) => {
           const newValues = {
             endpointId: selected,
+            staleTime: form.values.staleTime,
             dataLabelKey: "",
             dataValueKey: "",
             resultsKey: "",
@@ -54,27 +56,27 @@ export const EndpointData = ({
           <Flex align="end" gap="xs" justify="space-between">
             <SegmentedControlYesNo
               label="Cache Request"
-              value={form.values.staleTime === "0" ? "false" : "true"}
+              value={form.values.staleTime === 0 ? "false" : "true"}
               onChange={(value) => {
                 setOnLoadFormFieldValue({
-                  staleTime: value === "false" ? "0" : "30",
+                  staleTime: value === "false" ? 0 : DEFAULT_STALE_TIME,
                 });
               }}
             />
             <TextInput
-              disabled={form.values.staleTime === "0"}
+              disabled={form.values.staleTime === 0}
               mt={8}
               w={80}
               {...form.getInputProps("staleTime")}
               onChange={(e) => {
                 setOnLoadFormFieldValue({
-                  staleTime: e.target.value,
+                  staleTime: Number(e.target.value),
                 });
               }}
               onBlur={(e) => {
                 if (e.target.value === "") {
                   setOnLoadFormFieldValue({
-                    staleTime: "0",
+                    staleTime: 0,
                   });
                 }
               }}
