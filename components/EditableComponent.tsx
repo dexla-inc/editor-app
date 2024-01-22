@@ -18,7 +18,7 @@ import { removeKeysRecursive } from "@/utils/removeKeys";
 import { BoxProps, CSSObject } from "@mantine/core";
 import merge from "lodash.merge";
 import { Router, useRouter } from "next/router";
-import React, {
+import {
   ChangeEvent,
   cloneElement,
   PropsWithChildren,
@@ -214,17 +214,6 @@ export const EditableComponent = ({
     }
   };
 
-  const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
-    if (currentState === "default") {
-      setTreeComponentCurrentState(e.currentTarget.id, "hover");
-    }
-  };
-  const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
-    if (currentState === "hover") {
-      setTreeComponentCurrentState(e.currentTarget.id, "default");
-    }
-  };
-
   // State hooks for overlays
   const [overlayStyles, setOverlayStyles] = useState({
     display: "none", // By default, the overlays are not displayed
@@ -265,29 +254,6 @@ export const EditableComponent = ({
     });
   };
 
-  // Event handlers for mouse enter and leave
-  const handleMouseEnter = (e: any, id?: string) => {
-    e.stopPropagation();
-    const newHoveredId = e.currentTarget.id;
-    setHoveredComponentId(newHoveredId);
-    const element = (iframeWindow ?? window).document.getElementById(
-      id ?? newHoveredId,
-    );
-    updateOverlays(element);
-  };
-
-  const handleMouseLeave = (e: any) => {
-    e.stopPropagation(); // Stop the event from bubbling up to prevent child's onMouseLeave affecting parent
-    // Set a timeout to clear the hovered state
-    setTimeout(() => {
-      if (hoveredComponentId === e.currentTarget?.id) {
-        setHoveredComponentId("");
-        // ... Hide overlays
-        setOverlayStyles((prevStyles) => ({ ...prevStyles, display: "none" }));
-      }
-    }, 10);
-  };
-
   const propsWithOverwrites = merge(
     {},
     isEditorMode
@@ -296,16 +262,9 @@ export const EditableComponent = ({
     component.languages?.[language],
     component.states?.[currentState],
     {
-      triggers: !isEditorMode
-        ? {
-            ...triggers,
-            onMouseOver: triggers?.onHover ?? hoverStateFunc,
-            onMouseLeave: leaveHoverStateFunc,
-          }
-        : {
-            onMouseOver: handleMouseEnter,
-            onMouseLeave: handleMouseLeave,
-          },
+      triggers: !isEditorMode && {
+        ...triggers,
+      },
     },
   );
 
