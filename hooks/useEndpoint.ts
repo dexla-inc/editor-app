@@ -2,6 +2,7 @@ import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoint
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { performFetch, prepareRequestData } from "@/utils/actions";
+import { DEFAULT_STALE_TIME } from "@/utils/config";
 import { useQuery } from "@tanstack/react-query";
 
 type UseEndpointProps = {
@@ -12,7 +13,7 @@ type UseEndpointProps = {
 
 export const useEndpoint = ({
   endpointId = "",
-  requestSettings = { binds: {}, dataType: "", staleTime: 0 },
+  requestSettings = { binds: {}, dataType: "", staleTime: DEFAULT_STALE_TIME },
   enabled = true,
 }: UseEndpointProps) => {
   const accessToken = useDataSourceStore(
@@ -43,7 +44,7 @@ export const useEndpoint = ({
   const shouldFetch = requestSettings.dataType === "dynamic" && enabled;
 
   return useQuery([url, JSON.stringify(body), accessToken], apiCall, {
-    // staleTime: Number(requestSettings.staleTime) * 1000 * 60,
+    staleTime: requestSettings.staleTime * 1000 * 60,
     enabled: !!endpoint && shouldFetch,
   });
 };
