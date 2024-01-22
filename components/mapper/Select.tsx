@@ -13,14 +13,10 @@ import { InputLoader } from "../InputLoader";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-  isPreviewMode?: boolean;
 } & SelectProps;
 
 const SelectComponent = forwardRef(
-  (
-    { renderTree, component, isPreviewMode, children: child, ...props }: Props,
-    ref,
-  ) => {
+  ({ renderTree, component, children: child, ...props }: Props, ref) => {
     const { children, triggers, loading, dataType, ...componentProps } =
       component.props as any;
     const {
