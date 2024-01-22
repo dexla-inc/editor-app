@@ -8,13 +8,11 @@ import { useQuery } from "@tanstack/react-query";
 type UseEndpointProps = {
   endpointId: string;
   requestSettings: any;
-  enabled?: boolean;
 };
 
 export const useEndpoint = ({
   endpointId = "",
   requestSettings = { binds: {}, dataType: "", staleTime: DEFAULT_STALE_TIME },
-  enabled = true,
 }: UseEndpointProps) => {
   const accessToken = useDataSourceStore(
     (state) => state.authState.accessToken,
@@ -41,10 +39,10 @@ export const useEndpoint = ({
     return performFetch(fetchUrl, endpoint, body, authHeaderKey);
   };
 
-  const shouldFetch = requestSettings.dataType === "dynamic" && enabled;
+  const isEnabled = !!endpoint && requestSettings.dataType === "dynamic";
 
   return useQuery([url, JSON.stringify(body), accessToken], apiCall, {
     staleTime: requestSettings.staleTime * 1000 * 60,
-    enabled: !!endpoint && shouldFetch,
+    enabled: isEnabled,
   });
 };
