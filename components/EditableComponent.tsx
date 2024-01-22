@@ -1,5 +1,6 @@
 import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 import { useDroppable } from "@/hooks/useDroppable";
+import { useHoverState } from "@/hooks/useHoverState";
 import { useOnDrop } from "@/hooks/useOnDrop";
 import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper, ActionTrigger } from "@/utils/actions";
@@ -254,6 +255,13 @@ export const EditableComponent = ({
     });
   };
 
+  const { handleMouseEnter, handleMouseLeave } = useHoverState(
+    setHoveredComponentId,
+    updateOverlays,
+    hoveredComponentId,
+    iframeWindow,
+  );
+
   const propsWithOverwrites = merge(
     {},
     isEditorMode
@@ -262,9 +270,14 @@ export const EditableComponent = ({
     component.languages?.[language],
     component.states?.[currentState],
     {
-      triggers: !isEditorMode && {
-        ...triggers,
-      },
+      triggers: !isEditorMode
+        ? {
+            ...triggers,
+          }
+        : {
+            onMouseOver: handleMouseEnter,
+            onMouseLeave: handleMouseLeave,
+          },
     },
   );
 
