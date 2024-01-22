@@ -1,6 +1,6 @@
 import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 import { useDroppable } from "@/hooks/useDroppable";
-import { useHoverState } from "@/hooks/useHoverState";
+import { useHoverEvents } from "@/hooks/useHoverEvents";
 import { useOnDrop } from "@/hooks/useOnDrop";
 import { useEditorStore } from "@/stores/editor";
 import { Action, actionMapper, ActionTrigger } from "@/utils/actions";
@@ -255,7 +255,7 @@ export const EditableComponent = ({
     });
   };
 
-  const { handleMouseEnter, handleMouseLeave } = useHoverState(
+  const { handleMouseEnter, handleMouseLeave } = useHoverEvents(
     setHoveredComponentId,
     updateOverlays,
     hoveredComponentId,

@@ -1,4 +1,4 @@
-export const useHoverState = (
+export const useHoverEvents = (
   setHoveredComponentId: (hoveredComponentId?: string | undefined) => void,
   updateOverlays: any,
   hoveredComponentId: any,
