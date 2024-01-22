@@ -16,7 +16,6 @@ export const useHoverState = (
 
   const handleMouseLeave = (e: any) => {
     e.stopPropagation(); // Stop the event from bubbling up to prevent child's onMouseLeave affecting parent
-    // Set a timeout to clear the hovered state
     setTimeout(() => {
       if (hoveredComponentId === e.currentTarget?.id) {
         setHoveredComponentId("");
