@@ -7,6 +7,7 @@ import { Component } from "@/utils/editor";
 import { Select as MantineSelect, SelectProps } from "@mantine/core";
 import get from "lodash.get";
 import merge from "lodash.merge";
+import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo, useEffect, useState } from "react";
 import { InputLoader } from "../InputLoader";
 
@@ -92,18 +93,15 @@ const SelectComponent = forwardRef(
         styles={{
           root: {
             position: "relative",
-            width: customStyle.width,
-            height: customStyle.height,
-            minHeight: customStyle.minHeight,
-            minWidth: customStyle.minWidth,
+            ...pick(customStyle, [
+              "display",
+              "width",
+              "height",
+              "minHeight",
+              "minWidth",
+            ]),
           },
-          input: {
-            ...customStyle,
-            width: "-webkit-fill-available",
-            height: "-webkit-fill-available",
-            minHeight: "-webkit-fill-available",
-            minWidth: "-webkit-fill-available",
-          },
+          input: customStyle,
         }}
         withinPortal={false}
         maxDropdownHeight={150}

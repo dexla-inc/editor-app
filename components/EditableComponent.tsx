@@ -162,11 +162,12 @@ export const EditableComponent = ({
     }
   };
 
-  const { overlayStyles, handleMouseEnter, handleMouseLeave } = useHoverEvents(
-    setHoveredComponentId,
-    hoveredComponentId,
-    iframeWindow,
-  );
+  const {
+    overlayStyles,
+    handleMouseEnter,
+    handleMouseLeave,
+    handleComponentIfDisabledState,
+  } = useHoverEvents(setHoveredComponentId, hoveredComponentId, iframeWindow);
 
   const propsWithOverwrites = merge(
     {},
@@ -176,10 +177,13 @@ export const EditableComponent = ({
     component.languages?.[language],
     component.states?.[currentState],
     {
-      disabled: currentState === "disabled",
+      // disabled: currentState === "disabled",
       triggers: !isEditorMode
         ? {
             ...triggers,
+            ...(currentState === "disabled" && {
+              onKeyDown: handleComponentIfDisabledState,
+            }),
           }
         : {
             onMouseOver: handleMouseEnter,

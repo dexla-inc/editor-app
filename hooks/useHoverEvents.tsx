@@ -80,9 +80,12 @@ export const useHoverEvents = (
     [hoveredComponentId, setHoveredComponentId],
   );
 
+  const handleComponentIfDisabledState = (e: any) => e.preventDefault();
+
   return {
     overlayStyles: computedOverlayStyles,
     handleMouseEnter,
     handleMouseLeave,
+    handleComponentIfDisabledState,
   };
 };

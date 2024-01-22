@@ -83,6 +83,7 @@ const triggers = [
   "onSubmit",
   "onInvalid",
   "onReset",
+  "onKeyDown",
   // table actions
   "onRowClick",
   "onRowHover",
