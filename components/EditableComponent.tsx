@@ -2,8 +2,8 @@ import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 import { useDroppable } from "@/hooks/useDroppable";
 import { useHoverEvents } from "@/hooks/useHoverEvents";
 import { useOnDrop } from "@/hooks/useOnDrop";
+import { useTriggers } from "@/hooks/useTriggers";
 import { useEditorStore } from "@/stores/editor";
-import { Action, actionMapper, ActionTrigger } from "@/utils/actions";
 import {
   GRAY_OUTLINE,
   GREEN_BASE_SHADOW,
@@ -18,13 +18,7 @@ import { Component } from "@/utils/editor";
 import { removeKeysRecursive } from "@/utils/removeKeys";
 import { BoxProps, CSSObject } from "@mantine/core";
 import merge from "lodash.merge";
-import { Router, useRouter } from "next/router";
-import {
-  ChangeEvent,
-  cloneElement,
-  PropsWithChildren,
-  useCallback,
-} from "react";
+import { cloneElement, PropsWithChildren, useCallback, useMemo } from "react";
 
 type Props = {
   id: string;
@@ -33,8 +27,6 @@ type Props = {
   selectedByOther?: string;
 } & BoxProps;
 
-const nonDefaultActionTriggers = ["onSuccess", "onError"];
-
 export const EditableComponent = ({
   id,
   children,
@@ -42,7 +34,6 @@ export const EditableComponent = ({
   isSelected,
   selectedByOther,
 }: PropsWithChildren<Props>) => {
-  const router = useRouter();
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setComponentToBind = useEditorStore(
@@ -53,9 +44,6 @@ export const EditableComponent = ({
   );
   const setSelectedComponentId = useEditorStore(
     (state) => state.setSelectedComponentId,
-  );
-  const setTreeComponentCurrentState = useEditorStore(
-    (state) => state.setTreeComponentCurrentState,
   );
   const currentState = useEditorStore(
     (state) => state.currentTreeComponentsStates?.[component.id!] ?? "default",
@@ -82,25 +70,13 @@ export const EditableComponent = ({
     useComponentContextMenu();
 
   const handleContextMenu = (event: any) => {
-    // Open the default context menu if the user is holding down a key
     if (event.shiftKey || event.ctrlKey || event.metaKey) {
       return;
     }
 
-    // Open our own context menu
     event.preventDefault();
     componentContextMenu(component)(event);
   };
-
-  const actions: Action[] = component.actions ?? [];
-
-  const onSuccessActions: Action[] = actions.filter(
-    (action: Action) => action.trigger === "onSuccess",
-  );
-
-  const onErrorActions: Action[] = actions.filter(
-    (action: Action) => action.trigger === "onError",
-  );
 
   const hoveredComponentId = useEditorStore(
     (state) => state.hoveredComponentId,
@@ -109,51 +85,11 @@ export const EditableComponent = ({
     (state) => state.setHoveredComponentId,
   );
 
-  const triggers = actions.reduce(
-    (acc, action: Action) => {
-      if (nonDefaultActionTriggers.includes(action.trigger)) {
-        return acc;
-      }
-
-      return {
-        ...acc,
-        [action.trigger]: (e: any) =>
-          actionMapper[action.action.name].action({
-            // @ts-ignore
-            action: action.action,
-            actionId: action.id,
-            router: router as Router,
-            event: e,
-            onSuccess: onSuccessActions.find(
-              (sa) => sa.sequentialTo === action.id,
-            ),
-            onError: onErrorActions.find((ea) => ea.sequentialTo === action.id),
-            component,
-          }),
-      };
-    },
-    {} as Record<ActionTrigger, any>,
-  );
-
-  const { onChange, onSubmit } = triggers;
-  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    onChange && onChange(e);
-    if (component.props?.error) {
-      updateTreeComponent({
-        componentId: id,
-        props: { error: "" },
-        save: false,
-      });
-    }
-  };
-
-  const handleOnSubmit = (e: any) => {
-    isEditorMode && e.preventDefault();
-    !isEditorMode && onSubmit && onSubmit(e);
-  };
-
-  triggers.onChange = handleOnChange;
-  triggers.onSubmit = handleOnSubmit;
+  const triggers = useTriggers({
+    component,
+    isEditorMode,
+    updateTreeComponent,
+  });
 
   const onDrop = useOnDrop();
 
@@ -176,34 +112,46 @@ export const EditableComponent = ({
     : THIN_GREEN_BASE_SHADOW;
   const shouldDisplayOverlay = hoveredComponentId === id && isEditorMode;
 
-  const shadows = isHighlighted
-    ? { boxShadow: ORANGE_BASE_SHADOW }
-    : isOver
-    ? {
-        boxShadow:
-          edge === "top"
-            ? `0 -${DROP_INDICATOR_WIDTH}px 0 0 ${
-                selectedByOther ?? GREEN_COLOR
-              }, ${baseShadow}`
-            : edge === "bottom"
-            ? `0 ${DROP_INDICATOR_WIDTH}px 0 0 ${
-                selectedByOther ?? GREEN_COLOR
-              }, ${baseShadow}`
-            : edge === "left"
-            ? `-${DROP_INDICATOR_WIDTH}px 0 0 0 ${
-                selectedByOther ?? GREEN_COLOR
-              }, ${baseShadow}`
-            : edge === "right"
-            ? `${DROP_INDICATOR_WIDTH}px 0 0 0 ${
-                selectedByOther ?? GREEN_COLOR
-              }, ${baseShadow}`
-            : baseShadow,
+  const shadows = useMemo(() => {
+    if (isHighlighted) {
+      return { boxShadow: ORANGE_BASE_SHADOW };
+    } else if (isOver) {
+      let boxShadow;
+      switch (edge) {
+        case "top":
+          boxShadow = `0 -${DROP_INDICATOR_WIDTH}px 0 0 ${
+            selectedByOther ?? GREEN_COLOR
+          }, ${baseShadow}`;
+          break;
+        case "bottom":
+          boxShadow = `0 ${DROP_INDICATOR_WIDTH}px 0 0 ${
+            selectedByOther ?? GREEN_COLOR
+          }, ${baseShadow}`;
+          break;
+        case "left":
+          boxShadow = `-${DROP_INDICATOR_WIDTH}px 0 0 0 ${
+            selectedByOther ?? GREEN_COLOR
+          }, ${baseShadow}`;
+          break;
+        case "right":
+          boxShadow = `${DROP_INDICATOR_WIDTH}px 0 0 0 ${
+            selectedByOther ?? GREEN_COLOR
+          }, ${baseShadow}`;
+          break;
+        default:
+          boxShadow = baseShadow;
+      }
+      return {
+        boxShadow: boxShadow,
         background: edge === "center" ? selectedByOther ?? GREEN_COLOR : "none",
         opacity: edge === "center" ? 0.4 : 1,
-      }
-    : isSelected || selectedByOther
-    ? { boxShadow: baseShadow }
-    : {};
+      };
+    } else if (isSelected || selectedByOther) {
+      return { boxShadow: baseShadow };
+    } else {
+      return {};
+    }
+  }, [isHighlighted, isOver, edge, selectedByOther, baseShadow, isSelected]);
 
   const handleBackground = (styles: CSSObject) => {
     const isGradient = component.props?.bg?.includes("gradient");
@@ -256,29 +204,38 @@ export const EditableComponent = ({
 
   delete propsWithOverwrites.style;
 
-  const tealOutline = {
-    "&:before": {
-      ...(isEditorMode ? shadows : {}),
-      content: '""',
-      position: "absolute",
-      left: 0,
-      top: 0,
-      right: 0,
-      bottom: 0,
-      width: "100%",
-      height: "100%",
-      zIndex: 1,
-      pointerEvents: "none",
-    },
-    "&:hover": {
-      ...(isEditorMode
-        ? {
-            boxShadow: thinBaseShadow,
-            ...(shouldDisplayOverlay && hoverStyles(overlayStyles)),
-          }
-        : {}),
-    },
-  };
+  const tealOutline = useMemo(
+    () => ({
+      "&:before": {
+        ...(isEditorMode ? shadows : {}),
+        content: '""',
+        position: "absolute",
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        width: "100%",
+        height: "100%",
+        zIndex: 1,
+        pointerEvents: "none",
+      },
+      "&:hover": {
+        ...(isEditorMode
+          ? {
+              boxShadow: thinBaseShadow,
+              ...(shouldDisplayOverlay && hoverStyles(overlayStyles)),
+            }
+          : {}),
+      },
+    }),
+    [
+      shouldDisplayOverlay,
+      thinBaseShadow,
+      isEditorMode,
+      overlayStyles,
+      shadows,
+    ],
+  );
 
   const handleClick = useCallback(
     (e: any) => {
@@ -302,16 +259,14 @@ export const EditableComponent = ({
         }
       }
 
-      // @ts-ignore
       propsWithOverwrites.onClick?.(e);
       forceDestroyContextMenu();
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
+      isEditorMode,
       forceDestroyContextMenu,
       id,
       isPicking,
-      isPreviewMode,
       propsWithOverwrites,
       setComponentToBind,
       setSelectedComponentId,
