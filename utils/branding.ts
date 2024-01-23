@@ -85,6 +85,9 @@ const theme: MantineTheme = {
         withArrow: true,
       }),
     },
+    Text: {
+      defaultProps: () => ({ spacing: "xs" }),
+    },
     ...defaultComponentProps,
   },
 };
@@ -139,7 +142,7 @@ const darkTheme: MantineTheme = {
       defaultProps: () => ({ color: GRAY_WHITE_COLOR }),
     },
     Text: {
-      defaultProps: () => ({ color: GRAY_WHITE_COLOR }),
+      defaultProps: () => ({ color: GRAY_WHITE_COLOR, spacing: "xs" }),
     },
     ...defaultComponentProps,
   },

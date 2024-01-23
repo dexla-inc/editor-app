@@ -1,11 +1,13 @@
 import { GradientPicker } from "@/components/GradientSelector";
+import { SegmentedControlInput } from "@/components/SegmentedControlInput";
+import { ShowAssetsLink } from "@/components/ShowAssetsLink";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Stack, TextInput } from "@mantine/core";
+import { Box, SegmentedControl, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTexture } from "@tabler/icons-react";
 import merge from "lodash.merge";
@@ -107,40 +109,39 @@ export const Modifier = withModifier(
               setFieldValue={setFieldValue}
             />
           )}
-
-          <TextInput
-            label="Image"
-            size="xs"
-            placeholder="https://example.com/image.png"
-            {...form.getInputProps("backgroundImage")}
-            onChange={(e) => {
-              const value = e.target.value;
-              form.setFieldValue("backgroundImage", value);
-
-              debouncedTreeUpdate(selectedComponentIds, {
-                style: { backgroundImage: `url(${value})` },
-              });
-            }}
-          />
-          <Stack spacing={2}>
-            <TopLabel text="Size" />
-            <SegmentedControl
+          <Box>
+            <TextInput
+              label="Image"
               size="xs"
-              data={[
-                { label: "Contain", value: "contain" },
-                { label: "Cover", value: "cover" },
-                { label: "%", value: "100%" },
-              ]}
-              {...form.getInputProps("backgroundSize")}
-              onChange={(value) => {
-                form.setFieldValue("backgroundSize", value as any);
-                setBackgroundSize(value as string);
+              placeholder="https://example.com/image.png"
+              {...form.getInputProps("backgroundImage")}
+              onChange={(e) => {
+                const value = e.target.value;
+                form.setFieldValue("backgroundImage", value);
+
                 debouncedTreeUpdate(selectedComponentIds, {
-                  style: { backgroundSize: value },
+                  style: { backgroundImage: `url(${value})` },
                 });
               }}
             />
-          </Stack>
+            <ShowAssetsLink />
+          </Box>
+          <SegmentedControlInput
+            label="Size"
+            data={[
+              { label: "Cover", value: "cover" },
+              { label: "Contain", value: "contain" },
+              { label: "%", value: "100%" },
+            ]}
+            {...form.getInputProps("backgroundSize")}
+            onChange={(value) => {
+              form.setFieldValue("backgroundSize", value as any);
+              setBackgroundSize(value as string);
+              debouncedTreeUpdate(selectedComponentIds, {
+                style: { backgroundSize: value },
+              });
+            }}
+          />
           {backgroundSize !== "contain" && backgroundSize !== "cover" ? (
             <UnitInput
               label="Percent"

@@ -2,22 +2,27 @@ import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { Anchor } from "@mantine/core";
 
-export const OpenThemeButton = () => {
+export const ShowAssetsLink = () => {
   const activeTab = useEditorStore((state) => state.activeTab);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
 
-  const isTheme = activeTab === "theme";
+  const isTheme = activeTab === "assets";
   const _val = isTabPinned ? "layers" : undefined;
+
+  const openImageUploader = () => {
+    setActiveTab(isTheme ? _val : "assets");
+  };
+
   return (
     <Anchor
       component="button"
       type="button"
-      onClick={() => setActiveTab(isTheme ? _val : "theme")}
+      onClick={openImageUploader}
       size="xs"
       sx={{ alignSelf: "self-start" }}
     >
-      Add new color
+      Show assets
     </Anchor>
   );
 };

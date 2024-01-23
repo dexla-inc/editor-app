@@ -1,4 +1,3 @@
-import { FileStorage } from "@/components/FileStorage";
 import { Sections } from "@/components/navbar/EditorNavbarSections";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
@@ -26,7 +25,7 @@ import {
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
-import { useDisclosure, useHover } from "@mantine/hooks";
+import { useHover } from "@mantine/hooks";
 import {
   IconArrowsDiagonal2,
   IconArrowsDiagonalMinimize,
@@ -80,9 +79,6 @@ export const NavbarSection = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTabPinned]);
 
-  const [uploadModal, { open: openUploadModal, close: closeUploadModal }] =
-    useDisclosure(false);
-
   useEffect(() => {
     if (ref.current) ref.current.scrollTop = 0;
   }, [activeTab, ref]);
@@ -95,9 +91,6 @@ export const NavbarSection = ({
         setActiveTab("layers");
       } else if (activeTab === id) {
         setActiveTab(undefined);
-      } else if (id === "upload") {
-        isTabPinned ? setActiveTab("layers") : setActiveTab(undefined);
-        openUploadModal();
       } else {
         setActiveTab(id);
       }
@@ -233,10 +226,6 @@ export const NavbarSection = ({
         {(activeTab || (isTabPinned && activeTab === "layers")) && (
           <Portal target="#navbar-sections">{itemTab}</Portal>
         )}
-        <FileStorage
-          uploadModal={uploadModal}
-          closeUploadModal={closeUploadModal}
-        />
       </Group>
     </Group>
   );

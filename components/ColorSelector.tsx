@@ -94,7 +94,7 @@ export const ColorSelector = ({
         position="bottom-start"
       >
         <Popover.Target>
-          <Tooltip label="Click to change color">
+          <Tooltip label={hexa}>
             <ColorSwatch
               ref={ref}
               onClick={() => setOpened(!opened)}

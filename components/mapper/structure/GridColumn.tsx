@@ -13,6 +13,7 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       span: GRID_SIZE / 2,
       ...initialValues,
+      ...(props.props || {}),
     },
   };
 };

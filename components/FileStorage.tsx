@@ -76,7 +76,7 @@ export const FileStorage = ({ uploadModal, closeUploadModal }: Props) => {
               </Tabs.List>
 
               <Tabs.Panel value="images" pt="sm">
-                <Images expand={expand} />
+                <Images />
               </Tabs.Panel>
 
               <Tabs.Panel value="audios" pt="sm">

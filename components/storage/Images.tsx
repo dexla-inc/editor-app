@@ -1,47 +1,40 @@
+import { ActionIconDefault } from "@/components/ActionIconDefault";
+import { useStorageQuery } from "@/hooks/reactQuery/useStorageQuery";
 import { deleteFile, uploadFile } from "@/requests/storage/mutations";
-import { getAllFiles } from "@/requests/storage/queries-noauth";
 import {
   UploadMultipleResponse,
   UploadResponse,
 } from "@/requests/storage/types";
-import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import {
-  ActionIcon,
   Avatar,
-  Button,
   FileButton,
   Flex,
-  Grid,
   Group,
   LoadingOverlay,
+  Paper,
   Stack,
   Text,
   TextInput,
-  Tooltip,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconCopy, IconSearch, IconTrash } from "@tabler/icons-react";
+import { IconSearch } from "@tabler/icons-react";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
-
-type Props = {
-  expand: boolean;
-};
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 type FileObj = { [key: string]: any };
 
-export const Images = ({ expand }: Props) => {
+export const Images = () => {
   const router = useRouter();
   const projectId = router.query.id as string;
-  const theme = useEditorStore((state) => state.theme);
 
   const [storedImages, setStoredImages] = useState<FileObj[]>([]);
   const [copied, setCopied] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [errorMessage, setErrorMessage] = useState("No images found");
   const [loading, { open: onLoading, close: offLoading }] =
     useDisclosure(false);
+
+  const { data: files, invalidate } = useStorageQuery(projectId);
 
   // Filter storedImages based on searchText
   const filteredImages = useMemo(
@@ -79,23 +72,29 @@ export const Images = ({ expand }: Props) => {
     setStoredImages(images);
   };
 
-  const onUpload = async (e: File[]) => {
-    try {
-      onLoading();
-      await uploadFile(projectId, e, true);
-      const response = await getAllFiles(projectId);
-      handleImageStorage(response as UploadMultipleResponse);
-    } catch (error) {
-      console.error("Error uploading file: ", error);
-    } finally {
-      offLoading();
-    }
-  };
+  const onUpload = useCallback(
+    async (e: File[]) => {
+      try {
+        onLoading();
+        await uploadFile(projectId, e, true);
+        invalidate();
+      } catch (error) {
+        console.error("Error uploading file: ", error);
+      } finally {
+        offLoading();
+      }
+    },
+    [projectId],
+  );
 
   const copyImage = (url: string) => {
     setCopied(true);
     navigator.clipboard.writeText(url);
   };
+
+  useEffect(() => {
+    if (files) handleImageStorage(files as UploadMultipleResponse);
+  }, [files]);
 
   useEffect(() => {
     const timer = setTimeout(() => copied && setCopied(false), 1000);
@@ -106,35 +105,13 @@ export const Images = ({ expand }: Props) => {
     try {
       onLoading();
       await deleteFile(projectId, name);
-      const response = await getAllFiles(projectId);
-      handleImageStorage(response as UploadMultipleResponse);
+      invalidate();
     } catch (error) {
       console.error("Error deleting file: ", error);
     } finally {
       offLoading();
     }
   };
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        onLoading();
-        const response = await getAllFiles(projectId);
-        if (response.files.length === 0) {
-          setErrorMessage("No images found");
-        }
-        handleImageStorage(response as UploadMultipleResponse);
-      } catch (error) {
-        console.error("Error getting files: ", error);
-        setErrorMessage("Error getting images");
-      } finally {
-        offLoading();
-      }
-    };
-
-    loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <Stack spacing="xs" mih={200}>
@@ -152,9 +129,11 @@ export const Images = ({ expand }: Props) => {
         />
         <FileButton multiple onChange={onUpload} accept="image/*">
           {(props) => (
-            <Button w="50%" {...props}>
-              Upload image
-            </Button>
+            <ActionIconDefault
+              iconName="IconPhotoPlus"
+              tooltip="Upload image"
+              {...props}
+            />
           )}
         </FileButton>
       </Group>
@@ -162,87 +141,90 @@ export const Images = ({ expand }: Props) => {
       {isImagesEmpty ? (
         <Group mt={10}>
           <Text italic lineClamp={1}>
-            {errorMessage}
+            No images found
           </Text>
         </Group>
       ) : (
-        <Grid
-          justify="space-between"
-          columns={expand ? 12.5 : 12}
-          sx={{ gap: 10 }}
-          m={5}
-          mt={10}
-        >
+        <Stack>
           {filteredImages.map((image, index) => (
-            <Grid.Col
-              key={index}
-              w="100%"
-              span={expand ? 6 : 12}
-              sx={{
-                cursor: "default",
-              }}
-            >
-              <Group w="100%" noWrap>
-                <Avatar size={30} src={image.url} />
-                <Flex w="100%" align="center" justify="space-between">
-                  <Group noWrap>
-                    <Text
-                      lineClamp={1}
-                      truncate
-                      size="sm"
-                      fw={500}
-                      w={400}
-                      color={theme.colors.gray[6]}
-                    >
-                      {image.name}
-                    </Text>
-                    <Text
-                      lineClamp={1}
-                      truncate
-                      size="sm"
-                      color={theme.colors.gray[6]}
-                    >
-                      ~{image.type}
-                    </Text>
-                  </Group>
-                  <Group spacing="0" noWrap>
-                    <Tooltip
-                      zIndex={100}
-                      label={copied ? "copied" : "copy"}
-                      withArrow
-                      offset={0}
-                      fz="xs"
-                      pt={2}
-                    >
-                      <ActionIcon
-                        onClick={() => copyImage(image.url)}
-                        variant="subtle"
-                      >
-                        <IconCopy size={ICON_SIZE} />
-                      </ActionIcon>
-                    </Tooltip>
-                    <Tooltip
-                      zIndex={100}
-                      label="delete"
-                      withArrow
-                      offset={0}
-                      fz="xs"
-                      pt={2}
-                    >
-                      <ActionIcon
-                        onClick={() => deleteImage(image.name)}
-                        variant="subtle"
-                      >
-                        <IconTrash size={ICON_SIZE} />
-                      </ActionIcon>
-                    </Tooltip>
-                  </Group>
-                </Flex>
-              </Group>
-            </Grid.Col>
+            <ImageItem
+              key={image.id}
+              image={image}
+              onCopy={copyImage}
+              onDelete={deleteImage}
+              copied={copied}
+            />
           ))}
-        </Grid>
+        </Stack>
       )}
     </Stack>
   );
 };
+
+type ImageItemProps = {
+  image: FileObj;
+  onCopy: (url: string) => void;
+  onDelete: (name: string) => void;
+  copied: boolean;
+};
+
+const ImageItem = memo(
+  ({ image, onCopy, onDelete, copied }: ImageItemProps) => {
+    // Component logic for rendering each image item
+    return (
+      <Paper
+        key={image.key}
+        p={4}
+        pos="relative"
+        sx={{
+          width: "100%",
+          cursor: "pointer", // Ensure the cursor is a pointer over the entire Paper
+          "&:hover .image-actions": {
+            // Adjust the selector to target the actions on hover
+            opacity: 1,
+          },
+        }}
+      >
+        <Group w="100%">
+          <Avatar size={30} src={image.url} />
+          <Text lineClamp={1} truncate size="xs" fw={500}>
+            {image.name}
+          </Text>
+          <Paper
+            display="flex"
+            sx={{
+              opacity: 0,
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(0, 0, 0, 0.3)",
+              justifyContent: "center",
+              alignItems: "center",
+              transition: "opacity 0.3s ease",
+              "&:hover": {
+                opacity: 1,
+              },
+            }}
+          >
+            <Flex gap="xs">
+              <ActionIconDefault
+                iconName="IconCopy"
+                tooltip={copied ? "copied" : "copy"}
+                onClick={() => onCopy(image.url)}
+              />
+              <ActionIconDefault
+                iconName="IconTrash"
+                tooltip="delete"
+                onClick={() => onDelete(image.name)}
+              />
+            </Flex>
+          </Paper>
+        </Group>
+      </Paper>
+    );
+  },
+);
+
+ImageItem.displayName = "ImageItem";
