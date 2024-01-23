@@ -4,7 +4,7 @@ import { SidebarSection } from "@/components/SidebarSection";
 import { EndpointSelect } from "@/components/EndpointSelect";
 import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Endpoint } from "@/requests/datasources/types";
-import { useForm, UseFormReturnType } from "@mantine/form";
+import { useForm } from "@mantine/form";
 import { useInputsStore } from "@/stores/inputs";
 import { getObjectAndArrayKeys } from "@/utils/common";
 import { useEffect, useState } from "react";
@@ -13,6 +13,7 @@ import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
 import { pick } from "next/dist/lib/pick";
 import get from "lodash.get";
+import { DEFAULT_STALE_TIME } from "@/utils/config";
 
 type Props = {
   component: Component;
@@ -50,7 +51,7 @@ export const DynamicSettings = ({
       endpointId: component.onLoad?.endpointId ?? undefined,
       resultsKey: component.onLoad?.resultsKey ?? "",
       actionCode: component.onLoad?.actionCode ?? {},
-      staleTime: component.onLoad?.staleTime ?? "30",
+      staleTime: component.onLoad?.staleTime ?? DEFAULT_STALE_TIME,
       binds: {
         header: component.onLoad?.binds?.header ?? {},
         parameter: component.onLoad?.binds?.parameter ?? {},
@@ -105,27 +106,30 @@ export const DynamicSettings = ({
           <Flex align="end" gap="xs" justify="space-between">
             <SegmentedControlYesNo
               label="Cache Request"
-              value={form.values.staleTime === "0" ? "No" : "Yes"}
+              value={form.values.staleTime === 0 ? "false" : "true"}
               onChange={(value) => {
                 form.setValues({
-                  staleTime: value === "No" ? "0" : "30",
+                  staleTime: value === "false" ? 0 : DEFAULT_STALE_TIME,
                 });
               }}
             />
             <TextInput
-              disabled={form.values.staleTime === "0"}
+              disabled={form.values.staleTime === 0}
               mt={8}
               w={80}
               {...form.getInputProps("staleTime")}
               onChange={(e) => {
                 form.setValues({
-                  staleTime: e.target.value,
+                  staleTime:
+                    e.target.value !== ""
+                      ? Number(e.target.value)
+                      : e.target.value,
                 });
               }}
               onBlur={(e) => {
                 if (e.target.value === "") {
                   form.setValues({
-                    staleTime: "0",
+                    staleTime: 0,
                   });
                 }
               }}
