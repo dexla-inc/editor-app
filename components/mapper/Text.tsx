@@ -4,47 +4,43 @@ import { useContentEditable } from "@/hooks/useContentEditable";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
-import get from "lodash.get";
 import { forwardRef, memo, useEffect } from "react";
+import get from "lodash.get";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
   isPreviewMode: boolean;
+  shareableContent?: any;
 } & TextProps;
 
 const TextComponent = forwardRef(
-  ({ renderTree, component, isPreviewMode, ...props }: Props, ref: any) => {
+  (
+    { renderTree, component, isPreviewMode, shareableContent, ...props }: Props,
+    ref: any,
+  ) => {
     const contentEditableProps = useContentEditable(component.id as string);
     const {
       children,
-      data,
       triggers,
-      repeatedIndex,
-      dataPath,
       hideIfDataIsEmpty,
-      variable,
+      dataType,
+        variable,
       ...componentProps
     } = component.props as any;
 
-    const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
-    const selectedVariable = getSelectedVariable(variable);
+    const { childrenKey } = component.onLoad ?? {};
+    const childrenValue =
+      dataType === "dynamic" ? shareableContent.data?.[childrenKey] : children;
 
-    useEffect(() => {
-      if (selectedVariable?.defaultValue === children) return;
-      handleValueUpdate(component.id as string, selectedVariable);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedVariable]);
+      const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
+      const selectedVariable = getSelectedVariable(variable);
 
-    let value = isPreviewMode
-      ? data?.value ?? (hideIfDataIsEmpty ? "" : children)
-      : children;
-
-    if (isPreviewMode && typeof repeatedIndex !== "undefined" && dataPath) {
-      const path = dataPath.replaceAll("[0]", `[${repeatedIndex}]`);
-      value =
-        get(data?.base ?? {}, path) ?? (hideIfDataIsEmpty ? "" : children);
-    }
+      useEffect(() => {
+          if (selectedVariable?.defaultValue === children) return;
+          handleValueUpdate(component.id as string, selectedVariable);
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [selectedVariable]);
 
     return (
       <MantineText
@@ -52,11 +48,9 @@ const TextComponent = forwardRef(
         {...props}
         {...componentProps}
         {...triggers}
-        key={`${component.id}-${repeatedIndex}`}
+        ref={ref}
       >
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) => renderTree(child))
-          : value}
+        {!hideIfDataIsEmpty && childrenValue}
       </MantineText>
     );
   },

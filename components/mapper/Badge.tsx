@@ -11,27 +11,32 @@ import { forwardRef, memo, useEffect } from "react";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
+  shareableContent: any;
 } & BadgeProps;
 
 const BadgeComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
-    const { children, style, color, variable, ...componentProps } =
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+    const { children, style, color, dataType, variable, ...componentProps } =
       component.props as any;
-    const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
-    const selectedVariable = getSelectedVariable(variable);
 
-    useEffect(() => {
-      if (selectedVariable?.defaultValue === children) return;
-      handleValueUpdate(component.id as string, selectedVariable);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedVariable]);
-
-    let value = children;
     const theme = useEditorStore((state) => state.theme);
     const customStyle = merge({}, style, {
       color: getColorFromTheme(theme, color),
       textTransform: "none",
     });
+
+    const { childrenKey } = component.onLoad ?? {};
+    const childrenValue =
+      dataType === "dynamic" ? shareableContent.data?.[childrenKey] : children;
+
+      const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
+      const selectedVariable = getSelectedVariable(variable);
+
+      useEffect(() => {
+          if (selectedVariable?.defaultValue === children) return;
+          handleValueUpdate(component.id as string, selectedVariable);
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [selectedVariable]);
 
     return (
       <MantineBadge
@@ -45,7 +50,7 @@ const BadgeComponent = forwardRef(
       >
         {component.children && component.children.length > 0
           ? component.children?.map((child) => renderTree(child))
-          : value}
+          : childrenValue}
       </MantineBadge>
     );
   },

@@ -18,13 +18,14 @@ import { Component } from "@/utils/editor";
 import { removeKeysRecursive } from "@/utils/removeKeys";
 import { BoxProps, CSSObject } from "@mantine/core";
 import merge from "lodash.merge";
-import { cloneElement, PropsWithChildren, useCallback, useMemo } from "react";
+import { ChangeEvent, cloneElement, PropsWithChildren, useCallback, useMemo, useEffect } from "react";
 
 type Props = {
   id: string;
   component: Component;
   isSelected?: boolean;
   selectedByOther?: string;
+  shareableContent?: any;
 } & BoxProps;
 
 export const EditableComponent = ({
@@ -33,6 +34,7 @@ export const EditableComponent = ({
   component,
   isSelected,
   selectedByOther,
+  shareableContent,
 }: PropsWithChildren<Props>) => {
   const currentTargetId = useEditorStore((state) => state.currentTargetId);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
@@ -50,6 +52,9 @@ export const EditableComponent = ({
   );
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,
+  );
+  const updateTreeComponentAttrs = useEditorStore(
+    (state) => state.updateTreeComponentAttrs,
   );
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const isResizing = useEditorStore((state) => state.isResizing);
@@ -90,6 +95,36 @@ export const EditableComponent = ({
     isEditorMode,
     updateTreeComponent,
   });
+
+  useEffect(() => {
+    if (
+      component.parentDataComponentId !== shareableContent.parentDataComponentId
+    ) {
+      updateTreeComponentAttrs([component.id!], {
+        parentDataComponentId: shareableContent.parentDataComponentId,
+      });
+    }
+  }, [shareableContent.parentDataComponentId]);
+
+  const { onChange, onSubmit } = triggers;
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    onChange && onChange(e);
+    if (component.props?.error) {
+      updateTreeComponent({
+        componentId: id,
+        props: { error: "" },
+        save: false,
+      });
+    }
+  };
+
+  const handleOnSubmit = (e: any) => {
+    isEditorMode && e.preventDefault();
+    !isEditorMode && onSubmit && onSubmit(e);
+  };
+
+  triggers.onChange = handleOnChange;
+  triggers.onSubmit = handleOnSubmit;
 
   const onDrop = useOnDrop();
 
@@ -293,6 +328,7 @@ export const EditableComponent = ({
             onClick: handleClick,
             onContextMenu: handleContextMenu,
           }),
+          shareableContent,
         },
       )}
     </>

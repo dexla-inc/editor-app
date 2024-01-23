@@ -25,6 +25,7 @@ export const jsonStructure = (props?: any): Component => {
       children: content,
       color: `${theme.colors.Black ? "Black.6" : "dark"}`,
       order: order,
+      dataType: "static",
       style: {
         ...defaultValues,
         fontSize: `${size.fontSize}px`,

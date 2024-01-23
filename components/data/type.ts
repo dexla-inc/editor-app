@@ -5,4 +5,5 @@ import { Component } from "@/utils/editor";
 export type DataProps = {
   component: Component;
   endpoints: PagingResponse<Endpoint> | undefined;
+  dataType: "static" | "dynamic";
 };

@@ -1,85 +1,69 @@
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { DataProps } from "@/components/data/type";
-import { useBindingPopover } from "@/hooks/useBindingPopover";
-import { debouncedTreeUpdate } from "@/utils/editor";
 import { Stack } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useEffect } from "react";
+import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
+import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
+import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
+import { DynamicChildSettings } from "@/components/data/forms/DynamicChildSettings";
 
-export const AvatarData = ({ component }: DataProps) => {
-  const isImageComponent = component.name === "Image";
-  const propsArray = isImageComponent ? ["src", "alt"] : ["children", "src"];
-  const { getSelectedVariable } = useBindingPopover();
-
-  const form = useForm({
-    initialValues: {
-      ...(!isImageComponent && {
-        children: component.props?.children ?? "",
-        childrenKey: component.props?.childrenKey ?? "",
-      }),
-      ...(isImageComponent && {
-        alt: component.props?.alt ?? "",
-        altKey: component.props?.altKey ?? "",
-      }),
-      src: component.props?.src ?? "",
-      srcKey: component.props?.srcKey ?? "",
-      actionCode: component.props?.actionCode ?? {},
-    },
-  });
-
-  const updateItemKey = (key: string, value: string) => {
-    const variable = getSelectedVariable(value);
-    form.setFieldValue(key, variable?.defaultValue);
+export const AvatarData = ({ component, endpoints, dataType }: DataProps) => {
+  const staticFieldsGroup = {
+    Avatar: [
+      {
+        name: "src",
+        label: "Source",
+        placeholder: "https://example.com/image.png",
+        type: "url",
+      },
+      {
+        name: "children",
+        label: "Value",
+      },
+    ],
+    Image: [
+      {
+        name: "src",
+        label: "Source",
+        placeholder: "https://example.com/image.png",
+        type: "url",
+      },
+      {
+        name: "alt",
+        label: "Alternative Text",
+      },
+    ],
   };
+  const componentName = component.name as keyof typeof staticFieldsGroup;
+  const staticFields = staticFieldsGroup[componentName];
+  const dynamicFields = staticFields.map((f) => ({
+    ...f,
+    name: `${f.name}Key`,
+  }));
 
-  useEffect(() => {
-    debouncedTreeUpdate(component.id, form.values);
-  }, [form.values]);
+  const DynamicSettingsWrapper = !component.parentDataComponentId
+    ? DynamicSettings
+    : DynamicChildSettings;
 
   return (
-    <form>
-      <Stack spacing="xs">
-        {propsArray.map((key) => (
-          <ComponentToBindFromInput
-            category="data"
-            key={key}
-            componentId={component?.id!}
-            onPickVariable={(variable: string) => {
-              form.setFieldValue(`${key}Key`, variable);
-              updateItemKey(key, variable);
-            }}
-            javascriptCode={form.values.actionCode}
-            onChangeJavascriptCode={(javascriptCode: string, label: string) =>
-              form.setFieldValue(`actionCode`, {
-                ...form.values.actionCode,
-                [label]: javascriptCode,
-              })
-            }
-            size="xs"
-            label={
-              key === "children"
-                ? "Value"
-                : key === "alt"
-                ? "Alternative Text"
-                : "Source"
-            }
-            {...(key === "children" || key === "alt"
-              ? {}
-              : {
-                  placeholder: "https://example.com/image.png",
-                  type: "url",
-                })}
-            {...form.getInputProps(key)}
-            onChange={(e) => form.setFieldValue(key, e.currentTarget.value)}
-          />
-        ))}
-        <VisibilityModifier
+    <Stack spacing="xs">
+      {dataType === "static" && (
+        <StaticFormFieldsBuilder fields={staticFields} component={component} />
+      )}
+
+      {dataType === "dynamic" && (
+        <DynamicSettingsWrapper
           component={component}
-          form={form}
-          debouncedTreeUpdate={debouncedTreeUpdate}
-        />
-      </Stack>
-    </form>
+          endpoints={endpoints!}
+          customKeys={dynamicFields.map((f) => f.name)}
+        >
+          {({ form, selectableObjectKeys }) => (
+            <DynamicFormFieldsBuilder
+              form={form}
+              fields={dynamicFields}
+              selectableObjectKeys={selectableObjectKeys}
+            />
+          )}
+        </DynamicSettingsWrapper>
+      )}
+    </Stack>
   );
 };

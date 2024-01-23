@@ -23,6 +23,7 @@ export const jsonStructure = (props?: any): Component => {
       color: `${theme.colors.Black ? "Black.6" : "dark"}`,
       size: "sm",
       weight: "normal",
+      dataType: "static",
       style: {
         ...defaultValues,
         lineHeight: "110%",

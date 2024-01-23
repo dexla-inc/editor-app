@@ -9,23 +9,28 @@ import { forwardRef, memo, useEffect } from "react";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
+  shareableContent: any;
 } & AnchorProps;
 
 const LinkComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
-    const { children, triggers, variable, ...componentProps } =
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+    const { children, triggers, dataType, variable, ...componentProps } =
       component.props as any;
 
-    const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
-    const selectedVariable = getSelectedVariable(variable);
-
-    useEffect(() => {
-      if (selectedVariable?.defaultValue === children) return;
-      handleValueUpdate(component.id as string, selectedVariable);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedVariable]);
-
     const contentEditable = useContentEditable(component.id as string);
+
+      const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
+      const selectedVariable = getSelectedVariable(variable);
+
+      useEffect(() => {
+          if (selectedVariable?.defaultValue === children) return;
+          handleValueUpdate(component.id as string, selectedVariable);
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [selectedVariable]);
+
+    const { childrenKey } = component.onLoad ?? {};
+    const childrenValue =
+      dataType === "dynamic" ? shareableContent.data?.[childrenKey] : children;
 
     return (
       <MantineAnchor
@@ -33,15 +38,9 @@ const LinkComponent = forwardRef(
         {...props}
         {...componentProps}
         {...triggers}
+        ref={ref}
       >
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) =>
-              renderTree({
-                ...child,
-                props: { ...child.props, ...triggers },
-              }),
-            )
-          : children}
+        {childrenValue}
       </MantineAnchor>
     );
   },

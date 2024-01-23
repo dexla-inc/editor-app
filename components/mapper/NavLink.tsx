@@ -14,10 +14,11 @@ import { forwardRef, memo, useEffect } from "react";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
+  shareableContent: any;
 } & NavLinkProps;
 
 const NavLinkComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const theme = useEditorStore((state) => state.theme);
 
     const router = useRouter();
@@ -35,7 +36,7 @@ const NavLinkComponent = forwardRef(
     }
 
     const {
-      children,
+      label,
       isNested,
       pageId,
       triggers,
@@ -44,6 +45,7 @@ const NavLinkComponent = forwardRef(
       iconColor = "",
       bg = "",
       variable,
+      dataType,
       ...componentProps
     } = merge({}, component.props, activeProps) as any;
 
@@ -51,7 +53,7 @@ const NavLinkComponent = forwardRef(
     const selectedVariable = getSelectedVariable(variable);
 
     useEffect(() => {
-      if (selectedVariable?.defaultValue === children) return;
+      if (selectedVariable?.defaultValue === label) return;
       handleValueUpdate(component.id as string, selectedVariable);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedVariable]);
@@ -62,6 +64,10 @@ const NavLinkComponent = forwardRef(
     merge(componentProps, {
       style: { ...props.style, color: textColor, backgroundColor },
     });
+
+    const { labelKey } = component.onLoad ?? {};
+    const labelValue =
+      dataType === "dynamic" ? shareableContent.data?.[labelKey] : label;
 
     return (
       <MantineNavLink
@@ -83,6 +89,7 @@ const NavLinkComponent = forwardRef(
         {...props}
         {...componentProps}
         {...triggers}
+        label={labelValue}
         styles={{
           ...(!icon && {
             icon: { marginRight: 0 },
@@ -95,11 +102,7 @@ const NavLinkComponent = forwardRef(
             },
           },
         }}
-      >
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) => renderTree(child))
-          : children}
-      </MantineNavLink>
+      />
     );
   },
 );

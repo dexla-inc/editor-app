@@ -12,16 +12,18 @@ type Props = {
   renderTree: (component: Component) => any;
   component: Component;
   isPreviewMode: boolean;
+  shareableContent: any;
 } & FileButtonProps;
 
 export const FileButton = ({
   renderTree,
   component,
   onChange,
+  isPreviewMode,
+  shareableContent,
   ...props
 }: Props) => {
-  const { name, triggers, isPreviewMode, variable, ...componentProps } =
-    component.props ?? {};
+  const { name, triggers, dataType, variable, ...componentProps } = component.props ?? {};
   const contentEditableProps = useContentEditable(component.id as string);
   const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
   const selectedVariable = getSelectedVariable(variable);
@@ -31,6 +33,10 @@ export const FileButton = ({
     handleValueUpdate(component.id as string, selectedVariable, "name");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedVariable]);
+
+  const { nameKey } = component.onLoad ?? {};
+  const nameValue =
+    dataType === "dynamic" ? shareableContent.data?.[nameKey] : name;
 
   return (
     <>
@@ -44,7 +50,7 @@ export const FileButton = ({
         {...componentProps}
         {...props}
       >
-        {(props) => <Button {...props}>{name}</Button>}
+        {(props) => <Button {...props}>{nameValue}</Button>}
       </MantineFileButton>
     </>
   );
