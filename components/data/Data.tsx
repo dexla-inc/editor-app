@@ -1,8 +1,8 @@
-import { SegmentedControl, Stack } from "@mantine/core";
-import { Component } from "@/utils/editor";
-import { dataMapper } from "@/utils/dataMapper";
-import { useEditorStore } from "@/stores/editor";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { useEditorStore } from "@/stores/editor";
+import { dataMapper } from "@/utils/dataMapper";
+import { Component } from "@/utils/editor";
+import { SegmentedControl, Stack } from "@mantine/core";
 
 type DataProps = {
   component: Component;
@@ -22,18 +22,22 @@ export const Data = ({ component }: DataProps) => {
 
   return (
     <Stack px="md">
-      <SegmentedControl
-        w="100%"
-        size="xs"
-        value={component.props?.dataType}
-        data={[
-          { label: "Static", value: "static" },
-          { label: "Dynamic", value: "dynamic" },
-        ]}
-        onChange={(e) =>
-          updateTreeComponentAttrs([component.id!], { props: { dataType: e } })
-        }
-      />
+      {component.props?.dataType && (
+        <SegmentedControl
+          w="100%"
+          size="xs"
+          value={component.props?.dataType}
+          data={[
+            { label: "Static", value: "static" },
+            { label: "Dynamic", value: "dynamic" },
+          ]}
+          onChange={(e) =>
+            updateTreeComponentAttrs([component.id!], {
+              props: { dataType: e },
+            })
+          }
+        />
+      )}
       <DataSection
         component={component}
         endpoints={endpoints}

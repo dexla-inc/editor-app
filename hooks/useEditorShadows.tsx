@@ -38,9 +38,7 @@ export const useEditorShadows = ({
   const hoveredComponentId = useEditorStore(
     (state) => state.hoveredComponentId,
   );
-  const setHoveredComponentId = useEditorStore(
-    (state) => state.setHoveredComponentId,
-  );
+
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const isLive = useEditorStore((state) => state.isLive);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
