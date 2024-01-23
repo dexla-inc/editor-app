@@ -82,8 +82,6 @@ export default function BindingPopover({
     handleAuth,
   } = useBindingPopover();
 
-  console.log(inputComponents);
-
   useEffect(() => {
     try {
       if (javascriptCode === "return variables") {
