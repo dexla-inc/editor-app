@@ -4,7 +4,6 @@ import { useContentEditable } from "@/hooks/useContentEditable";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { CSSObject, Title as MantineTitle, TitleProps } from "@mantine/core";
-import get from "lodash.get";
 import { forwardRef, memo, useEffect } from "react";
 
 type Props = {
@@ -29,15 +28,15 @@ const TitleComponent = forwardRef(
     const childrenValue =
       dataType === "dynamic" ? shareableContent.data?.[childrenKey] : children;
 
-      const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
-      const selectedVariable = getSelectedVariable(variable);
+    const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
+    const selectedVariable = getSelectedVariable(variable);
 
-      useEffect(() => {
-          if (selectedVariable?.defaultValue === children) return;
-          handleValueUpdate(component.id as string, selectedVariable);
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [selectedVariable]);
-
+    useEffect(() => {
+      if (selectedVariable?.defaultValue === children) return;
+      handleValueUpdate(component.id as string, selectedVariable);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedVariable]);
+    // console.log(componentProps);
     return (
       <MantineTitle
         {...contentEditableProps}
