@@ -27,7 +27,7 @@ import {
 } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { useCallback } from "react";
+import { MouseEventHandler, useCallback } from "react";
 
 const determinePasteTarget = (selectedId: string | undefined) => {
   if (!selectedId) return "content-wrapper";
@@ -264,4 +264,21 @@ export const useComponentContextMenu = () => {
         },
       ),
   };
+};
+
+export const useComponentContextEventHandler = (
+  component: Component,
+  componentContextMenu: (component: Component) => MouseEventHandler,
+) => {
+  return useCallback(
+    (event: any) => {
+      if (event.shiftKey || event.ctrlKey || event.metaKey) {
+        return;
+      }
+
+      event.preventDefault();
+      componentContextMenu(component)(event);
+    },
+    [component, componentContextMenu],
+  );
 };
