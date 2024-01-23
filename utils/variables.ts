@@ -27,3 +27,29 @@ export const getParsedJSCode = (code: string) => {
 
   return parsedCode;
 };
+
+export const getAuthValue = (code: string, authData: any) => {
+  // check for auth in the code and replace them with their values
+  // auth pattern: return auth['accessToken']
+  const authsRegex = /auth\['([\w]+)'\]/g;
+  const parsedCode = code.replace(authsRegex, (_, authKey) => {
+    const value = authData?.find(
+      (auth: any) => auth.id === authKey || auth.name === authKey,
+    )?.value;
+
+    if (value === undefined) {
+      return `undefined`;
+    }
+
+    const isObject = typeof value === "object";
+    const isArray = Array.isArray(value);
+
+    if (isObject || isArray) {
+      return JSON.stringify(value);
+    }
+
+    return `"${value}"`;
+  });
+
+  return parsedCode;
+};

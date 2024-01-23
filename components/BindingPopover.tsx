@@ -2,7 +2,6 @@ import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea"
 import { DataTree } from "@/components/DataTree";
 import { Icon } from "@/components/Icon";
 import { Category, useBindingPopover } from "@/hooks/useBindingPopover";
-import { useDataSourceStore } from "@/stores/datasource";
 import {
   BG_COLOR,
   BINDER_BACKGROUND,
@@ -10,7 +9,7 @@ import {
 } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import { BindingTab, BindingType } from "@/utils/types";
-import { getParsedJSCode } from "@/utils/variables";
+import { getAuthValue, getParsedJSCode } from "@/utils/variables";
 import {
   ActionIcon,
   Box,
@@ -65,12 +64,6 @@ export default function BindingPopover({
   const [newValue, setNewValue] = useState<string>();
   const [tab, setTab] = useState<BindingTab>(bindingTab ?? "components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
-  const getAuthState = useDataSourceStore((state) => state.getAuthState);
-
-  const authState = getAuthState();
-
-  const authData = [];
-  authData.push(authState);
 
   const {
     variables,
@@ -85,7 +78,11 @@ export default function BindingPopover({
     toggle: onTogglePopover,
     close: onClosePopover,
     open: onOpenPopover,
+    authData,
+    handleAuth,
   } = useBindingPopover();
+
+  console.log(inputComponents);
 
   useEffect(() => {
     try {
@@ -93,7 +90,11 @@ export default function BindingPopover({
         setNewValue("undefined");
       }
 
-      const parsedCode = getParsedJSCode(javascriptCode);
+      let parsedCode = "";
+
+      if (javascriptCode.includes("auth["))
+        parsedCode = getAuthValue(javascriptCode, authData);
+      else parsedCode = getParsedJSCode(javascriptCode);
 
       let newValue = eval(
         `function autoRunJavascriptCode() { ${parsedCode}}; autoRunJavascriptCode()`,
@@ -137,6 +138,8 @@ export default function BindingPopover({
       handleBrowser(item);
     } else if (itemType === "actions") {
       handleActions({ item, onPickVariable });
+    } else if (itemType === "auth") {
+      handleAuth({ item, onPickVariable, javascriptCode });
     }
   };
 

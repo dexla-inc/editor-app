@@ -7,10 +7,8 @@ type Props = {
   filterKeyword?: string;
 };
 
-// TODO: This needs refactoring as it currently only really supports variables as we are checking type, value and default value
-// This needs to be generic as I want to add support for auth such as access token, refresh token, etc
 export function DataTree({
-  variables,
+  variables = [],
   onItemSelection,
   filterKeyword = "",
 }: Props) {
@@ -23,7 +21,11 @@ export function DataTree({
             return filterKeyword === "" || regex.test(variable.name);
           })
           .map((variable: any, index: number) => {
-            if (variable.type && variable.type !== "OBJECT") {
+            const isVariableComponent =
+              variable?.bindType && variable?.bindType === "component";
+            const isVariableNotObject =
+              variable.type && variable.type !== "OBJECT";
+            if (isVariableNotObject || isVariableComponent) {
               return (
                 <Button
                   key={variable.id}

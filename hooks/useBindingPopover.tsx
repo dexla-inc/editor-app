@@ -1,8 +1,10 @@
+import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
 import { debouncedTreeUpdate, getAllComponentsByName } from "@/utils/editor";
 import { useDisclosure } from "@mantine/hooks";
+import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -33,6 +35,12 @@ type ComponentsType = {
   onPickComponent: any;
 };
 
+type AuthType = {
+  item: string;
+  javascriptCode: string;
+  onPickVariable: any;
+};
+
 const prefixWithReturnIfNeeded = (code: string) =>
   !code?.startsWith("return") ? "return " : " ";
 
@@ -42,7 +50,9 @@ export const useBindingPopover = () => {
   const editorTree = useEditorStore((state) => state.tree);
   const inputsStore = useInputsStore((state) => state.inputValues);
   const variablesList = useVariableStore((state) => state.variableList);
+  const getAuthState = useDataSourceStore((state) => state.getAuthState);
   const browser = useRouter();
+  const authState = getAuthState();
 
   // create variables list for binding
   const variables = variablesList.reduce(
@@ -72,7 +82,7 @@ export const useBindingPopover = () => {
     (acc, component) => {
       const value = inputsStore[component?.id!];
       component = { ...component, name: component.description! };
-      acc.list[component?.id!] = component;
+      acc.list[component?.id!] = merge(component, { bindType: "component" });
       acc[component?.id!] = value;
       return acc;
     },
@@ -83,6 +93,17 @@ export const useBindingPopover = () => {
   const browserList = Object.entries(
     pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
   ).map(([key, value]) => {
+    const isObject = typeof value === "object";
+    return {
+      id: key,
+      name: key,
+      value: isObject ? JSON.stringify(value) : value,
+      type: isObject ? "OBJECT" : "STRING",
+    };
+  });
+
+  // create auth list for binding
+  const authData = Object.entries(authState).map(([key, value]) => {
     const isObject = typeof value === "object";
     return {
       id: key,
@@ -188,6 +209,23 @@ export const useBindingPopover = () => {
     }
   };
 
+  const handleAuth = ({ item, onPickVariable, javascriptCode }: AuthType) => {
+    try {
+      const parsed = JSON.parse(item);
+      setSelectedItem(
+        `${prefixWithReturnIfNeeded(javascriptCode)}auth['${parsed.id}'].${
+          parsed.path
+        }`,
+      );
+    } catch {
+      setSelectedItem(
+        `${prefixWithReturnIfNeeded(javascriptCode)}auth['${item}']`,
+      );
+      onPickVariable &&
+        onPickVariable(authData.find((auth) => auth.id === item)?.value);
+    }
+  };
+
   const getSelectedVariable = (id: string) =>
     variablesList.find((varItem) => varItem.id === id);
 
@@ -220,6 +258,8 @@ export const useBindingPopover = () => {
     variablesList,
     handleValueUpdate,
     handleValuesUpdate,
+    authData,
+    handleAuth,
   };
 
   return bindingPopoverProps;
