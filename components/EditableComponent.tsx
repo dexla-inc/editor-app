@@ -1,4 +1,5 @@
 import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
+import { useComponentStates } from "@/hooks/useComponentStates";
 import { useDroppable } from "@/hooks/useDroppable";
 import { useHoverEvents } from "@/hooks/useHoverEvents";
 import { useOnDrop } from "@/hooks/useOnDrop";
@@ -203,6 +204,11 @@ export const EditableComponent = ({
     iframeWindow,
   );
 
+  const { checkIfIsDisabledState, handleComponentIfDisabledState } =
+    useComponentStates();
+
+  const isDisabledState = checkIfIsDisabledState(component.name, currentState);
+
   const propsWithOverwrites = merge(
     {},
     isEditorMode
@@ -211,9 +217,13 @@ export const EditableComponent = ({
     component.languages?.[language],
     component.states?.[currentState],
     {
+      disabled: isDisabledState,
       triggers: !isEditorMode
         ? {
             ...triggers,
+            ...(currentState === "disabled" && {
+              onKeyDown: handleComponentIfDisabledState,
+            }),
           }
         : {
             onMouseOver: handleMouseEnter,

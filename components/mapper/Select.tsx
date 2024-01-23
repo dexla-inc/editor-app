@@ -1,5 +1,6 @@
 import { CustomDropdown } from "@/components/mapper/CustomSelectDropdown";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useChangeState } from "@/hooks/useChangeState";
 import { useEndpoint } from "@/hooks/useEndpoint";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
@@ -7,6 +8,7 @@ import { Component } from "@/utils/editor";
 import { Select as MantineSelect, SelectProps } from "@mantine/core";
 import get from "lodash.get";
 import merge from "lodash.merge";
+import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo, useEffect, useState } from "react";
 import { InputLoader } from "../InputLoader";
 
@@ -17,8 +19,15 @@ type Props = {
 
 const SelectComponent = forwardRef(
   ({ renderTree, component, children: child, ...props }: Props, ref) => {
-    const { children, triggers, loading, dataType, ...componentProps } =
-      component.props as any;
+    const {
+      children,
+      triggers,
+      loading,
+      dataType,
+      bg,
+      textColor,
+      ...componentProps
+    } = component.props as any;
     const {
       endpointId,
       dataLabelKey,
@@ -27,8 +36,9 @@ const SelectComponent = forwardRef(
       binds,
       staleTime,
     } = component.onLoad ?? {};
+    const { color, backgroundColor } = useChangeState({ bg, textColor });
 
-    const customStyle = merge({}, props.style);
+    const customStyle = merge({}, props.style, { backgroundColor, color });
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setInputValue = useInputsStore((state) => state.setInputValue);
 
@@ -92,18 +102,15 @@ const SelectComponent = forwardRef(
         styles={{
           root: {
             position: "relative",
-            width: customStyle.width,
-            height: customStyle.height,
-            minHeight: customStyle.minHeight,
-            minWidth: customStyle.minWidth,
+            ...pick(customStyle, [
+              "display",
+              "width",
+              "height",
+              "minHeight",
+              "minWidth",
+            ]),
           },
-          input: {
-            ...customStyle,
-            width: "-webkit-fill-available",
-            height: "-webkit-fill-available",
-            minHeight: "-webkit-fill-available",
-            minWidth: "-webkit-fill-available",
-          },
+          input: customStyle,
         }}
         withinPortal={false}
         maxDropdownHeight={150}

@@ -1,11 +1,12 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBindingPopover } from "@/hooks/useBindingPopover";
+import { useChangeState } from "@/hooks/useChangeState";
 import { useEditorStore } from "@/stores/editor";
 import { NavigationAction } from "@/utils/actions";
 import { getColorValue } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
-import { Component, getColorFromTheme } from "@/utils/editor";
+import { Component } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { useRouter } from "next/router";
@@ -58,8 +59,11 @@ const NavLinkComponent = forwardRef(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedVariable]);
 
-    const textColor = getColorFromTheme(theme, color) ?? "#000";
-    const backgroundColor = getColorFromTheme(theme, bg) ?? "transparent";
+    const { color: textColor, backgroundColor } = useChangeState({
+      bg,
+      textColor: color,
+      isTransparentBackground: true,
+    });
 
     merge(componentProps, {
       style: { ...props.style, color: textColor, backgroundColor },

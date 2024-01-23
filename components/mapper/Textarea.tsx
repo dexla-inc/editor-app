@@ -1,4 +1,5 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useChangeState } from "@/hooks/useChangeState";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
@@ -9,6 +10,7 @@ import {
 } from "@mantine/core";
 import debounce from "lodash.debounce";
 import merge from "lodash.merge";
+import { pick } from "next/dist/lib/pick";
 import { ChangeEvent, forwardRef, memo, useCallback, useState } from "react";
 
 type Props = {
@@ -18,10 +20,18 @@ type Props = {
 
 const TextareaComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
-    const { children, triggers, value, loading, ...componentProps } =
-      component.props as any;
+    const {
+      children,
+      triggers,
+      value,
+      loading,
+      bg,
+      textColor,
+      ...componentProps
+    } = component.props as any;
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setStoreInputValue = useInputsStore((state) => state.setInputValue);
+    const { color, backgroundColor } = useChangeState({ bg, textColor });
 
     const [localInputValue, setLocalInputValue] = useState(inputValue ?? "");
 
@@ -42,7 +52,7 @@ const TextareaComponent = forwardRef(
       triggers?.onChange && triggers?.onChange(e);
     };
 
-    const customStyle = merge({}, props.style);
+    const customStyle = merge({}, props.style, { backgroundColor, color });
 
     return (
       <MantineTextarea
@@ -54,18 +64,15 @@ const TextareaComponent = forwardRef(
         styles={{
           root: {
             position: "relative",
-            width: customStyle.width,
-            height: customStyle.height,
-            minHeight: customStyle.minHeight,
-            minWidth: customStyle.minWidth,
+            ...pick(customStyle, [
+              "display",
+              "width",
+              "height",
+              "minHeight",
+              "minWidth",
+            ]),
           },
-          input: {
-            ...customStyle,
-            width: "-webkit-fill-available",
-            height: "-webkit-fill-available",
-            minHeight: "-webkit-fill-available",
-            minWidth: "-webkit-fill-available",
-          },
+          input: customStyle,
         }}
         value={localInputValue}
         onChange={handleInputChange}

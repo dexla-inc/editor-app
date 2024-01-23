@@ -1,5 +1,6 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useChangeState } from "@/hooks/useChangeState";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
@@ -35,10 +36,13 @@ const InputComponent = forwardRef(
       value,
       loading,
       clearable,
+      bg,
+      textColor,
       ...componentProps
     } = component.props as any;
     const { name: iconName } = icon && icon!.props!;
     const { type, ...restComponentProps } = componentProps;
+    const { color, backgroundColor } = useChangeState({ bg, textColor });
 
     const _defaultValue = type === "number" || type === "numberRange" ? 0 : "";
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
@@ -99,7 +103,7 @@ const InputComponent = forwardRef(
       return isNaN(number) ? 0 : number;
     };
 
-    const customStyle = merge({}, props.style);
+    const customStyle = merge({}, props.style, { backgroundColor, color });
 
     return (
       <>
@@ -109,14 +113,13 @@ const InputComponent = forwardRef(
               spacing={0}
               {...props}
               style={{
-                background: "white",
                 ...customStyle,
                 position: "relative",
               }}
             >
               <ActionIcon
                 size={props.size}
-                variant="default"
+                variant="transparent"
                 style={{ border: "none" }}
                 onClick={decreaseNumber}
               >
@@ -139,6 +142,8 @@ const InputComponent = forwardRef(
                     border: "none",
                     textAlign: "center",
                     height: customStyle.height,
+                    backgroundColor,
+                    color,
                   },
                 }}
                 size={props.size}
@@ -149,7 +154,7 @@ const InputComponent = forwardRef(
 
               <ActionIcon
                 size={props.size}
-                variant="default"
+                variant="transparent"
                 style={{ border: "none" }}
                 onClick={increaseNumber}
               >
@@ -192,7 +197,6 @@ const InputComponent = forwardRef(
             ref={ref}
             id={component.id}
             icon={iconName ? <Icon name={iconName} /> : null}
-            style={{}}
             styles={{
               root: {
                 position: "relative",
@@ -205,6 +209,7 @@ const InputComponent = forwardRef(
                 ]),
               },
               input: customStyle,
+              innerInput: { color },
             }}
             value={localInputValue}
             onChange={handleInputChange}

@@ -127,7 +127,15 @@ export const useComponentStates = () => {
     return appearencesList.concat(...(customAppearences ?? []));
   };
 
+  const handleComponentIfDisabledState = (e: any) => e.preventDefault();
+
+  const checkIfIsDisabledState = (name: string, state: string) => {
+    return ["Pagination"].includes(name) && state === "disabled";
+  };
+
   return {
     getComponentsStates,
+    handleComponentIfDisabledState,
+    checkIfIsDisabledState,
   };
 };
