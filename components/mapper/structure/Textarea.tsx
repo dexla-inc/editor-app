@@ -21,6 +21,7 @@ export const jsonStructure = (props?: any): Component => {
       },
       ...(props.props || {}),
     },
+    states: { disabled: { bg: "Secondary.1", textColor: "PrimaryText.9" } },
     children: [],
   };
 };

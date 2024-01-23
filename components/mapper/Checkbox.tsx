@@ -1,3 +1,4 @@
+import { useChangeState } from "@/hooks/useChangeState";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
@@ -18,11 +19,13 @@ const CheckboxComponent = ({
   isPreviewMode,
   ...props
 }: Props) => {
-  const { label, value, triggers, ...componentProps } = component.props as any;
+  const { label, value, triggers, bg, textColor, ...componentProps } =
+    component.props as any;
   const { children, ...rest } = props;
   const inputValue = useInputsStore((state) => state.getValue(component.id!));
   const setStoreInputValue = useInputsStore((state) => state.setInputValue);
   const [checked, setChecked] = useState(inputValue ?? false);
+  const { color, backgroundColor } = useChangeState({ bg, textColor });
 
   // update values in store
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -41,7 +44,7 @@ const CheckboxComponent = ({
     triggers?.onChange && triggers?.onChange(e);
   };
 
-  const customStyle = merge({}, props.style);
+  const customStyle = merge({}, props.style, { backgroundColor, color });
 
   return (
     <MantineCheckbox

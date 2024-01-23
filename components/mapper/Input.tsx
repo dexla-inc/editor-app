@@ -1,9 +1,10 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useChangeState } from "@/hooks/useChangeState";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
-import { Component, getColorFromTheme } from "@/utils/editor";
+import { Component } from "@/utils/editor";
 import {
   ActionIcon,
   Group,
@@ -41,9 +42,7 @@ const InputComponent = forwardRef(
     } = component.props as any;
     const { name: iconName } = icon && icon!.props!;
     const { type, ...restComponentProps } = componentProps;
-    const theme = useEditorStore((state) => state.theme);
-    const backgroundColor = getColorFromTheme(theme, bg) ?? "white";
-    const color = getColorFromTheme(theme, textColor) ?? "black";
+    const { color, backgroundColor } = useChangeState({ bg, textColor });
 
     const _defaultValue = type === "number" || type === "numberRange" ? 0 : "";
     const inputValue = useInputsStore((state) => state.getValue(component.id!));

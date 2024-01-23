@@ -1,5 +1,6 @@
 import { CustomDropdown } from "@/components/mapper/CustomSelectDropdown";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useChangeState } from "@/hooks/useChangeState";
 import { useEndpoint } from "@/hooks/useEndpoint";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
@@ -18,8 +19,15 @@ type Props = {
 
 const SelectComponent = forwardRef(
   ({ renderTree, component, children: child, ...props }: Props, ref) => {
-    const { children, triggers, loading, dataType, ...componentProps } =
-      component.props as any;
+    const {
+      children,
+      triggers,
+      loading,
+      dataType,
+      bg,
+      textColor,
+      ...componentProps
+    } = component.props as any;
     const {
       endpointId,
       dataLabelKey,
@@ -28,8 +36,9 @@ const SelectComponent = forwardRef(
       binds,
       staleTime,
     } = component.onLoad ?? {};
+    const { color, backgroundColor } = useChangeState({ bg, textColor });
 
-    const customStyle = merge({}, props.style);
+    const customStyle = merge({}, props.style, { backgroundColor, color });
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setInputValue = useInputsStore((state) => state.setInputValue);
 

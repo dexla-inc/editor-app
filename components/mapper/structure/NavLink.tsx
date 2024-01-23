@@ -15,6 +15,13 @@ export const jsonStructure = (props?: any): Component => {
       },
       ...(props.props || {}),
     },
+    states: {
+      disabled: {
+        bg: "Secondary.1",
+        color: "PrimaryText.9",
+        iconColor: "PrimaryText.9",
+      },
+    },
     blockDroppingChildrenInside: true,
   };
 };
