@@ -13,55 +13,59 @@ type Props = {
   shareableContent?: any;
 } & ImageProps;
 
-const ImageComponent = forwardRef(({ component, ...props }: Props, ref) => {
-  const {
-    alt = "Image",
-    src,
-    triggers,
-    dataType,
-    loading,
-    ...componentProps
-  } = component.props as any;
+const ImageComponent = forwardRef(
+  ({ component, shareableContent, ...props }: Props, ref) => {
+    const {
+      alt = "Image",
+      src,
+      triggers,
+      dataType,
+      loading,
+      ...componentProps
+    } = component.props as any;
 
-  const { dataValueKey } = component.onLoad ?? {};
+    const { srcKey, altKey } = component.onLoad ?? {};
 
-  const value =
-    dataType === "dynamic" ? props.shareableContent.data?.[dataValueKey] : src;
+    const srcValue =
+      dataType === "dynamic" ? shareableContent.data?.[srcKey] : src;
+    const altValue =
+      dataType === "dynamic" ? shareableContent.data?.[altKey] : alt;
 
-  const { getSelectedVariable, handleValuesUpdate } = useBindingPopover();
-  const sourceVariable = getSelectedVariable(srcKey);
-  const altTextVariable = getSelectedVariable(altKey);
+    const { getSelectedVariable, handleValuesUpdate } = useBindingPopover();
+    const sourceVariable = getSelectedVariable(srcKey);
+    const altTextVariable = getSelectedVariable(altKey);
 
-  const isVariablesSame =
-      sourceVariable?.defaultValue === src &&
-      altTextVariable?.defaultValue === alt;
+    const isVariablesSame =
+        sourceVariable?.defaultValue === src &&
+        altTextVariable?.defaultValue === alt;
 
-  useEffect(() => {
-    if (isVariablesSame) return;
-    handleValuesUpdate(component.id as string, {
-      src: sourceVariable?.defaultValue,
-      alt: altTextVariable?.defaultValue,
-    });
-  }, [sourceVariable, altTextVariable]);
+    useEffect(() => {
+      if (isVariablesSame) return;
+      handleValuesUpdate(component.id as string, {
+        src: sourceVariable?.defaultValue,
+        alt: altTextVariable?.defaultValue,
+      });
+    }, [sourceVariable, altTextVariable]);
 
-  const { width, height, ...style } = props.style ?? {};
+    const { width, height, ...style } = props.style ?? {};
 
-  return (
-    <MantineImage
-      ref={ref}
-      id={component.id}
-      alt={alt}
-      imageProps={{ src: value }}
-      {...props}
-      {...componentProps}
-      style={{}}
-      styles={{ root: { position: "relative" }, image: style }}
-      width={width}
-      height={height}
-      {...triggers}
-    />
-  );
-});
+    return (
+      <MantineImage
+        ref={ref}
+        id={component.id}
+        alt={altValue}
+        imageProps={{ src: srcValue }}
+        {...props}
+        {...componentProps}
+        style={{}}
+        styles={{ root: { position: "relative" }, image: style }}
+        width={width}
+        height={height}
+        {...triggers}
+      />
+    );
+  },
+);
 ImageComponent.displayName = "Image";
 
 export const Image = memo(withComponentWrapper<Props>(ImageComponent), isSame);

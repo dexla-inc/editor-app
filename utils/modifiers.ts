@@ -172,6 +172,7 @@ export const requiredModifiers: RequiredModifiers = {
     },
   },
   button: {
+    dataType: "static",
     value: "New Button",
     type: "button",
     variant: "filled",
@@ -193,6 +194,7 @@ export const requiredModifiers: RequiredModifiers = {
     position: "relative",
   },
   link: {
+    dataType: "static",
     value: "New Link",
     size: "sm",
     color: "Primary.6",
@@ -333,6 +335,7 @@ export const requiredModifiers: RequiredModifiers = {
     markers: [],
   },
   fileButton: {
+    dataType: "static",
     name: "Upload Button",
     accept: "",
     multiple: false,
@@ -346,6 +349,7 @@ export const requiredModifiers: RequiredModifiers = {
     position: "bottom",
   },
   navLink: {
+    dataType: "static",
     color: "Black.6",
     iconColor: "Black.6",
     textAlign: "left",

@@ -15,7 +15,10 @@ type Props = {
 } & TextProps;
 
 const TextComponent = forwardRef(
-  ({ renderTree, component, isPreviewMode, ...props }: Props, ref: any) => {
+  (
+    { renderTree, component, isPreviewMode, shareableContent, ...props }: Props,
+    ref: any,
+  ) => {
     const contentEditableProps = useContentEditable(component.id as string);
     const {
       children,
@@ -27,6 +30,8 @@ const TextComponent = forwardRef(
     } = component.props as any;
 
     const { childrenKey } = component.onLoad ?? {};
+    const childrenValue =
+      dataType === "dynamic" ? shareableContent.data?.[childrenKey] : children;
 
       const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
       const selectedVariable = getSelectedVariable(variable);
@@ -45,8 +50,7 @@ const TextComponent = forwardRef(
         {...triggers}
         ref={ref}
       >
-        {!hideIfDataIsEmpty &&
-          (props.shareableContent.data?.[childrenKey] ?? children)}
+        {!hideIfDataIsEmpty && childrenValue}
       </MantineText>
     );
   },

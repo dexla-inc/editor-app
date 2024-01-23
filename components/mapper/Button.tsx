@@ -14,11 +14,22 @@ type Props = {
   renderTree: (component: Component) => any;
   component: Component;
   isPreviewMode: boolean;
+  shareableContent: any;
 } & ButtonProps &
   ReactElement<"Button">;
 
 const ButtonComponent = forwardRef(
-  ({ renderTree, component, isPreviewMode, style, ...props }: Props, ref) => {
+  (
+    {
+      renderTree,
+      component,
+      isPreviewMode,
+      style,
+      shareableContent,
+      ...props
+    }: Props,
+    ref,
+  ) => {
     const {
       children,
       triggers,
@@ -27,6 +38,7 @@ const ButtonComponent = forwardRef(
       loading,
       textColor,
       variable,
+      dataType,
       ...componentProps
     } = component.props as any;
 
@@ -57,6 +69,10 @@ const ButtonComponent = forwardRef(
       color: labelTextColor,
     });
 
+    const { childrenKey } = component.onLoad ?? {};
+    const childrenValue =
+      dataType === "dynamic" ? shareableContent.data?.[childrenKey] : children;
+
     return (
       <MantineButton
         {...contentEditableProps}
@@ -71,8 +87,9 @@ const ButtonComponent = forwardRef(
         {...triggers}
         style={customStyle}
         styles={{ root: DISABLED_HOVER }}
+        ref={ref}
       >
-        {children}
+        {childrenValue}
       </MantineButton>
     );
   },

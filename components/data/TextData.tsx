@@ -21,8 +21,6 @@ export const TextData = ({ component, endpoints, dataType }: DataProps) => {
     name: `${f.name}Key`,
   }));
 
-  console.log(component.parentDataComponentId);
-
   const DynamicSettingsWrapper = !component.parentDataComponentId
     ? DynamicSettings
     : DynamicChildSettings;

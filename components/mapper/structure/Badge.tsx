@@ -17,6 +17,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Badge",
     children: [],
     props: {
+      dataType: "static",
       children: content,
       radius: "xl",
       size: "md",
