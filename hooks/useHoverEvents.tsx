@@ -1,10 +1,16 @@
+import { useEditorStore } from "@/stores/editor";
 import { useCallback, useMemo, useState } from "react";
 
-export const useHoverEvents = (
-  setHoveredComponentId: (hoveredComponentId?: string | undefined) => void,
-  hoveredComponentId: any,
-  iframeWindow: any,
-) => {
+export const useHoverEvents = () => {
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
+
+  const hoveredComponentId = useEditorStore(
+    (state) => state.hoveredComponentId,
+  );
+  const setHoveredComponentId = useEditorStore(
+    (state) => state.setHoveredComponentId,
+  );
+
   const [overlayStyles, setOverlayStyles] = useState({
     display: "none",
     position: {},

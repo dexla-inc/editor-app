@@ -1,7 +1,7 @@
 import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
 import { Component } from "@/utils/editor";
 import { Router, useRouter } from "next/router";
-import { ChangeEvent, useMemo } from "react";
+import { ChangeEvent, useCallback, useMemo } from "react";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
@@ -59,25 +59,28 @@ export const useTriggers = ({
     );
   }, [component]);
 
-  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    triggers.onChange?.(e);
-    if (component.props?.error) {
-      updateTreeComponent({
-        componentId: component.id,
-        props: { error: "" },
-        save: false,
-      });
-    }
-  };
+  const handleOnChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      triggers.onChange?.(e);
+      if (component.props?.error) {
+        updateTreeComponent({
+          componentId: component.id,
+          props: { error: "" },
+          save: false,
+        });
+      }
+    },
+    [component],
+  );
 
-  const handleOnSubmit = (e: any) => {
+  const handleOnSubmit = useCallback((e: any) => {
     if (isEditorMode) e.preventDefault();
-    triggers.onSubmit?.(e);
-  };
+    !isEditorMode && triggers.onSubmit?.(e);
+  }, []);
 
   return {
     ...triggers,
-    handleOnChange,
-    handleOnSubmit,
+    onChange: handleOnChange,
+    onSubmit: handleOnSubmit,
   };
 };
