@@ -4,8 +4,8 @@ import { useContentEditable } from "@/hooks/useContentEditable";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
-import get from "lodash.get";
 import { forwardRef, memo, useEffect } from "react";
+import get from "lodash.get";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -26,7 +26,7 @@ const TextComponent = forwardRef(
       ...componentProps
     } = component.props as any;
 
-    const { dataValueKey } = component.onLoad ?? {};
+    const { childrenKey } = component.onLoad ?? {};
 
       const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
       const selectedVariable = getSelectedVariable(variable);
@@ -43,8 +43,10 @@ const TextComponent = forwardRef(
         {...props}
         {...componentProps}
         {...triggers}
+        ref={ref}
       >
-        {props.shareableContent.data?.[dataValueKey] ?? "Static data"}
+        {!hideIfDataIsEmpty &&
+          (props.shareableContent.data?.[childrenKey] ?? children)}
       </MantineText>
     );
   },

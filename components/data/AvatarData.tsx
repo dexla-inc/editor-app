@@ -1,6 +1,4 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { DataTabSelect } from "@/components/data/DataTabSelect";
-import { DynamicDataSettings } from "@/components/data/DynamicDataSettings";
 import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { DataProps } from "@/components/data/type";
 import { useBindingPopover } from "@/hooks/useBindingPopover";
@@ -60,8 +58,6 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
     });
 
     debouncedTreeUpdate(component.id, updates);
-    // if (Object.keys(updates).length > 0) {
-    // }
   };
 
   useEffect(() => {
@@ -72,10 +68,6 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
   return (
     <form>
       <Stack spacing="xs">
-        <DataTabSelect
-          {...form.getInputProps("dataType")}
-          setFieldValue={setFieldValue}
-        />
         {form.values.dataType === "static" && (
           <>
             {propsArray.map((key) => (
@@ -123,19 +115,20 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
           </>
         )}
         {form.values.dataType === "dynamic" && (
-          <DynamicDataSettings
-            initiallyOpened={form.values.initiallyOpened}
-            onClick={(id: string, opened: boolean) =>
-              id === "data" && form.setFieldValue("initiallyOpened", opened)
-            }
-            onChange={(selected) => {
-              setFieldValue("endpoint", selected!);
-              setSelectedEndpoint(
-                endpoints?.results?.find((e) => e.id === selected),
-              );
-            }}
-            endpointSelectProps={form.getInputProps("endpoint")}
-          />
+          <></>
+          // <DynamicDataSettings
+          //   initiallyOpened={form.values.initiallyOpened}
+          //   onClick={(id: string, opened: boolean) =>
+          //     id === "data" && form.setFieldValue("initiallyOpened", opened)
+          //   }
+          //   onChange={(selected) => {
+          //     setFieldValue("endpoint", selected!);
+          //     setSelectedEndpoint(
+          //       endpoints?.results?.find((e) => e.id === selected),
+          //     );
+          //   }}
+          //   endpointSelectProps={form.getInputProps("endpoint")}
+          // />
         )}
       </Stack>
     </form>

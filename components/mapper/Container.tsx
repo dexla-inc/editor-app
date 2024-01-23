@@ -19,7 +19,7 @@ export const ContainerComponent = forwardRef(
     const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
     const isLive = useEditorStore((state) => state.isLive);
 
-    const { children, bg, triggers, dataType, loading, ...componentProps } =
+    const { children, bg, triggers, loading, dataType, ...componentProps } =
       component.props as any;
 
     const { endpointId, resultsKey, binds, staleTime } = component.onLoad ?? {};
@@ -32,9 +32,7 @@ export const ContainerComponent = forwardRef(
       componentProps?.style?.borderRightWidth;
     const shouldRemoveBorder = isLive || isPreviewMode || hasBorder;
 
-    const [data, setData] = useState(
-      dataType === "static" ? component.props?.data : [],
-    );
+    const [data, setData] = useState(component.props?.data ?? []);
 
     const { data: response } = useEndpoint({
       endpointId,
@@ -42,7 +40,7 @@ export const ContainerComponent = forwardRef(
     });
 
     useEffect(() => {
-      if (dataType === "dynamic") {
+      if (endpointId) {
         if (!response) {
           setData([]);
         } else {
@@ -51,7 +49,7 @@ export const ContainerComponent = forwardRef(
         }
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [resultsKey, dataType, response]);
+    }, [resultsKey, response, endpointId]);
 
     return (
       <MantineFlex
@@ -67,10 +65,8 @@ export const ContainerComponent = forwardRef(
         bg={bg}
       >
         <LoadingOverlay visible={loading} overlayBlur={2} />
-        {data &&
-          !isEmpty(data) &&
-          data.length > 0 &&
-          data.map((item: any, repeatedIndex: number) => {
+        {endpointId &&
+          data?.map((item: any, repeatedIndex: number) => {
             return component.children && component.children.length > 0
               ? component.children?.map((child) =>
                   renderTree(
@@ -90,9 +86,7 @@ export const ContainerComponent = forwardRef(
                 )
               : children;
           })}
-        {(!data || isEmpty(data) || data.length === 0) &&
-        component.children &&
-        component.children.length > 0
+        {!endpointId && component.children && component.children.length > 0
           ? component.children?.map((child) =>
               renderTree(
                 {

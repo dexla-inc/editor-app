@@ -1,133 +1,53 @@
-import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
-import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { DataProps } from "@/components/data/type";
-import { useBindingPopover } from "@/hooks/useBindingPopover";
-import {
-  debouncedTreeComponentAttrsUpdate,
-  debouncedTreeUpdate,
-  getComponentById,
-} from "@/utils/editor";
-import { Select, Stack } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useEffect, useMemo } from "react";
-import get from "lodash.get";
-import { useEditorStore } from "@/stores/editor";
+import { Stack } from "@mantine/core";
+import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
+import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
+import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
+import { DynamicChildSettings } from "@/components/data/forms/DynamicChildSettings";
 
-export const TextData = ({ component, endpoints }: DataProps) => {
-  const editorTree = useEditorStore((state) => state.tree);
+export const TextData = ({ component, endpoints, dataType }: DataProps) => {
   const isNavLink = component.name === "NavLink";
   const isFileButton = component.name === "FileButton";
-  const { getSelectedVariable } = useBindingPopover();
-  const parentDataComponent = getComponentById(
-    editorTree.root,
-    component.parentDataComponentId,
-  );
-  const parentEndpoint = endpoints?.results?.find(
-    (e) => e.id === parentDataComponent?.onLoad.endpointId,
-  );
 
-  const itemKey = isNavLink ? "label" : isFileButton ? "name" : "children";
-
-  const form = useForm({
-    initialValues: {
-      [itemKey]: component.props?.[itemKey] ?? "",
-      hideIfDataIsEmpty: component.props?.hideIfDataIsEmpty ?? false,
-      endpoint: component.props?.endpoint ?? undefined,
-      actionCode: component.props?.actionCode ?? {},
-      dataType: component.props?.dataType ?? "static",
-      variable: component.props?.variable ?? "",
-      initiallyOpened: true,
+  const staticFields = [
+    {
+      name: isNavLink ? "label" : isFileButton ? "name" : "children",
+      label: "Value",
     },
-  });
+  ];
 
-  const onLoadForm = useForm({
-    initialValues: {
-      dataValueKey: component.onLoad?.dataValueKey ?? "",
-    },
-  });
+  const dynamicFields = staticFields.map((f) => ({
+    ...f,
+    name: `${f.name}Key`,
+  }));
 
-  const setFieldValue = (key: any, value: any) => {
-    form.setFieldValue(key, value);
-    debouncedTreeUpdate(component.id, { [key]: value });
-  };
+  console.log(component.parentDataComponentId);
 
-  const setOnLoadFormFieldValue = (attrs: any) => {
-    onLoadForm.setValues(attrs);
-    debouncedTreeComponentAttrsUpdate({ onLoad: attrs });
-  };
-
-  const selectableObject = useMemo(
-    () =>
-      parentDataComponent?.onLoad?.resultsKey
-        ? get(
-            JSON.parse(parentEndpoint?.exampleResponse || "{}"),
-            parentDataComponent?.onLoad?.resultsKey,
-          )
-        : JSON.parse(parentEndpoint?.exampleResponse || "{}"),
-    [parentEndpoint?.exampleResponse, parentDataComponent?.onLoad?.resultsKey],
-  );
-
-  const selectableObjectKeys = useMemo(
-    () =>
-      Object.keys(
-        Array.isArray(selectableObject)
-          ? selectableObject[0]
-          : selectableObject,
-      ),
-    [selectableObject],
-  );
-
-  const selectedVariable = getSelectedVariable(form.values.variable);
-
-  const handleValueUpdate = () => {
-    if (selectedVariable) {
-      setFieldValue(itemKey, selectedVariable.defaultValue);
-    }
-  };
-
-  useEffect(() => {
-    handleValueUpdate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.values.variable, selectedVariable]);
+  const DynamicSettingsWrapper = !component.parentDataComponentId
+    ? DynamicSettings
+    : DynamicChildSettings;
 
   return (
-    <form>
-      <Stack spacing="xs">
-        <Select
-          label="Value"
-          data={selectableObjectKeys}
-          {...onLoadForm.getInputProps("dataValueKey")}
-          onChange={(selected) => {
-            setOnLoadFormFieldValue({ dataValueKey: selected });
-          }}
-        />
+    <Stack spacing="xs">
+      {dataType === "static" && (
+        <StaticFormFieldsBuilder fields={staticFields} component={component} />
+      )}
 
-        <ComponentToBindFromInput
-          componentId={component?.id!}
-          onPickVariable={(variable: string) =>
-            form.setFieldValue("variable", variable)
-          }
-          category="data"
-          actionData={[]}
-          javascriptCode={form.values.actionCode}
-          onChangeJavascriptCode={(javascriptCode: string, label: string) =>
-            setFieldValue(`actionCode`, {
-              ...form.values.actionCode,
-              [label]: javascriptCode,
-            })
-          }
-          size="xs"
-          label="Value"
-          {...form.getInputProps(itemKey)}
-          onChange={(e) => setFieldValue(itemKey, e.currentTarget.value)}
-        />
-
-        <VisibilityModifier
-          componentId={component.id!}
-          componentName={component.name}
-          form={form}
-        />
-      </Stack>
-    </form>
+      {dataType === "dynamic" && (
+        <DynamicSettingsWrapper
+          component={component}
+          endpoints={endpoints!}
+          customKeys={dynamicFields.map((f) => f.name)}
+        >
+          {({ form, selectableObjectKeys }) => (
+            <DynamicFormFieldsBuilder
+              form={form}
+              fields={dynamicFields}
+              selectableObjectKeys={selectableObjectKeys}
+            />
+          )}
+        </DynamicSettingsWrapper>
+      )}
+    </Stack>
   );
 };

@@ -10,6 +10,7 @@ export const jsonStructure = (props?: any): Component => {
     name: "Container",
     description: "Container",
     props: {
+      dataType: "dynamic",
       ...(rest || {}),
       gap: defaultLayoutValues.gap,
       style: {
