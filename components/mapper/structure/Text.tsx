@@ -2,6 +2,7 @@ import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
+import merge from "lodash.merge";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
@@ -18,19 +19,17 @@ export const jsonStructure = (props?: any): Component => {
     name: "Text",
     description: "Text",
     children: [],
-    props: {
-      children: content,
+    props: merge({}, defaultValues, {
+      children: "New Text",
       color: `${theme.colors.Black ? "Black.6" : "dark"}`,
       size: "sm",
-      weight: "normal",
-      dataType: "static",
       style: {
-        ...defaultValues,
         lineHeight: "110%",
         letterSpacing: "0px",
+        fontWeight: "normal",
       },
       ...(props.props || {}),
-    },
+    }),
     blockDroppingChildrenInside: true,
   };
 };

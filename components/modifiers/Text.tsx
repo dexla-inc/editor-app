@@ -49,15 +49,10 @@ const defaultTextValues = requiredModifiers.text;
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const theme = useEditorStore((state) => state.theme);
-    const shadow = selectedComponent?.props?.style?.textShadow;
-    const getShadowStyle = (shadow: string) => {
-      // Parsing existing boxShadow style into separate parts
-      const textShadow =
-        typeof shadow === "string"
-          ? shadow
-          : Object.values(defaultTextValues.textShadow).join(" ");
 
-      const values = textShadow.split(/\s+/);
+    const shadow = selectedComponent?.props?.style?.textShadow ?? "";
+    const getShadowStyle = (shadow: string) => {
+      const values = shadow.split(/\s+/);
 
       const xOffset = values[0];
       const yOffset = values[1];
@@ -66,58 +61,40 @@ export const Modifier = withModifier(
 
       return { xOffset, yOffset, blur, shadowColor };
     };
+    const isTitle = selectedComponent?.name === "Title";
 
-    const [showTruncateProp, { open, close }] = useDisclosure(false);
     const [addShadow, { open: add, close: remove }] = useDisclosure(false);
     const { xOffset, yOffset, blur, shadowColor } = getShadowStyle(shadow);
 
     const data = pick(selectedComponent.props!, [
       "children",
+      "align",
       "style",
       "color",
       "size",
-      "weight",
-      "hideIfDataIsEmpty",
       "tt",
       "td",
       "truncate",
       "order",
     ]);
 
-    const form = useForm();
-
-    useEffect(() => {
-      form.setValues(
-        merge({}, defaultTextValues, {
-          order: data.order?.toString() ?? defaultTextValues.order,
-          color: data.color ?? defaultTextValues.color,
-          size: data.size ?? defaultTextValues.size,
-          weight: data.weight ?? defaultTextValues.weight,
-          align: data.style?.textAlign ?? defaultTextValues.align,
-          textWrap: data.style?.whiteSpace ?? defaultTextValues.textWrap,
-          textTransform: data.tt ?? defaultTextValues.textTransform,
-          textDecoration: data.td ?? defaultTextValues.textDecoration,
-          truncate: data.truncate?.toString() ?? defaultTextValues.truncate,
-          xOffset: xOffset ?? defaultTextValues.textShadow.xOffset,
-          yOffset: yOffset ?? defaultTextValues.textShadow.yOffset,
-          blur: blur ?? defaultTextValues.textShadow.blur,
-          shadowColor:
-            getThemeColor(theme, shadowColor) ??
-            defaultTextValues.textShadow.shadowColor,
-          hideIfDataIsEmpty:
-            data.hideIfDataIsEmpty ?? defaultTextValues.hideIfDataIsEmpty,
-          ...data.style,
-        }),
-      );
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedComponent]);
-
-    useEffect(() => {
-      form.values.textWrap !== "normal" ? open() : close();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [form.values.textWrap]);
-
-    const isTitle = selectedComponent?.name === "Title";
+    const form = useForm({
+      initialValues: merge({}, defaultTextValues, {
+        ...(!isTitle && { size: data.size ?? defaultTextValues.size }),
+        order: data.order?.toString() ?? defaultTextValues.order,
+        color: data.color ?? defaultTextValues.color,
+        align: data.align ?? defaultTextValues.align,
+        whiteSpace:
+          data.style?.whiteSpace ?? defaultTextValues.style.whiteSpace,
+        textTransform: data.tt ?? defaultTextValues.tt,
+        textDecoration: data.td ?? defaultTextValues.td,
+        truncate: data.truncate?.toString() ?? defaultTextValues.truncate,
+        xOffset: xOffset ?? "0px",
+        yOffset: yOffset ?? "0px",
+        blur: blur ?? "0px",
+        shadowColor: getThemeColor(theme, shadowColor),
+      }),
+    });
 
     return (
       <form>
@@ -155,8 +132,9 @@ export const Modifier = withModifier(
                   debouncedTreeUpdate(selectedComponentIds, {
                     order: parseInt(value as string, 10),
                     style: {
-                      fontSize: `${size.fontSize}px`,
+                      fontSize: size.fontSize,
                       lineHeight: size.lineHeight,
+                      fontWeight: size.fontWeight,
                     },
                   });
                 }}
@@ -195,9 +173,9 @@ export const Modifier = withModifier(
                   height: "100%",
                 },
               }}
-              {...form.getInputProps("textWrap")}
+              {...form.getInputProps("whiteSpace")}
               onChange={(value) => {
-                form.setFieldValue("textWrap", value as string);
+                form.setFieldValue("whiteSpace", value as string);
                 debouncedTreeUpdate(selectedComponentIds, {
                   style: { whiteSpace: value },
                   truncate: value === "normal" ? false : true,
@@ -366,6 +344,7 @@ export const Modifier = withModifier(
               }}
               {...form.getInputProps("textDecoration")}
               onChange={(value) => {
+                console.log({ value });
                 form.setFieldValue("textDecoration", value as string);
                 debouncedTreeUpdate(selectedComponentIds, { td: value });
               }}

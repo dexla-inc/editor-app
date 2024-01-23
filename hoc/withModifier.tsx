@@ -73,7 +73,7 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
 
     const component = findIntersectedKeyValues(mergedCustomData as Component[]);
 
-    if (!initiallyOpened) {
+    if (!initiallyOpened || !selectedComponentIds?.length) {
       return null;
     }
 
