@@ -3,19 +3,10 @@ import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries-no
 import { PageResponse } from "@/requests/pages/types";
 import { getByDomain } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
+import { isLiveUrl } from "@/utils/common";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
-
-export function isMatchingUrl(url: string): boolean {
-  // check if url follow the pattern: 7eacfa0cbb8b406cbc2b40085b9c37a4.dexla.io or 7eacfa0cbb8b406cbc2b40085b9c37a4.dexla.ai
-  // where 7eacfa0cbb8b406cbc2b40085b9c37a4 is the project id and can be any string that contains only letters and numbers,
-  // but always has 32 characters and a mix of letters and numbers
-  const pattern = new RegExp(
-    "^[a-zA-Z0-9]{32}\\.dexla\\.(io|ai|localhost:3000)$",
-  );
-  return pattern.test(url);
-}
 
 export const getServerSideProps = async ({
   req,
@@ -23,7 +14,7 @@ export const getServerSideProps = async ({
 }: GetServerSidePropsContext) => {
   const url = req.headers.host;
   let id = "";
-  if (isMatchingUrl(url!) || url?.endsWith(".localhost:3000")) {
+  if (isLiveUrl(url!)) {
     id = url?.split(".")[0] as string;
   } else {
     const project = await getByDomain(url!);

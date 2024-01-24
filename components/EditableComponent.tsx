@@ -14,7 +14,7 @@ import { useTriggers } from "@/hooks/useTriggers";
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { BoxProps } from "@mantine/core";
-import { PropsWithChildren, cloneElement, useEffect } from "react";
+import { PropsWithChildren, cloneElement } from "react";
 
 type Props = {
   id: string;
@@ -99,15 +99,16 @@ export const EditableComponent = ({
   );
 
   // Could this be encapsulated in its own file?
-  useEffect(() => {
-    if (
-      component.parentDataComponentId !== shareableContent.parentDataComponentId
-    ) {
-      updateTreeComponentAttrs([component.id!], {
-        parentDataComponentId: shareableContent.parentDataComponentId,
-      });
-    }
-  }, [shareableContent.parentDataComponentId]);
+  // Commenting out for now as error in deployed apps Cannot read properties of undefined (reading 'parentDataComponentId')
+  // useEffect(() => {
+  //   if (
+  //     component.parentDataComponentId !== shareableContent.parentDataComponentId
+  //   ) {
+  //     updateTreeComponentAttrs([component.id!], {
+  //       parentDataComponentId: shareableContent.parentDataComponentId,
+  //     });
+  //   }
+  // }, [shareableContent.parentDataComponentId]);
 
   return (
     <>

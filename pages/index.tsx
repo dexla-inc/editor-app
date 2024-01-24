@@ -1,9 +1,9 @@
 import { Live } from "@/components/Live";
-import { isMatchingUrl } from "@/pages/[page]";
 import { getMostRecentDeployment } from "@/requests/deployments/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
 import { getByDomain } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
+import { isLiveUrl } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
@@ -15,7 +15,7 @@ export const getServerSideProps = async ({
   const url = req.headers.host;
 
   let id = "";
-  if (isMatchingUrl(url!) || url?.endsWith(".localhost:3000")) {
+  if (isLiveUrl(url!)) {
     id = url?.split(".")[0] as string;
   } else {
     const project = await getByDomain(url!);

@@ -14,7 +14,6 @@ export const LiveWrapper = ({ children, projectId, ...props }: Props) => {
   const [customCode, setCustomCode] = useState<any | null>(null);
   const theme = useUserTheme(projectId);
   const { data: project } = useProjectQuery(projectId);
-  // const isRouteChanging = useRouteChange();
 
   const w = typeof window !== "undefined" ? window : undefined;
   const mountNode = w?.document.body;

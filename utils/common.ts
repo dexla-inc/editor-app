@@ -74,3 +74,13 @@ export function getObjectAndArrayKeys(obj: any, prefix = "") {
 
   return keys;
 }
+
+// check if url follow the pattern: 7eacfa0cbb8b406cbc2b40085b9c37a4.dexla.io or 7eacfa0cbb8b406cbc2b40085b9c37a4.dexla.ai
+// where 7eacfa0cbb8b406cbc2b40085b9c37a4 is the project id and can be any string that contains only letters and numbers,
+// but always has 32 characters and a mix of letters and numbers
+export function isLiveUrl(baseUrl: string): boolean {
+  const pattern = new RegExp(
+    "^[a-zA-Z0-9]{32}\\.dexla\\.(io|ai|localhost:3000)$",
+  );
+  return pattern.test(baseUrl) || baseUrl?.endsWith(".localhost:3000");
+}
