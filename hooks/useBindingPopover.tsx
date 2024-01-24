@@ -103,15 +103,7 @@ export const useBindingPopover = () => {
   });
 
   // create auth list for binding
-  const authData = Object.entries(authState).map(([key, value]) => {
-    const isObject = typeof value === "object";
-    return {
-      id: key,
-      name: key,
-      value: isObject ? JSON.stringify(value) : value,
-      type: isObject ? "OBJECT" : "STRING",
-    };
-  });
+  const authData = ([] as any[]).concat([authState]);
 
   const handleVariableType = ({
     item,
@@ -221,8 +213,7 @@ export const useBindingPopover = () => {
       setSelectedItem(
         `${prefixWithReturnIfNeeded(javascriptCode)}auth['${item}']`,
       );
-      onPickVariable &&
-        onPickVariable(authData.find((auth) => auth.id === item)?.value);
+      onPickVariable && onPickVariable(`auth_${item}`);
     }
   };
 

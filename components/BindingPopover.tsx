@@ -310,32 +310,35 @@ export default function BindingPopover({
           {tab === "components" ? (
             <DataTree
               filterKeyword={filterKeyword}
-              variables={Object.values(inputComponents?.list)}
+              dataItems={Object.values(inputComponents?.list)}
               onItemSelection={(item: string) => onSetItem(tab, item)}
+              type="components"
             />
           ) : tab === "variables" ? (
             <DataTree
               filterKeyword={filterKeyword}
-              variables={Object.values(variables.list)}
+              dataItems={Object.values(variables.list)}
               onItemSelection={(item: string) => onSetItem(tab, item)}
             />
           ) : tab === "actions" ? (
             <DataTree
               filterKeyword={filterKeyword}
-              variables={actionData}
+              dataItems={actionData}
               onItemSelection={(item: string) => onSetItem(tab, item)}
+              type="actions"
             />
           ) : tab === "auth" ? (
             <DataTree
               filterKeyword={filterKeyword}
-              variables={authData}
+              dataItems={authData}
               onItemSelection={(item: string) => onSetItem(tab, item)}
+              type="auth"
             />
           ) : tab === "browser" ? (
             // We may get rid of browser and store it in data
             <DataTree
               filterKeyword={filterKeyword}
-              variables={browserList}
+              dataItems={browserList}
               onItemSelection={(item: string) => onSetItem(tab, item)}
             />
           ) : null}

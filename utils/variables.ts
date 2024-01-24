@@ -33,9 +33,7 @@ export const getAuthValue = (code: string, authData: any) => {
   // auth pattern: return auth['accessToken']
   const authsRegex = /auth\['([\w]+)'\]/g;
   const parsedCode = code.replace(authsRegex, (_, authKey) => {
-    const value = authData?.find(
-      (auth: any) => auth.id === authKey || auth.name === authKey,
-    )?.value;
+    const value = authData[0][authKey];
 
     if (value === undefined) {
       return `undefined`;
