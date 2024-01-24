@@ -36,7 +36,7 @@ const TitleComponent = forwardRef(
       handleValueUpdate(component.id as string, selectedVariable);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedVariable]);
-    // console.log(componentProps);
+
     return (
       <MantineTitle
         {...contentEditableProps}

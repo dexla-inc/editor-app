@@ -9,6 +9,7 @@ export const jsonStructure = (props?: any): Component => {
     description: "Chart",
     children: [],
     props: {
+      dataType: "static",
       type: "line",
       height: "auto",
       style: {

@@ -3,7 +3,6 @@ import { useEditorStore } from "@/stores/editor";
 import { IDENTIFIER } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
-import isEmpty from "lodash.isempty";
 import { forwardRef, useEffect, useState } from "react";
 import { useEndpoint } from "@/hooks/useEndpoint";
 import get from "lodash.get";

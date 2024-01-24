@@ -2,8 +2,8 @@ import { DataProps } from "@/components/data/type";
 import { Stack } from "@mantine/core";
 import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
 import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
-import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
 import { DynamicChildSettings } from "@/components/data/forms/DynamicChildSettings";
+import { ShowAssetsLink } from "@/components/ShowAssetsLink";
 
 export const AvatarData = ({ component, endpoints, dataType }: DataProps) => {
   const staticFieldsGroup = {
@@ -13,6 +13,7 @@ export const AvatarData = ({ component, endpoints, dataType }: DataProps) => {
         label: "Source",
         placeholder: "https://example.com/image.png",
         type: "url",
+        additionalComponent: <ShowAssetsLink />,
       },
       {
         name: "children",
@@ -25,6 +26,7 @@ export const AvatarData = ({ component, endpoints, dataType }: DataProps) => {
         label: "Source",
         placeholder: "https://example.com/image.png",
         type: "url",
+        additionalComponent: <ShowAssetsLink />,
       },
       {
         name: "alt",
@@ -39,10 +41,6 @@ export const AvatarData = ({ component, endpoints, dataType }: DataProps) => {
     name: `${f.name}Key`,
   }));
 
-  const DynamicSettingsWrapper = !component.parentDataComponentId
-    ? DynamicSettings
-    : DynamicChildSettings;
-
   return (
     <Stack spacing="xs">
       {dataType === "static" && (
@@ -50,7 +48,7 @@ export const AvatarData = ({ component, endpoints, dataType }: DataProps) => {
       )}
 
       {dataType === "dynamic" && (
-        <DynamicSettingsWrapper
+        <DynamicChildSettings
           component={component}
           endpoints={endpoints!}
           customKeys={dynamicFields.map((f) => f.name)}
@@ -58,11 +56,12 @@ export const AvatarData = ({ component, endpoints, dataType }: DataProps) => {
           {({ form, selectableObjectKeys }) => (
             <DynamicFormFieldsBuilder
               form={form}
+              component={component}
               fields={dynamicFields}
               selectableObjectKeys={selectableObjectKeys}
             />
           )}
-        </DynamicSettingsWrapper>
+        </DynamicChildSettings>
       )}
     </Stack>
   );

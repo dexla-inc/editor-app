@@ -4,6 +4,7 @@ import {
 } from "@/components/data/AvatarData";
 import { SelectData as Select } from "@/components/data/SelectData";
 import { ContainerData as Container } from "@/components/data/ContainerData";
+import { ChartData as Chart } from "@/components/data/ChartData";
 import {
   TextData as Badge,
   TextData as Button,
@@ -26,4 +27,12 @@ export const dataMapper = {
   FileButton,
   Image,
   Container,
+  Form: Container,
+  Table: Container,
+  AreaChart: Chart,
+  BarChart: Chart,
+  LineChart: Chart,
+  PieChart: Chart,
+  RadarChart: Chart,
+  RadialChart: Chart,
 };
