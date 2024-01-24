@@ -62,7 +62,6 @@ import {
 } from "@/utils/editor";
 import { flattenKeys, flattenKeysWithRoot } from "@/utils/flattenKeys";
 import { executeFlow } from "@/utils/logicFlows";
-import { getParsedJSCode } from "@/utils/variables";
 import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
 import merge from "lodash.merge";
@@ -1416,10 +1415,9 @@ export const changeVariableAction = async ({
         if (action.javascriptCode === "return variables") {
           return;
         }
-        const parsedCode = getParsedJSCode(action.javascriptCode);
 
         previewNewValue = eval(
-          `function autoRunJavascriptCode() { ${parsedCode}}; autoRunJavascriptCode()`,
+          `function autoRunJavascriptCode() { ${action.javascriptCode}}; autoRunJavascriptCode()`,
         );
 
         isPreviewValueObject = typeof previewNewValue === "object";

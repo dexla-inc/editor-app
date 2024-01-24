@@ -251,6 +251,7 @@ export const useBindingPopover = () => {
     handleValuesUpdate,
     authData,
     handleAuth,
+    authState,
   };
 
   return bindingPopoverProps;

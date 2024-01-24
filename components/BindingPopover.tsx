@@ -9,7 +9,6 @@ import {
 } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import { BindingTab, BindingType } from "@/utils/types";
-import { getAuthValue, getParsedJSCode } from "@/utils/variables";
 import {
   ActionIcon,
   Box,
@@ -67,7 +66,7 @@ export default function BindingPopover({
 
   const {
     variables,
-    inputComponents,
+    inputComponents: components,
     browserList,
     handleVariables,
     selectedItem,
@@ -79,6 +78,7 @@ export default function BindingPopover({
     close: onClosePopover,
     open: onOpenPopover,
     authData,
+    authState: auth,
     handleAuth,
   } = useBindingPopover();
 
@@ -88,21 +88,16 @@ export default function BindingPopover({
         setNewValue("undefined");
       }
 
-      let parsedCode = "";
-
-      if (javascriptCode.includes("auth["))
-        parsedCode = getAuthValue(javascriptCode, authData);
-      else parsedCode = getParsedJSCode(javascriptCode);
-
       let newValue = eval(
-        `function autoRunJavascriptCode() { ${parsedCode}}; autoRunJavascriptCode()`,
+        `function autoRunJavascriptCode() { ${javascriptCode}}; autoRunJavascriptCode()`,
       );
-      setNewValue(JSON.stringify(newValue));
+      const _value = !!newValue ? JSON.stringify(newValue) : "undefined";
+      setNewValue(_value);
     } catch {
       setNewValue("undefined");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [javascriptCode, variables]);
+  }, [javascriptCode, variables, components, auth]);
 
   const openPopover = debounce(() => onOpenPopover && onOpenPopover(), 1000);
   const handleBinder = () => {
@@ -221,7 +216,7 @@ export default function BindingPopover({
                 language="typescript"
                 value={javascriptCode}
                 variables={variables.list}
-                components={inputComponents.list}
+                components={components.list}
                 onChange={onChangeJavascriptCode}
                 selectedItem={selectedItem}
               />
@@ -310,7 +305,7 @@ export default function BindingPopover({
           {tab === "components" ? (
             <DataTree
               filterKeyword={filterKeyword}
-              dataItems={Object.values(inputComponents?.list)}
+              dataItems={Object.values(components?.list)}
               onItemSelection={(item: string) => onSetItem(tab, item)}
               type="components"
             />
