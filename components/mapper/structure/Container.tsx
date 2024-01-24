@@ -1,25 +1,30 @@
-import { defaultLayoutValues } from "@/components/modifiers/Layout";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
-  const { style, ...rest } = props?.props || {};
+  const { style: propStyle, ...restProps } = props?.props || {};
+  const defaultValues = requiredModifiers.layout;
+
+  const { style: defaultStyle, ...restDefaultValues } = defaultValues;
+
+  const mergedStyle = {
+    ...defaultStyle,
+    ...propStyle,
+    width: propStyle?.width || "100%",
+    height: propStyle?.height || "auto",
+    minHeight: propStyle?.minHeight || "20px",
+  };
 
   return {
     id: nanoid(),
     name: "Container",
     description: "Container",
     props: {
-      ...(rest || {}),
-      gap: defaultLayoutValues.gap,
-      style: {
-        ...defaultLayoutValues,
-        width: "100%",
-        height: "auto",
-        minHeight: "20px",
-        ...(style || {}),
-      },
-      data: [1, 2, 34, 4],
+      ...restDefaultValues,
+      ...restProps,
+      style: mergedStyle,
+      data: restProps.data || [1, 2, 34, 4],
     },
   };
 };

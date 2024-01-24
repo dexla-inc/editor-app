@@ -1,9 +1,10 @@
+import { AssetsTextInput } from "@/components/AssetsTextInput";
 import { CardStyleSelector } from "@/components/CardStyleSelector";
 import { ColorSelector } from "@/components/ColorSelector";
 import { FocusRingSelector } from "@/components/FocusRingSelector";
 import { LoaderSelector } from "@/components/LoaderSelector";
-import { SizeSelector } from "@/components/SizeSelector";
-import { SwitchSelector } from "@/components/SwitchSelector";
+import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
+import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
 import { TypographyModal } from "@/components/navbar/EditorNavbarThemesSection/TypographyModal";
 import { useGetThemeQuery } from "@/hooks/reactQuery/useThemeQuery";
@@ -13,6 +14,7 @@ import { ThemeResponse } from "@/requests/themes/types";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE, INPUT_SIZE } from "@/utils/config";
+import { gapSizes, inputSizes, radiusSizes } from "@/utils/defaultSizes";
 import { getGoogleFonts } from "@/utils/googleFonts";
 import { useGoogleFonts } from "@flyyer/use-googlefonts";
 import {
@@ -23,7 +25,6 @@ import {
   SegmentedControl,
   Select,
   Stack,
-  TextInput,
   Title,
   useMantineTheme,
 } from "@mantine/core";
@@ -50,9 +51,10 @@ export const fontWeightLabels = {
   900: "Black",
 };
 
-export const pixelMetrics = Array.from({ length: 26 }, (_, index) =>
-  String(index * 4),
-);
+export const pixelMetrics = [
+  0, 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40,
+  42, 44, 46, 48, 54, 60, 66, 72,
+].map(String);
 
 export const EditorNavbarThemesSection =
   ({}: EditorNavbarThemesSectionProps) => {
@@ -101,6 +103,7 @@ export const EditorNavbarThemesSection =
           id: "saving-brand",
           title: "Saving Brand Failed",
           message: "Validation failed",
+          isError: true,
         });
       },
       onSuccess: () => {
@@ -115,20 +118,21 @@ export const EditorNavbarThemesSection =
 
     const form = useForm<ThemeResponse>({
       initialValues: {
-        colors: [],
-        fonts: [],
-        responsiveBreakpoints: [],
-        faviconUrl: "",
-        logoUrl: "",
-        logos: [],
-        defaultRadius: "sm",
-        defaultSpacing: "md",
-        cardStyle: "OUTLINED_ROUNDED",
-        loader: "OVAL",
-        focusRing: "DEFAULT",
-        hasCompactButtons: true,
-        defaultFont: "Arial, sans-serif",
-        theme: "LIGHT",
+        colors: userTheme?.colors ?? [],
+        fonts: userTheme?.fonts ?? [],
+        responsiveBreakpoints: userTheme?.responsiveBreakpoints ?? [],
+        faviconUrl: userTheme?.faviconUrl ?? "",
+        logoUrl: userTheme?.logoUrl ?? "",
+        logos: userTheme?.logos ?? [],
+        defaultRadius: userTheme?.defaultRadius ?? "sm",
+        defaultSpacing: userTheme?.defaultSpacing ?? "md",
+        inputSize: userTheme?.inputSize ?? "sm",
+        cardStyle: userTheme?.cardStyle ?? "OUTLINED_ROUNDED",
+        loader: userTheme?.loader ?? "OVAL",
+        focusRing: userTheme?.focusRing ?? "DEFAULT",
+        hasCompactButtons: userTheme?.hasCompactButtons ?? true,
+        defaultFont: userTheme?.defaultFont ?? "Arial, sans-serif",
+        theme: userTheme?.theme ?? "LIGHT",
       },
       validate: {},
     });
@@ -160,239 +164,232 @@ export const EditorNavbarThemesSection =
 
     return (
       <form onSubmit={form.onSubmit(onSubmit)}>
-        <>
-          <TypographyModal
-            controls={{ opened, close }}
-            form={form}
-            onSubmit={form.onSubmit(onSubmit)}
-            weightsList={weightsList}
-          />
-          <Stack spacing="xl">
-            <Stack spacing={4}>
-              <Title order={6} fw={600}>
-                Color palette
-              </Title>
-              {form.values?.colors &&
-                form.values?.colors.map(
-                  ({ friendlyName, hex, name }, index) => (
-                    <ColorSelector
-                      size={30}
-                      key={`color-${name}`}
-                      friendlyName={friendlyName}
-                      hex={hex}
-                      isDefault={form.values.colors[index].isDefault}
-                      mantineTheme={mantineTheme}
-                      onValueChange={(value) => {
-                        form.setFieldValue(
-                          `colors.${index}.friendlyName`,
-                          value.friendlyName,
-                        );
-                        form.setFieldValue(`colors.${index}.hex`, value.hex);
-                        if (!form.values.colors[index].isDefault) {
-                          form.setFieldValue(
-                            `colors.${index}.name`,
-                            value.friendlyName,
-                          );
-                        }
-                      }}
-                      deleteColor={() => {
-                        if (!form.values.colors[index].isDefault) {
-                          form.removeListItem("colors", index);
-                        }
-                      }}
-                    />
-                  ),
-                )}
-
-              <Button
-                mt="md"
-                type="button"
-                variant="outline"
-                fullWidth
-                compact
-                onClick={() =>
-                  form.insertListItem("colors", {
-                    name: "",
-                    friendlyName: "",
-                    hex: "",
-                    brightness: 0,
-                    isDefault: false,
-                  })
-                }
-              >
-                Add Color
-              </Button>
-              <Button type="submit" size="sm" fullWidth compact>
-                Save
-              </Button>
-            </Stack>
-            <Stack>
-              <Group position="apart">
-                <Title order={6} fw={600}>
-                  Typography
-                </Title>
-
-                <ActionIcon onClick={open} variant="default" radius="xs">
-                  <IconArrowsDiagonal2
-                    style={{ transform: "rotate(45deg)" }}
-                    size={ICON_SIZE}
-                  />
-                </ActionIcon>
-              </Group>
-              <SelectFont
-                label="Default Font Family"
-                {...form.getInputProps("defaultFont")}
-                onChange={(value: string) => {
-                  form.setFieldValue(`defaultFont`, value);
-                  form.values.fonts.forEach((font, index) => {
-                    if (!font.tag.toLowerCase().startsWith("h")) {
-                      form.setFieldValue(`fonts.${index}.fontFamily`, value);
-                    }
-                  });
-                }}
-              />
-              <SelectFont
-                label="Headings Font Family"
-                value={form.values.fonts[0]?.fontFamily}
-                onChange={(value: string) => {
-                  form.values.fonts.forEach((font, index) => {
-                    if (font.tag.toLowerCase().startsWith("h")) {
-                      form.setFieldValue(`fonts.${index}.fontFamily`, value);
-                    }
-                  });
-                }}
-              />
-              <SegmentedControl
-                fullWidth
-                size={INPUT_SIZE}
-                data={form.values.fonts.map((f) => f.tag).filter(Boolean)}
-                value={form.values.fonts[currentFontIndex]?.tag}
-                onChange={(value: string) => {
-                  const index = form.values.fonts.findIndex(
-                    (ft) => ft.tag === value,
-                  );
-                  setCurrentFontIndex(index);
-                }}
-              />
-              <Flex gap="sm" align="center">
-                <Select
-                  label="Weight"
-                  data={weightsList}
-                  {...form.getInputProps(
-                    `fonts.${currentFontIndex}.fontWeight`,
-                  )}
-                  size={INPUT_SIZE}
-                />
-                <Select
-                  label="Size"
-                  data={pixelMetrics}
-                  {...form.getInputProps(`fonts.${currentFontIndex}.fontSize`)}
-                  size={INPUT_SIZE}
-                />
-              </Flex>
-              <Flex align="center" gap="sm">
-                <Select
-                  label="Line Height"
-                  data={pixelMetrics}
-                  {...form.getInputProps(
-                    `fonts.${currentFontIndex}.lineHeight`,
-                  )}
-                  value={
-                    form.values.fonts[currentFontIndex]?.lineHeight === 1
-                      ? "0"
-                      : String(
-                          Math.round(
-                            (Number(
-                              form.values.fonts[currentFontIndex]?.lineHeight,
-                            ) -
-                              1) *
-                              100,
-                          ),
-                        )
-                  }
-                  onChange={(value) => {
+        <TypographyModal
+          controls={{ opened, close }}
+          form={form}
+          onSubmit={form.onSubmit(onSubmit)}
+          weightsList={weightsList}
+        />
+        <Stack spacing="xl">
+          <Stack spacing={4}>
+            <Title order={6} fw={600}>
+              Color palette
+            </Title>
+            {form.values?.colors &&
+              form.values?.colors.map(({ friendlyName, hex, name }, index) => (
+                <ColorSelector
+                  size={30}
+                  key={`color-${name}`}
+                  friendlyName={friendlyName}
+                  hex={hex}
+                  isDefault={form.values.colors[index].isDefault}
+                  mantineTheme={mantineTheme}
+                  onValueChange={(value) => {
                     form.setFieldValue(
-                      `fonts.${currentFontIndex}.lineHeight`,
-                      String(Number(value) / 100 + 1),
+                      `colors.${index}.friendlyName`,
+                      value.friendlyName,
                     );
+                    form.setFieldValue(`colors.${index}.hex`, value.hex);
+                    if (!form.values.colors[index].isDefault) {
+                      form.setFieldValue(
+                        `colors.${index}.name`,
+                        value.friendlyName,
+                      );
+                    }
                   }}
-                  size={INPUT_SIZE}
+                  deleteColor={() => {
+                    if (!form.values.colors[index].isDefault) {
+                      form.removeListItem("colors", index);
+                    }
+                  }}
                 />
-                <Select
-                  label="Letter Spacing"
-                  data={pixelMetrics}
-                  {...form.getInputProps(
-                    `fonts.${currentFontIndex}.letterSpacing`,
-                  )}
-                  size={INPUT_SIZE}
-                />
-              </Flex>
-            </Stack>
-            <Stack spacing={4}>
+              ))}
+
+            <Button
+              mt="md"
+              type="button"
+              variant="outline"
+              fullWidth
+              compact
+              onClick={() =>
+                form.insertListItem("colors", {
+                  name: "",
+                  friendlyName: "",
+                  hex: "",
+                  brightness: 0,
+                  isDefault: false,
+                })
+              }
+            >
+              Add Color
+            </Button>
+            <Button type="submit" size="sm" fullWidth compact>
+              Save
+            </Button>
+          </Stack>
+          <Stack>
+            <Group position="apart">
               <Title order={6} fw={600}>
-                General defaults
+                Typography
               </Title>
-              <CardStyleSelector
-                defaultValue={form.values.cardStyle}
-                {...form.getInputProps("cardStyle")}
+
+              <ActionIcon onClick={open} variant="default" radius="xs">
+                <IconArrowsDiagonal2
+                  style={{ transform: "rotate(45deg)" }}
+                  size={ICON_SIZE}
+                />
+              </ActionIcon>
+            </Group>
+            <SelectFont
+              label="Default Font Family"
+              {...form.getInputProps("defaultFont")}
+              onChange={(value: string) => {
+                form.setFieldValue(`defaultFont`, value);
+                form.values.fonts.forEach((font, index) => {
+                  if (!font.tag.toLowerCase().startsWith("h")) {
+                    form.setFieldValue(`fonts.${index}.fontFamily`, value);
+                  }
+                });
+              }}
+            />
+            <SelectFont
+              label="Headings Font Family"
+              value={form.values.fonts[0]?.fontFamily}
+              onChange={(value: string) => {
+                form.values.fonts.forEach((font, index) => {
+                  if (font.tag.toLowerCase().startsWith("h")) {
+                    form.setFieldValue(`fonts.${index}.fontFamily`, value);
+                  }
+                });
+              }}
+            />
+            <SegmentedControl
+              fullWidth
+              size={INPUT_SIZE}
+              data={form.values.fonts.map((f) => f.tag).filter(Boolean)}
+              value={form.values.fonts[currentFontIndex]?.tag}
+              onChange={(value: string) => {
+                const index = form.values.fonts.findIndex(
+                  (ft) => ft.tag === value,
+                );
+                setCurrentFontIndex(index);
+              }}
+            />
+            <Flex gap="sm" align="center">
+              <Select
+                label="Weight"
+                data={weightsList}
+                {...form.getInputProps(`fonts.${currentFontIndex}.fontWeight`)}
+                size={INPUT_SIZE}
+              />
+              <Select
+                label="Size"
+                data={pixelMetrics}
+                {...form.getInputProps(`fonts.${currentFontIndex}.fontSize`)}
+                size={INPUT_SIZE}
+              />
+            </Flex>
+            <Flex align="center" gap="sm">
+              <Select
+                label="Line Height"
+                data={pixelMetrics}
+                {...form.getInputProps(`fonts.${currentFontIndex}.lineHeight`)}
+                value={
+                  form.values.fonts[currentFontIndex]?.lineHeight === 1
+                    ? "0"
+                    : String(
+                        Math.round(
+                          (Number(
+                            form.values.fonts[currentFontIndex]?.lineHeight,
+                          ) -
+                            1) *
+                            100,
+                        ),
+                      )
+                }
                 onChange={(value) => {
-                  form.setFieldValue("cardStyle", value as CardStyle);
-                  setUsersTheme({
-                    ...usersTheme,
-                    cardStyle: value as CardStyle,
-                  });
+                  form.setFieldValue(
+                    `fonts.${currentFontIndex}.lineHeight`,
+                    String(Number(value) / 100 + 1),
+                  );
                 }}
                 size={INPUT_SIZE}
               />
-
-              <SizeSelector
-                label="Default border edges"
-                defaultValue={form.values.defaultRadius}
-                {...form.getInputProps("defaultRadius")}
+              <Select
+                label="Letter Spacing"
+                data={pixelMetrics}
+                {...form.getInputProps(
+                  `fonts.${currentFontIndex}.letterSpacing`,
+                )}
                 size={INPUT_SIZE}
               />
-              <SizeSelector
-                label="Default spacing"
-                defaultValue={form.values.defaultSpacing}
-                {...form.getInputProps("defaultSpacing")}
-                size={INPUT_SIZE}
-              />
-              <SwitchSelector
-                topLabel="Compact buttons"
-                checked={form.values.hasCompactButtons}
-                {...form.getInputProps("hasCompactButtons")}
-              />
-              <LoaderSelector
-                defaultValue={form.values.loader}
-                {...form.getInputProps("loader")}
-                size={INPUT_SIZE}
-              />
-              <FocusRingSelector
-                defaultValue={form.values.focusRing}
-                {...form.getInputProps("focusRing")}
-                size={INPUT_SIZE}
-              />
-
-              <TextInput
-                label="Favicon"
-                placeholder="https://example.com/favicon.ico"
-                defaultValue={form.values.faviconUrl}
-                {...form.getInputProps("faviconUrl")}
-                size={INPUT_SIZE}
-              />
-              <TextInput
-                label="Logo"
-                placeholder="https://example.com/logo.png"
-                defaultValue={form.values.logoUrl}
-                {...form.getInputProps("logoUrl")}
-                size={INPUT_SIZE}
-              />
-            </Stack>
+            </Flex>
           </Stack>
-          <Button type="submit" size="sm" fullWidth my="xl" compact>
-            Save
-          </Button>
-        </>
+          <Stack spacing={4}>
+            <Title order={6} fw={600}>
+              General defaults
+            </Title>
+            <CardStyleSelector
+              defaultValue={form.values.cardStyle}
+              {...form.getInputProps("cardStyle")}
+              onChange={(value) => {
+                form.setFieldValue("cardStyle", value as CardStyle);
+                setUsersTheme({
+                  ...usersTheme,
+                  cardStyle: value as CardStyle,
+                });
+              }}
+              size={INPUT_SIZE}
+            />
+            <SegmentedControlSizes
+              sizing={radiusSizes}
+              label="Default border edges"
+              defaultValue={form.values.defaultRadius}
+              {...form.getInputProps("defaultRadius")}
+            />
+            <SegmentedControlSizes
+              sizing={gapSizes}
+              label="Default spacing"
+              defaultValue={form.values.defaultSpacing}
+              {...form.getInputProps("defaultSpacing")}
+            />
+            <SegmentedControlSizes
+              sizing={inputSizes}
+              label="Input size"
+              defaultValue={form.values.inputSize}
+              {...form.getInputProps("inputSize")}
+            />
+            <SegmentedControlYesNo
+              label="Compact buttons"
+              {...form.getInputProps("hasCompactButtons")}
+            />
+            <LoaderSelector
+              defaultValue={form.values.loader}
+              {...form.getInputProps("loader")}
+              size={INPUT_SIZE}
+            />
+            <FocusRingSelector
+              defaultValue={form.values.focusRing}
+              {...form.getInputProps("focusRing")}
+              size={INPUT_SIZE}
+            />
+            <AssetsTextInput
+              label="Logo"
+              placeholder="https://example.com/logo.png"
+              defaultValue={form.values.logoUrl}
+              {...form.getInputProps("logoUrl")}
+            />
+            <AssetsTextInput
+              label="Favicon"
+              placeholder="https://example.com/favicon.ico"
+              defaultValue={form.values.faviconUrl}
+              {...form.getInputProps("faviconUrl")}
+            />
+          </Stack>
+        </Stack>
+        <Button type="submit" size="sm" fullWidth my="xl" compact>
+          Save
+        </Button>
       </form>
     );
   };

@@ -1,19 +1,19 @@
-import { Divider, Flex, Select, Text, TextInput } from "@mantine/core";
-import { IconDatabase } from "@tabler/icons-react";
-import { SidebarSection } from "@/components/SidebarSection";
+import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
 import { EndpointSelect } from "@/components/EndpointSelect";
-import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
+import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
+import { SidebarSection } from "@/components/SidebarSection";
 import { Endpoint } from "@/requests/datasources/types";
-import { useForm } from "@mantine/form";
+import { PagingResponse } from "@/requests/types";
 import { useInputsStore } from "@/stores/inputs";
 import { getObjectAndArrayKeys } from "@/utils/common";
-import { useEffect, useState } from "react";
-import { PagingResponse } from "@/requests/types";
-import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
-import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
-import { pick } from "next/dist/lib/pick";
-import get from "lodash.get";
 import { DEFAULT_STALE_TIME } from "@/utils/config";
+import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
+import { Divider, Flex, Select, Text, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { IconDatabase } from "@tabler/icons-react";
+import get from "lodash.get";
+import { pick } from "next/dist/lib/pick";
+import { useEffect, useState } from "react";
 
 type Props = {
   component: Component;
@@ -106,10 +106,10 @@ export const DynamicSettings = ({
           <Flex align="end" gap="xs" justify="space-between">
             <SegmentedControlYesNo
               label="Cache Request"
-              value={form.values.staleTime === 0 ? "false" : "true"}
+              value={form.values.staleTime === 0 ? false : true}
               onChange={(value) => {
                 form.setValues({
-                  staleTime: value === "false" ? 0 : DEFAULT_STALE_TIME,
+                  staleTime: value === false ? 0 : DEFAULT_STALE_TIME,
                 });
               }}
             />

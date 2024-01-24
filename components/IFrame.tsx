@@ -1,6 +1,5 @@
 import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { useUserTheme } from "@/hooks/useUserTheme";
-import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { decodeSchema } from "@/utils/compression";
@@ -30,7 +29,7 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
-  const isLoading = useAppStore((state) => state.isLoading);
+  const [isLoading, setIsLoading] = useState(true);
   const { data: project } = useProjectQuery(projectId);
 
   const theme = useUserTheme(projectId);
@@ -85,6 +84,7 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
   ]);
 
   useEffect(() => {
+    setIsLoading(false);
     const w = contentRef?.contentWindow;
     if (w) {
       setIframeWindow(w);

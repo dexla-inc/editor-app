@@ -235,7 +235,8 @@ const defaultTheme: MantineThemeExtended = {
   loader: "oval",
   cardStyle: "OUTLINED_ROUNDED",
   defaultSpacing: "md",
-  defaultRadius: "md",
+  defaultRadius: "xl",
+  inputSize: "sm",
   theme: "LIGHT",
 };
 

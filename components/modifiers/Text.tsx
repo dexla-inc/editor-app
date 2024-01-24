@@ -9,15 +9,7 @@ import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import {
-  ActionIcon,
-  Flex,
-  Group,
-  SegmentedControl,
-  Select,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { ActionIcon, Flex, SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -39,7 +31,7 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { useEffect } from "react";
+import { SegmentedControlInput } from "../SegmentedControlInput";
 
 export const icon = IconTextSize;
 export const label = "Content";
@@ -111,36 +103,33 @@ export const Modifier = withModifier(
               }}
             />
           )}
-          <Group noWrap>
-            {isTitle && (
-              <Select
-                label="Order"
-                size="xs"
-                data={[
-                  { label: "H1", value: "1" },
-                  { label: "H2", value: "2" },
-                  { label: "H3", value: "3" },
-                  { label: "H4", value: "4" },
-                  { label: "H5", value: "5" },
-                  { label: "H6", value: "6" },
-                ]}
-                {...form.getInputProps("order")}
-                onChange={(value) => {
-                  // @ts-ignore
-                  const size = theme.headings.sizes[`h${value}`];
-                  form.setFieldValue("order", value as string);
-                  debouncedTreeUpdate(selectedComponentIds, {
-                    order: parseInt(value as string, 10),
-                    style: {
-                      fontSize: size.fontSize,
-                      lineHeight: size.lineHeight,
-                      fontWeight: size.fontWeight,
-                    },
-                  });
-                }}
-              />
-            )}
-          </Group>
+          {isTitle && (
+            <SegmentedControlInput
+              label="Tag"
+              data={[
+                { label: "H1", value: "1" },
+                { label: "H2", value: "2" },
+                { label: "H3", value: "3" },
+                { label: "H4", value: "4" },
+                { label: "H5", value: "5" },
+                { label: "H6", value: "6" },
+              ]}
+              {...form.getInputProps("order")}
+              onChange={(value) => {
+                // @ts-ignore
+                const size = theme.headings.sizes[`h${value}`];
+                form.setFieldValue("order", value as string);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  order: parseInt(value as string, 10),
+                  style: {
+                    fontSize: size.fontSize,
+                    lineHeight: size.lineHeight,
+                    fontWeight: size.fontWeight,
+                  },
+                });
+              }}
+            />
+          )}
           <Stack w="100%" spacing={2}>
             <TopLabel text="Text Wrap" />
             <SegmentedControl
@@ -344,7 +333,6 @@ export const Modifier = withModifier(
               }}
               {...form.getInputProps("textDecoration")}
               onChange={(value) => {
-                console.log({ value });
                 form.setFieldValue("textDecoration", value as string);
                 debouncedTreeUpdate(selectedComponentIds, { td: value });
               }}

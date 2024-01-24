@@ -79,6 +79,7 @@ export const useUserTheme = (projectId: string) => {
           defaultRadius:
             userTheme.data?.defaultRadius ?? defaultTheme.radius.md,
           theme: userTheme.data?.theme ?? defaultTheme.theme,
+          inputSize: userTheme.data?.inputSize ?? defaultTheme.inputSize,
         });
       }
     };

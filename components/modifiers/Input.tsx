@@ -1,8 +1,9 @@
 import { IconSelector } from "@/components/IconSelector";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
-import { SizeSelector } from "@/components/SizeSelector";
 import { withModifier } from "@/hoc/withModifier";
+import { useEditorStore } from "@/stores/editor";
 import { INPUT_TYPES_DATA } from "@/utils/dashboardTypes";
+import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack, TextInput } from "@mantine/core";
@@ -10,6 +11,7 @@ import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { SegmentedControlSizes } from "../SegmentedControlSizes";
 
 export const icon = IconForms;
 export const label = "Input";
@@ -17,11 +19,12 @@ export const label = "Input";
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm();
+    const theme = useEditorStore((state) => state.theme);
 
     useEffect(() => {
       form.setValues(
         merge({}, requiredModifiers.input, {
-          size: selectedComponent?.props?.size,
+          size: selectedComponent?.props?.size ?? theme.inputSize,
           placeholder: selectedComponent?.props?.placeholder,
           type: selectedComponent?.props?.type,
           icon: selectedComponent?.props?.icon,
@@ -58,7 +61,9 @@ export const Modifier = withModifier(
               });
             }}
           />
-          <SizeSelector
+          <SegmentedControlSizes
+            label="Size"
+            sizing={inputSizes}
             {...form.getInputProps("size")}
             onChange={(value) => {
               form.setFieldValue("size", value as string);

@@ -2,7 +2,7 @@ import { SectionId } from "@/components/navbar/EditorNavbarSections";
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
 import { CardStyle } from "@/requests/projects/types";
-import { Logo } from "@/requests/themes/types";
+import { Logo, ResponsiveBreakpoint } from "@/requests/themes/types";
 import { Action } from "@/utils/actions";
 import { defaultTheme } from "@/utils/branding";
 import { encodeSchema } from "@/utils/compression";
@@ -22,7 +22,7 @@ import {
 import { requiredModifiers } from "@/utils/modifiers";
 import { createClient } from "@liveblocks/client";
 import { WithLiveblocks, liveblocks } from "@liveblocks/zustand";
-import { MantineNumberSize, MantineTheme } from "@mantine/core";
+import { MantineSize, MantineTheme } from "@mantine/core";
 import { User } from "@propelauth/react";
 import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
@@ -86,15 +86,20 @@ export const emptyEditorTree = {
   },
 };
 
+// Copy the properties from ThemeMutationParams
 export interface MantineThemeExtended extends MantineTheme {
-  logoUrl?: string;
-  faviconUrl?: string;
-  logos?: Logo[];
+  //fonts: Font[];
+  defaultRadius: MantineSize;
+  defaultSpacing: MantineSize;
+  inputSize: MantineSize;
   defaultFont?: string;
   hasCompactButtons?: boolean;
   cardStyle?: CardStyle;
-  defaultSpacing?: MantineNumberSize;
   theme: "LIGHT" | "DARK";
+  responsiveBreakpoints?: ResponsiveBreakpoint[];
+  faviconUrl?: string;
+  logoUrl?: string;
+  logos?: Logo[];
 }
 
 export type ComponentToBind = {
