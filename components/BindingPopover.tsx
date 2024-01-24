@@ -66,20 +66,17 @@ export default function BindingPopover({
 
   const {
     variables,
-    inputComponents: components,
+    components,
     browserList,
     handleVariables,
     selectedItem,
-    handleComponents,
-    handleBrowser,
-    handleActions,
     opened,
     toggle: onTogglePopover,
     close: onClosePopover,
     open: onOpenPopover,
     authData,
-    authState: auth,
-    handleAuth,
+    handleContext,
+    bindableContexts,
   } = useBindingPopover();
 
   useEffect(() => {
@@ -89,14 +86,18 @@ export default function BindingPopover({
       }
 
       let newValue = eval(
-        `function autoRunJavascriptCode() { ${javascriptCode}}; autoRunJavascriptCode()`,
+        `function autoRunJavascriptCode(components, auth) { ${javascriptCode} }` +
+          `autoRunJavascriptCode(${bindableContexts
+            .map((c) => JSON.stringify(c))
+            .join(",")})`,
       );
+
       const _value = !!newValue ? JSON.stringify(newValue) : "undefined";
       setNewValue(_value);
     } catch {
       setNewValue("undefined");
     }
-  }, [javascriptCode, variables, components, auth]);
+  }, [javascriptCode, variables, bindableContexts]);
 
   const openPopover = debounce(() => onOpenPopover && onOpenPopover(), 1000);
   const handleBinder = () => {
@@ -123,15 +124,27 @@ export default function BindingPopover({
 
   const onSetItem = (itemType: BindingTab, item: string) => {
     if (itemType === "components") {
-      handleComponents({ item, onPickComponent, javascriptCode });
+      handleContext("components")({
+        item,
+        onPick: onPickComponent,
+        javascriptCode,
+      });
     } else if (itemType === "variables") {
       handleVariables({ item, category, onPickVariable, javascriptCode });
     } else if (itemType === "browser") {
-      handleBrowser(item);
+      handleContext("browser")({
+        item,
+        onPick: onPickVariable,
+        javascriptCode,
+      });
     } else if (itemType === "actions") {
-      handleActions({ item, onPickVariable });
+      handleContext("actions")({
+        item,
+        onPick: onPickVariable,
+        javascriptCode,
+      });
     } else if (itemType === "auth") {
-      handleAuth({ item, onPickVariable, javascriptCode });
+      handleContext("auth")({ item, onPick: onPickVariable, javascriptCode });
     }
   };
 

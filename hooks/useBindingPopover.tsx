@@ -23,21 +23,16 @@ type VariableTypeProps = Omit<VariableProps, "javascriptCode"> & {
   error?: boolean;
 };
 
-type ActionsType = {
-  item: string;
-  onPickVariable: any;
-};
-
 type ComponentsType = {
   item: string;
   javascriptCode: string;
   onPickComponent: any;
 };
 
-type AuthType = {
+type BindType = {
   item: string;
   javascriptCode: string;
-  onPickVariable: any;
+  onPick: any;
 };
 
 const prefixWithReturnIfNeeded = (code: string) =>
@@ -51,7 +46,7 @@ export const useBindingPopover = () => {
   const variablesList = useVariableStore((state) => state.variableList);
   const getAuthState = useDataSourceStore((state) => state.getAuthState);
   const browser = useRouter();
-  const authState = getAuthState();
+  const auth = getAuthState();
 
   // create variables list for binding
   const variables = variablesList.reduce(
@@ -70,7 +65,7 @@ export const useBindingPopover = () => {
   );
 
   // create a list for input components for binding
-  const inputComponents = getAllComponentsByName(editorTree.root, [
+  const components = getAllComponentsByName(editorTree.root, [
     "Input",
     "Select",
     "Checkbox",
@@ -102,7 +97,7 @@ export const useBindingPopover = () => {
   });
 
   // create auth list for binding
-  const authData = ([] as any[]).concat([authState]);
+  const authData = ([] as any[]).concat([auth]);
 
   const handleVariableType = ({
     item,
@@ -168,53 +163,31 @@ export const useBindingPopover = () => {
     }
   };
 
-  const handleComponents = ({
-    item,
-    javascriptCode,
-    onPickComponent,
-  }: ComponentsType) => {
-    setSelectedItem(
-      `${prefixWithReturnIfNeeded(
-        javascriptCode,
-      )}components[/* ${inputComponents?.list[item].description} */'${item}']`,
-    );
-    onPickComponent && onPickComponent(item);
-  };
-
-  const handleBrowser = (item: string) => {
-    try {
-      const parsed = JSON.parse(item);
-      setSelectedItem(`browser['${parsed.id}'].${parsed.path}`);
-    } catch {
-      setSelectedItem(`browser['${item}']`);
-    }
-  };
-
-  const handleActions = ({ item, onPickVariable }: ActionsType) => {
-    try {
-      const parsed = JSON.parse(item);
-      setSelectedItem(`actions['${parsed.id}'].${parsed.path}`);
-    } catch {
-      setSelectedItem(`actions['${item}']`);
-      onPickVariable && onPickVariable(item);
-    }
-  };
-
-  const handleAuth = ({ item, onPickVariable, javascriptCode }: AuthType) => {
-    try {
-      const parsed = JSON.parse(item);
-      setSelectedItem(
-        `${prefixWithReturnIfNeeded(javascriptCode)}auth['${parsed.id}'].${
-          parsed.path
-        }`,
-      );
-    } catch {
-      setSelectedItem(
-        `${prefixWithReturnIfNeeded(javascriptCode)}auth['${item}']`,
-      );
-      onPickVariable && onPickVariable(`auth_${item}`);
-    }
-  };
+  const handleContext =
+    (context: "auth" | "components" | "browser" | "actions") =>
+    ({ item, onPick, javascriptCode }: BindType) => {
+      const pickedItem = context === "components" ? item : `${context}_${item}`;
+      const contextDescription =
+        context === "components"
+          ? "/* ${inputComponents?.list[item].description} */"
+          : "";
+      try {
+        const parsed = JSON.parse(item);
+        setSelectedItem(
+          `${prefixWithReturnIfNeeded(
+            javascriptCode,
+          )}${context}[${contextDescription}'${parsed.id}'].${parsed.path}`,
+        );
+      } catch {
+        setSelectedItem(
+          `${prefixWithReturnIfNeeded(
+            javascriptCode,
+          )}${context}[${contextDescription}'${item}']`,
+        );
+      } finally {
+        onPick && onPick(pickedItem);
+      }
+    };
 
   const getSelectedVariable = (id: string) =>
     variablesList.find((varItem) => varItem.id === id);
@@ -237,20 +210,17 @@ export const useBindingPopover = () => {
     close,
     open,
     variables,
-    inputComponents,
+    components,
     browserList,
     handleVariables,
-    handleComponents,
     selectedItem,
-    handleBrowser,
-    handleActions,
     getSelectedVariable,
     variablesList,
     handleValueUpdate,
     handleValuesUpdate,
     authData,
-    handleAuth,
-    authState,
+    bindableContexts: [components, auth],
+    handleContext,
   };
 
   return bindingPopoverProps;
