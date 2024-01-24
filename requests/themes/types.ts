@@ -1,4 +1,5 @@
 import { CardStyle, FocusRing, LoaderType } from "@/requests/projects/types";
+import { MantineSize } from "@mantine/core";
 
 export type ThemeQueryParams = {
   websiteUrl?: string;
@@ -11,13 +12,14 @@ export type ThemeMutationParams = {
   faviconUrl: string;
   logoUrl: string;
   logos: Logo[];
-  defaultRadius: string;
-  defaultSpacing: string;
+  defaultRadius: MantineSize;
+  defaultSpacing: MantineSize;
+  inputSize: MantineSize;
   defaultFont?: string;
   hasCompactButtons?: boolean;
   focusRing?: FocusRing;
   loader?: LoaderType;
-  cardStyle: CardStyle;
+  cardStyle?: CardStyle;
   theme: "LIGHT" | "DARK";
 };
 
@@ -40,7 +42,7 @@ export type Logo = {
   type: "LIGHT" | "DARK";
 };
 
-type Font = {
+export type Font = {
   fontFamily: string;
   tag: string;
   fontWeight: string;
@@ -49,7 +51,7 @@ type Font = {
   letterSpacing: number;
 };
 
-type ResponsiveBreakpoint = {
+export type ResponsiveBreakpoint = {
   type: string;
   breakpoint: string;
 };

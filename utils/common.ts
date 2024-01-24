@@ -84,3 +84,12 @@ export function isLiveUrl(baseUrl: string): boolean {
   );
   return pattern.test(baseUrl) || baseUrl?.endsWith(".localhost:3000");
 }
+
+export function remToPixelUnit(rem: string) {
+  const remValue = parseFloat(rem);
+  const rootFontSize = parseFloat(
+    getComputedStyle(document.documentElement).fontSize,
+  );
+
+  return `${remValue * rootFontSize}px`;
+}

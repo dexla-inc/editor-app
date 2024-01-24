@@ -29,6 +29,8 @@ type Props = {
 const InputComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
+    const theme = useEditorStore((state) => state.theme);
+
     const {
       children,
       icon,
@@ -38,11 +40,13 @@ const InputComponent = forwardRef(
       clearable,
       bg,
       textColor,
+      size,
       ...componentProps
     } = component.props as any;
     const { name: iconName } = icon && icon!.props!;
     const { type, ...restComponentProps } = componentProps;
     const { color, backgroundColor } = useChangeState({ bg, textColor });
+    const inputSize = size ?? theme.inputSize;
 
     const _defaultValue = type === "number" || type === "numberRange" ? 0 : "";
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
@@ -146,7 +150,7 @@ const InputComponent = forwardRef(
                     color,
                   },
                 }}
-                size={props.size}
+                size={inputSize}
                 value={parseToNumber(localInputValue)}
                 onChange={handleInputChange}
                 label={undefined}
@@ -166,6 +170,7 @@ const InputComponent = forwardRef(
           <MantineNumberInput
             {...props}
             {...restComponentProps}
+            size={inputSize}
             ref={ref}
             autoComplete="off"
             id={component.id}
@@ -194,6 +199,7 @@ const InputComponent = forwardRef(
           <PasswordInput
             {...props}
             {...restComponentProps}
+            size={inputSize}
             ref={ref}
             id={component.id}
             icon={iconName ? <Icon name={iconName} /> : null}
@@ -225,6 +231,7 @@ const InputComponent = forwardRef(
           <MantineInput
             {...props}
             {...componentProps}
+            size={inputSize}
             ref={ref}
             id={component.id}
             icon={iconName ? <Icon name={iconName} /> : null}

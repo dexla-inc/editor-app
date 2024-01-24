@@ -1,9 +1,11 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import isEmpty from "lodash.isempty";
+import merge from "lodash.merge";
 import { forwardRef } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { getCardStyling } from "../CardStyleSelector";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -13,6 +15,7 @@ type Props = {
 export const CardComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
     const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+    const theme = useEditorStore((state) => state.theme);
 
     const {
       children,
@@ -27,13 +30,21 @@ export const CardComponent = forwardRef(
 
     const data = !isPreviewMode ? undefined : dataProp?.value ?? dataProp;
 
+    const cardStylingProps = getCardStyling(
+      theme.cardStyle ?? "OUTLINED_ROUNDED",
+      theme.colors["Border"][6],
+      theme.defaultRadius,
+    );
+
+    const customStyle = merge(props.style, cardStylingProps);
+
     return (
       <MantineFlex
         ref={ref}
         {...props}
         {...componentProps}
         {...triggers}
-        style={{ ...props.style }}
+        style={{ ...customStyle }}
         bg={bg}
       >
         <LoadingOverlay visible={loading} overlayBlur={2} />

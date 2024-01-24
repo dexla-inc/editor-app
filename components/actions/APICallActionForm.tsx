@@ -70,7 +70,7 @@ export const APICallActionForm = ({ id }: Props) => {
 
   const form = useForm<FormValues>({
     initialValues: {
-      showLoader: action.action?.showLoader ?? "true",
+      showLoader: action.action?.showLoader ?? true,
       endpoint: action.action?.endpoint,
       selectedEndpoint: action.action?.selectedEndpoint,
       authConfig: action.action?.authConfig,

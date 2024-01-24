@@ -233,7 +233,7 @@ export interface APICallAction extends BaseAction {
   endpoint: string;
   selectedEndpoint: Endpoint;
   authConfig: Omit<DataSourceAuthResponse, "type">;
-  showLoader?: string;
+  showLoader?: boolean;
   datasources: DataSourceResponse[];
   binds?: {
     header: { [key: string]: any };

@@ -1,10 +1,10 @@
-import { SizeSelector } from "@/components/SizeSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
+import { useEditorStore } from "@/stores/editor";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, SegmentedControlItem, Stack } from "@mantine/core";
+import { SegmentedControl, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconArrowNarrowDown,
@@ -22,7 +22,8 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { SegmentedControlSizes } from "../SegmentedControlSizes";
 
 export const icon = IconLayout2;
 export const label = "Layout";
@@ -30,7 +31,7 @@ export const label = "Layout";
 export let GROW_FLEX_DEFAULT = "1 0 auto";
 export let SHRINK_FLEX_DEFAULT = "0 1 auto";
 
-export const defaultLayoutValues = requiredModifiers.layout;
+const defaultLayoutValues = requiredModifiers.layout;
 
 const justifyContentData = [
   {
@@ -112,8 +113,7 @@ const alignItemsData = [
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm();
-    const [justifyContent, setJustifyContent] =
-      useState<SegmentedControlItem[]>(justifyContentData);
+    const theme = useEditorStore((state) => state.theme);
 
     let isFlexDirectionColumn =
       selectedComponent.props?.style?.flexDirection === "column";
@@ -180,8 +180,10 @@ export const Modifier = withModifier(
               }}
             />
           </Stack>
-          <SizeSelector
+          <SegmentedControlSizes
             label="Gap"
+            sizing={theme.spacing}
+            includeZero
             {...form.getInputProps("gap")}
             onChange={(value) => {
               form.setFieldValue("gap", value as string);

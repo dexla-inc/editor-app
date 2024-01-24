@@ -1,9 +1,11 @@
-import { defaultLayoutValues } from "@/components/modifiers/Layout";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const { style, ...rest } = props?.props || {};
+
+  const defaultLayoutValues = requiredModifiers.layout;
 
   return {
     id: nanoid(),

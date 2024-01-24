@@ -113,13 +113,15 @@ export const requiredModifiers: RequiredModifiers = {
     borderWidth: "0px",
   },
   layout: {
-    display: "flex",
-    flexWrap: "nowrap",
-    flexDirection: "row",
     gap: "xs",
-    alignItems: "stretch",
-    justifyContent: "flex-start",
-    position: "relative",
+    style: {
+      display: "flex",
+      flexWrap: "nowrap",
+      flexDirection: "row",
+      alignItems: "stretch",
+      justifyContent: "flex-start",
+      position: "relative",
+    },
   },
   position: {
     position: "relative",
@@ -141,7 +143,7 @@ export const requiredModifiers: RequiredModifiers = {
     backgroundAttachment: "scroll",
   },
   input: {
-    size: "sm",
+    //size: "sm",
     showBorder: "all",
     placeholder: "Input",
     type: "text",

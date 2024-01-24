@@ -1,7 +1,7 @@
 import { getCardStyling } from "@/components/CardStyleSelector";
-import { defaultLayoutValues } from "@/components/modifiers/Layout";
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
@@ -13,6 +13,7 @@ export const jsonStructure = (props?: any): Component => {
     theme.colors["Border"][6],
     theme.defaultRadius,
   );
+  const defaultLayoutValues = requiredModifiers.layout;
 
   return {
     id: nanoid(),
