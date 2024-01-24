@@ -1,4 +1,4 @@
-import { Images } from "@/components/storage/Images";
+import { AssetImageOverview } from "@/components/storage/AssetImageOverview";
 import { ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
@@ -76,7 +76,7 @@ export const FileStorage = ({ uploadModal, closeUploadModal }: Props) => {
               </Tabs.List>
 
               <Tabs.Panel value="images" pt="sm">
-                <Images />
+                <AssetImageOverview />
               </Tabs.Panel>
 
               <Tabs.Panel value="audios" pt="sm">

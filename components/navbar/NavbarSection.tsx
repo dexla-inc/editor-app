@@ -187,6 +187,7 @@ export const NavbarSection = ({
       // bg={(theme) => (theme.co ? DARK_MODE : LIGHT_MODE)}
       top={HEADER_HEIGHT}
       p={10}
+      pr={0}
       left={NAVBAR_MIN_WIDTH}
       w={NAVBAR_WIDTH}
       h={`calc(100vh - ${HEADER_HEIGHT}px )`}

@@ -199,7 +199,7 @@ const RenderItemInner = ({ item, collapseIcon }: any) => {
   );
 };
 
-export const NavbarLayersSection = () => {
+export const EditorNavbarLayersSection = () => {
   const editorTree = useEditorStore((state) => state.tree);
 
   const isStructureCollapsed = useEditorStore(
