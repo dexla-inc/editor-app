@@ -1,3 +1,4 @@
+import { UploadMultipleResponse } from "@/requests/storage/types";
 import { getWithoutAuth } from "@/utils/apiNoAuth";
 
 export const getFile = async (projectId: string, name: string) => {
@@ -11,7 +12,7 @@ export const getFile = async (projectId: string, name: string) => {
 export const getAllFiles = async (projectId: string) => {
   let url = `/projects/${projectId}/storage`;
 
-  const response = (await getWithoutAuth<any>(url)) as any;
+  const response = (await getWithoutAuth<UploadMultipleResponse>(url)) as any;
 
   return response;
 };

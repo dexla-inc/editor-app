@@ -85,6 +85,9 @@ const theme: MantineTheme = {
         withArrow: true,
       }),
     },
+    Text: {
+      defaultProps: () => ({ size: "xs" }),
+    },
     ...defaultComponentProps,
   },
 };
@@ -139,7 +142,7 @@ const darkTheme: MantineTheme = {
       defaultProps: () => ({ color: GRAY_WHITE_COLOR }),
     },
     Text: {
-      defaultProps: () => ({ color: GRAY_WHITE_COLOR }),
+      defaultProps: () => ({ color: GRAY_WHITE_COLOR, size: "xs" }),
     },
     ...defaultComponentProps,
   },
@@ -169,6 +172,9 @@ const DARK_MODE = theme.colors.dark[7];
 const DARK_COLOR = theme.colors.dark[6];
 const LIGHT_MODE = "white";
 const BG_COLOR = isDarkTheme ? DARK_MODE : LIGHT_MODE;
+const TRANSPARENT_COLOR = isDarkTheme
+  ? "rgba(255, 255, 255, 0.1)"
+  : "rgba(0, 0, 0, 0.1)";
 const LINK_COLOR = isDarkTheme ? "teal" : "white";
 const FLEX_HOVER = isDarkTheme ? theme.colors.dark[4] : HOVERED;
 const BUTTON_HOVER = isDarkTheme ? theme.colors.dark[6] : HOVERED;
@@ -339,6 +345,7 @@ export {
   THIN_GREEN_BASE_SHADOW,
   THIN_GREEN_OUTLINE,
   THIN_ORANGE_BASE_SHADOW,
+  TRANSPARENT_COLOR,
   darkTheme,
   defaultTheme,
   flexStyles,

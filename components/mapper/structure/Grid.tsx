@@ -14,6 +14,7 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       gridSize: GRID_SIZE,
       ...initialGridValues,
+      ...(props.props || {}),
     },
     children: [
       {

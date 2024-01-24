@@ -1,7 +1,7 @@
 import { SettingsButton } from "@/components/navbar/SettingsButtons";
 import { useRouter } from "next/router";
 
-export const EditorSettingsSection = () => {
+export const EditorNavbarSettingsSection = () => {
   const router = useRouter();
 
   const settings = (

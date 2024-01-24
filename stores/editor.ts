@@ -1,9 +1,10 @@
+import { SectionId } from "@/components/navbar/EditorNavbarSections";
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
 import { CardStyle } from "@/requests/projects/types";
 import { Logo } from "@/requests/themes/types";
 import { Action } from "@/utils/actions";
-import { GRAY_OUTLINE, defaultTheme } from "@/utils/branding";
+import { defaultTheme } from "@/utils/branding";
 import { encodeSchema } from "@/utils/compression";
 import { GRID_SIZE } from "@/utils/config";
 import {
@@ -18,6 +19,7 @@ import {
   updateTreeComponentStates,
   updateTreeComponentWithOmitProps,
 } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { createClient } from "@liveblocks/client";
 import { WithLiveblocks, liveblocks } from "@liveblocks/zustand";
 import { MantineNumberSize, MantineTheme } from "@mantine/core";
@@ -34,6 +36,9 @@ const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
 });
 
+const initialGridValues = requiredModifiers.grid;
+const initialGridColumnValues = requiredModifiers.gridColumn;
+
 const initialTimestamp = Date.now();
 export const emptyEditorTree = {
   name: "Initial State",
@@ -49,8 +54,9 @@ export const emptyEditorTree = {
         description: "Body",
         props: {
           gridSize: GRID_SIZE,
-          gridDirection: "column",
+          ...initialGridValues,
           style: {
+            ...initialGridValues.style,
             gap: "0",
             minHeight: "20px",
           },
@@ -62,17 +68,15 @@ export const emptyEditorTree = {
             description: "Main Content",
             props: {
               span: GRID_SIZE,
-              gap: "sm",
+              ...initialGridColumnValues,
               style: {
-                alignSelf: "start",
-                alignContent: "baseline",
-                outline: GRAY_OUTLINE,
-                outlineOffset: "-2px",
+                ...initialGridColumnValues.style,
                 height: "100vh",
                 paddingLeft: "0px",
                 paddingTop: "0px",
                 paddingRight: "0px",
                 paddingBottom: "0px",
+                backgroundSize: "contain",
               },
             },
           },
@@ -125,7 +129,7 @@ export type EditorState = {
   isPreviewMode: boolean;
   isLive: boolean;
   isNavBarVisible: boolean;
-  activeTab?: string;
+  activeTab?: SectionId;
   isStructureCollapsed: boolean;
   pages: PageResponse[];
   pickingComponentToBindTo?: ComponentToBind;
@@ -206,7 +210,7 @@ export type EditorState = {
   setPreviewMode: (value: boolean) => void;
   setIsLive: (value: boolean) => void;
   setIsNavBarVisible: () => void;
-  setActiveTab: (activeTab?: string) => void;
+  setActiveTab: (activeTab?: SectionId) => void;
   setIsStructureCollapsed: (value: boolean) => void;
   setCopiedAction: (copiedAction?: Action[]) => void;
   // pasteAction: (componentId: string) => void;

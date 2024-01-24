@@ -134,8 +134,8 @@ export const requiredModifiers: RequiredModifiers = {
     bg: "transparent",
     bgGradient: `linear-gradient(90deg, #10D48Eff 0%, #FFFFFFff 50%, #10D48Eff 100%)`,
     backgroundImage: "",
-    backgroundSize: "contain",
-    backgroundRepeat: "repeat",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
     backgroundPositionX: "0%",
     backgroundPositionY: "0%",
     backgroundAttachment: "scroll",
@@ -434,6 +434,7 @@ export const requiredModifiers: RequiredModifiers = {
       gap: "xs",
       width: "100%",
       height: "auto",
+      backgroundRepeat: "no-repeat",
     },
   },
   gridColumn: {
@@ -448,6 +449,8 @@ export const requiredModifiers: RequiredModifiers = {
       outlineOffset: "-2px",
       gridAutoRows: "max-content",
       gridAutoFlow: "row",
+      backgroundRepeat: "no-repeat",
+      backgroundSize: "cover",
     },
   },
   navbar: {

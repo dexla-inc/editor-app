@@ -5,3 +5,5 @@ export interface UploadResponse {
 export interface UploadMultipleResponse {
   files: UploadResponse[];
 }
+
+export type FileObj = { [key: string]: any };
