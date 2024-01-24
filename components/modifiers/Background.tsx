@@ -1,17 +1,17 @@
 import { GradientPicker } from "@/components/GradientSelector";
 import { SegmentedControlInput } from "@/components/SegmentedControlInput";
-import { ShowAssetsLink } from "@/components/ShowAssetsLink";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { Box, SegmentedControl, Stack, TextInput } from "@mantine/core";
+import { SegmentedControl, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTexture } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect, useState } from "react";
+import { AssetsTextInput } from "../AssetsTextInput";
 
 export const icon = IconTexture;
 export const label = "Background";
@@ -109,23 +109,20 @@ export const Modifier = withModifier(
               setFieldValue={setFieldValue}
             />
           )}
-          <Box>
-            <TextInput
-              label="Image"
-              size="xs"
-              placeholder="https://example.com/image.png"
-              {...form.getInputProps("backgroundImage")}
-              onChange={(e) => {
-                const value = e.target.value;
-                form.setFieldValue("backgroundImage", value);
+          <AssetsTextInput
+            label="Image"
+            size="xs"
+            placeholder="https://example.com/image.png"
+            {...form.getInputProps("backgroundImage")}
+            onChange={(e) => {
+              const value = e.target.value;
+              form.setFieldValue("backgroundImage", value);
 
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { backgroundImage: `url(${value})` },
-                });
-              }}
-            />
-            <ShowAssetsLink />
-          </Box>
+              debouncedTreeUpdate(selectedComponentIds, {
+                style: { backgroundImage: `url(${value})` },
+              });
+            }}
+          />
           <SegmentedControlInput
             label="Size"
             data={[
