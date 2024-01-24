@@ -4,7 +4,6 @@ import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
 import { debouncedTreeUpdate, getAllComponentsByName } from "@/utils/editor";
 import { useDisclosure } from "@mantine/hooks";
-import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -82,7 +81,7 @@ export const useBindingPopover = () => {
     (acc, component) => {
       const value = inputsStore[component?.id!];
       component = { ...component, name: component.description! };
-      acc.list[component?.id!] = merge(component, { bindType: "component" });
+      acc.list[component?.id!] = component;
       acc[component?.id!] = value;
       return acc;
     },
