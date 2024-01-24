@@ -1,6 +1,6 @@
-import { isMatchingUrl } from "@/pages/[page]";
 import { getByDomain } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
+import { isLiveUrl } from "@/utils/common";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -13,10 +13,7 @@ export const useCheckIfIsLive = () => {
   );
 
   const url = typeof window !== "undefined" ? window.location.host : "";
-  const initialIsLive =
-    router?.asPath === "/[page]" ||
-    isMatchingUrl(url) ||
-    url.endsWith(".localhost:3000");
+  const initialIsLive = router?.asPath === "/[page]" || isLiveUrl(url);
 
   const [isLive, setIsLive] = useState(initialIsLive);
 
