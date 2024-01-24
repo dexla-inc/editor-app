@@ -96,7 +96,6 @@ export default function BindingPopover({
     } catch {
       setNewValue("undefined");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [javascriptCode, variables, components, auth]);
 
   const openPopover = debounce(() => onOpenPopover && onOpenPopover(), 1000);
