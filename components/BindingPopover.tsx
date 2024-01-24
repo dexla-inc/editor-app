@@ -2,7 +2,6 @@ import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea"
 import { DataTree } from "@/components/DataTree";
 import { Icon } from "@/components/Icon";
 import { Category, useBindingPopover } from "@/hooks/useBindingPopover";
-import { useDataSourceStore } from "@/stores/datasource";
 import {
   BG_COLOR,
   BINDER_BACKGROUND,
@@ -10,7 +9,6 @@ import {
 } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import { BindingTab, BindingType } from "@/utils/types";
-import { getParsedJSCode } from "@/utils/variables";
 import {
   ActionIcon,
   Box,
@@ -65,26 +63,20 @@ export default function BindingPopover({
   const [newValue, setNewValue] = useState<string>();
   const [tab, setTab] = useState<BindingTab>(bindingTab ?? "components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
-  const getAuthState = useDataSourceStore((state) => state.getAuthState);
-
-  const authState = getAuthState();
-
-  const authData = [];
-  authData.push(authState);
 
   const {
     variables,
-    inputComponents,
+    components,
     browserList,
     handleVariables,
     selectedItem,
-    handleComponents,
-    handleBrowser,
-    handleActions,
     opened,
     toggle: onTogglePopover,
     close: onClosePopover,
     open: onOpenPopover,
+    authData,
+    handleContext,
+    bindableContexts,
   } = useBindingPopover();
 
   useEffect(() => {
@@ -93,17 +85,19 @@ export default function BindingPopover({
         setNewValue("undefined");
       }
 
-      const parsedCode = getParsedJSCode(javascriptCode);
-
       let newValue = eval(
-        `function autoRunJavascriptCode() { ${parsedCode}}; autoRunJavascriptCode()`,
+        `function autoRunJavascriptCode(components, auth) { ${javascriptCode} }` +
+          `autoRunJavascriptCode(${bindableContexts
+            .map((c) => JSON.stringify(c))
+            .join(",")})`,
       );
-      setNewValue(JSON.stringify(newValue));
+
+      const _value = !!newValue ? JSON.stringify(newValue) : "undefined";
+      setNewValue(_value);
     } catch {
       setNewValue("undefined");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [javascriptCode, variables]);
+  }, [javascriptCode, variables, bindableContexts]);
 
   const openPopover = debounce(() => onOpenPopover && onOpenPopover(), 1000);
   const handleBinder = () => {
@@ -130,13 +124,27 @@ export default function BindingPopover({
 
   const onSetItem = (itemType: BindingTab, item: string) => {
     if (itemType === "components") {
-      handleComponents({ item, onPickComponent, javascriptCode });
+      handleContext("components")({
+        item,
+        onPick: onPickComponent,
+        javascriptCode,
+      });
     } else if (itemType === "variables") {
       handleVariables({ item, category, onPickVariable, javascriptCode });
     } else if (itemType === "browser") {
-      handleBrowser(item);
+      handleContext("browser")({
+        item,
+        onPick: onPickVariable,
+        javascriptCode,
+      });
     } else if (itemType === "actions") {
-      handleActions({ item, onPickVariable });
+      handleContext("actions")({
+        item,
+        onPick: onPickVariable,
+        javascriptCode,
+      });
+    } else if (itemType === "auth") {
+      handleContext("auth")({ item, onPick: onPickVariable, javascriptCode });
     }
   };
 
@@ -220,7 +228,7 @@ export default function BindingPopover({
                 language="typescript"
                 value={javascriptCode}
                 variables={variables.list}
-                components={inputComponents.list}
+                components={components.list}
                 onChange={onChangeJavascriptCode}
                 selectedItem={selectedItem}
               />
@@ -309,32 +317,35 @@ export default function BindingPopover({
           {tab === "components" ? (
             <DataTree
               filterKeyword={filterKeyword}
-              variables={Object.values(inputComponents?.list)}
+              dataItems={Object.values(components?.list)}
               onItemSelection={(item: string) => onSetItem(tab, item)}
+              type="components"
             />
           ) : tab === "variables" ? (
             <DataTree
               filterKeyword={filterKeyword}
-              variables={Object.values(variables.list)}
+              dataItems={Object.values(variables.list)}
               onItemSelection={(item: string) => onSetItem(tab, item)}
             />
           ) : tab === "actions" ? (
             <DataTree
               filterKeyword={filterKeyword}
-              variables={actionData}
+              dataItems={actionData}
               onItemSelection={(item: string) => onSetItem(tab, item)}
+              type="actions"
             />
           ) : tab === "auth" ? (
             <DataTree
               filterKeyword={filterKeyword}
-              variables={authData}
+              dataItems={authData}
               onItemSelection={(item: string) => onSetItem(tab, item)}
+              type="auth"
             />
           ) : tab === "browser" ? (
             // We may get rid of browser and store it in data
             <DataTree
               filterKeyword={filterKeyword}
-              variables={browserList}
+              dataItems={browserList}
               onItemSelection={(item: string) => onSetItem(tab, item)}
             />
           ) : null}
