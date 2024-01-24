@@ -1,9 +1,13 @@
-import { Select, Stack, Text, Title } from "@mantine/core";
+import { ActionIcon, Group, Select, Stack, Text, Title } from "@mantine/core";
+import { IconPlug, IconPlugOff, IconRefresh } from "@tabler/icons-react";
+import { Component } from "@/utils/editor";
+import { useEditorStore } from "@/stores/editor";
 
 type DynamicFormFieldsBuilderProps = {
   title?: string;
   subTitle?: string;
   form: any;
+  component: Component;
   fields: Array<{
     name: string;
     label: string;
@@ -16,10 +20,28 @@ type DynamicFormFieldsBuilderProps = {
 export const DynamicFormFieldsBuilder = ({
   title,
   subTitle,
+  component,
   form,
   selectableObjectKeys,
   fields,
 }: DynamicFormFieldsBuilderProps) => {
+  const updateTreeComponentAttrs = useEditorStore(
+    (state) => state.updateTreeComponentAttrs,
+  );
+  const { dataType = "static" } = component.props!;
+
+  const onClickToggleDataType = () => {
+    updateTreeComponentAttrs([component.id!], {
+      props: {
+        dataType: component.props?.dataType === "static" ? "dynamic" : "static",
+      },
+    });
+  };
+
+  const DataTypeIcon = dataType === "static" ? IconPlug : IconPlugOff;
+
+  const hasParentComponentData = component.parentDataComponentId;
+
   return (
     <Stack spacing="xs" my="xs">
       {title && (
@@ -34,12 +56,25 @@ export const DynamicFormFieldsBuilder = ({
       )}
 
       {fields.map((f) => (
-        <Select
+        <Group
           key={f.name}
-          label={f.label}
-          data={selectableObjectKeys}
-          {...form.getInputProps(f.name)}
-        />
+          noWrap
+          align="flex-end"
+          spacing={10}
+          grow={!hasParentComponentData}
+        >
+          <Select
+            key={f.name}
+            label={f.label}
+            data={selectableObjectKeys}
+            {...form.getInputProps(f.name)}
+          />
+          {hasParentComponentData && (
+            <ActionIcon onClick={onClickToggleDataType} variant="default">
+              <DataTypeIcon />
+            </ActionIcon>
+          )}
+        </Group>
       ))}
     </Stack>
   );

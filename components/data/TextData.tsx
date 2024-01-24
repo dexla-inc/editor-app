@@ -21,10 +21,6 @@ export const TextData = ({ component, endpoints, dataType }: DataProps) => {
     name: `${f.name}Key`,
   }));
 
-  const DynamicSettingsWrapper = !component.parentDataComponentId
-    ? DynamicSettings
-    : DynamicChildSettings;
-
   return (
     <Stack spacing="xs">
       {dataType === "static" && (
@@ -32,7 +28,7 @@ export const TextData = ({ component, endpoints, dataType }: DataProps) => {
       )}
 
       {dataType === "dynamic" && (
-        <DynamicSettingsWrapper
+        <DynamicChildSettings
           component={component}
           endpoints={endpoints!}
           customKeys={dynamicFields.map((f) => f.name)}
@@ -40,11 +36,12 @@ export const TextData = ({ component, endpoints, dataType }: DataProps) => {
           {({ form, selectableObjectKeys }) => (
             <DynamicFormFieldsBuilder
               form={form}
+              component={component}
               fields={dynamicFields}
               selectableObjectKeys={selectableObjectKeys}
             />
           )}
-        </DynamicSettingsWrapper>
+        </DynamicChildSettings>
       )}
     </Stack>
   );

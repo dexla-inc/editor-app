@@ -32,9 +32,5 @@ export const BarChart = (props: Props) => {
     },
   });
 
-  return (
-    <Skeleton visible={loading}>
-      <Chart {...customProps} />
-    </Skeleton>
-  );
+  return <Chart {...customProps} />;
 };
