@@ -14,7 +14,7 @@ import { useTriggers } from "@/hooks/useTriggers";
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { BoxProps } from "@mantine/core";
-import { PropsWithChildren, cloneElement } from "react";
+import { PropsWithChildren, cloneElement, useEffect } from "react";
 
 type Props = {
   id: string;
@@ -98,17 +98,16 @@ export const EditableComponent = ({
     isPicking,
   );
 
-  // Could this be encapsulated in its own file?
-  // Commenting out for now as error in deployed apps Cannot read properties of undefined (reading 'parentDataComponentId')
-  // useEffect(() => {
-  //   if (
-  //     component.parentDataComponentId !== shareableContent.parentDataComponentId
-  //   ) {
-  //     updateTreeComponentAttrs([component.id!], {
-  //       parentDataComponentId: shareableContent.parentDataComponentId,
-  //     });
-  //   }
-  // }, [shareableContent.parentDataComponentId]);
+  useEffect(() => {
+    if (
+      component.parentDataComponentId !==
+      shareableContent?.parentDataComponentId
+    ) {
+      updateTreeComponentAttrs([component.id!], {
+        parentDataComponentId: shareableContent?.parentDataComponentId,
+      });
+    }
+  }, [shareableContent?.parentDataComponentId]);
 
   return (
     <>
