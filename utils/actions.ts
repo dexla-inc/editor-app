@@ -652,7 +652,8 @@ export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
 
 const getVariableValueFromVariableId = (variableId = "") => {
   const variableList = useVariableStore.getState().variableList;
-  const actionVariable = variableId.split(`var_`)[1];
+  console.log(variableList);
+  const actionVariable = variableId.split("var_")[1];
 
   if (!actionVariable) {
     return variableId;
@@ -770,15 +771,15 @@ const getVariablesValue = (objs: Record<string, string>) => {
 
     if (key.startsWith(`valueOf_`)) {
       value = getElementValue(key);
-    }
-
-    if (key?.startsWith(`queryString_pass_`)) {
+    } else if (key?.startsWith(`queryString_pass_`)) {
       value = getQueryElementValue(key);
+    } else if (key.startsWith(`var_`)) {
+      value = getVariableValueFromVariableId(key) as string;
+    } else if (key.startsWith(`auth_`)) {
+      value = getAuthValueFromAuthId(key) as string;
     }
 
-    if (key.startsWith(`var_`)) {
-      value = getVariableValueFromVariableId(key) as string;
-    }
+    console.log(value);
 
     if (value) {
       // @ts-ignore
@@ -788,6 +789,15 @@ const getVariablesValue = (objs: Record<string, string>) => {
     return acc;
   }, {});
 };
+
+function getAuthValueFromAuthId(authId: string) {
+  const getAuthState = useDataSourceStore.getState().getAuthState;
+  const authState = getAuthState();
+  const key = authId.split("auth_")[1];
+  console.log(key, authState);
+  // @ts-ignore
+  return authState[key];
+}
 
 export type APICallActionParams = ActionParams & {
   action: APICallAction;
@@ -947,6 +957,14 @@ export async function performFetch(
   return response.json();
 }
 
+const setLoadingState = (
+  componentId: string,
+  isLoading: boolean,
+  updateTreeComponent: Function,
+) => {
+  updateTreeComponent({ componentId, props: { loading: isLoading } });
+};
+
 export const apiCallAction = async ({
   actionId,
   action,
@@ -959,66 +977,54 @@ export const apiCallAction = async ({
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
   try {
-    updateTreeComponent({
-      componentId: component.id!,
-      props: {
-        loading: action.showLoader,
-      },
-    });
+    setLoadingState(component.id!, true, updateTreeComponent);
+    const accessToken = useDataSourceStore.getState().authState.accessToken;
 
     const { url, body } = prepareRequestData(action, action.selectedEndpoint);
 
     let responseJson;
-    if (action.authType === "login") {
-      responseJson = await performFetch(url, action.selectedEndpoint, body);
-      const mergedAuthConfig = { ...responseJson, ...action.authConfig };
-      const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
 
-      setAuthTokens(mergedAuthConfig);
-    } else if (action.authType === "logout") {
-      const accessToken = useDataSourceStore.getState().authState.accessToken;
+    const authHeaderKey =
+      action.selectedEndpoint?.authenticationScheme === "BEARER"
+        ? "Bearer " + accessToken
+        : "";
 
-      let authHeaderKey =
-        action.selectedEndpoint?.authenticationScheme === "BEARER"
-          ? "Bearer " + accessToken
-          : "";
+    const fetchUrl = action.selectedEndpoint?.isServerRequest
+      ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
+      : url;
 
-      const fetchUrl = action.selectedEndpoint?.isServerRequest
-        ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
-        : url;
+    switch (action.authType) {
+      case "login":
+        responseJson = await performFetch(url, action.selectedEndpoint, body);
+        const mergedAuthConfig = { ...responseJson, ...action.authConfig };
+        const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
 
-      responseJson = await performFetch(
-        fetchUrl,
-        action.selectedEndpoint,
-        body,
-        authHeaderKey,
-      );
+        setAuthTokens(mergedAuthConfig);
+        break;
+      case "logout":
+        responseJson = await performFetch(
+          fetchUrl,
+          action.selectedEndpoint,
+          body,
+          authHeaderKey,
+        );
 
-      const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
+        const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
 
-      clearAuthTokens();
-    } else {
-      const refreshAccessToken =
-        useDataSourceStore.getState().refreshAccessToken;
-      const accessToken = useDataSourceStore.getState().authState.accessToken;
+        clearAuthTokens();
+        break;
+      default:
+        const refreshAccessToken =
+          useDataSourceStore.getState().refreshAccessToken;
 
-      refreshAccessToken();
+        refreshAccessToken();
 
-      let authHeaderKey =
-        action.selectedEndpoint?.authenticationScheme === "BEARER"
-          ? "Bearer " + accessToken
-          : "";
-
-      const fetchUrl = action.selectedEndpoint?.isServerRequest
-        ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
-        : url;
-
-      responseJson = await performFetch(
-        fetchUrl,
-        action.selectedEndpoint,
-        body,
-        authHeaderKey,
-      );
+        responseJson = await performFetch(
+          fetchUrl,
+          action.selectedEndpoint,
+          body,
+          authHeaderKey,
+        );
     }
 
     await handleSuccess(
@@ -1044,12 +1050,7 @@ export const apiCallAction = async ({
       updateTreeComponent,
     );
   } finally {
-    updateTreeComponent({
-      componentId: component.id!,
-      props: {
-        loading: false,
-      },
-    });
+    setLoadingState(component.id!, false, updateTreeComponent);
   }
 };
 
