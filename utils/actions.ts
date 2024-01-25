@@ -975,13 +975,28 @@ export const apiCallAction = async ({
       const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
 
       setAuthTokens(mergedAuthConfig);
-      // TODO: Handle logout by passing in refresh token to the API call and add if statement. Also redirect to login page
     } else if (action.authType === "logout") {
-      responseJson = await performFetch(url, action.selectedEndpoint, body);
-      const mergedAuthConfig = { ...responseJson, ...action.authConfig };
-      const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
+      const accessToken = useDataSourceStore.getState().authState.accessToken;
 
-      setAuthTokens(mergedAuthConfig);
+      let authHeaderKey =
+        action.selectedEndpoint?.authenticationScheme === "BEARER"
+          ? "Bearer " + accessToken
+          : "";
+
+      const fetchUrl = action.selectedEndpoint?.isServerRequest
+        ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
+        : url;
+
+      responseJson = await performFetch(
+        fetchUrl,
+        action.selectedEndpoint,
+        body,
+        authHeaderKey,
+      );
+
+      const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
+
+      clearAuthTokens();
     } else {
       const refreshAccessToken =
         useDataSourceStore.getState().refreshAccessToken;
@@ -1005,8 +1020,7 @@ export const apiCallAction = async ({
         authHeaderKey,
       );
     }
-    if (action.authType === "logout") {
-    }
+
     await handleSuccess(
       responseJson,
       onSuccess,
