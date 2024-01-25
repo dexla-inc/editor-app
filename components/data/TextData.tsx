@@ -1,9 +1,5 @@
 import { DataProps } from "@/components/data/type";
 import { Stack } from "@mantine/core";
-import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
-import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
-import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
-import { DynamicChildSettings } from "@/components/data/forms/DynamicChildSettings";
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
 
 export const TextData = ({ component, endpoints }: DataProps) => {
