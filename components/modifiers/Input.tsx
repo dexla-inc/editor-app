@@ -69,6 +69,7 @@ export const Modifier = withModifier(
               form.setFieldValue("size", value as string);
               debouncedTreeUpdate(selectedComponentIds, {
                 size: value,
+                style: { height: inputSizes[value] },
               });
             }}
           />
