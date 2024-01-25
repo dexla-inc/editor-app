@@ -143,7 +143,7 @@ export const requiredModifiers: RequiredModifiers = {
     backgroundAttachment: "scroll",
   },
   input: {
-    //size: "sm",
+    size: "sm",
     showBorder: "all",
     placeholder: "Input",
     type: "text",
