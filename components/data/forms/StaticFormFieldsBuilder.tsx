@@ -41,7 +41,7 @@ export const StaticFormFieldsBuilder = ({
       label={field.label}
       type={field.type}
       placeholder={field.placeholder}
-      {...form.getInputProps(`${field.name}.value`)}
+      {...form.getInputProps(`onLoad.${field.name}.value`)}
       onChange={(e) => {
         const selectedVariable = getSelectedVariable(e.currentTarget.value);
         form.setFieldValue(
