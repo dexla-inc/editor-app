@@ -7,11 +7,20 @@ import {
 } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { FormEvent, forwardRef, memo, useMemo } from "react";
+import {
+  FormEvent,
+  forwardRef,
+  memo,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { componentMapper } from "@/utils/componentMapper";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
+import { useEndpoint } from "@/hooks/useEndpoint";
+import get from "lodash.get";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -21,7 +30,7 @@ type Props = {
 
 const FormComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
-    const { children, triggers, loading, ...componentProps } =
+    const { children, triggers, loading, dataType, ...componentProps } =
       component.props as any;
     const { onSubmit, ...otherTriggers } = triggers;
     const form = useForm();
@@ -29,6 +38,8 @@ const FormComponent = forwardRef(
       (state) => state.updateTreeComponent,
     );
     const getInputValue = useInputsStore((state) => state.getValue);
+    const { endpointId, resultsKey, binds, staleTime } = component.onLoad ?? {};
+    const [data, setData] = useState(component.props?.data ?? []);
 
     const validatableComponentsList = useMemo(
       () =>
@@ -44,7 +55,7 @@ const FormComponent = forwardRef(
     const onSubmitCustom = async (e: FormEvent<any>) => {
       e.preventDefault();
 
-      const validatableComponents = getAllComponentsByName(
+      const invalidComponents = getAllComponentsByName(
         component,
         validatableComponentsList,
         { withAsterisk: true },
@@ -54,7 +65,7 @@ const FormComponent = forwardRef(
           getInputValue(component?.id!) === undefined,
       );
 
-      validatableComponents.map((component) => {
+      invalidComponents.map((component) => {
         return updateTreeComponent({
           componentId: component.id!,
           props: { error: `${component?.description} is required` },
@@ -62,7 +73,7 @@ const FormComponent = forwardRef(
         });
       });
 
-      if (!validatableComponents.length && triggers.onSubmit) {
+      if (!invalidComponents.length && triggers.onSubmit) {
         return triggers.onSubmit && triggers.onSubmit(e);
       }
     };
@@ -70,6 +81,23 @@ const FormComponent = forwardRef(
     const onChangeField = (e: any) => {
       form.setFieldValue(e.target.name, e.target.value);
     };
+
+    const { data: response } = useEndpoint({
+      endpointId,
+      requestSettings: { binds, dataType, staleTime },
+    });
+
+    useEffect(() => {
+      if (endpointId) {
+        if (!response) {
+          setData([]);
+        } else {
+          const result = get(response, resultsKey, response);
+          setData(result);
+        }
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [resultsKey, response, endpointId]);
 
     return (
       <MantineFlex

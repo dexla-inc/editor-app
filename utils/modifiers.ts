@@ -83,7 +83,6 @@ export const requiredModifiers: RequiredModifiers = {
       textShadow: "0px 0px 0px transparent",
     },
     order: 1,
-    dataType: "static",
     truncate: false,
     tt: "none",
     align: "left",
@@ -168,8 +167,6 @@ export const requiredModifiers: RequiredModifiers = {
     },
   },
   button: {
-    dataType: "static",
-    value: "New Button",
     type: "button",
     variant: "filled",
     size: "sm",
@@ -183,15 +180,10 @@ export const requiredModifiers: RequiredModifiers = {
     },
   },
   image: {
-    dataType: "static",
-    src: "https://www.contentviewspro.com/wp-content/uploads/2017/07/default_image.png",
-    alt: "",
     fit: "contain",
     position: "relative",
   },
   link: {
-    dataType: "static",
-    value: "New Link",
     size: "sm",
     color: "Primary.6",
     style: {
@@ -332,8 +324,6 @@ export const requiredModifiers: RequiredModifiers = {
     markers: [],
   },
   fileButton: {
-    dataType: "static",
-    name: "Upload Button",
     accept: "",
     multiple: false,
     size: "sm",
@@ -346,7 +336,6 @@ export const requiredModifiers: RequiredModifiers = {
     position: "bottom",
   },
   navLink: {
-    dataType: "static",
     color: "Black.6",
     iconColor: "Black.6",
     textAlign: "left",
@@ -388,7 +377,6 @@ export const requiredModifiers: RequiredModifiers = {
     color: "Danger.6",
   },
   badge: {
-    value: "New Badge",
     color: "PrimaryText.6",
     bg: "Primary.6",
     size: "md",

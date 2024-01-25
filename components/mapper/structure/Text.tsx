@@ -19,8 +19,13 @@ export const jsonStructure = (props?: any): Component => {
     name: "Text",
     description: "Text",
     children: [],
+    onLoad: {
+      children: {
+        value: "New Text",
+        dataType: "static",
+      },
+    },
     props: merge({}, defaultValues, {
-      children: "New Text",
       color: `${theme.colors.Black ? "Black.6" : "dark"}`,
       size: "sm",
       style: {

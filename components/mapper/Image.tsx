@@ -4,8 +4,7 @@ import { ImageProps, Image as MantineImage } from "@mantine/core";
 import { forwardRef, memo, useEffect } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBindingPopover } from "@/hooks/useBindingPopover";
-import { useEditorStore } from "@/stores/editor";
-import get from "lodash.get";
+import { useData } from "@/hooks/useData";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -15,29 +14,19 @@ type Props = {
 
 const ImageComponent = forwardRef(
   ({ component, shareableContent, ...props }: Props, ref) => {
-    const {
-      alt = "Image",
-      src,
-      triggers,
-      dataType,
-      loading,
-      ...componentProps
-    } = component.props as any;
+    const { triggers, loading, ...componentProps } = component.props as any;
 
-    const { srcKey, altKey } = component.onLoad ?? {};
-
-    const srcValue =
-      dataType === "dynamic" ? shareableContent.data?.[srcKey] : src;
-    const altValue =
-      dataType === "dynamic" ? shareableContent.data?.[altKey] : alt;
+    const { getValue } = useData();
+    const srcValue = getValue("src", { component, shareableContent });
+    const altValue = getValue("alt", { component, shareableContent });
 
     const { getSelectedVariable, handleValuesUpdate } = useBindingPopover();
-    const sourceVariable = getSelectedVariable(srcKey);
-    const altTextVariable = getSelectedVariable(altKey);
+    const sourceVariable = getSelectedVariable(srcValue);
+    const altTextVariable = getSelectedVariable(altValue);
 
     const isVariablesSame =
-        sourceVariable?.defaultValue === src &&
-        altTextVariable?.defaultValue === alt;
+      sourceVariable?.defaultValue === srcValue &&
+      altTextVariable?.defaultValue === altValue;
 
     useEffect(() => {
       if (isVariablesSame) return;

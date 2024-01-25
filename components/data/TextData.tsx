@@ -4,8 +4,9 @@ import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormField
 import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
 import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
 import { DynamicChildSettings } from "@/components/data/forms/DynamicChildSettings";
+import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
 
-export const TextData = ({ component, endpoints, dataType }: DataProps) => {
+export const TextData = ({ component, endpoints }: DataProps) => {
   const isNavLink = component.name === "NavLink";
   const isFileButton = component.name === "FileButton";
 
@@ -16,33 +17,13 @@ export const TextData = ({ component, endpoints, dataType }: DataProps) => {
     },
   ];
 
-  const dynamicFields = staticFields.map((f) => ({
-    ...f,
-    name: `${f.name}Key`,
-  }));
-
   return (
     <Stack spacing="xs">
-      {dataType === "static" && (
-        <StaticFormFieldsBuilder fields={staticFields} component={component} />
-      )}
-
-      {dataType === "dynamic" && (
-        <DynamicChildSettings
-          component={component}
-          endpoints={endpoints!}
-          customKeys={dynamicFields.map((f) => f.name)}
-        >
-          {({ form, selectableObjectKeys }) => (
-            <DynamicFormFieldsBuilder
-              form={form}
-              component={component}
-              fields={dynamicFields}
-              selectableObjectKeys={selectableObjectKeys}
-            />
-          )}
-        </DynamicChildSettings>
-      )}
+      <FormFieldsBuilder
+        fields={staticFields}
+        component={component}
+        endpoints={endpoints!}
+      />
     </Stack>
   );
 };

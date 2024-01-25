@@ -7,6 +7,17 @@ export const jsonStructure = (props?: any): Component => {
     id: nanoid(),
     name: "Image",
     description: "Image",
+    onLoad: {
+      src: {
+        value:
+          "https://www.contentviewspro.com/wp-content/uploads/2017/07/default_image.png",
+        dataType: "static",
+      },
+      alt: {
+        value: "",
+        dataType: "static",
+      },
+    },
     props: {
       style: {
         width: "120px",

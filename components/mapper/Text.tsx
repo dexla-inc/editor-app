@@ -5,7 +5,7 @@ import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
 import { forwardRef, memo, useEffect } from "react";
-import get from "lodash.get";
+import { useData } from "@/hooks/useData";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -20,27 +20,20 @@ const TextComponent = forwardRef(
     ref: any,
   ) => {
     const contentEditableProps = useContentEditable(component.id as string);
-    const {
-      children,
-      triggers,
-      hideIfDataIsEmpty,
-      dataType,
-        variable,
-      ...componentProps
-    } = component.props as any;
+    const { triggers, hideIfDataIsEmpty, variable, ...componentProps } =
+      component.props as any;
 
-    const { childrenKey } = component.onLoad ?? {};
-    const childrenValue =
-      dataType === "dynamic" ? shareableContent.data?.[childrenKey] : children;
+    const { getValue } = useData();
+    const childrenValue = getValue("children", { component, shareableContent });
 
-      const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
-      const selectedVariable = getSelectedVariable(variable);
+    const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
+    const selectedVariable = getSelectedVariable(variable);
 
-      useEffect(() => {
-          if (selectedVariable?.defaultValue === children) return;
-          handleValueUpdate(component.id as string, selectedVariable);
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [selectedVariable]);
+    useEffect(() => {
+      if (selectedVariable?.defaultValue === childrenValue) return;
+      handleValueUpdate(component.id as string, selectedVariable);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedVariable]);
 
     return (
       <MantineText

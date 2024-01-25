@@ -7,9 +7,14 @@ export const jsonStructure = (props?: any): Component => {
     id: nanoid(),
     name: "NavLink",
     description: "Nav Link",
+    onLoad: {
+      label: {
+        value: "Nav Link",
+        dataType: "static",
+      },
+    },
     props: {
       icon: "IconLayoutDashboard",
-      label: "Nav Link",
       style: {
         ...requiredModifiers.navLink,
       },

@@ -10,9 +10,14 @@ export const jsonStructure = (props?: any): Component => {
     id: nanoid(),
     name: "FileButton",
     description: "Upload Files",
+    onLoad: {
+      name: {
+        dataType: "static",
+        value: name ?? "Upload button",
+      },
+    },
     props: {
       ...requiredModifiers.fileButton,
-      name: name ?? "Upload button",
       ...(rest || {}),
     },
     blockDroppingChildrenInside: true,

@@ -1,19 +1,19 @@
-import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
-import { EndpointSelect } from "@/components/EndpointSelect";
-import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
-import { SidebarSection } from "@/components/SidebarSection";
-import { Endpoint } from "@/requests/datasources/types";
-import { PagingResponse } from "@/requests/types";
-import { useInputsStore } from "@/stores/inputs";
-import { getObjectAndArrayKeys } from "@/utils/common";
-import { DEFAULT_STALE_TIME } from "@/utils/config";
-import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Divider, Flex, Select, Text, TextInput } from "@mantine/core";
-import { useForm } from "@mantine/form";
 import { IconDatabase } from "@tabler/icons-react";
-import get from "lodash.get";
-import { pick } from "next/dist/lib/pick";
+import { SidebarSection } from "@/components/SidebarSection";
+import { EndpointSelect } from "@/components/EndpointSelect";
+import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
+import { Endpoint } from "@/requests/datasources/types";
+import { useForm } from "@mantine/form";
+import { useInputsStore } from "@/stores/inputs";
 import { useEffect, useState } from "react";
+import { PagingResponse } from "@/requests/types";
+import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
+import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
+import { pick } from "next/dist/lib/pick";
+import get from "lodash.get";
+import { DEFAULT_STALE_TIME } from "@/utils/config";
+import { useData } from "@/hooks/useData";
 
 type Props = {
   component: Component;
@@ -32,6 +32,7 @@ export const DynamicSettings = ({
   const [selectedEndpoint, setSelectedEndpoint] = useState<
     Endpoint | undefined
   >(endpoints?.results?.find((e) => e.id === component.onLoad?.endpointId));
+  const { getObjectAndArrayKeys } = useData();
 
   const exampleResponse = JSON.parse(selectedEndpoint?.exampleResponse ?? "{}");
 

@@ -1,10 +1,9 @@
 import { SelectOptionsForm } from "@/components/data/forms/static/SelectOptionsForm";
 import { Endpoint } from "@/requests/datasources/types";
 import { Component } from "@/utils/editor";
-import { SegmentedControl, Stack } from "@mantine/core";
+import { SegmentedControl, Select, Stack, Text, Title } from "@mantine/core";
 import { PagingResponse } from "@/requests/types";
 import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
-import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
 import { useEditorStore } from "@/stores/editor";
 
 export type DataProps = {
@@ -17,17 +16,6 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
   const updateTreeComponentAttrs = useEditorStore(
     (state) => state.updateTreeComponentAttrs,
   );
-
-  const fields = [
-    {
-      name: "dataLabelKey",
-      label: "Label",
-    },
-    {
-      name: "dataValueKey",
-      label: "Value",
-    },
-  ];
 
   return (
     <Stack spacing="xs">
@@ -50,18 +38,29 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
         <DynamicSettings
           component={component}
           endpoints={endpoints!}
-          customKeys={fields.map((f) => f.name)}
+          customKeys={["dataLabelKey", "dataValueKey"]}
         >
           {({ form, selectableObjectKeys }) => {
             return (
-              <DynamicFormFieldsBuilder
-                title="Options"
-                subTitle="Set up the data structure"
-                form={form}
-                fields={fields}
-                component={component}
-                selectableObjectKeys={selectableObjectKeys}
-              />
+              <Stack spacing="xs" my="xs">
+                <Title order={6} mt="xs">
+                  Options
+                </Title>
+                <Text size="xs" color="dimmed">
+                  Set up the data structure
+                </Text>
+
+                <Select
+                  label="Label"
+                  data={selectableObjectKeys}
+                  {...form.getInputProps("dataLabelKey")}
+                />
+                <Select
+                  label="Value"
+                  data={selectableObjectKeys}
+                  {...form.getInputProps("dataValueKey")}
+                />
+              </Stack>
             );
           }}
         </DynamicSettings>

@@ -52,43 +52,26 @@ const InputComponent = forwardRef(
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setStoreInputValue = useInputsStore((state) => state.setInputValue);
 
-    const [localInputValue, setLocalInputValue] = useState(
-      inputValue ?? _defaultValue,
-    );
-
     const isClearable = clearable && !!inputValue;
 
     // clear input field
     const clearInput = () => {
-      setLocalInputValue(_defaultValue);
       setStoreInputValue(component.id!, _defaultValue);
       const el = iframeWindow?.document.getElementById(component.id!);
       el?.focus();
     };
-
-    // update values in store
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedOnChange = useCallback(
-      debounce((value) => {
-        setStoreInputValue(component.id!, value);
-      }, 400),
-      [component.id],
-    );
-
-    // handle changes to input field
     const handleInputChange = (e: any) => {
       let newValue = e.target ? e.target.value : e;
       if (type === "number") {
         newValue = newValue ? Number(newValue) : 0;
       }
-      setLocalInputValue(newValue);
-      debouncedOnChange(newValue);
+      setStoreInputValue(component.id!, newValue);
       triggers?.onChange && triggers?.onChange(e);
     };
 
     // handle increase number range
     const increaseNumber = () => {
-      let val = localInputValue;
+      let val = inputValue;
       if (val === undefined) val = 1;
       else val += 1;
       handleInputChange(val);
@@ -96,7 +79,7 @@ const InputComponent = forwardRef(
 
     // handle decrease number range
     const decreaseNumber = () => {
-      let val = localInputValue;
+      let val = inputValue;
       if (val === undefined) val = -1;
       else val -= 1;
       handleInputChange(val);
@@ -151,7 +134,7 @@ const InputComponent = forwardRef(
                   },
                 }}
                 size={inputSize}
-                value={parseToNumber(localInputValue)}
+                value={parseToNumber(inputValue)}
                 onChange={handleInputChange}
                 label={undefined}
               />
@@ -190,7 +173,7 @@ const InputComponent = forwardRef(
               input: customStyle,
             }}
             min={0}
-            value={parseToNumber(localInputValue)}
+            value={parseToNumber(inputValue)}
             onChange={handleInputChange}
             rightSection={loading ? <InputLoader /> : null}
             label={undefined}
@@ -217,7 +200,7 @@ const InputComponent = forwardRef(
               input: customStyle,
               innerInput: { color },
             }}
-            value={localInputValue}
+            value={inputValue}
             onChange={handleInputChange}
             rightSection={
               loading ? (
@@ -249,7 +232,7 @@ const InputComponent = forwardRef(
               },
               input: customStyle,
             }}
-            value={localInputValue}
+            value={inputValue}
             onChange={handleInputChange}
             rightSection={
               loading ? (
