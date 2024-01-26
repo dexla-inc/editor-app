@@ -580,16 +580,13 @@ export const changeStepAction = ({ action }: ChangeStepActionParams) => {
   });
 };
 
-export const changeVisibilityAction = ({
-  action,
-  event,
-}: TogglePropsActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-
-  const tree = useEditorStore.getState().tree;
+export const changeVisibilityAction = ({ action }: TogglePropsActionParams) => {
+  const editorStore = useEditorStore.getState();
+  const updateTreeComponent = editorStore.updateTreeComponent;
+  const tree = editorStore.tree;
   action.conditionRules.forEach((item) => {
     // Find the component to toggle visibility
-    const componentToToggle = getComponentById(tree, item.componentId);
+    const componentToToggle = getComponentById(tree.root, item.componentId);
 
     // Determine the current display state of the component
     const currentDisplay = componentToToggle?.props?.style?.display;
