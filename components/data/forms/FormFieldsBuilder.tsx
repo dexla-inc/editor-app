@@ -10,6 +10,7 @@ import { ICON_SIZE } from "@/utils/config";
 import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
 import { PagingResponse } from "@/requests/types";
 import { Endpoint } from "@/requests/datasources/types";
+import get from "lodash.get";
 
 type Props = {
   fields: Array<{
@@ -40,7 +41,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
     } else {
       acc[key] = {
         dataType: value?.dataType ?? "static",
-        value: value.value,
+        value: get(value, "value", component.props?.[key]),
       };
     }
     return acc;
