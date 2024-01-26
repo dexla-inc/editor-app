@@ -1,6 +1,7 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { SidebarSection } from "@/components/SidebarSection";
 import { ActionsFlow } from "@/components/actions/ActionsFlow";
+import { Data } from "@/components/data/Data";
 import * as AccordionModifier from "@/components/modifiers/Accordion";
 import * as AccordionItemModifier from "@/components/modifiers/AccordionItem";
 import * as AlertModifier from "@/components/modifiers/Alert";
@@ -46,7 +47,6 @@ import * as TabsPanelModifier from "@/components/modifiers/TabsPanel";
 import * as TextModifier from "@/components/modifiers/Text";
 import * as TextareaModifier from "@/components/modifiers/Textaarea";
 import * as ChartModifier from "@/components/modifiers/chart/Chart";
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
@@ -77,7 +77,6 @@ import {
 import intersection from "lodash.intersection";
 import startCase from "lodash.startcase";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { Data } from "@/components/data/Data";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -456,8 +455,7 @@ export const EditorAsideSections = () => {
                 )}
               </Stack>
             )}
-
-          <Stack spacing="xs">{designSections}</Stack>
+          {designSections}
         </Stack>
       )}
       {tab === "data" && <Data component={component!} />}
