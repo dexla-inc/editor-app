@@ -1,81 +1,54 @@
-import { ActionIcon, Group, Select, Stack, Text, Title } from "@mantine/core";
-import { IconPlug, IconPlugOff, IconRefresh } from "@tabler/icons-react";
-import { Component } from "@/utils/editor";
+import { Select } from "@mantine/core";
+import { Component, getComponentById } from "@/utils/editor";
 import { useEditorStore } from "@/stores/editor";
+import get from "lodash.get";
+import { PagingResponse } from "@/requests/types";
+import { Endpoint } from "@/requests/datasources/types";
 
 type DynamicFormFieldsBuilderProps = {
-  title?: string;
-  subTitle?: string;
   form: any;
   component: Component;
-  fields: Array<{
+  endpoints: PagingResponse<Endpoint>;
+  field: {
     name: string;
     label: string;
     type?: string;
     placeholder?: string;
-  }>;
-  selectableObjectKeys: string[];
+  };
 };
 
 export const DynamicFormFieldsBuilder = ({
-  title,
-  subTitle,
   component,
   form,
-  selectableObjectKeys,
-  fields,
+  field,
+  endpoints,
 }: DynamicFormFieldsBuilderProps) => {
-  const updateTreeComponentAttrs = useEditorStore(
-    (state) => state.updateTreeComponentAttrs,
+  const editorTree = useEditorStore((state) => state.tree);
+
+  const parentDataComponent = getComponentById(
+    editorTree.root,
+    component.parentDataComponentId!,
   );
-  const { dataType = "static" } = component.props!;
+  const parentEndpoint = endpoints?.results?.find(
+    (e) => e.id === parentDataComponent?.onLoad?.endpointId,
+  );
 
-  const onClickToggleDataType = () => {
-    updateTreeComponentAttrs([component.id!], {
-      props: {
-        dataType: component.props?.dataType === "static" ? "dynamic" : "static",
-      },
-    });
-  };
+  const selectableObject = parentDataComponent?.onLoad?.resultsKey
+    ? get(
+        JSON.parse(parentEndpoint?.exampleResponse || "{}"),
+        parentDataComponent?.onLoad?.resultsKey,
+      )
+    : JSON.parse(parentEndpoint?.exampleResponse || "{}");
 
-  const DataTypeIcon = dataType === "static" ? IconPlug : IconPlugOff;
-
-  const hasParentComponentData = component.parentDataComponentId;
+  const selectableObjectKeys = Object.keys(
+    Array.isArray(selectableObject) ? selectableObject[0] : selectableObject,
+  );
 
   return (
-    <Stack spacing="xs" my="xs">
-      {title && (
-        <Title order={6} mt="xs">
-          {title}
-        </Title>
-      )}
-      {subTitle && (
-        <Text size="xs" color="dimmed">
-          {subTitle}
-        </Text>
-      )}
-
-      {fields.map((f) => (
-        <Group
-          key={f.name}
-          noWrap
-          align="flex-end"
-          spacing={10}
-          grow={!hasParentComponentData}
-        >
-          <Select
-            key={f.name}
-            label={f.label}
-            data={selectableObjectKeys}
-            {...form.getInputProps(f.name)}
-          />
-          {hasParentComponentData && (
-            <ActionIcon onClick={onClickToggleDataType} variant="default">
-              <DataTypeIcon />
-            </ActionIcon>
-          )}
-        </Group>
-      ))}
-    </Stack>
+    <Select
+      label={field.label}
+      data={selectableObjectKeys}
+      {...form.getInputProps(`onLoad.${field.name}.value`)}
+    />
   );
 };

@@ -2,7 +2,6 @@ import BindingPopover from "@/components/BindingPopover";
 import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { getComponentInitialDisplayValue } from "@/utils/common";
 import { Group, Stack } from "@mantine/core";
-import { debouncedTreeUpdate } from "@/utils/editor";
 
 type Props = {
   form: any;
@@ -30,7 +29,7 @@ export const VisibilityModifier = ({
               value: "none",
             },
           ]}
-          {...form.getInputProps("style.display")}
+          {...form.getInputProps("props.style.display")}
         />
       </Stack>
       <BindingPopover
@@ -38,17 +37,11 @@ export const VisibilityModifier = ({
         category="appearance"
         onChangeBindingType={() => {}}
         onPickVariable={(value: string) =>
-          form.setFieldValue("style.display", value)
+          form.setFieldValue("props.style.display", value)
         }
         javascriptCode={form.values.actionCode?.[componentId] as string}
-        onChangeJavascriptCode={(javascriptCode: string, _: any) => {
-          form.setFieldValue(`actionCode.${componentId}`, javascriptCode);
-          debouncedTreeUpdate(componentId, {
-            actionCode: {
-              ...form.values.actionCode,
-              [componentId!]: javascriptCode,
-            },
-          });
+        onChangeJavascriptCode={(javascriptCode: string) => {
+          form.setFieldValue(`props.actionCode.${componentId}`, javascriptCode);
         }}
       />
     </Group>

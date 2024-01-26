@@ -31,20 +31,6 @@ export const allEqual = <T>(array: T[]): boolean => {
   return array.every((element) => element === array[0]);
 };
 
-export const isInput = (componentName: string) => {
-  const inputCategories = [
-    "Input",
-    "Checkbox",
-    "Radio",
-    "Switch",
-    "Select",
-    "RadioGroup",
-    "Textarea",
-    "DateInput",
-  ];
-  return inputCategories.some((category) => componentName.includes(category));
-};
-
 export const getComponentInitialDisplayValue = (componentName: string) => {
   const defaultDisplayValues: { [key: string]: string } = {
     Grid: "grid",
@@ -54,26 +40,6 @@ export const getComponentInitialDisplayValue = (componentName: string) => {
 
   return defaultDisplayValues[componentName] || "block";
 };
-
-export function getObjectAndArrayKeys(obj: any, prefix = "") {
-  let keys: string[] = [];
-
-  for (let key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      const newKey = prefix ? `${prefix}.${key}` : key;
-
-      if (typeof obj[key] === "object" && obj[key] !== null) {
-        keys.push(newKey);
-
-        if (!Array.isArray(obj[key])) {
-          keys = keys.concat(getObjectAndArrayKeys(obj[key], newKey));
-        }
-      }
-    }
-  }
-
-  return keys;
-}
 
 // check if url follow the pattern: 7eacfa0cbb8b406cbc2b40085b9c37a4.dexla.io or 7eacfa0cbb8b406cbc2b40085b9c37a4.dexla.ai
 // where 7eacfa0cbb8b406cbc2b40085b9c37a4 is the project id and can be any string that contains only letters and numbers,

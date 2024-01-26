@@ -12,6 +12,7 @@ export const jsonStructure = (props?: any): Component => {
     name: "Form",
     description: "Form",
     props: {
+      dataType: "dynamic",
       style: {
         ...defaultLayoutValues,
         paddingLeft: "0px",

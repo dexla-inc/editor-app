@@ -47,8 +47,13 @@ export const jsonStructure = (props?: any): Component => {
                 name: "Text",
                 description: "Accordion Text",
                 children: [],
+                onLoad: {
+                  children: {
+                    dataType: "static",
+                    value: "Item Text",
+                  },
+                },
                 props: {
-                  children: "Item Text",
                   color: `${theme.colors.Black ? "Black.6" : "dark"}`,
                   style: {
                     fontSize: `${px(theme.fontSizes.sm)}px`,
@@ -81,8 +86,13 @@ export const jsonStructure = (props?: any): Component => {
             name: "Text",
             description: "Accordion Text",
             children: [],
+            onLoad: {
+              children: {
+                dataType: "static",
+                value: "Item Text",
+              },
+            },
             props: {
-              children: "Item Text",
               color: `${theme.colors.Black ? "Black.6" : "dark"}`,
               style: {
                 fontSize: `${px(theme.fontSizes.sm)}px`,

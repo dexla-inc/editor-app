@@ -1,11 +1,10 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { useBindingPopover } from "@/hooks/useBindingPopover";
-import { useEditorStore } from "@/stores/editor";
 import { Avatar as MantineAvatar, AvatarProps } from "@mantine/core";
 import { forwardRef, memo, useEffect } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import get from "lodash.get";
+import { useData } from "@/hooks/useData";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -15,31 +14,27 @@ type Props = {
 
 const AvatarComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
-    const { src, children, triggers, data, dataType, ...componentProps } =
-      component.props as any;
+    const { triggers, data, ...componentProps } = component.props as any;
 
-    const { srcKey, childrenKey } = component.onLoad ?? {};
+    const { getValue } = useData();
+    const srcValue = getValue("src", { component, shareableContent });
+    const childrenValue = getValue("children", { component, shareableContent });
 
-    const srcValue =
-      dataType === "dynamic" ? shareableContent.data?.[srcKey] : src;
-    const childrenValue =
-      dataType === "dynamic" ? shareableContent.data?.[childrenKey] : children;
+    const { getSelectedVariable, handleValuesUpdate } = useBindingPopover();
+    const sourceVariable = getSelectedVariable(srcValue);
+    const altTextVariable = getSelectedVariable(childrenValue);
 
-      const { getSelectedVariable, handleValuesUpdate } = useBindingPopover();
-      const sourceVariable = getSelectedVariable(srcKey);
-      const altTextVariable = getSelectedVariable(childrenKey);
+    const isVariablesSame =
+      sourceVariable?.defaultValue === srcValue &&
+      altTextVariable?.defaultValue === childrenValue;
 
-      const isVariablesSame =
-          sourceVariable?.defaultValue === src &&
-          altTextVariable?.defaultValue === children;
-
-      useEffect(() => {
-          if (isVariablesSame) return;
-          handleValuesUpdate(component.id as string, {
-              src: sourceVariable?.defaultValue,
-              children: altTextVariable?.defaultValue,
-          });
-      }, [sourceVariable, altTextVariable]);
+    useEffect(() => {
+      if (isVariablesSame) return;
+      handleValuesUpdate(component.id as string, {
+        src: sourceVariable?.defaultValue,
+        children: altTextVariable?.defaultValue,
+      });
+    }, [sourceVariable, altTextVariable]);
 
     return (
       <MantineAvatar ref={ref} {...props} {...componentProps} src={srcValue}>

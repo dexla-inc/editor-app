@@ -9,6 +9,7 @@ import { Component, getColorFromTheme } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import merge from "lodash.merge";
 import { ReactElement, forwardRef, memo, useEffect } from "react";
+import { useData } from "@/hooks/useData";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -31,14 +32,12 @@ const ButtonComponent = forwardRef(
     ref,
   ) => {
     const {
-      children,
       triggers,
       icon,
       iconPosition,
       loading,
       textColor,
       variable,
-      dataType,
       ...componentProps
     } = component.props as any;
 
@@ -48,8 +47,11 @@ const ButtonComponent = forwardRef(
     const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
     const selectedVariable = getSelectedVariable(variable);
 
+    const { getValue } = useData();
+    const childrenValue = getValue("children", { component, shareableContent });
+
     useEffect(() => {
-      if (selectedVariable?.defaultValue === children) return;
+      if (selectedVariable?.defaultValue === childrenValue) return;
       handleValueUpdate(component.id as string, selectedVariable);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedVariable]);
@@ -68,10 +70,6 @@ const ButtonComponent = forwardRef(
     const customStyle = merge({ borderColor, borderWidth: "0px" }, style, {
       color: labelTextColor,
     });
-
-    const { childrenKey } = component.onLoad ?? {};
-    const childrenValue =
-      dataType === "dynamic" ? shareableContent.data?.[childrenKey] : children;
 
     return (
       <MantineButton

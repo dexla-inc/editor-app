@@ -50,8 +50,13 @@ export const jsonStructure = (props?: any): Component => {
                 name: "Text",
                 description: "Tab Text",
                 children: [],
+                onLoad: {
+                  children: {
+                    dataType: "static",
+                    value: "First Tab",
+                  },
+                },
                 props: {
-                  children: "First Tab",
                   color: `${theme.colors.Black ? "Black.6" : "dark"}`,
                   style: {
                     fontSize: `${px(theme.fontSizes.sm)}px`,
@@ -84,8 +89,13 @@ export const jsonStructure = (props?: any): Component => {
                 name: "Text",
                 description: "Tab Text",
                 children: [],
+                onLoad: {
+                  children: {
+                    dataType: "static",
+                    value: "Second Tab",
+                  },
+                },
                 props: {
-                  children: "Second Tab",
                   color: `${theme.colors.Black ? "Black.6" : "dark"}`,
                   style: {
                     fontSize: `${px(theme.fontSizes.sm)}px`,
@@ -120,8 +130,13 @@ export const jsonStructure = (props?: any): Component => {
             name: "Text",
             description: "Tab Text",
             children: [],
+            onLoad: {
+              children: {
+                dataType: "static",
+                value: "First Tab Content",
+              },
+            },
             props: {
-              children: "First Tab Content",
               color: `${theme.colors.Black ? "Black.6" : "dark"}`,
               style: {
                 fontSize: `${px(theme.fontSizes.sm)}px`,
@@ -155,8 +170,13 @@ export const jsonStructure = (props?: any): Component => {
             name: "Text",
             description: "Tab Text",
             children: [],
+            onLoad: {
+              children: {
+                dataType: "static",
+                value: "Second Tab Content",
+              },
+            },
             props: {
-              children: "Second Tab Content",
               color: `${theme.colors.Black ? "Black.6" : "dark"}`,
               style: {
                 fontSize: `${px(theme.fontSizes.sm)}px`,

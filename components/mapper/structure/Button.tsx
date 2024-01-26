@@ -11,13 +11,17 @@ export const jsonStructure = (props?: any): Component => {
     id: nanoid(),
     name: "Button",
     description: "Button",
+    onLoad: {
+      children: {
+        value: value ?? "Button",
+        dataType: "static",
+      },
+    },
     props: {
       ...defaultValues,
-
       color: color ?? "Primary.6",
       textColor: textColor ?? "PrimaryText.6",
       ...(rest || {}),
-      children: value ?? "Button",
     },
     states: {
       hover: { color: "Primary.7" },

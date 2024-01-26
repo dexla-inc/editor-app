@@ -7,6 +7,7 @@ import {
   FileButton as MantineFileButton,
 } from "@mantine/core";
 import { useEffect } from "react";
+import { useData } from "@/hooks/useData";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -23,20 +24,19 @@ export const FileButton = ({
   shareableContent,
   ...props
 }: Props) => {
-  const { name, triggers, dataType, variable, ...componentProps } = component.props ?? {};
+  const { triggers, variable, ...componentProps } = component.props ?? {};
   const contentEditableProps = useContentEditable(component.id as string);
   const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
   const selectedVariable = getSelectedVariable(variable);
 
+  const { getValue } = useData();
+  const nameValue = getValue("name", { component, shareableContent });
+
   useEffect(() => {
-    if (selectedVariable?.defaultValue === name) return;
+    if (selectedVariable?.defaultValue === nameValue) return;
     handleValueUpdate(component.id as string, selectedVariable, "name");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedVariable]);
-
-  const { nameKey } = component.onLoad ?? {};
-  const nameValue =
-    dataType === "dynamic" ? shareableContent.data?.[nameKey] : name;
 
   return (
     <>

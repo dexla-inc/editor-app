@@ -11,6 +11,7 @@ import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { useRouter } from "next/router";
 import { forwardRef, memo, useEffect } from "react";
+import { useData } from "@/hooks/useData";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -37,7 +38,6 @@ const NavLinkComponent = forwardRef(
     }
 
     const {
-      label,
       isNested,
       pageId,
       triggers,
@@ -46,15 +46,17 @@ const NavLinkComponent = forwardRef(
       iconColor = "",
       bg = "",
       variable,
-      dataType,
       ...componentProps
     } = merge({}, component.props, activeProps) as any;
 
     const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
     const selectedVariable = getSelectedVariable(variable);
 
+    const { getValue } = useData();
+    const labelValue = getValue("label", { component, shareableContent });
+
     useEffect(() => {
-      if (selectedVariable?.defaultValue === label) return;
+      if (selectedVariable?.defaultValue === labelValue) return;
       handleValueUpdate(component.id as string, selectedVariable);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedVariable]);
@@ -68,10 +70,6 @@ const NavLinkComponent = forwardRef(
     merge(componentProps, {
       style: { ...props.style, color: textColor, backgroundColor },
     });
-
-    const { labelKey } = component.onLoad ?? {};
-    const labelValue =
-      dataType === "dynamic" ? shareableContent.data?.[labelKey] : label;
 
     return (
       <MantineNavLink

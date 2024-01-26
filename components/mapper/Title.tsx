@@ -5,6 +5,7 @@ import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { CSSObject, Title as MantineTitle, TitleProps } from "@mantine/core";
 import { forwardRef, memo, useEffect } from "react";
+import { useData } from "@/hooks/useData";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -21,18 +22,16 @@ const TitleComponent = forwardRef(
   ) => {
     const contentEditableProps = useContentEditable(component.id as string);
 
-    const { children, data, triggers, dataType, variable, ...componentProps } =
-      component.props as any;
+    const { triggers, variable, ...componentProps } = component.props as any;
 
-    const { childrenKey } = component.onLoad ?? {};
-    const childrenValue =
-      dataType === "dynamic" ? shareableContent.data?.[childrenKey] : children;
+    const { getValue } = useData();
+    const childrenValue = getValue("children", { component, shareableContent });
 
     const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
     const selectedVariable = getSelectedVariable(variable);
 
     useEffect(() => {
-      if (selectedVariable?.defaultValue === children) return;
+      if (selectedVariable?.defaultValue === childrenValue) return;
       handleValueUpdate(component.id as string, selectedVariable);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedVariable]);

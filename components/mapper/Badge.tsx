@@ -7,6 +7,7 @@ import { Component, getColorFromTheme } from "@/utils/editor";
 import { BadgeProps, Badge as MantineBadge } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo, useEffect } from "react";
+import { useData } from "@/hooks/useData";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -16,7 +17,7 @@ type Props = {
 
 const BadgeComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
-    const { children, style, color, dataType, variable, ...componentProps } =
+    const { style, color, variable, ...componentProps } =
       component.props as any;
 
     const theme = useEditorStore((state) => state.theme);
@@ -25,18 +26,17 @@ const BadgeComponent = forwardRef(
       textTransform: "none",
     });
 
-    const { childrenKey } = component.onLoad ?? {};
-    const childrenValue =
-      dataType === "dynamic" ? shareableContent.data?.[childrenKey] : children;
+    const { getValue } = useData();
+    const childrenValue = getValue("children", { component, shareableContent });
 
-      const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
-      const selectedVariable = getSelectedVariable(variable);
+    const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
+    const selectedVariable = getSelectedVariable(variable);
 
-      useEffect(() => {
-          if (selectedVariable?.defaultValue === children) return;
-          handleValueUpdate(component.id as string, selectedVariable);
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [selectedVariable]);
+    useEffect(() => {
+      if (selectedVariable?.defaultValue === childrenValue) return;
+      handleValueUpdate(component.id as string, selectedVariable);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedVariable]);
 
     return (
       <MantineBadge
