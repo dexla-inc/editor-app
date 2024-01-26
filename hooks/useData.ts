@@ -15,7 +15,7 @@ export const useData = () => {
     const value =
       fieldConfig.dataType === "dynamic"
         ? get(shareableContent, `data.${fieldConfig.value}`, fieldConfig.value)
-        : fieldConfig.value;
+        : get(fieldConfig, "value", component.props?.[field]);
 
     return value;
   };
