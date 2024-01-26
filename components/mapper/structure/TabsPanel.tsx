@@ -25,8 +25,13 @@ export const jsonStructure = (props?: any): Component => {
         name: "Text",
         description: "Tab Text",
         children: [],
+        onLoad: {
+          children: {
+            dataType: "static",
+            value: "New Tab Content",
+          },
+        },
         props: {
-          children: "New Tab Content",
           color: `${theme.colors.Black ? "Black.6" : "dark"}`,
           style: {
             fontSize: `${px(theme.fontSizes.sm)}px`,

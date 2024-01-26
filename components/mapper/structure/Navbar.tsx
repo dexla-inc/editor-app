@@ -108,8 +108,13 @@ export const jsonStructure = (props?: any): Component => {
                 id: nanoid(),
                 name: "Text",
                 description: "Username",
+                onLoad: {
+                  children: {
+                    dataType: "static",
+                    value: "JohnDoe14",
+                  },
+                },
                 props: {
-                  children: "JohnDoe14",
                   color: `${
                     theme.colors.Black ? "Black.6" : theme.colors.dark[6]
                   }`,
@@ -127,8 +132,13 @@ export const jsonStructure = (props?: any): Component => {
                 id: nanoid(),
                 name: "Text",
                 description: "Plan",
+                onLoad: {
+                  children: {
+                    dataType: "static",
+                    value: "Premium",
+                  },
+                },
                 props: {
-                  children: "Premium",
                   color: "Black.3",
                   size: "xs",
                   weight: "normal",
@@ -344,8 +354,13 @@ export const jsonStructure = (props?: any): Component => {
                     id: nanoid(),
                     name: "Text",
                     description: "Name",
+                    onLoad: {
+                      children: {
+                        dataType: "static",
+                        value: "John Doe",
+                      },
+                    },
                     props: {
-                      children: "John Doe",
                       color: `${
                         theme.colors.Black ? "Black.6" : theme.colors.dark[6]
                       }`,
@@ -363,8 +378,13 @@ export const jsonStructure = (props?: any): Component => {
                     id: nanoid(),
                     name: "Text",
                     description: "Email",
+                    onLoad: {
+                      children: {
+                        dataType: "static",
+                        value: "johnDoe14@gmail.com",
+                      },
+                    },
                     props: {
-                      children: "johnDoe14@gmail.com",
                       color: "gray.5",
                       size: "xs",
                       weight: "normal",

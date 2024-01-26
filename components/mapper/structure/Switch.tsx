@@ -40,8 +40,13 @@ export const jsonStructure = (props?: any): Component => {
         name: "Text",
         description: "Text",
         children: [],
+        onLoad: {
+          children: {
+            dataType: "static",
+            value: "A label",
+          },
+        },
         props: {
-          children: "A label",
           color: `${theme.colors.Black ? "Black.6" : "dark"}`,
           size: "sm",
           weight: "normal",

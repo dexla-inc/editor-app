@@ -144,8 +144,13 @@ export const jsonStructure = (props?: any): Component => {
               id: nanoid(),
               name: "Link",
               description: "Link",
+              onLoad: {
+                children: {
+                  value: "Have an account? Login",
+                  dataType: "static",
+                },
+              },
               props: {
-                children: "Have an account? Login",
                 color: `${theme.colors.Black ? "Black.6" : "dark"}`,
                 style: {
                   fontSize: `${px(theme.fontSizes.sm)}px`,
@@ -156,9 +161,14 @@ export const jsonStructure = (props?: any): Component => {
             {
               id: nanoid(),
               ...defaultButton,
+              onLoad: {
+                children: {
+                  dataType: "static",
+                  value: "Register",
+                },
+              },
               props: {
                 textColor: "White.6",
-                children: "Register",
               },
               blockDroppingChildrenInside: true,
             },

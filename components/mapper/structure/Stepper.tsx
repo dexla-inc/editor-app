@@ -74,8 +74,13 @@ export const jsonStructure = (props?: any): Component => {
                         name: "Text",
                         description: "Text",
                         children: [],
+                        onLoad: {
+                          children: {
+                            dataType: "static",
+                            value: "Address",
+                          },
+                        },
                         props: {
-                          children: "Address",
                           color: "Black.6",
                           style: {
                             fontSize: "14px",
@@ -143,8 +148,13 @@ export const jsonStructure = (props?: any): Component => {
                         name: "Text",
                         description: "Text",
                         children: [],
+                        onLoad: {
+                          children: {
+                            dataType: "static",
+                            value: "First Step content",
+                          },
+                        },
                         props: {
-                          children: "First Step content",
                           color: "Black.6",
                           style: {
                             fontSize: "14px",
@@ -174,6 +184,12 @@ export const jsonStructure = (props?: any): Component => {
                           {
                             id: nanoid(),
                             ...defaultButton,
+                            onLoad: {
+                              children: {
+                                dataType: "static",
+                                value: "Previous",
+                              },
+                            },
                             props: {
                               style: {
                                 width: "auto",
@@ -187,7 +203,6 @@ export const jsonStructure = (props?: any): Component => {
                               },
                               textColor: "Black.2",
                               variant: "default",
-                              children: "Previous",
                               leftIcon: "IconArrowLeft",
                             },
                             blockDroppingChildrenInside: true,
@@ -195,13 +210,18 @@ export const jsonStructure = (props?: any): Component => {
                           {
                             id: nanoid(),
                             ...defaultButton,
+                            onLoad: {
+                              children: {
+                                dataType: "static",
+                                value: "Next",
+                              },
+                            },
                             props: {
                               style: {
                                 width: "auto",
                                 height: "auto",
                                 padding: 12,
                               },
-                              children: "Next",
                               rightIcon: "IconArrowRight",
                             },
                             blockDroppingChildrenInside: true,
@@ -262,8 +282,13 @@ export const jsonStructure = (props?: any): Component => {
                         name: "Text",
                         description: "Text",
                         children: [],
+                        onLoad: {
+                          children: {
+                            dataType: "static",
+                            value: "Asset Description",
+                          },
+                        },
                         props: {
-                          children: "Asset Description",
                           color: "Black.6",
                           style: {
                             fontSize: "14px",
@@ -328,8 +353,13 @@ export const jsonStructure = (props?: any): Component => {
                         name: "Text",
                         description: "Text",
                         children: [],
+                        onLoad: {
+                          children: {
+                            dataType: "static",
+                            value: "Second Step content",
+                          },
+                        },
                         props: {
-                          children: "Second Step content",
                           color: "Black.6",
                           style: {
                             fontSize: "14px",
@@ -359,6 +389,12 @@ export const jsonStructure = (props?: any): Component => {
                           {
                             id: nanoid(),
                             ...defaultButton,
+                            onLoad: {
+                              children: {
+                                dataType: "static",
+                                value: "Previous",
+                              },
+                            },
                             props: {
                               style: {
                                 width: "auto",
@@ -367,7 +403,6 @@ export const jsonStructure = (props?: any): Component => {
                               },
                               textColor: "Black.9",
                               variant: "default",
-                              children: "Previous",
                               leftIcon: "IconArrowLeft",
                             },
                             blockDroppingChildrenInside: true,
@@ -386,13 +421,18 @@ export const jsonStructure = (props?: any): Component => {
                           {
                             id: nanoid(),
                             ...defaultButton,
+                            onLoad: {
+                              children: {
+                                dataType: "static",
+                                value: "Next",
+                              },
+                            },
                             props: {
                               style: {
                                 width: "auto",
                                 height: "auto",
                                 padding: 12,
                               },
-                              children: "Next",
                               rightIcon: "IconArrowRight",
                             },
                             blockDroppingChildrenInside: true,
@@ -448,8 +488,13 @@ export const jsonStructure = (props?: any): Component => {
                         name: "Text",
                         description: "Text",
                         children: [],
+                        onLoad: {
+                          children: {
+                            dataType: "static",
+                            value: "Additional Information",
+                          },
+                        },
                         props: {
-                          children: "Additional Information",
                           color: "Black.6",
                           style: {
                             fontSize: "14px",
@@ -514,8 +559,13 @@ export const jsonStructure = (props?: any): Component => {
                         name: "Text",
                         description: "Text",
                         children: [],
+                        onLoad: {
+                          children: {
+                            dataType: "static",
+                            value: "Third Step content",
+                          },
+                        },
                         props: {
-                          children: "Third Step content",
                           color: "Black.6",
                           style: {
                             fontSize: "14px",
@@ -545,6 +595,12 @@ export const jsonStructure = (props?: any): Component => {
                           {
                             id: nanoid(),
                             ...defaultButton,
+                            onLoad: {
+                              children: {
+                                dataType: "static",
+                                value: "Previous",
+                              },
+                            },
                             props: {
                               style: {
                                 width: "auto",
@@ -553,7 +609,6 @@ export const jsonStructure = (props?: any): Component => {
                               },
                               textColor: "Black.9",
                               variant: "default",
-                              children: "Previous",
                               leftIcon: "IconArrowLeft",
                             },
                             blockDroppingChildrenInside: true,
@@ -572,13 +627,18 @@ export const jsonStructure = (props?: any): Component => {
                           {
                             id: nanoid(),
                             ...defaultButton,
+                            onLoad: {
+                              children: {
+                                dataType: "static",
+                                value: "Next",
+                              },
+                            },
                             props: {
                               style: {
                                 width: "auto",
                                 height: "auto",
                                 padding: 12,
                               },
-                              children: "Next",
                               rightIcon: "IconArrowRight",
                             },
                             blockDroppingChildrenInside: true,
