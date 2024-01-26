@@ -265,7 +265,7 @@ export const requiredModifiers: RequiredModifiers = {
     labelSpacing: "0",
   },
   table: {
-    dataType: "static",
+    dataType: "dynamic",
     highlightOnHover: true,
     horizontalCellSpacing: "sm",
     verticalCellSpacing: "sm",

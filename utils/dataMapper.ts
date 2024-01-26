@@ -4,6 +4,7 @@ import {
 } from "@/components/data/AvatarData";
 import { SelectData as Select } from "@/components/data/SelectData";
 import { ContainerData as Container } from "@/components/data/ContainerData";
+import { TableData as Table } from "@/components/data/TableData";
 import { ChartData as Chart } from "@/components/data/ChartData";
 import {
   TextData as Badge,
@@ -28,7 +29,7 @@ export const dataMapper = {
   Image,
   Container,
   Form: Container,
-  Table: Container,
+  Table,
   AreaChart: Chart,
   BarChart: Chart,
   LineChart: Chart,

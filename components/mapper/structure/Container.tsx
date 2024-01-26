@@ -24,7 +24,7 @@ export const jsonStructure = (props?: any): Component => {
       ...restDefaultValues,
       ...restProps,
       style: mergedStyle,
-      data: restProps.data || [1, 2, 34, 4],
+      data: restProps.data,
     },
   };
 };

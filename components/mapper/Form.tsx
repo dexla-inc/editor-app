@@ -82,22 +82,22 @@ const FormComponent = forwardRef(
       form.setFieldValue(e.target.name, e.target.value);
     };
 
-    const { data: response } = useEndpoint({
-      endpointId,
-      requestSettings: { binds, dataType, staleTime },
-    });
-
-    useEffect(() => {
-      if (endpointId) {
-        if (!response) {
-          setData([]);
-        } else {
-          const result = get(response, resultsKey, response);
-          setData(result);
-        }
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [resultsKey, response, endpointId]);
+    // const { data: response } = useEndpoint({
+    //   endpointId,
+    //   requestSettings: { binds, dataType, staleTime },
+    // });
+    //
+    // useEffect(() => {
+    //   if (endpointId) {
+    //     if (!response) {
+    //       setData([]);
+    //     } else {
+    //       const result = get(response, resultsKey, response);
+    //       setData(result);
+    //     }
+    //   }
+    //   // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [resultsKey, response, endpointId]);
 
     return (
       <MantineFlex

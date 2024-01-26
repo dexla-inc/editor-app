@@ -4,22 +4,34 @@ import { useEditorStore } from "@/stores/editor";
 import { performFetch, prepareRequestData } from "@/utils/actions";
 import { DEFAULT_STALE_TIME } from "@/utils/config";
 import { useQuery } from "@tanstack/react-query";
+import { Component } from "@/utils/editor";
+import { useEffect, useState } from "react";
+import get from "lodash.get";
 
 type UseEndpointProps = {
-  endpointId: string;
-  requestSettings: any;
+  component: Component;
 };
 
-export const useEndpoint = ({
-  endpointId = "",
-  requestSettings = { binds: {}, dataType: "", staleTime: DEFAULT_STALE_TIME },
-}: UseEndpointProps) => {
+export const useEndpoint = ({ component }: UseEndpointProps) => {
   const accessToken = useDataSourceStore(
     (state) => state.authState.accessToken,
   );
+
+  const { dataType } = component.props as any;
+  const {
+    endpointId,
+    resultsKey,
+    binds,
+    staleTime = DEFAULT_STALE_TIME,
+  } = component.onLoad ?? {};
+
+  const [data, setData] = useState<any[] | Record<string, any>>();
   const projectId = useEditorStore((state) => state.currentProjectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const endpoint = endpoints?.results?.find((e) => e.id === endpointId);
+
+  const requestSettings = { binds, dataType, staleTime };
+
   const { url, body } = prepareRequestData(requestSettings, endpoint!);
 
   const apiCall = () => {
@@ -39,10 +51,28 @@ export const useEndpoint = ({
     return performFetch(fetchUrl, endpoint, body, authHeaderKey);
   };
 
-  const isEnabled = !!endpoint && requestSettings.dataType === "dynamic";
+  const isEnabled = !!endpoint && dataType === "dynamic";
 
-  return useQuery([url, JSON.stringify(body), accessToken], apiCall, {
-    staleTime: requestSettings.staleTime * 1000 * 60,
-    enabled: isEnabled,
-  });
+  const { data: response } = useQuery(
+    [url, JSON.stringify(body), accessToken],
+    apiCall,
+    {
+      staleTime: requestSettings.staleTime * 1000 * 60,
+      enabled: isEnabled,
+    },
+  );
+
+  useEffect(() => {
+    if (endpointId) {
+      if (!response) {
+        setData([]);
+      } else {
+        const result = get(response, resultsKey, response);
+        setData(result);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resultsKey, response, endpointId]);
+
+  return { data };
 };
