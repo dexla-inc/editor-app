@@ -46,40 +46,40 @@ const SelectComponent = forwardRef(
       dataType === "static" ? component.props?.data : [],
     );
 
-    const { data: response } = useEndpoint({
-      endpointId,
-      requestSettings: { binds, dataType, staleTime },
-    });
-
-    useEffect(() => {
-      if (dataType === "dynamic") {
-        if (!response || !dataLabelKey || !dataValueKey) {
-          setData([]);
-        } else {
-          const result = get(response, resultsKey, response);
-          if (Array.isArray(result)) {
-            setData(
-              (result ?? []).reduce((acc, item: any) => {
-                acc.push({
-                  label: item[dataLabelKey],
-                  value: item[dataValueKey],
-                });
-
-                return acc;
-              }, []),
-            );
-          } else {
-            setData([
-              {
-                label: result[dataLabelKey],
-                value: result[dataValueKey],
-              },
-            ]);
-          }
-        }
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [resultsKey, dataLabelKey, dataValueKey, dataType, response]);
+    // const { data: response } = useEndpoint({
+    //   endpointId,
+    //   requestSettings: { binds, dataType, staleTime },
+    // });
+    //
+    // useEffect(() => {
+    //   if (dataType === "dynamic") {
+    //     if (!response || !dataLabelKey || !dataValueKey) {
+    //       setData([]);
+    //     } else {
+    //       const result = get(response, resultsKey, response);
+    //       if (Array.isArray(result)) {
+    //         setData(
+    //           (result ?? []).reduce((acc, item: any) => {
+    //             acc.push({
+    //               label: item[dataLabelKey],
+    //               value: item[dataValueKey],
+    //             });
+    //
+    //             return acc;
+    //           }, []),
+    //         );
+    //       } else {
+    //         setData([
+    //           {
+    //             label: result[dataLabelKey],
+    //             value: result[dataValueKey],
+    //           },
+    //         ]);
+    //       }
+    //     }
+    //   }
+    //   // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [resultsKey, dataLabelKey, dataValueKey, dataType, response]);
 
     useEffect(() => {
       if (dataType === "static") {

@@ -3,6 +3,9 @@ import { Component } from "@/utils/editor";
 import { Table as MantineTable, ScrollArea, TableProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useEndpoint } from "@/hooks/useEndpoint";
+import { jsonStructure as tableRowStructure } from "@/components/mapper/structure/table/TableRow";
+import { jsonStructure as tableCellStructure } from "@/components/mapper/structure/table/TableCell";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -13,9 +16,27 @@ export const TableComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
     const { children, ...componentProps } = component.props as any;
 
+    const { data } = useEndpoint({
+      component,
+    });
+
+    const childrenStructure = data?.map((row: any, index: number) => {
+      const columns = component.onLoad?.columns?.map((c: string) => {
+        return tableCellStructure();
+      });
+
+      return tableRowStructure({ children: columns });
+    });
+
     return (
       <ScrollArea w={props.style?.width ?? "100%"}>
         <MantineTable ref={ref} {...props} {...componentProps}>
+          <thead>
+            {component.onLoad?.columns?.map((c: string) => (
+              <td key={c}>{c}</td>
+            ))}
+          </thead>
+          <tbody>asdf</tbody>
           {component.children?.map((child) => renderTree(child))}
         </MantineTable>
       </ScrollArea>

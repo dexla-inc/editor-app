@@ -3,9 +3,8 @@ import { useEditorStore } from "@/stores/editor";
 import { IDENTIFIER } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef } from "react";
 import { useEndpoint } from "@/hooks/useEndpoint";
-import get from "lodash.get";
 
 type Props = {
   renderTree: (component: Component, shareableContent: any) => any;
@@ -21,7 +20,7 @@ export const ContainerComponent = forwardRef(
     const { children, bg, triggers, loading, dataType, ...componentProps } =
       component.props as any;
 
-    const { endpointId, resultsKey, binds, staleTime } = component.onLoad ?? {};
+    const { endpointId } = component.onLoad ?? {};
 
     const hasBorder =
       componentProps?.style?.borderWidth ||
@@ -31,24 +30,23 @@ export const ContainerComponent = forwardRef(
       componentProps?.style?.borderRightWidth;
     const shouldRemoveBorder = isLive || isPreviewMode || hasBorder;
 
-    const [data, setData] = useState(component.props?.data ?? []);
+    // const [data, setData] = useState(component.props?.data ?? []);
 
-    const { data: response } = useEndpoint({
-      endpointId,
-      requestSettings: { binds, dataType, staleTime },
+    const { data } = useEndpoint({
+      component,
     });
 
-    useEffect(() => {
-      if (endpointId) {
-        if (!response) {
-          setData([]);
-        } else {
-          const result = get(response, resultsKey, response);
-          setData(result);
-        }
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [resultsKey, response, endpointId]);
+    // useEffect(() => {
+    //   if (endpointId) {
+    //     if (!response) {
+    //       setData([]);
+    //     } else {
+    //       const result = get(response, resultsKey, response);
+    //       setData(result);
+    //     }
+    //   }
+    //   // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [resultsKey, response, endpointId]);
 
     return (
       <MantineFlex
