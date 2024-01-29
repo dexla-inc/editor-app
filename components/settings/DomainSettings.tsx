@@ -6,6 +6,7 @@ import { convertToPatchParams } from "@/utils/dashboardTypes";
 import {
   Button,
   Container,
+  Group,
   Stack,
   Table,
   Text,
@@ -75,7 +76,7 @@ export default function DomainSettings({ projectId }: Props) {
   };
 
   useEffect(() => {
-    const fetchProject = async () => {
+    const verifyDomain = async () => {
       if (project) {
         form.setFieldValue("domain", project.domain ?? "");
         form.setFieldValue("subDomain", project.subDomain ?? "");
@@ -96,9 +97,9 @@ export default function DomainSettings({ projectId }: Props) {
       }
     };
 
-    fetchProject();
+    verifyDomain();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId]);
+  }, [project]);
 
   return (
     <Container py="xl">
@@ -154,7 +155,9 @@ export default function DomainSettings({ projectId }: Props) {
               placeholder="Your custom subdomain"
               {...form.getInputProps("subDomain")}
             />
-            <Button type="submit">Save</Button>
+            <Group>
+              <Button type="submit">Save</Button>
+            </Group>
           </Stack>
         </form>
       </Stack>
