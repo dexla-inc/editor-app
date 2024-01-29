@@ -1,10 +1,10 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useBindingPopover } from "@/hooks/useBindingPopover";
+import { useData } from "@/hooks/useData";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { useBindingPopover } from "@/hooks/useBindingPopover";
-import { Avatar as MantineAvatar, AvatarProps } from "@mantine/core";
-import { forwardRef, memo, useEffect } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useData } from "@/hooks/useData";
+import { AvatarProps, Avatar as MantineAvatar } from "@mantine/core";
+import { forwardRef, memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -28,13 +28,14 @@ const AvatarComponent = forwardRef(
       sourceVariable?.defaultValue === srcValue &&
       altTextVariable?.defaultValue === childrenValue;
 
-    useEffect(() => {
-      if (isVariablesSame) return;
-      handleValuesUpdate(component.id as string, {
-        src: sourceVariable?.defaultValue,
-        children: altTextVariable?.defaultValue,
-      });
-    }, [sourceVariable, altTextVariable]);
+    // TODO: NEVER PUT SAVING PAGE STATE IN A USE EFFECT
+    // useEffect(() => {
+    //   if (isVariablesSame) return;
+    //   handleValuesUpdate(component.id as string, {
+    //     src: sourceVariable?.defaultValue,
+    //     children: altTextVariable?.defaultValue,
+    //   });
+    // }, [sourceVariable, altTextVariable]);
 
     return (
       <MantineAvatar ref={ref} {...props} {...componentProps} src={srcValue}>
