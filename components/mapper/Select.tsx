@@ -48,10 +48,9 @@ const SelectComponent = forwardRef(
         if (!response || !dataLabelKey || !dataValueKey) {
           setData([]);
         } else {
-          const result = get(response, resultsKey, response);
-          if (Array.isArray(result)) {
+          if (Array.isArray(response)) {
             setData(
-              (result ?? []).reduce((acc, item: any) => {
+              response.reduce((acc, item: any) => {
                 acc.push({
                   label: item[dataLabelKey],
                   value: item[dataValueKey],
@@ -63,8 +62,8 @@ const SelectComponent = forwardRef(
           } else {
             setData([
               {
-                label: result[dataLabelKey],
-                value: result[dataValueKey],
+                label: response[dataLabelKey],
+                value: response[dataValueKey],
               },
             ]);
           }
