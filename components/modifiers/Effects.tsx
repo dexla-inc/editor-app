@@ -1,5 +1,8 @@
+import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
+import { getComponentInitialDisplayValue } from "@/utils/common";
+import { showVisibilityModifier } from "@/utils/dataMapper";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { NumberInput, Select, Stack, TextInput } from "@mantine/core";
@@ -14,6 +17,7 @@ export const label = "Appearance";
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm();
+    const showVisibility = showVisibilityModifier(selectedComponent);
 
     useEffect(() => {
       form.setValues(
@@ -23,6 +27,7 @@ export const Modifier = withModifier(
           opacity: selectedComponent.props?.style?.opacity,
           tooltip: selectedComponent.props?.tooltip,
           javascriptCode: selectedComponent.props?.javascriptCode ?? "",
+          display: selectedComponent.props?.style.display,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -31,6 +36,30 @@ export const Modifier = withModifier(
     return (
       <form key={selectedComponent?.id}>
         <Stack spacing="xs">
+          {showVisibility && (
+            <SegmentedControlInput
+              label="Visibility"
+              data={[
+                {
+                  label: "Visible",
+                  value: getComponentInitialDisplayValue(
+                    selectedComponent.name,
+                  ),
+                },
+                {
+                  label: "Hidden",
+                  value: "none",
+                },
+              ]}
+              {...form.getInputProps("display")}
+              onChange={(value) => {
+                form.setFieldValue("display", value as string);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  style: { display: value },
+                });
+              }}
+            />
+          )}
           <Select
             label="Cursor"
             size="xs"

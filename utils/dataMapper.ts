@@ -2,18 +2,18 @@ import {
   AvatarData as Avatar,
   AvatarData as Image,
 } from "@/components/data/AvatarData";
-import { SelectData as Select } from "@/components/data/SelectData";
-import { ContainerData as Container } from "@/components/data/ContainerData";
-import { TableData as Table } from "@/components/data/TableData";
 import { ChartData as Chart } from "@/components/data/ChartData";
+import { ContainerData as Container } from "@/components/data/ContainerData";
+import { SelectData as Select } from "@/components/data/SelectData";
+import { TableData as Table } from "@/components/data/TableData";
 import {
   TextData as Badge,
   TextData as Button,
   TextData as FileButton,
   TextData as Link,
   TextData as NavLink,
-  TextData as Title,
   TextData as Text,
+  TextData as Title,
 } from "@/components/data/TextData";
 
 export const dataMapper = {
@@ -37,3 +37,6 @@ export const dataMapper = {
   RadarChart: Chart,
   RadialChart: Chart,
 };
+
+export const showVisibilityModifier = (component: any) =>
+  !Object.keys(dataMapper).includes(component.name);
