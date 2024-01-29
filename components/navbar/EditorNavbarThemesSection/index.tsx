@@ -1,6 +1,7 @@
 import { AssetsTextInput } from "@/components/AssetsTextInput";
 import { CardStyleSelector } from "@/components/CardStyleSelector";
 import { ColorSelector } from "@/components/ColorSelector";
+import { FaviconUrl } from "@/components/FaviconUrl";
 import { FocusRingSelector } from "@/components/FocusRingSelector";
 import { LoaderSelector } from "@/components/LoaderSelector";
 import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
@@ -379,12 +380,7 @@ export const EditorNavbarThemesSection =
               defaultValue={form.values.logoUrl}
               {...form.getInputProps("logoUrl")}
             />
-            <AssetsTextInput
-              label="Favicon"
-              placeholder="https://example.com/favicon.ico"
-              defaultValue={form.values.faviconUrl}
-              {...form.getInputProps("faviconUrl")}
-            />
+            <FaviconUrl />
           </Stack>
         </Stack>
         <Button type="submit" size="sm" fullWidth my="xl" compact>
