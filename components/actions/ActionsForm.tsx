@@ -63,7 +63,7 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
     if (availableTriggers.length > 0) {
       form.setFieldValue("trigger", availableTriggers[0]);
     }
-  }, [availableTriggers, form]);
+  }, [availableTriggers]);
 
   const pasteAction = (copiedAction: Action[]) => {
     updateTreeComponentActions(

@@ -51,7 +51,6 @@ import { Tabs } from "@/components/mapper/Tabs";
 import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";
 import { Title } from "@/components/mapper/Title";
-import { UnstyledButton } from "@/components/mapper/UnstyledButton";
 import { AreaChart } from "@/components/mapper/charts/AreaChart";
 import { BarChart } from "@/components/mapper/charts/BarChart";
 import { LineChart } from "@/components/mapper/charts/LineChart";
@@ -98,7 +97,6 @@ import * as TabsStructure from "@/components/mapper/structure/Tabs";
 import * as TextStructure from "@/components/mapper/structure/Text";
 import * as TextareaStructure from "@/components/mapper/structure/Textarea";
 import * as TitleStructure from "@/components/mapper/structure/Title";
-import * as UnstyledButtonStructure from "@/components/mapper/structure/UnstyledButton";
 import * as AreaChartStructure from "@/components/mapper/structure/charts/AreaChart";
 import * as BarChartStructure from "@/components/mapper/structure/charts/BarChart";
 import * as LineChartStructure from "@/components/mapper/structure/charts/LineChart";
@@ -167,7 +165,6 @@ import {
   IconSelect,
   IconSeparator,
   IconSlash,
-  IconSquare,
   IconStackPop,
   IconTable,
   IconToggleLeft,
@@ -359,17 +356,6 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconCircleDot size={ICON_SIZE} />,
-  },
-  UnstyledButton: {
-    structure: (props: any) => UnstyledButtonStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="UnstyledButton"
-        icon={<IconSquare size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconSquare size={ICON_SIZE} />,
   },
   Rating: {
     structure: (props: any) => RatingStructure.jsonStructure(props),
@@ -1549,29 +1535,6 @@ export const componentMapper: ComponentMapper = {
       "border",
       "effects",
       "position",
-    ],
-    actionTriggers: ["onClick", "onHover"],
-    sequentialTriggers: ["onSuccess", "onError"],
-  },
-  UnstyledButton: {
-    Component: (props: { component: Component; renderTree: any }) => (
-      <UnstyledButton
-        component={props.component}
-        renderTree={props.renderTree}
-        // @ts-ignore
-        onClick={(e) => {
-          e.preventDefault();
-        }}
-      />
-    ),
-    modifiers: [
-      "layout",
-      "background",
-      "spacing",
-      "size",
-      "border",
-      "effects",
-      "boxShadow",
     ],
     actionTriggers: ["onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],

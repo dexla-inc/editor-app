@@ -14,10 +14,9 @@ import {
   PasswordInput,
   TextInputProps,
 } from "@mantine/core";
-import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { forwardRef, memo, useCallback, useState } from "react";
+import { forwardRef, memo } from "react";
 import { InputLoader } from "../InputLoader";
 
 type Props = {
@@ -186,6 +185,7 @@ const InputComponent = forwardRef(
             ref={ref}
             id={component.id}
             icon={iconName ? <Icon name={iconName} /> : null}
+            style={{}}
             styles={{
               root: {
                 position: "relative",
