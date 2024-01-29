@@ -34,7 +34,7 @@ export const usePropsWithOverwrites = (
         triggers: !isEditorMode
           ? {
               ...triggers,
-              ...(currentState === "disabled" && {
+              ...(isDisabledState && {
                 onKeyDown: handleComponentIfDisabledState,
               }),
             }
@@ -57,7 +57,7 @@ export function computeChildStyles(
     ...propsWithOverwrites.style,
     ...(currentState === "hidden" && { display: "none" }),
     ...(currentState === "disabled" &&
-      !isEditorMode && { PointerEvent: "none" }),
+      !isEditorMode && { pointerEvents: "none" }),
 
     outline:
       !isEditorMode && propsWithOverwrites.style?.outline === GRAY_OUTLINE
