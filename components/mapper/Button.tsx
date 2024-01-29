@@ -2,6 +2,7 @@ import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { useContentEditable } from "@/hooks/useContentEditable";
+import { useData } from "@/hooks/useData";
 import { useEditorStore } from "@/stores/editor";
 import { DISABLED_HOVER } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
@@ -9,7 +10,6 @@ import { Component, getColorFromTheme } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import merge from "lodash.merge";
 import { ReactElement, forwardRef, memo, useEffect } from "react";
-import { useData } from "@/hooks/useData";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -85,7 +85,7 @@ const ButtonComponent = forwardRef(
         {...triggers}
         style={customStyle}
         styles={{ root: DISABLED_HOVER }}
-        ref={ref}
+        ref={ref ?? contentEditableProps.ref}
       >
         {childrenValue}
       </MantineButton>
