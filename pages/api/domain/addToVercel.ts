@@ -13,10 +13,10 @@ export default async function handler(
     const domain = req.body.domain as string;
 
     const response = await addDomainToVercel(domain);
-    const json = await response.json();
 
-    res.status(200).json(json);
+    res.status(200).json(response);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error });
   }
 }
