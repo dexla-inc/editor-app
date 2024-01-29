@@ -1,11 +1,11 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { useContentEditable } from "@/hooks/useContentEditable";
+import { useData } from "@/hooks/useData";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { CSSObject, Title as MantineTitle, TitleProps } from "@mantine/core";
 import { forwardRef, memo, useEffect } from "react";
-import { useData } from "@/hooks/useData";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -42,7 +42,7 @@ const TitleComponent = forwardRef(
         {...props}
         {...componentProps}
         {...triggers}
-        ref={ref}
+        ref={ref ?? contentEditableProps.ref}
         key={`${component.id}`}
       >
         {childrenValue}

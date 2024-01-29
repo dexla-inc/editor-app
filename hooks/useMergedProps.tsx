@@ -20,6 +20,24 @@ export const usePropsWithOverwrites = (
     useComponentStates();
 
   const isDisabledState = checkIfIsDisabledState(component.name, currentState);
+  const setTreeComponentCurrentState = useEditorStore(
+    (state) => state.setTreeComponentCurrentState,
+  );
+
+  const hoverStateFunc = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    if (currentState === "default") {
+      setTreeComponentCurrentState(e.currentTarget.id, "hover");
+    }
+  }, []);
+
+  const leaveHoverStateFunc = useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      if (currentState === "hover") {
+        setTreeComponentCurrentState(e.currentTarget.id, "default");
+      }
+    },
+    [],
+  );
 
   return useMemo(() => {
     return merge(
@@ -34,6 +52,8 @@ export const usePropsWithOverwrites = (
         triggers: !isEditorMode
           ? {
               ...triggers,
+              onMouseOver: triggers?.onHover ?? hoverStateFunc,
+              onMouseLeave: leaveHoverStateFunc,
               ...(isDisabledState && {
                 onKeyDown: handleComponentIfDisabledState,
               }),
@@ -44,7 +64,8 @@ export const usePropsWithOverwrites = (
             },
       },
     );
-  }, [component, currentState, triggers, handleMouseEnter, handleMouseLeave]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [component, currentState, triggers]);
 };
 
 export function computeChildStyles(
