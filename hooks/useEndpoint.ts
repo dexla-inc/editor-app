@@ -69,6 +69,7 @@ export const useEndpoint = ({ component }: UseEndpointProps) => {
       } else {
         const result = get(response, resultsKey, response);
         setData(result);
+        console.log("update!!!");
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

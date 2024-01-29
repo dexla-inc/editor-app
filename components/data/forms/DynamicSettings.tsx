@@ -18,8 +18,9 @@ import { useData } from "@/hooks/useData";
 type Props = {
   component: Component;
   endpoints: PagingResponse<Endpoint>;
-  children?: (props: any) => JSX.Element;
   customKeys?: string[];
+  children?: (props: any) => JSX.Element;
+  onSave?: (component: Component, form: any) => Partial<Component>;
 };
 
 export const DynamicSettings = ({
@@ -27,6 +28,7 @@ export const DynamicSettings = ({
   endpoints,
   children,
   customKeys = [],
+  onSave,
 }: Props) => {
   const [initiallyOpened, setInitiallyOpened] = useState(true);
   const [selectedEndpoint, setSelectedEndpoint] = useState<
@@ -73,6 +75,7 @@ export const DynamicSettings = ({
     if (form.isTouched()) {
       debouncedTreeComponentAttrsUpdate({
         onLoad: form.values,
+        ...onSave?.(component, form),
       });
     }
   }, [form.values]);
