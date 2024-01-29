@@ -104,6 +104,7 @@ import * as PieChartStructure from "@/components/mapper/structure/charts/PieChar
 import * as RadarChartStructure from "@/components/mapper/structure/charts/RadarChart";
 import * as RadialChartStructure from "@/components/mapper/structure/charts/RadialChart";
 import * as TableStructure from "@/components/mapper/structure/table/Table";
+import * as TableCellStructure from "@/components/mapper/structure/table/TableCell";
 import { ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import { Component } from "@/utils/editor";
 
@@ -450,6 +451,17 @@ export const structureMapper: StructureMapper = {
     Draggable: () => (
       <DraggableComponent
         id="Table"
+        icon={<IconTable size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Data Display",
+    icon: <IconTable size={ICON_SIZE} />,
+  },
+  TableCell: {
+    structure: (props: any) => TableCellStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="TableCell"
         icon={<IconTable size={LARGE_ICON_SIZE} />}
       />
     ),

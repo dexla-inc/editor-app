@@ -1,43 +1,54 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { Table as MantineTable, ScrollArea, TableProps } from "@mantine/core";
+import {
+  Table as MantineTable,
+  ScrollArea,
+  TableProps,
+  Box,
+} from "@mantine/core";
 import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEndpoint } from "@/hooks/useEndpoint";
-import { jsonStructure as tableRowStructure } from "@/components/mapper/structure/table/TableRow";
-import { jsonStructure as tableCellStructure } from "@/components/mapper/structure/table/TableCell";
 
 type Props = {
-  renderTree: (component: Component) => any;
+  renderTree: (component: Component, shareableContent: any) => any;
   component: Component;
+  shareableContent?: any;
 } & TableProps;
 
 export const TableComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
-    const { children, ...componentProps } = component.props as any;
-
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+    const { children, triggers, ...componentProps } = component.props as any;
     const { data } = useEndpoint({
       component,
     });
 
-    const childrenStructure = data?.map((row: any, index: number) => {
-      const columns = component.onLoad?.columns?.map((c: string) => {
-        return tableCellStructure();
-      });
-
-      return tableRowStructure({ children: columns });
-    });
-
     return (
-      <ScrollArea w={props.style?.width ?? "100%"}>
-        <MantineTable ref={ref} {...props} {...componentProps}>
+      <ScrollArea
+        w={props.style?.width ?? "100%"}
+        mah={props.style?.height ?? "auto"}
+      >
+        <MantineTable ref={ref} {...props} {...componentProps} {...triggers}>
           <thead>
-            {component.onLoad?.columns?.map((c: string) => (
-              <td key={c}>{c}</td>
-            ))}
+            {component.onLoad?.columns
+              ?.split(",")
+              .map((c: string) => <td key={c}>{c}</td>)}
           </thead>
-          <tbody>asdf</tbody>
-          {component.children?.map((child) => renderTree(child))}
+          <tbody>
+            {(Array.isArray(data) ? data : [])?.map((item: any, i: number) => {
+              return (
+                <tr key={i}>
+                  {component.children?.map((child) =>
+                    renderTree(child, {
+                      ...shareableContent,
+                      parentDataComponentId: component.id,
+                      data: item,
+                    }),
+                  )}
+                </tr>
+              );
+            })}
+          </tbody>
         </MantineTable>
       </ScrollArea>
     );
@@ -45,44 +56,79 @@ export const TableComponent = forwardRef(
 );
 TableComponent.displayName = "Table";
 
-export const TableHead = ({ renderTree, component }: Props) => {
-  return <thead>{component.children?.map((child) => renderTree(child))}</thead>;
+export const TableHead = ({
+  renderTree,
+  component,
+  shareableContent,
+}: Props) => {
+  return (
+    <thead>
+      {component.children?.map((child) => renderTree(child, shareableContent))}
+    </thead>
+  );
 };
 
-export const TableBody = ({ renderTree, component }: Props) => {
-  return <tbody>{component.children?.map((child) => renderTree(child))}</tbody>;
+export const TableBody = ({
+  renderTree,
+  component,
+  shareableContent,
+}: Props) => {
+  return (
+    <tbody>
+      {component.children?.map((child) => renderTree(child, shareableContent))}
+    </tbody>
+  );
 };
 
-export const TableRow = ({ renderTree, component, ...props }: Props) => {
+export const TableRow = ({
+  renderTree,
+  component,
+  shareableContent,
+  ...props
+}: Props) => {
   const { ...componentProps } = component.props as any;
 
   return (
     <tr {...props} {...componentProps}>
-      {component.children?.map((child) => renderTree(child))}
+      {component.children?.map((child) => renderTree(child, shareableContent))}
     </tr>
   );
 };
 
-export const TableHeaderCell = ({ renderTree, component, ...props }: Props) => {
+export const TableHeaderCell = ({
+  renderTree,
+  component,
+  shareableContent,
+}: Props) => {
   const { children, style, triggers, ...componentProps } =
     component.props as any;
 
   return (
     <th style={{ ...style }} {...componentProps}>
-      {component.children?.map((child) => renderTree(child))}
+      {component.children?.map((child) => renderTree(child, shareableContent))}
     </th>
   );
 };
 
-export const TableCell = ({ renderTree, component, ...props }: Props) => {
-  const { children, style, triggers, ...componentProps } =
-    component.props as any;
+export const TableCell = forwardRef(
+  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+    const { style, triggers, ...componentProps } = component.props as any;
 
-  return (
-    <td style={{ ...style }} {...componentProps}>
-      {component.children?.map((child) => renderTree(child))}
-    </td>
-  );
-};
+    return (
+      <Box
+        ref={ref}
+        {...props}
+        {...componentProps}
+        {...triggers}
+        component="td"
+      >
+        {component.children?.map((child) =>
+          renderTree(child, shareableContent),
+        )}
+      </Box>
+    );
+  },
+);
+TableCell.displayName = "TableCell";
 
 export const Table = memo(withComponentWrapper<Props>(TableComponent), isSame);
