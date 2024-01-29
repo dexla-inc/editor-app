@@ -14,7 +14,8 @@ export const getServerSideProps = async ({
 }: GetServerSidePropsContext) => {
   const url = req.headers.host;
   let id = "";
-  if (isLiveUrl(url!)) {
+  const isLiveApp = isLiveUrl(url!);
+  if (isLiveApp) {
     id = url?.split(".")[0] as string;
   } else {
     const project = await getByDomain(url!);

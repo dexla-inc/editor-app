@@ -1,7 +1,7 @@
 import { Live } from "@/components/Live";
 import { getMostRecentDeployment } from "@/requests/deployments/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
-import { getByDomain } from "@/requests/projects/queries-noauth";
+import { getByDomain, getProject } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
 import { isLiveUrl } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
@@ -14,12 +14,16 @@ export const getServerSideProps = async ({
 }: GetServerSidePropsContext) => {
   const url = req.headers.host;
 
-  let id = "";
+  let id = "",
+    faviconUrl = "";
   if (isLiveUrl(url!)) {
     id = url?.split(".")[0] as string;
+    const project = await getProject(id);
+    faviconUrl = project.faviconUrl ?? "";
   } else {
     const project = await getByDomain(url!);
     id = project.id;
+    faviconUrl = project.faviconUrl ?? "";
   }
 
   if (!id) {
@@ -37,6 +41,7 @@ export const getServerSideProps = async ({
     props: {
       id,
       page: recentDeployment?.pages[0],
+      faviconUrl,
     },
   };
 };
@@ -44,9 +49,10 @@ export const getServerSideProps = async ({
 type Props = {
   id: string;
   page: PageResponse;
+  faviconUrl?: string;
 };
 
-const HomePage = ({ id, page }: Props) => {
+const HomePage = ({ id, page, faviconUrl }: Props) => {
   const setCurrentProjectId = useEditorStore(
     (state) => state.setCurrentProjectId,
   );
@@ -77,6 +83,11 @@ const HomePage = ({ id, page }: Props) => {
       <Head>
         <title>{page?.title}</title>
         <meta name="description" content={page?.title} />
+        <link
+          rel="icon"
+          type="image/x-icon"
+          href={faviconUrl ?? "/favicon.ico"}
+        />
       </Head>
       <Live key={state?.timestamp} pageId={page?.id} projectId={id} />;
     </>

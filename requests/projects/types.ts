@@ -42,6 +42,7 @@ export type ProjectResponse = {
   homePageId?: string;
   customCode?: string;
   redirectSlug?: string;
+  faviconUrl?: string;
 };
 
 export type ProjectListResponse = {
