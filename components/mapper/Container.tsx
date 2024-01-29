@@ -30,23 +30,9 @@ export const ContainerComponent = forwardRef(
       componentProps?.style?.borderRightWidth;
     const shouldRemoveBorder = isLive || isPreviewMode || hasBorder;
 
-    // const [data, setData] = useState(component.props?.data ?? []);
-
     const { data } = useEndpoint({
       component,
     });
-
-    // useEffect(() => {
-    //   if (endpointId) {
-    //     if (!response) {
-    //       setData([]);
-    //     } else {
-    //       const result = get(response, resultsKey, response);
-    //       setData(result);
-    //     }
-    //   }
-    //   // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [resultsKey, response, endpointId]);
 
     return (
       <MantineFlex
