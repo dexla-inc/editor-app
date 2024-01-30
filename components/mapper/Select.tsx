@@ -1,12 +1,12 @@
 import { CustomDropdown } from "@/components/mapper/CustomSelectDropdown";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useChangeState } from "@/hooks/useChangeState";
+import { useDefaultBorderStyle } from "@/hooks/useDefaultBorderStyle";
 import { useEndpoint } from "@/hooks/useEndpoint";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Select as MantineSelect, SelectProps } from "@mantine/core";
-import get from "lodash.get";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo, useEffect, useState } from "react";
@@ -30,8 +30,11 @@ const SelectComponent = forwardRef(
     } = component.props as any;
     const { dataLabelKey, dataValueKey, resultsKey } = component.onLoad ?? {};
     const { color, backgroundColor } = useChangeState({ bg, textColor });
-
-    const customStyle = merge({}, props.style, { backgroundColor, color });
+    const { borderStyle } = useDefaultBorderStyle();
+    const customStyle = merge({}, borderStyle, props.style, {
+      backgroundColor,
+      color,
+    });
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setInputValue = useInputsStore((state) => state.setInputValue);
 
