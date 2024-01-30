@@ -13,37 +13,25 @@ export default async function handler(
       throw new Error("Invalid method");
     }
 
-    const { projectId, accessToken, pageCount, excludedPages } = req.body;
+    const { projectId, pageCount, description, industry, excludedPages } =
+      req.body;
     const project = await prisma.project.findFirstOrThrow({
       where: {
         id: projectId as string,
       },
     });
 
-    const projectResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_APPS_BASE_URL}/projects/${projectId}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
-
-    const _project = await projectResponse.json();
-
     const prompt =
       pageCount === "1"
         ? getPagePrompt({
-            appDescription: _project.description ?? "",
-            appIndustry: _project.industry ?? "",
+            appDescription: description ?? "",
+            appIndustry: industry ?? "",
             entities: JSON.stringify(project.entities ?? []),
             excludedPages: excludedPages,
           })
         : getPagesPrompt({
-            appDescription: _project.description ?? "",
-            appIndustry: _project.industry ?? "",
+            appDescription: description ?? "",
+            appIndustry: industry ?? "",
             entities: JSON.stringify(project.entities ?? []),
             pageCount: pageCount,
           });

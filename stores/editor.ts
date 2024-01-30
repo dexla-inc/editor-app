@@ -36,6 +36,8 @@ const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
 });
 
+console.log(client);
+
 const initialGridValues = requiredModifiers.grid;
 const initialGridColumnValues = requiredModifiers.gridColumn;
 

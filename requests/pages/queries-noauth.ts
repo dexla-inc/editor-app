@@ -4,7 +4,6 @@ import {
   PageParams,
   PageResponse,
 } from "@/requests/pages/types";
-import { getAuthToken } from "@/utils/api";
 import { getWithoutAuth } from "@/utils/apiNoAuth";
 import { buildQueryString } from "@/utils/dashboardTypes";
 
@@ -64,7 +63,6 @@ export const getPageTemplate = async (
   pageId: string,
   init = {},
 ): Promise<Page> => {
-  const accessToken = await getAuthToken();
   const response = await fetch("/api/ai/page", {
     ...init,
     method: "POST",
@@ -74,7 +72,6 @@ export const getPageTemplate = async (
     body: JSON.stringify({
       projectId,
       pageId,
-      accessToken,
     }),
   });
 

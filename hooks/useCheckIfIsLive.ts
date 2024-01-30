@@ -15,6 +15,8 @@ export const useCheckIfIsLive = () => {
   const url = typeof window !== "undefined" ? window.location.host : "";
   const initialIsLive = isLiveUrl(url, router);
 
+  console.log("useCheckIfIsLive", initialIsLive, url, router);
+
   const [isLive, setIsLive] = useState(initialIsLive);
 
   useEffect(() => {
