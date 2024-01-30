@@ -16,8 +16,6 @@ export const jsonStructure = (props?: any): Component => {
     height: "auto",
     minHeight: "100px",
     flexDirection: "column",
-    rowGap: "20px",
-    columnGap: "20px",
     alignItems: "center",
     justifyContent: "center",
   };
