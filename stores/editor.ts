@@ -192,7 +192,7 @@ export type EditorState = {
     componentId: string,
     children: Component[],
     save?: boolean,
-  ) => void;
+  ) => any;
   updateTreeComponentActions: (componentId: string, actions: Action[]) => void;
   updateTreeComponentDescription: (
     componentId: string,
@@ -448,7 +448,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
             );
           },
           // anything out of .props that changes .children[]
-          updateTreeComponentChildren: (componentId, children, save = true) => {
+          updateTreeComponentChildren: (componentId, children, save = true) =>
             set(
               (state: EditorState) => {
                 const copy = cloneDeep(state.tree);
@@ -477,8 +477,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
               },
               false,
               "editor/updateTreeComponentChildren",
-            );
-          },
+            ),
           // any action change
           updateTreeComponentActions: (componentId, actions) => {
             set(

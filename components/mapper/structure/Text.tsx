@@ -5,13 +5,13 @@ import { nanoid } from "nanoid";
 import merge from "lodash.merge";
 
 export const jsonStructure = (props?: any): Component => {
-  const theme = props.theme ?? defaultTheme;
+  const theme = props?.theme ?? defaultTheme;
   const defaultValues = requiredModifiers.text;
   const content =
-    props.props?.children ??
-    props.props?.content ??
-    props.props?.text ??
-    props.props?.value ??
+    props?.props?.children ??
+    props?.props?.content ??
+    props?.props?.text ??
+    props?.props?.value ??
     "New text";
 
   return {
@@ -21,7 +21,7 @@ export const jsonStructure = (props?: any): Component => {
     children: [],
     onLoad: {
       children: {
-        value: "New Text",
+        value: content,
         dataType: "static",
       },
     },
@@ -33,7 +33,7 @@ export const jsonStructure = (props?: any): Component => {
         letterSpacing: "0px",
         fontWeight: "normal",
       },
-      ...(props.props || {}),
+      ...(props?.props ?? {}),
     }),
     blockDroppingChildrenInside: true,
   };

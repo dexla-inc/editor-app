@@ -1,10 +1,14 @@
 import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
-import { Component } from "@/utils/editor";
+import {
+  Component,
+  debouncedTreeComponentChildrenUpdate,
+} from "@/utils/editor";
 import { SegmentedControl, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useEditorStore } from "@/stores/editor";
 import { jsonStructure as tableCellStructure } from "@/components/mapper/structure/table/TableCell";
+import { jsonStructure as textStructure } from "@/components/mapper/structure/Text";
 
 export type DataProps = {
   component: Component;
@@ -12,17 +16,16 @@ export type DataProps = {
   dataType: "static" | "dynamic";
 };
 
-const onSave = (component: Component | undefined, form: any) => {
+const onSave = async (component: Component | undefined, form: any) => {
   const columns = form.values.columns?.split(",");
 
   if (component?.children?.length !== columns.length) {
-    return {
-      children: Array(columns.length)
+    return await debouncedTreeComponentChildrenUpdate(
+      Array(columns.length)
         .fill(0)
-        .map(() => tableCellStructure()),
-    };
+        .map(() => tableCellStructure({ children: [textStructure()] })),
+    );
   }
-  return {};
 };
 
 export const TableData = ({ component, endpoints, dataType }: DataProps) => {
