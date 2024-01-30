@@ -1,11 +1,9 @@
-import { getDefaultBorderStyle } from "@/utils/defaultsStructure";
 import { Component } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   // requiredModifiers.dateInput
-  const defaultBorderStyle = getDefaultBorderStyle(props.theme);
   const defaultValues = requiredModifiers.dateInput;
 
   return {
@@ -19,7 +17,6 @@ export const jsonStructure = (props?: any): Component => {
       size: "sm",
       style: {
         ...defaultValues.style,
-        ...defaultBorderStyle,
       },
       ...(props.props || {}),
     },

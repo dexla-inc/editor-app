@@ -1,6 +1,7 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useChangeState } from "@/hooks/useChangeState";
+import { useDefaultBorderStyle } from "@/hooks/useDefaultBorderStyle";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
@@ -46,12 +47,13 @@ const InputComponent = forwardRef(
     const { type, ...restComponentProps } = componentProps;
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const inputSize = size ?? theme.inputSize;
-
     const _defaultValue = type === "number" || type === "numberRange" ? 0 : "";
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setStoreInputValue = useInputsStore((state) => state.setInputValue);
 
     const isClearable = clearable && !!inputValue;
+
+    const { borderStyle } = useDefaultBorderStyle();
 
     // clear input field
     const clearInput = () => {
@@ -89,7 +91,10 @@ const InputComponent = forwardRef(
       return isNaN(number) ? 0 : number;
     };
 
-    const customStyle = merge({}, props.style, { backgroundColor, color });
+    const customStyle = merge({}, borderStyle, props.style, {
+      backgroundColor,
+      color,
+    });
 
     return (
       <>

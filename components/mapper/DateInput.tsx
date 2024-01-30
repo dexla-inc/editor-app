@@ -1,7 +1,7 @@
 import { Icon } from "@/components/Icon";
-import { useEditorStore } from "@/stores/editor";
+import { useDefaultBorderStyle } from "@/hooks/useDefaultBorderStyle";
 import { isSame } from "@/utils/componentComparison";
-import { Component, getColorFromTheme } from "@/utils/editor";
+import { Component } from "@/utils/editor";
 import {
   DatePickerInputProps,
   DatePickerInput as MantineDatePickerInput,
@@ -31,10 +31,8 @@ const DateInputComponent = ({
     styles,
     ...componentProps
   } = component.props as any;
-  const theme = useEditorStore((state) => state.theme);
-  const borderColor = getColorFromTheme(theme, "Border.6");
-
-  const customInputStyle = merge({}, { borderColor }, props.style);
+  const { borderStyle } = useDefaultBorderStyle();
+  const customInputStyle = merge({}, borderStyle, props.style);
   const customStyles = merge({}, styles, {
     input: customInputStyle,
   });

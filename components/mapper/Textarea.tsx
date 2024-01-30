@@ -1,5 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useChangeState } from "@/hooks/useChangeState";
+import { useDefaultBorderStyle } from "@/hooks/useDefaultBorderStyle";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
@@ -32,7 +33,7 @@ const TextareaComponent = forwardRef(
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setStoreInputValue = useInputsStore((state) => state.setInputValue);
     const { color, backgroundColor } = useChangeState({ bg, textColor });
-
+    const { borderStyle } = useDefaultBorderStyle();
     const [localInputValue, setLocalInputValue] = useState(inputValue ?? "");
 
     // update values in store
@@ -52,7 +53,10 @@ const TextareaComponent = forwardRef(
       triggers?.onChange && triggers?.onChange(e);
     };
 
-    const customStyle = merge({}, props.style, { backgroundColor, color });
+    const customStyle = merge({}, borderStyle, props.style, {
+      backgroundColor,
+      color,
+    });
 
     return (
       <MantineTextarea
