@@ -12,7 +12,6 @@ export async function middleware(request: NextRequest) {
   if (!appUrl) {
     return NextResponse.next();
   }
-  console.log(request);
 
   // Check if the request is for static files or API routes
   if (

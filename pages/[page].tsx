@@ -15,7 +15,6 @@ export const getServerSideProps = async ({
   const url = req.headers.host;
   let id = "";
   const isLiveApp = isAppUrl(url!);
-  console.log("isLiveApp", isLiveApp);
   if (isLiveApp) {
     id = url?.split(".")[0] as string;
   } else {

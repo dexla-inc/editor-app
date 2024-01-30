@@ -16,6 +16,7 @@ type Props = {
 const LinkComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { triggers, variable, ...componentProps } = component.props as any;
+    const { style, ...restProps } = props as any;
 
     const contentEditableProps = useContentEditable(component.id as string);
 
@@ -24,7 +25,6 @@ const LinkComponent = forwardRef(
 
     const { getValue } = useData();
     const childrenValue = getValue("children", { component, shareableContent });
-
     useEffect(() => {
       if (selectedVariable?.defaultValue === childrenValue) return;
       handleValueUpdate(component.id as string, selectedVariable);
@@ -34,10 +34,14 @@ const LinkComponent = forwardRef(
     return (
       <MantineAnchor
         {...contentEditableProps}
-        {...props}
+        {...restProps}
         {...componentProps}
         {...triggers}
         ref={ref ?? contentEditableProps.ref}
+        style={{
+          ...style,
+          ...(style?.fontSize ? { fontSize: Number(style.fontSize) } : {}),
+        }}
       >
         {childrenValue}
       </MantineAnchor>
