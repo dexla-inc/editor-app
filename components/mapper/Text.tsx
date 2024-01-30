@@ -45,7 +45,7 @@ const TextComponent = forwardRef(
         ref={ref ?? contentEditableProps.ref}
         style={{
           ...style,
-          ...(style?.fontSize ? { fontSize: Number(style.fontSize) } : {}),
+          ...(style?.fontSize ? { fontSize: style.fontSize + "px" } : {}),
         }}
       >
         {!hideIfDataIsEmpty && childrenValue}
