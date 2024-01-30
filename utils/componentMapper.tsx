@@ -995,6 +995,7 @@ export const componentMapper: ComponentMapper = {
       "border",
       "effects",
       "boxShadow",
+      "position",
     ],
     actionTriggers: ["onClick", "onHover"],
     sequentialTriggers: ["onSuccess", "onError"],
