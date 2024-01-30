@@ -43,8 +43,6 @@ export const getPagesEventSource = async (
   onopen?: (response: Response) => Promise<void>,
   onclose?: () => void,
 ) => {
-  const token = await getAuthToken();
-
   await fetchEventSource("/api/ai/page-list", {
     method: "POST",
     headers: {
@@ -53,7 +51,6 @@ export const getPagesEventSource = async (
     },
     body: JSON.stringify({
       projectId,
-      accessToken: token,
     }),
     onerror: onerror,
     onmessage: onmessage,

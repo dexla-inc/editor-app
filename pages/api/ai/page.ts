@@ -15,7 +15,7 @@ export default async function handler(
       throw new Error("Invalid method");
     }
 
-    const { projectId, pageId, accessToken } = req.body;
+    const { projectId, pageId } = req.body;
     const project = await prisma.project.findFirstOrThrow({
       where: {
         id: projectId as string,
@@ -28,7 +28,6 @@ export default async function handler(
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
         },
       },
     );
@@ -41,7 +40,6 @@ export default async function handler(
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
         },
       },
     );

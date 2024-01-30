@@ -1,6 +1,6 @@
 import { PatchParams } from "@/requests/types";
 import { isEditor as isEditorUrl } from "@/utils/common";
-import { IAuthClient, createClient } from "@propelauth/javascript";
+import { createClient } from "@propelauth/javascript";
 
 type FetchType = {
   url: string;
@@ -12,28 +12,23 @@ type FetchType = {
 };
 
 export const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
-let authClient: IAuthClient;
 
-const initializeAuthClient = () => {
+export async function getAuthToken() {
   const isEditor = isEditorUrl(window.location.origin);
   console.log(isEditor, window.location.origin);
-  // We only want to create Propel auth client if the request is made from the editor app and not live
-  if (!authClient && isEditor) {
-    authClient = createClient({
+  // We only want to create Propel auth client if the request is made from the editor
+  if (isEditor) {
+    const authClient = createClient({
       authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
       enableBackgroundTokenRefresh: true,
     });
+    const authInfo = await authClient.getAuthenticationInfoOrNull();
+    return authInfo?.accessToken;
   }
-  return authClient;
-};
-
-export async function getAuthToken() {
-  const client = initializeAuthClient();
-  const authInfo = await client.getAuthenticationInfoOrNull();
-  return authInfo?.accessToken;
+  return undefined;
 }
 
-export async function getBearerTokenHeaderValue() {
+async function getBearerTokenHeaderValue() {
   const accessToken = await getAuthToken();
   return `Bearer ${accessToken}`;
 }
@@ -49,10 +44,7 @@ async function doFetch<Type>({
   return new Promise(async (resolve, reject) => {
     let response = null;
     try {
-      let bearerToken = null;
-      if (!skipAuth) {
-        bearerToken = await getBearerTokenHeaderValue();
-      }
+      let bearerToken = await getBearerTokenHeaderValue();
 
       const isFormData = body instanceof FormData;
       let contentType;
@@ -97,14 +89,12 @@ export async function get<Type>(
   url: FetchType["url"],
   headers?: object,
   isStream?: boolean,
-  skipAuth?: boolean,
 ): Promise<Type | ReadableStream<Uint8Array> | null> {
   return doFetch<Type | ReadableStream<Uint8Array> | null>({
     url,
     method: "GET",
     headers,
     isStream,
-    skipAuth,
   });
 }
 

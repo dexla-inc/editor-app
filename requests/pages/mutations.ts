@@ -5,7 +5,7 @@ import {
   PagesResponse,
   UpdatePageBody,
 } from "@/requests/pages/types";
-import { del, getAuthToken, post, put } from "@/utils/api";
+import { del, post, put } from "@/utils/api";
 
 export const createPage = async (params: PageBody, projectId: string) => {
   const response = (await post<PageResponse>(
@@ -40,11 +40,12 @@ export const createPages = async (params: PageBody[], projectId: string) => {
 
 export const createPageList = async (
   projectId: string,
+  description: string,
+  industry: string,
   pageCount?: string,
   excludedPages?: string,
   init = {},
 ): Promise<PageAIResponse[]> => {
-  const accessToken = await getAuthToken();
   const response = await fetch("/api/ai/page-list", {
     ...init,
     method: "POST",
@@ -53,7 +54,8 @@ export const createPageList = async (
     },
     body: JSON.stringify({
       projectId,
-      accessToken,
+      description,
+      industry,
       pageCount,
       excludedPages,
     }),

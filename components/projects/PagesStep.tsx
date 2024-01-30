@@ -53,6 +53,8 @@ export interface PagesStepProps
   hasPagesCreated: boolean;
   setHasPagesCreated: (value: boolean) => void;
   setHomePageId: (value: string) => void;
+  description: string;
+  industry: string;
 }
 
 export default function PagesStep({
@@ -64,6 +66,8 @@ export default function PagesStep({
   hasPagesCreated,
   setHasPagesCreated,
   setHomePageId,
+  description,
+  industry,
 }: PagesStepProps) {
   const resetTree = useEditorStore((state) => state.resetTree);
   const theme = useMantineTheme();
@@ -94,6 +98,8 @@ export default function PagesStep({
 
     const newPageList = await createPageList(
       projectId,
+      description,
+      industry,
       pageCount,
       existingPageNames,
     );

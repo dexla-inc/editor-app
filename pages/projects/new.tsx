@@ -129,6 +129,8 @@ export default function New() {
                 hasPagesCreated={hasPagesCreated}
                 setHasPagesCreated={setHasPagesCreated}
                 setHomePageId={setHomePageId}
+                description={description}
+                industry={industry}
               />
             </Stepper.Step>
             <Stepper.Completed>
