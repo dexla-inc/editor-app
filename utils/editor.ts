@@ -989,12 +989,16 @@ export const getClosestEdge = (
 };
 
 export const debouncedTreeComponentChildrenUpdate = debounce(
-  (value: Component[], save = true) => {
+  async (value: Component[], save = true) => {
     const updateTreeComponentChildren =
       useEditorStore.getState().updateTreeComponentChildren;
     const selectedComponentId = useEditorStore.getState().selectedComponentId;
 
-    updateTreeComponentChildren(selectedComponentId as string, value, save);
+    return await updateTreeComponentChildren(
+      selectedComponentId as string,
+      value,
+      save,
+    );
   },
   300,
 );

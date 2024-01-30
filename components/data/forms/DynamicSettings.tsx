@@ -20,7 +20,7 @@ type Props = {
   endpoints: PagingResponse<Endpoint>;
   customKeys?: string[];
   children?: (props: any) => JSX.Element;
-  onSave?: (component: Component, form: any) => Partial<Component>;
+  onSave?: (component: Component, form: any) => Promise<any>;
 };
 
 export const DynamicSettings = ({
@@ -73,9 +73,10 @@ export const DynamicSettings = ({
 
   useEffect(() => {
     if (form.isTouched()) {
-      debouncedTreeComponentAttrsUpdate({
-        onLoad: form.values,
-        ...onSave?.(component, form),
+      onSave?.(component, form).then(() => {
+        debouncedTreeComponentAttrsUpdate({
+          onLoad: form.values,
+        });
       });
     }
   }, [form.values]);
