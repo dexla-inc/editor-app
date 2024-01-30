@@ -1,5 +1,5 @@
 import { PatchParams } from "@/requests/types";
-import { isLiveUrl } from "@/utils/common";
+import { isEditor as isEditorUrl } from "@/utils/common";
 import { IAuthClient, createClient } from "@propelauth/javascript";
 
 type FetchType = {
@@ -15,10 +15,10 @@ export const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 let authClient: IAuthClient;
 
 const initializeAuthClient = () => {
-  const requestMadeFromLiveApp = isLiveUrl(window.location.origin);
-
+  const isEditor = isEditorUrl(window.location.origin);
+  console.log(isEditor, window.location.origin);
   // We only want to create Propel auth client if the request is made from the editor app and not live
-  if (!authClient && !requestMadeFromLiveApp) {
+  if (!authClient && isEditor) {
     authClient = createClient({
       authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
       enableBackgroundTokenRefresh: true,

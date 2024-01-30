@@ -1,4 +1,5 @@
 import { FileWithPath } from "@mantine/dropzone";
+import { NextRouter } from "next/router";
 
 export const convertToBase64 = (file: FileWithPath): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -41,14 +42,37 @@ export const getComponentInitialDisplayValue = (componentName: string) => {
   return defaultDisplayValues[componentName] || "block";
 };
 
+export const isEditor = (baseUrl: string) => {
+  return (
+    baseUrl?.startsWith("http://localhost:3000") ||
+    baseUrl?.includes("dexla.ai")
+  );
+};
+
 // check if url follow the pattern: 7eacfa0cbb8b406cbc2b40085b9c37a4.dexla.io or 7eacfa0cbb8b406cbc2b40085b9c37a4.dexla.ai
 // where 7eacfa0cbb8b406cbc2b40085b9c37a4 is the project id and can be any string that contains only letters and numbers,
 // but always has 32 characters and a mix of letters and numbers
-export function isLiveUrl(baseUrl: string): boolean {
+export function isAppUrl(baseUrl: string): boolean {
   const pattern = new RegExp(
     "^[a-zA-Z0-9]{32}\\.dexla\\.(io|ai|localhost:3000)$",
   );
   return pattern.test(baseUrl) || baseUrl?.endsWith(".localhost:3000");
+}
+
+export function isLiveUrl(baseUrl: string, router: NextRouter): boolean;
+export function isLiveUrl(baseUrl: string, pathName: string): boolean;
+
+export function isLiveUrl(
+  baseUrl: string,
+  secondParam: NextRouter | string,
+): boolean {
+  const appUrl = isAppUrl(baseUrl);
+
+  if (typeof secondParam === "string") {
+    return secondParam === "/[page]" || appUrl;
+  } else {
+    return secondParam?.asPath === "/[page]" || appUrl;
+  }
 }
 
 export function remToPixelUnit(rem: string) {

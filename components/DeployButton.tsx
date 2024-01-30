@@ -68,8 +68,10 @@ export const DeployButton = ({ projectId, page }: Props) => {
       ? customDomain
       : "dexla.io";
 
+    const prefix = isLocalhost || !customDomain ? `${projectId}.` : "";
+
     const deployLink = new URL(
-      `${isLocalhost ? "http" : "https"}://${projectId}.${baseDomain}/${
+      `${isLocalhost ? "http" : "https"}://${prefix}${baseDomain}/${
         page?.slug === "/" ? "" : page?.slug
       }`,
     );

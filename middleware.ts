@@ -3,17 +3,16 @@ import { isLiveUrl } from "@/utils/common";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  // Implement your authentication check here
-
   const hostName = request.headers.get("host"); // e.g 7648e8ac8af14ea885a8ca1e200aa81d.localhost:3000
   if (!hostName) {
     return NextResponse.next();
   }
 
-  const matchingUrl = isLiveUrl(hostName);
-  if (!matchingUrl) {
+  const appUrl = isLiveUrl(hostName, request.nextUrl.pathname);
+  if (!appUrl) {
     return NextResponse.next();
   }
+  console.log(request);
 
   // Check if the request is for static files or API routes
   if (

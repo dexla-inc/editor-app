@@ -13,7 +13,7 @@ export const useCheckIfIsLive = () => {
   );
 
   const url = typeof window !== "undefined" ? window.location.host : "";
-  const initialIsLive = router?.asPath === "/[page]" || isLiveUrl(url);
+  const initialIsLive = isLiveUrl(url, router);
 
   const [isLive, setIsLive] = useState(initialIsLive);
 
