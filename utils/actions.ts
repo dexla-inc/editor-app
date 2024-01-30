@@ -790,7 +790,6 @@ function getAuthValueFromAuthId(authId: string) {
   const getAuthState = useDataSourceStore.getState().getAuthState;
   const authState = getAuthState();
   const key = authId.split("auth_")[1];
-  console.log(key, authState);
   // @ts-ignore
   return authState[key];
 }

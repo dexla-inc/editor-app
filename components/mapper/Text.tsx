@@ -22,6 +22,7 @@ const TextComponent = forwardRef(
     const contentEditableProps = useContentEditable(component.id as string);
     const { triggers, hideIfDataIsEmpty, variable, ...componentProps } =
       component.props as any;
+    const { style, ...restProps } = props as any;
 
     const { getValue } = useData();
     const childrenValue = getValue("children", { component, shareableContent });
@@ -38,10 +39,14 @@ const TextComponent = forwardRef(
     return (
       <MantineText
         {...contentEditableProps}
-        {...props}
+        {...restProps}
         {...componentProps}
         {...triggers}
         ref={ref ?? contentEditableProps.ref}
+        style={{
+          ...style,
+          ...(style?.fontSize ? { fontSize: Number(style.fontSize) } : {}),
+        }}
       >
         {!hideIfDataIsEmpty && childrenValue}
       </MantineText>

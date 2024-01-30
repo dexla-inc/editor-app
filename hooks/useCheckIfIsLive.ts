@@ -15,22 +15,15 @@ export const useCheckIfIsLive = () => {
   const url = typeof window !== "undefined" ? window.location.host : "";
   const isEditorUrl = isEditor(url);
 
-  //const [isLive, setIsLive] = useState(!isEditorUrl);
-  console.log("isEditor", isEditorUrl, !isEditorUrl, url, router);
-
   useEffect(() => {
     const setLiveIfHasCustomDomain = async () => {
       try {
         let _projectId = projectId;
         if (!projectId) {
-          console.log("Calling get by domain");
           const project = await getByDomain(url);
           _projectId = project.id ?? projectId;
         }
 
-        // if (_projectId) {
-        //   setIsLive(!!_projectId);
-        // }
         setCurrentProjectId(_projectId as string);
       } catch (error) {
         console.error("Error checking if live:", error);
