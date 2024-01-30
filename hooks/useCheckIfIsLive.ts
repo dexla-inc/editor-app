@@ -1,8 +1,8 @@
 import { getByDomain } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
-import { isLiveUrl } from "@/utils/common";
+import { isEditor } from "@/utils/common";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export const useCheckIfIsLive = () => {
   const router = useRouter();
@@ -13,22 +13,25 @@ export const useCheckIfIsLive = () => {
   );
 
   const url = typeof window !== "undefined" ? window.location.host : "";
-  const initialIsLive = isLiveUrl(url, router);
+  const isEditorUrl = isEditor(url);
 
-  console.log("useCheckIfIsLive", initialIsLive, url, router);
-
-  const [isLive, setIsLive] = useState(initialIsLive);
+  //const [isLive, setIsLive] = useState(!isEditorUrl);
+  console.log("isEditor", isEditorUrl, !isEditorUrl, url, router);
 
   useEffect(() => {
     const setLiveIfHasCustomDomain = async () => {
       try {
-        const project = await getByDomain(url);
-        const _projectId = project.id ?? projectId;
-
-        if (project.id) {
-          setIsLive(!!project.id);
+        let _projectId = projectId;
+        if (!projectId) {
+          console.log("Calling get by domain");
+          const project = await getByDomain(url);
+          _projectId = project.id ?? projectId;
         }
-        setCurrentProjectId(_projectId);
+
+        // if (_projectId) {
+        //   setIsLive(!!_projectId);
+        // }
+        setCurrentProjectId(_projectId as string);
       } catch (error) {
         console.error("Error checking if live:", error);
       }
@@ -39,5 +42,5 @@ export const useCheckIfIsLive = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router?.state?.pathname]);
 
-  return isLive;
+  return !isEditorUrl;
 };

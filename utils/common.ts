@@ -45,6 +45,7 @@ export const getComponentInitialDisplayValue = (componentName: string) => {
 export const isEditor = (baseUrl: string) => {
   return (
     baseUrl?.startsWith("http://localhost:3000") ||
+    baseUrl?.startsWith("localhost:3000") ||
     baseUrl?.includes("dexla.ai")
   );
 };
