@@ -47,7 +47,7 @@ const TitleComponent = forwardRef(
         key={`${component.id}`}
         style={{
           ...style,
-          ...(style?.fontSize ? { fontSize: Number(style.fontSize) } : {}),
+          ...(style?.fontSize ? { fontSize: style.fontSize + "px" } : {}),
         }}
       >
         {childrenValue}
