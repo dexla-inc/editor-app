@@ -23,7 +23,6 @@ const FormComponent = forwardRef(
     const updateTreeComponent = useEditorStore(
       (state) => state.updateTreeComponent,
     );
-    const theme = useEditorStore((state) => state.theme);
     const getInputValue = useInputsStore((state) => state.getValue);
     const setInputValue = useInputsStore((state) => state.setInputValue);
 
