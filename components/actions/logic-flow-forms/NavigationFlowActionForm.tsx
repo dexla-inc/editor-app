@@ -63,6 +63,13 @@ export const NavigationFlowActionForm = ({ form }: Props) => {
           };
         })}
         {...form.getInputProps("pageId")}
+        onChange={(value) => {
+          const page = pages.find((page) => page.id === value);
+          form.setValues({
+            pageId: value as string,
+            pageSlug: page?.slug ?? "",
+          });
+        }}
       />
       {!!queryStringState[0].length && (
         <QueryStringsForm queryStringState={queryStringState} readOnlyKeys />

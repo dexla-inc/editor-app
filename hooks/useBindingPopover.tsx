@@ -169,7 +169,7 @@ export const useBindingPopover = () => {
       const pickedItem = context === "components" ? item : `${context}_${item}`;
       const contextDescription =
         context === "components"
-          ? "/* ${inputComponents?.list[item].description} */"
+          ? `/* ${components?.list[item].description} */`
           : "";
       try {
         const parsed = JSON.parse(item);

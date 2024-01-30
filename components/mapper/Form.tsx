@@ -1,12 +1,18 @@
-import { isSame } from "@/utils/componentComparison";
-import { Component, getAllComponentsByName } from "@/utils/editor";
-import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
-import { FormEvent, forwardRef, memo, useMemo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { componentMapper } from "@/utils/componentMapper";
+import { useEndpoint } from "@/hooks/useEndpoint";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
-import { useEndpoint } from "@/hooks/useEndpoint";
+import { isSame } from "@/utils/componentComparison";
+import { componentMapper } from "@/utils/componentMapper";
+import { Component, getAllComponentsByName } from "@/utils/editor";
+import {
+  FlexProps,
+  LoadingOverlay,
+  Flex as MantineFlex,
+  px,
+} from "@mantine/core";
+import merge from "lodash.merge";
+import { FormEvent, forwardRef, memo, useMemo } from "react";
 
 type Props = {
   renderTree: (component: Component, shareableContent: any) => any;
@@ -17,17 +23,26 @@ type Props = {
 
 const FormComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
-    const { children, triggers, loading, dataType, ...componentProps } =
+    const { children, triggers, loading, dataType, gap, ...componentProps } =
       component.props as any;
     const { onSubmit, ...otherTriggers } = triggers;
     const updateTreeComponent = useEditorStore(
       (state) => state.updateTreeComponent,
     );
+    const theme = useEditorStore((state) => state.theme);
     const getInputValue = useInputsStore((state) => state.getValue);
+    const setInputValue = useInputsStore((state) => state.setInputValue);
 
     const { endpointId } = component.onLoad ?? {};
     const { data } = useEndpoint({
       component,
+    });
+
+    const customProps = merge({}, props, {
+      style: {
+        rowGap: `${px(theme.spacing[gap])}px`,
+        columnGap: `${px(theme.spacing[gap])}px`,
+      },
     });
 
     const validatableComponentsList = useMemo(
@@ -44,11 +59,13 @@ const FormComponent = forwardRef(
     const onSubmitCustom = async (e: FormEvent<any>) => {
       e.preventDefault();
 
-      const invalidComponents = getAllComponentsByName(
+      const formFieldComponents = getAllComponentsByName(
         component,
         validatableComponentsList,
         { withAsterisk: true },
-      ).filter(
+      );
+
+      const invalidComponents = formFieldComponents.filter(
         (component) =>
           getInputValue(component?.id!) === "" ||
           getInputValue(component?.id!) === undefined,
@@ -63,14 +80,17 @@ const FormComponent = forwardRef(
       });
 
       if (!invalidComponents.length && triggers.onSubmit) {
-        return triggers.onSubmit && triggers.onSubmit(e);
+        triggers.onSubmit && triggers.onSubmit(e);
+        formFieldComponents.map((component) =>
+          setInputValue(component.id!, ""),
+        );
       }
     };
 
     return (
       <MantineFlex
         ref={ref}
-        {...props}
+        {...customProps}
         {...componentProps}
         component="form"
         autoComplete={props.isPreviewMode ? "on" : "off"}

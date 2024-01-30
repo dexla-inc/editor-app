@@ -165,6 +165,7 @@ export interface BaseAction {
 export interface NavigationAction extends BaseAction {
   name: "navigateToPage";
   pageId: string;
+  pageSlug: string;
   queryStrings?: Record<string, string>;
 }
 
@@ -357,16 +358,17 @@ export const navigationAction = ({
   action,
   router,
 }: NavigationActionParams) => {
-  const isLive = useEditorStore.getState().isLive;
-  const projectId = useEditorStore.getState().currentProjectId;
+  const editorState = useEditorStore.getState();
+  const isLive = editorState.isLive;
+  const projectId = editorState.currentProjectId;
 
-  if (!action.pageId) {
+  if (!action.pageId || !action.pageSlug) {
     console.error("Page Id is not defined");
     return;
   }
 
   let url = isLive
-    ? `/${action.pageId}`
+    ? `/${action.pageSlug}`
     : `/projects/${projectId}/editor/${action.pageId}`;
 
   if (action.queryStrings && Object.keys(action.queryStrings).length) {
@@ -649,7 +651,6 @@ export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
 
 const getVariableValueFromVariableId = (variableId = "") => {
   const variableList = useVariableStore.getState().variableList;
-  console.log(variableList);
   const actionVariable = variableId.split("var_")[1];
 
   if (!actionVariable) {
@@ -775,8 +776,6 @@ const getVariablesValue = (objs: Record<string, string>) => {
     } else if (key.startsWith(`auth_`)) {
       value = getAuthValueFromAuthId(key) as string;
     }
-
-    console.log(value);
 
     if (value) {
       // @ts-ignore

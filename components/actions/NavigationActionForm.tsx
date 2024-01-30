@@ -39,6 +39,7 @@ export const NavigationActionForm = ({ id }: Props) => {
   const form = useForm<FormValues>({
     initialValues: {
       pageId: action.action?.pageId,
+      pageSlug: action.action?.pageSlug,
     },
     validate: {
       pageId: requiredFieldValidator("Page"),
@@ -83,7 +84,11 @@ export const NavigationActionForm = ({ id }: Props) => {
         selectedComponentId: selectedComponentId!,
         componentActions,
         id,
-        updateValues: { pageId: values.pageId, queryStrings },
+        updateValues: {
+          pageId: values.pageId,
+          pageSlug: values.pageSlug,
+          queryStrings,
+        },
         updateTreeComponentActions,
       });
 
@@ -109,6 +114,13 @@ export const NavigationActionForm = ({ id }: Props) => {
           })}
           //required
           {...form.getInputProps("pageId")}
+          onChange={(value) => {
+            const page = pages.find((page) => page.id === value);
+            form.setValues({
+              pageId: value as string,
+              pageSlug: page?.slug ?? "",
+            });
+          }}
         />
         {!!queryStringState[0].length && (
           <QueryStringsForm queryStringState={queryStringState} readOnlyKeys />

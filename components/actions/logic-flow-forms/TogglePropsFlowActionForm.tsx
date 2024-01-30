@@ -83,7 +83,7 @@ export const TogglePropsFlowActionForm = ({ form }: Props) => {
                 paddingBottom: 20,
               }}
             >
-              {["Radio", "Select"].includes(component!.name) ? (
+              {["Radio", "Select"].includes(component?.name!) ? (
                 <Select
                   size="xs"
                   label={
