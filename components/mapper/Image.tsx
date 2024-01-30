@@ -1,9 +1,8 @@
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { ImageProps, Image as MantineImage } from "@mantine/core";
-import { forwardRef, memo, useEffect } from "react";
+import { forwardRef, memo } from "react";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { useData } from "@/hooks/useData";
 
 type Props = {
@@ -19,22 +18,6 @@ const ImageComponent = forwardRef(
     const { getValue } = useData();
     const srcValue = getValue("src", { component, shareableContent });
     const altValue = getValue("alt", { component, shareableContent });
-
-    const { getSelectedVariable, handleValuesUpdate } = useBindingPopover();
-    const sourceVariable = getSelectedVariable(srcValue);
-    const altTextVariable = getSelectedVariable(altValue);
-
-    const isVariablesSame =
-      sourceVariable?.defaultValue === srcValue &&
-      altTextVariable?.defaultValue === altValue;
-
-    useEffect(() => {
-      if (isVariablesSame) return;
-      handleValuesUpdate(component.id as string, {
-        src: sourceVariable?.defaultValue,
-        alt: altTextVariable?.defaultValue,
-      });
-    }, [sourceVariable, altTextVariable]);
 
     const { width, height, ...style } = props.style ?? {};
 

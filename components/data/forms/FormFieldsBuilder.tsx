@@ -71,6 +71,7 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   }, [form.values]);
 
   const onClickToggleDataType = (field: string) => {
+    form.setTouched({ [`onLoad.${field}.dataType`]: true });
     form.setValues({
       onLoad: {
         ...form.values.onLoad,

@@ -1,5 +1,4 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { useData } from "@/hooks/useData";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
@@ -19,23 +18,6 @@ const AvatarComponent = forwardRef(
     const { getValue } = useData();
     const srcValue = getValue("src", { component, shareableContent });
     const childrenValue = getValue("children", { component, shareableContent });
-
-    const { getSelectedVariable, handleValuesUpdate } = useBindingPopover();
-    const sourceVariable = getSelectedVariable(srcValue);
-    const altTextVariable = getSelectedVariable(childrenValue);
-
-    const isVariablesSame =
-      sourceVariable?.defaultValue === srcValue &&
-      altTextVariable?.defaultValue === childrenValue;
-
-    // TODO: NEVER PUT SAVING PAGE STATE IN A USE EFFECT
-    // useEffect(() => {
-    //   if (isVariablesSame) return;
-    //   handleValuesUpdate(component.id as string, {
-    //     src: sourceVariable?.defaultValue,
-    //     children: altTextVariable?.defaultValue,
-    //   });
-    // }, [sourceVariable, altTextVariable]);
 
     return (
       <MantineAvatar ref={ref} {...props} {...componentProps} src={srcValue}>

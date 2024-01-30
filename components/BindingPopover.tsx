@@ -37,7 +37,7 @@ type Props = {
   onChangeBindingType: any;
   onChangeJavascriptCode: any;
   javascriptCode: string;
-  bindedValue?: string;
+  bindedValue?: React.InputHTMLAttributes<HTMLInputElement>["value"];
   onPickComponent?: any;
   onPickVariable?: any;
   actionData?: any;

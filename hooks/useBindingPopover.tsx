@@ -201,19 +201,10 @@ export const useBindingPopover = () => {
     };
 
   const getSelectedVariable = (id: string) =>
-    variablesList.find((varItem) => varItem.id === id);
+    variablesList.find((varItem) => varItem.id === id)?.defaultValue ?? id;
 
-  const handleValueUpdate = (id: string, variable: any, key = "children") => {
-    if (variable) {
-      debouncedTreeUpdate(id, {
-        [key]: variable.defaultValue,
-      });
-    }
-  };
-
-  const handleValuesUpdate = (id: string, values: Record<string, any>) => {
-    debouncedTreeUpdate(id, values);
-  };
+  const getSelectedVariableName = (id: string) =>
+    variablesList.find((varItem) => varItem.id === id)?.name ?? id;
 
   const bindingPopoverProps = {
     opened,
@@ -226,9 +217,8 @@ export const useBindingPopover = () => {
     handleVariables,
     selectedItem,
     getSelectedVariable,
+    getSelectedVariableName,
     variablesList,
-    handleValueUpdate,
-    handleValuesUpdate,
     authData,
     bindableContexts: [components, auth],
     handleContext,

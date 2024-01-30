@@ -35,6 +35,7 @@ export const ComponentToBindFromInput = ({
   category = "actions",
   ...rest
 }: Props) => {
+  console.log({ rest });
   const setPickingComponentToBindTo = useEditorStore(
     (state) => state.setPickingComponentToBindTo,
   );
@@ -49,7 +50,7 @@ export const ComponentToBindFromInput = ({
     });
   };
 
-  const [bindedValue, setBindedValue] = useState("");
+  // const [bindedValue, setBindedValue] = useState("");
   const isChangeVariable = category === "changeVariable";
   let _code = "";
   if (javascriptCode)
@@ -97,17 +98,17 @@ export const ComponentToBindFromInput = ({
           }),
         }}
         {...rest}
-        onChange={(e) => {
-          setBindedValue(e.target.value);
-          if (rest?.onChange) rest.onChange(e);
-        }}
+        // onChange={(e) => {
+        //   // setBindedValue(e.target.value);
+        //   if (rest?.onChange) rest.onChange(e);
+        // }}
       />
       <BindingPopover
         bindingType="JavaScript"
         onChangeBindingType={() => {}}
         javascriptCode={_code}
         onChangeJavascriptCode={onCodeChange}
-        bindedValue={bindedValue}
+        bindedValue={rest.value}
         onPickComponent={onPickComponent}
         onPickVariable={onPickVariable}
         actionData={actionData}

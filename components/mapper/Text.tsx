@@ -27,15 +27,6 @@ const TextComponent = forwardRef(
     const { getValue } = useData();
     const childrenValue = getValue("children", { component, shareableContent });
 
-    const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
-    const selectedVariable = getSelectedVariable(variable);
-
-    useEffect(() => {
-      if (selectedVariable?.defaultValue === childrenValue) return;
-      handleValueUpdate(component.id as string, selectedVariable);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedVariable]);
-
     return (
       <MantineText
         {...contentEditableProps}

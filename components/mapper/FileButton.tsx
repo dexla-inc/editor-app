@@ -1,4 +1,3 @@
-import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { useData } from "@/hooks/useData";
@@ -29,19 +28,12 @@ export const FileButton = ({
   const { triggers, variable, ...componentProps } = component.props ?? {};
   const { style, ...restProps } = props as any;
   const contentEditableProps = useContentEditable(component.id as string);
-  const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
-  const selectedVariable = getSelectedVariable(variable);
-  const { inputStyle } = useBrandingStyles();
-  const customStyle = merge(inputStyle, style);
 
   const { getValue } = useData();
   const nameValue = getValue("name", { component, shareableContent });
 
-  useEffect(() => {
-    if (selectedVariable?.defaultValue === nameValue) return;
-    handleValueUpdate(component.id as string, selectedVariable, "name");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedVariable]);
+  const { inputStyle } = useBrandingStyles();
+  const customStyle = merge(inputStyle, style);
 
   return (
     <>

@@ -1,5 +1,7 @@
 import { Component } from "@/utils/editor";
 import get from "lodash.get";
+import { useVariableStore } from "@/stores/variables";
+import { useBindingPopover } from "@/hooks/useBindingPopover";
 
 type GetValueProps = {
   component: Component;
@@ -7,6 +9,8 @@ type GetValueProps = {
 };
 
 export const useData = () => {
+  const { getSelectedVariable } = useBindingPopover();
+
   const getValue = (
     field: string,
     { component, shareableContent }: GetValueProps,
@@ -17,7 +21,7 @@ export const useData = () => {
         ? get(shareableContent, `data.${fieldConfig.value}`, fieldConfig.value)
         : get(fieldConfig, "value", component.props?.[field]);
 
-    return value;
+    return getSelectedVariable(value);
   };
 
   const getObjectAndArrayKeys = (obj: any, prefix = "") => {
