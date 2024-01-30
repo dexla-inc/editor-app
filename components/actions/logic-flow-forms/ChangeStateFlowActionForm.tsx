@@ -163,7 +163,7 @@ export const ChangeStateActionFlowForm = ({ form }: Props) => {
                 }}
               />
 
-              {["Radio", "Select"].includes(component!.name) ? (
+              {["Radio", "Select"].includes(component?.name!) ? (
                 <Select
                   size="xs"
                   label="Toggle when"

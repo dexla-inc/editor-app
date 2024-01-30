@@ -227,6 +227,7 @@ export const jsonStructure = (props?: any): Component => {
               action: {
                 name: "navigateToPage",
                 pageId: "",
+                pageSlug: "",
               },
             },
           ],
@@ -291,6 +292,7 @@ export const jsonStructure = (props?: any): Component => {
                   action: {
                     name: "navigateToPage",
                     pageId: "",
+                    pageSlug: "",
                   },
                 },
               ],
