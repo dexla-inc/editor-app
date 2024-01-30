@@ -71,7 +71,7 @@ export function isLiveUrl(
   if (typeof secondParam === "string") {
     return secondParam === "/[page]" || appUrl;
   } else {
-    return secondParam?.asPath === "/[page]" || appUrl;
+    return secondParam?.pathname === "/[page]" || appUrl;
   }
 }
 
