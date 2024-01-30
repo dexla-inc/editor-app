@@ -3,7 +3,7 @@ import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries-no
 import { PageResponse } from "@/requests/pages/types";
 import { getByDomain } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
-import { isLiveUrl } from "@/utils/common";
+import { isAppUrl } from "@/utils/common";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
@@ -14,7 +14,8 @@ export const getServerSideProps = async ({
 }: GetServerSidePropsContext) => {
   const url = req.headers.host;
   let id = "";
-  const isLiveApp = isLiveUrl(url!);
+  const isLiveApp = isAppUrl(url!);
+  console.log("isLiveApp", isLiveApp);
   if (isLiveApp) {
     id = url?.split(".")[0] as string;
   } else {

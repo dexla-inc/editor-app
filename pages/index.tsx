@@ -3,7 +3,7 @@ import { getMostRecentDeployment } from "@/requests/deployments/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
 import { getByDomain, getProject } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
-import { isLiveUrl } from "@/utils/common";
+import { isAppUrl } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
@@ -16,7 +16,7 @@ export const getServerSideProps = async ({
 
   let id = "",
     faviconUrl = "";
-  if (isLiveUrl(url!)) {
+  if (isAppUrl(url!)) {
     id = url?.split(".")[0] as string;
     const project = await getProject(id);
     faviconUrl = project.faviconUrl ?? "";
