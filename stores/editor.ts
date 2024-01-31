@@ -22,7 +22,7 @@ import {
 import { requiredModifiers } from "@/utils/modifiers";
 import { createClient } from "@liveblocks/client";
 import { WithLiveblocks, liveblocks } from "@liveblocks/zustand";
-import { MantineSize, MantineTheme } from "@mantine/core";
+import { MantineSize, MantineTheme, Tuple } from "@mantine/core";
 import { User } from "@propelauth/react";
 import cloneDeep from "lodash.clonedeep";
 import debounce from "lodash.debounce";
@@ -88,6 +88,7 @@ export const emptyEditorTree = {
 
 // Copy the properties from ThemeMutationParams
 export interface MantineThemeExtended extends MantineTheme {
+  colors: ExtendedMantineThemeColors;
   fonts: Font[];
   defaultRadius: MantineSize;
   defaultSpacing: MantineSize;
@@ -101,6 +102,25 @@ export interface MantineThemeExtended extends MantineTheme {
   logoUrl?: string;
   logos?: Logo[];
 }
+
+interface CustomColors {
+  Primary: Tuple<string, 10>;
+  PrimaryText: Tuple<string, 10>;
+  Secondary: Tuple<string, 10>;
+  SecondaryText: Tuple<string, 10>;
+  Tertiary: Tuple<string, 10>;
+  TertiaryText: Tuple<string, 10>;
+  Background: Tuple<string, 10>;
+  Danger: Tuple<string, 10>;
+  Warning: Tuple<string, 10>;
+  Success: Tuple<string, 10>;
+  Neutral: Tuple<string, 10>;
+  Black: Tuple<string, 10>;
+  White: Tuple<string, 10>;
+  Border: Tuple<string, 10>;
+}
+
+type ExtendedMantineThemeColors = CustomColors & MantineTheme["colors"];
 
 export type ComponentToBind = {
   componentId: string;
