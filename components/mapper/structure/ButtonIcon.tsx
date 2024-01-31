@@ -8,8 +8,6 @@ export const jsonStructure = (props?: any): Component => {
     description: "ButtonIcon",
     props: {
       style: {
-        width: "fit-content",
-        height: "fit-content",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

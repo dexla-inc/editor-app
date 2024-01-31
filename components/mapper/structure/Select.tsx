@@ -11,9 +11,6 @@ export const jsonStructure = (props?: any): Component => {
     description: "Select",
     props: {
       ...defaultValues,
-      style: {
-        ...defaultValues.style,
-      },
       ...(props.props || {}),
     },
     states: { disabled: { bg: "Secondary.1", textColor: "PrimaryText.9" } },

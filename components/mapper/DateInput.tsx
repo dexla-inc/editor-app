@@ -1,5 +1,5 @@
 import { Icon } from "@/components/Icon";
-import { useDefaultBorderStyle } from "@/hooks/useDefaultBorderStyle";
+import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import {
@@ -31,8 +31,8 @@ const DateInputComponent = ({
     styles,
     ...componentProps
   } = component.props as any;
-  const { borderStyle } = useDefaultBorderStyle();
-  const customInputStyle = merge({}, borderStyle, props.style);
+  const { borderStyle, inputStyle } = useBrandingStyles();
+  const customInputStyle = merge({}, borderStyle, inputStyle, props.style);
   const customStyles = merge({}, styles, {
     input: customInputStyle,
   });

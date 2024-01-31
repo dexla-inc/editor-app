@@ -142,7 +142,6 @@ export const requiredModifiers: RequiredModifiers = {
     backgroundAttachment: "scroll",
   },
   input: {
-    size: "sm",
     showBorder: "all",
     placeholder: "Input",
     type: "text",
@@ -156,7 +155,6 @@ export const requiredModifiers: RequiredModifiers = {
   textarea: {
     name: "Textarea",
     placeholder: "Textarea",
-    size: "sm",
     label: "",
     labelSpacing: "0",
     hideIfDataIsEmpty: false,
@@ -169,14 +167,11 @@ export const requiredModifiers: RequiredModifiers = {
   button: {
     type: "button",
     variant: "filled",
-    size: "sm",
-    radius: "sm",
     icon: "",
     style: {
       width: "fit-content",
-      paddingLeft: "18px",
-      paddingRight: "18px",
-      borderRadius: "4px",
+      paddingLeft: "32px",
+      paddingRight: "32px",
     },
   },
   image: {
@@ -184,7 +179,6 @@ export const requiredModifiers: RequiredModifiers = {
     position: "relative",
   },
   link: {
-    size: "sm",
     color: "Primary.6",
     style: {
       width: "fit-content",
@@ -210,7 +204,6 @@ export const requiredModifiers: RequiredModifiers = {
   },
   select: {
     name: "Select",
-    size: "sm",
     placeholder: "Select",
     type: "text",
     label: "A label",
@@ -233,8 +226,7 @@ export const requiredModifiers: RequiredModifiers = {
     customLinkText: "",
     customLinkUrl: "",
     style: {
-      width: "220px",
-      height: "fit-content",
+      width: "100%",
     },
   },
   effects: {
@@ -260,7 +252,6 @@ export const requiredModifiers: RequiredModifiers = {
     name: "Checkbox",
     label: "A label",
     checked: false,
-    size: "sm",
     withAsterisk: false,
     labelSpacing: "0",
   },
@@ -276,7 +267,6 @@ export const requiredModifiers: RequiredModifiers = {
   },
   radio: {
     label: "",
-    size: "sm",
     weight: "normal",
     align: "left",
     withAsterisk: false,
@@ -326,10 +316,11 @@ export const requiredModifiers: RequiredModifiers = {
   fileButton: {
     accept: "",
     multiple: false,
-    size: "sm",
     compact: true,
     style: {
       width: "fit-content",
+      paddingLeft: "32px",
+      paddingRight: "32px",
     },
   },
   popOver: {
@@ -387,8 +378,6 @@ export const requiredModifiers: RequiredModifiers = {
     placeholder: "DD MMM YYYY",
     valueFormat: "DD MMM YYYY",
     description: "",
-    radius: "sm",
-    size: "sm",
     disabled: "false",
     withAsterisk: "false",
     clearable: "false",

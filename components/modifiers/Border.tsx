@@ -12,6 +12,7 @@ import { CardStyle } from "@/requests/projects/types";
 import { useEditorStore } from "@/stores/editor";
 import { allEqual } from "@/utils/common";
 import { INPUT_SIZE } from "@/utils/config";
+import { radiusSizes } from "@/utils/defaultSizes";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Group, SegmentedControl, Stack } from "@mantine/core";
@@ -98,7 +99,8 @@ export const Modifier = withModifier(
             borderLeftColor: style?.borderLeftColor
               ? getThemeColor(theme, style.borderLeftColor)
               : defaultBorderValues.borderLeftColor,
-            borderRadius: style?.borderRadius,
+            borderRadius:
+              style?.borderRadius ?? radiusSizes[theme.defaultRadius],
             borderTopLeftRadius: style?.borderTopLeftRadius,
             borderTopRightRadius: style?.borderTopRightRadius,
             borderBottomLeftRadius: style?.borderBottomLeftRadius,

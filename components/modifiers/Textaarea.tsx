@@ -1,5 +1,4 @@
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
-import { SizeSelector } from "@/components/SizeSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -39,26 +38,6 @@ export const Modifier = withModifier(
               form.setFieldValue("placeholder", e.target.value);
               debouncedTreeUpdate(selectedComponentIds, {
                 placeholder: e.target.value,
-              });
-            }}
-          />
-          <TextInput
-            label="Name"
-            size="xs"
-            {...form.getInputProps("name")}
-            onChange={(e) => {
-              form.setFieldValue("name", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                name: e.target.value,
-              });
-            }}
-          />
-          <SizeSelector
-            {...form.getInputProps("size")}
-            onChange={(value) => {
-              form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                size: value,
               });
             }}
           />

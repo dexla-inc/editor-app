@@ -2,7 +2,7 @@ import { SectionId } from "@/components/navbar/EditorNavbarSections";
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
 import { CardStyle } from "@/requests/projects/types";
-import { Logo, ResponsiveBreakpoint } from "@/requests/themes/types";
+import { Font, Logo, ResponsiveBreakpoint } from "@/requests/themes/types";
 import { Action } from "@/utils/actions";
 import { defaultTheme } from "@/utils/branding";
 import { encodeSchema } from "@/utils/compression";
@@ -88,7 +88,7 @@ export const emptyEditorTree = {
 
 // Copy the properties from ThemeMutationParams
 export interface MantineThemeExtended extends MantineTheme {
-  //fonts: Font[];
+  fonts: Font[];
   defaultRadius: MantineSize;
   defaultSpacing: MantineSize;
   inputSize: MantineSize;

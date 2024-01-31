@@ -1,6 +1,7 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
-import { useDefaultBorderStyle } from "@/hooks/useDefaultBorderStyle";
+import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
@@ -30,11 +31,17 @@ const TextareaComponent = forwardRef(
       textColor,
       ...componentProps
     } = component.props as any;
+    const theme = useEditorStore((state) => state.theme);
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setStoreInputValue = useInputsStore((state) => state.setInputValue);
     const { color, backgroundColor } = useChangeState({ bg, textColor });
-    const { borderStyle } = useDefaultBorderStyle();
+    const { borderStyle, fontSizeStyle } = useBrandingStyles();
     const [localInputValue, setLocalInputValue] = useState(inputValue ?? "");
+
+    const customStyle = merge({}, borderStyle, fontSizeStyle, props.style, {
+      backgroundColor,
+      color,
+    });
 
     // update values in store
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,11 +60,6 @@ const TextareaComponent = forwardRef(
       triggers?.onChange && triggers?.onChange(e);
     };
 
-    const customStyle = merge({}, borderStyle, props.style, {
-      backgroundColor,
-      color,
-    });
-
     return (
       <MantineTextarea
         ref={ref}
@@ -68,6 +70,7 @@ const TextareaComponent = forwardRef(
         styles={{
           root: {
             position: "relative",
+
             ...pick(customStyle, [
               "display",
               "width",

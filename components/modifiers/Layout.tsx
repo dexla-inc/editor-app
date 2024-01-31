@@ -1,3 +1,4 @@
+import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { TopLabel } from "@/components/TopLabel";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
@@ -23,7 +24,6 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { SegmentedControlSizes } from "../SegmentedControlSizes";
 
 export const icon = IconLayout2;
 export const label = "Layout";

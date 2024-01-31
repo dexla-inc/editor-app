@@ -1,4 +1,5 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { DISABLED_HOVER } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
@@ -24,7 +25,10 @@ const ButtonIconComponent = forwardRef(
       bg: undefined,
       textColor: color,
     });
-    const customStyle = merge({}, props.style, { backgroundColor: bgColor });
+    const { buttonIconStyle } = useBrandingStyles();
+    const customStyle = merge({}, buttonIconStyle, props.style, {
+      backgroundColor: bgColor,
+    });
 
     return (
       <MantineActionIcon

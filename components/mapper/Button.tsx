@@ -1,6 +1,7 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBindingPopover } from "@/hooks/useBindingPopover";
+import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { useData } from "@/hooks/useData";
 import { useEditorStore } from "@/stores/editor";
@@ -66,8 +67,9 @@ const ButtonComponent = forwardRef(
 
     const labelTextColor = getColorFromTheme(theme, textColor);
 
-    const borderColor = getColorFromTheme(theme, "Border.6");
-    const customStyle = merge({ borderColor, borderWidth: "0px" }, style, {
+    const { inputStyle } = useBrandingStyles();
+
+    const customStyle = merge(inputStyle, style, {
       color: labelTextColor,
     });
 

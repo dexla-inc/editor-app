@@ -4,8 +4,8 @@ import { MantineSize } from "@mantine/core";
 const sizeDefinitions = {
   xs: { input: "30px", gap: "10px", radius: "2px" },
   sm: { input: "36px", gap: "12px", radius: "4px" },
-  md: { input: "42px", gap: "16px", radius: "8px" },
-  lg: { input: "50px", gap: "20px", radius: "16px" },
+  md: { input: "40px", gap: "16px", radius: "10px" },
+  lg: { input: "48px", gap: "20px", radius: "16px" },
   xl: { input: "60px", gap: "24px", radius: "32px" },
 };
 

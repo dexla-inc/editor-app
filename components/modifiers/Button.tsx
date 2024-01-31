@@ -1,8 +1,10 @@
 import { IconSelector } from "@/components/IconSelector";
 import { SegmentedControlInput } from "@/components/SegmentedControlInput";
-import { SizeSelector } from "@/components/SizeSelector";
+import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
+import { useEditorStore } from "@/stores/editor";
+import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
@@ -17,6 +19,7 @@ export const label = "Button";
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm();
+    const theme = useEditorStore((state) => state.theme);
     const [icon, setIcon] = useState(selectedComponent.props?.icon);
 
     const changeIcon = useCallback(
@@ -44,7 +47,7 @@ export const Modifier = withModifier(
           {
             type: selectedComponent.props?.type,
             variant: selectedComponent.props?.variant,
-            size: selectedComponent.props?.size,
+            size: selectedComponent?.props?.size ?? theme.inputSize,
             icon: icon,
             //compact: selectedComponent.props?.compact,
             color: selectedComponent.props?.color,
@@ -166,12 +169,15 @@ export const Modifier = withModifier(
             }}
           /> */}
 
-          <SizeSelector
+          <SegmentedControlSizes
+            label="Size"
+            sizing={inputSizes}
             {...form.getInputProps("size")}
             onChange={(value) => {
               form.setFieldValue("size", value as string);
               debouncedTreeUpdate(selectedComponentIds, {
                 size: value,
+                style: { height: inputSizes[value] },
               });
             }}
           />
