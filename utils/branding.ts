@@ -223,6 +223,23 @@ const globalStyles = (isDarkTheme?: boolean) => ({
 // Default Theme
 const defaultTheme: MantineThemeExtended = {
   ...DEFAULT_THEME,
+  colors: {
+    ...DEFAULT_THEME.colors,
+    Primary: ["", "", "", "", "", "#2F65CB", "", "", "", ""],
+    PrimaryText: ["", "", "", "", "", "#FFFFFF", "", "", "", ""],
+    Secondary: ["", "", "", "", "", "#D9D9D9", "", "", "", ""],
+    SecondaryText: ["", "", "", "", "", "#000000", "", "", "", ""],
+    Tertiary: ["", "", "", "", "", "#E57F4F", "", "", "", ""],
+    TertiaryText: ["", "", "", "", "", "#FFFFFF", "", "", "", ""],
+    Background: ["", "", "", "", "", "#FF9600", "", "", "", ""],
+    Danger: ["", "", "", "", "", "#FE191C", "", "", "", ""],
+    Warning: ["", "", "", "", "", "#FFCC00", "", "", "", ""],
+    Success: ["", "", "", "", "", "#10D48E", "", "", "", ""],
+    Neutral: ["", "", "", "", "", "#F1F1F1", "", "", "", ""],
+    Black: ["", "", "", "", "", "#000000", "", "", "", ""],
+    White: ["", "", "", "", "", "#FFFFFF", "", "", "", ""],
+    Border: ["", "", "", "", "", "#EEEEEE", "", "", "", ""],
+  },
   fonts: [],
   fontFamily: "Arial, sans-serif",
   headings: {
