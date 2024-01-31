@@ -15,16 +15,9 @@ export const jsonStructure = (props?: any): Component => {
       },
       variant: "filled",
       color: "Primary.6",
-      size: "md",
-      iconProps: {
-        style: {
-          width: "auto",
-          height: "auto",
-        },
-        name: "IconSettings",
-        color: "PrimaryText.6",
-        size: "xs",
-      },
+      iconName: "IconSettings",
+      iconColor: "PrimaryText.6",
+      iconSize: "xs",
     },
     states: {
       hover: { color: "Primary.7" },

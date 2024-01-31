@@ -22,13 +22,14 @@ const ButtonIconComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
     const {
       children,
-      iconProps = {},
       triggers,
       color,
+      iconColor,
+      iconName,
+      iconSize,
       ...componentProps
     } = component.props as any;
 
-    const { color: iconColor, size: iconSize, ...otherIconProps } = iconProps;
     const { color: backgroundColor, backgroundColor: newIconColor } =
       useChangeState({
         bg: iconColor,
@@ -42,11 +43,17 @@ const ButtonIconComponent = forwardRef(
     });
 
     const iconWidth = globalStyles().sizing.icon[iconSize];
-    const iconStyle = merge({}, otherIconProps.style, {
-      width: iconWidth,
-      height: iconWidth,
-      color: newIconColor,
-    });
+    const iconProps = merge(
+      {},
+      {
+        name: iconName,
+        style: {
+          width: iconWidth,
+          height: iconWidth,
+          color: newIconColor,
+        },
+      },
+    );
 
     return (
       <MantineActionIcon
@@ -57,7 +64,7 @@ const ButtonIconComponent = forwardRef(
         styles={{ root: DISABLED_HOVER }}
         {...triggers}
       >
-        <BaseIconComponent {...otherIconProps} style={iconStyle} />
+        <BaseIconComponent {...iconProps} />
       </MantineActionIcon>
     );
   },

@@ -21,16 +21,18 @@ export const Modifier = withModifier(
       form.setValues(
         merge({}, requiredModifiers.buttonIcon, {
           color: selectedComponent.props?.color,
-          iconProps: selectedComponent.props?.iconProps ?? {},
+          iconName: selectedComponent.props?.iconName,
+          iconSize: selectedComponent.props?.iconSize,
+          iconColor: selectedComponent.props?.iconColor,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedComponent]);
 
     const handleIconPropsChange = (key: string, value: string) => {
-      form.setFieldValue(`iconProps.${key}`, value);
+      form.setFieldValue(key, value);
       debouncedTreeUpdate(selectedComponentIds, {
-        iconProps: { [key]: value },
+        [key]: value,
       });
     };
 
@@ -40,25 +42,26 @@ export const Modifier = withModifier(
           <ThemeColorSelector
             label="Background"
             {...form.getInputProps("color")}
-            onChange={(value: string) => {
-              form.setFieldValue("color", value);
-              debouncedTreeUpdate(selectedComponentIds, { color: value });
-            }}
+            onChange={(value: string) => handleIconPropsChange("color", value)}
           />
           <IconSelector
             topLabel="Icon"
-            selectedIcon={selectedComponent.props?.iconProps?.name}
-            onIconSelect={(value) => handleIconPropsChange("name", value)}
+            selectedIcon={selectedComponent.props?.iconName}
+            onIconSelect={(value) => handleIconPropsChange("iconName", value)}
           />
           <ThemeColorSelector
             label="Icon Color"
-            {...form.getInputProps("iconProps.color")}
-            onChange={(value: string) => handleIconPropsChange("color", value)}
+            {...form.getInputProps("iconColor")}
+            onChange={(value: string) =>
+              handleIconPropsChange("iconColor", value)
+            }
           />
           <SizeSelector
             label="Icon Size"
-            {...form.getInputProps("iconProps.size")}
-            onChange={(value: string) => handleIconPropsChange("size", value)}
+            {...form.getInputProps("iconSize")}
+            onChange={(value: string) =>
+              handleIconPropsChange("iconSize", value)
+            }
             showNone={false}
           />
         </Stack>
