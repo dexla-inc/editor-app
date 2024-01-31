@@ -43,17 +43,14 @@ const ButtonIconComponent = forwardRef(
     });
 
     const iconWidth = globalStyles().sizing.icon[iconSize];
-    const iconProps = merge(
-      {},
-      {
-        name: iconName,
-        style: {
-          width: iconWidth,
-          height: iconWidth,
-          color: newIconColor,
-        },
+    const iconProps = {
+      name: iconName,
+      style: {
+        width: iconWidth,
+        height: iconWidth,
+        color: newIconColor,
       },
-    );
+    };
 
     return (
       <MantineActionIcon
