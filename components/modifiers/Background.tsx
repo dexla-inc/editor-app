@@ -30,7 +30,7 @@ const extractBackgroundUrl = (backgroundImageValue: string): string => {
 const defaultBackgroundValues = requiredModifiers.background;
 
 export const Modifier = withModifier(
-  ({ selectedComponent, selectedComponentIds }) => {
+  ({ selectedComponent, selectedComponentIds, currentState }) => {
     const form = useForm();
 
     const [backgroundSize, setBackgroundSize] = useState(

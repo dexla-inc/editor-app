@@ -10,6 +10,7 @@ import { ComponentType, useMemo } from "react";
 type WithModifier = {
   selectedComponentIds: string[];
   selectedComponent: Component;
+  currentState: string;
 };
 
 function getObjectPaths(obj: any, parentKey = ""): string[] {
@@ -82,6 +83,7 @@ export const withModifier = (Modifier: ComponentType<WithModifier>) => {
         {...{
           selectedComponentIds: selectedComponentIds!,
           selectedComponent: component as Component,
+          currentState,
         }}
       />
     );
