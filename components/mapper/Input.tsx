@@ -131,7 +131,6 @@ const InputComponent = forwardRef(
                   input: {
                     border: "none",
                     textAlign: "center",
-                    height: customStyle.height,
                     backgroundColor,
                     color,
                   },
@@ -199,7 +198,7 @@ const InputComponent = forwardRef(
                 ]),
               },
               input: customStyle,
-              innerInput: { color },
+              innerInput: { ...pick(customStyle, ["height"]), color },
             }}
             value={inputValue}
             onChange={handleInputChange}
