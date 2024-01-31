@@ -67,10 +67,8 @@ export const EditorNavbarThemesSection =
 
     const [opened, { open, close }] = useDisclosure(false);
 
-    const { usersTheme, setUsersTheme } = useEditorStore((state) => ({
-      usersTheme: state.theme,
-      setUsersTheme: state.setTheme,
-    }));
+    const usersTheme = useEditorStore((state) => state.theme);
+    const setUsersTheme = useEditorStore((state) => state.setTheme);
 
     const projectId = router.query.id as string;
 
