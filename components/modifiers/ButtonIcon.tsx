@@ -1,3 +1,5 @@
+import { IconSelector } from "@/components/IconSelector";
+import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
@@ -7,7 +9,6 @@ import { useForm } from "@mantine/form";
 import { IconCircleDot } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { SizeSelector } from "../SizeSelector";
 
 export const icon = IconCircleDot;
 export const label = "Button Icon";
@@ -20,30 +21,45 @@ export const Modifier = withModifier(
       form.setValues(
         merge({}, requiredModifiers.buttonIcon, {
           color: selectedComponent.props?.color,
-          size: selectedComponent.props?.size,
+          iconProps: selectedComponent.props?.iconProps ?? {},
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedComponent]);
 
+    const handleIconPropsChange = (key: string, value: string) => {
+      form.setFieldValue(`iconProps.${key}`, value);
+      debouncedTreeUpdate(selectedComponentIds, {
+        iconProps: { [key]: value },
+      });
+    };
+
     return (
       <form>
         <Stack spacing="xs">
           <ThemeColorSelector
-            label="Color"
+            label="Background"
             {...form.getInputProps("color")}
             onChange={(value: string) => {
               form.setFieldValue("color", value);
               debouncedTreeUpdate(selectedComponentIds, { color: value });
             }}
           />
+          <IconSelector
+            topLabel="Icon"
+            selectedIcon={selectedComponent.props?.iconProps?.name}
+            onIconSelect={(value) => handleIconPropsChange("name", value)}
+          />
+          <ThemeColorSelector
+            label="Icon Color"
+            {...form.getInputProps("iconProps.color")}
+            onChange={(value: string) => handleIconPropsChange("color", value)}
+          />
           <SizeSelector
-            label="Size"
-            {...form.getInputProps("size")}
-            onChange={(value) => {
-              form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponentIds, { size: value });
-            }}
+            label="Icon Size"
+            {...form.getInputProps("iconProps.size")}
+            onChange={(value: string) => handleIconPropsChange("size", value)}
+            showNone={false}
           />
         </Stack>
       </form>
