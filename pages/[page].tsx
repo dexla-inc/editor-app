@@ -1,7 +1,7 @@
 import { Live } from "@/components/Live";
 import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
-import { getByDomain } from "@/requests/projects/queries-noauth";
+import { getByDomain, getProject } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
 import { isAppUrl } from "@/utils/common";
 import { GetServerSidePropsContext } from "next";
@@ -13,23 +13,30 @@ export const getServerSideProps = async ({
   query,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host;
-  let id = "";
+  let id = "",
+    faviconUrl = "";
   const isLiveApp = isAppUrl(url!);
   if (isLiveApp) {
     id = url?.split(".")[0] as string;
+    const project = await getProject(id);
+    faviconUrl = project.faviconUrl ?? "";
   } else {
     const project = await getByDomain(url!);
     id = project.id;
+    faviconUrl = project.faviconUrl ?? "";
   }
 
   const page = await getMostRecentDeploymentByPage(id as string, {
     page: query.page as string,
   });
 
+  console.log("[page]]", isLiveApp);
+
   return {
     props: {
       id,
       page,
+      faviconUrl,
     },
   };
 };
@@ -37,9 +44,10 @@ export const getServerSideProps = async ({
 type Props = {
   id: string;
   page: PageResponse;
+  faviconUrl?: string;
 };
 
-export default function LivePage({ id, page }: Props) {
+export default function LivePage({ id, page, faviconUrl }: Props) {
   const setCurrentProjectId = useEditorStore(
     (state) => state.setCurrentProjectId,
   );
@@ -68,6 +76,11 @@ export default function LivePage({ id, page }: Props) {
       <Head>
         <title>{page?.title}</title>
         <meta name="description" content={page.title} />
+        <link
+          rel="icon"
+          type="image/x-icon"
+          href={faviconUrl ?? "/favicon.ico"}
+        />
       </Head>
       <Live key={page?.id} pageId={page?.id} projectId={id} />
     </>

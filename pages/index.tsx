@@ -16,7 +16,9 @@ export const getServerSideProps = async ({
 
   let id = "",
     faviconUrl = "";
-  if (isAppUrl(url!)) {
+
+  const isLiveApp = isAppUrl(url!);
+  if (isLiveApp) {
     id = url?.split(".")[0] as string;
     const project = await getProject(id);
     faviconUrl = project.faviconUrl ?? "";
@@ -25,6 +27,8 @@ export const getServerSideProps = async ({
     id = project.id;
     faviconUrl = project.faviconUrl ?? "";
   }
+
+  console.log("index", isLiveApp);
 
   if (!id) {
     return {
@@ -77,7 +81,6 @@ const HomePage = ({ id, page, faviconUrl }: Props) => {
   ]);
 
   const state = JSON.parse(decodeSchema(page?.pageState ?? "") ?? "{}");
-
   return (
     <>
       <Head>
