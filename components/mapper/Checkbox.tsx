@@ -1,3 +1,4 @@
+import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
@@ -27,6 +28,13 @@ const CheckboxComponent = ({
   const [checked, setChecked] = useState(inputValue ?? false);
   const { color, backgroundColor } = useChangeState({ bg, textColor });
 
+  const { borderStyle } = useBrandingStyles();
+
+  const customStyle = merge({}, borderStyle, props.style, {
+    backgroundColor,
+    color,
+  });
+
   // update values in store
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedOnChange = useCallback(
@@ -43,8 +51,6 @@ const CheckboxComponent = ({
     debouncedOnChange(newValue);
     triggers?.onChange && triggers?.onChange(e);
   };
-
-  const customStyle = merge({}, props.style, { backgroundColor, color });
 
   return (
     <MantineCheckbox

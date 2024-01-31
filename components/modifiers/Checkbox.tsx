@@ -1,6 +1,7 @@
-import { SizeSelector } from "@/components/SizeSelector";
+import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { SwitchSelector } from "@/components/SwitchSelector";
 import { withModifier } from "@/hoc/withModifier";
+import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack, TextInput } from "@mantine/core";
@@ -41,7 +42,9 @@ export const Modifier = withModifier(
               });
             }}
           />
-          <SizeSelector
+          <SegmentedControlSizes
+            label="Size"
+            sizing={inputSizes}
             {...form.getInputProps("size")}
             onChange={(value) => {
               form.setFieldValue("size", value as string);

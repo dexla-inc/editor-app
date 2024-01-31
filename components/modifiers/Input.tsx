@@ -1,4 +1,5 @@
 import { IconSelector } from "@/components/IconSelector";
+import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
@@ -11,7 +12,6 @@ import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { SegmentedControlSizes } from "../SegmentedControlSizes";
 
 export const icon = IconForms;
 export const label = "Input";

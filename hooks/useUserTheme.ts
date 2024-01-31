@@ -32,6 +32,7 @@ export const useUserTheme = (projectId: string) => {
 
         setInternalTheme({
           fontFamily: defaultFontFamily,
+          fonts: userTheme.data?.fonts,
           headings: {
             fontFamily: headingsFontFamily,
             fontWeight: userTheme.data?.fonts?.[0].fontWeight ?? 500,
@@ -46,7 +47,6 @@ export const useUserTheme = (projectId: string) => {
               };
             }, {} as any),
           },
-          // @ts-ignore
           colors: {
             ...userTheme.data?.colors.reduce((userColors, color) => {
               const hex = color.hex.substring(0, 7);

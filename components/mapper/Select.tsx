@@ -1,7 +1,7 @@
 import { CustomDropdown } from "@/components/mapper/CustomSelectDropdown";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
-import { useDefaultBorderStyle } from "@/hooks/useDefaultBorderStyle";
 import { useEndpoint } from "@/hooks/useEndpoint";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
@@ -30,8 +30,8 @@ const SelectComponent = forwardRef(
     } = component.props as any;
     const { dataLabelKey, dataValueKey, resultsKey } = component.onLoad ?? {};
     const { color, backgroundColor } = useChangeState({ bg, textColor });
-    const { borderStyle } = useDefaultBorderStyle();
-    const customStyle = merge({}, borderStyle, props.style, {
+    const { borderStyle, inputStyle } = useBrandingStyles();
+    const customStyle = merge({}, borderStyle, inputStyle, props.style, {
       backgroundColor,
       color,
     });

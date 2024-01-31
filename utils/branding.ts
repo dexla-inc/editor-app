@@ -223,6 +223,7 @@ const globalStyles = (isDarkTheme?: boolean) => ({
 // Default Theme
 const defaultTheme: MantineThemeExtended = {
   ...DEFAULT_THEME,
+  fonts: [],
   fontFamily: "Arial, sans-serif",
   headings: {
     ...DEFAULT_THEME.headings,

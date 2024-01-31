@@ -1,4 +1,3 @@
-import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { nanoid } from "nanoid";
@@ -13,7 +12,7 @@ export const jsonStructure = (props?: any): Component => {
     onLoad: {
       name: {
         dataType: "static",
-        value: name ?? "Upload button",
+        value: name ?? "Upload",
       },
     },
     props: {

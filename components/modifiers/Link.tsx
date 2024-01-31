@@ -1,4 +1,3 @@
-import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
@@ -19,7 +18,6 @@ export const Modifier = withModifier(
     useEffect(() => {
       form.setValues(
         merge({}, requiredModifiers.link, {
-          size: selectedComponent.props?.size,
           color: selectedComponent.props?.color,
         }),
       );
@@ -29,16 +27,6 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          <SizeSelector
-            label="Size"
-            {...form.getInputProps("size")}
-            onChange={(value) => {
-              form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                size: value,
-              });
-            }}
-          />
           <ThemeColorSelector
             label="Color"
             value={form.getInputProps("color").value}

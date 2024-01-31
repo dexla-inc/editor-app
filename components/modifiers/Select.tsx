@@ -1,8 +1,10 @@
+import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
-import { SizeSelector } from "@/components/SizeSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
+import { useEditorStore } from "@/stores/editor";
+import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack, TextInput } from "@mantine/core";
@@ -49,11 +51,12 @@ const dropdownData = [
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm();
+    const theme = useEditorStore((state) => state.theme);
 
     useEffect(() => {
       form.setValues(
         merge({}, requiredModifiers.select, {
-          size: selectedComponent?.props?.size,
+          size: selectedComponent?.props?.size ?? theme.inputSize,
           placeholder: selectedComponent?.props?.placeholder,
           icon: selectedComponent?.props?.icon,
           data: selectedComponent?.props?.data,
@@ -94,10 +97,16 @@ export const Modifier = withModifier(
               setFieldValue("placeholder", e.target.value);
             }}
           />
-          <SizeSelector
+          <SegmentedControlSizes
+            label="Size"
+            sizing={inputSizes}
             {...form.getInputProps("size")}
             onChange={(value) => {
-              setFieldValue("size", value as string);
+              form.setFieldValue("size", value as string);
+              debouncedTreeUpdate(selectedComponentIds, {
+                size: value,
+                style: { height: inputSizes[value] },
+              });
             }}
           />
 

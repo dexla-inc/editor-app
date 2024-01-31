@@ -11,7 +11,6 @@ export const jsonStructure = (props?: any): Component => {
       ...requiredModifiers.input,
       style: {
         width: "100%",
-        height: "38px",
       },
       ...(props.props || {}),
     },

@@ -32,14 +32,15 @@ export const useHoverEvents = () => {
 
     const rect = element.getBoundingClientRect();
     const computedStyle = window.getComputedStyle(element);
+    const pixelUnit = "px";
 
     setOverlayStyles({
       display,
       position: {
-        width: rect.width + "px",
-        height: rect.height + "px",
-        top: rect.top + "px",
-        left: rect.left + "px",
+        width: rect.width + pixelUnit,
+        height: rect.height + pixelUnit,
+        top: rect.top + pixelUnit,
+        left: rect.left + pixelUnit,
       },
       padding: {
         paddingTop: computedStyle.paddingTop,

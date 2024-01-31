@@ -1,7 +1,7 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
-import { useDefaultBorderStyle } from "@/hooks/useDefaultBorderStyle";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
@@ -46,14 +46,18 @@ const InputComponent = forwardRef(
     const { name: iconName } = icon && icon!.props!;
     const { type, ...restComponentProps } = componentProps;
     const { color, backgroundColor } = useChangeState({ bg, textColor });
-    const inputSize = size ?? theme.inputSize;
     const _defaultValue = type === "number" || type === "numberRange" ? 0 : "";
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
     const setStoreInputValue = useInputsStore((state) => state.setInputValue);
 
     const isClearable = clearable && !!inputValue;
 
-    const { borderStyle } = useDefaultBorderStyle();
+    const { borderStyle, inputStyle } = useBrandingStyles();
+
+    const customStyle = merge({}, borderStyle, inputStyle, props.style, {
+      backgroundColor,
+      color,
+    });
 
     // clear input field
     const clearInput = () => {
@@ -90,11 +94,6 @@ const InputComponent = forwardRef(
       const number = Number(value);
       return isNaN(number) ? 0 : number;
     };
-
-    const customStyle = merge({}, borderStyle, props.style, {
-      backgroundColor,
-      color,
-    });
 
     return (
       <>
@@ -137,7 +136,6 @@ const InputComponent = forwardRef(
                     color,
                   },
                 }}
-                size={inputSize}
                 value={parseToNumber(inputValue)}
                 onChange={handleInputChange}
                 label={undefined}
@@ -157,7 +155,6 @@ const InputComponent = forwardRef(
           <MantineNumberInput
             {...props}
             {...restComponentProps}
-            size={inputSize}
             ref={ref}
             autoComplete="off"
             id={component.id}
@@ -186,7 +183,6 @@ const InputComponent = forwardRef(
           <PasswordInput
             {...props}
             {...restComponentProps}
-            size={inputSize}
             ref={ref}
             id={component.id}
             icon={iconName ? <Icon name={iconName} /> : null}
@@ -219,7 +215,6 @@ const InputComponent = forwardRef(
           <MantineInput
             {...props}
             {...componentProps}
-            size={inputSize}
             ref={ref}
             id={component.id}
             icon={iconName ? <Icon name={iconName} /> : null}
