@@ -329,6 +329,12 @@ export const getColorValue = (theme: MantineThemeExtended, value?: string) => {
   return _value;
 };
 
+const getHoverColor = (value: string) => {
+  let [color, opacity] = value.split(".");
+  opacity = opacity ? `${parseInt(opacity) + 1}` : "";
+  return `${color}.${opacity}`;
+};
+
 export {
   BG_COLOR,
   BINDER_BACKGROUND,
@@ -365,6 +371,7 @@ export {
   darkTheme,
   defaultTheme,
   flexStyles,
+  getHoverColor,
   globalStyles,
   hoverStyles,
   nestable,

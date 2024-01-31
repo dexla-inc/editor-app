@@ -3,6 +3,7 @@ import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { withModifier } from "@/hoc/withModifier";
+import { useChangeState } from "@/hooks/useChangeState";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack } from "@mantine/core";
@@ -15,7 +16,7 @@ export const icon = IconIdBadge;
 export const label = "Badge";
 
 export const Modifier = withModifier(
-  ({ selectedComponent, selectedComponentIds }) => {
+  ({ selectedComponent, selectedComponentIds, currentState }) => {
     const form = useForm();
 
     const [backgroundType, setBackgroundType] = useState("single");
@@ -43,6 +44,8 @@ export const Modifier = withModifier(
       form.setFieldValue(key, value);
       debouncedTreeUpdate(selectedComponentIds, { [key]: value });
     };
+
+    const { setBackgroundColor } = useChangeState({});
 
     return (
       <form>
@@ -100,12 +103,9 @@ export const Modifier = withModifier(
             <ThemeColorSelector
               label="Background"
               {...form.getInputProps("bg")}
-              onChange={(value: string) => {
-                form.setFieldValue("bg", value);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  bg: value,
-                });
-              }}
+              onChange={(value: string) =>
+                setBackgroundColor("color", value, form, currentState)
+              }
             />
           ) : (
             <GradientPicker
