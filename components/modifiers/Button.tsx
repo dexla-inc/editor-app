@@ -3,6 +3,7 @@ import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
+import { useChangeState } from "@/hooks/useChangeState";
 import { useEditorStore } from "@/stores/editor";
 import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeUpdate } from "@/utils/editor";
@@ -17,7 +18,7 @@ export const icon = IconClick;
 export const label = "Button";
 
 export const Modifier = withModifier(
-  ({ selectedComponent, selectedComponentIds }) => {
+  ({ selectedComponent, selectedComponentIds, currentState }) => {
     const form = useForm();
     const theme = useEditorStore((state) => state.theme);
     const [icon, setIcon] = useState(selectedComponent.props?.icon);
@@ -59,6 +60,8 @@ export const Modifier = withModifier(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedComponent]);
 
+    const { setBackgroundColor } = useChangeState({});
+
     return (
       <form>
         <Stack spacing="xs">
@@ -97,12 +100,9 @@ export const Modifier = withModifier(
           <ThemeColorSelector
             label="Background Color"
             {...form.getInputProps("color")}
-            onChange={(value: string) => {
-              form.setFieldValue("color", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                color: value,
-              });
-            }}
+            onChange={(value: string) =>
+              setBackgroundColor("color", value, form, currentState)
+            }
             excludeTransparent
           />
           <ThemeColorSelector
