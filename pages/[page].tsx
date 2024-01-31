@@ -36,6 +36,7 @@ type Props = {
 };
 
 export default function LivePage({ id, page, faviconUrl }: Props) {
+  console.log("LivePage");
   const setCurrentProjectId = useEditorStore(
     (state) => state.setCurrentProjectId,
   );
@@ -44,7 +45,7 @@ export default function LivePage({ id, page, faviconUrl }: Props) {
   const setIsLive = useEditorStore((state) => state.setIsLive);
 
   useEffect(() => {
-    if (id && page?.id) {
+    if (id && page.id) {
       setCurrentProjectId(id);
       setCurrentPageId(page.id);
       setPreviewMode(true);
@@ -52,7 +53,7 @@ export default function LivePage({ id, page, faviconUrl }: Props) {
     }
   }, [
     id,
-    page?.id,
+    page.id,
     setCurrentPageId,
     setCurrentProjectId,
     setPreviewMode,
@@ -62,7 +63,7 @@ export default function LivePage({ id, page, faviconUrl }: Props) {
   return (
     <>
       <Head>
-        <title>{page?.title}</title>
+        <title>{page.title}</title>
         <meta name="description" content={page.title} />
         <link
           rel="icon"
@@ -70,7 +71,7 @@ export default function LivePage({ id, page, faviconUrl }: Props) {
           href={faviconUrl ?? "/favicon.ico"}
         />
       </Head>
-      <Live key={page?.id} pageId={page?.id} projectId={id} />
+      <Live pageId={page.id} projectId={id} />
     </>
   );
 }

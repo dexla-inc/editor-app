@@ -97,7 +97,6 @@ export const DeployButton = ({ projectId, page }: Props) => {
   }, [project]);
 
   useEffect(() => {
-    console.log(recentDeployment);
     if (recentDeployment?.id) {
       setHasDeployed(true);
     }

@@ -2,14 +2,14 @@
 // @refresh reset
 import { EditableComponent } from "@/components/EditableComponent";
 import { LiveWrapper } from "@/components/LiveWrapper";
-import { useDeploymentsPageQuery } from "@/hooks/reactQuery/useDeploymentsPageQuery";
+import { useDeploymentsRecentQuery } from "@/hooks/reactQuery/useDeploymentsRecentQuery";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { componentMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
 import { Component } from "@/utils/editor";
 import { Box } from "@mantine/core";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 type Props = {
   projectId: string;
@@ -25,11 +25,17 @@ const EditableComponentContainer = ({ children, component }: any) => {
 };
 
 export const Live = ({ projectId, pageId }: Props) => {
+  console.log("Live component", projectId, pageId);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isLoading = useAppStore((state) => state.isLoading);
-  const { data: page } = useDeploymentsPageQuery(projectId, pageId);
+  const { data: deployment } = useDeploymentsRecentQuery(projectId);
+
+  const page = useMemo(
+    () => deployment?.pages?.find((p) => p.id === pageId),
+    [deployment, pageId],
+  );
 
   useEffect(() => {
     if (page?.pageState) {
@@ -41,7 +47,8 @@ export const Live = ({ projectId, pageId }: Props) => {
       });
       setIsLoading(false);
     }
-  }, [page, setEditorTree, setIsLoading]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
 
   const renderTree = useCallback((component: Component) => {
     if (component.id === "root") {
@@ -73,16 +80,8 @@ export const Live = ({ projectId, pageId }: Props) => {
   }
 
   return (
-    <Box
-      pos="relative"
-      style={{
-        minHeight: `100vh`,
-      }}
-      p={0}
-    >
-      <LiveWrapper projectId={projectId}>
-        {renderTree(editorTree.root)}
-      </LiveWrapper>
-    </Box>
+    <LiveWrapper projectId={projectId}>
+      {renderTree(editorTree.root)}
+    </LiveWrapper>
   );
 };
