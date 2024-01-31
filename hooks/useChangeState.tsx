@@ -31,7 +31,7 @@ export const useChangeState = ({
     form.setFieldValue(key, value);
     const defaultStateUpdate = { hover: { [key]: hoverBackground } };
     const nonDefaultStateUpdate = {
-      [currentState]: { [key]: hoverBackground },
+      [currentState]: { [key]: value },
     };
 
     const treeUpdate: Record<string, any> = {
