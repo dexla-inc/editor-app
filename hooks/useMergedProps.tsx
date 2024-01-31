@@ -24,20 +24,17 @@ export const usePropsWithOverwrites = (
     (state) => state.setTreeComponentCurrentState,
   );
 
-  const hoverStateFunc = useCallback((e: React.MouseEvent<HTMLElement>) => {
+  const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
     if (currentState === "default") {
       setTreeComponentCurrentState(e.currentTarget.id, "hover");
     }
-  }, []);
+  };
 
-  const leaveHoverStateFunc = useCallback(
-    (e: React.MouseEvent<HTMLElement>) => {
-      if (currentState === "hover") {
-        setTreeComponentCurrentState(e.currentTarget.id, "default");
-      }
-    },
-    [],
-  );
+  const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
+    if (currentState === "hover") {
+      setTreeComponentCurrentState(e.currentTarget.id, "default");
+    }
+  };
 
   return useMemo(() => {
     return merge(
