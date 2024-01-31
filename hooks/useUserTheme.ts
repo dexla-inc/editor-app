@@ -50,20 +50,25 @@ export const useUserTheme = (projectId: string) => {
           colors: {
             ...userTheme.data?.colors.reduce((userColors, color) => {
               const hex = color.hex.substring(0, 7);
+              const colorShades =
+                color.name === "White"
+                  ? [color.hex]
+                  : [
+                      defaultTheme.fn.lighten(hex, 0.9),
+                      defaultTheme.fn.lighten(hex, 0.8),
+                      defaultTheme.fn.lighten(hex, 0.7),
+                      defaultTheme.fn.lighten(hex, 0.6),
+                      defaultTheme.fn.lighten(hex, 0.5),
+                      defaultTheme.fn.lighten(hex, 0.4),
+                      color.hex,
+                      defaultTheme.fn.darken(hex, 0.1),
+                      defaultTheme.fn.darken(hex, 0.2),
+                      defaultTheme.fn.darken(hex, 0.3),
+                    ];
+
               return {
                 ...userColors,
-                [color.name]: [
-                  defaultTheme.fn.lighten(hex, 0.9),
-                  defaultTheme.fn.lighten(hex, 0.8),
-                  defaultTheme.fn.lighten(hex, 0.7),
-                  defaultTheme.fn.lighten(hex, 0.6),
-                  defaultTheme.fn.lighten(hex, 0.5),
-                  defaultTheme.fn.lighten(hex, 0.4),
-                  color.hex,
-                  defaultTheme.fn.darken(hex, 0.1),
-                  defaultTheme.fn.darken(hex, 0.2),
-                  defaultTheme.fn.darken(hex, 0.3),
-                ],
+                [color.name]: colorShades,
               };
             }, {}),
           },
