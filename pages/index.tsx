@@ -1,9 +1,8 @@
 import { Live } from "@/components/Live";
-import { getMostRecentDeployment } from "@/requests/deployments/queries-noauth";
+import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
-import { getByDomain, getProject } from "@/requests/projects/queries-noauth";
+import { getByDomain } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
-import { isAppUrl } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
@@ -12,23 +11,10 @@ import { useEffect } from "react";
 export const getServerSideProps = async ({
   req,
 }: GetServerSidePropsContext) => {
-  const url = req.headers.host;
-
-  let id = "",
-    faviconUrl = "";
-
-  const isLiveApp = isAppUrl(url!);
-  if (isLiveApp) {
-    id = url?.split(".")[0] as string;
-    const project = await getProject(id);
-    faviconUrl = project.faviconUrl ?? "";
-  } else {
-    const project = await getByDomain(url!);
-    id = project.id;
-    faviconUrl = project.faviconUrl ?? "";
-  }
-
-  console.log("index", isLiveApp);
+  const url = req.headers.host as string;
+  const project = await getByDomain(url);
+  const id = project.id;
+  const faviconUrl = project.faviconUrl ?? "";
 
   if (!id) {
     return {
@@ -39,12 +25,14 @@ export const getServerSideProps = async ({
     };
   }
 
-  const recentDeployment = await getMostRecentDeployment(id as string);
+  const page = await getMostRecentDeploymentByPage(id as string, {
+    page: "/",
+  });
 
   return {
     props: {
       id,
-      page: recentDeployment?.pages[0],
+      page: page,
       faviconUrl,
     },
   };
