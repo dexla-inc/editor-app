@@ -25,10 +25,6 @@ export const VariableSelect = ({ onPick, ...props }: Props) => {
           label: variable.name,
         };
       })}
-      onChange={(varId) => {
-        const variable = variables!.results.find((v) => v.id === varId)!;
-        onPick?.(variable);
-      }}
     />
   );
 };

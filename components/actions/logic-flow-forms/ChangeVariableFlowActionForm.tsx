@@ -16,14 +16,7 @@ export const ChangeVariableFlowActionForm = ({ form }: Props) => {
 
   return (
     <Stack spacing="xs">
-      <VariableSelect
-        label="Variable"
-        required
-        onPick={(variable) => {
-          form.setFieldValue("variableId", variable.id);
-        }}
-        {...form.getInputProps("variableId")}
-      />
+      <VariableSelect required {...form.getInputProps("variableId")} />
 
       <BindingPopover
         bindingType={form.values.bindingType ?? "JavaScript"}

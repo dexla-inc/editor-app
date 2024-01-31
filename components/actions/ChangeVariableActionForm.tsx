@@ -76,14 +76,7 @@ export const ChangeVariableActionForm = ({ id }: Props) => {
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
-        <VariableSelect
-          label="Variable"
-          required
-          onPick={(variable) => {
-            form.setFieldValue("variableId", variable.id);
-          }}
-          {...form.getInputProps("variableId")}
-        />
+        <VariableSelect required {...form.getInputProps("variableId")} />
         <ComponentToBindFromInput
           label="Value"
           componentId={selectedComponentId}
