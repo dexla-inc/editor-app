@@ -38,6 +38,18 @@ type BindType = {
 const prefixWithReturnIfNeeded = (code: string) =>
   !code?.startsWith("return") ? "return " : " ";
 
+const parseVariableValue = (value: string): any => {
+  try {
+    return JSON.parse(value);
+  } catch (_) {
+    return value;
+  }
+};
+
+const processValue = (value: any, type: string) => {
+  return type === "STRING" ? value.toString() : value;
+};
+
 export const useBindingPopover = () => {
   const [opened, { toggle, close, open }] = useDisclosure(false);
   const [selectedItem, setSelectedItem] = useState<string>();
@@ -51,14 +63,13 @@ export const useBindingPopover = () => {
   // create variables list for binding
   const variables = variablesList.reduce(
     (acc, variable) => {
-      let value = variable.defaultValue;
-      const isText = variable.type === "TEXT";
-      const isBoolean = variable.type === "BOOLEAN";
-      const parsedValue =
-        value && (isText || isBoolean ? value : JSON.parse(value));
+      let value = variable.defaultValue ?? "";
+      const parsedValue = parseVariableValue(value);
+      const processedValue = processValue(parsedValue, variable.type);
+
       acc.list[variable.id] = variable;
-      acc[variable.id] = parsedValue;
-      acc[variable.name] = parsedValue;
+      acc[variable.id] = processedValue;
+      acc[variable.name] = processedValue;
       return acc;
     },
     { list: {} } as Record<string, any>,

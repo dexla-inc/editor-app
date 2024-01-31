@@ -74,9 +74,11 @@ const FormComponent = forwardRef(
         });
       });
 
-      submitButtonComponents.map((component) => {
-        setState(component.id!, "disabled");
-      });
+      if (invalidComponents.length) {
+        submitButtonComponents.map((component) => {
+          setState(component.id!, "disabled");
+        });
+      }
 
       if (!invalidComponents.length && triggers.onSubmit) {
         triggers.onSubmit && triggers.onSubmit(e);
