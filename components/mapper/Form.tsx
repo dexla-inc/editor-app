@@ -23,6 +23,9 @@ const FormComponent = forwardRef(
     const updateTreeComponent = useEditorStore(
       (state) => state.updateTreeComponent,
     );
+    const setState = useEditorStore(
+      (state) => state.setTreeComponentCurrentState,
+    );
     const getInputValue = useInputsStore((state) => state.getValue);
     const setInputValue = useInputsStore((state) => state.setInputValue);
 
@@ -51,6 +54,12 @@ const FormComponent = forwardRef(
         { withAsterisk: true },
       );
 
+      const submitButtonComponents = getAllComponentsByName(
+        component,
+        "Button",
+        { type: "submit" },
+      );
+
       const invalidComponents = formFieldComponents.filter(
         (component) =>
           getInputValue(component?.id!) === "" ||
@@ -63,6 +72,10 @@ const FormComponent = forwardRef(
           props: { error: `${component?.description} is required` },
           save: false,
         });
+      });
+
+      submitButtonComponents.map((component) => {
+        setState(component.id!, "disabled");
       });
 
       if (!invalidComponents.length && triggers.onSubmit) {
