@@ -27,7 +27,7 @@ export const Modifier = withModifier(
           opacity: selectedComponent.props?.style?.opacity,
           tooltip: selectedComponent.props?.tooltip,
           javascriptCode: selectedComponent.props?.javascriptCode ?? "",
-          display: selectedComponent.props?.style.display,
+          display: selectedComponent.props?.style?.display,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps

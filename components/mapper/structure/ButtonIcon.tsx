@@ -15,7 +15,9 @@ export const jsonStructure = (props?: any): Component => {
       },
       variant: "filled",
       color: "Primary.6",
-      size: "md",
+      iconName: "IconSettings",
+      iconColor: "PrimaryText.6",
+      iconSize: "xs",
     },
     states: {
       hover: { color: "Primary.7" },
@@ -24,22 +26,5 @@ export const jsonStructure = (props?: any): Component => {
       },
     },
     blockDroppingChildrenInside: true,
-    children: [
-      {
-        id: nanoid(),
-        name: "Icon",
-        description: "Icon",
-        props: {
-          style: {
-            width: "auto",
-            height: "auto",
-          },
-          name: "IconSettings",
-          color: "PrimaryText.6",
-        },
-        children: [],
-        blockDroppingChildrenInside: true,
-      },
-    ],
   };
 };

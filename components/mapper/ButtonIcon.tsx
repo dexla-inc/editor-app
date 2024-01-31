@@ -1,7 +1,8 @@
+import { Icon as BaseIconComponent } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
-import { DISABLED_HOVER } from "@/utils/branding";
+import { DISABLED_HOVER, globalStyles } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import {
@@ -19,16 +20,37 @@ type Props = {
 
 const ButtonIconComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
-    const { children, triggers, color, ...componentProps } =
-      component.props as any;
-    const { color: bgColor } = useChangeState({
-      bg: undefined,
-      textColor: color,
-    });
+    const {
+      children,
+      triggers,
+      color,
+      iconColor,
+      iconName,
+      iconSize,
+      ...componentProps
+    } = component.props as any;
+
+    const { color: backgroundColor, backgroundColor: newIconColor } =
+      useChangeState({
+        bg: iconColor,
+        textColor: color,
+      });
+
     const { buttonIconStyle } = useBrandingStyles();
+
     const customStyle = merge({}, buttonIconStyle, props.style, {
-      backgroundColor: bgColor,
+      backgroundColor,
     });
+
+    const iconWidth = globalStyles().sizing.icon[iconSize];
+    const iconProps = {
+      name: iconName,
+      style: {
+        width: iconWidth,
+        height: iconWidth,
+        color: newIconColor,
+      },
+    };
 
     return (
       <MantineActionIcon
@@ -39,14 +61,7 @@ const ButtonIconComponent = forwardRef(
         styles={{ root: DISABLED_HOVER }}
         {...triggers}
       >
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) =>
-              renderTree({
-                ...child,
-                props: { ...child.props, ...triggers },
-              }),
-            )
-          : children}
+        <BaseIconComponent {...iconProps} />
       </MantineActionIcon>
     );
   },

@@ -9,6 +9,7 @@ type Props = {
 export const SizeSelector = ({
   showNone = true,
   showFullscreen = false,
+  label = "Size",
   ...props
 }: Props) => {
   const defaultData = [
@@ -21,5 +22,5 @@ export const SizeSelector = ({
     showFullscreen && { label: "Fullscreen", value: "fullscreen" },
   ].filter(Boolean) as SelectItem[];
   const data = ("data" in props ? props.data : defaultData) as SelectItem[];
-  return <Select label="Size" size="xs" {...props} data={data} />;
+  return <Select label={label} size="xs" {...props} data={data} />;
 };
