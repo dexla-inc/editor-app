@@ -146,7 +146,6 @@ export const ThemeColorSelector = ({ isGradient, ...props }: Props) => {
                 data={_dataWithShades}
                 itemComponent={SelectItem}
                 searchable
-                disabled={selectedColor === "White"}
               />
             </Group>
           )}
