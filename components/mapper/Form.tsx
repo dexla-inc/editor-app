@@ -67,7 +67,7 @@ const FormComponent = forwardRef(
       );
 
       invalidComponents.map((component) => {
-        return updateTreeComponent({
+        updateTreeComponent({
           componentId: component.id!,
           props: { error: `${component?.description} is required` },
           save: false,
@@ -81,7 +81,7 @@ const FormComponent = forwardRef(
       }
 
       if (!invalidComponents.length && triggers.onSubmit) {
-        triggers.onSubmit && triggers.onSubmit(e);
+        triggers.onSubmit(e);
         formFieldComponents.map((component) =>
           setInputValue(component.id!, ""),
         );
