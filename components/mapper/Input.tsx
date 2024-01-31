@@ -165,10 +165,10 @@ const InputComponent = forwardRef(
                 ...pick(customStyle, [
                   "display",
                   "width",
-                  "height",
                   "minHeight",
                   "minWidth",
                 ]),
+                height: "fit-content",
               },
               input: customStyle,
             }}
@@ -192,10 +192,10 @@ const InputComponent = forwardRef(
                 ...pick(customStyle, [
                   "display",
                   "width",
-                  "height",
                   "minHeight",
                   "minWidth",
                 ]),
+                height: "fit-content",
               },
               input: customStyle,
               innerInput: { ...pick(customStyle, ["height"]), color },
@@ -224,10 +224,10 @@ const InputComponent = forwardRef(
                 ...pick(customStyle, [
                   "display",
                   "width",
-                  "height",
                   "minHeight",
                   "minWidth",
                 ]),
+                height: "fit-content",
               },
               input: customStyle,
             }}
