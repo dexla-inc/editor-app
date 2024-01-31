@@ -69,7 +69,7 @@ const ButtonComponent = forwardRef(
 
     const { inputStyle } = useBrandingStyles();
 
-    const customStyle = merge(inputStyle, style, {
+    const customStyle = merge({}, inputStyle, style, {
       color: labelTextColor,
     });
 
