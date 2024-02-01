@@ -1,11 +1,4 @@
-import { useDataSourceStore } from "@/stores/datasource";
-import { useEditorStore } from "@/stores/editor";
-import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
-import { getAllComponentsByName } from "@/utils/editor";
-import { pick } from "next/dist/lib/pick";
-import { useRouter } from "next/router";
-import { useState } from "react";
 import { useDataContext } from "@/contexts/DataProvider";
 
 type BindType = {
@@ -14,8 +7,6 @@ type BindType = {
 };
 
 export const useBindingPopover = () => {
-  const variablesList = useVariableStore((state) => state.variableList);
-
   const { variables, components } = useDataContext()!;
 
   const getEntityEditorValue = ({ selectedEntityId, entity }: BindType) => {
@@ -39,15 +30,7 @@ export const useBindingPopover = () => {
     return entityHandlers[entity]();
   };
 
-  const getSelectedVariable = (id: string) =>
-    variablesList.find((varItem) => varItem.id === id)?.defaultValue ?? id;
-
-  const getSelectedVariableName = (id: string) =>
-    variablesList.find((varItem) => varItem.id === id)?.name ?? id;
-
   return {
-    getSelectedVariable,
-    getSelectedVariableName,
     getEntityEditorValue,
   };
 };
