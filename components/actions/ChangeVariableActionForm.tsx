@@ -24,11 +24,7 @@ type FormValues = Omit<ChangeVariableAction, "name">;
 
 const defaultValues = {
   variableId: "",
-  bindingType: "JavaScript" as BindingType,
-  javascriptCode: "",
-  formulaCondition: "",
-  formulaValue: "",
-  value: "",
+  value: {},
 };
 
 export const ChangeVariableActionForm = ({ id }: Props) => {
@@ -66,11 +62,6 @@ export const ChangeVariableActionForm = ({ id }: Props) => {
     } catch (error) {
       handleLoadingStop({ stopLoading, success: false });
     }
-  };
-
-  const setFieldValue = (key: any, value: any) => {
-    form.setFieldValue(key, value);
-    debouncedTreeUpdate(selectedComponentId, { [key]: value });
   };
 
   return (

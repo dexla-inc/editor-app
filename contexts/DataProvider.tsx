@@ -111,7 +111,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         return get(shareableContent, `data.${value?.dynamic}`, value?.dynamic);
       },
       static: () => get(value, "static", value?.value),
-      boundCode: () => autoRunJavascriptCode(value?.boundCode),
+      boundCode: () => autoRunJavascriptCode(value?.boundCode ?? ""),
     };
 
     return valueHandlers[dataType]();

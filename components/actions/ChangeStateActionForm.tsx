@@ -27,6 +27,7 @@ import {
 import { useForm } from "@mantine/form";
 import { IconTrash } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
+import { ValueProps } from "@/utils/types";
 
 type Props = {
   id: string;
@@ -120,7 +121,7 @@ export const ChangeStateActionForm = ({ id }: Props) => {
               form.setFieldValue(
                 "conditionRules",
                 form.values.conditionRules.concat({
-                  componentId: "",
+                  componentId: {} as ValueProps,
                   condition: "",
                   state: "",
                 }),
@@ -134,7 +135,7 @@ export const ChangeStateActionForm = ({ id }: Props) => {
           </Button>
         </Flex>
         {form.values.conditionRules.map(
-          ({ componentId, condition, state }: any, i: number) => {
+          ({ condition, state }: any, i: number) => {
             return (
               <div
                 key={i}
@@ -187,15 +188,13 @@ export const ChangeStateActionForm = ({ id }: Props) => {
                     label="Toggle when"
                     placeholder="Select a condition"
                     data={(conditionOptions as SelectData) ?? []}
-                    value={condition}
-                    onChange={(val) => onChange(val, "condition", i)}
+                    {...form.getInputProps(`conditionRules.${i}.condition`)}
                   />
                 ) : (
                   <TextInput
                     size="xs"
                     label="Toggle when"
-                    value={condition}
-                    onChange={(e) => onChange(e.target.value, "condition", i)}
+                    {...form.getInputProps(`conditionRules.${i}.condition`)}
                   />
                 )}
               </div>

@@ -76,7 +76,12 @@ export const GoToUrlForm = ({ id }: Props) => {
               BP
               <ComponentToBindActionsPopover
                 onPick={(componentToBind: string) => {
-                  form.setFieldValue("url", componentToBind);
+                  form.setValues({
+                    url: {
+                      dataType: "static",
+                      static: componentToBind,
+                    },
+                  });
                   setComponentToBind(undefined);
                 }}
               />

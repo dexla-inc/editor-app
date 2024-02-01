@@ -85,7 +85,7 @@ export const ChangeStateActionFlowForm = ({ form }: Props) => {
             form.setFieldValue(
               "conditionRules",
               (form.values.conditionRules ?? []).concat({
-                componentId: "",
+                componentId: {},
                 condition: "",
                 state: "",
               }),

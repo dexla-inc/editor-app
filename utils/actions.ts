@@ -151,7 +151,7 @@ export interface NavigationAction extends BaseAction {
 
 export interface GoToUrlAction extends BaseAction {
   name: "goToUrl";
-  url: string;
+  url: ValueProps;
   openInNewTab: boolean;
 }
 
@@ -188,13 +188,13 @@ export interface OpenPopOverAction extends BaseAction {
 
 export interface TogglePropsAction extends BaseAction {
   name: "changeVisibility";
-  conditionRules: Array<{ componentId: string; condition: string }>;
+  conditionRules: Array<{ componentId: ValueProps; condition: string }>;
 }
 
 export interface ShowNotificationAction extends BaseAction {
   name: "showNotification";
-  title: string;
-  message: string;
+  title: ValueProps;
+  message: ValueProps;
   color: string;
 }
 
@@ -202,7 +202,7 @@ export interface ChangeStateAction extends BaseAction {
   name: "changeState";
   conditionRules: Array<{
     condition: string;
-    componentId: string;
+    componentId: ValueProps;
     state: string;
   }>;
 }
@@ -247,11 +247,7 @@ export interface CustomJavascriptAction extends BaseAction {
 export interface ChangeVariableAction extends BaseAction {
   name: "changeVariable";
   variableId: string;
-  value: {
-    static?: string;
-    dynamic?: string;
-    boundCode?: string;
-  };
+  value: ValueProps;
 }
 
 export type Action = {
@@ -295,7 +291,7 @@ export type GoToUrlParams = ActionParams & {
   action: GoToUrlAction;
 };
 
-export const navigationAction =
+export const useNavigationAction =
   () =>
   ({ action, router }: NavigationActionParams) => {
     const editorState = useEditorStore.getState();
@@ -323,37 +319,11 @@ export const navigationAction =
     router.push(url);
   };
 
-export const goToUrlAction =
-  () =>
-  async ({ action, component }: GoToUrlParams) => {
+export const useGoToUrlAction = () => {
+  const { computeValue } = useDataContext()!;
+  return async ({ action }: GoToUrlParams) => {
     const { url, openInNewTab } = action;
-    let value = url;
-    if (url.startsWith("var_")) {
-      const variablesList = useVariableStore.getState().variableList;
-      value = url.split("var_")[1];
-      const isObj = value.startsWith("{") && value.endsWith("}");
-      const variableId = isObj ? JSON.parse(value).id : value;
-      const variableResponse = variablesList.find(
-        (variable) =>
-          variable.id === variableId || variable.name === variableId,
-      );
-      if (!variableResponse) return;
-      if (variableResponse.type === "OBJECT") {
-        const variable = JSON.parse(value);
-        const val = JSON.parse(variableResponse?.defaultValue ?? "{}");
-        if (typeof component?.props?.repeatedIndex !== "undefined") {
-          const path = (variable.path ?? "").replace(
-            "[0]",
-            `[${component?.props?.repeatedIndex}]`,
-          );
-          value = get(val ?? {}, path) ?? "";
-        } else {
-          value = get(val ?? {}, variable.path ?? "") ?? "";
-        }
-      } else {
-        value = variableResponse?.defaultValue ?? "";
-      }
-    }
+    const value = computeValue({ value: url });
 
     if (openInNewTab) {
       window.open(value, "_blank");
@@ -361,12 +331,13 @@ export const goToUrlAction =
       window.location.href = value;
     }
   };
+};
 
 export type DebugActionParams = ActionParams & {
   action: AlertAction;
 };
 
-export const debugAction =
+export const useDebugAction =
   () =>
   async ({ action }: DebugActionParams) => {
     alert(action.message);
@@ -414,7 +385,7 @@ export type ChangeLanguageActionParams = ActionParams & {
   action: ChangeLanguageAction;
 };
 
-export const openModalAction =
+export const useOpenModalAction =
   () =>
   ({ action }: OpenModalActionParams) => {
     const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
@@ -425,7 +396,7 @@ export const openModalAction =
     });
   };
 
-export const closeModalAction =
+export const useCloseModalAction =
   () =>
   ({ action }: OpenModalActionParams) => {
     const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
@@ -436,7 +407,7 @@ export const closeModalAction =
     });
   };
 
-export const openDrawerAction =
+export const useOpenDrawerAction =
   () =>
   ({ action }: OpenDrawerActionParams) => {
     const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
@@ -447,7 +418,7 @@ export const openDrawerAction =
     });
   };
 
-export const toggleAccordionItemAction =
+export const useToggleAccordionItemAction =
   () =>
   ({ action }: ToggleAccordionItemActionParams) => {
     const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
@@ -467,7 +438,7 @@ export const toggleAccordionItemAction =
     });
   };
 
-export const closeDrawerAction =
+export const useCloseDrawerAction =
   () =>
   ({ action }: OpenDrawerActionParams) => {
     const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
@@ -478,7 +449,7 @@ export const closeDrawerAction =
     });
   };
 
-export const openPopOverAction =
+export const useOpenPopOverAction =
   () =>
   ({ action }: OpenPopOverActionParams) => {
     const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
@@ -489,7 +460,7 @@ export const openPopOverAction =
     });
   };
 
-export const closePopOverAction =
+export const useClosePopOverAction =
   () =>
   ({ action }: OpenPopOverActionParams) => {
     const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
@@ -500,9 +471,8 @@ export const closePopOverAction =
     });
   };
 
-export const changeStepAction =
-  () =>
-  ({ action }: ChangeStepActionParams) => {
+export const useChangeStepAction = () => {
+  return ({ action }: ChangeStepActionParams) => {
     const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
     const component = getComponentById(
@@ -532,16 +502,18 @@ export const changeStepAction =
       save: false,
     });
   };
+};
 
-export const changeVisibilityAction =
-  () =>
-  ({ action }: TogglePropsActionParams) => {
+export const useChangeVisibilityAction = () => {
+  const { computeValue } = useDataContext()!;
+  return ({ action }: TogglePropsActionParams) => {
     const editorStore = useEditorStore.getState();
     const updateTreeComponent = editorStore.updateTreeComponent;
     const tree = editorStore.tree;
     action.conditionRules.forEach((item) => {
       // Find the component to toggle visibility
-      const componentToToggle = getComponentById(tree.root, item.componentId);
+      const componentId = computeValue({ value: item.componentId });
+      const componentToToggle = getComponentById(tree.root, componentId);
 
       // Determine the current display state of the component
       const currentDisplay = componentToToggle?.props?.style?.display;
@@ -554,7 +526,7 @@ export const changeVisibilityAction =
 
       // Update the component with the new display value
       updateTreeComponent({
-        componentId: item.componentId,
+        componentId,
         props: {
           style: { display: newDisplay },
         },
@@ -562,8 +534,9 @@ export const changeVisibilityAction =
       });
     });
   };
+};
 
-export const toggleNavbarAction =
+export const useToggleNavbarAction =
   () =>
   ({ action }: ToggleNavbarActionParams) => {
     const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
@@ -638,32 +611,34 @@ const getVariableValueFromVariableId = (variableId = "") => {
   }
 };
 
-export const showNotificationAction =
-  () =>
-  async ({ action }: ShowNotificationActionParams) => {
+export const useShowNotificationAction = () => {
+  const { computeValue } = useDataContext()!;
+  return async ({ action }: ShowNotificationActionParams) => {
     showNotification({
-      title: getVariableValueFromVariableId(action.title),
-      message: getVariableValueFromVariableId(action.message),
+      title: computeValue({ value: action.title }),
+      message: computeValue({ value: action.message }),
       color: action.color,
     });
   };
+};
 
-export const triggerLogicFlowAction =
+export const useTriggerLogicFlowAction =
   () => (params: TriggerLogicFlowActionParams) => {
     executeFlow(params.action.logicFlowId, params);
   };
 
-export const changeStateAction =
-  () =>
-  ({ action, event }: ChangeStateActionParams) => {
+export const useChangeStateAction = () => {
+  const { computeValue } = useDataContext()!;
+  return ({ action, event }: ChangeStateActionParams) => {
     const setTreeComponentCurrentState =
       useEditorStore.getState().setTreeComponentCurrentState;
     const skipPreviousList: string[] = [];
     (action.conditionRules || []).forEach((item) => {
-      if (!skipPreviousList.includes(item.componentId)) {
+      const componentId = computeValue({ value: item.componentId });
+      if (!skipPreviousList.includes(componentId)) {
         if (item.condition === event || item.condition === "") {
-          setTreeComponentCurrentState(item.componentId, item.state);
-          skipPreviousList.push(item.componentId);
+          setTreeComponentCurrentState(componentId, item.state);
+          skipPreviousList.push(componentId);
         }
         console.error(
           "Condition not met changeStateAction",
@@ -673,6 +648,7 @@ export const changeStateAction =
       }
     });
   };
+};
 
 function getCurrentDocument() {
   const isLive = useEditorStore.getState().isLive;
@@ -1022,7 +998,7 @@ export const useApiCallAction = () => {
   };
 };
 
-export const changeLanguageAction =
+export const useChangeLanguageAction =
   () =>
   ({ action }: ChangeLanguageActionParams) => {
     const setLanguage = useEditorStore.getState().setLanguage;
@@ -1030,7 +1006,7 @@ export const changeLanguageAction =
   };
 
 // IMPORTANT: do not delete the variable data as it is used in the eval
-export const customJavascriptAction =
+export const useCustomJavascriptAction =
   () =>
   ({ action, data }: any) => {
     const codeTranspiled = transpile(action.code);
@@ -1041,107 +1017,35 @@ export type ChangeVariableActionParams = ActionParams & {
   action: ChangeVariableAction;
 };
 
-export const changeVariableAction =
-  () =>
-  async ({ action }: ChangeVariableActionParams) => {
-    // const variablesList = useVariableStore.getState().variableList;
-    // const setVariable = useVariableStore.getState().setVariable;
-    // const noValueExist = !action.javascriptCode && !action.value;
-    // const isGeneratedFromVariable =
-    //   action.value && action.value.startsWith("var_");
-    // const isStaticValue =
-    //   (action.value && !action.javascriptCode) || !isGeneratedFromVariable;
-    // const isDynamicValue =
-    //   action.javascriptCode &&
-    //   !action.javascriptCode.startsWith("return variables");
-    //
-    // let isPreviewValueObject = false;
-    // let isPreviewValueArray = false;
-    //
-    // if (action.bindingType === "JavaScript") {
-    //   try {
-    //     const variables = variablesList.reduce(
-    //       (acc, variable) => {
-    //         let value = variable.defaultValue;
-    //         const isText = variable.type === "TEXT";
-    //         const isBoolean = variable.type === "BOOLEAN";
-    //         const parsedValue =
-    //           value && (isText || isBoolean ? value : JSON.parse(value));
-    //         acc.list[variable.id] = variable;
-    //         acc[variable.id] = parsedValue;
-    //         acc[variable.name] = parsedValue;
-    //         return acc;
-    //       },
-    //       { list: {} } as Record<string, any>,
-    //     );
-    //     if (noValueExist) return;
-    //     let previewNewValue = "";
-    //     if (isStaticValue) previewNewValue = action.value;
-    //     if (isGeneratedFromVariable) {
-    //       const _variable = variablesList.find(
-    //         (variable) => variable.name === action.value.split("var_")[1],
-    //       );
-    //       if (_variable) {
-    //         previewNewValue = _variable.defaultValue ?? "";
-    //         isPreviewValueObject = typeof previewNewValue === "object";
-    //         isPreviewValueArray = Array.isArray(previewNewValue);
-    //       }
-    //     }
-    //
-    //     if (isDynamicValue) {
-    //       if (action.javascriptCode === "return variables") {
-    //         return;
-    //       }
-    //
-    //       previewNewValue = eval(
-    //         `function autoRunJavascriptCode() { ${action.javascriptCode}}; autoRunJavascriptCode()`,
-    //       );
-    //
-    //       isPreviewValueObject = typeof previewNewValue === "object";
-    //       isPreviewValueArray = Array.isArray(previewNewValue);
-    //
-    //       if (typeof previewNewValue !== "string") {
-    //         previewNewValue = JSON.stringify(previewNewValue);
-    //       }
-    //     }
-    //
-    //     const variable = variables.list[action.variableId];
-    //
-    //     setVariable(
-    //       {
-    //         name: variable.name,
-    //         type: isPreviewValueArray
-    //           ? "ARRAY"
-    //           : isPreviewValueObject
-    //           ? "OBJECT"
-    //           : "TEXT",
-    //         defaultValue:
-    //           typeof previewNewValue === "string"
-    //             ? previewNewValue
-    //             : JSON.stringify(previewNewValue),
-    //       },
-    //       action.variableId,
-    //     );
-    //   } catch (error) {
-    //     console.error({ error });
-    //     return;
-    //   }
-    // }
+export const useChangeVariableAction = () => {
+  const { computeValue } = useDataContext()!;
+
+  return async ({ action }: ChangeVariableActionParams) => {
+    const setVariable = useVariableStore.getState().setVariable;
+    const value = computeValue({ value: action.value });
+    setVariable(
+      {
+        type: "TEXT",
+        defaultValue: value,
+      },
+      action.variableId,
+    );
   };
+};
 
 export const actionMapper = {
   alert: {
-    action: debugAction,
+    action: useDebugAction,
     form: DebugActionForm,
     flowForm: DebugFlowActionForm,
   },
   changeVariable: {
-    action: changeVariableAction,
+    action: useChangeVariableAction,
     form: ChangeVariableActionForm,
     flowForm: ChangeVariableFlowActionForm,
   },
   navigateToPage: {
-    action: navigationAction,
+    action: useNavigationAction,
     form: NavigationActionForm,
     flowForm: NavigationFlowActionForm,
   },
@@ -1151,81 +1055,81 @@ export const actionMapper = {
     flowForm: APICallFlowActionForm,
   },
   goToUrl: {
-    action: goToUrlAction,
+    action: useGoToUrlAction,
     form: GoToUrlForm,
     flowForm: GoToUrlFlowActionForm,
   },
   openModal: {
-    action: openModalAction,
+    action: useOpenModalAction,
     form: OpenModalActionForm,
     flowForm: OpenModalFlowActionForm,
   },
   closeModal: {
-    action: closeModalAction,
+    action: useCloseModalAction,
     form: OpenModalActionForm,
     flowForm: CloseModalFlowActionForm,
   },
   openDrawer: {
-    action: openDrawerAction,
+    action: useOpenDrawerAction,
     form: OpenDrawerActionForm,
     flowForm: OpenDrawerFlowActionForm,
   },
   triggerLogicFlow: {
-    action: triggerLogicFlowAction,
+    action: useTriggerLogicFlowAction,
     form: TriggerLogicFlowActionForm,
     flowForm: TriggerLogicFlowForm,
   },
   closeDrawer: {
-    action: closeDrawerAction,
+    action: useCloseDrawerAction,
     form: OpenDrawerActionForm,
     flowForm: CloseDrawerFlowActionForm,
   },
   openPopOver: {
-    action: openPopOverAction,
+    action: useOpenPopOverAction,
     form: OpenPopOverActionForm,
     flowForm: OpenPopOverFlowActionForm,
   },
   closePopOver: {
-    action: closePopOverAction,
+    action: useClosePopOverAction,
     form: OpenPopOverActionForm,
     flowForm: ClosePopOverFlowActionForm,
   },
   showNotification: {
-    action: showNotificationAction,
+    action: useShowNotificationAction,
     form: ShowNotificationActionForm,
     flowForm: ShowNotificationFlowActionForm,
   },
   changeState: {
-    action: changeStateAction,
+    action: useChangeStateAction,
     form: ChangeStateActionForm,
     flowForm: ChangeStateActionFlowForm,
   },
   changeVisibility: {
-    action: changeVisibilityAction,
+    action: useChangeVisibilityAction,
     form: TogglePropsActionForm,
     flowForm: TogglePropsFlowActionForm,
   },
   toggleAccordionItem: {
-    action: toggleAccordionItemAction,
+    action: useToggleAccordionItemAction,
     form: ToggleAccordionItemActionForm,
   },
   toggleNavbar: {
-    action: toggleNavbarAction,
+    action: useToggleNavbarAction,
     form: TogglePropsActionForm,
     flowForm: TogglePropsFlowActionForm,
   },
   changeStep: {
-    action: changeStepAction,
+    action: useChangeStepAction,
     form: ChangeStepActionForm,
     flowForm: ChangeStepFlowActionForm,
   },
   changeLanguage: {
-    action: changeLanguageAction,
+    action: useChangeLanguageAction,
     form: ChangeLanguageActionForm,
     flowForm: ChangeLanguageFlowActionForm,
   },
   customJavascript: {
-    action: customJavascriptAction,
+    action: useCustomJavascriptAction,
     form: CustomJavascriptActionForm,
     flowForm: CustomJavascriptFlowActionForm,
   },

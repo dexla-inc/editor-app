@@ -42,10 +42,8 @@ export default function BindingPopover({
   onChange,
   style = "iconButton",
 }: Props) {
-  const [
-    opened,
-    { toggle: onTogglePopOver, close: onClosePopOver, open: onOpenPopOver },
-  ] = useDisclosure(false);
+  const [opened, { close: onClosePopOver, open: onOpenPopOver }] =
+    useDisclosure(false);
   const [tab, setTab] = useState<BindingTab>("components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
   const { variables, components, browserList, auth, computeValue } =
@@ -53,6 +51,14 @@ export default function BindingPopover({
   const [selectedItem, setSelectedItem] = useState<string>();
 
   const { getEntityEditorValue } = useBindingPopover();
+
+  const onChangeDataTypeAsBoundCode = () => {
+    onChange({
+      ...value,
+      dataType: "boundCode",
+    });
+    onOpenPopOver();
+  };
 
   useEffect(
     () => {
@@ -97,17 +103,16 @@ export default function BindingPopover({
       arrowPosition="center"
       position="right"
       onClose={onClosePopOver}
-      onOpen={onOpenPopOver}
     >
       <Popover.Target>
         {style === "iconButton" ? (
           <Tooltip label="Bind Logic" withArrow position="top-end">
-            <ActionIcon onClick={onTogglePopOver} variant="default">
+            <ActionIcon onClick={onChangeDataTypeAsBoundCode} variant="default">
               <IconPlugConnected size={ICON_SIZE} />
             </ActionIcon>
           </Tooltip>
         ) : (
-          <ActionIcon onClick={onTogglePopOver} size="xs">
+          <ActionIcon onClick={onChangeDataTypeAsBoundCode} size="xs">
             <IconExternalLink size={ICON_SIZE} />
           </ActionIcon>
         )}
