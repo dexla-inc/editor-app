@@ -294,70 +294,72 @@ export type GoToUrlParams = ActionParams & {
   action: GoToUrlAction;
 };
 
-export const navigationAction = ({
-  action,
-  router,
-}: NavigationActionParams) => {
-  const editorState = useEditorStore.getState();
-  const isLive = editorState.isLive;
-  const projectId = editorState.currentProjectId;
+export const navigationAction =
+  () =>
+  ({ action, router }: NavigationActionParams) => {
+    const editorState = useEditorStore.getState();
+    const isLive = editorState.isLive;
+    const projectId = editorState.currentProjectId;
 
-  if (!action.pageId || !action.pageSlug) {
-    console.error("Page Id is not defined");
-    return;
-  }
-
-  let url = isLive
-    ? `/${action.pageSlug}`
-    : `/projects/${projectId}/editor/${action.pageId}`;
-
-  if (action.queryStrings && Object.keys(action.queryStrings).length) {
-    const queryStrings = [];
-    for (const key in action.queryStrings) {
-      queryStrings.push(`${key}=${action.queryStrings[key]}`);
+    if (!action.pageId || !action.pageSlug) {
+      console.error("Page Id is not defined");
+      return;
     }
 
-    url += `?${queryStrings.join("&")}`;
-  }
+    let url = isLive
+      ? `/${action.pageSlug}`
+      : `/projects/${projectId}/editor/${action.pageId}`;
 
-  router.push(url);
-};
-
-export const goToUrlAction = async ({ action, component }: GoToUrlParams) => {
-  const { url, openInNewTab } = action;
-  let value = url;
-  if (url.startsWith("var_")) {
-    const variablesList = useVariableStore.getState().variableList;
-    value = url.split("var_")[1];
-    const isObj = value.startsWith("{") && value.endsWith("}");
-    const variableId = isObj ? JSON.parse(value).id : value;
-    const variableResponse = variablesList.find(
-      (variable) => variable.id === variableId || variable.name === variableId,
-    );
-    if (!variableResponse) return;
-    if (variableResponse.type === "OBJECT") {
-      const variable = JSON.parse(value);
-      const val = JSON.parse(variableResponse?.defaultValue ?? "{}");
-      if (typeof component?.props?.repeatedIndex !== "undefined") {
-        const path = (variable.path ?? "").replace(
-          "[0]",
-          `[${component?.props?.repeatedIndex}]`,
-        );
-        value = get(val ?? {}, path) ?? "";
-      } else {
-        value = get(val ?? {}, variable.path ?? "") ?? "";
+    if (action.queryStrings && Object.keys(action.queryStrings).length) {
+      const queryStrings = [];
+      for (const key in action.queryStrings) {
+        queryStrings.push(`${key}=${action.queryStrings[key]}`);
       }
-    } else {
-      value = variableResponse?.defaultValue ?? "";
-    }
-  }
 
-  if (openInNewTab) {
-    window.open(value, "_blank");
-  } else {
-    window.location.href = value;
-  }
-};
+      url += `?${queryStrings.join("&")}`;
+    }
+
+    router.push(url);
+  };
+
+export const goToUrlAction =
+  () =>
+  async ({ action, component }: GoToUrlParams) => {
+    const { url, openInNewTab } = action;
+    let value = url;
+    if (url.startsWith("var_")) {
+      const variablesList = useVariableStore.getState().variableList;
+      value = url.split("var_")[1];
+      const isObj = value.startsWith("{") && value.endsWith("}");
+      const variableId = isObj ? JSON.parse(value).id : value;
+      const variableResponse = variablesList.find(
+        (variable) =>
+          variable.id === variableId || variable.name === variableId,
+      );
+      if (!variableResponse) return;
+      if (variableResponse.type === "OBJECT") {
+        const variable = JSON.parse(value);
+        const val = JSON.parse(variableResponse?.defaultValue ?? "{}");
+        if (typeof component?.props?.repeatedIndex !== "undefined") {
+          const path = (variable.path ?? "").replace(
+            "[0]",
+            `[${component?.props?.repeatedIndex}]`,
+          );
+          value = get(val ?? {}, path) ?? "";
+        } else {
+          value = get(val ?? {}, variable.path ?? "") ?? "";
+        }
+      } else {
+        value = variableResponse?.defaultValue ?? "";
+      }
+    }
+
+    if (openInNewTab) {
+      window.open(value, "_blank");
+    } else {
+      window.location.href = value;
+    }
+  };
 
 export type DebugActionParams = ActionParams & {
   action: AlertAction;
@@ -411,177 +413,195 @@ export type ChangeLanguageActionParams = ActionParams & {
   action: ChangeLanguageAction;
 };
 
-export const openModalAction = ({ action }: OpenModalActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent({
-    componentId: action.modalId,
-    props: { opened: true },
-    save: false,
-  });
-};
-
-export const closeModalAction = ({ action }: OpenModalActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent({
-    componentId: action.modalId,
-    props: { opened: false },
-    save: false,
-  });
-};
-
-export const openDrawerAction = ({ action }: OpenDrawerActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent({
-    componentId: action.drawerId,
-    props: { opened: true },
-    save: false,
-  });
-};
-
-export const toggleAccordionItemAction = ({
-  action,
-}: ToggleAccordionItemActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  const editorTree = useEditorStore.getState().tree;
-
-  const accordion = getComponentById(editorTree.root, action.accordionId);
-
-  updateTreeComponent({
-    componentId: action.accordionId,
-    props: {
-      value:
-        accordion?.props?.value === action.accordionItemId
-          ? ""
-          : action.accordionItemId,
-    },
-    save: false,
-  });
-};
-
-export const closeDrawerAction = ({ action }: OpenDrawerActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent({
-    componentId: action.drawerId,
-    props: { opened: false },
-    save: false,
-  });
-};
-
-export const openPopOverAction = ({ action }: OpenPopOverActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent({
-    componentId: action.popOverId,
-    props: { opened: true },
-    save: false,
-  });
-};
-
-export const closePopOverAction = ({ action }: OpenPopOverActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  updateTreeComponent({
-    componentId: action.popOverId,
-    props: { opened: false },
-    save: false,
-  });
-};
-
-export const changeStepAction = ({ action }: ChangeStepActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-
-  const component = getComponentById(
-    useEditorStore.getState().tree.root,
-    action.stepperId,
-  );
-
-  if (!component) {
-    return;
-  }
-
-  let { activeStep } = component.props!;
-  activeStep = Number(activeStep);
-
-  if (action.control === "previous" && activeStep > 0) {
-    activeStep -= 1;
-  } else if (
-    action.control === "next" &&
-    activeStep < component!.children!.length - 1
-  ) {
-    activeStep += 1;
-  }
-
-  updateTreeComponent({
-    componentId: action.stepperId,
-    props: { activeStep },
-    save: false,
-  });
-};
-
-export const changeVisibilityAction = ({ action }: TogglePropsActionParams) => {
-  const editorStore = useEditorStore.getState();
-  const updateTreeComponent = editorStore.updateTreeComponent;
-  const tree = editorStore.tree;
-  action.conditionRules.forEach((item) => {
-    // Find the component to toggle visibility
-    const componentToToggle = getComponentById(tree.root, item.componentId);
-
-    // Determine the current display state of the component
-    const currentDisplay = componentToToggle?.props?.style?.display;
-
-    // Toggle between 'none' and the component's initial display value
-    const newDisplay =
-      currentDisplay === "none"
-        ? getComponentInitialDisplayValue(componentToToggle?.name ?? "")
-        : "none";
-
-    // Update the component with the new display value
+export const openModalAction =
+  () =>
+  ({ action }: OpenModalActionParams) => {
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
     updateTreeComponent({
-      componentId: item.componentId,
+      componentId: action.modalId,
+      props: { opened: true },
+      save: false,
+    });
+  };
+
+export const closeModalAction =
+  () =>
+  ({ action }: OpenModalActionParams) => {
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    updateTreeComponent({
+      componentId: action.modalId,
+      props: { opened: false },
+      save: false,
+    });
+  };
+
+export const openDrawerAction =
+  () =>
+  ({ action }: OpenDrawerActionParams) => {
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    updateTreeComponent({
+      componentId: action.drawerId,
+      props: { opened: true },
+      save: false,
+    });
+  };
+
+export const toggleAccordionItemAction =
+  () =>
+  ({ action }: ToggleAccordionItemActionParams) => {
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    const editorTree = useEditorStore.getState().tree;
+
+    const accordion = getComponentById(editorTree.root, action.accordionId);
+
+    updateTreeComponent({
+      componentId: action.accordionId,
       props: {
-        style: { display: newDisplay },
+        value:
+          accordion?.props?.value === action.accordionItemId
+            ? ""
+            : action.accordionItemId,
       },
       save: false,
     });
-  });
-};
+  };
 
-export const toggleNavbarAction = ({ action }: ToggleNavbarActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  const editorTree = useEditorStore.getState().tree;
-
-  const selectedComponent = editorTree.root.children?.find(
-    (tree) => tree.name === "Navbar",
-  );
-  const buttonComponent = selectedComponent?.children?.find(
-    (tree) => tree.description === "Button to toggle Navbar",
-  );
-  const linksComponent = selectedComponent?.children?.find(
-    (tree) => tree.description === "Container for navigation links",
-  );
-  const buttonIcon = buttonComponent?.children?.reduce(
-    (obj, tree) => ({ ...obj, ...tree }),
-    {} as Component,
-  );
-
-  const isExpanded = selectedComponent?.props?.style?.width !== "100px";
-  const name = isExpanded ? "IconChevronRight" : "IconChevronLeft";
-  const width = isExpanded ? "100px" : "260px";
-  const flexDirection = isExpanded ? "column" : "row";
-  const justifyContent = isExpanded ? "center" : "flex-start";
-
-  updateTreeComponent({ componentId: buttonIcon?.id!, props: { name } });
-  linksComponent?.children?.forEach((child) => {
+export const closeDrawerAction =
+  () =>
+  ({ action }: OpenDrawerActionParams) => {
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
     updateTreeComponent({
-      componentId: child?.id as string,
-      props: {
-        style: { flexDirection, justifyContent },
-      },
+      componentId: action.drawerId,
+      props: { opened: false },
+      save: false,
     });
-  });
-  updateTreeComponent({
-    componentId: selectedComponent?.id!,
-    props: { style: { width } },
-  });
-};
+  };
+
+export const openPopOverAction =
+  () =>
+  ({ action }: OpenPopOverActionParams) => {
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    updateTreeComponent({
+      componentId: action.popOverId,
+      props: { opened: true },
+      save: false,
+    });
+  };
+
+export const closePopOverAction =
+  () =>
+  ({ action }: OpenPopOverActionParams) => {
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    updateTreeComponent({
+      componentId: action.popOverId,
+      props: { opened: false },
+      save: false,
+    });
+  };
+
+export const changeStepAction =
+  () =>
+  ({ action }: ChangeStepActionParams) => {
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+
+    const component = getComponentById(
+      useEditorStore.getState().tree.root,
+      action.stepperId,
+    );
+
+    if (!component) {
+      return;
+    }
+
+    let { activeStep } = component.props!;
+    activeStep = Number(activeStep);
+
+    if (action.control === "previous" && activeStep > 0) {
+      activeStep -= 1;
+    } else if (
+      action.control === "next" &&
+      activeStep < component!.children!.length - 1
+    ) {
+      activeStep += 1;
+    }
+
+    updateTreeComponent({
+      componentId: action.stepperId,
+      props: { activeStep },
+      save: false,
+    });
+  };
+
+export const changeVisibilityAction =
+  () =>
+  ({ action }: TogglePropsActionParams) => {
+    const editorStore = useEditorStore.getState();
+    const updateTreeComponent = editorStore.updateTreeComponent;
+    const tree = editorStore.tree;
+    action.conditionRules.forEach((item) => {
+      // Find the component to toggle visibility
+      const componentToToggle = getComponentById(tree.root, item.componentId);
+
+      // Determine the current display state of the component
+      const currentDisplay = componentToToggle?.props?.style?.display;
+
+      // Toggle between 'none' and the component's initial display value
+      const newDisplay =
+        currentDisplay === "none"
+          ? getComponentInitialDisplayValue(componentToToggle?.name ?? "")
+          : "none";
+
+      // Update the component with the new display value
+      updateTreeComponent({
+        componentId: item.componentId,
+        props: {
+          style: { display: newDisplay },
+        },
+        save: false,
+      });
+    });
+  };
+
+export const toggleNavbarAction =
+  () =>
+  ({ action }: ToggleNavbarActionParams) => {
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    const editorTree = useEditorStore.getState().tree;
+
+    const selectedComponent = editorTree.root.children?.find(
+      (tree) => tree.name === "Navbar",
+    );
+    const buttonComponent = selectedComponent?.children?.find(
+      (tree) => tree.description === "Button to toggle Navbar",
+    );
+    const linksComponent = selectedComponent?.children?.find(
+      (tree) => tree.description === "Container for navigation links",
+    );
+    const buttonIcon = buttonComponent?.children?.reduce(
+      (obj, tree) => ({ ...obj, ...tree }),
+      {} as Component,
+    );
+
+    const isExpanded = selectedComponent?.props?.style?.width !== "100px";
+    const name = isExpanded ? "IconChevronRight" : "IconChevronLeft";
+    const width = isExpanded ? "100px" : "260px";
+    const flexDirection = isExpanded ? "column" : "row";
+    const justifyContent = isExpanded ? "center" : "flex-start";
+
+    updateTreeComponent({ componentId: buttonIcon?.id!, props: { name } });
+    linksComponent?.children?.forEach((child) => {
+      updateTreeComponent({
+        componentId: child?.id as string,
+        props: {
+          style: { flexDirection, justifyContent },
+        },
+      });
+    });
+    updateTreeComponent({
+      componentId: selectedComponent?.id!,
+      props: { style: { width } },
+    });
+  };
 
 const getVariableValueFromVariableId = (variableId = "") => {
   const variableList = useVariableStore.getState().variableList;
@@ -617,43 +637,41 @@ const getVariableValueFromVariableId = (variableId = "") => {
   }
 };
 
-export const showNotificationAction = async ({
-  action,
-}: ShowNotificationActionParams) => {
-  showNotification({
-    title: getVariableValueFromVariableId(action.title),
-    message: getVariableValueFromVariableId(action.message),
-    color: action.color,
-  });
-};
+export const showNotificationAction =
+  () =>
+  async ({ action }: ShowNotificationActionParams) => {
+    showNotification({
+      title: getVariableValueFromVariableId(action.title),
+      message: getVariableValueFromVariableId(action.message),
+      color: action.color,
+    });
+  };
 
-export const triggerLogicFlowAction = (
-  params: TriggerLogicFlowActionParams,
-) => {
-  executeFlow(params.action.logicFlowId, params);
-};
+export const triggerLogicFlowAction =
+  () => (params: TriggerLogicFlowActionParams) => {
+    executeFlow(params.action.logicFlowId, params);
+  };
 
-export const changeStateAction = ({
-  action,
-  event,
-}: ChangeStateActionParams) => {
-  const setTreeComponentCurrentState =
-    useEditorStore.getState().setTreeComponentCurrentState;
-  const skipPreviousList: string[] = [];
-  (action.conditionRules || []).forEach((item) => {
-    if (!skipPreviousList.includes(item.componentId)) {
-      if (item.condition === event || item.condition === "") {
-        setTreeComponentCurrentState(item.componentId, item.state);
-        skipPreviousList.push(item.componentId);
+export const changeStateAction =
+  () =>
+  ({ action, event }: ChangeStateActionParams) => {
+    const setTreeComponentCurrentState =
+      useEditorStore.getState().setTreeComponentCurrentState;
+    const skipPreviousList: string[] = [];
+    (action.conditionRules || []).forEach((item) => {
+      if (!skipPreviousList.includes(item.componentId)) {
+        if (item.condition === event || item.condition === "") {
+          setTreeComponentCurrentState(item.componentId, item.state);
+          skipPreviousList.push(item.componentId);
+        }
+        console.error(
+          "Condition not met changeStateAction",
+          item.condition,
+          event,
+        );
       }
-      console.error(
-        "Condition not met changeStateAction",
-        item.condition,
-        event,
-      );
-    }
-  });
-};
+    });
+  };
 
 function getCurrentDocument() {
   const isLive = useEditorStore.getState().isLive;
@@ -894,199 +912,203 @@ const setLoadingState = (
   updateTreeComponent({ componentId, props: { loading: isLoading } });
 };
 
-export const apiCallAction = async ({
-  actionId,
-  action,
-  router,
-  onSuccess,
-  onError,
-  component,
-  ...rest
-}: APICallActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+export const apiCallAction =
+  () =>
+  async ({
+    actionId,
+    action,
+    router,
+    onSuccess,
+    onError,
+    component,
+    ...rest
+  }: APICallActionParams) => {
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
-  try {
-    setLoadingState(component.id!, true, updateTreeComponent);
-    const accessToken = useDataSourceStore.getState().authState.accessToken;
+    try {
+      setLoadingState(component.id!, true, updateTreeComponent);
+      const accessToken = useDataSourceStore.getState().authState.accessToken;
 
-    const { url, body } = prepareRequestData(action, action.selectedEndpoint);
+      const { url, body } = prepareRequestData(action, action.selectedEndpoint);
 
-    let responseJson;
+      let responseJson;
 
-    const authHeaderKey =
-      action.selectedEndpoint?.authenticationScheme === "BEARER"
-        ? "Bearer " + accessToken
-        : "";
+      const authHeaderKey =
+        action.selectedEndpoint?.authenticationScheme === "BEARER"
+          ? "Bearer " + accessToken
+          : "";
 
-    const fetchUrl = action.selectedEndpoint?.isServerRequest
-      ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
-      : url;
+      const fetchUrl = action.selectedEndpoint?.isServerRequest
+        ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
+        : url;
 
-    switch (action.authType) {
-      case "login":
-        responseJson = await performFetch(url, action.selectedEndpoint, body);
-        const mergedAuthConfig = { ...responseJson, ...action.authConfig };
-        const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
+      switch (action.authType) {
+        case "login":
+          responseJson = await performFetch(url, action.selectedEndpoint, body);
+          const mergedAuthConfig = { ...responseJson, ...action.authConfig };
+          const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
 
-        setAuthTokens(mergedAuthConfig);
-        break;
-      case "logout":
-        responseJson = await performFetch(
-          fetchUrl,
-          action.selectedEndpoint,
-          body,
-          authHeaderKey,
-        );
+          setAuthTokens(mergedAuthConfig);
+          break;
+        case "logout":
+          responseJson = await performFetch(
+            fetchUrl,
+            action.selectedEndpoint,
+            body,
+            authHeaderKey,
+          );
 
-        const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
+          const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
 
-        clearAuthTokens();
-        break;
-      default:
-        const refreshAccessToken =
-          useDataSourceStore.getState().refreshAccessToken;
+          clearAuthTokens();
+          break;
+        default:
+          const refreshAccessToken =
+            useDataSourceStore.getState().refreshAccessToken;
 
-        refreshAccessToken();
+          refreshAccessToken();
 
-        responseJson = await performFetch(
-          fetchUrl,
-          action.selectedEndpoint,
-          body,
-          authHeaderKey,
-        );
+          responseJson = await performFetch(
+            fetchUrl,
+            action.selectedEndpoint,
+            body,
+            authHeaderKey,
+          );
+      }
+
+      await handleSuccess(
+        responseJson,
+        onSuccess,
+        actionId,
+        router,
+        rest,
+        component,
+        action,
+        actionMapper,
+        updateTreeComponent,
+      );
+    } catch (error) {
+      await handleError(
+        error,
+        onError,
+        actionId,
+        router,
+        rest,
+        component,
+        actionMapper,
+        updateTreeComponent,
+      );
+    } finally {
+      setLoadingState(component.id!, false, updateTreeComponent);
     }
+  };
 
-    await handleSuccess(
-      responseJson,
-      onSuccess,
-      actionId,
-      router,
-      rest,
-      component,
-      action,
-      actionMapper,
-      updateTreeComponent,
-    );
-  } catch (error) {
-    await handleError(
-      error,
-      onError,
-      actionId,
-      router,
-      rest,
-      component,
-      actionMapper,
-      updateTreeComponent,
-    );
-  } finally {
-    setLoadingState(component.id!, false, updateTreeComponent);
-  }
-};
-
-export const changeLanguageAction = ({
-  action,
-}: ChangeLanguageActionParams) => {
-  const setLanguage = useEditorStore.getState().setLanguage;
-  setLanguage(action.language);
-};
+export const changeLanguageAction =
+  () =>
+  ({ action }: ChangeLanguageActionParams) => {
+    const setLanguage = useEditorStore.getState().setLanguage;
+    setLanguage(action.language);
+  };
 
 // IMPORTANT: do not delete the variable data as it is used in the eval
-export const customJavascriptAction = ({ action, data }: any) => {
-  const codeTranspiled = transpile(action.code);
-  return eval(codeTranspiled);
-};
+export const customJavascriptAction =
+  () =>
+  ({ action, data }: any) => {
+    const codeTranspiled = transpile(action.code);
+    return eval(codeTranspiled);
+  };
 
 export type ChangeVariableActionParams = ActionParams & {
   action: ChangeVariableAction;
 };
 
-export const changeVariableAction = async ({
-  action,
-}: ChangeVariableActionParams) => {
-  // const variablesList = useVariableStore.getState().variableList;
-  // const setVariable = useVariableStore.getState().setVariable;
-  // const noValueExist = !action.javascriptCode && !action.value;
-  // const isGeneratedFromVariable =
-  //   action.value && action.value.startsWith("var_");
-  // const isStaticValue =
-  //   (action.value && !action.javascriptCode) || !isGeneratedFromVariable;
-  // const isDynamicValue =
-  //   action.javascriptCode &&
-  //   !action.javascriptCode.startsWith("return variables");
-  //
-  // let isPreviewValueObject = false;
-  // let isPreviewValueArray = false;
-  //
-  // if (action.bindingType === "JavaScript") {
-  //   try {
-  //     const variables = variablesList.reduce(
-  //       (acc, variable) => {
-  //         let value = variable.defaultValue;
-  //         const isText = variable.type === "TEXT";
-  //         const isBoolean = variable.type === "BOOLEAN";
-  //         const parsedValue =
-  //           value && (isText || isBoolean ? value : JSON.parse(value));
-  //         acc.list[variable.id] = variable;
-  //         acc[variable.id] = parsedValue;
-  //         acc[variable.name] = parsedValue;
-  //         return acc;
-  //       },
-  //       { list: {} } as Record<string, any>,
-  //     );
-  //     if (noValueExist) return;
-  //     let previewNewValue = "";
-  //     if (isStaticValue) previewNewValue = action.value;
-  //     if (isGeneratedFromVariable) {
-  //       const _variable = variablesList.find(
-  //         (variable) => variable.name === action.value.split("var_")[1],
-  //       );
-  //       if (_variable) {
-  //         previewNewValue = _variable.defaultValue ?? "";
-  //         isPreviewValueObject = typeof previewNewValue === "object";
-  //         isPreviewValueArray = Array.isArray(previewNewValue);
-  //       }
-  //     }
-  //
-  //     if (isDynamicValue) {
-  //       if (action.javascriptCode === "return variables") {
-  //         return;
-  //       }
-  //
-  //       previewNewValue = eval(
-  //         `function autoRunJavascriptCode() { ${action.javascriptCode}}; autoRunJavascriptCode()`,
-  //       );
-  //
-  //       isPreviewValueObject = typeof previewNewValue === "object";
-  //       isPreviewValueArray = Array.isArray(previewNewValue);
-  //
-  //       if (typeof previewNewValue !== "string") {
-  //         previewNewValue = JSON.stringify(previewNewValue);
-  //       }
-  //     }
-  //
-  //     const variable = variables.list[action.variableId];
-  //
-  //     setVariable(
-  //       {
-  //         name: variable.name,
-  //         type: isPreviewValueArray
-  //           ? "ARRAY"
-  //           : isPreviewValueObject
-  //           ? "OBJECT"
-  //           : "TEXT",
-  //         defaultValue:
-  //           typeof previewNewValue === "string"
-  //             ? previewNewValue
-  //             : JSON.stringify(previewNewValue),
-  //       },
-  //       action.variableId,
-  //     );
-  //   } catch (error) {
-  //     console.error({ error });
-  //     return;
-  //   }
-  // }
-};
+export const changeVariableAction =
+  () =>
+  async ({ action }: ChangeVariableActionParams) => {
+    // const variablesList = useVariableStore.getState().variableList;
+    // const setVariable = useVariableStore.getState().setVariable;
+    // const noValueExist = !action.javascriptCode && !action.value;
+    // const isGeneratedFromVariable =
+    //   action.value && action.value.startsWith("var_");
+    // const isStaticValue =
+    //   (action.value && !action.javascriptCode) || !isGeneratedFromVariable;
+    // const isDynamicValue =
+    //   action.javascriptCode &&
+    //   !action.javascriptCode.startsWith("return variables");
+    //
+    // let isPreviewValueObject = false;
+    // let isPreviewValueArray = false;
+    //
+    // if (action.bindingType === "JavaScript") {
+    //   try {
+    //     const variables = variablesList.reduce(
+    //       (acc, variable) => {
+    //         let value = variable.defaultValue;
+    //         const isText = variable.type === "TEXT";
+    //         const isBoolean = variable.type === "BOOLEAN";
+    //         const parsedValue =
+    //           value && (isText || isBoolean ? value : JSON.parse(value));
+    //         acc.list[variable.id] = variable;
+    //         acc[variable.id] = parsedValue;
+    //         acc[variable.name] = parsedValue;
+    //         return acc;
+    //       },
+    //       { list: {} } as Record<string, any>,
+    //     );
+    //     if (noValueExist) return;
+    //     let previewNewValue = "";
+    //     if (isStaticValue) previewNewValue = action.value;
+    //     if (isGeneratedFromVariable) {
+    //       const _variable = variablesList.find(
+    //         (variable) => variable.name === action.value.split("var_")[1],
+    //       );
+    //       if (_variable) {
+    //         previewNewValue = _variable.defaultValue ?? "";
+    //         isPreviewValueObject = typeof previewNewValue === "object";
+    //         isPreviewValueArray = Array.isArray(previewNewValue);
+    //       }
+    //     }
+    //
+    //     if (isDynamicValue) {
+    //       if (action.javascriptCode === "return variables") {
+    //         return;
+    //       }
+    //
+    //       previewNewValue = eval(
+    //         `function autoRunJavascriptCode() { ${action.javascriptCode}}; autoRunJavascriptCode()`,
+    //       );
+    //
+    //       isPreviewValueObject = typeof previewNewValue === "object";
+    //       isPreviewValueArray = Array.isArray(previewNewValue);
+    //
+    //       if (typeof previewNewValue !== "string") {
+    //         previewNewValue = JSON.stringify(previewNewValue);
+    //       }
+    //     }
+    //
+    //     const variable = variables.list[action.variableId];
+    //
+    //     setVariable(
+    //       {
+    //         name: variable.name,
+    //         type: isPreviewValueArray
+    //           ? "ARRAY"
+    //           : isPreviewValueObject
+    //           ? "OBJECT"
+    //           : "TEXT",
+    //         defaultValue:
+    //           typeof previewNewValue === "string"
+    //             ? previewNewValue
+    //             : JSON.stringify(previewNewValue),
+    //       },
+    //       action.variableId,
+    //     );
+    //   } catch (error) {
+    //     console.error({ error });
+    //     return;
+    //   }
+    // }
+  };
 
 export const actionMapper = {
   alert: {
