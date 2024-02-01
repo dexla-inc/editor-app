@@ -1,4 +1,4 @@
-import { useEditorStore } from "@/stores/editor";
+import { ExtendedMantineThemeColors, useEditorStore } from "@/stores/editor";
 import { defaultTheme } from "@/utils/branding";
 import { useEffect, useState } from "react";
 import { useProjectQuery } from "./reactQuery/useProjectQuery";
@@ -9,7 +9,7 @@ export const useUserTheme = (projectId: string) => {
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const isLive = useEditorStore((state) => state.isLive);
   const project = useProjectQuery(projectId);
-  const userTheme = project.data?.branding;
+  const userTheme = project.data?.branding ?? defaultTheme;
 
   useEffect(() => {
     const updateTheme = async () => {
@@ -49,24 +49,9 @@ export const useUserTheme = (projectId: string) => {
             }, {} as any),
           },
           colors: {
-            ...userTheme?.colors.reduce((userColors, color) => {
-              const hex = color.hex.substring(0, 7);
-              return {
-                ...userColors,
-                [color.name]: [
-                  defaultTheme.fn.lighten(hex, 0.9),
-                  defaultTheme.fn.lighten(hex, 0.8),
-                  defaultTheme.fn.lighten(hex, 0.7),
-                  defaultTheme.fn.lighten(hex, 0.6),
-                  defaultTheme.fn.lighten(hex, 0.5),
-                  defaultTheme.fn.lighten(hex, 0.4),
-                  color.hex,
-                  defaultTheme.fn.darken(hex, 0.1),
-                  defaultTheme.fn.darken(hex, 0.2),
-                  defaultTheme.fn.darken(hex, 0.3),
-                ],
-              };
-            }, {}),
+            ...adjustColorShades(
+              userTheme?.colors as ExtendedMantineThemeColors,
+            ),
           },
           primaryColor: "Primary",
           logoUrl: userTheme?.logoUrl,
@@ -94,4 +79,24 @@ export const useUserTheme = (projectId: string) => {
   }, [internalTheme, setTheme]);
 
   return internalTheme;
+};
+
+const adjustColorShades = (colors: ExtendedMantineThemeColors) => {
+  const adjustedColors = {} as ExtendedMantineThemeColors;
+  Object.entries(colors).forEach(([key, value]) => {
+    const baseColor = value[5];
+    adjustedColors[key] = [
+      defaultTheme.fn.lighten(baseColor, 0.6),
+      defaultTheme.fn.lighten(baseColor, 0.5),
+      defaultTheme.fn.lighten(baseColor, 0.4),
+      defaultTheme.fn.lighten(baseColor, 0.3),
+      defaultTheme.fn.lighten(baseColor, 0.2),
+      defaultTheme.fn.lighten(baseColor, 0.1),
+      baseColor,
+      defaultTheme.fn.darken(baseColor, 0.1),
+      defaultTheme.fn.darken(baseColor, 0.2),
+      defaultTheme.fn.darken(baseColor, 0.3),
+    ];
+  });
+  return adjustedColors;
 };

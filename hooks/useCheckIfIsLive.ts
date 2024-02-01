@@ -1,6 +1,6 @@
 import { getProject } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
-import { isEditor } from "@/utils/common";
+import { getProjectType } from "@/utils/common";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
@@ -12,15 +12,17 @@ export const useCheckIfIsLive = () => {
     (state) => state.setCurrentProjectId,
   );
 
-  const url = typeof window !== "undefined" ? window.location.host : "";
-  const isEditorUrl = isEditor(url);
-
+  const hrefUrl = typeof window !== "undefined" ? window.location.href : "";
+  const urlType = getProjectType(hrefUrl);
+  console.log("useCheckIfIsLive", urlType);
   useEffect(() => {
     const setLiveIfHasCustomDomain = async () => {
       try {
         let _projectId = projectId;
-        if (!projectId) {
-          const project = await getProject(url, true);
+        if (!projectId && urlType === "live") {
+          const hostUrl =
+            typeof window !== "undefined" ? window.location.host : "";
+          const project = await getProject(hostUrl, true);
           _projectId = project.id ?? projectId;
         }
 
@@ -35,5 +37,5 @@ export const useCheckIfIsLive = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router?.state?.pathname]);
 
-  return !isEditorUrl;
+  return urlType === "live";
 };

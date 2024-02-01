@@ -50,6 +50,22 @@ export const isEditor = (baseUrl: string) => {
   );
 };
 
+export type UrlType = "project" | "live" | "editor";
+
+export const getProjectType = (href: string): UrlType => {
+  const pattern = new RegExp("[0-9a-fA-F]{32}/editor/[0-9a-fA-F]{32}$");
+  if (pattern.test(href)) {
+    return "editor";
+  } else if (
+    href.includes("http://localhost:3000") ||
+    href.includes("app.dexla.ai")
+  ) {
+    return "project";
+  } else {
+    return "live";
+  }
+};
+
 // check if url follow the pattern: 7eacfa0cbb8b406cbc2b40085b9c37a4.dexla.io or 7eacfa0cbb8b406cbc2b40085b9c37a4.dexla.ai
 // where 7eacfa0cbb8b406cbc2b40085b9c37a4 is the project id and can be any string that contains only letters and numbers,
 // but always has 32 characters and a mix of letters and numbers

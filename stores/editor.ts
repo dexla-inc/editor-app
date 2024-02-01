@@ -120,7 +120,7 @@ interface CustomColors {
   Border: Tuple<string, 10>;
 }
 
-type ExtendedMantineThemeColors = CustomColors & MantineTheme["colors"];
+export type ExtendedMantineThemeColors = CustomColors & MantineTheme["colors"];
 
 export type ComponentToBind = {
   componentId: string;

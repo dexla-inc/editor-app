@@ -11,6 +11,7 @@ export const getServerSideProps = async ({
   req,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
+  console.log("getServerSideProps", url);
   const project = await getProject(url, true);
   const id = project.id;
   const faviconUrl = project.faviconUrl ?? "";
