@@ -10,7 +10,7 @@ import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { useRouter } from "next/router";
 import { forwardRef, memo } from "react";
-import { useData } from "@/hooks/useData";
+import { useDataContext } from "@/contexts/DataProvider";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -48,8 +48,12 @@ const NavLinkComponent = forwardRef(
       ...componentProps
     } = merge({}, component.props, activeProps) as any;
 
-    const { getValue } = useData();
-    const labelValue = getValue("label", { component, shareableContent });
+    const { computeValue } = useDataContext()!;
+    const labelValue =
+      computeValue({
+        value: component.onLoad.label,
+        shareableContent,
+      }) ?? component.props?.label;
 
     const { color: textColor, backgroundColor } = useChangeState({
       bg,

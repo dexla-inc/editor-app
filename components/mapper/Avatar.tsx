@@ -1,9 +1,9 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useData } from "@/hooks/useData";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { AvatarProps, Avatar as MantineAvatar } from "@mantine/core";
 import { forwardRef, memo } from "react";
+import { useDataContext } from "@/contexts/DataProvider";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -15,9 +15,17 @@ const AvatarComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { triggers, data, ...componentProps } = component.props as any;
 
-    const { getValue } = useData();
-    const srcValue = getValue("src", { component, shareableContent });
-    const childrenValue = getValue("children", { component, shareableContent });
+    const { computeValue } = useDataContext()!;
+    const srcValue =
+      computeValue({
+        value: component.onLoad.src,
+        shareableContent,
+      }) ?? component.props?.src;
+    const childrenValue =
+      computeValue({
+        value: component.onLoad.children,
+        shareableContent,
+      }) ?? component.props?.children;
 
     return (
       <MantineAvatar ref={ref} {...props} {...componentProps} src={srcValue}>

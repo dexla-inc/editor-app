@@ -110,7 +110,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
       dynamic: () => {
         return get(shareableContent, `data.${value?.dynamic}`, value?.dynamic);
       },
-      static: () => value?.static,
+      static: () => get(value, "static", value?.value),
       boundCode: () => autoRunJavascriptCode(value?.boundCode),
     };
 

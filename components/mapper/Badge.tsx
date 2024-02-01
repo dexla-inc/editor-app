@@ -6,7 +6,7 @@ import { Component, getColorFromTheme } from "@/utils/editor";
 import { BadgeProps, Badge as MantineBadge } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { useData } from "@/hooks/useData";
+import { useDataContext } from "@/contexts/DataProvider";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -25,8 +25,12 @@ const BadgeComponent = forwardRef(
       textTransform: "none",
     });
 
-    const { getValue } = useData();
-    const childrenValue = getValue("children", { component, shareableContent });
+    const { computeValue } = useDataContext()!;
+    const childrenValue =
+      computeValue({
+        value: component.onLoad.children,
+        shareableContent,
+      }) ?? component.props?.children;
 
     return (
       <MantineBadge

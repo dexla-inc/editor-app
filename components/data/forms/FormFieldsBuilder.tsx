@@ -27,31 +27,10 @@ type Props = {
 export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   const hasParentComponentData = component.parentDataComponentId;
 
-  // const customFields = pick(
-  //   component.onLoad ?? {},
-  //   fields.map((f) => f.name),
-  // );
-  //     .reduce((acc, [key, value]) => {
-  //   if (hasParentComponentData) {
-  //     acc[key] = {
-  //       dataType: "dynamic",
-  //       value: value?.value,
-  //     };
-  //   } else {
-  //     acc[key] = {
-  //       dataType: value?.dataType ?? "static",
-  //       value: get(value, "value", component.props?.[key]),
-  //     };
-  //   }
-  //   return acc;
-  // }, {} as any);
-
   const form = useForm({
     initialValues: {
       onLoad: component?.onLoad,
       props: {
-        // actionCode: component.props?.actionCode ?? {},
-        // variable: component.props?.variable ?? "",
         style: {
           display: component.props?.style?.display,
         },
@@ -67,18 +46,16 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   }, [form.values]);
 
   const onClickToggleDataType = (field: string) => {
-    const isDynamic = form.values.onLoad[field].dataType === "dynamic";
-    const hasBoundCode = form.values.onLoad[field]["boundCode"];
     form.setTouched({ [`onLoad.${field}.dataType`]: true });
     form.setValues({
       onLoad: {
         ...form.values.onLoad,
         [String(field)]: {
-          dataType: isDynamic
-            ? hasBoundCode
-              ? "boundCode"
-              : "static"
-            : "dynamic",
+          value: "",
+          dataType:
+            form.values.onLoad[field].dataType === "static"
+              ? "dynamic"
+              : "static",
         },
       },
     });
