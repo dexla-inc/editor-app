@@ -31,9 +31,10 @@ const DataItemButton = ({
 const DataItem = ({ onClick, item, onItemSelection, type }: DataItemProps) => {
   if (type === "components")
     return <DataItemButton item={item} onClick={onClick} />;
-  if (type === "auth")
+  if (type === "auth" || type === "browser")
     return (
       <JSONSelector
+        name={type}
         data={item}
         onSelectValue={(selected) => onItemSelection(`${selected.path}`)}
       />
@@ -44,6 +45,7 @@ const DataItem = ({ onClick, item, onItemSelection, type }: DataItemProps) => {
       <DataItemButton item={item} onClick={onClick} />
     ) : (
       <JSONSelector
+        name={item.name}
         data={item}
         onSelectValue={(selected) =>
           onItemSelection(

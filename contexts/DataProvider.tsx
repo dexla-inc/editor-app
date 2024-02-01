@@ -1,13 +1,13 @@
-import { createContext, useContext } from "react";
-import { useVariableStore } from "@/stores/variables";
-import { Component, getAllComponentsByName } from "@/utils/editor";
+import { AuthState, useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
+import { useVariableStore } from "@/stores/variables";
+import { getAllComponentsByName } from "@/utils/editor";
+import { ValueProps } from "@/utils/types";
+import get from "lodash.get";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
-import { AuthState, useDataSourceStore } from "@/stores/datasource";
-import get from "lodash.get";
-import { ValueProps } from "@/utils/types";
+import { createContext, useContext } from "react";
 
 type DataProviderProps = {
   children: React.ReactNode;
@@ -79,17 +79,9 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     { list: {} } as any,
   );
 
-  const browserList = Object.entries(
+  const browserList = Array.of(
     pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
-  ).map(([key, value]) => {
-    const isObject = typeof value === "object";
-    return {
-      id: key,
-      name: key,
-      value: isObject ? JSON.stringify(value) : value,
-      type: isObject ? "OBJECT" : "STRING",
-    };
-  }) as any;
+  );
 
   const autoRunJavascriptCode = (boundCode: string) => {
     try {

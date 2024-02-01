@@ -1,4 +1,3 @@
-import { useVariableStore } from "@/stores/variables";
 import { useDataContext } from "@/contexts/DataProvider";
 
 type BindType = {
@@ -6,15 +5,21 @@ type BindType = {
   entity: "auth" | "components" | "browser" | "variables";
 };
 
+const setEntityString = ({ selectedEntityId, entity }: BindType) => {
+  const [entityKey, entityId] = selectedEntityId.split(".");
+  const path = !entityId ? "" : `.${entityId}`;
+  return `${entity}['${entityKey}']${path}`;
+};
+
 export const useBindingPopover = () => {
   const { variables, components } = useDataContext()!;
 
   const getEntityEditorValue = ({ selectedEntityId, entity }: BindType) => {
     const entityHandlers = {
-      auth: () => `${entity}['${selectedEntityId}']`,
+      auth: () => setEntityString({ selectedEntityId, entity }),
       components: () =>
         `${entity}[/* ${components?.list[selectedEntityId].description} */'${selectedEntityId}']`,
-      browser: () => `${entity}['${selectedEntityId}']`,
+      browser: () => setEntityString({ selectedEntityId, entity }),
       variables: () => {
         try {
           const parsed = JSON.parse(selectedEntityId);
