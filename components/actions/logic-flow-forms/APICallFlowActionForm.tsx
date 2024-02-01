@@ -88,6 +88,7 @@ export const APICallFlowActionForm = ({ form }: Props) => {
     if (endpoints?.results) {
       setApiAuthConfig(endpoints.results);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endpoints?.results]);
 
   const accessToken = useDataSourceStore(

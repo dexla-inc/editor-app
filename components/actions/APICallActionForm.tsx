@@ -65,6 +65,7 @@ export const APICallActionForm = ({ id }: Props) => {
     if (endpoints?.results) {
       setApiAuthConfig(endpoints.results);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endpoints?.results]);
 
   const form = useForm<FormValues>({

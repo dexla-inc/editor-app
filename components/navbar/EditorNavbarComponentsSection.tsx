@@ -46,7 +46,7 @@ export const EditorNavbarComponentsSection = () => {
   const userTheme = useUserTheme(router.query.id! as string);
 
   const componentList = useQuery({
-    queryKey: ["components"],
+    queryKey: ["components", router.query.id, activeCompany.orgId],
     queryFn: () =>
       getComponentList(router.query.id as string, activeCompany.orgId),
     enabled: !!router.query.id && componentTypeToShow === "custom",

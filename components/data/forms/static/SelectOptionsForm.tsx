@@ -22,6 +22,7 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
 
   useEffect(() => {
     debouncedTreeUpdate(component.id, form.values);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
 
   return (

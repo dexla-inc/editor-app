@@ -1,7 +1,4 @@
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
-import { BindPlaceDataActionForm } from "@/components/actions/BindPlaceDataActionForm";
-import { BindResponseToComponentActionForm } from "@/components/actions/BindResponseToComponentActionForm";
-import { BindVariableToComponentActionForm } from "@/components/actions/BindVariableToComponentActionForm";
 import { ChangeLanguageActionForm } from "@/components/actions/ChangeLanguageActionForm";
 import { ChangeStateActionForm } from "@/components/actions/ChangeStateActionForm";
 import { ChangeStepActionForm } from "@/components/actions/ChangeStepActionForm";
@@ -16,9 +13,6 @@ import { ToggleAccordionItemActionForm } from "@/components/actions/ToggleAccord
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
 import { APICallFlowActionForm } from "@/components/actions/logic-flow-forms/APICallFlowActionForm";
-import { BindPlaceDataFlowActionForm } from "@/components/actions/logic-flow-forms/BindPlaceDataFlowActionForm";
-import { BindResponseToComponentFlowActionForm } from "@/components/actions/logic-flow-forms/BindResponseToComponentFlowActionForm";
-import { BindVariableToComponentFlowActionForm } from "@/components/actions/logic-flow-forms/BindVariableToComponentFlowActionForm";
 import { ChangeLanguageFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeLanguageActionFlowForm";
 import { ChangeStateActionFlowForm } from "@/components/actions/logic-flow-forms/ChangeStateFlowActionForm";
 import { ChangeStepFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeStepFlowActionForm";
@@ -30,7 +24,6 @@ import { DebugFlowActionForm } from "@/components/actions/logic-flow-forms/Debug
 import { transpile } from "typescript";
 
 import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableActionForm";
-import { BindVariableToChartFlowActionForm } from "@/components/actions/logic-flow-forms/BindVariableToChartFlowActionForm";
 import { ChangeVariableFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeVariableFlowActionForm";
 import { GoToUrlFlowActionForm } from "@/components/actions/logic-flow-forms/GoToUrlFlowActionForm";
 import { NavigationFlowActionForm } from "@/components/actions/logic-flow-forms/NavigationFlowActionForm";
@@ -40,32 +33,23 @@ import { OpenPopOverFlowActionForm } from "@/components/actions/logic-flow-forms
 import { ShowNotificationFlowActionForm } from "@/components/actions/logic-flow-forms/ShowNotificationFlowActionForm";
 import { TogglePropsFlowActionForm } from "@/components/actions/logic-flow-forms/TogglePropsFlowActionForm";
 import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components/actions/logic-flow-forms/TriggerLogicFlowActionForm";
-import { Position } from "@/components/mapper/GoogleMapPlugin";
-import { Options } from "@/components/modifiers/GoogleMap";
 import {
   DataSourceAuthResponse,
   DataSourceResponse,
   Endpoint,
 } from "@/requests/datasources/types";
-import { VariableParams } from "@/requests/variables/types";
 
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
 import { readDataFromStream } from "@/utils/api";
-import {
-  Component,
-  getAllComponentsByName,
-  getComponentById,
-  getComponentParent,
-} from "@/utils/editor";
-import { flattenKeys, flattenKeysWithRoot } from "@/utils/flattenKeys";
+import { Component, getComponentById } from "@/utils/editor";
+import { flattenKeys } from "@/utils/flattenKeys";
 import { executeFlow } from "@/utils/logicFlows";
 import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
 import merge from "lodash.merge";
-import { nanoid } from "nanoid";
 import { Router } from "next/router";
 import { getComponentInitialDisplayValue } from "./common";
 import { BindingType } from "./types";
@@ -129,9 +113,6 @@ export const actions: ActionInfo[] = [
     group: "Utilities & Tools",
     icon: "IconMessageLanguage",
   },
-  { name: "bindResponse", group: "Z Delete" },
-  { name: "bindVariable", group: "Z Delete" },
-  { name: "bindVariableToChart", group: "Z Delete" },
   { name: "changeStep", group: "Z Delete", icon: "IconStatusChange" },
   {
     name: "toggleAccordionItem",
@@ -144,8 +125,6 @@ export const actions: ActionInfo[] = [
   { name: "closeModal", group: "Z Delete" },
   { name: "openPopOver", group: "Z Delete" },
   { name: "closePopOver", group: "Z Delete" },
-  { name: "bindPlaceData", group: "Z Delete", icon: "IconMap" },
-  { name: "bindPlaceGeometry", group: "Z Delete", icon: "IconMap" },
 ];
 
 type ActionTriggerAll = (typeof triggers)[number];
@@ -244,40 +223,6 @@ export interface APICallAction extends BaseAction {
   authType: EndpointAuthType;
 }
 
-export interface BindPlaceDataAction extends Omit<APICallAction, "name"> {
-  name: "bindPlaceData";
-  componentId?: string;
-}
-
-export interface BindPlaceGeometryAction extends BaseAction {
-  name: "bindPlaceGeometry";
-  componentId: string;
-  key?: string;
-}
-
-export interface BindResponseToComponentAction extends BaseAction {
-  name: "bindResponse";
-  data?: any;
-  binds?: {
-    component: string;
-    value: string;
-    example: string;
-  }[];
-}
-
-export interface BindVariableToComponentAction extends BaseAction {
-  name: "bindVariable";
-  component: string;
-  variable: string;
-}
-
-export interface BindVariableToChartAction extends BaseAction {
-  name: "bindVariableToChart";
-  component: string;
-  series: string;
-  labels: string;
-}
-
 export interface ToggleNavbarAction extends BaseAction {
   name: "toggleNavbar";
 }
@@ -315,7 +260,6 @@ export type Action = {
     | NavigationAction
     | AlertAction
     | APICallAction
-    | BindResponseToComponentAction
     | GoToUrlAction
     | OpenModalAction
     | OpenDrawerAction
@@ -326,13 +270,9 @@ export type Action = {
     | ChangeStateAction
     | ToggleNavbarAction
     | ChangeStepAction
-    | BindPlaceDataAction
-    | BindPlaceGeometryAction
     | TriggerLogicFlowAction
     | ChangeLanguageAction
-    | BindVariableToComponentAction
-    | ChangeVariableAction
-    | BindVariableToChartAction;
+    | ChangeVariableAction;
   sequentialTo?: string;
 };
 
@@ -463,14 +403,6 @@ export type ToggleNavbarActionParams = ActionParams & {
 };
 export type ChangeStepActionParams = ActionParams & {
   action: ChangeStepAction;
-};
-
-export type BindPlaceDataActionParams = ActionParams & {
-  action: BindPlaceDataAction;
-};
-
-export type BindPlaceGeometryActionParams = ActionParams & {
-  action: BindPlaceGeometryAction;
 };
 
 export type ChangeLanguageActionParams = ActionParams & {
@@ -1049,314 +981,6 @@ export const apiCallAction = async ({
   }
 };
 
-export type BindResponseToComponentActionParams = ActionParams & {
-  action: BindResponseToComponentAction;
-};
-
-export const bindResponseToComponentAction = ({
-  action,
-  data,
-}: BindResponseToComponentActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-
-  action.binds?.forEach((bind) => {
-    if (bind.component && bind.value) {
-      const dataFlatten = flattenKeysWithRoot(data);
-      const value = get(dataFlatten, bind.value);
-      updateTreeComponent({
-        componentId: bind.component,
-        props: {
-          data: { value, base: data },
-          dataPath: bind.value.startsWith("root[0].")
-            ? bind.value.split("root[0].")[1]
-            : bind.value.split("root.")[1],
-        },
-        save: false,
-      });
-    }
-  });
-};
-
-export type BindVariableToChartActionParams = ActionParams & {
-  action: BindVariableToChartAction;
-};
-
-export const bindVariableToChartAction = async ({
-  action,
-}: BindVariableToChartActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  const variableList = useVariableStore.getState().variableList;
-  const seriesVariable = action.series.split(`var_`)[1];
-  let seriesVar: string | number[] = seriesVariable;
-  if (seriesVariable.startsWith("{") && seriesVariable.endsWith("}")) {
-    seriesVar = JSON.parse(seriesVariable);
-  }
-
-  const isSeriesObject = typeof seriesVar === "object";
-
-  const labelsVariable = action.labels.split(`var_`)[1];
-  let labelsVar: string | number[] = labelsVariable;
-  if (labelsVariable.startsWith("{") && labelsVariable.endsWith("}")) {
-    labelsVar = JSON.parse(labelsVariable);
-  }
-
-  const isLabelsObject = typeof labelsVar === "object";
-
-  if (action.component && seriesVar) {
-    const seriesId = isSeriesObject ? (seriesVar as any).id : seriesVar;
-    const labelsId = isLabelsObject ? (labelsVar as any).id : labelsVar;
-    const variableSeries = variableList.find(
-      (variable) => variable.id === seriesId || variable.name === seriesId,
-    );
-    if (!variableSeries) return;
-    let seriesValue = variableSeries.defaultValue;
-    if (variableSeries.type === "OBJECT") {
-      const dataFlatten = flattenKeys(
-        JSON.parse(variableSeries.defaultValue ?? "{}"),
-      );
-
-      seriesValue = get(dataFlatten, (seriesVar as any).path);
-    }
-    const variableLabels = variableList.find(
-      (variable) => variable.id === labelsId || variable.name === labelsId,
-    );
-    if (!variableLabels) return;
-
-    let labelsValue = variableLabels.defaultValue;
-    if (variableLabels.type === "OBJECT") {
-      const dataFlatten = flattenKeys(
-        JSON.parse(variableLabels.defaultValue ?? "{}"),
-      );
-
-      labelsValue = get(dataFlatten, (labelsVar as any).path);
-    }
-
-    updateTreeComponent({
-      componentId: action.component,
-      props: {
-        data: {
-          series: {
-            value: seriesValue,
-            base:
-              variableSeries.type === "OBJECT"
-                ? JSON.parse(variableSeries.defaultValue ?? "{}")
-                : undefined,
-            path: (seriesVar as any)?.path ?? undefined,
-          },
-          labels: {
-            value: labelsValue,
-            base:
-              variableLabels.type === "OBJECT"
-                ? JSON.parse(variableLabels.defaultValue ?? "{}")
-                : undefined,
-            path: (labelsVar as any)?.path ?? undefined,
-          },
-        },
-      },
-      save: false,
-    });
-  }
-};
-
-export type BindVariableToComponentActionParams = ActionParams & {
-  action: BindVariableToComponentAction;
-};
-
-export const bindVariableToComponentAction = async ({
-  action,
-}: BindVariableToComponentActionParams) => {
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  const variableList = useVariableStore.getState().variableList;
-  const actionVariable = action.variable.split(`var_`)[1];
-  let _var: string | { id: string; variable: VariableParams; path: string } =
-    actionVariable;
-  if (actionVariable.startsWith("{") && actionVariable.endsWith("}")) {
-    _var = JSON.parse(actionVariable);
-  }
-
-  const isObject = typeof _var === "object";
-
-  if (action.component && _var) {
-    const variableId = isObject ? (_var as any).id : _var;
-    const variable = variableList.find(
-      (variable) => variable.id === variableId || variable.name === variableId,
-    );
-    if (!variable) return;
-
-    let value = variable.defaultValue;
-    if (variable.type === "OBJECT") {
-      const valueFlatten = flattenKeys(JSON.parse(value || "{}"));
-      value = get(valueFlatten, (_var as any).path);
-    }
-
-    updateTreeComponent({
-      componentId: action.component,
-      props: {
-        data: {
-          value,
-          base:
-            variable.type === "OBJECT"
-              ? JSON.parse(variable.defaultValue || "{}")
-              : undefined,
-        },
-        exampleData: {
-          value,
-          base:
-            variable.type === "OBJECT"
-              ? JSON.parse(variable.defaultValue || "{}")
-              : undefined,
-        },
-        headers: value
-          ? Object.keys(value[0]).reduce((acc, key) => {
-              return {
-                ...acc,
-                [key]: typeof key === "string",
-              };
-            }, {})
-          : {},
-        dataPath: (_var as any)?.path ?? undefined,
-      },
-      save: false,
-    });
-  }
-};
-
-export const bindPlaceDataAction = ({
-  action,
-  data,
-}: BindPlaceDataActionParams) => {
-  const editorTree = useEditorStore.getState().tree;
-  const component = getComponentById(
-    editorTree.root,
-    action.componentId!,
-  ) as Component;
-  const updateTreeComponentChildren =
-    useEditorStore.getState().updateTreeComponentChildren;
-
-  const googleMap = component.children?.filter(
-    (child) => child.name === "GoogleMap",
-  )[0];
-
-  if (data !== undefined) {
-    const predictions: { description: string; place_id: string }[] =
-      data.predictions.map((item: Record<string, any>) => {
-        return {
-          description: item.description as string,
-          place_id: item.place_id as string,
-        };
-      });
-    const newPredictions = predictions.map((pred) => {
-      const predId = nanoid();
-      const child = {
-        id: nanoid(),
-        name: "Text",
-        description: "Search Address In Map",
-        props: {
-          children: pred.description,
-          place_Id: pred.place_id,
-          sx: {
-            "&:hover": {
-              backgroundColor: `black.9`,
-            },
-            cursor: "pointer",
-          },
-        },
-        actions: [
-          {
-            id: predId,
-            trigger: "onClick",
-            action: {
-              name: "apiCall",
-              showLoader: true,
-              endpoint: action.endpoint,
-              binds: {
-                ...action.binds,
-                parameter: {
-                  ...action.binds?.parameter,
-                  place_id: pred.place_id,
-                },
-              },
-              datasources: action.datasources,
-            },
-          },
-          {
-            id: nanoid(),
-            trigger: "onSuccess",
-            sequentialTo: predId,
-            action: {
-              name: "bindPlaceGeometry",
-              key: action.binds?.parameter.key,
-            },
-          },
-        ],
-        blockDroppingChildrenInside: true,
-      };
-      return child as Component;
-    });
-    updateTreeComponentChildren(component.id!, [
-      ...newPredictions,
-      googleMap as Component,
-    ]);
-  } else updateTreeComponentChildren(component.id!, []);
-};
-
-export const bindPlaceGeometryAction = ({
-  data: { result },
-  action: { key },
-}: BindPlaceGeometryActionParams) => {
-  const editorTree = useEditorStore.getState().tree;
-  const updateTreeComponentChildren =
-    useEditorStore.getState().updateTreeComponentChildren;
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-  const searchResults = getAllComponentsByName(editorTree.root, "Text").filter(
-    (component) => component.description === "Search Address In Map",
-  );
-  const parent = getComponentParent(
-    editorTree.root,
-    searchResults[0].id!,
-  ) as Component;
-
-  const ancestor = getComponentParent(editorTree.root, parent.id!) as Component;
-  const {
-    formatted_address,
-    geometry: { location },
-  } = result;
-  const child = {
-    id: nanoid(),
-    name: "GoogleMap",
-    description: "GoogleMap",
-    props: {
-      style: {
-        width: "100%",
-        height: "500px",
-      },
-      center: location as Position,
-      apiKey: key,
-      zoom: 10,
-      language: "en",
-      markers: [
-        {
-          id: nanoid(),
-          name: formatted_address,
-          position: location as Position,
-        },
-      ],
-      options: {
-        mapTypeId: "SATELITE",
-        styles: [],
-        mapTypeControl: true,
-      } as Options,
-    },
-    blockDroppingChildrenInside: true,
-  } as Component;
-  updateTreeComponent({
-    componentId: ancestor.children![0].id!,
-    props: { value: formatted_address },
-    save: true,
-  });
-  updateTreeComponentChildren(parent.id!, [child]);
-};
-
 export const changeLanguageAction = ({
   action,
 }: ChangeLanguageActionParams) => {
@@ -1483,21 +1107,6 @@ export const actionMapper = {
     form: APICallActionForm,
     flowForm: APICallFlowActionForm,
   },
-  bindResponse: {
-    action: bindResponseToComponentAction,
-    form: BindResponseToComponentActionForm,
-    flowForm: BindResponseToComponentFlowActionForm,
-  },
-  bindVariable: {
-    action: bindVariableToComponentAction,
-    form: BindVariableToComponentActionForm,
-    flowForm: BindVariableToComponentFlowActionForm,
-  },
-  bindVariableToChart: {
-    action: bindVariableToChartAction,
-    form: BindVariableToComponentActionForm,
-    flowForm: BindVariableToChartFlowActionForm,
-  },
   goToUrl: {
     action: goToUrlAction,
     form: GoToUrlForm,
@@ -1566,16 +1175,6 @@ export const actionMapper = {
     action: changeStepAction,
     form: ChangeStepActionForm,
     flowForm: ChangeStepFlowActionForm,
-  },
-  bindPlaceData: {
-    action: bindPlaceDataAction,
-    form: BindPlaceDataActionForm,
-    flowForm: BindPlaceDataFlowActionForm,
-  },
-  bindPlaceGeometry: {
-    action: bindPlaceGeometryAction,
-    form: BindPlaceDataActionForm,
-    flowForm: BindPlaceDataFlowActionForm,
   },
   changeLanguage: {
     action: changeLanguageAction,

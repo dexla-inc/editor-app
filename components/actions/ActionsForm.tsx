@@ -63,6 +63,7 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
     if (availableTriggers.length > 0) {
       form.setFieldValue("trigger", availableTriggers[0]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [availableTriggers]);
 
   const pasteAction = (copiedAction: Action[]) => {

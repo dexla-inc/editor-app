@@ -37,6 +37,7 @@ export const RedirectUrlForm = () => {
     form.setValues({
       redirectSlug: project?.redirectSlug,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

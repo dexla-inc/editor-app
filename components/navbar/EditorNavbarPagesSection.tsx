@@ -18,6 +18,7 @@ export const EditorNavbarPagesSection = () => {
 
   const debouncedSearch = useCallback(
     debounce((query) => setSearch(query), 150),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 

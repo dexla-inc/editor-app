@@ -60,6 +60,7 @@ export const DataSourceForm = ({
       authenticationScheme: datasource.authenticationScheme,
       authValue: datasource.authValue,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

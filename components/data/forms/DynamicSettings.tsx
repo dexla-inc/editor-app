@@ -79,6 +79,7 @@ export const DynamicSettings = ({
         });
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
 
   return (
