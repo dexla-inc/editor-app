@@ -11,7 +11,7 @@ export const useProjectQuery = (projectId: string) => {
 
   const queryResult = useQuery<ProjectResponse, Error>({
     queryKey: queryKey,
-    queryFn: () => getProject(projectId),
+    queryFn: () => getProject(projectId, true),
     staleTime: cacheTime,
     enabled: !!projectId,
   });

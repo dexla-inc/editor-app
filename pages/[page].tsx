@@ -12,7 +12,7 @@ export const getServerSideProps = async ({
   query,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
-  const project = await getProject(url);
+  const project = await getProject(url, true);
   const id = project.id;
   const faviconUrl = project.faviconUrl ?? "";
 

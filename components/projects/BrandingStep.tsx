@@ -1,7 +1,7 @@
 import BackButton from "@/components/BackButton";
 import { ColorSelector } from "@/components/ColorSelector";
 import NextButton from "@/components/NextButton";
-import { useGetThemeQuery } from "@/hooks/reactQuery/useThemeQuery";
+import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { generateThemeFromScreenshot } from "@/requests/ai/queries";
 import { saveBasicTheme, saveTheme } from "@/requests/themes/mutations";
 import { Color, ThemeResponse } from "@/requests/themes/types";
@@ -115,7 +115,8 @@ export default function BrandingStep({
   const linkComponent = componentMapper["Link"];
   const theme = useEditorStore((state) => state.theme);
   const setTheme = useEditorStore((state) => state.setTheme);
-  const userTheme = useGetThemeQuery(projectId);
+  const project = useProjectQuery(projectId);
+  const userTheme = project.data?.branding;
 
   const previews = screenshots.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
@@ -145,7 +146,7 @@ export default function BrandingStep({
   };
 
   useEffect(() => {
-    if (userTheme.isFetched) {
+    if (project.isFetched) {
       setTheme({
         ...theme,
         colors: {
@@ -173,7 +174,7 @@ export default function BrandingStep({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userTheme.isFetched, setTheme, themeResponse]);
+  }, [project.isFetched, setTheme, themeResponse]);
 
   const form = useForm({
     initialValues: {

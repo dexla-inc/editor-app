@@ -21,7 +21,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const project = await getProject(hostName);
+  const project = await getProject(hostName, true);
 
   if (!project.redirectSlug) {
     return NextResponse.next();
