@@ -107,6 +107,7 @@ export const EditableComponent = ({
         parentDataComponentId: shareableContent?.parentDataComponentId,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shareableContent?.parentDataComponentId]);
 
   return (

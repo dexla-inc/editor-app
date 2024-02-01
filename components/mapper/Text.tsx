@@ -1,11 +1,10 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { useContentEditable } from "@/hooks/useContentEditable";
-import { useData } from "@/hooks/useData";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
-import { forwardRef, memo, useEffect } from "react";
+import { forwardRef, memo } from "react";
+import { useDataContext } from "@/contexts/DataProvider";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -24,17 +23,12 @@ const TextComponent = forwardRef(
       component.props as any;
     const { style, ...restProps } = props as any;
 
-    const { getValue } = useData();
-    const childrenValue = getValue("children", { component, shareableContent });
-
-    const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
-    const selectedVariable = getSelectedVariable(variable);
-
-    useEffect(() => {
-      if (selectedVariable?.defaultValue === childrenValue) return;
-      handleValueUpdate(component.id as string, selectedVariable);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedVariable]);
+    const { computeValue } = useDataContext()!;
+    const childrenValue =
+      computeValue({
+        value: component.onLoad.children,
+        shareableContent,
+      }) ?? component.props?.children;
 
     return (
       <MantineText

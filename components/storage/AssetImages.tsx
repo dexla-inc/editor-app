@@ -39,6 +39,7 @@ export const AssetImages = ({ search, projectId }: Props) => {
         console.error("Error deleting file: ", error);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [projectId],
   );
 

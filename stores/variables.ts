@@ -8,7 +8,7 @@ type VariableList = Array<VariableResponse>;
 type VariablesState = {
   variableList: VariableList;
   initializeVariableList: (variableList: VariableList) => void;
-  setVariable: (variable: VariableParams, id: string) => void;
+  setVariable: (variable: Partial<VariableParams>, id: string) => void;
   deleteVariable: (variableId: string) => void;
 };
 
@@ -23,25 +23,29 @@ export const useVariableStore = create<VariablesState>()(
           if (!isArraysEqual)
             set({ variableList }, false, "variables/initializeVariableList");
         },
-        setVariable: (variable, id) => {
+        setVariable: (varProps, id) => {
           const _variableList = get().variableList;
 
           const index = _variableList.findIndex((item) => item?.id === id);
           if (index >= 0) {
-            _variableList[index] = { id, ...variable };
+            _variableList[index] = { ..._variableList[index], ...varProps };
             set(
               { variableList: [..._variableList] },
               false,
               "variables/setVariable",
             );
-          } else
+          } else {
             set(
               {
-                variableList: [..._variableList, { id, ...variable }],
+                variableList: [
+                  ..._variableList,
+                  { id, ...(varProps as VariableParams) },
+                ],
               },
               false,
               "variables/setVariable",
             );
+          }
         },
         deleteVariable: (variableId) => {
           const _variableList = get().variableList;

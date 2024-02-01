@@ -19,38 +19,14 @@ export const StaticFormFieldsBuilder = ({
   field,
   form,
 }: StaticFormFieldsBuilderProps) => {
-  const { getSelectedVariable } = useBindingPopover();
-
   return (
     <ComponentToBindFromInput
-      category="data"
-      key={field.name}
-      componentId={component?.id!}
-      onPickVariable={(variable: string) =>
-        form.setFieldValue("props.variable", variable)
-      }
-      actionData={[]}
-      javascriptCode={form.values.props.actionCode}
-      onChangeJavascriptCode={(javascriptCode: string, label: string) =>
-        form.setFieldValue(`props.actionCode`, {
-          ...form.values.props.actionCode,
-          [label]: javascriptCode,
-        })
-      }
       size="xs"
+      key={field.name}
       label={field.label}
-      type={field.type}
+      componentId={component?.id!}
       placeholder={field.placeholder}
-      {...form.getInputProps(`onLoad.${field.name}.value`)}
-      onChange={(e) => {
-        const selectedVariable = getSelectedVariable(e.currentTarget.value);
-        form.setFieldValue(
-          `onLoad.${field.name}.value`,
-          selectedVariable
-            ? selectedVariable.defaultValue
-            : e.currentTarget.value,
-        );
-      }}
+      {...form.getInputProps(`onLoad.${field.name}`)}
     />
   );
 };

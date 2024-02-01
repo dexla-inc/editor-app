@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Component } from "@/utils/editor";
 import { useEffect, useState } from "react";
 import get from "lodash.get";
+import { useDataContext } from "@/contexts/DataProvider";
 
 type UseEndpointProps = {
   component: Component;
@@ -29,10 +30,15 @@ export const useEndpoint = ({ component }: UseEndpointProps) => {
   const projectId = useEditorStore((state) => state.currentProjectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const endpoint = endpoints?.results?.find((e) => e.id === endpointId);
+  const { computeValue } = useDataContext()!;
 
   const requestSettings = { binds, dataType, staleTime };
 
-  const { url, body } = prepareRequestData(requestSettings, endpoint!);
+  const { url, body } = prepareRequestData(
+    requestSettings,
+    endpoint!,
+    computeValue,
+  );
 
   const apiCall = () => {
     if (!accessToken) {

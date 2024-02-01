@@ -98,18 +98,7 @@ export const ShowNotificationActionForm = ({ id }: Props) => {
                   setPickingComponentToBindTo(undefined);
                   setComponentToBind(undefined);
                 }}
-                onPickVariable={(variable: string) => {
-                  form.setFieldValue(name, variable);
-                }}
-                javascriptCode={form.values.actionCode}
-                onChangeJavascriptCode={(
-                  javascriptCode: string,
-                  label: string,
-                ) => form.setFieldValue(`actionCode.${label}`, javascriptCode)}
                 {...form.getInputProps(name)}
-                onChange={(e) => {
-                  form.setFieldValue(name, e.currentTarget.value);
-                }}
               />
             </React.Fragment>
           );

@@ -1,6 +1,5 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useEditorStore } from "@/stores/editor";
 import { NavigationAction } from "@/utils/actions";
@@ -10,8 +9,8 @@ import { Component } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { useRouter } from "next/router";
-import { forwardRef, memo, useEffect } from "react";
-import { useData } from "@/hooks/useData";
+import { forwardRef, memo } from "react";
+import { useDataContext } from "@/contexts/DataProvider";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -49,17 +48,12 @@ const NavLinkComponent = forwardRef(
       ...componentProps
     } = merge({}, component.props, activeProps) as any;
 
-    const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
-    const selectedVariable = getSelectedVariable(variable);
-
-    const { getValue } = useData();
-    const labelValue = getValue("label", { component, shareableContent });
-
-    useEffect(() => {
-      if (selectedVariable?.defaultValue === labelValue) return;
-      handleValueUpdate(component.id as string, selectedVariable);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedVariable]);
+    const { computeValue } = useDataContext()!;
+    const labelValue =
+      computeValue({
+        value: component.onLoad.label,
+        shareableContent,
+      }) ?? component.props?.label;
 
     const { color: textColor, backgroundColor } = useChangeState({
       bg,

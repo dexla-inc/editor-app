@@ -1,5 +1,4 @@
 import { ComponentToBindActionsPopover } from "@/components/ComponentToBindActionsPopover";
-import { VariablePicker } from "@/components/VariablePicker";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { GoToUrlAction } from "@/utils/actions";
@@ -27,14 +26,15 @@ export const GoToUrlFlowActionForm = ({ form }: Props) => {
         {...form.getInputProps("url")}
         rightSection={
           <Flex px={5}>
-            <VariablePicker
-              onSelectValue={(selected) => {
-                form.setFieldValue("url", selected);
-              }}
-            />
+            BP
             <ComponentToBindActionsPopover
               onPick={(componentToBind: string) => {
-                form.setFieldValue("url", componentToBind);
+                form.setValues({
+                  url: {
+                    dataType: "static",
+                    static: componentToBind,
+                  },
+                });
                 setComponentToBind(undefined);
               }}
             />

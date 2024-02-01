@@ -23,6 +23,7 @@ export const FaviconUrl = () => {
 
       await patchProject(projectId, patchParams);
     }, 500),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [projectId],
   );
 

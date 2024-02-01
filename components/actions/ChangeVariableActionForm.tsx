@@ -24,11 +24,7 @@ type FormValues = Omit<ChangeVariableAction, "name">;
 
 const defaultValues = {
   variableId: "",
-  bindingType: "JavaScript" as BindingType,
-  javascriptCode: "",
-  formulaCondition: "",
-  formulaValue: "",
-  value: "",
+  value: {},
 };
 
 export const ChangeVariableActionForm = ({ id }: Props) => {
@@ -68,36 +64,15 @@ export const ChangeVariableActionForm = ({ id }: Props) => {
     }
   };
 
-  const setFieldValue = (key: any, value: any) => {
-    form.setFieldValue(key, value);
-    debouncedTreeUpdate(selectedComponentId, { [key]: value });
-  };
-
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
-        <VariableSelect
-          label="Variable"
-          required
-          onPick={(variable) => {
-            form.setFieldValue("variableId", variable.id);
-          }}
-          {...form.getInputProps("variableId")}
-        />
+        <VariableSelect required {...form.getInputProps("variableId")} />
         <ComponentToBindFromInput
+          required
           label="Value"
           componentId={selectedComponentId}
-          onPickVariable={(variable: string) =>
-            setFieldValue("value", variable)
-          }
-          category="changeVariable"
-          javascriptCode={form.values.javascriptCode}
-          onChangeJavascriptCode={(javascriptCode: string) => {
-            setFieldValue("javascriptCode", javascriptCode);
-          }}
           {...form.getInputProps("value")}
-          onChange={(e) => setFieldValue("value", e.currentTarget.value)}
-          required
         />
 
         <ActionButtons

@@ -6,6 +6,7 @@ import AuthProvider from "@/pages/AuthProvider";
 import InitializeVariables from "@/pages/InitializeVariables";
 import InstantiatePropelAuthStore from "@/pages/InstantiatePropelAuthStore";
 import { useUserConfigStore } from "@/stores/userConfig";
+
 import {
   DARK_MODE,
   GREEN_COLOR,
@@ -30,6 +31,7 @@ import Script from "next/script";
 import { useEffect, useState } from "react";
 import TagManager from "react-gtm-module";
 import { ReactFlowProvider } from "reactflow";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -131,6 +133,7 @@ export default function App(props: AppProps) {
           )}
           <main className={inter.variable}>
             <QueryClientProvider client={queryClient}>
+              <ReactQueryDevtools initialIsOpen={false} />
               <InitializeVariables pageProps={pageProps} />
               <Hydrate state={pageProps.dehydratedState}>
                 <ModalsProvider modals={{ logicFlows: LogicFlowInitialModal }}>

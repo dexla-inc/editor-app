@@ -32,6 +32,7 @@ import {
 } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
+import { DataProvider } from "@/contexts/DataProvider";
 
 type Props = {
   projectId: string;
@@ -97,7 +98,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   }, [user, setCurrentUser]);
 
   return (
-    <>
+    <DataProvider>
       <Shell
         pos="relative"
         navbar={
@@ -197,6 +198,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
           );
         })
       }
-    </>
+    </DataProvider>
   );
 };

@@ -68,6 +68,7 @@ export const EndpointSelect = ({ value, ...props }: EndpointSelectProps) => {
         props.onChange(selectedValue);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [endpoints?.results, props.onChange],
   );
 

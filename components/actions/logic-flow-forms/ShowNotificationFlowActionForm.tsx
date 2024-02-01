@@ -44,26 +44,9 @@ export const ShowNotificationFlowActionForm = ({ form }: Props) => {
                 setComponentToBind(undefined);
                 setPickingComponentToBindTo(undefined);
               }}
-              onPickVariable={(variable: string) => {
-                form.setFieldValue(name, variable);
-              }}
-              javascriptCode={form.values.actionCode}
-              onChangeJavascriptCode={(
-                javascriptCode: string,
-                label: string,
-              ) => {
-                const actionCode = form.values.actionCode;
-                form.setFieldValue(`actionCode`, {
-                  ...actionCode,
-                  [label]: javascriptCode,
-                });
-              }}
               size="xs"
               label={title}
               {...form.getInputProps(name)}
-              onChange={(e) => {
-                form.setFieldValue(name, e.currentTarget.value);
-              }}
             />
           </React.Fragment>
         );

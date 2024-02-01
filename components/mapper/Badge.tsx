@@ -1,13 +1,12 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { useEditorStore } from "@/stores/editor";
 import { DISABLED_HOVER } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { BadgeProps, Badge as MantineBadge } from "@mantine/core";
 import merge from "lodash.merge";
-import { forwardRef, memo, useEffect } from "react";
-import { useData } from "@/hooks/useData";
+import { forwardRef, memo } from "react";
+import { useDataContext } from "@/contexts/DataProvider";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -26,17 +25,12 @@ const BadgeComponent = forwardRef(
       textTransform: "none",
     });
 
-    const { getValue } = useData();
-    const childrenValue = getValue("children", { component, shareableContent });
-
-    const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
-    const selectedVariable = getSelectedVariable(variable);
-
-    useEffect(() => {
-      if (selectedVariable?.defaultValue === childrenValue) return;
-      handleValueUpdate(component.id as string, selectedVariable);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedVariable]);
+    const { computeValue } = useDataContext()!;
+    const childrenValue =
+      computeValue({
+        value: component.onLoad.children,
+        shareableContent,
+      }) ?? component.props?.children;
 
     return (
       <MantineBadge

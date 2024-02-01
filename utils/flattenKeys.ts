@@ -1,8 +1,6 @@
-import get from "lodash.get";
-
 export const flattenKeys = (
   object: object,
-  initialPathPrefix: string = ""
+  initialPathPrefix: string = "",
 ): any => {
   if (!object || typeof object !== "object") {
     return [{ [initialPathPrefix]: object }];
@@ -24,13 +22,13 @@ export const flattenKeys = (
             ...flattenKeys(
               // @ts-ignore
               object[key],
-              `${prefix}[${key}]`
+              `${prefix}[${key}]`,
             ),
           }
         : flattenKeys(
             // @ts-ignore
             object[key],
-            isArray ? `${prefix}[${key}]` : `${prefix}${key}`
+            isArray ? `${prefix}[${key}]` : `${prefix}${key}`,
           );
     })
     .reduce((acc, path) => {
@@ -43,24 +41,4 @@ export const flattenKeys = (
       }
       return { ...acc, ...path };
     }, {});
-};
-
-export const flattenKeysWithRoot = (object: object) => {
-  const flatten = flattenKeys(object, "root");
-  return Object.keys(flatten).reduce((acc: any, key: string, index: number) => {
-    const value = get(flatten, key);
-
-    if (index === 0 && key.split(".")[0].endsWith("[0]")) {
-      return {
-        [key.split(".")[0]]: object,
-        [key]: value,
-        ...acc,
-      };
-    }
-
-    return {
-      ...acc,
-      [key]: value,
-    };
-  }, {});
 };

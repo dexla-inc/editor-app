@@ -48,7 +48,7 @@ export const DynamicFormFieldsBuilder = ({
     <Select
       label={field.label}
       data={selectableObjectKeys}
-      {...form.getInputProps(`onLoad.${field.name}.value`)}
+      {...form.getInputProps(`onLoad.${field.name}.dynamic`)}
     />
   );
 };

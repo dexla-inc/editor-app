@@ -83,23 +83,25 @@ export const QueryStringsForm = ({
                 style={{ width: "50%" }}
               />
               {readOnlyKeys ? (
-                <ComponentToBindFromInput
-                  value={value}
-                  placeholder="value"
-                  label=""
-                  componentId={selectedComponentId}
-                  onPickComponent={(componentToBindId: string) => {
-                    setQueryStrings((prev: QueryStringListItem[]) => {
-                      const nPrev = [...prev];
-                      nPrev[index].value = componentToBindId;
-                      return nPrev;
-                    });
-
-                    setPickingComponentToBindTo(undefined);
-                    setComponentToBind(undefined);
-                  }}
-                />
-              ) : company.orgName == "Dexla" && key == "type" ? (
+                <></>
+              ) : // TODO: uncomment this when we have the ability to bind components
+              // <ComponentToBindFromInput
+              //   value={value}
+              //   placeholder="value"
+              //   label=""
+              //   componentId={selectedComponentId}
+              //   onPickComponent={(componentToBindId: string) => {
+              //     setQueryStrings((prev: QueryStringListItem[]) => {
+              //       const nPrev = [...prev];
+              //       nPrev[index].value = componentToBindId;
+              //       return nPrev;
+              //     });
+              //
+              //     setPickingComponentToBindTo(undefined);
+              //     setComponentToBind(undefined);
+              //   }}
+              // />
+              company.orgName == "Dexla" && key == "type" ? (
                 <Select
                   value={value ?? "REPORT"}
                   onChange={(value) => {

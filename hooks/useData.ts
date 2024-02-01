@@ -1,5 +1,7 @@
 import { Component } from "@/utils/editor";
 import get from "lodash.get";
+import { useVariableStore } from "@/stores/variables";
+import { useBindingPopover } from "@/hooks/useBindingPopover";
 
 type GetValueProps = {
   component: Component;
@@ -7,19 +9,6 @@ type GetValueProps = {
 };
 
 export const useData = () => {
-  const getValue = (
-    field: string,
-    { component, shareableContent }: GetValueProps,
-  ) => {
-    const fieldConfig = component.onLoad?.[field] ?? {};
-    const value =
-      fieldConfig.dataType === "dynamic"
-        ? get(shareableContent, `data.${fieldConfig.value}`, fieldConfig.value)
-        : get(fieldConfig, "value", component.props?.[field]);
-
-    return value;
-  };
-
   const getObjectAndArrayKeys = (obj: any, prefix = "") => {
     let keys: string[] = [];
 
@@ -41,7 +30,6 @@ export const useData = () => {
   };
 
   return {
-    getValue,
     getObjectAndArrayKeys,
   };
 };

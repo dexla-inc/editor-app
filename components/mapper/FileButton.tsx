@@ -1,7 +1,5 @@
-import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
-import { useData } from "@/hooks/useData";
 import { Component } from "@/utils/editor";
 import {
   Button,
@@ -9,7 +7,7 @@ import {
   FileButton as MantineFileButton,
 } from "@mantine/core";
 import merge from "lodash.merge";
-import { useEffect } from "react";
+import { useDataContext } from "@/contexts/DataProvider";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -29,19 +27,16 @@ export const FileButton = ({
   const { triggers, variable, ...componentProps } = component.props ?? {};
   const { style, ...restProps } = props as any;
   const contentEditableProps = useContentEditable(component.id as string);
-  const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
-  const selectedVariable = getSelectedVariable(variable);
+
+  const { computeValue } = useDataContext()!;
+  const nameValue =
+    computeValue({
+      value: component.onLoad.name,
+      shareableContent,
+    }) ?? component.props?.name;
+
   const { inputStyle } = useBrandingStyles();
   const customStyle = merge(inputStyle, style);
-
-  const { getValue } = useData();
-  const nameValue = getValue("name", { component, shareableContent });
-
-  useEffect(() => {
-    if (selectedVariable?.defaultValue === nameValue) return;
-    handleValueUpdate(component.id as string, selectedVariable, "name");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedVariable]);
 
   return (
     <>

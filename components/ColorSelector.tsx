@@ -64,6 +64,7 @@ export const ColorSelector = ({
     debouncedOnValueChangeRef.current(hexa, friendlyName);
     // Make sure to cancel the debounced call on effect cleanup
     return () => debouncedOnValueChangeRef.current.cancel();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hexa, friendlyName]);
 
   useEffect(() => {
@@ -82,6 +83,7 @@ export const ColorSelector = ({
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
   return (

@@ -5,3 +5,13 @@ export type BindingTab =
   | "actions"
   | "auth"
   | "browser";
+
+export type ValueProps = Partial<{
+  dataType: "static" | "dynamic" | "boundCode";
+  static: string;
+  dynamic: string;
+  boundCode: string;
+
+  // TODO: remove this value property when structures are refactored
+  value: string;
+}>;

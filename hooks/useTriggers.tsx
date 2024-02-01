@@ -35,10 +35,12 @@ export const useTriggers = ({
           return acc;
         }
 
+        const actionFunction = actionMapper[action.action.name].action();
+
         return {
           ...acc,
           [action.trigger]: (e: any) => {
-            actionMapper[action.action.name].action({
+            actionFunction({
               // @ts-ignore
               action: action.action,
               actionId: action.id,

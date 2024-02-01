@@ -1,16 +1,15 @@
 import { Icon } from "@/components/Icon";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useBindingPopover } from "@/hooks/useBindingPopover";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
-import { useData } from "@/hooks/useData";
 import { useEditorStore } from "@/stores/editor";
 import { DISABLED_HOVER } from "@/utils/branding";
 import { isSame } from "@/utils/componentComparison";
 import { Component, getColorFromTheme } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import merge from "lodash.merge";
-import { ReactElement, forwardRef, memo, useEffect } from "react";
+import { ReactElement, forwardRef, memo } from "react";
+import { useDataContext } from "@/contexts/DataProvider";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -45,17 +44,12 @@ const ButtonComponent = forwardRef(
     const theme = useEditorStore((state) => state.theme);
     const contentEditableProps = useContentEditable(component.id as string);
 
-    const { getSelectedVariable, handleValueUpdate } = useBindingPopover();
-    const selectedVariable = getSelectedVariable(variable);
-
-    const { getValue } = useData();
-    const childrenValue = getValue("children", { component, shareableContent });
-
-    useEffect(() => {
-      if (selectedVariable?.defaultValue === childrenValue) return;
-      handleValueUpdate(component.id as string, selectedVariable);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedVariable]);
+    const { computeValue } = useDataContext()!;
+    const childrenValue =
+      computeValue({
+        value: component.onLoad.children,
+        shareableContent,
+      }) ?? component.props?.children;
 
     const defaultTriggers = isPreviewMode
       ? {}
