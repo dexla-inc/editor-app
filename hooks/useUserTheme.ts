@@ -1,23 +1,24 @@
-import { useGetThemeQuery } from "@/hooks/reactQuery/useThemeQuery";
 import { useEditorStore } from "@/stores/editor";
 import { defaultTheme } from "@/utils/branding";
 import { useEffect, useState } from "react";
+import { useProjectQuery } from "./reactQuery/useProjectQuery";
 
 export const useUserTheme = (projectId: string) => {
   const setTheme = useEditorStore((state) => state.setTheme);
   const [internalTheme, setInternalTheme] = useState<any>(null);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const isLive = useEditorStore((state) => state.isLive);
-  const userTheme = useGetThemeQuery(projectId);
+  const project = useProjectQuery(projectId);
+  const userTheme = project.data?.branding;
 
   useEffect(() => {
     const updateTheme = async () => {
-      if (userTheme.isFetched) {
+      if (project.isFetched) {
         const defaultFontFamily =
-          userTheme.data?.defaultFont ?? defaultTheme.fontFamily ?? "Open Sans";
+          userTheme?.defaultFont ?? defaultTheme.fontFamily ?? "Open Sans";
         const headingsFontFamily =
-          userTheme.data?.fonts?.[0].fontFamily ??
-          userTheme.data?.defaultFont ??
+          userTheme?.fonts?.[0].fontFamily ??
+          userTheme?.defaultFont ??
           defaultTheme.fontFamily ??
           "Open Sans";
 
@@ -32,11 +33,11 @@ export const useUserTheme = (projectId: string) => {
 
         setInternalTheme({
           fontFamily: defaultFontFamily,
-          fonts: userTheme.data?.fonts,
+          fonts: userTheme?.fonts,
           headings: {
             fontFamily: headingsFontFamily,
-            fontWeight: userTheme.data?.fonts?.[0].fontWeight ?? 500,
-            sizes: userTheme.data?.fonts?.reduce((acc, font) => {
+            fontWeight: userTheme?.fonts?.[0].fontWeight ?? 500,
+            sizes: userTheme?.fonts?.reduce((acc, font) => {
               return {
                 ...acc,
                 [font.tag.toLowerCase()]: {
@@ -48,7 +49,7 @@ export const useUserTheme = (projectId: string) => {
             }, {} as any),
           },
           colors: {
-            ...userTheme.data?.colors.reduce((userColors, color) => {
+            ...userTheme?.colors.reduce((userColors, color) => {
               const hex = color.hex.substring(0, 7);
               return {
                 ...userColors,
@@ -68,25 +69,23 @@ export const useUserTheme = (projectId: string) => {
             }, {}),
           },
           primaryColor: "Primary",
-          logoUrl: userTheme.data?.logoUrl,
-          faviconUrl: userTheme.data?.faviconUrl,
-          logos: userTheme.data?.logos,
-          hasCompactButtons: userTheme.data?.hasCompactButtons,
-          cardStyle: userTheme.data?.cardStyle,
-          defaultFont: userTheme.data?.defaultFont,
-          defaultSpacing:
-            userTheme.data?.defaultSpacing ?? defaultTheme.spacing.md,
-          defaultRadius:
-            userTheme.data?.defaultRadius ?? defaultTheme.radius.md,
-          theme: userTheme.data?.theme ?? defaultTheme.theme,
-          inputSize: userTheme.data?.inputSize ?? defaultTheme.inputSize,
+          logoUrl: userTheme?.logoUrl,
+          faviconUrl: userTheme?.faviconUrl,
+          logos: userTheme?.logos,
+          hasCompactButtons: userTheme?.hasCompactButtons,
+          cardStyle: userTheme?.cardStyle,
+          defaultFont: userTheme?.defaultFont,
+          defaultSpacing: userTheme?.defaultSpacing ?? defaultTheme.spacing.md,
+          defaultRadius: userTheme?.defaultRadius ?? defaultTheme.radius.md,
+          theme: userTheme?.theme ?? defaultTheme.theme,
+          inputSize: userTheme?.inputSize ?? defaultTheme.inputSize,
         });
       }
     };
 
     updateTheme();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [iframeWindow, isLive, userTheme.isFetched]);
+  }, [iframeWindow, isLive, project.isFetched]);
 
   useEffect(() => {
     if (internalTheme) {

@@ -1,3 +1,4 @@
+import { ThemeResponse } from "@/requests/themes/types";
 import { UserRoles } from "@/utils/dashboardTypes";
 import { ProjectTypes } from "@/utils/projectTypes";
 
@@ -43,6 +44,7 @@ export type ProjectResponse = {
   customCode?: string;
   redirectSlug?: string;
   faviconUrl?: string;
+  branding: ThemeResponse;
 };
 
 export type ProjectListResponse = {

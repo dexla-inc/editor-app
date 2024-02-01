@@ -8,7 +8,7 @@ import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
 import { TypographyModal } from "@/components/navbar/EditorNavbarThemesSection/TypographyModal";
-import { useGetThemeQuery } from "@/hooks/reactQuery/useThemeQuery";
+import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { CardStyle } from "@/requests/projects/types";
 import { saveTheme } from "@/requests/themes/mutations";
 import { ThemeResponse } from "@/requests/themes/types";
@@ -72,7 +72,8 @@ export const EditorNavbarThemesSection =
 
     const projectId = router.query.id as string;
 
-    const { data: userTheme, invalidate } = useGetThemeQuery(projectId);
+    const { data: project, refetch } = useProjectQuery(projectId);
+    const userTheme = project?.branding;
 
     useEffect(() => {
       if (userTheme) form.setValues(userTheme);
@@ -106,7 +107,7 @@ export const EditorNavbarThemesSection =
         });
       },
       onSuccess: () => {
-        invalidate();
+        refetch();
         stopLoading({
           id: "saving-brand",
           title: "Brand Saved",

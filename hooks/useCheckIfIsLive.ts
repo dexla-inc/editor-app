@@ -20,7 +20,7 @@ export const useCheckIfIsLive = () => {
       try {
         let _projectId = projectId;
         if (!projectId) {
-          const project = await getProject(url);
+          const project = await getProject(url, true);
           _projectId = project.id ?? projectId;
         }
 
