@@ -5,18 +5,10 @@ export type ProjectListResponse = {
   results: ProjectResponse[];
 };
 
-export const getProject = async (projectId: string) => {
+export const getProject = async (projectIdOrDomain: string) => {
   const response = (await getWithoutAuth<ProjectResponse>(
-    `/projects/${projectId}`,
+    `/projects/${projectIdOrDomain}`,
     {},
-  )) as ProjectResponse;
-
-  return response;
-};
-
-export const getByDomain = async (domain: string) => {
-  const response = (await getWithoutAuth<ProjectResponse>(
-    `/projects/${domain}/id`,
   )) as ProjectResponse;
 
   return response;

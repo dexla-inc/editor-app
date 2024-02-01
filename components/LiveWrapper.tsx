@@ -86,8 +86,16 @@ export const LiveWrapper = ({ children, projectId, ...props }: Props) => {
       })}
       {...props}
     >
-      <ProgressBar color={theme.colors.Primary[6]} />
-      <Box id="iframe-content">{children}</Box>
+      <Box
+        pos="relative"
+        style={{
+          minHeight: `100vh`,
+        }}
+        p={0}
+      >
+        <ProgressBar color={theme.colors.Primary[6]} />
+        <Box id="iframe-content">{children}</Box>
+      </Box>
     </MantineProvider>
   );
 };

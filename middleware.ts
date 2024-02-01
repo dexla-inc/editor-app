@@ -1,4 +1,4 @@
-import { getByDomain } from "@/requests/projects/queries-noauth";
+import { getProject } from "@/requests/projects/queries-noauth";
 import { isLiveUrl } from "@/utils/common";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -21,7 +21,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const project = await getByDomain(hostName);
+  const project = await getProject(hostName);
 
   if (!project.redirectSlug) {
     return NextResponse.next();
