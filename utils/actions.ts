@@ -246,11 +246,11 @@ export interface CustomJavascriptAction extends BaseAction {
 export interface ChangeVariableAction extends BaseAction {
   name: "changeVariable";
   variableId: string;
-  bindingType?: BindingType;
-  javascriptCode: string;
-  formulaCondition: string;
-  formulaValue: string;
-  value: string;
+  value: {
+    static?: string;
+    dynamic?: string;
+    boundCode?: string;
+  };
 }
 
 export type Action = {
@@ -363,9 +363,11 @@ export type DebugActionParams = ActionParams & {
   action: AlertAction;
 };
 
-export const debugAction = async ({ action }: DebugActionParams) => {
-  alert(action.message);
-};
+export const debugAction =
+  () =>
+  async ({ action }: DebugActionParams) => {
+    alert(action.message);
+  };
 
 export type OpenModalActionParams = ActionParams & {
   action: OpenModalAction;
@@ -1001,89 +1003,89 @@ export type ChangeVariableActionParams = ActionParams & {
 export const changeVariableAction = async ({
   action,
 }: ChangeVariableActionParams) => {
-  const variablesList = useVariableStore.getState().variableList;
-  const setVariable = useVariableStore.getState().setVariable;
-  const noValueExist = !action.javascriptCode && !action.value;
-  const isGeneratedFromVariable =
-    action.value && action.value.startsWith("var_");
-  const isStaticValue =
-    (action.value && !action.javascriptCode) || !isGeneratedFromVariable;
-  const isDynamicValue =
-    action.javascriptCode &&
-    !action.javascriptCode.startsWith("return variables");
-
-  let isPreviewValueObject = false;
-  let isPreviewValueArray = false;
-
-  if (action.bindingType === "JavaScript") {
-    try {
-      const variables = variablesList.reduce(
-        (acc, variable) => {
-          let value = variable.defaultValue;
-          const isText = variable.type === "TEXT";
-          const isBoolean = variable.type === "BOOLEAN";
-          const parsedValue =
-            value && (isText || isBoolean ? value : JSON.parse(value));
-          acc.list[variable.id] = variable;
-          acc[variable.id] = parsedValue;
-          acc[variable.name] = parsedValue;
-          return acc;
-        },
-        { list: {} } as Record<string, any>,
-      );
-      if (noValueExist) return;
-      let previewNewValue = "";
-      if (isStaticValue) previewNewValue = action.value;
-      if (isGeneratedFromVariable) {
-        const _variable = variablesList.find(
-          (variable) => variable.name === action.value.split("var_")[1],
-        );
-        if (_variable) {
-          previewNewValue = _variable.defaultValue ?? "";
-          isPreviewValueObject = typeof previewNewValue === "object";
-          isPreviewValueArray = Array.isArray(previewNewValue);
-        }
-      }
-
-      if (isDynamicValue) {
-        if (action.javascriptCode === "return variables") {
-          return;
-        }
-
-        previewNewValue = eval(
-          `function autoRunJavascriptCode() { ${action.javascriptCode}}; autoRunJavascriptCode()`,
-        );
-
-        isPreviewValueObject = typeof previewNewValue === "object";
-        isPreviewValueArray = Array.isArray(previewNewValue);
-
-        if (typeof previewNewValue !== "string") {
-          previewNewValue = JSON.stringify(previewNewValue);
-        }
-      }
-
-      const variable = variables.list[action.variableId];
-
-      setVariable(
-        {
-          name: variable.name,
-          type: isPreviewValueArray
-            ? "ARRAY"
-            : isPreviewValueObject
-            ? "OBJECT"
-            : "TEXT",
-          defaultValue:
-            typeof previewNewValue === "string"
-              ? previewNewValue
-              : JSON.stringify(previewNewValue),
-        },
-        action.variableId,
-      );
-    } catch (error) {
-      console.error({ error });
-      return;
-    }
-  }
+  // const variablesList = useVariableStore.getState().variableList;
+  // const setVariable = useVariableStore.getState().setVariable;
+  // const noValueExist = !action.javascriptCode && !action.value;
+  // const isGeneratedFromVariable =
+  //   action.value && action.value.startsWith("var_");
+  // const isStaticValue =
+  //   (action.value && !action.javascriptCode) || !isGeneratedFromVariable;
+  // const isDynamicValue =
+  //   action.javascriptCode &&
+  //   !action.javascriptCode.startsWith("return variables");
+  //
+  // let isPreviewValueObject = false;
+  // let isPreviewValueArray = false;
+  //
+  // if (action.bindingType === "JavaScript") {
+  //   try {
+  //     const variables = variablesList.reduce(
+  //       (acc, variable) => {
+  //         let value = variable.defaultValue;
+  //         const isText = variable.type === "TEXT";
+  //         const isBoolean = variable.type === "BOOLEAN";
+  //         const parsedValue =
+  //           value && (isText || isBoolean ? value : JSON.parse(value));
+  //         acc.list[variable.id] = variable;
+  //         acc[variable.id] = parsedValue;
+  //         acc[variable.name] = parsedValue;
+  //         return acc;
+  //       },
+  //       { list: {} } as Record<string, any>,
+  //     );
+  //     if (noValueExist) return;
+  //     let previewNewValue = "";
+  //     if (isStaticValue) previewNewValue = action.value;
+  //     if (isGeneratedFromVariable) {
+  //       const _variable = variablesList.find(
+  //         (variable) => variable.name === action.value.split("var_")[1],
+  //       );
+  //       if (_variable) {
+  //         previewNewValue = _variable.defaultValue ?? "";
+  //         isPreviewValueObject = typeof previewNewValue === "object";
+  //         isPreviewValueArray = Array.isArray(previewNewValue);
+  //       }
+  //     }
+  //
+  //     if (isDynamicValue) {
+  //       if (action.javascriptCode === "return variables") {
+  //         return;
+  //       }
+  //
+  //       previewNewValue = eval(
+  //         `function autoRunJavascriptCode() { ${action.javascriptCode}}; autoRunJavascriptCode()`,
+  //       );
+  //
+  //       isPreviewValueObject = typeof previewNewValue === "object";
+  //       isPreviewValueArray = Array.isArray(previewNewValue);
+  //
+  //       if (typeof previewNewValue !== "string") {
+  //         previewNewValue = JSON.stringify(previewNewValue);
+  //       }
+  //     }
+  //
+  //     const variable = variables.list[action.variableId];
+  //
+  //     setVariable(
+  //       {
+  //         name: variable.name,
+  //         type: isPreviewValueArray
+  //           ? "ARRAY"
+  //           : isPreviewValueObject
+  //           ? "OBJECT"
+  //           : "TEXT",
+  //         defaultValue:
+  //           typeof previewNewValue === "string"
+  //             ? previewNewValue
+  //             : JSON.stringify(previewNewValue),
+  //       },
+  //       action.variableId,
+  //     );
+  //   } catch (error) {
+  //     console.error({ error });
+  //     return;
+  //   }
+  // }
 };
 
 export const actionMapper = {

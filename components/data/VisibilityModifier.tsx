@@ -36,9 +36,6 @@ export const VisibilityModifier = ({
         bindingType="JavaScript"
         category="appearance"
         onChangeBindingType={() => {}}
-        onPickVariable={(value: string) =>
-          form.setFieldValue("props.style.display", value)
-        }
         javascriptCode={form.values.actionCode?.[componentId] as string}
         onChangeJavascriptCode={(javascriptCode: string) => {
           form.setFieldValue(`props.actionCode.${componentId}`, javascriptCode);

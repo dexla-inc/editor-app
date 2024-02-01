@@ -178,12 +178,6 @@ export const APICallFlowActionForm = ({ form }: Props) => {
                           setPickingComponentToBindTo(undefined);
                           setComponentToBind(undefined);
                         }}
-                        onPickVariable={(variable: string) => {
-                          form.setValues({
-                            ...form.values,
-                            [field]: variable,
-                          });
-                        }}
                         javascriptCode={form.values.actionCode}
                         onChangeJavascriptCode={(
                           javascriptCode: string,

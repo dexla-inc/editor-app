@@ -80,9 +80,6 @@ export const EndpointRequestInputs = ({ selectedEndpoint, form }: Props) => {
                     setPickingComponentToBindTo(undefined);
                     setComponentToBind(undefined);
                   }}
-                  onPickVariable={(variable: string) => {
-                    form.setFieldValue(field, variable);
-                  }}
                   javascriptCode={form.values.actionCode}
                   onChangeJavascriptCode={(
                     javascriptCode: string,

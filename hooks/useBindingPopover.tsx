@@ -2,37 +2,14 @@ import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
-import { debouncedTreeUpdate, getAllComponentsByName } from "@/utils/editor";
-import { useDisclosure } from "@mantine/hooks";
+import { getAllComponentsByName } from "@/utils/editor";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-export type Category = "data" | "actions" | "changeVariable" | "appearance";
-
-type VariableProps = {
-  item: string;
-  category: Category;
-  onPickVariable: any;
-  javascriptCode: string;
-};
-
-type VariableTypeProps = Omit<VariableProps, "javascriptCode"> & {
-  parsed?: any;
-  isObjectType?: boolean;
-  error?: boolean;
-};
-
-type ComponentsType = {
-  item: string;
-  javascriptCode: string;
-  onPickComponent: any;
-};
-
 type BindType = {
-  item: string;
-  javascriptCode: string;
-  onPick: any;
+  selectedEntityId: string;
+  entity: "auth" | "components" | "browser" | "variables";
 };
 
 const prefixWithReturnIfNeeded = (code: string) =>
@@ -51,14 +28,13 @@ const processValue = (value: any, type: string) => {
 };
 
 export const useBindingPopover = () => {
-  const [opened, { toggle, close, open }] = useDisclosure(false);
   const [selectedItem, setSelectedItem] = useState<string>();
   const editorTree = useEditorStore((state) => state.tree);
   const inputsStore = useInputsStore((state) => state.inputValues);
   const variablesList = useVariableStore((state) => state.variableList);
   const getAuthState = useDataSourceStore((state) => state.getAuthState);
   const browser = useRouter();
-  const auth = getAuthState();
+  const authData = [getAuthState()];
 
   // create variables list for binding
   const variables = variablesList.reduce(
@@ -107,98 +83,26 @@ export const useBindingPopover = () => {
     };
   });
 
-  // create auth list for binding
-  const authData = ([] as any[]).concat([auth]);
-
-  const handleVariableType = ({
-    item,
-    parsed,
-    isObjectType,
-    error,
-    category,
-    onPickVariable,
-  }: VariableTypeProps) => {
-    if (category === "actions") {
-      !error &&
-        onPickVariable(
-          isObjectType
-            ? `var_${JSON.stringify({
-                id: parsed.id,
-                variable: variables?.list[parsed.id],
-                path: parsed.path,
-              })}`
-            : `var_${variables?.list[parsed.id].name}`,
-        );
-      error && onPickVariable(`var_${variables?.list[item].name}`);
-    }
-    if (category === "data") {
-      onPickVariable(variables?.list[item].id);
-    }
-
-    if (category === "changeVariable") {
-      onPickVariable(`var_${variables?.list[item].name}`);
-    }
-  };
-
-  const handleVariables = ({
-    item,
-    category,
-    onPickVariable,
-    javascriptCode,
-  }: VariableProps) => {
-    try {
-      const parsed = JSON.parse(item);
-      const isObjectType =
-        typeof parsed === "object" || variables[parsed.id].type === "OBJECT";
-      const pathStartsWithBracket = parsed.path.startsWith("[") ? "" : ".";
-      setSelectedItem(
-        `${prefixWithReturnIfNeeded(javascriptCode)}variables[/* ${
-          variables[parsed.id].name
-        } */'${parsed.id}']${pathStartsWithBracket}${parsed.path}`,
-      );
-      onPickVariable &&
-        handleVariableType({
-          item,
-          parsed,
-          isObjectType,
-          onPickVariable,
-          category,
-        });
-    } catch {
-      setSelectedItem(
-        `${prefixWithReturnIfNeeded(javascriptCode)}variables[/* ${variables
-          ?.list[item].name} */'${item}']`,
-      );
-      onPickVariable &&
-        handleVariableType({ item, error: true, onPickVariable, category });
-    }
-  };
-
-  const handleContext =
-    (context: "auth" | "components" | "browser" | "actions") =>
-    ({ item, onPick, javascriptCode }: BindType) => {
-      const pickedItem = context === "components" ? item : `${context}_${item}`;
-      const contextDescription =
-        context === "components"
-          ? `/* ${components?.list[item].description} */`
-          : "";
-      try {
-        const parsed = JSON.parse(item);
-        setSelectedItem(
-          `${prefixWithReturnIfNeeded(
-            javascriptCode,
-          )}${context}[${contextDescription}'${parsed.id}'].${parsed.path}`,
-        );
-      } catch {
-        setSelectedItem(
-          `${prefixWithReturnIfNeeded(
-            javascriptCode,
-          )}${context}[${contextDescription}'${item}']`,
-        );
-      } finally {
-        onPick && onPick(pickedItem);
-      }
+  const getEntityEditorValue = ({ selectedEntityId, entity }: BindType) => {
+    const entityHandlers = {
+      auth: () => `${entity}['${selectedEntityId}']`,
+      components: () =>
+        `${entity}[/* ${components?.list[selectedEntityId].description} */'${selectedEntityId}']`,
+      browser: () => `${entity}['${selectedEntityId}']`,
+      variables: () => {
+        try {
+          const parsed = JSON.parse(selectedEntityId);
+          return `${entity}[/* ${variables?.list[parsed.id].name} */].${
+            parsed.path
+          }`;
+        } catch {
+          return `${entity}[/* ${variables?.list[selectedEntityId].name} */]`;
+        }
+      },
     };
+
+    return setSelectedItem(entityHandlers[entity]());
+  };
 
   const getSelectedVariable = (id: string) =>
     variablesList.find((varItem) => varItem.id === id)?.defaultValue ?? id;
@@ -207,21 +111,16 @@ export const useBindingPopover = () => {
     variablesList.find((varItem) => varItem.id === id)?.name ?? id;
 
   const bindingPopoverProps = {
-    opened,
-    toggle,
-    close,
-    open,
     variables,
     components,
     browserList,
-    handleVariables,
     selectedItem,
     getSelectedVariable,
     getSelectedVariableName,
     variablesList,
     authData,
-    bindableContexts: [components, auth],
-    handleContext,
+    bindableContexts: [components, authData[0]],
+    getEntityEditorValue,
   };
 
   return bindingPopoverProps;

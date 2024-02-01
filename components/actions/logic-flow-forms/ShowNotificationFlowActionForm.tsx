@@ -44,9 +44,6 @@ export const ShowNotificationFlowActionForm = ({ form }: Props) => {
                 setComponentToBind(undefined);
                 setPickingComponentToBindTo(undefined);
               }}
-              onPickVariable={(variable: string) => {
-                form.setFieldValue(name, variable);
-              }}
               javascriptCode={form.values.actionCode}
               onChangeJavascriptCode={(
                 javascriptCode: string,

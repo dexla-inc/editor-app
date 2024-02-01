@@ -11,7 +11,7 @@ type JsProps = {
   variables?: Record<string, any>;
   components?: Record<string, any>;
   onChange?: any;
-  selectedItem?: any;
+  selectedItem?: string;
 };
 
 const RETURN_ERROR_CODE = 1108;
@@ -31,7 +31,6 @@ export function CustomJavaScriptTextArea({
 
   const [completionDisposable, setCompletionDisposable] = useState<any>();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedOnChange = useCallback(
     debounce((value) => {
       onChange(value);

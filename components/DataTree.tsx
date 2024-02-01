@@ -5,7 +5,7 @@ import { useMemo } from "react";
 type Props = {
   dataItems: any[];
   onItemSelection: (selected: string) => void;
-  type?: "components" | "variables" | "auth" | "actions" | "browser";
+  type?: "components" | "variables" | "auth" | "browser";
   filterKeyword?: string;
 };
 
