@@ -168,7 +168,6 @@ export const ChangeStateActionForm = ({ id }: Props) => {
                 />
 
                 <ComponentToBindFromInput
-                  value={componentId}
                   componentId={component?.id}
                   onPickComponent={(componentToBind: string) => {
                     form.setFieldValue(
@@ -179,19 +178,7 @@ export const ChangeStateActionForm = ({ id }: Props) => {
                     setPickingComponentToBindTo(undefined);
                     setComponentToBind(undefined);
                   }}
-                  onChange={(e) => {
-                    form.setFieldValue(
-                      `conditionRules.${i}.componentId`,
-                      e.currentTarget.value,
-                    );
-                  }}
-                  javascriptCode={form.values.actionCode}
-                  onChangeJavascriptCode={(
-                    javascriptCode: string,
-                    label: string,
-                  ) =>
-                    form.setFieldValue(`actionCode.${label}`, javascriptCode)
-                  }
+                  {...form.getInputProps(`conditionRules.${i}.componentId`)}
                 />
 
                 {["Radio", "Select"].includes(component!.name) ? (

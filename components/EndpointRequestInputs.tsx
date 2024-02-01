@@ -69,26 +69,9 @@ export const EndpointRequestInputs = ({ selectedEndpoint, form }: Props) => {
             return (
               <Stack key={param.name}>
                 <ComponentToBindFromInput
-                  componentId={component?.id!}
-                  onPickComponent={(componentToBind: string) => {
-                    const value = componentToBind.startsWith(
-                      "queryString_pass_",
-                    )
-                      ? componentToBind
-                      : `valueOf_${componentToBind}`;
-                    form.setFieldValue(field, value);
-                    setPickingComponentToBindTo(undefined);
-                    setComponentToBind(undefined);
-                  }}
-                  javascriptCode={form.values.actionCode}
-                  onChangeJavascriptCode={(
-                    javascriptCode: string,
-                    label: string,
-                  ) =>
-                    form.setFieldValue(`actionCode.${label}`, javascriptCode)
-                  }
                   size="xs"
                   label={param.name}
+                  componentId={component?.id!}
                   description={`${
                     // @ts-ignore
                     param.location ? `${param.location} - ` : ""
@@ -99,10 +82,17 @@ export const EndpointRequestInputs = ({ selectedEndpoint, form }: Props) => {
                       { required: param.required }
                     : {})}
                   {...additionalProps}
-                  {...form.getInputProps(field)}
-                  onChange={(e) => {
-                    form.setFieldValue(field, e.currentTarget.value);
+                  onPickComponent={(componentToBind: string) => {
+                    const value = componentToBind.startsWith(
+                      "queryString_pass_",
+                    )
+                      ? componentToBind
+                      : `valueOf_${componentToBind}`;
+                    form.setFieldValue(field, value);
+                    setPickingComponentToBindTo(undefined);
+                    setComponentToBind(undefined);
                   }}
+                  {...form.getInputProps(field)}
                 />
               </Stack>
             );

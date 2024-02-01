@@ -21,10 +21,10 @@ export const StaticFormFieldsBuilder = ({
 }: StaticFormFieldsBuilderProps) => {
   return (
     <ComponentToBindFromInput
-      key={field.name}
-      componentId={component?.id!}
       size="xs"
+      key={field.name}
       label={field.label}
+      componentId={component?.id!}
       placeholder={field.placeholder}
       {...form.getInputProps(`onLoad.${field.name}`)}
     />

@@ -134,7 +134,6 @@ export const ChangeStateActionFlowForm = ({ form }: Props) => {
 
               <ComponentToBindFromInput
                 isLogicFlow={true}
-                value={componentId}
                 onPickComponent={(componentToBind: string) => {
                   form.setFieldValue(
                     `conditionRules.${i}.componentId`,
@@ -144,23 +143,7 @@ export const ChangeStateActionFlowForm = ({ form }: Props) => {
                   setPickingComponentToBindTo(undefined);
                   setComponentToBind(undefined);
                 }}
-                onChange={(e) => {
-                  form.setFieldValue(
-                    `conditionRules.${i}.componentId`,
-                    e.currentTarget.value,
-                  );
-                }}
-                javascriptCode={form.values.actionCode}
-                onChangeJavascriptCode={(
-                  javascriptCode: string,
-                  label: string,
-                ) => {
-                  const actionCode = form.values.actionCode;
-                  form.setFieldValue(`actionCode`, {
-                    ...actionCode,
-                    [label]: javascriptCode,
-                  });
-                }}
+                {...form.getInputProps(`conditionRules.${i}.componentId`)}
               />
 
               {["Radio", "Select"].includes(component?.name!) ? (

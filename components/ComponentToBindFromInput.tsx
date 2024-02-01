@@ -55,14 +55,15 @@ export const ComponentToBindFromInput = ({
         onBlur={() => {
           setHighlightedComponentId(null);
         }}
-        rightSection={
-          onPickComponent &&
-          !isLogicFlow && (
-            <ActionIcon onClick={onBindComponent} size="xs">
-              <IconCurrentLocation size={ICON_SIZE} />
-            </ActionIcon>
-          )
-        }
+        // TODO: uncomment this when we have the ability to bind components
+        // rightSection={
+        //   onPickComponent &&
+        //   !isLogicFlow && (
+        //     <ActionIcon onClick={onBindComponent} size="xs">
+        //       <IconCurrentLocation size={ICON_SIZE} />
+        //     </ActionIcon>
+        //   )
+        // }
         styles={{
           ...(!isLogicFlow && {
             rightSection: { width: "3.65rem", justifyContent: "flex-end" },

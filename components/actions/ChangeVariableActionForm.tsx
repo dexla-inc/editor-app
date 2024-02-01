@@ -78,16 +78,10 @@ export const ChangeVariableActionForm = ({ id }: Props) => {
       <Stack spacing="xs">
         <VariableSelect required {...form.getInputProps("variableId")} />
         <ComponentToBindFromInput
+          required
           label="Value"
           componentId={selectedComponentId}
-          category="changeVariable"
-          javascriptCode={form.values.javascriptCode}
-          onChangeJavascriptCode={(javascriptCode: string) => {
-            setFieldValue("javascriptCode", javascriptCode);
-          }}
           {...form.getInputProps("value")}
-          onChange={(e) => setFieldValue("value", e.currentTarget.value)}
-          required
         />
 
         <ActionButtons

@@ -27,6 +27,7 @@ import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
+import { useDataContext } from "@/contexts/DataProvider";
 
 const TAB_TEXT_SIZE = "xs";
 const ML = 10;
@@ -49,15 +50,10 @@ export default function BindingPopover({
   const browser = useRouter(); // do not delete me, eval
   const [tab, setTab] = useState<BindingTab>("components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
+  const { variables, components, browserList, auth } = useDataContext();
+  const [selectedItem, setSelectedItem] = useState<string>();
 
-  const {
-    variables,
-    components,
-    browserList,
-    authData,
-    getEntityEditorValue,
-    selectedItem,
-  } = useBindingPopover();
+  const { getEntityEditorValue } = useBindingPopover();
 
   useEffect(
     () => {
@@ -96,7 +92,7 @@ export default function BindingPopover({
     },
     {
       entity: "auth",
-      dataItems: authData,
+      dataItems: auth,
     },
     {
       entity: "browser",
@@ -274,7 +270,9 @@ export default function BindingPopover({
                   filterKeyword={filterKeyword}
                   dataItems={dataItems}
                   onItemSelection={(selectedEntityId: string) =>
-                    getEntityEditorValue({ selectedEntityId, entity })
+                    setSelectedItem(
+                      getEntityEditorValue({ selectedEntityId, entity }),
+                    )
                   }
                   type={entity}
                 />

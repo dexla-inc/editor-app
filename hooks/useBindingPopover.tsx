@@ -6,14 +6,12 @@ import { getAllComponentsByName } from "@/utils/editor";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useDataContext } from "@/contexts/DataProvider";
 
 type BindType = {
   selectedEntityId: string;
   entity: "auth" | "components" | "browser" | "variables";
 };
-
-const prefixWithReturnIfNeeded = (code: string) =>
-  !code?.startsWith("return") ? "return " : " ";
 
 const parseVariableValue = (value: string): any => {
   try {
@@ -28,60 +26,9 @@ const processValue = (value: any, type: string) => {
 };
 
 export const useBindingPopover = () => {
-  const [selectedItem, setSelectedItem] = useState<string>();
-  const editorTree = useEditorStore((state) => state.tree);
-  const inputsStore = useInputsStore((state) => state.inputValues);
   const variablesList = useVariableStore((state) => state.variableList);
-  const getAuthState = useDataSourceStore((state) => state.getAuthState);
-  const browser = useRouter();
-  const authData = [getAuthState()];
 
-  // create variables list for binding
-  const variables = variablesList.reduce(
-    (acc, variable) => {
-      let value = variable.defaultValue ?? "";
-      const parsedValue = parseVariableValue(value);
-      const processedValue = processValue(parsedValue, variable.type);
-
-      acc.list[variable.id] = variable;
-      acc[variable.id] = processedValue;
-      acc[variable.name] = processedValue;
-      return acc;
-    },
-    { list: {} } as Record<string, any>,
-  );
-
-  // create a list for input components for binding
-  const components = getAllComponentsByName(editorTree.root, [
-    "Input",
-    "Select",
-    "Checkbox",
-    "RadioGroup",
-    "Switch",
-    "Textarea",
-  ]).reduce(
-    (acc, component) => {
-      const value = inputsStore[component?.id!];
-      component = { ...component, name: component.description! };
-      acc.list[component?.id!] = component;
-      acc[component?.id!] = value;
-      return acc;
-    },
-    { list: {} } as Record<string, any>,
-  );
-
-  // create browser list for binding
-  const browserList = Object.entries(
-    pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
-  ).map(([key, value]) => {
-    const isObject = typeof value === "object";
-    return {
-      id: key,
-      name: key,
-      value: isObject ? JSON.stringify(value) : value,
-      type: isObject ? "OBJECT" : "STRING",
-    };
-  });
+  const { variables, components } = useDataContext();
 
   const getEntityEditorValue = ({ selectedEntityId, entity }: BindType) => {
     const entityHandlers = {
@@ -92,16 +39,16 @@ export const useBindingPopover = () => {
       variables: () => {
         try {
           const parsed = JSON.parse(selectedEntityId);
-          return `${entity}[/* ${variables?.list[parsed.id].name} */].${
-            parsed.path
-          }`;
+          return `${entity}[/* ${variables?.list[parsed.id].name} */ '${
+            parsed.id
+          }'].${parsed.path}`;
         } catch {
-          return `${entity}[/* ${variables?.list[selectedEntityId].name} */]`;
+          return `${entity}[/* ${variables?.list[selectedEntityId].name} */ '${selectedEntityId}']`;
         }
       },
     };
 
-    return setSelectedItem(entityHandlers[entity]());
+    return entityHandlers[entity]();
   };
 
   const getSelectedVariable = (id: string) =>
@@ -110,18 +57,9 @@ export const useBindingPopover = () => {
   const getSelectedVariableName = (id: string) =>
     variablesList.find((varItem) => varItem.id === id)?.name ?? id;
 
-  const bindingPopoverProps = {
-    variables,
-    components,
-    browserList,
-    selectedItem,
+  return {
     getSelectedVariable,
     getSelectedVariableName,
-    variablesList,
-    authData,
-    bindableContexts: [components, authData[0]],
     getEntityEditorValue,
   };
-
-  return bindingPopoverProps;
 };

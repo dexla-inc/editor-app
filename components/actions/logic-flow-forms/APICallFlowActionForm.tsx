@@ -178,18 +178,6 @@ export const APICallFlowActionForm = ({ form }: Props) => {
                           setPickingComponentToBindTo(undefined);
                           setComponentToBind(undefined);
                         }}
-                        javascriptCode={form.values.actionCode}
-                        onChangeJavascriptCode={(
-                          javascriptCode: string,
-                          label: string,
-                        ) => {
-                          const actionCode = form.values.actionCode;
-                          form.setFieldValue(`actionCode`, {
-                            ...actionCode,
-                            [label]: javascriptCode,
-                          });
-                        }}
-                        size="xs"
                         label={param.name}
                         description={`${
                           // @ts-ignore
@@ -202,14 +190,6 @@ export const APICallFlowActionForm = ({ form }: Props) => {
                           : {})}
                         {...additionalProps}
                         {...form.getInputProps(field)}
-                        // @ts-ignore
-                        value={form.values[field] ?? undefined}
-                        onChange={(e) => {
-                          form.setValues({
-                            ...form.values,
-                            [field]: e.currentTarget.value,
-                          });
-                        }}
                       />
                     </Stack>
                   );
