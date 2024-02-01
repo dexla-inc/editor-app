@@ -220,8 +220,10 @@ const globalStyles = (isDarkTheme?: boolean) => ({
   },
 });
 
-// Default Theme
-const defaultTheme: MantineThemeExtended = {
+const defaultFontFamily = "Open Sans";
+
+// Default Users Theme
+const defaultUsersTheme: MantineThemeExtended = {
   ...DEFAULT_THEME,
   colors: {
     ...DEFAULT_THEME.colors,
@@ -240,20 +242,77 @@ const defaultTheme: MantineThemeExtended = {
     White: ["", "", "", "", "", "#FFFFFF", "", "", "", ""],
     Border: ["", "", "", "", "", "#EEEEEE", "", "", "", ""],
   },
-  fonts: [],
-  fontFamily: "Arial, sans-serif",
+  fonts: [
+    {
+      fontFamily: defaultFontFamily,
+      tag: "H1",
+      fontWeight: "500",
+      fontSize: 48,
+      lineHeight: 1.5,
+      letterSpacing: 0,
+    },
+    {
+      fontFamily: defaultFontFamily,
+      tag: "H2",
+      fontWeight: "500",
+      fontSize: 28,
+      lineHeight: 1.5,
+      letterSpacing: 0,
+    },
+    {
+      fontFamily: defaultFontFamily,
+      tag: "H3",
+      fontWeight: "500",
+      fontSize: 24,
+      lineHeight: 1.67,
+      letterSpacing: 0,
+    },
+    {
+      fontFamily: defaultFontFamily,
+      tag: "H4",
+      fontWeight: "600",
+      fontSize: 22,
+      lineHeight: 1.45,
+      letterSpacing: 0,
+    },
+    {
+      fontFamily: defaultFontFamily,
+      tag: "H5",
+      fontWeight: "500",
+      fontSize: 20,
+      lineHeight: 1.2,
+      letterSpacing: 0,
+    },
+    {
+      fontFamily: defaultFontFamily,
+      tag: "H6",
+      fontWeight: "600",
+      fontSize: 18,
+      lineHeight: 1.33,
+      letterSpacing: 0,
+    },
+    {
+      fontFamily: defaultFontFamily,
+      tag: "P",
+      fontWeight: "400",
+      fontSize: 14,
+      lineHeight: 1.43,
+      letterSpacing: 0,
+    },
+  ],
+  fontFamily: defaultFontFamily,
   headings: {
     ...DEFAULT_THEME.headings,
-    fontFamily: "Arial, sans-serif",
+    fontFamily: defaultFontFamily,
   },
   primaryColor: "teal",
-  defaultFont: "Arial, sans-serif",
+  defaultFont: defaultFontFamily,
   hasCompactButtons: true,
   //focusRing: "DEFAULT",  Need to do focusRingStyles: {     styles(theme: MantineThemeBase): CSSObject;
   loader: "oval",
   cardStyle: "OUTLINED_ROUNDED",
-  defaultSpacing: "md",
-  defaultRadius: "xl",
+  defaultSpacing: "sm",
+  defaultRadius: "sm",
   inputSize: "sm",
   theme: "LIGHT",
 };
@@ -369,7 +428,7 @@ export {
   THIN_ORANGE_BASE_SHADOW,
   TRANSPARENT_COLOR,
   darkTheme,
-  defaultTheme,
+  defaultUsersTheme as defaultTheme,
   flexStyles,
   getHoverColor,
   globalStyles,
