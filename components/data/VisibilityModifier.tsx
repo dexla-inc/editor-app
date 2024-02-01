@@ -1,4 +1,3 @@
-import BindingPopover from "@/components/BindingPopover";
 import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { getComponentInitialDisplayValue } from "@/utils/common";
 import { Group, Stack } from "@mantine/core";
@@ -9,11 +8,7 @@ type Props = {
   componentName: string;
 };
 
-export const VisibilityModifier = ({
-  componentId,
-  componentName,
-  form,
-}: Props) => {
+export const VisibilityModifier = ({ componentName, form }: Props) => {
   return (
     <Group spacing="xs" noWrap align="end">
       <Stack w="100%">
@@ -32,15 +27,12 @@ export const VisibilityModifier = ({
           {...form.getInputProps("props.style.display")}
         />
       </Stack>
-      <BindingPopover
-        bindingType="JavaScript"
-        category="appearance"
-        onChangeBindingType={() => {}}
-        javascriptCode={form.values.actionCode?.[componentId] as string}
-        onChangeJavascriptCode={(javascriptCode: string) => {
-          form.setFieldValue(`props.actionCode.${componentId}`, javascriptCode);
-        }}
-      />
+      {/* TODO: come with a solution to make bindable style properties */}
+      {/*<BindingPopover*/}
+      {/*  value={}*/}
+      {/*  onChange={}*/}
+      {/*  prop="props.style.display"*/}
+      {/*/>*/}
     </Group>
   );
 };

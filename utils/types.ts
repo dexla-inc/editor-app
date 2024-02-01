@@ -5,3 +5,10 @@ export type BindingTab =
   | "actions"
   | "auth"
   | "browser";
+
+export type ValueProps = {
+  dataType?: "static" | "dynamic" | "boundCode";
+  static: string;
+  dynamic: string;
+  boundCode: string;
+};

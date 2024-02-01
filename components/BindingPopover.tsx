@@ -8,7 +8,7 @@ import {
   DEFAULT_TEXTCOLOR,
 } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
-import { BindingTab } from "@/utils/types";
+import { BindingTab, ValueProps } from "@/utils/types";
 import {
   ActionIcon,
   Box,
@@ -26,15 +26,14 @@ import {
 import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
-import { useRouter } from "next/router";
 import { useDataContext } from "@/contexts/DataProvider";
 
 const TAB_TEXT_SIZE = "xs";
 const ML = 10;
 
 type Props = {
-  value: any;
-  onChange: (value: any) => void;
+  value: ValueProps;
+  onChange: (value: ValueProps) => void;
   style?: "input" | "iconButton";
 };
 
@@ -47,10 +46,10 @@ export default function BindingPopover({
     opened,
     { toggle: onTogglePopOver, close: onClosePopOver, open: onOpenPopOver },
   ] = useDisclosure(false);
-  const browser = useRouter(); // do not delete me, eval
   const [tab, setTab] = useState<BindingTab>("components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
-  const { variables, components, browserList, auth } = useDataContext();
+  const { variables, components, browserList, auth, computeValue } =
+    useDataContext()!;
   const [selectedItem, setSelectedItem] = useState<string>();
 
   const { getEntityEditorValue } = useBindingPopover();
@@ -67,16 +66,7 @@ export default function BindingPopover({
     [value?.boundCode],
   );
 
-  const autoRunJavascriptCode = () => {
-    try {
-      return eval(
-        `(function autoRunJavascriptCode() { ${value?.boundCode} })`,
-      )();
-    } catch {
-      return "undefined";
-    }
-  };
-  const currentValue = autoRunJavascriptCode();
+  const currentValue = computeValue({ value });
 
   const entitiesDataTreeList: Array<{
     entity: "auth" | "components" | "browser" | "variables";

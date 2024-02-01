@@ -1,15 +1,7 @@
 import BindingPopover from "@/components/BindingPopover";
 import { useEditorStore } from "@/stores/editor";
-import { ICON_SIZE } from "@/utils/config";
-import { ActionIcon, Flex, TextInput, TextInputProps } from "@mantine/core";
-import { IconCurrentLocation } from "@tabler/icons-react";
-
-type ValueProps = {
-  dataType: string;
-  static: string;
-  dynamic: string;
-  boundCode: (props: Record<string, any>) => any;
-};
+import { Flex, TextInput, TextInputProps } from "@mantine/core";
+import { ValueProps } from "@/utils/types";
 
 type Props = Omit<TextInputProps, "value" | "onChange"> & {
   componentId?: string;

@@ -13,22 +13,10 @@ type BindType = {
   entity: "auth" | "components" | "browser" | "variables";
 };
 
-const parseVariableValue = (value: string): any => {
-  try {
-    return JSON.parse(value);
-  } catch (_) {
-    return value;
-  }
-};
-
-const processValue = (value: any, type: string) => {
-  return type === "STRING" ? value.toString() : value;
-};
-
 export const useBindingPopover = () => {
   const variablesList = useVariableStore((state) => state.variableList);
 
-  const { variables, components } = useDataContext();
+  const { variables, components } = useDataContext()!;
 
   const getEntityEditorValue = ({ selectedEntityId, entity }: BindType) => {
     const entityHandlers = {

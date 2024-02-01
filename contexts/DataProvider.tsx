@@ -1,14 +1,29 @@
 import { createContext, useContext } from "react";
 import { useVariableStore } from "@/stores/variables";
-import { getAllComponentsByName } from "@/utils/editor";
+import { Component, getAllComponentsByName } from "@/utils/editor";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
-import { useDataSourceStore } from "@/stores/datasource";
+import { AuthState, useDataSourceStore } from "@/stores/datasource";
+import get from "lodash.get";
+import { ValueProps } from "@/utils/types";
 
 type DataProviderProps = {
   children: React.ReactNode;
+};
+
+type GetValueProps = {
+  value?: ValueProps;
+  shareableContent?: any;
+};
+
+type DataContextProps = {
+  variables: { list: Record<string, any> };
+  components: { list: Record<string, any> };
+  browserList: any[];
+  auth: AuthState & { refreshToken?: string }[];
+  computeValue: (props: GetValueProps) => any;
 };
 
 const parseVariableValue = (value: string): any => {
@@ -23,19 +38,14 @@ const processValue = (value: any, type: string) => {
   return type === "STRING" ? value.toString() : value;
 };
 
-export const DataContext = createContext({
-  variables: { list: {} as Record<string, any> },
-  components: { list: {} as Record<string, any> },
-  browserList: [],
-  auth: {},
-});
+export const DataContext = createContext<DataContextProps | null>(null);
 
 export const DataProvider = ({ children }: DataProviderProps) => {
   const variablesList = useVariableStore((state) => state.variableList);
   const editorTree = useEditorStore((state) => state.tree);
   const inputsStore = useInputsStore((state) => state.inputValues);
   const browser = useRouter();
-  const auth = useDataSourceStore((state) => [state.getAuthState]);
+  const auth = useDataSourceStore((state) => [state.getAuthState()]);
 
   const variables = variablesList.reduce(
     (acc, variable) => {
@@ -81,8 +91,42 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     };
   }) as any;
 
+  const autoRunJavascriptCode = (boundCode: string) => {
+    try {
+      return eval(`(function () { ${boundCode} })`)();
+    } catch {
+      return "undefined";
+    }
+  };
+
+  const computeValue = ({ value, shareableContent }: GetValueProps) => {
+    if (!value) {
+      return;
+    }
+
+    let dataType = value?.dataType ?? "static";
+
+    const valueHandlers = {
+      dynamic: () => {
+        return get(shareableContent, `data.${value?.dynamic}`, value?.dynamic);
+      },
+      static: () => value?.static,
+      boundCode: () => autoRunJavascriptCode(value?.boundCode),
+    };
+
+    return valueHandlers[dataType]();
+  };
+
   return (
-    <DataContext.Provider value={{ variables, components, browserList, auth }}>
+    <DataContext.Provider
+      value={{
+        variables,
+        components,
+        browserList,
+        auth,
+        computeValue,
+      }}
+    >
       {children}
     </DataContext.Provider>
   );

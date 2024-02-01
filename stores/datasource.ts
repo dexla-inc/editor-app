@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
-type AuthState = {
+export type AuthState = {
   accessToken?: string;
   expiresAt?: number;
 };

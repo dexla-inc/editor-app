@@ -52,7 +52,8 @@ import get from "lodash.get";
 import merge from "lodash.merge";
 import { Router } from "next/router";
 import { getComponentInitialDisplayValue } from "./common";
-import { BindingType } from "./types";
+import { BindingType, ValueProps } from "./types";
+import { useDataContext } from "@/contexts/DataProvider";
 
 const triggers = [
   "onClick",
@@ -715,23 +716,29 @@ function getQueryElementValue(value: string): string {
   return el?.value ?? "";
 }
 
-const getVariablesValue = (objs: Record<string, string>) => {
-  return Object.values(objs).reduce((acc, key) => {
-    let value = key;
+const getVariablesValue = (
+  objs: Record<string, ValueProps>,
+  computeValue: any,
+) => {
+  return Object.entries(objs).reduce((acc, [key, value]) => {
+    // TODO: remove this code
+    // let value = key;
 
-    if (key.startsWith(`valueOf_`)) {
-      value = getElementValue(key);
-    } else if (key?.startsWith(`queryString_pass_`)) {
-      value = getQueryElementValue(key);
-    } else if (key.startsWith(`var_`)) {
-      value = getVariableValueFromVariableId(key) as string;
-    } else if (key.startsWith(`auth_`)) {
-      value = getAuthValueFromAuthId(key) as string;
-    }
+    // if (key.startsWith(`valueOf_`)) {
+    //   value = getElementValue(key);
+    // } else if (key?.startsWith(`queryString_pass_`)) {
+    //   value = getQueryElementValue(key);
+    // } else if (key.startsWith(`var_`)) {
+    //   value = getVariableValueFromVariableId(key) as string;
+    // } else if (key.startsWith(`auth_`)) {
+    //   value = getAuthValueFromAuthId(key) as string;
+    // }
 
-    if (value) {
+    const fieldValue = computeValue({ value });
+
+    if (fieldValue) {
       // @ts-ignore
-      acc[key] = value;
+      acc[key] = fieldValue;
     }
 
     return acc;
@@ -781,20 +788,25 @@ const getUrl = (
 
 const getBody = (endpoint: Endpoint, action: any, variableValues: any) => {
   return endpoint?.methodType === "POST"
-    ? Object.keys(action.binds?.body ?? {}).reduce((body: any, key: string) => {
-        let value = action.binds.body[key] as string;
-
-        if (!value) {
-          return body;
-        }
-
-        value = variableValues[value];
-        return { ...body, [key]: value };
-      }, {} as any)
-    : undefined;
+    ? variableValues
+    : // Object.keys(action.binds?.body ?? {}).reduce((body: any, key: string) => {
+      //   let value = action.binds.body[key] as string;
+      //
+      //   if (!value) {
+      //     return body;
+      //   }
+      //
+      //   value = variableValues[value];
+      //   return { ...body, [key]: value };
+      // }, {} as any)
+      undefined;
 };
 
-export const prepareRequestData = (action: any, endpoint: Endpoint) => {
+export const prepareRequestData = (
+  action: any,
+  endpoint: Endpoint,
+  computeValue: any,
+) => {
   if (!endpoint) {
     return { url: "", body: {} };
   }
@@ -804,6 +816,7 @@ export const prepareRequestData = (action: any, endpoint: Endpoint) => {
 
   const variableValues = getVariablesValue(
     merge(action.binds?.body ?? {}, action.binds?.parameter ?? {}),
+    computeValue,
   );
 
   const url = getUrl(keys ?? [], apiUrl, action, variableValues);
@@ -912,9 +925,10 @@ const setLoadingState = (
   updateTreeComponent({ componentId, props: { loading: isLoading } });
 };
 
-export const apiCallAction =
-  () =>
-  async ({
+export const useApiCallAction = () => {
+  const { computeValue } = useDataContext()!;
+
+  return async ({
     actionId,
     action,
     router,
@@ -929,7 +943,11 @@ export const apiCallAction =
       setLoadingState(component.id!, true, updateTreeComponent);
       const accessToken = useDataSourceStore.getState().authState.accessToken;
 
-      const { url, body } = prepareRequestData(action, action.selectedEndpoint);
+      const { url, body } = prepareRequestData(
+        action,
+        action.selectedEndpoint,
+        computeValue,
+      );
 
       let responseJson;
 
@@ -1002,6 +1020,7 @@ export const apiCallAction =
       setLoadingState(component.id!, false, updateTreeComponent);
     }
   };
+};
 
 export const changeLanguageAction =
   () =>
@@ -1127,7 +1146,7 @@ export const actionMapper = {
     flowForm: NavigationFlowActionForm,
   },
   apiCall: {
-    action: apiCallAction,
+    action: useApiCallAction,
     form: APICallActionForm,
     flowForm: APICallFlowActionForm,
   },
