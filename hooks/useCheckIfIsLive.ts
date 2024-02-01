@@ -1,4 +1,4 @@
-import { getByDomain } from "@/requests/projects/queries-noauth";
+import { getProject } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
 import { isEditor } from "@/utils/common";
 import { useRouter } from "next/router";
@@ -20,7 +20,7 @@ export const useCheckIfIsLive = () => {
       try {
         let _projectId = projectId;
         if (!projectId) {
-          const project = await getByDomain(url);
+          const project = await getProject(url);
           _projectId = project.id ?? projectId;
         }
 

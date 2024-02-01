@@ -1,7 +1,7 @@
 import { Live } from "@/components/Live";
 import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
-import { getByDomain } from "@/requests/projects/queries-noauth";
+import { getProject } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
@@ -11,7 +11,7 @@ export const getServerSideProps = async ({
   req,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
-  const project = await getByDomain(url);
+  const project = await getProject(url);
   const id = project.id;
   const faviconUrl = project.faviconUrl ?? "";
 
