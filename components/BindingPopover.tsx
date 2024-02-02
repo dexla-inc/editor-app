@@ -171,9 +171,7 @@ export default function BindingPopover({
                   },
                 ]}
               />
-              <Button onClick={onClickUnbind} variant="default">
-                Unbind
-              </Button>
+              <Button onClick={onClickUnbind}>Unbind</Button>
             </Flex>
             <ActionIcon variant="light" radius="xl">
               <Icon name="IconCopy" />

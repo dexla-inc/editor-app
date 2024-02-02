@@ -170,11 +170,7 @@ export const APICallFlowActionForm = ({ form }: Props) => {
                     <Stack key={param.name}>
                       <ComponentToBindFromInput
                         isLogicFlow={true}
-                        onPickComponent={(componentToBind: string) => {
-                          form.setValues({
-                            ...form.values,
-                            [field]: `valueOf_${componentToBind}`,
-                          });
+                        onPickComponent={() => {
                           setPickingComponentToBindTo(undefined);
                           setComponentToBind(undefined);
                         }}

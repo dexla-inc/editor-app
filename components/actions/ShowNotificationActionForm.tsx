@@ -92,9 +92,7 @@ export const ShowNotificationActionForm = ({ id }: Props) => {
               <ComponentToBindFromInput
                 label={title}
                 componentId={selectedComponentId}
-                onPickComponent={(componentToBind: string) => {
-                  form.setFieldValue(name, `valueOf_${componentToBind}`);
-
+                onPickComponent={() => {
                   setPickingComponentToBindTo(undefined);
                   setComponentToBind(undefined);
                 }}
