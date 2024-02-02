@@ -319,8 +319,11 @@ export const useNavigationAction =
     router.push(url);
   };
 
-export const useGoToUrlAction = () => {
-  const { computeValue } = useDataContext()!;
+export const useGoToUrlAction = (computeValue?: any) => {
+  if (!computeValue) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    computeValue = useDataContext()!.computeValue;
+  }
   return async ({ action }: GoToUrlParams) => {
     const { url, openInNewTab } = action;
     const value = computeValue({ value: url });
@@ -504,8 +507,11 @@ export const useChangeStepAction = () => {
   };
 };
 
-export const useChangeVisibilityAction = () => {
-  const { computeValue } = useDataContext()!;
+export const useChangeVisibilityAction = (computeValue?: any) => {
+  if (!computeValue) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    computeValue = useDataContext()!.computeValue;
+  }
   return ({ action }: TogglePropsActionParams) => {
     const editorStore = useEditorStore.getState();
     const updateTreeComponent = editorStore.updateTreeComponent;
@@ -611,8 +617,11 @@ const getVariableValueFromVariableId = (variableId = "") => {
   }
 };
 
-export const useShowNotificationAction = () => {
-  const { computeValue } = useDataContext()!;
+export const useShowNotificationAction = (computeValue?: any) => {
+  if (!computeValue) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    computeValue = useDataContext()!.computeValue;
+  }
   return async ({ action }: ShowNotificationActionParams) => {
     showNotification({
       title: computeValue({ value: action.title }),
@@ -627,8 +636,11 @@ export const useTriggerLogicFlowAction =
     executeFlow(params.action.logicFlowId, params);
   };
 
-export const useChangeStateAction = () => {
-  const { computeValue } = useDataContext()!;
+export const useChangeStateAction = (computeValue?: any) => {
+  if (!computeValue) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    computeValue = useDataContext()!.computeValue;
+  }
   return ({ action, event }: ChangeStateActionParams) => {
     const setTreeComponentCurrentState =
       useEditorStore.getState().setTreeComponentCurrentState;
@@ -797,11 +809,13 @@ const handleError = async (
   component: any,
   actionMapper: any,
   updateTreeComponent: any,
+  computeValue: any,
 ) => {
   if (onError && onError.sequentialTo === actionId) {
     const actions = component.actions ?? [];
     const onErrorAction = actions.find((a: Action) => a.trigger === "onError");
-    const onErrorActionMapped = actionMapper[onError.action.name].action();
+    const onErrorActionMapped =
+      actionMapper[onError.action.name].action(computeValue);
     let errorMessage = "";
 
     try {
@@ -831,15 +845,17 @@ const handleSuccess = async (
   action: any,
   actionMapper: any,
   updateTreeComponent: any,
+  computeValue: any,
 ) => {
   if (onSuccess && onSuccess.sequentialTo === actionId) {
     const actions = component.actions ?? [];
     const onSuccessAction = actions.find(
       (a: Action) => a.trigger === "onSuccess",
     );
-    const onSuccessActionMapped = actionMapper[onSuccess.action.name];
+    const onSuccessActionMapped =
+      actionMapper[onSuccess.action.name].action(computeValue);
 
-    onSuccessActionMapped.action({
+    onSuccessActionMapped({
       action: onSuccessAction?.action,
       binds: action.binds,
       router,
@@ -976,6 +992,7 @@ export const useApiCallAction = () => {
         action,
         actionMapper,
         updateTreeComponent,
+        computeValue,
       );
     } catch (error) {
       await handleError(
@@ -987,6 +1004,7 @@ export const useApiCallAction = () => {
         component,
         actionMapper,
         updateTreeComponent,
+        computeValue,
       );
     } finally {
       setLoadingState(component.id!, false, updateTreeComponent);
@@ -1013,8 +1031,11 @@ export type ChangeVariableActionParams = ActionParams & {
   action: ChangeVariableAction;
 };
 
-export const useChangeVariableAction = () => {
-  const { computeValue } = useDataContext()!;
+export const useChangeVariableAction = (computeValue?: any) => {
+  if (!computeValue) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    computeValue = useDataContext()!.computeValue;
+  }
 
   return async ({ action }: ChangeVariableActionParams) => {
     const setVariable = useVariableStore.getState().setVariable;
