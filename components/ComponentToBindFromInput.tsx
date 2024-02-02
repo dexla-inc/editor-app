@@ -1,8 +1,9 @@
 import BindingPopover from "@/components/BindingPopover";
 import { useEditorStore } from "@/stores/editor";
+import { Flex, TextInput, TextInputProps } from "@mantine/core";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ValueProps } from "@/utils/types";
-import { Flex, TextInput, TextInputProps } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 
 type Props = Omit<TextInputProps, "value" | "onChange"> & {
   componentId?: string;
@@ -28,9 +29,37 @@ export const ComponentToBindFromInput = ({
   const setHighlightedComponentId = useEditorStore(
     (state) => state.setHighlightedComponentId,
   );
+  const [
+    isBindingPopOverOpen,
+    { open: onOpenBindingPopOver, close: onCloseBindingPopOver },
+  ] = useDisclosure(false);
+
+  const onBindComponent = () => {
+    setPickingComponentToBindTo({
+      componentId: componentId || "",
+      onPick: onPickComponent,
+    });
+  };
 
   return (
-    <Flex align="end" gap="xs">
+    <Flex align="end" gap="xs" pos="relative">
+      {value.dataType === "boundCode" && (
+        <TextInput
+          pos="absolute"
+          w="100%"
+          styles={{
+            root: { zIndex: 100 },
+            input: {
+              cursor: "pointer",
+              "&:disabled": { opacity: 1 },
+            },
+          }}
+          readOnly
+          value="< Edit Code >"
+          disabled={isBindingPopOverOpen}
+          onClick={onOpenBindingPopOver}
+        />
+      )}
       <TextInput
         size="xs"
         placeholder={placeholder}
@@ -65,7 +94,16 @@ export const ComponentToBindFromInput = ({
         {...props}
         {...AUTOCOMPLETE_OFF_PROPS}
       />
-      <BindingPopover value={value} onChange={onChange} style="iconButton" />
+      <BindingPopover
+        value={value}
+        onChange={onChange}
+        controls={{
+          isOpen: isBindingPopOverOpen,
+          onClose: onCloseBindingPopOver,
+          onOpen: onOpenBindingPopOver,
+        }}
+        style="iconButton"
+      />
     </Flex>
   );
 };

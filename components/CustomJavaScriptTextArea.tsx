@@ -55,9 +55,16 @@ export function CustomJavaScriptTextArea({
       const row = selection.positionLineNumber - 1;
       const column = selection.positionColumn - 1;
 
-      const lines = value.split("\n");
+      const isValueEmpty = value === "";
+      const prefixWhenEmpty = "return ";
+
+      const lines = (isValueEmpty ? prefixWhenEmpty : value).split("\n");
       const targetLineChars = lines[row].split("");
-      targetLineChars.splice(column, 0, ...selectedItem);
+      targetLineChars.splice(
+        isValueEmpty ? column + prefixWhenEmpty.length : column,
+        0,
+        ...selectedItem,
+      );
       lines[row] = targetLineChars.join("");
 
       onChange(lines.join("\n"));
