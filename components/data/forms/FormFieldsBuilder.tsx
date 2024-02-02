@@ -62,7 +62,8 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   return (
     <>
       {fields.map((f) => {
-        const isDynamic = form.values.onLoad[f.name]?.dataType === "dynamic";
+        const load = form.values.onLoad;
+        const isDynamic = load ? load[f.name]?.dataType === "dynamic" : false;
         const DataTypeIcon = isDynamic ? IconPlugOff : IconPlug;
 
         return (
