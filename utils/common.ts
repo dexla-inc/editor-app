@@ -53,15 +53,30 @@ export const isEditor = (baseUrl: string) => {
 export type UrlType = "project" | "live" | "editor";
 
 export const getProjectType = (href: string): UrlType => {
-  const pattern = new RegExp("[0-9a-fA-F]{32}/editor/[0-9a-fA-F]{32}$");
-  if (pattern.test(href)) {
-    return "editor";
+  if (href.includes("dexla-inc.vercel.app")) {
+    // Define patterns to match specific cases within the dexla-inc.vercel.app domain
+    const editorPattern = new RegExp(
+      "dexla-inc.vercel.app.*/editor/[0-9a-fA-F]{32}$",
+    );
+    const projectPattern = new RegExp(
+      "dexla-inc.vercel.app/(projects|playground|team)/[0-9a-fA-F]{32}",
+    );
+
+    if (editorPattern.test(href)) {
+      return "editor";
+    } else if (projectPattern.test(href)) {
+      return "project";
+    } else {
+      return "live";
+    }
   } else if (
+    // Check for other specific conditions outside the dexla-inc.vercel.app domain
     href.includes("http://localhost:3000") ||
     href.includes("app.dexla.ai")
   ) {
     return "project";
   } else {
+    // Default case for all other URLs
     return "live";
   }
 };

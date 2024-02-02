@@ -17,12 +17,12 @@ export const useCheckIfIsLive = () => {
   // Need this to check the type of page
   useEffect(() => {
     console.log("Checking page type");
-    const currentUrlType = getProjectType(
-      typeof window !== "undefined" ? window.location.href : "",
-    );
+    const hrefUrl = typeof window !== "undefined" ? window.location.href : "";
+    const currentUrlType = getProjectType(hrefUrl);
     if (urlType !== currentUrlType) {
       setUrlType(currentUrlType);
     }
+    console.log("URLS", hrefUrl, router.asPath, currentUrlType);
   }, [router.asPath]);
 
   // Only do this when page refreshes
