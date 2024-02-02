@@ -14,61 +14,58 @@ type VariablesState = {
 
 export const useVariableStore = create<VariablesState>()(
   devtools(
-    persist(
-      (set, get) => ({
-        variableList: [],
-        initializeVariableList: (variableList) => {
-          const _variableList = get().variableList;
-          const isArraysEqual = isEqual(_variableList, variableList);
-          if (!isArraysEqual)
-            set({ variableList }, false, "variables/initializeVariableList");
-        },
-        setVariable: (varProps, id) => {
-          const _variableList = get().variableList;
-
-          const index = _variableList.findIndex((item) => item?.id === id);
-          if (index >= 0) {
-            _variableList[index] = { ..._variableList[index], ...varProps };
-            set(
-              { variableList: [..._variableList] },
-              false,
-              "variables/setVariable",
-            );
-          } else {
-            set(
-              {
-                variableList: [
-                  ..._variableList,
-                  { id, ...(varProps as VariableParams) },
-                ],
-              },
-              false,
-              "variables/setVariable",
-            );
-          }
-        },
-        deleteVariable: (variableId) => {
-          const _variableList = get().variableList;
-          const index = _variableList.findIndex(
-            (item) => item?.id === variableId,
-          );
-          if (index >= 0) {
-            _variableList?.splice(index, 1);
-            set(
-              { variableList: [...(_variableList ?? [])] },
-              false,
-              "variables/deleteVariable",
-            );
-          }
-        },
-      }),
-      {
-        name: "variables-storage",
-        partialize: (state: VariablesState) => ({
-          variableList: state.variableList,
-        }),
+    (set, get) => ({
+      variableList: [],
+      initializeVariableList: (variableList) => {
+        const _variableList = get().variableList;
+        const isArraysEqual = isEqual(_variableList, variableList);
+        if (!isArraysEqual)
+          set({ variableList }, false, "variables/initializeVariableList");
       },
-    ),
-    { name: "Variables store" },
+      setVariable: (varProps, id) => {
+        const _variableList = get().variableList;
+
+        const index = _variableList.findIndex((item) => item?.id === id);
+        if (index >= 0) {
+          _variableList[index] = { ..._variableList[index], ...varProps };
+          set(
+            { variableList: [..._variableList] },
+            false,
+            "variables/setVariable",
+          );
+        } else {
+          set(
+            {
+              variableList: [
+                ..._variableList,
+                { id, ...(varProps as VariableParams) },
+              ],
+            },
+            false,
+            "variables/setVariable",
+          );
+        }
+      },
+      deleteVariable: (variableId) => {
+        const _variableList = get().variableList;
+        const index = _variableList.findIndex(
+          (item) => item?.id === variableId,
+        );
+        if (index >= 0) {
+          _variableList?.splice(index, 1);
+          set(
+            { variableList: [...(_variableList ?? [])] },
+            false,
+            "variables/deleteVariable",
+          );
+        }
+      },
+    }),
+    {
+      name: "variables-storage",
+      partialize: (state: VariablesState) => ({
+        variableList: state.variableList,
+      }),
+    },
   ),
 );

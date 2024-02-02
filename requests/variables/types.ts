@@ -3,7 +3,8 @@ import { PagingParams } from "@/requests/types";
 export type VariableParams = {
   name: string;
   type: FrontEndTypes;
-  defaultValue: string | null;
+  defaultValue?: string | null;
+  value: string | null;
 };
 
 export type FrontEndTypes = "TEXT" | "NUMBER" | "BOOLEAN" | "OBJECT" | "ARRAY";
