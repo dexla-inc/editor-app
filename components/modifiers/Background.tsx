@@ -100,7 +100,7 @@ export const Modifier = withModifier(
               label="Color"
               {...form.getInputProps("bg")}
               onChange={(value: string) =>
-                setBackgroundColor("color", value, form, currentState)
+                setBackgroundColor("bg", value, form, currentState)
               }
             />
           ) : (
