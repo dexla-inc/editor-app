@@ -87,12 +87,9 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
   const autoRunJavascriptCode = (boundCode: string) => {
     try {
-      console.log({ boundCode });
       const result = eval(`(function () { ${boundCode} })`)();
-
       return isEmpty(result) ? result : result.toString();
     } catch {
-      console.log("QUEBROUUUUU");
       return;
     }
   };
