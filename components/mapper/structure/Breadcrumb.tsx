@@ -28,13 +28,8 @@ export const jsonStructure = (props?: any): Component => {
         name: "Text",
         description: "Breadcrumb Item",
         children: [],
-        onLoad: {
-          children: {
-            dataType: "static",
-            value: "Home",
-          },
-        },
         props: {
+          children: "Home",
           color: `${theme.colors.Black ? "Black.6" : "dark"}`,
           style: {
             fontSize: `${px(theme.fontSizes.sm)}px`,
@@ -52,13 +47,8 @@ export const jsonStructure = (props?: any): Component => {
         name: "Text",
         description: "Breadcrumb Item",
         children: [],
-        onLoad: {
-          children: {
-            dataType: "static",
-            value: "Settings",
-          },
-        },
         props: {
+          children: "Settings",
           color: `${theme.colors.Black ? "Black.6" : "dark"}`,
           style: {
             fontSize: `${px(theme.fontSizes.sm)}px`,
@@ -76,13 +66,8 @@ export const jsonStructure = (props?: any): Component => {
         name: "Text",
         description: "Breadcrumb Item",
         children: [],
-        onLoad: {
-          children: {
-            dataType: "static",
-            value: "About",
-          },
-        },
         props: {
+          children: "About",
           color: `${theme.colors.Black ? "Black.6" : "dark"}`,
           style: {
             fontSize: `${px(theme.fontSizes.xs)}px`,

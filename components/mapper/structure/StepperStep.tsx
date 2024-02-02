@@ -42,13 +42,8 @@ export const jsonStructure = (props?: any): Component => {
                 name: "Text",
                 description: "Text",
                 children: [],
-                onLoad: {
-                  children: {
-                    dataType: "static",
-                    value: "New Step",
-                  },
-                },
                 props: {
+                  children: "New Step",
                   color: "Black.6",
                   style: {
                     fontSize: "14px",
@@ -106,13 +101,8 @@ export const jsonStructure = (props?: any): Component => {
                 name: "Text",
                 description: "Text",
                 children: [],
-                onLoad: {
-                  children: {
-                    dataType: "static",
-                    value: "New Step content",
-                  },
-                },
                 props: {
+                  children: "New Step content",
                   color: `${theme.colors.Black ? "Black.6" : "dark"}`,
                   style: {
                     fontSize: `${px(theme.fontSizes.sm)}px`,
@@ -143,13 +133,8 @@ export const jsonStructure = (props?: any): Component => {
                   {
                     id: nanoid(),
                     ...defaultButton,
-                    onLoad: {
-                      children: {
-                        dataType: "static",
-                        value: "Previous",
-                      },
-                    },
                     props: {
+                      children: "Previous",
                       style: {
                         width: "auto",
                         height: "auto",
@@ -175,13 +160,8 @@ export const jsonStructure = (props?: any): Component => {
                   {
                     id: nanoid(),
                     ...defaultButton,
-                    onLoad: {
-                      children: {
-                        dataType: "static",
-                        value: "Next",
-                      },
-                    },
                     props: {
+                      children: "Next",
                       style: {
                         width: "auto",
                         height: "auto",

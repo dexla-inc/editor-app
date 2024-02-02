@@ -7,13 +7,8 @@ export const jsonStructure = (props?: any): Component => {
     name: "Badge",
     description: "Badge",
     children: [],
-    onLoad: {
-      children: {
-        dataType: "static",
-        value: "New badge",
-      },
-    },
     props: {
+      children: "New badge",
       radius: "xl",
       size: "md",
       color: "PrimaryText.6",

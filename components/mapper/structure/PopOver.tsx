@@ -31,13 +31,8 @@ export const jsonStructure = (props?: any): Component => {
             name: "Text",
             description: "Text",
             children: [],
-            onLoad: {
-              children: {
-                dataType: "static",
-                value: "This is a PopOver",
-              },
-            },
             props: {
+              children: "This is a PopOver",
               color: `${theme.colors.Black ? "Black.6" : "dark"}`,
               style: {
                 fontSize: `${px(theme.fontSizes.sm)}px`,

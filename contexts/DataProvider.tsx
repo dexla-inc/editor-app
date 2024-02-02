@@ -99,10 +99,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     shareableContent,
     staticFallback,
   }: GetValueProps) => {
-    if (!value) {
-      return;
-    }
-
     let dataType = value?.dataType ?? "static";
 
     const valueHandlers = {

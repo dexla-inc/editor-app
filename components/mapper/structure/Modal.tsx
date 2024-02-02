@@ -35,13 +35,8 @@ export const jsonStructure = (props?: any): Component => {
           id: nanoid(),
           name: "Title",
           description: "Title",
-          onLoad: {
-            children: {
-              dataType: "static",
-              value: "Modal Title",
-            },
-          },
           props: {
+            children: "Modal Title",
             order,
             color: "Black.6",
             style: {
@@ -216,13 +211,8 @@ export const jsonStructure = (props?: any): Component => {
       id: nanoid(),
       name: "Link",
       description: "Link",
-      onLoad: {
-        children: {
-          dataType: "static",
-          value: "Have an account? Login",
-        },
-      },
       props: {
+        children: "Have an account? Login",
         color: `${theme.colors.Black ? "Black.6" : "dark"}`,
         style: {
           fontSize: `${px(theme.fontSizes.sm)}px`,
@@ -234,13 +224,8 @@ export const jsonStructure = (props?: any): Component => {
       id: nanoid(),
       name: "Button",
       description: "Button",
-      onLoad: {
-        children: {
-          dataType: "static",
-          value: "Register",
-        },
-      },
       props: {
+        children: "Register",
         style: {
           width: "fit-content",
           padding: px(theme.spacing.sm),

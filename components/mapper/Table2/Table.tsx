@@ -23,7 +23,7 @@ export const TableComponent = forwardRef(
     const { data } = useEndpoint({
       component,
     });
-
+    console.log(component?.onLoad?.columns ?? "");
     return (
       <ScrollArea
         w={props.style?.width ?? "100%"}
@@ -31,9 +31,12 @@ export const TableComponent = forwardRef(
       >
         <MantineTable ref={ref} {...props} {...componentProps} {...triggers}>
           <thead>
-            {component.onLoad?.columns
-              ?.split(",")
-              .map((c: string) => <td key={c}>{c}</td>)}
+            {(Array.isArray(component?.onLoad?.columns)
+              ? component?.onLoad?.columns
+              : (component?.onLoad?.columns ?? "")?.split(",")
+            ).map((c: string) => (
+              <td key={c}>{c}</td>
+            ))}
           </thead>
           <tbody>
             {(Array.isArray(data) ? data : [])?.map((item: any, i: number) => {
