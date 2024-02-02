@@ -39,7 +39,9 @@ import {
   Endpoint,
 } from "@/requests/datasources/types";
 
+import { CountdownTimerActionForm } from "@/components/actions/CountdownTimerActionForm";
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
+import { useDataContext } from "@/contexts/DataProvider";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
@@ -52,8 +54,7 @@ import get from "lodash.get";
 import merge from "lodash.merge";
 import { Router } from "next/router";
 import { getComponentInitialDisplayValue } from "./common";
-import { BindingType, ValueProps } from "./types";
-import { useDataContext } from "@/contexts/DataProvider";
+import { ValueProps } from "./types";
 
 const triggers = [
   "onClick",
@@ -113,6 +114,11 @@ export const actions: ActionInfo[] = [
     name: "changeLanguage",
     group: "Utilities & Tools",
     icon: "IconMessageLanguage",
+  },
+  {
+    name: "countdownTimer",
+    group: "Utilities & Tools",
+    icon: "IconAlarm",
   },
   { name: "changeStep", group: "Z Delete", icon: "IconStatusChange" },
   {
@@ -250,6 +256,13 @@ export interface ChangeVariableAction extends BaseAction {
   value: ValueProps;
 }
 
+export interface CountdownTimerAction extends BaseAction {
+  name: "countdownTimer";
+  componentId: string;
+  selectedProp: string;
+  duration: number;
+}
+
 export type Action = {
   id: string;
   trigger: ActionTrigger;
@@ -269,7 +282,8 @@ export type Action = {
     | ChangeStepAction
     | TriggerLogicFlowAction
     | ChangeLanguageAction
-    | ChangeVariableAction;
+    | ChangeVariableAction
+    | CountdownTimerAction;
   sequentialTo?: string;
 };
 
@@ -1050,6 +1064,46 @@ export const useChangeVariableAction = (computeValue?: any) => {
   };
 };
 
+export type CountdownTimerActionParams = ActionParams & {
+  action: CountdownTimerAction;
+};
+
+function updateNumberInString(str: string) {
+  // Find the number using a regular expression
+  const regex = /\d+/;
+  const found = str.match(regex);
+
+  // Parse the number, increment it, and convert it back to a string
+  let number = found ? parseInt(found[0], 10) : 0;
+  if (number > 0) {
+    number--;
+    str = str.replace(regex, number.toString());
+  }
+
+  return { str, number };
+}
+
+export const useCountdownTimerAction =
+  () =>
+  ({ action }: CountdownTimerActionParams) => {
+    const editorStore = useEditorStore.getState();
+    const tree = editorStore.tree;
+    const updateTreeComponent = editorStore.updateTreeComponent;
+    const component = getComponentById(tree.root, action.componentId)!;
+    const stringItem = component.props![action.selectedProp] as string;
+    const { str, number } = updateNumberInString(stringItem);
+    const countdown = setInterval(() => {
+      updateTreeComponent({
+        componentId: action.componentId,
+        props: { [action.selectedProp]: str },
+      });
+
+      if (number <= 0) {
+        clearInterval(countdown);
+      }
+    }, 1000);
+  };
+
 export const actionMapper = {
   alert: {
     action: useDebugAction,
@@ -1149,5 +1203,10 @@ export const actionMapper = {
     action: useCustomJavascriptAction,
     form: CustomJavascriptActionForm,
     flowForm: CustomJavascriptFlowActionForm,
+  },
+  countdownTimer: {
+    action: useCountdownTimerAction,
+    form: CountdownTimerActionForm,
+    flowForm: ChangeLanguageActionForm,
   },
 };
