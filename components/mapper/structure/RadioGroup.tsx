@@ -83,13 +83,8 @@ export const jsonStructure = (props?: any): Component => {
                 name: "Text",
                 description: "Text",
                 children: [],
-                onLoad: {
-                  children: {
-                    dataType: "static",
-                    value: "New Radio Item 1",
-                  },
-                },
                 props: {
+                  children: "New Radio Item 1",
                   color: "Black.6",
                   size: "sm",
                   style: {
@@ -171,13 +166,8 @@ export const jsonStructure = (props?: any): Component => {
                 name: "Text",
                 description: "Text",
                 children: [],
-                onLoad: {
-                  children: {
-                    dataType: "static",
-                    value: "New Radio Item 2",
-                  },
-                },
                 props: {
+                  children: "New Radio Item 2",
                   color: "Black.6",
                   size: "sm",
                   style: {

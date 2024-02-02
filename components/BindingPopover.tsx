@@ -12,6 +12,7 @@ import { BindingTab, ValueProps } from "@/utils/types";
 import {
   ActionIcon,
   Box,
+  Button,
   Center,
   CloseButton,
   Flex,
@@ -25,7 +26,6 @@ import {
 } from "@mantine/core";
 import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { useDisclosure } from "@mantine/hooks";
 import { useDataContext } from "@/contexts/DataProvider";
 
 const TAB_TEXT_SIZE = "xs";
@@ -34,16 +34,20 @@ const ML = 10;
 type Props = {
   value: ValueProps;
   onChange: (value: ValueProps) => void;
+  controls: {
+    isOpen: boolean;
+    onOpen: () => void;
+    onClose: () => void;
+  };
   style?: "input" | "iconButton";
 };
 
 export default function BindingPopover({
   value,
   onChange,
+  controls: { isOpen, onOpen, onClose },
   style = "iconButton",
 }: Props) {
-  const [opened, { close: onClosePopOver, open: onOpenPopOver }] =
-    useDisclosure(false);
   const [tab, setTab] = useState<BindingTab>("components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
   const { variables, components, browserList, auth, computeValue } =
@@ -57,7 +61,15 @@ export default function BindingPopover({
       ...value,
       dataType: "boundCode",
     });
-    onOpenPopOver();
+    onOpen();
+  };
+
+  const onClickUnbind = () => {
+    onChange({
+      ...value,
+      dataType: "static",
+    });
+    onClose();
   };
 
   useEffect(
@@ -66,7 +78,7 @@ export default function BindingPopover({
       const isDoubleAtSign = value?.boundCode === "@@";
       if (!isSingleAtSign && !isDoubleAtSign) return;
       setTab(isSingleAtSign ? "components" : "variables");
-      onOpenPopOver();
+      onOpen();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [value?.boundCode],
@@ -98,11 +110,11 @@ export default function BindingPopover({
 
   return (
     <Popover
-      opened={opened}
+      opened={isOpen}
       withinPortal
       arrowPosition="center"
       position="right"
-      onClose={onClosePopOver}
+      onClose={onClose}
     >
       <Popover.Target>
         {style === "iconButton" ? (
@@ -131,33 +143,38 @@ export default function BindingPopover({
               <Icon name="IconPlugConnected" color={DEFAULT_TEXTCOLOR} />
               <Title order={5}>Binder</Title>
             </Flex>
-            <CloseButton onClick={onClosePopOver} />
+            <CloseButton onClick={onClose} />
           </Flex>
           <Flex justify="space-between" align="center">
-            <SegmentedControl
-              value="JavaScript"
-              data={[
-                {
-                  value: "Formula",
-                  disabled: true,
-                  label: (
-                    <Center>
-                      <Icon name="IconVariable" />
-                      <Text ml={ML}>Formula</Text>
-                    </Center>
-                  ),
-                },
-                {
-                  value: "JavaScript",
-                  label: (
-                    <Center>
-                      <Icon name="IconCode" />
-                      <Text ml={ML}>JavaScript</Text>
-                    </Center>
-                  ),
-                },
-              ]}
-            />
+            <Flex align="center" gap="xs">
+              <SegmentedControl
+                value="JavaScript"
+                data={[
+                  {
+                    value: "Formula",
+                    disabled: true,
+                    label: (
+                      <Center>
+                        <Icon name="IconVariable" />
+                        <Text ml={ML}>Formula</Text>
+                      </Center>
+                    ),
+                  },
+                  {
+                    value: "JavaScript",
+                    label: (
+                      <Center>
+                        <Icon name="IconCode" />
+                        <Text ml={ML}>JavaScript</Text>
+                      </Center>
+                    ),
+                  },
+                ]}
+              />
+              <Button onClick={onClickUnbind} variant="default">
+                Unbind
+              </Button>
+            </Flex>
             <ActionIcon variant="light" radius="xl">
               <Icon name="IconCopy" />
             </ActionIcon>
@@ -180,7 +197,7 @@ export default function BindingPopover({
           <TextInput
             label="Current Value"
             styles={{ input: { background: BINDER_BACKGROUND } }}
-            value={currentValue}
+            value={currentValue ?? "undefined"}
             readOnly
             sx={{
               color: currentValue === undefined ? "grey" : "inherit",

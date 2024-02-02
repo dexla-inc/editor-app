@@ -20,13 +20,8 @@ export const jsonStructure = (props?: any): Component => {
       {
         ...title,
         id: nanoid(),
-        onLoad: {
-          children: {
-            dataType: "static",
-            value: "Alert title",
-          },
-        },
         props: {
+          children: "Alert title",
           order: 6,
           style: {
             marginBottom: "8px",
@@ -36,13 +31,9 @@ export const jsonStructure = (props?: any): Component => {
       {
         ...text,
         id: nanoid(),
-        onLoad: {
-          children: {
-            dataType: "static",
-            value: "Alert text",
-          },
+        props: {
+          children: "Alert text",
         },
-        props: {},
       },
     ],
     props: {

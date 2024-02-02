@@ -209,13 +209,8 @@ export const jsonStructure = (props?: any): Component => {
                     name: "Text",
                     description: "Text",
                     children: [],
-                    onLoad: {
-                      children: {
-                        dataType: "static",
-                        value: "Expert Appraisal",
-                      },
-                    },
                     props: {
+                      children: "Expert Appraisal",
                       color: "Black.6",
                       size: "sm",
                       weight: "bold",
@@ -262,13 +257,8 @@ export const jsonStructure = (props?: any): Component => {
                     name: "Text",
                     description: "Text",
                     children: [],
-                    onLoad: {
-                      children: {
-                        dataType: "static",
-                        value: "50 credits per appraisal",
-                      },
-                    },
                     props: {
+                      children: "50 credits per appraisal",
                       color: "Black.6",
                       size: "sm",
                       weight: "bold",
@@ -303,13 +293,8 @@ export const jsonStructure = (props?: any): Component => {
             name: "Text",
             description: "Text",
             children: [],
-            onLoad: {
-              children: {
-                dataType: "static",
-                value: "or",
-              },
-            },
             props: {
+              children: "or",
               color: "Black.6",
               size: "xs",
               weight: "normal",
@@ -464,13 +449,8 @@ export const jsonStructure = (props?: any): Component => {
                     name: "Text",
                     description: "Text",
                     children: [],
-                    onLoad: {
-                      children: {
-                        dataType: "static",
-                        value: "Expert Appraisal",
-                      },
-                    },
                     props: {
+                      children: "Expert Appraisal",
                       color: "Black.6",
                       size: "sm",
                       weight: "bold",
@@ -517,13 +497,8 @@ export const jsonStructure = (props?: any): Component => {
                     name: "Text",
                     description: "Text",
                     children: [],
-                    onLoad: {
-                      children: {
-                        dataType: "static",
-                        value: "50 credits per appraisal",
-                      },
-                    },
                     props: {
+                      children: "50 credits per appraisal",
                       color: "Black.6",
                       size: "sm",
                       weight: "bold",
@@ -558,13 +533,8 @@ export const jsonStructure = (props?: any): Component => {
             name: "Text",
             description: "Text",
             children: [],
-            onLoad: {
-              children: {
-                dataType: "static",
-                value: "or",
-              },
-            },
             props: {
+              children: "or",
               color: "Black.6",
               size: "xs",
               weight: "normal",
@@ -718,13 +688,8 @@ export const jsonStructure = (props?: any): Component => {
                     name: "Text",
                     description: "Text",
                     children: [],
-                    onLoad: {
-                      children: {
-                        dataType: "static",
-                        value: "Expert Drive-by Appraisal",
-                      },
-                    },
                     props: {
+                      children: "Expert Drive-by Appraisal",
                       color: "Black.6",
                       size: "sm",
                       weight: "bold",
@@ -771,13 +736,8 @@ export const jsonStructure = (props?: any): Component => {
                     name: "Text",
                     description: "Text",
                     children: [],
-                    onLoad: {
-                      children: {
-                        dataType: "static",
-                        value: "200 credits per appraisal",
-                      },
-                    },
                     props: {
+                      children: "200 credits per appraisal",
                       color: "Black.6",
                       size: "sm",
                       weight: "bold",

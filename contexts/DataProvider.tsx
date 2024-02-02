@@ -8,6 +8,7 @@ import get from "lodash.get";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
 import { createContext, useContext } from "react";
+import isEmpty from "lodash.isempty";
 
 type DataProviderProps = {
   children: React.ReactNode;
@@ -16,6 +17,7 @@ type DataProviderProps = {
 type GetValueProps = {
   value?: ValueProps;
   shareableContent?: any;
+  staticFallback?: string;
 };
 
 type DataContextProps = {
@@ -85,24 +87,25 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
   const autoRunJavascriptCode = (boundCode: string) => {
     try {
-      return eval(`(function () { ${boundCode} })`)();
+      const result = eval(`(function () { ${boundCode} })`)();
+      return isEmpty(result) ? result : result.toString();
     } catch {
-      return "undefined";
+      return;
     }
   };
 
-  const computeValue = ({ value, shareableContent }: GetValueProps) => {
-    if (!value) {
-      return;
-    }
-
+  const computeValue = ({
+    value,
+    shareableContent,
+    staticFallback,
+  }: GetValueProps) => {
     let dataType = value?.dataType ?? "static";
 
     const valueHandlers = {
       dynamic: () => {
         return get(shareableContent, `data.${value?.dynamic}`, value?.dynamic);
       },
-      static: () => get(value, "static", value?.value),
+      static: () => get(value, "static", staticFallback),
       boundCode: () => autoRunJavascriptCode(value?.boundCode ?? ""),
     };
 

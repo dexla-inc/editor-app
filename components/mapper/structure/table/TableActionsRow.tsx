@@ -66,13 +66,8 @@ export const jsonStructure = (props?: any): Component => {
             id: nanoid(),
             name: "Button",
             description: "Button",
-            onLoad: {
-              children: {
-                dataType: "static",
-                value: "Export CSV",
-              },
-            },
             props: {
+              children: "Export CSV",
               style: {
                 ...defaultButtonValues,
               },

@@ -51,13 +51,8 @@ export const jsonStructure = (props?: any): Component => {
             id: nanoid(),
             name: "Text",
             description: "FileUpload Title",
-            onLoad: {
-              children: {
-                dataType: "static",
-                value: "FileUpload",
-              },
-            },
             props: {
+              children: "FileUpload",
               color: `${theme.colors.Black ? "Black.6" : "dark"}`,
               style: {
                 marginTop: px(theme.spacing.xs),
@@ -76,13 +71,8 @@ export const jsonStructure = (props?: any): Component => {
             id: nanoid(),
             name: "Text",
             description: "FileUpload Text",
-            onLoad: {
-              children: {
-                dataType: "static",
-                value: "Drag a file here",
-              },
-            },
             props: {
+              children: "Drag a file here",
               style: {
                 fontSize: `${px(theme.fontSizes.xs)}px`,
                 fontWeight: "normal",

@@ -11,13 +11,8 @@ export const jsonStructure = (props?: any): Component => {
     id: nanoid(),
     name: "Button",
     description: "Button",
-    onLoad: {
-      children: {
-        value: value ?? "Button",
-        dataType: "static",
-      },
-    },
     props: {
+      children: value ?? "Button",
       ...defaultValues,
       color: color ?? "Primary.6",
       textColor: textColor ?? "PrimaryText.6",

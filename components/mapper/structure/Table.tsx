@@ -90,13 +90,8 @@ export const jsonStructure = (props?: any): Component => {
               {
                 id: nanoid(),
                 ...defaultButton,
-                onLoad: {
-                  children: {
-                    dataType: "static",
-                    value: "Export CSV",
-                  },
-                },
                 props: {
+                  children: "Export CSV",
                   color: "Primary.6",
                   textColor: "PrimaryText.6",
                   leftIcon: "IconDownload",
@@ -140,6 +135,7 @@ export const jsonStructure = (props?: any): Component => {
           },
           ...(props.props || {}),
         },
+        onLoad: {},
         children: [],
         blockDroppingChildrenInside: true,
       },
@@ -162,13 +158,8 @@ export const jsonStructure = (props?: any): Component => {
             id: nanoid(),
             name: "Text",
             description: "Text",
-            onLoad: {
-              children: {
-                dataType: "static",
-                value: "Showing 5 results of 10",
-              },
-            },
             props: {
+              children: "Showing 5 results of 10",
               ...defaultTextValues,
             },
           },

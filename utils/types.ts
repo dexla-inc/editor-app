@@ -11,7 +11,4 @@ export type ValueProps = Partial<{
   static: string;
   dynamic: string;
   boundCode: string;
-
-  // TODO: remove this value property when structures are refactored
-  value: string;
 }>;
