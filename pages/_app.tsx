@@ -3,7 +3,6 @@ import LogicFlowInitialModal from "@/components/logic-flow/LogicFlowInitialModal
 import { ContextMenuProvider } from "@/contexts/ContextMenuProvider";
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
 import AuthProvider from "@/pages/AuthProvider";
-import { useInitializeVariables } from "@/pages/InitializeVariables";
 import InstantiatePropelAuthStore from "@/pages/InstantiatePropelAuthStore";
 import { useUserConfigStore } from "@/stores/userConfig";
 
