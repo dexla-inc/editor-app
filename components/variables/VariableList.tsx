@@ -1,6 +1,6 @@
 import { VariableForm } from "@/components/variables/VariableForm";
+import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 import { deleteVariable } from "@/requests/variables/mutations";
-import { useVariableStore } from "@/stores/variables";
 import {
   ActionIcon,
   Center,
@@ -24,16 +24,14 @@ export const VariableList = ({ projectId }: Props) => {
   const [opened, modal] = useDisclosure(false);
   const [filter, setFilter] = useDebouncedState("", 250);
   const [variableToEdit, setVariableToEdit] = useState(undefined);
-  const variableList = useVariableStore((state) => state.variableList);
-  // This gets the latest variables. We need the store just to load the current value
-  //const { data: variableList, invalidate } = useVariableListQuery(projectId);
+  const { data: variableList, invalidate } = useVariableListQuery({});
 
   const deleteVar = async (variableId: string) => {
     await deleteVariable(projectId, variableId);
-    //invalidate();
+    invalidate();
   };
 
-  const rows = (variableList ?? [])?.map((variable: any) => (
+  const rows = (variableList?.results ?? [])?.map((variable: any) => (
     <tr key={variable.id}>
       <td>{variable.name}</td>
       <td>{variable.type}</td>
