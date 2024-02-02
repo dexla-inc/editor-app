@@ -88,9 +88,7 @@ export const CountdownTimerActionForm = ({ id }: Props) => {
       <Stack spacing="xs">
         <ComponentToBindFromInput
           componentId={selectedComponentId}
-          onPickComponent={(componentToBind: string) => {
-            form.setFieldValue("componentId", componentToBind);
-
+          onPickComponent={() => {
             setPickingComponentToBindTo(undefined);
             setComponentToBind(undefined);
           }}
