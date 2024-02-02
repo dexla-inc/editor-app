@@ -74,7 +74,7 @@ export const useComputeChildStyles = () => {
     isEditorMode: boolean,
   ) {
     const computedInitialStyles = Object.entries(
-      propsWithOverwrites.style,
+      propsWithOverwrites.style ?? {},
     ).reduce((acc, [key, value]) => {
       const isObject = typeof value === "object";
       acc[key] = isObject ? computeValue({ value: value as any }) : value;
