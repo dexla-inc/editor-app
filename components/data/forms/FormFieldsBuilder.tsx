@@ -9,6 +9,8 @@ import { ActionIcon, Group } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { ValueProps } from "@/utils/types";
+import merge from "lodash.merge";
 
 type Props = {
   fields: Array<{
@@ -25,9 +27,17 @@ type Props = {
 export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   const hasParentComponentData = component.parentDataComponentId;
 
+  const onLoadFieldsStarter = fields.reduce(
+    (acc, f) => {
+      acc[f.name] = {};
+      return acc;
+    },
+    {} as Record<string, ValueProps>,
+  );
+
   const form = useForm({
     initialValues: {
-      onLoad: component?.onLoad,
+      onLoad: merge({}, onLoadFieldsStarter, component?.onLoad),
       props: {
         style: {
           display: component.props?.style?.display,
