@@ -763,19 +763,7 @@ const getUrl = (
 };
 
 const getBody = (endpoint: Endpoint, action: any, variableValues: any) => {
-  return endpoint?.methodType === "POST"
-    ? variableValues
-    : // Object.keys(action.binds?.body ?? {}).reduce((body: any, key: string) => {
-      //   let value = action.binds.body[key] as string;
-      //
-      //   if (!value) {
-      //     return body;
-      //   }
-      //
-      //   value = variableValues[value];
-      //   return { ...body, [key]: value };
-      // }, {} as any)
-      undefined;
+  return endpoint?.methodType === "POST" ? variableValues : undefined;
 };
 
 export const prepareRequestData = (
@@ -813,12 +801,20 @@ const handleError = async (
   if (onError && onError.sequentialTo === actionId) {
     const actions = component.actions ?? [];
     const onErrorAction = actions.find((a: Action) => a.trigger === "onError");
-    const onErrorActionMapped = actionMapper[onError.action.name];
-    onErrorActionMapped.action({
+    const onErrorActionMapped = actionMapper[onError.action.name].action();
+    let errorMessage = "";
+
+    try {
+      errorMessage = JSON.parse(error.message);
+    } catch {
+      errorMessage = error.message;
+    }
+
+    onErrorActionMapped({
       action: onErrorAction?.action,
       router,
       ...rest,
-      data: { value: JSON.parse(error.message) },
+      data: { value: errorMessage },
     });
   }
 
