@@ -7,7 +7,7 @@ type Props = {
   pageProps: any;
 };
 
-const InitializeVariables = ({ pageProps }: Props) => {
+export const useInitializeVariables = ({ pageProps }: Props) => {
   const projectId = useEditorStore((state) => state.currentProjectId);
   const pageId = useEditorStore((state) => state.currentPageId);
   const _projectId = pageProps.id || projectId;
@@ -23,9 +23,7 @@ const InitializeVariables = ({ pageProps }: Props) => {
     if (!isVariablesFetching && variables?.results)
       initializeVariableList(variables?.results);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [_pageId, variables]);
-
-  return null;
+  }, [_pageId, variables?.results, isVariablesFetching]);
 };
 
-export default InitializeVariables;
+// export default InitializeVariables;

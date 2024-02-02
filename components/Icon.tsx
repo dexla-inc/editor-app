@@ -2,7 +2,7 @@ import { globalStyles } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import { Box, CSSObject, MantineSize } from "@mantine/core";
 import * as Icons from "@tabler/icons-react";
-import { forwardRef } from "react";
+import { ForwardedRef, forwardRef } from "react";
 
 type Props = {
   name: string;
@@ -12,7 +12,7 @@ type Props = {
 } & Icons.TablerIconsProps;
 
 export const Icon = forwardRef(
-  ({ name, size = ICON_SIZE, ...props }: Props, ref) => {
+  ({ name, size = ICON_SIZE, ...props }: Props, ref: ForwardedRef<any>) => {
     // @ts-ignore
     const IconToRender = Icons[name];
 
@@ -25,7 +25,6 @@ export const Icon = forwardRef(
 
     return (
       <Box
-        // @ts-ignore
         ref={ref}
         unstyled
         bg={props.bg}

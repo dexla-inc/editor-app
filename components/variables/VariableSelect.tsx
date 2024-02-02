@@ -1,7 +1,6 @@
 import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 import { VariableResponse } from "@/requests/variables/types";
 import { Select, SelectProps } from "@mantine/core";
-import { useRouter } from "next/router";
 
 type Props = Omit<SelectProps, "data"> & {
   onPick?: (variable: VariableResponse) => void;
@@ -9,10 +8,7 @@ type Props = Omit<SelectProps, "data"> & {
 };
 
 export const VariableSelect = ({ onPick, ...props }: Props) => {
-  const router = useRouter();
-  const projectId = router.query.id as string;
-
-  const { data: variables } = useVariableListQuery(projectId);
+  const { data: variables } = useVariableListQuery({});
 
   return (
     <Select

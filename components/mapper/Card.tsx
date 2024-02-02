@@ -10,11 +10,11 @@ import { getCardStyling } from "../CardStyleSelector";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
+  isPreviewMode: boolean;
 } & FlexProps;
 
 export const CardComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
-    const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  ({ renderTree, isPreviewMode, component, ...props }: Props, ref) => {
     const theme = useEditorStore((state) => state.theme);
 
     const {

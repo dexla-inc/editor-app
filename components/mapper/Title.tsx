@@ -27,7 +27,7 @@ const TitleComponent = forwardRef(
     const { computeValue } = useDataContext()!;
     const childrenValue =
       computeValue({
-        value: component.onLoad.children,
+        value: component.onLoad?.children,
         shareableContent,
       }) ?? component.props?.children;
 

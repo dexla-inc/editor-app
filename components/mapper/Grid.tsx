@@ -12,10 +12,11 @@ import { forwardRef, memo, useEffect } from "react";
 export type GridProps = {
   renderTree: (component: Component) => any;
   component: Component;
+  isPreviewMode: boolean;
 } & BoxProps;
 
 const GridComponent = forwardRef(
-  ({ renderTree, component, ...props }: GridProps, ref) => {
+  ({ renderTree, component, isPreviewMode, ...props }: GridProps, ref) => {
     const theme = useMantineTheme();
     const editorTree = useEditorStore((state) => state.tree);
     const setEditorTree = useEditorStore((state) => state.setTree);
@@ -24,6 +25,7 @@ const GridComponent = forwardRef(
       gridSize,
       gridDirection,
       navbarWidth,
+      ...componentProps
     } = component.props!;
 
     const isColumns = gridDirection === "column";
@@ -54,9 +56,8 @@ const GridComponent = forwardRef(
         // @ts-ignore
         ref={ref}
         display="grid"
-        {...component.props}
+        {...componentProps}
         {...props}
-        id={component.id}
         pos="relative"
         style={{
           ...props.style,
