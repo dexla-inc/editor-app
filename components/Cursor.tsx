@@ -1,3 +1,5 @@
+import { useEditorStore } from "@/stores/editor";
+
 type Props = {
   color: string;
   x: number;
@@ -6,6 +8,7 @@ type Props = {
 };
 
 export const Cursor = ({ color, x, y, name }: Props) => {
+  const liveblocks = useEditorStore((state) => state.liveblocks);
   return (
     <div
       style={{

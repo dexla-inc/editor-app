@@ -5,6 +5,7 @@ import { Cursor } from "@/components/Cursor";
 import { EditorCanvas } from "@/components/EditorCanvas";
 import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
+import { DataProvider } from "@/contexts/DataProvider";
 import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
@@ -32,7 +33,6 @@ import {
 } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
-import { DataProvider } from "@/contexts/DataProvider";
 
 type Props = {
   projectId: string;
@@ -175,29 +175,27 @@ export const Editor = ({ projectId, pageId }: Props) => {
         )}
         <EditorCanvas projectId={projectId} />
       </Shell>
-      {
-        /**
-         * Iterate over other users and display a cursor based on their presence
-         */
-        liveblocks.others.map(({ connectionId, presence }) => {
-          const cursor = presence.cursor as { x: number; y: number };
-          if (!cursor) {
-            return null;
-          }
+      {liveblocks.others.map(({ connectionId, presence }) => {
+        const cursor = presence.cursor as { x: number; y: number };
+        // @ts-ignore
+        const firstName = presence?.currentUser?.firstName ?? "Anonymous";
 
-          return (
-            <Cursor
-              key={`cursor-${connectionId}`}
-              // connectionId is an integer that is incremented at every new connections
-              // Assigning a color with a modulo makes sure that a specific user has the same colors on every clients
-              color={CURSOR_COLORS[connectionId % CURSOR_COLORS.length]}
-              x={cursor.x}
-              y={cursor.y}
-              name={user.firstName ?? ""}
-            />
-          );
-        })
-      }
+        if (!cursor) {
+          return null;
+        }
+
+        return (
+          <Cursor
+            key={`cursor-${connectionId}`}
+            // connectionId is an integer that is incremented at every new connections
+            // Assigning a color with a modulo makes sure that a specific user has the same colors on every clients
+            color={CURSOR_COLORS[connectionId % CURSOR_COLORS.length]}
+            x={cursor.x}
+            y={cursor.y}
+            name={firstName}
+          />
+        );
+      })}
     </DataProvider>
   );
 };
