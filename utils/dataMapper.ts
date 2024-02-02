@@ -1,3 +1,4 @@
+import { AlertData as Alert } from "@/components/data/AlertData";
 import {
   AvatarData as Avatar,
   AvatarData as Image,
@@ -17,6 +18,7 @@ import {
 } from "@/components/data/TextData";
 
 export const dataMapper = {
+  Alert,
   Select,
   Text,
   Title,
