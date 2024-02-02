@@ -1,7 +1,8 @@
 import BindingPopover from "@/components/BindingPopover";
 import { useEditorStore } from "@/stores/editor";
-import { Flex, TextInput, TextInputProps } from "@mantine/core";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ValueProps } from "@/utils/types";
+import { Flex, TextInput, TextInputProps } from "@mantine/core";
 
 type Props = Omit<TextInputProps, "value" | "onChange"> & {
   componentId?: string;
@@ -27,13 +28,6 @@ export const ComponentToBindFromInput = ({
   const setHighlightedComponentId = useEditorStore(
     (state) => state.setHighlightedComponentId,
   );
-
-  const onBindComponent = () => {
-    setPickingComponentToBindTo({
-      componentId: componentId || "",
-      onPick: onPickComponent,
-    });
-  };
 
   return (
     <Flex align="end" gap="xs">
@@ -69,6 +63,7 @@ export const ComponentToBindFromInput = ({
           });
         }}
         {...props}
+        {...AUTOCOMPLETE_OFF_PROPS}
       />
       <BindingPopover value={value} onChange={onChange} style="iconButton" />
     </Flex>

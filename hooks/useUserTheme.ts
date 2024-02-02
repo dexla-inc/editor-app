@@ -9,11 +9,11 @@ export const useUserTheme = (projectId: string) => {
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const isLive = useEditorStore((state) => state.isLive);
   const project = useProjectQuery(projectId);
-  const userTheme = project.data?.branding;
 
   useEffect(() => {
     const updateTheme = async () => {
       if (project.isFetched) {
+        const userTheme = project.data?.branding;
         const defaultFontFamily =
           userTheme?.defaultFont ?? defaultTheme.fontFamily ?? "Open Sans";
         const headingsFontFamily =

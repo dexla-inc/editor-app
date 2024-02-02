@@ -1,9 +1,10 @@
+import { useDataContext } from "@/contexts/DataProvider";
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { ImageProps, Image as MantineImage } from "@mantine/core";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { forwardRef, memo } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { useDataContext } from "@/contexts/DataProvider";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -27,7 +28,10 @@ const ImageComponent = forwardRef(
         shareableContent,
       }) ?? component.props?.alt;
 
-    const { width, height, ...style } = props.style ?? {};
+    const { width, height, position, top, bottom, left, right, ...style } =
+      props.style ?? {};
+
+    console.log(props.style);
 
     return (
       <MantineImage
@@ -38,7 +42,11 @@ const ImageComponent = forwardRef(
         {...props}
         {...componentProps}
         style={{}}
-        styles={{ root: { position: "relative" }, image: style }}
+        styles={{
+          root: { position, top, bottom, left, right },
+          // @ts-ignore
+          image: omit(style, ["position", "top", "bottom", "left", "right"]),
+        }}
         width={width}
         height={height}
         {...triggers}
