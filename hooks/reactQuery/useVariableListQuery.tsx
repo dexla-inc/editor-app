@@ -1,8 +1,8 @@
 import { PagingResponse } from "@/requests/types";
 import { listVariables } from "@/requests/variables/queries-noauth";
 import { VariableResponse } from "@/requests/variables/types";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEditorStore } from "@/stores/editor";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const cacheTime = 30 * 60 * 1000; // 30 minutes
 

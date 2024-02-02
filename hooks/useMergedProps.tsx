@@ -1,3 +1,4 @@
+import { useDataContext } from "@/contexts/DataProvider";
 import { ComponentToBind, useEditorStore } from "@/stores/editor";
 import { GRAY_OUTLINE } from "@/utils/branding";
 import { Component } from "@/utils/editor";
@@ -6,7 +7,6 @@ import { CSSObject } from "@mantine/core";
 import merge from "lodash.merge";
 import { useCallback, useMemo } from "react";
 import { useComponentStates } from "./useComponentStates";
-import { useDataContext } from "@/contexts/DataProvider";
 
 export const usePropsWithOverwrites = (
   component: Component,
@@ -74,7 +74,7 @@ export const useComputeChildStyles = () => {
     isEditorMode: boolean,
   ) {
     const computedInitialStyles = Object.entries(
-      propsWithOverwrites.style,
+      propsWithOverwrites.style ?? {},
     ).reduce((acc, [key, value]) => {
       const isObject = typeof value === "object";
       acc[key] = isObject ? computeValue({ value: value as any }) : value;

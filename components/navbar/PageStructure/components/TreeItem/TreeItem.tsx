@@ -12,6 +12,7 @@ import { useComponentContextMenu } from "@/hooks/useComponentContextMenu";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { DARK_COLOR, GRAY_WHITE_COLOR } from "@/utils/branding";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import {
@@ -263,6 +264,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                   }}
                   onBlur={closeEdit}
                   autoFocus
+                  {...AUTOCOMPLETE_OFF_PROPS}
                 />
               ) : (
                 <Text
