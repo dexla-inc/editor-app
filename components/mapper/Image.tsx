@@ -18,12 +18,12 @@ const ImageComponent = forwardRef(
     const { computeValue } = useDataContext()!;
     const srcValue =
       computeValue({
-        value: component.onLoad.src,
+        value: component.onLoad?.src,
         shareableContent,
       }) ?? component.props?.src;
     const altValue =
       computeValue({
-        value: component.onLoad.alt,
+        value: component.onLoad?.alt,
         shareableContent,
       }) ?? component.props?.alt;
 

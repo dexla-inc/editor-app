@@ -18,12 +18,12 @@ const AvatarComponent = forwardRef(
     const { computeValue } = useDataContext()!;
     const srcValue =
       computeValue({
-        value: component.onLoad.src,
+        value: component.onLoad?.src,
         shareableContent,
       }) ?? component.props?.src;
     const childrenValue =
       computeValue({
-        value: component.onLoad.children,
+        value: component.onLoad?.children,
         shareableContent,
       }) ?? component.props?.children;
 

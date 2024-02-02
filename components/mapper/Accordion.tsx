@@ -1,4 +1,3 @@
-import { Icon } from "@/components/Icon";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { AccordionProps, Accordion as MantineAccordion } from "@mantine/core";

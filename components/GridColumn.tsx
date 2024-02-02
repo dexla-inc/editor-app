@@ -17,6 +17,7 @@ export const GridColumn = forwardRef(
       children,
       style: gridColumnStyles,
       span,
+      isPreviewMode,
       ...props
     }: PropsWithChildren<any>,
     ref,

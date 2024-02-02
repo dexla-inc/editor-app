@@ -25,6 +25,8 @@ import debounce from "lodash.debounce";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useVariableStore } from "@/stores/variables";
+import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 
 export default function Projects() {
   const [search, setSearch] = useState<string>("");
@@ -39,6 +41,9 @@ export default function Projects() {
   const { setPageCancelled } = useUserConfigStore((state) => ({
     setPageCancelled: state.setPageCancelled,
   }));
+  const initializeVariableList = useVariableStore(
+    (state) => state.initializeVariableList,
+  );
 
   const router = useRouter();
 
@@ -80,6 +85,8 @@ export default function Projects() {
 
     router.push(url);
   };
+
+  useVariableListQuery({ onSuccess: initializeVariableList });
 
   // useEffect(() => {
   //   if (!user) {

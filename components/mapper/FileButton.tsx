@@ -31,7 +31,7 @@ export const FileButton = ({
   const { computeValue } = useDataContext()!;
   const nameValue =
     computeValue({
-      value: component.onLoad.name,
+      value: component.onLoad?.name,
       shareableContent,
     }) ?? component.props?.name;
 

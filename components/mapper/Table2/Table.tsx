@@ -18,7 +18,8 @@ type Props = {
 
 export const TableComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
-    const { children, triggers, ...componentProps } = component.props as any;
+    const { children, triggers, dataType, ...componentProps } =
+      component.props as any;
     const { data } = useEndpoint({
       component,
     });
