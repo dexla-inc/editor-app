@@ -1,16 +1,14 @@
-import { useForm } from "@mantine/form";
-import { pick } from "next/dist/lib/pick";
-import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
-import { useEffect } from "react";
 import { VisibilityModifier } from "@/components/data/VisibilityModifier";
-import { ActionIcon, Group } from "@mantine/core";
-import { IconPlug, IconPlugOff } from "@tabler/icons-react";
-import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
-import { ICON_SIZE } from "@/utils/config";
 import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
-import { PagingResponse } from "@/requests/types";
+import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
 import { Endpoint } from "@/requests/datasources/types";
-import get from "lodash.get";
+import { PagingResponse } from "@/requests/types";
+import { ICON_SIZE } from "@/utils/config";
+import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
+import { ActionIcon, Group } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { IconPlug, IconPlugOff } from "@tabler/icons-react";
+import { useEffect } from "react";
 
 type Props = {
   fields: Array<{
