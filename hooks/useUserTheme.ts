@@ -33,7 +33,6 @@ export const useUserTheme = (projectId: string) => {
         });
 
         const colors = manipulateColors(userTheme?.colors);
-        console.log("useUserTheme", colors);
 
         setInternalTheme({
           fontFamily: defaultFontFamily,
@@ -84,7 +83,7 @@ export const useUserTheme = (projectId: string) => {
 const adjustColorShades = (colors: ExtendedMantineThemeColors) => {
   const adjustedColors = {} as ExtendedMantineThemeColors;
   Object.entries(colors).forEach(([key, value]) => {
-    const baseColor = value[5];
+    const baseColor = value[7];
     adjustedColors[key] = [
       defaultTheme.fn.lighten(baseColor, 0.6),
       defaultTheme.fn.lighten(baseColor, 0.5),
