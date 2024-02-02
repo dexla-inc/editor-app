@@ -1,6 +1,7 @@
 import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { getComponentInitialDisplayValue } from "@/utils/common";
 import { Group, Stack } from "@mantine/core";
+import BindingPopover from "@/components/BindingPopover";
 
 type Props = {
   form: any;
@@ -27,12 +28,7 @@ export const VisibilityModifier = ({ componentName, form }: Props) => {
           {...form.getInputProps("props.style.display")}
         />
       </Stack>
-      {/* TODO: come with a solution to make bindable style properties */}
-      {/*<BindingPopover*/}
-      {/*  value={}*/}
-      {/*  onChange={}*/}
-      {/*  prop="props.style.display"*/}
-      {/*/>*/}
+      {/*<BindingPopover value={} onChange={} prop="props.style.display" />*/}
     </Group>
   );
 };

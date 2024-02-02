@@ -5,6 +5,7 @@ import { decodeSchema } from "@/utils/compression";
 import createCache from "@emotion/cache";
 import { Box, BoxProps, MantineProvider } from "@mantine/core";
 import { useEffect, useState } from "react";
+import { DataProvider } from "@/contexts/DataProvider";
 
 type Props = {
   projectId: string;
@@ -86,16 +87,18 @@ export const LiveWrapper = ({ children, projectId, ...props }: Props) => {
       })}
       {...props}
     >
-      <Box
-        pos="relative"
-        style={{
-          minHeight: `100vh`,
-        }}
-        p={0}
-      >
-        <ProgressBar color={theme.colors.Primary[6]} />
-        <Box id="iframe-content">{children}</Box>
-      </Box>
+      <DataProvider>
+        <Box
+          pos="relative"
+          style={{
+            minHeight: `100vh`,
+          }}
+          p={0}
+        >
+          <ProgressBar color={theme.colors.Primary[6]} />
+          <Box id="iframe-content">{children}</Box>
+        </Box>
+      </DataProvider>
     </MantineProvider>
   );
 };
