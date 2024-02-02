@@ -18,7 +18,7 @@ export const useTriggers = ({
 }: UseTriggersProps) => {
   const router = useRouter();
 
-  const triggers = useMemo(() => {
+  const triggers = () => {
     const actions: Action[] = component.actions ?? [];
 
     const onSuccessActions: Action[] = actions.filter(
@@ -59,11 +59,11 @@ export const useTriggers = ({
       },
       {} as Record<ActionTrigger, any>,
     );
-  }, [component]);
+  };
 
   const handleOnChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      triggers.onChange?.(e);
+      triggers().onChange?.(e);
       if (component.props?.error) {
         updateTreeComponent({
           componentId: component.id,
@@ -77,11 +77,11 @@ export const useTriggers = ({
 
   const handleOnSubmit = useCallback((e: any) => {
     if (isEditorMode) e.preventDefault();
-    !isEditorMode && triggers.onSubmit?.(e);
+    !isEditorMode && triggers().onSubmit?.(e);
   }, []);
 
   return {
-    ...triggers,
+    ...triggers(),
     onChange: handleOnChange,
     onSubmit: handleOnSubmit,
   };
