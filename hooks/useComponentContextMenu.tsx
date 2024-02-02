@@ -23,6 +23,7 @@ import {
   IconClipboardPlus,
   IconContainer,
   IconCopy,
+  IconForms,
   IconTrash,
 } from "@tabler/icons-react";
 import cloneDeep from "lodash.clonedeep";
@@ -214,6 +215,12 @@ export const useComponentContextMenu = () => {
                 icon: <IconBoxModel size={16} />,
                 title: "Card",
                 onClick: () => wrapIn(component, "Card"),
+              },
+              {
+                key: "form",
+                icon: <IconForms size={16} />,
+                title: "Form",
+                onClick: () => wrapIn(component, "Form"),
               },
             ],
           },
