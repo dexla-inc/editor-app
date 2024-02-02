@@ -23,7 +23,7 @@ export const TableComponent = forwardRef(
     const { data } = useEndpoint({
       component,
     });
-    console.log(component?.onLoad?.columns ?? "");
+
     return (
       <ScrollArea
         w={props.style?.width ?? "100%"}
