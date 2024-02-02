@@ -2,7 +2,7 @@ import { getProject } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
 import { getProjectType } from "@/utils/common";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const useCheckIfIsLive = () => {
   const router = useRouter();
@@ -12,10 +12,22 @@ export const useCheckIfIsLive = () => {
     (state) => state.setCurrentProjectId,
   );
 
-  const hrefUrl = typeof window !== "undefined" ? window.location.href : "";
-  const urlType = getProjectType(hrefUrl);
-  console.log("useCheckIfIsLive", urlType);
+  const [urlType, setUrlType] = useState("");
+
+  // Need this to check the type of page
   useEffect(() => {
+    console.log("Checking page type");
+    const currentUrlType = getProjectType(
+      typeof window !== "undefined" ? window.location.href : "",
+    );
+    if (urlType !== currentUrlType) {
+      setUrlType(currentUrlType);
+    }
+  }, [router.asPath]);
+
+  // Only do this when page refreshes
+  useEffect(() => {
+    console.log("Checking if live");
     const setLiveIfHasCustomDomain = async () => {
       try {
         let _projectId = projectId;
@@ -34,7 +46,6 @@ export const useCheckIfIsLive = () => {
 
     setLiveIfHasCustomDomain();
     // @ts-ignore
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router?.state?.pathname]);
 
   return urlType === "live";
