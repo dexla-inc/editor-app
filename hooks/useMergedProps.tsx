@@ -6,6 +6,7 @@ import { CSSObject } from "@mantine/core";
 import merge from "lodash.merge";
 import { useCallback, useMemo } from "react";
 import { useComponentStates } from "./useComponentStates";
+import { useDataContext } from "@/contexts/DataProvider";
 
 export const usePropsWithOverwrites = (
   component: Component,
@@ -65,26 +66,39 @@ export const usePropsWithOverwrites = (
   }, [component, currentState, triggers]);
 };
 
-export function computeChildStyles(
-  propsWithOverwrites: any,
-  currentState: any,
-  isEditorMode: boolean,
-) {
-  const childStyles = {
-    position: "relative",
-    ...propsWithOverwrites.style,
-    ...(currentState === "hidden" && { display: "none" }),
-    ...(currentState === "disabled" &&
-      !isEditorMode && { pointerEvents: "none" }),
+export const useComputeChildStyles = () => {
+  const { computeValue } = useDataContext()!;
+  function computeChildStyles(
+    propsWithOverwrites: any,
+    currentState: any,
+    isEditorMode: boolean,
+  ) {
+    const computedInitialStyles = Object.entries(
+      propsWithOverwrites.style,
+    ).reduce((acc, [key, value]) => {
+      const isObject = typeof value === "object";
+      acc[key] = isObject ? computeValue({ value: value as any }) : value;
+      return acc;
+    }, {} as any);
 
-    outline:
-      !isEditorMode && propsWithOverwrites.style?.outline === GRAY_OUTLINE
-        ? "none"
-        : propsWithOverwrites.style?.outline,
-  };
+    const childStyles = {
+      position: "relative",
+      ...computedInitialStyles,
+      ...(currentState === "hidden" && { display: "none" }),
+      ...(currentState === "disabled" &&
+        !isEditorMode && { pointerEvents: "none" }),
 
-  return childStyles;
-}
+      outline:
+        !isEditorMode && propsWithOverwrites.style?.outline === GRAY_OUTLINE
+          ? "none"
+          : propsWithOverwrites.style?.outline,
+    };
+
+    return childStyles;
+  }
+
+  return { computeChildStyles };
+};
 
 export const useEditorClickHandler = (
   componentId: string,

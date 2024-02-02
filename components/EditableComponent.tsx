@@ -5,7 +5,7 @@ import {
 import { useEditorShadows } from "@/hooks/useEditorShadows";
 import { useHoverEvents } from "@/hooks/useHoverEvents";
 import {
-  computeChildStyles,
+  useComputeChildStyles,
   handleBackground,
   useEditorClickHandler,
   usePropsWithOverwrites,
@@ -42,6 +42,7 @@ export const EditableComponent = ({
     (state) => state.updateTreeComponentAttrs,
   );
   const isResizing = useEditorStore((state) => state.isResizing);
+  const { computeChildStyles } = useComputeChildStyles();
 
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const isLive = useEditorStore((state) => state.isLive);

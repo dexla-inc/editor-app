@@ -31,8 +31,6 @@ const ImageComponent = forwardRef(
     const { width, height, position, top, bottom, left, right, ...style } =
       props.style ?? {};
 
-    console.log(props.style);
-
     return (
       <MantineImage
         ref={ref}

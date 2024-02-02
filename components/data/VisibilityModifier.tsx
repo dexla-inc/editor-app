@@ -2,6 +2,7 @@ import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { getComponentInitialDisplayValue } from "@/utils/common";
 import { Group, Stack } from "@mantine/core";
 import BindingPopover from "@/components/BindingPopover";
+import { useDisclosure } from "@mantine/hooks";
 
 type Props = {
   form: any;
@@ -10,6 +11,11 @@ type Props = {
 };
 
 export const VisibilityModifier = ({ componentName, form }: Props) => {
+  const [
+    isBindingPopOverOpen,
+    { open: onOpenBindingPopOver, close: onCloseBindingPopOver },
+  ] = useDisclosure(false);
+
   return (
     <Group spacing="xs" noWrap align="end">
       <Stack w="100%">
@@ -28,7 +34,14 @@ export const VisibilityModifier = ({ componentName, form }: Props) => {
           {...form.getInputProps("props.style.display")}
         />
       </Stack>
-      {/*<BindingPopover value={} onChange={} prop="props.style.display" />*/}
+      <BindingPopover
+        controls={{
+          isOpen: isBindingPopOverOpen,
+          onOpen: onOpenBindingPopOver,
+          onClose: onCloseBindingPopOver,
+        }}
+        {...form.getInputProps(`props.style.display`)}
+      />
     </Group>
   );
 };
