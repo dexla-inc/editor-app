@@ -1,5 +1,6 @@
 import { OpenThemeButton } from "@/components/OpenThemeButton";
 import { useEditorStore } from "@/stores/editor";
+import { excludeColors } from "@/utils/branding";
 import {
   Box,
   ColorSwatch,
@@ -53,23 +54,6 @@ type Props = {
 
 export const ThemeColorSelector = ({ isGradient, ...props }: Props) => {
   const theme = useEditorStore((state) => state.theme);
-
-  const excludeColors = new Set([
-    "blue",
-    "cyan",
-    "dark",
-    "grape",
-    "gray",
-    "green",
-    "indigo",
-    "lime",
-    "orange",
-    "pink",
-    "red",
-    "teal",
-    "violet",
-    "yellow",
-  ]);
 
   let [selectedColor, selectedIndex] = ["Primary", 6]; // default color if none is selected
 

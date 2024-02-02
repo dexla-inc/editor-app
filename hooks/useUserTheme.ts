@@ -1,8 +1,8 @@
+import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { Color } from "@/requests/themes/types";
 import { ExtendedMantineThemeColors, useEditorStore } from "@/stores/editor";
-import { defaultTheme } from "@/utils/branding";
+import { defaultTheme, excludeColors } from "@/utils/branding";
 import { useEffect, useState } from "react";
-import { useProjectQuery } from "./reactQuery/useProjectQuery";
 
 export const useUserTheme = (projectId: string) => {
   const setTheme = useEditorStore((state) => state.setTheme);
@@ -83,7 +83,7 @@ export const useUserTheme = (projectId: string) => {
 const adjustColorShades = (colors: ExtendedMantineThemeColors) => {
   const adjustedColors = {} as ExtendedMantineThemeColors;
   Object.entries(colors).forEach(([key, value]) => {
-    const baseColor = value[7];
+    const baseColor = excludeColors.has(key) ? value[7] : value[5];
     adjustedColors[key] = [
       defaultTheme.fn.lighten(baseColor, 0.6),
       defaultTheme.fn.lighten(baseColor, 0.5),

@@ -9,6 +9,23 @@ import {
 
 const isDarkTheme = useUserConfigStore.getState().isDarkTheme;
 
+export const excludeColors = new Set([
+  "blue",
+  "cyan",
+  "dark",
+  "grape",
+  "gray",
+  "green",
+  "indigo",
+  "lime",
+  "orange",
+  "pink",
+  "red",
+  "teal",
+  "violet",
+  "yellow",
+]);
+
 // Nestable styles for the page structure items
 const nestable = {
   ".nestable": { padding: 0, margin: 0 },
