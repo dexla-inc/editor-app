@@ -1043,7 +1043,7 @@ export const useChangeVariableAction = (computeValue?: any) => {
     setVariable(
       {
         type: "TEXT",
-        defaultValue: value,
+        value: value,
       },
       action.variableId,
     );

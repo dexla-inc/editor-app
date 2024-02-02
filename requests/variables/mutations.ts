@@ -8,7 +8,7 @@ const onDeleteVariable = useVariableStore.getState().deleteVariable;
 
 export const createVariable = async (
   projectId: string,
-  params: VariableParams,
+  params: Omit<VariableParams, "value">,
 ) => {
   let url = `/projects/${projectId}/variables`;
 

@@ -51,7 +51,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
   const variables = variablesList.reduce(
     (acc, variable) => {
-      let value = variable.defaultValue ?? "";
+      let value = variable.value ?? variable.defaultValue ?? "";
       const parsedValue = parseVariableValue(value);
       const processedValue = processValue(parsedValue, variable.type);
 
