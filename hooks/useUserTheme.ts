@@ -1,3 +1,4 @@
+import { Color } from "@/requests/themes/types";
 import { ExtendedMantineThemeColors, useEditorStore } from "@/stores/editor";
 import { defaultTheme } from "@/utils/branding";
 import { useEffect, useState } from "react";
@@ -31,6 +32,9 @@ export const useUserTheme = (projectId: string) => {
           context: isLive ? window : iframeWindow,
         });
 
+        const colors = manipulateColors(userTheme?.colors);
+        console.log("useUserTheme", colors);
+
         setInternalTheme({
           fontFamily: defaultFontFamily,
           fonts: userTheme?.fonts,
@@ -48,11 +52,7 @@ export const useUserTheme = (projectId: string) => {
               };
             }, {} as any),
           },
-          colors: {
-            ...adjustColorShades(
-              userTheme?.colors as ExtendedMantineThemeColors,
-            ),
-          },
+          colors: colors,
           primaryColor: "Primary",
           logoUrl: userTheme?.logoUrl,
           faviconUrl: userTheme?.faviconUrl,
@@ -100,3 +100,37 @@ const adjustColorShades = (colors: ExtendedMantineThemeColors) => {
   });
   return adjustedColors;
 };
+
+function manipulateColors(
+  userThemeColors: Color[] | ExtendedMantineThemeColors,
+) {
+  const isColorArray = Array.isArray(userThemeColors);
+
+  if (isColorArray) {
+    // Array way: userTheme?.colors is an array of Color
+    return userThemeColors.reduce((userColors, color) => {
+      const hex = color.hex.substring(0, 7);
+      return {
+        ...userColors,
+        [color.name]: [
+          defaultTheme.fn.lighten(hex, 0.9),
+          defaultTheme.fn.lighten(hex, 0.8),
+          defaultTheme.fn.lighten(hex, 0.7),
+          defaultTheme.fn.lighten(hex, 0.6),
+          defaultTheme.fn.lighten(hex, 0.5),
+          defaultTheme.fn.lighten(hex, 0.4),
+          color.hex,
+          defaultTheme.fn.darken(hex, 0.1),
+          defaultTheme.fn.darken(hex, 0.2),
+          defaultTheme.fn.darken(hex, 0.3),
+        ],
+      };
+    }, {});
+  } else {
+    // Object way: userTheme?.colors is an ExtendedMantineThemeColors
+    // Assuming adjustColorShades is a function that adjusts the color shades appropriately
+    return {
+      ...adjustColorShades(userThemeColors),
+    };
+  }
+}

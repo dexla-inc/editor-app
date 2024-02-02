@@ -14,7 +14,6 @@ export const useCheckIfIsLive = () => {
 
   const hrefUrl = typeof window !== "undefined" ? window.location.href : "";
   const urlType = getProjectType(hrefUrl);
-  console.log("useCheckIfIsLive", urlType);
   useEffect(() => {
     const setLiveIfHasCustomDomain = async () => {
       try {

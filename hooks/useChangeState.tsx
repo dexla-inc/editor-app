@@ -27,6 +27,7 @@ export const useChangeState = ({
     form: any,
     currentState: string,
   ) => {
+    console.log(key, value, form, currentState);
     const hoverBackground = getHoverColor(value);
     form.setFieldValue(key, value);
     const defaultStateUpdate = { hover: { [key]: hoverBackground } };
