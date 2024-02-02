@@ -62,8 +62,8 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   return (
     <>
       {fields.map((f) => {
-        const isStatic = form.values.onLoad?.[f.name]?.dataType === "static";
-        const DataTypeIcon = isStatic ? IconPlug : IconPlugOff;
+        const isDynamic = form.values.onLoad?.[f.name]?.dataType === "dynamic";
+        const DataTypeIcon = isDynamic ? IconPlugOff : IconPlug;
 
         return (
           <Group
@@ -73,14 +73,14 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
             spacing={10}
             grow={!hasParentComponentData}
           >
-            {isStatic && (
+            {!isDynamic && (
               <StaticFormFieldsBuilder
                 field={f}
                 form={form}
                 component={component}
               />
             )}
-            {!isStatic && (
+            {isDynamic && (
               <DynamicFormFieldsBuilder
                 form={form}
                 component={component}
