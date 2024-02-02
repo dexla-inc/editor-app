@@ -3,16 +3,18 @@ import { TopLabel } from "@/components/TopLabel";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Flex, Group, Stack, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { Component, debouncedTreeUpdate } from "@/utils/editor";
+import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { useForm } from "@mantine/form";
 
 export const SelectOptionsForm = ({ component }: { component: Component }) => {
   const form = useForm({
     initialValues: {
-      data: component.props?.data ?? [],
-      style: {
-        display: component.props?.style.display,
+      props: {
+        data: component.props?.data ?? [],
+        style: {
+          display: component.props?.style?.display,
+        },
       },
     },
   });
@@ -21,7 +23,9 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
   const [value, setValue] = useState("");
 
   useEffect(() => {
-    debouncedTreeUpdate(component.id, form.values);
+    if (form.isTouched()) {
+      debouncedTreeComponentAttrsUpdate(form.values);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
 
@@ -35,7 +39,7 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
           onClick={() => {
             form.setFieldValue(
               "data",
-              form.values.data.concat({ label, value }),
+              form.values.props.data.concat({ label, value }),
             );
             setKey("");
             setValue("");
@@ -50,7 +54,7 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
 
       <Flex direction="column" gap="10px">
         {/* @ts-ignore*/}
-        {form.values.data.map(({ label, value }, index) => {
+        {form.values.props.data.map(({ label, value }, index) => {
           return (
             <Group key={index} style={{ flexWrap: "nowrap" }}>
               <TextInput
@@ -59,7 +63,10 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
                 value={label}
                 onChange={(event) => {
                   form.setValues((prev) => {
-                    prev.data[index].label = event.target.value;
+                    if (prev.props?.data[index].label) {
+                      prev.props.data[index].label = event.target.value;
+                    }
+
                     return prev;
                   });
                 }}
@@ -71,7 +78,10 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
                 value={value}
                 onChange={(event) => {
                   form.setValues((prev) => {
-                    prev.data[index].value = event.target.value;
+                    if (prev?.props?.data[index].value) {
+                      prev.props.data[index].value = event.target.value;
+                    }
+
                     return prev;
                   });
                 }}
@@ -82,7 +92,9 @@ export const SelectOptionsForm = ({ component }: { component: Component }) => {
                 name={ICON_DELETE}
                 onClick={() => {
                   form.setValues((prev) => {
-                    return prev.data.filter((_: any, i: number) => index !== i);
+                    return prev?.props?.data.filter(
+                      (_: any, i: number) => index !== i,
+                    );
                   });
                 }}
                 style={{ cursor: "pointer" }}
