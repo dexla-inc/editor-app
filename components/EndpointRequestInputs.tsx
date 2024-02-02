@@ -82,13 +82,7 @@ export const EndpointRequestInputs = ({ selectedEndpoint, form }: Props) => {
                       { required: param.required }
                     : {})}
                   {...additionalProps}
-                  onPickComponent={(componentToBind: string) => {
-                    const value = componentToBind.startsWith(
-                      "queryString_pass_",
-                    )
-                      ? componentToBind
-                      : `valueOf_${componentToBind}`;
-                    form.setFieldValue(field, value);
+                  onPickComponent={() => {
                     setPickingComponentToBindTo(undefined);
                     setComponentToBind(undefined);
                   }}

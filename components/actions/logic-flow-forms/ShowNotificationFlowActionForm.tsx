@@ -38,9 +38,7 @@ export const ShowNotificationFlowActionForm = ({ form }: Props) => {
           <React.Fragment key={title}>
             <ComponentToBindFromInput
               isLogicFlow={true}
-              onPickComponent={(componentToBind: string) => {
-                form.setFieldValue(name, `valueOf_${componentToBind}`);
-
+              onPickComponent={() => {
                 setComponentToBind(undefined);
                 setPickingComponentToBindTo(undefined);
               }}
