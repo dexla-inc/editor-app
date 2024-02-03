@@ -44,9 +44,9 @@ export const EditableComponent = ({
   const isResizing = useEditorStore((state) => state.isResizing);
   const { computeChildStyles } = useComputeChildStyles();
 
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-  const isLive = useEditorStore((state) => state.isLive);
-  const isEditorMode = !isPreviewMode && !isLive;
+  const isEditorMode = useEditorStore(
+    (state) => !state.isPreviewMode && !state.isLive,
+  );
 
   const { componentContextMenu, forceDestroyContextMenu } =
     useComponentContextMenu();
@@ -121,9 +121,9 @@ export const EditableComponent = ({
             ...component,
             props: propsWithOverwrites,
           },
-          ...(isResizing || isPreviewMode ? {} : droppable),
+          ...(isResizing || !isEditorMode ? {} : droppable),
           id: component.id,
-          isPreviewMode: isPreviewMode,
+          isPreviewMode: !isEditorMode,
           style: childStyles,
           sx: tealOutline,
           ...(isEditorMode && {

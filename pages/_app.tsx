@@ -3,6 +3,7 @@ import LogicFlowInitialModal from "@/components/logic-flow/LogicFlowInitialModal
 import { ContextMenuProvider } from "@/contexts/ContextMenuProvider";
 import { useCheckIfIsLive } from "@/hooks/useCheckIfIsLive";
 import AuthProvider from "@/pages/AuthProvider";
+import InitializeVariables from "@/pages/InitializeVariables";
 import InstantiatePropelAuthStore from "@/pages/InstantiatePropelAuthStore";
 import { useUserConfigStore } from "@/stores/userConfig";
 
@@ -133,6 +134,7 @@ export default function App(props: AppProps) {
           <main className={inter.variable}>
             <QueryClientProvider client={queryClient}>
               <ReactQueryDevtools initialIsOpen={false} />
+              <InitializeVariables pageProps={pageProps} />
               <Hydrate state={pageProps.dehydratedState}>
                 <ModalsProvider modals={{ logicFlows: LogicFlowInitialModal }}>
                   <Notifications />

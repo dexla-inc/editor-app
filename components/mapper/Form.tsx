@@ -16,7 +16,10 @@ type Props = {
 } & FlexProps;
 
 const FormComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    { renderTree, component, isPreviewMode, shareableContent, ...props }: Props,
+    ref,
+  ) => {
     const { children, triggers, loading, dataType, ...componentProps } =
       component.props as any;
     const { onSubmit, ...otherTriggers } = triggers;
@@ -45,26 +48,34 @@ const FormComponent = forwardRef(
       [],
     );
 
+    const formFieldComponents = getAllComponentsByName(
+      component,
+      validatableComponentsList,
+      { withAsterisk: true },
+    );
+
+    const submitButtonComponents = getAllComponentsByName(component, "Button", {
+      type: "submit",
+    });
+
+    const invalidComponents = formFieldComponents.filter(
+      (component) =>
+        getInputValue(component?.id!) === "" ||
+        getInputValue(component?.id!) === undefined,
+    );
+
+    if (!invalidComponents.length) {
+      submitButtonComponents.map((component) => {
+        setState(component.id!, "default");
+      });
+    }
+
     const onSubmitCustom = async (e: FormEvent<any>) => {
       e.preventDefault();
 
-      const formFieldComponents = getAllComponentsByName(
-        component,
-        validatableComponentsList,
-        { withAsterisk: true },
-      );
-
-      const submitButtonComponents = getAllComponentsByName(
-        component,
-        "Button",
-        { type: "submit" },
-      );
-
-      const invalidComponents = formFieldComponents.filter(
-        (component) =>
-          getInputValue(component?.id!) === "" ||
-          getInputValue(component?.id!) === undefined,
-      );
+      if (!isPreviewMode) {
+        return;
+      }
 
       invalidComponents.map((component) => {
         updateTreeComponent({
@@ -94,7 +105,7 @@ const FormComponent = forwardRef(
         {...props}
         {...componentProps}
         component="form"
-        autoComplete={props.isPreviewMode ? "on" : "off"}
+        autoComplete={isPreviewMode ? "on" : "off"}
         onSubmit={onSubmitCustom}
         {...otherTriggers}
         pos="relative"
