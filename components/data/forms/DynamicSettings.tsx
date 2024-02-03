@@ -23,12 +23,14 @@ type Props = {
   onSave?: (component: Component, form: any) => Promise<any>;
 };
 
+const onSaveDefault = () => Promise.resolve();
+
 export const DynamicSettings = ({
   component,
   endpoints,
   children,
   customKeys = [],
-  onSave,
+  onSave = onSaveDefault,
 }: Props) => {
   const [initiallyOpened, setInitiallyOpened] = useState(true);
   const [selectedEndpoint, setSelectedEndpoint] = useState<

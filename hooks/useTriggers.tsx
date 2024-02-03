@@ -63,7 +63,6 @@ export const useTriggers = ({
 
   const handleOnChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      triggers().onChange?.(e);
       if (component.props?.error) {
         updateTreeComponent({
           componentId: component.id,
@@ -75,14 +74,8 @@ export const useTriggers = ({
     [component],
   );
 
-  const handleOnSubmit = useCallback((e: any) => {
-    if (isEditorMode) e.preventDefault();
-    !isEditorMode && triggers().onSubmit?.(e);
-  }, []);
-
   return {
     ...triggers(),
     onChange: handleOnChange,
-    onSubmit: handleOnSubmit,
   };
 };

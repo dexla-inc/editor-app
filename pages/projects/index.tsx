@@ -41,9 +41,9 @@ export default function Projects() {
   const { setPageCancelled } = useUserConfigStore((state) => ({
     setPageCancelled: state.setPageCancelled,
   }));
-  const initializeVariableList = useVariableStore(
-    (state) => state.initializeVariableList,
-  );
+  // const initializeVariableList = useVariableStore(
+  //   (state) => state.initializeVariableList,
+  // );
 
   const router = useRouter();
 
@@ -86,7 +86,8 @@ export default function Projects() {
     router.push(url);
   };
 
-  useVariableListQuery({ onSuccess: initializeVariableList });
+  // TODO: Add this back when so we get rid of InitializeVariables.ts
+  // useVariableListQuery({ onSuccess: initializeVariableList });
 
   // useEffect(() => {
   //   if (!user) {
