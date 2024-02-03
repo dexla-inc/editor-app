@@ -53,34 +53,28 @@ export const isEditor = (baseUrl: string) => {
 export type UrlType = "project" | "live" | "editor";
 
 export const getProjectType = (href: string): UrlType => {
-  // Global editor pattern, not domain specific
-  const globalEditorPattern = new RegExp(
-    "[0-9a-fA-F]{32}/editor/[0-9a-fA-F]{32}$",
+  // Pattern to match editor URLs globally, not limited to a specific domain
+  const editorPattern = new RegExp("/editor/[0-9a-fA-F]{32}$");
+
+  // Specific patterns to identify project URLs within the 'dexla-inc.vercel.app' domain
+  // and to accommodate for different project types like projects, playground, and team
+  const projectPattern = new RegExp(
+    "dexla-inc.vercel.app/(projects|playground|team)/[0-9a-fA-F]{32}",
   );
 
-  // Check specifically for dexla-inc.vercel.app domain URLs
-  if (href.includes("dexla-inc.vercel.app")) {
-    // Updated pattern to match editor URLs within dexla-inc.vercel.app domain
-    const editorPattern = new RegExp(
-      "dexla-inc.vercel.app.*/editor/[0-9a-fA-F]{32}$",
-    );
-    // Updated pattern to match project URLs (projects, playground, and team)
-    const projectPattern = new RegExp(
-      "dexla-inc.vercel.app/(projects|playground|team)/[0-9a-fA-F]{32}",
-    );
-
-    if (editorPattern.test(href)) {
-      return "editor";
-    } else if (projectPattern.test(href)) {
+  if (editorPattern.test(href)) {
+    // This now catches any URL ending with '/editor/' followed by a 32-char hex string, across any domain
+    return "editor";
+  } else if (href.includes("dexla-inc.vercel.app")) {
+    if (projectPattern.test(href)) {
+      // Matches specific project types within the 'dexla-inc.vercel.app' domain
       return "project";
     } else {
-      return "live";
+      // Other URLs within 'dexla-inc.vercel.app' that don't match the editor or project patterns
+      return "project"; // Assuming generic project type for any non-editor URLs within this domain
     }
-  } else if (globalEditorPattern.test(href)) {
-    // This checks for an editor pattern globally if the specific domain check fails
-    return "editor";
   } else if (
-    // Check for other specific conditions based on URL starting strings
+    // Checks for URLs starting with specific substrings indicating a 'project'
     href.startsWith("http://localhost:3000") ||
     href.startsWith("https://dev-app.dexla.ai") ||
     href.startsWith("https://beta.dexla.ai") ||
@@ -88,7 +82,7 @@ export const getProjectType = (href: string): UrlType => {
   ) {
     return "project";
   } else {
-    // Default to "live" if no other conditions are met
+    // Defaults to 'live' for URLs that don't match any of the above conditions
     return "live";
   }
 };
