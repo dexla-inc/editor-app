@@ -67,7 +67,6 @@ export const useTriggers = ({
         updateTreeComponent({
           componentId: component.id,
           props: { error: "" },
-          save: false,
         });
       }
     },

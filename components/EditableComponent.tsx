@@ -47,9 +47,6 @@ export const EditableComponent = ({
   const isEditorMode = useEditorStore(
     (state) => !state.isPreviewMode && !state.isLive,
   );
-  // const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-  // const isLive = useEditorStore((state) => state.isLive);
-  // const isEditorMode = !isPreviewMode && !isLive;
 
   const { componentContextMenu, forceDestroyContextMenu } =
     useComponentContextMenu();
