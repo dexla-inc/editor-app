@@ -53,11 +53,18 @@ export const isEditor = (baseUrl: string) => {
 export type UrlType = "project" | "live" | "editor";
 
 export const getProjectType = (href: string): UrlType => {
+  // Global editor pattern, not domain specific
+  const globalEditorPattern = new RegExp(
+    "[0-9a-fA-F]{32}/editor/[0-9a-fA-F]{32}$",
+  );
+
+  // Check specifically for dexla-inc.vercel.app domain URLs
   if (href.includes("dexla-inc.vercel.app")) {
-    // Define patterns to match specific cases within the dexla-inc.vercel.app domain
+    // Updated pattern to match editor URLs within dexla-inc.vercel.app domain
     const editorPattern = new RegExp(
       "dexla-inc.vercel.app.*/editor/[0-9a-fA-F]{32}$",
     );
+    // Updated pattern to match project URLs (projects, playground, and team)
     const projectPattern = new RegExp(
       "dexla-inc.vercel.app/(projects|playground|team)/[0-9a-fA-F]{32}",
     );
@@ -69,19 +76,23 @@ export const getProjectType = (href: string): UrlType => {
     } else {
       return "live";
     }
+  } else if (globalEditorPattern.test(href)) {
+    // This checks for an editor pattern globally if the specific domain check fails
+    return "editor";
   } else if (
-    // Check for other specific conditions outside the dexla-inc.vercel.app domain
-    href.includes("http://localhost:3000") ||
-    href.includes("app.dexla.ai")
+    // Check for other specific conditions based on URL starting strings
+    href.startsWith("http://localhost:3000") ||
+    href.startsWith("https://dev-app.dexla.ai") ||
+    href.startsWith("https://beta.dexla.ai") ||
+    href.startsWith("https://app.dexla.ai")
   ) {
     return "project";
   } else {
-    // Default case for all other URLs
+    // Default to "live" if no other conditions are met
     return "live";
   }
 };
 
-// check if url follow the pattern: 7eacfa0cbb8b406cbc2b40085b9c37a4.dexla.io or 7eacfa0cbb8b406cbc2b40085b9c37a4.dexla.ai
 // where 7eacfa0cbb8b406cbc2b40085b9c37a4 is the project id and can be any string that contains only letters and numbers,
 // but always has 32 characters and a mix of letters and numbers
 export function isAppUrl(baseUrl: string): boolean {
