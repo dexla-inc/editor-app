@@ -11,5 +11,4 @@ export type ValueProps = Partial<{
   static: string;
   dynamic: string;
   boundCode: string;
-  bindedId?: string;
 }>;
