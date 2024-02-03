@@ -25,8 +25,6 @@ import debounce from "lodash.debounce";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useVariableStore } from "@/stores/variables";
-import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 
 export default function Projects() {
   const [search, setSearch] = useState<string>("");

@@ -24,7 +24,7 @@ export const VariableList = ({ projectId }: Props) => {
   const [opened, modal] = useDisclosure(false);
   const [filter, setFilter] = useDebouncedState("", 250);
   const [variableToEdit, setVariableToEdit] = useState(undefined);
-  const { data: variableList, invalidate } = useVariableListQuery({});
+  const { data: variableList, invalidate } = useVariableListQuery(projectId);
 
   const deleteVar = async (variableId: string) => {
     await deleteVariable(projectId, variableId);
