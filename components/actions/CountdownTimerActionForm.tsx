@@ -1,3 +1,4 @@
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
@@ -12,7 +13,6 @@ import { getComponentById } from "@/utils/editor";
 import { Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
-import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
 
 type Props = {
   id: string;
@@ -53,7 +53,6 @@ export const CountdownTimerActionForm = ({ id }: Props) => {
     initialValues: {
       componentId: action.action?.componentId,
       selectedProp: action.action?.selectedProp,
-      duration: action.action?.duration,
     },
   });
 

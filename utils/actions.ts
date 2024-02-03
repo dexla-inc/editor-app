@@ -41,6 +41,7 @@ import {
 
 import { CountdownTimerActionForm } from "@/components/actions/CountdownTimerActionForm";
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
+import { CountdownTimerActionFlowForm } from "@/components/actions/logic-flow-forms/CountdownTimerActionFlowForm";
 import { useDataContext } from "@/contexts/DataProvider";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
@@ -52,7 +53,7 @@ import { executeFlow } from "@/utils/logicFlows";
 import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
 import merge from "lodash.merge";
-import { Router, useRouter } from "next/router";
+import { Router } from "next/router";
 import { getComponentInitialDisplayValue } from "./common";
 import { ValueProps } from "./types";
 
@@ -260,7 +261,6 @@ export interface CountdownTimerAction extends BaseAction {
   name: "countdownTimer";
   componentId: ValueProps;
   selectedProp: string;
-  duration: number;
 }
 
 export type Action = {
@@ -333,11 +333,8 @@ export const useNavigationAction =
     router.push(url);
   };
 
-export const useGoToUrlAction = (computeValue?: any) => {
-  if (!computeValue) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    computeValue = useDataContext()!.computeValue;
-  }
+export const useGoToUrlAction = () => {
+  const { computeValue } = useDataContext()!;
   return async ({ action }: GoToUrlParams) => {
     const { url, openInNewTab } = action;
     const value = computeValue({ value: url });
@@ -521,11 +518,8 @@ export const useChangeStepAction = () => {
   };
 };
 
-export const useChangeVisibilityAction = (computeValue?: any) => {
-  if (!computeValue) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    computeValue = useDataContext()!.computeValue;
-  }
+export const useChangeVisibilityAction = () => {
+  const { computeValue } = useDataContext()!;
   return ({ action }: TogglePropsActionParams) => {
     const editorStore = useEditorStore.getState();
     const updateTreeComponent = editorStore.updateTreeComponent;
@@ -631,11 +625,8 @@ const getVariableValueFromVariableId = (variableId = "") => {
   }
 };
 
-export const useShowNotificationAction = (computeValue?: any) => {
-  if (!computeValue) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    computeValue = useDataContext()!.computeValue;
-  }
+export const useShowNotificationAction = () => {
+  const { computeValue } = useDataContext()!;
   return async ({ action }: ShowNotificationActionParams) => {
     showNotification({
       title: computeValue({ value: action.title }),
@@ -650,11 +641,8 @@ export const useTriggerLogicFlowAction =
     executeFlow(params.action.logicFlowId, params);
   };
 
-export const useChangeStateAction = (computeValue?: any) => {
-  if (!computeValue) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    computeValue = useDataContext()!.computeValue;
-  }
+export const useChangeStateAction = () => {
+  const { computeValue } = useDataContext()!;
   return ({ action, event }: ChangeStateActionParams) => {
     const setTreeComponentCurrentState =
       useEditorStore.getState().setTreeComponentCurrentState;
@@ -823,13 +811,11 @@ const handleError = async (
   component: any,
   actionMapper: any,
   updateTreeComponent: any,
-  computeValue: any,
 ) => {
   if (onError && onError.sequentialTo === actionId) {
     const actions = component.actions ?? [];
     const onErrorAction = actions.find((a: Action) => a.trigger === "onError");
-    const onErrorActionMapped =
-      actionMapper[onError.action.name].action(computeValue);
+    const onErrorActionMapped = actionMapper[onError.action.name].action();
     let errorMessage = "";
 
     try {
@@ -859,17 +845,15 @@ const handleSuccess = async (
   action: any,
   actionMapper: any,
   updateTreeComponent: any,
-  computeValue: any,
 ) => {
   if (onSuccess && onSuccess.sequentialTo === actionId) {
     const actions = component.actions ?? [];
     const onSuccessAction = actions.find(
       (a: Action) => a.trigger === "onSuccess",
     );
-    const onSuccessActionMapped =
-      actionMapper[onSuccess.action.name].action(computeValue);
+    const onSuccessActionMapped = actionMapper[onSuccess.action.name];
 
-    onSuccessActionMapped({
+    onSuccessActionMapped.action({
       action: onSuccessAction?.action,
       binds: action.binds,
       router,
@@ -1006,7 +990,6 @@ export const useApiCallAction = () => {
         action,
         actionMapper,
         updateTreeComponent,
-        computeValue,
       );
     } catch (error) {
       await handleError(
@@ -1018,7 +1001,6 @@ export const useApiCallAction = () => {
         component,
         actionMapper,
         updateTreeComponent,
-        computeValue,
       );
     } finally {
       setLoadingState(component.id!, false, updateTreeComponent);
@@ -1045,11 +1027,8 @@ export type ChangeVariableActionParams = ActionParams & {
   action: ChangeVariableAction;
 };
 
-export const useChangeVariableAction = (computeValue?: any) => {
-  if (!computeValue) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    computeValue = useDataContext()!.computeValue;
-  }
+export const useChangeVariableAction = () => {
+  const { computeValue } = useDataContext()!;
 
   return async ({ action }: ChangeVariableActionParams) => {
     const setVariable = useVariableStore.getState().setVariable;
@@ -1057,7 +1036,7 @@ export const useChangeVariableAction = (computeValue?: any) => {
     setVariable(
       {
         type: "TEXT",
-        value: value,
+        defaultValue: value,
       },
       action.variableId,
     );
@@ -1077,20 +1056,14 @@ function getNumberInString(str: string) {
 function updateComponentStringWithNumber(
   originalString: string,
   newValue: number,
-): string {
+) {
   return originalString.replace(/\d+/, newValue.toString());
 }
 
 export const useCountdownTimerAction = () => {
-  const router = useRouter();
-  const tree = useEditorStore((state) => state.tree);
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-  const isLive = useEditorStore((state) => state.isLive);
-
   return ({ action }: CountdownTimerActionParams) => {
-    const updateTreeComponentAttrs =
-      useEditorStore.getState().updateTreeComponentAttrs;
-    const isEditorMode = !isPreviewMode && !isLive;
+    const { tree, updateTreeComponentAttrs } = useEditorStore.getState();
+
     const componentId = action.componentId.bindedId;
     const component = getComponentById(tree.root, componentId!);
 
@@ -1099,15 +1072,11 @@ export const useCountdownTimerAction = () => {
       let stringItem = component?.props?.[propToUpdate] ?? "";
       const isLoadedData = Boolean(component?.onLoad);
       const isStatic = isLoadedData && component.onLoad[propToUpdate]?.static;
-      const isDynamic = isLoadedData && component.onLoad[propToUpdate]?.dynamic;
 
       const componentKey = isLoadedData ? "onLoad" : "props";
 
       if (isStatic) stringItem = component.onLoad[propToUpdate].static;
-      if (isDynamic) stringItem = component.onLoad[propToUpdate].dynamic;
       if (!stringItem) return;
-
-      console.log(component?.props, component?.onLoad);
 
       let duration = getNumberInString(stringItem);
       const countdown = setInterval(() => {
@@ -1117,15 +1086,14 @@ export const useCountdownTimerAction = () => {
             stringItem,
             duration,
           );
-          const updatedData =
-            isStatic || isDynamic
-              ? {
-                  [propToUpdate]: {
-                    static: updatedString,
-                    dynamic: updatedString,
-                  },
-                }
-              : { [propToUpdate]: updatedString };
+          const updatedData = isStatic
+            ? {
+                [propToUpdate]: {
+                  static: updatedString,
+                  dynamic: updatedString,
+                },
+              }
+            : { [propToUpdate]: updatedString };
 
           updateTreeComponentAttrs([componentId!], {
             [componentKey]: updatedData,
@@ -1134,8 +1102,6 @@ export const useCountdownTimerAction = () => {
           clearInterval(countdown);
         }
       }, 1000);
-
-      if (isEditorMode) clearInterval(countdown);
     }
   };
 };
@@ -1243,6 +1209,6 @@ export const actionMapper = {
   countdownTimer: {
     action: useCountdownTimerAction,
     form: CountdownTimerActionForm,
-    flowForm: ChangeLanguageActionForm,
+    flowForm: CountdownTimerActionFlowForm,
   },
 };
