@@ -27,7 +27,6 @@ export const useCheckIfIsLive = () => {
 
   // Only do this when page refreshes
   useEffect(() => {
-    console.log("Checking if live");
     const setLiveIfHasCustomDomain = async () => {
       try {
         let _projectId = projectId;
