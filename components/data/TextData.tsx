@@ -1,6 +1,6 @@
-import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
 import { DataProps } from "@/components/data/type";
 import { Stack } from "@mantine/core";
+import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
 
 export const TextData = ({ component, endpoints }: DataProps) => {
   const isNavLink = component.name === "NavLink";

@@ -1,7 +1,6 @@
 import BindingPopover from "@/components/BindingPopover";
 import { useEditorStore } from "@/stores/editor";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
-import { ICON_SIZE } from "@/utils/config";
 import { ValueProps } from "@/utils/types";
 import {
   ActionIcon,
@@ -13,6 +12,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCurrentLocation } from "@tabler/icons-react";
+import { ICON_SIZE } from "@/utils/config";
 
 type Props = Omit<TextInputProps, "value" | "onChange"> & {
   componentId?: string;
@@ -51,7 +51,6 @@ export const ComponentToBindFromInput = ({
           ...value,
           dataType: "boundCode",
           boundCode: `return components['${componentToBind}']`,
-          bindedId: componentToBind,
         });
         onPickComponent?.();
       },
