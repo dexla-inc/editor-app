@@ -57,8 +57,6 @@ export const CountdownTimerActionForm = ({ id }: Props) => {
     },
   });
 
-  console.log(form.values);
-
   useEffect(() => {
     if (form.isTouched("componentId")) {
       form.setFieldValue("selectedProp", requiredProp);

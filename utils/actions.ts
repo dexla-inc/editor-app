@@ -52,7 +52,7 @@ import { executeFlow } from "@/utils/logicFlows";
 import { showNotification } from "@mantine/notifications";
 import get from "lodash.get";
 import merge from "lodash.merge";
-import { Router } from "next/router";
+import { Router, useRouter } from "next/router";
 import { getComponentInitialDisplayValue } from "./common";
 import { ValueProps } from "./types";
 
@@ -258,7 +258,7 @@ export interface ChangeVariableAction extends BaseAction {
 
 export interface CountdownTimerAction extends BaseAction {
   name: "countdownTimer";
-  componentId: string;
+  componentId: ValueProps;
   selectedProp: string;
   duration: number;
 }
@@ -1068,41 +1068,77 @@ export type CountdownTimerActionParams = ActionParams & {
   action: CountdownTimerAction;
 };
 
-function updateNumberInString(str: string) {
+function getNumberInString(str: string) {
   // Find the number using a regular expression
-  const regex = /\d+/;
-  const found = str.match(regex);
-
-  // Parse the number, increment it, and convert it back to a string
-  let number = found ? parseInt(found[0], 10) : 0;
-  if (number > 0) {
-    number--;
-    str = str.replace(regex, number.toString());
-  }
-
-  return { str, number };
+  const found = str.match(/\d+/);
+  return found ? parseInt(found[0], 10) : 0;
 }
 
-export const useCountdownTimerAction =
-  () =>
-  ({ action }: CountdownTimerActionParams) => {
-    const editorStore = useEditorStore.getState();
-    const tree = editorStore.tree;
-    const updateTreeComponent = editorStore.updateTreeComponent;
-    const component = getComponentById(tree.root, action.componentId)!;
-    const stringItem = component.props![action.selectedProp] as string;
-    const { str, number } = updateNumberInString(stringItem);
-    const countdown = setInterval(() => {
-      updateTreeComponent({
-        componentId: action.componentId,
-        props: { [action.selectedProp]: str },
-      });
+function updateComponentStringWithNumber(
+  originalString: string,
+  newValue: number,
+): string {
+  return originalString.replace(/\d+/, newValue.toString());
+}
 
-      if (number <= 0) {
-        clearInterval(countdown);
-      }
-    }, 1000);
+export const useCountdownTimerAction = () => {
+  const router = useRouter();
+  const tree = useEditorStore((state) => state.tree);
+  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const isLive = useEditorStore((state) => state.isLive);
+
+  return ({ action }: CountdownTimerActionParams) => {
+    const updateTreeComponentAttrs =
+      useEditorStore.getState().updateTreeComponentAttrs;
+    const isEditorMode = !isPreviewMode && !isLive;
+    const componentId = action.componentId.bindedId;
+    const component = getComponentById(tree.root, componentId!);
+
+    if (component) {
+      const propToUpdate = action.selectedProp;
+      let stringItem = component?.props?.[propToUpdate] ?? "";
+      const isLoadedData = Boolean(component?.onLoad);
+      const isStatic = isLoadedData && component.onLoad[propToUpdate]?.static;
+      const isDynamic = isLoadedData && component.onLoad[propToUpdate]?.dynamic;
+
+      const componentKey = isLoadedData ? "onLoad" : "props";
+
+      if (isStatic) stringItem = component.onLoad[propToUpdate].static;
+      if (isDynamic) stringItem = component.onLoad[propToUpdate].dynamic;
+      if (!stringItem) return;
+
+      console.log(component?.props, component?.onLoad);
+
+      let duration = getNumberInString(stringItem);
+      const countdown = setInterval(() => {
+        if (duration > 0) {
+          duration--;
+          const updatedString = updateComponentStringWithNumber(
+            stringItem,
+            duration,
+          );
+          const updatedData =
+            isStatic || isDynamic
+              ? {
+                  [propToUpdate]: {
+                    static: updatedString,
+                    dynamic: updatedString,
+                  },
+                }
+              : { [propToUpdate]: updatedString };
+
+          updateTreeComponentAttrs([componentId!], {
+            [componentKey]: updatedData,
+          });
+        } else {
+          clearInterval(countdown);
+        }
+      }, 1000);
+
+      if (isEditorMode) clearInterval(countdown);
+    }
   };
+};
 
 export const actionMapper = {
   alert: {
