@@ -6,6 +6,7 @@ import { Droppable } from "@/components/Droppable";
 import { EditableComponent } from "@/components/EditableComponent";
 import { IFrame } from "@/components/IFrame";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
+import { useClearIntervals } from "@/hooks/useMergedProps";
 import {
   debouncedUpdatePageState,
   useEditorStore,
@@ -92,6 +93,9 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const [canvasRef] = useAutoAnimate();
   const [isCustomComponentModalOpen, customComponentModal] =
     useDisclosure(false);
+
+  const clearIntervals = useClearIntervals(editorTree);
+  clearIntervals();
 
   const deleteComponent = useCallback(() => {
     const selectedComponentIds = useEditorStore.getState().selectedComponentIds;

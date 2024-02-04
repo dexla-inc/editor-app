@@ -1,7 +1,8 @@
 import { useDataContext } from "@/contexts/DataProvider";
 import { ComponentToBind, useEditorStore } from "@/stores/editor";
+import { useintervalStore } from "@/stores/intervals";
 import { GRAY_OUTLINE } from "@/utils/branding";
-import { Component } from "@/utils/editor";
+import { Component, getComponentById } from "@/utils/editor";
 import { removeKeysRecursive } from "@/utils/removeKeys";
 import { CSSObject } from "@mantine/core";
 import merge from "lodash.merge";
@@ -161,4 +162,35 @@ export const handleBackground = (component: Component, styles: CSSObject) => {
   if (isGradient && hasImage) {
     styles.backgroundImage = `${styles.backgroundImage}, ${component.props?.bg}`;
   }
+};
+
+export const useClearIntervals = (tree: any) => {
+  const isEditorMode = useEditorStore(
+    (state) => !state.isLive && !state.isPreviewMode,
+  );
+
+  const updateTreeComponentAttrs = useEditorStore(
+    (state) => state.updateTreeComponentAttrs,
+  );
+  const interval = useintervalStore((state) => state.interval);
+  const removeInterval = useintervalStore((state) => state.clearInterval);
+
+  const component = getComponentById(tree.root, interval.id);
+
+  const clearExistingIntervals = () => {
+    if (isEditorMode && component) {
+      clearInterval(interval.intervalName);
+      updateTreeComponentAttrs([interval.id], {
+        onLoad: {
+          [interval.prop]: {
+            static: interval.initialValue,
+            dynamic: interval.initialValue,
+          },
+        },
+      });
+      removeInterval();
+    }
+  };
+
+  return clearExistingIntervals;
 };

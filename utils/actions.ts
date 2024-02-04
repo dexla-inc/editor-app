@@ -21,6 +21,7 @@ import { useDataContext } from "@/contexts/DataProvider";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
+import { useintervalStore } from "@/stores/intervals";
 import { useVariableStore } from "@/stores/variables";
 import { readDataFromStream } from "@/utils/api";
 import { Component, getComponentById } from "@/utils/editor";
@@ -197,6 +198,12 @@ export interface ChangeVariableAction extends BaseAction {
   value: ValueProps;
 }
 
+export interface CountdownTimerAction extends BaseAction {
+  name: "countdownTimer";
+  componentId: ValueProps;
+  selectedProp: string;
+}
+
 export type ActionType =
   | NavigationAction
   | AlertAction
@@ -207,7 +214,8 @@ export type ActionType =
   | ChangeStateAction
   | TriggerLogicFlowAction
   | ChangeLanguageAction
-  | ChangeVariableAction;
+  | ChangeVariableAction
+  | CountdownTimerAction;
 
 export type Action = {
   id: string;
@@ -694,6 +702,71 @@ export const useChangeVariableAction = () => {
       },
       action.variableId,
     );
+  };
+};
+
+export type CountdownTimerActionParams = ActionParams & {
+  action: CountdownTimerAction;
+};
+
+function getNumberInString(str: string) {
+  // Find the number using a regular expression
+  const found = str.match(/\d+/);
+  return found ? parseInt(found[0], 10) : 0;
+}
+
+function updateComponentStringWithNumber(
+  originalString: string,
+  newValue: number,
+) {
+  return originalString.replace(/\d+/, newValue.toString());
+}
+
+export const useCountdownTimerAction = () => {
+  return ({ action }: CountdownTimerActionParams) => {
+    const { tree, updateTreeComponentAttrs } = useEditorStore.getState();
+    const setIntervalInStore = useintervalStore.getState().setInterval;
+
+    const componentId = action.componentId.bindedId;
+    const component = getComponentById(tree.root, componentId!);
+
+    if (component) {
+      const propToUpdate = action.selectedProp;
+      let stringItem = component?.props?.[propToUpdate] ?? "";
+      const isLoadedData = Boolean(component?.onLoad);
+      const isStatic = isLoadedData && component.onLoad[propToUpdate]?.static;
+
+      const componentKey = isLoadedData ? "onLoad" : "props";
+
+      if (isStatic) stringItem = component.onLoad[propToUpdate].static;
+      if (!stringItem) return;
+
+      let duration = getNumberInString(stringItem);
+      const countdown = setInterval(() => {
+        if (duration > 0) {
+          duration--;
+          const updatedString = updateComponentStringWithNumber(
+            stringItem,
+            duration,
+          );
+          const updatedData = isStatic
+            ? {
+                [propToUpdate]: {
+                  static: updatedString,
+                  dynamic: updatedString,
+                },
+              }
+            : { [propToUpdate]: updatedString };
+
+          updateTreeComponentAttrs([componentId!], {
+            [componentKey]: updatedData,
+          });
+        } else {
+          clearInterval(countdown);
+        }
+      }, 1000);
+      setIntervalInStore(componentId!, propToUpdate, countdown, stringItem);
+    }
   };
 };
 
