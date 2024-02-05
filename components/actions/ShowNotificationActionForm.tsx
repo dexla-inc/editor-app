@@ -46,7 +46,6 @@ export const ShowNotificationActionForm = ({ id }: Props) => {
     initialValues: {
       title: action.action?.title,
       message: action.action?.message,
-      actionCode: action.action?.actionCode ?? {},
       color: action.action?.color ?? "Primary.6",
     },
   });
@@ -62,7 +61,6 @@ export const ShowNotificationActionForm = ({ id }: Props) => {
         updateValues: {
           title: values.title,
           message: values.message,
-          actionCode: values.actionCode,
           color: values.color,
         },
         updateTreeComponentActions,

@@ -55,7 +55,6 @@ export const DynamicSettings = ({
       ...pick(component.onLoad ?? {}, customKeys),
       endpointId: component.onLoad?.endpointId ?? undefined,
       resultsKey: component.onLoad?.resultsKey ?? "",
-      actionCode: component.onLoad?.actionCode ?? {},
       staleTime: component.onLoad?.staleTime ?? DEFAULT_STALE_TIME,
       binds: {
         header: component.onLoad?.binds?.header ?? {},

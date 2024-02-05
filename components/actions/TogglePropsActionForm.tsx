@@ -59,7 +59,6 @@ export const TogglePropsActionForm = ({ id }: Props) => {
   const form = useForm<FormValues>({
     initialValues: {
       conditionRules: action.action?.conditionRules ?? [],
-      actionCode: action.action?.actionCode ?? {},
     },
   });
 
@@ -75,7 +74,6 @@ export const TogglePropsActionForm = ({ id }: Props) => {
         id,
         updateValues: {
           conditionRules: values.conditionRules ?? [],
-          actionCode: values.actionCode,
         },
         updateTreeComponentActions,
       });

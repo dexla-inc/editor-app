@@ -139,7 +139,6 @@ export type SequentialTrigger = Extract<
 export interface BaseAction {
   name: string;
   data?: any;
-  actionCode?: Record<string, string>;
 }
 
 export interface NavigationAction extends BaseAction {
@@ -250,26 +249,28 @@ export interface ChangeVariableAction extends BaseAction {
   value: ValueProps;
 }
 
+type ActionType =
+  | NavigationAction
+  | AlertAction
+  | APICallAction
+  | GoToUrlAction
+  | OpenModalAction
+  | OpenDrawerAction
+  | OpenPopOverAction
+  | ToggleAccordionItemAction
+  | TogglePropsAction
+  | ShowNotificationAction
+  | ChangeStateAction
+  | ToggleNavbarAction
+  | ChangeStepAction
+  | TriggerLogicFlowAction
+  | ChangeLanguageAction
+  | ChangeVariableAction;
+
 export type Action = {
   id: string;
   trigger: ActionTrigger;
-  action:
-    | NavigationAction
-    | AlertAction
-    | APICallAction
-    | GoToUrlAction
-    | OpenModalAction
-    | OpenDrawerAction
-    | OpenPopOverAction
-    | ToggleAccordionItemAction
-    | TogglePropsAction
-    | ShowNotificationAction
-    | ChangeStateAction
-    | ToggleNavbarAction
-    | ChangeStepAction
-    | TriggerLogicFlowAction
-    | ChangeLanguageAction
-    | ChangeVariableAction;
+  action: ActionType;
   sequentialTo?: string;
 };
 
@@ -319,11 +320,8 @@ export const useNavigationAction =
     router.push(url);
   };
 
-export const useGoToUrlAction = (computeValue?: any) => {
-  if (!computeValue) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    computeValue = useDataContext()!.computeValue;
-  }
+export const useGoToUrlAction = () => {
+  const { computeValue } = useDataContext()!;
   return async ({ action }: GoToUrlParams) => {
     const { url, openInNewTab } = action;
     const value = computeValue({ value: url });
@@ -507,11 +505,8 @@ export const useChangeStepAction = () => {
   };
 };
 
-export const useChangeVisibilityAction = (computeValue?: any) => {
-  if (!computeValue) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    computeValue = useDataContext()!.computeValue;
-  }
+export const useChangeVisibilityAction = () => {
+  const { computeValue } = useDataContext()!;
   return ({ action }: TogglePropsActionParams) => {
     const editorStore = useEditorStore.getState();
     const updateTreeComponent = editorStore.updateTreeComponent;
@@ -617,11 +612,8 @@ const getVariableValueFromVariableId = (variableId = "") => {
   }
 };
 
-export const useShowNotificationAction = (computeValue?: any) => {
-  if (!computeValue) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    computeValue = useDataContext()!.computeValue;
-  }
+export const useShowNotificationAction = () => {
+  const { computeValue } = useDataContext()!;
   return async ({ action }: ShowNotificationActionParams) => {
     showNotification({
       title: computeValue({ value: action.title }),
@@ -636,11 +628,8 @@ export const useTriggerLogicFlowAction =
     executeFlow(params.action.logicFlowId, params);
   };
 
-export const useChangeStateAction = (computeValue?: any) => {
-  if (!computeValue) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    computeValue = useDataContext()!.computeValue;
-  }
+export const useChangeStateAction = () => {
+  const { computeValue } = useDataContext()!;
   return ({ action, event }: ChangeStateActionParams) => {
     const setTreeComponentCurrentState =
       useEditorStore.getState().setTreeComponentCurrentState;
@@ -800,71 +789,51 @@ export const prepareRequestData = (
   return { url, body };
 };
 
-const handleError = async (
+const handleError = async <T>(
   error: any,
   onError: any,
-  actionId: any,
-  router: any,
-  rest: any,
-  component: any,
-  actionMapper: any,
-  updateTreeComponent: any,
-  computeValue: any,
+  router: Router,
+  rest: T,
+  component: Component,
 ) => {
-  if (onError && onError.sequentialTo === actionId) {
-    const actions = component.actions ?? [];
-    const onErrorAction = actions.find((a: Action) => a.trigger === "onError");
-    const onErrorActionMapped =
-      actionMapper[onError.action.name].action(computeValue);
-    let errorMessage = "";
+  const actions = component.actions ?? [];
+  const onErrorAction = actions.find((a: Action) => a.trigger === "onError");
+  let errorMessage = "";
 
-    try {
-      errorMessage = JSON.parse(error.message);
-    } catch {
-      errorMessage = error.message;
-    }
-
-    onErrorActionMapped({
-      action: onErrorAction?.action,
-      router,
-      ...rest,
-      data: { value: errorMessage },
-    });
+  try {
+    errorMessage = JSON.parse(error.message);
+  } catch {
+    errorMessage = error.message;
   }
 
-  updateTreeComponent(component.id!, { loading: false }, false);
+  onError({
+    action: onErrorAction?.action,
+    router,
+    ...rest,
+    data: { value: errorMessage },
+  });
 };
 
-const handleSuccess = async (
+const handleSuccess = async <T>(
   responseJson: any,
   onSuccess: any,
-  actionId: any,
-  router: any,
-  rest: any,
-  component: any,
-  action: any,
-  actionMapper: any,
-  updateTreeComponent: any,
-  computeValue: any,
+  router: Router,
+  rest: T,
+  component: Component,
+  action: APICallAction,
 ) => {
-  if (onSuccess && onSuccess.sequentialTo === actionId) {
-    const actions = component.actions ?? [];
-    const onSuccessAction = actions.find(
-      (a: Action) => a.trigger === "onSuccess",
-    );
-    const onSuccessActionMapped =
-      actionMapper[onSuccess.action.name].action(computeValue);
+  const actions = component.actions ?? [];
+  const onSuccessAction = actions.find(
+    (a: Action) => a.trigger === "onSuccess",
+  );
 
-    onSuccessActionMapped({
-      action: onSuccessAction?.action,
-      binds: action.binds,
-      router,
-      ...rest,
-      data: responseJson,
-    });
-  }
-
-  updateTreeComponent(component.id!, { loading: false }, false);
+  onSuccess({
+    action: onSuccessAction?.action,
+    binds: action.binds,
+    router,
+    ...rest,
+    data: responseJson,
+  });
 };
 
 function constructHeaders(endpoint?: Endpoint, authHeaderKey = "") {
@@ -912,6 +881,11 @@ const setLoadingState = (
 ) => {
   updateTreeComponent({ componentId, props: { loading: isLoading } });
 };
+
+type ApiCallActionRestParams = Pick<
+  APICallActionParams,
+  "event" | "data" | "endpoint"
+>;
 
 export const useApiCallAction = () => {
   const { computeValue } = useDataContext()!;
@@ -982,30 +956,24 @@ export const useApiCallAction = () => {
           );
       }
 
-      await handleSuccess(
-        responseJson,
-        onSuccess,
-        actionId,
-        router,
-        rest,
-        component,
-        action,
-        actionMapper,
-        updateTreeComponent,
-        computeValue,
-      );
+      onSuccess &&
+        (await handleSuccess<ApiCallActionRestParams>(
+          responseJson,
+          onSuccess,
+          router,
+          rest,
+          component,
+          action,
+        ));
     } catch (error) {
-      await handleError(
-        error,
-        onError,
-        actionId,
-        router,
-        rest,
-        component,
-        actionMapper,
-        updateTreeComponent,
-        computeValue,
-      );
+      onError &&
+        (await handleError<ApiCallActionRestParams>(
+          error,
+          onError,
+          router,
+          rest,
+          component,
+        ));
     } finally {
       setLoadingState(component.id!, false, updateTreeComponent);
     }
@@ -1031,11 +999,8 @@ export type ChangeVariableActionParams = ActionParams & {
   action: ChangeVariableAction;
 };
 
-export const useChangeVariableAction = (computeValue?: any) => {
-  if (!computeValue) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    computeValue = useDataContext()!.computeValue;
-  }
+export const useChangeVariableAction = () => {
+  const { computeValue } = useDataContext()!;
 
   return async ({ action }: ChangeVariableActionParams) => {
     const setVariable = useVariableStore.getState().setVariable;
