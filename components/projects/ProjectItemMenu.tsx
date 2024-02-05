@@ -11,7 +11,6 @@ import {
   Loader,
   Menu,
   NavLink,
-  Skeleton,
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
@@ -41,11 +40,9 @@ export function ProjectItemMenu({
 }: Props) {
   const theme = useMantineTheme();
   const [pages, setPages] = useState<PageResponse[]>([]);
-  const [pagesLoading] = useState(false);
   const [menuOpened, setMenuOpened] = useState(false);
   const [pagesOpened, setPagesOpened] = useState(false);
   const [settingsOpened, setSettingsOpened] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const company = usePropelAuthStore((state) => state.activeCompany);
   const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
 
@@ -60,19 +57,18 @@ export function ProjectItemMenu({
 
   const {
     data: pageListQuery,
-    isLoading: dataIsFetching,
+    isLoading,
     isError,
     invalidate,
   } = usePageListQuery(projectId, undefined, menuOpened);
 
   useEffect(() => {
-    if (!dataIsFetching && !isError && pageListQuery) {
+    if (!isLoading && !isError && pageListQuery) {
       setPages(pageListQuery.results || []);
     }
-  }, [pageListQuery, dataIsFetching, isError]);
+  }, [pageListQuery, isLoading, isError]);
 
   const deleteProjectFn = async () => {
-    setIsLoading(true);
     await deleteProject(projectId);
     onDeleteProject && onDeleteProject(projectId);
     setPages([]);
@@ -122,22 +118,20 @@ export function ProjectItemMenu({
         <Collapse in={pagesOpened}>
           {pages.map((page) => {
             return (
-              <Skeleton key={page.id} visible={pagesLoading}>
-                <Box ml={10}>
-                  <Menu.Item
-                    icon={
-                      page.isHome ? (
-                        <IconHome size={ICON_SIZE} />
-                      ) : (
-                        <IconFileAnalytics size={ICON_SIZE} />
-                      )
-                    }
-                    onClick={() => goToEditor(projectId, page.id)}
-                  >
-                    {page.title}
-                  </Menu.Item>
-                </Box>
-              </Skeleton>
+              <Box key={page.id} ml={10}>
+                <Menu.Item
+                  icon={
+                    page.isHome ? (
+                      <IconHome size={ICON_SIZE} />
+                    ) : (
+                      <IconFileAnalytics size={ICON_SIZE} />
+                    )
+                  }
+                  onClick={() => goToEditor(projectId, page.id)}
+                >
+                  {page.title}
+                </Menu.Item>
+              </Box>
             );
           })}
         </Collapse>
