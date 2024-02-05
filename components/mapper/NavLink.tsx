@@ -51,7 +51,7 @@ const NavLinkComponent = forwardRef(
     const { computeValue } = useDataContext()!;
     const labelValue =
       computeValue({
-        value: component.onLoad.label,
+        value: component.onLoad?.label,
         shareableContent,
       }) ?? component.props?.label;
 

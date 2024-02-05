@@ -29,7 +29,9 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
 
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
-      acc[f.name] = {};
+      acc[f.name] = {
+        static: component.onLoad?.[f.name]?.static || component.props?.[f.name],
+      };
       return acc;
     },
     {} as Record<string, ValueProps>,
