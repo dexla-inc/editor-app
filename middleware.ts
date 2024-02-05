@@ -29,7 +29,6 @@ export async function middleware(request: NextRequest) {
 
   const signInSlug = `/${project.redirectSlug ?? ""}`;
 
-  // Need to add a config to check if the user has authentication enabled
   const userIsAuthenticated = checkUserAuthentication(request);
   if (userIsAuthenticated) {
     return NextResponse.next();
@@ -48,11 +47,9 @@ export async function middleware(request: NextRequest) {
 function checkUserAuthentication(request: NextRequest) {
   const refreshToken = request.cookies.get("refreshToken");
 
-  if (!refreshToken && refreshToken === "undefined") {
+  if (!refreshToken || refreshToken.toString() === "undefined") {
     return false;
   }
-  // Implement your authentication logic here
-  // For example, check for a valid cookie or token
-  // Return true if the user is authenticated, false otherwise
+
   return true;
 }
