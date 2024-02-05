@@ -1,4 +1,5 @@
 import { Icon } from "@/components/Icon";
+import { useDataContext } from "@/contexts/DataProvider";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
@@ -9,7 +10,6 @@ import { Component, getColorFromTheme } from "@/utils/editor";
 import { ButtonProps, Button as MantineButton } from "@mantine/core";
 import merge from "lodash.merge";
 import { ReactElement, forwardRef, memo } from "react";
-import { useDataContext } from "@/contexts/DataProvider";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -67,6 +67,8 @@ const ButtonComponent = forwardRef(
       color: labelTextColor,
     });
 
+    const { sx, ...restProps } = props;
+
     return (
       <MantineButton
         {...contentEditableProps}
@@ -76,7 +78,8 @@ const ButtonComponent = forwardRef(
           iconPosition === "right" && { rightIcon: <Icon name={icon} /> })}
         loading={loading}
         {...defaultTriggers}
-        {...props}
+        {...restProps}
+        {...(!isPreviewMode ? { sx: { ...sx } } : {})}
         {...componentProps}
         {...triggers}
         style={customStyle}
