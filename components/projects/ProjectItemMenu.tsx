@@ -45,6 +45,7 @@ export function ProjectItemMenu({
   const [settingsOpened, setSettingsOpened] = useState(false);
   const company = usePropelAuthStore((state) => state.activeCompany);
   const isDexlaAdmin = usePropelAuthStore((state) => state.isDexlaAdmin);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleMenuOpen = () => {
     setMenuOpened(true);
@@ -69,6 +70,7 @@ export function ProjectItemMenu({
   }, [pageListQuery, isLoading, isError]);
 
   const deleteProjectFn = async () => {
+    setIsDeleting(true);
     await deleteProject(projectId);
     onDeleteProject && onDeleteProject(projectId);
     setPages([]);
@@ -94,7 +96,7 @@ export function ProjectItemMenu({
             ...buttonHoverStyles(theme),
           }}
         >
-          {isLoading ? (
+          {isDeleting ? (
             <Loader size="sm" />
           ) : (
             <IconDots size={LARGE_ICON_SIZE} color={theme.colors.teal[5]} />

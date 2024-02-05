@@ -41,11 +41,7 @@ export function ProjectItem({
     );
 
     const homePage = data.results.find((page) => page.isHome);
-    let pageId: string | undefined = homePage?.id;
-
-    if (!pageId && data.results.length > 0) {
-      pageId = data.results[0].id;
-    }
+    let pageId = data.results?.[0]?.id ?? homePage?.id;
 
     if (pageId !== undefined) {
       goToEditor(project.id, pageId);
