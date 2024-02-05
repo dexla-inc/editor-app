@@ -39,13 +39,12 @@ export function ProjectItem({
     const data = await queryClient.fetchQuery(["pages", project.id], () =>
       getPageList(project.id),
     );
-    const pages = data.results;
 
-    const homePage = pages.find((page) => page.isHome);
+    const homePage = data.results.find((page) => page.isHome);
     let pageId: string | undefined = homePage?.id;
 
-    if (!pageId && pages.length > 0) {
-      pageId = pages[0].id;
+    if (!pageId && data.results.length > 0) {
+      pageId = data.results[0].id;
     }
 
     if (pageId !== undefined) {
