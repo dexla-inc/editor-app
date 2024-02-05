@@ -1,7 +1,6 @@
 import { DashboardShell } from "@/components/DashboardShell";
 import IconTitleDescriptionButton from "@/components/projects/NewProjectButton";
 import { ProjectItem } from "@/components/projects/ProjectItem";
-import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
 import { useProjectListQuery } from "@/hooks/reactQuery/useProjectListQuery";
 import { useProjectMutatation } from "@/hooks/reactQuery/useProjectMutation";
 import { createProject } from "@/requests/projects/mutations";
@@ -18,7 +17,6 @@ import {
   TextInput,
   Title,
   Tooltip,
-  useMantineTheme,
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import debounce from "lodash.debounce";
@@ -27,9 +25,9 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 
 export default function Projects() {
+  const router = useRouter();
   const [search, setSearch] = useState<string>("");
   const debouncedSearch = debounce((query) => setSearch(query), 400);
-  const theme = useMantineTheme();
   const user = usePropelAuthStore((state) => state.user);
   const company = usePropelAuthStore((state) => state.activeCompany);
 
@@ -42,8 +40,6 @@ export default function Projects() {
   // const initializeVariableList = useVariableStore(
   //   (state) => state.initializeVariableList,
   // );
-
-  const router = useRouter();
 
   const goToEditor = async (projectId: string, pageId: string) => {
     startLoading({
@@ -172,8 +168,6 @@ export default function Projects() {
                   <ProjectItem
                     key={project.id}
                     project={project}
-                    theme={theme}
-                    buttonHoverStyles={buttonHoverStyles}
                     goToEditor={goToEditor}
                     onDeleteProject={mutate}
                   />
@@ -190,8 +184,6 @@ export default function Projects() {
                     <ProjectItem
                       key={project.id}
                       project={project}
-                      theme={theme}
-                      buttonHoverStyles={buttonHoverStyles}
                       goToEditor={goToEditor}
                     />
                   ))}

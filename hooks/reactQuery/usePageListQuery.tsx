@@ -4,7 +4,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const cacheTime = 30 * 60 * 1000; // 30 minutes
 
-export const usePageListQuery = (projectId: string, search?: string) => {
+export const usePageListQuery = (
+  projectId: string,
+  search?: string,
+  isEnabled = false,
+) => {
   const queryClient = useQueryClient();
 
   const queryKey = ["pages", projectId, search];
@@ -13,7 +17,7 @@ export const usePageListQuery = (projectId: string, search?: string) => {
     queryKey: queryKey,
     queryFn: () => getPageList(projectId, { search }),
     staleTime: cacheTime,
-    enabled: !!projectId,
+    enabled: !!projectId && isEnabled,
   });
 
   const invalidate = () => {
