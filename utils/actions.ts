@@ -45,15 +45,16 @@ import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
 import { readDataFromStream } from "@/utils/api";
 import { Component, getComponentById } from "@/utils/editor";
-import { flattenKeys } from "@/utils/flattenKeys";
 import { executeFlow } from "@/utils/logicFlows";
 import { showNotification } from "@mantine/notifications";
-import get from "lodash.get";
 import merge from "lodash.merge";
 import { Router } from "next/router";
 import { getComponentInitialDisplayValue } from "./common";
-import { BindingType, ValueProps } from "./types";
+import { ValueProps } from "./types";
 import { useDataContext } from "@/contexts/DataProvider";
+import { pick } from "next/dist/lib/pick";
+import isEmpty from "lodash.isempty";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 
 const triggers = [
   "onClick",
@@ -211,7 +212,6 @@ export type EndpointAuthType = "authenticated" | "login" | "logout";
 export interface APICallAction extends BaseAction {
   name: "apiCall";
   endpoint: string;
-  selectedEndpoint: Endpoint;
   authConfig: Omit<DataSourceAuthResponse, "type">;
   showLoader?: boolean;
   datasources: DataSourceResponse[];
@@ -578,40 +578,6 @@ export const useToggleNavbarAction =
     });
   };
 
-const getVariableValueFromVariableId = (variableId = "") => {
-  const variableList = useVariableStore.getState().variableList;
-  const actionVariable = variableId.split("var_")[1];
-
-  if (!actionVariable) {
-    return variableId;
-  }
-
-  let _var: string | { id: string; path: string } = actionVariable;
-  if (actionVariable.startsWith("{") && actionVariable.endsWith("}")) {
-    _var = JSON.parse(actionVariable);
-  }
-
-  const isObject = typeof _var === "object";
-
-  if (_var) {
-    const variableId = isObject ? (_var as any).id : _var;
-    const variable = variableList.find(
-      (v) => v.id === variableId || v.name === variableId,
-    );
-
-    if (!variable) return;
-    let value = variable.defaultValue;
-    if (isObject) {
-      const dataFlatten = flattenKeys(
-        JSON.parse(variable.defaultValue ?? "{}"),
-      );
-
-      value = get(dataFlatten, (_var as any).path);
-    }
-    return value;
-  }
-};
-
 export const useShowNotificationAction = () => {
   const { computeValue } = useDataContext()!;
   return async ({ action }: ShowNotificationActionParams) => {
@@ -661,30 +627,6 @@ function getCurrentDocument() {
   console.error("iframe is empty", iframeWindow);
 }
 
-function getElementValue(value: string): string {
-  const currentDocument = getCurrentDocument();
-  const _id = value.split("valueOf_")[1];
-  let el = currentDocument?.getElementById(_id);
-  const tag = el?.tagName?.toLowerCase();
-
-  if (tag !== "input") {
-    el = el?.getElementsByTagName("input")[0];
-  }
-
-  if (!el) {
-    const component = getComponentById(
-      useEditorStore.getState().tree.root,
-      _id,
-    );
-
-    if (component && component.props) {
-      return component?.props?.value?.toString() ?? "";
-    }
-  }
-
-  return (el as HTMLInputElement)?.value ?? "";
-}
-
 function getQueryElementValue(value: string): string {
   const currentDocument = getCurrentDocument();
   const el = currentDocument?.querySelector(
@@ -698,19 +640,6 @@ const getVariablesValue = (
   computeValue: any,
 ) => {
   return Object.entries(objs).reduce((acc, [key, value]) => {
-    // TODO: remove this code
-    // let value = key;
-
-    // if (key.startsWith(`valueOf_`)) {
-    //   value = getElementValue(key);
-    // } else if (key?.startsWith(`queryString_pass_`)) {
-    //   value = getQueryElementValue(key);
-    // } else if (key.startsWith(`var_`)) {
-    //   value = getVariableValueFromVariableId(key) as string;
-    // } else if (key.startsWith(`auth_`)) {
-    //   value = getAuthValueFromAuthId(key) as string;
-    // }
-
     const fieldValue = computeValue({ value });
 
     if (fieldValue) {
@@ -722,14 +651,6 @@ const getVariablesValue = (
   }, {});
 };
 
-function getAuthValueFromAuthId(authId: string) {
-  const getAuthState = useDataSourceStore.getState().getAuthState;
-  const authState = getAuthState();
-  const key = authId.split("auth_")[1];
-  // @ts-ignore
-  return authState[key];
-}
-
 export type APICallActionParams = ActionParams & {
   action: APICallAction;
   endpoint: Endpoint;
@@ -738,33 +659,21 @@ export type APICallActionParams = ActionParams & {
 const getUrl = (
   keys: string[],
   apiUrl: string,
-  action: any,
-  variableValues: any,
+  variableValues: Record<string, string>,
 ) => {
   return keys.length > 0
     ? keys.reduce((url: string, key: string) => {
-        key.startsWith("type_Key_") ? (key = key.split(`type_key_`)[1]) : key;
-        let value = action.binds?.parameter[key] as string;
+        const value = variableValues[key];
 
-        if (!value) {
-          return url.toString();
+        if (isEmpty(value)) {
+          return url;
         }
 
-        value = variableValues[value] ?? "";
-
-        if (!url.includes(`{${key}}`)) {
-          const _url = new URL(url);
-          _url.searchParams.append(key, value);
-          return _url.toString();
-        } else {
-          return url.replace(`{${key}}`, value);
-        }
+        const _url = new URL(url);
+        _url.searchParams.append(key, value);
+        return _url.toString();
       }, apiUrl)
     : apiUrl;
-};
-
-const getBody = (endpoint: Endpoint, action: any, variableValues: any) => {
-  return endpoint?.methodType === "POST" ? variableValues : undefined;
 };
 
 export const prepareRequestData = (
@@ -775,17 +684,20 @@ export const prepareRequestData = (
   if (!endpoint) {
     return { url: "", body: {} };
   }
-
-  const keys = action.binds?.parameter && Object.keys(action.binds?.parameter);
+  const queryStringKeys = Object.keys(action.binds?.parameter ?? {});
+  const bodyKeys = Object.keys(action.binds?.body ?? {});
   const apiUrl = `${endpoint?.baseUrl}/${endpoint?.relativeUrl}`;
 
-  const variableValues = getVariablesValue(
+  const computedValues = getVariablesValue(
     merge(action.binds?.body ?? {}, action.binds?.parameter ?? {}),
     computeValue,
   );
 
-  const url = getUrl(keys ?? [], apiUrl, action, variableValues);
-  const body = getBody(endpoint, action, variableValues);
+  const url = getUrl(queryStringKeys, apiUrl, computedValues);
+  const body = bodyKeys.length
+    ? pick<Record<string, string>, string>(computedValues, bodyKeys)
+    : undefined;
+
   return { url, body };
 };
 
@@ -889,6 +801,8 @@ type ApiCallActionRestParams = Pick<
 
 export const useApiCallAction = () => {
   const { computeValue } = useDataContext()!;
+  const projectId = useEditorStore.getState().currentProjectId;
+  const { data: endpoints } = useDataSourceEndpoints(projectId);
 
   return async ({
     actionId,
@@ -900,6 +814,9 @@ export const useApiCallAction = () => {
     ...rest
   }: APICallActionParams) => {
     const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    const selectedEndpoint = endpoints?.results.find(
+      (e) => e.id === action.endpoint,
+    )!;
 
     try {
       setLoadingState(component.id!, true, updateTreeComponent);
@@ -907,24 +824,24 @@ export const useApiCallAction = () => {
 
       const { url, body } = prepareRequestData(
         action,
-        action.selectedEndpoint,
+        selectedEndpoint,
         computeValue,
       );
 
       let responseJson;
 
       const authHeaderKey =
-        action.selectedEndpoint?.authenticationScheme === "BEARER"
+        selectedEndpoint?.authenticationScheme === "BEARER"
           ? "Bearer " + accessToken
           : "";
 
-      const fetchUrl = action.selectedEndpoint?.isServerRequest
+      const fetchUrl = selectedEndpoint?.isServerRequest
         ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
         : url;
 
       switch (action.authType) {
         case "login":
-          responseJson = await performFetch(url, action.selectedEndpoint, body);
+          responseJson = await performFetch(url, selectedEndpoint, body);
           const mergedAuthConfig = { ...responseJson, ...action.authConfig };
           const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
 
@@ -933,7 +850,7 @@ export const useApiCallAction = () => {
         case "logout":
           responseJson = await performFetch(
             fetchUrl,
-            action.selectedEndpoint,
+            selectedEndpoint,
             body,
             authHeaderKey,
           );
@@ -950,7 +867,7 @@ export const useApiCallAction = () => {
 
           responseJson = await performFetch(
             fetchUrl,
-            action.selectedEndpoint,
+            selectedEndpoint,
             body,
             authHeaderKey,
           );

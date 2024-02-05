@@ -51,25 +51,13 @@ const SelectComponent = forwardRef(
         if (!response || !dataLabelKey || !dataValueKey) {
           setData([]);
         } else {
-          if (Array.isArray(response)) {
-            setData(
-              response.reduce((acc, item: any) => {
-                acc.push({
-                  label: item[dataLabelKey],
-                  value: item[dataValueKey],
-                });
-
-                return acc;
-              }, []),
-            );
-          } else {
-            setData([
-              {
-                label: response[dataLabelKey],
-                value: response[dataValueKey],
-              },
-            ]);
-          }
+          const list = Array.isArray(response) ? response : [response];
+          setData(
+            list.map((item: any) => ({
+              label: String(item[dataLabelKey]),
+              value: String(item[dataValueKey]),
+            })),
+          );
         }
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps

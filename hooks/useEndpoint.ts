@@ -26,7 +26,6 @@ export const useEndpoint = ({ component }: UseEndpointProps) => {
     staleTime = DEFAULT_STALE_TIME,
   } = component.onLoad ?? {};
 
-  const [data, setData] = useState<any[] | Record<string, any>>();
   const projectId = useEditorStore((state) => state.currentProjectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const endpoint = endpoints?.results?.find((e) => e.id === endpointId);
@@ -59,26 +58,13 @@ export const useEndpoint = ({ component }: UseEndpointProps) => {
 
   const isEnabled = !!endpoint && dataType === "dynamic";
 
-  const { data: response } = useQuery(
-    [url, JSON.stringify(body), accessToken],
-    apiCall,
-    {
-      staleTime: requestSettings.staleTime * 1000 * 60,
-      enabled: isEnabled,
+  const { data } = useQuery([url, JSON.stringify(body), accessToken], apiCall, {
+    select: (response) => {
+      return get(response, resultsKey, response);
     },
-  );
-
-  useEffect(() => {
-    if (endpointId) {
-      if (!response) {
-        setData([]);
-      } else {
-        const result = get(response, resultsKey, response);
-        setData(result);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resultsKey, response, endpointId]);
+    staleTime: requestSettings.staleTime * 1000 * 60,
+    enabled: isEnabled,
+  });
 
   return { data };
 };
