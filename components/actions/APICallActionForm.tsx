@@ -81,7 +81,6 @@ export const APICallActionForm = ({ id }: Props) => {
       },
       datasources: action.action?.datasources,
       authType: action.action?.authType ?? "authenticated",
-      actionCode: action.action?.actionCode ?? {},
     },
   });
 
@@ -101,7 +100,6 @@ export const APICallActionForm = ({ id }: Props) => {
           datasources: dataSources!.results,
           binds: values.binds,
           authType: values.authType,
-          actionCode: values.actionCode,
         },
         updateTreeComponentActions,
       });

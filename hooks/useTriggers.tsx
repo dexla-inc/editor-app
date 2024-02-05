@@ -13,7 +13,6 @@ type UseTriggersProps = {
 
 export const useTriggers = ({
   component,
-  isEditorMode,
   updateTreeComponent,
 }: UseTriggersProps) => {
   const router = useRouter();
@@ -36,7 +35,19 @@ export const useTriggers = ({
         }
 
         const actionFunction = actionMapper[action.action.name].action();
+        const onSuccessAction = onSuccessActions.find(
+          (sa) => sa.sequentialTo === action.id,
+        );
+        const onErrorAction = onErrorActions.find(
+          (ea) => ea.sequentialTo === action.id,
+        );
 
+        const onSuccessObj = onSuccessAction && {
+          onSuccess: actionMapper[onSuccessAction?.action.name]?.action(),
+        };
+        const onErrorObj = onErrorAction && {
+          onError: actionMapper[onErrorAction?.action.name]?.action(),
+        };
         return {
           ...acc,
           [action.trigger]: (e: any) => {
@@ -46,12 +57,8 @@ export const useTriggers = ({
               actionId: action.id,
               router: router as Router,
               event: e,
-              onSuccess: onSuccessActions.find(
-                (sa) => sa.sequentialTo === action.id,
-              ),
-              onError: onErrorActions.find(
-                (ea) => ea.sequentialTo === action.id,
-              ),
+              ...onSuccessObj,
+              ...onErrorObj,
               component,
             });
           },
