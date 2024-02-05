@@ -42,12 +42,10 @@ export const getComponentInitialDisplayValue = (componentName: string) => {
   return defaultDisplayValues[componentName] || "block";
 };
 
-export const isEditor = (baseUrl: string) => {
-  return (
-    baseUrl?.startsWith("http://localhost:3000") ||
-    baseUrl?.startsWith("localhost:3000") ||
-    baseUrl?.includes("dexla.ai")
-  );
+export const isEditor = (hrefUrl: string) => {
+  const urlType = getProjectType(hrefUrl);
+
+  return urlType !== "live";
 };
 
 export type UrlType = "project" | "live" | "editor";
