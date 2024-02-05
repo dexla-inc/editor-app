@@ -28,11 +28,15 @@ export async function middleware(request: NextRequest) {
   }
 
   const signInSlug = `/${project.redirectSlug ?? ""}`;
+  console.log("signInSlug", signInSlug);
 
-  const userIsAuthenticated = checkUserAuthentication(request);
-  if (userIsAuthenticated) {
+  const isLoggedIn = validateAuthentication(request);
+  console.log("userIsAuthenticated", isLoggedIn);
+  if (isLoggedIn) {
     return NextResponse.next();
   }
+
+  console.log("request.nextUrl.pathname", request.nextUrl.pathname);
 
   // Check if the current request is already for the sign-in page
   if (request.nextUrl.pathname === signInSlug) {
@@ -41,11 +45,18 @@ export async function middleware(request: NextRequest) {
 
   const url = request.nextUrl.clone();
   url.pathname = signInSlug;
+  console.log("url", url);
   return NextResponse.redirect(url);
 }
 
-function checkUserAuthentication(request: NextRequest) {
+function validateAuthentication(request: NextRequest) {
   const refreshToken = request.cookies.get("refreshToken");
+
+  console.log(
+    "refreshToken",
+    refreshToken,
+    !refreshToken || refreshToken.toString() === "undefined",
+  );
 
   if (!refreshToken || refreshToken.toString() === "undefined") {
     return false;
