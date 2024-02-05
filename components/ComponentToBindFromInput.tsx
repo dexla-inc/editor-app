@@ -101,6 +101,7 @@ export const ComponentToBindFromInput = ({
         onChange={(e) => {
           onChange({
             ...value,
+            dataType: "static",
             static: e.currentTarget.value,
           });
         }}

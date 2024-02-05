@@ -12,15 +12,13 @@ import {
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useDataSources } from "@/hooks/reactQuery/useDataSources";
-import { useVariable } from "@/hooks/reactQuery/useVariable";
-import { Endpoint } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { APICallAction, Action, EndpointAuthType } from "@/utils/actions";
 import { Button, Divider, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { SegmentedControlInput } from "../SegmentedControlInput";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
@@ -46,13 +44,8 @@ export const APICallActionForm = ({ id }: Props) => {
   });
   const router = useRouter();
   const projectId = router.query.id as string;
-  const { createVariablesMutation } = useVariable(projectId);
 
   const sequentialTo = useEditorStore((state) => state.sequentialTo);
-
-  const [selectedEndpoint, setSelectedEndpoint] = useState<
-    Endpoint | undefined
-  >(undefined);
 
   const { data: dataSources } = useDataSources(projectId);
   const { data: endpoints } = useDataSourceEndpoints(projectId);
@@ -72,7 +65,6 @@ export const APICallActionForm = ({ id }: Props) => {
     initialValues: {
       showLoader: action.action?.showLoader ?? true,
       endpoint: action.action?.endpoint,
-      selectedEndpoint: action.action?.selectedEndpoint,
       authConfig: action.action?.authConfig,
       binds: {
         header: action.action?.binds?.header ?? {},
@@ -84,6 +76,8 @@ export const APICallActionForm = ({ id }: Props) => {
     },
   });
 
+  console.log(form.values);
+
   const onSubmit = (values: FormValues) => {
     try {
       handleLoadingStart({ startLoading });
@@ -94,7 +88,6 @@ export const APICallActionForm = ({ id }: Props) => {
         id,
         updateValues: {
           endpoint: values.endpoint,
-          selectedEndpoint: selectedEndpoint!,
           authConfig: apiAuthConfig!,
           showLoader: values.showLoader,
           datasources: dataSources!.results,
@@ -120,34 +113,15 @@ export const APICallActionForm = ({ id }: Props) => {
     );
   };
 
-  const updateSelectedEndpoint = useCallback(
-    (endpointId: string) => {
-      const foundEndpoint = endpoints?.results?.find(
-        (e) => e.id === endpointId,
-      );
-      setSelectedEndpoint(foundEndpoint);
-    },
-    [endpoints],
+  const selectedEndpoint = endpoints?.results?.find(
+    (e) => e.id === form.values.endpoint,
   );
-
-  // useEffect to update selectedEndpoint when form.values.endpoint changes
-  useEffect(() => {
-    if (form.values.endpoint) {
-      updateSelectedEndpoint(form.values.endpoint);
-    }
-  }, [form.values.endpoint, updateSelectedEndpoint]);
 
   return endpoints && endpoints.results.length > 0 ? (
     <>
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack spacing="xs">
-          <EndpointSelect
-            {...form.getInputProps("endpoint")}
-            onChange={(selected) => {
-              form.setFieldValue("endpoint", selected as string);
-              updateSelectedEndpoint(selected as string);
-            }}
-          />
+          <EndpointSelect {...form.getInputProps("endpoint")} />
           {selectedEndpoint && (
             <>
               <SegmentedControlInput
