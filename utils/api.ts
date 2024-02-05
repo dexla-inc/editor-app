@@ -14,7 +14,8 @@ type FetchType = {
 export const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export async function getAuthToken() {
-  const isEditor = isEditorUrl(window.location.origin);
+  const hrefUrl = window.location.href;
+  const isEditor = isEditorUrl(hrefUrl);
   // We only want to create Propel auth client if the request is made from the editor
   if (isEditor) {
     const authClient = createClient({
