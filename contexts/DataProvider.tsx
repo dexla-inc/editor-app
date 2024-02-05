@@ -5,10 +5,10 @@ import { useVariableStore } from "@/stores/variables";
 import { getAllComponentsByName } from "@/utils/editor";
 import { ValueProps } from "@/utils/types";
 import get from "lodash.get";
+import isEmpty from "lodash.isempty";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
 import { createContext, useContext } from "react";
-import isEmpty from "lodash.isempty";
 
 type DataProviderProps = {
   children: React.ReactNode;
@@ -24,7 +24,7 @@ type DataContextProps = {
   variables: { list: Record<string, any> };
   components: { list: Record<string, any> };
   browserList: any[];
-  auth: AuthState & { refreshToken?: string }[];
+  auth: AuthState & { refreshToken?: string };
   computeValue: (props: GetValueProps) => any;
 };
 
@@ -47,7 +47,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const editorTree = useEditorStore((state) => state.tree);
   const inputsStore = useInputsStore((state) => state.inputValues);
   const browser = useRouter();
-  const auth = useDataSourceStore((state) => [state.getAuthState()]);
+  const auth = useDataSourceStore((state) => state.getAuthState());
 
   const variables = variablesList.reduce(
     (acc, variable) => {

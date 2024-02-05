@@ -1,6 +1,7 @@
 import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea";
 import { DataTree } from "@/components/DataTree";
 import { Icon } from "@/components/Icon";
+import { useDataContext } from "@/contexts/DataProvider";
 import { useBindingPopover } from "@/hooks/useBindingPopover";
 import {
   BG_COLOR,
@@ -26,7 +27,6 @@ import {
 } from "@mantine/core";
 import { IconExternalLink, IconPlugConnected } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { useDataContext } from "@/contexts/DataProvider";
 
 const TAB_TEXT_SIZE = "xs";
 const ML = 10;
@@ -100,7 +100,7 @@ export default function BindingPopover({
     },
     {
       entity: "auth",
-      dataItems: auth,
+      dataItems: Array.of(auth),
     },
     {
       entity: "browser",
