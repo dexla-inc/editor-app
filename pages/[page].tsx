@@ -1,8 +1,8 @@
 import { Live } from "@/components/Live";
-import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
+import { getPageProps } from "@/utils/serverside";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
@@ -13,20 +13,14 @@ export const getServerSideProps = async ({
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
   const project = await getProject(url, true);
-  const id = project.id;
-  const faviconUrl = project.faviconUrl ?? "";
 
-  const page = await getMostRecentDeploymentByPage(id as string, {
-    page: query.page as string,
-  });
-
-  return {
-    props: {
-      id,
-      page,
-      faviconUrl,
-    },
-  };
+  return getPageProps(
+    project.id,
+    query.page as string,
+    project.redirectSlug,
+    req.cookies["refreshToken"],
+    project.faviconUrl ?? "",
+  );
 };
 
 type Props = {
@@ -36,7 +30,6 @@ type Props = {
 };
 
 export default function LivePage({ id, page, faviconUrl }: Props) {
-  console.log("LivePage");
   const setCurrentProjectId = useEditorStore(
     (state) => state.setCurrentProjectId,
   );

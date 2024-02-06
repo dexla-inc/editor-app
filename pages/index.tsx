@@ -1,8 +1,8 @@
 import { Live } from "@/components/Live";
-import { getMostRecentDeploymentByPage } from "@/requests/deployments/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
+import { getPageProps } from "@/utils/serverside";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
@@ -11,10 +11,8 @@ export const getServerSideProps = async ({
   req,
 }: GetServerSidePropsContext) => {
   const url = req.headers.host as string;
-  console.log("getServerSideProps", url);
   const project = await getProject(url, true);
-  const id = project.id;
-  const faviconUrl = project.faviconUrl ?? "";
+  const id = project.id as string;
 
   if (!id) {
     return {
@@ -25,17 +23,13 @@ export const getServerSideProps = async ({
     };
   }
 
-  const page = await getMostRecentDeploymentByPage(id as string, {
-    page: "/",
-  });
-
-  return {
-    props: {
-      id,
-      page: page,
-      faviconUrl,
-    },
-  };
+  return getPageProps(
+    id,
+    "/",
+    project.redirectSlug,
+    req.cookies["refreshToken"],
+    project.faviconUrl ?? "",
+  );
 };
 
 type Props = {
@@ -45,7 +39,6 @@ type Props = {
 };
 
 const HomePage = ({ id, page, faviconUrl }: Props) => {
-  console.log("HomePage");
   const setCurrentProjectId = useEditorStore(
     (state) => state.setCurrentProjectId,
   );

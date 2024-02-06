@@ -25,7 +25,6 @@ const EditableComponentContainer = ({ children, component }: any) => {
 };
 
 export const Live = ({ projectId, pageId }: Props) => {
-  console.log("Live component", projectId, pageId);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const setIsLoading = useAppStore((state) => state.setIsLoading);

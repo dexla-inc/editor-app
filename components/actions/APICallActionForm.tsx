@@ -76,8 +76,6 @@ export const APICallActionForm = ({ id }: Props) => {
     },
   });
 
-  console.log(form.values);
-
   const onSubmit = (values: FormValues) => {
     try {
       handleLoadingStart({ startLoading });

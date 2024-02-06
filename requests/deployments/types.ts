@@ -20,6 +20,8 @@ export type DeploymentPage = {
   id: string;
   title: string;
   slug: string;
+  authenticatedOnly: boolean;
+  authenticatedUserRole?: string;
   pageState: string;
 };
 
