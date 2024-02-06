@@ -253,6 +253,14 @@ export type EditorState = {
     y: number;
   };
   setCursor: (cursor?: { x: number; y: number }) => void;
+  interval: Record<string, any>;
+  setInterval: (
+    id: string,
+    prop: string,
+    intervalFunction: any,
+    initialPropValue: string,
+  ) => void;
+  clearInterval: () => void;
 };
 
 export const debouncedUpdatePageState = debounce(updatePageState, 2000);
@@ -263,7 +271,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
   liveblocks(
     devtools(
       temporal(
-        (set) => ({
+        (set, get) => ({
           collapsedItemsCount: 0,
           tree: emptyEditorTree,
           theme: defaultTheme,
@@ -680,7 +688,18 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           setCurrentUser: (currentUser) =>
             set({ currentUser }, false, "editor/setCurrentUser"),
           setCursor: (cursor) => set({ cursor }, false, "editor/setCursor"),
+          interval: {},
+          setInterval: (id, prop, intervalFunction, initialPropValue) =>
+            set(
+              {
+                interval: { id, prop, intervalFunction, initialPropValue },
+              },
+              false,
+              "editor/setInterval",
+            ),
+          clearInterval: () => (get().interval = {}),
         }),
+
         {
           partialize: (state) => {
             const { tree, columnSpans } = state;

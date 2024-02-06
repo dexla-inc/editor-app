@@ -1,6 +1,5 @@
 import { useDataContext } from "@/contexts/DataProvider";
 import { ComponentToBind, useEditorStore } from "@/stores/editor";
-import { useintervalStore } from "@/stores/intervals";
 import { GRAY_OUTLINE } from "@/utils/branding";
 import { Component, getComponentById } from "@/utils/editor";
 import { removeKeysRecursive } from "@/utils/removeKeys";
@@ -172,19 +171,18 @@ export const useClearIntervals = (tree: any) => {
   const updateTreeComponentAttrs = useEditorStore(
     (state) => state.updateTreeComponentAttrs,
   );
-  const interval = useintervalStore((state) => state.interval);
-  const removeInterval = useintervalStore((state) => state.clearInterval);
+  const interval = useEditorStore((state) => state.interval);
+  const removeInterval = useEditorStore((state) => state.clearInterval);
 
   const component = getComponentById(tree.root, interval.id);
 
   const clearExistingIntervals = () => {
     if (isEditorMode && component) {
-      clearInterval(interval.intervalName);
+      clearInterval(interval.intervalFunction);
       updateTreeComponentAttrs([interval.id], {
         onLoad: {
           [interval.prop]: {
-            static: interval.initialValue,
-            dynamic: interval.initialValue,
+            static: interval.initalPropValue,
           },
         },
       });

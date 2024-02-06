@@ -1,11 +1,11 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { UnitInput } from "@/components/UnitInput";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { CountdownTimerAction } from "@/utils/actions";
-import { getComponentById } from "@/utils/editor";
-import { Button, Stack, TextInput } from "@mantine/core";
+import { findComponentProp } from "@/utils/findComponentProp";
+import { Button, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
-import { useEffect } from "react";
 
 type Props = {
   form: UseFormReturnType<FormValues>;
@@ -15,7 +15,6 @@ type FormValues = Omit<CountdownTimerAction, "name">;
 
 export const CountdownTimerActionFlowForm = ({ form }: Props) => {
   const isUpdating = useFlowStore((state) => state.isUpdating);
-  const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );
@@ -27,18 +26,6 @@ export const CountdownTimerActionFlowForm = ({ form }: Props) => {
     (state) => state.setComponentToBind,
   );
 
-  const component = getComponentById(editorTree.root, selectedComponentId!);
-  const requiredProp =
-    ["value", "name", "children"].find(
-      (prop) => component?.props![prop] !== undefined,
-    ) ?? "";
-
-  useEffect(() => {
-    if (form.isTouched("componentId")) {
-      form.setFieldValue("selectedProp", requiredProp);
-    }
-  }, [form.values.componentId]);
-
   return (
     <Stack spacing="xs">
       <ComponentToBindFromInput
@@ -48,11 +35,22 @@ export const CountdownTimerActionFlowForm = ({ form }: Props) => {
           setComponentToBind(undefined);
         }}
         {...form.getInputProps(`componentId`)}
+        onChange={(value) => {
+          const selectedProp = findComponentProp(value.bindedId as string);
+          form.setValues({
+            componentId: value,
+            selectedProp,
+          });
+        }}
       />
-      <TextInput
-        label="Selected Prop"
-        readOnly
-        {...form.getInputProps("selectedProp")}
+      <UnitInput
+        {...form.getInputProps("interval")}
+        options={[
+          { label: "secs", value: "seconds" },
+          { label: "mins", value: "minutes" },
+        ]}
+        disabledUnits={["%", "auto", "fit-content", "px", "rem", "vh", "vw"]}
+        onChange={(value) => form.setFieldValue("interval", value)}
       />
       <Button type="submit" size="xs" loading={isUpdating}>
         Save
