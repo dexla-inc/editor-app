@@ -5,15 +5,15 @@ import { performFetch, prepareRequestData } from "@/utils/actions";
 import { DEFAULT_STALE_TIME } from "@/utils/config";
 import { useQuery } from "@tanstack/react-query";
 import { Component } from "@/utils/editor";
-import { useEffect, useState } from "react";
 import get from "lodash.get";
 import { useDataContext } from "@/contexts/DataProvider";
 
 type UseEndpointProps = {
   component: Component;
+  forceEnabled?: boolean;
 };
 
-export const useEndpoint = ({ component }: UseEndpointProps) => {
+export const useEndpoint = ({ component, forceEnabled }: UseEndpointProps) => {
   const accessToken = useDataSourceStore(
     (state) => state.authState.accessToken,
   );
@@ -56,7 +56,7 @@ export const useEndpoint = ({ component }: UseEndpointProps) => {
     return performFetch(fetchUrl, endpoint, body, authHeaderKey);
   };
 
-  const isEnabled = !!endpoint && dataType === "dynamic";
+  const isEnabled = forceEnabled || (!!endpoint && dataType === "dynamic");
 
   const { data } = useQuery([url, JSON.stringify(body), accessToken], apiCall, {
     select: (response) => {

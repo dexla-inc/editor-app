@@ -15,10 +15,7 @@ import { DARK_COLOR, GRAY_WHITE_COLOR } from "@/utils/branding";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
-import {
-  Component,
-  debouncedTreeComponentDescriptionpdate,
-} from "@/utils/editor";
+import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import {
   ActionIcon,
   Card,
@@ -260,7 +257,9 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
                     e.preventDefault();
                     e.stopPropagation();
                     form.setFieldValue("value", e.target.value);
-                    debouncedTreeComponentDescriptionpdate(e.target.value);
+                    debouncedTreeComponentAttrsUpdate({
+                      description: e.target.value,
+                    });
                   }}
                   onBlur={closeEdit}
                   autoFocus

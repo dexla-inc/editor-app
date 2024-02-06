@@ -37,6 +37,7 @@ export type Component = {
   };
   actions?: Action[];
   onLoad?: any;
+  dataType?: "static" | "dynamic";
   parentDataComponentId?: string;
   states?: Record<string, any>;
   languages?: Record<string, any>;
@@ -643,23 +644,6 @@ export const updateTreeComponentChildren = (
   );
 };
 
-export const updateTreeComponentWithOmitProps = (treeRoot: Component) => {
-  crawl(
-    treeRoot,
-    (node, context) => {
-      // @ts-ignore
-      delete node.collapsed;
-      // @ts-ignore
-      delete node.depth;
-      // @ts-ignore
-      delete node.index;
-      // @ts-ignore
-      delete node.parentId;
-    },
-    { order: "bfs" },
-  );
-};
-
 export const updateTreeComponentActions = (
   treeRoot: Component,
   id: string,
@@ -670,23 +654,6 @@ export const updateTreeComponentActions = (
     (node, context) => {
       if (node.id === id) {
         node.actions = actions;
-        context.break();
-      }
-    },
-    { order: "bfs" },
-  );
-};
-
-export const updateTreeComponentDescription = (
-  treeRoot: Component,
-  id: string,
-  description: string,
-) => {
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (node.id === id) {
-        node.description = description;
         context.break();
       }
     },
@@ -1041,17 +1008,6 @@ export const debouncedTreeUpdateStates = debounce((...params: any[]) => {
   // @ts-ignore
   updateTreeComponentStates(...params);
 }, 300);
-
-export const debouncedTreeComponentDescriptionpdate = debounce(
-  (value: string) => {
-    const updateTreeComponentDescription =
-      useEditorStore.getState().updateTreeComponentDescription;
-    const selectedComponentId = useEditorStore.getState().selectedComponentId;
-
-    updateTreeComponentDescription(selectedComponentId!, value);
-  },
-  300,
-);
 
 export const debouncedTreeRootChildrenUpdate = debounce(
   (value: Component[], save = true) => {
