@@ -16,13 +16,12 @@ export const useCheckIfIsLive = () => {
 
   // Need this to check the type of page
   useEffect(() => {
-    console.log("Checking page type");
     const hrefUrl = typeof window !== "undefined" ? window.location.href : "";
     const currentUrlType = getProjectType(hrefUrl);
     if (urlType !== currentUrlType) {
       setUrlType(currentUrlType);
     }
-    console.log("URLS", hrefUrl, router.asPath, currentUrlType);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.asPath]);
 
   // Only do this when page refreshes

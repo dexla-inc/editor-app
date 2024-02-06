@@ -1,5 +1,6 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { QueryStringsForm } from "@/components/QueryStringsForm";
+import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
 import {
   PageBody,
@@ -187,6 +188,7 @@ export default function PageDetailPane({
       form.setFieldValue("title", page.title);
       form.setFieldValue("slug", page.slug.toLowerCase());
       form.setFieldValue("queryStrings", page.queryStrings);
+      form.setFieldValue("authenticatedOnly", page.authenticatedOnly);
       setSlug(page.slug);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -261,6 +263,11 @@ export default function PageDetailPane({
                 form.setTouched({ slug: true });
               }}
               size="xs"
+            />
+
+            <SegmentedControlYesNo
+              label="Authenticated Only"
+              {...form.getInputProps("authenticatedOnly")}
             />
 
             <QueryStringsForm queryStringState={queryStringState} />
