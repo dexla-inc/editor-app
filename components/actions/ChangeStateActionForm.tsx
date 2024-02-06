@@ -10,12 +10,11 @@ import {
 import { useDataContext } from "@/contexts/DataProvider";
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { useEditorStore } from "@/stores/editor";
-import { ChangeStateAction, StateType } from "@/utils/actions";
+import { ChangeStateAction } from "@/utils/actions";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { getComponentById } from "@/utils/editor";
 import { Select, Stack, useMantineTheme } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { SegmentedControlInput } from "../SegmentedControlInput";
 
 type Props = {
   id: string;
@@ -56,7 +55,6 @@ export const ChangeStateActionForm = ({ id }: Props) => {
     initialValues: {
       componentId: action.action?.componentId,
       state: action.action?.state,
-      type: action.action?.type ?? "component",
     },
   });
 
@@ -71,7 +69,6 @@ export const ChangeStateActionForm = ({ id }: Props) => {
         updateValues: {
           componentId: values.componentId,
           state: values.state,
-          type: values.type,
         },
         updateTreeComponentActions,
       });
@@ -96,43 +93,16 @@ export const ChangeStateActionForm = ({ id }: Props) => {
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
-        <SegmentedControlInput
-          label="Type"
-          data={[
-            {
-              label: "Component",
-              value: "component",
-            },
-            {
-              label: "Bindable",
-              value: "bindable",
-            },
-          ]}
-          {...form.getInputProps("type")}
-          onChange={(value) => {
-            form.setFieldValue("type", value as StateType);
+        <ComponentToBindFromInput
+          componentId={component?.id}
+          onPickComponent={() => {
+            setPickingComponentToBindTo(undefined);
+            setComponentToBind(undefined);
           }}
+          {...form.getInputProps("componentId")}
         />
-        {form.values.type === "component" ? (
-          <Select
-            label="Component"
-            searchable
-            data={Object.entries(components.list).map(([value, label]) => ({
-              value,
-              label: label.name,
-            }))}
-          />
-        ) : (
-          <ComponentToBindFromInput
-            componentId={component?.id}
-            onPickComponent={() => {
-              setPickingComponentToBindTo(undefined);
-              setComponentToBind(undefined);
-            }}
-            {...form.getInputProps("componentId")}
-          />
-        )}
 
+        {/* This select must be bindable */}
         <Select
           size="xs"
           label="State"

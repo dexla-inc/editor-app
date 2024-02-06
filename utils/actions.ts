@@ -198,10 +198,8 @@ export interface ShowNotificationAction extends BaseAction {
   color: string;
 }
 
-export type StateType = "component" | "bindable";
 export interface ChangeStateAction extends BaseAction {
   name: "changeState";
-  type: StateType;
   componentId: ValueProps;
   state: string;
 }
