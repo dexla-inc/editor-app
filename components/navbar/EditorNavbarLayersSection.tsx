@@ -6,7 +6,7 @@ import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE, NAVBAR_WIDTH } from "@/utils/config";
 import {
   Component,
-  debouncedTreeComponentDescriptionpdate,
+  debouncedTreeComponentAttrsUpdate,
   debouncedTreeRootChildrenUpdate,
 } from "@/utils/editor";
 import { ActionIcon, Card, Group, Text, TextInput } from "@mantine/core";
@@ -147,7 +147,9 @@ const ListItem = ({ component, collapseIcon, isSelected }: ListItemProps) => {
                   e.preventDefault();
                   e.stopPropagation();
                   form.setFieldValue("value", e.target.value);
-                  debouncedTreeComponentDescriptionpdate(e.target.value);
+                  debouncedTreeComponentAttrsUpdate({
+                    description: e.target.value,
+                  });
                 }}
               />
             ) : (

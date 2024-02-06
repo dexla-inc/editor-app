@@ -32,6 +32,7 @@ export const ContainerComponent = forwardRef(
 
     const { data } = useEndpoint({
       component,
+      forceEnabled: !!endpointId,
     });
 
     return (
@@ -49,7 +50,8 @@ export const ContainerComponent = forwardRef(
       >
         <LoadingOverlay visible={loading} overlayBlur={2} />
         {endpointId &&
-          data?.map((item: any, repeatedIndex: number) => {
+          Array.isArray(data) &&
+          data.map((item: any, repeatedIndex: number) => {
             return component.children && component.children.length > 0
               ? component.children?.map((child) =>
                   renderTree(
@@ -69,6 +71,20 @@ export const ContainerComponent = forwardRef(
                 )
               : children;
           })}
+        {endpointId &&
+          typeof data === "object" &&
+          component.children?.map((child) =>
+            renderTree(
+              {
+                ...child,
+              },
+              {
+                ...props.shareableContent,
+                parentDataComponentId: component.id,
+                data,
+              },
+            ),
+          )}
         {!endpointId && component.children && component.children.length > 0
           ? component.children?.map((child) =>
               renderTree(
