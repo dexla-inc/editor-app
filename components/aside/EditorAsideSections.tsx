@@ -58,6 +58,7 @@ import { getAllComponentsByIds, getComponentById } from "@/utils/editor";
 import { Modifiers } from "@/utils/modifiers";
 import {
   ActionIcon,
+  Anchor,
   Box,
   Center,
   Flex,
@@ -375,39 +376,46 @@ export const EditorAsideSections = () => {
             !excludeComponentsForState.includes(componentName) && (
               <Stack spacing="xs" px="md">
                 {createState === undefined && (
-                  <Flex gap="10px" align="flex-end">
-                    <Select
-                      style={{ flex: "1" }}
-                      value={currentState}
-                      size="xs"
-                      label="State"
-                      data={getComponentsStates()}
-                      placeholder="Select State"
-                      nothingFound="Nothing found"
-                      searchable
-                      onChange={(value: string) => {
-                        setTreeComponentCurrentState(
-                          selectedComponentId,
-                          value,
-                        );
-                      }}
-                      {...AUTOCOMPLETE_OFF_PROPS}
-                    />
-                    <ActionIconDefault
-                      iconName="IconPlus"
-                      tooltip="Create new state"
-                      onClick={() => {
-                        setCreateState("");
-                      }}
-                    />
-                    {currentState !== "default" && (
-                      <ActionIconDefault
-                        iconName="IconRefresh"
-                        tooltip="Revert to default settings"
-                        onClick={onClickResetToDefault}
+                  <Stack>
+                    <Flex justify="space-between">
+                      <Text size="xs">State</Text>
+                      {currentState !== "default" && (
+                        <Tooltip
+                          label="Revert to default settings"
+                          position="top-end"
+                        >
+                          <Anchor size="xs" onClick={onClickResetToDefault}>
+                            Revert
+                          </Anchor>
+                        </Tooltip>
+                      )}
+                    </Flex>
+                    <Flex gap="xs">
+                      <Select
+                        style={{ flex: "1" }}
+                        value={currentState}
+                        size="xs"
+                        data={getComponentsStates()}
+                        placeholder="Select State"
+                        nothingFound="Nothing found"
+                        searchable
+                        onChange={(value: string) => {
+                          setTreeComponentCurrentState(
+                            selectedComponentId,
+                            value,
+                          );
+                        }}
+                        {...AUTOCOMPLETE_OFF_PROPS}
                       />
-                    )}
-                  </Flex>
+                      <ActionIconDefault
+                        iconName="IconPlus"
+                        tooltip="Create new state"
+                        onClick={() => {
+                          setCreateState("");
+                        }}
+                      />
+                    </Flex>
+                  </Stack>
                 )}
                 {createState !== undefined && (
                   <Flex gap="10px" align="flex-end">
