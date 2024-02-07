@@ -1,6 +1,7 @@
 import { buttonHoverStyles } from "@/components/styles/buttonHoverStyles";
 import { getPageList } from "@/requests/pages/queries-noauth";
 import { ProjectResponse } from "@/requests/projects/types";
+import { useAppStore } from "@/stores/app";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { THIN_DARK_OUTLINE, THIN_GRAY_OUTLINE } from "@/utils/branding";
 import { regionTypeFlags } from "@/utils/dashboardTypes";
@@ -34,14 +35,21 @@ export function ProjectItem({
   const [isHovered, setIsHovered] = useState(false);
   const company = usePropelAuthStore((state) => state.activeCompany);
   const queryClient = useQueryClient();
+  const startLoading = useAppStore((state) => state.startLoading);
 
   const goToEditorHomePage = async () => {
+    startLoading({
+      id: "go-to-editor",
+      title: "Loading App",
+      message: "Wait while we load the editor for your project",
+    });
+
     const data = await queryClient.fetchQuery(["pages", project.id], () =>
       getPageList(project.id),
     );
 
     const homePage = data.results.find((page) => page.isHome);
-    let pageId = data.results?.[0]?.id ?? homePage?.id;
+    let pageId = homePage?.id ?? data.results[0].id;
 
     if (pageId !== undefined) {
       goToEditor(project.id, pageId);

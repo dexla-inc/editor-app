@@ -42,12 +42,6 @@ export default function Projects() {
   // );
 
   const goToEditor = async (projectId: string, pageId: string) => {
-    startLoading({
-      id: "go-to-editor",
-      title: "Loading App",
-      message: "Wait while we load the editor for your project",
-    });
-
     router.push(`/projects/${projectId}/editor/${pageId}`);
   };
 
