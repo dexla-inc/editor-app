@@ -12,21 +12,30 @@ type FetchType = {
 };
 
 export const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
-let authClient: IAuthClient | null = null;
+let propelAuthClient: IAuthClient | null = null;
+let propelAuthInitPromise: Promise<void> | null = null;
 
 export async function getAuthToken() {
   const hrefUrl = window.location.href;
   const isEditor = isEditorUrl(hrefUrl);
-  // We only want to create Propel auth client if the request is made from the editor
-  if (isEditor && !authClient) {
-    authClient = createClient({
-      authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
-      enableBackgroundTokenRefresh: true,
-    });
-    const authInfo = await authClient.getAuthenticationInfoOrNull();
-    return authInfo?.accessToken;
+  if (isEditor && !propelAuthClient) {
+    if (!propelAuthInitPromise) {
+      // Check if initialization is already in progress
+      // Initialize authClient and clear the promise once done
+      propelAuthInitPromise = (async () => {
+        propelAuthClient = createClient({
+          authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
+          enableBackgroundTokenRefresh: true,
+        });
+        await propelAuthClient.getAuthenticationInfoOrNull();
+      })();
+    }
+    await propelAuthInitPromise; // Wait for the initialization to complete if in progress
   }
-  return undefined;
+
+  return propelAuthClient
+    ? (await propelAuthClient.getAuthenticationInfoOrNull())?.accessToken
+    : undefined;
 }
 
 async function getBearerTokenHeaderValue() {
