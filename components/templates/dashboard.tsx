@@ -323,6 +323,7 @@ export const template = async (
           name: `GET ${key} Data`,
           type: "OBJECT",
           defaultValue: ex,
+          isGlobal: false,
         });
 
         const logicFlow = await createLogicFlow(projectId, {
