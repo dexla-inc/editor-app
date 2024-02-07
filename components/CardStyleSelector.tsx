@@ -53,7 +53,7 @@ export function getCardStyling(
 
   const styles: Record<CardStyle, CardStyleProps> = {
     ROUNDED: {
-      borderRadius: convertMantineRadiusToPixels(radius),
+      borderRadius: "16px", // Hard code for Evalio for now
       borderStyle: "none",
       boxShadow: "none",
     },
