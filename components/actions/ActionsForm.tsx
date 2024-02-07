@@ -1,6 +1,11 @@
 import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
-import { Action, SequentialTrigger, actions } from "@/utils/actions";
+import {
+  Action,
+  ActionTrigger,
+  SequentialTrigger,
+  actions,
+} from "@/utils/actions";
 import { componentMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
@@ -28,7 +33,7 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
 
   const form = useForm({
     initialValues: {
-      trigger: "",
+      trigger: "onClick" as ActionTrigger,
       action: "",
     },
   });
@@ -78,34 +83,40 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
     isSequential ? setSequentialTo(undefined) : close && close();
   };
 
-  const onSubmit = (values: any) => {
+  const saveAction = (trigger: ActionTrigger, action: string) => {
     const id = nanoid();
+
+    updateTreeComponentActions(selectedComponentId!, [
+      ...(component?.actions ?? []),
+      {
+        id,
+        sequentialTo: sequentialTo,
+        trigger: trigger as ActionTrigger,
+        action: {
+          name: action as any,
+        },
+      },
+    ]);
+    handleOpenAction(id);
+    form.reset();
+  };
+
+  const handleOpenAction = (id: string) => {
     const isAllowedInOpenAction =
       openAction?.componentId === selectedComponentId &&
       openAction?.actionIds &&
       sequentialTo &&
       openAction?.actionIds.includes(sequentialTo ?? "");
-    updateTreeComponentActions(
-      selectedComponentId!,
-      (component?.actions ?? []).concat({
-        id,
-        sequentialTo: sequentialTo,
-        trigger: values.trigger,
-        action: {
-          name: values.action,
-        },
-      }),
-    );
     const actionIds = isAllowedInOpenAction
       ? [...(openAction?.actionIds ?? []), `seq_${id}`]
       : [id];
     setOpenAction({ actionIds, componentId: selectedComponentId });
-    isSequential ? setSequentialTo(undefined) : close && close();
-    form.reset();
+    handleClose();
   };
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
+    // TODO: Remove form and make it controlled instead
+    <form>
       <Stack spacing="xs" sx={{ position: "relative" }}>
         <ActionIcon
           onClick={handleClose}
@@ -128,6 +139,9 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
             };
           })}
           {...form.getInputProps("trigger")}
+          onChange={(value) => {
+            form.setFieldValue("trigger", value as ActionTrigger);
+          }}
         />
         <Select
           size="xs"
@@ -143,10 +157,10 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
             };
           })}
           {...form.getInputProps("action")}
+          onChange={(value) => {
+            saveAction(form.values.trigger, value as string);
+          }}
         />
-        <Button size="xs" type="submit" mt="xs" variant="light">
-          Save {isSequential ? `sequential action` : `action`}
-        </Button>
         {isCopiedAction &&
           componentActions.every((action) =>
             copiedAction.every((a) => a.id !== action.id),
