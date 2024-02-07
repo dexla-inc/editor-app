@@ -1,6 +1,6 @@
 import { PatchParams } from "@/requests/types";
 import { isEditor as isEditorUrl } from "@/utils/common";
-import { createClient } from "@propelauth/javascript";
+import { IAuthClient, createClient } from "@propelauth/javascript";
 
 type FetchType = {
   url: string;
@@ -12,15 +12,14 @@ type FetchType = {
 };
 
 export const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
-let propelAuthInitialised = false;
+let authClient: IAuthClient | null = null;
 
 export async function getAuthToken() {
   const hrefUrl = window.location.href;
   const isEditor = isEditorUrl(hrefUrl);
   // We only want to create Propel auth client if the request is made from the editor
-  if (isEditor && !propelAuthInitialised) {
-    propelAuthInitialised = true;
-    const authClient = createClient({
+  if (isEditor && !authClient) {
+    authClient = createClient({
       authUrl: process.env.NEXT_PUBLIC_AUTH_URL as string,
       enableBackgroundTokenRefresh: true,
     });
