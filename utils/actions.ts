@@ -40,6 +40,8 @@ import {
 } from "@/requests/datasources/types";
 
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
+import { useDataContext } from "@/contexts/DataProvider";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
@@ -47,14 +49,12 @@ import { readDataFromStream } from "@/utils/api";
 import { Component, getComponentById } from "@/utils/editor";
 import { executeFlow } from "@/utils/logicFlows";
 import { showNotification } from "@mantine/notifications";
+import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
+import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
 import { getComponentInitialDisplayValue } from "./common";
 import { ValueProps } from "./types";
-import { useDataContext } from "@/contexts/DataProvider";
-import { pick } from "next/dist/lib/pick";
-import isEmpty from "lodash.isempty";
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 
 const triggers = [
   "onClick",
@@ -848,6 +848,10 @@ export const useApiCallAction = () => {
           setAuthTokens(mergedAuthConfig);
           break;
         case "logout":
+          const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
+
+          clearAuthTokens();
+
           responseJson = await performFetch(
             fetchUrl,
             selectedEndpoint,
@@ -855,9 +859,6 @@ export const useApiCallAction = () => {
             authHeaderKey,
           );
 
-          const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
-
-          clearAuthTokens();
           break;
         default:
           const refreshAccessToken =
