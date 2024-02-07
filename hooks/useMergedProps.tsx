@@ -25,25 +25,14 @@ export const usePropsWithOverwrites = (
     (state) => state.setTreeComponentCurrentState,
   );
 
-  const supportedComponentsForHoverStateChange = [
-    "Button",
-    "Badge",
-    "ButtonIcon",
-    "NavLink",
-  ];
-
-  const isComponentSupported = supportedComponentsForHoverStateChange.includes(
-    component.name,
-  );
-
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
-    if (isComponentSupported && currentState === "default") {
+    if (currentState === "default") {
       setTreeComponentCurrentState(e.currentTarget.id, "hover");
     }
   };
 
   const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
-    if (isComponentSupported && currentState === "hover") {
+    if (currentState === "hover") {
       setTreeComponentCurrentState(e.currentTarget.id, "default");
     }
   };
