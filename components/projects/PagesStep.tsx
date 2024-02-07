@@ -209,6 +209,7 @@ export default function PagesStep({
         name: "GET Project Data",
         type: "OBJECT",
         defaultValue: exampleResponse,
+        isGlobal: false,
       });
 
       setHomePageId(createdPages.homePageId);

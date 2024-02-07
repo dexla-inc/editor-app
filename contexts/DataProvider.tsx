@@ -43,7 +43,7 @@ const processValue = (value: any, type: string) => {
 export const DataContext = createContext<DataContextProps | null>(null);
 
 export const DataProvider = ({ children }: DataProviderProps) => {
-  const variablesList = useVariableStore((state) => state.variableList);
+  const variablesList = useVariableStore((state) => state.variableList); // Is this persisted store required any longer?
   const editorTree = useEditorStore((state) => state.tree);
   const inputsStore = useInputsStore((state) => state.inputValues);
   const browser = useRouter();

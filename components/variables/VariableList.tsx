@@ -25,7 +25,7 @@ export const VariableList = ({ projectId }: Props) => {
   const [filter, setFilter] = useDebouncedState("", 250);
   const [variableToEdit, setVariableToEdit] = useState(undefined);
   const { data: variableList, invalidate } = useVariableListQuery(projectId);
-
+  console.log(variableList?.results);
   const deleteVar = async (variableId: string) => {
     await deleteVariable(projectId, variableId);
     invalidate();
@@ -35,6 +35,7 @@ export const VariableList = ({ projectId }: Props) => {
     <tr key={variable.id}>
       <td>{variable.name}</td>
       <td>{variable.type}</td>
+      <td>{variable.isGlobal.toString()}</td>
       <td>{variable.defaultValue}</td>
       <td>{variable.value}</td>
       <td>
@@ -75,6 +76,7 @@ export const VariableList = ({ projectId }: Props) => {
                 <tr>
                   <th>Name</th>
                   <th>Type</th>
+                  <th>Is Global</th>
                   <th>Default Value</th>
                   <th>Current Value</th>
                   <th style={{ width: 80 }}>Actions</th>

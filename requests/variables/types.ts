@@ -5,6 +5,8 @@ export type VariableParams = {
   type: FrontEndTypes;
   defaultValue?: string | null;
   value: string | null;
+  isGlobal: boolean; // When true the value is retained navigating between pages.
+  //Default is false so value is lost when navigating between pages.
 };
 
 export type FrontEndTypes = "TEXT" | "NUMBER" | "BOOLEAN" | "OBJECT" | "ARRAY";
