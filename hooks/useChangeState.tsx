@@ -2,6 +2,7 @@ import { useEditorStore } from "@/stores/editor";
 import { getHoverColor } from "@/utils/branding";
 import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import {
+  Component,
   debouncedTreeComponentAttrsUpdate,
   getColorFromTheme,
 } from "@/utils/editor";
@@ -19,22 +20,18 @@ const createStateUpdateObject = (
   hoverBackground: string,
   shouldUpdateHover: boolean,
 ) => {
-  let treeUpdate: Record<string, any> = {};
-
   if (componentState === "default") {
-    treeUpdate = {
+    return {
       props: { [propertyName]: propertyValue },
       states: shouldUpdateHover
         ? { hover: { [propertyName]: hoverBackground } }
         : {},
     };
   } else {
-    treeUpdate = {
+    return {
       states: { [componentState]: { [propertyName]: propertyValue } },
     };
   }
-
-  return treeUpdate;
 };
 
 export const useChangeState = ({
@@ -64,7 +61,7 @@ export const useChangeState = ({
     value: string,
     form: any,
     currentState: string,
-    component?: any,
+    component?: Component,
   ) => {
     const hoverBackground = getHoverColor(value);
     form.setFieldValue(key, value);
