@@ -1,8 +1,6 @@
-import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
 import { useUserTheme } from "@/hooks/useUserTheme";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { decodeSchema } from "@/utils/compression";
 import { HEADER_HEIGHT, NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
 import createCache from "@emotion/cache";
 import {
@@ -24,13 +22,11 @@ type Props = {
 
 export const IFrame = ({ children, projectId, ...props }: Props) => {
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
-  const [customCode, setCustomCode] = useState<any | null>(null);
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
   const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const [isLoading, setIsLoading] = useState(true);
-  const { data: project } = useProjectQuery(projectId);
 
   const theme = useUserTheme(projectId);
   const w = contentRef?.contentWindow;
@@ -46,42 +42,7 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
     const styleTag = document.createElement("style");
     styleTag.textContent = `* { box-sizing: border-box; }`;
     insertionTarget?.appendChild(styleTag);
-
-    // add head custom code
-    if (customCode?.headCode) {
-      // check if head code already exists
-      const existingHeadCode = w?.document.getElementById("footer-code");
-      if (!existingHeadCode) {
-        const scriptTag = w?.document.createElement("script");
-
-        if (scriptTag) {
-          scriptTag!.textContent = customCode.headCode;
-          scriptTag!.setAttribute("id", "head-code");
-          insertionTarget?.appendChild(scriptTag!);
-        }
-      }
-    }
-
-    // add footer custom code
-    if (customCode?.footerCode) {
-      // check if footer code already exists
-      const existingFooterCode = w?.document.getElementById("footer-code");
-      if (!existingFooterCode) {
-        const scriptTag = w?.document.createElement("script");
-        if (scriptTag) {
-          scriptTag.textContent = customCode.footerCode;
-          scriptTag.setAttribute("id", "footer-code");
-          mountNode?.appendChild(scriptTag!);
-        }
-      }
-    }
-  }, [
-    customCode?.footerCode,
-    customCode?.headCode,
-    insertionTarget,
-    mountNode,
-    w?.document,
-  ]);
+  }, [insertionTarget, mountNode, w?.document]);
 
   useEffect(() => {
     setIsLoading(false);
@@ -122,17 +83,6 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
       setActiveTab(undefined);
     }
   }, [isTabPinned, setActiveTab]);
-
-  useEffect(() => {
-    if (project) {
-      const customCode = project.customCode
-        ? JSON.parse(decodeSchema(project.customCode))
-        : undefined;
-      if (customCode) {
-        setCustomCode(customCode);
-      }
-    }
-  }, [project]);
 
   if (!theme) {
     return null;
