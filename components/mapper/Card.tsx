@@ -1,5 +1,6 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
+import { convertSizeToPx } from "@/utils/defaultSizes";
 import { Component } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import isEmpty from "lodash.isempty";
@@ -25,8 +26,10 @@ export const CardComponent = forwardRef(
       exampleData = {},
       dataPath,
       loading,
+      gap,
       ...componentProps
     } = component.props as any;
+    const gapPx = convertSizeToPx(gap, "gap");
 
     const data = !isPreviewMode ? undefined : dataProp?.value ?? dataProp;
 
@@ -44,7 +47,7 @@ export const CardComponent = forwardRef(
         {...props}
         {...componentProps}
         {...triggers}
-        style={{ ...customStyle }}
+        style={{ ...customStyle, gap: gapPx }}
         bg={bg}
       >
         <LoadingOverlay visible={loading} overlayBlur={2} />
