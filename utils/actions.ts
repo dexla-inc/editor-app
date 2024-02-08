@@ -139,7 +139,7 @@ export interface TriggerLogicFlowAction extends BaseAction {
 
 export interface TogglePropsAction extends BaseAction {
   name: "changeVisibility";
-  conditionRules: Array<{ componentId: ValueProps; condition: string }>;
+  componentId: ValueProps;
 }
 
 export interface ShowNotificationAction extends BaseAction {
@@ -308,28 +308,25 @@ export const useChangeVisibilityAction = () => {
     const editorStore = useEditorStore.getState();
     const updateTreeComponent = editorStore.updateTreeComponent;
     const tree = editorStore.tree;
-    action.conditionRules.forEach((item) => {
-      // Find the component to toggle visibility
-      const componentId = computeValue({ value: item.componentId });
-      const componentToToggle = getComponentById(tree.root, componentId);
+    const componentId = computeValue({ value: action.componentId });
+    const componentToToggle = getComponentById(tree.root, componentId);
 
-      // Determine the current display state of the component
-      const currentDisplay = componentToToggle?.props?.style?.display;
+    // Determine the current display state of the component
+    const currentDisplay = componentToToggle?.props?.style?.display;
 
-      // Toggle between 'none' and the component's initial display value
-      const newDisplay =
-        currentDisplay === "none"
-          ? getComponentInitialDisplayValue(componentToToggle?.name ?? "")
-          : "none";
+    // Toggle between 'none' and the component's initial display value
+    const newDisplay =
+      currentDisplay === "none"
+        ? getComponentInitialDisplayValue(componentToToggle?.name ?? "")
+        : "none";
 
-      // Update the component with the new display value
-      updateTreeComponent({
-        componentId,
-        props: {
-          style: { display: newDisplay },
-        },
-        save: false,
-      });
+    // Update the component with the new display value
+    updateTreeComponent({
+      componentId,
+      props: {
+        style: { display: newDisplay },
+      },
+      save: false,
     });
   };
 };
