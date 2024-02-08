@@ -1,4 +1,5 @@
 import { SectionId } from "@/components/navbar/EditorNavbarSections";
+import { useDataContext } from "@/contexts/DataProvider";
 import { updatePageState } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
 import { CardStyle } from "@/requests/projects/types";
@@ -18,6 +19,8 @@ import {
   updateTreeComponentStates,
 } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
+import { removeKeysRecursive } from "@/utils/removeKeys";
+import { ValueProps } from "@/utils/types";
 import { createClient } from "@liveblocks/client";
 import { WithLiveblocks, liveblocks } from "@liveblocks/zustand";
 import { MantineSize, MantineTheme, Tuple } from "@mantine/core";
@@ -29,7 +32,6 @@ import merge from "lodash.merge";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
-import { removeKeysRecursive } from "@/utils/removeKeys";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -160,7 +162,7 @@ export type EditorState = {
   pickingComponentToBindFrom?: ComponentToBind;
   componentToBind?: string;
   currentTreeComponentsStates?: {
-    [key: string]: string;
+    [key: string]: ValueProps;
   };
   copiedAction?: Action[];
   sequentialTo?: string;
@@ -191,13 +193,13 @@ export type EditorState = {
   setCurrentProjectId: (currentProjectId: string) => void;
   setCurrentPageId: (currentPageId: string) => void;
   setComponentToAdd: (componentToAdd?: Component) => void;
-  updateTreeComponent: (params: {
+  useUpdateTreeComponent: () => (params: {
     componentId: string;
     props: any;
     forceState?: string;
     save?: boolean;
   }) => void;
-  updateTreeComponents: (
+  useUpdateTreeComponents: () => (
     componentIds: string[],
     props: any,
     save?: boolean,
@@ -219,7 +221,7 @@ export type EditorState = {
   ) => void;
   setTreeComponentCurrentState: (
     componentId: string,
-    currentState: string,
+    currentState: ValueProps,
   ) => void;
   setSelectedComponentId: (selectedComponentId?: string) => void;
   setHoveredComponentId: (hoveredComponentId?: string) => void;
@@ -253,6 +255,11 @@ export type EditorState = {
     y: number;
   };
   setCursor: (cursor?: { x: number; y: number }) => void;
+};
+
+export const defaultComponentState: ValueProps = {
+  dataType: "static",
+  static: "default",
 };
 
 export const debouncedUpdatePageState = debounce(updatePageState, 2000);
@@ -352,90 +359,98 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
             );
           },
           // any props change
-          updateTreeComponent: ({
-            componentId,
-            props,
-            forceState,
-            save = true,
-          }) => {
-            set(
-              (prev: EditorState) => {
-                const copy = cloneDeep(prev.tree);
-                const currentState =
-                  prev.currentTreeComponentsStates?.[componentId] ?? "default";
-                const currentLanguage = forceState ?? prev.language;
+          useUpdateTreeComponent: () => {
+            const { computeValue } = useDataContext()!;
+            return ({ componentId, props, forceState, save = true }) => {
+              set(
+                (prev: EditorState) => {
+                  const copy = cloneDeep(prev.tree);
+                  const currentState =
+                    prev.currentTreeComponentsStates?.[componentId] ??
+                    defaultComponentState;
+                  const currentStateValue = computeValue({
+                    value: currentState,
+                  });
+                  const currentLanguage = forceState ?? prev.language;
 
-                updateTreeComponent(
-                  copy.root,
-                  componentId,
-                  props,
-                  currentState,
-                  currentLanguage,
-                );
-                if (save && !prev.isPreviewMode) {
-                  debouncedUpdatePageState(
-                    encodeSchema(
-                      JSON.stringify(removeKeysRecursive(copy, ["error"])),
-                    ),
-                    prev.currentProjectId ?? "",
-                    prev.currentPageId ?? "",
-                    prev.setIsSaving,
+                  updateTreeComponent(
+                    copy.root,
+                    componentId,
+                    props,
+                    currentStateValue,
+                    currentLanguage,
                   );
-                }
+                  if (save && !prev.isPreviewMode) {
+                    debouncedUpdatePageState(
+                      encodeSchema(
+                        JSON.stringify(removeKeysRecursive(copy, ["error"])),
+                      ),
+                      prev.currentProjectId ?? "",
+                      prev.currentPageId ?? "",
+                      prev.setIsSaving,
+                    );
+                  }
 
-                const component = getComponentById(copy.root, componentId);
+                  const component = getComponentById(copy.root, componentId);
 
-                return {
-                  tree: {
-                    ...copy,
-                    name: `Edited ${component?.name}`,
-                    timestamp: Date.now(),
-                  },
-                };
-              },
-              false,
-              "editor/updateTreeComponent",
-            );
+                  return {
+                    tree: {
+                      ...copy,
+                      name: `Edited ${component?.name}`,
+                      timestamp: Date.now(),
+                    },
+                  };
+                },
+                false,
+                "editor/updateTreeComponent",
+              );
+            };
           },
-          updateTreeComponents: (componentIds, props, save = true) => {
-            set(
-              (prev: EditorState) => {
-                const lastComponentId = componentIds[componentIds.length - 1];
-                const copy = cloneDeep(prev.tree);
-                const currentState =
-                  prev.currentTreeComponentsStates?.[lastComponentId] ??
-                  "default";
-                const currentLanguage = prev.language;
+          useUpdateTreeComponents: () => {
+            const { computeValue } = useDataContext()!;
+            return (componentIds, props, save = true) => {
+              set(
+                (prev: EditorState) => {
+                  const lastComponentId = componentIds[componentIds.length - 1];
+                  const copy = cloneDeep(prev.tree);
+                  const currentState =
+                    prev.currentTreeComponentsStates?.[lastComponentId] ??
+                    defaultComponentState;
+                  const currentStateValue = computeValue({
+                    value: currentState,
+                  });
+                  const currentLanguage = prev.language;
 
-                updateTreeComponent(
-                  copy.root,
-                  componentIds,
-                  props,
-                  currentState,
-                  currentLanguage,
-                );
-                if (save && !prev.isPreviewMode) {
-                  debouncedUpdatePageState(
-                    encodeSchema(
-                      JSON.stringify(removeKeysRecursive(copy, ["error"])),
-                    ),
-                    prev.currentProjectId ?? "",
-                    prev.currentPageId ?? "",
-                    prev.setIsSaving,
+                  updateTreeComponent(
+                    copy.root,
+                    componentIds,
+                    props,
+                    currentStateValue,
+                    currentLanguage,
                   );
-                }
+                  if (save && !prev.isPreviewMode) {
+                    debouncedUpdatePageState(
+                      encodeSchema(
+                        JSON.stringify(removeKeysRecursive(copy, ["error"])),
+                      ),
+                      prev.currentProjectId ?? "",
+                      prev.currentPageId ?? "",
+                      prev.setIsSaving,
+                    );
+                  }
 
-                return {
-                  tree: {
-                    ...cloneDeep(copy),
-                    name: `Edited multiple components`,
-                    timestamp: Date.now(),
-                  },
-                };
-              },
-              false,
-              "editor/updateTreeComponents",
-            );
+                  return {
+                    tree: {
+                      ...cloneDeep(copy),
+                      name: `Edited multiple components`,
+                      timestamp: Date.now(),
+                    },
+                  };
+                },
+                false,
+                "editor/updateTreeComponents",
+              );
+            };
           },
           updateTreeComponentStates: (componentId, states, save = true) => {
             set(
@@ -566,7 +581,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           },
           setTreeComponentCurrentState: (
             componentId,
-            currentState = "default",
+            currentState = defaultComponentState,
           ) => {
             set(
               (prev) => {

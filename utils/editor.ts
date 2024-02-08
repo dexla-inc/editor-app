@@ -972,15 +972,17 @@ export const debouncedTreeComponentChildrenUpdate = debounce(
 
 export const debouncedTreeComponentStyleUpdate = debounce(
   (...params: any[]) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    const updateTreeComponents = useEditorStore.getState().updateTreeComponents;
+    const updateTreeComponent =
+      useEditorStore.getState().useUpdateTreeComponent;
+    const updateTreeComponents =
+      useEditorStore.getState().useUpdateTreeComponents;
 
     if (Array.isArray(params[0])) {
       const [componentIds, styleUpdate] = params;
-      updateTreeComponents(componentIds, { style: { ...styleUpdate } });
+      updateTreeComponents()(componentIds, { style: { ...styleUpdate } });
     } else {
       const [componentId, styleUpdate] = params;
-      updateTreeComponent({
+      updateTreeComponent()({
         componentId: componentId,
         props: { style: { ...styleUpdate } },
       });
@@ -991,12 +993,14 @@ export const debouncedTreeComponentStyleUpdate = debounce(
 
 export const debouncedTreeUpdate = debounce(
   (componentId, props, save = true) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    const updateTreeComponents = useEditorStore.getState().updateTreeComponents;
+    const updateTreeComponent =
+      useEditorStore.getState().useUpdateTreeComponent;
+    const updateTreeComponents =
+      useEditorStore.getState().useUpdateTreeComponents;
     if (Array.isArray(componentId)) {
-      updateTreeComponents(componentId, props, save);
+      updateTreeComponents()(componentId, props, save);
     } else {
-      updateTreeComponent({ componentId, props, save });
+      updateTreeComponent()({ componentId, props, save });
     }
   },
   300,

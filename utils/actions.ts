@@ -604,7 +604,10 @@ export const useChangeStateAction = () => {
       const componentId = computeValue({ value: item.componentId });
       if (!skipPreviousList.includes(componentId)) {
         if (item.condition === event || item.condition === "") {
-          setTreeComponentCurrentState(componentId, item.state);
+          setTreeComponentCurrentState(componentId, {
+            dataType: "static",
+            static: item.state,
+          });
           skipPreviousList.push(componentId);
         }
         console.error(
