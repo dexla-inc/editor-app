@@ -1,7 +1,9 @@
 import { Tile } from "@/components/templates/dashboard";
+import { useDataContext } from "@/contexts/DataProvider";
 import { PageResponse } from "@/requests/pages/types";
 import {
   MantineThemeExtended,
+  defaultComponentState,
   emptyEditorTree,
   useEditorStore,
 } from "@/stores/editor";
@@ -22,6 +24,7 @@ import { nanoid } from "nanoid";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
+import { ValueProps } from "./types";
 
 export type Component = {
   id?: string;
@@ -564,49 +567,54 @@ export const updateTreeComponentAttrs = (
   );
 };
 
-export const updateTreeComponent = (
-  treeRoot: Component,
-  ids: string | string[],
-  props: any,
-  state: string = "default",
-  language: string = "default",
-) => {
-  ids = Array.isArray(ids) ? ids : [ids];
+export const useUpdateTreeComponent = () => {
+  const { computeValue } = useDataContext()!;
+  return (
+    treeRoot: Component,
+    ids: string | string[],
+    props: any,
+    state: ValueProps = defaultComponentState,
+    language: string = "default",
+  ) => {
+    ids = Array.isArray(ids) ? ids : [ids];
 
-  const translatableFields = pickBy(props, pickTranslatableFields);
-  const styleFields = pickBy(props, pickStyleFields);
-  const alwaysDefaultFields = omit(props ?? {}, [
-    ...translatableFieldsKeys,
-    ...styleFieldsKeys,
-  ]);
+    const translatableFields = pickBy(props, pickTranslatableFields);
+    const styleFields = pickBy(props, pickStyleFields);
+    const alwaysDefaultFields = omit(props ?? {}, [
+      ...translatableFieldsKeys,
+      ...styleFieldsKeys,
+    ]);
 
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (ids.includes(node.id!)) {
-        if (language === "default") {
-          node.props = merge(node.props, translatableFields);
-        } else {
-          node.languages = merge(node.languages, {
-            [language]: translatableFields,
-          });
+    const componentState = computeValue({ value: state });
+
+    crawl(
+      treeRoot,
+      (node, context) => {
+        if (ids.includes(node.id!)) {
+          if (language === "default") {
+            node.props = merge(node.props, translatableFields);
+          } else {
+            node.languages = merge(node.languages, {
+              [language]: translatableFields,
+            });
+          }
+
+          if (componentState === "default") {
+            node.props = merge(node.props, styleFields);
+          } else {
+            node.states = merge(node.states, {
+              [componentState]: styleFields,
+            });
+          }
+
+          node.props = merge(node.props, alwaysDefaultFields);
+
+          // context.break();
         }
-
-        if (state === "default") {
-          node.props = merge(node.props, styleFields);
-        } else {
-          node.states = merge(node.states, {
-            [state]: styleFields,
-          });
-        }
-
-        node.props = merge(node.props, alwaysDefaultFields);
-
-        // context.break();
-      }
-    },
-    { order: "bfs" },
-  );
+      },
+      { order: "bfs" },
+    );
+  };
 };
 
 export const updateTreeComponentStates = (
@@ -972,17 +980,15 @@ export const debouncedTreeComponentChildrenUpdate = debounce(
 
 export const debouncedTreeComponentStyleUpdate = debounce(
   (...params: any[]) => {
-    const updateTreeComponent =
-      useEditorStore.getState().useUpdateTreeComponent;
-    const updateTreeComponents =
-      useEditorStore.getState().useUpdateTreeComponents;
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    const updateTreeComponents = useEditorStore.getState().updateTreeComponents;
 
     if (Array.isArray(params[0])) {
       const [componentIds, styleUpdate] = params;
-      updateTreeComponents()(componentIds, { style: { ...styleUpdate } });
+      updateTreeComponents(componentIds, { style: { ...styleUpdate } });
     } else {
       const [componentId, styleUpdate] = params;
-      updateTreeComponent()({
+      updateTreeComponent({
         componentId: componentId,
         props: { style: { ...styleUpdate } },
       });
@@ -993,14 +999,12 @@ export const debouncedTreeComponentStyleUpdate = debounce(
 
 export const debouncedTreeUpdate = debounce(
   (componentId, props, save = true) => {
-    const updateTreeComponent =
-      useEditorStore.getState().useUpdateTreeComponent;
-    const updateTreeComponents =
-      useEditorStore.getState().useUpdateTreeComponents;
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    const updateTreeComponents = useEditorStore.getState().updateTreeComponents;
     if (Array.isArray(componentId)) {
-      updateTreeComponents()(componentId, props, save);
+      updateTreeComponents(componentId, props, save);
     } else {
-      updateTreeComponent()({ componentId, props, save });
+      updateTreeComponent({ componentId, props, save });
     }
   },
   300,
