@@ -1,10 +1,11 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useEndpoint } from "@/hooks/useEndpoint";
 import { useEditorStore } from "@/stores/editor";
 import { IDENTIFIER } from "@/utils/branding";
+import { convertSizeToPx } from "@/utils/defaultSizes";
 import { Component } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import { forwardRef } from "react";
-import { useEndpoint } from "@/hooks/useEndpoint";
 
 type Props = {
   renderTree: (component: Component, shareableContent: any) => any;
@@ -17,10 +18,18 @@ export const ContainerComponent = forwardRef(
     const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
     const isLive = useEditorStore((state) => state.isLive);
 
-    const { children, bg, triggers, loading, dataType, ...componentProps } =
-      component.props as any;
+    const {
+      children,
+      bg,
+      triggers,
+      loading,
+      dataType,
+      gap,
+      ...componentProps
+    } = component.props as any;
 
     const { endpointId } = component.onLoad ?? {};
+    const gapPx = convertSizeToPx(gap, "gap");
 
     const hasBorder =
       componentProps?.style?.borderWidth ||
@@ -44,6 +53,7 @@ export const ContainerComponent = forwardRef(
         style={{
           width: "100%",
           ...props.style,
+          gap: gapPx,
           ...(shouldRemoveBorder ? {} : { border: IDENTIFIER }),
         }}
         bg={bg}

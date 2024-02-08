@@ -1,7 +1,7 @@
 import { SegmentedControlInput } from "@/components/SegmentedControlInput";
-import { SizeSelector } from "@/components/SizeSelector";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
+import { gapSizes } from "@/utils/defaultSizes";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
@@ -20,6 +20,7 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { SegmentedControlSizes } from "../SegmentedControlSizes";
 
 export const label = "Grid Column";
 export const icon = IconLayoutColumns;
@@ -34,7 +35,7 @@ export const Modifier = withModifier(
           alignSelf: selectedComponent.props?.style?.alignSelf,
           justifyContent: selectedComponent.props?.style?.justifyContent,
           gridAutoFlow: selectedComponent.props?.style?.gridAutoFlow,
-          gap: selectedComponent.props?.style?.gap,
+          gap: selectedComponent.props?.gap,
           flexWrap: selectedComponent.props?.style?.flexWrap,
         }),
       );
@@ -44,15 +45,15 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          <SizeSelector
+          <SegmentedControlSizes
             label="Gap"
+            sizing={gapSizes}
+            includeZero
             {...form.getInputProps("gap")}
             onChange={(value) => {
               form.setFieldValue("gap", value);
               debouncedTreeUpdate(selectedComponentIds, {
-                style: {
-                  gap: value,
-                },
+                gap: value,
               });
             }}
           />

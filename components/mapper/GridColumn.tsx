@@ -2,8 +2,9 @@ import { GridColumn as GridColumnBase } from "@/components/GridColumn";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
+import { convertSizeToPx } from "@/utils/defaultSizes";
 import { Component } from "@/utils/editor";
-import { BoxProps } from "@mantine/core";
+import { BoxProps, MantineSize } from "@mantine/core";
 import { forwardRef, memo } from "react";
 
 type Props = {
@@ -18,11 +19,11 @@ const GridColumnComponent = forwardRef(
     const isLive = useEditorStore((state) => state.isLive);
     const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
     // @ts-ignore
-    const { style = {}, ...componentProps } = component.props;
+    const { style = {}, gap, ...componentProps } = component.props;
     const { style: propsStyle = {}, ...propsRest } = props;
-    const gap = propsStyle?.gap ? theme.spacing[propsStyle.gap as string] : 0;
+    const gapPx = convertSizeToPx(gap as MantineSize, "gap");
 
-    const styles = { ...style, ...propsStyle, gap };
+    const styles = { ...style, ...propsStyle };
 
     const shouldRemoveBorder = isLive || isPreviewMode;
     const { border, ...stylesRest } = styles;
@@ -31,7 +32,11 @@ const GridColumnComponent = forwardRef(
       <GridColumnBase
         ref={ref}
         key={`${component.id}-${componentProps.span}`}
-        style={{ ...stylesRest, border: shouldRemoveBorder ? "none" : border }}
+        style={{
+          ...stylesRest,
+          gap: gapPx,
+          border: shouldRemoveBorder ? "none" : border,
+        }}
         {...componentProps}
         {...propsRest}
         id={component.id}

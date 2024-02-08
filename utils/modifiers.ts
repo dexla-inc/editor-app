@@ -407,16 +407,16 @@ export const requiredModifiers: RequiredModifiers = {
     m: 0,
     p: 0,
     gridDirection: "column",
+    gap: "xs",
     style: {
-      gap: "xs",
       width: "100%",
       height: "auto",
       backgroundRepeat: "no-repeat",
     },
   },
   gridColumn: {
+    gap: "xs",
     style: {
-      gap: "xs",
       alignSelf: "start",
       justifyContent: "stretch",
       padding: "8px",
