@@ -2,9 +2,10 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { GRID_SIZE } from "@/utils/config";
+import { convertSizeToPx } from "@/utils/defaultSizes";
 import { Component } from "@/utils/editor";
 import { calculateGridSizes } from "@/utils/grid";
-import { Box, BoxProps, useMantineTheme } from "@mantine/core";
+import { Box, BoxProps, MantineSize, useMantineTheme } from "@mantine/core";
 import { usePrevious } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
 import { forwardRef, memo, useEffect } from "react";
@@ -25,6 +26,7 @@ const GridComponent = forwardRef(
       gridSize,
       gridDirection,
       navbarWidth,
+      gap,
       ...componentProps
     } = component.props!;
 
@@ -36,11 +38,10 @@ const GridComponent = forwardRef(
         ? `${navbarWidth} ${defaultGridTemplate}`
         : defaultGridTemplate;
 
-    const gap = props?.style?.gap
-      ? theme.spacing[props.style?.gap as string]
-      : 0;
-
-    const gapValue = props?.style?.gap ? gap : theme.spacing.xs;
+    const gapValue = convertSizeToPx(
+      gap ?? (theme.spacing.xs as MantineSize),
+      "gap",
+    );
     const prevGapValue = usePrevious(gapValue);
 
     useEffect(() => {

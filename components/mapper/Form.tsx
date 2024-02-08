@@ -4,6 +4,7 @@ import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { componentMapper } from "@/utils/componentMapper";
+import { convertSizeToPx } from "@/utils/defaultSizes";
 import { Component, getAllComponentsByName } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
 import { FormEvent, forwardRef, memo, useMemo } from "react";
@@ -20,9 +21,11 @@ const FormComponent = forwardRef(
     { renderTree, component, isPreviewMode, shareableContent, ...props }: Props,
     ref,
   ) => {
-    const { children, triggers, loading, dataType, ...componentProps } =
+    const { children, triggers, loading, dataType, gap, ...componentProps } =
       component.props as any;
     const { onSubmit, ...otherTriggers } = triggers;
+    const { style, ...otherProps } = props as any;
+    const gapPx = convertSizeToPx(gap, "gap");
     const updateTreeComponent = useEditorStore(
       (state) => state.updateTreeComponent,
     );
@@ -102,8 +105,12 @@ const FormComponent = forwardRef(
     return (
       <MantineFlex
         ref={ref}
-        {...props}
+        {...otherProps}
         {...componentProps}
+        style={{
+          ...style,
+          gap: gapPx,
+        }}
         component="form"
         autoComplete={isPreviewMode ? "on" : "off"}
         onSubmit={onSubmitCustom}

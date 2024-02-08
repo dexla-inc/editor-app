@@ -3,6 +3,7 @@ import { TopLabel } from "@/components/TopLabel";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
 import { useEditorStore } from "@/stores/editor";
+import { gapSizes } from "@/utils/defaultSizes";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { SegmentedControl, Stack } from "@mantine/core";
@@ -182,7 +183,7 @@ export const Modifier = withModifier(
           </Stack>
           <SegmentedControlSizes
             label="Gap"
-            sizing={theme.spacing}
+            sizing={gapSizes}
             includeZero
             {...form.getInputProps("gap")}
             onChange={(value) => {
