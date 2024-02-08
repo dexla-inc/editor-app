@@ -37,11 +37,9 @@ export const TogglePropsActionForm = ({ form }: Props) => {
   );
   const component = getComponentById(editorTree.root, selectedComponentId!);
 
-  const conditionRules = () => form.getInputProps("conditionRules").value;
-
   const conditionOptions =
     component?.name === "Select"
-      ? component?.props?.data ?? component?.props?.exampleData
+      ? component?.props?.data
       : component?.children?.map((child) => ({
           label: child?.props?.value,
           value: child?.props?.value,
@@ -70,62 +68,55 @@ export const TogglePropsActionForm = ({ form }: Props) => {
           Add
         </Button>
       </Flex>
-      {conditionRules().map(({ componentId, condition }: any, i: number) => {
-        return (
-          <div
-            key={i}
-            style={{
-              borderBottom: "1px solid " + theme.colors.gray[3],
-              paddingBottom: 20,
-            }}
-          >
-            {["Radio", "Select"].includes(component!.name) ? (
-              <Select
-                size="xs"
-                label={
-                  <Flex justify="space-between" align="center">
-                    Toggle when
-                    <ActionIcon
-                      onClick={() => {
-                        form.removeListItem("conditionRules", i);
-                      }}
-                    >
-                      <IconTrash size={ICON_SIZE} color="red" />
-                    </ActionIcon>
-                  </Flex>
-                }
-                placeholder="Select a condition"
-                data={(conditionOptions as SelectData) ?? []}
-                value={condition}
-                onChange={(val) => {
-                  form.setFieldValue(`conditionRules.${i}.condition`, val);
-                }}
-                styles={{ label: { width: "100%" } }}
-              />
-            ) : (
-              <TextInput
-                size="xs"
-                label="Toggle when"
-                value={condition}
-                onChange={(e) => {
-                  form.setFieldValue(
-                    `conditionRules.${i}.condition`,
-                    e.target.value,
-                  );
-                }}
-              />
-            )}
-            <ComponentToBindFromInput
-              componentId={component?.id}
-              onPickComponent={() => {
-                setPickingComponentToBindTo(undefined);
-                setComponentToBind(undefined);
+      {(form.values.conditionRules ?? []).map(
+        ({ componentId, condition }: any, i: number) => {
+          return (
+            <div
+              key={i}
+              style={{
+                borderBottom: "1px solid " + theme.colors.gray[3],
+                paddingBottom: 20,
               }}
-              {...form.getInputProps(`conditionRules.${i}.componentId`)}
-            />
-          </div>
-        );
-      })}
+            >
+              {["Radio", "Select"].includes(component!.name) ? (
+                <Select
+                  size="xs"
+                  label={
+                    <Flex justify="space-between" align="center">
+                      Toggle when
+                      <ActionIcon
+                        onClick={() => {
+                          form.removeListItem("conditionRules", i);
+                        }}
+                      >
+                        <IconTrash size={ICON_SIZE} color="red" />
+                      </ActionIcon>
+                    </Flex>
+                  }
+                  placeholder="Select a condition"
+                  data={(conditionOptions as SelectData) ?? []}
+                  styles={{ label: { width: "100%" } }}
+                  {...form.getInputProps(`conditionRules.${i}.condition`)}
+                />
+              ) : (
+                <TextInput
+                  size="xs"
+                  label="Toggle when"
+                  {...form.getInputProps(`conditionRules.${i}.condition`)}
+                />
+              )}
+              <ComponentToBindFromInput
+                componentId={component?.id}
+                onPickComponent={() => {
+                  setPickingComponentToBindTo(undefined);
+                  setComponentToBind(undefined);
+                }}
+                {...form.getInputProps(`conditionRules.${i}.componentId`)}
+              />
+            </div>
+          );
+        },
+      )}
     </Stack>
   );
 };

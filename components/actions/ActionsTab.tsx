@@ -110,7 +110,10 @@ export const ActionsTab = ({ component }: Props) => {
     return (
       item && (
         <SidebarSection icon={IconBolt} {...item} key={item.label}>
-          <ActionSettingsForm action={action}>
+          <ActionSettingsForm
+            action={action}
+            defaultValues={actionMapper[actionName]?.defaultValues}
+          >
             {({ form }) => <ActionForm form={form} />}
           </ActionSettingsForm>
           {renderSequentialActions(action)}

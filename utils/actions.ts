@@ -19,7 +19,6 @@ import { ChangeVariableFlowActionForm } from "@/components/actions/logic-flow-fo
 import { GoToUrlFlowActionForm } from "@/components/actions/logic-flow-forms/GoToUrlFlowActionForm";
 import { NavigationFlowActionForm } from "@/components/actions/logic-flow-forms/NavigationFlowActionForm";
 import { ShowNotificationFlowActionForm } from "@/components/actions/logic-flow-forms/ShowNotificationFlowActionForm";
-import { TogglePropsFlowActionForm } from "@/components/actions/logic-flow-forms/TogglePropsFlowActionForm";
 import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components/actions/logic-flow-forms/TriggerLogicFlowActionForm";
 import {
   DataSourceAuthResponse,
@@ -175,10 +174,6 @@ export interface APICallAction extends BaseAction {
   authType: EndpointAuthType;
 }
 
-export interface ToggleNavbarAction extends BaseAction {
-  name: "toggleNavbar";
-}
-
 export interface ChangeStepAction extends BaseAction {
   name: "changeStep";
   stepperId: string;
@@ -209,7 +204,6 @@ type ActionType =
   | TogglePropsAction
   | ShowNotificationAction
   | ChangeStateAction
-  | ToggleNavbarAction
   | TriggerLogicFlowAction
   | ChangeLanguageAction
   | ChangeVariableAction;
@@ -306,9 +300,6 @@ export type TogglePropsActionParams = ActionParams & {
 export type ChangeStateActionParams = ActionParams & {
   action: ChangeStateAction;
 };
-export type ToggleNavbarActionParams = ActionParams & {
-  action: ToggleNavbarAction;
-};
 
 export type ChangeLanguageActionParams = ActionParams & {
   action: ChangeLanguageAction;
@@ -345,47 +336,6 @@ export const useChangeVisibilityAction = () => {
     });
   };
 };
-
-export const useToggleNavbarAction =
-  () =>
-  ({ action }: ToggleNavbarActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    const editorTree = useEditorStore.getState().tree;
-
-    const selectedComponent = editorTree.root.children?.find(
-      (tree) => tree.name === "Navbar",
-    );
-    const buttonComponent = selectedComponent?.children?.find(
-      (tree) => tree.description === "Button to toggle Navbar",
-    );
-    const linksComponent = selectedComponent?.children?.find(
-      (tree) => tree.description === "Container for navigation links",
-    );
-    const buttonIcon = buttonComponent?.children?.reduce(
-      (obj, tree) => ({ ...obj, ...tree }),
-      {} as Component,
-    );
-
-    const isExpanded = selectedComponent?.props?.style?.width !== "100px";
-    const name = isExpanded ? "IconChevronRight" : "IconChevronLeft";
-    const width = isExpanded ? "100px" : "260px";
-    const flexDirection = isExpanded ? "column" : "row";
-    const justifyContent = isExpanded ? "center" : "flex-start";
-
-    updateTreeComponent({ componentId: buttonIcon?.id!, props: { name } });
-    linksComponent?.children?.forEach((child) => {
-      updateTreeComponent({
-        componentId: child?.id as string,
-        props: {
-          style: { flexDirection, justifyContent },
-        },
-      });
-    });
-    updateTreeComponent({
-      componentId: selectedComponent?.id!,
-      props: { style: { width } },
-    });
-  };
 
 export const useShowNotificationAction = () => {
   const { computeValue } = useDataContext()!;
@@ -738,60 +688,68 @@ export const actionMapper = {
     action: useDebugAction,
     form: DebugActionForm,
     flowForm: DebugFlowActionForm,
+    defaultValues: {},
   },
   changeVariable: {
     action: useChangeVariableAction,
     form: ChangeVariableActionForm,
     flowForm: ChangeVariableFlowActionForm,
+    defaultValues: {},
   },
   navigateToPage: {
     action: useNavigationAction,
     form: NavigationActionForm,
     flowForm: NavigationFlowActionForm,
+    defaultValues: {},
   },
   apiCall: {
     action: useApiCallAction,
     form: APICallActionForm,
     flowForm: APICallFlowActionForm,
+    defaultValues: {},
   },
   goToUrl: {
     action: useGoToUrlAction,
     form: GoToUrlForm,
     flowForm: GoToUrlFlowActionForm,
+    defaultValues: {},
   },
   triggerLogicFlow: {
     action: useTriggerLogicFlowAction,
     form: TriggerLogicFlowActionForm,
-    flowForm: TriggerLogicFlowForm,
+    flowForm: TriggerLogicFlowActionForm,
+    defaultValues: {},
   },
   showNotification: {
     action: useShowNotificationAction,
     form: ShowNotificationActionForm,
     flowForm: ShowNotificationFlowActionForm,
+    defaultValues: {},
   },
   changeState: {
     action: useChangeStateAction,
     form: ChangeStateActionForm,
     flowForm: ChangeStateActionFlowForm,
+    defaultValues: {},
   },
   changeVisibility: {
     action: useChangeVisibilityAction,
     form: TogglePropsActionForm,
-    flowForm: TogglePropsFlowActionForm,
-  },
-  toggleNavbar: {
-    action: useToggleNavbarAction,
-    form: TogglePropsActionForm,
-    flowForm: TogglePropsFlowActionForm,
+    flowForm: TogglePropsActionForm,
+    defaultValues: {
+      conditionRules: [],
+    },
   },
   changeLanguage: {
     action: useChangeLanguageAction,
     form: ChangeLanguageActionForm,
     flowForm: ChangeLanguageFlowActionForm,
+    defaultValues: {},
   },
   customJavascript: {
     action: useCustomJavascriptAction,
     form: CustomJavascriptActionForm,
     flowForm: CustomJavascriptFlowActionForm,
+    defaultValues: {},
   },
 };

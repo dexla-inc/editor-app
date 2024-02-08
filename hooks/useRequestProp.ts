@@ -4,7 +4,7 @@ import { getPage } from "@/requests/pages/queries-noauth";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
-export const useRequestProp = (val?: string) => {
+export const useRequestProp = () => {
   const router = useRouter();
   const projectId = router.query.id as string;
   const pageId = router.query.page as string;
@@ -16,19 +16,22 @@ export const useRequestProp = (val?: string) => {
   });
 
   const dataSources = useQuery({
-    queryKey: ["datasources"],
+    queryKey: ["datasources", projectId],
     queryFn: () => getDataSources(projectId, {}),
     enabled: !!projectId,
   });
 
-  const { data: flows } = useQuery({
-    queryKey: ["logic-flows", projectId, pageId],
-    queryFn: async () => {
-      const response = await listLogicFlows(projectId, { pageId });
-      return response.results ?? [];
-    },
-    enabled: !!projectId && !!pageId,
-  });
+  const useFlowsQuery = () => {
+    return useQuery({
+      queryKey: ["logic-flows", projectId, pageId],
+      queryFn: async () => {
+        const response = await listLogicFlows(projectId, { pageId });
+        return response.results ?? [];
+      },
+      initialData: [],
+      enabled: !!projectId && !!pageId,
+    });
+  };
 
-  return { page, dataSources, flows };
+  return { page, dataSources, useFlowsQuery };
 };

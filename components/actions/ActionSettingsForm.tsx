@@ -13,10 +13,15 @@ import { Stack } from "@mantine/core";
 
 type Props = {
   action: Action;
+  defaultValues: Record<string, any>;
   children?: (props: any) => JSX.Element;
 };
 
-export const ActionSettingsForm = ({ action, children }: Props) => {
+export const ActionSettingsForm = ({
+  action,
+  defaultValues,
+  children,
+}: Props) => {
   const { startLoading, stopLoading } = useLoadingState();
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
@@ -27,7 +32,7 @@ export const ActionSettingsForm = ({ action, children }: Props) => {
   );
 
   const form = useForm({
-    initialValues: action.action,
+    initialValues: { ...defaultValues, ...action.action },
   });
 
   const { componentActions } = useActionData<ChangeLanguageAction>({
@@ -36,7 +41,7 @@ export const ActionSettingsForm = ({ action, children }: Props) => {
     selectedComponentId,
   });
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (updateValues: any) => {
     handleLoadingStart({ startLoading });
 
     try {
@@ -44,7 +49,7 @@ export const ActionSettingsForm = ({ action, children }: Props) => {
         selectedComponentId: selectedComponentId!,
         componentActions,
         id: action.id,
-        updateValues: { language: values.language },
+        updateValues,
         updateTreeComponentActions,
       });
       handleLoadingStop({ stopLoading });
