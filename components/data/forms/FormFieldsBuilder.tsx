@@ -1,16 +1,18 @@
+import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
 import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
 import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
+import { useComponentStates } from "@/hooks/useComponentStates";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { ICON_SIZE } from "@/utils/config";
 import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
+import { ValueProps } from "@/utils/types";
 import { ActionIcon, Group } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
-import { useEffect } from "react";
-import { ValueProps } from "@/utils/types";
 import merge from "lodash.merge";
+import { useEffect } from "react";
 
 type Props = {
   fields: Array<{
@@ -26,6 +28,7 @@ type Props = {
 
 export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   const hasParentComponentData = component.parentDataComponentId;
+  const { getComponentsStates } = useComponentStates();
 
   const onLoadFieldsStarter = fields.reduce(
     (acc, f) => {
@@ -115,6 +118,12 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
         componentId={component.id!}
         componentName={component.name}
         form={form}
+      />
+      <ComponentToBindFromSelect
+        size="xs"
+        label="State"
+        {...form.getInputProps(`onLoad.currentState`)}
+        data={getComponentsStates()}
       />
     </>
   );

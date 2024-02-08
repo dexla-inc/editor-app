@@ -1,18 +1,10 @@
-import BindingPopover from "@/components/BindingPopover";
+import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
-import { ValueProps } from "@/utils/types";
-import {
-  ActionIcon,
-  Flex,
-  MantineTheme,
-  TextInput,
-  TextInputProps,
-  useMantineTheme,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { IconCurrentLocation } from "@tabler/icons-react";
 import { ICON_SIZE } from "@/utils/config";
+import { ValueProps } from "@/utils/types";
+import { ActionIcon, TextInput, TextInputProps } from "@mantine/core";
+import { IconCurrentLocation } from "@tabler/icons-react";
 
 type Props = Omit<TextInputProps, "value" | "onChange"> & {
   componentId?: string;
@@ -38,10 +30,6 @@ export const ComponentToBindFromInput = ({
   const setHighlightedComponentId = useEditorStore(
     (state) => state.setHighlightedComponentId,
   );
-  const [
-    isBindingPopOverOpen,
-    { open: onOpenBindingPopOver, close: onCloseBindingPopOver },
-  ] = useDisclosure(false);
 
   const onBindComponent = () => {
     setPickingComponentToBindTo({
@@ -57,23 +45,8 @@ export const ComponentToBindFromInput = ({
     });
   };
 
-  const theme = useMantineTheme();
-  const styles = useTextInputStyles(theme);
-
   return (
-    <Flex align="end" gap="xs" pos="relative">
-      {/* TODO: This value should never be empty  */}
-      {value?.dataType === "boundCode" && (
-        <TextInput
-          pos="absolute"
-          w="100%"
-          styles={styles}
-          readOnly
-          value="< Edit Code >"
-          disabled={isBindingPopOverOpen}
-          onClick={onOpenBindingPopOver}
-        />
-      )}
+    <ComponentToBindWrapper onChange={onChange} value={value}>
       <TextInput
         size="xs"
         placeholder={placeholder}
@@ -108,31 +81,6 @@ export const ComponentToBindFromInput = ({
         {...props}
         {...AUTOCOMPLETE_OFF_PROPS}
       />
-      <BindingPopover
-        value={value}
-        onChange={onChange}
-        controls={{
-          isOpen: isBindingPopOverOpen,
-          onClose: onCloseBindingPopOver,
-          onOpen: onOpenBindingPopOver,
-        }}
-        style="iconButton"
-      />
-    </Flex>
+    </ComponentToBindWrapper>
   );
 };
-
-const useTextInputStyles = (theme: MantineTheme) => ({
-  root: { zIndex: 100 },
-  input: {
-    cursor: "pointer",
-    backgroundColor: theme.colors.teal[4],
-    color: theme.black,
-    "&:disabled": {
-      opacity: 1,
-      color: theme.black,
-      backgroundColor: theme.colors.teal[5],
-    },
-    "&:hover": { backgroundColor: theme.colors.teal[5] },
-  },
-});
