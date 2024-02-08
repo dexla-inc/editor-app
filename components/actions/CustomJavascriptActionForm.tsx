@@ -1,14 +1,11 @@
-import { CustomJavascriptAction } from "@/utils/actions";
+import { ActionFormProps, CustomJavascriptAction } from "@/utils/actions";
 import { Button, Card, Flex, Stack, Text } from "@mantine/core";
-import { UseFormReturnType } from "@mantine/form";
 import Editor from "@monaco-editor/react";
 import { IconPlayerPlayFilled } from "@tabler/icons-react";
 import { useState } from "react";
 import { transpile } from "typescript";
 
-type Props = {
-  form: UseFormReturnType<Omit<CustomJavascriptAction, "name">>;
-};
+type Props = ActionFormProps<Omit<CustomJavascriptAction, "name">>;
 
 export const CustomJavascriptActionForm = ({ form }: Props) => {
   const [codeResult, setCodeResult] = useState<any>();

@@ -1,77 +1,29 @@
 import { QueryStringsForm } from "@/components/QueryStringsForm";
-import { ActionButtons } from "@/components/actions/ActionButtons";
-import {
-  handleLoadingStart,
-  handleLoadingStop,
-  updateActionInTree,
-  useActionData,
-  useLoadingState,
-} from "@/components/actions/_BaseActionFunctions";
-import { QueryStringListItem } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
-import { NavigationAction } from "@/utils/actions";
-import { requiredFieldValidator } from "@/utils/validation";
+import { ActionFormProps, NavigationAction } from "@/utils/actions";
 import { Select, Stack } from "@mantine/core";
-import { useForm, UseFormReturnType } from "@mantine/form";
-import { useEffect, useMemo, useState } from "react";
-type Props = {
-  form: UseFormReturnType<Omit<NavigationAction, "name">>;
-};
+import { useEffect, useState } from "react";
+type Props = ActionFormProps<Omit<NavigationAction, "name">>;
 
 export const NavigationActionForm = ({ form }: Props) => {
   const pages = useEditorStore((state) => state.pages);
 
-  // const pageId = form.getInputProps("pageId").value;
+  const pageId = form.getInputProps("pageId").value;
 
-  // const pageQueryStrings = useMemo(() => {
-  //   if (action.action?.pageId === pageId && action.action?.queryStrings) {
-  //     return action.action?.queryStrings;
-  //   }
-  //
-  //   return pages.find((page) => page.id === pageId)?.queryStrings ?? {};
-  // }, [pages, pageId, action.action]);
-  //
+  const pageQueryStrings =
+    pages.find((page) => page.id === pageId)?.queryStrings ?? {};
+
   const queryStringState = useState<Array<{ key: string; value: string }>>([]);
 
-  // useEffect(() => {
-  //   queryStringState[1](
-  //     Object.entries(pageQueryStrings).map(([key, value]) => ({
-  //       key,
-  //       value,
-  //     })),
-  //   );
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [pageQueryStrings]);
-
-  // const onSubmit = (values: FormValues) => {
-  //   handleLoadingStart({ startLoading });
-  //
-  //   const queryStrings = queryStringState[0].reduce(
-  //     (acc: Record<string, string>, item: QueryStringListItem) => {
-  //       acc[item.key] = item.value;
-  //       return acc;
-  //     },
-  //     {},
-  //   );
-  //
-  //   try {
-  //     updateActionInTree<NavigationAction>({
-  //       selectedComponentId: selectedComponentId!,
-  //       componentActions,
-  //       id,
-  //       updateValues: {
-  //         pageId: values.pageId,
-  //         pageSlug: values.pageSlug,
-  //         queryStrings,
-  //       },
-  //       updateTreeComponentActions,
-  //     });
-  //
-  //     handleLoadingStop({ stopLoading });
-  //   } catch (error) {
-  //     handleLoadingStop({ stopLoading, success: false });
-  //   }
-  // };
+  useEffect(() => {
+    queryStringState[1](
+      Object.entries(pageQueryStrings).map(([key, value]) => ({
+        key,
+        value,
+      })),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageQueryStrings]);
 
   return (
     <Stack>

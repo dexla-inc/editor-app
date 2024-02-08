@@ -114,7 +114,7 @@ export const ActionsTab = ({ component }: Props) => {
             action={action}
             defaultValues={actionMapper[actionName]?.defaultValues}
           >
-            {({ form }) => <ActionForm form={form} />}
+            {({ form }) => <ActionForm form={form} actionId={action.id} />}
           </ActionSettingsForm>
           {renderSequentialActions(action)}
         </SidebarSection>

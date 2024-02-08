@@ -4,19 +4,21 @@ import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourc
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
-import { APICallAction, EndpointAuthType } from "@/utils/actions";
-import { Button, Stack } from "@mantine/core";
-import { UseFormReturnType } from "@mantine/form";
+import {
+  ActionFormProps,
+  APICallAction,
+  EndpointAuthType,
+} from "@/utils/actions";
+import { Divider, Stack } from "@mantine/core";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { SegmentedControlInput } from "../SegmentedControlInput";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
+import { ActionsForm } from "@/components/actions/ActionsForm";
 
-type Props = {
-  form: UseFormReturnType<Omit<APICallAction, "name" | "datasource">>;
-};
+type Props = ActionFormProps<Omit<APICallAction, "name" | "datasource">>;
 
-export const APICallActionForm = ({ form }: Props) => {
+export const APICallActionForm = ({ form, isLogicFlow, actionId }: Props) => {
   const router = useRouter();
   const projectId = router.query.id as string;
 
@@ -33,16 +35,6 @@ export const APICallActionForm = ({ form }: Props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endpoints?.results]);
-
-  // For EmptyDatasourcesPlaceholder
-  // const removeAction = () => {
-  //   updateTreeComponentActions(
-  //     selectedComponentId!,
-  //     componentActions.filter((a: Action) => {
-  //       return a.id !== id && a.sequentialTo !== id;
-  //     }),
-  //   );
-  // };
 
   const selectedEndpoint = endpoints?.results?.find(
     (e) => e.id === form.values.endpoint,
@@ -89,20 +81,14 @@ export const APICallActionForm = ({ form }: Props) => {
           </>
         )}
       </Stack>
-      {/*{sequentialTo === id && (*/}
-      {/*  <>*/}
-      {/*    <Divider my="lg" label="Sequential Action" labelPosition="center" />*/}
-      {/*    <ActionsForm sequentialTo={sequentialTo} />*/}
-      {/*  </>*/}
-      {/*)}*/}
+      {!isLogicFlow && sequentialTo === actionId && (
+        <>
+          <Divider my="lg" label="Sequential Action" labelPosition="center" />
+          <ActionsForm sequentialTo={sequentialTo} />
+        </>
+      )}
     </>
   ) : (
-    <Stack>
-      <EmptyDatasourcesPlaceholder projectId={projectId} />
-      {/*<Button size="xs" type="button" variant="default" onClick={removeAction}>*/}
-      <Button size="xs" type="button" variant="default">
-        Remove
-      </Button>
-    </Stack>
+    <EmptyDatasourcesPlaceholder projectId={projectId} />
   );
 };

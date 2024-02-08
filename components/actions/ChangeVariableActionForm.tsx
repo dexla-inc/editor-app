@@ -1,13 +1,10 @@
 import { VariableSelect } from "@/components/variables/VariableSelect";
 import { useEditorStore } from "@/stores/editor";
-import { ChangeVariableAction } from "@/utils/actions";
+import { ActionFormProps, ChangeVariableAction } from "@/utils/actions";
 import { Stack } from "@mantine/core";
-import { UseFormReturnType } from "@mantine/form";
 import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
 
-type Props = {
-  form: UseFormReturnType<Omit<ChangeVariableAction, "name">>;
-};
+type Props = ActionFormProps<Omit<ChangeVariableAction, "name">>;
 
 export const ChangeVariableActionForm = ({ form }: Props) => {
   const selectedComponentId = useEditorStore(

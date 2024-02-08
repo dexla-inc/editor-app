@@ -1,7 +1,7 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
-import { TogglePropsAction } from "@/utils/actions";
+import { ActionFormProps, TogglePropsAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
 import { getComponentById } from "@/utils/editor";
 import {
@@ -14,12 +14,9 @@ import {
   TextInput,
   useMantineTheme,
 } from "@mantine/core";
-import { UseFormReturnType } from "@mantine/form";
 import { IconTrash } from "@tabler/icons-react";
 
-type Props = {
-  form: UseFormReturnType<Omit<TogglePropsAction, "name">>;
-};
+type Props = ActionFormProps<Omit<TogglePropsAction, "name">>;
 
 type SelectData = Array<{ value: string; label: string }>;
 

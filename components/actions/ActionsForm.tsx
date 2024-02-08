@@ -5,6 +5,7 @@ import {
   ActionTrigger,
   SequentialTrigger,
   actions,
+  ActionType,
 } from "@/utils/actions";
 import { componentMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
@@ -94,7 +95,7 @@ export const ActionsForm = ({ sequentialTo, close }: ActionProps) => {
         trigger: trigger as ActionTrigger,
         action: {
           name: action as any,
-        },
+        } as ActionType,
       },
     ]);
     handleOpenAction(id);

@@ -1,10 +1,7 @@
-import { ChangeLanguageAction } from "@/utils/actions";
+import { ActionFormProps, ChangeLanguageAction } from "@/utils/actions";
 import { Select, Stack } from "@mantine/core";
-import { UseFormReturnType } from "@mantine/form";
 
-type Props = {
-  form: UseFormReturnType<Omit<ChangeLanguageAction, "name">>;
-};
+type Props = ActionFormProps<Omit<ChangeLanguageAction, "name">>;
 
 export const ChangeLanguageActionForm = ({ form }: Props) => {
   return (

@@ -1,10 +1,7 @@
-import { AlertAction } from "@/utils/actions";
+import { ActionFormProps, AlertAction } from "@/utils/actions";
 import { Stack, TextInput } from "@mantine/core";
-import { UseFormReturnType } from "@mantine/form";
 
-type Props = {
-  form: UseFormReturnType<Omit<AlertAction, "name">>;
-};
+type Props = ActionFormProps<Omit<AlertAction, "name">>;
 
 export const DebugActionForm = ({ form }: Props) => {
   return (

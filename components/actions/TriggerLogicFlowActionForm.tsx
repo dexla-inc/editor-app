@@ -1,12 +1,9 @@
 import { LogicFlowResponse } from "@/requests/logicflows/types";
-import { TriggerLogicFlowAction } from "@/utils/actions";
-import { LoadingOverlay, Select, Stack } from "@mantine/core";
-import { UseFormReturnType } from "@mantine/form";
+import { ActionFormProps, TriggerLogicFlowAction } from "@/utils/actions";
+import { Select, Stack } from "@mantine/core";
 import { useRequestProp } from "@/hooks/useRequestProp";
 
-type Props = {
-  form: UseFormReturnType<Omit<TriggerLogicFlowAction, "name">>;
-};
+type Props = ActionFormProps<Omit<TriggerLogicFlowAction, "name">>;
 
 export const TriggerLogicFlowActionForm = ({ form }: Props) => {
   const { useFlowsQuery } = useRequestProp();

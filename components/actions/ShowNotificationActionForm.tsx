@@ -1,15 +1,12 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { useEditorStore } from "@/stores/editor";
-import { ShowNotificationAction } from "@/utils/actions";
+import { ActionFormProps, ShowNotificationAction } from "@/utils/actions";
 import { ApiType } from "@/utils/dashboardTypes";
 import { Stack } from "@mantine/core";
-import { UseFormReturnType } from "@mantine/form";
 import React from "react";
 import { ThemeColorSelector } from "../ThemeColorSelector";
 
-type Props = {
-  form: UseFormReturnType<Omit<ShowNotificationAction, "name">>;
-};
+type Props = ActionFormProps<Omit<ShowNotificationAction, "name">>;
 
 export const ShowNotificationActionForm = ({ form }: Props) => {
   const setPickingComponentToBindTo = useEditorStore(

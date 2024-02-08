@@ -7,19 +7,9 @@ import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
-import { APICallFlowActionForm } from "@/components/actions/logic-flow-forms/APICallFlowActionForm";
-import { ChangeLanguageFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeLanguageActionFlowForm";
-import { ChangeStateActionFlowForm } from "@/components/actions/logic-flow-forms/ChangeStateFlowActionForm";
-import { CustomJavascriptFlowActionForm } from "@/components/actions/logic-flow-forms/CustomJavascriptFlowActionForm";
-import { DebugFlowActionForm } from "@/components/actions/logic-flow-forms/DebugFlowActionForm";
 import { transpile } from "typescript";
 
 import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableActionForm";
-import { ChangeVariableFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeVariableFlowActionForm";
-import { GoToUrlFlowActionForm } from "@/components/actions/logic-flow-forms/GoToUrlFlowActionForm";
-import { NavigationFlowActionForm } from "@/components/actions/logic-flow-forms/NavigationFlowActionForm";
-import { ShowNotificationFlowActionForm } from "@/components/actions/logic-flow-forms/ShowNotificationFlowActionForm";
-import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components/actions/logic-flow-forms/TriggerLogicFlowActionForm";
 import {
   DataSourceAuthResponse,
   DataSourceResponse,
@@ -28,7 +18,6 @@ import {
 
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
 import { useDataContext } from "@/contexts/DataProvider";
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
@@ -42,6 +31,8 @@ import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
 import { getComponentInitialDisplayValue } from "./common";
 import { ValueProps } from "./types";
+import { UseFormReturnType } from "@mantine/form";
+import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 
 const triggers = [
   "onClick",
@@ -103,6 +94,12 @@ export const actions: ActionInfo[] = [
     icon: "IconMessageLanguage",
   },
 ];
+
+export type ActionFormProps<T> = {
+  form: UseFormReturnType<T>;
+  isLogicFlow?: boolean;
+  actionId?: string;
+};
 
 type ActionTriggerAll = (typeof triggers)[number];
 
@@ -196,7 +193,7 @@ export interface ChangeVariableAction extends BaseAction {
   value: ValueProps;
 }
 
-type ActionType =
+export type ActionType =
   | NavigationAction
   | AlertAction
   | APICallAction
@@ -367,24 +364,6 @@ export const useChangeStateAction = () => {
   };
 };
 
-function getCurrentDocument() {
-  const isLive = useEditorStore.getState().isLive;
-  if (isLive) return document;
-
-  const iframeWindow = useEditorStore.getState().iframeWindow;
-  if (iframeWindow) return iframeWindow.document;
-
-  console.error("iframe is empty", iframeWindow);
-}
-
-function getQueryElementValue(value: string): string {
-  const currentDocument = getCurrentDocument();
-  const el = currentDocument?.querySelector(
-    `input#${value.split("queryString_pass_")[1]}`,
-  ) as HTMLInputElement;
-  return el?.value ?? "";
-}
-
 const getVariablesValue = (
   objs: Record<string, ValueProps>,
   computeValue: any,
@@ -552,7 +531,6 @@ type ApiCallActionRestParams = Pick<
 export const useApiCallAction = () => {
   const { computeValue } = useDataContext()!;
   const projectId = useEditorStore.getState().currentProjectId;
-  const { data: endpoints } = useDataSourceEndpoints(projectId);
 
   return async ({
     actionId,
@@ -564,6 +542,7 @@ export const useApiCallAction = () => {
     ...rest
   }: APICallActionParams) => {
     const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    const endpoints = await getDataSourceEndpoints(projectId as string);
     const selectedEndpoint = endpoints?.results.find(
       (e) => e.id === action.endpoint,
     )!;
@@ -687,55 +666,48 @@ export const actionMapper = {
   alert: {
     action: useDebugAction,
     form: DebugActionForm,
-    flowForm: DebugFlowActionForm,
     defaultValues: {},
   },
   changeVariable: {
     action: useChangeVariableAction,
     form: ChangeVariableActionForm,
-    flowForm: ChangeVariableFlowActionForm,
     defaultValues: {},
   },
   navigateToPage: {
     action: useNavigationAction,
     form: NavigationActionForm,
-    flowForm: NavigationFlowActionForm,
     defaultValues: {},
   },
   apiCall: {
     action: useApiCallAction,
     form: APICallActionForm,
-    flowForm: APICallFlowActionForm,
     defaultValues: {},
   },
   goToUrl: {
     action: useGoToUrlAction,
     form: GoToUrlForm,
-    flowForm: GoToUrlFlowActionForm,
     defaultValues: {},
   },
   triggerLogicFlow: {
     action: useTriggerLogicFlowAction,
     form: TriggerLogicFlowActionForm,
-    flowForm: TriggerLogicFlowActionForm,
     defaultValues: {},
   },
   showNotification: {
     action: useShowNotificationAction,
     form: ShowNotificationActionForm,
-    flowForm: ShowNotificationFlowActionForm,
     defaultValues: {},
   },
   changeState: {
     action: useChangeStateAction,
     form: ChangeStateActionForm,
-    flowForm: ChangeStateActionFlowForm,
-    defaultValues: {},
+    defaultValues: {
+      conditionRules: [],
+    },
   },
   changeVisibility: {
     action: useChangeVisibilityAction,
     form: TogglePropsActionForm,
-    flowForm: TogglePropsActionForm,
     defaultValues: {
       conditionRules: [],
     },
@@ -743,13 +715,11 @@ export const actionMapper = {
   changeLanguage: {
     action: useChangeLanguageAction,
     form: ChangeLanguageActionForm,
-    flowForm: ChangeLanguageFlowActionForm,
     defaultValues: {},
   },
   customJavascript: {
     action: useCustomJavascriptAction,
     form: CustomJavascriptActionForm,
-    flowForm: CustomJavascriptFlowActionForm,
     defaultValues: {},
   },
 };

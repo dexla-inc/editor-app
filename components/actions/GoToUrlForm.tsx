@@ -1,11 +1,8 @@
-import { GoToUrlAction } from "@/utils/actions";
+import { ActionFormProps, GoToUrlAction } from "@/utils/actions";
 import { Checkbox, Stack } from "@mantine/core";
-import { UseFormReturnType } from "@mantine/form";
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
-type Props = {
-  form: UseFormReturnType<Omit<GoToUrlAction, "name">>;
-};
+type Props = ActionFormProps<Omit<GoToUrlAction, "name">>;
 
 export const GoToUrlForm = ({ form }: Props) => {
   return (
