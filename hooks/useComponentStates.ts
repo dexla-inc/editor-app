@@ -85,10 +85,10 @@ export const useComponentStates = () => {
     ],
   };
 
-  const getComponentsStates = () => {
+  const getComponentsStates = (componentsIds?: string[]) => {
     const components = getAllComponentsByIds(
       editorTreeRoot,
-      selectedComponentIds,
+      componentsIds ?? selectedComponentIds,
     );
 
     const componentNames = [

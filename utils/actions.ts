@@ -200,11 +200,8 @@ export interface ShowNotificationAction extends BaseAction {
 
 export interface ChangeStateAction extends BaseAction {
   name: "changeState";
-  conditionRules: Array<{
-    condition: string;
-    componentId: ValueProps;
-    state: string;
-  }>;
+  componentId: ValueProps;
+  state: ValueProps;
 }
 
 export type EndpointAuthType = "authenticated" | "login" | "logout";
@@ -596,23 +593,14 @@ export const useTriggerLogicFlowAction =
 
 export const useChangeStateAction = () => {
   const { computeValue } = useDataContext()!;
-  return ({ action, event }: ChangeStateActionParams) => {
-    const setTreeComponentCurrentState =
-      useEditorStore.getState().setTreeComponentCurrentState;
-    const skipPreviousList: string[] = [];
-    (action.conditionRules || []).forEach((item) => {
-      const componentId = computeValue({ value: item.componentId });
-      if (!skipPreviousList.includes(componentId)) {
-        if (item.condition === event || item.condition === "") {
-          setTreeComponentCurrentState(componentId, item.state);
-          skipPreviousList.push(componentId);
-        }
-        console.error(
-          "Condition not met changeStateAction",
-          item.condition,
-          event,
-        );
-      }
+  return ({ action }: ChangeStateActionParams) => {
+    const componentId = computeValue({ value: action.componentId });
+
+    const updateTreeComponentAttrs =
+      useEditorStore.getState().updateTreeComponentAttrs;
+
+    updateTreeComponentAttrs([componentId], {
+      onLoad: { currentState: action.state },
     });
   };
 };

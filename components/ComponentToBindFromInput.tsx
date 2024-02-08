@@ -37,8 +37,8 @@ export const ComponentToBindFromInput = ({
       onPick: (componentToBind: string) => {
         onChange({
           ...value,
-          dataType: "boundCode",
-          boundCode: `return components['${componentToBind}']`,
+          dataType: "static",
+          static: componentToBind,
         });
         onPickComponent?.();
       },
