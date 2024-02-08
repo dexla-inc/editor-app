@@ -1,7 +1,7 @@
+import BindingPopover from "@/components/BindingPopover";
 import { ValueProps } from "@/utils/types";
 import { Flex, MantineTheme, TextInput, useMantineTheme } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import BindingPopover from "./BindingPopover";
 
 type Props = {
   value: ValueProps;
