@@ -1,3 +1,4 @@
+import { useDataContext } from "@/contexts/DataProvider";
 import {
   useComponentContextEventHandler,
   useComponentContextMenu,
@@ -5,8 +6,8 @@ import {
 import { useEditorShadows } from "@/hooks/useEditorShadows";
 import { useHoverEvents } from "@/hooks/useHoverEvents";
 import {
-  useComputeChildStyles,
   handleBackground,
+  useComputeChildStyles,
   useEditorClickHandler,
   usePropsWithOverwrites,
 } from "@/hooks/useMergedProps";
@@ -32,8 +33,17 @@ export const EditableComponent = ({
   selectedByOther,
   shareableContent,
 }: PropsWithChildren<Props>) => {
-  const currentState = useEditorStore(
-    (state) => state.currentTreeComponentsStates?.[component.id!] ?? "default",
+  const { computeValue } = useDataContext()!;
+  const isEditorMode = useEditorStore(
+    (state) => !state.isPreviewMode && !state.isLive,
+  );
+  const currentState = useEditorStore((state) =>
+    isEditorMode
+      ? state.currentTreeComponentsStates?.[component.id!] ?? "default"
+      : computeValue({
+          value: component.onLoad?.currentState,
+          staticFallback: "default",
+        }),
   );
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,
@@ -43,10 +53,6 @@ export const EditableComponent = ({
   );
   const isResizing = useEditorStore((state) => state.isResizing);
   const { computeChildStyles } = useComputeChildStyles();
-
-  const isEditorMode = useEditorStore(
-    (state) => !state.isPreviewMode && !state.isLive,
-  );
 
   const { componentContextMenu, forceDestroyContextMenu } =
     useComponentContextMenu();
