@@ -14,7 +14,6 @@ import { removeKeysRecursive } from "@/utils/removeKeys";
 import {
   Aside,
   Box,
-  Button,
   Center,
   ScrollArea,
   Stack,
@@ -175,6 +174,15 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNode, previousSelectedNode]);
 
+  useEffect(() => {
+    let timeout: string | number | NodeJS.Timeout = "";
+    if (form.isTouched() && form.isDirty()) {
+      timeout = setTimeout(() => onSubmit(form.values), 2000);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [form.values]);
+
   const onSubmit = async ({ label, ...values }: any) => {
     const isConditionalNode = selectedNode?.type === "conditionalNode";
     const connectedEdges = state.edges.filter(
@@ -257,25 +265,20 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
                   <Text size="sm">
                     Edit {startCase(selectedNode.data?.label)} Node
                   </Text>
-                  <form onSubmit={form.onSubmit(onSubmit)}>
-                    <Stack>
-                      <TextInput
-                        size="xs"
-                        label="Label"
-                        placeholder="Label"
-                        {...form.getInputProps("label")}
-                        mb="sm"
-                      />
-                      <NodeForm
-                        key={selectedNode?.id}
-                        form={form}
-                        data={selectedNode.data}
-                      />
-                      <Button type="submit" size="xs" loading={isUpdating}>
-                        Save
-                      </Button>
-                    </Stack>
-                  </form>
+                  <Stack>
+                    <TextInput
+                      size="xs"
+                      label="Label"
+                      placeholder="Label"
+                      {...form.getInputProps("label")}
+                      mb="sm"
+                    />
+                    <NodeForm
+                      key={selectedNode?.id}
+                      form={form}
+                      data={selectedNode.data}
+                    />
+                  </Stack>
                 </Stack>
               )}
             </Stack>

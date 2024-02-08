@@ -1,8 +1,6 @@
 import { useForm } from "@mantine/form";
 import { Action, ChangeLanguageAction } from "@/utils/actions";
 import {
-  handleLoadingStart,
-  handleLoadingStop,
   updateActionInTree,
   useActionData,
   useLoadingState,
@@ -10,6 +8,7 @@ import {
 import { useEditorStore } from "@/stores/editor";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import { Stack } from "@mantine/core";
+import { useEffect } from "react";
 
 type Props = {
   action: Action;
@@ -41,9 +40,16 @@ export const ActionSettingsForm = ({
     selectedComponentId,
   });
 
-  const onSubmit = (updateValues: any) => {
-    handleLoadingStart({ startLoading });
+  useEffect(() => {
+    let timeout: string | number | NodeJS.Timeout = "";
+    if (form.isTouched() && form.isDirty()) {
+      timeout = setTimeout(() => onSubmit(form.values), 200);
+    }
 
+    return () => clearTimeout(timeout);
+  }, [form.values]);
+
+  const onSubmit = (updateValues: any) => {
     try {
       updateActionInTree<ChangeLanguageAction>({
         selectedComponentId: selectedComponentId!,
@@ -52,22 +58,19 @@ export const ActionSettingsForm = ({
         updateValues,
         updateTreeComponentActions,
       });
-      handleLoadingStop({ stopLoading });
     } catch (error) {
-      handleLoadingStop({ stopLoading, success: false });
+      console.error(error);
     }
   };
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack spacing="xs">
-        {children && children({ form })}
-        <ActionButtons
-          actionId={action.id}
-          componentActions={componentActions}
-          canAddSequential={action.action.name === "apiCall"}
-        ></ActionButtons>
-      </Stack>
-    </form>
+    <Stack spacing="xs">
+      {children && children({ form })}
+      <ActionButtons
+        actionId={action.id}
+        componentActions={componentActions}
+        canAddSequential={action.action.name === "apiCall"}
+      ></ActionButtons>
+    </Stack>
   );
 };

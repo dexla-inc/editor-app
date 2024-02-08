@@ -33,20 +33,12 @@ export const ActionButtons = ({
   const addSequentialAction = () => setSequentialTo(actionId);
 
   useEffect(() => {
-    const timeout = setTimeout(() => copied && close(), 2000);
+    const timeout = setTimeout(() => copied && close(), 200);
     return () => clearTimeout(timeout);
   });
 
   return (
     <Stack>
-      <Button
-        size="xs"
-        type="submit"
-        mt="xs"
-        leftIcon={<Icon name="IconCheck"></Icon>}
-      >
-        Save
-      </Button>
       {canAddSequential && (
         <Button
           size="xs"
