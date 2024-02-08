@@ -71,26 +71,10 @@ export function arrayMove<T>(array: T[], from: number, to: number): T[] {
 }
 
 export const replaceIdsDeeply = (treeRoot: Component) => {
-  let stepperId = "";
-
   crawl(
     treeRoot,
     (node) => {
-      const newId = nanoid();
-
-      if (node.name === "Stepper") {
-        stepperId = newId;
-      }
-
-      node.id = newId;
-      const changeStepActionIndex = (node.actions || []).findIndex(
-        (action) => action.action.name === "changeStep",
-      );
-      if (changeStepActionIndex > -1) {
-        (
-          node.actions![changeStepActionIndex].action as ChangeStepAction
-        ).stepperId = stepperId;
-      }
+      node.id = nanoid();
     },
     { order: "bfs" },
   );
