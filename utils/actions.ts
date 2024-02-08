@@ -542,13 +542,13 @@ export const useApiCallAction = () => {
     ...rest
   }: APICallActionParams) => {
     const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    setLoadingState(component.id!, true, updateTreeComponent);
     const endpoints = await getDataSourceEndpoints(projectId as string);
     const selectedEndpoint = endpoints?.results.find(
       (e) => e.id === action.endpoint,
     )!;
 
     try {
-      setLoadingState(component.id!, true, updateTreeComponent);
       const accessToken = useDataSourceStore.getState().authState.accessToken;
 
       const { url, body } = prepareRequestData(
@@ -681,7 +681,17 @@ export const actionMapper = {
   apiCall: {
     action: useApiCallAction,
     form: APICallActionForm,
-    defaultValues: {},
+    defaultValues: {
+      authConfig: {},
+      showLoader: true,
+      datasources: [],
+      binds: {
+        header: {},
+        parameter: {},
+        body: {},
+      },
+      authType: "authenticated",
+    },
   },
   goToUrl: {
     action: useGoToUrlAction,
