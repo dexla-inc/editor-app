@@ -65,6 +65,7 @@ export const ActionSettingsForm = ({
         <ActionButtons
           actionId={action.id}
           componentActions={componentActions}
+          canAddSequential={action.action.name === "apiCall"}
         ></ActionButtons>
       </Stack>
     </form>
