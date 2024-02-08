@@ -1,24 +1,15 @@
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { ChangeLanguageActionForm } from "@/components/actions/ChangeLanguageActionForm";
 import { ChangeStateActionForm } from "@/components/actions/ChangeStateActionForm";
-import { ChangeStepActionForm } from "@/components/actions/ChangeStepActionForm";
 import { CustomJavascriptActionForm } from "@/components/actions/CustomJavascriptActionForm";
 import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
-import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm";
-import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
-import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
-import { ToggleAccordionItemActionForm } from "@/components/actions/ToggleAccordionItemActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
 import { APICallFlowActionForm } from "@/components/actions/logic-flow-forms/APICallFlowActionForm";
 import { ChangeLanguageFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeLanguageActionFlowForm";
 import { ChangeStateActionFlowForm } from "@/components/actions/logic-flow-forms/ChangeStateFlowActionForm";
-import { ChangeStepFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeStepFlowActionForm";
-import { CloseDrawerFlowActionForm } from "@/components/actions/logic-flow-forms/CloseDrawerFlowActionForm";
-import { CloseModalFlowActionForm } from "@/components/actions/logic-flow-forms/CloseModalFlowActionForm";
-import { ClosePopOverFlowActionForm } from "@/components/actions/logic-flow-forms/ClosePopOverFlowActionForm";
 import { CustomJavascriptFlowActionForm } from "@/components/actions/logic-flow-forms/CustomJavascriptFlowActionForm";
 import { DebugFlowActionForm } from "@/components/actions/logic-flow-forms/DebugFlowActionForm";
 import { transpile } from "typescript";
@@ -27,9 +18,6 @@ import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableAct
 import { ChangeVariableFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeVariableFlowActionForm";
 import { GoToUrlFlowActionForm } from "@/components/actions/logic-flow-forms/GoToUrlFlowActionForm";
 import { NavigationFlowActionForm } from "@/components/actions/logic-flow-forms/NavigationFlowActionForm";
-import { OpenDrawerFlowActionForm } from "@/components/actions/logic-flow-forms/OpenDrawerFlowActionForm";
-import { OpenModalFlowActionForm } from "@/components/actions/logic-flow-forms/OpenModalFlowActionForm";
-import { OpenPopOverFlowActionForm } from "@/components/actions/logic-flow-forms/OpenPopOverFlowActionForm";
 import { ShowNotificationFlowActionForm } from "@/components/actions/logic-flow-forms/ShowNotificationFlowActionForm";
 import { TogglePropsFlowActionForm } from "@/components/actions/logic-flow-forms/TogglePropsFlowActionForm";
 import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components/actions/logic-flow-forms/TriggerLogicFlowActionForm";
@@ -115,18 +103,6 @@ export const actions: ActionInfo[] = [
     group: "Utilities & Tools",
     icon: "IconMessageLanguage",
   },
-  { name: "changeStep", group: "Z Delete", icon: "IconStatusChange" },
-  {
-    name: "toggleAccordionItem",
-    group: "Z Delete",
-    icon: "IconStatusChange",
-  },
-  { name: "openDrawer", group: "Z Delete" },
-  { name: "closeDrawer", group: "Z Delete" },
-  { name: "openModal", group: "Z Delete" },
-  { name: "closeModal", group: "Z Delete" },
-  { name: "openPopOver", group: "Z Delete" },
-  { name: "closePopOver", group: "Z Delete" },
 ];
 
 type ActionTriggerAll = (typeof triggers)[number];
@@ -160,30 +136,9 @@ export interface AlertAction extends BaseAction {
   message: string;
 }
 
-export interface OpenModalAction extends BaseAction {
-  name: "openModal";
-  modalId: string;
-}
-
-export interface ToggleAccordionItemAction extends BaseAction {
-  name: "openModal";
-  accordionId: string;
-  accordionItemId: string;
-}
-
-export interface OpenDrawerAction extends BaseAction {
-  name: "openDrawer";
-  drawerId: string;
-}
-
 export interface TriggerLogicFlowAction extends BaseAction {
   name: "triggerLogicFlow";
   logicFlowId: string;
-}
-
-export interface OpenPopOverAction extends BaseAction {
-  name: "openPopOver";
-  popOverId: string;
 }
 
 export interface TogglePropsAction extends BaseAction {
@@ -251,15 +206,10 @@ type ActionType =
   | AlertAction
   | APICallAction
   | GoToUrlAction
-  | OpenModalAction
-  | OpenDrawerAction
-  | OpenPopOverAction
-  | ToggleAccordionItemAction
   | TogglePropsAction
   | ShowNotificationAction
   | ChangeStateAction
   | ToggleNavbarAction
-  | ChangeStepAction
   | TriggerLogicFlowAction
   | ChangeLanguageAction
   | ChangeVariableAction;
@@ -341,24 +291,8 @@ export const useDebugAction =
     alert(action.message);
   };
 
-export type OpenModalActionParams = ActionParams & {
-  action: OpenModalAction;
-};
-
-export type OpenDrawerActionParams = ActionParams & {
-  action: OpenDrawerAction;
-};
-
-export type ToggleAccordionItemActionParams = ActionParams & {
-  action: ToggleAccordionItemAction;
-};
-
 export type TriggerLogicFlowActionParams = ActionParams & {
   action: TriggerLogicFlowAction;
-};
-
-export type OpenPopOverActionParams = ActionParams & {
-  action: OpenPopOverAction;
 };
 
 export type ShowNotificationActionParams = ActionParams & {
@@ -375,131 +309,9 @@ export type ChangeStateActionParams = ActionParams & {
 export type ToggleNavbarActionParams = ActionParams & {
   action: ToggleNavbarAction;
 };
-export type ChangeStepActionParams = ActionParams & {
-  action: ChangeStepAction;
-};
 
 export type ChangeLanguageActionParams = ActionParams & {
   action: ChangeLanguageAction;
-};
-
-export const useOpenModalAction =
-  () =>
-  ({ action }: OpenModalActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    updateTreeComponent({
-      componentId: action.modalId,
-      props: { opened: true },
-      save: false,
-    });
-  };
-
-export const useCloseModalAction =
-  () =>
-  ({ action }: OpenModalActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    updateTreeComponent({
-      componentId: action.modalId,
-      props: { opened: false },
-      save: false,
-    });
-  };
-
-export const useOpenDrawerAction =
-  () =>
-  ({ action }: OpenDrawerActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    updateTreeComponent({
-      componentId: action.drawerId,
-      props: { opened: true },
-      save: false,
-    });
-  };
-
-export const useToggleAccordionItemAction =
-  () =>
-  ({ action }: ToggleAccordionItemActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    const editorTree = useEditorStore.getState().tree;
-
-    const accordion = getComponentById(editorTree.root, action.accordionId);
-
-    updateTreeComponent({
-      componentId: action.accordionId,
-      props: {
-        value:
-          accordion?.props?.value === action.accordionItemId
-            ? ""
-            : action.accordionItemId,
-      },
-      save: false,
-    });
-  };
-
-export const useCloseDrawerAction =
-  () =>
-  ({ action }: OpenDrawerActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    updateTreeComponent({
-      componentId: action.drawerId,
-      props: { opened: false },
-      save: false,
-    });
-  };
-
-export const useOpenPopOverAction =
-  () =>
-  ({ action }: OpenPopOverActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    updateTreeComponent({
-      componentId: action.popOverId,
-      props: { opened: true },
-      save: false,
-    });
-  };
-
-export const useClosePopOverAction =
-  () =>
-  ({ action }: OpenPopOverActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    updateTreeComponent({
-      componentId: action.popOverId,
-      props: { opened: false },
-      save: false,
-    });
-  };
-
-export const useChangeStepAction = () => {
-  return ({ action }: ChangeStepActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-
-    const component = getComponentById(
-      useEditorStore.getState().tree.root,
-      action.stepperId,
-    );
-
-    if (!component) {
-      return;
-    }
-
-    let { activeStep } = component.props!;
-    activeStep = Number(activeStep);
-
-    if (action.control === "previous" && activeStep > 0) {
-      activeStep -= 1;
-    } else if (
-      action.control === "next" &&
-      activeStep < component!.children!.length - 1
-    ) {
-      activeStep += 1;
-    }
-
-    updateTreeComponent({
-      componentId: action.stepperId,
-      props: { activeStep },
-      save: false,
-    });
-  };
 };
 
 export const useChangeVisibilityAction = () => {
@@ -947,40 +759,10 @@ export const actionMapper = {
     form: GoToUrlForm,
     flowForm: GoToUrlFlowActionForm,
   },
-  openModal: {
-    action: useOpenModalAction,
-    form: OpenModalActionForm,
-    flowForm: OpenModalFlowActionForm,
-  },
-  closeModal: {
-    action: useCloseModalAction,
-    form: OpenModalActionForm,
-    flowForm: CloseModalFlowActionForm,
-  },
-  openDrawer: {
-    action: useOpenDrawerAction,
-    form: OpenDrawerActionForm,
-    flowForm: OpenDrawerFlowActionForm,
-  },
   triggerLogicFlow: {
     action: useTriggerLogicFlowAction,
     form: TriggerLogicFlowActionForm,
     flowForm: TriggerLogicFlowForm,
-  },
-  closeDrawer: {
-    action: useCloseDrawerAction,
-    form: OpenDrawerActionForm,
-    flowForm: CloseDrawerFlowActionForm,
-  },
-  openPopOver: {
-    action: useOpenPopOverAction,
-    form: OpenPopOverActionForm,
-    flowForm: OpenPopOverFlowActionForm,
-  },
-  closePopOver: {
-    action: useClosePopOverAction,
-    form: OpenPopOverActionForm,
-    flowForm: ClosePopOverFlowActionForm,
   },
   showNotification: {
     action: useShowNotificationAction,
@@ -997,19 +779,10 @@ export const actionMapper = {
     form: TogglePropsActionForm,
     flowForm: TogglePropsFlowActionForm,
   },
-  toggleAccordionItem: {
-    action: useToggleAccordionItemAction,
-    form: ToggleAccordionItemActionForm,
-  },
   toggleNavbar: {
     action: useToggleNavbarAction,
     form: TogglePropsActionForm,
     flowForm: TogglePropsFlowActionForm,
-  },
-  changeStep: {
-    action: useChangeStepAction,
-    form: ChangeStepActionForm,
-    flowForm: ChangeStepFlowActionForm,
   },
   changeLanguage: {
     action: useChangeLanguageAction,
