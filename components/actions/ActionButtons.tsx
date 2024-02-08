@@ -1,7 +1,7 @@
 import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
 import { Action } from "@/utils/actions";
-import { Button } from "@mantine/core";
+import { Button, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
 
@@ -38,7 +38,7 @@ export const ActionButtons = ({
   });
 
   return (
-    <>
+    <Stack>
       <Button
         size="xs"
         type="submit"
@@ -81,6 +81,6 @@ export const ActionButtons = ({
           Remove
         </Button>
       )}
-    </>
+    </Stack>
   );
 };

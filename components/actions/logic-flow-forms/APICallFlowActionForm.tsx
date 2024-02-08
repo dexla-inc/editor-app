@@ -1,46 +1,19 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { EndpointSelect } from "@/components/EndpointSelect";
-import { colors } from "@/components/datasources/DataSourceEndpoint";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { Endpoint } from "@/requests/datasources/types";
-import { MethodTypes } from "@/requests/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { APICallAction } from "@/utils/actions";
 import { decodeSchema } from "@/utils/compression";
 import { ApiType } from "@/utils/dashboardTypes";
-import { Box, Button, Flex, Stack, Switch, Text, Title } from "@mantine/core";
+import { Button, Stack, Switch, Title } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useRouter } from "next/router";
-import React, { forwardRef, useEffect, useState } from "react";
-
-// eslint-disable-next-line react/display-name
-const SelectItem = forwardRef<HTMLDivElement, any>(
-  ({ method, label, ...others }: any, ref) => (
-    <Flex ref={ref} gap="xs" {...others}>
-      <Box
-        p={2}
-        sx={{
-          fontSize: 8,
-          color: "white",
-          border: colors[method as MethodTypes].color + " 1px solid",
-          background: colors[method as MethodTypes].color,
-          borderRadius: "4px",
-          width: 38,
-          textAlign: "center",
-        }}
-      >
-        {method}
-      </Box>
-      <Text size="xs" truncate>
-        {label}
-      </Text>
-    </Flex>
-  ),
-);
+import React, { useEffect, useState } from "react";
 
 type FormValues = Omit<APICallAction, "name" | "datasource">;
 

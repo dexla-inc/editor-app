@@ -1,13 +1,5 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { Icon } from "@/components/Icon";
-import { ActionButtons } from "@/components/actions/ActionButtons";
-import {
-  handleLoadingStart,
-  handleLoadingStop,
-  updateActionInTree,
-  useActionData,
-  useLoadingState,
-} from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
 import { TogglePropsAction } from "@/utils/actions";
 import { ICON_SIZE } from "@/utils/config";
@@ -22,32 +14,21 @@ import {
   TextInput,
   useMantineTheme,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { UseFormReturnType } from "@mantine/form";
 import { IconTrash } from "@tabler/icons-react";
 
 type Props = {
-  id: string;
+  form: UseFormReturnType<Omit<TogglePropsAction, "name">>;
 };
-
-type FormValues = Omit<TogglePropsAction, "name">;
 
 type SelectData = Array<{ value: string; label: string }>;
 
-export const TogglePropsActionForm = ({ id }: Props) => {
+export const TogglePropsActionForm = ({ form }: Props) => {
   const theme = useMantineTheme();
-  const { startLoading, stopLoading } = useLoadingState();
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );
-  const updateTreeComponentActions = useEditorStore(
-    (state) => state.updateTreeComponentActions,
-  );
-  const { componentActions, action } = useActionData<TogglePropsAction>({
-    actionId: id,
-    editorTree,
-    selectedComponentId,
-  });
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
@@ -56,33 +37,7 @@ export const TogglePropsActionForm = ({ id }: Props) => {
   );
   const component = getComponentById(editorTree.root, selectedComponentId!);
 
-  const form = useForm<FormValues>({
-    initialValues: {
-      conditionRules: action.action?.conditionRules ?? [],
-    },
-  });
-
   const conditionRules = () => form.getInputProps("conditionRules").value;
-
-  const onSubmit = (values: FormValues) => {
-    handleLoadingStart({ startLoading });
-
-    try {
-      updateActionInTree<TogglePropsAction>({
-        selectedComponentId: selectedComponentId!,
-        componentActions,
-        id,
-        updateValues: {
-          conditionRules: values.conditionRules ?? [],
-        },
-        updateTreeComponentActions,
-      });
-
-      handleLoadingStop({ stopLoading });
-    } catch (error) {
-      handleLoadingStop({ stopLoading, success: false });
-    }
-  };
 
   const conditionOptions =
     component?.name === "Select"
@@ -93,91 +48,84 @@ export const TogglePropsActionForm = ({ id }: Props) => {
         }));
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack spacing="xs">
-        <Flex justify="space-between" gap="xl" sx={{ marginTop: "0.5rem" }}>
-          <Text fz="xs" weight="500">
-            Condition Rules
-          </Text>
+    <Stack spacing="xs">
+      <Flex justify="space-between" gap="xl" sx={{ marginTop: "0.5rem" }}>
+        <Text fz="xs" weight="500">
+          Condition Rules
+        </Text>
 
-          <Button
-            type="button"
-            compact
-            onClick={() => {
-              form.insertListItem("conditionRules", {
-                componentId: "",
-                condition: "",
-              });
+        <Button
+          type="button"
+          compact
+          onClick={() => {
+            form.insertListItem("conditionRules", {
+              componentId: "",
+              condition: "",
+            });
+          }}
+          variant="default"
+          sx={{ marginRight: 0 }}
+          leftIcon={<Icon name="IconPlus" size={ICON_SIZE} />}
+        >
+          Add
+        </Button>
+      </Flex>
+      {conditionRules().map(({ componentId, condition }: any, i: number) => {
+        return (
+          <div
+            key={i}
+            style={{
+              borderBottom: "1px solid " + theme.colors.gray[3],
+              paddingBottom: 20,
             }}
-            variant="default"
-            sx={{ marginRight: 0 }}
-            leftIcon={<Icon name="IconPlus" size={ICON_SIZE} />}
           >
-            Add
-          </Button>
-        </Flex>
-        {conditionRules().map(({ componentId, condition }: any, i: number) => {
-          return (
-            <div
-              key={i}
-              style={{
-                borderBottom: "1px solid " + theme.colors.gray[3],
-                paddingBottom: 20,
-              }}
-            >
-              {["Radio", "Select"].includes(component!.name) ? (
-                <Select
-                  size="xs"
-                  label={
-                    <Flex justify="space-between" align="center">
-                      Toggle when
-                      <ActionIcon
-                        onClick={() => {
-                          form.removeListItem("conditionRules", i);
-                        }}
-                      >
-                        <IconTrash size={ICON_SIZE} color="red" />
-                      </ActionIcon>
-                    </Flex>
-                  }
-                  placeholder="Select a condition"
-                  data={(conditionOptions as SelectData) ?? []}
-                  value={condition}
-                  onChange={(val) => {
-                    form.setFieldValue(`conditionRules.${i}.condition`, val);
-                  }}
-                  styles={{ label: { width: "100%" } }}
-                />
-              ) : (
-                <TextInput
-                  size="xs"
-                  label="Toggle when"
-                  value={condition}
-                  onChange={(e) => {
-                    form.setFieldValue(
-                      `conditionRules.${i}.condition`,
-                      e.target.value,
-                    );
-                  }}
-                />
-              )}
-              <ComponentToBindFromInput
-                componentId={component?.id}
-                onPickComponent={() => {
-                  setPickingComponentToBindTo(undefined);
-                  setComponentToBind(undefined);
+            {["Radio", "Select"].includes(component!.name) ? (
+              <Select
+                size="xs"
+                label={
+                  <Flex justify="space-between" align="center">
+                    Toggle when
+                    <ActionIcon
+                      onClick={() => {
+                        form.removeListItem("conditionRules", i);
+                      }}
+                    >
+                      <IconTrash size={ICON_SIZE} color="red" />
+                    </ActionIcon>
+                  </Flex>
+                }
+                placeholder="Select a condition"
+                data={(conditionOptions as SelectData) ?? []}
+                value={condition}
+                onChange={(val) => {
+                  form.setFieldValue(`conditionRules.${i}.condition`, val);
                 }}
-                {...form.getInputProps(`conditionRules.${i}.componentId`)}
+                styles={{ label: { width: "100%" } }}
               />
-            </div>
-          );
-        })}
-
-        <ActionButtons
-          actionId={action.id}
-          componentActions={componentActions}
-        ></ActionButtons>
-      </Stack>
-    </form>
+            ) : (
+              <TextInput
+                size="xs"
+                label="Toggle when"
+                value={condition}
+                onChange={(e) => {
+                  form.setFieldValue(
+                    `conditionRules.${i}.condition`,
+                    e.target.value,
+                  );
+                }}
+              />
+            )}
+            <ComponentToBindFromInput
+              componentId={component?.id}
+              onPickComponent={() => {
+                setPickingComponentToBindTo(undefined);
+                setComponentToBind(undefined);
+              }}
+              {...form.getInputProps(`conditionRules.${i}.componentId`)}
+            />
+          </div>
+        );
+      })}
+    </Stack>
   );
 };

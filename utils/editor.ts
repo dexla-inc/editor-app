@@ -602,6 +602,7 @@ export const updateTreeComponent = (
 
         node.props = merge(node.props, alwaysDefaultFields);
 
+        // TODO: uncomment when we have a solution to  loop only the ids list
         // context.break();
       }
     },
