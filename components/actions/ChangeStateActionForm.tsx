@@ -1,4 +1,5 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import {
   handleLoadingStart,
@@ -11,9 +12,8 @@ import { useDataContext } from "@/contexts/DataProvider";
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { useEditorStore } from "@/stores/editor";
 import { ChangeStateAction } from "@/utils/actions";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { getComponentById } from "@/utils/editor";
-import { Select, Stack, useMantineTheme } from "@mantine/core";
+import { Stack, useMantineTheme } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 type Props = {
@@ -47,7 +47,7 @@ export const ChangeStateActionForm = ({ id }: Props) => {
   );
   const { getComponentsStates } = useComponentStates();
 
-  const { components } = useDataContext()!;
+  const { computeValue } = useDataContext()!;
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
 
@@ -57,6 +57,8 @@ export const ChangeStateActionForm = ({ id }: Props) => {
       state: action.action?.state,
     },
   });
+
+  const pickedId = computeValue({ value: form.values.componentId });
 
   const onSubmit = (values: FormValues) => {
     try {
@@ -79,17 +81,6 @@ export const ChangeStateActionForm = ({ id }: Props) => {
     }
   };
 
-  // const onChange = (val: string | null, key: string, i: number) => {
-  //   const newValue = cloneDeep(form.values.conditionRules) as any;
-  //   newValue[i][key] = val;
-  //   form.setFieldValue("conditionRules", newValue);
-  // };
-
-  // Change State, choose component to change
-  // Use case: Change the state of any component when I perform an action like clicking on a button
-  // Use case: Bind a variable to state of a component from any value such as query string, variable etc
-  // Component, State (Bindable)
-
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack spacing="xs">
@@ -102,18 +93,13 @@ export const ChangeStateActionForm = ({ id }: Props) => {
           {...form.getInputProps("componentId")}
         />
 
-        {/* This select must be bindable */}
-        <Select
-          size="xs"
+        <ComponentToBindFromSelect
           label="State"
-          //onChange={(val) => onChange(val, "state", i)}
-          data={getComponentsStates()}
           placeholder="Select State"
           nothingFound="Nothing found"
           searchable
-          //value={state}
-          styles={{ label: { width: "100%" } }}
-          {...AUTOCOMPLETE_OFF_PROPS}
+          data={getComponentsStates([pickedId])}
+          {...form.getInputProps("state")}
         />
 
         <ActionButtons

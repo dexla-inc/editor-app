@@ -1,13 +1,14 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
+import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
+import { useDataContext } from "@/contexts/DataProvider";
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { useRequestProp } from "@/hooks/useRequestProp";
 import { useEditorStore } from "@/stores/editor";
 import { useFlowStore } from "@/stores/flow";
 import { ChangeStateAction } from "@/utils/actions";
-import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { decodeSchema } from "@/utils/compression";
 import { getComponentById } from "@/utils/editor";
-import { Button, Select, Stack, useMantineTheme } from "@mantine/core";
+import { Button, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useEffect } from "react";
 
@@ -18,13 +19,14 @@ type Props = {
 type FormValues = Omit<ChangeStateAction, "name">;
 
 export const ChangeStateActionFlowForm = ({ form }: Props) => {
-  const theme = useMantineTheme();
   const isUpdating = useFlowStore((state) => state.isUpdating);
   const setTree = useEditorStore((state) => state.setTree);
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );
+  const { computeValue } = useDataContext()!;
+  const pickedId = computeValue({ value: form.values.componentId });
 
   const { page } = useRequestProp();
 
@@ -44,20 +46,6 @@ export const ChangeStateActionFlowForm = ({ form }: Props) => {
 
   const component = getComponentById(editorTree.root, selectedComponentId!);
 
-  // const onChange = (val: string | null, key: string, i: number) => {
-  //   const newValue = cloneDeep(form.values.conditionRules) as any;
-  //   newValue[i][key] = val;
-  //   form.setFieldValue("conditionRules", newValue);
-  // };
-
-  const conditionOptions =
-    component?.name === "Select"
-      ? component?.props?.data ?? component?.props?.exampleData
-      : component?.children?.map((child) => ({
-          label: child?.props?.value,
-          value: child?.props?.value,
-        }));
-
   return (
     <Stack spacing="xs">
       <ComponentToBindFromInput
@@ -69,18 +57,13 @@ export const ChangeStateActionFlowForm = ({ form }: Props) => {
         {...form.getInputProps("componentId")}
       />
 
-      {/* This select must be bindable */}
-      <Select
-        size="xs"
+      <ComponentToBindFromSelect
         label="State"
-        //onChange={(val) => onChange(val, "state", i)}
-        data={getComponentsStates()}
         placeholder="Select State"
         nothingFound="Nothing found"
         searchable
-        //value={state}
-        styles={{ label: { width: "100%" } }}
-        {...AUTOCOMPLETE_OFF_PROPS}
+        data={getComponentsStates([pickedId])}
+        {...form.getInputProps("state")}
       />
 
       <Button type="submit" size="xs" loading={isUpdating}>
