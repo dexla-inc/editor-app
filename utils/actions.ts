@@ -1,38 +1,15 @@
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { ChangeLanguageActionForm } from "@/components/actions/ChangeLanguageActionForm";
 import { ChangeStateActionForm } from "@/components/actions/ChangeStateActionForm";
-import { ChangeStepActionForm } from "@/components/actions/ChangeStepActionForm";
 import { CustomJavascriptActionForm } from "@/components/actions/CustomJavascriptActionForm";
 import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
-import { OpenDrawerActionForm } from "@/components/actions/OpenDrawerActionForm";
-import { OpenModalActionForm } from "@/components/actions/OpenModalActionForm";
-import { OpenPopOverActionForm } from "@/components/actions/OpenPopOverActionForm";
-import { ToggleAccordionItemActionForm } from "@/components/actions/ToggleAccordionItemActionForm";
 import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
-import { APICallFlowActionForm } from "@/components/actions/logic-flow-forms/APICallFlowActionForm";
-import { ChangeLanguageFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeLanguageActionFlowForm";
-import { ChangeStateActionFlowForm } from "@/components/actions/logic-flow-forms/ChangeStateFlowActionForm";
-import { ChangeStepFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeStepFlowActionForm";
-import { CloseDrawerFlowActionForm } from "@/components/actions/logic-flow-forms/CloseDrawerFlowActionForm";
-import { CloseModalFlowActionForm } from "@/components/actions/logic-flow-forms/CloseModalFlowActionForm";
-import { ClosePopOverFlowActionForm } from "@/components/actions/logic-flow-forms/ClosePopOverFlowActionForm";
-import { CustomJavascriptFlowActionForm } from "@/components/actions/logic-flow-forms/CustomJavascriptFlowActionForm";
-import { DebugFlowActionForm } from "@/components/actions/logic-flow-forms/DebugFlowActionForm";
 import { transpile } from "typescript";
 
 import { ChangeVariableActionForm } from "@/components/actions/ChangeVariableActionForm";
-import { ChangeVariableFlowActionForm } from "@/components/actions/logic-flow-forms/ChangeVariableFlowActionForm";
-import { GoToUrlFlowActionForm } from "@/components/actions/logic-flow-forms/GoToUrlFlowActionForm";
-import { NavigationFlowActionForm } from "@/components/actions/logic-flow-forms/NavigationFlowActionForm";
-import { OpenDrawerFlowActionForm } from "@/components/actions/logic-flow-forms/OpenDrawerFlowActionForm";
-import { OpenModalFlowActionForm } from "@/components/actions/logic-flow-forms/OpenModalFlowActionForm";
-import { OpenPopOverFlowActionForm } from "@/components/actions/logic-flow-forms/OpenPopOverFlowActionForm";
-import { ShowNotificationFlowActionForm } from "@/components/actions/logic-flow-forms/ShowNotificationFlowActionForm";
-import { TogglePropsFlowActionForm } from "@/components/actions/logic-flow-forms/TogglePropsFlowActionForm";
-import { TriggerLogicFlowActionForm as TriggerLogicFlowForm } from "@/components/actions/logic-flow-forms/TriggerLogicFlowActionForm";
 import {
   DataSourceAuthResponse,
   DataSourceResponse,
@@ -41,7 +18,6 @@ import {
 
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
 import { useDataContext } from "@/contexts/DataProvider";
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
@@ -55,6 +31,8 @@ import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
 import { getComponentInitialDisplayValue } from "./common";
 import { ValueProps } from "./types";
+import { UseFormReturnType } from "@mantine/form";
+import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 
 const triggers = [
   "onClick",
@@ -115,19 +93,13 @@ export const actions: ActionInfo[] = [
     group: "Utilities & Tools",
     icon: "IconMessageLanguage",
   },
-  { name: "changeStep", group: "Z Delete", icon: "IconStatusChange" },
-  {
-    name: "toggleAccordionItem",
-    group: "Z Delete",
-    icon: "IconStatusChange",
-  },
-  { name: "openDrawer", group: "Z Delete" },
-  { name: "closeDrawer", group: "Z Delete" },
-  { name: "openModal", group: "Z Delete" },
-  { name: "closeModal", group: "Z Delete" },
-  { name: "openPopOver", group: "Z Delete" },
-  { name: "closePopOver", group: "Z Delete" },
 ];
+
+export type ActionFormProps<T> = {
+  form: UseFormReturnType<T>;
+  isLogicFlow?: boolean;
+  actionId?: string;
+};
 
 type ActionTriggerAll = (typeof triggers)[number];
 
@@ -160,30 +132,9 @@ export interface AlertAction extends BaseAction {
   message: string;
 }
 
-export interface OpenModalAction extends BaseAction {
-  name: "openModal";
-  modalId: string;
-}
-
-export interface ToggleAccordionItemAction extends BaseAction {
-  name: "openModal";
-  accordionId: string;
-  accordionItemId: string;
-}
-
-export interface OpenDrawerAction extends BaseAction {
-  name: "openDrawer";
-  drawerId: string;
-}
-
 export interface TriggerLogicFlowAction extends BaseAction {
   name: "triggerLogicFlow";
   logicFlowId: string;
-}
-
-export interface OpenPopOverAction extends BaseAction {
-  name: "openPopOver";
-  popOverId: string;
 }
 
 export interface TogglePropsAction extends BaseAction {
@@ -220,10 +171,6 @@ export interface APICallAction extends BaseAction {
   authType: EndpointAuthType;
 }
 
-export interface ToggleNavbarAction extends BaseAction {
-  name: "toggleNavbar";
-}
-
 export interface ChangeStepAction extends BaseAction {
   name: "changeStep";
   stepperId: string;
@@ -246,20 +193,14 @@ export interface ChangeVariableAction extends BaseAction {
   value: ValueProps;
 }
 
-type ActionType =
+export type ActionType =
   | NavigationAction
   | AlertAction
   | APICallAction
   | GoToUrlAction
-  | OpenModalAction
-  | OpenDrawerAction
-  | OpenPopOverAction
-  | ToggleAccordionItemAction
   | TogglePropsAction
   | ShowNotificationAction
   | ChangeStateAction
-  | ToggleNavbarAction
-  | ChangeStepAction
   | TriggerLogicFlowAction
   | ChangeLanguageAction
   | ChangeVariableAction;
@@ -341,24 +282,8 @@ export const useDebugAction =
     alert(action.message);
   };
 
-export type OpenModalActionParams = ActionParams & {
-  action: OpenModalAction;
-};
-
-export type OpenDrawerActionParams = ActionParams & {
-  action: OpenDrawerAction;
-};
-
-export type ToggleAccordionItemActionParams = ActionParams & {
-  action: ToggleAccordionItemAction;
-};
-
 export type TriggerLogicFlowActionParams = ActionParams & {
   action: TriggerLogicFlowAction;
-};
-
-export type OpenPopOverActionParams = ActionParams & {
-  action: OpenPopOverAction;
 };
 
 export type ShowNotificationActionParams = ActionParams & {
@@ -372,134 +297,9 @@ export type TogglePropsActionParams = ActionParams & {
 export type ChangeStateActionParams = ActionParams & {
   action: ChangeStateAction;
 };
-export type ToggleNavbarActionParams = ActionParams & {
-  action: ToggleNavbarAction;
-};
-export type ChangeStepActionParams = ActionParams & {
-  action: ChangeStepAction;
-};
 
 export type ChangeLanguageActionParams = ActionParams & {
   action: ChangeLanguageAction;
-};
-
-export const useOpenModalAction =
-  () =>
-  ({ action }: OpenModalActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    updateTreeComponent({
-      componentId: action.modalId,
-      props: { opened: true },
-      save: false,
-    });
-  };
-
-export const useCloseModalAction =
-  () =>
-  ({ action }: OpenModalActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    updateTreeComponent({
-      componentId: action.modalId,
-      props: { opened: false },
-      save: false,
-    });
-  };
-
-export const useOpenDrawerAction =
-  () =>
-  ({ action }: OpenDrawerActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    updateTreeComponent({
-      componentId: action.drawerId,
-      props: { opened: true },
-      save: false,
-    });
-  };
-
-export const useToggleAccordionItemAction =
-  () =>
-  ({ action }: ToggleAccordionItemActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    const editorTree = useEditorStore.getState().tree;
-
-    const accordion = getComponentById(editorTree.root, action.accordionId);
-
-    updateTreeComponent({
-      componentId: action.accordionId,
-      props: {
-        value:
-          accordion?.props?.value === action.accordionItemId
-            ? ""
-            : action.accordionItemId,
-      },
-      save: false,
-    });
-  };
-
-export const useCloseDrawerAction =
-  () =>
-  ({ action }: OpenDrawerActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    updateTreeComponent({
-      componentId: action.drawerId,
-      props: { opened: false },
-      save: false,
-    });
-  };
-
-export const useOpenPopOverAction =
-  () =>
-  ({ action }: OpenPopOverActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    updateTreeComponent({
-      componentId: action.popOverId,
-      props: { opened: true },
-      save: false,
-    });
-  };
-
-export const useClosePopOverAction =
-  () =>
-  ({ action }: OpenPopOverActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    updateTreeComponent({
-      componentId: action.popOverId,
-      props: { opened: false },
-      save: false,
-    });
-  };
-
-export const useChangeStepAction = () => {
-  return ({ action }: ChangeStepActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-
-    const component = getComponentById(
-      useEditorStore.getState().tree.root,
-      action.stepperId,
-    );
-
-    if (!component) {
-      return;
-    }
-
-    let { activeStep } = component.props!;
-    activeStep = Number(activeStep);
-
-    if (action.control === "previous" && activeStep > 0) {
-      activeStep -= 1;
-    } else if (
-      action.control === "next" &&
-      activeStep < component!.children!.length - 1
-    ) {
-      activeStep += 1;
-    }
-
-    updateTreeComponent({
-      componentId: action.stepperId,
-      props: { activeStep },
-      save: false,
-    });
-  };
 };
 
 export const useChangeVisibilityAction = () => {
@@ -534,47 +334,6 @@ export const useChangeVisibilityAction = () => {
   };
 };
 
-export const useToggleNavbarAction =
-  () =>
-  ({ action }: ToggleNavbarActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    const editorTree = useEditorStore.getState().tree;
-
-    const selectedComponent = editorTree.root.children?.find(
-      (tree) => tree.name === "Navbar",
-    );
-    const buttonComponent = selectedComponent?.children?.find(
-      (tree) => tree.description === "Button to toggle Navbar",
-    );
-    const linksComponent = selectedComponent?.children?.find(
-      (tree) => tree.description === "Container for navigation links",
-    );
-    const buttonIcon = buttonComponent?.children?.reduce(
-      (obj, tree) => ({ ...obj, ...tree }),
-      {} as Component,
-    );
-
-    const isExpanded = selectedComponent?.props?.style?.width !== "100px";
-    const name = isExpanded ? "IconChevronRight" : "IconChevronLeft";
-    const width = isExpanded ? "100px" : "260px";
-    const flexDirection = isExpanded ? "column" : "row";
-    const justifyContent = isExpanded ? "center" : "flex-start";
-
-    updateTreeComponent({ componentId: buttonIcon?.id!, props: { name } });
-    linksComponent?.children?.forEach((child) => {
-      updateTreeComponent({
-        componentId: child?.id as string,
-        props: {
-          style: { flexDirection, justifyContent },
-        },
-      });
-    });
-    updateTreeComponent({
-      componentId: selectedComponent?.id!,
-      props: { style: { width } },
-    });
-  };
-
 export const useShowNotificationAction = () => {
   const { computeValue } = useDataContext()!;
   return async ({ action }: ShowNotificationActionParams) => {
@@ -604,24 +363,6 @@ export const useChangeStateAction = () => {
     });
   };
 };
-
-function getCurrentDocument() {
-  const isLive = useEditorStore.getState().isLive;
-  if (isLive) return document;
-
-  const iframeWindow = useEditorStore.getState().iframeWindow;
-  if (iframeWindow) return iframeWindow.document;
-
-  console.error("iframe is empty", iframeWindow);
-}
-
-function getQueryElementValue(value: string): string {
-  const currentDocument = getCurrentDocument();
-  const el = currentDocument?.querySelector(
-    `input#${value.split("queryString_pass_")[1]}`,
-  ) as HTMLInputElement;
-  return el?.value ?? "";
-}
 
 const getVariablesValue = (
   objs: Record<string, ValueProps>,
@@ -790,7 +531,6 @@ type ApiCallActionRestParams = Pick<
 export const useApiCallAction = () => {
   const { computeValue } = useDataContext()!;
   const projectId = useEditorStore.getState().currentProjectId;
-  const { data: endpoints } = useDataSourceEndpoints(projectId);
 
   return async ({
     actionId,
@@ -802,12 +542,13 @@ export const useApiCallAction = () => {
     ...rest
   }: APICallActionParams) => {
     const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+    setLoadingState(component.id!, true, updateTreeComponent);
+    const endpoints = await getDataSourceEndpoints(projectId as string);
     const selectedEndpoint = endpoints?.results.find(
       (e) => e.id === action.endpoint,
     )!;
 
     try {
-      setLoadingState(component.id!, true, updateTreeComponent);
       const accessToken = useDataSourceStore.getState().authState.accessToken;
 
       const { url, body } = prepareRequestData(
@@ -925,100 +666,70 @@ export const actionMapper = {
   alert: {
     action: useDebugAction,
     form: DebugActionForm,
-    flowForm: DebugFlowActionForm,
+    defaultValues: {},
   },
   changeVariable: {
     action: useChangeVariableAction,
     form: ChangeVariableActionForm,
-    flowForm: ChangeVariableFlowActionForm,
+    defaultValues: {},
   },
   navigateToPage: {
     action: useNavigationAction,
     form: NavigationActionForm,
-    flowForm: NavigationFlowActionForm,
+    defaultValues: {},
   },
   apiCall: {
     action: useApiCallAction,
     form: APICallActionForm,
-    flowForm: APICallFlowActionForm,
+    defaultValues: {
+      authConfig: {},
+      showLoader: true,
+      datasources: [],
+      binds: {
+        header: {},
+        parameter: {},
+        body: {},
+      },
+      authType: "authenticated",
+    },
   },
   goToUrl: {
     action: useGoToUrlAction,
     form: GoToUrlForm,
-    flowForm: GoToUrlFlowActionForm,
-  },
-  openModal: {
-    action: useOpenModalAction,
-    form: OpenModalActionForm,
-    flowForm: OpenModalFlowActionForm,
-  },
-  closeModal: {
-    action: useCloseModalAction,
-    form: OpenModalActionForm,
-    flowForm: CloseModalFlowActionForm,
-  },
-  openDrawer: {
-    action: useOpenDrawerAction,
-    form: OpenDrawerActionForm,
-    flowForm: OpenDrawerFlowActionForm,
+    defaultValues: {},
   },
   triggerLogicFlow: {
     action: useTriggerLogicFlowAction,
     form: TriggerLogicFlowActionForm,
-    flowForm: TriggerLogicFlowForm,
-  },
-  closeDrawer: {
-    action: useCloseDrawerAction,
-    form: OpenDrawerActionForm,
-    flowForm: CloseDrawerFlowActionForm,
-  },
-  openPopOver: {
-    action: useOpenPopOverAction,
-    form: OpenPopOverActionForm,
-    flowForm: OpenPopOverFlowActionForm,
-  },
-  closePopOver: {
-    action: useClosePopOverAction,
-    form: OpenPopOverActionForm,
-    flowForm: ClosePopOverFlowActionForm,
+    defaultValues: {},
   },
   showNotification: {
     action: useShowNotificationAction,
     form: ShowNotificationActionForm,
-    flowForm: ShowNotificationFlowActionForm,
+    defaultValues: {},
   },
   changeState: {
     action: useChangeStateAction,
     form: ChangeStateActionForm,
-    flowForm: ChangeStateActionFlowForm,
+    defaultValues: {
+      conditionRules: [],
+    },
   },
   changeVisibility: {
     action: useChangeVisibilityAction,
     form: TogglePropsActionForm,
-    flowForm: TogglePropsFlowActionForm,
-  },
-  toggleAccordionItem: {
-    action: useToggleAccordionItemAction,
-    form: ToggleAccordionItemActionForm,
-  },
-  toggleNavbar: {
-    action: useToggleNavbarAction,
-    form: TogglePropsActionForm,
-    flowForm: TogglePropsFlowActionForm,
-  },
-  changeStep: {
-    action: useChangeStepAction,
-    form: ChangeStepActionForm,
-    flowForm: ChangeStepFlowActionForm,
+    defaultValues: {
+      conditionRules: [],
+    },
   },
   changeLanguage: {
     action: useChangeLanguageAction,
     form: ChangeLanguageActionForm,
-    flowForm: ChangeLanguageFlowActionForm,
+    defaultValues: {},
   },
   customJavascript: {
     action: useCustomJavascriptAction,
     form: CustomJavascriptActionForm,
-    flowForm: CustomJavascriptFlowActionForm,
+    defaultValues: {},
   },
 };

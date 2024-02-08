@@ -1,85 +1,25 @@
-import { ActionButtons } from "@/components/actions/ActionButtons";
-import {
-  handleLoadingStart,
-  handleLoadingStop,
-  updateActionInTree,
-  useActionData,
-  useLoadingState,
-} from "@/components/actions/_BaseActionFunctions";
 import { VariableSelect } from "@/components/variables/VariableSelect";
 import { useEditorStore } from "@/stores/editor";
-import { ChangeVariableAction } from "@/utils/actions";
-import { debouncedTreeUpdate } from "@/utils/editor";
-import { BindingType } from "@/utils/types";
+import { ActionFormProps, ChangeVariableAction } from "@/utils/actions";
 import { Stack } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import merge from "lodash.merge";
 import { ComponentToBindFromInput } from "../ComponentToBindFromInput";
 
-type Props = {
-  id: string;
-};
+type Props = ActionFormProps<Omit<ChangeVariableAction, "name">>;
 
-type FormValues = Omit<ChangeVariableAction, "name">;
-
-const defaultValues = {
-  variableId: "",
-  value: {},
-};
-
-export const ChangeVariableActionForm = ({ id }: Props) => {
-  const { startLoading, stopLoading } = useLoadingState();
-  const editorTree = useEditorStore((state) => state.tree);
+export const ChangeVariableActionForm = ({ form }: Props) => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );
-  const updateTreeComponentActions = useEditorStore(
-    (state) => state.updateTreeComponentActions,
-  );
-  const { componentActions, action } = useActionData<ChangeVariableAction>({
-    actionId: id,
-    editorTree,
-    selectedComponentId,
-  });
-
-  const form = useForm<FormValues>({
-    initialValues: merge({}, defaultValues, action.action),
-  });
-
-  const onSubmit = (updateValues: FormValues) => {
-    handleLoadingStart({ startLoading });
-
-    try {
-      updateActionInTree<ChangeVariableAction>({
-        selectedComponentId: selectedComponentId!,
-        componentActions,
-        id,
-        updateValues,
-        updateTreeComponentActions,
-      });
-
-      handleLoadingStop({ stopLoading });
-    } catch (error) {
-      handleLoadingStop({ stopLoading, success: false });
-    }
-  };
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack spacing="xs">
-        <VariableSelect required {...form.getInputProps("variableId")} />
-        <ComponentToBindFromInput
-          required
-          label="Value"
-          componentId={selectedComponentId}
-          {...form.getInputProps("value")}
-        />
-
-        <ActionButtons
-          actionId={action.id}
-          componentActions={componentActions}
-        ></ActionButtons>
-      </Stack>
-    </form>
+    <Stack spacing="xs">
+      <VariableSelect required {...form.getInputProps("variableId")} />
+      <ComponentToBindFromInput
+        required
+        label="Value"
+        componentId={selectedComponentId}
+        {...form.getInputProps("value")}
+      />
+    </Stack>
   );
 };

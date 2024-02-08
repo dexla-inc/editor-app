@@ -34,6 +34,7 @@ import { nanoid } from "nanoid";
 import { GetServerSidePropsContext } from "next";
 import { useCallback, useEffect, useRef } from "react";
 import { useUpdateNodeInternals } from "reactflow";
+import { actionMapper } from "@/utils/actions";
 
 export const getServerSideProps = async ({
   query,
@@ -66,6 +67,7 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
   const selectedNode = useFlowStore((state) => state.selectedNode);
   const isRestored = useFlowStore((state) => state.isRestored);
   const isDragging = useFlowStore((state) => state.isDragging);
+  const isUpdating = useFlowStore((state) => state.isUpdating);
   const setIsUpdating = useFlowStore((state) => state.setIsUpdating);
   const updateNodeData = useFlowStore((state) => state.updateNodeData);
   const state = useFlowStore((state) => ({
@@ -149,8 +151,14 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
     id,
   ]);
 
+  const actionMapped = selectedNode?.data?.form?.action
+    ? // @ts-ignore
+      actionMapper[selectedNode.data.form.action]
+    : null;
+
   const form = useForm({
     initialValues: {
+      ...actionMapped?.defaultValues,
       label: selectedNode?.data.label ?? "",
     },
   });
@@ -158,12 +166,22 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
   useEffect(() => {
     if (selectedNode && previousSelectedNode?.id !== selectedNode?.id) {
       form.setValues({
+        ...actionMapped?.defaultValues,
         ...selectedNode.data.form,
         label: selectedNode.data.label,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNode, previousSelectedNode]);
+
+  useEffect(() => {
+    let timeout: string | number | NodeJS.Timeout = "";
+    if (form.isTouched() && form.isDirty()) {
+      timeout = setTimeout(() => onSubmit(form.values), 2000);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [form.values]);
 
   const onSubmit = async ({ label, ...values }: any) => {
     const isConditionalNode = selectedNode?.type === "conditionalNode";
@@ -247,7 +265,7 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
                   <Text size="sm">
                     Edit {startCase(selectedNode.data?.label)} Node
                   </Text>
-                  <form onSubmit={form.onSubmit(onSubmit)}>
+                  <Stack>
                     <TextInput
                       size="xs"
                       label="Label"
@@ -260,7 +278,7 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
                       form={form}
                       data={selectedNode.data}
                     />
-                  </form>
+                  </Stack>
                 </Stack>
               )}
             </Stack>

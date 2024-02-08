@@ -3,32 +3,49 @@ import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
 import { getPage } from "@/requests/pages/queries-noauth";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
+import { decodeSchema } from "@/utils/compression";
+import { useEditorStore } from "@/stores/editor";
 
-export const useRequestProp = (val?: string) => {
+export const useRequestProp = () => {
   const router = useRouter();
   const projectId = router.query.id as string;
   const pageId = router.query.page as string;
+  const setTree = useEditorStore((state) => state.setTree);
 
-  const { data: page } = useQuery({
-    queryKey: ["page", projectId, pageId],
-    queryFn: () => getPage(projectId, pageId),
-    enabled: !!projectId && !!pageId,
-  });
+  const usePageQuery = () => {
+    return useQuery({
+      queryKey: ["page", projectId, pageId],
+      queryFn: async () => {
+        const page = await getPage(projectId, pageId);
+        if (page?.pageState) {
+          setTree(JSON.parse(decodeSchema(page.pageState)));
+        }
 
-  const dataSources = useQuery({
-    queryKey: ["datasources"],
-    queryFn: () => getDataSources(projectId, {}),
-    enabled: !!projectId,
-  });
+        return page;
+      },
+      enabled: !!projectId && !!pageId,
+    });
+  };
 
-  const { data: flows } = useQuery({
-    queryKey: ["logic-flows", projectId, pageId],
-    queryFn: async () => {
-      const response = await listLogicFlows(projectId, { pageId });
-      return response.results ?? [];
-    },
-    enabled: !!projectId && !!pageId,
-  });
+  const useDataSourcesQuery = () => {
+    return useQuery({
+      queryKey: ["datasources", projectId],
+      queryFn: () => getDataSources(projectId, {}),
+      enabled: !!projectId,
+    });
+  };
 
-  return { page, dataSources, flows };
+  const useFlowsQuery = () => {
+    return useQuery({
+      queryKey: ["logic-flows", projectId, pageId],
+      queryFn: async () => {
+        const response = await listLogicFlows(projectId, { pageId });
+        return response.results ?? [];
+      },
+      initialData: [],
+      enabled: !!projectId && !!pageId,
+    });
+  };
+
+  return { usePageQuery, useDataSourcesQuery, useFlowsQuery };
 };

@@ -1,6 +1,5 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { SidebarSection } from "@/components/SidebarSection";
-import { ActionsFlow } from "@/components/actions/ActionsFlow";
 import { Data } from "@/components/data/Data";
 import * as AccordionModifier from "@/components/modifiers/Accordion";
 import * as AccordionItemModifier from "@/components/modifiers/AccordionItem";
@@ -50,7 +49,6 @@ import * as ChartModifier from "@/components/modifiers/chart/Chart";
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { Action, actionMapper } from "@/utils/actions";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { componentMapper } from "@/utils/componentMapper";
 import { dataMapper } from "@/utils/dataMapper";
@@ -69,15 +67,10 @@ import {
   TextInput,
   Tooltip,
 } from "@mantine/core";
-import {
-  IconArrowBadgeRight,
-  IconBolt,
-  IconCheck,
-  IconX,
-} from "@tabler/icons-react";
+import { IconCheck, IconX } from "@tabler/icons-react";
 import intersection from "lodash.intersection";
-import startCase from "lodash.startcase";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
+import { ActionsTab } from "@/components/actions/ActionsTab";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -139,10 +132,6 @@ export const EditorAsideSections = () => {
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,
   );
-  const updateTreeComponentActions = useEditorStore(
-    (state) => state.updateTreeComponentActions,
-  );
-  const setCopiedAction = useEditorStore((state) => state.setCopiedAction);
   const setTreeComponentCurrentState = useEditorStore(
     (state) => state.setTreeComponentCurrentState,
   );
@@ -205,7 +194,6 @@ export const EditorAsideSections = () => {
     );
   }
 
-  const componentActions = component?.actions ?? [];
   const mappedModifiers = intersection(
     ...components.map((c) => componentMapper[c?.name as string]?.modifiers),
   );
@@ -235,72 +223,6 @@ export const EditorAsideSections = () => {
     </SidebarSection>
   ));
 
-  const getActionsBySequentialToOrId = (id: string) => {
-    return componentActions.filter(
-      (a: Action) => a.id === id || a.sequentialTo === id,
-    );
-  };
-
-  const copyAction = (id: string) => {
-    setCopiedAction(getActionsBySequentialToOrId(id));
-  };
-
-  const removeAction = (id: string) => {
-    const updatedActions = componentActions.filter(
-      (a: Action) => a.id !== id && a.sequentialTo !== id,
-    );
-
-    setOpenAction({
-      ...openAction,
-      actionIds: openAction?.actionIds?.filter(
-        (a) => a !== id && a !== `seq_${id}`,
-      ),
-    });
-    updateTreeComponentActions(selectedComponentId!, updatedActions);
-  };
-
-  const baseItem = {
-    isAction: true,
-    removeAction,
-    copyAction,
-    componentId: _selectedComponentId,
-    openAction,
-  };
-
-  const renderSequentialActions = (action: Action) => {
-    return getActionsBySequentialToOrId(action.id).map(
-      (sequentialAction: Action) => {
-        const sequentialActionName = sequentialAction.action.name;
-        const ActionForm = actionMapper[sequentialActionName]?.form;
-
-        const item = {
-          ...baseItem,
-          id: sequentialAction.id,
-          isSequential: true,
-          label: `${startCase(sequentialAction.trigger)}: ${startCase(
-            sequentialAction.action.name,
-          )}`,
-          initiallyOpened: openAction?.actionIds?.includes(
-            `seq_${sequentialAction.id}`,
-          ),
-          my: 20,
-        };
-
-        return (
-          sequentialAction.sequentialTo === action.id && (
-            <SidebarSection
-              icon={IconArrowBadgeRight}
-              {...item}
-              key={item.label}
-            >
-              <ActionForm id={sequentialAction.id} />
-            </SidebarSection>
-          )
-        );
-      },
-    );
-  };
-
   const onClickResetToDefault = () => {
     updateTreeComponent({
       componentId: selectedComponentId!,
@@ -308,33 +230,6 @@ export const EditorAsideSections = () => {
       forceState: currentState,
     });
   };
-
-  const actionsSections = componentActions.map((action: Action) => {
-    const isSequential = !!action.sequentialTo;
-    const actionName = action.action.name;
-
-    const item = !isSequential
-      ? {
-          ...baseItem,
-          id: action.id,
-          label: `${startCase(action.trigger)}: ${startCase(actionName)}`,
-          initiallyOpened: openAction?.actionIds?.includes(action.id),
-        }
-      : undefined;
-
-    if (!actionName) return undefined;
-
-    const ActionForm = actionMapper[actionName]?.form;
-
-    return (
-      item && (
-        <SidebarSection icon={IconBolt} {...item} key={item.label}>
-          <ActionForm id={action.id} />
-          {renderSequentialActions(action)}
-        </SidebarSection>
-      )
-    );
-  });
 
   // @ts-ignore
   const DataSection = dataMapper[componentName];
@@ -467,7 +362,7 @@ export const EditorAsideSections = () => {
         </Stack>
       )}
       {tab === "data" && <Data component={component!} />}
-      {tab === "actions" && <ActionsFlow actionsSections={actionsSections} />}
+      {tab === "actions" && <ActionsTab component={component!} />}
     </Stack>
   );
 };

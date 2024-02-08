@@ -1,101 +1,23 @@
-import { ComponentToBindActionsPopover } from "@/components/ComponentToBindActionsPopover";
-import { ActionButtons } from "@/components/actions/ActionButtons";
-import {
-  handleLoadingStart,
-  handleLoadingStop,
-  updateActionInTree,
-  useActionData,
-  useLoadingState,
-} from "@/components/actions/_BaseActionFunctions";
-import { useEditorStore } from "@/stores/editor";
-import { GoToUrlAction } from "@/utils/actions";
-import { Checkbox, Flex, Stack, TextInput } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { ActionFormProps, GoToUrlAction } from "@/utils/actions";
+import { Checkbox, Stack } from "@mantine/core";
+import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 
-type Props = {
-  id: string;
-};
+type Props = ActionFormProps<Omit<GoToUrlAction, "name">>;
 
-type FormValues = Omit<GoToUrlAction, "name">;
-
-export const GoToUrlForm = ({ id }: Props) => {
-  const { startLoading, stopLoading } = useLoadingState();
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
-  );
-  const updateTreeComponentActions = useEditorStore(
-    (state) => state.updateTreeComponentActions,
-  );
-  const setComponentToBind = useEditorStore(
-    (state) => state.setComponentToBind,
-  );
-  const { componentActions, action } = useActionData<GoToUrlAction>({
-    actionId: id,
-    editorTree,
-    selectedComponentId,
-  });
-
-  const form = useForm<FormValues>({
-    initialValues: {
-      url: action.action?.url,
-      openInNewTab: action.action?.openInNewTab,
-    },
-  });
-
-  const onSubmit = (values: FormValues) => {
-    handleLoadingStart({ startLoading });
-
-    try {
-      updateActionInTree<GoToUrlAction>({
-        id,
-        selectedComponentId: selectedComponentId!,
-        componentActions,
-        updateValues: { url: values.url, openInNewTab: values.openInNewTab },
-        updateTreeComponentActions,
-      });
-
-      handleLoadingStop({ stopLoading });
-    } catch (error) {
-      handleLoadingStop({ stopLoading, success: false });
-    }
-  };
-
-  const openInNewTabInputProps = form.getInputProps("openInNewTab");
-
+export const GoToUrlForm = ({ form }: Props) => {
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack>
-        <TextInput
-          size="xs"
-          placeholder="Enter a URL"
-          label="URL"
-          {...form.getInputProps("url")}
-          rightSection={
-            <Flex px={5}>
-              BP
-              <ComponentToBindActionsPopover
-                onPick={(componentToBind: string) => {
-                  form.setValues({
-                    url: {
-                      dataType: "static",
-                      static: componentToBind,
-                    },
-                  });
-                  setComponentToBind(undefined);
-                }}
-              />
-            </Flex>
-          }
-          rightSectionWidth="auto"
-        />
-        <Checkbox
-          label="Open in new tab"
-          {...openInNewTabInputProps}
-          checked={openInNewTabInputProps.value}
-        />
-        <ActionButtons actionId={id} componentActions={componentActions} />
-      </Stack>
-    </form>
+    <Stack>
+      <ComponentToBindFromInput
+        size="xs"
+        placeholder="Enter a URL"
+        label="URL"
+        {...form.getInputProps("url")}
+      />
+
+      <Checkbox
+        label="Open in new tab"
+        {...form.getInputProps("openInNewTab", { type: "checkbox" })}
+      />
+    </Stack>
   );
 };

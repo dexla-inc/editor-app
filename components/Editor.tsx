@@ -5,7 +5,6 @@ import { Cursor } from "@/components/Cursor";
 import { EditorCanvas } from "@/components/EditorCanvas";
 import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
-import { DataProvider } from "@/contexts/DataProvider";
 import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
@@ -98,7 +97,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   }, [user, setCurrentUser]);
 
   return (
-    <DataProvider>
+    <>
       <Shell
         pos="relative"
         navbar={
@@ -196,6 +195,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
           />
         );
       })}
-    </DataProvider>
+    </>
   );
 };

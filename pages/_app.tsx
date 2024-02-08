@@ -32,6 +32,7 @@ import { useEffect, useState } from "react";
 import TagManager from "react-gtm-module";
 import { ReactFlowProvider } from "reactflow";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { DataProvider } from "@/contexts/DataProvider";
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -136,53 +137,57 @@ export default function App(props: AppProps) {
               <ReactQueryDevtools initialIsOpen={false} />
               <InitializeVariables pageProps={pageProps} />
               <Hydrate state={pageProps.dehydratedState}>
-                <ModalsProvider modals={{ logicFlows: LogicFlowInitialModal }}>
-                  <Notifications />
-                  <Global
-                    styles={{
-                      "*, *::before, *::after": {
-                        boxSizing: "border-box",
-                      },
-                      body: {
-                        margin: 0,
-                        padding: 0,
-                        ...theme.fn.fontStyles(),
-                        lineHeight: theme.lineHeight,
-                        maxHeight: "100vh",
-                        minHeight: "100vh",
-                        background:
-                          !isLive && isDarkTheme ? DARK_MODE : LIGHT_MODE,
-                        color:
-                          !isLive && isDarkTheme ? GREEN_COLOR : theme.black,
-                        // For WebKit browsers (e.g., Chrome, Safari)
-                        "::-webkit-scrollbar": {
-                          width: isLive ? "0px" : "8px",
-                          height: isLive && "0px",
+                <DataProvider>
+                  <ModalsProvider
+                    modals={{ logicFlows: LogicFlowInitialModal }}
+                  >
+                    <Notifications />
+                    <Global
+                      styles={{
+                        "*, *::before, *::after": {
+                          boxSizing: "border-box",
                         },
-                        "::-webkit-scrollbar-thumb": {
-                          backgroundColor: !isLive && "#888",
-                          borderRadius: !isLive && "10px",
+                        body: {
+                          margin: 0,
+                          padding: 0,
+                          ...theme.fn.fontStyles(),
+                          lineHeight: theme.lineHeight,
+                          maxHeight: "100vh",
+                          minHeight: "100vh",
+                          background:
+                            !isLive && isDarkTheme ? DARK_MODE : LIGHT_MODE,
+                          color:
+                            !isLive && isDarkTheme ? GREEN_COLOR : theme.black,
+                          // For WebKit browsers (e.g., Chrome, Safari)
+                          "::-webkit-scrollbar": {
+                            width: isLive ? "0px" : "8px",
+                            height: isLive && "0px",
+                          },
+                          "::-webkit-scrollbar-thumb": {
+                            backgroundColor: !isLive && "#888",
+                            borderRadius: !isLive && "10px",
+                          },
+
+                          // For Firefox
+                          scrollbarWidth: isLive ? "none" : "thin",
+                          scrollbarColor: !isLive && "#888 transparent",
+
+                          // For IE and Edge
+                          msOverflowStyle: isLive
+                            ? "none"
+                            : "-ms-autohiding-scrollbar",
                         },
 
-                        // For Firefox
-                        scrollbarWidth: isLive ? "none" : "thin",
-                        scrollbarColor: !isLive && "#888 transparent",
-
-                        // For IE and Edge
-                        msOverflowStyle: isLive
-                          ? "none"
-                          : "-ms-autohiding-scrollbar",
-                      },
-
-                      html: {
-                        maxHeight: "-webkit-fill-available",
-                      },
-                    }}
-                  />
-                  <ReactFlowProvider>
-                    <Component {...pageProps} />
-                  </ReactFlowProvider>
-                </ModalsProvider>
+                        html: {
+                          maxHeight: "-webkit-fill-available",
+                        },
+                      }}
+                    />
+                    <ReactFlowProvider>
+                      <Component {...pageProps} />
+                    </ReactFlowProvider>
+                  </ModalsProvider>
+                </DataProvider>
               </Hydrate>
             </QueryClientProvider>
             <SpeedInsights />

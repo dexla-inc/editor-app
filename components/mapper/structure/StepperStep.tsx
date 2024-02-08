@@ -145,17 +145,6 @@ export const jsonStructure = (props?: any): Component => {
                       leftIcon: "IconArrowLeft",
                     },
                     blockDroppingChildrenInside: true,
-                    actions: [
-                      {
-                        id: nanoid(),
-                        trigger: "onClick",
-                        action: {
-                          name: "changeStep",
-                          stepperId: props.stepperId,
-                          control: "previous",
-                        },
-                      },
-                    ],
                   },
                   {
                     id: nanoid(),
@@ -170,17 +159,6 @@ export const jsonStructure = (props?: any): Component => {
                       rightIcon: "IconArrowRight",
                     },
                     blockDroppingChildrenInside: true,
-                    actions: [
-                      {
-                        id: nanoid(),
-                        trigger: "onClick",
-                        action: {
-                          name: "changeStep",
-                          stepperId: props.stepperId,
-                          control: "next",
-                        },
-                      },
-                    ],
                   },
                 ],
               },

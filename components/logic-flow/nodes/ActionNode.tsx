@@ -48,7 +48,7 @@ export const NodeForm = ({ form, data }: NodeFormType) => {
       actionMapper[form.values.action]
     : null;
 
-  const ActionForm = actionMapped?.flowForm;
+  const ActionForm = actionMapped?.form;
 
   return (
     <Stack>
@@ -65,7 +65,7 @@ export const NodeForm = ({ form, data }: NodeFormType) => {
         })}
         {...form.getInputProps("action")}
       />
-      {ActionForm && <ActionForm form={form} />}
+      {ActionForm && <ActionForm form={form} isLogicFlow />}
     </Stack>
   );
 };

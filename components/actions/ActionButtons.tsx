@@ -1,7 +1,7 @@
 import { Icon } from "@/components/Icon";
 import { useEditorStore } from "@/stores/editor";
 import { Action } from "@/utils/actions";
-import { Button } from "@mantine/core";
+import { Button, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
 
@@ -33,20 +33,12 @@ export const ActionButtons = ({
   const addSequentialAction = () => setSequentialTo(actionId);
 
   useEffect(() => {
-    const timeout = setTimeout(() => copied && close(), 2000);
+    const timeout = setTimeout(() => copied && close(), 200);
     return () => clearTimeout(timeout);
   });
 
   return (
-    <>
-      <Button
-        size="xs"
-        type="submit"
-        mt="xs"
-        leftIcon={<Icon name="IconCheck"></Icon>}
-      >
-        Save
-      </Button>
+    <Stack>
       {canAddSequential && (
         <Button
           size="xs"
@@ -81,6 +73,6 @@ export const ActionButtons = ({
           Remove
         </Button>
       )}
-    </>
+    </Stack>
   );
 };
