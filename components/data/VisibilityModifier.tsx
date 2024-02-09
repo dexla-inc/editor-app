@@ -35,7 +35,7 @@ export const VisibilityModifier = ({
   const Wrapper = isVisibilityActionForm ? Fragment : ComponentToBindWrapper;
   const InnerWrapper = isVisibilityActionForm ? Fragment : Stack;
 
-  const visibilityOptions = [
+  const baseVisibilityOptions = [
     {
       label: "Visible",
       value: getComponentInitialDisplayValue(componentName),
@@ -44,8 +44,11 @@ export const VisibilityModifier = ({
       label: "Hidden",
       value: "none",
     },
-    ...(isVisibilityActionForm ? [{ label: "Toggle", value: "toggle" }] : []),
   ];
+
+  const visibilityOptions = isVisibilityActionForm
+    ? [{ label: "Toggle", value: "toggle" }, ...baseVisibilityOptions]
+    : baseVisibilityOptions;
 
   const otherInputProps = {
     value: visibleValue,
@@ -65,7 +68,7 @@ export const VisibilityModifier = ({
           label="Visibility"
           data={visibilityOptions}
           {...inputProps}
-          {...(isVisibilityActionForm && otherInputProps)}
+          {...(!isVisibilityActionForm && otherInputProps)}
         />
       </InnerWrapper>
     </Wrapper>

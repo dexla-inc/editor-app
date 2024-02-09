@@ -19,7 +19,6 @@ export const TogglePropsActionForm = ({ form }: Props) => {
   );
 
   const editorTree = useEditorStore((state) => state.tree);
-
   const component = getComponentById(editorTree.root, selectedComponentId!);
 
   return (

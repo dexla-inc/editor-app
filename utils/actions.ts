@@ -18,12 +18,14 @@ import {
 
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
 import { useDataContext } from "@/contexts/DataProvider";
+import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
 import { readDataFromStream } from "@/utils/api";
 import { Component, getComponentById } from "@/utils/editor";
 import { executeFlow } from "@/utils/logicFlows";
+import { UseFormReturnType } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
@@ -31,8 +33,6 @@ import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
 import { getComponentInitialDisplayValue } from "./common";
 import { ValueProps } from "./types";
-import { UseFormReturnType } from "@mantine/form";
-import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 
 const triggers = [
   "onClick",
@@ -140,6 +140,7 @@ export interface TriggerLogicFlowAction extends BaseAction {
 export interface TogglePropsAction extends BaseAction {
   name: "changeVisibility";
   componentId: ValueProps;
+  visibilityType: string;
 }
 
 export interface ShowNotificationAction extends BaseAction {
@@ -302,6 +303,25 @@ export type ChangeLanguageActionParams = ActionParams & {
   action: ChangeLanguageAction;
 };
 
+const createVisibilityObject = (value: string, currentDisplay: any) => ({
+  ...currentDisplay,
+  dataType: "static",
+  static: value,
+});
+
+const getComponentDisplayUpdate = (
+  visibilityType: string,
+  parsedCurrentDisplay: string,
+  defaultDisplayValue: string,
+  currentDisplay?: ValueProps,
+) => {
+  if (visibilityType === "toggle") {
+    return parsedCurrentDisplay === "none"
+      ? createVisibilityObject(defaultDisplayValue, currentDisplay)
+      : createVisibilityObject("none", currentDisplay);
+  } else return visibilityType;
+};
+
 export const useChangeVisibilityAction = () => {
   const { computeValue } = useDataContext()!;
   return ({ action }: TogglePropsActionParams) => {
@@ -309,16 +329,26 @@ export const useChangeVisibilityAction = () => {
     const updateTreeComponent = editorStore.updateTreeComponent;
     const tree = editorStore.tree;
     const componentId = computeValue({ value: action.componentId });
-    const componentToToggle = getComponentById(tree.root, componentId);
+    const component = getComponentById(tree.root, componentId);
+
+    const defaultDisplayValue = getComponentInitialDisplayValue(
+      component?.name!,
+    );
 
     // Determine the current display state of the component
-    const currentDisplay = componentToToggle?.props?.style?.display;
+    const currentDisplay = component?.props?.style?.display;
+    const parsedCurrentDisplay = computeValue({
+      value: currentDisplay,
+      staticFallback: defaultDisplayValue,
+    });
 
-    // Toggle between 'none' and the component's initial display value
-    const newDisplay =
-      currentDisplay === "none"
-        ? getComponentInitialDisplayValue(componentToToggle?.name ?? "")
-        : "none";
+    // Get value to update the display to
+    const newDisplay = getComponentDisplayUpdate(
+      action.visibilityType,
+      parsedCurrentDisplay,
+      defaultDisplayValue,
+      currentDisplay,
+    );
 
     // Update the component with the new display value
     updateTreeComponent({
@@ -716,7 +746,7 @@ export const actionMapper = {
     action: useChangeVisibilityAction,
     form: TogglePropsActionForm,
     defaultValues: {
-      conditionRules: [],
+      visibilityType: "toggle",
     },
   },
   changeLanguage: {
