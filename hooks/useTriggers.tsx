@@ -35,7 +35,7 @@ export const useTriggers = ({
           return acc;
         }
 
-        const actionFunction = actionMapper[action.action.name].action();
+        const actionFunction = actionMapper[action.action.name]?.action?.();
         const onSuccessAction = onSuccessActions.find(
           (sa) => sa.sequentialTo === action.id,
         );
