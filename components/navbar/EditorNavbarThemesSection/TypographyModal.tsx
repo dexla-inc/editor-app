@@ -1,3 +1,8 @@
+import { ActionIconDefault } from "@/components/ActionIconDefault";
+import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
+import { pixelMetrics } from "@/components/navbar/EditorNavbarThemesSection/index";
+import { ThemeResponse } from "@/requests/themes/types";
+import { INPUT_SIZE } from "@/utils/config";
 import {
   Button,
   Container,
@@ -10,13 +15,7 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { INPUT_SIZE } from "@/utils/config";
-import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
-import { useQuery } from "@tanstack/react-query";
-import { getGoogleFonts } from "@/utils/googleFonts";
-import { ThemeResponse } from "@/requests/themes/types";
 import { UseFormReturnType } from "@mantine/form";
-import { pixelMetrics } from "@/components/navbar/EditorNavbarThemesSection/index";
 
 type TypographyModalProps = {
   controls: { opened: boolean; close: () => void };
@@ -31,11 +30,6 @@ export const TypographyModal = ({
   onSubmit,
   weightsList = [],
 }: TypographyModalProps) => {
-  const { data: googleFontsData = [] } = useQuery({
-    queryKey: ["fonts"],
-    queryFn: () => getGoogleFonts(),
-  });
-
   return (
     <Modal
       opened={controls.opened}
@@ -82,6 +76,7 @@ export const TypographyModal = ({
                   <th>Size</th>
                   <th>Line Height</th>
                   <th>Letter Spacing</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -149,6 +144,16 @@ export const TypographyModal = ({
                           )}
                           size={INPUT_SIZE}
                         />
+                      </td>
+                      <td>
+                        <ActionIconDefault
+                          iconName="IconTrash"
+                          color="red"
+                          tooltip="Delete"
+                          onClick={() => form.removeListItem("fonts", index)}
+                        >
+                          Delete
+                        </ActionIconDefault>
                       </td>
                     </tr>
                   );
