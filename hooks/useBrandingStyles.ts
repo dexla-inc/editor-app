@@ -7,6 +7,7 @@ export const useBrandingStyles = () => {
   const borderColor = getColorFromTheme(theme, "Border.6");
   const pTagFontSize =
     theme.fonts?.find((font) => font.tag === "P")?.fontSize + "px";
+  const buttonFont = theme.fonts.find((font) => font.tag === "Button");
 
   const borderStyle = {
     borderRadius: radiusSizes[theme.defaultRadius],
@@ -35,10 +36,22 @@ export const useBrandingStyles = () => {
     borderRadius: radiusSizes[theme.defaultRadius],
   };
 
+  const buttonStyle = {
+    height: inputSizes[theme.inputSize],
+    borderRadius: radiusSizes[theme.defaultRadius],
+    ...(buttonFont && {
+      fontSize: buttonFont?.fontSize,
+      fontWeight: buttonFont?.fontWeight,
+      lineHeight: buttonFont?.lineHeight,
+      letterSpacing: buttonFont?.letterSpacing,
+    }),
+  };
+
   return {
     borderStyle,
     inputStyle,
     fontSizeStyle,
     buttonIconStyle,
+    buttonStyle,
   };
 };

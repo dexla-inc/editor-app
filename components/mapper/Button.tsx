@@ -42,6 +42,7 @@ const ButtonComponent = forwardRef(
     } = component.props as any;
 
     const theme = useEditorStore((state) => state.theme);
+
     const contentEditableProps = useContentEditable(component.id as string);
 
     const { computeValue } = useDataContext()!;
@@ -61,9 +62,9 @@ const ButtonComponent = forwardRef(
 
     const labelTextColor = getColorFromTheme(theme, textColor);
 
-    const { inputStyle } = useBrandingStyles();
+    const { buttonStyle } = useBrandingStyles();
 
-    const customStyle = merge({}, inputStyle, style, {
+    const customStyle = merge({}, buttonStyle, style, {
       color: labelTextColor,
     });
 
