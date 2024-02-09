@@ -9,17 +9,18 @@ import { ActionButtons } from "@/components/actions/ActionButtons";
 import { Stack } from "@mantine/core";
 import { useEffect } from "react";
 import { updatePage } from "@/requests/pages/mutations";
+import { PageResponse } from "@/requests/pages/types";
 
 type Props = {
   action: Action;
-  pageActions: Action[];
+  page: PageResponse;
   defaultValues: Record<string, any>;
   children?: (props: any) => JSX.Element;
 };
 
 export const ActionSettingsForm = ({
   action,
-  pageActions,
+  page,
   defaultValues,
   children,
 }: Props) => {
@@ -53,7 +54,7 @@ export const ActionSettingsForm = ({
       {children && children({ form })}
       <ActionButtons
         actionId={action.id}
-        componentActions={pageActions}
+        componentActions={page.actions ?? []}
         canAddSequential={action.action.name === "apiCall"}
       ></ActionButtons>
     </Stack>

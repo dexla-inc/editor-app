@@ -21,6 +21,19 @@ type Props = {
 };
 
 export default function PageActions({ page, invalidateQuery }: Props) {
+  // @ts-ignore
+  page = {
+    ...page,
+    actions: page?.actions?.map((action) => {
+      // @ts-ignore
+      return {
+        ...action,
+        // @ts-ignore
+        action: JSON.parse(action.action),
+      };
+    }),
+  };
+
   const projectId = useEditorStore((state) => state.currentProjectId!);
   const pageId = useEditorStore((state) => state.currentPageId!);
   const [addForm, { open, close }] = useDisclosure(false);
@@ -96,7 +109,7 @@ export default function PageActions({ page, invalidateQuery }: Props) {
             >
               <ActionSettingsForm
                 action={sequentialAction}
-                pageActions={page?.actions || []}
+                page={page!}
                 defaultValues={
                   actionMapper[sequentialActionName]?.defaultValues
                 }
