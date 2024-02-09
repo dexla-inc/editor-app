@@ -319,7 +319,7 @@ const getComponentDisplayUpdate = (
     return parsedCurrentDisplay === "none"
       ? createVisibilityObject(defaultDisplayValue, currentDisplay)
       : createVisibilityObject("none", currentDisplay);
-  } else return visibilityType;
+  } else return createVisibilityObject(visibilityType, currentDisplay);
 };
 
 export const useChangeVisibilityAction = () => {
