@@ -19,6 +19,7 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo } from "react";
 import { InputLoader } from "../InputLoader";
+import { PasswordInputWrapper } from "./PasswordInputWrapper";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -179,37 +180,43 @@ const InputComponent = forwardRef(
             label={undefined}
           />
         ) : type === "password" ? (
-          <PasswordInput
-            {...props}
-            {...restComponentProps}
-            ref={ref}
-            id={component.id}
-            icon={iconName ? <Icon name={iconName} /> : null}
-            style={{}}
-            styles={{
-              root: {
-                position: "relative",
-                ...pick(customStyle, [
-                  "display",
-                  "width",
-                  "minHeight",
-                  "minWidth",
-                ]),
-                height: "fit-content",
-              },
-              input: customStyle,
-              innerInput: { ...pick(customStyle, ["height"]), color },
-            }}
+          <PasswordInputWrapper
             value={inputValue}
-            onChange={handleInputChange}
-            rightSection={
-              loading ? (
-                <InputLoader />
-              ) : isClearable ? (
-                <Icon onClick={clearInput} name="IconX" />
-              ) : null
-            }
-          />
+            requirements={[]}
+            isPreviewMode
+          >
+            <PasswordInput
+              {...props}
+              {...restComponentProps}
+              ref={ref}
+              id={component.id}
+              icon={iconName ? <Icon name={iconName} /> : null}
+              style={{}}
+              styles={{
+                root: {
+                  position: "relative",
+                  ...pick(customStyle, [
+                    "display",
+                    "width",
+                    "minHeight",
+                    "minWidth",
+                  ]),
+                  height: "fit-content",
+                },
+                input: customStyle,
+                innerInput: { ...pick(customStyle, ["height"]), color },
+              }}
+              value={inputValue}
+              onChange={handleInputChange}
+              rightSection={
+                loading ? (
+                  <InputLoader />
+                ) : isClearable ? (
+                  <Icon onClick={clearInput} name="IconX" />
+                ) : null
+              }
+            />
+          </PasswordInputWrapper>
         ) : (
           <MantineInput
             {...props}
