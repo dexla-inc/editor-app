@@ -10,7 +10,7 @@ import { useEditorStore } from "@/stores/editor";
 import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 import { SidebarSection } from "@/components/pages/SidebarSection";
-import { IconBolt } from "@tabler/icons-react";
+import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { Icon } from "@/components/Icon";
 import { ICON_SIZE } from "@/utils/config";
@@ -63,6 +63,53 @@ export default function PageActions({ page, invalidateQuery }: Props) {
 
       updatePage({ ...page, actions: updatedActions }, projectId, pageId);
     }
+  };
+
+  const getActionsBySequentialToOrId = (id: string) => {
+    return page?.actions?.filter(
+      (a: Action) => a.id === id || a.sequentialTo === id,
+    );
+  };
+
+  const renderSequentialActions = (action: Action) => {
+    return getActionsBySequentialToOrId(action.id!)?.map(
+      (sequentialAction: Action) => {
+        const sequentialActionName = sequentialAction.action.name;
+        const ActionForm = actionMapper[sequentialActionName]?.form;
+
+        const item = {
+          id: sequentialAction.id,
+          isSequential: true,
+          label: `${startCase(sequentialAction.trigger)}: ${startCase(
+            sequentialAction.action.name,
+          )}`,
+          my: 20,
+        };
+
+        return (
+          sequentialAction.sequentialTo === action.id && (
+            <SidebarSection
+              icon={IconArrowBadgeRight}
+              isAction
+              {...item}
+              key={item.label}
+            >
+              <ActionSettingsForm
+                action={sequentialAction}
+                pageActions={page?.actions || []}
+                defaultValues={
+                  actionMapper[sequentialActionName]?.defaultValues
+                }
+              >
+                {({ form }) => (
+                  <ActionForm form={form} actionId={sequentialAction.id} />
+                )}
+              </ActionSettingsForm>
+            </SidebarSection>
+          )
+        );
+      },
+    );
   };
 
   return (
@@ -139,6 +186,7 @@ export default function PageActions({ page, invalidateQuery }: Props) {
                 return <ActionForm form={form} />;
               }}
             </ActionSettingsForm>
+            {renderSequentialActions(action)}
           </SidebarSection>
         );
       })}
