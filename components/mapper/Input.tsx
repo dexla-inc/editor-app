@@ -23,13 +23,13 @@ import { InputLoader } from "../InputLoader";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
+  isPreviewMode: Boolean;
 } & NumberInputProps &
   TextInputProps;
 
 const InputComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ renderTree, component, isPreviewMode, ...props }: Props, ref) => {
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
-    const theme = useEditorStore((state) => state.theme);
 
     const {
       children,
