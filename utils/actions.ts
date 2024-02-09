@@ -1,11 +1,11 @@
 import { APICallActionForm } from "@/components/actions/APICallActionForm";
 import { ChangeLanguageActionForm } from "@/components/actions/ChangeLanguageActionForm";
 import { ChangeStateActionForm } from "@/components/actions/ChangeStateActionForm";
+import { ChangeVisibilityActionForm } from "@/components/actions/ChangeVisibilityActionForm";
 import { CustomJavascriptActionForm } from "@/components/actions/CustomJavascriptActionForm";
 import { DebugActionForm } from "@/components/actions/DebugActionForm";
 import { GoToUrlForm } from "@/components/actions/GoToUrlForm";
 import { NavigationActionForm } from "@/components/actions/NavigationActionForm";
-import { TogglePropsActionForm } from "@/components/actions/TogglePropsActionForm";
 import { TriggerLogicFlowActionForm } from "@/components/actions/TriggerLogicFlowActionForm";
 import { transpile } from "typescript";
 
@@ -744,7 +744,7 @@ export const actionMapper = {
   },
   changeVisibility: {
     action: useChangeVisibilityAction,
-    form: TogglePropsActionForm,
+    form: ChangeVisibilityActionForm,
     defaultValues: {
       visibilityType: "toggle",
     },

@@ -36,6 +36,7 @@ export const ChangeStateActionForm = ({ form }: Props) => {
     <Stack spacing="xs">
       <ComponentToBindFromInput
         componentId={component?.id}
+        label="Component to change"
         onPickComponent={() => {
           setPickingComponentToBindTo(undefined);
           setComponentToBind(undefined);
