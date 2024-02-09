@@ -28,8 +28,17 @@ const ImageComponent = forwardRef(
         shareableContent,
       }) ?? component.props?.alt;
 
-    const { width, height, position, top, bottom, left, right, ...style } =
-      props.style ?? {};
+    const {
+      width,
+      height,
+      position,
+      top,
+      bottom,
+      left,
+      right,
+      zIndex,
+      ...style
+    } = props.style ?? {};
 
     return (
       <MantineImage
@@ -41,7 +50,7 @@ const ImageComponent = forwardRef(
         {...componentProps}
         style={{}}
         styles={{
-          root: { position, top, bottom, left, right },
+          root: { position, top, bottom, left, right, zIndex },
           // @ts-ignore
           image: omit(style, ["position", "top", "bottom", "left", "right"]),
         }}
