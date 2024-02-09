@@ -35,7 +35,7 @@ export const VisibilityModifier = ({ componentName, form }: Props) => {
               value: "none",
             },
           ]}
-          {...form.getInputProps(inputKey)}
+          {...inputProps}
           value={visibleValue}
           onChange={(_value) => {
             form.setFieldValue(inputKey, {
