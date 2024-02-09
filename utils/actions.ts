@@ -56,6 +56,8 @@ const triggers = [
   "onFilterApplied",
   "onSuccess",
   "onError",
+  // page actions
+  "onPageLoad",
 ] as const;
 
 type ActionGroup =

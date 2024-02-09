@@ -2,23 +2,24 @@ import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
 import { Component } from "@/utils/editor";
 import { Router, useRouter } from "next/router";
 import { ChangeEvent, useCallback, useMemo } from "react";
+import { PageResponse } from "@/requests/pages/types";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
 type UseTriggersProps = {
-  component: Component;
-  isEditorMode: boolean;
-  updateTreeComponent: (update: any) => void;
+  entity: Component | PageResponse;
+  isEditorMode?: boolean;
+  updateTreeComponent?: (update: any) => void;
 };
 
 export const useTriggers = ({
-  component,
+  entity,
   updateTreeComponent,
 }: UseTriggersProps) => {
   const router = useRouter();
 
   const triggers = () => {
-    const actions: Action[] = component.actions ?? [];
+    const actions: Action[] = entity?.actions ?? [];
 
     const onSuccessActions: Action[] = actions.filter(
       (action: Action) => action.trigger === "onSuccess",
@@ -59,7 +60,7 @@ export const useTriggers = ({
               event: e,
               ...onSuccessObj,
               ...onErrorObj,
-              component,
+              entity,
             });
           },
         };
@@ -70,14 +71,15 @@ export const useTriggers = ({
 
   const handleOnChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      if (component.props?.error) {
-        updateTreeComponent({
-          componentId: component.id,
+      if (entity.props?.error) {
+        updateTreeComponent?.({
+          componentId: entity.id,
           props: { error: "" },
         });
       }
     },
-    [component],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [entity],
   );
 
   return {

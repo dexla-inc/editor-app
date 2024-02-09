@@ -6,6 +6,7 @@ import { getPageProps } from "@/utils/serverside";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
+import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 
 export const getServerSideProps = async ({
   req,
@@ -78,4 +79,4 @@ const HomePage = ({ id, page, faviconUrl }: Props) => {
   );
 };
 
-export default HomePage;
+export default withPageOnLoad(HomePage);

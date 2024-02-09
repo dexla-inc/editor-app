@@ -8,34 +8,26 @@ import { useEditorStore } from "@/stores/editor";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import { Stack } from "@mantine/core";
 import { useEffect } from "react";
+import { updatePage } from "@/requests/pages/mutations";
 
 type Props = {
   action: Action;
+  pageActions: Action[];
   defaultValues: Record<string, any>;
   children?: (props: any) => JSX.Element;
 };
 
 export const ActionSettingsForm = ({
   action,
+  pageActions,
   defaultValues,
   children,
 }: Props) => {
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
-  );
-  const updateTreeComponentActions = useEditorStore(
-    (state) => state.updateTreeComponentActions,
-  );
+  const projectId = useEditorStore((state) => state.currentProjectId!);
+  const pageId = useEditorStore((state) => state.currentPageId!);
 
   const form = useForm({
     initialValues: { ...defaultValues, ...action.action },
-  });
-
-  const { componentActions } = useActionData<ChangeLanguageAction>({
-    actionId: action.id,
-    editorTree,
-    selectedComponentId,
   });
 
   useEffect(() => {
@@ -48,15 +40,9 @@ export const ActionSettingsForm = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
 
-  const onSubmit = (updateValues: any) => {
+  const onSubmit = async (updateValues: any) => {
     try {
-      updateActionInTree<ChangeLanguageAction>({
-        selectedComponentId: selectedComponentId!,
-        componentActions,
-        id: action.id,
-        updateValues,
-        updateTreeComponentActions,
-      });
+      await updatePage(updateValues, projectId, pageId);
     } catch (error) {
       console.error(error);
     }
@@ -67,7 +53,7 @@ export const ActionSettingsForm = ({
       {children && children({ form })}
       <ActionButtons
         actionId={action.id}
-        componentActions={componentActions}
+        componentActions={pageActions}
         canAddSequential={action.action.name === "apiCall"}
       ></ActionButtons>
     </Stack>

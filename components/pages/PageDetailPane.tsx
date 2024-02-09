@@ -44,7 +44,7 @@ export default function PageDetailPane({
           invalidateQuery={invalidateQuery}
         />
       ) : (
-        <PageActions />
+        <PageActions page={page} invalidateQuery={invalidateQuery} />
       )}
     </Stack>
   );
