@@ -12,15 +12,16 @@ type Props = {
 
 export const VisibilityModifier = ({ componentName, form }: Props) => {
   const { computeValue } = useDataContext()!;
+  const inputKey = "props.style.display";
+  const inputProps = form.getInputProps(inputKey);
   const defaultValue = getComponentInitialDisplayValue(componentName);
-  const value = form.getInputProps("props.style.display").value;
   const visibleValue = computeValue({
-    value,
+    value: inputProps.value,
     staticFallback: defaultValue,
   });
 
   return (
-    <ComponentToBindWrapper {...form.getInputProps("props.style.display")}>
+    <ComponentToBindWrapper {...inputProps}>
       <Stack w="100%">
         <SegmentedControlInput
           label="Visibility"
@@ -34,11 +35,11 @@ export const VisibilityModifier = ({ componentName, form }: Props) => {
               value: "none",
             },
           ]}
-          {...form.getInputProps("props.style.display")}
+          {...form.getInputProps(inputKey)}
           value={visibleValue}
           onChange={(_value) => {
-            form.setFieldValue("props.style.display", {
-              ...value,
+            form.setFieldValue(inputKey, {
+              ...inputProps.value,
               dataType: "static",
               static: _value,
             });
