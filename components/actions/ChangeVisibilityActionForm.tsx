@@ -7,7 +7,7 @@ import { VisibilityModifier } from "../data/VisibilityModifier";
 
 type Props = ActionFormProps<Omit<TogglePropsAction, "name">>;
 
-export const TogglePropsActionForm = ({ form }: Props) => {
+export const ChangeVisibilityActionForm = ({ form }: Props) => {
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );
@@ -25,6 +25,7 @@ export const TogglePropsActionForm = ({ form }: Props) => {
     <Stack spacing="xs">
       <ComponentToBindFromInput
         componentId={selectedComponentId}
+        label="Component to change"
         onPickComponent={() => {
           setPickingComponentToBindTo(undefined);
           setComponentToBind(undefined);
