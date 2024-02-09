@@ -2,50 +2,72 @@ import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { useDataContext } from "@/contexts/DataProvider";
 import { getComponentInitialDisplayValue } from "@/utils/common";
 import { Stack } from "@mantine/core";
+import { Fragment } from "react";
 import { ComponentToBindWrapper } from "../ComponentToBindWrapper";
 
 type Props = {
   form: any;
   componentId: string;
   componentName: string;
+  isVisibilityActionForm?: boolean;
 };
 
-export const VisibilityModifier = ({ componentName, form }: Props) => {
+export const VisibilityModifier = ({
+  componentName,
+  form,
+  isVisibilityActionForm,
+}: Props) => {
   const { computeValue } = useDataContext()!;
-  const inputKey = "props.style.display";
+  const inputKey = isVisibilityActionForm
+    ? "visibilityType"
+    : "props.style.display";
+
   const inputProps = form.getInputProps(inputKey);
   const defaultValue = getComponentInitialDisplayValue(componentName);
-  const visibleValue = computeValue({
-    value: inputProps.value,
-    staticFallback: defaultValue,
-  });
+  const visibleValue =
+    typeof inputProps.value === "string"
+      ? inputProps.value
+      : computeValue({
+          value: inputProps.value,
+          staticFallback: defaultValue,
+        });
+
+  const Wrapper = isVisibilityActionForm ? Fragment : ComponentToBindWrapper;
+  const InnerWrapper = isVisibilityActionForm ? Fragment : Stack;
+
+  const visibilityOptions = [
+    {
+      label: "Visible",
+      value: getComponentInitialDisplayValue(componentName),
+    },
+    {
+      label: "Hidden",
+      value: "none",
+    },
+    ...(isVisibilityActionForm ? [{ label: "Toggle", value: "toggle" }] : []),
+  ];
+
+  const otherInputProps = {
+    value: visibleValue,
+    onChange: (_value: string) => {
+      form.setFieldValue(inputKey, {
+        ...inputProps.value,
+        dataType: "static",
+        static: _value,
+      });
+    },
+  };
 
   return (
-    <ComponentToBindWrapper {...inputProps}>
-      <Stack w="100%">
+    <Wrapper {...inputProps}>
+      <InnerWrapper w="100%">
         <SegmentedControlInput
           label="Visibility"
-          data={[
-            {
-              label: "Visible",
-              value: getComponentInitialDisplayValue(componentName),
-            },
-            {
-              label: "Hidden",
-              value: "none",
-            },
-          ]}
+          data={visibilityOptions}
           {...inputProps}
-          value={visibleValue}
-          onChange={(_value) => {
-            form.setFieldValue(inputKey, {
-              ...inputProps.value,
-              dataType: "static",
-              static: _value,
-            });
-          }}
+          {...(isVisibilityActionForm && otherInputProps)}
         />
-      </Stack>
-    </ComponentToBindWrapper>
+      </InnerWrapper>
+    </Wrapper>
   );
 };

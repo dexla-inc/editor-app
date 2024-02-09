@@ -36,6 +36,7 @@ export const TogglePropsActionForm = ({ form }: Props) => {
         componentId={component?.id!}
         componentName={component?.name as string}
         form={form}
+        isVisibilityActionForm={true}
       />
     </Stack>
   );
