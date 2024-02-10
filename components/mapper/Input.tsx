@@ -46,6 +46,7 @@ const InputComponent = forwardRef(
       passwordLower,
       passwordUpper,
       passwordSpecial,
+      displayRequirements,
       ...componentProps
     } = component.props as any;
 
@@ -191,6 +192,7 @@ const InputComponent = forwardRef(
             value={inputValue}
             isPreviewMode={isPreviewMode}
             onChange={handleInputChange}
+            displayRequirements={displayRequirements}
             testParameters={{
               passwordRange,
               passwordNumber,

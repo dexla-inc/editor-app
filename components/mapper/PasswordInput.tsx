@@ -2,7 +2,6 @@ import {
   PasswordInput as MantinePasswordInput,
   PasswordInputProps,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { pick } from "next/dist/lib/pick";
 import { PasswordInputWrapper } from "./PasswordInputWrapper";
 
@@ -14,6 +13,7 @@ type Props = Omit<PasswordInputProps, "value"> & {
   iconComponent: any;
   iconName?: string;
   customStyle: any;
+  displayRequirements?: boolean;
   testParameters: Record<string, any>;
   props: any;
   restComponentProps: any;
@@ -27,27 +27,20 @@ export const PasswordInput = ({
   customStyle,
   iconComponent: Icon,
   iconName,
+  displayRequirements,
   testParameters,
   color,
   onChange,
   props,
   restComponentProps,
 }: Props) => {
-  const [openPasswordPopover, { open, close }] = useDisclosure(false);
-
-  const onChangePassword = (e: any) => {
-    if (!openPasswordPopover) {
-      open();
-    }
-    onChange && onChange(e);
-  };
-
   return (
     <PasswordInputWrapper
       value={value}
-      openPasswordPopover={openPasswordPopover}
       testParameters={testParameters}
       isPreviewMode={isPreviewMode}
+      displayRequirements={displayRequirements}
+      width={customStyle.width}
     >
       <MantinePasswordInput
         {...props}
@@ -66,10 +59,7 @@ export const PasswordInput = ({
           innerInput: { ...pick(customStyle, ["height"]), color },
         }}
         value={value}
-        onChange={onChangePassword}
-        onFocus={open}
-        onBlur={close}
-        onKeyDown={(e) => e.key === "Escape" && close()}
+        onChange={onChange}
       />
     </PasswordInputWrapper>
   );

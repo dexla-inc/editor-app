@@ -31,11 +31,13 @@ export const Modifier = withModifier(
           icon: selectedComponent?.props?.icon,
           withAsterisk: selectedComponent?.props?.withAsterisk,
           clearable: selectedComponent?.props?.clearable,
-          passwordRange: selectedComponent?.props?.passwordRange, // default 8-20. May need two numbers check docs
-          passwordNumber: selectedComponent?.props?.passwordNumber ?? true, // default true
-          passwordLower: selectedComponent?.props?.passwordLower ?? true, // default true
-          passwordUpper: selectedComponent?.props?.passwordUpper ?? true, // default true
-          passwordSpecial: selectedComponent?.props?.passwordSpecial ?? false, // default false
+          displayRequirements:
+            selectedComponent?.props?.displayRequirements ?? false,
+          passwordRange: selectedComponent?.props?.passwordRange,
+          passwordNumber: selectedComponent?.props?.passwordNumber,
+          passwordLower: selectedComponent?.props?.passwordLower,
+          passwordUpper: selectedComponent?.props?.passwordUpper,
+          passwordSpecial: selectedComponent?.props?.passwordSpecial,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -67,18 +69,18 @@ export const Modifier = withModifier(
               });
             }}
           />
-          {/* Has at least 6 characters
-Includes number
-Includes lowercase letter
-Includes uppercase letter
-Includes special symbol */}
-          {/* Character count: Number Range
-Includes number: Yes/No
-Includes lowercase letter: Yes/No
-Includes uppercase letter: Yes/No
-Includes special symbol: Yes/No */}
           {form.values.type === "password" && (
             <>
+              <SegmentedControlYesNo
+                label="Display"
+                {...form.getInputProps("displayRequirements")}
+                onChange={(value) => {
+                  form.setFieldValue("displayRequirements", value);
+                  debouncedTreeUpdate(selectedComponentIds, {
+                    displayRequirements: value,
+                  });
+                }}
+              />
               {/* Create a new component with label like SegmentedControlInput */}
               <RangeSliderInput
                 label="Character range"

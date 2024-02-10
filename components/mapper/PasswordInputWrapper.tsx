@@ -3,7 +3,6 @@ import {
   Center,
   Group,
   PasswordInputProps,
-  Popover,
   Progress,
   Text,
 } from "@mantine/core";
@@ -14,8 +13,8 @@ type Props = Omit<PasswordInputProps, "value"> & {
   children: React.ReactNode;
   isPreviewMode: Boolean;
   value: string;
+  displayRequirements?: boolean;
   testParameters: { [key: string]: any };
-  openPasswordPopover: boolean;
 };
 
 function getStrength(password: string, requirements: any) {
@@ -91,8 +90,9 @@ export const PasswordInputWrapper = ({
   children,
   isPreviewMode,
   value,
+  displayRequirements,
   testParameters,
-  openPasswordPopover,
+  width,
 }: Props) => {
   const requirements = fetchRequirements(testParameters);
   const strength = getStrength(value, requirements);
@@ -121,23 +121,35 @@ export const PasswordInputWrapper = ({
       />
     ));
 
-  const Wrapper = !isPreviewMode ? Fragment : Popover;
-  const TargetWrapper = !isPreviewMode ? Fragment : Popover.Target;
-  const dropdownContent = isPreviewMode ? (
-    <Popover.Dropdown>
-      <Group spacing={5} grow mt="xs" mb="md">
-        {bars}
-      </Group>
-      {checks}
-    </Popover.Dropdown>
-  ) : (
-    <></>
-  );
+  const Wrapper = !isPreviewMode ? Fragment : Box;
+  const dropdownContent =
+    isPreviewMode && displayRequirements ? (
+      <Box>
+        <Group spacing={5} grow mt="xs" mb="md">
+          {bars}
+        </Group>
+        {checks}
+      </Box>
+    ) : (
+      <></>
+    );
 
   return (
-    <Wrapper opened={isPreviewMode && openPasswordPopover}>
-      <TargetWrapper>{children}</TargetWrapper>
+    <Wrapper w={width}>
+      {children}
       {dropdownContent}
     </Wrapper>
   );
+};
+
+const dropdownStyles = {
+  position: "absolute",
+  left: "0",
+  top: "100%",
+  zIndex: 1,
+  width: "100%",
+  background: "#fff",
+  borderRadius: "10px",
+  boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+  padding: "10px",
 };
