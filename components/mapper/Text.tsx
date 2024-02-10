@@ -1,10 +1,12 @@
+import { useDataContext } from "@/contexts/DataProvider";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Text as MantineText, TextProps } from "@mantine/core";
+import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { useDataContext } from "@/contexts/DataProvider";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -23,7 +25,13 @@ const TextComponent = forwardRef(
       component.props as any;
     const { style, ...restProps } = props as any;
 
+    const { textStyle } = useBrandingStyles();
+    const customStyle = merge({}, style, textStyle, {
+      ...(style?.fontSize ? { fontSize: style.fontSize + "px" } : {}),
+    });
+
     const { computeValue } = useDataContext()!;
+
     const childrenValue =
       computeValue({
         value: component.onLoad?.children,
@@ -37,10 +45,7 @@ const TextComponent = forwardRef(
         {...componentProps}
         {...triggers}
         ref={ref ?? contentEditableProps.ref}
-        style={{
-          ...style,
-          ...(style?.fontSize ? { fontSize: style.fontSize + "px" } : {}),
-        }}
+        style={customStyle}
       >
         {!hideIfDataIsEmpty && childrenValue}
       </MantineText>
