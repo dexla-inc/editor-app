@@ -5,8 +5,9 @@ import { getColorFromTheme } from "@/utils/editor";
 export const useBrandingStyles = () => {
   const theme = useEditorStore((state) => state.theme);
   const borderColor = getColorFromTheme(theme, "Border.6");
-  const pTagFontSize =
-    theme.fonts?.find((font) => font.tag === "P")?.fontSize + "px";
+  // Need to be able to support multiple texts
+  const textFont = theme.fonts?.find((font) => font.tag === "P");
+  const pTagFontSize = textFont?.fontSize + "px";
   const buttonFont = theme.fonts.find((font) => font.tag === "Button");
 
   const borderStyle = {
@@ -47,11 +48,21 @@ export const useBrandingStyles = () => {
     }),
   };
 
+  const textStyle = {
+    ...(textFont && {
+      fontSize: pTagFontSize,
+      fontWeight: textFont?.fontWeight,
+      lineHeight: textFont?.lineHeight,
+      letterSpacing: textFont?.letterSpacing,
+    }),
+  };
+
   return {
     borderStyle,
     inputStyle,
     fontSizeStyle,
     buttonIconStyle,
     buttonStyle,
+    textStyle,
   };
 };
