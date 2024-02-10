@@ -151,6 +151,10 @@ export const requiredModifiers: RequiredModifiers = {
     clearable: false,
     labelSpacing: "0",
     name: "Input",
+    passwordRange: [8, 20],
+    passwordNumber: true,
+    passwordLower: true,
+    passwordUpper: true,
   },
   textarea: {
     name: "Textarea",

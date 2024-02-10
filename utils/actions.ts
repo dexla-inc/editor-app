@@ -738,9 +738,7 @@ export const actionMapper = {
   changeState: {
     action: useChangeStateAction,
     form: ChangeStateActionForm,
-    defaultValues: {
-      conditionRules: [],
-    },
+    defaultValues: {},
   },
   changeVisibility: {
     action: useChangeVisibilityAction,
