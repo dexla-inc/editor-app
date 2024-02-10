@@ -6,6 +6,7 @@ import { FocusRingSelector } from "@/components/FocusRingSelector";
 import { LoaderSelector } from "@/components/LoaderSelector";
 import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
+import { UnitInput } from "@/components/UnitInput";
 import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
 import { TypographyModal } from "@/components/navbar/EditorNavbarThemesSection/TypographyModal";
 import { useProjectQuery } from "@/hooks/reactQuery/useProjectQuery";
@@ -23,7 +24,6 @@ import {
   Button,
   Flex,
   Group,
-  SegmentedControl,
   Select,
   Stack,
   Title,
@@ -31,7 +31,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { IconArrowsDiagonal2 } from "@tabler/icons-react";
+import { IconArrowsMaximize } from "@tabler/icons-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -55,7 +55,7 @@ export const fontWeightLabels = {
 export const pixelMetrics = [
   0, 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40,
   42, 44, 46, 48, 54, 60, 66, 72,
-].map(String);
+].map((num) => `${num}px`);
 
 export const EditorNavbarThemesSection =
   ({}: EditorNavbarThemesSectionProps) => {
@@ -234,7 +234,7 @@ export const EditorNavbarThemesSection =
               </Title>
 
               <ActionIcon onClick={open} variant="default" radius="xs">
-                <IconArrowsDiagonal2
+                <IconArrowsMaximize
                   style={{ transform: "rotate(45deg)" }}
                   size={ICON_SIZE}
                 />
@@ -263,17 +263,22 @@ export const EditorNavbarThemesSection =
                 });
               }}
             />
-            <SegmentedControl
-              fullWidth
+            <Select
+              label="Tag"
               size={INPUT_SIZE}
-              data={form.values.fonts.map((f) => f.tag).filter(Boolean)}
               value={form.values.fonts[currentFontIndex]?.tag}
-              onChange={(value: string) => {
+              onChange={(value) => {
                 const index = form.values.fonts.findIndex(
                   (ft) => ft.tag === value,
                 );
                 setCurrentFontIndex(index);
               }}
+              data={form.values.fonts
+                .map((font) => ({
+                  value: font.tag,
+                  label: font.tag,
+                }))
+                .filter((option) => Boolean(option.value))}
             />
             <Flex gap="sm" align="center">
               <Select
@@ -294,34 +299,15 @@ export const EditorNavbarThemesSection =
                 label="Line Height"
                 data={pixelMetrics}
                 {...form.getInputProps(`fonts.${currentFontIndex}.lineHeight`)}
-                value={
-                  form.values.fonts[currentFontIndex]?.lineHeight === 1
-                    ? "0"
-                    : String(
-                        Math.round(
-                          (Number(
-                            form.values.fonts[currentFontIndex]?.lineHeight,
-                          ) -
-                            1) *
-                            100,
-                        ),
-                      )
-                }
-                onChange={(value) => {
-                  form.setFieldValue(
-                    `fonts.${currentFontIndex}.lineHeight`,
-                    String(Number(value) / 100 + 1),
-                  );
-                }}
                 size={INPUT_SIZE}
               />
-              <Select
+              <UnitInput
                 label="Letter Spacing"
-                data={pixelMetrics}
+                size={INPUT_SIZE}
+                options={[{ value: "px", label: "px" }]}
                 {...form.getInputProps(
                   `fonts.${currentFontIndex}.letterSpacing`,
                 )}
-                size={INPUT_SIZE}
               />
             </Flex>
           </Stack>
@@ -388,3 +374,9 @@ export const EditorNavbarThemesSection =
       </form>
     );
   };
+
+function stripUnit(value: string) {
+  if (!value) return 0;
+  const numericValue = parseFloat(value);
+  return isNaN(numericValue) ? 0 : numericValue;
+}
