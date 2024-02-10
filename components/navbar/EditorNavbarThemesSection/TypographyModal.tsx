@@ -1,4 +1,5 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
+import { UnitInput } from "@/components/UnitInput";
 import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
 import { pixelMetrics } from "@/components/navbar/EditorNavbarThemesSection/index";
 import { ThemeResponse } from "@/requests/themes/types";
@@ -118,27 +119,13 @@ export const TypographyModal = ({
                         <Select
                           data={pixelMetrics}
                           {...form.getInputProps(`fonts.${index}.lineHeight`)}
-                          value={
-                            font.lineHeight === 1
-                              ? "0"
-                              : String(
-                                  Math.round(
-                                    (Number(font.lineHeight) - 1) * 100,
-                                  ),
-                                )
-                          }
-                          onChange={(value) => {
-                            form.setFieldValue(
-                              `fonts.${index}.lineHeight`,
-                              String(Number(value) / 100 + 1),
-                            );
-                          }}
                           size={INPUT_SIZE}
                         />
                       </td>
                       <td>
-                        <Select
-                          data={pixelMetrics}
+                        <UnitInput
+                          w={100}
+                          options={[{ value: "px", label: "px" }]}
                           {...form.getInputProps(
                             `fonts.${index}.letterSpacing`,
                           )}
