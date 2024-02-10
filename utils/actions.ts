@@ -32,7 +32,6 @@ import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
 import { getComponentInitialDisplayValue } from "./common";
-import { splitValueAndUnit } from "./splitValueAndUnit";
 import { ValueProps } from "./types";
 import { PageResponse } from "@/requests/pages/types";
 
@@ -198,13 +197,6 @@ export interface ChangeVariableAction extends BaseAction {
   value: ValueProps;
 }
 
-export interface CountdownTimerAction extends BaseAction {
-  name: "countdownTimer";
-  componentId: ValueProps;
-  selectedProp: string;
-  interval: string;
-}
-
 export type ActionType =
   | NavigationAction
   | AlertAction
@@ -215,8 +207,7 @@ export type ActionType =
   | ChangeStateAction
   | TriggerLogicFlowAction
   | ChangeLanguageAction
-  | ChangeVariableAction
-  | CountdownTimerAction;
+  | ChangeVariableAction;
 
 export type Action = {
   id: string;
@@ -703,79 +694,6 @@ export const useChangeVariableAction = () => {
       },
       action.variableId,
     );
-  };
-};
-
-export type CountdownTimerActionParams = ActionParams & {
-  action: CountdownTimerAction;
-};
-
-function getNumberInString(str: string) {
-  // Find the number using a regular expression
-  const found = str.match(/\d+/);
-  return found ? parseInt(found[0], 10) : 0;
-}
-
-function updateComponentStringWithNumber(
-  originalString: string,
-  newValue: number,
-) {
-  return originalString.replace(/\d+/, newValue.toString());
-}
-
-export const useCountdownTimerAction = (computeValue?: any) => {
-  if (!computeValue) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    computeValue = useDataContext()!.computeValue;
-  }
-  return ({ action }: CountdownTimerActionParams) => {
-    const {
-      tree,
-      updateTreeComponentAttrs,
-      setInterval: setIntervalInStore,
-    } = useEditorStore.getState();
-
-    const [timer, type] = splitValueAndUnit(action.interval) ?? [0, "secs"];
-    const _timer = type === "mins" ? timer * 60 * 1000 : timer * 1000;
-
-    const componentId = action.componentId.bindedId;
-    const component = getComponentById(tree.root, componentId!);
-
-    if (component) {
-      const stringItem = computeValue({
-        value: component.onLoad[action.selectedProp],
-        staticFallback: component.props?.[action.selectedProp],
-      });
-      if (!stringItem) return;
-
-      let duration = getNumberInString(stringItem);
-      const countdown = setInterval(() => {
-        if (duration > 0) {
-          duration--;
-          const updatedString = updateComponentStringWithNumber(
-            stringItem,
-            duration,
-          );
-          const updatedData = {
-            [action.selectedProp]: {
-              static: updatedString,
-            },
-          };
-
-          updateTreeComponentAttrs([componentId!], {
-            onLoad: updatedData,
-          });
-        } else {
-          clearInterval(countdown);
-        }
-      }, _timer);
-      setIntervalInStore(
-        componentId!,
-        action.selectedProp,
-        countdown,
-        stringItem,
-      );
-    }
   };
 };
 
