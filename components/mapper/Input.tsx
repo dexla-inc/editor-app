@@ -12,24 +12,24 @@ import {
   TextInput as MantineInput,
   NumberInput as MantineNumberInput,
   NumberInputProps,
-  PasswordInput,
   TextInputProps,
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo } from "react";
 import { InputLoader } from "../InputLoader";
+import { PasswordInput } from "./PasswordInput";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
+  isPreviewMode: Boolean;
 } & NumberInputProps &
   TextInputProps;
 
 const InputComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
+  ({ renderTree, component, isPreviewMode, ...props }: Props, ref) => {
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
-    const theme = useEditorStore((state) => state.theme);
 
     const {
       children,
@@ -41,8 +41,15 @@ const InputComponent = forwardRef(
       bg,
       textColor,
       size,
+      passwordRange,
+      passwordNumber,
+      passwordLower,
+      passwordUpper,
+      passwordSpecial,
+      displayRequirements,
       ...componentProps
     } = component.props as any;
+
     const { name: iconName } = icon && icon!.props!;
     const { type, ...restComponentProps } = componentProps;
     const { color, backgroundColor } = useChangeState({ bg, textColor });
@@ -180,35 +187,25 @@ const InputComponent = forwardRef(
           />
         ) : type === "password" ? (
           <PasswordInput
-            {...props}
-            {...restComponentProps}
+            componentId={component?.id!}
             ref={ref}
-            id={component.id}
-            icon={iconName ? <Icon name={iconName} /> : null}
-            style={{}}
-            styles={{
-              root: {
-                position: "relative",
-                ...pick(customStyle, [
-                  "display",
-                  "width",
-                  "minHeight",
-                  "minWidth",
-                ]),
-                height: "fit-content",
-              },
-              input: customStyle,
-              innerInput: { ...pick(customStyle, ["height"]), color },
-            }}
             value={inputValue}
+            isPreviewMode={isPreviewMode}
             onChange={handleInputChange}
-            rightSection={
-              loading ? (
-                <InputLoader />
-              ) : isClearable ? (
-                <Icon onClick={clearInput} name="IconX" />
-              ) : null
-            }
+            displayRequirements={displayRequirements}
+            testParameters={{
+              passwordRange,
+              passwordNumber,
+              passwordLower,
+              passwordUpper,
+              passwordSpecial,
+            }}
+            iconComponent={Icon}
+            iconName={iconName}
+            color={color}
+            customStyle={customStyle}
+            props={props}
+            restComponentProps={restComponentProps}
           />
         ) : (
           <MantineInput

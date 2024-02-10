@@ -12,6 +12,7 @@ import { useForm } from "@mantine/form";
 import { IconForms } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { RangeSliderInput } from "../RangeSliderInput";
 
 export const icon = IconForms;
 export const label = "Input";
@@ -30,6 +31,13 @@ export const Modifier = withModifier(
           icon: selectedComponent?.props?.icon,
           withAsterisk: selectedComponent?.props?.withAsterisk,
           clearable: selectedComponent?.props?.clearable,
+          displayRequirements:
+            selectedComponent?.props?.displayRequirements ?? false,
+          passwordRange: selectedComponent?.props?.passwordRange,
+          passwordNumber: selectedComponent?.props?.passwordNumber,
+          passwordLower: selectedComponent?.props?.passwordLower,
+          passwordUpper: selectedComponent?.props?.passwordUpper,
+          passwordSpecial: selectedComponent?.props?.passwordSpecial,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -61,6 +69,75 @@ export const Modifier = withModifier(
               });
             }}
           />
+          {form.values.type === "password" && (
+            <>
+              <SegmentedControlYesNo
+                label="Display"
+                {...form.getInputProps("displayRequirements")}
+                onChange={(value) => {
+                  form.setFieldValue("displayRequirements", value);
+                  debouncedTreeUpdate(selectedComponentIds, {
+                    displayRequirements: value,
+                  });
+                }}
+              />
+              {/* Create a new component with label like SegmentedControlInput */}
+              <RangeSliderInput
+                label="Character range"
+                thumbSize={14}
+                defaultValue={[8, 20]}
+                min={4}
+                max={40}
+                {...form.getInputProps("passwordRange")}
+                onChange={(value) => {
+                  form.setFieldValue("passwordRange", value);
+                  debouncedTreeUpdate(selectedComponentIds, {
+                    passwordRange: value,
+                  });
+                }}
+              />
+              <SegmentedControlYesNo
+                label="Includes number"
+                {...form.getInputProps("passwordNumber")}
+                onChange={(value) => {
+                  form.setFieldValue("passwordNumber", value);
+                  debouncedTreeUpdate(selectedComponentIds, {
+                    passwordNumber: value,
+                  });
+                }}
+              />
+              <SegmentedControlYesNo
+                label="Includes lowercase letter"
+                {...form.getInputProps("passwordLower")}
+                onChange={(value) => {
+                  form.setFieldValue("passwordLower", value);
+                  debouncedTreeUpdate(selectedComponentIds, {
+                    passwordLower: value,
+                  });
+                }}
+              />
+              <SegmentedControlYesNo
+                label="Includes uppercase letter"
+                {...form.getInputProps("passwordUpper")}
+                onChange={(value) => {
+                  form.setFieldValue("passwordUpper", value);
+                  debouncedTreeUpdate(selectedComponentIds, {
+                    passwordUpper: value,
+                  });
+                }}
+              />
+              <SegmentedControlYesNo
+                label="Includes special letter"
+                {...form.getInputProps("passwordSpecial")}
+                onChange={(value) => {
+                  form.setFieldValue("passwordSpecial", value);
+                  debouncedTreeUpdate(selectedComponentIds, {
+                    passwordSpecial: value,
+                  });
+                }}
+              />
+            </>
+          )}
           <SegmentedControlSizes
             label="Size"
             sizing={inputSizes}
