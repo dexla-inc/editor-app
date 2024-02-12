@@ -1,5 +1,6 @@
 import { useDataContext } from "@/contexts/DataProvider";
 import { ComponentToBind, useEditorStore } from "@/stores/editor";
+import { useVariableStore } from "@/stores/variables";
 import { GRAY_OUTLINE } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import { removeKeysRecursive } from "@/utils/removeKeys";
@@ -151,6 +152,36 @@ export const useEditorClickHandler = (
       setSelectedComponentId,
       setSelectedComponentIds,
     ],
+  );
+};
+
+export const useCurrentState = (
+  component: Component,
+  isEditorMode: boolean,
+) => {
+  const { computeValue } = useDataContext()!;
+  const formInvalid = useVariableStore((state) =>
+    state.variableList.find((variable) => variable.name === "formInvalid"),
+  );
+  const isFormInvalid = formInvalid?.value ?? formInvalid?.defaultValue;
+
+  const isButtonDisabled =
+    component.name === "Button" &&
+    component.props?.type === "submit" &&
+    component.props?.disabledWhenInvalid &&
+    isFormInvalid;
+
+  const componentState = isButtonDisabled
+    ? "disabled"
+    : computeValue({
+        value: component.onLoad?.currentState,
+        staticFallback: "default",
+      });
+
+  return useEditorStore((state) =>
+    isEditorMode
+      ? state.currentTreeComponentsStates?.[component.id!] ?? "default"
+      : componentState,
   );
 };
 

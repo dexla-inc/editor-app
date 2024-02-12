@@ -1,4 +1,3 @@
-import { useDataContext } from "@/contexts/DataProvider";
 import {
   useComponentContextEventHandler,
   useComponentContextMenu,
@@ -8,6 +7,7 @@ import { useHoverEvents } from "@/hooks/useHoverEvents";
 import {
   handleBackground,
   useComputeChildStyles,
+  useCurrentState,
   useEditorClickHandler,
   usePropsWithOverwrites,
 } from "@/hooks/useMergedProps";
@@ -33,18 +33,11 @@ export const EditableComponent = ({
   selectedByOther,
   shareableContent,
 }: PropsWithChildren<Props>) => {
-  const { computeValue } = useDataContext()!;
   const isEditorMode = useEditorStore(
     (state) => !state.isPreviewMode && !state.isLive,
   );
-  const currentState = useEditorStore((state) =>
-    isEditorMode
-      ? state.currentTreeComponentsStates?.[component.id!] ?? "default"
-      : computeValue({
-          value: component.onLoad?.currentState,
-          staticFallback: "default",
-        }),
-  );
+
+  const currentState = useCurrentState(component, isEditorMode);
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,
   );

@@ -1,6 +1,7 @@
 import { IconSelector } from "@/components/IconSelector";
 import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
+import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { useChangeState } from "@/hooks/useChangeState";
@@ -54,6 +55,7 @@ export const Modifier = withModifier(
             color: selectedComponent.props?.color,
             textColor: selectedComponent.props?.textColor,
             width: selectedComponent.props?.style?.width,
+            disabledWhenInvalid: selectedComponent.props?.disabledWhenInvalid,
           },
         ),
       );
@@ -65,24 +67,6 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          {/* <Select
-            label="Variant"
-            size="xs"
-            data={[
-              { label: "Filled", value: "filled" },
-              { label: "Light", value: "light" },
-              { label: "Outline", value: "outline" },
-              { label: "Default", value: "default" },
-              { label: "Subtle", value: "subtle" },
-            ]}
-            {...form.getInputProps("variant")}
-            onChange={(value) => {
-              form.setFieldValue("variant", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                variant: value,
-              });
-            }}
-          /> */}
           <SegmentedControlInput
             label="Type"
             data={[
@@ -97,6 +81,18 @@ export const Modifier = withModifier(
               });
             }}
           />
+          {form.values.type === "submit" && (
+            <SegmentedControlYesNo
+              label="Disabled when invalid"
+              {...form.getInputProps("disabledWhenInvalid")}
+              onChange={(value) => {
+                form.setFieldValue("disabledWhenInvalid", value);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  disabledWhenInvalid: value,
+                });
+              }}
+            />
+          )}
           <ThemeColorSelector
             label="Background Color"
             {...form.getInputProps("color")}
