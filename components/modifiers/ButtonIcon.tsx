@@ -2,6 +2,7 @@ import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
+import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Stack } from "@mantine/core";
@@ -9,6 +10,7 @@ import { useForm } from "@mantine/form";
 import { IconCircleDot } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { SegmentedControlSizes } from "../SegmentedControlSizes";
 
 export const icon = IconCircleDot;
 export const label = "Button Icon";
@@ -20,6 +22,7 @@ export const Modifier = withModifier(
     useEffect(() => {
       form.setValues(
         merge({}, requiredModifiers.buttonIcon, {
+          size: selectedComponent?.props?.size ?? "md",
           color: selectedComponent.props?.color,
           iconName: selectedComponent.props?.iconName,
           iconSize: selectedComponent.props?.iconSize,
@@ -39,6 +42,18 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
+          <SegmentedControlSizes
+            label="Size"
+            sizing={inputSizes}
+            {...form.getInputProps("size")}
+            onChange={(value) => {
+              form.setFieldValue("size", value as string);
+              debouncedTreeUpdate(selectedComponentIds, {
+                size: value,
+                style: { height: inputSizes[value], width: inputSizes[value] },
+              });
+            }}
+          />
           <ThemeColorSelector
             label="Background"
             {...form.getInputProps("color")}

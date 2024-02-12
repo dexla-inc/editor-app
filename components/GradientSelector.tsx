@@ -54,7 +54,7 @@ function parseGradientDetailed(gradient: string) {
   // Split the colors part and map to an array of color objects
   const colors = colorsParts.map((colorStop) => {
     const [color, stopWithUnit] = colorStop.trim().split(/\s+/);
-    const stop = stopWithUnit.replace(/%/, "");
+    const stop = stopWithUnit?.replace(/%/, "");
     return { color, stop };
   });
 

@@ -1,6 +1,8 @@
 import { Icon } from "@/components/Icon";
+import { useDataContext } from "@/contexts/DataProvider";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useChangeState } from "@/hooks/useChangeState";
+import { useContentEditable } from "@/hooks/useContentEditable";
 import { useEditorStore } from "@/stores/editor";
 import { NavigationAction } from "@/utils/actions";
 import { getColorValue } from "@/utils/branding";
@@ -10,7 +12,6 @@ import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import merge from "lodash.merge";
 import { useRouter } from "next/router";
 import { forwardRef, memo } from "react";
-import { useDataContext } from "@/contexts/DataProvider";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -21,8 +22,9 @@ type Props = {
 const NavLinkComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const theme = useEditorStore((state) => state.theme);
-
     const router = useRouter();
+    const contentEditableProps = useContentEditable(component.id as string);
+
     const currentPageId = router.query.page as string;
     const activePageId = (
       component.actions?.find(
@@ -67,7 +69,8 @@ const NavLinkComponent = forwardRef(
 
     return (
       <MantineNavLink
-        ref={ref}
+        {...contentEditableProps}
+        ref={ref ?? contentEditableProps.ref}
         {...(icon && {
           icon: (
             <Icon

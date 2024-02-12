@@ -20,6 +20,7 @@ export const Modifier = withModifier(
       form.setValues(
         merge({}, requiredModifiers.navLink, {
           icon: selectedComponent?.props?.icon,
+          bg: selectedComponent?.props?.bg ?? "transparent",
           color: selectedComponent?.props?.color,
           iconColor:
             selectedComponent?.props?.iconColor ??
@@ -50,7 +51,17 @@ export const Modifier = withModifier(
             }}
           />
           <ThemeColorSelector
-            label="Color"
+            label="Background Color"
+            {...form.getInputProps("bg")}
+            onChange={(value: string) => {
+              form.setFieldValue("bg", value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                bg: value,
+              });
+            }}
+          />
+          <ThemeColorSelector
+            label="Text Color"
             {...form.getInputProps("color")}
             onChange={(value: string) => {
               form.setFieldValue("color", value);
