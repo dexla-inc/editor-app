@@ -132,6 +132,7 @@ export default function PageConfig({ page, setPage, invalidateQuery }: Props) {
       }
 
       invalidateQuery();
+      setPage(values as any);
 
       stopLoading({
         id: "mutating",

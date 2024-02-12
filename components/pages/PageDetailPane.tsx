@@ -3,6 +3,8 @@ import { SegmentedControl, Stack } from "@mantine/core";
 import { useState } from "react";
 import PageActions from "./PageActions";
 import PageConfig from "./PageConfig";
+import { deletePage, updatePage } from "@/requests/pages/mutations";
+import { useEditorStore } from "@/stores/editor";
 
 type PageDetailPaneProps = {
   page?: PageResponse | null | undefined;
@@ -17,6 +19,20 @@ export default function PageDetailPane({
   invalidateQuery,
 }: PageDetailPaneProps) {
   const [tab, setTab] = useState<Tab>("config");
+  const projectId = useEditorStore((state) => state.currentProjectId!);
+  const pageId = useEditorStore((state) => state.currentPageId!);
+
+  const onUpdatePage = async (values: any) => {
+    setPage(values);
+    await updatePage(values, projectId, pageId);
+    return invalidateQuery();
+  };
+
+  const onDeletePage = async () => {
+    await deletePage(projectId, pageId);
+    setPage(undefined);
+    return invalidateQuery();
+  };
 
   return (
     <Stack>
@@ -44,7 +60,7 @@ export default function PageDetailPane({
           invalidateQuery={invalidateQuery}
         />
       ) : (
-        <PageActions page={page} invalidateQuery={invalidateQuery} />
+        <PageActions page={page} onUpdatePage={onUpdatePage} />
       )}
     </Stack>
   );

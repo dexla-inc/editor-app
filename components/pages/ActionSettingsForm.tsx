@@ -1,21 +1,17 @@
 import { useForm } from "@mantine/form";
-import { Action, ChangeLanguageAction } from "@/utils/actions";
-import {
-  updateActionInTree,
-  useActionData,
-} from "@/components/actions/_BaseActionFunctions";
-import { useEditorStore } from "@/stores/editor";
+import { Action } from "@/utils/actions";
 import { ActionButtons } from "@/components/actions/ActionButtons";
 import { Stack } from "@mantine/core";
 import { useEffect } from "react";
-import { updatePage } from "@/requests/pages/mutations";
 import { PageResponse } from "@/requests/pages/types";
+import merge from "lodash.merge";
 
 type Props = {
   action: Action;
   page: PageResponse;
   defaultValues: Record<string, any>;
   children?: (props: any) => JSX.Element;
+  onUpdatePage: (values: any) => Promise<any>;
 };
 
 export const ActionSettingsForm = ({
@@ -23,10 +19,8 @@ export const ActionSettingsForm = ({
   page,
   defaultValues,
   children,
+  onUpdatePage,
 }: Props) => {
-  const projectId = useEditorStore((state) => state.currentProjectId!);
-  const pageId = useEditorStore((state) => state.currentPageId!);
-
   const form = useForm({
     initialValues: { ...defaultValues, ...action.action },
   });
@@ -41,9 +35,17 @@ export const ActionSettingsForm = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
 
-  const onSubmit = async (updateValues: any) => {
+  const onSubmit = async (values: any) => {
+    const updatedActions = page.actions?.map((a) => {
+      if (a.action.name === values.name) {
+        a.action = { ...a.action, ...values };
+      }
+      return a;
+    });
+    const updatedPage = merge({}, page, { actions: updatedActions });
+
     try {
-      await updatePage(updateValues, projectId, pageId);
+      await onUpdatePage(updatedPage);
     } catch (error) {
       console.error(error);
     }

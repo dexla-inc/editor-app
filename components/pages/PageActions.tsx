@@ -1,12 +1,10 @@
-import { ActionIcon, Button, Select, Stack, Text } from "@mantine/core";
+import { ActionIcon, Button, Select, Stack } from "@mantine/core";
 import startCase from "lodash.startcase";
 import { Action, actionMapper, actions } from "@/utils/actions";
 import { useForm } from "@mantine/form";
 import { PageResponse } from "@/requests/pages/types";
 import { ActionSettingsForm } from "@/components/pages/ActionSettingsForm";
 import { useEffect } from "react";
-import { updatePage } from "@/requests/pages/mutations";
-import { useEditorStore } from "@/stores/editor";
 import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 import { SidebarSection } from "@/components/pages/SidebarSection";
@@ -17,25 +15,10 @@ import { ICON_SIZE } from "@/utils/config";
 
 type Props = {
   page?: PageResponse | null | undefined;
-  invalidateQuery: () => void;
+  onUpdatePage: (values: any) => Promise<any>;
 };
 
-export default function PageActions({ page, invalidateQuery }: Props) {
-  // @ts-ignore
-  page = {
-    ...page,
-    actions: page?.actions?.map((action) => {
-      // @ts-ignore
-      return {
-        ...action,
-        // @ts-ignore
-        action: JSON.parse(action.action),
-      };
-    }),
-  };
-
-  const projectId = useEditorStore((state) => state.currentProjectId!);
-  const pageId = useEditorStore((state) => state.currentPageId!);
+export default function PageActions({ page, onUpdatePage }: Props) {
   const [addForm, { open, close }] = useDisclosure(false);
 
   const form = useForm({
@@ -58,8 +41,7 @@ export default function PageActions({ page, invalidateQuery }: Props) {
           },
         ],
       });
-      updatePage(values, projectId, pageId).then(() => {
-        invalidateQuery();
+      onUpdatePage(values).then(() => {
         form.reset();
         close();
       });
@@ -67,14 +49,16 @@ export default function PageActions({ page, invalidateQuery }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
 
-  const removeAction = (id: string) => {
+  const removeAction = async (id: string) => {
     if (page) {
       const updatedActions =
         page.actions?.filter(
           (a: Action) => a.id !== id && a.sequentialTo !== id,
         ) ?? [];
 
-      updatePage({ ...page, actions: updatedActions }, projectId, pageId);
+      const pageUpdated = { ...page, actions: updatedActions };
+
+      await onUpdatePage(pageUpdated);
     }
   };
 
@@ -113,6 +97,7 @@ export default function PageActions({ page, invalidateQuery }: Props) {
                 defaultValues={
                   actionMapper[sequentialActionName]?.defaultValues
                 }
+                onUpdatePage={onUpdatePage}
               >
                 {({ form }) => (
                   <ActionForm form={form} actionId={sequentialAction.id} />
@@ -191,8 +176,9 @@ export default function PageActions({ page, invalidateQuery }: Props) {
           >
             <ActionSettingsForm
               action={action}
-              pageActions={page?.actions || []}
+              page={page!}
               defaultValues={actionMapped.defaultValues}
+              onUpdatePage={onUpdatePage}
             >
               {({ form }) => {
                 const ActionForm = actionMapped.form;
