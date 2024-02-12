@@ -1,10 +1,12 @@
 import { useForm } from "@mantine/form";
 import { Action } from "@/utils/actions";
-import { ActionButtons } from "@/components/actions/ActionButtons";
-import { Stack } from "@mantine/core";
+import { Button, Divider, Stack } from "@mantine/core";
 import { useEffect } from "react";
 import { PageResponse } from "@/requests/pages/types";
 import merge from "lodash.merge";
+import { Icon } from "@/components/Icon";
+import { SelectActionForm } from "@/components/pages/SelectActionForm";
+import { useDisclosure } from "@mantine/hooks";
 
 type Props = {
   action: Action;
@@ -21,6 +23,9 @@ export const ActionSettingsForm = ({
   children,
   onUpdatePage,
 }: Props) => {
+  const [addSequentialForm, { open: openSequential, close: closeSequential }] =
+    useDisclosure(false);
+
   const form = useForm({
     initialValues: { ...defaultValues, ...action.action },
   });
@@ -54,11 +59,29 @@ export const ActionSettingsForm = ({
   return (
     <Stack spacing="xs">
       {children && children({ form })}
-      <ActionButtons
-        actionId={action.id}
-        componentActions={page.actions ?? []}
-        canAddSequential={action.action.name === "apiCall"}
-      ></ActionButtons>
+      {action.action.name === "apiCall" && (
+        <Button
+          size="xs"
+          type="button"
+          onClick={openSequential}
+          variant="light"
+          mt="xs"
+          leftIcon={<Icon name="IconPlus"></Icon>}
+        >
+          Add Sequential Action
+        </Button>
+      )}
+      {addSequentialForm && (
+        <>
+          <Divider my="lg" label="Sequential Action" labelPosition="center" />
+          <SelectActionForm
+            page={page}
+            onUpdatePage={onUpdatePage}
+            close={closeSequential}
+            sequentialTo={action.id}
+          />
+        </>
+      )}
     </Stack>
   );
 };

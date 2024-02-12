@@ -1,17 +1,12 @@
-import { ActionIcon, Button, Select, Stack } from "@mantine/core";
+import { Button, Stack } from "@mantine/core";
 import startCase from "lodash.startcase";
-import { Action, actionMapper, actions } from "@/utils/actions";
-import { useForm } from "@mantine/form";
+import { Action, actionMapper } from "@/utils/actions";
 import { PageResponse } from "@/requests/pages/types";
 import { ActionSettingsForm } from "@/components/pages/ActionSettingsForm";
-import { useEffect } from "react";
-import merge from "lodash.merge";
-import { nanoid } from "nanoid";
 import { SidebarSection } from "@/components/pages/SidebarSection";
 import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
-import { Icon } from "@/components/Icon";
-import { ICON_SIZE } from "@/utils/config";
+import { SelectActionForm } from "@/components/pages/SelectActionForm";
 
 type Props = {
   page?: PageResponse | null | undefined;
@@ -20,34 +15,6 @@ type Props = {
 
 export default function PageActions({ page, onUpdatePage }: Props) {
   const [addForm, { open, close }] = useDisclosure(false);
-
-  const form = useForm({
-    initialValues: {
-      trigger: "onPageLoad",
-      action: {
-        name: "",
-      },
-    },
-  });
-
-  useEffect(() => {
-    if (form.isTouched() && form.isDirty()) {
-      const id = nanoid();
-      const values = merge(page, {
-        actions: [
-          {
-            id,
-            ...form.values,
-          },
-        ],
-      });
-      onUpdatePage(values).then(() => {
-        form.reset();
-        close();
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.values]);
 
   const removeAction = async (id: string) => {
     if (page) {
@@ -124,69 +91,42 @@ export default function PageActions({ page, onUpdatePage }: Props) {
         </Button>
       )}
       {addForm && (
-        <>
-          <ActionIcon
-            onClick={close}
-            color="gray"
-            variant="light"
-            radius="xl"
-            size="sm"
-            sx={{ position: "absolute", top: "-5px", right: "0px", zIndex: 30 }}
-          >
-            <Icon name="IconX" size={ICON_SIZE} />
-          </ActionIcon>
-          <Select
-            size="xs"
-            placeholder="Select a trigger"
-            label="Trigger"
-            data={[{ value: "onPageLoad", label: "On Page Load" }]}
-            {...form.getInputProps("trigger")}
-          />
-          <Select
-            size="xs"
-            placeholder="Select an action"
-            label="Action"
-            searchable
-            nothingFound="No actions found"
-            data={actions.map((action) => {
-              return {
-                label: startCase(action.name),
-                value: action.name,
-                group: action.group,
-              };
-            })}
-            {...form.getInputProps("action.name")}
-          />
-        </>
+        <SelectActionForm
+          onUpdatePage={onUpdatePage}
+          close={close}
+          page={page!}
+        />
       )}
 
       {page?.actions?.map((action) => {
         const actionMapped = actionMapper[action?.action?.name];
 
         return (
-          <SidebarSection
-            key={action.id}
-            id={action.id}
-            isAction
-            icon={IconBolt}
-            removeAction={removeAction}
-            label={`${startCase(action.trigger)}: ${startCase(
-              action.action.name,
-            )}`}
-          >
-            <ActionSettingsForm
-              action={action}
-              page={page!}
-              defaultValues={actionMapped.defaultValues}
-              onUpdatePage={onUpdatePage}
+          !action.sequentialTo && (
+            <SidebarSection
+              key={action.id}
+              id={action.id}
+              isAction
+              icon={IconBolt}
+              removeAction={removeAction}
+              label={`${startCase(action.trigger)}: ${startCase(
+                action.action.name,
+              )}`}
             >
-              {({ form }) => {
-                const ActionForm = actionMapped.form;
-                return <ActionForm form={form} />;
-              }}
-            </ActionSettingsForm>
-            {renderSequentialActions(action)}
-          </SidebarSection>
+              <ActionSettingsForm
+                action={action}
+                page={page!}
+                defaultValues={actionMapped.defaultValues}
+                onUpdatePage={onUpdatePage}
+              >
+                {({ form }) => {
+                  const ActionForm = actionMapped.form;
+                  return <ActionForm form={form} />;
+                }}
+              </ActionSettingsForm>
+              {renderSequentialActions(action)}
+            </SidebarSection>
+          )
         );
       })}
     </Stack>

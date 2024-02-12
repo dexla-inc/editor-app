@@ -33,6 +33,7 @@ import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
 import { getComponentInitialDisplayValue } from "./common";
 import { ValueProps } from "./types";
+import { PageResponse } from "@/requests/pages/types";
 
 const triggers = [
   "onClick",
@@ -221,7 +222,7 @@ export type ActionParams = {
   onSuccess?: Action;
   onError?: Action;
   event?: any;
-  component: Component;
+  entity: Component | PageResponse;
   data?: any;
 };
 
@@ -464,9 +465,9 @@ const handleError = async <T>(
   onError: any,
   router: Router,
   rest: T,
-  component: Component,
+  entity: Component | PageResponse,
 ) => {
-  const actions = component.actions ?? [];
+  const actions = entity.actions ?? [];
   const onErrorAction = actions.find((a: Action) => a.trigger === "onError");
   let errorMessage = "";
 
@@ -489,10 +490,10 @@ const handleSuccess = async <T>(
   onSuccess: any,
   router: Router,
   rest: T,
-  component: Component,
+  entity: Component | PageResponse,
   action: APICallAction,
 ) => {
-  const actions = component.actions ?? [];
+  const actions = entity.actions ?? [];
   const onSuccessAction = actions.find(
     (a: Action) => a.trigger === "onSuccess",
   );
@@ -567,11 +568,14 @@ export const useApiCallAction = () => {
     router,
     onSuccess,
     onError,
-    component,
+    entity,
     ...rest
   }: APICallActionParams) => {
     const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    setLoadingState(component.id!, true, updateTreeComponent);
+    if (entity.props) {
+      setLoadingState(entity.id!, true, updateTreeComponent);
+    }
+
     const endpoints = await getDataSourceEndpoints(projectId as string);
     const selectedEndpoint = endpoints?.results.find(
       (e) => e.id === action.endpoint,
@@ -638,7 +642,7 @@ export const useApiCallAction = () => {
           onSuccess,
           router,
           rest,
-          component,
+          entity,
           action,
         ));
     } catch (error) {
@@ -648,10 +652,12 @@ export const useApiCallAction = () => {
           onError,
           router,
           rest,
-          component,
+          entity,
         ));
     } finally {
-      setLoadingState(component.id!, false, updateTreeComponent);
+      if (entity.props) {
+        setLoadingState(entity.id!, false, updateTreeComponent);
+      }
     }
   };
 };

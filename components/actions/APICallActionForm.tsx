@@ -3,26 +3,22 @@ import { EndpointSelect } from "@/components/EndpointSelect";
 import EmptyDatasourcesPlaceholder from "@/components/datasources/EmptyDatasourcesPlaceholder";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useDataSourceStore } from "@/stores/datasource";
-import { useEditorStore } from "@/stores/editor";
 import {
   ActionFormProps,
   APICallAction,
   EndpointAuthType,
 } from "@/utils/actions";
-import { Divider, Stack } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { SegmentedControlInput } from "../SegmentedControlInput";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
-import { ActionsForm } from "@/components/actions/ActionsForm";
 
 type Props = ActionFormProps<Omit<APICallAction, "name" | "datasource">>;
 
 export const APICallActionForm = ({ form, isLogicFlow, actionId }: Props) => {
   const router = useRouter();
   const projectId = router.query.id as string;
-
-  const sequentialTo = useEditorStore((state) => state.sequentialTo);
 
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const setApiAuthConfig = useDataSourceStore(
@@ -81,12 +77,6 @@ export const APICallActionForm = ({ form, isLogicFlow, actionId }: Props) => {
           </>
         )}
       </Stack>
-      {!isLogicFlow && sequentialTo === actionId && (
-        <>
-          <Divider my="lg" label="Sequential Action" labelPosition="center" />
-          <ActionsForm sequentialTo={sequentialTo} />
-        </>
-      )}
     </>
   ) : (
     <EmptyDatasourcesPlaceholder projectId={projectId} />
