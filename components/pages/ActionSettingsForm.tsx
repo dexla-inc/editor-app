@@ -7,6 +7,7 @@ import merge from "lodash.merge";
 import { Icon } from "@/components/Icon";
 import { SelectActionForm } from "@/components/pages/SelectActionForm";
 import { useDisclosure } from "@mantine/hooks";
+import { ActionButtons } from "@/components/actions/ActionButtons";
 
 type Props = {
   action: Action;
@@ -82,6 +83,10 @@ export const ActionSettingsForm = ({
           />
         </>
       )}
+      <ActionButtons
+        actionId={action.id}
+        componentActions={page.actions ?? []}
+      />
     </Stack>
   );
 };

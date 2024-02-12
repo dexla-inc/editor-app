@@ -6,8 +6,12 @@ import {
 } from "@/components/actions/_BaseActionFunctions";
 import { useEditorStore } from "@/stores/editor";
 import { ActionButtons } from "@/components/actions/ActionButtons";
-import { Stack } from "@mantine/core";
+import { Button, Divider, Stack } from "@mantine/core";
 import { useEffect } from "react";
+import { Icon } from "@/components/Icon";
+import { SelectActionForm } from "@/components/pages/SelectActionForm";
+import { useDisclosure } from "@mantine/hooks";
+import { ActionsForm } from "@/components/actions/ActionsForm";
 
 type Props = {
   action: Action;
@@ -20,6 +24,9 @@ export const ActionSettingsForm = ({
   defaultValues,
   children,
 }: Props) => {
+  const [addSequentialForm, { open: openSequential, close: closeSequential }] =
+    useDisclosure(false);
+
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
@@ -65,10 +72,27 @@ export const ActionSettingsForm = ({
   return (
     <Stack spacing="xs">
       {children && children({ form })}
+      {action.action.name === "apiCall" && (
+        <Button
+          size="xs"
+          type="button"
+          onClick={openSequential}
+          variant="light"
+          mt="xs"
+          leftIcon={<Icon name="IconPlus"></Icon>}
+        >
+          Add Sequential Action
+        </Button>
+      )}
+      {addSequentialForm && (
+        <>
+          <Divider my="lg" label="Sequential Action" labelPosition="center" />
+          <ActionsForm close={closeSequential} sequentialTo={action.id} />
+        </>
+      )}
       <ActionButtons
         actionId={action.id}
         componentActions={componentActions}
-        canAddSequential={action.action.name === "apiCall"}
       ></ActionButtons>
     </Stack>
   );
