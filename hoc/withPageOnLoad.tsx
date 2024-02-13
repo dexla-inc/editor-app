@@ -17,10 +17,16 @@ export const withPageOnLoad = (WrappedComponent: any) => {
     const page = pageListQuery?.results?.find((item) => item.id === pageId)!;
     const { onPageLoad } = useTriggers({ entity: page });
 
-    const [isPageValid, setIsPageValid] = useState(isEditorMode || !onPageLoad);
+    const isActionApiCall = page?.actions?.some(
+      (a) => a.action.name === "apiCall" && a.trigger === "onPageLoad",
+    );
+
+    const [isPageValid, setIsPageValid] = useState(
+      isEditorMode || !isActionApiCall,
+    );
 
     const onTriggerPageActions = async () => {
-      setIsPageValid(isEditorMode || !onPageLoad);
+      setIsPageValid(isEditorMode || !isActionApiCall);
       if (!isEditorMode) {
         if (!onPageLoad) {
           setIsPageValid(true);
