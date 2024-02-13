@@ -31,7 +31,6 @@ type Props = {
 };
 
 function LivePage({ id, page, faviconUrl }: Props) {
-  console.log("LivePage");
   const setCurrentProjectId = useEditorStore(
     (state) => state.setCurrentProjectId,
   );
