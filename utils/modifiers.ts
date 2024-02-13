@@ -45,7 +45,8 @@ export type Modifiers =
   | "grid"
   | "gridColumn"
   | "navbar"
-  | "progress";
+  | "progress"
+  | "countdownButton";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -447,6 +448,7 @@ export const requiredModifiers: RequiredModifiers = {
     value: 50,
     animate: true,
   },
+  countdownButton: { startingNumber: 0, enabledText: "", disabledText: "" },
 };
 
 type AISupportedModifiers = {

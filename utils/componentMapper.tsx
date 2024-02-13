@@ -68,6 +68,7 @@ import * as ButtonIconStructure from "@/components/mapper/structure/ButtonIcon";
 import * as CardStructure from "@/components/mapper/structure/Card";
 import * as CheckboxStructure from "@/components/mapper/structure/Checkbox";
 import * as ContainerStructure from "@/components/mapper/structure/Container";
+import * as CountdownButtonStructure from "@/components/mapper/structure/CountdownButton";
 import * as DateInputStructure from "@/components/mapper/structure/DateInput";
 import * as DividerStructure from "@/components/mapper/structure/Divider";
 import * as DrawerStructure from "@/components/mapper/structure/Drawer";
@@ -117,6 +118,7 @@ import { useEditorStore } from "@/stores/editor";
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import { Modifiers } from "@/utils/modifiers";
 
+import { CountdownButton } from "@/components/mapper/CountdownButton";
 import {
   addAccordionItemToolboxAction,
   addColumnToParentToolboxAction,
@@ -242,6 +244,17 @@ export const structureMapper: StructureMapper = {
     Draggable: () => (
       <DraggableComponent
         id="Button"
+        icon={<IconClick size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconClick size={ICON_SIZE} />,
+  },
+  CountdownButton: {
+    structure: (props: any) => CountdownButtonStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="CountdownButton"
         icon={<IconClick size={LARGE_ICON_SIZE} />}
       />
     ),
@@ -1521,6 +1534,26 @@ export const componentMapper: ComponentMapper = {
     },
     modifiers: [
       "button",
+      "spacing",
+      "border",
+      "effects",
+      "boxShadow",
+      "position",
+    ],
+    actionTriggers: ["onClick", "onHover"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  CountdownButton: {
+    Component: (props: { component: Component; renderTree: any }) => {
+      return (
+        <CountdownButton
+          component={props.component}
+          renderTree={props.renderTree}
+        />
+      );
+    },
+    modifiers: [
+      "countdownButton",
       "spacing",
       "border",
       "effects",

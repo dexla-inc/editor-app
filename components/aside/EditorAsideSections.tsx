@@ -1,5 +1,6 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { SidebarSection } from "@/components/SidebarSection";
+import { ActionsTab } from "@/components/actions/ActionsTab";
 import { Data } from "@/components/data/Data";
 import * as AccordionModifier from "@/components/modifiers/Accordion";
 import * as AccordionItemModifier from "@/components/modifiers/AccordionItem";
@@ -13,6 +14,7 @@ import * as BreadcrumbModifier from "@/components/modifiers/Breadcrumb";
 import * as ButtonModifier from "@/components/modifiers/Button";
 import * as ButtonIconModifier from "@/components/modifiers/ButtonIcon";
 import * as CheckboxModifier from "@/components/modifiers/Checkbox";
+import * as CountdownModifier from "@/components/modifiers/CountdownButton";
 import * as DateInputModifier from "@/components/modifiers/DateInput";
 import * as DividerModifier from "@/components/modifiers/Divider";
 import * as DrawerModifier from "@/components/modifiers/Drawer";
@@ -70,7 +72,6 @@ import {
 import { IconCheck, IconX } from "@tabler/icons-react";
 import intersection from "lodash.intersection";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { ActionsTab } from "@/components/actions/ActionsTab";
 
 type SectionsMapper = {
   [key in Modifiers]: any;
@@ -122,6 +123,7 @@ const sectionMapper: SectionsMapper = {
   gridColumn: GridColumnModifier,
   navbar: NavbarModifier,
   progress: ProgressModifier,
+  countdownButton: CountdownModifier,
 };
 
 type Tab = "design" | "data" | "actions";
