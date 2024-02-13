@@ -1,48 +1,34 @@
 import { useForm } from "@mantine/form";
-import { Action, ChangeLanguageAction } from "@/utils/actions";
-import {
-  updateActionInTree,
-  useActionData,
-} from "@/components/actions/_BaseActionFunctions";
-import { useEditorStore } from "@/stores/editor";
-import { ActionButtons } from "@/components/actions/ActionButtons";
+import { Action } from "@/utils/actions";
 import { Button, Divider, Stack } from "@mantine/core";
 import { useEffect } from "react";
+import { PageResponse } from "@/requests/pages/types";
+import merge from "lodash.merge";
 import { Icon } from "@/components/Icon";
 import { SelectActionForm } from "@/components/pages/SelectActionForm";
 import { useDisclosure } from "@mantine/hooks";
-import { ActionsForm } from "@/components/actions/ActionsForm";
+import { ActionButtons } from "@/components/actions/ActionButtons";
 
 type Props = {
   action: Action;
+  page: PageResponse;
   defaultValues: Record<string, any>;
   children?: (props: any) => JSX.Element;
+  onUpdatePage: (values: any) => Promise<any>;
 };
 
 export const ActionSettingsForm = ({
   action,
+  page,
   defaultValues,
   children,
+  onUpdatePage,
 }: Props) => {
   const [addSequentialForm, { open: openSequential, close: closeSequential }] =
     useDisclosure(false);
 
-  const editorTree = useEditorStore((state) => state.tree);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
-  );
-  const updateTreeComponentActions = useEditorStore(
-    (state) => state.updateTreeComponentActions,
-  );
-
   const form = useForm({
     initialValues: { ...defaultValues, ...action.action },
-  });
-
-  const { componentActions } = useActionData<ChangeLanguageAction>({
-    actionId: action.id,
-    editorTree,
-    selectedComponentId,
   });
 
   useEffect(() => {
@@ -55,15 +41,17 @@ export const ActionSettingsForm = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
 
-  const onSubmit = (updateValues: any) => {
+  const onSubmit = async (values: any) => {
+    const updatedActions = page.actions?.map((a) => {
+      if (a.action.name === values.name) {
+        a.action = { ...a.action, ...values };
+      }
+      return a;
+    });
+    const updatedPage = merge({}, page, { actions: updatedActions });
+
     try {
-      updateActionInTree<ChangeLanguageAction>({
-        selectedComponentId: selectedComponentId!,
-        componentActions,
-        id: action.id,
-        updateValues,
-        updateTreeComponentActions,
-      });
+      await onUpdatePage(updatedPage);
     } catch (error) {
       console.error(error);
     }
@@ -87,13 +75,18 @@ export const ActionSettingsForm = ({
       {addSequentialForm && (
         <>
           <Divider my="lg" label="Sequential Action" labelPosition="center" />
-          <ActionsForm close={closeSequential} sequentialTo={action.id} />
+          <SelectActionForm
+            page={page}
+            onUpdatePage={onUpdatePage}
+            close={closeSequential}
+            sequentialTo={action.id}
+          />
         </>
       )}
       <ActionButtons
         actionId={action.id}
-        componentActions={componentActions}
-      ></ActionButtons>
+        componentActions={page.actions ?? []}
+      />
     </Stack>
   );
 };

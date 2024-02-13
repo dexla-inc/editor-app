@@ -1,5 +1,6 @@
 import { PagingParams } from "@/requests/types";
 import { AppTypes } from "@/utils/dashboardTypes";
+import { Action } from "@/utils/actions";
 
 export type PageAIResponse = {
   name: string;
@@ -35,6 +36,7 @@ export type UpdatePageBody = {
     id: string;
     type: AppTypes;
   };
+  actions?: Action[];
 };
 
 export type PagesResponse = {

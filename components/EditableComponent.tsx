@@ -63,7 +63,7 @@ export const EditableComponent = ({
   );
 
   const triggers = useTriggers({
-    component,
+    entity: component,
     isEditorMode,
     updateTreeComponent,
   });

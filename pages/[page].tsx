@@ -6,6 +6,7 @@ import { getPageProps } from "@/utils/serverside";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
+import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 
 export const getServerSideProps = async ({
   req,
@@ -29,7 +30,7 @@ type Props = {
   faviconUrl?: string;
 };
 
-export default function LivePage({ id, page, faviconUrl }: Props) {
+function LivePage({ id, page, faviconUrl }: Props) {
   const setCurrentProjectId = useEditorStore(
     (state) => state.setCurrentProjectId,
   );
@@ -68,3 +69,5 @@ export default function LivePage({ id, page, faviconUrl }: Props) {
     </>
   );
 }
+
+export default withPageOnLoad(LivePage);
