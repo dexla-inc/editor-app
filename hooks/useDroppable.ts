@@ -118,7 +118,9 @@ export const useDroppable = ({
   ) => {
     const { leftDist, rightDist, topDist, bottomDist } = distances;
     const isPopOver = componentToAdd?.name === "PopOver";
-    const isAllowed = !component?.blockDroppingChildrenInside || isPopOver;
+    let isAllowed = !component?.blockDroppingChildrenInside || isPopOver;
+    if (component?.name === "NavLink")
+      isAllowed = componentToAdd?.name === "NavLink";
 
     if (
       leftDist > threshold &&
