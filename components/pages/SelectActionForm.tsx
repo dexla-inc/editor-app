@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { nanoid } from "nanoid";
 import merge from "lodash.merge";
 import { PageResponse } from "@/requests/pages/types";
+import isEmpty from "lodash.isempty";
 
 type Props = {
   sequentialTo?: string;
@@ -39,10 +40,15 @@ export const SelectActionForm = ({
         name: "" as any,
       } as ActionType,
     },
+    validate: {
+      action: {
+        name: (value: string) => (isEmpty(value) ? "Action is required" : null),
+      },
+    },
   });
 
   useEffect(() => {
-    if (form.isTouched() && form.isDirty()) {
+    if (form.isTouched() && form.isDirty() && form.isValid()) {
       const id = nanoid();
       const updatedActions = (page.actions || [])?.concat({
         id,
