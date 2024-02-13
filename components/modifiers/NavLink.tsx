@@ -1,6 +1,7 @@
 import { IconSelector } from "@/components/IconSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
+import { useChangeState } from "@/hooks/useChangeState";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { Select, Stack } from "@mantine/core";
@@ -13,8 +14,9 @@ export const icon = IconClick;
 export const label = "Nav Link";
 
 export const Modifier = withModifier(
-  ({ selectedComponent, selectedComponentIds }) => {
+  ({ selectedComponent, selectedComponentIds, currentState }) => {
     const form = useForm();
+    const { setBackgroundColor } = useChangeState({});
 
     useEffect(() => {
       form.setValues(
@@ -53,12 +55,15 @@ export const Modifier = withModifier(
           <ThemeColorSelector
             label="Background Color"
             {...form.getInputProps("bg")}
-            onChange={(value: string) => {
-              form.setFieldValue("bg", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                bg: value,
-              });
-            }}
+            onChange={(value: string) =>
+              setBackgroundColor(
+                "bg",
+                value,
+                form,
+                currentState,
+                selectedComponent,
+              )
+            }
           />
           <ThemeColorSelector
             label="Text Color"

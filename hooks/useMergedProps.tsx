@@ -24,16 +24,25 @@ export const usePropsWithOverwrites = (
   const setTreeComponentCurrentState = useEditorStore(
     (state) => state.setTreeComponentCurrentState,
   );
+  const updateTreeComponentAttrs = useEditorStore(
+    (state) => state.updateTreeComponentAttrs,
+  );
+
+  const updateComponentState = (id: string, newState: string) => {
+    updateTreeComponentAttrs([id], {
+      onLoad: { currentState: { dataType: "static", static: newState } },
+    });
+  };
 
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
     if (currentState === "default") {
-      setTreeComponentCurrentState(e.currentTarget.id, "hover");
+      updateComponentState(e.currentTarget.id, "hover");
     }
   };
 
   const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
     if (currentState === "hover") {
-      setTreeComponentCurrentState(e.currentTarget.id, "default");
+      updateComponentState(e.currentTarget.id, "default");
     }
   };
 
