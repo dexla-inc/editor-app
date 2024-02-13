@@ -39,6 +39,11 @@ export default function PageActions({ page, onUpdatePage }: Props) {
     return getActionsBySequentialToOrId(action.id!)?.map(
       (sequentialAction: Action) => {
         const sequentialActionName = sequentialAction.action.name;
+
+        if (!sequentialActionName) {
+          return null;
+        }
+
         const ActionForm = actionMapper[sequentialActionName]?.form;
 
         const item = {
@@ -56,6 +61,7 @@ export default function PageActions({ page, onUpdatePage }: Props) {
               icon={IconArrowBadgeRight}
               isAction
               {...item}
+              removeAction={removeAction}
               key={item.label}
             >
               <ActionSettingsForm

@@ -52,7 +52,7 @@ export const useTriggers = ({
         return {
           ...acc,
           [action.trigger]: (e: any) => {
-            actionFunction({
+            return actionFunction({
               // @ts-ignore
               action: action.action,
               actionId: action.id,

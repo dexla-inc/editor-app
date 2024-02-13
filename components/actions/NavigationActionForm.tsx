@@ -13,17 +13,12 @@ export const NavigationActionForm = ({ form }: Props) => {
   const pageQueryStrings =
     pages.find((page) => page.id === pageId)?.queryStrings ?? {};
 
-  const queryStringState = useState<Array<{ key: string; value: string }>>([]);
-
-  useEffect(() => {
-    queryStringState[1](
-      Object.entries(pageQueryStrings).map(([key, value]) => ({
-        key,
-        value,
-      })),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageQueryStrings]);
+  const queryStringState = useState<Array<{ key: string; value: string }>>(
+    Object.entries(pageQueryStrings).map(([key, value]) => ({
+      key,
+      value,
+    })),
+  );
 
   return (
     <Stack>
