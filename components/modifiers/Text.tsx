@@ -1,4 +1,3 @@
-import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
@@ -9,7 +8,14 @@ import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { ActionIcon, Flex, SegmentedControl, Stack, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Flex,
+  SegmentedControl,
+  Select,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -41,6 +47,12 @@ const defaultTextValues = requiredModifiers.text;
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const theme = useEditorStore((state) => state.theme);
+    const fontsList = theme.fonts.map((font, index) => ({
+      label: font.tag,
+      value: index.toString(),
+    }));
+
+    console.log(theme.fonts);
 
     const shadow = selectedComponent?.props?.style?.textShadow ?? "";
     const getShadowStyle = (shadow: string) => {
@@ -91,7 +103,7 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          {!isTitle && (
+          {/* {!isTitle && (
             <SizeSelector
               label="Size"
               {...form.getInputProps("size")}
@@ -99,6 +111,25 @@ export const Modifier = withModifier(
                 form.setFieldValue("size", value as string);
                 debouncedTreeUpdate(selectedComponentIds, {
                   size: value,
+                });
+              }}
+            />
+          )} */}
+          {!isTitle && (
+            <Select
+              label="Type"
+              data={fontsList}
+              {...form.getInputProps("size")}
+              onChange={(value) => {
+                form.setFieldValue("size", value as string);
+                const size = theme.fonts[parseInt(value as string, 10)];
+                debouncedTreeUpdate(selectedComponentIds, {
+                  size: value,
+                  style: {
+                    fontSize: size.fontSize,
+                    fontWeight: size.fontWeight,
+                    lineHeight: size.lineHeight,
+                  },
                 });
               }}
             />

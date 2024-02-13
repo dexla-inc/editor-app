@@ -21,7 +21,7 @@ const TextComponent = forwardRef(
     ref: any,
   ) => {
     const contentEditableProps = useContentEditable(component.id as string);
-    const { triggers, hideIfDataIsEmpty, variable, ...componentProps } =
+    const { triggers, hideIfDataIsEmpty, variable, text, ...componentProps } =
       component.props as any;
     const { style, ...restProps } = props as any;
 
