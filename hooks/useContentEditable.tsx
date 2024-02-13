@@ -5,7 +5,7 @@ import { useAppMode } from "./useAppMode";
 export const useContentEditable = (componentId: string) => {
   const [isEditable, setIsEditable] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const isPreviewMode = useAppMode();
+  const { isPreviewMode } = useAppMode();
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,
   );

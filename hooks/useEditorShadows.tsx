@@ -40,7 +40,7 @@ export const useEditorShadows = ({
     (state) => state.hoveredComponentId,
   );
 
-  const isPreviewMode = useAppMode();
+  const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
 

@@ -17,7 +17,7 @@ export const ModalComponent = forwardRef(
       (state) => state.selectedComponentId,
     );
     const theme = useEditorStore((state) => state.theme);
-    const isPreviewMode = useAppMode();
+    const { isPreviewMode } = useAppMode();
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
     const updateTreeComponent = useEditorStore(
       (state) => state.updateTreeComponent,

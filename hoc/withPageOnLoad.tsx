@@ -6,7 +6,7 @@ import { useEffect } from "react";
 
 export const withPageOnLoad = (WrappedComponent: any) => {
   const Config = (props: any) => {
-    const isPreviewMode = useAppMode();
+    const { isPreviewMode } = useAppMode();
     const isLive = useEditorStore((state) => state.isLive);
     const isEditorMode = !isPreviewMode && !isLive;
     const projectId = useEditorStore((state) => state.currentProjectId!);
