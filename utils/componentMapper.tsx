@@ -1076,14 +1076,7 @@ export const componentMapper: ComponentMapper = {
     Component: (props: { component: Component; renderTree: any }) => (
       <NavLink component={props.component} renderTree={props.renderTree} />
     ),
-    modifiers: [
-      "navLink",
-      "background",
-      "spacing",
-      "size",
-      "border",
-      "effects",
-    ],
+    modifiers: ["navLink", "spacing", "size", "border", "effects"],
     actionTriggers: ["onClick"],
     sequentialTriggers: ["onSuccess", "onError"],
   },

@@ -27,6 +27,5 @@ export const jsonStructure = (props?: any): Component => {
         iconColor: "PrimaryText.9",
       },
     },
-    blockDroppingChildrenInside: true,
   };
 };

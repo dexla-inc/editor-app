@@ -10,22 +10,24 @@ import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { NavLink as MantineNavLink, NavLinkProps } from "@mantine/core";
 import merge from "lodash.merge";
-import { useRouter } from "next/router";
 import { forwardRef, memo } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
   shareableContent: any;
+  isPreviewMode: Boolean;
 } & NavLinkProps;
 
 const NavLinkComponent = forwardRef(
-  ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
+  (
+    { renderTree, component, shareableContent, isPreviewMode, ...props }: Props,
+    ref,
+  ) => {
     const theme = useEditorStore((state) => state.theme);
-    const router = useRouter();
+    const currentPageId = useEditorStore((state) => state.currentPageId);
     const contentEditableProps = useContentEditable(component.id as string);
 
-    const currentPageId = router.query.page as string;
     const activePageId = (
       component.actions?.find(
         (action) => action.action.name === "navigateToPage",
@@ -34,8 +36,8 @@ const NavLinkComponent = forwardRef(
     const active = currentPageId === activePageId;
 
     const activeProps = {};
-    if (active) {
-      merge(activeProps, component?.states?.Active);
+    if (active && isPreviewMode) {
+      merge(activeProps, component?.states?.active);
     }
 
     const {
@@ -67,6 +69,9 @@ const NavLinkComponent = forwardRef(
       style: { ...props.style, color: textColor, backgroundColor },
     });
 
+    const hasNestedLinks =
+      (component.children && component.children?.length > 0) ?? isNested;
+
     return (
       <MantineNavLink
         {...contentEditableProps}
@@ -82,8 +87,8 @@ const NavLinkComponent = forwardRef(
             />
           ),
         })}
-        childrenOffset={isNested ? 20 : 0}
-        rightSection={isNested ? <Icon name="IconChevronRight" /> : null}
+        childrenOffset={hasNestedLinks ? 20 : 0}
+        rightSection={hasNestedLinks ? <Icon name="IconChevronRight" /> : null}
         active={active}
         {...props}
         {...componentProps}
@@ -101,7 +106,16 @@ const NavLinkComponent = forwardRef(
             },
           },
         }}
-      />
+      >
+        {component.children &&
+          component.children.length > 0 &&
+          component.children?.map((child) =>
+            renderTree({
+              ...child,
+              props: { ...child.props },
+            }),
+          )}
+      </MantineNavLink>
     );
   },
 );
