@@ -477,12 +477,14 @@ const handleError = async <T>(
     errorMessage = error.message;
   }
 
-  onError({
+  await onError({
     action: onErrorAction?.action,
     router,
     ...rest,
     data: { value: errorMessage },
   });
+
+  throw new Error(errorMessage);
 };
 
 const handleSuccess = async <T>(
@@ -498,7 +500,7 @@ const handleSuccess = async <T>(
     (a: Action) => a.trigger === "onSuccess",
   );
 
-  onSuccess({
+  return onSuccess({
     action: onSuccessAction?.action,
     binds: action.binds,
     router,
@@ -636,7 +638,8 @@ export const useApiCallAction = () => {
           );
       }
 
-      onSuccess &&
+      return (
+        onSuccess &&
         (await handleSuccess<ApiCallActionRestParams>(
           responseJson,
           onSuccess,
@@ -644,16 +647,19 @@ export const useApiCallAction = () => {
           rest,
           entity,
           action,
-        ));
+        ))
+      );
     } catch (error) {
-      onError &&
+      return (
+        onError &&
         (await handleError<ApiCallActionRestParams>(
           error,
           onError,
           router,
           rest,
           entity,
-        ));
+        ))
+      );
     } finally {
       if (entity.props) {
         setLoadingState(entity.id!, false, updateTreeComponent);
