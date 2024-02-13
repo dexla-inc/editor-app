@@ -35,7 +35,7 @@ export const EditableComponent = ({
   shareableContent,
 }: PropsWithChildren<Props>) => {
   const { computeValue } = useDataContext()!;
-  const isPreviewMode = useAppMode();
+  const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
   const isEditorMode = !isPreviewMode && !isLive;
 

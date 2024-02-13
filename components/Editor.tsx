@@ -43,7 +43,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const liveblocks = useEditorStore((state) => state.liveblocks);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
-  const isPreviewMode = useAppMode();
+  const { isPreviewMode } = useAppMode();
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
   const setCurrentUser = useEditorStore((state) => state.setCurrentUser);
 

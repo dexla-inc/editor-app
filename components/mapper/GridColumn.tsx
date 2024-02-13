@@ -16,7 +16,7 @@ type Props = {
 const GridColumnComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
     const isLive = useEditorStore((state) => state.isLive);
-    const isPreviewMode = useAppMode();
+    const { isPreviewMode } = useAppMode();
     // @ts-ignore
     const { style = {}, gap, ...componentProps } = component.props;
     const { style: propsStyle = {}, ...propsRest } = props;
