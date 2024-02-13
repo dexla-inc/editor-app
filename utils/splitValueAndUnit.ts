@@ -1,4 +1,5 @@
 export const splitValueAndUnit = (value: string): [number, string] | null => {
+  console.log("splitValueAndUnit", value);
   const matches = value?.match(/^(\d+(?:\.\d+)?)(.*)$/);
 
   if (matches && matches.length === 3) {

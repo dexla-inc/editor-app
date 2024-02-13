@@ -45,7 +45,8 @@ export type Modifiers =
   | "grid"
   | "gridColumn"
   | "navbar"
-  | "progress";
+  | "progress"
+  | "countdownButton";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -177,6 +178,16 @@ export const requiredModifiers: RequiredModifiers = {
       paddingLeft: "32px",
       paddingRight: "32px",
     },
+  },
+  countdownButton: {
+    variant: "filled",
+    icon: "",
+    style: {
+      width: "fit-content",
+      paddingLeft: "32px",
+      paddingRight: "32px",
+    },
+    duration: "60seconds",
   },
   image: {
     fit: "contain",

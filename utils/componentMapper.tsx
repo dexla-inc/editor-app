@@ -9,12 +9,11 @@ import { Avatar } from "@/components/mapper/Avatar";
 import { Badge } from "@/components/mapper/Badge";
 import { Breadcrumb } from "@/components/mapper/Breadcrumb";
 import { Button } from "@/components/mapper/Button";
-import { Progress } from "@/components/mapper/Progress";
-
 import { ButtonIcon } from "@/components/mapper/ButtonIcon";
 import { Card } from "@/components/mapper/Card";
 import { Checkbox } from "@/components/mapper/Checkbox";
 import { Container } from "@/components/mapper/Container";
+import { CountdownButton } from "@/components/mapper/CountdownButton";
 import { DateInput } from "@/components/mapper/DateInput";
 import { Divider } from "@/components/mapper/Divider";
 import { Drawer } from "@/components/mapper/Drawer";
@@ -32,6 +31,7 @@ import { NavLink } from "@/components/mapper/NavLink";
 import { Navbar } from "@/components/mapper/Navbar";
 import { Pagination } from "@/components/mapper/Pagination";
 import { PopOver } from "@/components/mapper/PopOver";
+import { Progress } from "@/components/mapper/Progress";
 import { Radio } from "@/components/mapper/Radio";
 import { RadioItem } from "@/components/mapper/RadioItem";
 import { Rating } from "@/components/mapper/Rating";
@@ -68,6 +68,7 @@ import * as ButtonIconStructure from "@/components/mapper/structure/ButtonIcon";
 import * as CardStructure from "@/components/mapper/structure/Card";
 import * as CheckboxStructure from "@/components/mapper/structure/Checkbox";
 import * as ContainerStructure from "@/components/mapper/structure/Container";
+import * as CountdownButtonStructure from "@/components/mapper/structure/CountdownButton";
 import * as DateInputStructure from "@/components/mapper/structure/DateInput";
 import * as DividerStructure from "@/components/mapper/structure/Divider";
 import * as DrawerStructure from "@/components/mapper/structure/Drawer";
@@ -140,6 +141,7 @@ import {
   IconCheckbox,
   IconCircleDot,
   IconClick,
+  IconClockHour5,
   IconContainer,
   IconCursorText,
   IconExclamationMark,
@@ -247,6 +249,17 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconClick size={ICON_SIZE} />,
+  },
+  CountdownButton: {
+    structure: (props: any) => CountdownButtonStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="CountdownButton"
+        icon={<IconClockHour5 size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconClockHour5 size={ICON_SIZE} />,
   },
   Link: {
     structure: (props: any) => LinkStructure.jsonStructure(props),
@@ -1514,6 +1527,26 @@ export const componentMapper: ComponentMapper = {
     },
     modifiers: [
       "button",
+      "spacing",
+      "border",
+      "effects",
+      "boxShadow",
+      "position",
+    ],
+    actionTriggers: ["onClick", "onHover"],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  CountdownButton: {
+    Component: (props: { component: Component; renderTree: any }) => {
+      return (
+        <CountdownButton
+          component={props.component}
+          renderTree={props.renderTree}
+        />
+      );
+    },
+    modifiers: [
+      "countdownButton",
       "spacing",
       "border",
       "effects",
