@@ -40,7 +40,6 @@ type Props = {
 };
 
 const HomePage = ({ id, page, faviconUrl }: Props) => {
-  console.log("HomePage");
   const setCurrentProjectId = useEditorStore(
     (state) => state.setCurrentProjectId,
   );
