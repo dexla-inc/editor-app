@@ -5,6 +5,7 @@ import {
 } from "@/components/data/AvatarData";
 import { ChartData as Chart } from "@/components/data/ChartData";
 import { ContainerData as Container } from "@/components/data/ContainerData";
+import { CountdownButtonData as CountdownButton } from "@/components/data/CountdownButtonData";
 import { SelectData as Select } from "@/components/data/SelectData";
 import { TableData as Table } from "@/components/data/TableData";
 import {
@@ -24,6 +25,7 @@ export const dataMapper = {
   Title,
   Link,
   Button,
+  CountdownButton,
   Avatar,
   NavLink,
   Badge,

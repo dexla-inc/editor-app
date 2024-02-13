@@ -1,4 +1,5 @@
 import { Live } from "@/components/Live";
+import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { PageResponse } from "@/requests/pages/types";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
@@ -6,7 +7,6 @@ import { getPageProps } from "@/utils/serverside";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
-import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 
 export const getServerSideProps = async ({
   req,
@@ -40,6 +40,7 @@ type Props = {
 };
 
 const HomePage = ({ id, page, faviconUrl }: Props) => {
+  console.log("HomePage");
   const setCurrentProjectId = useEditorStore(
     (state) => state.setCurrentProjectId,
   );
