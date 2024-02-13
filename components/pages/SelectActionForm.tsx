@@ -44,7 +44,7 @@ export const SelectActionForm = ({
   useEffect(() => {
     if (form.isTouched() && form.isDirty()) {
       const id = nanoid();
-      const updatedActions = page.actions?.concat({
+      const updatedActions = (page.actions || [])?.concat({
         id,
         ...form.values,
         ...(!!sequentialTo && { sequentialTo }),
