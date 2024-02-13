@@ -1,4 +1,5 @@
 import { useDataContext } from "@/contexts/DataProvider";
+import { useAppMode } from "@/hooks/useAppMode";
 import {
   useComponentContextEventHandler,
   useComponentContextMenu,
@@ -34,9 +35,10 @@ export const EditableComponent = ({
   shareableContent,
 }: PropsWithChildren<Props>) => {
   const { computeValue } = useDataContext()!;
-  const isEditorMode = useEditorStore(
-    (state) => !state.isPreviewMode && !state.isLive,
-  );
+  const isPreviewMode = useAppMode();
+  const isLive = useEditorStore((state) => state.isLive);
+  const isEditorMode = !isPreviewMode && !isLive;
+
   const currentState = useEditorStore((state) =>
     isEditorMode
       ? state.currentTreeComponentsStates?.[component.id!] ?? "default"

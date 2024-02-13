@@ -1,13 +1,14 @@
-import { useEffect } from "react";
-import { useEditorStore } from "@/stores/editor";
 import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
+import { useAppMode } from "@/hooks/useAppMode";
 import { useTriggers } from "@/hooks/useTriggers";
+import { useEditorStore } from "@/stores/editor";
+import { useEffect } from "react";
 
 export const withPageOnLoad = (WrappedComponent: any) => {
   const Config = (props: any) => {
-    const isEditorMode = useEditorStore(
-      (state) => !state.isPreviewMode && !state.isLive,
-    );
+    const isPreviewMode = useAppMode();
+    const isLive = useEditorStore((state) => state.isLive);
+    const isEditorMode = !isPreviewMode && !isLive;
     const projectId = useEditorStore((state) => state.currentProjectId!);
     const pageId = useEditorStore((state) => state.currentPageId!);
 

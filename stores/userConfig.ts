@@ -16,6 +16,8 @@ type UserConfigState = {
   setPageCancelled: (pageCancelled: boolean) => void;
   isDarkTheme: boolean;
   setIsDarkTheme: (isDarkTheme: boolean) => void;
+  isPreviewMode: boolean;
+  setPreviewMode: (isPreviewMode: boolean) => void;
 };
 
 export const useUserConfigStore = create<UserConfigState>()(
@@ -26,6 +28,7 @@ export const useUserConfigStore = create<UserConfigState>()(
         isShadesActive: false,
         pageCancelled: false,
         isDarkTheme: false,
+        isPreviewMode: false,
         setIsDarkTheme: (isDarkTheme: boolean) => {
           set({ isDarkTheme }, false, "userConfig/setIsDarkTheme");
         },
@@ -73,6 +76,9 @@ export const useUserConfigStore = create<UserConfigState>()(
         setPageCancelled: (pageCancelled: boolean) => {
           set({ pageCancelled }, false, "userConfig/setPageCancelled");
         },
+        setPreviewMode: (isPreviewMode: boolean) => {
+          set({ isPreviewMode }, false, "userConfig/setPreviewMode");
+        },
       }),
       {
         name: "user-config",
@@ -83,6 +89,7 @@ export const useUserConfigStore = create<UserConfigState>()(
           initiallyOpenedModifiersByComponent:
             state.initiallyOpenedModifiersByComponent,
           pageCancelled: state.pageCancelled,
+          isPreviewMode: state.isPreviewMode,
         }),
       },
     ),
