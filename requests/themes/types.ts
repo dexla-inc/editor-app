@@ -49,6 +49,7 @@ export type Font = {
   fontSize: number;
   lineHeight: number;
   letterSpacing: number;
+  type: "TEXT" | "TITLE";
 };
 
 export type ResponsiveBreakpoint = {

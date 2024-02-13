@@ -2,13 +2,13 @@ import { TopLabel } from "@/components/TopLabel";
 import { SegmentedControl, SegmentedControlProps, Stack } from "@mantine/core";
 
 interface Props extends SegmentedControlProps {
-  label: string;
+  label?: string;
 }
 
 export const SegmentedControlInput = ({ label, ...props }: Props) => {
   return (
     <Stack spacing={2}>
-      <TopLabel text={label} />
+      {label && <TopLabel text={label} />}
       <SegmentedControl {...props} />
     </Stack>
   );

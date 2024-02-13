@@ -1,8 +1,8 @@
 import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { nanoid } from "nanoid";
 import merge from "lodash.merge";
+import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props?.theme ?? defaultTheme;
@@ -22,7 +22,6 @@ export const jsonStructure = (props?: any): Component => {
     props: merge({}, defaultValues, {
       children: content,
       color: `${theme.colors.Black ? "Black.6" : "dark"}`,
-      size: "sm",
       style: {
         lineHeight: "110%",
         letterSpacing: "0px",

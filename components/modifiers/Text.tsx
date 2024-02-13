@@ -47,12 +47,13 @@ const defaultTextValues = requiredModifiers.text;
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const theme = useEditorStore((state) => state.theme);
-    const fontsList = theme.fonts.map((font, index) => ({
-      label: font.tag,
-      value: index.toString(),
-    }));
 
-    console.log(theme.fonts);
+    const fonts = theme.fonts.reduce((acc, font) => {
+      if (font.type === "TEXT") {
+        acc.push({ label: font.tag, value: font.tag, font });
+      }
+      return acc;
+    }, [] as any[]);
 
     const shadow = selectedComponent?.props?.style?.textShadow ?? "";
     const getShadowStyle = (shadow: string) => {
@@ -75,7 +76,7 @@ export const Modifier = withModifier(
       "align",
       "style",
       "color",
-      "size",
+      "fontTag",
       "tt",
       "td",
       "truncate",
@@ -84,7 +85,7 @@ export const Modifier = withModifier(
 
     const form = useForm({
       initialValues: merge({}, defaultTextValues, {
-        ...(!isTitle && { size: data.size ?? defaultTextValues.size }),
+        ...(!isTitle && { fontTag: data.fontTag ?? defaultTextValues.fontTag }),
         order: data.order?.toString() ?? defaultTextValues.order,
         color: data.color ?? defaultTextValues.color,
         align: data.align ?? defaultTextValues.align,
@@ -103,32 +104,23 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          {/* {!isTitle && (
-            <SizeSelector
-              label="Size"
-              {...form.getInputProps("size")}
-              onChange={(value) => {
-                form.setFieldValue("size", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  size: value,
-                });
-              }}
-            />
-          )} */}
           {!isTitle && (
             <Select
               label="Type"
-              data={fontsList}
-              {...form.getInputProps("size")}
+              data={fonts}
+              {...form.getInputProps("fontTag")}
               onChange={(value) => {
-                form.setFieldValue("size", value as string);
-                const size = theme.fonts[parseInt(value as string, 10)];
+                form.setFieldValue("fontTag", value as string);
+                const selectedFont = fonts.find(
+                  (font) => font.value === value,
+                ).font;
+
                 debouncedTreeUpdate(selectedComponentIds, {
-                  size: value,
+                  fontTag: value,
                   style: {
-                    fontSize: size.fontSize,
-                    fontWeight: size.fontWeight,
-                    lineHeight: size.lineHeight,
+                    fontSize: selectedFont.fontSize,
+                    fontWeight: selectedFont.fontWeight,
+                    lineHeight: selectedFont.lineHeight,
                   },
                 });
               }}
