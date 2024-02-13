@@ -1,5 +1,6 @@
 import { GridColumn as GridColumnBase } from "@/components/GridColumn";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useAppMode } from "@/hooks/useAppMode";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { convertSizeToPx } from "@/utils/defaultSizes";
@@ -14,10 +15,8 @@ type Props = {
 
 const GridColumnComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
-    const theme = useEditorStore((state) => state.theme);
-
     const isLive = useEditorStore((state) => state.isLive);
-    const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+    const isPreviewMode = useAppMode();
     // @ts-ignore
     const { style = {}, gap, ...componentProps } = component.props;
     const { style: propsStyle = {}, ...propsRest } = props;

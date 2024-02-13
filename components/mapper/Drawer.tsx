@@ -1,4 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/userConfig";
 import { Component, checkIfIsChild } from "@/utils/editor";
 import { DrawerProps, Drawer as MantineDrawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -19,7 +20,7 @@ export const Drawer = ({
     (state) => state.selectedComponentId,
   );
   const theme = useEditorStore((state) => state.theme);
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const isPreviewMode = useUserConfigStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,

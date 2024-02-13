@@ -1,12 +1,13 @@
 import { Live } from "@/components/Live";
+import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 import { PageResponse } from "@/requests/pages/types";
 import { getProject } from "@/requests/projects/queries-noauth";
 import { useEditorStore } from "@/stores/editor";
+import { useUserConfigStore } from "@/stores/userConfig";
 import { getPageProps } from "@/utils/serverside";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect } from "react";
-import { withPageOnLoad } from "@/hoc/withPageOnLoad";
 
 export const getServerSideProps = async ({
   req,
@@ -44,7 +45,7 @@ const HomePage = ({ id, page, faviconUrl }: Props) => {
     (state) => state.setCurrentProjectId,
   );
   const setCurrentPageId = useEditorStore((state) => state.setCurrentPageId);
-  const setPreviewMode = useEditorStore((state) => state.setPreviewMode);
+  const setPreviewMode = useUserConfigStore((state) => state.setPreviewMode);
   const setIsLive = useEditorStore((state) => state.setIsLive);
 
   useEffect(() => {

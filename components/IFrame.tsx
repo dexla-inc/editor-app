@@ -1,3 +1,4 @@
+import { useAppMode } from "@/hooks/useAppMode";
 import { useUserTheme } from "@/hooks/useUserTheme";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
@@ -23,7 +24,7 @@ type Props = {
 export const IFrame = ({ children, projectId, ...props }: Props) => {
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const isPreviewMode = useAppMode();
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const [isLoading, setIsLoading] = useState(true);

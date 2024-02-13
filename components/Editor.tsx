@@ -5,6 +5,7 @@ import { Cursor } from "@/components/Cursor";
 import { EditorCanvas } from "@/components/EditorCanvas";
 import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
+import { useAppMode } from "@/hooks/useAppMode";
 import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
@@ -42,7 +43,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
   const liveblocks = useEditorStore((state) => state.liveblocks);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const isPreviewMode = useAppMode();
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
   const setCurrentUser = useEditorStore((state) => state.setCurrentUser);
 
