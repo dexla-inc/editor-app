@@ -366,7 +366,7 @@ export const useShowNotificationAction = async ({
   action,
   computeValue,
 }: ShowNotificationActionParams) => {
-  showNotification({
+  return showNotification({
     title: computeValue({ value: action.title }),
     message: computeValue({ value: action.message }),
     color: action.color,
@@ -461,14 +461,13 @@ export const prepareRequestData = (
 
 const handleError = async <T>(
   error: any,
-  onError: any,
+  onError: Action,
   router: Router,
   rest: T,
-  entity: Component | PageResponse,
+  computeValue: (val: GetValueProps) => any,
 ) => {
-  const actions = entity.actions ?? [];
-  const onErrorAction = actions.find((a: Action) => a.trigger === "onError");
   let errorMessage = "";
+  const onErrorActionMapped = actionMapper[onError.action.name];
 
   try {
     errorMessage = JSON.parse(error.message);
@@ -476,9 +475,11 @@ const handleError = async <T>(
     errorMessage = error.message;
   }
 
-  await onError({
-    action: onErrorAction?.action,
+  await onErrorActionMapped.action({
+    // @ts-ignore
+    action: onError?.action,
     router,
+    computeValue,
     ...rest,
     data: { value: errorMessage },
   });
@@ -488,21 +489,20 @@ const handleError = async <T>(
 
 const handleSuccess = async <T>(
   responseJson: any,
-  onSuccess: any,
+  onSuccess: Action,
   router: Router,
   rest: T,
-  entity: Component | PageResponse,
   action: APICallAction,
+  computeValue: (val: GetValueProps) => any,
 ) => {
-  const actions = entity.actions ?? [];
-  const onSuccessAction = actions.find(
-    (a: Action) => a.trigger === "onSuccess",
-  );
+  const onSuccessActionMapped = actionMapper[onSuccess.action.name];
 
-  return onSuccess({
-    action: onSuccessAction?.action,
+  return onSuccessActionMapped.action({
+    // @ts-ignore
+    action: onSuccess?.action,
     binds: action.binds,
     router,
+    computeValue,
     ...rest,
     data: responseJson,
   });
@@ -568,12 +568,13 @@ export const useApiCallAction = async ({
   onError,
   entity,
   ...rest
-}: APICallActionParams) => {
+}: APICallActionParams): Promise<any> => {
   const projectId = useEditorStore.getState().currentProjectId;
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   if (entity.props) {
     setLoadingState(entity.id!, true, updateTreeComponent);
   }
+  let result = null;
 
   const endpoints = await getDataSourceEndpoints(projectId as string);
   const selectedEndpoint = endpoints?.results.find(
@@ -635,33 +636,33 @@ export const useApiCallAction = async ({
         );
     }
 
-    return (
+    result =
       onSuccess &&
       (await handleSuccess<ApiCallActionRestParams>(
         responseJson,
         onSuccess,
         router,
         rest,
-        entity,
         action,
-      ))
-    );
+        computeValue,
+      ));
   } catch (error) {
-    return (
+    result =
       onError &&
       (await handleError<ApiCallActionRestParams>(
         error,
         onError,
         router,
         rest,
-        entity,
-      ))
-    );
+        computeValue,
+      ));
   } finally {
     if (entity.props) {
       setLoadingState(entity.id!, false, updateTreeComponent);
     }
   }
+
+  return result;
 };
 
 export const useChangeLanguageAction = ({
