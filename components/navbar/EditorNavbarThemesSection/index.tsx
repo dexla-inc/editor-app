@@ -324,9 +324,6 @@ export const EditorNavbarThemesSection =
                 },
               ]}
               {...form.getInputProps(`fonts.${currentFontIndex}.type`)}
-              onChange={(value) => {
-                form.setFieldValue(`fonts.${currentFontIndex}.type`, value);
-              }}
             />
           </Stack>
           <Stack spacing={4}>
