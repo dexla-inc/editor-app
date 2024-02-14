@@ -23,11 +23,12 @@ export const withPageOnLoad = (WrappedComponent: any) => {
       const triggerPageActions = async () => {
         if (isPageValid && onPageLoad && actionTriggeredForPath !== asPath) {
           await onPageLoad?.();
-          setActionTriggeredForPath(asPath); // Mark this path as having triggered the action
+          setActionTriggeredForPath(asPath);
         }
       };
 
       triggerPageActions();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [asPath, onPageLoad]);
 
     return <WrappedComponent {...props} />;

@@ -140,11 +140,7 @@ export const Editor = ({ projectId, pageId }: Props) => {
           <Box
             pos="relative"
             style={{ minHeight: `calc(100vh - ${HEADER_HEIGHT}px)` }}
-            ml={
-              isTabPinned && !isPreviewMode
-                ? NAVBAR_WIDTH
-                : NAVBAR_MIN_WIDTH - 50
-            } // Weird sizing issue that I haven't got time to investigate, had to hack it
+            ml={isTabPinned ? NAVBAR_WIDTH : NAVBAR_MIN_WIDTH - 50} // Weird sizing issue that I haven't got time to investigate, had to hack it
             p={"40px 10px"}
           >
             <Paper
