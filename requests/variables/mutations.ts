@@ -1,5 +1,5 @@
 import { SuccessResponse } from "@/requests/types";
-import { VariableParams, VariableResponse } from "@/requests/variables/types";
+import { VariableResponse } from "@/requests/variables/types";
 import { useVariableStore } from "@/stores/variables";
 import { del, post, put } from "@/utils/api";
 
@@ -8,7 +8,7 @@ const onDeleteVariable = useVariableStore.getState().deleteVariable;
 
 export const createVariable = async (
   projectId: string,
-  params: Omit<VariableParams, "value">,
+  params: Omit<VariableResponse, "id">,
 ) => {
   let url = `/projects/${projectId}/variables`;
 
@@ -17,14 +17,14 @@ export const createVariable = async (
     params,
   )) as VariableResponse;
 
-  setVariable(params, response.id);
+  setVariable({ id: response.id, ...params });
   return response;
 };
 
 export const updateVariable = async (
   id: string,
   projectId: string,
-  params: VariableParams,
+  params: Omit<VariableResponse, "id">,
 ) => {
   let url = `/projects/${projectId}/variables/${id}`;
 
@@ -32,7 +32,7 @@ export const updateVariable = async (
     url,
     params,
   )) as VariableResponse;
-  setVariable(params, response.id);
+  setVariable({ id: response.id, value: params.defaultValue, ...params });
 
   return response;
 };
