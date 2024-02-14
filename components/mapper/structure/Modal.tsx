@@ -15,6 +15,10 @@ export const jsonStructure = (props?: any): Component => {
   const modalId = nanoid();
 
   const containerItem = structureMapper["Container"].structure({ theme });
+  const defaultButtonIcon = structureMapper["ButtonIcon"].structure({});
+  const buttonIconProps = merge({}, defaultButtonIcon.props, {
+    iconName: "IconX",
+  });
 
   const defaultChildren = [
     {
@@ -51,17 +55,8 @@ export const jsonStructure = (props?: any): Component => {
         },
         {
           id: nanoid(),
-          name: "ButtonIcon",
-          description: "ButtonIcon",
-          props: {
-            style: {
-              width: "auto",
-              height: "auto",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            },
-          },
+          ...defaultButtonIcon,
+          props: buttonIconProps,
           blockDroppingChildrenInside: true,
           actions: [
             {
@@ -71,23 +66,6 @@ export const jsonStructure = (props?: any): Component => {
                 name: "closeModal",
                 modalId,
               },
-            },
-          ],
-          children: [
-            {
-              id: nanoid(),
-              name: "Icon",
-              description: "Icon",
-              props: {
-                style: {
-                  width: "auto",
-                  height: "auto",
-                },
-                name: "IconX",
-                color: "Secondary.7",
-              },
-              children: [],
-              blockDroppingChildrenInside: true,
             },
           ],
         },

@@ -18,6 +18,7 @@ export const jsonStructure = (props?: any): Component => {
       iconName: "IconSettings",
       iconColor: "PrimaryText.6",
       iconSize: "xs",
+      ...(props ?? {}),
     },
     states: {
       hover: { color: "Primary.7" },
