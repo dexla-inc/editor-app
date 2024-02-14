@@ -10,7 +10,6 @@ type Props = {
 };
 
 export const RadarChart = (props: Props) => {
-  const { loading } = props.component.props as any;
   const theme = useEditorStore((state) => state.theme);
 
   const customProps = merge({}, props, {
@@ -33,9 +32,5 @@ export const RadarChart = (props: Props) => {
     },
   });
 
-  return (
-    <Skeleton visible={loading}>
-      <Chart {...customProps} />
-    </Skeleton>
-  );
+  return <Chart {...customProps} />;
 };

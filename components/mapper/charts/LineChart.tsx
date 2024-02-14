@@ -8,11 +8,5 @@ type Props = {
 };
 
 export const LineChart = (props: Props) => {
-  const { loading } = props.component.props as any;
-
-  return (
-    <Skeleton visible={loading}>
-      <Chart {...props} />
-    </Skeleton>
-  );
+  return <Chart {...props} />;
 };

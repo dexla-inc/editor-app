@@ -10,7 +10,7 @@ type Props = {
 };
 
 export const RadialChart = (props: Props) => {
-  const { loading, labelColor } = props.component.props as any;
+  const { labelColor } = props.component.props as any;
   const theme = useEditorStore((state) => state.theme);
   const _labelColor = getChartColor(theme, labelColor, "SecondaryText.5");
 
@@ -73,9 +73,5 @@ export const RadialChart = (props: Props) => {
     },
   });
 
-  return (
-    <Skeleton visible={loading}>
-      <Chart {...customProps} />
-    </Skeleton>
-  );
+  return <Chart {...customProps} />;
 };
