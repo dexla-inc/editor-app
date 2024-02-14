@@ -1,8 +1,6 @@
 import { Chart } from "@/components/mapper/charts/Chart";
 import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
-import { Skeleton } from "@mantine/core";
-import { useEffect, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -10,12 +8,6 @@ type Props = {
 };
 
 export const PieChart = (props: Props) => {
-  const [initiallyLoading, setInitiallyLoading] = useState(true);
-
-  useEffect(() => {
-    setInitiallyLoading(false);
-  }, []);
-
   const customProps = merge({}, props, {
     component: {
       props: {
@@ -80,9 +72,5 @@ export const PieChart = (props: Props) => {
     },
   });
 
-  return (
-    <Skeleton visible={initiallyLoading}>
-      <Chart {...customProps} />
-    </Skeleton>
-  );
+  return <Chart {...customProps} />;
 };

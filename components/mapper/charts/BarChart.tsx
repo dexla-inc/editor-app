@@ -2,7 +2,6 @@ import { Chart } from "@/components/mapper/charts/Chart";
 import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
 import { Skeleton } from "@mantine/core";
-import { useEffect, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -10,11 +9,7 @@ type Props = {
 };
 
 export const BarChart = (props: Props) => {
-  const [initiallyLoading, setInitiallyLoading] = useState(true);
-
-  useEffect(() => {
-    setInitiallyLoading(false);
-  }, []);
+  const { loading } = props.component.props as any;
 
   const customProps = merge({}, props, {
     component: {
@@ -37,9 +32,5 @@ export const BarChart = (props: Props) => {
     },
   });
 
-  return (
-    <Skeleton visible={initiallyLoading}>
-      <Chart {...customProps} />
-    </Skeleton>
-  );
+  return <Chart {...customProps} />;
 };

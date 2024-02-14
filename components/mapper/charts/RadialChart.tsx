@@ -3,7 +3,6 @@ import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import merge from "lodash.merge";
 import { Skeleton } from "@mantine/core";
-import { useEffect, useState } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -14,12 +13,6 @@ export const RadialChart = (props: Props) => {
   const { labelColor } = props.component.props as any;
   const theme = useEditorStore((state) => state.theme);
   const _labelColor = getChartColor(theme, labelColor, "SecondaryText.5");
-
-  const [initiallyLoading, setInitiallyLoading] = useState(true);
-
-  useEffect(() => {
-    setInitiallyLoading(false);
-  }, []);
 
   const customProps = merge({}, props, {
     component: {
@@ -80,9 +73,5 @@ export const RadialChart = (props: Props) => {
     },
   });
 
-  return (
-    <Skeleton visible={initiallyLoading}>
-      <Chart {...customProps} />
-    </Skeleton>
-  );
+  return <Chart {...customProps} />;
 };
