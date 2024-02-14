@@ -1,8 +1,5 @@
-import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
-import { getComponentInitialDisplayValue } from "@/utils/common";
-import { showVisibilityModifier } from "@/utils/dataMapper";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
 import { NumberInput, Select, Stack, TextInput } from "@mantine/core";
@@ -17,7 +14,6 @@ export const label = "Appearance";
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm();
-    const showVisibility = showVisibilityModifier(selectedComponent);
 
     useEffect(() => {
       form.setValues(
@@ -28,6 +24,8 @@ export const Modifier = withModifier(
           tooltip: selectedComponent.props?.tooltip,
           javascriptCode: selectedComponent.props?.javascriptCode ?? "",
           display: selectedComponent.props?.style?.display,
+          tooltipColor: selectedComponent.props?.tooltipColor,
+          tooltipPosition: selectedComponent.props?.tooltipPosition,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -36,30 +34,6 @@ export const Modifier = withModifier(
     return (
       <form key={selectedComponent?.id}>
         <Stack spacing="xs">
-          {showVisibility && (
-            <SegmentedControlInput
-              label="Visibility"
-              data={[
-                {
-                  label: "Visible",
-                  value: getComponentInitialDisplayValue(
-                    selectedComponent.name,
-                  ),
-                },
-                {
-                  label: "Hidden",
-                  value: "none",
-                },
-              ]}
-              {...form.getInputProps("display")}
-              onChange={(value) => {
-                form.setFieldValue("display", value as string);
-                debouncedTreeUpdate(selectedComponentIds, {
-                  style: { display: value },
-                });
-              }}
-            />
-          )}
           <Select
             label="Cursor"
             size="xs"
@@ -142,6 +116,30 @@ export const Modifier = withModifier(
               form.setFieldValue("tooltipColor", value);
               debouncedTreeUpdate(selectedComponentIds, {
                 tooltipColor: value,
+              });
+            }}
+          />
+          <Select
+            label="Tooltip Position"
+            data={[
+              { label: "Bottom", value: "bottom" },
+              { label: "Left", value: "left" },
+              { label: "Right", value: "right" },
+              { label: "Top", value: "top" },
+              { label: "Bottom-End", value: "bottom-end" },
+              { label: "Bottom-Start", value: "bottom-start" },
+              { label: "Left-End", value: "left-end" },
+              { label: "Left-Start", value: "left-start" },
+              { label: "Right-End", value: "right-end" },
+              { label: "Right-Start", value: "right-start" },
+              { label: "Top-End", value: "top-end" },
+              { label: "Top-Start", value: "top-start" },
+            ]}
+            {...form.getInputProps("tooltipPosition")}
+            onChange={(value) => {
+              form.setFieldValue("tooltipPosition", value as string);
+              debouncedTreeUpdate(selectedComponentIds, {
+                tooltipPosition: value,
               });
             }}
           />

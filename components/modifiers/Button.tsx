@@ -37,25 +37,15 @@ export const Modifier = withModifier(
 
     useEffect(() => {
       form.setValues(
-        merge(
-          {},
-          requiredModifiers.button,
-          {
-            color: "Primary.6",
-            textColor: "PrimaryText.6",
-            //compact: theme.hasCompactButtons?.toString(),
-          },
-          {
-            type: selectedComponent.props?.type,
-            variant: selectedComponent.props?.variant,
-            size: selectedComponent?.props?.size ?? theme.inputSize,
-            icon: icon,
-            //compact: selectedComponent.props?.compact,
-            color: selectedComponent.props?.color,
-            textColor: selectedComponent.props?.textColor,
-            width: selectedComponent.props?.style?.width,
-          },
-        ),
+        merge({}, requiredModifiers.button, {
+          type: selectedComponent.props?.type,
+          variant: selectedComponent.props?.variant,
+          size: selectedComponent?.props?.size ?? theme.inputSize,
+          icon: icon,
+          color: selectedComponent.props?.color ?? "Primary.6",
+          textColor: selectedComponent.props?.textColor ?? "PrimaryText.6",
+          width: selectedComponent.props?.style?.width,
+        }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedComponent]);
@@ -65,6 +55,18 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
+          <SegmentedControlSizes
+            label="Size"
+            sizing={inputSizes}
+            {...form.getInputProps("size")}
+            onChange={(value) => {
+              form.setFieldValue("size", value as string);
+              debouncedTreeUpdate(selectedComponentIds, {
+                size: value,
+                style: { height: inputSizes[value] },
+              });
+            }}
+          />
           {/* <Select
             label="Variant"
             size="xs"
@@ -98,12 +100,21 @@ export const Modifier = withModifier(
             }}
           />
           <ThemeColorSelector
-            label="Background Color"
+            label="Button Color"
             {...form.getInputProps("color")}
             onChange={(value: string) =>
               setBackgroundColor("color", value, form, currentState)
             }
-            excludeTransparent
+          />
+          <ThemeColorSelector
+            label="Button Color"
+            {...form.getInputProps("color")}
+            onChange={(value: string) => {
+              form.setFieldValue("color", value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                color: value,
+              });
+            }}
           />
           <ThemeColorSelector
             label="Text Color"
@@ -158,29 +169,6 @@ export const Modifier = withModifier(
               }}
             />
           )}
-          {/* <SegmentedControlYesNo
-            label="Compact"
-            {...form.getInputProps("compact")}
-            onChange={(value) => {
-              form.setFieldValue("compact", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                compact: value,
-              });
-            }}
-          /> */}
-
-          <SegmentedControlSizes
-            label="Size"
-            sizing={inputSizes}
-            {...form.getInputProps("size")}
-            onChange={(value) => {
-              form.setFieldValue("size", value as string);
-              debouncedTreeUpdate(selectedComponentIds, {
-                size: value,
-                style: { height: inputSizes[value] },
-              });
-            }}
-          />
         </Stack>
       </form>
     );

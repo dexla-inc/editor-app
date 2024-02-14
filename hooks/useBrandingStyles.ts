@@ -5,13 +5,15 @@ import { getColorFromTheme } from "@/utils/editor";
 export const useBrandingStyles = () => {
   const theme = useEditorStore((state) => state.theme);
   const borderColor = getColorFromTheme(theme, "Border.6");
-  // Need to be able to support multiple texts
+  // TODO: Need to be able to support multiple texts
   const textFont = theme.fonts?.find((font) => font.tag === "P");
   const pTagFontSize = textFont?.fontSize + "px";
   const buttonFont = theme.fonts.find((font) => font.tag === "Button");
+  const inputSize = inputSizes[theme.inputSize];
+  const radiusSize = radiusSizes[theme.defaultRadius];
 
   const borderStyle = {
-    borderRadius: radiusSizes[theme.defaultRadius],
+    borderRadius: radiusSize,
     borderStyle: "solid",
     borderWidth: "1px",
     borderColor: borderColor,
@@ -23,8 +25,8 @@ export const useBrandingStyles = () => {
 
   const inputStyle = {
     fontSize: pTagFontSize,
-    height: inputSizes[theme.inputSize],
-    borderRadius: radiusSizes[theme.defaultRadius],
+    height: inputSize,
+    borderRadius: radiusSize,
   };
 
   const fontSizeStyle = {
@@ -32,14 +34,14 @@ export const useBrandingStyles = () => {
   };
 
   const buttonIconStyle = {
-    height: inputSizes[theme.inputSize],
-    width: inputSizes[theme.inputSize],
-    borderRadius: radiusSizes[theme.defaultRadius],
+    height: inputSize,
+    width: inputSize,
+    borderRadius: radiusSize,
   };
 
   const buttonStyle = {
-    height: inputSizes[theme.inputSize],
-    borderRadius: radiusSizes[theme.defaultRadius],
+    height: inputSize,
+    borderRadius: radiusSize,
     ...(buttonFont && {
       fontSize: buttonFont?.fontSize,
       fontWeight: buttonFont?.fontWeight,
@@ -57,6 +59,14 @@ export const useBrandingStyles = () => {
     }),
   };
 
+  const avatarStyle = {
+    root: {
+      height: inputSize,
+      width: inputSize,
+    },
+    borderRadius: radiusSize,
+  };
+
   return {
     borderStyle,
     inputStyle,
@@ -64,5 +74,12 @@ export const useBrandingStyles = () => {
     buttonIconStyle,
     buttonStyle,
     textStyle,
+    avatarStyle,
   };
+};
+
+const calcSize = (size: string, factor: number) => {
+  const numericSize = parseInt(size, 10);
+  const newSize = numericSize * factor;
+  return `${newSize}px`;
 };
