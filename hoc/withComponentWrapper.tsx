@@ -1,21 +1,17 @@
 import { Skeleton, Tooltip } from "@mantine/core";
-import { ComponentType, Fragment, useEffect, useState } from "react";
+import { ComponentType, Fragment } from "react";
 
 export const withComponentWrapper = <T extends {}>(
   Component: ComponentType<T>,
 ) => {
   const Config = (props: any) => {
     const hasTooltip = !!props.component?.props?.tooltip;
-    const [initiallyLoading, setInitiallyLoading] = useState(true);
+    const initiallyLoading = props.component?.props?.initiallyLoading;
     const Wrapper = hasTooltip
       ? Tooltip
       : initiallyLoading
       ? Skeleton
       : Fragment;
-
-    useEffect(() => {
-      setInitiallyLoading(false);
-    }, []);
 
     return (
       // @ts-ignore
