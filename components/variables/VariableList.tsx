@@ -1,6 +1,8 @@
 import { VariableForm } from "@/components/variables/VariableForm";
 import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 import { deleteVariable } from "@/requests/variables/mutations";
+import { useVariableStore } from "@/stores/variables";
+import { safeJsonParse } from "@/utils/common";
 import {
   ActionIcon,
   Center,
@@ -24,19 +26,21 @@ export const VariableList = ({ projectId }: Props) => {
   const [opened, modal] = useDisclosure(false);
   const [filter, setFilter] = useDebouncedState("", 250);
   const [variableToEdit, setVariableToEdit] = useState(undefined);
-  const { data: variableList, invalidate } = useVariableListQuery(projectId);
+  const { invalidate } = useVariableListQuery(projectId);
+  const variableList = useVariableStore((state) => state.variableList);
+
   const deleteVar = async (variableId: string) => {
     await deleteVariable(projectId, variableId);
     invalidate();
   };
 
-  const rows = (variableList?.results ?? [])?.map((variable: any) => (
+  const rows = (variableList ?? [])?.map((variable: any) => (
     <tr key={variable.id}>
       <td>{variable.name}</td>
       <td>{variable.type}</td>
       <td>{variable.isGlobal.toString()}</td>
-      <td>{variable.defaultValue}</td>
-      <td>{variable.value}</td>
+      <td>{safeJsonParse(variable.defaultValue)}</td>
+      <td>{safeJsonParse(variable.value)}</td>
       <td>
         <Group>
           <ActionIcon

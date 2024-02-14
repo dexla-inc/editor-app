@@ -693,13 +693,10 @@ export const useChangeVariableAction = () => {
   return async ({ action }: ChangeVariableActionParams) => {
     const setVariable = useVariableStore.getState().setVariable;
     const value = computeValue({ value: action.value });
-    setVariable(
-      {
-        type: "TEXT",
-        value: value,
-      },
-      action.variableId,
-    );
+    setVariable({
+      id: action.variableId,
+      value: value,
+    });
   };
 };
 

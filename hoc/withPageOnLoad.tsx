@@ -17,11 +17,11 @@ export const withPageOnLoad = (WrappedComponent: any) => {
     const { onPageLoad } = useTriggers({ entity: page });
     const [actionTriggeredForPath, setActionTriggeredForPath] = useState("");
 
-    const isPageValid = page && asPath.includes(page.id);
-
     useEffect(() => {
       const triggerPageActions = async () => {
+        const isPageValid = page && asPath.includes(page.id);
         // TODO: Do not run when runInEditMode is false and the mode is editor.
+        // TODO: Only the last action gets run
         if (isPageValid && onPageLoad && actionTriggeredForPath !== asPath) {
           await onPageLoad?.();
           setActionTriggeredForPath(asPath);

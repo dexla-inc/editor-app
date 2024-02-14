@@ -118,3 +118,11 @@ export function remToPixelUnit(rem: string) {
 
   return `${remValue * rootFontSize}px`;
 }
+
+export function safeJsonParse(str: string) {
+  try {
+    return JSON.parse(str);
+  } catch (e) {
+    return str;
+  }
+}

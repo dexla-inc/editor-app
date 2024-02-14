@@ -4,6 +4,7 @@ import {
   VariableTypesOptions,
 } from "@/requests/variables/types";
 import { useVariableStore } from "@/stores/variables";
+import { safeJsonParse } from "@/utils/common";
 import { requiredFieldValidator } from "@/utils/validation";
 import {
   Button,
@@ -13,11 +14,12 @@ import {
   Stack,
   Text,
   TextInput,
-  Textarea,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { Editor } from "@monaco-editor/react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { SegmentedControlInput } from "../SegmentedControlInput";
 import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
 type VariablesFormValues = {
@@ -40,7 +42,7 @@ function convertDefaultValueToString(type: string, defaultValue: any): string {
     case "OBJECT":
     case "ARRAY":
       try {
-        return JSON.stringify(defaultValue);
+        return JSON.stringify(defaultValue, null, 2);
       } catch (error) {
         console.error("Error converting defaultValue to string:", error);
         return "";
@@ -52,19 +54,19 @@ function convertDefaultValueToString(type: string, defaultValue: any): string {
 
 export const VariableForm = ({ variableId }: Props) => {
   const variableList = useVariableStore((state) => state.variableList);
+  const variable = variableList.find((v) => v.id === variableId);
+  const [selectedType, setSelectedType] = useState(variable?.type ?? "TEXT");
   const router = useRouter();
   const projectId = router.query.id as string;
   const { createVariablesMutation, updateVariablesMutation } =
     useVariable(projectId);
 
-  const variable = variableList.find((v) => v.id === variableId);
-
   const form = useForm<VariablesFormValues>({
     initialValues: {
-      name: "",
-      type: "TEXT",
-      defaultValue: "",
-      isGlobal: false,
+      name: variable?.name ?? "",
+      type: variable?.type ?? "TEXT",
+      defaultValue: variable?.defaultValue ?? "",
+      isGlobal: variable?.isGlobal ?? false,
     },
     validate: {
       name: requiredFieldValidator("Name"),
@@ -92,12 +94,27 @@ export const VariableForm = ({ variableId }: Props) => {
     }
   };
 
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [selectedType, setSelectedType] = useState("TEXT");
-
   const handleTypeChange = (type: FrontEndTypes) => {
     setSelectedType(type);
     form.setFieldValue("type", type);
+    // Set defaultValue appropriately for defaultValue when type changes
+    switch (type) {
+      case "TEXT":
+      case "NUMBER":
+        form.setFieldValue("defaultValue", "");
+        break;
+      case "BOOLEAN":
+        form.setFieldValue("defaultValue", "false");
+        break;
+      case "OBJECT":
+        form.setFieldValue("defaultValue", "{}");
+        break;
+      case "ARRAY":
+        form.setFieldValue("defaultValue", "[]");
+        break;
+      default:
+        break;
+    }
   };
 
   const DefaultValueInput = () => {
@@ -120,7 +137,11 @@ export const VariableForm = ({ variableId }: Props) => {
         );
       case "BOOLEAN":
         return (
-          <SegmentedControlYesNo
+          <SegmentedControlInput
+            data={[
+              { label: "True", value: "true" },
+              { label: "False", value: "false" },
+            ]}
             label="Default Value"
             {...form.getInputProps("defaultValue")}
           />
@@ -128,29 +149,40 @@ export const VariableForm = ({ variableId }: Props) => {
       case "OBJECT":
       case "ARRAY":
         return (
-          <Textarea
-            autosize
-            size="sm"
-            label="Default Value"
-            {...form.getInputProps("defaultValue")}
+          <Editor
+            height="100px"
+            defaultLanguage="json"
+            {...(variableId
+              ? {
+                  value: form.values.defaultValue
+                    ? safeJsonParse(form.values.defaultValue)
+                    : "",
+                  onChange: (value: any) => {
+                    form.setFieldValue(
+                      "defaultValue",
+                      JSON.stringify(value, null, 2) ?? "",
+                    );
+                  },
+                }
+              : {
+                  value: form.values.defaultValue,
+                  onChange: (value: any) => {
+                    form.setFieldValue("defaultValue", value ?? "");
+                  },
+                })}
+            options={{
+              wordWrap: "on",
+              scrollBeyondLastLine: false,
+              minimap: {
+                enabled: false,
+              },
+            }}
           />
         );
       default:
         return null;
     }
   };
-
-  useEffect(() => {
-    if (variable && !isInitialized) {
-      form.setValues({
-        name: variable.name,
-        type: variable.type,
-        defaultValue: variable.defaultValue ?? "",
-        isGlobal: variable.isGlobal,
-      });
-      setIsInitialized(true);
-    }
-  }, [form, variable, isInitialized]);
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
@@ -179,7 +211,10 @@ export const VariableForm = ({ variableId }: Props) => {
         </Group>
         <Button
           type="submit"
-          loading={createVariablesMutation.isLoading}
+          loading={
+            createVariablesMutation.isLoading ||
+            updateVariablesMutation.isLoading
+          }
           compact
         >
           {variableId ? "Save" : "Create"} Variable
