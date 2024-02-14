@@ -2,6 +2,7 @@ import { Icon } from "@/components/Icon";
 import { useDataContext } from "@/contexts/DataProvider";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
+import { useChangeState } from "@/hooks/useChangeState";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import { useEditorStore } from "@/stores/editor";
 import { DISABLED_HOVER } from "@/utils/branding";
@@ -38,6 +39,7 @@ const ButtonComponent = forwardRef(
       loading,
       textColor,
       variable,
+      color,
       ...componentProps
     } = component.props as any;
 
@@ -64,8 +66,14 @@ const ButtonComponent = forwardRef(
 
     const { buttonStyle } = useBrandingStyles();
 
+    const { color: backgroundColor } = useChangeState({
+      bg: textColor,
+      textColor: color,
+    });
+
     const customStyle = merge({}, buttonStyle, style, {
       color: labelTextColor,
+      backgroundColor,
     });
 
     const { sx, ...restProps } = props;

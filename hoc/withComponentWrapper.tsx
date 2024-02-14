@@ -20,6 +20,7 @@ export const withComponentWrapper = <T extends {}>(
           ? {
               label: props.component?.props?.tooltip,
               color: props.component?.props?.tooltipColor,
+              position: props.component?.props?.tooltipPosition,
               withArrow: true,
             }
           : initiallyLoading

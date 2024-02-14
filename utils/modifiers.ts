@@ -247,6 +247,8 @@ export const requiredModifiers: RequiredModifiers = {
     overflow: "auto",
     opacity: 1,
     tooltip: "",
+    tooltipColor: "Black.6",
+    tooltipPosition: "top",
   },
   modal: {
     forceHide: false,
@@ -298,7 +300,6 @@ export const requiredModifiers: RequiredModifiers = {
     position: "left",
   },
   buttonIcon: {
-    bg: "transparent",
     style: {
       width: "fit-content",
       height: "fit-content",
@@ -355,7 +356,6 @@ export const requiredModifiers: RequiredModifiers = {
     variant: "filled",
     src: "",
     radius: "",
-    size: "md",
     color: "Primary.6",
     value: "",
   },
