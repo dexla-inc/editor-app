@@ -24,7 +24,7 @@ export const NavigationActionForm = ({ form }: Props) => {
 
   return (
     <Stack>
-      {/* This should only be visible on page actions */}
+      {/* TODO: This should only be visible on page actions */}
       <SegmentedControlYesNo
         label="Run in edit mode"
         {...form.getInputProps("runInEditMode")}

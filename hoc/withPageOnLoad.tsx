@@ -21,6 +21,7 @@ export const withPageOnLoad = (WrappedComponent: any) => {
 
     useEffect(() => {
       const triggerPageActions = async () => {
+        // TODO: Do not run when runInEditMode is false and the mode is editor.
         if (isPageValid && onPageLoad && actionTriggeredForPath !== asPath) {
           await onPageLoad?.();
           setActionTriggeredForPath(asPath);
