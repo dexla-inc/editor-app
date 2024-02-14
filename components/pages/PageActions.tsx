@@ -1,12 +1,12 @@
-import { Button, Stack } from "@mantine/core";
-import startCase from "lodash.startcase";
-import { Action, actionMapper } from "@/utils/actions";
-import { PageResponse } from "@/requests/pages/types";
 import { ActionSettingsForm } from "@/components/pages/ActionSettingsForm";
-import { SidebarSection } from "@/components/pages/SidebarSection";
-import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
-import { useDisclosure } from "@mantine/hooks";
 import { SelectActionForm } from "@/components/pages/SelectActionForm";
+import { SidebarSection } from "@/components/pages/SidebarSection";
+import { PageResponse } from "@/requests/pages/types";
+import { Action, actionMapper } from "@/utils/actions";
+import { Button, Stack } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
+import startCase from "lodash.startcase";
 
 type Props = {
   page?: PageResponse | null | undefined;

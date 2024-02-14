@@ -2,7 +2,9 @@ import { QueryStringsForm } from "@/components/QueryStringsForm";
 import { useEditorStore } from "@/stores/editor";
 import { ActionFormProps, NavigationAction } from "@/utils/actions";
 import { Select, Stack } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
+
 type Props = ActionFormProps<Omit<NavigationAction, "name">>;
 
 export const NavigationActionForm = ({ form }: Props) => {
@@ -22,6 +24,14 @@ export const NavigationActionForm = ({ form }: Props) => {
 
   return (
     <Stack>
+      {/* This should only be visible on page actions */}
+      <SegmentedControlYesNo
+        label="Run in edit mode"
+        {...form.getInputProps("runInEditMode")}
+        onChange={(value) => {
+          form.setFieldValue("runInEditMode", value);
+        }}
+      />
       <Select
         size="xs"
         placeholder="Select a page"
@@ -33,7 +43,6 @@ export const NavigationActionForm = ({ form }: Props) => {
             value: page.id,
           };
         })}
-        //required
         {...form.getInputProps("pageId")}
         onChange={(value) => {
           const page = pages.find((page) => page.id === value);

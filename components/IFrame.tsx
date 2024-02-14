@@ -1,4 +1,3 @@
-import { useAppMode } from "@/hooks/useAppMode";
 import { useUserTheme } from "@/hooks/useUserTheme";
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
@@ -24,8 +23,8 @@ type Props = {
 export const IFrame = ({ children, projectId, ...props }: Props) => {
   const [contentRef, setContentRef] = useState<HTMLIFrameElement>();
   const setIframeWindow = useEditorStore((state) => state.setIframeWindow);
-  const { isPreviewMode } = useAppMode();
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
+  const navbarWidth = useUserConfigStore((state) => state.navbarWidth);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -53,7 +52,7 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
     }
   }, [contentRef, setIframeWindow]);
 
-  const getContainerStyles = (isPreviewMode: boolean, isTabPinned: boolean) => {
+  const getContainerStyles = (isTabPinned: boolean) => {
     const containerStyles = {
       overflow: "visible",
       border: "none",
@@ -62,20 +61,18 @@ export const IFrame = ({ children, projectId, ...props }: Props) => {
       marginLeft: 0 as string | number,
     };
 
-    if (!isPreviewMode) {
-      containerStyles.width = isTabPinned
-        ? `calc(100% - ${NAVBAR_WIDTH}px)`
-        : `calc(100% - ${NAVBAR_MIN_WIDTH - 50}px)`; // Weird sizing issue that I haven't got time to investigate, had to hack it
+    containerStyles.width = isTabPinned
+      ? `calc(100% - ${navbarWidth}px)`
+      : `calc(100% - ${navbarWidth - 50}px)`; // Weird sizing issue that I haven't got time to investigate, had to hack it
 
-      containerStyles.marginLeft = isTabPinned
-        ? `${NAVBAR_WIDTH}px`
-        : `${NAVBAR_MIN_WIDTH - 50}px`; // Weird sizing issue that I haven't got time to investigate, had to hack it
-    }
+    containerStyles.marginLeft = isTabPinned
+      ? `${navbarWidth}px`
+      : `${navbarWidth - 50}px`; // Weird sizing issue that I haven't got time to investigate, had to hack it
 
     return containerStyles;
   };
 
-  const styles = getContainerStyles(isPreviewMode, isTabPinned);
+  const styles = getContainerStyles(isTabPinned);
 
   const handleMouseDown = useCallback(() => {
     if (isTabPinned) {

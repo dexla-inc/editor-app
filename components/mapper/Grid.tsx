@@ -17,7 +17,6 @@ export type GridProps = {
 
 const GridComponent = forwardRef(
   ({ renderTree, component, ...props }: GridProps, ref) => {
-    console.log("GridComponent");
     const theme = useMantineTheme();
     const editorTree = useEditorStore((state) => state.tree);
     const setEditorTree = useEditorStore((state) => state.setTree);

@@ -49,6 +49,7 @@ export const NavbarSection = ({
   const setActiveTab = useEditorStore((state) => state.setActiveTab);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const setPinTab = useUserConfigStore((state) => state.setIsTabPinned);
+  const setNavbarWidth = useUserConfigStore((state) => state.setNavbarWidth);
   const collapsedItemsCount = useEditorStore(
     (state) => state.collapsedItemsCount,
   );
@@ -161,6 +162,7 @@ export const NavbarSection = ({
           <IconToggle
             onClick={() => {
               setPinTab(!isTabPinned);
+              setNavbarWidth(isTabPinned ? NAVBAR_MIN_WIDTH : NAVBAR_WIDTH);
             }}
             size={ICON_SIZE}
             color="gray"
