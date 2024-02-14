@@ -2,6 +2,7 @@ import { IconSelector } from "@/components/IconSelector";
 import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
+import { useChangeState } from "@/hooks/useChangeState";
 import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
@@ -16,8 +17,9 @@ export const icon = IconCircleDot;
 export const label = "Button Icon";
 
 export const Modifier = withModifier(
-  ({ selectedComponent, selectedComponentIds }) => {
+  ({ selectedComponent, selectedComponentIds, currentState }) => {
     const form = useForm();
+    const { setBackgroundColor } = useChangeState({});
 
     useEffect(() => {
       form.setValues(
@@ -57,7 +59,9 @@ export const Modifier = withModifier(
           <ThemeColorSelector
             label="Background"
             {...form.getInputProps("color")}
-            onChange={(value: string) => handleIconPropsChange("color", value)}
+            onChange={(value: string) =>
+              setBackgroundColor("color", value, form, currentState)
+            }
           />
           <IconSelector
             topLabel="Icon"

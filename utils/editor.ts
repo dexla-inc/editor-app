@@ -5,7 +5,7 @@ import {
   emptyEditorTree,
   useEditorStore,
 } from "@/stores/editor";
-import { Action, ChangeStepAction } from "@/utils/actions";
+import { Action } from "@/utils/actions";
 import { GRAY_OUTLINE } from "@/utils/branding";
 import { structureMapper } from "@/utils/componentMapper";
 import { GRID_SIZE } from "@/utils/config";
@@ -538,10 +538,9 @@ export const updateTreeComponentAttrs = (
 ) => {
   crawl(
     treeRoot,
-    (node, context) => {
+    (node) => {
       if (ids.includes(node.id!)) {
         merge(node, attrs);
-        context.break();
       }
     },
     { order: "bfs" },
@@ -1009,9 +1008,9 @@ export const debouncedTreeComponentAttrsUpdate = debounce(
   (value: Partial<Component>) => {
     const updateTreeComponentAttrs =
       useEditorStore.getState().updateTreeComponentAttrs;
-    const selectedComponentId = useEditorStore.getState().selectedComponentId;
+    const selectedComponentIds = useEditorStore.getState().selectedComponentIds;
 
-    updateTreeComponentAttrs([selectedComponentId!], value);
+    updateTreeComponentAttrs(selectedComponentIds!, value);
   },
   300,
 );
