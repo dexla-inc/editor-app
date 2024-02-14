@@ -5,6 +5,7 @@ import { CustomComponentModal } from "@/components/CustomComponentModal";
 import { Droppable } from "@/components/Droppable";
 import { EditableComponent } from "@/components/EditableComponent";
 import { IFrame } from "@/components/IFrame";
+import { useAppMode } from "@/hooks/useAppMode";
 import { useHotkeysOnIframe } from "@/hooks/useHotkeysOnIframe";
 import {
   debouncedUpdatePageState,
@@ -78,7 +79,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   );
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const { isPreviewMode } = useAppMode();
   const currentProjectId = useEditorStore((state) => state.currentProjectId);
   const currentPageId = useEditorStore((state) => state.currentPageId);
   const setIsSaving = useEditorStore((state) => state.setIsSaving);

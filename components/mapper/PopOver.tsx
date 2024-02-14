@@ -1,3 +1,4 @@
+import { useAppMode } from "@/hooks/useAppMode";
 import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
 import { Component, checkIfIsChild } from "@/utils/editor";
@@ -19,7 +20,7 @@ const PopOverComponent = ({
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentId,
   );
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const { isPreviewMode } = useAppMode();
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,
   );

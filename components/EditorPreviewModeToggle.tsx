@@ -1,12 +1,15 @@
-import { useEditorStore } from "@/stores/editor";
-import { ICON_SIZE } from "@/utils/config";
+import { useAppMode } from "@/hooks/useAppMode";
+import { useUserConfigStore } from "@/stores/userConfig";
+import { ICON_SIZE, NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
 import { Group, Switch, Tooltip, useMantineTheme } from "@mantine/core";
 import { IconBrush, IconEye } from "@tabler/icons-react";
 
 export const EditorPreviewModeToggle = () => {
   const theme = useMantineTheme();
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
-  const setPreviewMode = useEditorStore((state) => state.setPreviewMode);
+  const { isPreviewMode } = useAppMode();
+  const setPreviewMode = useUserConfigStore((state) => state.setPreviewMode);
+  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
+  const setNavbarWidth = useUserConfigStore((state) => state.setNavbarWidth);
 
   return (
     <Tooltip
@@ -23,6 +26,13 @@ export const EditorPreviewModeToggle = () => {
           onChange={(event) => {
             const isPreviewMode = event.currentTarget.checked;
             setPreviewMode(isPreviewMode);
+            setNavbarWidth(
+              isTabPinned && isPreviewMode
+                ? 0
+                : isTabPinned
+                ? NAVBAR_WIDTH
+                : NAVBAR_MIN_WIDTH,
+            );
           }}
         />
       </Group>

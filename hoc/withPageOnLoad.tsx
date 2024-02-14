@@ -1,52 +1,36 @@
-import { useEffect, useState } from "react";
-import { useEditorStore } from "@/stores/editor";
 import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
 import { useTriggers } from "@/hooks/useTriggers";
+import { PageResponse } from "@/requests/pages/types";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export const withPageOnLoad = (WrappedComponent: any) => {
   const Config = (props: any) => {
-    const isEditorMode = useEditorStore(
-      (state) => !state.isPreviewMode && !state.isLive,
-    );
     const {
       asPath,
       query: { id: projectId, page: pageId },
     } = useRouter();
     const { data: pageListQuery } = usePageListQuery(projectId as string);
-    const page = pageListQuery?.results?.find((item) => item.id === pageId)!;
+    const page = pageListQuery?.results?.find(
+      (item) => item.id === pageId,
+    ) as PageResponse;
     const { onPageLoad } = useTriggers({ entity: page });
+    const [actionTriggeredForPath, setActionTriggeredForPath] = useState("");
 
-    const isActionApiCall = page?.actions?.some(
-      (a) => a.action.name === "apiCall" && a.trigger === "onPageLoad",
-    );
-
-    const [isPageValid, setIsPageValid] = useState(
-      isEditorMode || !isActionApiCall,
-    );
-
-    const onTriggerPageActions = async () => {
-      setIsPageValid(isEditorMode || !isActionApiCall);
-      if (!isEditorMode) {
-        if (!onPageLoad) {
-          setIsPageValid(true);
-        } else {
-          try {
-            await onPageLoad?.();
-            setIsPageValid(true);
-          } catch {}
-        }
-      }
-    };
+    const isPageValid = page && asPath.includes(page.id);
 
     useEffect(() => {
-      onTriggerPageActions();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isEditorMode, asPath]);
+      const triggerPageActions = async () => {
+        // TODO: Do not run when runInEditMode is false and the mode is editor.
+        if (isPageValid && onPageLoad && actionTriggeredForPath !== asPath) {
+          await onPageLoad?.();
+          setActionTriggeredForPath(asPath);
+        }
+      };
 
-    if (!isPageValid) {
-      return null;
-    }
+      triggerPageActions();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [asPath, onPageLoad]);
 
     return <WrappedComponent {...props} />;
   };

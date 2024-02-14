@@ -19,6 +19,7 @@ import {
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
 import { useDataContext } from "@/contexts/DataProvider";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
+import { PageResponse } from "@/requests/pages/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useVariableStore } from "@/stores/variables";
@@ -33,7 +34,6 @@ import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
 import { getComponentInitialDisplayValue } from "./common";
 import { ValueProps } from "./types";
-import { PageResponse } from "@/requests/pages/types";
 
 const triggers = [
   "onClick",
@@ -70,8 +70,7 @@ type ActionGroup =
   | "Style & Props"
   | "Feedback"
   | "Utilities & Tools"
-  | "Third-Party Plugins"
-  | "Z Delete";
+  | "Third-Party Plugins";
 
 type ActionInfo = {
   name: string;
@@ -122,6 +121,7 @@ export interface NavigationAction extends BaseAction {
   pageId: string;
   pageSlug: string;
   queryStrings?: Record<string, string>;
+  runInEditMode: boolean;
 }
 
 export interface GoToUrlAction extends BaseAction {
@@ -717,7 +717,10 @@ export const actionMapper = {
   navigateToPage: {
     action: useNavigationAction,
     form: NavigationActionForm,
-    defaultValues: {},
+    defaultValues: {
+      // runInEditMode: isPageAction ? false : true
+      runInEditMode: true,
+    },
   },
   apiCall: {
     action: useApiCallAction,

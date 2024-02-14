@@ -1,10 +1,11 @@
 import { useEditorStore } from "@/stores/editor";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useAppMode } from "./useAppMode";
 
 export const useContentEditable = (componentId: string) => {
   const [isEditable, setIsEditable] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const { isPreviewMode } = useAppMode();
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,
   );

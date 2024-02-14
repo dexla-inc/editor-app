@@ -11,6 +11,7 @@ import {
 } from "@/utils/branding";
 import { DROP_INDICATOR_WIDTH } from "@/utils/config";
 import { useMemo } from "react";
+import { useAppMode } from "./useAppMode";
 
 type Props = {
   componentId: string;
@@ -39,7 +40,7 @@ export const useEditorShadows = ({
     (state) => state.hoveredComponentId,
   );
 
-  const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
 

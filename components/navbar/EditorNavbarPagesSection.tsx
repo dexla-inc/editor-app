@@ -13,7 +13,7 @@ export const EditorNavbarPagesSection = () => {
   const currentPage = router.query.page as string;
   const [page, setPage] = useState<PageResponse | undefined | null>();
   const [search, setSearch] = useState<string>("");
-  const { data: pageListQuery, invalidate } = usePageListQuery(projectId);
+  const { data: pageListQuery } = usePageListQuery(projectId);
   const [pages, setPages] = useState<PageResponse[] | undefined>();
 
   const debouncedSearch = useCallback(
@@ -42,11 +42,7 @@ export const EditorNavbarPagesSection = () => {
           debouncedSearch={debouncedSearch}
         />
       ) : (
-        <PageDetailPane
-          page={page}
-          setPage={setPage}
-          invalidateQuery={invalidate}
-        />
+        <PageDetailPane page={page} setPage={setPage} />
       )}
     </Stack>
   );

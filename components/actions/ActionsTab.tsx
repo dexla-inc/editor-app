@@ -1,13 +1,13 @@
+import { SidebarSection } from "@/components/SidebarSection";
+import { ActionSettingsForm } from "@/components/actions/ActionSettingsForm";
 import { ActionsForm } from "@/components/actions/ActionsForm";
+import { useEditorStore } from "@/stores/editor";
+import { Action, actionMapper } from "@/utils/actions";
+import { Component } from "@/utils/editor";
 import { Box, Button, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Action, actionMapper } from "@/utils/actions";
-import startCase from "lodash.startcase";
-import { SidebarSection } from "@/components/SidebarSection";
 import { IconArrowBadgeRight, IconBolt } from "@tabler/icons-react";
-import { Component } from "@/utils/editor";
-import { useEditorStore } from "@/stores/editor";
-import { ActionSettingsForm } from "@/components/actions/ActionSettingsForm";
+import startCase from "lodash.startcase";
 
 type Props = {
   component: Component;

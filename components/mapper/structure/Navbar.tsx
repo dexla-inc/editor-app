@@ -191,6 +191,7 @@ export const jsonStructure = (props?: any): Component => {
             height: "auto",
           },
         },
+        // @ts-ignore
         children: pages.map((page) => ({
           id: page.id,
           name: "NavLink",
@@ -256,6 +257,7 @@ export const jsonStructure = (props?: any): Component => {
                 flexDirection: "column",
               },
             },
+            // @ts-ignore
             children: bottomPages.map((page) => ({
               id: page.id,
               name: "NavLink",

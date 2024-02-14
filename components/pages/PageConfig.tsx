@@ -1,6 +1,7 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
 import { QueryStringsForm } from "@/components/QueryStringsForm";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
+import { usePageListQuery } from "@/hooks/reactQuery/usePageListQuery";
 import { createPage, deletePage, updatePage } from "@/requests/pages/mutations";
 import {
   PageBody,
@@ -23,10 +24,9 @@ import slugify from "slugify";
 type Props = {
   page?: PageResponse | null | undefined;
   setPage: (page?: PageResponse | null | undefined) => void;
-  invalidateQuery: () => void;
 };
 
-export default function PageConfig({ page, setPage, invalidateQuery }: Props) {
+export default function PageConfig({ page, setPage }: Props) {
   const { copy, copied } = useClipboard();
   const [isLoading, setIsLoading] = useState(false);
   const startLoading = useAppStore((state) => state.startLoading);
@@ -35,7 +35,7 @@ export default function PageConfig({ page, setPage, invalidateQuery }: Props) {
   const projectId = router.query.id as string;
   const [slug, setSlug] = useState("");
   const resetTree = useEditorStore((state) => state.resetTree);
-
+  const { invalidate } = usePageListQuery(projectId);
   const queryStringState = useState(
     page?.queryStrings
       ? Object.entries(page?.queryStrings || {}).map(([key, value]) => ({
@@ -82,7 +82,7 @@ export default function PageConfig({ page, setPage, invalidateQuery }: Props) {
       });
 
       await deletePage(projectId, page?.id as string);
-      invalidateQuery();
+      invalidate();
 
       setIsLoading(false);
 
@@ -131,7 +131,7 @@ export default function PageConfig({ page, setPage, invalidateQuery }: Props) {
         resetTree();
       }
 
-      invalidateQuery();
+      invalidate();
       setPage(values as any);
 
       stopLoading({

@@ -13,11 +13,10 @@ import { forwardRef, memo, useEffect } from "react";
 export type GridProps = {
   renderTree: (component: Component) => any;
   component: Component;
-  isPreviewMode: boolean;
 } & BoxProps;
 
 const GridComponent = forwardRef(
-  ({ renderTree, component, isPreviewMode, ...props }: GridProps, ref) => {
+  ({ renderTree, component, ...props }: GridProps, ref) => {
     const theme = useMantineTheme();
     const editorTree = useEditorStore((state) => state.tree);
     const setEditorTree = useEditorStore((state) => state.setTree);

@@ -10,12 +10,12 @@ import { forwardRef } from "react";
 type Props = {
   renderTree: (component: Component, shareableContent: any) => any;
   component: Component;
+  isPreviewMode?: boolean;
   shareableContent?: any;
 } & FlexProps;
 
 export const ContainerComponent = forwardRef(
-  ({ renderTree, component, ...props }: Props, ref) => {
-    const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+  ({ renderTree, component, isPreviewMode, ...props }: Props, ref) => {
     const isLive = useEditorStore((state) => state.isLive);
 
     const {

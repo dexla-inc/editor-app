@@ -1,9 +1,10 @@
+import { withComponentWrapper } from "@/hoc/withComponentWrapper";
+import { useAppMode } from "@/hooks/useAppMode";
 import { useEditorStore } from "@/stores/editor";
+import { isSame } from "@/utils/componentComparison";
 import { Component, checkIfIsChild } from "@/utils/editor";
 import { Modal as MantineModal, ModalProps } from "@mantine/core";
 import { forwardRef, memo } from "react";
-import { withComponentWrapper } from "@/hoc/withComponentWrapper";
-import { isSame } from "@/utils/componentComparison";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -16,7 +17,7 @@ export const ModalComponent = forwardRef(
       (state) => state.selectedComponentId,
     );
     const theme = useEditorStore((state) => state.theme);
-    const isPreviewMode = useEditorStore((state) => state.isPreviewMode);
+    const { isPreviewMode } = useAppMode();
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
     const updateTreeComponent = useEditorStore(
       (state) => state.updateTreeComponent,
