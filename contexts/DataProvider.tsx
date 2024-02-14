@@ -14,7 +14,7 @@ type DataProviderProps = {
   children: React.ReactNode;
 };
 
-type GetValueProps = {
+export type GetValueProps = {
   value?: ValueProps;
   shareableContent?: any;
   staticFallback?: string;

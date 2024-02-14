@@ -17,7 +17,7 @@ import {
 } from "@/requests/datasources/types";
 
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
-import { useDataContext } from "@/contexts/DataProvider";
+import { GetValueProps, useDataContext } from "@/contexts/DataProvider";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
 import { useDataSourceStore } from "@/stores/datasource";
@@ -219,6 +219,7 @@ export type Action = {
 export type ActionParams = {
   actionId: string;
   router: Router;
+  computeValue: (value: GetValueProps) => any;
   onSuccess?: Action;
   onError?: Action;
   event?: any;
@@ -234,57 +235,56 @@ export type GoToUrlParams = ActionParams & {
   action: GoToUrlAction;
 };
 
-export const useNavigationAction =
-  () =>
-  ({ action, router }: NavigationActionParams) => {
-    const editorState = useEditorStore.getState();
-    const isLive = editorState.isLive;
-    const projectId = editorState.currentProjectId;
+export const useNavigationAction = ({
+  action,
+  router,
+}: NavigationActionParams) => {
+  const editorState = useEditorStore.getState();
+  const isLive = editorState.isLive;
+  const projectId = editorState.currentProjectId;
 
-    if (!action.pageId || !action.pageSlug) {
-      console.error("Page Id is not defined");
-      return;
+  if (!action.pageId || !action.pageSlug) {
+    console.error("Page Id is not defined");
+    return;
+  }
+
+  let url = isLive
+    ? `/${action.pageSlug}`
+    : `/projects/${projectId}/editor/${action.pageId}`;
+
+  if (action.queryStrings && Object.keys(action.queryStrings).length) {
+    const queryStrings = [];
+    for (const key in action.queryStrings) {
+      queryStrings.push(`${key}=${action.queryStrings[key]}`);
     }
 
-    let url = isLive
-      ? `/${action.pageSlug}`
-      : `/projects/${projectId}/editor/${action.pageId}`;
+    url += `?${queryStrings.join("&")}`;
+  }
 
-    if (action.queryStrings && Object.keys(action.queryStrings).length) {
-      const queryStrings = [];
-      for (const key in action.queryStrings) {
-        queryStrings.push(`${key}=${action.queryStrings[key]}`);
-      }
+  router.push(url);
+};
 
-      url += `?${queryStrings.join("&")}`;
-    }
+export const useGoToUrlAction = async ({
+  action,
+  computeValue,
+}: GoToUrlParams) => {
+  const { url, openInNewTab } = action;
+  const value = computeValue({ value: url });
 
-    router.push(url);
-  };
-
-export const useGoToUrlAction = () => {
-  const { computeValue } = useDataContext()!;
-  return async ({ action }: GoToUrlParams) => {
-    const { url, openInNewTab } = action;
-    const value = computeValue({ value: url });
-
-    if (openInNewTab) {
-      window.open(value, "_blank");
-    } else {
-      window.location.href = value;
-    }
-  };
+  if (openInNewTab) {
+    window.open(value, "_blank");
+  } else {
+    window.location.href = value;
+  }
 };
 
 export type DebugActionParams = ActionParams & {
   action: AlertAction;
 };
 
-export const useDebugAction =
-  () =>
-  async ({ action }: DebugActionParams) => {
-    alert(action.message);
-  };
+export const useDebugAction = async ({ action }: DebugActionParams) => {
+  alert(action.message);
+};
 
 export type TriggerLogicFlowActionParams = ActionParams & {
   action: TriggerLogicFlowAction;
@@ -325,73 +325,72 @@ const getComponentDisplayUpdate = (
   } else return createVisibilityObject(visibilityType, currentDisplay);
 };
 
-export const useChangeVisibilityAction = () => {
-  const { computeValue } = useDataContext()!;
-  return ({ action }: TogglePropsActionParams) => {
-    const editorStore = useEditorStore.getState();
-    const updateTreeComponent = editorStore.updateTreeComponent;
-    const tree = editorStore.tree;
-    const componentId = computeValue({ value: action.componentId });
-    const component = getComponentById(tree.root, componentId);
+export const useChangeVisibilityAction = ({
+  action,
+  computeValue,
+}: TogglePropsActionParams) => {
+  const editorStore = useEditorStore.getState();
+  const updateTreeComponent = editorStore.updateTreeComponent;
+  const tree = editorStore.tree;
+  const componentId = computeValue({ value: action.componentId });
+  const component = getComponentById(tree.root, componentId);
 
-    const defaultDisplayValue = getComponentInitialDisplayValue(
-      component?.name!,
-    );
+  const defaultDisplayValue = getComponentInitialDisplayValue(component?.name!);
 
-    // Determine the current display state of the component
-    const currentDisplay = component?.props?.style?.display;
-    const parsedCurrentDisplay = computeValue({
-      value: currentDisplay,
-      staticFallback: defaultDisplayValue,
-    });
+  // Determine the current display state of the component
+  const currentDisplay = component?.props?.style?.display;
+  const parsedCurrentDisplay = computeValue({
+    value: currentDisplay,
+    staticFallback: defaultDisplayValue,
+  });
 
-    // Get value to update the display to
-    const newDisplay = getComponentDisplayUpdate(
-      action.visibilityType,
-      parsedCurrentDisplay,
-      defaultDisplayValue,
-      currentDisplay,
-    );
+  // Get value to update the display to
+  const newDisplay = getComponentDisplayUpdate(
+    action.visibilityType,
+    parsedCurrentDisplay,
+    defaultDisplayValue,
+    currentDisplay,
+  );
 
-    // Update the component with the new display value
-    updateTreeComponent({
-      componentId,
-      props: {
-        style: { display: newDisplay },
-      },
-      save: false,
-    });
-  };
+  // Update the component with the new display value
+  updateTreeComponent({
+    componentId,
+    props: {
+      style: { display: newDisplay },
+    },
+    save: false,
+  });
 };
 
-export const useShowNotificationAction = () => {
-  const { computeValue } = useDataContext()!;
-  return async ({ action }: ShowNotificationActionParams) => {
-    showNotification({
-      title: computeValue({ value: action.title }),
-      message: computeValue({ value: action.message }),
-      color: action.color,
-    });
-  };
+export const useShowNotificationAction = async ({
+  action,
+  computeValue,
+}: ShowNotificationActionParams) => {
+  return showNotification({
+    title: computeValue({ value: action.title }),
+    message: computeValue({ value: action.message }),
+    color: action.color,
+  });
 };
 
-export const useTriggerLogicFlowAction =
-  () => (params: TriggerLogicFlowActionParams) => {
-    executeFlow(params.action.logicFlowId, params);
-  };
+export const useTriggerLogicFlowAction = (
+  params: TriggerLogicFlowActionParams,
+) => {
+  return executeFlow(params.action.logicFlowId, params);
+};
 
-export const useChangeStateAction = () => {
-  const { computeValue } = useDataContext()!;
-  return ({ action }: ChangeStateActionParams) => {
-    const componentId = computeValue({ value: action.componentId });
+export const useChangeStateAction = ({
+  action,
+  computeValue,
+}: ChangeStateActionParams) => {
+  const componentId = computeValue({ value: action.componentId });
 
-    const updateTreeComponentAttrs =
-      useEditorStore.getState().updateTreeComponentAttrs;
+  const updateTreeComponentAttrs =
+    useEditorStore.getState().updateTreeComponentAttrs;
 
-    updateTreeComponentAttrs([componentId], {
-      onLoad: { currentState: action.state },
-    });
-  };
+  updateTreeComponentAttrs([componentId], {
+    onLoad: { currentState: action.state },
+  });
 };
 
 const getVariablesValue = (
@@ -462,14 +461,13 @@ export const prepareRequestData = (
 
 const handleError = async <T>(
   error: any,
-  onError: any,
+  onError: Action,
   router: Router,
   rest: T,
-  entity: Component | PageResponse,
+  computeValue: (val: GetValueProps) => any,
 ) => {
-  const actions = entity.actions ?? [];
-  const onErrorAction = actions.find((a: Action) => a.trigger === "onError");
   let errorMessage = "";
+  const onErrorActionMapped = actionMapper[onError.action.name];
 
   try {
     errorMessage = JSON.parse(error.message);
@@ -477,9 +475,11 @@ const handleError = async <T>(
     errorMessage = error.message;
   }
 
-  await onError({
-    action: onErrorAction?.action,
+  await onErrorActionMapped.action({
+    // @ts-ignore
+    action: onError?.action,
     router,
+    computeValue,
     ...rest,
     data: { value: errorMessage },
   });
@@ -489,21 +489,20 @@ const handleError = async <T>(
 
 const handleSuccess = async <T>(
   responseJson: any,
-  onSuccess: any,
+  onSuccess: Action,
   router: Router,
   rest: T,
-  entity: Component | PageResponse,
   action: APICallAction,
+  computeValue: (val: GetValueProps) => any,
 ) => {
-  const actions = entity.actions ?? [];
-  const onSuccessAction = actions.find(
-    (a: Action) => a.trigger === "onSuccess",
-  );
+  const onSuccessActionMapped = actionMapper[onSuccess.action.name];
 
-  return onSuccess({
-    action: onSuccessAction?.action,
+  return onSuccessActionMapped.action({
+    // @ts-ignore
+    action: onSuccess?.action,
     binds: action.binds,
     router,
+    computeValue,
     ...rest,
     data: responseJson,
   });
@@ -560,144 +559,139 @@ type ApiCallActionRestParams = Pick<
   "event" | "data" | "endpoint"
 >;
 
-export const useApiCallAction = () => {
-  const { computeValue } = useDataContext()!;
+export const useApiCallAction = async ({
+  actionId,
+  action,
+  router,
+  computeValue,
+  onSuccess,
+  onError,
+  entity,
+  ...rest
+}: APICallActionParams): Promise<any> => {
   const projectId = useEditorStore.getState().currentProjectId;
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+  if (entity.props) {
+    setLoadingState(entity.id!, true, updateTreeComponent);
+  }
+  let result = null;
 
-  return async ({
-    actionId,
-    action,
-    router,
-    onSuccess,
-    onError,
-    entity,
-    ...rest
-  }: APICallActionParams) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    if (entity.props) {
-      setLoadingState(entity.id!, true, updateTreeComponent);
+  const endpoints = await getDataSourceEndpoints(projectId as string);
+  const selectedEndpoint = endpoints?.results.find(
+    (e) => e.id === action.endpoint,
+  )!;
+
+  try {
+    const accessToken = useDataSourceStore.getState().authState.accessToken;
+
+    const { url, body } = prepareRequestData(
+      action,
+      selectedEndpoint,
+      computeValue,
+    );
+
+    let responseJson;
+
+    const authHeaderKey =
+      selectedEndpoint?.authenticationScheme === "BEARER"
+        ? "Bearer " + accessToken
+        : "";
+
+    const fetchUrl = selectedEndpoint?.isServerRequest
+      ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
+      : url;
+
+    switch (action.authType) {
+      case "login":
+        responseJson = await performFetch(url, selectedEndpoint, body);
+        const mergedAuthConfig = { ...responseJson, ...action.authConfig };
+        const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
+
+        setAuthTokens(mergedAuthConfig);
+        break;
+      case "logout":
+        const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
+
+        clearAuthTokens();
+
+        responseJson = await performFetch(
+          fetchUrl,
+          selectedEndpoint,
+          body,
+          authHeaderKey,
+        );
+
+        break;
+      default:
+        const refreshAccessToken =
+          useDataSourceStore.getState().refreshAccessToken;
+
+        refreshAccessToken();
+
+        responseJson = await performFetch(
+          fetchUrl,
+          selectedEndpoint,
+          body,
+          authHeaderKey,
+        );
     }
 
-    const endpoints = await getDataSourceEndpoints(projectId as string);
-    const selectedEndpoint = endpoints?.results.find(
-      (e) => e.id === action.endpoint,
-    )!;
-
-    try {
-      const accessToken = useDataSourceStore.getState().authState.accessToken;
-
-      const { url, body } = prepareRequestData(
+    result =
+      onSuccess &&
+      (await handleSuccess<ApiCallActionRestParams>(
+        responseJson,
+        onSuccess,
+        router,
+        rest,
         action,
-        selectedEndpoint,
         computeValue,
-      );
-
-      let responseJson;
-
-      const authHeaderKey =
-        selectedEndpoint?.authenticationScheme === "BEARER"
-          ? "Bearer " + accessToken
-          : "";
-
-      const fetchUrl = selectedEndpoint?.isServerRequest
-        ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
-        : url;
-
-      switch (action.authType) {
-        case "login":
-          responseJson = await performFetch(url, selectedEndpoint, body);
-          const mergedAuthConfig = { ...responseJson, ...action.authConfig };
-          const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
-
-          setAuthTokens(mergedAuthConfig);
-          break;
-        case "logout":
-          const clearAuthTokens = useDataSourceStore.getState().clearAuthTokens;
-
-          clearAuthTokens();
-
-          responseJson = await performFetch(
-            fetchUrl,
-            selectedEndpoint,
-            body,
-            authHeaderKey,
-          );
-
-          break;
-        default:
-          const refreshAccessToken =
-            useDataSourceStore.getState().refreshAccessToken;
-
-          refreshAccessToken();
-
-          responseJson = await performFetch(
-            fetchUrl,
-            selectedEndpoint,
-            body,
-            authHeaderKey,
-          );
-      }
-
-      return (
-        onSuccess &&
-        (await handleSuccess<ApiCallActionRestParams>(
-          responseJson,
-          onSuccess,
-          router,
-          rest,
-          entity,
-          action,
-        ))
-      );
-    } catch (error) {
-      return (
-        onError &&
-        (await handleError<ApiCallActionRestParams>(
-          error,
-          onError,
-          router,
-          rest,
-          entity,
-        ))
-      );
-    } finally {
-      if (entity.props) {
-        setLoadingState(entity.id!, false, updateTreeComponent);
-      }
+      ));
+  } catch (error) {
+    result =
+      onError &&
+      (await handleError<ApiCallActionRestParams>(
+        error,
+        onError,
+        router,
+        rest,
+        computeValue,
+      ));
+  } finally {
+    if (entity.props) {
+      setLoadingState(entity.id!, false, updateTreeComponent);
     }
-  };
+  }
+
+  return result;
 };
 
-export const useChangeLanguageAction =
-  () =>
-  ({ action }: ChangeLanguageActionParams) => {
-    const setLanguage = useEditorStore.getState().setLanguage;
-    setLanguage(action.language);
-  };
+export const useChangeLanguageAction = ({
+  action,
+}: ChangeLanguageActionParams) => {
+  const setLanguage = useEditorStore.getState().setLanguage;
+  setLanguage(action.language);
+};
 
 // IMPORTANT: do not delete the variable data as it is used in the eval
-export const useCustomJavascriptAction =
-  () =>
-  ({ action, data }: any) => {
-    const codeTranspiled = transpile(action.code);
-    return eval(codeTranspiled);
-  };
+export const useCustomJavascriptAction = ({ action, data }: any) => {
+  const codeTranspiled = transpile(action.code);
+  return eval(codeTranspiled);
+};
 
 export type ChangeVariableActionParams = ActionParams & {
   action: ChangeVariableAction;
 };
 
-export const useChangeVariableAction = () => {
-  const { computeValue } = useDataContext()!;
-
-  return async ({ action }: ChangeVariableActionParams) => {
-    const setVariable = useVariableStore.getState().setVariable;
-    const value = computeValue({ value: action.value });
-    setVariable({
-      id: action.variableId,
-      value: value,
-    });
-  };
+export const useChangeVariableAction = async ({
+  action,
+  computeValue,
+}: ChangeVariableActionParams) => {
+  const setVariable = useVariableStore.getState().setVariable;
+  const value = computeValue({ value: action.value });
+  setVariable({
+    id: action.variableId,
+    value: value,
+  });
 };
 
 export const actionMapper = {

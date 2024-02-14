@@ -1,8 +1,9 @@
 import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
 import { Component } from "@/utils/editor";
 import { Router, useRouter } from "next/router";
-import { ChangeEvent, useCallback, useMemo } from "react";
+import { ChangeEvent, useCallback } from "react";
 import { PageResponse } from "@/requests/pages/types";
+import { useDataContext } from "@/contexts/DataProvider";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
@@ -17,6 +18,7 @@ export const useTriggers = ({
   updateTreeComponent,
 }: UseTriggersProps) => {
   const router = useRouter();
+  const { computeValue } = useDataContext()!;
 
   const triggers = () => {
     const actions: Action[] = entity?.actions ?? [];
@@ -35,31 +37,22 @@ export const useTriggers = ({
           return acc;
         }
 
-        const actionFunction = actionMapper[action.action.name]?.action?.();
-        const onSuccessAction = onSuccessActions.find(
-          (sa) => sa.sequentialTo === action.id,
-        );
-        const onErrorAction = onErrorActions.find(
-          (ea) => ea.sequentialTo === action.id,
-        );
-
-        const onSuccessObj = onSuccessAction && {
-          onSuccess: actionMapper[onSuccessAction?.action.name]?.action(),
-        };
-        const onErrorObj = onErrorAction && {
-          onError: actionMapper[onErrorAction?.action.name]?.action(),
-        };
         return {
           ...acc,
           [action.trigger]: (e: any) => {
-            return actionFunction({
+            return actionMapper[action.action.name].action({
               // @ts-ignore
               action: action.action,
               actionId: action.id,
               router: router as Router,
+              computeValue,
               event: e,
-              ...onSuccessObj,
-              ...onErrorObj,
+              onSuccess: onSuccessActions.find(
+                (sa) => sa.sequentialTo === action.id,
+              ),
+              onError: onErrorActions.find(
+                (ea) => ea.sequentialTo === action.id,
+              ),
               entity,
             });
           },
