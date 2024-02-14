@@ -21,14 +21,18 @@ const TextComponent = forwardRef(
     ref: any,
   ) => {
     const contentEditableProps = useContentEditable(component.id as string);
-    const { triggers, hideIfDataIsEmpty, variable, ...componentProps } =
-      component.props as any;
+    const {
+      triggers,
+      hideIfDataIsEmpty,
+      variable,
+      text,
+
+      ...componentProps
+    } = component.props as any;
     const { style, ...restProps } = props as any;
 
     const { textStyle } = useBrandingStyles();
-    const customStyle = merge({}, style, textStyle, {
-      ...(style?.fontSize ? { fontSize: style.fontSize + "px" } : {}),
-    });
+    const customStyle = merge({}, textStyle, style);
 
     const { computeValue } = useDataContext()!;
 

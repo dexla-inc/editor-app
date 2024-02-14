@@ -4,6 +4,7 @@ import { ColorSelector } from "@/components/ColorSelector";
 import { FaviconUrl } from "@/components/FaviconUrl";
 import { FocusRingSelector } from "@/components/FocusRingSelector";
 import { LoaderSelector } from "@/components/LoaderSelector";
+import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
 import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { UnitInput } from "@/components/UnitInput";
@@ -310,6 +311,23 @@ export const EditorNavbarThemesSection =
                 )}
               />
             </Flex>
+            <SegmentedControlInput
+              label="Type"
+              data={[
+                {
+                  label: "TITLE",
+                  value: "TITLE",
+                },
+                {
+                  label: "TEXT",
+                  value: "TEXT",
+                },
+              ]}
+              {...form.getInputProps(`fonts.${currentFontIndex}.type`)}
+              onChange={(value) => {
+                form.setFieldValue(`fonts.${currentFontIndex}.type`, value);
+              }}
+            />
           </Stack>
           <Stack spacing={4}>
             <Title order={6} fw={600}>

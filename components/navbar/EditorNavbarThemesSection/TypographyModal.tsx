@@ -1,4 +1,5 @@
 import { ActionIconDefault } from "@/components/ActionIconDefault";
+import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { UnitInput } from "@/components/UnitInput";
 import { SelectFont } from "@/components/navbar/EditorNavbarThemesSection/SelectFont";
 import { pixelMetrics } from "@/components/navbar/EditorNavbarThemesSection/index";
@@ -35,7 +36,7 @@ export const TypographyModal = ({
     <Modal
       opened={controls.opened}
       onClose={controls.close}
-      size="xl"
+      size="70%"
       styles={{ overlay: { zIndex: 300 }, inner: { zIndex: 400 } }}
     >
       <Container>
@@ -77,6 +78,7 @@ export const TypographyModal = ({
                   <th>Size</th>
                   <th>Line Height</th>
                   <th>Letter Spacing</th>
+                  <th>Type</th>
                   <th></th>
                 </tr>
               </thead>
@@ -130,6 +132,24 @@ export const TypographyModal = ({
                             `fonts.${index}.letterSpacing`,
                           )}
                           size={INPUT_SIZE}
+                        />
+                      </td>
+                      <td>
+                        <SegmentedControlInput
+                          data={[
+                            {
+                              label: "TITLE",
+                              value: "TITLE",
+                            },
+                            {
+                              label: "TEXT",
+                              value: "TEXT",
+                            },
+                          ]}
+                          {...form.getInputProps(`fonts.${index}.type`)}
+                          onChange={(value) => {
+                            form.setFieldValue(`fonts.${index}.type`, value);
+                          }}
                         />
                       </td>
                       <td>

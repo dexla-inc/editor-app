@@ -1,4 +1,3 @@
-import { SizeSelector } from "@/components/SizeSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
@@ -9,7 +8,14 @@ import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { ActionIcon, Flex, SegmentedControl, Stack, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Flex,
+  SegmentedControl,
+  Select,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -42,6 +48,13 @@ export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const theme = useEditorStore((state) => state.theme);
 
+    const fonts = theme.fonts.reduce((acc, font) => {
+      if (font.type === "TEXT") {
+        acc.push({ label: font.tag, value: font.tag, font });
+      }
+      return acc;
+    }, [] as any[]);
+
     const shadow = selectedComponent?.props?.style?.textShadow ?? "";
     const getShadowStyle = (shadow: string) => {
       const values = shadow.split(/\s+/);
@@ -63,7 +76,7 @@ export const Modifier = withModifier(
       "align",
       "style",
       "color",
-      "size",
+      "fontTag",
       "tt",
       "td",
       "truncate",
@@ -72,7 +85,7 @@ export const Modifier = withModifier(
 
     const form = useForm({
       initialValues: merge({}, defaultTextValues, {
-        ...(!isTitle && { size: data.size ?? defaultTextValues.size }),
+        ...(!isTitle && { fontTag: data.fontTag ?? defaultTextValues.fontTag }),
         order: data.order?.toString() ?? defaultTextValues.order,
         color: data.color ?? defaultTextValues.color,
         align: data.align ?? defaultTextValues.align,
@@ -92,13 +105,23 @@ export const Modifier = withModifier(
       <form>
         <Stack spacing="xs">
           {!isTitle && (
-            <SizeSelector
-              label="Size"
-              {...form.getInputProps("size")}
+            <Select
+              label="Type"
+              data={fonts}
+              {...form.getInputProps("fontTag")}
               onChange={(value) => {
-                form.setFieldValue("size", value as string);
+                form.setFieldValue("fontTag", value as string);
+                const selectedFont = fonts.find(
+                  (font) => font.value === value,
+                ).font;
+
                 debouncedTreeUpdate(selectedComponentIds, {
-                  size: value,
+                  fontTag: value,
+                  style: {
+                    fontSize: selectedFont.fontSize,
+                    fontWeight: selectedFont.fontWeight,
+                    lineHeight: selectedFont.lineHeight,
+                  },
                 });
               }}
             />

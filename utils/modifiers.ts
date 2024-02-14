@@ -83,6 +83,7 @@ export const requiredModifiers: RequiredModifiers = {
       fontWeight: 500,
       textShadow: "0px 0px 0px transparent",
     },
+    fontTag: "P",
     order: 1,
     truncate: false,
     tt: "none",
