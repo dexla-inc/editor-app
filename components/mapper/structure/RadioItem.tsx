@@ -5,6 +5,7 @@ import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
+  const label = props.label ?? "New Radio Item";
 
   return {
     id: nanoid(),
@@ -13,7 +14,7 @@ export const jsonStructure = (props?: any): Component => {
     props: {
       value: "change-me",
       style: {
-        borderRadius: px(theme.radius.md),
+        borderRadius: `${px(theme.radius.md)}px`,
       },
       ...(props.props || {}),
     },
@@ -51,6 +52,7 @@ export const jsonStructure = (props?: any): Component => {
             props: {
               name: "IconCircle",
               width: "24px",
+              color: "Border.6",
               style: {
                 position: "relative",
                 width: "26px",
@@ -70,7 +72,7 @@ export const jsonStructure = (props?: any): Component => {
             description: "Text",
             children: [],
             props: {
-              children: "New Radio Item",
+              children: label,
               color: "Black.6",
               size: "sm",
               style: {

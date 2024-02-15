@@ -58,16 +58,6 @@ export const jsonStructure = (props?: any): Component => {
           ...defaultButtonIcon,
           props: buttonIconProps,
           blockDroppingChildrenInside: true,
-          actions: [
-            {
-              id: nanoid(),
-              trigger: "onClick",
-              action: {
-                name: "closeModal",
-                modalId,
-              },
-            },
-          ],
         },
       ],
     },
