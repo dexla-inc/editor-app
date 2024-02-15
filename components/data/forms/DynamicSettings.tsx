@@ -79,8 +79,6 @@ export const DynamicSettings = ({
     ? get(exampleResponse, onLoadValues.resultsKey)
     : exampleResponse;
 
-  console.log("selectableObject", selectableObject);
-
   const selectableObjectKeys = extractKeys(selectableObject);
 
   useEffect(() => {
