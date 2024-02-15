@@ -8,7 +8,8 @@ import {
   Component,
   debouncedTreeComponentChildrenUpdate,
 } from "@/utils/editor";
-import { SegmentedControl, Stack, Text, TextInput, Title } from "@mantine/core";
+import { SegmentedControl, Stack } from "@mantine/core";
+import { TableDataForm } from "./forms/TableDataForm";
 
 export type DataProps = {
   component: Component;
@@ -57,17 +58,12 @@ export const TableData = ({ component, endpoints, dataType }: DataProps) => {
           onSave={onSave}
           customKeys={["columns"]}
         >
-          {({ form }) => {
+          {({ form, selectableObjectKeys }) => {
             return (
-              <Stack spacing="xs" my="xs">
-                <Title order={6} mt="xs">
-                  Options
-                </Title>
-                <Text size="xs" color="dimmed">
-                  Set up the data structure
-                </Text>
-                <TextInput label="Columns" {...form.getInputProps("columns")} />
-              </Stack>
+              <TableDataForm
+                form={form}
+                selectableObjectKeys={selectableObjectKeys}
+              />
             );
           }}
         </DynamicSettings>

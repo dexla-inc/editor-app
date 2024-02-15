@@ -7,6 +7,7 @@ import { useData } from "@/hooks/useData";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { useInputsStore } from "@/stores/inputs";
+import { AUTOCOMPLETE_OFF_PROPS, extractKeys } from "@/utils/common";
 import { DEFAULT_STALE_TIME } from "@/utils/config";
 import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Divider, Flex, Select, Text, TextInput } from "@mantine/core";
@@ -78,9 +79,9 @@ export const DynamicSettings = ({
     ? get(exampleResponse, onLoadValues.resultsKey)
     : exampleResponse;
 
-  const selectableObjectKeys = Object.keys(
-    Array.isArray(selectableObject) ? selectableObject[0] : selectableObject,
-  );
+  console.log("selectableObject", selectableObject);
+
+  const selectableObjectKeys = extractKeys(selectableObject);
 
   useEffect(() => {
     if (form.isTouched()) {
@@ -157,6 +158,7 @@ export const DynamicSettings = ({
                     mins
                   </Text>
                 }
+                {...AUTOCOMPLETE_OFF_PROPS}
               />
             </Flex>
             {!Array.isArray(exampleResponse) && (

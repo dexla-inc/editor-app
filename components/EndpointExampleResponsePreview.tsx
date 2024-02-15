@@ -8,6 +8,7 @@ type Props = {
 };
 
 export const EndpointExampleResponsePreview = ({ endpoint }: Props) => {
+  console.log(endpoint.exampleResponse);
   return (
     <Popover width={300} position="bottom-end" withArrow withinPortal>
       <Popover.Target>
