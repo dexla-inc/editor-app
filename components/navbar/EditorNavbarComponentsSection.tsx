@@ -1,8 +1,9 @@
 import { DraggableComponent } from "@/components/DraggableComponent";
-import { GenerateComponentsAIButton } from "@/components/GenerateComponentsAIButton";
+import GridItemComponent from "@/components/navbar/ComponentGridItem";
+import { useCustomComponentList } from "@/hooks/reactQuery/useCustomComponentList";
 import { useUserTheme } from "@/hooks/useUserTheme";
-import { getComponentList } from "@/requests/components/queries-noauth";
 import { CustomComponentResponse } from "@/requests/components/types";
+import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import {
   ComponentCategoryType,
@@ -26,9 +27,7 @@ import {
   Title,
 } from "@mantine/core";
 import { IconFrustum, IconSearch } from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/router";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 type DraggableComponentData = {
   id: string;
@@ -36,41 +35,42 @@ type DraggableComponentData = {
   category?: ComponentCategoryType;
 };
 
+const componentsGroupedByCategory = Object.keys(structureMapper).reduce(
+  (groups, key) => {
+    const draggable = structureMapper[key]?.Draggable;
+    const category = structureMapper[key]?.category;
+
+    if (draggable) {
+      if (!groups[category]) {
+        groups[category] = [];
+      }
+      groups[category].push({ draggable, id: toSpaced(key) });
+    }
+
+    return groups;
+  },
+  {} as Record<string, DraggableComponentData[]>,
+);
+
 export const EditorNavbarComponentsSection = () => {
   const [query, setQuery] = useState<string>("");
   const [componentTypeToShow, setComponentTypeToShow] =
     useState<string>("default");
-  const router = useRouter();
+  const projectId = useEditorStore((state) => state.currentProjectId) as string;
   const activeCompany = usePropelAuthStore((state) => state.activeCompany);
   const customStackRef = useRef<HTMLDivElement>(null);
-  const userTheme = useUserTheme(router.query.id! as string);
+  const userTheme = useUserTheme(projectId);
 
-  const componentList = useQuery({
-    queryKey: ["components", router.query.id, activeCompany.orgId],
-    queryFn: () =>
-      getComponentList(router.query.id as string, activeCompany.orgId),
-    enabled: !!router.query.id && componentTypeToShow === "custom",
-  });
-
-  const componentsGroupedByCategory = Object.keys(structureMapper).reduce(
-    (groups, key) => {
-      const draggable = structureMapper[key]?.Draggable;
-      const category = structureMapper[key]?.category;
-
-      if (draggable) {
-        if (!groups[category]) {
-          groups[category] = [];
-        }
-        groups[category].push({ draggable, id: toSpaced(key) });
-      }
-
-      return groups;
-    },
-    {} as Record<string, DraggableComponentData[]>,
+  const { data: componentList } = useCustomComponentList(
+    projectId,
+    activeCompany.orgId ?? "",
+    componentTypeToShow,
   );
 
-  const customComponents =
-    componentList.data?.results.filter((c) => c.scope !== "GLOBAL") ?? [];
+  const customComponents = useMemo(
+    () => componentList?.results.filter((c) => c.scope !== "GLOBAL") ?? [],
+    [componentList?.results],
+  );
 
   const renderTree = useCallback((component: Component) => {
     const componentToRender = componentMapper[component.name];
@@ -95,7 +95,6 @@ export const EditorNavbarComponentsSection = () => {
           },
         ]}
       />
-      <GenerateComponentsAIButton />
       <TextInput
         onChange={(e) => setQuery(e.target.value)}
         value={query}
@@ -122,9 +121,7 @@ export const EditorNavbarComponentsSection = () => {
                     <Title order={6}>{category}</Title>
                   </Grid.Col>
                   {filteredComponents.map(({ id, draggable: Draggable }) => (
-                    <Grid.Col span={6} key={id}>
-                      <Draggable />
-                    </Grid.Col>
+                    <GridItemComponent key={id} id={id} Draggable={Draggable} />
                   ))}
                 </>
               );

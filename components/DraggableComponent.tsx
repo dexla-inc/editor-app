@@ -2,7 +2,7 @@ import { Draggable } from "@/components/Draggable";
 import { useEditorStore } from "@/stores/editor";
 import { structureMapper } from "@/utils/componentMapper";
 import { toSpaced } from "@/utils/dashboardTypes";
-import { Text } from "@mantine/core";
+import { Box, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -29,8 +29,19 @@ export const DraggableComponent = ({ id, text, data, icon }: Props) => {
 
   return (
     <Draggable id={id} data={draggableData} isDeletable={!!data} sx={{}}>
-      {icon}
-      <Text size="xs">{toSpaced(text ?? id)}</Text>
+      <Box
+        h={60}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: 0,
+        }}
+      >
+        {icon}
+        <Text size="xs">{toSpaced(text ?? id)}</Text>
+      </Box>
     </Draggable>
   );
 };
