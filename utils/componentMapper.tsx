@@ -250,17 +250,7 @@ export const structureMapper: StructureMapper = {
     category: "Input",
     icon: <IconClick size={ICON_SIZE} />,
   },
-  CountdownButton: {
-    structure: (props: any) => CountdownButtonStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="CountdownButton"
-        icon={<IconClockHour5 size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconClockHour5 size={ICON_SIZE} />,
-  },
+
   Link: {
     structure: (props: any) => LinkStructure.jsonStructure(props),
     Draggable: () => (
@@ -403,6 +393,17 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconFile size={ICON_SIZE} />,
+  },
+  CountdownButton: {
+    structure: (props: any) => CountdownButtonStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="CountdownButton"
+        icon={<IconClockHour5 size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconClockHour5 size={ICON_SIZE} />,
   },
   // RadioItem: {
   //   structure: (props: any) => RadioItemStructure.jsonStructure(props),

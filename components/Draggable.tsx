@@ -72,6 +72,7 @@ export const Draggable = ({
     >
       <Card
         w="100%"
+        h={92}
         withBorder
         pos="relative"
         sx={{
