@@ -21,7 +21,7 @@ import { IconMapPin, IconPlus, IconTrash } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
-import { SwitchSelector } from "../SwitchSelector";
+import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
 export const icon = IconMapPin;
 export const label = "Map Settings";
@@ -259,29 +259,29 @@ export const Modifier = withModifier(
                   }}
                 />
               </Group>
-              <Group noWrap>
-                <SwitchSelector
-                  topLabel="Show Control"
+              <Group grow noWrap>
+                <SegmentedControlYesNo
+                  label="Show Control"
                   {...form.getInputProps("options.mapTypeControl")}
-                  checked={form.getInputProps("options.mapTypeControl").value}
-                  onChange={(event) => {
-                    form.setFieldValue(
-                      "options.mapTypeControl",
-                      event.currentTarget.checked,
-                    );
+                  onChange={(value) => {
+                    form.setFieldValue("options.mapTypeControl", value);
                     debouncedTreeUpdate(selectedComponentIds, {
-                      options: { mapTypeControl: event.currentTarget.checked },
+                      options: {
+                        mapTypeControl: value,
+                        streetViewControl: value,
+                        fullscreenControl: value,
+                        zoomControl: value,
+                      },
                     });
                   }}
                 />
-                <SwitchSelector
-                  topLabel="fade"
+                <SegmentedControlYesNo
+                  label="Fade"
                   {...form.getInputProps("fade")}
-                  checked={form.getInputProps("fade").value}
-                  onChange={(event) => {
-                    form.setFieldValue("fade", event.currentTarget.checked);
+                  onChange={(value) => {
+                    form.setFieldValue("fade", value);
                     debouncedTreeUpdate(selectedComponentIds, {
-                      fade: event.currentTarget.checked,
+                      fade: value,
                     });
                   }}
                 />
