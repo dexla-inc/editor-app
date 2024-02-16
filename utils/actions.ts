@@ -219,6 +219,7 @@ export type Action = {
 export type ActionParams = {
   actionId: string;
   router: Router;
+  setNonEditorActions: any;
   computeValue: (value: GetValueProps) => any;
   onSuccess?: Action;
   onError?: Action;
@@ -465,6 +466,7 @@ const handleError = async <T>(
   router: Router,
   rest: T,
   computeValue: (val: GetValueProps) => any,
+  setNonEditorActions: any,
 ) => {
   let errorMessage = "";
   const onErrorActionMapped = actionMapper[onError.action.name];
@@ -494,6 +496,7 @@ const handleSuccess = async <T>(
   rest: T,
   action: APICallAction,
   computeValue: (val: GetValueProps) => any,
+  setNonEditorActions: any,
 ) => {
   const onSuccessActionMapped = actionMapper[onSuccess.action.name];
 
@@ -502,6 +505,7 @@ const handleSuccess = async <T>(
     action: onSuccess?.action,
     binds: action.binds,
     router,
+    setNonEditorActions,
     computeValue,
     ...rest,
     data: responseJson,
@@ -564,6 +568,7 @@ export const useApiCallAction = async ({
   action,
   router,
   computeValue,
+  setNonEditorActions,
   onSuccess,
   onError,
   entity,
@@ -645,6 +650,7 @@ export const useApiCallAction = async ({
         rest,
         action,
         computeValue,
+        setNonEditorActions,
       ));
   } catch (error) {
     result =
@@ -655,6 +661,7 @@ export const useApiCallAction = async ({
         router,
         rest,
         computeValue,
+        setNonEditorActions,
       ));
   } finally {
     if (entity.props) {
