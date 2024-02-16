@@ -9,6 +9,10 @@ import isEmpty from "lodash.isempty";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
 import { createContext, useContext } from "react";
+import { useNodes } from "reactflow";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
+import { safeJsonParse } from "@/utils/common";
 
 type DataProviderProps = {
   children: React.ReactNode;
@@ -23,6 +27,7 @@ export type GetValueProps = {
 type DataContextProps = {
   variables: { list: Record<string, any> };
   components: { list: Record<string, any> };
+  actions: { list: Record<string, any> };
   browserList: any[];
   auth: AuthState & { refreshToken?: string };
   computeValue: (props: GetValueProps) => any;
@@ -48,6 +53,32 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const inputsStore = useInputsStore((state) => state.inputValues);
   const browser = useRouter();
   const auth = useDataSourceStore((state) => state.getAuthState());
+  const nodes = useNodes<NodeData>();
+  const projectId = useEditorStore((state) => state.currentProjectId ?? "");
+  const { data: endpoints } = useDataSourceEndpoints(projectId);
+
+  const actions = nodes.reduce(
+    (acc, node) => {
+      const { action, endpoint: endpointId } = node.data.form ?? {};
+      if (action === "apiCall") {
+        if (endpointId) {
+          const endpoint = endpoints?.results.find((e) => e.id === endpointId);
+          const exampleResponse = safeJsonParse(
+            endpoint?.exampleResponse ?? "",
+          );
+          const data = Array.isArray(exampleResponse)
+            ? exampleResponse[0]
+            : exampleResponse;
+
+          acc.list[endpointId] = endpoint;
+          acc[endpointId] = data;
+        }
+      }
+
+      return acc;
+    },
+    { list: {} } as any,
+  );
 
   const variables = variablesList.reduce(
     (acc, variable) => {
@@ -119,6 +150,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         components,
         browserList,
         auth,
+        actions,
         computeValue,
       }}
     >

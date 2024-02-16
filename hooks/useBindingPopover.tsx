@@ -2,7 +2,7 @@ import { useDataContext } from "@/contexts/DataProvider";
 
 type BindType = {
   selectedEntityId: string;
-  entity: "auth" | "components" | "browser" | "variables";
+  entity: "auth" | "components" | "browser" | "variables" | "actions";
 };
 
 const setEntityString = ({ selectedEntityId, entity }: BindType) => {
@@ -12,13 +12,18 @@ const setEntityString = ({ selectedEntityId, entity }: BindType) => {
 };
 
 export const useBindingPopover = () => {
-  const { variables, components } = useDataContext()!;
+  const { variables, components, actions } = useDataContext()!;
 
   const getEntityEditorValue = ({ selectedEntityId, entity }: BindType) => {
     const entityHandlers = {
       auth: () => setEntityString({ selectedEntityId, entity }),
       components: () =>
         `${entity}[/* ${components?.list[selectedEntityId].description} */'${selectedEntityId}']`,
+      actions: () => {
+        const parsed = JSON.parse(selectedEntityId);
+        return `${entity}[/* ${actions?.list[parsed.id].methodType} ${actions
+          ?.list[parsed.id].relativeUrl} */ '${parsed.id}'].${parsed.path}`;
+      },
       browser: () => setEntityString({ selectedEntityId, entity }),
       variables: () => {
         try {

@@ -50,7 +50,7 @@ export default function BindingPopover({
 }: Props) {
   const [tab, setTab] = useState<BindingTab>("components");
   const [filterKeyword, setFilterKeyword] = useState<string>("");
-  const { variables, components, browserList, auth, computeValue } =
+  const { variables, components, browserList, auth, actions, computeValue } =
     useDataContext()!;
   const [selectedItem, setSelectedItem] = useState<string>();
 
@@ -87,7 +87,7 @@ export default function BindingPopover({
   const currentValue = computeValue({ value });
 
   const entitiesDataTreeList: Array<{
-    entity: "auth" | "components" | "browser" | "variables";
+    entity: "auth" | "components" | "browser" | "variables" | "actions";
     dataItems: any;
   }> = [
     {
@@ -106,7 +106,14 @@ export default function BindingPopover({
       entity: "browser",
       dataItems: browserList,
     },
+    {
+      entity: "actions",
+      dataItems: Object.values(actions.list),
+    },
   ];
+
+  // console.log("actions", Object.values(actions.list));
+  // console.log("variables", Object.values(variables.list));
 
   return (
     <Popover

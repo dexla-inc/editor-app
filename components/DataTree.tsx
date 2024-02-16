@@ -1,11 +1,12 @@
 import { JSONSelector } from "@/components/JSONSelector";
 import { Button, ScrollArea, Stack } from "@mantine/core";
 import { useMemo } from "react";
+import { safeJsonParse } from "@/utils/common";
 
 type Props = {
   dataItems: any[];
   onItemSelection: (selected: string) => void;
-  type?: "components" | "variables" | "auth" | "browser";
+  type?: "components" | "variables" | "auth" | "browser" | "actions";
   filterKeyword?: string;
 };
 
@@ -29,6 +30,27 @@ const DataItemButton = ({
 );
 
 const DataItem = ({ onClick, item, onItemSelection, type }: DataItemProps) => {
+  if (type === "actions") {
+    const exampleResponse = safeJsonParse(item?.exampleResponse ?? "");
+    const data = Array.isArray(exampleResponse)
+      ? exampleResponse[0]
+      : exampleResponse;
+
+    return (
+      <JSONSelector
+        name={item.relativeUrl}
+        data={data}
+        onSelectValue={(selected) =>
+          onItemSelection(
+            `${JSON.stringify({
+              id: item?.id,
+              path: selected.path,
+            })}`,
+          )
+        }
+      />
+    );
+  }
   if (type === "components")
     return <DataItemButton item={item} onClick={onClick} />;
   if (type === "auth" || type === "browser")
@@ -70,7 +92,7 @@ export function DataTree({
     () => filterDataItems(dataItems, filterKeyword),
     [dataItems, filterKeyword],
   );
-
+  console.log({ filteredDataItems });
   return (
     <ScrollArea.Autosize mah={150}>
       <Stack align="flex-start" spacing="xs">
