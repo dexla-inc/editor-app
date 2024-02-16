@@ -59,7 +59,9 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const nodes = useNodes<NodeData>();
   const projectId = useEditorStore((state) => state.currentProjectId ?? "");
   const { data: endpoints } = useDataSourceEndpoints(projectId);
-  const [nonEditorActions, setNonEditorActions] = useState({});
+  const [nonEditorActions, setNonEditorActions] = useState<Record<string, any>>(
+    {},
+  );
   const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
   const isEditorMode = !isPreviewMode && !isLive;
@@ -87,8 +89,8 @@ export const DataProvider = ({ children }: DataProviderProps) => {
           error,
         });
         acc[node.id] = {
-          success: isEditorMode ? success : nonEditorActions?.[node.id],
-          error: isEditorMode ? error : nonEditorActions?.[node.id],
+          success: isEditorMode ? success : nonEditorActions[node.id],
+          error: isEditorMode ? error : nonEditorActions[node.id],
         };
       }
 
