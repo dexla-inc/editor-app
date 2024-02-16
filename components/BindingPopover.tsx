@@ -112,9 +112,6 @@ export default function BindingPopover({
     },
   ];
 
-  // console.log("actions", Object.values(actions.list));
-  // console.log("variables", Object.values(variables.list));
-
   return (
     <Popover
       opened={isOpen}

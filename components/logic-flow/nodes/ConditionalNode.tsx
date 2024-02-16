@@ -7,7 +7,6 @@ import { Button, Select, Stack } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { IconArrowFork } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
-import { useEffect } from "react";
 import { NodeProps } from "reactflow";
 
 type FormValues = {
@@ -34,21 +33,14 @@ export const NodeAvatar = (props: any) => {
 
 type NodeFormType = {
   form: UseFormReturnType<FormValues>;
-  data: ConditionalNodeData;
 };
 
-export const NodeForm = ({ form, data }: NodeFormType) => {
+export const NodeForm = ({ form }: NodeFormType) => {
   const selectedNode = useFlowStore((state) => state.selectedNode);
   const isUpdating = useFlowStore((state) => state.isUpdating);
   const projectId = useEditorStore((state) => state.currentProjectId) as string;
 
   const { data: variables } = useVariableListQuery(projectId);
-
-  useEffect(() => {
-    if (!form.values.variable && !form.isTouched("variable")) {
-      form.setFieldValue("variable", data.form?.variable);
-    }
-  }, [data, form]);
 
   return (
     <Stack>

@@ -1,13 +1,5 @@
 import { NodeTriggerCondition } from "@/utils/triggerConditions";
-import {
-  Box,
-  Card,
-  CSSObject,
-  Flex,
-  Stack,
-  Text,
-  useMantineTheme,
-} from "@mantine/core";
+import { Card, CSSObject, Stack, Text, useMantineTheme } from "@mantine/core";
 import { IconBoxModel2 } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
 import { Handle, NodeProps, Position } from "reactflow";
@@ -52,8 +44,8 @@ export const CustomNode = (props: CustomNodeProps) => {
         border: "1px solid",
         borderColor: `${
           selectedNode?.id === node.id
-            ? theme.colors.gray[6]
-            : theme.colors.gray[3]
+            ? theme.colors.gray[3]
+            : theme.colors.gray[6]
         } !important`,
         minWidth: "70px",
 
@@ -86,7 +78,7 @@ export const CustomNode = (props: CustomNodeProps) => {
         {Avatar ? <Avatar size={14} /> : <NodeAvatar size={14} />}
         <Text size={6} weight="bold" w="90%" ta="center">
           {node.type === "conditionalNode" && "Conditional"}
-          {startCase(data.form.action)}
+          {startCase(data.form.action)} - {data.label}
         </Text>
       </Stack>
       <Stack spacing={4} mb={4} align="flex-end">
