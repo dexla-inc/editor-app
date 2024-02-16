@@ -107,16 +107,6 @@ export const Modifier = withModifier(
             }
           />
           <ThemeColorSelector
-            label="Button Color"
-            {...form.getInputProps("color")}
-            onChange={(value: string) => {
-              form.setFieldValue("color", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                color: value,
-              });
-            }}
-          />
-          <ThemeColorSelector
             label="Text Color"
             {...form.getInputProps("textColor")}
             onChange={(value: string) => {
