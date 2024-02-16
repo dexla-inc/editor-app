@@ -1,7 +1,7 @@
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { useEditorStore } from "@/stores/editor";
-import { extractKeys } from "@/utils/common";
+import { extractKeys } from "@/utils/data";
 import { Component, getParentComponentData } from "@/utils/editor";
 import { Select } from "@mantine/core";
 import get from "lodash.get";

@@ -17,6 +17,7 @@
     "@faker-js/faker": "6.1.2",
     "@flyyer/use-googlefonts": "^0.4.2",
     "@formkit/auto-animate": "^0.8.0",
+    "@hello-pangea/dnd": "^16.5.0",
     "@iarna/toml": "^2.2.5",
     "@liveblocks/client": "^1.8.2",
     "@liveblocks/zustand": "^1.8.2",
