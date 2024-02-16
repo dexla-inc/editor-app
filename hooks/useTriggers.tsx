@@ -18,7 +18,7 @@ export const useTriggers = ({
   updateTreeComponent,
 }: UseTriggersProps) => {
   const router = useRouter();
-  const { computeValue } = useDataContext()!;
+  const { computeValue, setNonEditorActions } = useDataContext()!;
 
   const triggers = () => {
     const actions: Action[] = entity?.actions ?? [];
@@ -46,6 +46,7 @@ export const useTriggers = ({
               actionId: action.id,
               router: router as Router,
               computeValue,
+              setNonEditorActions,
               event: e,
               onSuccess: onSuccessActions.find(
                 (sa) => sa.sequentialTo === action.id,

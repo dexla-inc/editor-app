@@ -8,12 +8,13 @@ import get from "lodash.get";
 import isEmpty from "lodash.isempty";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 import { useNodes } from "reactflow";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
 import { safeJsonParse } from "@/utils/common";
 import merge from "lodash.merge";
+import { useAppMode } from "@/hooks/useAppMode";
 
 type DataProviderProps = {
   children: React.ReactNode;
@@ -32,6 +33,7 @@ type DataContextProps = {
   browserList: any[];
   auth: AuthState & { refreshToken?: string };
   computeValue: (props: GetValueProps) => any;
+  setNonEditorActions: any;
 };
 
 const parseVariableValue = (value: string): any => {
@@ -57,6 +59,10 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const nodes = useNodes<NodeData>();
   const projectId = useEditorStore((state) => state.currentProjectId ?? "");
   const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const [nonEditorActions, setNonEditorActions] = useState({});
+  const { isPreviewMode } = useAppMode();
+  const isLive = useEditorStore((state) => state.isLive);
+  const isEditorMode = !isPreviewMode && !isLive;
 
   const actions = nodes.reduce(
     (acc, node) => {
@@ -75,14 +81,14 @@ export const DataProvider = ({ children }: DataProviderProps) => {
           ? errorExampleResponse[0]
           : errorExampleResponse;
 
-        acc.list[endpointId] = merge({}, endpoint, {
+        acc.list[node.id] = merge({}, endpoint, {
           name: node.data.label,
           success,
           error,
         });
-        acc[endpointId] = {
-          success,
-          error,
+        acc[node.id] = {
+          success: isEditorMode ? success : nonEditorActions?.[node.id],
+          error: isEditorMode ? error : nonEditorActions?.[node.id],
         };
       }
 
@@ -163,6 +169,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         auth,
         actions,
         computeValue,
+        setNonEditorActions,
       }}
     >
       {children}
