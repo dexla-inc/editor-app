@@ -717,7 +717,7 @@ export const actionMapper = {
     action: useApiCallAction,
     form: APICallActionForm,
     defaultValues: {
-      authConfig: {},
+      authConfig: useDataSourceStore.getState().apiAuthConfig,
       showLoader: true,
       datasources: [],
       binds: {

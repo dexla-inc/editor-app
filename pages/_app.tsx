@@ -137,57 +137,56 @@ export default function App(props: AppProps) {
               <ReactQueryDevtools initialIsOpen={false} />
               <InitializeVariables pageProps={pageProps} />
               <Hydrate state={pageProps.dehydratedState}>
-                <DataProvider>
-                  <ModalsProvider
-                    modals={{ logicFlows: LogicFlowInitialModal }}
-                  >
-                    <Notifications />
-                    <Global
-                      styles={{
-                        "*, *::before, *::after": {
-                          boxSizing: "border-box",
-                        },
-                        body: {
-                          margin: 0,
-                          padding: 0,
-                          ...theme.fn.fontStyles(),
-                          lineHeight: theme.lineHeight,
-                          maxHeight: "100vh",
-                          minHeight: "100vh",
-                          background:
-                            !isLive && isDarkTheme ? DARK_MODE : LIGHT_MODE,
-                          color:
-                            !isLive && isDarkTheme ? GREEN_COLOR : theme.black,
-                          // For WebKit browsers (e.g., Chrome, Safari)
-                          "::-webkit-scrollbar": {
-                            width: isLive ? "0px" : "8px",
-                            height: isLive && "0px",
-                          },
-                          "::-webkit-scrollbar-thumb": {
-                            backgroundColor: !isLive && "#888",
-                            borderRadius: !isLive && "10px",
-                          },
+                <Notifications />
+                <Global
+                  styles={{
+                    "*, *::before, *::after": {
+                      boxSizing: "border-box",
+                    },
+                    body: {
+                      margin: 0,
+                      padding: 0,
+                      ...theme.fn.fontStyles(),
+                      lineHeight: theme.lineHeight,
+                      maxHeight: "100vh",
+                      minHeight: "100vh",
+                      background:
+                        !isLive && isDarkTheme ? DARK_MODE : LIGHT_MODE,
+                      color: !isLive && isDarkTheme ? GREEN_COLOR : theme.black,
+                      // For WebKit browsers (e.g., Chrome, Safari)
+                      "::-webkit-scrollbar": {
+                        width: isLive ? "0px" : "8px",
+                        height: isLive && "0px",
+                      },
+                      "::-webkit-scrollbar-thumb": {
+                        backgroundColor: !isLive && "#888",
+                        borderRadius: !isLive && "10px",
+                      },
 
-                          // For Firefox
-                          scrollbarWidth: isLive ? "none" : "thin",
-                          scrollbarColor: !isLive && "#888 transparent",
+                      // For Firefox
+                      scrollbarWidth: isLive ? "none" : "thin",
+                      scrollbarColor: !isLive && "#888 transparent",
 
-                          // For IE and Edge
-                          msOverflowStyle: isLive
-                            ? "none"
-                            : "-ms-autohiding-scrollbar",
-                        },
+                      // For IE and Edge
+                      msOverflowStyle: isLive
+                        ? "none"
+                        : "-ms-autohiding-scrollbar",
+                    },
 
-                        html: {
-                          maxHeight: "-webkit-fill-available",
-                        },
-                      }}
-                    />
-                    <ReactFlowProvider>
+                    html: {
+                      maxHeight: "-webkit-fill-available",
+                    },
+                  }}
+                />
+                <ReactFlowProvider>
+                  <DataProvider>
+                    <ModalsProvider
+                      modals={{ logicFlows: LogicFlowInitialModal }}
+                    >
                       <Component {...pageProps} />
-                    </ReactFlowProvider>
-                  </ModalsProvider>
-                </DataProvider>
+                    </ModalsProvider>
+                  </DataProvider>
+                </ReactFlowProvider>
               </Hydrate>
             </QueryClientProvider>
             <SpeedInsights />

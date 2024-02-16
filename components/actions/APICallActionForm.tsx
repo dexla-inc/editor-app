@@ -16,7 +16,7 @@ import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
 type Props = ActionFormProps<Omit<APICallAction, "name" | "datasource">>;
 
-export const APICallActionForm = ({ form, isLogicFlow, actionId }: Props) => {
+export const APICallActionForm = ({ form }: Props) => {
   const router = useRouter();
   const projectId = router.query.id as string;
 

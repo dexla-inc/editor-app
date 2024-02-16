@@ -93,9 +93,7 @@ export default function LogicFlowInitialModal({}: ContextModalProps) {
         </LogicFlowShell>
       </Tabs.Panel>
       <Tabs.Panel value={"flow"}>
-        <ReactFlowProvider>
-          <LogicFlowsPage flowId={flowId} />
-        </ReactFlowProvider>
+        <LogicFlowsPage flowId={flowId} />
       </Tabs.Panel>
     </Tabs>
   );
