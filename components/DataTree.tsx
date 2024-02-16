@@ -90,7 +90,7 @@ export function DataTree({
     () => filterDataItems(dataItems, filterKeyword),
     [dataItems, filterKeyword],
   );
-  console.log({ filteredDataItems });
+
   return (
     <ScrollArea.Autosize mah={150}>
       <Stack align="flex-start" spacing="xs">
