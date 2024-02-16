@@ -33,16 +33,9 @@ export const NodeAvatar = (props: any) => {
 
 type NodeFormType = {
   form: UseFormReturnType<FormValues>;
-  data: ActionNodeData;
 };
 
-export const NodeForm = ({ form, data }: NodeFormType) => {
-  useEffect(() => {
-    if (!form.values.action && !form.isTouched("action")) {
-      form.setFieldValue("action", data.form?.action);
-    }
-  }, [data, form]);
-
+export const NodeForm = ({ form }: NodeFormType) => {
   const actionMapped = form.values?.action
     ? // @ts-ignore
       actionMapper[form.values.action]

@@ -21,8 +21,9 @@ export const useBindingPopover = () => {
         `${entity}[/* ${components?.list[selectedEntityId].description} */'${selectedEntityId}']`,
       actions: () => {
         const parsed = JSON.parse(selectedEntityId);
-        return `${entity}[/* ${actions?.list[parsed.id].methodType} ${actions
-          ?.list[parsed.id].relativeUrl} */ '${parsed.id}'].${parsed.path}`;
+        return `${entity}[/* ${actions?.list[parsed.id].name} */ '${
+          parsed.id
+        }'].${parsed.path}`;
       },
       browser: () => setEntityString({ selectedEntityId, entity }),
       variables: () => {

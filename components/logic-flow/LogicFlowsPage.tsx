@@ -198,6 +198,10 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
       },
     });
     updateNodeInternals(selectedNode?.id!);
+
+    if (!isConditionalNode) {
+      return;
+    }
     values.outputs?.forEach((output: any, index: number) => {
       const connectedEdge = connectedEdges.find(
         (edge) => edge.sourceHandle === output.id,
@@ -235,6 +239,9 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
         ]);
       }
     });
+
+    form.resetDirty();
+    form.resetTouched();
   };
 
   const nodeData = nodesData[selectedNode?.type as keyof typeof nodesData];
@@ -273,11 +280,7 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
                       {...form.getInputProps("label")}
                       mb="sm"
                     />
-                    <NodeForm
-                      key={selectedNode?.id}
-                      form={form}
-                      data={selectedNode.data}
-                    />
+                    <NodeForm key={selectedNode?.id} form={form} />
                   </Stack>
                 </Stack>
               )}

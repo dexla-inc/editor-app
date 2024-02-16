@@ -13,6 +13,7 @@ import { useNodes } from "reactflow";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
 import { safeJsonParse } from "@/utils/common";
+import merge from "lodash.merge";
 
 type DataProviderProps = {
   children: React.ReactNode;
@@ -60,19 +61,29 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const actions = nodes.reduce(
     (acc, node) => {
       const { action, endpoint: endpointId } = node.data.form ?? {};
-      if (action === "apiCall") {
-        if (endpointId) {
-          const endpoint = endpoints?.results.find((e) => e.id === endpointId);
-          const exampleResponse = safeJsonParse(
-            endpoint?.exampleResponse ?? "",
-          );
-          const data = Array.isArray(exampleResponse)
-            ? exampleResponse[0]
-            : exampleResponse;
+      if (action === "apiCall" && endpointId) {
+        const endpoint = endpoints?.results.find((e) => e.id === endpointId);
 
-          acc.list[endpointId] = endpoint;
-          acc[endpointId] = data;
-        }
+        const exampleResponse = safeJsonParse(endpoint?.exampleResponse ?? "");
+        const errorExampleResponse = safeJsonParse(
+          endpoint?.errorExampleResponse ?? "",
+        );
+        const success = Array.isArray(exampleResponse)
+          ? exampleResponse[0]
+          : exampleResponse;
+        const error = Array.isArray(errorExampleResponse)
+          ? errorExampleResponse[0]
+          : errorExampleResponse;
+
+        acc.list[endpointId] = merge({}, endpoint, {
+          name: node.data.label,
+          success,
+          error,
+        });
+        acc[endpointId] = {
+          success,
+          error,
+        };
       }
 
       return acc;

@@ -31,15 +31,13 @@ const DataItemButton = ({
 
 const DataItem = ({ onClick, item, onItemSelection, type }: DataItemProps) => {
   if (type === "actions") {
-    const exampleResponse = safeJsonParse(item?.exampleResponse ?? "");
-    const data = Array.isArray(exampleResponse)
-      ? exampleResponse[0]
-      : exampleResponse;
-
     return (
       <JSONSelector
-        name={item.relativeUrl}
-        data={data}
+        name={item.name}
+        data={{
+          success: item.success,
+          error: item.error,
+        }}
         onSelectValue={(selected) =>
           onItemSelection(
             `${JSON.stringify({
