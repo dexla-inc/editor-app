@@ -1,32 +1,22 @@
 import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
-import { jsonStructure as textStructure } from "@/components/mapper/structure/Text";
-import { jsonStructure as tableCellStructure } from "@/components/mapper/structure/table/TableCell";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { useEditorStore } from "@/stores/editor";
+import { Component } from "@/utils/editor";
 import {
-  Component,
-  debouncedTreeComponentChildrenUpdate,
-} from "@/utils/editor";
-import { Box, SegmentedControl, Stack, Text, Title } from "@mantine/core";
-import { TableColumnItemsDraggable } from "./forms/TableColumnItemsDraggable";
+  Box,
+  NumberInput,
+  SegmentedControl,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
+import { TableForm } from "./forms/static/TableForm";
 
 export type DataProps = {
   component: Component;
   endpoints: PagingResponse<Endpoint> | undefined;
   dataType: "static" | "dynamic";
-};
-
-const onSave = async (component: Component | undefined, form: any) => {
-  const columns = form.values.onLoad.columns?.split(",");
-
-  if (component?.children?.length !== columns.length) {
-    return await debouncedTreeComponentChildrenUpdate(
-      Array(columns.length)
-        .fill(0)
-        .map(() => tableCellStructure({ children: [textStructure()] })),
-    );
-  }
 };
 
 export const TableData = ({ component, endpoints, dataType }: DataProps) => {
@@ -50,33 +40,32 @@ export const TableData = ({ component, endpoints, dataType }: DataProps) => {
           })
         }
       />
-      {dataType === "static" && <></>}
+      {dataType === "static" && <TableForm component={component} />}
       {dataType === "dynamic" && (
         <DynamicSettings
           component={component}
           endpoints={endpoints!}
-          onSave={onSave}
-          customKeys={["columns"]}
+          customProps={{
+            columnCount: 5,
+          }}
         >
-          {({
-            form,
-            selectableObjectKeys,
-          }: {
-            form: any;
-            selectableObjectKeys: string[];
-          }) => {
+          {({ form, selectableObjectKeys }) => {
             return (
               <Stack spacing="xs" my="xs">
                 <Box>
                   <Title order={6} mt="xs">
-                    Table display
+                    Options
                   </Title>
                   <Text size="xs" color="dimmed">
-                    Set up the data structure
+                    Configure the table
                   </Text>
                 </Box>
-                <TableColumnItemsDraggable
-                  selectableObjectKeys={selectableObjectKeys}
+
+                <NumberInput
+                  label="Column count"
+                  data={selectableObjectKeys}
+                  min={1}
+                  {...form.getInputProps("columnCount")}
                 />
               </Stack>
             );

@@ -38,7 +38,10 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
         <DynamicSettings
           component={component}
           endpoints={endpoints!}
-          customKeys={["dataLabelKey", "dataValueKey"]}
+          customProps={{
+            dataLabelKey: "name",
+            dataValueKey: "id",
+          }}
         >
           {({ form, selectableObjectKeys }) => {
             return (

@@ -3,6 +3,8 @@ export function extractKeys(
   obj: Array<{}> | Array<number | string> | {},
   parentKey: string = "",
 ): string[] {
+  if (obj === null || obj === undefined) return [];
+
   let keys: string[] = [];
 
   const isArrayOfObjects =

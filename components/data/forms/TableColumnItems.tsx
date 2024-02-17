@@ -3,15 +3,16 @@ import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Flex, Stack, Switch, TextInput, Tooltip } from "@mantine/core";
 import { useListState } from "@mantine/hooks";
 import { IconGripVertical } from "@tabler/icons-react";
-import { forwardRef } from "react";
+import { forwardRef, useMemo } from "react";
 
 type TableColumnItemProps = {
   value: string;
+  label?: string;
   dragHandleProps: any;
 } & React.RefAttributes<HTMLDivElement>;
 
 const TableColumnItem = forwardRef<HTMLDivElement, TableColumnItemProps>(
-  ({ value, dragHandleProps, ...props }, ref) => (
+  ({ value, label, dragHandleProps, ...props }, ref) => (
     <Flex align="center" justify="center" gap="xs" ref={ref} {...props}>
       <Tooltip label="Reorder">
         <Flex align="center" style={{ cursor: "pointer" }} {...dragHandleProps}>
@@ -23,8 +24,9 @@ const TableColumnItem = forwardRef<HTMLDivElement, TableColumnItemProps>(
       </Tooltip>
       <Switch />
       <Tooltip label={value}>
-        <TextInput value={value} readOnly />
+        <TextInput value={label ?? value} />
       </Tooltip>
+      <TextInput value={value} sx={{ display: "none" }} />
     </Flex>
   ),
 );
@@ -32,13 +34,20 @@ const TableColumnItem = forwardRef<HTMLDivElement, TableColumnItemProps>(
 TableColumnItem.displayName = "TableColumnItem";
 
 export type TableColumnItemsDraggableProps = {
+  form: any;
   selectableObjectKeys: string[];
 };
 
 export function TableColumnItemsDraggable({
+  form,
   selectableObjectKeys,
 }: TableColumnItemsDraggableProps) {
   const [state, handlers] = useListState(selectableObjectKeys);
+
+  useMemo(() => {
+    handlers.setState(selectableObjectKeys);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectableObjectKeys]);
 
   return (
     <DragDropContext

@@ -15,13 +15,12 @@ import { Divider, Flex, Select, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconDatabase } from "@tabler/icons-react";
 import get from "lodash.get";
-import { pick } from "next/dist/lib/pick";
 import { useEffect, useState } from "react";
 
 type Props = {
   component: Component;
   endpoints: PagingResponse<Endpoint>;
-  customKeys?: string[];
+  customProps?: Record<string, any>;
   children?: (props: any) => JSX.Element;
   onSave?: (component: Component, form: any) => Promise<any>;
 };
@@ -32,7 +31,7 @@ export const DynamicSettings = ({
   component,
   endpoints,
   children,
-  customKeys = [],
+  customProps = {},
   onSave = onSaveDefault,
 }: Props) => {
   const [initiallyOpened, setInitiallyOpened] = useState(true);
@@ -45,18 +44,23 @@ export const DynamicSettings = ({
 
   const setInputValue = useInputsStore((state) => state.setInputValue);
   const resultsKeysList = getObjectAndArrayKeys(exampleResponse);
-  const resetCustomKeys = customKeys.reduce(
-    (acc, key) => {
-      acc[key] = "";
-      return acc;
-    },
-    {} as Record<string, string>,
-  );
+
+  const mergedInitialValues = Object.keys({
+    ...customProps,
+    ...component.onLoad,
+  }).reduce((acc, key) => {
+    const onLoadValue = component.onLoad?.[key];
+    const isOnLoadValueEmpty =
+      onLoadValue === "" || onLoadValue === undefined || onLoadValue === null;
+    // @ts-ignore
+    acc[key] = isOnLoadValueEmpty ? customProps[key] : onLoadValue;
+    return acc;
+  }, {});
 
   const form = useForm({
     initialValues: {
       onLoad: {
-        ...pick(component.onLoad ?? {}, customKeys),
+        ...mergedInitialValues,
         endpointId: component.onLoad?.endpointId ?? undefined,
         resultsKey: component.onLoad?.resultsKey ?? "",
         staleTime: component.onLoad?.staleTime ?? DEFAULT_STALE_TIME,
@@ -111,7 +115,6 @@ export const DynamicSettings = ({
                 ...onLoadValues,
                 endpointId: selected,
                 resultsKey: "",
-                ...resetCustomKeys,
               },
             });
             setInputValue(component.id!, "");
@@ -171,7 +174,6 @@ export const DynamicSettings = ({
                   const newValues = {
                     ...onLoadValues,
                     resultsKey: selected,
-                    ...resetCustomKeys,
                   };
                   setInputValue(component.id!, "");
                   form.setValues({ onLoad: newValues });

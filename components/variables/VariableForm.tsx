@@ -1,3 +1,6 @@
+import { MonacoEditorJson } from "@/components/MonacoEditorJson";
+import { SegmentedControlInput } from "@/components/SegmentedControlInput";
+import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { useVariable } from "@/hooks/reactQuery/useVariable";
 import {
   FrontEndTypes,
@@ -16,11 +19,9 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { Editor } from "@monaco-editor/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { SegmentedControlInput } from "../SegmentedControlInput";
-import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
+import { TopLabel } from "../TopLabel";
 
 type VariablesFormValues = {
   name: string;
@@ -42,7 +43,7 @@ function convertDefaultValueToString(type: string, defaultValue: any): string {
     case "OBJECT":
     case "ARRAY":
       try {
-        return JSON.stringify(defaultValue, null, 2);
+        return defaultValue;
       } catch (error) {
         console.error("Error converting defaultValue to string:", error);
         return "";
@@ -130,54 +131,48 @@ export const VariableForm = ({ variableId }: Props) => {
       case "NUMBER":
         return (
           <NumberInput
-            size="sm"
             label="Default Value"
+            size="sm"
             {...form.getInputProps("defaultValue")}
           />
         );
       case "BOOLEAN":
         return (
           <SegmentedControlInput
+            label="Default Value"
             data={[
               { label: "True", value: "true" },
               { label: "False", value: "false" },
             ]}
-            label="Default Value"
             {...form.getInputProps("defaultValue")}
           />
         );
       case "OBJECT":
       case "ARRAY":
         return (
-          <Editor
-            height="100px"
-            defaultLanguage="json"
-            {...(variableId
-              ? {
-                  value: form.values.defaultValue
-                    ? safeJsonParse(form.values.defaultValue)
-                    : "",
-                  onChange: (value: any) => {
-                    form.setFieldValue(
-                      "defaultValue",
-                      JSON.stringify(value, null, 2) ?? "",
-                    );
-                  },
-                }
-              : {
-                  value: form.values.defaultValue,
-                  onChange: (value: any) => {
-                    form.setFieldValue("defaultValue", value ?? "");
-                  },
-                })}
-            options={{
-              wordWrap: "on",
-              scrollBeyondLastLine: false,
-              minimap: {
-                enabled: false,
-              },
-            }}
-          />
+          <Stack>
+            <TopLabel text="Default Value" size="sm" />
+            <MonacoEditorJson
+              {...(variableId
+                ? {
+                    value: form.values.defaultValue
+                      ? safeJsonParse(form.values.defaultValue)
+                      : "",
+                    onChange: (value: any) => {
+                      form.setFieldValue(
+                        "defaultValue",
+                        JSON.stringify(value, null, 2) ?? "",
+                      );
+                    },
+                  }
+                : {
+                    value: form.values.defaultValue,
+                    onChange: (value: any) => {
+                      form.setFieldValue("defaultValue", value ?? "");
+                    },
+                  })}
+            />
+          </Stack>
         );
       default:
         return null;

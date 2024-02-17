@@ -1,13 +1,11 @@
-import { WarningAlert } from "@/components/Alerts";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
-import { Divider, Stack, Switch, Textarea } from "@mantine/core";
+import { Stack, Switch } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTable } from "@tabler/icons-react";
 import get from "lodash.get";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { SwitchSelector } from "../SwitchSelector";
 import { useEffect } from "react";
 
 export const icon = IconTable;
@@ -77,8 +75,8 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          <SwitchSelector
-            topLabel="Striped"
+          <Switch
+            label="Striped"
             {...form.getInputProps("striped")}
             onChange={(event) => {
               form.setFieldValue("striped", event.currentTarget.checked);
@@ -87,28 +85,6 @@ export const Modifier = withModifier(
               });
             }}
           />
-
-          <Divider label="Headers" labelPosition="center" />
-          {form.values.data &&
-            Object.keys(JSON.parse(form.values.data)[0] ?? {}).map((key) => {
-              return (
-                <Switch
-                  size="xs"
-                  key={key}
-                  label={key}
-                  checked={!!get(form.values.headers, key, false)}
-                  onChange={(e) => {
-                    const headers = {
-                      ...form.values.headers,
-                      [key]: e.currentTarget.checked,
-                    };
-                    form.setFieldValue("headers", headers);
-                    debouncedTreeUpdate(selectedComponentIds, { headers });
-                  }}
-                />
-              );
-            })}
-          <Divider label="Config" labelPosition="center" />
           <Switch
             size="xs"
             label="Sorting"
@@ -133,26 +109,6 @@ export const Modifier = withModifier(
               };
               form.setFieldValue("config", config);
               debouncedTreeUpdate(selectedComponentIds, { config });
-            }}
-          />
-          {isThereAnyConfigChecked && (
-            <WarningAlert text="Ensure that you bind the action for the activated configurations" />
-          )}
-          <Divider label="Data" labelPosition="center" />
-          <Textarea
-            autosize
-            label="Data"
-            size="xs"
-            {...form.getInputProps("data")}
-            onChange={(e) => {
-              form.setFieldValue("data", e.target.value);
-              try {
-                debouncedTreeUpdate(selectedComponentIds, {
-                  data: JSON.parse(e.target.value ?? ""),
-                });
-              } catch (error) {
-                console.error(error);
-              }
             }}
           />
         </Stack>

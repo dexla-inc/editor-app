@@ -38,6 +38,9 @@ const defaultComponentProps = {
   Stack: {
     defaultProps: () => ({ spacing: "xs" }),
   },
+  NumberInput: {
+    defaultProps: () => ({ size: "xs" }),
+  },
 };
 
 // App Theme
