@@ -18,7 +18,7 @@ import {
 } from "@mantine/core";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { forwardRef, memo } from "react";
+import { forwardRef, memo, useEffect } from "react";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -76,13 +76,15 @@ const InputComponent = forwardRef(
 
     const handleInputChange = (e: any) => {
       let newValue = e.target ? e.target.value : e;
-      console.log(newValue, e.target.value);
       if (type === "number") {
         newValue = newValue ? Number(newValue) : 0;
       }
       setStoreInputValue(component.id!, newValue);
-      onChange && onChange(e);
     };
+
+    useEffect(() => {
+      onChange && onChange();
+    }, [inputValue]);
 
     // handle increase number range
     const increaseNumber = () => {
