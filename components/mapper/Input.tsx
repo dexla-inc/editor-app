@@ -1,4 +1,6 @@
 import { Icon } from "@/components/Icon";
+import { InputLoader } from "@/components/InputLoader";
+import { PasswordInput } from "@/components/mapper/PasswordInput";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
@@ -17,8 +19,6 @@ import {
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo } from "react";
-import { InputLoader } from "../InputLoader";
-import { PasswordInput } from "./PasswordInput";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -50,8 +50,9 @@ const InputComponent = forwardRef(
       ...componentProps
     } = component.props as any;
 
-    const { name: iconName } = icon && icon!.props!;
     const { type, ...restComponentProps } = componentProps;
+    const { onChange, ...restTriggers } = triggers || {};
+    const { name: iconName } = icon && icon!.props!;
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const _defaultValue = type === "number" || type === "numberRange" ? 0 : "";
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
@@ -72,13 +73,15 @@ const InputComponent = forwardRef(
       const el = iframeWindow?.document.getElementById(component.id!);
       el?.focus();
     };
+
     const handleInputChange = (e: any) => {
       let newValue = e.target ? e.target.value : e;
+      console.log(newValue, e.target.value);
       if (type === "number") {
         newValue = newValue ? Number(newValue) : 0;
       }
       setStoreInputValue(component.id!, newValue);
-      triggers?.onChange && triggers?.onChange(e);
+      onChange && onChange(e);
     };
 
     // handle increase number range
@@ -143,6 +146,7 @@ const InputComponent = forwardRef(
                   },
                 }}
                 value={parseToNumber(inputValue)}
+                {...restTriggers}
                 onChange={handleInputChange}
                 label={undefined}
               />
@@ -181,6 +185,7 @@ const InputComponent = forwardRef(
             }}
             min={0}
             value={parseToNumber(inputValue)}
+            {...restTriggers}
             onChange={handleInputChange}
             rightSection={loading ? <InputLoader /> : null}
             label={undefined}
@@ -191,6 +196,7 @@ const InputComponent = forwardRef(
             ref={ref}
             value={inputValue}
             isPreviewMode={isPreviewMode}
+            {...restTriggers}
             onChange={handleInputChange}
             displayRequirements={displayRequirements}
             testParameters={{
@@ -229,6 +235,7 @@ const InputComponent = forwardRef(
               input: customStyle,
             }}
             value={inputValue}
+            {...restTriggers}
             onChange={handleInputChange}
             rightSection={
               loading ? (

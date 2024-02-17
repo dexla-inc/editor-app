@@ -17,7 +17,7 @@ import {
 } from "@/requests/datasources/types";
 
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
-import { GetValueProps, useDataContext } from "@/contexts/DataProvider";
+import { GetValueProps } from "@/contexts/DataProvider";
 import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
 import { useDataSourceStore } from "@/stores/datasource";
@@ -748,7 +748,9 @@ export const actionMapper = {
   showNotification: {
     action: useShowNotificationAction,
     form: ShowNotificationActionForm,
-    defaultValues: {},
+    defaultValues: {
+      color: "Primary.6",
+    },
   },
   changeState: {
     action: useChangeStateAction,

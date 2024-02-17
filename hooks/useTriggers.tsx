@@ -1,9 +1,9 @@
+import { useDataContext } from "@/contexts/DataProvider";
+import { PageResponse } from "@/requests/pages/types";
 import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
 import { Component } from "@/utils/editor";
 import { Router, useRouter } from "next/router";
 import { ChangeEvent, useCallback } from "react";
-import { PageResponse } from "@/requests/pages/types";
-import { useDataContext } from "@/contexts/DataProvider";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
@@ -65,6 +65,10 @@ export const useTriggers = ({
 
   const handleOnChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
+      if (typeof triggers().onChange === "function") {
+        triggers().onChange(e);
+      }
+
       if (entity.props?.error) {
         updateTreeComponent?.({
           componentId: entity.id,
