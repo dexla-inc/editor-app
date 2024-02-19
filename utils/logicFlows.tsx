@@ -51,18 +51,15 @@ const run = async (state: FlowData, params: any) => {
 
     while (nextNodes.length) {
       const nextNode = nextNodes[0];
-
       const compute = computeNodeMapper[nextNode?.type!];
-      const result = await compute?.(nextNode, params);
-      params.setNonEditorActions((prev: any) => {
-        prev[nextNode.id] = result;
-        return prev;
-      });
+
+      await compute?.(nextNode, params);
+
       nextNodes = getOutgoers(nextNode, state.nodes, state.edges);
     }
   };
 
-  compute();
+  await compute();
 };
 
 export const executeFlow = async (flowId: string, params: any) => {

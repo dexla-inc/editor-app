@@ -34,10 +34,20 @@ export const compute = async (node: Node, params: any) => {
       action: { name: action, ...formDataTransformed },
     };
     // @ts-ignore
-    await actionMapper[action].action(actionData);
-    return Promise.resolve();
+    const result = await actionMapper[action].action(actionData);
+
+    params.setNonEditorActions((prev: any) => {
+      prev[node.id] = { success: result };
+      return prev;
+    });
+
+    return result;
   } catch (error) {
-    console.error({ error });
+    params.setNonEditorActions((prev: any) => {
+      prev[node.id] = { error };
+      return prev;
+    });
+
     return Promise.reject(error);
   }
 };
