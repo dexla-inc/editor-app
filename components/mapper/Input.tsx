@@ -74,7 +74,7 @@ const InputComponent = forwardRef(
       el?.focus();
     };
 
-    const handleInputChange = (e: any) => {
+    const handleChange = (e: any) => {
       let newValue = e.target ? e.target.value : e;
       if (type === "number") {
         newValue = newValue ? Number(newValue) : 0;
@@ -82,16 +82,12 @@ const InputComponent = forwardRef(
       setStoreInputValue(component.id!, newValue);
     };
 
-    useEffect(() => {
-      onChange && onChange();
-    }, [inputValue]);
-
     // handle increase number range
     const increaseNumber = () => {
       let val = inputValue;
       if (val === undefined) val = 1;
       else val += 1;
-      handleInputChange(val);
+      handleChange(val);
     };
 
     // handle decrease number range
@@ -99,13 +95,17 @@ const InputComponent = forwardRef(
       let val = inputValue;
       if (val === undefined) val = -1;
       else val -= 1;
-      handleInputChange(val);
+      handleChange(val);
     };
 
     const parseToNumber = (value: any) => {
       const number = Number(value);
       return isNaN(number) ? 0 : number;
     };
+
+    useEffect(() => {
+      onChange && onChange();
+    }, [inputValue]);
 
     return (
       <>
@@ -149,7 +149,7 @@ const InputComponent = forwardRef(
                 }}
                 value={parseToNumber(inputValue)}
                 {...restTriggers}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 label={undefined}
               />
 
@@ -188,7 +188,7 @@ const InputComponent = forwardRef(
             min={0}
             value={parseToNumber(inputValue)}
             {...restTriggers}
-            onChange={handleInputChange}
+            onChange={handleChange}
             rightSection={loading ? <InputLoader /> : null}
             label={undefined}
           />
@@ -199,7 +199,7 @@ const InputComponent = forwardRef(
             value={inputValue}
             isPreviewMode={isPreviewMode}
             {...restTriggers}
-            onChange={handleInputChange}
+            onChange={handleChange}
             displayRequirements={displayRequirements}
             testParameters={{
               passwordRange,
@@ -238,7 +238,7 @@ const InputComponent = forwardRef(
             }}
             value={inputValue}
             {...restTriggers}
-            onChange={handleInputChange}
+            onChange={handleChange}
             rightSection={
               loading ? (
                 <InputLoader />

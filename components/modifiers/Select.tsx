@@ -62,6 +62,7 @@ export const Modifier = withModifier(
           data: selectedComponent?.props?.data,
           withAsterisk: selectedComponent?.props?.withAsterisk,
           clearable: selectedComponent?.props?.clearable,
+          searchable: selectedComponent?.props?.searchable,
           customText: selectedComponent?.props?.customText,
           customLinkText: selectedComponent?.props?.customLinkText,
           customLinkUrl: selectedComponent?.props?.customLinkUrl,
@@ -79,16 +80,6 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
-          <SegmentedControlYesNo
-            label="Clearable"
-            {...form.getInputProps("clearable")}
-            onChange={(value) => {
-              form.setFieldValue("clearable", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                clearable: value,
-              });
-            }}
-          />
           <TextInput
             label="Placeholder"
             size="xs"
@@ -109,7 +100,26 @@ export const Modifier = withModifier(
               });
             }}
           />
-
+          <SegmentedControlYesNo
+            label="Searchable"
+            {...form.getInputProps("searchable")}
+            onChange={(value) => {
+              form.setFieldValue("searchable", value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                searchable: value,
+              });
+            }}
+          />
+          <SegmentedControlYesNo
+            label="Clearable"
+            {...form.getInputProps("clearable")}
+            onChange={(value) => {
+              form.setFieldValue("clearable", value);
+              debouncedTreeUpdate(selectedComponentIds, {
+                clearable: value,
+              });
+            }}
+          />
           <Stack spacing={2}>
             <TopLabel text="Dropdown Position" />
             <SegmentedControl

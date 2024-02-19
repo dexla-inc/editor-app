@@ -1,10 +1,8 @@
 import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
-import { ICON_SIZE } from "@/utils/config";
 import { ValueProps } from "@/utils/types";
-import { ActionIcon, TextInput, TextInputProps } from "@mantine/core";
-import { IconCurrentLocation } from "@tabler/icons-react";
+import { TextInput, TextInputProps } from "@mantine/core";
 
 type Props = Omit<TextInputProps, "value" | "onChange"> & {
   componentId?: string;
@@ -57,14 +55,15 @@ export const ComponentToBindFromInput = ({
         onBlur={() => {
           setHighlightedComponentId(null);
         }}
-        rightSection={
-          onPickComponent &&
-          !isLogicFlow && (
-            <ActionIcon onClick={onBindComponent} size="xs">
-              <IconCurrentLocation size={ICON_SIZE} />
-            </ActionIcon>
-          )
-        }
+        // Commentating out as it doesn't work
+        // rightSection={
+        //   onPickComponent &&
+        //   !isLogicFlow && (
+        //     <ActionIcon onClick={onBindComponent} size="xs">
+        //       <IconCurrentLocation size={ICON_SIZE} />
+        //     </ActionIcon>
+        //   )
+        // }
         styles={{
           ...(!isLogicFlow && {
             rightSection: { width: "3.65rem", justifyContent: "flex-end" },
