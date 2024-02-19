@@ -28,7 +28,9 @@ const SelectComponent = forwardRef(
       textColor,
       ...componentProps
     } = component.props as any;
+
     const { dataLabelKey, dataValueKey, resultsKey } = component.onLoad ?? {};
+    const { onChange, onSearchChange, ...restTriggers } = triggers || {};
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const { borderStyle, inputStyle } = useBrandingStyles();
     const customStyle = merge({}, borderStyle, inputStyle, props.style, {
@@ -69,9 +71,14 @@ const SelectComponent = forwardRef(
       }
     }, [component.props?.data, dataType]);
 
-    const handleInputChange = (value: any) => {
+    const handleChange = (value: any) => {
       setInputValue(component.id!, value);
-      triggers?.onChange && triggers?.onChange(value);
+      onChange && onChange(value);
+    };
+
+    // Merging this to see if there are problems with multipe calls in prod
+    const handleSearchChange = (value: any) => {
+      onSearchChange && onSearchChange(value);
     };
 
     return (
@@ -79,7 +86,9 @@ const SelectComponent = forwardRef(
         ref={ref}
         {...props}
         {...componentProps}
-        {...triggers}
+        onChange={handleChange}
+        onSearchChange={handleSearchChange}
+        {...restTriggers}
         style={{}}
         styles={{
           root: {
@@ -101,7 +110,6 @@ const SelectComponent = forwardRef(
         rightSection={loading ? <InputLoader /> : null}
         label={undefined}
         value={inputValue}
-        onChange={handleInputChange}
       />
     );
   },

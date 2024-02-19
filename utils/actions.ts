@@ -38,7 +38,6 @@ import { ValueProps } from "./types";
 const triggers = [
   "onClick",
   "onHover",
-  "onDoubleClick", // Do not think we need this, can just use onClick
   "onChange",
   "onFocus",
   "onBlur",
@@ -48,6 +47,7 @@ const triggers = [
   "onInvalid",
   "onReset",
   "onKeyDown",
+  "onSearchChange",
   // table actions
   "onRowClick",
   "onRowHover",

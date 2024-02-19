@@ -1026,7 +1026,7 @@ export const componentMapper: ComponentMapper = {
       />
     ),
     modifiers: ["select", "spacing", "size", "border", "effects"],
-    actionTriggers: ["onChange"],
+    actionTriggers: ["onChange", "onSearchChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Input: {
