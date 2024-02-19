@@ -32,7 +32,7 @@ import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
-import { getComponentInitialDisplayValue } from "./common";
+import { getComponentInitialDisplayValue, safeJsonParse } from "./common";
 import { ValueProps } from "./types";
 
 const triggers = [
@@ -466,16 +466,9 @@ const handleError = async <T>(
   router: Router,
   rest: T,
   computeValue: (val: GetValueProps) => any,
-  setNonEditorActions: any,
 ) => {
-  let errorMessage = "";
+  const errorMessage = safeJsonParse(error.message);
   const onErrorActionMapped = actionMapper[onError.action.name];
-
-  try {
-    errorMessage = JSON.parse(error.message);
-  } catch {
-    errorMessage = error.message;
-  }
 
   await onErrorActionMapped.action({
     // @ts-ignore
@@ -496,7 +489,6 @@ const handleSuccess = async <T>(
   rest: T,
   action: APICallAction,
   computeValue: (val: GetValueProps) => any,
-  setNonEditorActions: any,
 ) => {
   const onSuccessActionMapped = actionMapper[onSuccess.action.name];
 
@@ -505,7 +497,6 @@ const handleSuccess = async <T>(
     action: onSuccess?.action,
     binds: action.binds,
     router,
-    setNonEditorActions,
     computeValue,
     ...rest,
     data: responseJson,
@@ -568,7 +559,6 @@ export const useApiCallAction = async ({
   action,
   router,
   computeValue,
-  setNonEditorActions,
   onSuccess,
   onError,
   entity,
@@ -579,7 +569,6 @@ export const useApiCallAction = async ({
   if (entity.props) {
     setLoadingState(entity.id!, true, updateTreeComponent);
   }
-  let result = null;
 
   const endpoints = await getDataSourceEndpoints(projectId as string);
   const selectedEndpoint = endpoints?.results.find(
@@ -641,8 +630,7 @@ export const useApiCallAction = async ({
         );
     }
 
-    result =
-      onSuccess &&
+    onSuccess &&
       (await handleSuccess<ApiCallActionRestParams>(
         responseJson,
         onSuccess,
@@ -650,26 +638,23 @@ export const useApiCallAction = async ({
         rest,
         action,
         computeValue,
-        setNonEditorActions,
       ));
+
+    return responseJson;
   } catch (error) {
-    result =
-      onError &&
+    onError &&
       (await handleError<ApiCallActionRestParams>(
         error,
         onError,
         router,
         rest,
         computeValue,
-        setNonEditorActions,
       ));
   } finally {
     if (entity.props) {
       setLoadingState(entity.id!, false, updateTreeComponent);
     }
   }
-
-  return result;
 };
 
 export const useChangeLanguageAction = ({

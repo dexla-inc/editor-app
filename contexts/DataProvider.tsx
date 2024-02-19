@@ -72,25 +72,30 @@ export const DataProvider = ({ children }: DataProviderProps) => {
       if (action === "apiCall" && endpointId) {
         const endpoint = endpoints?.results.find((e) => e.id === endpointId);
 
-        const exampleResponse = safeJsonParse(endpoint?.exampleResponse ?? "");
+        const successExampleResponse = safeJsonParse(
+          endpoint?.exampleResponse ?? "",
+        );
         const errorExampleResponse = safeJsonParse(
           endpoint?.errorExampleResponse ?? "",
         );
-        const success = Array.isArray(exampleResponse)
-          ? exampleResponse[0]
-          : exampleResponse;
-        const error = Array.isArray(errorExampleResponse)
-          ? errorExampleResponse[0]
-          : errorExampleResponse;
+
+        const success = isEditorMode
+          ? successExampleResponse
+          : nonEditorActions[node.id]?.success;
+
+        const error = isEditorMode
+          ? errorExampleResponse
+          : nonEditorActions[node.id]?.error;
 
         acc.list[node.id] = merge({}, endpoint, {
+          id: node.id,
           name: node.data.label,
           success,
           error,
         });
         acc[node.id] = {
-          success: isEditorMode ? success : nonEditorActions[node.id],
-          error: isEditorMode ? error : nonEditorActions[node.id],
+          success,
+          error,
         };
       }
 
@@ -150,7 +155,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     staticFallback,
   }: GetValueProps) => {
     let dataType = value?.dataType ?? "static";
-
     const valueHandlers = {
       dynamic: () => {
         return get(shareableContent, `data.${value?.dynamic}`, value?.dynamic);
