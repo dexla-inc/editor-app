@@ -31,9 +31,13 @@ export const useEndpoint = ({ component, forceEnabled }: UseEndpointProps) => {
   const endpoint = endpoints?.results?.find((e) => e.id === endpointId);
   const { computeValue } = useDataContext()!;
 
-  const requestSettings = { binds, dataType, staleTime, endpoint };
+  const requestSettings = { binds, dataType, staleTime };
 
-  const { url, body } = prepareRequestData(requestSettings, computeValue);
+  const { url, body } = prepareRequestData(
+    requestSettings,
+    endpoint!,
+    computeValue,
+  );
 
   const apiCall = () => {
     if (!accessToken) {
