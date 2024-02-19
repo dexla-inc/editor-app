@@ -155,9 +155,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     staticFallback,
   }: GetValueProps) => {
     let dataType = value?.dataType ?? "static";
-    if (dataType === "boundCode") {
-      console.log(actions);
-    }
     const valueHandlers = {
       dynamic: () => {
         return get(shareableContent, `data.${value?.dynamic}`, value?.dynamic);
