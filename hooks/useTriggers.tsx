@@ -4,6 +4,8 @@ import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
 import { Component } from "@/utils/editor";
 import { Router, useRouter } from "next/router";
 import { ChangeEvent, useCallback } from "react";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { useEditorStore } from "@/stores/editor";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
@@ -17,8 +19,10 @@ export const useTriggers = ({
   entity,
   updateTreeComponent,
 }: UseTriggersProps) => {
+  const projectId = useEditorStore((state) => state.currentProjectId);
   const router = useRouter();
   const { computeValue, setNonEditorActions } = useDataContext()!;
+  const { data: endpoints } = useDataSourceEndpoints(projectId);
 
   const triggers = () => {
     const actions: Action[] = entity?.actions ?? [];
@@ -37,6 +41,11 @@ export const useTriggers = ({
           return acc;
         }
 
+        const selectedEndpoint = endpoints?.results.find(
+          (e) =>
+            action.action.name === "apiCall" && e.id === action.action.endpoint,
+        )!;
+
         return {
           ...acc,
           [action.trigger]: (e: any) => {
@@ -48,6 +57,7 @@ export const useTriggers = ({
               computeValue,
               setNonEditorActions,
               event: e,
+              endpoint: selectedEndpoint,
               onSuccess: onSuccessActions.find(
                 (sa) => sa.sequentialTo === action.id,
               ),
