@@ -7,6 +7,7 @@ import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Select as MantineSelect, SelectProps } from "@mantine/core";
+import debounce from "lodash.debounce";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo, useEffect, useState } from "react";
@@ -29,6 +30,7 @@ const SelectComponent = forwardRef(
       ...componentProps
     } = component.props as any;
 
+    const componentId = component.id as string;
     const { dataLabelKey, dataValueKey, resultsKey } = component.onLoad ?? {};
     const { onChange, onSearchChange, ...restTriggers } = triggers || {};
     const { color, backgroundColor } = useChangeState({ bg, textColor });
@@ -37,7 +39,7 @@ const SelectComponent = forwardRef(
       backgroundColor,
       color,
     });
-    const inputValue = useInputsStore((state) => state.getValue(component.id!));
+    const inputValue = useInputsStore((state) => state.getValue(componentId));
     const setInputValue = useInputsStore((state) => state.setInputValue);
 
     const [data, setData] = useState(
@@ -47,6 +49,14 @@ const SelectComponent = forwardRef(
     const { data: response } = useEndpoint({
       component,
     });
+
+    const handleChange = (value: any) => {
+      onChange && setInputValue(componentId, value);
+    };
+
+    const debouncedHandleSearchChange = debounce((value) => {
+      onSearchChange && onSearchChange(value);
+    }, 200);
 
     useEffect(() => {
       if (dataType === "dynamic") {
@@ -71,15 +81,9 @@ const SelectComponent = forwardRef(
       }
     }, [component.props?.data, dataType]);
 
-    const handleChange = (value: any) => {
-      setInputValue(component.id!, value);
-      onChange && onChange(value);
-    };
-
-    // Merging this to see if there are problems with multipe calls in prod
-    const handleSearchChange = (value: any) => {
-      onSearchChange && onSearchChange(value);
-    };
+    useEffect(() => {
+      onChange && onChange(inputValue);
+    }, [inputValue]);
 
     return (
       <MantineSelect
@@ -87,7 +91,7 @@ const SelectComponent = forwardRef(
         {...props}
         {...componentProps}
         onChange={handleChange}
-        onSearchChange={handleSearchChange}
+        onSearchChange={debouncedHandleSearchChange}
         {...restTriggers}
         style={{}}
         styles={{
@@ -120,3 +124,7 @@ export const Select = memo(
   withComponentWrapper<Props>(SelectComponent),
   isSame,
 );
+
+const handleSearchChange = (value: any) => {
+  console.log("search", value);
+};

@@ -103,8 +103,17 @@ const InputComponent = forwardRef(
       return isNaN(number) ? 0 : number;
     };
 
+    // TODO: Move to a hook
     useEffect(() => {
-      onChange && onChange();
+      // Set a timeout to delay the call to onChange
+      const timer = setTimeout(() => {
+        if (onChange) {
+          onChange();
+        }
+      }, 200);
+
+      // Cleanup function to clear the timeout if the component unmounts or if inputValue changes
+      return () => clearTimeout(timer);
     }, [inputValue]);
 
     return (

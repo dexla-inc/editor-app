@@ -18,7 +18,6 @@ import {
 
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
 import { GetValueProps } from "@/contexts/DataProvider";
-import { getDataSourceEndpoints } from "@/requests/datasources/queries-noauth";
 import { PageResponse } from "@/requests/pages/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
@@ -549,7 +548,7 @@ export const useApiCallAction = async ({
   onSuccess,
   onError,
   entity,
-  endpoint: selectedEndpoint,
+  endpoint,
 }: APICallActionParams): Promise<any> => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   if (entity.props) {
@@ -559,26 +558,22 @@ export const useApiCallAction = async ({
   try {
     const accessToken = useDataSourceStore.getState().authState.accessToken;
 
-    const { url, body } = prepareRequestData(
-      action,
-      selectedEndpoint,
-      computeValue,
-    );
+    const { url, body } = prepareRequestData(action, endpoint, computeValue);
 
     let responseJson;
 
     const authHeaderKey =
-      selectedEndpoint?.authenticationScheme === "BEARER"
+      endpoint?.authenticationScheme === "BEARER"
         ? "Bearer " + accessToken
         : "";
 
-    const fetchUrl = selectedEndpoint?.isServerRequest
+    const fetchUrl = endpoint?.isServerRequest
       ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
       : url;
 
     switch (action.authType) {
       case "login":
-        responseJson = await performFetch(url, selectedEndpoint, body);
+        responseJson = await performFetch(url, endpoint, body);
         const mergedAuthConfig = { ...responseJson, ...action.authConfig };
         const setAuthTokens = useDataSourceStore.getState().setAuthTokens;
 
@@ -591,7 +586,7 @@ export const useApiCallAction = async ({
 
         responseJson = await performFetch(
           fetchUrl,
-          selectedEndpoint,
+          endpoint,
           body,
           authHeaderKey,
         );
@@ -605,7 +600,7 @@ export const useApiCallAction = async ({
 
         responseJson = await performFetch(
           fetchUrl,
-          selectedEndpoint,
+          endpoint,
           body,
           authHeaderKey,
         );

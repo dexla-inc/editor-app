@@ -1,11 +1,11 @@
 import { useDataContext } from "@/contexts/DataProvider";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { PageResponse } from "@/requests/pages/types";
+import { useEditorStore } from "@/stores/editor";
 import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
 import { Component } from "@/utils/editor";
 import { Router, useRouter } from "next/router";
-import { ChangeEvent, useCallback } from "react";
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
-import { useEditorStore } from "@/stores/editor";
+import { ChangeEvent } from "react";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
