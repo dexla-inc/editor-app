@@ -460,11 +460,10 @@ export const prepareRequestData = (
   return { url, body };
 };
 
-const handleError = async <T>(
+const handleError = async (
   error: any,
   onError: Action,
   router: Router,
-  rest: T,
   computeValue: (val: GetValueProps) => any,
 ) => {
   const errorMessage = safeJsonParse(error.message);
@@ -475,18 +474,14 @@ const handleError = async <T>(
     action: onError?.action,
     router,
     computeValue,
-    ...rest,
-    data: { value: errorMessage },
   });
 
   throw new Error(errorMessage);
 };
 
-const handleSuccess = async <T>(
-  responseJson: any,
+const handleSuccess = async (
   onSuccess: Action,
   router: Router,
-  rest: T,
   action: APICallAction,
   computeValue: (val: GetValueProps) => any,
 ) => {
@@ -498,8 +493,6 @@ const handleSuccess = async <T>(
     binds: action.binds,
     router,
     computeValue,
-    ...rest,
-    data: responseJson,
   });
 };
 
@@ -549,31 +542,19 @@ const setLoadingState = (
   updateTreeComponent({ componentId, props: { loading: isLoading } });
 };
 
-type ApiCallActionRestParams = Pick<
-  APICallActionParams,
-  "event" | "data" | "endpoint"
->;
-
 export const useApiCallAction = async ({
-  actionId,
   action,
   router,
   computeValue,
   onSuccess,
   onError,
   entity,
-  ...rest
+  endpoint: selectedEndpoint,
 }: APICallActionParams): Promise<any> => {
-  const projectId = useEditorStore.getState().currentProjectId;
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   if (entity.props) {
     setLoadingState(entity.id!, true, updateTreeComponent);
   }
-
-  const endpoints = await getDataSourceEndpoints(projectId as string);
-  const selectedEndpoint = endpoints?.results.find(
-    (e) => e.id === action.endpoint,
-  )!;
 
   try {
     const accessToken = useDataSourceStore.getState().authState.accessToken;
@@ -630,26 +611,11 @@ export const useApiCallAction = async ({
         );
     }
 
-    onSuccess &&
-      (await handleSuccess<ApiCallActionRestParams>(
-        responseJson,
-        onSuccess,
-        router,
-        rest,
-        action,
-        computeValue,
-      ));
+    onSuccess && (await handleSuccess(onSuccess, router, action, computeValue));
 
     return responseJson;
   } catch (error) {
-    onError &&
-      (await handleError<ApiCallActionRestParams>(
-        error,
-        onError,
-        router,
-        rest,
-        computeValue,
-      ));
+    onError && (await handleError(error, onError, router, computeValue));
   } finally {
     if (entity.props) {
       setLoadingState(entity.id!, false, updateTreeComponent);
