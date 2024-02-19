@@ -63,22 +63,18 @@ export const useTriggers = ({
     );
   };
 
-  const handleOnChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      if (typeof triggers().onChange === "function") {
-        triggers().onChange(e);
-      }
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (typeof triggers().onChange === "function") {
+      triggers().onChange(e);
+    }
 
-      if (entity.props?.error) {
-        updateTreeComponent?.({
-          componentId: entity.id,
-          props: { error: "" },
-        });
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [entity],
-  );
+    if (entity.props?.error) {
+      updateTreeComponent?.({
+        componentId: entity.id,
+        props: { error: "" },
+      });
+    }
+  };
 
   return {
     ...triggers(),
