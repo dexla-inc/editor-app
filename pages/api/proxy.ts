@@ -6,7 +6,6 @@ export default async function handler(
 ) {
   // Construct the URL dynamically based on query params from the client request
   const { targetUrl } = req.query;
-  console.log("targetUrl", targetUrl);
 
   const headers: Record<string, any> = {};
   for (const [key, value] of Object.entries(req.headers)) {
