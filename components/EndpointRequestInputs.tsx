@@ -10,9 +10,14 @@ import React from "react";
 type Props = {
   selectedEndpoint: Endpoint;
   form: any;
+  formType?: "data" | "actions";
 };
 
-export const EndpointRequestInputs = ({ selectedEndpoint, form }: Props) => {
+export const EndpointRequestInputs = ({
+  selectedEndpoint,
+  form,
+  formType = "actions",
+}: Props) => {
   const accessToken = useDataSourceStore(
     (state) => state.authState.accessToken,
   );
@@ -64,8 +69,8 @@ export const EndpointRequestInputs = ({ selectedEndpoint, form }: Props) => {
                 };
               }
             }
-
-            const field = `binds.${type}.${param.name}`;
+            const fieldPrefix = formType === "data" ? "onLoad." : "";
+            const field = `${fieldPrefix}binds.${type}.${param.name}`;
             return (
               <Stack key={param.name}>
                 <ComponentToBindFromInput

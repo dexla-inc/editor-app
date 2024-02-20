@@ -1,10 +1,10 @@
+import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
 import { SelectOptionsForm } from "@/components/data/forms/static/SelectOptionsForm";
 import { Endpoint } from "@/requests/datasources/types";
+import { PagingResponse } from "@/requests/types";
+import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { SegmentedControl, Select, Stack, Text, Title } from "@mantine/core";
-import { PagingResponse } from "@/requests/types";
-import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
-import { useEditorStore } from "@/stores/editor";
 
 export type DataProps = {
   component: Component;
@@ -53,12 +53,12 @@ export const SelectData = ({ component, endpoints, dataType }: DataProps) => {
                 <Select
                   label="Label"
                   data={selectableObjectKeys}
-                  {...form.getInputProps("dataLabelKey")}
+                  {...form.getInputProps("onLoad.dataLabelKey")}
                 />
                 <Select
                   label="Value"
                   data={selectableObjectKeys}
-                  {...form.getInputProps("dataValueKey")}
+                  {...form.getInputProps("onLoad.dataValueKey")}
                 />
               </Stack>
             );

@@ -1,14 +1,14 @@
 import { DynamicSettings } from "@/components/data/forms/DynamicSettings";
+import { jsonStructure as textStructure } from "@/components/mapper/structure/Text";
+import { jsonStructure as tableCellStructure } from "@/components/mapper/structure/table/TableCell";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
+import { useEditorStore } from "@/stores/editor";
 import {
   Component,
   debouncedTreeComponentChildrenUpdate,
 } from "@/utils/editor";
 import { SegmentedControl, Stack, Text, TextInput, Title } from "@mantine/core";
-import { useEditorStore } from "@/stores/editor";
-import { jsonStructure as tableCellStructure } from "@/components/mapper/structure/table/TableCell";
-import { jsonStructure as textStructure } from "@/components/mapper/structure/Text";
 
 export type DataProps = {
   component: Component;
@@ -17,7 +17,7 @@ export type DataProps = {
 };
 
 const onSave = async (component: Component | undefined, form: any) => {
-  const columns = form.values.columns?.split(",");
+  const columns = form.values.onLoad.columns?.split(",");
 
   if (component?.children?.length !== columns.length) {
     return await debouncedTreeComponentChildrenUpdate(
