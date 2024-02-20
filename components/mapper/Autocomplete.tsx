@@ -8,6 +8,7 @@ import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import {
+  AutocompleteItem,
   AutocompleteProps,
   Autocomplete as MantineAutocomplete,
 } from "@mantine/core";
@@ -34,7 +35,7 @@ const AutocompleteComponent = forwardRef(
 
     const componentId = component.id as string;
     const { dataLabelKey, dataValueKey, resultsKey } = component.onLoad ?? {};
-    const { onChange, ...restTriggers } = triggers || {};
+    const { onChange, onItemSubmit, ...restTriggers } = triggers || {};
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const { borderStyle, inputStyle } = useBrandingStyles();
     const customStyle = merge({}, borderStyle, inputStyle, props.style, {
@@ -50,6 +51,7 @@ const AutocompleteComponent = forwardRef(
 
     const { data: response } = useEndpoint({
       component,
+      enabled: !!inputValue,
     });
 
     useEffect(() => {
@@ -75,22 +77,33 @@ const AutocompleteComponent = forwardRef(
       }
     }, [component.props?.data, dataType]);
 
+    const [timeoutId, setTimeoutId] = useState(null);
+
     const handleChange = (value: any) => {
+      console.log(value);
       setInputValue(componentId, value);
+
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
+      const newTimeoutId = setTimeout(() => {
+        if (onChange && value) {
+          console.log("onChange", value);
+          onChange(value);
+        }
+      }, 200);
+
+      setTimeoutId(newTimeoutId as any);
     };
 
-    useEffect(() => {
-      // Set a timeout to delay the call to onChange
-      const timer = setTimeout(() => {
-        if (onChange) {
-          console.log("onChange");
-          onChange();
-        }
-      }, 1000);
-
-      // Cleanup function to clear the timeout if the component unmounts or if inputValue changes
-      return () => clearTimeout(timer);
-    }, [inputValue]);
+    const handleItemSubmit = (item: AutocompleteItem) => {
+      // Submit value, display label
+      onItemSubmit(item.value);
+      // Need to be able to return the label so we can use in subsequent actions
+      console.log("onItemSubmit", item.value, item.label);
+      setInputValue(componentId, item.label);
+    };
 
     return (
       <MantineAutocomplete
@@ -98,6 +111,7 @@ const AutocompleteComponent = forwardRef(
         {...props}
         {...componentProps}
         onChange={handleChange}
+        onItemSubmit={handleItemSubmit}
         {...restTriggers}
         style={{}}
         styles={{
@@ -114,8 +128,8 @@ const AutocompleteComponent = forwardRef(
           input: customStyle,
         }}
         withinPortal={false}
-        maxDropdownHeight={150}
         data={data}
+        filter={() => true}
         dropdownComponent={CustomDropdown}
         rightSection={loading ? <InputLoader /> : null}
         label={undefined}

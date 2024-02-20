@@ -47,6 +47,7 @@ const triggers = [
   "onReset",
   "onKeyDown",
   "onSearchChange",
+  "onItemSubmit",
   // table actions
   "onRowClick",
   "onRowHover",

@@ -6,7 +6,7 @@ import { useEditorStore } from "@/stores/editor";
 import { inputSizes } from "@/utils/defaultSizes";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import { SegmentedControl, Stack, TextInput } from "@mantine/core";
+import { SegmentedControl, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   IconArrowBarDown,
@@ -24,6 +24,7 @@ export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const form = useForm();
     const theme = useEditorStore((state) => state.theme);
+    const pages = useEditorStore((state) => state.pages);
 
     useEffect(() => {
       form.setValues(
@@ -105,13 +106,17 @@ export const Modifier = withModifier(
               setFieldValue("customLinkText", e.target.value);
             }}
           />
-          <TextInput
-            label="Custom Link Url"
+          <Select
+            label="Custom Page Link"
             size="xs"
             {...form.getInputProps("customLinkUrl")}
-            onChange={(e) => {
-              setFieldValue("customLinkUrl", e.target.value);
+            onChange={(value) => {
+              setFieldValue("customLinkUrl", value);
             }}
+            data={pages.map((page) => ({
+              label: page.title,
+              value: page.id,
+            }))}
           />
         </Stack>
       </form>
