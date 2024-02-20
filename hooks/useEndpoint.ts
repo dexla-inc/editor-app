@@ -11,9 +11,14 @@ import get from "lodash.get";
 type UseEndpointProps = {
   component: Component;
   forceEnabled?: boolean;
+  enabled?: boolean;
 };
 
-export const useEndpoint = ({ component, forceEnabled }: UseEndpointProps) => {
+export const useEndpoint = ({
+  component,
+  forceEnabled,
+  enabled = true,
+}: UseEndpointProps) => {
   const accessToken = useDataSourceStore(
     (state) => state.authState.accessToken,
   );
@@ -52,7 +57,8 @@ export const useEndpoint = ({ component, forceEnabled }: UseEndpointProps) => {
     return performFetch(fetchUrl, endpoint, body, authHeaderKey);
   };
 
-  const isEnabled = forceEnabled || (!!endpoint && dataType === "dynamic");
+  const isEnabled =
+    forceEnabled || (!!endpoint && dataType === "dynamic" && enabled);
 
   const { data } = useQuery(
     [fetchUrl, JSON.stringify(body), accessToken],

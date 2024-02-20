@@ -1119,7 +1119,7 @@ export const componentMapper: ComponentMapper = {
       <Autocomplete component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["autocomplete", "spacing", "size", "border", "effects"],
-    actionTriggers: ["onChange"],
+    actionTriggers: ["onChange", "onItemSubmit"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Progress: {
