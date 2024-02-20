@@ -46,7 +46,8 @@ export type Modifiers =
   | "gridColumn"
   | "navbar"
   | "progress"
-  | "countdownButton";
+  | "countdownButton"
+  | "autocomplete";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -152,14 +153,12 @@ export const requiredModifiers: RequiredModifiers = {
     withAsterisk: false,
     clearable: false,
     labelSpacing: "0",
-    name: "Input",
     passwordRange: [8, 20],
     passwordNumber: true,
     passwordLower: true,
     passwordUpper: true,
   },
   textarea: {
-    name: "Textarea",
     placeholder: "Textarea",
     label: "",
     labelSpacing: "0",
@@ -219,7 +218,6 @@ export const requiredModifiers: RequiredModifiers = {
     variant: "solid",
   },
   select: {
-    name: "Select",
     placeholder: "Select",
     type: "text",
     label: "A label",
@@ -231,6 +229,24 @@ export const requiredModifiers: RequiredModifiers = {
     labelSize: "sm",
     labelWeight: "normal",
     labelAlign: "left",
+    dataType: "static",
+    data: [
+      { label: "Option 1", value: "option-1" },
+      { label: "Option 2", value: "option-2" },
+    ],
+    customText: "",
+    customLinkText: "",
+    customLinkUrl: "",
+    style: {
+      width: "100%",
+    },
+  },
+  autocomplete: {
+    placeholder: "Autocomplete",
+    label: "A label",
+    icon: "",
+    dropdownPosition: "flip",
+    withAsterisk: "false",
     dataType: "static",
     data: [
       { label: "Option 1", value: "option-1" },
@@ -265,7 +281,6 @@ export const requiredModifiers: RequiredModifiers = {
     boxShadow: "",
   },
   checkbox: {
-    name: "Checkbox",
     label: "A label",
     checked: false,
     withAsterisk: false,

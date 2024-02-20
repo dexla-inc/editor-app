@@ -5,6 +5,7 @@ import { AccordionItem } from "@/components/mapper/AccordionItem";
 import { AccordionPanel } from "@/components/mapper/AccordionPanel";
 import { Alert } from "@/components/mapper/Alert";
 import { AppBar } from "@/components/mapper/AppBar";
+import { Autocomplete } from "@/components/mapper/Autocomplete";
 import { Avatar } from "@/components/mapper/Avatar";
 import { Badge } from "@/components/mapper/Badge";
 import { Breadcrumb } from "@/components/mapper/Breadcrumb";
@@ -60,6 +61,7 @@ import * as AccordionStructure from "@/components/mapper/structure/Accordion";
 import * as AccordionItemStructure from "@/components/mapper/structure/AccordionItem";
 import * as AlertStructure from "@/components/mapper/structure/Alert";
 import * as AppBarStructure from "@/components/mapper/structure/AppBar";
+import * as AutocompleteStructure from "@/components/mapper/structure/Autocomplete";
 import * as AvatarStructure from "@/components/mapper/structure/Avatar";
 import * as BadgeStructure from "@/components/mapper/structure/Badge";
 import * as Breadcrumbs from "@/components/mapper/structure/Breadcrumb";
@@ -151,6 +153,7 @@ import {
   IconForms,
   IconHeading,
   IconIdBadge,
+  IconInputSearch,
   IconJewishStar,
   IconLayoutBottombarCollapse,
   IconLayoutColumns,
@@ -227,7 +230,6 @@ export const structureMapper: StructureMapper = {
     category: "Layout",
     icon: <IconContainer size={ICON_SIZE} />,
   },
-
   Card: {
     structure: (props: any) => CardStructure.jsonStructure(props),
     Draggable: () => (
@@ -249,18 +251,6 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconClick size={ICON_SIZE} />,
-  },
-
-  Link: {
-    structure: (props: any) => LinkStructure.jsonStructure(props),
-    Draggable: () => (
-      <DraggableComponent
-        id="Link"
-        icon={<IconLink size={LARGE_ICON_SIZE} />}
-      />
-    ),
-    category: "Input",
-    icon: <IconLink size={ICON_SIZE} />,
   },
   Input: {
     structure: (props: any) => InputStructure.jsonStructure(props),
@@ -305,6 +295,17 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconCircleDot size={ICON_SIZE} />,
+  },
+  Link: {
+    structure: (props: any) => LinkStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Link"
+        icon={<IconLink size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconLink size={ICON_SIZE} />,
   },
   Form: {
     structure: (props: any) => FormStructure.jsonStructure(props),
@@ -361,16 +362,16 @@ export const structureMapper: StructureMapper = {
     category: "Input",
     icon: <IconCircleDot size={ICON_SIZE} />,
   },
-  Rating: {
-    structure: (props: any) => RatingStructure.jsonStructure(props),
+  Autocomplete: {
+    structure: (props: any) => AutocompleteStructure.jsonStructure(props),
     Draggable: () => (
       <DraggableComponent
-        id="Rating"
-        icon={<IconJewishStar size={LARGE_ICON_SIZE} />}
+        id="Autocomplete"
+        icon={<IconInputSearch size={LARGE_ICON_SIZE} />}
       />
     ),
     category: "Input",
-    icon: <IconJewishStar size={ICON_SIZE} />,
+    icon: <IconInputSearch size={ICON_SIZE} />,
   },
   FileButton: {
     structure: (props: any) => FileButtonStructure.jsonStructure(props),
@@ -393,6 +394,17 @@ export const structureMapper: StructureMapper = {
     ),
     category: "Input",
     icon: <IconFile size={ICON_SIZE} />,
+  },
+  Rating: {
+    structure: (props: any) => RatingStructure.jsonStructure(props),
+    Draggable: () => (
+      <DraggableComponent
+        id="Rating"
+        icon={<IconJewishStar size={LARGE_ICON_SIZE} />}
+      />
+    ),
+    category: "Input",
+    icon: <IconJewishStar size={ICON_SIZE} />,
   },
   CountdownButton: {
     structure: (props: any) => CountdownButtonStructure.jsonStructure(props),
@@ -1100,6 +1112,14 @@ export const componentMapper: ComponentMapper = {
     ),
     modifiers: ["icon", "spacing", "border", "effects"],
     actionTriggers: [],
+    sequentialTriggers: ["onSuccess", "onError"],
+  },
+  Autocomplete: {
+    Component: (props: { component: Component; renderTree: any }) => (
+      <Autocomplete component={props.component} renderTree={props.renderTree} />
+    ),
+    modifiers: ["autocomplete", "spacing", "size", "border", "effects"],
+    actionTriggers: ["onChange"],
     sequentialTriggers: ["onSuccess", "onError"],
   },
   Progress: {

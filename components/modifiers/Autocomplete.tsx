@@ -1,5 +1,4 @@
 import { SegmentedControlSizes } from "@/components/SegmentedControlSizes";
-import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { TopLabel } from "@/components/TopLabel";
 import { StylingPaneItemIcon } from "@/components/modifiers/StylingPaneItemIcon";
 import { withModifier } from "@/hoc/withModifier";
@@ -13,13 +12,13 @@ import {
   IconArrowBarDown,
   IconArrowBarUp,
   IconArrowsMoveVertical,
-  IconSelect,
+  IconInputSearch,
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
 
-export const icon = IconSelect;
-export const label = "Select";
+export const icon = IconInputSearch;
+export const label = "Autocomplete";
 
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
@@ -28,14 +27,12 @@ export const Modifier = withModifier(
 
     useEffect(() => {
       form.setValues(
-        merge({}, requiredModifiers.select, {
+        merge({}, requiredModifiers.autocomplete, {
           size: selectedComponent?.props?.size ?? theme.inputSize,
           placeholder: selectedComponent?.props?.placeholder,
           icon: selectedComponent?.props?.icon,
           data: selectedComponent?.props?.data,
           withAsterisk: selectedComponent?.props?.withAsterisk,
-          clearable: selectedComponent?.props?.clearable,
-          searchable: selectedComponent?.props?.searchable,
           customText: selectedComponent?.props?.customText,
           customLinkText: selectedComponent?.props?.customLinkText,
           customLinkUrl: selectedComponent?.props?.customLinkUrl,
@@ -70,26 +67,6 @@ export const Modifier = withModifier(
               debouncedTreeUpdate(selectedComponentIds, {
                 size: value,
                 style: { height: inputSizes[value] },
-              });
-            }}
-          />
-          <SegmentedControlYesNo
-            label="Searchable"
-            {...form.getInputProps("searchable")}
-            onChange={(value) => {
-              form.setFieldValue("searchable", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                searchable: value,
-              });
-            }}
-          />
-          <SegmentedControlYesNo
-            label="Clearable"
-            {...form.getInputProps("clearable")}
-            onChange={(value) => {
-              form.setFieldValue("clearable", value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                clearable: value,
               });
             }}
           />

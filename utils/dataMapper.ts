@@ -6,7 +6,10 @@ import {
 import { ChartData as Chart } from "@/components/data/ChartData";
 import { ContainerData as Container } from "@/components/data/ContainerData";
 import { CountdownButtonData as CountdownButton } from "@/components/data/CountdownButtonData";
-import { SelectData as Select } from "@/components/data/SelectData";
+import {
+  SelectData as Autocomplete,
+  SelectData as Select,
+} from "@/components/data/SelectData";
 import { TableData as Table } from "@/components/data/TableData";
 import {
   TextData as Badge,
@@ -34,6 +37,7 @@ export const dataMapper = {
   Container,
   Form: Container,
   Table,
+  Autocomplete,
   AreaChart: Chart,
   BarChart: Chart,
   LineChart: Chart,
