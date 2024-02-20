@@ -5,7 +5,6 @@ import { NAVBAR_WIDTH } from "@/utils/config";
 import {
   DropTarget,
   Edge,
-  checkIfIsChildDeep,
   getClosestEdge,
   getComponentById,
 } from "@/utils/editor";
@@ -30,7 +29,7 @@ const debouncedDragEnter = debounce((event: any, id: string) => {
   const comp = getComponentById(editorTree.root, id);
   const isTryingToDropInsideItself =
     activeComponent && activeId !== id
-      ? checkIfIsChildDeep(activeComponent!, id)
+      ? !!getComponentById(activeComponent!, id)
       : false;
 
   if (id === "root" || id === "content-wrapper") {

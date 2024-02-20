@@ -35,7 +35,7 @@ export const usePropsWithOverwrites = (
   };
 
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
-    if (currentState === "default") {
+    if (currentState === "default" && component.states?.hover) {
       updateComponentState(e.currentTarget.id, "hover");
     }
   };

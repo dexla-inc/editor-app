@@ -50,9 +50,6 @@ export const EditableComponent = ({
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,
   );
-  const updateTreeComponentAttrs = useEditorStore(
-    (state) => state.updateTreeComponentAttrs,
-  );
   const isResizing = useEditorStore((state) => state.isResizing);
   const { computeChildStyles } = useComputeChildStyles();
 
