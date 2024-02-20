@@ -1,4 +1,10 @@
+import {
+  createLogicFlow,
+  deleteLogicFlow,
+} from "@/requests/logicflows/mutations";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
+import { useEditorStore } from "@/stores/editor";
+import { BORDER_COLOR } from "@/utils/branding";
 import { decodeSchema } from "@/utils/compression";
 import { nodesData } from "@/utils/logicFlows";
 import {
@@ -15,15 +21,10 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { IconCopy, IconDots, IconEdit, IconTrashX } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Edge, Node } from "reactflow";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  createLogicFlow,
-  deleteLogicFlow,
-} from "@/requests/logicflows/mutations";
-import { useEditorStore } from "@/stores/editor";
 
 dayjs.extend(relativeTime);
 
@@ -155,7 +156,7 @@ export const LogicFlowCard = ({ flow, onEdit, onClick }: FlowCardProps) => {
         </Menu>
       </Group>
       <Card.Section mt="sm">
-        <Divider color={theme.colors.gray[3]} />
+        <Divider color={BORDER_COLOR} />
         <Box p="xs">
           <Avatar.Group spacing="xs">
             {avatars

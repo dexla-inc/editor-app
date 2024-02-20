@@ -1,6 +1,8 @@
-import { EdgeAddChange, Handle, NodeProps, Position } from "reactflow";
-import { IconPlus } from "@tabler/icons-react";
 import { NodeData, NodeInput } from "@/components/logic-flow/nodes/CustomNode";
+import { useLogicFlows } from "@/hooks/logic-flow/useLogicFlows";
+import { FlowState, useFlowStore } from "@/stores/flow";
+import { actions } from "@/utils/actions";
+import { BORDER_COLOR } from "@/utils/branding";
 import {
   ActionIcon,
   Card,
@@ -10,12 +12,11 @@ import {
   Stack,
   useMantineTheme,
 } from "@mantine/core";
-import { FlowState, useFlowStore } from "@/stores/flow";
-import { nanoid } from "nanoid";
-import { actions } from "@/utils/actions";
+import { IconPlus } from "@tabler/icons-react";
 import groupBy from "lodash.groupby";
 import startCase from "lodash.startcase";
-import { useLogicFlows } from "@/hooks/logic-flow/useLogicFlows";
+import { nanoid } from "nanoid";
+import { EdgeAddChange, Handle, NodeProps, Position } from "reactflow";
 
 interface ConnectionCreatorNodeData extends NodeData {}
 
@@ -158,7 +159,7 @@ export const ConnectionCreatorNode = (
       sx={{
         borderRadius: 50,
         border: "1px solid",
-        borderColor: theme.colors.gray[3],
+        borderColor: BORDER_COLOR,
         width: "15px",
         height: "15px",
 

@@ -1,12 +1,12 @@
+import { useDataContext } from "@/contexts/DataProvider";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { performFetch, prepareRequestData } from "@/utils/actions";
 import { DEFAULT_STALE_TIME } from "@/utils/config";
-import { useQuery } from "@tanstack/react-query";
 import { Component } from "@/utils/editor";
+import { useQuery } from "@tanstack/react-query";
 import get from "lodash.get";
-import { useDataContext } from "@/contexts/DataProvider";
 
 type UseEndpointProps = {
   component: Component;
@@ -39,32 +39,32 @@ export const useEndpoint = ({ component, forceEnabled }: UseEndpointProps) => {
     computeValue,
   );
 
-  const apiCall = () => {
-    if (!accessToken) {
-      throw new Error("Unauthorized");
-    }
+  const fetchUrl = endpoint?.isServerRequest
+    ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
+    : url;
 
+  const apiCall = () => {
     const authHeaderKey =
       endpoint?.authenticationScheme === "BEARER"
         ? "Bearer " + accessToken
         : "";
-
-    const fetchUrl = endpoint?.isServerRequest
-      ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
-      : url;
 
     return performFetch(fetchUrl, endpoint, body, authHeaderKey);
   };
 
   const isEnabled = forceEnabled || (!!endpoint && dataType === "dynamic");
 
-  const { data } = useQuery([url, JSON.stringify(body), accessToken], apiCall, {
-    select: (response) => {
-      return get(response, resultsKey, response);
+  const { data } = useQuery(
+    [fetchUrl, JSON.stringify(body), accessToken],
+    apiCall,
+    {
+      select: (response) => {
+        return get(response, resultsKey, response);
+      },
+      staleTime: requestSettings.staleTime * 1000 * 60,
+      enabled: isEnabled,
     },
-    staleTime: requestSettings.staleTime * 1000 * 60,
-    enabled: isEnabled,
-  });
+  );
 
   return { data };
 };

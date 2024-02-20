@@ -17,6 +17,7 @@ import {
 } from "@/requests/datasources/types";
 import { MethodTypes } from "@/requests/types";
 import { useAppStore } from "@/stores/app";
+import { BORDER_COLOR } from "@/utils/branding";
 import { ICON_DELETE } from "@/utils/config";
 import { ApiType } from "@/utils/dashboardTypes";
 import {
@@ -500,7 +501,7 @@ export const DataSourceEndpointDetail = ({
       <Stack
         py="lg"
         spacing="xs"
-        sx={{ borderBottom: "1px solid " + theme.colors.gray[3] }}
+        sx={{ borderBottom: "1px solid " + BORDER_COLOR }}
       >
         <Flex gap="md">
           <TextInput

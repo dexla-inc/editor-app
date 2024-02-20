@@ -1,3 +1,4 @@
+import { BORDER_COLOR } from "@/utils/branding";
 import { ToggleMenuItem as ToggleMenuItemType } from "@/utils/dashboardTypes";
 import { Box, Menu, rem, useMantineTheme } from "@mantine/core";
 import { forwardRef } from "react";
@@ -29,11 +30,7 @@ const ToggleMenu = forwardRef<HTMLDivElement, ToggleMenuProps>((props, ref) => {
     <Box
       ref={ref}
       sx={{
-        borderTop: `${rem(1)} solid ${
-          theme.colorScheme === "dark"
-            ? theme.colors.dark[4]
-            : theme.colors.gray[3]
-        }`,
+        borderTop: `${rem(1)} solid ${BORDER_COLOR}`,
       }}
     >
       <Menu>

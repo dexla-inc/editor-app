@@ -1,4 +1,5 @@
 import { Icon } from "@/components/Icon";
+import { BORDER_COLOR } from "@/utils/branding";
 import { ICON_MEDIUM_SIZE, ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
@@ -149,7 +150,7 @@ export default function ScreenshotUploader({
               align="center"
               w="100%"
               sx={(theme) => ({
-                border: "2px dashed " + theme.colors.gray[3],
+                border: "2px dashed " + BORDER_COLOR,
                 paddingLeft: theme.spacing.md,
                 borderRadius: theme.radius.sm,
                 ":focus-within": {

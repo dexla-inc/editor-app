@@ -52,10 +52,6 @@ const AutocompleteComponent = forwardRef(
       component,
     });
 
-    const handleChange = (value: any) => {
-      onChange && setInputValue(componentId, value);
-    };
-
     useEffect(() => {
       if (dataType === "dynamic") {
         if (!response || !dataLabelKey || !dataValueKey) {
@@ -79,8 +75,21 @@ const AutocompleteComponent = forwardRef(
       }
     }, [component.props?.data, dataType]);
 
+    const handleChange = (value: any) => {
+      setInputValue(componentId, value);
+    };
+
     useEffect(() => {
-      onChange && onChange(inputValue);
+      // Set a timeout to delay the call to onChange
+      const timer = setTimeout(() => {
+        if (onChange) {
+          console.log("onChange");
+          onChange();
+        }
+      }, 1000);
+
+      // Cleanup function to clear the timeout if the component unmounts or if inputValue changes
+      return () => clearTimeout(timer);
     }, [inputValue]);
 
     return (

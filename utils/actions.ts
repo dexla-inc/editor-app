@@ -495,7 +495,7 @@ const handleSuccess = async (
   });
 };
 
-function constructHeaders(endpoint?: Endpoint, authHeaderKey = "") {
+export function constructHeaders(endpoint?: Endpoint, authHeaderKey = "") {
   const contentType = endpoint?.mediaType || "application/json";
 
   return {
@@ -511,10 +511,12 @@ export async function performFetch(
   body?: any,
   authHeaderKey?: string,
 ) {
+  const isGetMethodType = endpoint?.methodType === "GET";
+
   const response = await fetch(url, {
     method: endpoint?.methodType,
     headers: constructHeaders(endpoint, authHeaderKey),
-    ...(!!body ? { body: JSON.stringify(body) } : {}),
+    ...(!!body && !isGetMethodType ? { body: JSON.stringify(body) } : {}),
   });
 
   const responseString = response.status.toString();
@@ -604,8 +606,6 @@ export const useApiCallAction = async ({
           body,
           authHeaderKey,
         );
-
-        console.log("responseJson", responseJson);
     }
 
     onSuccess && (await handleSuccess(onSuccess, router, action, computeValue));

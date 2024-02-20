@@ -1,3 +1,4 @@
+import { BORDER_COLOR } from "@/utils/branding";
 import { Accordion, AccordionProps, createStyles, rem } from "@mantine/core";
 
 const useStyles = createStyles((theme) => ({
@@ -27,10 +28,7 @@ const useStyles = createStyles((theme) => ({
       backgroundColor:
         theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
       boxShadow: theme.shadows.md,
-      borderColor:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[4]
-          : theme.colors.gray[3],
+      borderColor: BORDER_COLOR,
       borderRadius: theme.radius.md,
       zIndex: 1,
       fontWeight: 400,

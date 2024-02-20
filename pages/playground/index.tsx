@@ -3,6 +3,7 @@ import { ErrorAlert } from "@/components/Alerts";
 import { TopLabel } from "@/components/TopLabel";
 import { anyPrompt } from "@/requests/ai/queries";
 import { AIResponseTypes } from "@/requests/ai/types";
+import { BORDER_COLOR } from "@/utils/branding";
 import {
   GPT35_TURBO_1106_MODEL,
   GPT4_MODEL,
@@ -188,9 +189,9 @@ export default function Playground() {
             p="sm"
             sx={(theme) => ({
               borderRadius: theme.radius.sm,
-              border: "1px solid" + theme.colors.gray[3],
+              border: "1px solid" + BORDER_COLOR,
               "&:hover": {
-                outline: "1px solid" + theme.colors.gray[3],
+                outline: "1px solid" + BORDER_COLOR,
               },
             })}
           >
