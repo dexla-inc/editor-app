@@ -1,20 +1,19 @@
-import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
-import { EndpointSelect } from "@/components/EndpointSelect";
-import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
-import { SidebarSection } from "@/components/SidebarSection";
-import { useData } from "@/hooks/useData";
-import { Endpoint } from "@/requests/datasources/types";
-import { PagingResponse } from "@/requests/types";
-import { useInputsStore } from "@/stores/inputs";
-import { DEFAULT_STALE_TIME } from "@/utils/config";
-import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Divider, Flex, Select, Text, TextInput } from "@mantine/core";
-import { useForm } from "@mantine/form";
 import { IconDatabase } from "@tabler/icons-react";
-import get from "lodash.get";
-import { pick } from "next/dist/lib/pick";
+import { SidebarSection } from "@/components/SidebarSection";
+import { EndpointSelect } from "@/components/EndpointSelect";
+import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
+import { Endpoint } from "@/requests/datasources/types";
+import { useForm } from "@mantine/form";
+import { useInputsStore } from "@/stores/inputs";
 import { useEffect, useState } from "react";
-import { VisibilityModifier } from "../VisibilityModifier";
+import { PagingResponse } from "@/requests/types";
+import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
+import { EndpointRequestInputs } from "@/components/EndpointRequestInputs";
+import { pick } from "next/dist/lib/pick";
+import get from "lodash.get";
+import { DEFAULT_STALE_TIME } from "@/utils/config";
+import { useData } from "@/hooks/useData";
 
 type Props = {
   component: Component;
@@ -53,29 +52,20 @@ export const DynamicSettings = ({
 
   const form = useForm({
     initialValues: {
-      onLoad: {
-        ...pick(component.onLoad ?? {}, customKeys),
-        endpointId: component.onLoad?.endpointId ?? undefined,
-        resultsKey: component.onLoad?.resultsKey ?? "",
-        staleTime: component.onLoad?.staleTime ?? DEFAULT_STALE_TIME,
-        binds: {
-          header: component.onLoad?.binds?.header ?? {},
-          parameter: component.onLoad?.binds?.parameter ?? {},
-          body: component.onLoad?.binds?.body ?? {},
-        },
-      },
-      props: {
-        style: {
-          display: component.props?.style?.display,
-        },
+      ...pick(component.onLoad ?? {}, customKeys),
+      endpointId: component.onLoad?.endpointId ?? undefined,
+      resultsKey: component.onLoad?.resultsKey ?? "",
+      staleTime: component.onLoad?.staleTime ?? DEFAULT_STALE_TIME,
+      binds: {
+        header: component.onLoad?.binds?.header ?? {},
+        parameter: component.onLoad?.binds?.parameter ?? {},
+        body: component.onLoad?.binds?.body ?? {},
       },
     },
   });
 
-  const onLoadValues = form.values.onLoad;
-
-  const selectableObject = form.values.onLoad.resultsKey
-    ? get(exampleResponse, form.values.onLoad.resultsKey)
+  const selectableObject = form.values.resultsKey
+    ? get(exampleResponse, form.values.resultsKey)
     : exampleResponse;
 
   const selectableObjectKeys = Object.keys(
@@ -85,114 +75,106 @@ export const DynamicSettings = ({
   useEffect(() => {
     if (form.isTouched()) {
       onSave?.(component, form).then(() => {
-        debouncedTreeComponentAttrsUpdate(form.values);
+        debouncedTreeComponentAttrsUpdate({
+          onLoad: form.values,
+        });
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
 
   return (
-    <>
-      <SidebarSection
-        id="data"
-        noPadding={true}
-        initiallyOpened={initiallyOpened}
-        label="Load Data"
-        icon={IconDatabase}
-        onClick={(id: string, opened: boolean) =>
-          id === "data" && setInitiallyOpened(opened)
-        }
-      >
-        <EndpointSelect
-          {...form.getInputProps("onLoad.endpointId")}
-          onChange={(selected) => {
-            form.setValues({
-              onLoad: {
-                ...onLoadValues,
-                endpointId: selected,
-                resultsKey: "",
-                ...resetCustomKeys,
-              },
-            });
-            setInputValue(component.id!, "");
-            setSelectedEndpoint(
-              endpoints?.results?.find((e) => e.id === selected) as Endpoint,
-            );
-          }}
-        />
-        {form.values.onLoad.endpointId && (
-          <>
-            <Flex align="end" gap="xs" justify="space-between">
-              <SegmentedControlYesNo
-                label="Cache Request"
-                value={form.values.onLoad.staleTime === 0 ? false : true}
-                onChange={(value) => {
-                  form.setFieldValue(
-                    "onLoad.staleTime",
-                    value === false ? 0 : DEFAULT_STALE_TIME,
-                  );
-                }}
-              />
-              <TextInput
-                disabled={form.values.onLoad.staleTime === 0}
-                mt={8}
-                w={80}
-                {...form.getInputProps("onLoad.staleTime")}
-                onChange={(e) => {
-                  form.setFieldValue(
-                    "onLoad.staleTime",
+    <SidebarSection
+      id="data"
+      noPadding={true}
+      initiallyOpened={initiallyOpened}
+      label="Load Data"
+      icon={IconDatabase}
+      onClick={(id: string, opened: boolean) =>
+        id === "data" && setInitiallyOpened(opened)
+      }
+    >
+      <EndpointSelect
+        {...form.getInputProps("endpointId")}
+        onChange={(selected) => {
+          form.setValues({
+            endpointId: selected,
+            resultsKey: "",
+            ...resetCustomKeys,
+          });
+          setInputValue(component.id!, "");
+          setSelectedEndpoint(
+            endpoints?.results?.find((e) => e.id === selected) as Endpoint,
+          );
+        }}
+      />
+      {form.values.endpointId && (
+        <>
+          <Flex align="end" gap="xs" justify="space-between">
+            <SegmentedControlYesNo
+              label="Cache Request"
+              value={form.values.staleTime === 0 ? false : true}
+              onChange={(value) => {
+                form.setValues({
+                  staleTime: value === false ? 0 : DEFAULT_STALE_TIME,
+                });
+              }}
+            />
+            <TextInput
+              disabled={form.values.staleTime === 0}
+              mt={8}
+              w={80}
+              {...form.getInputProps("staleTime")}
+              onChange={(e) => {
+                form.setValues({
+                  staleTime:
                     e.target.value !== ""
                       ? Number(e.target.value)
                       : e.target.value,
-                  );
-                }}
-                onBlur={(e) => {
-                  if (e.target.value === "") {
-                    form.setFieldValue("onLoad.staleTime", 0);
-                  }
-                }}
-                styles={{ rightSection: { right: "0.25rem" } }}
-                rightSection={
-                  <Text size="xs" color="dimmed">
-                    mins
-                  </Text>
+                });
+              }}
+              onBlur={(e) => {
+                if (e.target.value === "") {
+                  form.setValues({
+                    staleTime: 0,
+                  });
                 }
-              />
-            </Flex>
-            {!Array.isArray(exampleResponse) && (
-              <Select
-                clearable
-                label="Results key"
-                placeholder="user.list"
-                data={resultsKeysList}
-                {...form.getInputProps("resultsKey")}
-                onChange={(selected) => {
-                  const newValues = {
-                    ...onLoadValues,
-                    resultsKey: selected,
-                    ...resetCustomKeys,
-                  };
-                  setInputValue(component.id!, "");
-                  form.setValues({ onLoad: newValues });
-                }}
-              />
-            )}
-            {children && children({ form, selectableObjectKeys })}
-
-            <Divider mt="md" />
-
-            <EndpointRequestInputs
-              selectedEndpoint={selectedEndpoint!}
-              form={form}
+              }}
+              styles={{ rightSection: { right: "0.25rem" } }}
+              rightSection={
+                <Text size="xs" color="dimmed">
+                  mins
+                </Text>
+              }
             />
-          </>
-        )}
-      </SidebarSection>
-      <VisibilityModifier
-        componentId={component.id!}
-        componentName={component.name}
-        form={form}
-      />
-    </>
+          </Flex>
+          {!Array.isArray(exampleResponse) && (
+            <Select
+              clearable
+              label="Results key"
+              placeholder="user.list"
+              data={resultsKeysList}
+              {...form.getInputProps("resultsKey")}
+              onChange={(selected) => {
+                const newValues = {
+                  resultsKey: selected,
+                  ...resetCustomKeys,
+                };
+                setInputValue(component.id!, "");
+                form.setValues(newValues);
+              }}
+            />
+          )}
+          {children && children({ form, selectableObjectKeys })}
+
+          <Divider mt="md" />
+
+          <EndpointRequestInputs
+            selectedEndpoint={selectedEndpoint!}
+            form={form}
+          />
+        </>
+      )}
+    </SidebarSection>
   );
 };
