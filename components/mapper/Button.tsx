@@ -42,7 +42,7 @@ const ButtonComponent = forwardRef(
       color,
       ...componentProps
     } = component.props as any;
-
+    console.log("button");
     const theme = useEditorStore((state) => state.theme);
 
     const contentEditableProps = useContentEditable(component.id as string);

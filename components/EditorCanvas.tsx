@@ -19,7 +19,6 @@ import { CURSOR_COLORS, HEADER_HEIGHT } from "@/utils/config";
 import {
   Component,
   addComponent,
-  checkIfIsChildDeep,
   getAllComponentsByName,
   getComponentById,
   getComponentIndex,
@@ -103,8 +102,8 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     ) {
       const copy = cloneDeep(editorTree);
       const modals = getAllComponentsByName(copy.root, "Modal");
-      const targetModal = modals.find((modal) =>
-        checkIfIsChildDeep(modal, selectedComponentIds[0]),
+      const targetModal = modals.find(
+        (modal) => !!getComponentById(modal, selectedComponentIds[0]),
       );
       selectedComponentIds.map((selectedComponentId) => {
         const comp = getComponentById(copy.root, selectedComponentId);
