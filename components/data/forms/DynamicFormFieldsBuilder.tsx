@@ -1,5 +1,9 @@
 import { Select } from "@mantine/core";
-import { Component, getComponentById } from "@/utils/editor";
+import {
+  Component,
+  getComponentById,
+  getParentComponentData,
+} from "@/utils/editor";
 import { useEditorStore } from "@/stores/editor";
 import get from "lodash.get";
 import { PagingResponse } from "@/requests/types";
@@ -25,9 +29,9 @@ export const DynamicFormFieldsBuilder = ({
 }: DynamicFormFieldsBuilderProps) => {
   const editorTree = useEditorStore((state) => state.tree);
 
-  const parentDataComponent = getComponentById(
+  const parentDataComponent = getParentComponentData(
     editorTree.root,
-    component.parentDataComponentId!,
+    component.id!,
   );
   const parentEndpoint = endpoints?.results?.find(
     (e) => e.id === parentDataComponent?.onLoad?.endpointId,

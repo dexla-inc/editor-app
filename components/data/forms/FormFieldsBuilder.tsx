@@ -6,13 +6,18 @@ import { useComponentStates } from "@/hooks/useComponentStates";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { ICON_SIZE } from "@/utils/config";
-import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
+import {
+  Component,
+  debouncedTreeComponentAttrsUpdate,
+  getParentComponentData,
+} from "@/utils/editor";
 import { ValueProps } from "@/utils/types";
 import { ActionIcon, Group } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   fields: Array<{
@@ -27,7 +32,12 @@ type Props = {
 };
 
 export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
-  const hasParentComponentData = component.parentDataComponentId;
+  const tree = useEditorStore((state) => state.tree);
+  const hasParentComponentData = !!getParentComponentData(
+    tree.root,
+    component.id!,
+  );
+  console.log(hasParentComponentData);
   const { getComponentsStates } = useComponentStates();
 
   const onLoadFieldsStarter = fields.reduce(

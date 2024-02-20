@@ -45,7 +45,6 @@ export const TableComponent = forwardRef(
                   {component.children?.map((child) =>
                     renderTree(child, {
                       ...shareableContent,
-                      parentDataComponentId: component.id,
                       data: item,
                     }),
                   )}

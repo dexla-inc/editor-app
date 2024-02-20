@@ -50,9 +50,6 @@ export const EditableComponent = ({
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,
   );
-  const updateTreeComponentAttrs = useEditorStore(
-    (state) => state.updateTreeComponentAttrs,
-  );
   const isResizing = useEditorStore((state) => state.isResizing);
   const { computeChildStyles } = useComputeChildStyles();
 
@@ -106,18 +103,6 @@ export const EditableComponent = ({
     propsWithOverwrites,
     isPicking,
   );
-
-  useEffect(() => {
-    if (
-      component.parentDataComponentId !==
-      shareableContent?.parentDataComponentId
-    ) {
-      updateTreeComponentAttrs([component.id!], {
-        parentDataComponentId: shareableContent?.parentDataComponentId,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shareableContent?.parentDataComponentId]);
 
   return (
     <>
