@@ -107,18 +107,6 @@ export const EditableComponent = ({
     isPicking,
   );
 
-  useEffect(() => {
-    if (
-      component.parentDataComponentId !==
-      shareableContent?.parentDataComponentId
-    ) {
-      updateTreeComponentAttrs([component.id!], {
-        parentDataComponentId: shareableContent?.parentDataComponentId,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shareableContent?.parentDataComponentId]);
-
   return (
     <>
       {cloneElement(

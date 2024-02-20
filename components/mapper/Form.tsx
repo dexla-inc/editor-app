@@ -131,7 +131,6 @@ const FormComponent = forwardRef(
                     },
                     {
                       ...shareableContent,
-                      parentDataComponentId: component.id,
                       data: item,
                     },
                   ),

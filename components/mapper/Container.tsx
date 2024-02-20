@@ -74,7 +74,6 @@ export const ContainerComponent = forwardRef(
                     },
                     {
                       ...props.shareableContent,
-                      parentDataComponentId: component.id,
                       data: item,
                     },
                   ),
@@ -90,7 +89,6 @@ export const ContainerComponent = forwardRef(
               },
               {
                 ...props.shareableContent,
-                parentDataComponentId: component.id,
                 data,
               },
             ),

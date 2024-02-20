@@ -80,31 +80,6 @@ export const replaceIdsDeeply = (treeRoot: Component) => {
   );
 };
 
-// TODO: put Select field here
-const inputFields = ["input", "checkbox", "textarea"];
-export const updateInputFieldsWithFormData = (
-  treeRoot: Component,
-  onChange: any,
-) => {
-  crawl(
-    treeRoot,
-    (node) => {
-      if (inputFields.includes(node.name.toLowerCase())) {
-        const currOnChange = node?.props?.triggers?.onChange ?? false;
-        node.props = merge(node.props, {
-          triggers: {
-            onChange: (e: any) => {
-              currOnChange && currOnChange(e);
-              onChange(e);
-            },
-          },
-        });
-      }
-    },
-    { order: "bfs" },
-  );
-};
-
 export const traverseComponents = (
   components: Component[],
   theme: MantineThemeExtended,
@@ -645,93 +620,30 @@ export const updateTreeComponentActions = (
   );
 };
 
-export const checkIfIsChild = (treeRoot: Component, childId: string) => {
-  let isChild = false;
-
+export const getParentComponentData = (
+  treeRoot: Component,
+  componentId: string,
+): Component | null => {
+  const parentComponentNames = ["Container", "Table", "Form"];
+  let parentWithOnLoad: Component | null = null;
   crawl(
     treeRoot,
     (node, context) => {
-      if (node.id === childId) {
-        isChild = true;
-        context.break();
-      }
-    },
-    { order: "bfs" },
-  );
-
-  return isChild;
-};
-
-export const checkIfIsChildDeep = (
-  treeRoot: Component,
-  childId: string,
-): boolean => {
-  let isChild = checkIfIsChild(treeRoot, childId);
-
-  if (!isChild && (treeRoot.children ?? [])?.length > 0) {
-    const length = (treeRoot.children ?? []).length;
-    for (let i = 0; i < length; i++) {
-      if (isChild) {
-        break;
-      }
-      // @ts-ignore
-      isChild = checkIfIsChildDeep(treeRoot.children[i], childId);
-    }
-  }
-
-  return isChild;
-};
-
-export const checkIfIsDirectAncestor = (
-  treeRoot: Component,
-  childId: string,
-  possibleAncestorId: string,
-) => {
-  let possibleAncestorDepth = null;
-  let childDepth = 0;
-  let isDirectChild = false;
-
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (node.id === possibleAncestorId) {
-        possibleAncestorDepth = context.depth;
-        isDirectChild = checkIfIsChildDeep(node, childId);
-      } else if (node.id === childId) {
-        childDepth = context.depth;
-        context.break();
+      if (
+        !isEmpty(node.onLoad?.endpointId) &&
+        parentComponentNames.includes(node.name)
+      ) {
+        const childComponent = getComponentById(node, componentId);
+        if (childComponent) {
+          parentWithOnLoad = node;
+          context.break();
+        }
       }
     },
     { order: "pre" },
   );
 
-  return (
-    possibleAncestorDepth && possibleAncestorDepth < childDepth && isDirectChild
-  );
-};
-
-export const getAllParentsWithExampleData = (
-  treeRoot: Component,
-  childId: string,
-): Component[] => {
-  const parentsWithExampleData: any[] = [];
-  crawl(
-    treeRoot,
-    (node) => {
-      const isDirectAncestor = checkIfIsDirectAncestor(
-        treeRoot,
-        childId,
-        node.id!,
-      );
-
-      if (isDirectAncestor && !isEmpty(node.props?.exampleData?.value)) {
-        parentsWithExampleData.push(node);
-      }
-    },
-    { order: "pre" },
-  );
-
-  return parentsWithExampleData;
+  return parentWithOnLoad;
 };
 
 export const getComponentParent = (
@@ -799,20 +711,6 @@ export const getAllChildrenComponents = (treeRoot: Component): Component[] => {
   );
 
   return components;
-};
-
-export const resetContentWrapperWidth = (treeRoot: Component) => {
-  crawl(
-    treeRoot,
-    (node, context) => {
-      if (node.id === "content-wrapper") {
-        // @ts-ignore
-        node.props.style.width = "100%";
-        context.break();
-      }
-    },
-    { order: "bfs" },
-  );
 };
 
 export const getComponentIndex = (parent: Component, id: string) => {
@@ -950,25 +848,6 @@ export const debouncedTreeComponentChildrenUpdate = debounce(
       value,
       save,
     );
-  },
-  300,
-);
-
-export const debouncedTreeComponentStyleUpdate = debounce(
-  (...params: any[]) => {
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-    const updateTreeComponents = useEditorStore.getState().updateTreeComponents;
-
-    if (Array.isArray(params[0])) {
-      const [componentIds, styleUpdate] = params;
-      updateTreeComponents(componentIds, { style: { ...styleUpdate } });
-    } else {
-      const [componentId, styleUpdate] = params;
-      updateTreeComponent({
-        componentId: componentId,
-        props: { style: { ...styleUpdate } },
-      });
-    }
   },
   300,
 );

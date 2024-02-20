@@ -1,6 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
-import { Component, checkIfIsChild } from "@/utils/editor";
+import { Component, getComponentById } from "@/utils/editor";
 import { DrawerProps, Drawer as MantineDrawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
@@ -60,7 +60,7 @@ export const Drawer = ({
         isPreviewMode
           ? opened
           : selectedComponentId === component.id ||
-            checkIfIsChild(component, selectedComponentId as string)
+            !!getComponentById(component, selectedComponentId as string)
       }
       onClose={isPreviewMode ? handleClose : () => {}}
       title={title}
