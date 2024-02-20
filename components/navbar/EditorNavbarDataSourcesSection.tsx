@@ -54,6 +54,7 @@ export const EditorNavbarDataSourcesSection = () => {
               <Link
                 href="/projects/[id]/settings/datasources"
                 as={`/projects/${projectId}/settings/datasources`}
+                target="_blank"
               >
                 Datasource settings
               </Link>

@@ -7,10 +7,6 @@ export default async function handler(
   // Construct the URL dynamically based on query params from the client request
   const { targetUrl } = req.query;
 
-  const decodedUrl = decodeURIComponent(targetUrl as string);
-
-  console.log("decodedUrl", decodedUrl);
-
   const headers: Record<string, any> = {};
   for (const [key, value] of Object.entries(req.headers)) {
     if (typeof value === "string") {
@@ -19,7 +15,7 @@ export default async function handler(
   }
   delete headers["host"];
 
-  const response = await fetch(decodedUrl as string, {
+  const response = await fetch(targetUrl as string, {
     method: req.method,
     headers,
     body:
@@ -27,8 +23,10 @@ export default async function handler(
         ? JSON.stringify(req.body)
         : null,
   });
+
   if (response.ok) {
     const data = await response.json();
+    console.log("data", data);
     res.status(200).json(data);
   } else {
     res.status(400).json({ error: "Failed to fetch data from API" });

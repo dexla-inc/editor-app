@@ -1114,16 +1114,9 @@ export const componentMapper: ComponentMapper = {
     actionTriggers: [],
     sequentialTriggers: ["onSuccess", "onError"],
   },
-  Autcomplete: {
+  Autocomplete: {
     Component: (props: { component: Component; renderTree: any }) => (
-      <Autocomplete
-        component={props.component}
-        renderTree={props.renderTree}
-        data={["Option 1", "Option 2"]}
-        onClick={(e: any) => {
-          e.preventDefault();
-        }}
-      />
+      <Autocomplete component={props.component} renderTree={props.renderTree} />
     ),
     modifiers: ["autocomplete", "spacing", "size", "border", "effects"],
     actionTriggers: ["onChange"],

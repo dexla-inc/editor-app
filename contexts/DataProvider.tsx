@@ -1,20 +1,20 @@
+import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
+import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
+import { useAppMode } from "@/hooks/useAppMode";
 import { AuthState, useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
+import { safeJsonParse } from "@/utils/common";
 import { getAllComponentsByName } from "@/utils/editor";
 import { ValueProps } from "@/utils/types";
 import get from "lodash.get";
 import isEmpty from "lodash.isempty";
+import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
 import { createContext, useContext, useState } from "react";
 import { useNodes } from "reactflow";
-import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
-import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
-import { safeJsonParse } from "@/utils/common";
-import merge from "lodash.merge";
-import { useAppMode } from "@/hooks/useAppMode";
 
 type DataProviderProps = {
   children: React.ReactNode;
@@ -125,6 +125,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     "RadioGroup",
     "Switch",
     "Textarea",
+    "Autocomplete",
   ]).reduce(
     (acc, component) => {
       const value = inputsStore[component?.id!];

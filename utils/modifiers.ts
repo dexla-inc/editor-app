@@ -153,14 +153,12 @@ export const requiredModifiers: RequiredModifiers = {
     withAsterisk: false,
     clearable: false,
     labelSpacing: "0",
-    name: "Input",
     passwordRange: [8, 20],
     passwordNumber: true,
     passwordLower: true,
     passwordUpper: true,
   },
   textarea: {
-    name: "Textarea",
     placeholder: "Textarea",
     label: "",
     labelSpacing: "0",
@@ -220,7 +218,6 @@ export const requiredModifiers: RequiredModifiers = {
     variant: "solid",
   },
   select: {
-    name: "Select",
     placeholder: "Select",
     type: "text",
     label: "A label",
@@ -245,7 +242,6 @@ export const requiredModifiers: RequiredModifiers = {
     },
   },
   autocomplete: {
-    name: "Autocomplete",
     placeholder: "Autocomplete",
     label: "A label",
     icon: "",
@@ -285,7 +281,6 @@ export const requiredModifiers: RequiredModifiers = {
     boxShadow: "",
   },
   checkbox: {
-    name: "Checkbox",
     label: "A label",
     checked: false,
     withAsterisk: false,

@@ -604,6 +604,8 @@ export const useApiCallAction = async ({
           body,
           authHeaderKey,
         );
+
+        console.log("responseJson", responseJson);
     }
 
     onSuccess && (await handleSuccess(onSuccess, router, action, computeValue));
