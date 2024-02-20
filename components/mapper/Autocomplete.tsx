@@ -7,8 +7,10 @@ import { useEndpoint } from "@/hooks/useEndpoint";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
-import { Select as MantineSelect, SelectProps } from "@mantine/core";
-import debounce from "lodash.debounce";
+import {
+  AutocompleteProps,
+  Autocomplete as MantineAutocomplete,
+} from "@mantine/core";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { forwardRef, memo, useEffect, useState } from "react";
@@ -16,9 +18,9 @@ import { forwardRef, memo, useEffect, useState } from "react";
 type Props = {
   renderTree: (component: Component) => any;
   component: Component;
-} & SelectProps;
+} & AutocompleteProps;
 
-const SelectComponent = forwardRef(
+const AutocompleteComponent = forwardRef(
   ({ renderTree, component, children: child, ...props }: Props, ref) => {
     const {
       children,
@@ -32,7 +34,7 @@ const SelectComponent = forwardRef(
 
     const componentId = component.id as string;
     const { dataLabelKey, dataValueKey, resultsKey } = component.onLoad ?? {};
-    const { onChange, onSearchChange, ...restTriggers } = triggers || {};
+    const { onChange, ...restTriggers } = triggers || {};
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const { borderStyle, inputStyle } = useBrandingStyles();
     const customStyle = merge({}, borderStyle, inputStyle, props.style, {
@@ -53,10 +55,6 @@ const SelectComponent = forwardRef(
     const handleChange = (value: any) => {
       onChange && setInputValue(componentId, value);
     };
-
-    const debouncedHandleSearchChange = debounce((value) => {
-      onSearchChange && onSearchChange(value);
-    }, 200);
 
     useEffect(() => {
       if (dataType === "dynamic") {
@@ -86,12 +84,11 @@ const SelectComponent = forwardRef(
     }, [inputValue]);
 
     return (
-      <MantineSelect
+      <MantineAutocomplete
         ref={ref}
         {...props}
         {...componentProps}
         onChange={handleChange}
-        onSearchChange={debouncedHandleSearchChange}
         {...restTriggers}
         style={{}}
         styles={{
@@ -118,9 +115,9 @@ const SelectComponent = forwardRef(
     );
   },
 );
-SelectComponent.displayName = "Select";
+AutocompleteComponent.displayName = "Autocomplete";
 
-export const Select = memo(
-  withComponentWrapper<Props>(SelectComponent),
+export const Autocomplete = memo(
+  withComponentWrapper<Props>(AutocompleteComponent),
   isSame,
 );

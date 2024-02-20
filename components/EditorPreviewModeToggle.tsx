@@ -1,4 +1,5 @@
 import { useAppMode } from "@/hooks/useAppMode";
+import { useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
 import { ICON_SIZE, NAVBAR_MIN_WIDTH, NAVBAR_WIDTH } from "@/utils/config";
 import { Group, Switch, Tooltip, useMantineTheme } from "@mantine/core";
@@ -7,7 +8,10 @@ import { IconBrush, IconEye } from "@tabler/icons-react";
 export const EditorPreviewModeToggle = () => {
   const theme = useMantineTheme();
   const { isPreviewMode } = useAppMode();
-  const setPreviewMode = useUserConfigStore((state) => state.setPreviewMode);
+  const setPreviewModeConfig = useUserConfigStore(
+    (state) => state.setPreviewMode,
+  );
+  const setPreviewModeEditor = useEditorStore((state) => state.setPreviewMode);
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const setNavbarWidth = useUserConfigStore((state) => state.setNavbarWidth);
 
@@ -25,7 +29,8 @@ export const EditorPreviewModeToggle = () => {
           checked={isPreviewMode}
           onChange={(event) => {
             const isPreviewMode = event.currentTarget.checked;
-            setPreviewMode(isPreviewMode);
+            setPreviewModeConfig(isPreviewMode);
+            setPreviewModeEditor(isPreviewMode);
             setNavbarWidth(
               isTabPinned && isPreviewMode
                 ? 0

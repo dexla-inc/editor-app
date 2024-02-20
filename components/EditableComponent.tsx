@@ -119,6 +119,8 @@ export const EditableComponent = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shareableContent?.parentDataComponentId]);
 
+  console.log("EditableComponent", component);
+
   return (
     <>
       {cloneElement(

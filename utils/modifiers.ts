@@ -46,7 +46,8 @@ export type Modifiers =
   | "gridColumn"
   | "navbar"
   | "progress"
-  | "countdownButton";
+  | "countdownButton"
+  | "autocomplete";
 
 type RequiredModifiers = {
   [K in Modifiers]: Record<string, any>;
@@ -231,6 +232,25 @@ export const requiredModifiers: RequiredModifiers = {
     labelSize: "sm",
     labelWeight: "normal",
     labelAlign: "left",
+    dataType: "static",
+    data: [
+      { label: "Option 1", value: "option-1" },
+      { label: "Option 2", value: "option-2" },
+    ],
+    customText: "",
+    customLinkText: "",
+    customLinkUrl: "",
+    style: {
+      width: "100%",
+    },
+  },
+  autocomplete: {
+    name: "Autocomplete",
+    placeholder: "Autocomplete",
+    label: "A label",
+    icon: "",
+    dropdownPosition: "flip",
+    withAsterisk: "false",
     dataType: "static",
     data: [
       { label: "Option 1", value: "option-1" },

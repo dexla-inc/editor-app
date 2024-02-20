@@ -5,6 +5,7 @@ import { Data } from "@/components/data/Data";
 import * as AccordionModifier from "@/components/modifiers/Accordion";
 import * as AccordionItemModifier from "@/components/modifiers/AccordionItem";
 import * as AlertModifier from "@/components/modifiers/Alert";
+import * as AutocompleteModifier from "@/components/modifiers/Autocomplete";
 import * as AvatarModifier from "@/components/modifiers/Avatar";
 import * as BackgroundModifier from "@/components/modifiers/Background";
 import * as BadgeModifier from "@/components/modifiers/Badge";
@@ -124,6 +125,7 @@ const sectionMapper: SectionsMapper = {
   gridColumn: GridColumnModifier,
   navbar: NavbarModifier,
   progress: ProgressModifier,
+  autocomplete: AutocompleteModifier,
 };
 
 type Tab = "design" | "data" | "actions";
