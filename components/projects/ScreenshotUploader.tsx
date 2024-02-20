@@ -149,7 +149,7 @@ export default function ScreenshotUploader({
               align="center"
               w="100%"
               sx={(theme) => ({
-                border: "2px dashed " + theme.colors.gray[3],
+                border: "2px dashed " + BORDER_COLOR,
                 paddingLeft: theme.spacing.md,
                 borderRadius: theme.radius.sm,
                 ":focus-within": {

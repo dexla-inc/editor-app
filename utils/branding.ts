@@ -174,6 +174,7 @@ const TRANSPARENT_COLOR = isDarkTheme
   : "rgba(0, 0, 0, 0.1)";
 const LINK_COLOR = isDarkTheme ? "teal" : "white";
 const FLEX_HOVER = isDarkTheme ? theme.colors.dark[4] : HOVERED;
+const BORDER_COLOR = isDarkTheme ? theme.colors.dark[4] : theme.colors.gray[3];
 const BUTTON_HOVER = isDarkTheme ? theme.colors.dark[6] : HOVERED;
 const BORDER = isDarkTheme ? THIN_DARK_OUTLINE : THIN_GRAY_OUTLINE;
 const BINDER_BACKGROUND = isDarkTheme ? theme.colors.dark[5] : undefined;
@@ -398,6 +399,7 @@ export {
   BG_COLOR,
   BINDER_BACKGROUND,
   BORDER,
+  BORDER_COLOR,
   BUTTON_HOVER,
   DARK_COLOR,
   DARK_MODE,

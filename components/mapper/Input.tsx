@@ -56,7 +56,7 @@ const InputComponent = forwardRef(
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const _defaultValue = type === "number" || type === "numberRange" ? 0 : "";
     const inputValue = useInputsStore((state) => state.getValue(component.id!));
-    const setStoreInputValue = useInputsStore((state) => state.setInputValue);
+    const setInputValue = useInputsStore((state) => state.setInputValue);
 
     const isClearable = clearable && !!inputValue;
 
@@ -69,17 +69,9 @@ const InputComponent = forwardRef(
 
     // clear input field
     const clearInput = () => {
-      setStoreInputValue(component.id!, _defaultValue);
+      setInputValue(component.id!, _defaultValue);
       const el = iframeWindow?.document.getElementById(component.id!);
       el?.focus();
-    };
-
-    const handleChange = (e: any) => {
-      let newValue = e.target ? e.target.value : e;
-      if (type === "number") {
-        newValue = newValue ? Number(newValue) : 0;
-      }
-      setStoreInputValue(component.id!, newValue);
     };
 
     // handle increase number range
@@ -103,7 +95,15 @@ const InputComponent = forwardRef(
       return isNaN(number) ? 0 : number;
     };
 
-    // TODO: Move to a hook
+    const handleChange = (e: any) => {
+      let newValue = e.target ? e.target.value : e;
+      if (type === "number") {
+        newValue = newValue ? Number(newValue) : 0;
+      }
+      setInputValue(component.id!, newValue);
+    };
+
+    // TODO: Move to a hook. Doing this as we need to update input immediately but not call actions etc.
     useEffect(() => {
       // Set a timeout to delay the call to onChange
       const timer = setTimeout(() => {
