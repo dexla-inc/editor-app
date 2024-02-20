@@ -1,4 +1,5 @@
 import { Icon } from "@/components/Icon";
+import { BORDER_COLOR } from "@/utils/branding";
 import { ICON_MEDIUM_SIZE, ICON_SIZE, LARGE_ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
