@@ -2,8 +2,8 @@ import {
   PageAIResponse,
   PageBody,
   PageResponse,
+  PageStateParams,
   PagesResponse,
-  UpdatePageBody,
 } from "@/requests/pages/types";
 import { del, post, put } from "@/utils/api";
 
@@ -17,7 +17,7 @@ export const createPage = async (params: PageBody, projectId: string) => {
 };
 
 export const updatePage = async (
-  params: UpdatePageBody,
+  params: PageBody,
   projectId: string,
   pageId: string,
 ) => {
@@ -67,18 +67,14 @@ export const createPageList = async (
 };
 
 export const updatePageState = async (
-  pageState: PageBody["pageState"],
+  state: PageStateParams["state"],
   projectId: string,
   pageId: string,
   setIsSaving: (isSaving: boolean) => void,
 ) => {
   setIsSaving(true);
-  const response = (await put<any>(
-    `/projects/${projectId}/pages/${pageId}/page-state`,
-    {
-      pageState,
-    },
-  )) as any;
+  const url = `/projects/${projectId}/pages/${pageId}/state`;
+  const response = (await post<any>(url, { state })) as any;
   setIsSaving(false);
   return response;
 };

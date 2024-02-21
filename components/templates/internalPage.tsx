@@ -144,7 +144,7 @@ export const template = (data: Data, theme: any, pages: any) => {
   const cards = data.cards.map((card: Card) => {
     const children = (card.component as any).children ?? [];
     const childrenComponents = children
-      ? traverseComponents(children, theme, pages)
+      ? traverseComponents(children, theme)
       : undefined;
 
     const isTable = card.component.name === "Table";

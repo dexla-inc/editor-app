@@ -3,6 +3,7 @@ import {
   PageListResponse,
   PageParams,
   PageResponse,
+  PageStateResponse,
 } from "@/requests/pages/types";
 import { getWithoutAuth } from "@/utils/apiNoAuth";
 import { buildQueryString } from "@/utils/dashboardTypes";
@@ -29,6 +30,19 @@ export const getPage = async (
     headers,
     init,
   )) as PageResponse;
+
+  return response;
+};
+
+export const getPageState = async (
+  projectId: string,
+  pageId: string,
+  init = {},
+) => {
+  const response = (await getWithoutAuth<PageStateResponse>(
+    `/projects/${projectId}/pages/${pageId}/state`,
+    init,
+  )) as PageStateResponse;
 
   return response;
 };

@@ -1,4 +1,4 @@
-import { getPage } from "@/requests/pages/queries-noauth";
+import { getPageState } from "@/requests/pages/queries-noauth";
 import { useAppStore } from "@/stores/app";
 import { emptyEditorTree, useEditorStore } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
@@ -36,7 +36,8 @@ export const useGetPageData = ({
   }));
 
   const getPageData = async ({ signal }: getPageDataParams) => {
-    const page = await getPage(projectId, pageId, {}, { signal });
+    const page = await getPageState(projectId, pageId, { signal });
+
     setIsLoading(true);
 
     if (pageCancelled) {
@@ -51,8 +52,8 @@ export const useGetPageData = ({
         title: "Page Loaded",
         message: "Your page has successfully loaded",
       });
-    } else if (page.pageState) {
-      const decodedSchema = decodeSchema(page.pageState);
+    } else if (page.state) {
+      const decodedSchema = decodeSchema(page.state);
       setEditorTree(JSON.parse(decodedSchema), {
         onLoad: true,
         action: "Initial State",

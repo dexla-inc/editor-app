@@ -1,6 +1,6 @@
 import { PagingParams } from "@/requests/types";
-import { AppTypes } from "@/utils/dashboardTypes";
 import { Action } from "@/utils/actions";
+import { AppTypes } from "@/utils/dashboardTypes";
 
 export type PageAIResponse = {
   name: string;
@@ -16,13 +16,18 @@ export type PageListResponse = {
   results: PageResponse[];
 };
 
-export interface PageBody extends UpdatePageBody {
-  pageState?: string;
-}
+export type PageStateParams = {
+  state: string;
+};
+
+export type PageStateResponse = PageStateParams & {
+  id: string;
+  created: number;
+};
 
 export type QueryStringListItem = { key: string; value: string };
 
-export type UpdatePageBody = {
+export type PageBody = {
   title: string;
   slug: string;
   isHome: boolean;
