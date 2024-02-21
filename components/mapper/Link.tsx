@@ -1,3 +1,4 @@
+import { useDataContext } from "@/contexts/DataProvider";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useContentEditable } from "@/hooks/useContentEditable";
@@ -6,7 +7,6 @@ import { Component } from "@/utils/editor";
 import { AnchorProps, Anchor as MantineAnchor } from "@mantine/core";
 import merge from "lodash.merge";
 import { forwardRef, memo } from "react";
-import { useDataContext } from "@/contexts/DataProvider";
 
 type Props = {
   renderTree: (component: Component) => any;
@@ -17,6 +17,7 @@ type Props = {
 const LinkComponent = forwardRef(
   ({ renderTree, component, shareableContent, ...props }: Props, ref) => {
     const { triggers, variable, ...componentProps } = component.props as any;
+    const { style, ...restProps } = props;
 
     const contentEditableProps = useContentEditable(component.id as string);
 
@@ -27,18 +28,14 @@ const LinkComponent = forwardRef(
         shareableContent,
       }) ?? component.props?.children;
 
-    const { fontSizeStyle } = useBrandingStyles();
+    const { textStyle } = useBrandingStyles();
 
-    const customStyle = merge({}, props.style, {
-      fontSize: props.style?.fontSize
-        ? props.style.fontSize + "px"
-        : fontSizeStyle.fontSize,
-    });
+    const customStyle = merge({}, textStyle, style);
 
     return (
       <MantineAnchor
         {...contentEditableProps}
-        {...props}
+        {...restProps}
         {...componentProps}
         {...triggers}
         ref={ref ?? contentEditableProps.ref}

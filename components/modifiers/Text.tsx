@@ -1,3 +1,5 @@
+import { FontSelector } from "@/components/FontSelector";
+import { SegmentedControlInput } from "@/components/SegmentedControlInput";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { TopLabel } from "@/components/TopLabel";
 import { UnitInput } from "@/components/UnitInput";
@@ -8,14 +10,7 @@ import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import { debouncedTreeUpdate } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
-import {
-  ActionIcon,
-  Flex,
-  SegmentedControl,
-  Select,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { ActionIcon, Flex, SegmentedControl, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -37,7 +32,6 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
-import { SegmentedControlInput } from "../SegmentedControlInput";
 
 export const icon = IconTextSize;
 export const label = "Content";
@@ -47,13 +41,6 @@ const defaultTextValues = requiredModifiers.text;
 export const Modifier = withModifier(
   ({ selectedComponent, selectedComponentIds }) => {
     const theme = useEditorStore((state) => state.theme);
-
-    const fonts = theme.fonts.reduce((acc, font) => {
-      if (font.type === "TEXT") {
-        acc.push({ label: font.tag, value: font.tag, font });
-      }
-      return acc;
-    }, [] as any[]);
 
     const shadow = selectedComponent?.props?.style?.textShadow ?? "";
     const getShadowStyle = (shadow: string) => {
@@ -105,25 +92,10 @@ export const Modifier = withModifier(
       <form>
         <Stack spacing="xs">
           {!isTitle && (
-            <Select
-              label="Type"
-              data={fonts}
+            <FontSelector
               {...form.getInputProps("fontTag")}
-              onChange={(value) => {
-                form.setFieldValue("fontTag", value as string);
-                const selectedFont = fonts.find(
-                  (font) => font.value === value,
-                ).font;
-
-                debouncedTreeUpdate(selectedComponentIds, {
-                  fontTag: value,
-                  style: {
-                    fontSize: selectedFont.fontSize,
-                    fontWeight: selectedFont.fontWeight,
-                    lineHeight: selectedFont.lineHeight,
-                  },
-                });
-              }}
+              form={form as any}
+              selectedComponentIds={selectedComponentIds}
             />
           )}
           {isTitle && (
