@@ -1,6 +1,6 @@
 import { useDroppable } from "@/hooks/useDroppable";
 import { useOnDrop } from "@/hooks/useOnDrop";
-import { useEditorStore } from "@/stores/editor";
+import { ComponentToBind, useEditorStore } from "@/stores/editor";
 import {
   GREEN_BASE_SHADOW,
   GREEN_COLOR,
@@ -26,28 +26,26 @@ export const useEditorShadows = ({
   selectedByOther,
   overlayStyles,
 }: Props) => {
-  const pickingComponentToBindFrom = useEditorStore(
-    (state) => state.pickingComponentToBindFrom,
-  );
-  const pickingComponentToBindTo = useEditorStore(
-    (state) => state.pickingComponentToBindTo,
-  );
-  const currentTargetId = useEditorStore((state) => state.currentTargetId);
-  const highlightedComponentId = useEditorStore(
-    (state) => state.highlightedComponentId,
-  );
-  const hoveredComponentId = useEditorStore(
-    (state) => state.hoveredComponentId,
-  );
-
   const { isPreviewMode } = useAppMode();
-  const isLive = useEditorStore((state) => state.isLive);
-  const iframeWindow = useEditorStore((state) => state.iframeWindow);
+  const isEditorMode = useEditorStore(
+    (state) => !isPreviewMode && !state.isLive,
+  );
+  const isPicking = useEditorStore(
+    (state) =>
+      state.pickingComponentToBindFrom || state.pickingComponentToBindTo,
+  );
+  const isOver = useEditorStore(
+    (state) => state.currentTargetId === componentId,
+  );
+  const isHighlighted = useEditorStore(
+    (state) => state.highlightedComponentId === componentId,
+  );
+  const shouldDisplayOverlay = useEditorStore(
+    (state) => state.hoveredComponentId === componentId,
+  );
+  const onDrop = useOnDrop();
 
-  const isEditorMode = !isPreviewMode && !isLive;
-  const isPicking = pickingComponentToBindFrom || pickingComponentToBindTo;
-  const isOver = currentTargetId === componentId;
-  const isHighlighted = highlightedComponentId === componentId;
+  const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const baseShadow = isPicking
     ? ORANGE_BASE_SHADOW
     : selectedByOther
@@ -56,9 +54,6 @@ export const useEditorShadows = ({
   const thinBaseShadow = isPicking
     ? THIN_ORANGE_BASE_SHADOW
     : THIN_GREEN_BASE_SHADOW;
-  const shouldDisplayOverlay =
-    hoveredComponentId === componentId && isEditorMode;
-  const onDrop = useOnDrop();
   const { edge, ...droppable } = useDroppable({
     id: componentId,
     onDrop,
@@ -109,7 +104,7 @@ export const useEditorShadows = ({
   const tealOutline = useMemo(
     () => ({
       "&:before": {
-        ...(isEditorMode ? shadows : {}),
+        ...shadows,
         content: '""',
         position: "absolute",
         left: 0,
@@ -122,22 +117,20 @@ export const useEditorShadows = ({
         pointerEvents: "none",
       },
       "&:hover": {
-        ...(isEditorMode
-          ? {
-              boxShadow: thinBaseShadow,
-              ...(shouldDisplayOverlay && hoverStyles(overlayStyles)),
-            }
-          : {}),
+        boxShadow: thinBaseShadow,
+        ...(shouldDisplayOverlay && hoverStyles(overlayStyles)),
       },
     }),
-    [
-      shouldDisplayOverlay,
-      thinBaseShadow,
-      isEditorMode,
-      overlayStyles,
-      shadows,
-    ],
+    [shouldDisplayOverlay, thinBaseShadow, overlayStyles, shadows],
   );
+
+  if (!isEditorMode) {
+    return {
+      isPicking: {} as ComponentToBind,
+      droppable: {},
+      tealOutline: {},
+    };
+  }
 
   return {
     isPicking,
