@@ -14,7 +14,6 @@ import { useRouter } from "next/router";
 
 export const SaveTemplateButton = () => {
   const router = useRouter();
-  const editorTree = useEditorStore((state) => state.tree);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const company = usePropelAuthStore((state) => state.activeCompany);
@@ -27,6 +26,7 @@ export const SaveTemplateButton = () => {
         message: "Please wait while we save your template",
       });
 
+      const editorTree = useEditorStore.getState().tree;
       const { id: projectId, page: pageId } = router.query as {
         id: string;
         page: string;
