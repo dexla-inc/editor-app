@@ -17,7 +17,9 @@ const debouncedDragEnter = debounce((event: any, id: string) => {
 
   const editorTree = useEditorStore.getState().tree;
   const componentToAdd = useEditorStore.getState().componentToAdd;
-  const selectedComponentId = useEditorStore.getState().selectedComponentId;
+  const selectedComponentId = useEditorStore
+    .getState()
+    .selectedComponentIds?.at(-1);
   const setCurrentTargetId = useEditorStore.getState().setCurrentTargetId;
   const activeTab = useEditorStore.getState().activeTab;
   const setActiveTab = useEditorStore.getState().setActiveTab;
@@ -88,7 +90,9 @@ export const useDroppable = ({
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
       if (isResizing) return;
-      const selectedComponentId = useEditorStore.getState().selectedComponentId;
+      const selectedComponentId = useEditorStore
+        .getState()
+        .selectedComponentIds?.at(-1);
       const activeId = componentToAdd?.id ?? selectedComponentId;
 
       event.preventDefault();

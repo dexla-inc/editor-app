@@ -118,7 +118,7 @@ const FormComponent = forwardRef(
         pos="relative"
       >
         {endpointId &&
-          data?.map((item: any, repeatedIndex: number) => {
+          data?.map((item: any, parentIndex: number) => {
             return component.children && component.children.length > 0
               ? component.children?.map((child) =>
                   renderTree(
@@ -126,12 +126,12 @@ const FormComponent = forwardRef(
                       ...child,
                       props: {
                         ...child.props,
-                        repeatedIndex,
                       },
                     },
                     {
                       ...shareableContent,
                       data: item,
+                      parentIndex,
                     },
                   ),
                 )

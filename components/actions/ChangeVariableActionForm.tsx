@@ -8,7 +8,7 @@ type Props = ActionFormProps<Omit<ChangeVariableAction, "name">>;
 
 export const ChangeVariableActionForm = ({ form }: Props) => {
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
+    (state) => state.selectedComponentIds?.at(-1),
   );
 
   return (

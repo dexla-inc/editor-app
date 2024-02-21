@@ -37,7 +37,6 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
     tree.root,
     component.id!,
   );
-  console.log(hasParentComponentData);
   const { getComponentsStates } = useComponentStates();
 
   const onLoadFieldsStarter = fields.reduce(

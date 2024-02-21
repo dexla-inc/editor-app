@@ -18,7 +18,7 @@ const PopOverComponent = ({
   ...props
 }: Props) => {
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
+    (state) => state.selectedComponentIds?.at(-1),
   );
   const { isPreviewMode } = useAppMode();
   const updateTreeComponent = useEditorStore(

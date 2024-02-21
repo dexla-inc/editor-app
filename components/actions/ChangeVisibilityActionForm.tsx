@@ -9,7 +9,7 @@ type Props = ActionFormProps<Omit<TogglePropsAction, "name">>;
 
 export const ChangeVisibilityActionForm = ({ form }: Props) => {
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
+    (state) => state.selectedComponentIds?.at(-1),
   );
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,

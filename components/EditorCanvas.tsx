@@ -83,9 +83,6 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const currentPageId = useEditorStore((state) => state.currentPageId);
   const setIsSaving = useEditorStore((state) => state.setIsSaving);
 
-  const setSelectedComponentId = useEditorStore(
-    (state) => state.setSelectedComponentId,
-  );
   const setSelectedComponentIds = useEditorStore(
     (state) => state.setSelectedComponentIds,
   );
@@ -133,25 +130,19 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
         }
 
         if (targetModal) {
-          setSelectedComponentId(targetModal.id!);
           setSelectedComponentIds(() => [targetModal.id!]);
         } else {
-          setSelectedComponentId(undefined);
           setSelectedComponentIds(() => []);
         }
         setEditorTree(copy, { action: `Removed ${comp?.name}` });
       });
     }
-  }, [
-    isPreviewMode,
-    editorTree,
-    setSelectedComponentId,
-    setSelectedComponentIds,
-    setEditorTree,
-  ]);
+  }, [isPreviewMode, editorTree, setSelectedComponentIds, setEditorTree]);
 
   const copySelectedComponent = useCallback(() => {
-    const selectedComponentId = useEditorStore.getState().selectedComponentId;
+    const selectedComponentId = useEditorStore
+      .getState()
+      .selectedComponentIds?.at(-1);
     const componentToCopy = getComponentById(
       editorTree.root,
       selectedComponentId!,
@@ -163,7 +154,9 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   }, [editorTree.root, isPreviewMode, setCopiedComponent]);
 
   const cutSelectedComponent = useCallback(() => {
-    const selectedComponentId = useEditorStore.getState().selectedComponentId;
+    const selectedComponentId = useEditorStore
+      .getState()
+      .selectedComponentIds?.at(-1);
 
     if (!isPreviewMode && selectedComponentId) {
       copySelectedComponent();
@@ -179,7 +172,9 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       return;
     }
 
-    const selectedComponentId = useEditorStore.getState().selectedComponentId;
+    const selectedComponentId = useEditorStore
+      .getState()
+      .selectedComponentIds?.at(-1);
     const copy = cloneDeep(editorTree);
 
     if (!selectedComponentId || selectedComponentId === "root")
@@ -229,7 +224,6 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     );
 
     setEditorTree(copy, { action: `Pasted ${componentToPaste.name}` });
-    setSelectedComponentId(newSelectedId);
     setSelectedComponentIds(() => [newSelectedId]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [copiedComponent, editorTree, isPreviewMode, setEditorTree]);

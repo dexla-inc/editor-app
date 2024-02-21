@@ -47,15 +47,11 @@ export const useComponentContextMenu = () => {
   const isPageStructure = useEditorStore((state) => state.isPageStructure);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const clearSelection = useEditorStore((state) => state.clearSelection);
-  const clearSelections = useEditorStore((state) => state.clearSelections);
   const setCopiedComponent = useEditorStore(
     (state) => state.setCopiedComponent,
   );
   const setCopiedProperties = useEditorStore(
     (state) => state.setCopiedProperties,
-  );
-  const setSelectedComponentId = useEditorStore(
-    (state) => state.setSelectedComponentId,
   );
   const setSelectedComponentIds = useEditorStore(
     (state) => state.setSelectedComponentIds,
@@ -98,17 +94,10 @@ export const useComponentContextMenu = () => {
         action: `Wrapped ${component.name} with a Container`,
       });
       setTimeout(() => {
-        setSelectedComponentId(containerId);
         setSelectedComponentIds(() => [containerId]);
       }, 100);
     },
-    [
-      editorTheme,
-      editorTree,
-      setEditorTree,
-      setSelectedComponentId,
-      setSelectedComponentIds,
-    ],
+    [editorTheme, editorTree, setEditorTree, setSelectedComponentIds],
   );
 
   const deleteComponent = useCallback(
@@ -123,10 +112,9 @@ export const useComponentContextMenu = () => {
         removeComponent(copy.root, component.id);
         setEditorTree(copy, { action: `Removed ${component?.name}` });
         clearSelection();
-        clearSelections();
       }
     },
-    [clearSelection, clearSelections, editorTree, setEditorTree],
+    [clearSelection, editorTree, setEditorTree],
   );
 
   const duplicateComponent = useCallback(
@@ -148,11 +136,10 @@ export const useComponentContextMenu = () => {
       );
 
       setEditorTree(copy, { action: `Pasted ${componentName}` });
-      setSelectedComponentId(newSelectedId);
       setSelectedComponentIds(() => [newSelectedId]);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [editorTree, setSelectedComponentId, setEditorTree],
+    [editorTree, setEditorTree],
   );
 
   const copyComponent = useCallback(

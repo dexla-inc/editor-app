@@ -16,7 +16,7 @@ export const ShowNotificationActionForm = ({ form }: Props) => {
     (state) => state.setComponentToBind,
   );
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
+    (state) => state.selectedComponentIds?.at(-1),
   );
 
   return (

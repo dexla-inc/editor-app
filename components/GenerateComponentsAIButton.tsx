@@ -60,9 +60,6 @@ export const GenerateComponentsAIButton = () => {
   );
   const tree = useEditorStore((state) => state.tree);
   const theme = useEditorStore((state) => state.theme);
-  const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
-  );
 
   const closeModal = () => {
     close();

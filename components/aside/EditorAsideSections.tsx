@@ -140,7 +140,7 @@ export const EditorAsideSections = () => {
     (state) => state.setTreeComponentCurrentState,
   );
   const _selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
+    (state) => state.selectedComponentIds?.at(-1),
   );
   const selectedComponentIds = useEditorStore(
     (state) => state.selectedComponentIds,
