@@ -3,7 +3,6 @@ import { Endpoint } from "@/requests/datasources/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { ApiType } from "@/utils/dashboardTypes";
-import { getComponentById } from "@/utils/editor";
 import { Stack, Title } from "@mantine/core";
 import React from "react";
 
@@ -27,12 +26,9 @@ export const EndpointRequestInputs = ({
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
-  const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
-
-  const component = getComponentById(editorTree.root, selectedComponentId!);
 
   return (
     <Stack spacing={2}>
@@ -76,7 +72,7 @@ export const EndpointRequestInputs = ({
                 <ComponentToBindFromInput
                   size="xs"
                   label={param.name}
-                  componentId={component?.id!}
+                  componentId={selectedComponentId}
                   description={`${
                     // @ts-ignore
                     param.location ? `${param.location} - ` : ""
