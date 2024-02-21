@@ -694,9 +694,9 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
     {
       client,
       // comment this out to disable multiplayer and see if that fix the state loss issue
-      // storageMapping: {
-      //   tree: true,
-      // },
+      storageMapping: {
+        tree: true,
+      },
       presenceMapping: {
         selectedComponentIds: true,
         currentUser: true,
