@@ -41,28 +41,19 @@ type Props = {
 };
 
 const HomePage = ({ id, page, faviconUrl }: Props) => {
-  const setCurrentProjectId = useEditorStore(
-    (state) => state.setCurrentProjectId,
+  const setCurrentPageAndProjectIds = useEditorStore(
+    (state) => state.setCurrentPageAndProjectIds,
   );
-  const setCurrentPageId = useEditorStore((state) => state.setCurrentPageId);
   const setPreviewMode = useUserConfigStore((state) => state.setPreviewMode);
   const setIsLive = useEditorStore((state) => state.setIsLive);
 
   useEffect(() => {
     if (id && page.id) {
-      setCurrentProjectId(id);
-      setCurrentPageId(page.id);
+      setCurrentPageAndProjectIds(id, page.id);
       setPreviewMode(true);
       setIsLive(true);
     }
-  }, [
-    id,
-    page.id,
-    setCurrentPageId,
-    setCurrentProjectId,
-    setPreviewMode,
-    setIsLive,
-  ]);
+  }, [id, page.id, setCurrentPageAndProjectIds, setPreviewMode, setIsLive]);
 
   return (
     <>

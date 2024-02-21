@@ -18,6 +18,7 @@ import {
   updateTreeComponentStates,
 } from "@/utils/editor";
 import { requiredModifiers } from "@/utils/modifiers";
+import { removeKeysRecursive } from "@/utils/removeKeys";
 import { createClient } from "@liveblocks/client";
 import { WithLiveblocks, liveblocks } from "@liveblocks/zustand";
 import { MantineSize, MantineTheme, Tuple } from "@mantine/core";
@@ -29,7 +30,6 @@ import merge from "lodash.merge";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
-import { removeKeysRecursive } from "@/utils/removeKeys";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -188,8 +188,10 @@ export type EditorState = {
     options?: { onLoad?: boolean; action?: string },
   ) => void;
   resetTree: () => void;
-  setCurrentProjectId: (currentProjectId: string) => void;
-  setCurrentPageId: (currentPageId: string) => void;
+  setCurrentPageAndProjectIds: (
+    currentProjectId: string,
+    currentPageId: string,
+  ) => void;
   setComponentToAdd: (componentToAdd?: Component) => void;
   updateTreeComponent: (params: {
     componentId: string;
@@ -254,7 +256,7 @@ export type EditorState = {
   setCursor: (cursor?: { x: number; y: number }) => void;
 };
 
-export const debouncedUpdatePageState = debounce(updatePageState, 2000);
+export const debouncedUpdatePageState = debounce(updatePageState, 1000);
 
 // creates a store with undo/redo capability
 export const useEditorStore = create<WithLiveblocks<EditorState>>()(
@@ -342,13 +344,13 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           },
           resetTree: () => {
             const timestamp = Date.now();
-            set(
-              {
-                tree: { ...emptyEditorTree, timestamp },
-              },
-              false,
-              "editor/resetTree",
-            );
+            // set(
+            //   {
+            //     tree: { ...emptyEditorTree, timestamp },
+            //   },
+            //   false,
+            //   "editor/resetTree",
+            // );
           },
           // any props change
           updateTreeComponent: ({
@@ -580,10 +582,12 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
               "editor/setTreeComponentCurrentState",
             );
           },
-          setCurrentProjectId: (currentProjectId) =>
-            set({ currentProjectId }, false, "editor/setCurrentProjectId"),
-          setCurrentPageId: (currentPageId) =>
-            set({ currentPageId }, false, "editor/setCurrentPageId"),
+          setCurrentPageAndProjectIds: (currentProjectId, currentPageId) =>
+            set(
+              { currentProjectId, currentPageId },
+              false,
+              "editor/setCurrentPageAndProjectIds",
+            ),
           setComponentToAdd: (componentToAdd) =>
             set({ componentToAdd }, false, "editor/setComponentToAdd"),
           setSelectedComponentParentIndex: (selectedComponentParentIndex) =>

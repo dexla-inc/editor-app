@@ -1,8 +1,7 @@
 import { Editor } from "@/components/Editor";
-import { useEditorStore } from "@/stores/editor";
-import { GetServerSidePropsContext } from "next";
-import { useEffect } from "react";
 import { withPageOnLoad } from "@/hoc/withPageOnLoad";
+import { GetServerSidePropsContext } from "next";
+import { memo } from "react";
 
 export const getServerSideProps = async ({
   query,
@@ -20,20 +19,9 @@ type Props = {
   page: string;
 };
 
-function PageEditor({ id, page }: Props) {
-  const setCurrentProjectId = useEditorStore(
-    (state) => state.setCurrentProjectId,
-  );
-  const setCurrentPageId = useEditorStore((state) => state.setCurrentPageId);
-
-  useEffect(() => {
-    if (id && page) {
-      setCurrentProjectId(id);
-      setCurrentPageId(page);
-    }
-  }, [id, page, setCurrentPageId, setCurrentProjectId]);
-
+const PageEditor = ({ id, page }: Props) => {
+  console.log("PageEditor", id, page);
   return <Editor key={page} pageId={page} projectId={id} />;
-}
+};
 
-export default withPageOnLoad(PageEditor);
+export default withPageOnLoad(memo(PageEditor));

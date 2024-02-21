@@ -8,8 +8,8 @@ export const useCheckIfIsLive = () => {
   const router = useRouter();
   const projectId = router.query.id as string | undefined;
 
-  const setCurrentProjectId = useEditorStore(
-    (state) => state.setCurrentProjectId,
+  const setCurrentPageAndProjectIds = useEditorStore(
+    (state) => state.setCurrentPageAndProjectIds,
   );
 
   const [urlType, setUrlType] = useState("");
@@ -36,7 +36,7 @@ export const useCheckIfIsLive = () => {
           _projectId = project.id ?? projectId;
         }
 
-        setCurrentProjectId(_projectId as string);
+        setCurrentPageAndProjectIds(_projectId as string, "");
       } catch (error) {
         console.error("Error checking if live:", error);
       }
