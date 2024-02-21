@@ -1,3 +1,4 @@
+import { FontSelector } from "@/components/FontSelector";
 import { ThemeColorSelector } from "@/components/ThemeColorSelector";
 import { withModifier } from "@/hoc/withModifier";
 import { debouncedTreeUpdate } from "@/utils/editor";
@@ -19,6 +20,7 @@ export const Modifier = withModifier(
       form.setValues(
         merge({}, requiredModifiers.link, {
           color: selectedComponent.props?.color,
+          fontTag: selectedComponent.props?.fontTag,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -27,6 +29,11 @@ export const Modifier = withModifier(
     return (
       <form>
         <Stack spacing="xs">
+          <FontSelector
+            {...form.getInputProps("fontTag")}
+            form={form as any}
+            selectedComponentIds={selectedComponentIds}
+          />
           <ThemeColorSelector
             label="Color"
             value={form.getInputProps("color").value}

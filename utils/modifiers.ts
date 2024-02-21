@@ -198,10 +198,10 @@ export const requiredModifiers: RequiredModifiers = {
     style: {
       width: "fit-content",
       height: "fit-content",
-      fontWeight: "normal",
-      lineHeight: "110%",
+      fontWeight: 500,
       letterSpacing: "0px",
     },
+    fontTag: "P",
   },
   icon: {
     size: "md",
