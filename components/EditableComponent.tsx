@@ -16,7 +16,7 @@ import { useTriggers } from "@/hooks/useTriggers";
 import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import { BoxProps } from "@mantine/core";
-import { PropsWithChildren, cloneElement, useEffect } from "react";
+import { PropsWithChildren, cloneElement } from "react";
 
 type Props = {
   id: string;

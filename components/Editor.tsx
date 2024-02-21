@@ -6,8 +6,7 @@ import { EditorCanvas } from "@/components/EditorCanvas";
 import { EditorAsideSections } from "@/components/aside/EditorAsideSections";
 import { EditorNavbarSections } from "@/components/navbar/EditorNavbarSections";
 import { useAppMode } from "@/hooks/useAppMode";
-import { defaultPageState, useGetPageData } from "@/hooks/useGetPageData";
-import { useAppStore } from "@/stores/app";
+import { useGetPageData } from "@/hooks/useGetPageData";
 import { useEditorStore } from "@/stores/editor";
 import { usePropelAuthStore } from "@/stores/propelAuth";
 import { useUserConfigStore } from "@/stores/userConfig";
@@ -19,20 +18,8 @@ import {
   NAVBAR_MIN_WIDTH,
   NAVBAR_WIDTH,
 } from "@/utils/config";
-import {
-  Aside,
-  Box,
-  Button,
-  Global,
-  Loader,
-  Navbar,
-  Paper,
-  ScrollArea,
-  Stack,
-  Text,
-} from "@mantine/core";
-import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect } from "react";
+import { Aside, Box, Global, Navbar, ScrollArea } from "@mantine/core";
+import { useEffect } from "react";
 
 type Props = {
   projectId: string;
@@ -40,46 +27,19 @@ type Props = {
 };
 
 export const Editor = ({ projectId, pageId }: Props) => {
+  console.log("Editor", projectId, pageId);
+  const setCurrentPageAndProjectIds = useEditorStore(
+    (state) => state.setCurrentPageAndProjectIds,
+  );
   const liveblocks = useEditorStore((state) => state.liveblocks);
-  const editorTree = useEditorStore((state) => state.tree);
-  const setEditorTree = useEditorStore((state) => state.setTree);
   const { isPreviewMode } = useAppMode();
   const isNavBarVisible = useEditorStore((state) => state.isNavBarVisible);
   const setCurrentUser = useEditorStore((state) => state.setCurrentUser);
-
-  const isLoading = useAppStore((state) => state.isLoading);
-  const setIsLoading = useAppStore((state) => state.setIsLoading);
-  const stopLoading = useAppStore((state) => state.stopLoading);
-
-  const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
   const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
   const user = usePropelAuthStore((state) => state.user);
 
   useGetPageData({ projectId, pageId });
-
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    setIsLoading(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const cancelGeneratePage = useCallback(() => {
-    stopLoading({
-      id: "page-generation",
-      title: "Page Cancelled",
-      message: "You can build from scratch",
-      isError: true,
-    });
-    queryClient.cancelQueries({ queryKey: ["page"] });
-    setEditorTree(defaultPageState, {
-      onLoad: true,
-      action: "Initial State",
-    });
-    setIsLoading(false);
-    // we don't unnnecessary rerendering of the editor
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setEditorTree]);
+  setCurrentPageAndProjectIds(projectId, pageId);
 
   useEffect(() => {
     if (pageId) {
@@ -95,7 +55,8 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
   useEffect(() => {
     setCurrentUser(user);
-  }, [user, setCurrentUser]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   return (
     <>
@@ -136,43 +97,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
         }
       >
         <Global styles={globalStyles(isDarkTheme)} />
-        {isLoading && editorTree.root.children?.length === 0 && (
-          <Box
-            pos="relative"
-            style={{ minHeight: `calc(100vh - ${HEADER_HEIGHT}px)` }}
-            ml={isTabPinned ? NAVBAR_WIDTH : NAVBAR_MIN_WIDTH - 50} // Weird sizing issue that I haven't got time to investigate, had to hack it
-            p={"40px 10px"}
-          >
-            <Paper
-              pos="relative"
-              shadow="xs"
-              sx={{
-                width: "100%",
-                minHeight: "400px",
-                justifyContent: "center",
-                alignItems: "center",
-                display: "flex",
-              }}
-            >
-              <Stack align="center">
-                <Text color="teal.6" size="sm" weight="bold">
-                  Loading the page
-                </Text>
-                <Loader />
-              </Stack>
-
-              <Button
-                color="red"
-                pos="absolute"
-                bottom={30}
-                type="button"
-                onClick={cancelGeneratePage}
-              >
-                Cancel
-              </Button>
-            </Paper>
-          </Box>
-        )}
         <EditorCanvas projectId={projectId} />
       </Shell>
       {liveblocks.others.map(({ connectionId, presence }) => {

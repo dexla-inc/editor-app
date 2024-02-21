@@ -36,6 +36,7 @@ export const useGetPageData = ({
   }));
 
   const getPageData = async ({ signal }: getPageDataParams) => {
+    console.log("Getting page data");
     const page = await getPageState(projectId, pageId, { signal });
 
     setIsLoading(true);
