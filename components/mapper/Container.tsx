@@ -61,7 +61,7 @@ export const ContainerComponent = forwardRef(
         <LoadingOverlay visible={loading} overlayBlur={2} />
         {endpointId &&
           Array.isArray(data) &&
-          data.map((item: any, repeatedIndex: number) => {
+          data.map((item: any, parentIndex: number) => {
             return component.children && component.children.length > 0
               ? component.children?.map((child) =>
                   renderTree(
@@ -69,12 +69,12 @@ export const ContainerComponent = forwardRef(
                       ...child,
                       props: {
                         ...child.props,
-                        repeatedIndex,
                       },
                     },
                     {
                       ...props.shareableContent,
                       data: item,
+                      parentIndex,
                     },
                   ),
                 )

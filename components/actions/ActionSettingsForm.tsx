@@ -9,7 +9,6 @@ import { ActionButtons } from "@/components/actions/ActionButtons";
 import { Button, Divider, Stack } from "@mantine/core";
 import { useEffect } from "react";
 import { Icon } from "@/components/Icon";
-import { SelectActionForm } from "@/components/pages/SelectActionForm";
 import { useDisclosure } from "@mantine/hooks";
 import { ActionsForm } from "@/components/actions/ActionsForm";
 
@@ -29,7 +28,7 @@ export const ActionSettingsForm = ({
 
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
+    (state) => state.selectedComponentIds?.at(-1),
   );
   const updateTreeComponentActions = useEditorStore(
     (state) => state.updateTreeComponentActions,

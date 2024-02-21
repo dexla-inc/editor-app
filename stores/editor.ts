@@ -141,7 +141,7 @@ export type EditorState = {
   tree: EditorTree;
   currentProjectId?: string;
   currentPageId?: string;
-  selectedComponentId?: string;
+  selectedComponentParentIndex?: number | undefined;
   hoveredComponentId?: string;
   selectedComponentIds?: string[];
   copiedComponent?: Component;
@@ -221,11 +221,10 @@ export type EditorState = {
     componentId: string,
     currentState: string,
   ) => void;
-  setSelectedComponentId: (selectedComponentId?: string) => void;
+  setSelectedComponentParentIndex: (parentIndex: number | undefined) => void;
   setHoveredComponentId: (hoveredComponentId?: string) => void;
   setSelectedComponentIds: (cb: (ids: string[]) => string[]) => void;
   clearSelection: (id?: string) => void;
-  clearSelections: (ids?: string[]) => void;
   setIsSaving: (isSaving: boolean) => void;
   setPreviewMode: (value: boolean) => void;
   setIsLive: (value: boolean) => void;
@@ -587,11 +586,11 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
             set({ currentPageId }, false, "editor/setCurrentPageId"),
           setComponentToAdd: (componentToAdd) =>
             set({ componentToAdd }, false, "editor/setComponentToAdd"),
-          setSelectedComponentId: (selectedComponentId) =>
+          setSelectedComponentParentIndex: (selectedComponentParentIndex) =>
             set(
-              { selectedComponentId },
+              { selectedComponentParentIndex },
               false,
-              "editor/setSelectedComponentId",
+              "editor/setSelectedComponentParentIndex",
             ),
           setSelectedComponentIds: (cb) => {
             return set(
@@ -607,15 +606,9 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           },
           clearSelection: (id) =>
             set(
-              { selectedComponentId: id ?? "content-wrapper" },
+              { selectedComponentIds: [id ?? "content-wrapper"] },
               false,
               "editor/clearSelection",
-            ),
-          clearSelections: (ids) =>
-            set(
-              { selectedComponentIds: ids ?? ["content-wrapper"] },
-              false,
-              "editor/clearSelections",
             ),
           setIsSaving: (isSaving) =>
             set({ isSaving }, false, "editor/setIsSaving"),
@@ -702,7 +695,6 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
       },
       presenceMapping: {
         selectedComponentIds: true,
-        selectedComponentId: true,
         currentUser: true,
         cursor: true,
       },

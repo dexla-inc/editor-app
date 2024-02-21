@@ -102,6 +102,7 @@ export const EditableComponent = ({
     forceDestroyContextMenu,
     propsWithOverwrites,
     isPicking,
+    shareableContent.parentIndex,
   );
 
   return (

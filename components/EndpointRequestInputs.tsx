@@ -29,7 +29,7 @@ export const EndpointRequestInputs = ({
   );
   const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
+    (state) => state.selectedComponentIds?.at(-1),
   );
 
   const component = getComponentById(editorTree.root, selectedComponentId!);

@@ -29,7 +29,7 @@ export const QueryStringsForm = ({
     (state) => state.setComponentToBind,
   );
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
+    (state) => state.selectedComponentIds?.at(-1),
   );
   const setPickingComponentToBindTo = useEditorStore(
     (state) => state.setPickingComponentToBindTo,

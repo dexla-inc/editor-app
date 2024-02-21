@@ -14,7 +14,7 @@ type Props = {
 export const ModalComponent = forwardRef(
   ({ renderTree, component, ...props }: Props, ref) => {
     const selectedComponentId = useEditorStore(
-      (state) => state.selectedComponentId,
+      (state) => state.selectedComponentIds?.at(-1),
     );
     const theme = useEditorStore((state) => state.theme);
     const { isPreviewMode } = useAppMode();

@@ -99,7 +99,7 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
   const tree = useEditorStore((state) => state.tree);
   const theme = useEditorStore((state) => state.theme);
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
+    (state) => state.selectedComponentIds?.at(-1),
   );
   // const [stream, setStream] = useState<string>("");
 

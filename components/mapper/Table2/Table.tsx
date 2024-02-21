@@ -42,10 +42,11 @@ export const TableComponent = forwardRef(
             {(Array.isArray(data) ? data : [])?.map((item: any, i: number) => {
               return (
                 <tr key={i}>
-                  {component.children?.map((child) =>
+                  {component.children?.map((child, parentIndex) =>
                     renderTree(child, {
                       ...shareableContent,
                       data: item,
+                      parentIndex,
                     }),
                   )}
                 </tr>

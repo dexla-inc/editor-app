@@ -17,7 +17,7 @@ export const Drawer = ({
   ...props
 }: Props) => {
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
+    (state) => state.selectedComponentIds?.at(-1),
   );
   const theme = useEditorStore((state) => state.theme);
   const isPreviewMode = useUserConfigStore((state) => state.isPreviewMode);

@@ -35,14 +35,11 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
   const editorTheme = useEditorStore((state) => state.theme);
   const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
-  const setSelectedComponentId = useEditorStore(
-    (state) => state.setSelectedComponentId,
-  );
   const setSelectedComponentIds = useEditorStore(
     (state) => state.setSelectedComponentIds,
   );
   const selectedComponentId = useEditorStore(
-    (state) => state.selectedComponentId,
+    (state) => state.selectedComponentIds?.at(-1),
   );
 
   const isTabPinned = useUserConfigStore((state) => state.isTabPinned);
@@ -182,7 +179,6 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            setSelectedComponentId(parent.id as string);
             setSelectedComponentIds(() => [parent.id!]);
           }}
         />
