@@ -344,13 +344,13 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           },
           resetTree: () => {
             const timestamp = Date.now();
-            // set(
-            //   {
-            //     tree: { ...emptyEditorTree, timestamp },
-            //   },
-            //   false,
-            //   "editor/resetTree",
-            // );
+            set(
+              {
+                tree: { ...emptyEditorTree, timestamp },
+              },
+              false,
+              "editor/resetTree",
+            );
           },
           // any props change
           updateTreeComponent: ({
