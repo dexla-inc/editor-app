@@ -11,7 +11,6 @@ import {
 import { useAppStore } from "@/stores/app";
 import { useEditorStore } from "@/stores/editor";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
-import { decodeSchema } from "@/utils/compression";
 import { ICON_DELETE, ICON_SIZE } from "@/utils/config";
 import { Button, Group, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -207,16 +206,6 @@ export default function PageConfig({ page, setPage }: Props) {
               iconName="IconCopy"
               tooltip="Duplicate"
               onClick={duplicate}
-            />
-          )}
-          {page?.pageState && (
-            <ActionIconDefault
-              iconName="IconPhotoPlus"
-              tooltip={copied ? "Copied" : "Copy Design"}
-              onClick={(e) => {
-                const pageStructure = decodeSchema(page.pageState!);
-                copy(pageStructure);
-              }}
             />
           )}
           {page?.id && (

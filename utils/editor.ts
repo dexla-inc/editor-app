@@ -83,7 +83,6 @@ export const replaceIdsDeeply = (treeRoot: Component) => {
 export const traverseComponents = (
   components: Component[],
   theme: MantineThemeExtended,
-  pages: PageResponse[],
 ): Component[] => {
   return components
     .filter((c) => !!c.name)
@@ -122,14 +121,9 @@ export const traverseComponents = (
             : {}),
         },
         theme,
-        pages,
       });
       if (component.children) {
-        newComponent.children = traverseComponents(
-          component.children,
-          theme,
-          pages,
-        );
+        newComponent.children = traverseComponents(component.children, theme);
       }
 
       return newComponent;
@@ -173,7 +167,7 @@ export const getEditorTreeFromPageStructure = (
                   flexDirection: "row",
                 },
               },
-              children: traverseComponents(row.components, theme, pages),
+              children: traverseComponents(row.components, theme),
             };
           }),
         },
@@ -190,11 +184,8 @@ export const getEditorTreeFromTemplateData = (
   pages: PageResponse[],
 ) => {
   // @ts-ignore
-  const editorTree: EditorTree = templatesMapper[tree.template.name](
-    tree.template.data,
-    theme,
-    pages,
-  );
+  const template = templatesMapper[tree.template.name];
+  const editorTree: EditorTree = template(tree.template.data, theme, pages);
   return editorTree;
 };
 
@@ -206,7 +197,8 @@ export const getEditorTreeFromTemplateTileData = async (
   pageId: string,
 ) => {
   // @ts-ignore
-  const editorTree: EditorTree = await templatesMapper[tree.template.name](
+  const template = templatesMapper[tree.template.name];
+  const editorTree: EditorTree = await template(
     tree.template,
     theme,
     pages,
@@ -247,7 +239,7 @@ export const getNewComponents = (
         },
         children:
           row.components && row.components.length > 0
-            ? traverseComponents(row.components, theme, pages)
+            ? traverseComponents(row.components, theme)
             : [],
       };
     }),
@@ -267,7 +259,6 @@ export const getNewComponent = (
       ...(firstComponent?.props ?? {}),
     },
     theme,
-    pages,
   });
 
   return {
@@ -277,7 +268,7 @@ export const getNewComponent = (
     props: { ...firstComponentStructure.props },
     children:
       firstComponent.children && firstComponent.children.length > 0
-        ? traverseComponents(firstComponent.children, theme, pages)
+        ? traverseComponents(firstComponent.children, theme)
         : [],
   };
 };
