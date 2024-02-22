@@ -174,8 +174,6 @@ export const Modifier = withModifier(
           borderBottomStyle: value,
           borderLeftStyle: value,
         };
-
-        // @ts-ignore
       } else {
         const key = `border${startCase(form.values.showBorder as string)}Style`;
         form.setFieldValue("borderStyle", value);
@@ -360,11 +358,7 @@ export const Modifier = withModifier(
                     borderBottomWidth: value,
                     borderLeftWidth: value,
                   };
-                  form.setFieldValue("borderWidth", value);
-                  form.setFieldValue("borderTopWidth", value);
-                  form.setFieldValue("borderRightWidth", value);
-                  form.setFieldValue("borderBottomWidth", value);
-                  form.setFieldValue("borderLeftWidth", value);
+                  form.setValues({ ...borderWidth });
                 } else {
                   const key = `border${startCase(
                     form.values.showBorder as string,
@@ -427,20 +421,16 @@ export const Modifier = withModifier(
                   <UnitInput
                     {...form.getInputProps("borderRadius")}
                     onChange={(value) => {
-                      form.setFieldValue("borderRadius", value);
-                      form.setFieldValue("borderTopLeftRadius", value);
-                      form.setFieldValue("borderTopRightRadius", value);
-                      form.setFieldValue("borderBottomLeftRadius", value);
-                      form.setFieldValue("borderBottomRightRadius", value);
-
+                      const borderRadius = {
+                        borderRadius: value,
+                        borderTopLeftRadius: value,
+                        borderTopRightRadius: value,
+                        borderBottomLeftRadius: value,
+                        borderBottomRightRadius: value,
+                      };
+                      form.setValues({ ...borderRadius });
                       debouncedTreeUpdate(selectedComponentIds, {
-                        style: {
-                          borderRadius: value,
-                          borderTopLeftRadius: value,
-                          borderTopRightRadius: value,
-                          borderBottomLeftRadius: value,
-                          borderBottomRightRadius: value,
-                        },
+                        style: borderRadius,
                       });
                     }}
                     options={[
