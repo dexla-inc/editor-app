@@ -16,6 +16,7 @@ import {
 } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
+import { IconSelector } from "../IconSelector";
 
 export const icon = IconInputSearch;
 export const label = "Autocomplete";
@@ -68,6 +69,17 @@ export const Modifier = withModifier(
               debouncedTreeUpdate(selectedComponentIds, {
                 size: value,
                 style: { height: inputSizes[value] },
+              });
+            }}
+          />
+          <IconSelector
+            topLabel="Icon"
+            selectedIcon={(form.values.icon as any)?.props?.name}
+            onIconSelect={(iconName: string) => {
+              const icon = { props: { name: iconName } };
+              form.setFieldValue("icon.props.name", iconName);
+              debouncedTreeUpdate(selectedComponentIds, {
+                icon,
               });
             }}
           />

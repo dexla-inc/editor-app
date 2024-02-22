@@ -1,7 +1,6 @@
 import { JSONSelector } from "@/components/JSONSelector";
 import { Button, ScrollArea, Stack } from "@mantine/core";
 import { useMemo } from "react";
-import { safeJsonParse } from "@/utils/common";
 
 type Props = {
   dataItems: any[];
