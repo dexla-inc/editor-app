@@ -14,6 +14,14 @@ type UseEndpointProps = {
   enabled?: boolean;
 };
 
+const setLoadingState = (
+  componentId: string,
+  isLoading: boolean,
+  updateTreeComponent: Function,
+) => {
+  updateTreeComponent({ componentId, props: { loading: isLoading } });
+};
+
 export const useEndpoint = ({
   component,
   forceEnabled,
@@ -35,6 +43,7 @@ export const useEndpoint = ({
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const endpoint = endpoints?.results?.find((e) => e.id === endpointId);
   const { computeValue } = useDataContext()!;
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
   const requestSettings = { binds, dataType, staleTime };
 
@@ -48,13 +57,21 @@ export const useEndpoint = ({
     ? `/api/proxy?targetUrl=${encodeURIComponent(url)}`
     : url;
 
-  const apiCall = () => {
+  const apiCall = async () => {
+    setLoadingState(component.id!, true, updateTreeComponent);
+
     const authHeaderKey =
       endpoint?.authenticationScheme === "BEARER"
         ? "Bearer " + accessToken
         : "";
 
-    return performFetch(fetchUrl, endpoint, body, authHeaderKey);
+    return performFetch(fetchUrl, endpoint, body, authHeaderKey)
+      .then((response) => {
+        return response;
+      })
+      .finally(() => {
+        setLoadingState(component.id!, false, updateTreeComponent);
+      });
   };
 
   const isEnabled =
