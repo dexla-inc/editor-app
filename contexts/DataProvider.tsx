@@ -26,6 +26,12 @@ export type GetValueProps = {
   staticFallback?: string;
 };
 
+export type GetValuesProps = {
+  value?: Array<ValueProps>;
+  shareableContent?: any;
+  staticFallback?: string;
+};
+
 type DataContextProps = {
   variables: { list: Record<string, any> };
   components: { list: Record<string, any> };
@@ -33,6 +39,7 @@ type DataContextProps = {
   browserList: any[];
   auth: AuthState & { refreshToken?: string };
   computeValue: (props: GetValueProps) => any;
+  computeValues: (props: GetValuesProps) => any;
   setNonEditorActions: any;
 };
 
@@ -167,6 +174,25 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     return valueHandlers[dataType]();
   };
 
+  const computeValues = ({ value, shareableContent }: any) => {
+    if (!value) return {};
+    const keys = Object.keys(value);
+    const computedValues = keys.reduce(
+      (acc, key) => {
+        // Assuming computeValue is available in this scope, or imported if this is defined elsewhere
+        const computedValue = computeValue({
+          value: value[key],
+          shareableContent,
+        });
+        acc[key] = computedValue;
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
+
+    return computedValues;
+  };
+
   return (
     <DataContext.Provider
       value={{
@@ -176,6 +202,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         auth,
         actions,
         computeValue,
+        computeValues,
         setNonEditorActions,
       }}
     >

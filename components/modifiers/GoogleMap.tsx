@@ -7,7 +7,6 @@ import {
   ActionIcon,
   Box,
   Button,
-  Divider,
   Flex,
   Group,
   NumberInput,
@@ -42,10 +41,7 @@ export const Modifier = withModifier(
       form.setValues(
         merge({}, requiredModifiers.mapSettings, {
           language: selectedComponent.props?.language,
-          apiKey: selectedComponent.props?.apiKey,
-          center: selectedComponent.props?.center,
           options: selectedComponent.props?.options,
-          zoom: selectedComponent.props?.zoom,
           markers: selectedComponent.props?.markers,
           fade: selectedComponent.props?.fade,
         }),
@@ -145,296 +141,211 @@ export const Modifier = withModifier(
     return (
       <form key={selectedComponent?.id}>
         <Stack spacing="xs">
-          <TextInput
-            size="xs"
-            label="API Key"
-            {...form.getInputProps("apiKey")}
-            onChange={(e) => {
-              form.setFieldValue("apiKey", e.target.value);
-              debouncedTreeUpdate(selectedComponentIds, {
-                apiKey: e.target.value,
-              });
-            }}
-          />
-          {isApiKey && (
-            <>
-              <Stack>
-                <Flex justify="space-between" align="center">
-                  <Text size="sm">Add Marker</Text>
-                  <Button
-                    onClick={addMarker}
-                    size="xs"
-                    leftIcon={<IconPlus size={ICON_SIZE} />}
-                  >
-                    Add
-                  </Button>
-                </Flex>
-                {(form.values.markers as any[]).map(
-                  (child: any, index: any) => (
-                    <Box key={child.id}>
-                      <Flex justify="space-between">
-                        <Text size="sm">Marker {index + 1}</Text>
-                        <ActionIcon onClick={() => removeMarker(index)}>
-                          <IconTrash size={ICON_SIZE} color="red" />
-                        </ActionIcon>
-                      </Flex>
-                      <TextInput
-                        label="Name"
-                        size="xs"
-                        value={child.name}
-                        onChange={(e) =>
-                          upDateMarker(index, "name", e.target.value)
-                        }
-                      />
-                      <Group grow spacing="xs">
-                        <NumberInput
-                          label="Latitude"
-                          size="xs"
-                          precision={6}
-                          step={0.000005}
-                          value={child.position.lat}
-                          onChange={(e) =>
-                            upDateMarker(index, "lat", e as number)
-                          }
-                        />
-                        <NumberInput
-                          label="Longitude"
-                          size="xs"
-                          precision={6}
-                          step={0.000005}
-                          value={child.position.lng}
-                          onChange={(e) =>
-                            upDateMarker(index, "lng", e as number)
-                          }
-                        />
-                      </Group>
-                      <Divider my="sm" />
-                    </Box>
-                  ),
-                )}
-              </Stack>
-              <Select
-                size="xs"
-                label="Map Type"
-                {...form.getInputProps("options.mapTypeId")}
-                data={[
-                  { label: "Satelite", value: "SATELITE" },
-                  { label: "Roadmap", value: "ROADMAP" },
-                  { label: "Hybrid", value: "HYBRID" },
-                  { label: "Terrain", value: "TERRAIN" },
-                  { label: "Streetview", value: "STREETVIEW" },
-                ]}
-                onChange={(value) => {
-                  form.setFieldValue("options.mapTypeId", value as string);
-                  const options = {
-                    ...(form.values.options as any),
-                    mapTypeId: value as string,
-                  };
-                  debouncedTreeUpdate(selectedComponentIds, { options });
-                }}
-              />
-              <Group grow spacing="xs">
-                <NumberInput
+          <>
+            <Stack>
+              <Flex justify="space-between" align="center">
+                <Text size="sm">Add Marker</Text>
+                <Button
+                  onClick={addMarker}
                   size="xs"
-                  label="Zoom"
-                  {...form.getInputProps("zoom")}
-                  onChange={(value) => {
-                    form.setFieldValue("zoom", value as number);
-                    debouncedTreeUpdate(selectedComponentIds, { zoom: value });
-                  }}
+                  leftIcon={<IconPlus size={ICON_SIZE} />}
+                >
+                  Add
+                </Button>
+              </Flex>
+              <Box>
+                <Flex justify="space-between">
+                  <Text size="sm">Marker </Text>
+                  <ActionIcon onClick={() => removeMarker(0)}>
+                    <IconTrash size={ICON_SIZE} color="red" />
+                  </ActionIcon>
+                </Flex>
+                <TextInput
+                  label="Name"
+                  size="xs"
+                  // value={child.name}
+                  onChange={(e) => upDateMarker(0, "name", e.target.value)}
+                />
+                <Group grow spacing="xs">
+                  <NumberInput
+                    label="Latitude"
+                    size="xs"
+                    precision={6}
+                    step={0.000005}
+                    // value={position.lat}
+                    onChange={(e) => upDateMarker(0, "lat", e as number)}
+                  />
+                  <NumberInput
+                    label="Longitude"
+                    size="xs"
+                    precision={6}
+                    step={0.000005}
+                    // value={child.position.lng}
+                    onChange={(e) => upDateMarker(0, "lng", e as number)}
+                  />
+                </Group>
+              </Box>
+            </Stack>
+            <Select
+              size="xs"
+              label="Map Type"
+              {...form.getInputProps("options.mapTypeId")}
+              data={[
+                { label: "Satelite", value: "SATELITE" },
+                { label: "Roadmap", value: "ROADMAP" },
+                { label: "Hybrid", value: "HYBRID" },
+                { label: "Terrain", value: "TERRAIN" },
+                { label: "Streetview", value: "STREETVIEW" },
+              ]}
+              onChange={(value) => {
+                form.setFieldValue("options.mapTypeId", value as string);
+                const options = {
+                  ...(form.values.options as any),
+                  mapTypeId: value as string,
+                };
+                debouncedTreeUpdate(selectedComponentIds, { options });
+              }}
+            />
+            <Select
+              label="Language"
+              {...form.getInputProps("language")}
+              data={[
+                { label: "English", value: "en" },
+                { label: "French", value: "fr" },
+              ]}
+              onChange={(value) => {
+                form.setFieldValue("language", value as string);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  language: value,
+                });
+              }}
+            />
+            <SegmentedControlYesNo
+              label="Show Control"
+              {...form.getInputProps("options.mapTypeControl")}
+              onChange={(value) => {
+                form.setFieldValue("options.mapTypeControl", value);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  options: {
+                    mapTypeControl: value,
+                    streetViewControl: value,
+                    fullscreenControl: value,
+                    zoomControl: value,
+                  },
+                });
+              }}
+            />
+            <SegmentedControlYesNo
+              label="Fade"
+              {...form.getInputProps("fade")}
+              onChange={(value) => {
+                form.setFieldValue("fade", value);
+                debouncedTreeUpdate(selectedComponentIds, {
+                  fade: value,
+                });
+              }}
+            />
+            <Stack>
+              <Flex justify="space-between" align="center">
+                <Text size="sm">Add Map Style</Text>
+                <Button
+                  onClick={addMapStyle}
+                  size="xs"
+                  leftIcon={<IconPlus size={ICON_SIZE} />}
+                >
+                  Add
+                </Button>
+              </Flex>
+
+              <Box key={0}>
+                <Flex justify="space-between">
+                  <Text size="sm">Style {0 + 1}</Text>
+                  <ActionIcon onClick={() => removeMapStyle(0)}>
+                    <IconTrash size={ICON_SIZE} color="red" />
+                  </ActionIcon>
+                </Flex>
+                <Select
+                  label="Feature Type"
+                  size="xs"
+                  // value={child.featureType as string}
+                  data={[
+                    { label: "all", value: "all" },
+                    {
+                      label: "administrative",
+                      value: "administrative",
+                    },
+                    { label: "landscape", value: "landscape" },
+                    { label: "poi", value: "poi" },
+                    { label: "road", value: "road" },
+                    { label: "transit", value: "transit" },
+                    { label: "water", value: "water" },
+                  ]}
+                  onChange={(e) =>
+                    updateMapStyle(0, "featureType", e as string)
+                  }
                 />
                 <Select
+                  label="Element Type"
                   size="xs"
-                  label="Language"
-                  {...form.getInputProps("language")}
+                  // value={child.elementType as string}
                   data={[
-                    { label: "English", value: "en" },
-                    { label: "French", value: "fr" },
+                    { label: "all", value: "all" },
+                    { label: "geometry", value: "geometry" },
+                    { label: "labels", value: "labels" },
                   ]}
-                  onChange={(value) => {
-                    form.setFieldValue("language", value as string);
-                    debouncedTreeUpdate(selectedComponentIds, {
-                      language: value,
-                    });
-                  }}
+                  onChange={(e) =>
+                    updateMapStyle(0, "elementType", e as string)
+                  }
                 />
-              </Group>
-              <Group grow noWrap>
-                <SegmentedControlYesNo
-                  label="Show Control"
-                  {...form.getInputProps("options.mapTypeControl")}
-                  onChange={(value) => {
-                    form.setFieldValue("options.mapTypeControl", value);
-                    debouncedTreeUpdate(selectedComponentIds, {
-                      options: {
-                        mapTypeControl: value,
-                        streetViewControl: value,
-                        fullscreenControl: value,
-                        zoomControl: value,
-                      },
-                    });
-                  }}
-                />
-                <SegmentedControlYesNo
-                  label="Fade"
-                  {...form.getInputProps("fade")}
-                  onChange={(value) => {
-                    form.setFieldValue("fade", value);
-                    debouncedTreeUpdate(selectedComponentIds, {
-                      fade: value,
-                    });
-                  }}
-                />
-              </Group>
-              <Divider my="sm" />
-              <Text size="sm">Center</Text>
-              <Group grow spacing="xs">
-                <NumberInput
-                  size="xs"
-                  label="Latitude"
-                  precision={6}
-                  step={0.000005}
-                  {...form.getInputProps("center.lat")}
-                  onChange={(value) => {
-                    form.setFieldValue("center.lat", value as number);
-                    const center = {
-                      ...(form.values.center as any),
-                      lat: value as number,
-                    };
-                    debouncedTreeUpdate(selectedComponentIds, {
-                      center,
-                    });
-                  }}
-                />
-                <NumberInput
-                  size="xs"
-                  label="Longitude"
-                  precision={6}
-                  step={0.000005}
-                  {...form.getInputProps("center.lng")}
-                  onChange={(value) => {
-                    form.setFieldValue("center.lng", value as number);
-                    const center = {
-                      ...(form.values.center as any),
-                      lng: value as number,
-                    };
-                    debouncedTreeUpdate(selectedComponentIds, {
-                      center,
-                    });
-                  }}
-                />
-              </Group>
-              <Divider my={2} />
-              <Stack>
-                <Flex justify="space-between" align="center">
-                  <Text size="sm">Add Map Style</Text>
-                  <Button
-                    onClick={addMapStyle}
+
+                <Stack spacing="xs">
+                  <Group noWrap>
+                    <NumberInput
+                      size="xs"
+                      label="Saturation"
+                      // value={style.saturation as number}
+                      // onChange={(value) => {
+                      //   const _stylers = [...child.stylers];
+                      //   _stylers[styleIndex] = {
+                      //     ...style,
+                      //     saturation: value as number,
+                      //   };
+                      //   updateMapStyle(index, "stylers", _stylers);
+                      // }}
+                    />
+                    <NumberInput
+                      size="xs"
+                      label="Lightness"
+                      // value={style.lightness as number}
+                      // onChange={(value) => {
+                      //   const _stylers = [...child.stylers];
+                      //   _stylers[styleIndex] = {
+                      //     ...style,
+                      //     lightness: value as number,
+                      //   };
+                      //   updateMapStyle(index, "stylers", _stylers);
+                      // }}
+                    />
+                  </Group>
+                  <NumberInput
                     size="xs"
-                    leftIcon={<IconPlus size={ICON_SIZE} />}
-                  >
-                    Add
-                  </Button>
-                </Flex>
-                {(form.values.options as any).styles.map(
-                  (child: any, index: any) => {
-                    return (
-                      <Box key={index}>
-                        <Flex justify="space-between">
-                          <Text size="sm">Style {index + 1}</Text>
-                          <ActionIcon onClick={() => removeMapStyle(index)}>
-                            <IconTrash size={ICON_SIZE} color="red" />
-                          </ActionIcon>
-                        </Flex>
-                        <Select
-                          label="Feature Type"
-                          size="xs"
-                          value={child.featureType as string}
-                          data={[
-                            { label: "all", value: "all" },
-                            {
-                              label: "administrative",
-                              value: "administrative",
-                            },
-                            { label: "landscape", value: "landscape" },
-                            { label: "poi", value: "poi" },
-                            { label: "road", value: "road" },
-                            { label: "transit", value: "transit" },
-                            { label: "water", value: "water" },
-                          ]}
-                          onChange={(e) =>
-                            updateMapStyle(index, "featureType", e as string)
-                          }
-                        />
-                        <Select
-                          label="Element Type"
-                          size="xs"
-                          value={child.elementType as string}
-                          data={[
-                            { label: "all", value: "all" },
-                            { label: "geometry", value: "geometry" },
-                            { label: "labels", value: "labels" },
-                          ]}
-                          onChange={(e) =>
-                            updateMapStyle(index, "elementType", e as string)
-                          }
-                        />
-                        {child.stylers.map((style: any, styleIndex: any) => {
-                          return (
-                            <Stack spacing="xs" key={styleIndex}>
-                              <Group noWrap>
-                                <NumberInput
-                                  size="xs"
-                                  label="Saturation"
-                                  value={style.saturation as number}
-                                  onChange={(value) => {
-                                    const _stylers = [...child.stylers];
-                                    _stylers[styleIndex] = {
-                                      ...style,
-                                      saturation: value as number,
-                                    };
-                                    updateMapStyle(index, "stylers", _stylers);
-                                  }}
-                                />
-                                <NumberInput
-                                  size="xs"
-                                  label="Lightness"
-                                  value={style.lightness as number}
-                                  onChange={(value) => {
-                                    const _stylers = [...child.stylers];
-                                    _stylers[styleIndex] = {
-                                      ...style,
-                                      lightness: value as number,
-                                    };
-                                    updateMapStyle(index, "stylers", _stylers);
-                                  }}
-                                />
-                              </Group>
-                              <NumberInput
-                                size="xs"
-                                label="Gamma"
-                                precision={2}
-                                step={0.05}
-                                value={style.gamma as number}
-                                onChange={(value) => {
-                                  const _stylers = [...child.stylers];
-                                  _stylers[styleIndex] = {
-                                    ...style,
-                                    gamma: value as number,
-                                  };
-                                  updateMapStyle(index, "stylers", _stylers);
-                                }}
-                              />
-                            </Stack>
-                          );
-                        })}
-                      </Box>
-                    );
-                  },
-                )}
-              </Stack>
-            </>
-          )}
+                    label="Gamma"
+                    precision={2}
+                    step={0.05}
+                    // value={style.gamma as number}
+                    // onChange={(value) => {
+                    //   const _stylers = [...child.stylers];
+                    //   _stylers[styleIndex] = {
+                    //     ...style,
+                    //     gamma: value as number,
+                    //   };
+                    //   updateMapStyle(index, "stylers", _stylers);
+                    // }}
+                  />
+                </Stack>
+              </Box>
+            </Stack>
+          </>
         </Stack>
       </form>
     );

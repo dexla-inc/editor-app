@@ -1,14 +1,26 @@
 import { ComponentToBindFromInput } from "@/components/ComponentToBindFromInput";
 import { Component } from "@/utils/editor";
-import { useBindingPopover } from "@/hooks/useBindingPopover";
+
+export type FieldType =
+  | "text"
+  | "number"
+  | "yesno"
+  | "password"
+  | "email"
+  | "tel"
+  | "url"
+  | "date"
+  | "unit";
 
 type StaticFormFieldsBuilderProps = {
   field: {
     name: string;
     label: string;
-    type?: string;
+    type?: FieldType;
     placeholder?: string;
     additionalComponent?: JSX.Element;
+    defaultValue?: any;
+    decimalPlaces?: number;
   };
   component: Component;
   form: any;
@@ -19,6 +31,7 @@ export const StaticFormFieldsBuilder = ({
   field,
   form,
 }: StaticFormFieldsBuilderProps) => {
+  console.log(field.name);
   return (
     <ComponentToBindFromInput
       size="xs"
@@ -26,6 +39,9 @@ export const StaticFormFieldsBuilder = ({
       label={field.label}
       componentId={component?.id!}
       placeholder={field.placeholder}
+      fieldType={field.type}
+      defaultValue={field.defaultValue}
+      decimalPlaces={field.decimalPlaces}
       {...form.getInputProps(`onLoad.${field.name}`)}
     />
   );

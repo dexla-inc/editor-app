@@ -20,7 +20,6 @@ type Props = {
 };
 
 const PageEditor = ({ id, page }: Props) => {
-  console.log("PageEditor", id, page);
   return <Editor key={page} pageId={page} projectId={id} />;
 };
 

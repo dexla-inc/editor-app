@@ -35,7 +35,7 @@
     "@prisma/client": "^5.4.2",
     "@propelauth/javascript": "^2.0.11",
     "@propelauth/react": "^2.0.16",
-    "@react-google-maps/api": "^2.19.2",
+    "@react-google-maps/api": "^2.19.3",
     "@tabler/icons-react": "^2.45.0",
     "@tanem/react-nprogress": "^5.0.51",
     "@tanstack/react-query": "4.36.1",

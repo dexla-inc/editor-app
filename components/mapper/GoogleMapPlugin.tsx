@@ -1,4 +1,5 @@
 import { MarkerItem } from "@/components/modifiers/GoogleMap";
+import { useDataContext } from "@/contexts/DataProvider";
 import { Component } from "@/utils/editor";
 import { Box, BoxProps, Overlay, Skeleton, Text } from "@mantine/core";
 import {
@@ -15,6 +16,7 @@ type Props = {
   renderTree: (component: Component) => any;
   component: Component;
   onClick?: (e: any) => void;
+  shareableContent?: any;
 } & BoxProps;
 
 type GoogleMapProps = {
@@ -23,8 +25,9 @@ type GoogleMapProps = {
   style?: { width?: string; height?: string; [key: string]: any };
   apiKey: string;
   language?: string;
-  zoom: number;
-  center: { lat: number; lng: number };
+  // Managed in data tab
+  //zoom: number;
+  //center: { lat: number; lng: number };
   [i: string]: any;
 };
 
@@ -32,24 +35,26 @@ export type Position = {
   position: { lat: number; lng: number };
 };
 
-export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
+export const GoogleMapPlugin = ({
+  renderTree,
+  component,
+  shareableContent,
+  ...props
+}: Props) => {
   const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
   const [map, setMap] = useState<any | null>(null);
 
-  const {
-    markers,
-    options,
-    apiKey,
-    language,
-    zoom,
-    center,
-    loading,
-    fade,
-    ...componentProps
-  } = component.props as GoogleMapProps;
+  const { markers, options, language, loading, fade, ...componentProps } =
+    component.props as GoogleMapProps;
   const { onClick, ...customProps } = props;
 
-  const [internalZoom, setInternalZoom] = useState<number>(zoom);
+  const { computeValues } = useDataContext()!;
+  const { apiKey, zoom, center } = computeValues({
+    value: component.onLoad,
+    shareableContent,
+  });
+
+  const [internalZoom, setInternalZoom] = useState<number>(parseInt(zoom));
   const MAP_SCRIPT_DELAY_DURATION = 800;
 
   const { width, height, ...googleStyles } = props.style ?? {};
@@ -87,7 +92,10 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
   const onLoad = useCallback(
     (map: google.maps.Map) => {
       const bounds = new window.google.maps.LatLngBounds(center);
-      markers.forEach(({ position }: Position) => bounds.extend(position));
+      // check marks is an array
+
+      Array.isArray(markers) &&
+        markers.forEach(({ position }: Position) => bounds.extend(position));
       map.fitBounds(bounds);
 
       setMap(map);
@@ -127,16 +135,16 @@ export const GoogleMapPlugin = ({ renderTree, component, ...props }: Props) => {
     <Box pos="relative" {...otherProps} style={containerStyle}>
       <GoogleMap
         key={apiKey}
-        center={center}
         options={customOptions}
         onLoad={onLoad}
         onUnmount={unMount}
-        zoom={(internalZoom ?? 0) as any}
         onClick={handleClick}
         mapContainerStyle={containerStyle}
         {...componentProps}
         {...customProps}
         {...googleStyles}
+        center={center}
+        zoom={internalZoom}
       >
         {markers &&
           markers.length > 0 &&

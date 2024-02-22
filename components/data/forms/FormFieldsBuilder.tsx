@@ -1,10 +1,14 @@
 import { ComponentToBindFromSelect } from "@/components/ComponentToBindFromSelect";
 import { VisibilityModifier } from "@/components/data/VisibilityModifier";
 import { DynamicFormFieldsBuilder } from "@/components/data/forms/DynamicFormFieldsBuilder";
-import { StaticFormFieldsBuilder } from "@/components/data/forms/StaticFormFieldsBuilder";
+import {
+  FieldType,
+  StaticFormFieldsBuilder,
+} from "@/components/data/forms/StaticFormFieldsBuilder";
 import { useComponentStates } from "@/hooks/useComponentStates";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
+import { useEditorStore } from "@/stores/editor";
 import { ICON_SIZE } from "@/utils/config";
 import {
   Component,
@@ -17,15 +21,16 @@ import { useForm } from "@mantine/form";
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
 import merge from "lodash.merge";
 import { useEffect } from "react";
-import { useEditorStore } from "@/stores/editor";
 
 type Props = {
   fields: Array<{
     name: string;
     label: string;
-    type?: string;
+    type?: FieldType;
     placeholder?: string;
     additionalComponent?: JSX.Element;
+    defaultValue?: any;
+    decimalPlaces?: number;
   }>;
   endpoints: PagingResponse<Endpoint>;
   component: Component;

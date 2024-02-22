@@ -1,7 +1,7 @@
-import { DataProps } from "@/components/data/type";
-import { Stack } from "@mantine/core";
 import { ShowAssetsLink } from "@/components/ShowAssetsLink";
 import { FormFieldsBuilder } from "@/components/data/forms/FormFieldsBuilder";
+import { DataProps } from "@/components/data/type";
+import { Stack } from "@mantine/core";
 
 export const AvatarData = ({ component, endpoints }: DataProps) => {
   const fieldsGroup = {
@@ -10,7 +10,7 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
         name: "src",
         label: "Source",
         placeholder: "https://example.com/image.png",
-        type: "url",
+        type: "url" as const,
         additionalComponent: <ShowAssetsLink />,
       },
       {
@@ -23,7 +23,7 @@ export const AvatarData = ({ component, endpoints }: DataProps) => {
         name: "src",
         label: "Source",
         placeholder: "https://example.com/image.png",
-        type: "url",
+        type: "url" as const,
         additionalComponent: <ShowAssetsLink />,
       },
       {
