@@ -1,5 +1,6 @@
 import { MantineThemeExtended } from "@/stores/editor";
 import { useUserConfigStore } from "@/stores/userConfig";
+import { splitValueAndUnit } from "@/utils/splitValueAndUnit";
 import {
   CSSObject,
   DEFAULT_THEME,
@@ -163,7 +164,23 @@ const THIN_GRAY_OUTLINE = `1px solid ${GRAY_BORDER_COLOR}`;
 const THIN_GREEN_OUTLINE = `1px solid ${theme.colors.teal[6]}`;
 const THIN_DARK_OUTLINE = `1px solid ${theme.colors.dark[5]}`;
 const SELECTED = `1px solid ${GREEN_COLOR}`;
-const IDENTIFIER = `1px dashed ${GRAY_BORDER_COLOR}`;
+const IDENTIFIER = {
+  borderWidth: "1px",
+  borderTopWidth: "1px",
+  borderBottomWidth: "1px",
+  borderLeftWidth: "1px",
+  borderRightWidth: "1px",
+  borderStyle: "dashed",
+  borderTopStyle: "dashed",
+  borderBottomStyle: "dashed",
+  borderLeftStyle: "dashed",
+  borderRightStyle: "dashed",
+  borderColor: GRAY_BORDER_COLOR,
+  borderTopColor: GRAY_BORDER_COLOR,
+  borderBottomColor: GRAY_BORDER_COLOR,
+  borderLeftColor: GRAY_BORDER_COLOR,
+  borderRightColor: GRAY_BORDER_COLOR,
+};
 const HOVERED = theme.colors.gray[1];
 const DARK_MODE = theme.colors.dark[7];
 const DARK_COLOR = theme.colors.dark[6];
@@ -395,6 +412,12 @@ const getHoverColor = (value: string) => {
   return `${color}.${opacity}`;
 };
 
+const setComponentBorder = (style: any, isPreviewMode?: boolean) => {
+  const [borderSize, _] = splitValueAndUnit(style.borderWidth) || [0, "px"];
+  const hasBorder = borderSize > 0 && style.borderStyle !== "none";
+  return hasBorder || isPreviewMode ? {} : IDENTIFIER;
+};
+
 export {
   BG_COLOR,
   BINDER_BACKGROUND,
@@ -437,5 +460,6 @@ export {
   hoverStyles,
   nestable,
   scrollbarStyles,
+  setComponentBorder,
   theme,
 };

@@ -1,10 +1,10 @@
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useEndpoint } from "@/hooks/useEndpoint";
-import { useEditorStore } from "@/stores/editor";
-import { IDENTIFIER } from "@/utils/branding";
+import { setComponentBorder } from "@/utils/branding";
 import { convertSizeToPx } from "@/utils/defaultSizes";
 import { Component } from "@/utils/editor";
 import { FlexProps, LoadingOverlay, Flex as MantineFlex } from "@mantine/core";
+import merge from "lodash.merge";
 import { forwardRef } from "react";
 
 type Props = {
@@ -16,8 +16,6 @@ type Props = {
 
 export const ContainerComponent = forwardRef(
   ({ renderTree, component, isPreviewMode, ...props }: Props, ref) => {
-    const isLive = useEditorStore((state) => state.isLive);
-
     const {
       children,
       bg,
@@ -31,17 +29,15 @@ export const ContainerComponent = forwardRef(
     const { endpointId } = component.onLoad ?? {};
     const gapPx = convertSizeToPx(gap, "gap");
 
-    const hasBorder =
-      componentProps?.style?.borderWidth ||
-      componentProps?.style?.borderTopWidth ||
-      componentProps?.style?.borderBottomWidth ||
-      componentProps?.style?.borderLeftWidth ||
-      componentProps?.style?.borderRightWidth;
-    const shouldRemoveBorder = isLive || isPreviewMode || hasBorder;
-
     const { data } = useEndpoint({
       component,
       forceEnabled: !!endpointId,
+    });
+
+    const defaultBorder = setComponentBorder(props.style, isPreviewMode);
+    const customStyle = merge({ width: "100%" }, props.style, {
+      gap: gapPx,
+      ...defaultBorder,
     });
 
     return (
@@ -50,12 +46,7 @@ export const ContainerComponent = forwardRef(
         {...props}
         {...componentProps}
         {...triggers}
-        style={{
-          width: "100%",
-          ...props.style,
-          gap: gapPx,
-          ...(shouldRemoveBorder ? {} : { border: IDENTIFIER }),
-        }}
+        style={customStyle}
         bg={bg}
       >
         <LoadingOverlay visible={loading} overlayBlur={2} />
