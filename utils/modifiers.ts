@@ -244,14 +244,8 @@ export const requiredModifiers: RequiredModifiers = {
   autocomplete: {
     placeholder: "Autocomplete",
     label: "A label",
-    icon: "",
+    icon: "IconArrowNarrowDown",
     dropdownPosition: "flip",
-    withAsterisk: "false",
-    dataType: "static",
-    data: [
-      { label: "Option 1", value: "option-1" },
-      { label: "Option 2", value: "option-2" },
-    ],
     customText: "",
     customLinkText: "",
     customLinkUrl: "",

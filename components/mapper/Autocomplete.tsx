@@ -1,3 +1,4 @@
+import { Icon } from "@/components/Icon";
 import { InputLoader } from "@/components/InputLoader";
 import { CustomDropdown } from "@/components/mapper/CustomSelectDropdown";
 import { withComponentWrapper } from "@/hoc/withComponentWrapper";
@@ -30,12 +31,14 @@ const AutocompleteComponent = forwardRef(
       dataType,
       bg,
       textColor,
+      icon,
       ...componentProps
     } = component.props as any;
 
     const componentId = component.id as string;
     const { dataLabelKey, dataValueKey, resultsKey } = component.onLoad ?? {};
     const { onChange, onItemSubmit, ...restTriggers } = triggers || {};
+    const { name: iconName } = icon && icon!.props!;
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const { borderStyle, inputStyle } = useBrandingStyles();
     const customStyle = merge({}, borderStyle, inputStyle, props.style, {
@@ -80,7 +83,6 @@ const AutocompleteComponent = forwardRef(
     const [timeoutId, setTimeoutId] = useState(null);
 
     const handleChange = (value: any) => {
-      console.log(value);
       setInputValue(componentId, value);
 
       if (timeoutId) {
@@ -89,7 +91,6 @@ const AutocompleteComponent = forwardRef(
 
       const newTimeoutId = setTimeout(() => {
         if (onChange && value) {
-          console.log("onChange", value);
           onChange(value);
         }
       }, 200);
@@ -97,13 +98,19 @@ const AutocompleteComponent = forwardRef(
       setTimeoutId(newTimeoutId as any);
     };
 
+    const [itemSubmitted, setItemSubmitted] = useState(false);
+
     const handleItemSubmit = (item: AutocompleteItem) => {
-      // Submit value, display label
-      onItemSubmit(item.value);
-      // Need to be able to return the label so we can use in subsequent actions
-      console.log("onItemSubmit", item.value, item.label);
-      setInputValue(componentId, item.label);
+      setItemSubmitted(true);
+      setInputValue(componentId, { label: item.label, value: item.value });
     };
+
+    useEffect(() => {
+      if (itemSubmitted && onItemSubmit && inputValue) {
+        onItemSubmit && onItemSubmit(inputValue.value);
+        setItemSubmitted(false);
+      }
+    }, [itemSubmitted]);
 
     return (
       <MantineAutocomplete
@@ -113,6 +120,7 @@ const AutocompleteComponent = forwardRef(
         onChange={handleChange}
         onItemSubmit={handleItemSubmit}
         {...restTriggers}
+        icon={iconName ? <Icon name={iconName} /> : null}
         style={{}}
         styles={{
           root: {
@@ -133,7 +141,7 @@ const AutocompleteComponent = forwardRef(
         dropdownComponent={CustomDropdown}
         rightSection={loading ? <InputLoader /> : null}
         label={undefined}
-        value={inputValue}
+        value={inputValue?.label ?? inputValue}
       />
     );
   },
