@@ -21,28 +21,18 @@ export const usePropsWithOverwrites = (
     useComponentStates();
 
   const isDisabledState = checkIfIsDisabledState(component.name, currentState);
-  const setTreeComponentCurrentState = useEditorStore(
-    (state) => state.setTreeComponentCurrentState,
-  );
-  const updateTreeComponentAttrs = useEditorStore(
-    (state) => state.updateTreeComponentAttrs,
-  );
-
-  const updateComponentState = (id: string, newState: string) => {
-    updateTreeComponentAttrs([id], {
-      onLoad: { currentState: { dataType: "static", static: newState } },
-    });
-  };
+  const setTreeComponentCurrentState =
+    useEditorStore.getState().setTreeComponentCurrentState;
 
   const hoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
     if (currentState === "default" && component.states?.hover) {
-      updateComponentState(e.currentTarget.id, "hover");
+      setTreeComponentCurrentState(e.currentTarget.id, "hover");
     }
   };
 
   const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
     if (currentState === "hover") {
-      updateComponentState(e.currentTarget.id, "default");
+      setTreeComponentCurrentState(e.currentTarget.id, "default");
     }
   };
 
