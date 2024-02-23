@@ -31,7 +31,6 @@ export const StaticFormFieldsBuilder = ({
   field,
   form,
 }: StaticFormFieldsBuilderProps) => {
-  console.log(field.name);
   return (
     <ComponentToBindFromInput
       size="xs"

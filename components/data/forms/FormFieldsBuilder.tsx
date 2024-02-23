@@ -15,7 +15,6 @@ import {
   debouncedTreeComponentAttrsUpdate,
   getParentComponentData,
 } from "@/utils/editor";
-import { ValueProps } from "@/utils/types";
 import { ActionIcon, Group } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconPlug, IconPlugOff } from "@tabler/icons-react";
@@ -44,19 +43,36 @@ export const FormFieldsBuilder = ({ component, fields, endpoints }: Props) => {
   );
   const { getComponentsStates } = useComponentStates();
 
-  const onLoadFieldsStarter = fields.reduce(
-    (acc, f) => {
-      acc[f.name] = {
-        static: component.onLoad?.[f.name]?.static || component.props?.[f.name],
+  const onLoadFieldsStarter = fields.reduce((acc, f) => {
+    // Handle special case for nested properties like 'center.lat'
+    if (f.name.includes(".")) {
+      const [parentKey, childKey] = f.name.split(".");
+      // @ts-ignore
+      acc[parentKey] = acc[parentKey] || {};
+      // @ts-ignore
+      acc[parentKey][childKey] = {
+        static:
+          component.onLoad?.[f.name]?.static ||
+          component.props?.[f.name] ||
+          f.defaultValue,
       };
-      return acc;
-    },
-    {} as Record<string, ValueProps>,
-  );
+    } else {
+      // @ts-ignore
+      acc[f.name] = {
+        static:
+          component.onLoad?.[f.name]?.static ||
+          component.props?.[f.name] ||
+          f.defaultValue,
+      };
+    }
+    return acc;
+  }, {});
+
+  const onLoadValues = merge({}, onLoadFieldsStarter, component?.onLoad);
 
   const form = useForm({
     initialValues: {
-      onLoad: merge({}, onLoadFieldsStarter, component?.onLoad),
+      onLoad: onLoadValues,
       props: {
         style: {
           display: component.props?.style?.display,

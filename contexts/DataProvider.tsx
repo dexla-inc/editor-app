@@ -173,18 +173,45 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
     return valueHandlers[dataType]();
   };
-
-  const computeValues = ({ value, shareableContent }: any) => {
+  const computeValues = ({ value, shareableContent }: any): any => {
     if (!value) return {};
     const keys = Object.keys(value);
+
+    // Helper function to determine if an object is a plain object
+    const isPlainObject = (obj: any): obj is Object =>
+      Object.prototype.toString.call(obj) === "[object Object]";
+
+    // Modified processValue function to handle nested objects correctly
+    const processValue = (currentValue: any) => {
+      // Check if the current value is a plain object
+      if (isPlainObject(currentValue)) {
+        // Special handling for objects that directly contain a "static" property
+        if ("static" in currentValue || "dataType" in currentValue) {
+          // Directly process values that have a "static" or "dataType" property
+          return computeValue({
+            value: currentValue,
+            shareableContent,
+          });
+        } else {
+          // If it's a nested object without "static" or "dataType", process each key
+          return Object.keys(currentValue).reduce(
+            (acc, key) => {
+              acc[key] = processValue(currentValue[key]);
+              return acc;
+            },
+            {} as Record<string, any>,
+          );
+        }
+      } else {
+        // For non-object values, just return the value as is
+        return currentValue;
+      }
+    };
+
+    // Reduce function to compute values for all keys in the object
     const computedValues = keys.reduce(
       (acc, key) => {
-        // Assuming computeValue is available in this scope, or imported if this is defined elsewhere
-        const computedValue = computeValue({
-          value: value[key],
-          shareableContent,
-        });
-        acc[key] = computedValue;
+        acc[key] = processValue(value[key]);
         return acc;
       },
       {} as Record<string, any>,

@@ -55,6 +55,11 @@ export const GoogleMapPlugin = ({
   });
 
   const [internalZoom, setInternalZoom] = useState<number>(parseInt(zoom));
+
+  useEffect(() => {
+    setInternalZoom(parseInt(zoom));
+  }, [zoom]);
+
   const MAP_SCRIPT_DELAY_DURATION = 800;
 
   const { width, height, ...googleStyles } = props.style ?? {};

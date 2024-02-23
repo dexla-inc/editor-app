@@ -2,25 +2,44 @@ import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ValueProps } from "@/utils/types";
-import { NumberInput, TextInput } from "@mantine/core";
+import {
+  NumberInput,
+  NumberInputProps,
+  SegmentedControlProps,
+  TextInput,
+  TextInputProps,
+} from "@mantine/core";
 import { SegmentedControlYesNo } from "./SegmentedControlYesNo";
 import { FieldType } from "./data/forms/StaticFormFieldsBuilder";
 
 // Need to extend input props depending on fieldType
-type Props = {
+type BaseProps = {
+  fieldType?: FieldType;
   componentId?: string;
   onPickComponent?: () => void;
   isLogicFlow?: boolean;
   value: ValueProps;
   onChange: (value: ValueProps) => void;
-  fieldType?: FieldType;
   placeholder?: string;
   label?: string;
   defaultValue?: any;
   decimalPlaces?: number;
 };
 
-export const ComponentToBindFromInput = ({
+// Define a helper type for the conditional props extension
+type ExtendedPropsByFieldType<T> = T extends "text"
+  ? Omit<TextInputProps, "onChange" | "value">
+  : T extends "number"
+  ? Omit<NumberInputProps, "onChange" | "value">
+  : T extends "yesno"
+  ? Omit<SegmentedControlProps, "onChange" | "value">
+  : {};
+
+// Define the component props type using a generic parameter for fieldType
+type ComponentToBindFromInputProps<T extends FieldType | undefined> =
+  BaseProps & ExtendedPropsByFieldType<T>;
+
+export const ComponentToBindFromInput = <T extends FieldType | undefined>({
   componentId,
   onPickComponent,
   placeholder = "",
@@ -29,10 +48,9 @@ export const ComponentToBindFromInput = ({
   value,
   onChange,
   fieldType = "text",
-  defaultValue,
   decimalPlaces,
   ...props
-}: Props) => {
+}: ComponentToBindFromInputProps<T>) => {
   const setHighlightedComponentId = useEditorStore(
     (state) => state.setHighlightedComponentId,
   );
@@ -68,7 +86,7 @@ export const ComponentToBindFromInput = ({
         <NumberInput
           {...commonProps}
           placeholder={placeholder}
-          value={parseInt(value?.static, decimalPlaces) || defaultValue}
+          value={value?.static || 0}
           onChange={(val) =>
             onChange({
               ...value,
@@ -76,8 +94,10 @@ export const ComponentToBindFromInput = ({
               static: val.toString(),
             })
           }
-          precision={decimalPlaces}
           {...props}
+          precision={decimalPlaces}
+          parser={(value) => parseFloat(value).toString()}
+          formatter={(value) => parseFloat(value).toString()}
         />
       ) : fieldType === "yesno" ? (
         <SegmentedControlYesNo
