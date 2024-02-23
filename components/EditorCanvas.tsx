@@ -24,6 +24,7 @@ import {
   getComponentIndex,
   getComponentParent,
   removeComponent,
+  ComponentTree,
 } from "@/utils/editor";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Paper } from "@mantine/core";
@@ -326,12 +327,12 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   ]);
 
   const renderTree = useCallback(
-    (component: Component, shareableContent = {}) => {
-      if (component.id === "root") {
+    (componentTree: ComponentTree, shareableContent = {}) => {
+      if (componentTree.id === "root") {
         return (
           <Droppable
-            key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
-            id={component.id}
+            key={`${componentTree.id}-${isPreviewMode ? "preview" : "editor"}`}
+            id={componentTree.id}
             m={0}
             p={2}
             miw={980}
@@ -343,12 +344,14 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
               display="flex"
               sx={{ flexDirection: "column" }}
             >
-              {component.children?.map((child) => renderTree(child))}
+              {componentTree.children?.map((child) => renderTree(child))}
             </Paper>
           </Droppable>
         );
       }
 
+      const component =
+        useEditorStore.getState().componentMutableAttrs[componentTree.id!];
       const componentToRender = componentMapper[component.name];
 
       if (!componentToRender) {
@@ -357,7 +360,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
             key={`${component.id}-${isPreviewMode ? "preview" : "editor"}`}
             component={component}
           >
-            {component.children?.map((child) => renderTree(child))}
+            {componentTree.children?.map((child) => renderTree(child))}
           </EditableComponentContainer>
         );
       }

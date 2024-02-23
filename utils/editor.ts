@@ -23,12 +23,14 @@ import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { CSSProperties } from "react";
 import crawl from "tree-crawl";
 
-export type Component = {
+type ComponentBase = {
   id?: string;
+};
+
+export type Component = {
   name: string;
   description?: string;
   title?: string;
-  children?: Component[];
   props?: { [key: string]: any };
   blockDroppingChildrenInside?: boolean;
   fixedPosition?: {
@@ -41,7 +43,11 @@ export type Component = {
   parentDataComponentId?: string;
   states?: Record<string, any>;
   languages?: Record<string, any>;
-};
+} & ComponentBase;
+
+export type ComponentTree = {
+  children?: Component[];
+} & ComponentBase;
 
 export type Row = {
   columns: number;
@@ -49,7 +55,7 @@ export type Row = {
 };
 
 export type EditorTree = {
-  root: Component;
+  root: ComponentTree;
   name: string;
   timestamp: number;
 };
@@ -81,45 +87,21 @@ export const replaceIdsDeeply = (treeRoot: Component) => {
 };
 
 export const traverseComponents = (
-  components: Component[],
+  componentTrees: ComponentTree[],
   theme: MantineThemeExtended,
 ): Component[] => {
-  return components
+  return componentTrees
     .filter((c) => !!c.name)
     .map((component) => {
       const isTable = component.name === "Table";
 
       let tableData = {};
-      if (isTable && component?.props?.data?.length > 0) {
-        const headers = Object.keys(component?.props?.data[0]).reduce(
-          (acc, key) => {
-            return {
-              ...acc,
-              [key]: true,
-            };
-          },
-          {},
-        );
-
-        tableData = {
-          headers,
-          config: { filter: false, sorting: false, pagination: false },
-        };
-      }
 
       const structureDefinition = structureMapper[component.name];
 
       const newComponent = structureDefinition.structure({
         ...component,
-        props: {
-          ...(component?.props ?? {}),
-          ...(isTable
-            ? {
-                exampleData: { value: component?.props?.data ?? {} },
-                ...tableData,
-              }
-            : {}),
-        },
+        props: component?.props ?? {},
         theme,
       });
       if (component.children) {
@@ -520,6 +502,7 @@ export const updateTreeComponent = (
   state: string = "default",
   language: string = "default",
 ) => {
+  const componentMutableAttrs: Record<string, any> = {};
   ids = Array.isArray(ids) ? ids : [ids];
 
   const translatableFields = pickBy(props, pickTranslatableFields);
@@ -553,10 +536,35 @@ export const updateTreeComponent = (
 
         // TODO: uncomment when we have a solution to  loop only the ids list
         // context.break();
+        componentMutableAttrs[node.id!] = extractComponentMutableAttrs(node);
       }
     },
     { order: "bfs" },
   );
+
+  return componentMutableAttrs;
+};
+
+export const getTreeComponentMutableProps = (treeRoot: Component) => {
+  const newComponentMutableAttrs: Record<string, any> = {};
+  crawl(
+    treeRoot,
+    (node, context) => {
+      newComponentMutableAttrs[node.id!] = extractComponentMutableAttrs(node);
+    },
+    { order: "bfs" },
+  );
+
+  return newComponentMutableAttrs;
+};
+
+export const extractComponentMutableAttrs = (component: Partial<Component>) => {
+  return omit(component, [
+    "id",
+    "name",
+    "children",
+    "blockDroppingChildrenInside",
+  ]);
 };
 
 export const updateTreeComponentStates = (

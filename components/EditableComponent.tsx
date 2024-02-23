@@ -37,6 +37,9 @@ export const EditableComponent = ({
   const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
   const isEditorMode = !isPreviewMode && !isLive;
+  const componentMutableAttrs = useEditorStore(
+    (state) => state.componentMutableAttrs[component.id!] ?? {},
+  );
 
   let currentState = useComputeCurrentState(component, isEditorMode);
 
@@ -50,7 +53,7 @@ export const EditableComponent = ({
     useComponentContextMenu();
 
   const handleContextMenu = useComponentContextEventHandler(
-    component,
+    { ...component, ...componentMutableAttrs },
     componentContextMenu,
   );
 
