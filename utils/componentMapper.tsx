@@ -115,8 +115,6 @@ import { FileButton } from "@/components/mapper/FileButton";
 import { TabsList } from "@/components/mapper/TabsList";
 import { TabsPanel } from "@/components/mapper/TabsPanel";
 import { RadialChart } from "@/components/mapper/charts/RadialChart";
-import { uploadFile } from "@/requests/storage/mutations";
-import { useEditorStore } from "@/stores/editor";
 import { ActionTrigger, SequentialTrigger } from "@/utils/actions";
 import { Modifiers } from "@/utils/modifiers";
 
@@ -176,7 +174,7 @@ import {
   IconToggleLeft,
   IconUser,
 } from "@tabler/icons-react";
-import { useRouter } from "next/router";
+import { saveFile } from "./fileUpload";
 
 export type ComponentCategoryType =
   | "Layout"
@@ -1190,8 +1188,6 @@ export const componentMapper: ComponentMapper = {
   },
   FileUpload: {
     Component: (props: { component: Component; renderTree: any }) => {
-      const router = useRouter();
-      const projectId = router.query.id as string;
       return (
         <FileUpload
           component={props.component}
@@ -1199,11 +1195,9 @@ export const componentMapper: ComponentMapper = {
           // eslint-disable-next-line react/no-children-prop
           children={props.component.children as any}
           onDrop={(files): void => {
-            uploadFile(projectId, files, props.component.props?.multiple);
+            saveFile(props.component, files);
           }}
           activateOnClick={false}
-          dragEventsBubbling={false}
-          activateOnDrag={true}
         />
       );
     },
@@ -1216,14 +1210,7 @@ export const componentMapper: ComponentMapper = {
       // @ts-ignore
       <FileButton
         onChange={(files) => {
-          const updateTreeComponent =
-            useEditorStore.getState().updateTreeComponent;
-          updateTreeComponent({
-            componentId: props.component.id!,
-            props: {
-              files: [...(props.component.props?.files ?? []), files],
-            },
-          });
+          saveFile(props.component, files);
         }}
         component={props.component}
         renderTree={props.renderTree}

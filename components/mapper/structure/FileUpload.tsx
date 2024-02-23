@@ -1,10 +1,11 @@
 import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
-import { px } from "@mantine/core";
+import { MantineSize, px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
 export const jsonStructure = (props?: any): Component => {
   const theme = props.theme ?? defaultTheme;
+  const setSize = (size: MantineSize) => `${px(theme.spacing[size])}px`;
 
   return {
     id: nanoid(),
@@ -26,8 +27,8 @@ export const jsonStructure = (props?: any): Component => {
         description: "FileUpload Child Container",
         props: {
           style: {
-            paddingTop: px(theme.spacing.lg),
-            paddingBottom: px(theme.spacing.lg),
+            paddingTop: setSize("lg"),
+            paddingBottom: setSize("lg"),
             width: "100%",
             height: "auto",
             display: "flex",
@@ -55,9 +56,9 @@ export const jsonStructure = (props?: any): Component => {
               children: "FileUpload",
               color: `${theme.colors.Black ? "Black.6" : "dark"}`,
               style: {
-                marginTop: px(theme.spacing.xs),
+                marginTop: setSize("xs"),
                 marginBottom: "2px",
-                fontSize: `${px(theme.fontSizes.sm)}px`,
+                fontSize: setSize("sm"),
                 fontWeight: "normal",
                 lineHeight: "110%",
                 letterSpacing: "0px",
@@ -74,7 +75,7 @@ export const jsonStructure = (props?: any): Component => {
             props: {
               children: "Drag a file here",
               style: {
-                fontSize: `${px(theme.fontSizes.xs)}px`,
+                fontSize: setSize("xs"),
                 fontWeight: "normal",
                 lineHeight: "110%",
                 letterSpacing: "0px",
