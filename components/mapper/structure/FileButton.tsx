@@ -8,11 +8,11 @@ export const jsonStructure = (props?: any): Component => {
   return {
     id: nanoid(),
     name: "FileButton",
-    description: "Upload Files",
+    description: "File Upload Button",
     onLoad: {
       name: {
         dataType: "static",
-        value: name ?? "Upload",
+        static: name ?? "Upload",
       },
     },
     props: {
