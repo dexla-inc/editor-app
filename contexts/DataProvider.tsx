@@ -5,7 +5,7 @@ import { AuthState, useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
-import { safeJsonParse } from "@/utils/common";
+import { isObject, jsonInString, safeJsonParse } from "@/utils/common";
 import { getAllComponentsByName } from "@/utils/editor";
 import { ValueProps } from "@/utils/types";
 import get from "lodash.get";
@@ -150,7 +150,9 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
   const autoRunJavascriptCode = (boundCode: string) => {
     try {
+      console.log("autoRunJavascriptCode", boundCode);
       const result = eval(`(function () { ${boundCode} })`)();
+      console.log("result", boundCode);
       return isEmpty(result) ? result : result.toString();
     } catch {
       return;
@@ -163,28 +165,49 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     staticFallback,
   }: GetValueProps) => {
     let dataType = value?.dataType ?? "static";
+
     const valueHandlers = {
       dynamic: () => {
         return get(shareableContent, `data.${value?.dynamic}`, value?.dynamic);
       },
-      static: () => get(value, "static", staticFallback),
-      boundCode: () => autoRunJavascriptCode(value?.boundCode ?? ""),
+      static: () => {
+        // Attempt to parse the static value if it looks like a JSON string
+        if (value && jsonInString(value)) {
+          return safeJsonParse(value.static);
+        }
+        return get(value, "static", staticFallback);
+      },
+      boundCode: () => {
+        let boundCode = value?.boundCode?.trim() ?? "";
+        let hasReturn = boundCode.startsWith("return");
+
+        if (hasReturn) {
+          boundCode = boundCode.substring(6).trim();
+
+          if (jsonInString(boundCode)) {
+            boundCode = safeJsonParse(boundCode);
+          }
+        }
+
+        console.log("computeValue", boundCode, hasReturn);
+        // Unable to return objects as `return ${boundCode}` implicitly calls toString() so Current Value does not get returned in BindingPopover
+        return autoRunJavascriptCode(
+          hasReturn ? `return ${boundCode}` : boundCode,
+        );
+      },
     };
 
     return valueHandlers[dataType]();
   };
+
   const computeValues = ({ value, shareableContent }: any): any => {
     if (!value) return {};
     const keys = Object.keys(value);
 
-    // Helper function to determine if an object is a plain object
-    const isPlainObject = (obj: any): obj is Object =>
-      Object.prototype.toString.call(obj) === "[object Object]";
-
     // Modified processValue function to handle nested objects correctly
     const processValue = (currentValue: any) => {
       // Check if the current value is a plain object
-      if (isPlainObject(currentValue)) {
+      if (isObject(currentValue)) {
         // Special handling for objects that directly contain a "static" property
         if ("static" in currentValue || "dataType" in currentValue) {
           // Directly process values that have a "static" or "dataType" property

@@ -119,10 +119,39 @@ export function remToPixelUnit(rem: string) {
   return `${remValue * rootFontSize}px`;
 }
 
-export function safeJsonParse(str: string) {
+export function safeJsonParse<T>(str: string) {
   try {
     return JSON.parse(str);
   } catch (e) {
     return str;
   }
+}
+
+export function safeJsonParseWithReturn(str: string) {
+  try {
+    return JSON.parse(str);
+  } catch (e) {
+    return str;
+  }
+}
+
+export function jsonInString(value: any) {
+  return (
+    typeof value === "string" &&
+    (value.startsWith("{") || value.startsWith("["))
+  );
+}
+
+export function objectInStringWithReturn(value: any) {
+  return (
+    typeof value === "string" &&
+    (value.startsWith("return {") ||
+      value.startsWith("return [") ||
+      jsonInString(value))
+  );
+}
+
+export function isObject(value: any): boolean {
+  return typeof value === "object" && value !== null;
+  //return Object.prototype.toString.call(value) === "[object Object]";
 }

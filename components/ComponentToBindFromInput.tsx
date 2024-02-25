@@ -86,7 +86,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
         <NumberInput
           {...commonProps}
           placeholder={placeholder}
-          value={value?.static || 0}
+          value={parseFloatExtension(value?.static)}
           onChange={(val) =>
             onChange({
               ...value,
@@ -96,8 +96,8 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
           }
           {...props}
           precision={decimalPlaces}
-          parser={(value) => parseFloat(value).toString()}
-          formatter={(value) => parseFloat(value).toString()}
+          parser={(value) => parseFloatExtension(value).toString()}
+          formatter={(value) => parseFloatExtension(value).toString()}
         />
       ) : fieldType === "yesno" ? (
         <SegmentedControlYesNo
@@ -116,3 +116,7 @@ export const ComponentToBindFromInput = <T extends FieldType | undefined>({
     </ComponentToBindWrapper>
   );
 };
+
+function parseFloatExtension(value: any) {
+  return isNaN(parseFloat(value)) ? 0 : parseFloat(value);
+}

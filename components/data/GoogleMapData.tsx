@@ -36,9 +36,9 @@ export const GoogleMapData = ({ component, endpoints }: DataProps) => {
         defaultValue: 15,
       },
       {
-        name: "marker",
-        label: "Marker",
-        type: "yesno" as FieldType,
+        name: "markers",
+        label: "Markers",
+        type: "text" as FieldType,
       },
     ],
   };
