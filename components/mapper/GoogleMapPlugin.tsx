@@ -55,22 +55,12 @@ export const GoogleMapPlugin = ({
     shareableContent,
   });
 
-  // console.log("component.onLoad", component.onLoad);
-  // console.log("apiKey", apiKey);
-  // console.log("zoom", zoom);
-  // console.log("center", center);
-  // console.log("markers", markers);
-
   const [internalZoom, setInternalZoom] = useState<number>(parseInt(zoom));
   const internaMarkers = safeJsonParse<MarkerItem[]>(markers);
 
   useEffect(() => {
     setInternalZoom(parseInt(zoom));
   }, [zoom]);
-
-  // useEffect(() => {
-  //   setInternalMarkers(safeJsonParse(markers));
-  // }, [markers]);
 
   const MAP_SCRIPT_DELAY_DURATION = 800;
 

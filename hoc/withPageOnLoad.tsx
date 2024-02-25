@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 
 export const withPageOnLoad = (WrappedComponent: any) => {
   const Config = (props: any) => {
-    //console.log("withPageOnLoad", WrappedComponent.name);
     const {
       asPath,
       query: { id: projectId, page: pageId },

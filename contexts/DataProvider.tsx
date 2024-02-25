@@ -150,9 +150,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
   const autoRunJavascriptCode = (boundCode: string) => {
     try {
-      console.log("autoRunJavascriptCode", boundCode);
       const result = eval(`(function () { ${boundCode} })`)();
-      console.log("result", boundCode);
       return isEmpty(result) ? result : result.toString();
     } catch {
       return;
@@ -189,8 +187,8 @@ export const DataProvider = ({ children }: DataProviderProps) => {
           }
         }
 
-        console.log("computeValue", boundCode, hasReturn);
-        // Unable to return objects as `return ${boundCode}` implicitly calls toString() so Current Value does not get returned in BindingPopover
+        // Unable to return objects as `return ${boundCode}` implicitly calls toString() so Current Value
+        // does not get returned in BindingPopover
         return autoRunJavascriptCode(
           hasReturn ? `return ${boundCode}` : boundCode,
         );
