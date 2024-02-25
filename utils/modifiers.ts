@@ -317,11 +317,6 @@ export const requiredModifiers: RequiredModifiers = {
   },
   mapSettings: {
     language: "en",
-    //apiKey: "",
-    // center: {
-    //   lat: 25.816347481537285,
-    //   lng: -80.1219500315037,
-    // },
     options: {
       mapTypeId: "ROADMAP",
       mapTypeControl: true,
@@ -333,9 +328,7 @@ export const requiredModifiers: RequiredModifiers = {
         },
       ],
     },
-    //zoom: 15,
     fade: false,
-    //markers: [],
   },
   fileButton: {
     accept: "",
