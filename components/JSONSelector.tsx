@@ -2,7 +2,6 @@ import { BG_COLOR, BUTTON_HOVER } from "@/utils/branding";
 import { ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
-  Box,
   Button,
   Card,
   CardProps,
@@ -14,6 +13,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
+import DataItemValuePreview from "./DataItemValuePreview";
 
 type Item = {
   key: string;
@@ -156,20 +156,8 @@ const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
                   </Button>
                 )}
 
-                {item.key !== "root" && (
-                  <Box w={200} maw={200}>
-                    <Text
-                      size="xs"
-                      ml="xs"
-                      bg={BUTTON_HOVER}
-                      color={primaryColor}
-                      py={2}
-                      px={4}
-                      truncate
-                    >
-                      {item.value ?? item.type}
-                    </Text>
-                  </Box>
+                {item.key !== "root" && item.value && (
+                  <DataItemValuePreview value={item.value} />
                 )}
               </Group>
             </Group>

@@ -8,7 +8,7 @@ export type BindingTab =
 
 export type ValueProps = Partial<{
   dataType: "static" | "dynamic" | "boundCode";
-  static: string;
+  static: any;
   dynamic: string;
   boundCode: string;
 }>;

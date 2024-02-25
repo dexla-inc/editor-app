@@ -5,7 +5,7 @@ import { AuthState, useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
-import { safeJsonParse } from "@/utils/common";
+import { isObject, jsonInString, safeJsonParse } from "@/utils/common";
 import { getAllComponentsByName } from "@/utils/editor";
 import { ValueProps } from "@/utils/types";
 import get from "lodash.get";
@@ -26,6 +26,12 @@ export type GetValueProps = {
   staticFallback?: string;
 };
 
+export type GetValuesProps = {
+  value?: Array<ValueProps>;
+  shareableContent?: any;
+  staticFallback?: string;
+};
+
 type DataContextProps = {
   variables: { list: Record<string, any> };
   components: { list: Record<string, any> };
@@ -33,6 +39,7 @@ type DataContextProps = {
   browserList: any[];
   auth: AuthState & { refreshToken?: string };
   computeValue: (props: GetValueProps) => any;
+  computeValues: (props: GetValuesProps) => any;
   setNonEditorActions: any;
 };
 
@@ -156,15 +163,82 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     staticFallback,
   }: GetValueProps) => {
     let dataType = value?.dataType ?? "static";
+
     const valueHandlers = {
       dynamic: () => {
         return get(shareableContent, `data.${value?.dynamic}`, value?.dynamic);
       },
-      static: () => get(value, "static", staticFallback),
-      boundCode: () => autoRunJavascriptCode(value?.boundCode ?? ""),
+      static: () => {
+        // Attempt to parse the static value if it looks like a JSON string
+        if (value && jsonInString(value)) {
+          return safeJsonParse(value.static);
+        }
+        return get(value, "static", staticFallback);
+      },
+      boundCode: () => {
+        let boundCode = value?.boundCode?.trim() ?? "";
+        let hasReturn = boundCode.startsWith("return");
+
+        if (hasReturn) {
+          boundCode = boundCode.substring(6).trim();
+
+          if (jsonInString(boundCode)) {
+            boundCode = safeJsonParse(boundCode);
+          }
+        }
+
+        // Unable to return objects as `return ${boundCode}` implicitly calls toString() so Current Value
+        // does not get returned in BindingPopover
+        return autoRunJavascriptCode(
+          hasReturn ? `return ${boundCode}` : boundCode,
+        );
+      },
     };
 
     return valueHandlers[dataType]();
+  };
+
+  const computeValues = ({ value, shareableContent }: any): any => {
+    if (!value) return {};
+    const keys = Object.keys(value);
+
+    // Modified processValue function to handle nested objects correctly
+    const processValue = (currentValue: any) => {
+      // Check if the current value is a plain object
+      if (isObject(currentValue)) {
+        // Special handling for objects that directly contain a "static" property
+        if ("static" in currentValue || "dataType" in currentValue) {
+          // Directly process values that have a "static" or "dataType" property
+          return computeValue({
+            value: currentValue,
+            shareableContent,
+          });
+        } else {
+          // If it's a nested object without "static" or "dataType", process each key
+          return Object.keys(currentValue).reduce(
+            (acc, key) => {
+              acc[key] = processValue(currentValue[key]);
+              return acc;
+            },
+            {} as Record<string, any>,
+          );
+        }
+      } else {
+        // For non-object values, just return the value as is
+        return currentValue;
+      }
+    };
+
+    // Reduce function to compute values for all keys in the object
+    const computedValues = keys.reduce(
+      (acc, key) => {
+        acc[key] = processValue(value[key]);
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
+
+    return computedValues;
   };
 
   return (
@@ -176,6 +250,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         auth,
         actions,
         computeValue,
+        computeValues,
         setNonEditorActions,
       }}
     >

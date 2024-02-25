@@ -27,7 +27,6 @@ type Props = {
 };
 
 export const Editor = ({ projectId, pageId }: Props) => {
-  console.log("Editor", projectId, pageId);
   const setCurrentPageAndProjectIds = useEditorStore(
     (state) => state.setCurrentPageAndProjectIds,
   );

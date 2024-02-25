@@ -6,6 +6,7 @@ import {
 import { ChartData as Chart } from "@/components/data/ChartData";
 import { ContainerData as Container } from "@/components/data/ContainerData";
 import { CountdownButtonData as CountdownButton } from "@/components/data/CountdownButtonData";
+import { GoogleMapData as GoogleMap } from "@/components/data/GoogleMapData";
 import {
   SelectData as Autocomplete,
   SelectData as Select,
@@ -38,6 +39,7 @@ export const dataMapper = {
   Form: Container,
   Table,
   Autocomplete,
+  GoogleMap,
   AreaChart: Chart,
   BarChart: Chart,
   LineChart: Chart,

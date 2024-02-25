@@ -19,8 +19,8 @@ export const useVariableStore = create<VariablesState>()(
       (set, get) => ({
         variableList: [] as Array<VariableStoreParams>,
         initializeVariableList: (variableList) => {
-          const newVariableList: Array<VariableStoreParams> = variableList.map(
-            (variable) => {
+          const newVariableList: Array<VariableStoreParams> = variableList
+            .map((variable) => {
               const existingVariable = get().variableList.find(
                 (v) => v.id === variable.id,
               );
@@ -30,8 +30,8 @@ export const useVariableStore = create<VariablesState>()(
                   ? existingVariable?.value ?? null
                   : variable.defaultValue,
               };
-            },
-          );
+            })
+            .sort((a, b) => a.name.localeCompare(b.name));
 
           set(
             { variableList: newVariableList },

@@ -1,6 +1,7 @@
 import { JSONSelector } from "@/components/JSONSelector";
-import { Button, ScrollArea, Stack } from "@mantine/core";
+import { Button, Flex, ScrollArea, Stack } from "@mantine/core";
 import { useMemo } from "react";
+import DataItemValuePreview from "./DataItemValuePreview";
 
 type Props = {
   dataItems: any[];
@@ -61,7 +62,10 @@ const DataItem = ({ onClick, item, onItemSelection, type }: DataItemProps) => {
   if (type === "variables") {
     const isVariableNotObject = item?.type && item?.type !== "OBJECT";
     return isVariableNotObject ? (
-      <DataItemButton item={item} onClick={onClick} />
+      <Flex gap="xs">
+        <DataItemButton item={item} onClick={onClick} />
+        {item.value && <DataItemValuePreview value={item.value} />}
+      </Flex>
     ) : (
       <JSONSelector
         name={item.name}

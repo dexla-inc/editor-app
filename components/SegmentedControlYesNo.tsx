@@ -21,7 +21,7 @@ export const SegmentedControlYesNo = ({
   };
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} w="100%">
       <TopLabel text={label} />
       <SegmentedControl
         data={[

@@ -2,17 +2,44 @@ import { ComponentToBindWrapper } from "@/components/ComponentToBindWrapper";
 import { useEditorStore } from "@/stores/editor";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { ValueProps } from "@/utils/types";
-import { TextInput, TextInputProps } from "@mantine/core";
+import {
+  NumberInput,
+  NumberInputProps,
+  SegmentedControlProps,
+  TextInput,
+  TextInputProps,
+} from "@mantine/core";
+import { SegmentedControlYesNo } from "./SegmentedControlYesNo";
+import { FieldType } from "./data/forms/StaticFormFieldsBuilder";
 
-type Props = Omit<TextInputProps, "value" | "onChange"> & {
+// Need to extend input props depending on fieldType
+type BaseProps = {
+  fieldType?: FieldType;
   componentId?: string;
   onPickComponent?: () => void;
   isLogicFlow?: boolean;
   value: ValueProps;
   onChange: (value: ValueProps) => void;
+  placeholder?: string;
+  label?: string;
+  defaultValue?: any;
+  decimalPlaces?: number;
 };
 
-export const ComponentToBindFromInput = ({
+// Define a helper type for the conditional props extension
+type ExtendedPropsByFieldType<T> = T extends "text"
+  ? Omit<TextInputProps, "onChange" | "value">
+  : T extends "number"
+  ? Omit<NumberInputProps, "onChange" | "value">
+  : T extends "yesno"
+  ? Omit<SegmentedControlProps, "onChange" | "value">
+  : {};
+
+// Define the component props type using a generic parameter for fieldType
+type ComponentToBindFromInputProps<T extends FieldType | undefined> =
+  BaseProps & ExtendedPropsByFieldType<T>;
+
+export const ComponentToBindFromInput = <T extends FieldType | undefined>({
   componentId,
   onPickComponent,
   placeholder = "",
@@ -20,66 +47,76 @@ export const ComponentToBindFromInput = ({
   isLogicFlow,
   value,
   onChange,
+  fieldType = "text",
+  decimalPlaces,
   ...props
-}: Props) => {
-  const setPickingComponentToBindTo = useEditorStore(
-    (state) => state.setPickingComponentToBindTo,
-  );
+}: ComponentToBindFromInputProps<T>) => {
   const setHighlightedComponentId = useEditorStore(
     (state) => state.setHighlightedComponentId,
   );
 
-  const onBindComponent = () => {
-    setPickingComponentToBindTo({
-      componentId: componentId || "",
-      onPick: (componentToBind: string) => {
-        onChange({
-          ...value,
-          dataType: "static",
-          static: componentToBind,
-        });
-        onPickComponent?.();
-      },
-    });
+  const commonProps = {
+    label,
+    onFocus: (e: any) => {
+      setHighlightedComponentId(e.target.value);
+    },
+    onBlur: () => {
+      setHighlightedComponentId(null);
+    },
+    ...AUTOCOMPLETE_OFF_PROPS,
   };
 
   return (
     <ComponentToBindWrapper onChange={onChange} value={value}>
-      <TextInput
-        size="xs"
-        placeholder={placeholder}
-        label={label}
-        onFocus={(e) => {
-          setHighlightedComponentId(e.target.value);
-        }}
-        onBlur={() => {
-          setHighlightedComponentId(null);
-        }}
-        // Commentating out as it doesn't work
-        // rightSection={
-        //   onPickComponent &&
-        //   !isLogicFlow && (
-        //     <ActionIcon onClick={onBindComponent} size="xs">
-        //       <IconCurrentLocation size={ICON_SIZE} />
-        //     </ActionIcon>
-        //   )
-        // }
-        styles={{
-          ...(!isLogicFlow && {
-            rightSection: { width: "3.65rem", justifyContent: "flex-end" },
-          }),
-        }}
-        value={value?.static}
-        onChange={(e) => {
-          onChange({
-            ...value,
-            dataType: "static",
-            static: e.currentTarget.value,
-          });
-        }}
-        {...props}
-        {...AUTOCOMPLETE_OFF_PROPS}
-      />
+      {fieldType === "text" ? (
+        <TextInput
+          {...commonProps}
+          placeholder={placeholder}
+          value={value?.static}
+          onChange={(e) =>
+            onChange({
+              ...value,
+              dataType: "static",
+              static: e.currentTarget.value,
+            })
+          }
+          {...props}
+        />
+      ) : fieldType === "number" ? (
+        <NumberInput
+          {...commonProps}
+          placeholder={placeholder}
+          value={parseFloatExtension(value?.static)}
+          onChange={(val) =>
+            onChange({
+              ...value,
+              dataType: "static",
+              static: val.toString(),
+            })
+          }
+          {...props}
+          precision={decimalPlaces}
+          parser={(value) => parseFloatExtension(value).toString()}
+          formatter={(value) => parseFloatExtension(value).toString()}
+        />
+      ) : fieldType === "yesno" ? (
+        <SegmentedControlYesNo
+          {...commonProps}
+          value={value?.static}
+          onChange={(val) =>
+            onChange({
+              ...value,
+              dataType: "static",
+              static: val.toString(),
+            })
+          }
+          w="100%"
+        />
+      ) : null}
     </ComponentToBindWrapper>
   );
 };
+
+function parseFloatExtension(value: any) {
+  return isNaN(parseFloat(value)) ? 0 : parseFloat(value);
+}
