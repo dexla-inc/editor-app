@@ -17,9 +17,10 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
+import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { NuAnglePicker } from "react-nu-anglepicker";
 import { ThemeColorSelector } from "./ThemeColorSelector";
 import { getThemeColor } from "./modifiers/Border";
@@ -32,13 +33,29 @@ type GradientPickerProps = {
 function getRandomInt(): number {
   const min = Math.ceil(0);
   const max = Math.floor(100);
-  // The maximum is exclusive and the minimum is inclusive
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+const getColorsAndStops = (params: string) => {
+  const colorsPartsRegex = /(?:rgba?\([^)]+\)|#[\dA-Fa-f]+)\s*(\d*%?)/g;
+  let match;
+  const colors = [];
+
+  while ((match = colorsPartsRegex.exec(params))) {
+    let [color, stop] = match;
+    if (stop) {
+      // If a stop value is provided, separate it from the color value
+      color = color.replace(/\s+\d*%?$/, "");
+      stop = stop.replace("%", ""); // Remove the '%' sign for consistency
+    }
+    colors.push({ color, stop });
+  }
+  return colors;
+};
+
 function parseGradientDetailed(gradient: string) {
   // Default result in case of no match
-  const defaultResult = { type: "", angle: "", colors: [] };
+  const defaultResult = { type: "", angle: 0, colors: [] };
 
   // Extract the gradient type, angle, and the colors part
   const matchResult = gradient.match(/([\w-]+)\((.+)\)/);
@@ -46,23 +63,20 @@ function parseGradientDetailed(gradient: string) {
 
   // Separate the angle and the colors part
   const [type, params] = matchResult.slice(1);
-  const [angleWithUnit, ...colorsParts] = params.split(/,\s*/);
+  const [angleWithUnit, _] = params.split(/,\s*/);
 
   // Remove 'deg' from angle and '%' from color stops
-  const angle = angleWithUnit.replace(/deg/, "");
+  let angle = Number(angleWithUnit.replace(/deg/, ""));
+  angle = isNaN(angle) ? 0 : angle;
 
   // Split the colors part and map to an array of color objects
-  const colors = colorsParts.map((colorStop) => {
-    const [color, stopWithUnit] = colorStop.trim().split(/\s+/);
-    const stop = stopWithUnit?.replace(/%/, "");
-    return { color, stop };
-  });
+  const colors = getColorsAndStops(params);
 
   return { type, angle, colors };
 }
 
 const ColorItem = ({ color, index, theme, ...rest }: any) => {
-  const { handleClick, isSelected, colors, setColors, setIndex } = rest;
+  const { onClick, onDelete, isSelected, colors, setColors } = rest;
 
   const handleChange = (key: string, value: string) => {
     const newColors = colors.map((c: any, i: number) =>
@@ -84,7 +98,7 @@ const ColorItem = ({ color, index, theme, ...rest }: any) => {
       <ThemeColorSelector
         value={getThemeColor(theme, color.color)}
         isGradient={true}
-        onClick={() => handleClick(index)}
+        onClick={() => onClick(index)}
         onChange={(e) => {
           const _value = getColorFromTheme(theme, e as string);
           handleChange("color", _value);
@@ -95,7 +109,7 @@ const ColorItem = ({ color, index, theme, ...rest }: any) => {
         fz="xs"
         w={100}
         value={color.stop}
-        onClick={() => handleClick(index)}
+        onClick={() => onClick(index)}
         onChange={(e) => {
           let _value = e.target.value;
           if (Number(_value) > 100) _value = "100";
@@ -110,13 +124,7 @@ const ColorItem = ({ color, index, theme, ...rest }: any) => {
       />
       {colors.length > 2 ? (
         <CloseButton
-          onClick={(e) => {
-            e.preventDefault();
-            isSelected && setIndex(0);
-            // Remove the color at the given index
-            const newColors = colors.filter((_: any, i: number) => i !== index);
-            setColors(newColors);
-          }}
+          onClick={() => onDelete(isSelected)}
           size="xs"
           iconSize="xs"
         />
@@ -134,39 +142,48 @@ const AngleItem = ({ angle, setAngle }: any) => {
         value={angle}
         handleValueChange={setAngle}
       />
-      <Group noWrap></Group>
     </Stack>
   );
 };
 
 const GradientSelector = ({ getValue, setFieldValue }: GradientPickerProps) => {
-  const { type, angle, colors } = parseGradientDetailed(getValue());
   const theme = useEditorStore((state) => state.theme);
-  const angleValue = isNaN(Number(angle)) ? 0 : Number(angle);
-  const [index, setIndex] = useState(0);
-  const [_colors, setColors] = useState(colors);
-  const [_angle, setAngle] = useState(Number(angleValue));
-  const [_type, setType] = useState(type);
-  const selectedColor = _colors[index ?? 0];
 
-  const handleClick = (index: number) => setIndex(index);
+  const form = useForm({
+    initialValues: {
+      index: 0,
+      ...parseGradientDetailed(getValue()),
+    },
+  });
+  const gradValues = form.values;
+  const selectedColor = gradValues.colors[gradValues.index];
+
+  const onClick = (index: number) => form.setFieldValue("index", index);
+
+  const onDelete = (isSelected: boolean) => {
+    const newIndex = gradValues.index === 0 ? 1 : 0;
+    isSelected && onClick(newIndex);
+    form.removeListItem("colors", gradValues.index);
+  };
 
   const addNewColorToColors = () => {
-    const newColors = [
-      ...colors,
-      { color: "#ffffffff", stop: `${getRandomInt()}` },
-    ];
-    setColors(newColors);
+    form.insertListItem("colors", {
+      color: "#ffffffff",
+      stop: `${getRandomInt()}`,
+    });
   };
 
   useEffect(() => {
-    const angle = _type === "linear-gradient" ? `${_angle}deg` : `circle`;
-    const gradient = `${_type}(${angle}, ${_colors
-      .map((c: any) => `${c.color} ${c.stop}%`)
-      .join(",")})`;
-    setFieldValue("bg", gradient);
+    if (form.isTouched()) {
+      let { type, angle, colors } = gradValues;
+      const _angle = type === "linear-gradient" ? `${angle}deg` : `circle`;
+      const gradient = `${type}(${_angle}, ${colors
+        .map((c: any) => `${c.color} ${c.stop}%`)
+        .join(",")})`;
+      setFieldValue("bg", gradient);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [_colors, _angle, _type]);
+  }, [gradValues]);
 
   return (
     <Paper shadow="md" p="sm" w={450} sx={{ justifyContent: "left" }}>
@@ -192,11 +209,13 @@ const GradientSelector = ({ getValue, setFieldValue }: GradientPickerProps) => {
               { label: "Linear", value: "linear-gradient" },
               { label: "Radial", value: "radial-gradient" },
             ]}
-            value={_type}
-            onChange={setType}
+            {...form.getInputProps("type")}
           />
-          {_type === "linear-gradient" && (
-            <AngleItem angle={_angle} setAngle={setAngle} />
+          {gradValues.type === "linear-gradient" && (
+            <AngleItem
+              angle={form.getInputProps("angle").value}
+              setAngle={(value: number) => form.setFieldValue("angle", value)}
+            />
           )}
         </Stack>
         <Divider orientation="vertical" />
@@ -207,24 +226,24 @@ const GradientSelector = ({ getValue, setFieldValue }: GradientPickerProps) => {
               <ActionIcon
                 size="xs"
                 onClick={addNewColorToColors}
-                disabled={_colors.length >= 4}
+                disabled={gradValues.colors.length >= 4}
               >
                 <IconPlus />
               </ActionIcon>
             </Group>
             <Stack spacing="xs">
-              {_colors.map((color: any, i) => {
-                const isSelected = i === index;
+              {gradValues.colors.map((color: any, i) => {
+                const isSelected = i === gradValues.index;
                 return (
                   <ColorItem
                     key={i}
                     color={color}
                     index={i}
-                    setIndex={setIndex}
-                    handleClick={handleClick}
+                    onClick={onClick}
+                    onDelete={onDelete}
                     isSelected={isSelected}
-                    colors={_colors}
-                    setColors={setColors}
+                    colors={gradValues.colors}
+                    setColors={form.getInputProps("colors").onChange}
                     theme={theme}
                   />
                 );
@@ -244,7 +263,7 @@ export const GradientPicker = ({
   getValue,
   setFieldValue,
 }: GradientPickerProps) => {
-  const [opened, { toggle, open, close }] = useDisclosure(false);
+  const [opened, { toggle }] = useDisclosure(false);
 
   const gradientSwatch = (
     <Paper
