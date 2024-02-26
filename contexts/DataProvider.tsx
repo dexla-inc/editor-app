@@ -5,8 +5,9 @@ import { AuthState, useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
+import { APICallAction } from "@/utils/actions";
 import { isObject, jsonInString, safeJsonParse } from "@/utils/common";
-import { getAllComponentsByName } from "@/utils/editor";
+import { getAllComponentsByName, getComponentById } from "@/utils/editor";
 import { ValueProps } from "@/utils/types";
 import get from "lodash.get";
 import isEmpty from "lodash.isempty";
@@ -71,45 +72,100 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   );
   const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
-  const isEditorMode = !isPreviewMode && !isLive;
-
-  const actions = nodes.reduce(
-    (acc, node) => {
-      const { action, endpoint: endpointId } = node.data.form ?? {};
-      if (action === "apiCall" && endpointId) {
-        const endpoint = endpoints?.results.find((e) => e.id === endpointId);
-
-        const successExampleResponse = safeJsonParse(
-          endpoint?.exampleResponse ?? "",
-        );
-        const errorExampleResponse = safeJsonParse(
-          endpoint?.errorExampleResponse ?? "",
-        );
-
-        const success = isEditorMode
-          ? successExampleResponse
-          : nonEditorActions[node.id]?.success;
-
-        const error = isEditorMode
-          ? errorExampleResponse
-          : nonEditorActions[node.id]?.error;
-
-        acc.list[node.id] = merge({}, endpoint, {
-          id: node.id,
-          name: node.data.label,
-          success,
-          error,
-        });
-        acc[node.id] = {
-          success,
-          error,
-        };
-      }
-
-      return acc;
-    },
-    { list: {} } as any,
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentIds?.at(-1),
   );
+  let selectedComponent = null;
+  if (selectedComponentId) {
+    selectedComponent = getComponentById(editorTree.root, selectedComponentId);
+  }
+  console.log("selectedComponent", selectedComponent?.actions);
+  const isEditorMode = !isPreviewMode && !isLive;
+  const isLogicFlow = nodes.length > 0;
+
+  const actions = isLogicFlow
+    ? nodes.reduce(
+        (acc, node) => {
+          const { action, endpoint: endpointId } = node.data.form ?? {};
+          if (action === "apiCall" && endpointId) {
+            const endpoint = endpoints?.results.find(
+              (e) => e.id === endpointId,
+            );
+
+            const successExampleResponse = safeJsonParse(
+              endpoint?.exampleResponse ?? "",
+            );
+            const errorExampleResponse = safeJsonParse(
+              endpoint?.errorExampleResponse ?? "",
+            );
+
+            const success = isEditorMode
+              ? successExampleResponse
+              : nonEditorActions[node.id]?.success;
+
+            const error = isEditorMode
+              ? errorExampleResponse
+              : nonEditorActions[node.id]?.error;
+
+            acc.list[node.id] = merge({}, endpoint, {
+              id: node.id,
+              name: node.data.label,
+              success,
+              error,
+            });
+            acc[node.id] = {
+              success,
+              error,
+            };
+          }
+
+          return acc;
+        },
+        { list: {} } as any,
+      )
+    : selectedComponent?.actions
+        ?.filter((a) => a.action.name === "apiCall")
+        .reduce(
+          (acc, action) => {
+            const { endpoint: endpointId } = action.action as APICallAction;
+            if (endpointId) {
+              const endpoint = endpoints?.results.find(
+                (e) => e.id === endpointId,
+              );
+
+              const successExampleResponse = safeJsonParse(
+                endpoint?.exampleResponse ?? "",
+              );
+              const errorExampleResponse = safeJsonParse(
+                endpoint?.errorExampleResponse ?? "",
+              );
+
+              const success = isEditorMode
+                ? successExampleResponse
+                : nonEditorActions[action.id]?.success;
+
+              const error = isEditorMode
+                ? errorExampleResponse
+                : nonEditorActions[action.id]?.error;
+
+              acc.list[action.id] = merge({}, endpoint, {
+                id: action.id,
+                name: action.action.name,
+                success,
+                error,
+              });
+              acc[action.id] = {
+                success,
+                error,
+              };
+            }
+
+            return acc;
+          },
+          { list: {} } as any,
+        ) ?? { list: {} };
+
+  console.log("actions", actions);
 
   const variables = variablesList.reduce(
     (acc, variable) => {
