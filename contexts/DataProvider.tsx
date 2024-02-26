@@ -138,7 +138,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
       const value = inputsStore[component?.id!];
       component = { ...component, name: component.description! };
       acc.list[component?.id!] = component;
-      acc[component?.id!] = value;
+      acc[component?.id!] = typeof value === "object" ? value.value : value;
       return acc;
     },
     { list: {} } as any,
