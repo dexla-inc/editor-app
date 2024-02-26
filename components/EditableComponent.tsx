@@ -4,6 +4,7 @@ import {
   useComponentContextEventHandler,
   useComponentContextMenu,
 } from "@/hooks/useComponentContextMenu";
+import { computeCurrentState } from "@/hooks/useComponentStates";
 import { useEditorShadows } from "@/hooks/useEditorShadows";
 import { useHoverEvents } from "@/hooks/useHoverEvents";
 import {
@@ -39,18 +40,16 @@ export const EditableComponent = ({
   const isLive = useEditorStore((state) => state.isLive);
   const isEditorMode = !isPreviewMode && !isLive;
 
-  const currentState = useEditorStore((state) => {
-    const boundState = computeValue({
-      value: component.onLoad?.currentState,
-      staticFallback: "default",
-    });
-    const isHovered =
-      boundState === "default" &&
-      state.currentTreeComponentsStates?.[component.id!] === "hover";
-    return isEditorMode || isHovered
-      ? state.currentTreeComponentsStates?.[component.id!] ?? "default"
-      : boundState;
-  });
+  let currentState = useEditorStore((state) =>
+    computeCurrentState(
+      state.currentTreeComponentsStates ?? {},
+      component,
+      isEditorMode,
+      computeValue,
+    ),
+  );
+
+  if (shareableContent.parentState) currentState = shareableContent.parentState;
 
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,
