@@ -72,7 +72,6 @@ export default function LogicFlowInitialModal({}: ContextModalProps) {
                   }}
                   onClick={() => {
                     setSelectedTabView("flow");
-                    console.log(flow);
                     setFlow(flow);
                     setIsRestored(false);
                   }}
@@ -83,7 +82,7 @@ export default function LogicFlowInitialModal({}: ContextModalProps) {
         </LogicFlowShell>
       </Tabs.Panel>
       <Tabs.Panel value={"flow"}>
-        <LogicFlowsPage flow={flow} />
+        {flow && <LogicFlowsPage flow={flow} />}
       </Tabs.Panel>
     </Tabs>
   );
