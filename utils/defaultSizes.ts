@@ -4,6 +4,7 @@ type ModifierType = "input" | "gap" | "radius";
 
 // Centralized size definitions
 const sizeDefinitions = {
+  xxs: { input: "24px", gap: "4px", radius: "2px" },
   xs: { input: "30px", gap: "8px", radius: "4px" },
   sm: { input: "36px", gap: "12px", radius: "8px" },
   md: { input: "40px", gap: "16px", radius: "10px" },
