@@ -32,7 +32,7 @@ export const Modifier = withModifier(
         merge({}, requiredModifiers.autocomplete, {
           size: selectedComponent?.props?.size ?? theme.inputSize,
           placeholder: selectedComponent?.props?.placeholder,
-          icon: selectedComponent?.props?.icon,
+          iconName: selectedComponent?.props?.iconName,
           data: selectedComponent?.props?.data,
           withAsterisk: selectedComponent?.props?.withAsterisk,
           customText: selectedComponent?.props?.customText,
@@ -76,10 +76,9 @@ export const Modifier = withModifier(
             topLabel="Icon"
             selectedIcon={(form.values.icon as any)?.props?.name}
             onIconSelect={(iconName: string) => {
-              const icon = { props: { name: iconName } };
-              form.setFieldValue("icon.props.name", iconName);
+              form.setFieldValue("iconName", iconName);
               debouncedTreeUpdate(selectedComponentIds, {
-                icon,
+                iconName,
               });
             }}
           />

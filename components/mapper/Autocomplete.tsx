@@ -31,14 +31,14 @@ const AutocompleteComponent = forwardRef(
       dataType,
       bg,
       textColor,
-      icon,
+      iconName,
       ...componentProps
     } = component.props as any;
 
     const componentId = component.id as string;
     const { dataLabelKey, dataValueKey, resultsKey } = component.onLoad ?? {};
     const { onChange, onItemSubmit, ...restTriggers } = triggers || {};
-    const { name: iconName } = icon && icon!.props!;
+
     const { color, backgroundColor } = useChangeState({ bg, textColor });
     const { borderStyle, inputStyle } = useBrandingStyles();
     const customStyle = merge({}, borderStyle, inputStyle, props.style, {
