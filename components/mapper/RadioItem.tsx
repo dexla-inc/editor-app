@@ -25,9 +25,6 @@ const RadioItemComponent = ({
     ...componentProps
   } = component.props as any;
 
-  const setTreeComponentCurrentState = useEditorStore(
-    (state) => state.setTreeComponentCurrentState,
-  );
   const updateTreeComponentAttrs = useEditorStore(
     (state) => state.updateTreeComponentAttrs,
   );
