@@ -51,7 +51,7 @@ const RadioItemComponent = ({
     const allChildren = getAllChildrenComponents(component);
     allChildren.forEach((c) => updateState(c.id!));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setTreeComponentCurrentState, checked, component.id]);
+  }, [checked, component.id]);
 
   const defaultTriggers = isPreviewMode
     ? isInsideGroup
