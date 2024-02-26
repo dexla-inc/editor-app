@@ -42,7 +42,6 @@ export const Editor = ({ projectId, pageId }: Props) => {
 
   useEffect(() => {
     if (pageId) {
-      liveblocks.leaveRoom();
       liveblocks.enterRoom(pageId);
     }
 
