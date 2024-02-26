@@ -136,7 +136,7 @@ export const requiredModifiers: RequiredModifiers = {
   },
   background: {
     bg: "transparent",
-    bgGradient: `linear-gradient(90deg, #10D48Eff 0%, #FFFFFFff 50%, #10D48Eff 100%)`,
+    bgGradient: `linear-gradient(90deg, #000000ff 0%, #FFFFFFff 100%)`,
     backgroundImage: "",
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",

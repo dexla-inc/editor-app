@@ -88,7 +88,7 @@ export const Modifier = withModifier(
               onChange={(value) => {
                 setBackgroundType(value as string);
                 if (value === "single") {
-                  setFieldValue("bg", "White.6");
+                  setFieldValue("bg", "transparent");
                 } else {
                   setFieldValue("bg", defaultBackgroundValues.bgGradient);
                 }
