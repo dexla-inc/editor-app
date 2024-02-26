@@ -14,7 +14,6 @@ import {
 } from "@/hooks/useMergedProps";
 import { useTriggers } from "@/hooks/useTriggers";
 import { useEditorStore } from "@/stores/editor";
-import { computeCurrentState } from "@/utils/computeCurrentState";
 import { Component } from "@/utils/editor";
 import { BoxProps } from "@mantine/core";
 import { PropsWithChildren, cloneElement } from "react";
