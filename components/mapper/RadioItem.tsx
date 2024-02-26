@@ -28,19 +28,28 @@ const RadioItemComponent = ({
   const setTreeComponentCurrentState = useEditorStore(
     (state) => state.setTreeComponentCurrentState,
   );
+  const updateTreeComponentAttrs = useEditorStore(
+    (state) => state.updateTreeComponentAttrs,
+  );
   const [_checked, setChecked] = useState<boolean>(
     isPreviewMode ? checked : false,
   );
 
+  const updateState = (id: string) => {
+    updateTreeComponentAttrs([id], {
+      onLoad: {
+        currentState: {
+          dataType: "static",
+          static: checked ? "checked" : "default",
+        },
+      },
+    });
+  };
+
   useEffect(() => {
-    setTreeComponentCurrentState(
-      component.id!,
-      checked ? "checked" : "default",
-    );
+    updateState(component.id!);
     const allChildren = getAllChildrenComponents(component);
-    allChildren.forEach((c) =>
-      setTreeComponentCurrentState(c.id!, checked ? "checked" : "default"),
-    );
+    allChildren.forEach((c) => updateState(c.id!));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setTreeComponentCurrentState, checked, component.id]);
 
