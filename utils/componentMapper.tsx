@@ -980,12 +980,6 @@ export const componentMapper: ComponentMapper = {
         icon: "IconColumnInsertRight",
         onClick: addColumnToParentToolboxAction,
       },
-      {
-        id: "insert-row",
-        name: "Insert Row",
-        icon: "IconRowInsertBottom",
-        onClick: insertRowToolboxAction,
-      },
     ],
     blockedToolboxActions: ["wrap-with-container"],
   },
