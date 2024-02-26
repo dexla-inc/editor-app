@@ -39,7 +39,6 @@ export const EditableComponent = ({
   const isEditorMode = !isPreviewMode && !isLive;
 
   let currentState = useComputeCurrentState(component, isEditorMode);
-
   if (shareableContent.parentState) currentState = shareableContent.parentState;
 
   const updateTreeComponent = useEditorStore(
