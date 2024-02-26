@@ -1,4 +1,4 @@
-import { useDataContext } from "@/contexts/DataProvider";
+import { useComputeCurrentState } from "@/hooks/reactQuery/useComputeCurrentState";
 import { useAppMode } from "@/hooks/useAppMode";
 import {
   useComponentContextEventHandler,
@@ -34,23 +34,13 @@ export const EditableComponent = ({
   selectedByOther,
   shareableContent,
 }: PropsWithChildren<Props>) => {
-  const { computeValue } = useDataContext()!;
   const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
   const isEditorMode = !isPreviewMode && !isLive;
 
-  const currentState = useEditorStore((state) => {
-    const boundState = computeValue({
-      value: component.onLoad?.currentState,
-      staticFallback: "default",
-    });
-    const isHovered =
-      boundState === "default" &&
-      state.currentTreeComponentsStates?.[component.id!] === "hover";
-    return isEditorMode || isHovered
-      ? state.currentTreeComponentsStates?.[component.id!] ?? "default"
-      : boundState;
-  });
+  let currentState = useComputeCurrentState(component, isEditorMode);
+
+  if (shareableContent.parentState) currentState = shareableContent.parentState;
 
   const updateTreeComponent = useEditorStore(
     (state) => state.updateTreeComponent,

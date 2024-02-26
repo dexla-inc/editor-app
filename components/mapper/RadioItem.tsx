@@ -1,11 +1,10 @@
-import { useEditorStore } from "@/stores/editor";
 import { isSame } from "@/utils/componentComparison";
-import { Component, getAllChildrenComponents } from "@/utils/editor";
+import { Component } from "@/utils/editor";
 import { Radio as MantineRadio, RadioProps } from "@mantine/core";
-import { memo, useEffect, useState } from "react";
+import { memo, useState } from "react";
 
 type Props = {
-  renderTree: (component: Component) => any;
+  renderTree: (component: Component, shareableContent: any) => any;
   component: Component;
   isPreviewMode: boolean;
 } & RadioProps;
@@ -25,24 +24,9 @@ const RadioItemComponent = ({
     ...componentProps
   } = component.props as any;
 
-  const setTreeComponentCurrentState = useEditorStore(
-    (state) => state.setTreeComponentCurrentState,
-  );
   const [_checked, setChecked] = useState<boolean>(
     isPreviewMode ? checked : false,
   );
-
-  useEffect(() => {
-    setTreeComponentCurrentState(
-      component.id!,
-      checked ? "checked" : "default",
-    );
-    const allChildren = getAllChildrenComponents(component);
-    allChildren.forEach((c) =>
-      setTreeComponentCurrentState(c.id!, checked ? "checked" : "default"),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setTreeComponentCurrentState, checked, component.id]);
 
   const defaultTriggers = isPreviewMode
     ? isInsideGroup
@@ -65,21 +49,26 @@ const RadioItemComponent = ({
       {...props}
       {...componentProps}
       {...defaultTriggers}
+      {...triggers}
       label={
         component.children && component.children.length > 0
           ? component.children?.map((child) =>
-              renderTree({
-                ...child,
-                props: {
-                  ...child.props,
+              renderTree(
+                {
+                  ...child,
+                  props: {
+                    ...child.props,
+                  },
                 },
-              }),
+                {
+                  parentState: checked ? "checked" : "default",
+                },
+              ),
             )
           : children
       }
       value={value}
       checked={isPreviewMode ? _checked : false}
-      {...triggers}
       styles={{
         inner: { display: "none" },
         label: {
