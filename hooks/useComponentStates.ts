@@ -1,5 +1,5 @@
 import { useEditorStore } from "@/stores/editor";
-import { Component, getAllComponentsByIds } from "@/utils/editor";
+import { getAllComponentsByIds } from "@/utils/editor";
 
 export const useComponentStates = () => {
   const selectedComponentIds = useEditorStore(
@@ -138,22 +138,4 @@ export const useComponentStates = () => {
     handleComponentIfDisabledState,
     checkIfIsDisabledState,
   };
-};
-
-export const computeCurrentState = (
-  componentStates: Record<string, any>,
-  component: Component,
-  isEditorMode: boolean,
-  computeValue: any,
-) => {
-  const boundState = computeValue({
-    value: component.onLoad?.currentState,
-    staticFallback: "default",
-  });
-  const componentId = component.id;
-  const state = componentStates?.[componentId!];
-
-  const isHovered = boundState === "default" && state === "hover";
-
-  return isEditorMode || isHovered ? state ?? "default" : boundState;
 };
