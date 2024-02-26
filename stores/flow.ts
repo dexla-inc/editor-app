@@ -1,21 +1,22 @@
-import { create } from "zustand";
+import { LogicFlowResponse } from "@/requests/logicflows/types";
+import { nanoid } from "nanoid";
 import {
   Connection,
   Edge,
+  EdgeAddChange,
   EdgeChange,
   Node,
-  NodeChange,
-  addEdge,
-  OnNodesChange,
-  OnEdgesChange,
-  OnConnect,
-  applyNodeChanges,
-  applyEdgeChanges,
   NodeAddChange,
+  NodeChange,
+  OnConnect,
+  OnEdgesChange,
+  OnNodesChange,
   ReactFlowInstance,
-  EdgeAddChange,
+  addEdge,
+  applyEdgeChanges,
+  applyNodeChanges,
 } from "reactflow";
-import { nanoid } from "nanoid";
+import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
 export type FlowData = {
@@ -53,7 +54,7 @@ export type FlowState = {
   nodes: Node[];
   edges: Edge[];
   shouldShowFormModal?: boolean;
-  currentFlowId?: string;
+  currentFlow?: LogicFlowResponse;
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
@@ -66,8 +67,11 @@ export type FlowState = {
   setSelectedNode: (selectedNode?: Partial<Node>) => void;
   updateNodeData: (node: Partial<Node>) => Promise<Node[]>;
   getNodeById: (id?: string) => Partial<Node>;
-  setCurrentFlowId: (currentFlowId?: string) => void;
-  setShowFormModal: (shouldShowFormModal?: boolean, flowId?: string) => void;
+  setCurrentFlow: (currentFlow?: LogicFlowResponse) => void;
+  setShowFormModal: (
+    shouldShowFormModal?: boolean,
+    flow?: LogicFlowResponse,
+  ) => void;
   selectedTabView: "list" | "flow";
   setSelectedTabView: (selectedTabView: "list" | "flow") => void;
   setIsRestored: (isRestored: boolean) => void;
@@ -276,15 +280,15 @@ export const useFlowStore = create<FlowState>()(
       getNodeById: (id?: string) => {
         return get().nodes.find((n) => n.id === id) as Partial<Node>;
       },
-      setCurrentFlowId: (currentFlowId?: string) => {
-        set({ currentFlowId }, false, "flow/setCurrentFlowId");
+      setCurrentFlow: (currentFlow?: LogicFlowResponse) => {
+        set({ currentFlow }, false, "flow/setCurrentFlow");
       },
       setShowFormModal: (
         shouldShowFormModal?: boolean,
-        currentFlowId?: string,
+        currentFlow?: LogicFlowResponse,
       ) => {
         set(
-          { shouldShowFormModal, currentFlowId: currentFlowId ?? undefined },
+          { shouldShowFormModal, currentFlow: currentFlow ?? undefined },
           false,
           "flow/setShowFormModal",
         );

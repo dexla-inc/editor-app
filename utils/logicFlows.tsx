@@ -1,9 +1,8 @@
 import * as ActionNodeExports from "@/components/logic-flow/nodes/ActionNode";
-import * as ConditionalNodeExports from "@/components/logic-flow/nodes/ConditionalNode";
-import * as StartNodeExports from "@/components/logic-flow/nodes/StartNode";
-import * as ConnectionCreatorNodeExports from "@/components/logic-flow/nodes/ConnectionCreatorNode";
 import { computeNodeMapper } from "@/components/logic-flow/nodes/compute";
-import { getLogicFlow } from "@/requests/logicflows/queries-noauth";
+import * as ConditionalNodeExports from "@/components/logic-flow/nodes/ConditionalNode";
+import * as ConnectionCreatorNodeExports from "@/components/logic-flow/nodes/ConnectionCreatorNode";
+import * as StartNodeExports from "@/components/logic-flow/nodes/StartNode";
 import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { FlowData } from "@/stores/flow";
 import { decodeSchema } from "@/utils/compression";
@@ -62,13 +61,11 @@ const run = async (state: FlowData, params: any) => {
   await compute();
 };
 
-export const executeFlow = async (flowId: string, params: any) => {
+export const executeFlow = async (flow: LogicFlowResponse, params: any) => {
   try {
-    const flow: LogicFlowResponse = await getLogicFlow(
-      params.router.query.id,
-      flowId,
-    );
     const flowData: FlowData = JSON.parse(decodeSchema(flow.data as string));
+    console.log("flowData", flowData, params);
+
     await run(flowData, params);
   } catch (error) {
     console.error(error);

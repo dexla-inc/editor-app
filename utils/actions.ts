@@ -18,6 +18,7 @@ import {
 
 import { ShowNotificationActionForm } from "@/components/actions/ShowNotificationActionForm";
 import { GetValueProps } from "@/contexts/DataProvider";
+import { LogicFlowResponse } from "@/requests/logicflows/types";
 import { PageResponse } from "@/requests/pages/types";
 import { useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
@@ -137,7 +138,9 @@ export interface AlertAction extends BaseAction {
 
 export interface TriggerLogicFlowAction extends BaseAction {
   name: "triggerLogicFlow";
+  // obsolete, use logicFlow instead
   logicFlowId: string;
+  logicFlow: LogicFlowResponse;
 }
 
 export interface TogglePropsAction extends BaseAction {
@@ -377,7 +380,7 @@ export const useShowNotificationAction = async ({
 export const useTriggerLogicFlowAction = (
   params: TriggerLogicFlowActionParams,
 ) => {
-  return executeFlow(params.action.logicFlowId, params);
+  return executeFlow(params.action.logicFlow, params);
 };
 
 export const useChangeStateAction = ({
@@ -562,6 +565,7 @@ export const useApiCallAction = async ({
     const accessToken = useDataSourceStore.getState().authState.accessToken;
 
     const { url, body } = prepareRequestData(action, endpoint, computeValue);
+    console.log("useApiCallAction", action, endpoint);
 
     let responseJson;
 
@@ -607,6 +611,7 @@ export const useApiCallAction = async ({
           body,
           authHeaderKey,
         );
+        console.log("useApiCallAction", responseJson);
     }
 
     onSuccess && (await handleSuccess(onSuccess, router, action, computeValue));
@@ -642,6 +647,7 @@ export const useChangeVariableAction = async ({
   action,
   computeValue,
 }: ChangeVariableActionParams) => {
+  console.log("useChangeVariableAction", action);
   const setVariable = useVariableStore.getState().setVariable;
   const value = computeValue({ value: action.value });
   setVariable({

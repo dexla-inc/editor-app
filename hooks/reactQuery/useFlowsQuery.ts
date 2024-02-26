@@ -1,23 +1,19 @@
 import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/router";
 
-export const useFlowsQuery = () => {
-  const router = useRouter();
-  const projectId = router.query.id as string;
-  const pageId = router.query.page as string;
+export const useFlowsQuery = (projectId: string) => {
   const queryClient = useQueryClient();
 
-  const queryKey = ["logic-flows", projectId, pageId];
+  const queryKey = ["logic-flows", projectId];
 
   const queryResult = useQuery({
     queryKey: queryKey,
     queryFn: async () => {
-      const response = await listLogicFlows(projectId, { pageId });
+      const response = await listLogicFlows(projectId);
       return response.results ?? [];
     },
     initialData: [],
-    enabled: !!projectId && !!pageId,
+    enabled: !!projectId,
   });
 
   const invalidate = () => {

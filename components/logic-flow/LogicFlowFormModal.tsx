@@ -2,7 +2,6 @@ import {
   createLogicFlow,
   patchLogicFlow,
 } from "@/requests/logicflows/mutations";
-import { getLogicFlow } from "@/requests/logicflows/queries-noauth";
 import { LogicFlowParams } from "@/requests/logicflows/types";
 import { useAppStore } from "@/stores/app";
 import { initialEdges, initialNodes, useFlowStore } from "@/stores/flow";
@@ -21,25 +20,32 @@ export const LogicFlowFormModal = () => {
     (state) => state.shouldShowFormModal,
   );
   const setShowFormModal = useFlowStore((state) => state.setShowFormModal);
-  const currentFlowId = useFlowStore((state) => state.currentFlowId);
+  const currentFlow = useFlowStore((state) => state.currentFlow);
   const startLoading = useAppStore((state) => state.startLoading);
   const stopLoading = useAppStore((state) => state.stopLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const isLoading = useAppStore((state) => state.isLoading);
+  const projectId = router.query.id as string;
+
+  const form = useForm({
+    initialValues: {
+      name: currentFlow?.name ?? "",
+    },
+  });
 
   const updateFlow = useMutation({
-    mutationKey: ["logic-flow", currentFlowId],
+    mutationKey: ["logic-flow", currentFlow?.id],
     mutationFn: async (values: any) => {
       const patchParams =
         convertToPatchParams<Partial<LogicFlowParams>>(values);
       return await patchLogicFlow(
-        router.query.id as string,
-        currentFlowId as string,
+        projectId,
+        currentFlow?.id as string,
         patchParams,
       );
     },
     onSettled: async () => {
-      await client.refetchQueries(["logic-flows", router.query.id]);
+      await client.refetchQueries(["logic-flows", projectId]);
       setShowFormModal(false);
       stopLoading({
         id: "logic-flows",
@@ -58,13 +64,13 @@ export const LogicFlowFormModal = () => {
         nodes: initialNodes,
       };
 
-      return createLogicFlow(router.query.id as string, {
+      return createLogicFlow(projectId as string, {
         ...values,
         data: encodeSchema(JSON.stringify(newFlow)),
       });
     },
     onSettled: async (data, error) => {
-      await client.refetchQueries(["logic-flows", router.query.id]);
+      await client.refetchQueries(["logic-flows", projectId]);
 
       if (!data?.id) {
         stopLoading({
@@ -87,12 +93,6 @@ export const LogicFlowFormModal = () => {
     },
   });
 
-  const form = useForm({
-    initialValues: {
-      name: "",
-    },
-  });
-
   const onSubmit = async (values: any) => {
     try {
       setIsLoading(true);
@@ -102,7 +102,7 @@ export const LogicFlowFormModal = () => {
         message: "Shouldn't take too long....",
       });
 
-      if (currentFlowId) {
+      if (currentFlow?.id) {
         updateFlow.mutate(values);
       } else {
         createFlow.mutate(values);
@@ -119,26 +119,13 @@ export const LogicFlowFormModal = () => {
   };
 
   useEffect(() => {
-    if (currentFlowId) {
-      const getLogicFLow = async () => {
-        const flow = await getLogicFlow(
-          router.query.id as string,
-          currentFlowId,
-        );
-
-        form.setValues({
-          name: flow.name,
-        });
-      };
-
-      getLogicFLow();
-    } else {
+    if (currentFlow) {
       form.setValues({
-        name: "",
+        name: currentFlow.name,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query.id, currentFlowId]);
+  }, [projectId, currentFlow]);
 
   return (
     <Modal
@@ -150,7 +137,7 @@ export const LogicFlowFormModal = () => {
           name: "",
         });
       }}
-      title={currentFlowId ? "Edit Logic Flow" : "Create Logic Flow"}
+      title={currentFlow?.id ? "Edit Logic Flow" : "Create Logic Flow"}
       styles={{ overlay: { zIndex: 300 }, inner: { zIndex: 400 } }}
     >
       <form onSubmit={form.onSubmit(onSubmit)}>
@@ -162,7 +149,7 @@ export const LogicFlowFormModal = () => {
             withAsterisk={false}
           />
           <Button type="submit" loading={isLoading} compact>
-            {currentFlowId ? "Save" : "Create"}
+            {currentFlow?.id ? "Save" : "Create"}
           </Button>
         </Stack>
       </form>

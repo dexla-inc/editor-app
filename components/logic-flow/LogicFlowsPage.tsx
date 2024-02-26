@@ -1,10 +1,13 @@
 import { LogicFlow } from "@/components/logic-flow/LogicFlow";
 import { LogicFlowShell } from "@/components/logic-flow/LogicFlowShell";
 import { patchLogicFlow } from "@/requests/logicflows/mutations";
-import { getLogicFlow } from "@/requests/logicflows/queries-noauth";
-import { LogicFlowParams } from "@/requests/logicflows/types";
+import {
+  LogicFlowParams,
+  LogicFlowResponse,
+} from "@/requests/logicflows/types";
 import { useEditorStore } from "@/stores/editor";
 import { FlowData, useFlowStore } from "@/stores/flow";
+import { actionMapper } from "@/utils/actions";
 import { LOGICFLOW_BACKGROUND } from "@/utils/branding";
 import { decodeSchema, encodeSchema } from "@/utils/compression";
 import { ASIDE_WIDTH, HEADER_HEIGHT, NAVBAR_WIDTH } from "@/utils/config";
@@ -22,52 +25,24 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { usePrevious } from "@mantine/hooks";
-import {
-  QueryClient,
-  dehydrate,
-  useMutation,
-  useQuery,
-} from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import isEqual from "lodash.isequal";
 import startCase from "lodash.startcase";
 import { nanoid } from "nanoid";
-import { GetServerSidePropsContext } from "next";
 import { useCallback, useEffect, useRef } from "react";
 import { useUpdateNodeInternals } from "reactflow";
-import { actionMapper } from "@/utils/actions";
-
-export const getServerSideProps = async ({
-  query,
-}: GetServerSidePropsContext) => {
-  const queryClient = new QueryClient();
-  const flowId = query.flow as string;
-
-  await queryClient.prefetchQuery(["logic-flow", flowId], async () => {
-    return await getLogicFlow(query.id! as string, flowId);
-  });
-
-  return {
-    props: JSON.parse(
-      JSON.stringify({
-        id: query.id,
-        flowId,
-        dehydratedState: dehydrate(queryClient),
-      }),
-    ),
-  };
-};
 
 type Props = {
-  flowId: string;
+  flow: LogicFlowResponse;
 };
 
-export const LogicFlowsPage = ({ flowId }: Props) => {
+export const LogicFlowsPage = ({ flow }: Props) => {
   const reactFlowWrapper = useRef(null);
   const restoreFlow = useFlowStore((state) => state.restoreFlow);
   const selectedNode = useFlowStore((state) => state.selectedNode);
   const isRestored = useFlowStore((state) => state.isRestored);
   const isDragging = useFlowStore((state) => state.isDragging);
-  const isUpdating = useFlowStore((state) => state.isUpdating);
+
   const setIsUpdating = useFlowStore((state) => state.setIsUpdating);
   const updateNodeData = useFlowStore((state) => state.updateNodeData);
   const state = useFlowStore((state) => ({
@@ -81,21 +56,12 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
   const previousSelectedNode = usePrevious(selectedNode);
   const id = useEditorStore((state) => state.currentProjectId ?? "");
 
-  const { data: flow, isLoading: isFlowDataLoading } = useQuery({
-    queryKey: ["logic-flow", id, flowId],
-    queryFn: async () => {
-      state.setIsRestored(false);
-      const result = await getLogicFlow(id, flowId);
-
-      if (result?.data) {
-        const data = JSON.parse(decodeSchema(result.data as string));
-        restoreFlow(data as any);
-      }
-
-      return result;
-    },
-    enabled: !!flowId,
-  });
+  useEffect(() => {
+    if (flow?.data) {
+      const data = JSON.parse(decodeSchema(flow.data as string));
+      restoreFlow(data as any);
+    }
+  }, [flow?.data]);
 
   const { mutate: updateFlow } = useMutation({
     mutationKey: ["logic-flow", flow?.id],
@@ -129,7 +95,7 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
   }, [flow?.data, state.edges, state.nodes]);
 
   useEffect(() => {
-    if (isRestored && !isDragging && hasChanges() && !isFlowDataLoading) {
+    if (isRestored && !isDragging && hasChanges()) {
       const nodes = state.nodes.map((n) =>
         removeKeysRecursive(n, ["width", "height"]),
       ) as FlowData["nodes"];
@@ -144,7 +110,6 @@ export const LogicFlowsPage = ({ flowId }: Props) => {
     isDragging,
     isRestored,
     hasChanges,
-    isFlowDataLoading,
     state.nodes,
     state.edges,
     updateFlow,
