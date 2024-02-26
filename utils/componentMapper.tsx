@@ -47,7 +47,7 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
-} from "@/components/mapper/Table2/Table";
+} from "@/components/mapper/Table";
 import { Tabs } from "@/components/mapper/Tabs";
 import { Text } from "@/components/mapper/Text";
 import { Textarea } from "@/components/mapper/Textarea";

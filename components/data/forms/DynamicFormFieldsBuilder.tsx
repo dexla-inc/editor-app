@@ -1,13 +1,10 @@
-import { Select } from "@mantine/core";
-import {
-  Component,
-  getComponentById,
-  getParentComponentData,
-} from "@/utils/editor";
-import { useEditorStore } from "@/stores/editor";
-import get from "lodash.get";
-import { PagingResponse } from "@/requests/types";
 import { Endpoint } from "@/requests/datasources/types";
+import { PagingResponse } from "@/requests/types";
+import { useEditorStore } from "@/stores/editor";
+import { extractKeys } from "@/utils/data";
+import { Component, getParentComponentData } from "@/utils/editor";
+import { Select } from "@mantine/core";
+import get from "lodash.get";
 
 type DynamicFormFieldsBuilderProps = {
   form: any;
@@ -44,9 +41,7 @@ export const DynamicFormFieldsBuilder = ({
       )
     : JSON.parse(parentEndpoint?.exampleResponse || "{}");
 
-  const selectableObjectKeys = Object.keys(
-    Array.isArray(selectableObject) ? selectableObject[0] : selectableObject,
-  );
+  const selectableObjectKeys = extractKeys(selectableObject);
 
   return (
     <Select

@@ -7,19 +7,20 @@ import { useData } from "@/hooks/useData";
 import { Endpoint } from "@/requests/datasources/types";
 import { PagingResponse } from "@/requests/types";
 import { useInputsStore } from "@/stores/inputs";
+import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { DEFAULT_STALE_TIME } from "@/utils/config";
+import { extractKeys } from "@/utils/data";
 import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
 import { Divider, Flex, Select, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconDatabase } from "@tabler/icons-react";
 import get from "lodash.get";
-import { pick } from "next/dist/lib/pick";
 import { useEffect, useState } from "react";
 
 type Props = {
   component: Component;
   endpoints: PagingResponse<Endpoint>;
-  customKeys?: string[];
+  customProps?: Record<string, any>;
   children?: (props: any) => JSX.Element;
   onSave?: (component: Component, form: any) => Promise<any>;
 };
@@ -30,7 +31,7 @@ export const DynamicSettings = ({
   component,
   endpoints,
   children,
-  customKeys = [],
+  customProps = {},
   onSave = onSaveDefault,
 }: Props) => {
   const [initiallyOpened, setInitiallyOpened] = useState(true);
@@ -43,18 +44,23 @@ export const DynamicSettings = ({
 
   const setInputValue = useInputsStore((state) => state.setInputValue);
   const resultsKeysList = getObjectAndArrayKeys(exampleResponse);
-  const resetCustomKeys = customKeys.reduce(
-    (acc, key) => {
-      acc[key] = "";
-      return acc;
-    },
-    {} as Record<string, string>,
-  );
+
+  const mergedInitialValues = Object.keys({
+    ...customProps,
+    ...component.onLoad,
+  }).reduce((acc, key) => {
+    const onLoadValue = component.onLoad?.[key];
+    const isOnLoadValueEmpty =
+      onLoadValue === "" || onLoadValue === undefined || onLoadValue === null;
+    // @ts-ignore
+    acc[key] = isOnLoadValueEmpty ? customProps[key] : onLoadValue;
+    return acc;
+  }, {});
 
   const form = useForm({
     initialValues: {
       onLoad: {
-        ...pick(component.onLoad ?? {}, customKeys),
+        ...mergedInitialValues,
         endpointId: component.onLoad?.endpointId ?? undefined,
         resultsKey: component.onLoad?.resultsKey ?? "",
         staleTime: component.onLoad?.staleTime ?? DEFAULT_STALE_TIME,
@@ -78,9 +84,7 @@ export const DynamicSettings = ({
     ? get(exampleResponse, onLoadValues.resultsKey)
     : exampleResponse;
 
-  const selectableObjectKeys = Object.keys(
-    Array.isArray(selectableObject) ? selectableObject[0] : selectableObject,
-  );
+  const selectableObjectKeys = extractKeys(selectableObject);
 
   useEffect(() => {
     if (form.isTouched()) {
@@ -111,7 +115,6 @@ export const DynamicSettings = ({
                 ...onLoadValues,
                 endpointId: selected,
                 resultsKey: "",
-                ...resetCustomKeys,
               },
             });
             setInputValue(component.id!, "");
@@ -157,6 +160,7 @@ export const DynamicSettings = ({
                     mins
                   </Text>
                 }
+                {...AUTOCOMPLETE_OFF_PROPS}
               />
             </Flex>
             {!Array.isArray(exampleResponse) && (
@@ -170,7 +174,6 @@ export const DynamicSettings = ({
                   const newValues = {
                     ...onLoadValues,
                     resultsKey: selected,
-                    ...resetCustomKeys,
                   };
                   setInputValue(component.id!, "");
                   form.setValues({ onLoad: newValues });
