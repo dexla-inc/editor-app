@@ -1,6 +1,8 @@
+import { useDataContext } from "@/contexts/DataProvider";
+import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 
-export const computeCurrentState = (
+const computeCurrentState = (
   componentStates: Record<string, any>,
   component: Component,
   isEditorMode: boolean,
@@ -16,4 +18,19 @@ export const computeCurrentState = (
   const isHovered = boundState === "default" && state === "hover";
 
   return isEditorMode || isHovered ? state ?? "default" : boundState;
+};
+
+export const useComputeCurrentState = (
+  component: Component,
+  isEditorMode: boolean,
+) => {
+  const { computeValue } = useDataContext()!;
+  return useEditorStore((state) =>
+    computeCurrentState(
+      state.currentTreeComponentsStates ?? {},
+      component,
+      isEditorMode,
+      computeValue,
+    ),
+  );
 };

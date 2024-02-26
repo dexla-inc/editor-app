@@ -1,4 +1,4 @@
-import { useDataContext } from "@/contexts/DataProvider";
+import { useComputeCurrentState } from "@/hooks/reactQuery/useComputeCurrentState";
 import { useAppMode } from "@/hooks/useAppMode";
 import {
   useComponentContextEventHandler,
@@ -14,7 +14,6 @@ import {
 } from "@/hooks/useMergedProps";
 import { useTriggers } from "@/hooks/useTriggers";
 import { useEditorStore } from "@/stores/editor";
-import { computeCurrentState } from "@/utils/computeCurrentState";
 import { Component } from "@/utils/editor";
 import { BoxProps } from "@mantine/core";
 import { PropsWithChildren, cloneElement } from "react";
@@ -35,19 +34,11 @@ export const EditableComponent = ({
   selectedByOther,
   shareableContent,
 }: PropsWithChildren<Props>) => {
-  const { computeValue } = useDataContext()!;
   const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
   const isEditorMode = !isPreviewMode && !isLive;
 
-  let currentState = useEditorStore((state) =>
-    computeCurrentState(
-      state.currentTreeComponentsStates ?? {},
-      component,
-      isEditorMode,
-      computeValue,
-    ),
-  );
+  let currentState = useComputeCurrentState(component, isEditorMode);
 
   if (shareableContent.parentState) currentState = shareableContent.parentState;
 
