@@ -8,7 +8,6 @@ import {
   Collapse,
   Group,
   List,
-  Text,
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure, useHover } from "@mantine/hooks";
@@ -138,23 +137,17 @@ const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
             </ActionIcon>
             <Group noWrap>
               <Group noWrap spacing={0}>
-                {canExpand ? (
-                  <Text id={item.key} size="xs" lineClamp={1}>
-                    {item.key}
-                  </Text>
-                ) : (
-                  <Button
-                    id={item.key}
-                    size="xs"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      onSelectValue?.(item);
-                    }}
-                  >
-                    {item.key}
-                  </Button>
-                )}
+                <Button
+                  id={item.key}
+                  size="xs"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onSelectValue?.(item);
+                  }}
+                >
+                  {item.key}
+                </Button>
 
                 {item.key !== "root" && item.value && (
                   <DataItemValuePreview value={item.value} />
