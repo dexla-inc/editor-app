@@ -565,7 +565,6 @@ export const useApiCallAction = async ({
     const accessToken = useDataSourceStore.getState().authState.accessToken;
 
     const { url, body } = prepareRequestData(action, endpoint, computeValue);
-    console.log("useApiCallAction", action, endpoint);
 
     let responseJson;
 

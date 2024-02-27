@@ -140,11 +140,12 @@ export default function PageConfig({ page, setPage }: Props) {
       });
 
       setIsLoading(false);
-    } catch (error) {
+    } catch (error: any) {
       stopLoading({
         id: "mutating",
         title: "Page Failed",
-        message: "Validation failed",
+        message: error,
+        isError: true,
       });
       setIsLoading(false);
     }
