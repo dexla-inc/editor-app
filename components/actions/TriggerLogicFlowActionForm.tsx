@@ -20,7 +20,7 @@ export const TriggerLogicFlowActionForm = ({ form }: Props) => {
         form.setFieldValue("logicFlow", selectedFlow);
       }
     }
-  }, [isFetched]);
+  }, [isFetched, form.values.logicFlowId]);
 
   return (
     <Stack spacing="xs">

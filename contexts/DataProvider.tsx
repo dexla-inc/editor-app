@@ -41,7 +41,7 @@ type DataContextProps = {
   auth: AuthState & { refreshToken?: string };
   computeValue: (props: GetValueProps) => any;
   computeValues: (props: GetValuesProps) => any;
-  setNonEditorActions: any;
+  setNonEditorActions: (actions: Record<string, any>) => void;
 };
 
 const parseVariableValue = (value: string): any => {
@@ -64,12 +64,13 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const inputsStore = useInputsStore((state) => state.inputValues);
   const browser = useRouter();
   const auth = useDataSourceStore((state) => state.getAuthState());
-  const nodes = useNodes<NodeData>();
+  const logicFlowsEditorNodes = useNodes<NodeData>();
   const projectId = useEditorStore((state) => state.currentProjectId ?? "");
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const [nonEditorActions, setNonEditorActions] = useState<Record<string, any>>(
     {},
   );
+  const logicFlowsActionNodes = useEditorStore((state) => state.lf);
   const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
   const selectedComponentId = useEditorStore(
@@ -79,8 +80,13 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   if (selectedComponentId) {
     selectedComponent = getComponentById(editorTree.root, selectedComponentId);
   }
-  console.log("selectedComponent", selectedComponent?.actions);
+  console.log("selectedComponent", nonEditorActions);
   const isEditorMode = !isPreviewMode && !isLive;
+  // const isLogicFlow = nodes.length > 0;
+
+  const nodes = logicFlowsEditorNodes.length
+    ? logicFlowsEditorNodes
+    : logicFlowsActionNodes;
   const isLogicFlow = nodes.length > 0;
 
   const actions = isLogicFlow
@@ -123,47 +129,45 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         },
         { list: {} } as any,
       )
-    : selectedComponent?.actions
-        ?.filter((a) => a.action.name === "apiCall")
-        .reduce(
-          (acc, action) => {
-            const { endpoint: endpointId } = action.action as APICallAction;
-            if (endpointId) {
-              const endpoint = endpoints?.results.find(
-                (e) => e.id === endpointId,
-              );
+    : selectedComponent?.actions?.reduce(
+        (acc, action) => {
+          const { endpoint: endpointId } = action.action as APICallAction;
+          if (action.action.name === "apiCall" && endpointId) {
+            const endpoint = endpoints?.results.find(
+              (e) => e.id === endpointId,
+            );
 
-              const successExampleResponse = safeJsonParse(
-                endpoint?.exampleResponse ?? "",
-              );
-              const errorExampleResponse = safeJsonParse(
-                endpoint?.errorExampleResponse ?? "",
-              );
+            const successExampleResponse = safeJsonParse(
+              endpoint?.exampleResponse ?? "",
+            );
+            const errorExampleResponse = safeJsonParse(
+              endpoint?.errorExampleResponse ?? "",
+            );
 
-              const success = isEditorMode
-                ? successExampleResponse
-                : nonEditorActions[action.id]?.success;
+            const success = isEditorMode
+              ? successExampleResponse
+              : nonEditorActions[action.id]?.success;
 
-              const error = isEditorMode
-                ? errorExampleResponse
-                : nonEditorActions[action.id]?.error;
+            const error = isEditorMode
+              ? errorExampleResponse
+              : nonEditorActions[action.id]?.error;
 
-              acc.list[action.id] = merge({}, endpoint, {
-                id: action.id,
-                name: action.action.name,
-                success,
-                error,
-              });
-              acc[action.id] = {
-                success,
-                error,
-              };
-            }
+            acc.list[action.id] = merge({}, endpoint, {
+              id: action.id,
+              name: action.action.name,
+              success,
+              error,
+            });
+            acc[action.id] = {
+              success,
+              error,
+            };
+          }
 
-            return acc;
-          },
-          { list: {} } as any,
-        ) ?? { list: {} };
+          return acc;
+        },
+        { list: {} } as any,
+      ) ?? { list: {} };
 
   console.log("actions", actions);
 
@@ -219,7 +223,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     staticFallback,
   }: GetValueProps) => {
     let dataType = value?.dataType ?? "static";
-
+    console.log({ actions });
     const valueHandlers = {
       dynamic: () => {
         return get(shareableContent, `data.${value?.dynamic}`, value?.dynamic);

@@ -34,6 +34,7 @@ import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
 import { getComponentInitialDisplayValue, safeJsonParse } from "./common";
 import { ValueProps } from "./types";
+import { decodeSchema } from "@/utils/compression";
 
 const triggers = [
   "onClick",
@@ -292,6 +293,7 @@ export const useDebugAction = async ({ action }: DebugActionParams) => {
 
 export type TriggerLogicFlowActionParams = ActionParams & {
   action: TriggerLogicFlowAction;
+  setTriggeredLogicFlow: any;
 };
 
 export type ShowNotificationActionParams = ActionParams & {
@@ -377,9 +379,12 @@ export const useShowNotificationAction = async ({
   });
 };
 
-export const useTriggerLogicFlowAction = (
+export const useTriggerLogicFlowAction = async (
   params: TriggerLogicFlowActionParams,
 ) => {
+  const decoded = decodeSchema(params.action.logicFlow?.data);
+  const nodeData = JSON.parse(decoded).nodes;
+  await params.setTriggeredLogicFlow(nodeData);
   return executeFlow(params.action.logicFlow, params);
 };
 
@@ -415,7 +420,7 @@ const getVariablesValue = (
 
 export type APICallActionParams = ActionParams & {
   action: APICallAction;
-  endpoint: Endpoint;
+  endpointResults: Endpoint[];
 };
 
 const getUrl = (
@@ -554,12 +559,14 @@ export const useApiCallAction = async ({
   onSuccess,
   onError,
   entity,
-  endpoint,
+  endpointResults,
 }: APICallActionParams): Promise<any> => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   if (entity.props) {
     setLoadingState(entity.id!, true, updateTreeComponent);
   }
+
+  const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
 
   try {
     const accessToken = useDataSourceStore.getState().authState.accessToken;

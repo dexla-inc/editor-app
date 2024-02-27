@@ -105,16 +105,12 @@ export const useEditorClickHandler = (
   forceDestroyContextMenu: any,
   propsWithOverwrites: any,
   isPicking?: ComponentToBind,
-  parentIndex?: number,
 ) => {
   const setComponentToBind = useEditorStore(
     (state) => state.setComponentToBind,
   );
   const setSelectedComponentIds = useEditorStore(
     (state) => state.setSelectedComponentIds,
-  );
-  const setSelectedComponentParentIndex = useEditorStore(
-    (state) => state.setSelectedComponentParentIndex,
   );
   return useCallback(
     (e: any) => {
@@ -125,7 +121,6 @@ export const useEditorClickHandler = (
       if (isPicking) {
         setComponentToBind(componentId);
       } else {
-        setSelectedComponentParentIndex(parentIndex);
         if (e.ctrlKey || e.metaKey) {
           setSelectedComponentIds((prev) => {
             if (prev.includes(componentId)) {
