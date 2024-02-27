@@ -4,10 +4,10 @@ import cloneDeep from "lodash.clonedeep";
 import { nanoid } from "nanoid";
 
 export const AddGridButton = () => {
-  const editorTree = useEditorStore((state) => state.tree);
   const setEditorTree = useEditorStore((state) => state.setTree);
 
   const addGrid = () => {
+    const editorTree = useEditorStore.getState().tree;
     const copy = cloneDeep(editorTree);
     copy.root.children = (copy.root.children ?? [])
       .map((child) => {

@@ -2,7 +2,10 @@ import { useEditorStore } from "@/stores/editor";
 import { Component } from "@/utils/editor";
 import crawl from "tree-crawl";
 
-export const calculateGridSizes = (tree: Component) => {
+export const calculateGridSizes = (tree?: Component) => {
+  if (!tree) {
+    tree = useEditorStore.getState().tree.root;
+  }
   const setColumnSpan = useEditorStore.getState().setColumnSpan;
   const componentResizedMap: { [parentId: string]: Component } = {};
 

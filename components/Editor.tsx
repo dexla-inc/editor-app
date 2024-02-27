@@ -44,6 +44,11 @@ export const Editor = ({ projectId, pageId }: Props) => {
     if (pageId) {
       liveblocks.enterRoom(pageId);
     }
+
+    return () => {
+      if (liveblocks.status === "connected") liveblocks.leaveRoom();
+    };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageId]);
 

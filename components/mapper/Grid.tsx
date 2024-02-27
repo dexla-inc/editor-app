@@ -18,7 +18,6 @@ export type GridProps = {
 const GridComponent = forwardRef(
   ({ renderTree, component, ...props }: GridProps, ref) => {
     const theme = useMantineTheme();
-    const editorTree = useEditorStore((state) => state.tree);
     const setEditorTree = useEditorStore((state) => state.setTree);
     const {
       style = {},
@@ -45,8 +44,7 @@ const GridComponent = forwardRef(
 
     useEffect(() => {
       if (prevGapValue !== gapValue) {
-        const copy = cloneDeep(editorTree);
-        calculateGridSizes(copy.root);
+        calculateGridSizes();
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gapValue, prevGapValue, setEditorTree]);
