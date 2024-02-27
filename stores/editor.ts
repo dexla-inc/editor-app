@@ -254,9 +254,13 @@ export type EditorState = {
     y: number;
   };
   setCursor: (cursor?: { x: number; y: number }) => void;
-  setTriggeredLogicFlow: (lf: Node<NodeData>[]) => void;
+  setTriggeredLogicFlow: (lf: Node<NodeData>[]) => Promise<void>;
   lf: Node<NodeData>[];
-  setNonEditorActions: (nonEditorActions: Record<string, any>) => void;
+  setTriggeredAction: (actions: Action[]) => Promise<void>;
+  actions: Action[];
+  setNonEditorActions: (
+    cb: (actions: Record<string, any>) => Record<string, any>,
+  ) => Promise<void>;
   nonEditorActions: Record<string, any>;
 };
 
@@ -269,17 +273,22 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
     devtools(
       temporal(
         (set) => ({
-          setTriggeredLogicFlow: (lf) =>
+          setTriggeredLogicFlow: async (lf) =>
             set({ lf }, false, "editor/setTriggeredLogicFlow"),
           lf: [],
-          setNonEditorActions: (nonEditorActions) =>
-            set(
+          setTriggeredAction: async (actions) =>
+            set({ actions }, false, "editor/setTriggeredAction"),
+          actions: [],
+          setNonEditorActions: async (cb) => {
+            return set(
               (state) => {
-                return merge({}, state.nonEditorActions, nonEditorActions);
+                const nonEditorActions = cb(state.nonEditorActions);
+                return { nonEditorActions };
               },
               false,
               "editor/setNonEditorActions",
-            ),
+            );
+          },
           nonEditorActions: {},
           collapsedItemsCount: 0,
           tree: emptyEditorTree,

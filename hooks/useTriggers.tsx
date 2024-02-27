@@ -2,10 +2,16 @@ import { useDataContext } from "@/contexts/DataProvider";
 import { useDataSourceEndpoints } from "@/hooks/reactQuery/useDataSourceEndpoints";
 import { PageResponse } from "@/requests/pages/types";
 import { useEditorStore } from "@/stores/editor";
-import { Action, ActionTrigger, actionMapper } from "@/utils/actions";
+import {
+  Action,
+  ActionTrigger,
+  actionMapper,
+  TriggerLogicFlowAction,
+} from "@/utils/actions";
 import { Component } from "@/utils/editor";
 import { Router, useRouter } from "next/router";
 import { ChangeEvent } from "react";
+import { decodeSchema } from "@/utils/compression";
 
 const nonDefaultActionTriggers = ["onSuccess", "onError"];
 
@@ -21,10 +27,16 @@ export const useTriggers = ({
 }: UseTriggersProps) => {
   const projectId = useEditorStore((state) => state.currentProjectId);
   const router = useRouter();
-  const { computeValue, setNonEditorActions } = useDataContext()!;
+  const { computeValue } = useDataContext()!;
+  const setNonEditorActions = useEditorStore(
+    (state) => state.setNonEditorActions,
+  );
   const { data: endpoints } = useDataSourceEndpoints(projectId);
   const setTriggeredLogicFlow = useEditorStore(
     (state) => state.setTriggeredLogicFlow,
+  );
+  const setTriggeredAction = useEditorStore(
+    (state) => state.setTriggeredAction,
   );
 
   const triggers = () => {
@@ -46,7 +58,16 @@ export const useTriggers = ({
 
         return {
           ...acc,
-          [action.trigger]: (e: any) => {
+          [action.trigger]: async (e: any) => {
+            if (action.action.hasOwnProperty("logicFlow")) {
+              const { logicFlow } = action.action as TriggerLogicFlowAction;
+              const decoded = decodeSchema(logicFlow?.data);
+              const nodeData = JSON.parse(decoded).nodes;
+              await setTriggeredLogicFlow(nodeData);
+            } else {
+              await setTriggeredAction(actions);
+            }
+
             return actionMapper[action.action.name].action({
               // @ts-ignore
               action: action.action,

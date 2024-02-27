@@ -223,7 +223,9 @@ export type Action = {
 export type ActionParams = {
   actionId: string;
   router: Router;
-  setNonEditorActions: any;
+  setNonEditorActions: (
+    cb: (param: Record<string, any>) => Record<string, any>,
+  ) => Promise<void>;
   computeValue: (value: GetValueProps) => any;
   onSuccess?: Action;
   onError?: Action;
@@ -382,9 +384,6 @@ export const useShowNotificationAction = async ({
 export const useTriggerLogicFlowAction = async (
   params: TriggerLogicFlowActionParams,
 ) => {
-  const decoded = decodeSchema(params.action.logicFlow?.data);
-  const nodeData = JSON.parse(decoded).nodes;
-  await params.setTriggeredLogicFlow(nodeData);
   return executeFlow(params.action.logicFlow, params);
 };
 
@@ -554,12 +553,14 @@ const setLoadingState = (
 
 export const useApiCallAction = async ({
   action,
+  actionId,
   router,
   computeValue,
   onSuccess,
   onError,
   entity,
   endpointResults,
+  setNonEditorActions,
 }: APICallActionParams): Promise<any> => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   if (entity.props) {
@@ -573,7 +574,7 @@ export const useApiCallAction = async ({
 
     const { url, body } = prepareRequestData(action, endpoint, computeValue);
 
-    let responseJson;
+    let responseJson: any;
 
     const authHeaderKey =
       endpoint?.authenticationScheme === "BEARER"
@@ -617,14 +618,29 @@ export const useApiCallAction = async ({
           body,
           authHeaderKey,
         );
-        console.log("useApiCallAction", responseJson);
     }
 
     onSuccess && (await handleSuccess(onSuccess, router, action, computeValue));
 
+    await setNonEditorActions((prev) => {
+      prev[actionId] = {
+        ...prev[actionId],
+        success: responseJson,
+      };
+      return prev;
+    });
+
     return responseJson;
   } catch (error) {
     onError && (await handleError(error, onError, router, computeValue));
+
+    await setNonEditorActions((prev) => {
+      prev[actionId] = {
+        ...prev[actionId],
+        error,
+      };
+      return prev;
+    });
   } finally {
     if (entity.props) {
       setLoadingState(entity.id!, false, updateTreeComponent);
