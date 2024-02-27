@@ -19,23 +19,9 @@ export default function AIPromptTextInput() {
   const internalTheme = useMantineTheme();
   const [description, setDescription] = useState<string>("");
 
-  // start of handleComponentGeneration props
-
-  const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
-
-  let selectedComponent = null;
-  if (selectedComponentId) {
-    selectedComponent = getComponentById(editorTree.root, selectedComponentId);
-  }
-
-  const dropTarget = {
-    id: selectedComponent?.id! ?? "content-wrapper",
-    edge: "left",
-  } as DropTarget;
-
   const componentBeingAddedId = useRef<string>();
 
   const { theme, updateTreeComponentChildren, tree, setTree, pages } =
@@ -45,12 +31,26 @@ export default function AIPromptTextInput() {
       tree: state.tree,
       setTree: state.setTree,
       pages: state.pages,
-      dropTarget,
     }));
 
   // end of handleComponentGeneration props
 
   const onClick = async (base64Image?: string) => {
+    const editorTree = useEditorStore.getState().tree;
+
+    let selectedComponent = null;
+    if (selectedComponentId) {
+      selectedComponent = getComponentById(
+        editorTree.root,
+        selectedComponentId,
+      );
+    }
+
+    const dropTarget = {
+      id: selectedComponent?.id! ?? "content-wrapper",
+      edge: "left",
+    } as DropTarget;
+
     try {
       const result = await generateStructureFromScreenshot(
         description,

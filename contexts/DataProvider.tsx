@@ -13,7 +13,7 @@ import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 import { useNodes } from "reactflow";
 
 type DataProviderProps = {
@@ -73,43 +73,45 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const isLive = useEditorStore((state) => state.isLive);
   const isEditorMode = !isPreviewMode && !isLive;
 
-  const actions = nodes.reduce(
-    (acc, node) => {
-      const { action, endpoint: endpointId } = node.data.form ?? {};
-      if (action === "apiCall" && endpointId) {
-        const endpoint = endpoints?.results.find((e) => e.id === endpointId);
+  const actions = useMemo(() => {
+    return nodes.reduce(
+      (acc, node) => {
+        const { action, endpoint: endpointId } = node.data.form ?? {};
+        if (action === "apiCall" && endpointId) {
+          const endpoint = endpoints?.results.find((e) => e.id === endpointId);
 
-        const successExampleResponse = safeJsonParse(
-          endpoint?.exampleResponse ?? "",
-        );
-        const errorExampleResponse = safeJsonParse(
-          endpoint?.errorExampleResponse ?? "",
-        );
+          const successExampleResponse = safeJsonParse(
+            endpoint?.exampleResponse ?? "",
+          );
+          const errorExampleResponse = safeJsonParse(
+            endpoint?.errorExampleResponse ?? "",
+          );
 
-        const success = isEditorMode
-          ? successExampleResponse
-          : nonEditorActions[node.id]?.success;
+          const success = isEditorMode
+            ? successExampleResponse
+            : nonEditorActions[node.id]?.success;
 
-        const error = isEditorMode
-          ? errorExampleResponse
-          : nonEditorActions[node.id]?.error;
+          const error = isEditorMode
+            ? errorExampleResponse
+            : nonEditorActions[node.id]?.error;
 
-        acc.list[node.id] = merge({}, endpoint, {
-          id: node.id,
-          name: node.data.label,
-          success,
-          error,
-        });
-        acc[node.id] = {
-          success,
-          error,
-        };
-      }
+          acc.list[node.id] = merge({}, endpoint, {
+            id: node.id,
+            name: node.data.label,
+            success,
+            error,
+          });
+          acc[node.id] = {
+            success,
+            error,
+          };
+        }
 
-      return acc;
-    },
-    { list: {} } as any,
-  );
+        return acc;
+      },
+      { list: {} } as any,
+    );
+  }, [nodes, endpoints, nonEditorActions, isEditorMode]);
 
   const variables = variablesList.reduce(
     (acc, variable) => {
@@ -125,7 +127,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     { list: {} } as any,
   );
 
-  const components = getAllComponentsByName(editorTree.root, [
+  const inputComponents = getAllComponentsByName(editorTree.root, [
     "Input",
     "Select",
     "Checkbox",
@@ -133,19 +135,27 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     "Switch",
     "Textarea",
     "Autocomplete",
-  ]).reduce(
-    (acc, component) => {
-      const value = inputsStore[component?.id!];
-      component = { ...component, name: component.description! };
-      acc.list[component?.id!] = component;
-      acc[component?.id!] = value;
-      return acc;
-    },
-    { list: {} } as any,
-  );
+  ]);
 
-  const browserList = Array.of(
-    pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
+  const components = useMemo(() => {
+    return inputComponents.reduce(
+      (acc, component) => {
+        const value = inputsStore[component?.id!];
+        component = { ...component, name: component.description! };
+        acc.list[component?.id!] = component;
+        acc[component?.id!] = value;
+        return acc;
+      },
+      { list: {} } as any,
+    );
+  }, [inputsStore, inputComponents]);
+
+  const browserList = useMemo(
+    () =>
+      Array.of(
+        pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
+      ),
+    [browser],
   );
 
   const autoRunJavascriptCode = (boundCode: string) => {

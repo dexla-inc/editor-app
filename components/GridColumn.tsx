@@ -9,7 +9,13 @@ import { calculateGridSizes } from "@/utils/grid";
 import { Box, Text, px, useMantineTheme } from "@mantine/core";
 import cloneDeep from "lodash.clonedeep";
 import { Resizable } from "re-resizable";
-import { PropsWithChildren, forwardRef, useEffect, useState } from "react";
+import {
+  PropsWithChildren,
+  forwardRef,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
 
 export const GridColumn = forwardRef(
   (
@@ -24,7 +30,6 @@ export const GridColumn = forwardRef(
   ) => {
     const { flexWrap, ...style } = gridColumnStyles;
     const theme = useMantineTheme();
-    const editorTree = useEditorStore((state) => state.tree);
     const setEditorTree = useEditorStore((state) => state.setTree);
     const columnSpans = useEditorStore((state) => state.columnSpans ?? {});
     const setColumnSpan = useEditorStore((state) => state.setColumnSpan);
@@ -35,7 +40,10 @@ export const GridColumn = forwardRef(
     const [initialSpan, setInitialSpan] = useState(0);
     const [initialNextSiblingSpan, setInitialNextSiblingSpan] = useState(0);
 
-    const parent = getComponentParent(editorTree.root, props.id!);
+    const parent = useMemo(() => {
+      const editorTree = useEditorStore.getState().tree;
+      return getComponentParent(editorTree.root, props.id!);
+    }, [props.id]);
     const siblings = (parent?.children ?? []).filter(
       (c) => c.name === "GridColumn",
     );
@@ -196,6 +204,7 @@ export const GridColumn = forwardRef(
             setColumnSpan(props.id, newSpan);
           }}
           onResizeStop={() => {
+            const editorTree = useEditorStore.getState().tree;
             const copy = cloneDeep(editorTree);
             updateTreeComponent(copy.root, props.id, {
               span: columnSpans[props.id] ?? 0,

@@ -25,7 +25,6 @@ export const CustomComponentModal = ({
 }: Props) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const editorTree = useEditorStore((state) => state.tree);
   const selectedComponentId = useEditorStore(
     (state) => state.selectedComponentIds?.at(-1),
   );
@@ -64,6 +63,7 @@ export const CustomComponentModal = ({
   });
 
   const handleSubmitCustomComponent = (values: any) => {
+    const editorTree = useEditorStore.getState().tree;
     customComponentModal.close();
     const component = getComponentById(
       editorTree.root,
