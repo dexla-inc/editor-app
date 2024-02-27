@@ -31,7 +31,7 @@ export const usePropsWithOverwrites = (
   };
 
   const leaveHoverStateFunc = (e: React.MouseEvent<HTMLElement>) => {
-    if (currentState === "hover") {
+    if (currentState === "hover" || currentState === "checked") {
       setTreeComponentCurrentState(e.currentTarget.id, "default");
     }
   };

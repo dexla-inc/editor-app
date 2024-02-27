@@ -61,7 +61,9 @@ const RadioItemComponent = ({
                   },
                 },
                 {
-                  parentState: checked ? "checked" : "default",
+                  ...(checked && {
+                    parentState: "checked",
+                  }),
                 },
               ),
             )
