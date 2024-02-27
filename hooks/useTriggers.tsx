@@ -23,6 +23,9 @@ export const useTriggers = ({
   const router = useRouter();
   const { computeValue, setNonEditorActions } = useDataContext()!;
   const { data: endpoints } = useDataSourceEndpoints(projectId);
+  const setTriggeredLogicFlow = useEditorStore(
+    (state) => state.setTriggeredLogicFlow,
+  );
 
   const triggers = () => {
     const actions: Action[] = entity?.actions ?? [];
@@ -41,11 +44,6 @@ export const useTriggers = ({
           return acc;
         }
 
-        const selectedEndpoint = endpoints?.results.find(
-          (e) =>
-            action.action.name === "apiCall" && e.id === action.action.endpoint,
-        )!;
-
         return {
           ...acc,
           [action.trigger]: (e: any) => {
@@ -57,7 +55,7 @@ export const useTriggers = ({
               computeValue,
               setNonEditorActions,
               event: e,
-              endpoint: selectedEndpoint,
+              endpointResults: endpoints?.results ?? [],
               onSuccess: onSuccessActions.find(
                 (sa) => sa.sequentialTo === action.id,
               ),
@@ -65,6 +63,7 @@ export const useTriggers = ({
                 (ea) => ea.sequentialTo === action.id,
               ),
               entity,
+              setTriggeredLogicFlow,
             });
           },
         };
