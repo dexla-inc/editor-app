@@ -7,6 +7,7 @@ import {
   DatePickerInput as MantineDatePickerInput,
 } from "@mantine/dates";
 import merge from "lodash.merge";
+import { pick } from "next/dist/lib/pick";
 import { memo } from "react";
 
 type Props = {
@@ -32,10 +33,8 @@ const DateInputComponent = ({
     ...componentProps
   } = component.props as any;
   const { borderStyle, inputStyle } = useBrandingStyles();
-  const customInputStyle = merge({}, borderStyle, inputStyle, props.style);
-  const customStyles = merge({}, styles, {
-    input: customInputStyle,
-  });
+
+  const customStyle = merge({}, borderStyle, inputStyle, props.style);
 
   const isPositionLeft =
     !iconPosition || (iconPosition && iconPosition === "left");
@@ -46,7 +45,15 @@ const DateInputComponent = ({
       {...(iconName &&
         !isPositionLeft && { rightSection: <Icon name={iconName} /> })}
       disabled={isDisabled ? true : false}
-      styles={customStyles}
+      style={{}}
+      styles={{
+        root: {
+          position: "relative",
+          ...pick(customStyle, ["display", "width", "minHeight", "minWidth"]),
+          height: "fit-content",
+        },
+        input: customStyle,
+      }}
       {...props}
       {...componentProps}
       {...triggers}

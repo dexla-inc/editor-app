@@ -400,10 +400,6 @@ export const requiredModifiers: RequiredModifiers = {
     icon: "",
     iconPosition: "left",
     labelSize: "sm",
-    style: {
-      width: "220px",
-      height: "fit-content",
-    },
   },
   chart: {
     data: "",
