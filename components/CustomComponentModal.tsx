@@ -6,7 +6,7 @@ import { structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { ICON_SIZE } from "@/utils/config";
 import { Component, getComponentById, replaceIdsDeeply } from "@/utils/editor";
-import { Button, Group, Modal, Select, Stack, TextInput } from "@mantine/core";
+import { Button, Modal, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import { IconNewSection } from "@tabler/icons-react";
@@ -97,26 +97,24 @@ export const CustomComponentModal = ({
         onSubmit={customComponentForm.onSubmit(handleSubmitCustomComponent)}
       >
         <Stack>
-          <Group noWrap>
-            <TextInput
-              data-autofocus
-              label="Name"
-              withAsterisk={false}
-              {...customComponentForm.getInputProps("name")}
-              {...AUTOCOMPLETE_OFF_PROPS}
-            />
-            <Select
-              withinPortal
-              label="Scope"
-              data={[
-                { label: "Global", value: "global" },
-                { label: "Company", value: "company" },
-                { label: "Project", value: "project" },
-              ]}
-              dropdownPosition="bottom"
-              {...customComponentForm.getInputProps("scope")}
-            />
-          </Group>
+          <TextInput
+            data-autofocus
+            label="Name"
+            withAsterisk={false}
+            {...customComponentForm.getInputProps("name")}
+            {...AUTOCOMPLETE_OFF_PROPS}
+          />
+          <Select
+            withinPortal
+            label="Scope"
+            data={[
+              { label: "Global", value: "global" },
+              { label: "Company", value: "company" },
+              { label: "Project", value: "project" },
+            ]}
+            dropdownPosition="bottom"
+            {...customComponentForm.getInputProps("scope")}
+          />
           {customComponentForm.values.scope === "global" && (
             <Select
               withinPortal
@@ -127,7 +125,11 @@ export const CustomComponentModal = ({
               {...customComponentForm.getInputProps("type")}
             />
           )}
-          <Button leftIcon={<IconNewSection size={ICON_SIZE} />} type="submit">
+          <Button
+            leftIcon={<IconNewSection size={ICON_SIZE} />}
+            type="submit"
+            mt="md"
+          >
             Save New Component
           </Button>
         </Stack>

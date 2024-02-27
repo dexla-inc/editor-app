@@ -10,7 +10,7 @@ export const getComponentList = async (
   companyId: string,
 ) => {
   const response = (await getWithoutAuth<CustomComponentListResponse>(
-    `/projects/${projectId}/components?companyId=${companyId}`,
+    `/projects/${projectId}/components?companyId=${companyId}&scopes=PROJECT,COMPANY,GLOBAL`,
     {},
   )) as CustomComponentListResponse;
 
