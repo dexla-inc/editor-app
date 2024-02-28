@@ -7,7 +7,6 @@ import {
   VariableTypesOptions,
 } from "@/requests/variables/types";
 import { useVariableStore } from "@/stores/variables";
-import { safeJsonParse } from "@/utils/common";
 import { requiredFieldValidator } from "@/utils/validation";
 import {
   Button,
@@ -55,6 +54,7 @@ function convertDefaultValueToString(type: string, defaultValue: any): string {
 
 export const VariableForm = ({ variableId }: Props) => {
   const variableList = useVariableStore((state) => state.variableList);
+  const setVariable = useVariableStore((state) => state.setVariable);
   const variable = variableList.find((v) => v.id === variableId);
   const [selectedType, setSelectedType] = useState(variable?.type ?? "TEXT");
   const router = useRouter();
@@ -90,8 +90,10 @@ export const VariableForm = ({ variableId }: Props) => {
         id: variableId,
         values: convertedValues,
       });
+      setVariable({ ...convertedValues, id: variableId });
     } else {
       createVariablesMutation.mutate(convertedValues);
+      console.log(createVariablesMutation);
     }
   };
 
@@ -153,24 +155,10 @@ export const VariableForm = ({ variableId }: Props) => {
           <Stack>
             <TopLabel text="Default Value" size="sm" />
             <MonacoEditorJson
-              {...(variableId
-                ? {
-                    value: form.values.defaultValue
-                      ? safeJsonParse(form.values.defaultValue)
-                      : "",
-                    onChange: (value: any) => {
-                      form.setFieldValue(
-                        "defaultValue",
-                        JSON.stringify(value, null, 2) ?? "",
-                      );
-                    },
-                  }
-                : {
-                    value: form.values.defaultValue,
-                    onChange: (value: any) => {
-                      form.setFieldValue("defaultValue", value ?? "");
-                    },
-                  })}
+              value={form.values.defaultValue}
+              onChange={(value: any) => {
+                form.setFieldValue("defaultValue", value ?? "");
+              }}
             />
           </Stack>
         );

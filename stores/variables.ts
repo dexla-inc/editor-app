@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 type VariableStoreParams = VariableResponse & {
-  value?: string | null;
+  value?: any | null;
 };
 
 type VariablesState = {
@@ -48,16 +48,14 @@ export const useVariableStore = create<VariablesState>()(
               let newVariableList = [...state.variableList];
 
               if (index >= 0) {
-                // Update existing variable
                 newVariableList[index] = {
                   ...newVariableList[index],
                   ...variable,
                 };
               } else if (variable.id) {
-                // Create new variable, assuming that id is provided in varProps
                 const newVariable: VariableStoreParams = {
-                  ...(variable as VariableStoreParams), // Casting to ensure types match
-                  value: variable.value ?? null, // Set value to null if not provided
+                  ...(variable as VariableStoreParams),
+                  value: variable.value ?? variable.defaultValue,
                 };
                 newVariableList = [...newVariableList, newVariable];
               }
