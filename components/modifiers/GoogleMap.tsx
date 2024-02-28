@@ -1,4 +1,4 @@
-import { Position } from "@/components/mapper/GoogleMapPlugin";
+import { SegmentedControlYesNo } from "@/components/SegmentedControlYesNo";
 import { withModifier } from "@/hoc/withModifier";
 import { ICON_SIZE } from "@/utils/config";
 import { debouncedTreeUpdate } from "@/utils/editor";
@@ -13,19 +13,15 @@ import {
   Select,
   Stack,
   Text,
-  TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconMapPin, IconPlus, IconTrash } from "@tabler/icons-react";
 import merge from "lodash.merge";
-import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
-import { SegmentedControlYesNo } from "../SegmentedControlYesNo";
 
 export const icon = IconMapPin;
 export const label = "Map Settings";
 
-export type MarkerItem = { id: string; name: string } & Position;
 export type Styler = Record<string, string | Record<string, any>[]>;
 export type Options = {
   mapTypeId: string;
@@ -42,42 +38,11 @@ export const Modifier = withModifier(
         merge({}, requiredModifiers.mapSettings, {
           language: selectedComponent.props?.language,
           options: selectedComponent.props?.options,
-          markers: selectedComponent.props?.markers,
           fade: selectedComponent.props?.fade,
         }),
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedComponent]);
-
-    const addMarker = () => {
-      const id = nanoid();
-      const newMarker: MarkerItem = {
-        id,
-        name: "",
-        position: { lat: 0.0, lng: 0.0 },
-      };
-      const updatedMarkers = [...(form.values.markers as any[]), newMarker];
-      form.setFieldValue("markers", updatedMarkers);
-      debouncedTreeUpdate(selectedComponentIds, { markers: updatedMarkers });
-    };
-
-    const upDateMarker = (id: number, field: string, val: string | number) => {
-      const updatedMarkerItems = [...(form.values.markers as any[])];
-      if (field === "name") updatedMarkerItems[id][field] = val as string;
-      if (field === "lat" || field === "lng")
-        updatedMarkerItems[id].position[field] = val as number;
-      form.setValues({ ...form.values, markers: updatedMarkerItems });
-      debouncedTreeUpdate(selectedComponentIds, {
-        markers: updatedMarkerItems,
-      });
-    };
-
-    const removeMarker = (index: number) => {
-      const updatedMarkers = form.values.markers as any[];
-      updatedMarkers.splice(index, 1);
-      form.setValues({ ...form.values, markers: updatedMarkers });
-      debouncedTreeUpdate(selectedComponentIds, { markers: updatedMarkers });
-    };
 
     const addMapStyle = () => {
       const newMapStyle: Styler = {
@@ -142,50 +107,6 @@ export const Modifier = withModifier(
       <form key={selectedComponent?.id}>
         <Stack spacing="xs">
           <>
-            <Stack>
-              <Flex justify="space-between" align="center">
-                <Text size="sm">Add Marker</Text>
-                <Button
-                  onClick={addMarker}
-                  size="xs"
-                  leftIcon={<IconPlus size={ICON_SIZE} />}
-                >
-                  Add
-                </Button>
-              </Flex>
-              <Box>
-                <Flex justify="space-between">
-                  <Text size="sm">Marker </Text>
-                  <ActionIcon onClick={() => removeMarker(0)}>
-                    <IconTrash size={ICON_SIZE} color="red" />
-                  </ActionIcon>
-                </Flex>
-                <TextInput
-                  label="Name"
-                  size="xs"
-                  // value={child.name}
-                  onChange={(e) => upDateMarker(0, "name", e.target.value)}
-                />
-                <Group grow spacing="xs">
-                  <NumberInput
-                    label="Latitude"
-                    size="xs"
-                    precision={6}
-                    step={0.000005}
-                    // value={position.lat}
-                    onChange={(e) => upDateMarker(0, "lat", e as number)}
-                  />
-                  <NumberInput
-                    label="Longitude"
-                    size="xs"
-                    precision={6}
-                    step={0.000005}
-                    // value={child.position.lng}
-                    onChange={(e) => upDateMarker(0, "lng", e as number)}
-                  />
-                </Group>
-              </Box>
-            </Stack>
             <Select
               size="xs"
               label="Map Type"

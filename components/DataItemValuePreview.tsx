@@ -1,3 +1,4 @@
+import { isObjectOrArray } from "@/utils/common";
 import { Card, Text, useMantineTheme } from "@mantine/core";
 
 export default function DataItemValuePreview({ value }: { value: string }) {
@@ -6,7 +7,7 @@ export default function DataItemValuePreview({ value }: { value: string }) {
   return (
     <Card padding={4} maw={350}>
       <Text size="xs" color={primaryColor} truncate>
-        {value}
+        {isObjectOrArray(value) ? JSON.stringify(value) : value}
       </Text>
     </Card>
   );

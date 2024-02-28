@@ -119,7 +119,7 @@ export default function BindingPopover({
       opened={isOpen}
       withinPortal
       arrowPosition="center"
-      position="bottom-end"
+      position="left-end"
       onClose={onClose}
     >
       <Popover.Target>

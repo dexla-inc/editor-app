@@ -1,4 +1,3 @@
-import { MarkerItem } from "@/components/modifiers/GoogleMap";
 import { useDataContext } from "@/contexts/DataProvider";
 import { safeJsonParse } from "@/utils/common";
 import { Component } from "@/utils/editor";
@@ -31,8 +30,8 @@ type GoogleMapProps = {
   //center: { lat: number; lng: number };
   [i: string]: any;
 };
-
-export type Position = {
+export type MarkerItem = { id: string; name: string } & Position;
+type Position = {
   position: { lat: number; lng: number };
 };
 
@@ -56,11 +55,18 @@ export const GoogleMapPlugin = ({
   });
 
   const [internalZoom, setInternalZoom] = useState<number>(parseInt(zoom));
-  const internaMarkers = safeJsonParse<MarkerItem[]>(markers);
+  const [internalMarkers, setInternalMarkers] = useState<MarkerItem[]>(
+    safeJsonParse<MarkerItem[]>(markers),
+  );
 
   useEffect(() => {
     setInternalZoom(parseInt(zoom));
   }, [zoom]);
+
+  useEffect(() => {
+    console.log("markers", markers);
+    setInternalMarkers(safeJsonParse<MarkerItem[]>(markers));
+  }, [markers]);
 
   const MAP_SCRIPT_DELAY_DURATION = 800;
 
@@ -98,21 +104,22 @@ export const GoogleMapPlugin = ({
 
   const onLoad = useCallback(
     (map: google.maps.Map) => {
-      const bounds = new window.google.maps.LatLngBounds(center);
-      // check marks is an array
-
-      Array.isArray(internaMarkers) &&
-        internaMarkers.forEach(({ position }: Position) =>
-          bounds.extend(position),
-        );
-      map.fitBounds(bounds);
-
       setMap(map);
 
       setInternalZoom(internalZoom);
+      console.log("internalMarkers", internalMarkers);
+
+      const bounds = new window.google.maps.LatLngBounds(center);
+      // check marks is an array
+
+      Array.isArray(internalMarkers) &&
+        internalMarkers.forEach(({ position }: Position) =>
+          bounds.extend(position),
+        );
+      map.fitBounds(bounds);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [map, center, apiKey, internaMarkers],
+    [center, internalMarkers, internalZoom],
   );
 
   useEffect(() => {
@@ -155,9 +162,9 @@ export const GoogleMapPlugin = ({
         center={center}
         zoom={internalZoom}
       >
-        {internaMarkers &&
-          internaMarkers.length > 0 &&
-          (internaMarkers as MarkerItem[]).map(({ id, name, position }) => (
+        {internalMarkers &&
+          internalMarkers.length > 0 &&
+          (internalMarkers as MarkerItem[]).map(({ id, name, position }) => (
             <Marker
               key={id}
               position={position}
@@ -172,6 +179,7 @@ export const GoogleMapPlugin = ({
             </Marker>
           ))}
       </GoogleMap>
+
       {fade && <Overlay color="#fff" opacity={0.7} blur={0.5} zIndex={1} />}
     </Box>
   );
