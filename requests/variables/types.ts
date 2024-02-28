@@ -4,7 +4,7 @@ export type VariableResponse = {
   id: string;
   name: string;
   type: FrontEndTypes;
-  defaultValue?: string | null;
+  defaultValue?: any | null;
   isGlobal: boolean;
 };
 

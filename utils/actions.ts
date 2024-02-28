@@ -34,7 +34,6 @@ import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
 import { getComponentInitialDisplayValue, safeJsonParse } from "./common";
 import { ValueProps } from "./types";
-import { decodeSchema } from "@/utils/compression";
 
 const triggers = [
   "onClick",
@@ -669,9 +668,9 @@ export const useChangeVariableAction = async ({
   action,
   computeValue,
 }: ChangeVariableActionParams) => {
-  console.log("useChangeVariableAction", action);
   const setVariable = useVariableStore.getState().setVariable;
   const value = computeValue({ value: action.value });
+  console.log("useChangeVariableAction", value, action);
   setVariable({
     id: action.variableId,
     value: value,

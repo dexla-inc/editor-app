@@ -2,7 +2,6 @@ import { VariableForm } from "@/components/variables/VariableForm";
 import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 import { deleteVariable } from "@/requests/variables/mutations";
 import { useVariableStore } from "@/stores/variables";
-import { safeJsonParse } from "@/utils/common";
 import {
   ActionIcon,
   Center,
@@ -34,31 +33,46 @@ export const VariableList = ({ projectId }: Props) => {
     invalidate();
   };
 
-  const rows = (variableList ?? [])?.map((variable: any) => (
-    <tr key={variable.id}>
-      <td>{variable.name}</td>
-      <td>{variable.type}</td>
-      <td>{variable.isGlobal.toString()}</td>
-      <td>{safeJsonParse(variable.defaultValue)}</td>
-      <td>{safeJsonParse(variable.value)}</td>
-      <td>
-        <Group>
-          <ActionIcon
-            size="xs"
-            onClick={() => {
-              setVariableToEdit(variable.id);
-              modal.open();
-            }}
-          >
-            <IconEdit />
-          </ActionIcon>
-          <ActionIcon size="xs" onClick={() => deleteVar(variable.id)}>
-            <IconX />
-          </ActionIcon>
-        </Group>
-      </td>
-    </tr>
-  ));
+  const rows = (
+    variableList?.sort((a, b) => a.name.localeCompare(b.name)) ?? []
+  )?.map((variable: any) => {
+    const defaultValue = variable.defaultValue;
+    const value = variable.value;
+    if (variable.name === "Google Maps") {
+      console.log("Google Maps", variable);
+    }
+    return (
+      <tr key={variable.id}>
+        <td style={{ maxWidth: 150 }}>
+          <Text truncate>{variable.name}</Text>
+        </td>
+        <td style={{ maxWidth: 100 }}>{variable.type}</td>
+        <td style={{ maxWidth: 100 }}>{variable.isGlobal.toString()}</td>
+        <td style={{ maxWidth: 200 }}>
+          <Text truncate>{defaultValue}</Text>
+        </td>
+        <td style={{ maxWidth: 200 }}>
+          <Text truncate>{value}</Text>
+        </td>
+        <td style={{ maxWidth: 50 }}>
+          <Group>
+            <ActionIcon
+              size="xs"
+              onClick={() => {
+                setVariableToEdit(variable.id);
+                modal.open();
+              }}
+            >
+              <IconEdit />
+            </ActionIcon>
+            <ActionIcon size="xs" onClick={() => deleteVar(variable.id)}>
+              <IconX />
+            </ActionIcon>
+          </Group>
+        </td>
+      </tr>
+    );
+  });
 
   return (
     <>
@@ -73,21 +87,19 @@ export const VariableList = ({ projectId }: Props) => {
           }}
         />
         {rows.length > 0 && (
-          <Stack>
-            <Table striped highlightOnHover withBorder withColumnBorders>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Is Global</th>
-                  <th>Default Value</th>
-                  <th>Current Value</th>
-                  <th style={{ width: 80 }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>{rows}</tbody>
-            </Table>
-          </Stack>
+          <Table striped highlightOnHover withBorder withColumnBorders>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Is Global</th>
+                <th>Default Value</th>
+                <th>Current Value</th>
+                <th style={{ width: 80 }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>{rows}</tbody>
+          </Table>
         )}
         {!rows.length && (
           <Stack>
