@@ -24,3 +24,5 @@ export const VariableTypesOptions = Object.keys(VariableTypes).map((key) => ({
 }));
 
 export type VariablePagingParams = PagingParams & {};
+
+// TODO: Change defaultValue in variables to an object, like we do with actions on page load
