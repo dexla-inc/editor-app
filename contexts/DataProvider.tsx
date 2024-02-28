@@ -10,11 +10,10 @@ import { isObject, jsonInString, safeJsonParse } from "@/utils/common";
 import { getAllComponentsByName, getComponentById } from "@/utils/editor";
 import { ValueProps } from "@/utils/types";
 import get from "lodash.get";
-import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
 import { useNodes } from "reactflow";
 
 type DataProviderProps = {
@@ -166,7 +165,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         },
         { list: {} } as any,
       ) ?? { list: {} };
-  console.log("--->", { actions });
+
   const variables = variablesList.reduce(
     (acc, variable) => {
       let value = variable.value ?? variable.defaultValue ?? "";
@@ -204,20 +203,12 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
   );
 
-  const autoRunJavascriptCode = (boundCode: string) => {
-    try {
-      const result = eval(`(function () { ${boundCode} })`)();
-      return isEmpty(result) ? result : result.toString();
-    } catch {
-      return;
-    }
-  };
-
   const computeValue = ({
     value,
     shareableContent,
     staticFallback,
   }: GetValueProps) => {
+    if (value === undefined) return;
     let dataType = value?.dataType ?? "static";
 
     const valueHandlers = {
@@ -238,13 +229,12 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         if (hasReturn) {
           boundCode = boundCode.substring(6).trim();
 
+          // This is needed when the boundCode is a stringified static object with a return statement
           if (jsonInString(boundCode)) {
             boundCode = safeJsonParse(boundCode);
           }
         }
 
-        // Unable to return objects as `return ${boundCode}` implicitly calls toString() so Current Value
-        // does not get returned in BindingPopover
         return autoRunJavascriptCode(
           hasReturn ? `return ${boundCode}` : boundCode,
         );
@@ -252,6 +242,14 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     };
 
     return valueHandlers[dataType]();
+  };
+
+  const autoRunJavascriptCode = (boundCode: string) => {
+    try {
+      return eval(`(function () { ${boundCode} })`)();
+    } catch {
+      return;
+    }
   };
 
   const computeValues = ({ value, shareableContent }: any): any => {
