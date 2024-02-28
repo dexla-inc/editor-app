@@ -93,7 +93,6 @@ export const VariableForm = ({ variableId }: Props) => {
       setVariable({ ...convertedValues, id: variableId });
     } else {
       createVariablesMutation.mutate(convertedValues);
-      console.log(createVariablesMutation);
     }
   };
 

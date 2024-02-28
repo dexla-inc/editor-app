@@ -2,6 +2,7 @@ import { VariableForm } from "@/components/variables/VariableForm";
 import { useVariableListQuery } from "@/hooks/reactQuery/useVariableListQuery";
 import { deleteVariable } from "@/requests/variables/mutations";
 import { useVariableStore } from "@/stores/variables";
+import { isObjectOrArray } from "@/utils/common";
 import {
   ActionIcon,
   Center,
@@ -38,9 +39,7 @@ export const VariableList = ({ projectId }: Props) => {
   )?.map((variable: any) => {
     const defaultValue = variable.defaultValue;
     const value = variable.value;
-    if (variable.name === "Google Maps") {
-      console.log("Google Maps", variable);
-    }
+
     return (
       <tr key={variable.id}>
         <td style={{ maxWidth: 150 }}>
@@ -52,7 +51,9 @@ export const VariableList = ({ projectId }: Props) => {
           <Text truncate>{defaultValue}</Text>
         </td>
         <td style={{ maxWidth: 200 }}>
-          <Text truncate>{value}</Text>
+          <Text truncate>
+            {isObjectOrArray(value) ? JSON.stringify(value) : value}
+          </Text>
         </td>
         <td style={{ maxWidth: 50 }}>
           <Group>

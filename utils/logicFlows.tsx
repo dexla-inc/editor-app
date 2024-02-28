@@ -64,7 +64,6 @@ const run = async (state: FlowData, params: any) => {
 export const executeFlow = async (flow: LogicFlowResponse, params: any) => {
   try {
     const flowData: FlowData = JSON.parse(decodeSchema(flow.data as string));
-    console.log("flowData", flowData, params);
 
     await run(flowData, params);
   } catch (error) {
