@@ -219,9 +219,10 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
             // });
 
             removeComponentFromParent(copy.root, id, parent?.id!);
-            setEditorTree(copy, {
-              action: `Wrapped ${component.name} with a Container`,
-            });
+            // TODO: get this back
+            // setEditorTree(copy, {
+            //   action: `Wrapped ${component.name} with a Container`,
+            // });
           }}
         />
       )}
@@ -245,7 +246,8 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
             onClick={() => {
               const copy = cloneDeep(editorTree);
               removeComponent(copy.root, component?.id!);
-              setEditorTree(copy, { action: `Removed ${component?.name}` });
+              // TODO: get this back
+              // setEditorTree(copy, { action: `Removed ${component?.name}` });
             }}
           />
           {customComponentModal && (

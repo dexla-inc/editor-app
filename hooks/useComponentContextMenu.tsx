@@ -74,28 +74,29 @@ export const useComponentContextMenu = () => {
         };
       }
       const copy = cloneDeep(editorTree);
-      const containerId = addComponent(
-        copy.root,
-        container,
-        {
-          id: parent?.id!,
-          edge: "left",
-        },
-        getComponentIndex(parent!, component.id!),
-      );
-
-      addComponent(copy.root, component, {
-        id: containerId,
-        edge: "left",
-      });
-
-      removeComponentFromParent(copy.root, component.id!, parent?.id!);
-      setEditorTree(copy, {
-        action: `Wrapped ${component.name} with a Container`,
-      });
-      setTimeout(() => {
-        setSelectedComponentIds(() => [containerId]);
-      }, 100);
+      // TODO: get this back
+      // const containerId = addComponent(
+      //   copy.root,
+      //   container,
+      //   {
+      //     id: parent?.id!,
+      //     edge: "left",
+      //   },
+      //   getComponentIndex(parent!, component.id!),
+      // );
+      //
+      // addComponent(copy.root, component, {
+      //   id: containerId,
+      //   edge: "left",
+      // });
+      //
+      // removeComponentFromParent(copy.root, component.id!, parent?.id!);
+      // setEditorTree(copy, {
+      //   action: `Wrapped ${component.name} with a Container`,
+      // });
+      // setTimeout(() => {
+      //   setSelectedComponentIds(() => [containerId]);
+      // }, 100);
     },
     [editorTheme, editorTree, setEditorTree, setSelectedComponentIds],
   );
@@ -110,7 +111,8 @@ export const useComponentContextMenu = () => {
       ) {
         const copy = cloneDeep(editorTree);
         removeComponent(copy.root, component.id);
-        setEditorTree(copy, { action: `Removed ${component?.name}` });
+        // TODO: get this back
+        // setEditorTree(copy, { action: `Removed ${component?.name}` });
         clearSelection();
       }
     },
@@ -125,18 +127,19 @@ export const useComponentContextMenu = () => {
       const targetId = determinePasteTarget(componentId);
       const parentComponent = getComponentParent(copy.root, targetId);
 
-      const newSelectedId = addComponent(
-        copy.root,
-        component,
-        {
-          id: parentComponent!.id as string,
-          edge: "bottom",
-        },
-        getComponentIndex(parentComponent!, componentId) + 1,
-      );
+      // TODO: get this back
+      // const newSelectedId = addComponent(
+      //   copy.root,
+      //   component,
+      //   {
+      //     id: parentComponent!.id as string,
+      //     edge: "bottom",
+      //   },
+      //   getComponentIndex(parentComponent!, componentId) + 1,
+      // );
 
-      setEditorTree(copy, { action: `Pasted ${componentName}` });
-      setSelectedComponentIds(() => [newSelectedId]);
+      // setEditorTree(copy, { action: `Pasted ${componentName}` });
+      // setSelectedComponentIds(() => [newSelectedId]);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [editorTree, setEditorTree],

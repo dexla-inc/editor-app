@@ -32,8 +32,8 @@ export type EditableComponentMapper = {
   renderTree: (component: ComponentTree, shareableContent?: any) => any;
   component: ComponentTree & Component;
   shareableContent?: any;
-  isPreviewMode: boolean;
-  style: CSSObject;
+  isPreviewMode?: boolean;
+  style?: CSSObject;
 };
 
 type ComponentBase = {
@@ -56,6 +56,7 @@ export type Component = {
   parentDataComponentId?: string;
   states?: Record<string, any>;
   languages?: Record<string, any>;
+  isBeingAdded?: boolean;
 } & ComponentBase;
 
 export type ComponentTree = {
@@ -70,6 +71,12 @@ export type Row = {
 
 export type EditorTree = {
   root: ComponentTree;
+  name: string;
+  timestamp: number;
+};
+
+export type EditorTreeCopy = {
+  root: ComponentStructure;
   name: string;
   timestamp: number;
 };
@@ -278,75 +285,77 @@ export type TileType = {
   count: number;
 };
 
-// export const getTiles = (treeRoot: Component): TileType[] => {
-//   let tiles: TileType[] = [];
-//
-//   crawl(
-//     treeRoot,
-//     (node) => {
-//       const name = node.description?.replace(".tile", "");
-//       if (
-//         node.description?.endsWith(".tile") &&
-//         !tiles.find((t) => t.name === name)
-//       ) {
-//         tiles.push({ name: name as string, node, count: 1 });
-//       } else {
-//         tiles = tiles.map((t) => {
-//           if (t.name === name) {
-//             return { ...t, count: t.count + 1 } as TileType;
-//           }
-//
-//           return t as TileType;
-//         });
-//       }
-//     },
-//     { order: "bfs" },
-//   );
-//
-//   return tiles;
-// };
-//
-// export const getTileData = (treeRoot: Component): { [key: string]: any } => {
-//   let data: { [key: string]: any } = {};
-//
-//   crawl(
-//     treeRoot,
-//     (node) => {
-//       if (node.description?.startsWith("tile.data.")) {
-//         let type = "string";
-//         // TODO: Handle unique types of charts, like PieChart that needs different data
-//         if (node.name.endsWith("Chart")) {
-//           type = `{
-//             data: {
-//               series: {
-//                 name: string;
-//                 data: number[]
-//               }[]
-//               xaxis: { categories: string[] }
-//             }
-//           }`;
-//         }
-//
-//         if (node.name === "Table") {
-//           type = `{
-//             data: {
-//               value: { [key: string]: any }[]
-//             }
-//           }`;
-//         }
-//
-//         data = {
-//           ...data,
-//           [node.description.replace("tile.data.", "")]: type,
-//         };
-//       }
-//     },
-//     { order: "bfs" },
-//   );
-//
-//   return data;
-// };
-//
+export const getTiles = (treeRoot: ComponentTree): TileType[] => {
+  let tiles: TileType[] = [];
+
+  crawl(
+    treeRoot,
+    (nodeTree) => {
+      const node =
+        useEditorStore.getState().componentMutableAttrs[nodeTree.id!];
+      const name = node.description?.replace(".tile", "");
+      if (
+        node.description?.endsWith(".tile") &&
+        !tiles.find((t) => t.name === name)
+      ) {
+        tiles.push({ name: name as string, node, count: 1 });
+      } else {
+        tiles = tiles.map((t) => {
+          if (t.name === name) {
+            return { ...t, count: t.count + 1 } as TileType;
+          }
+
+          return t as TileType;
+        });
+      }
+    },
+    { order: "bfs" },
+  );
+
+  return tiles;
+};
+
+export const getTileData = (treeRoot: Component): { [key: string]: any } => {
+  let data: { [key: string]: any } = {};
+
+  crawl(
+    treeRoot,
+    (node) => {
+      if (node.description?.startsWith("tile.data.")) {
+        let type = "string";
+        // TODO: Handle unique types of charts, like PieChart that needs different data
+        if (node.name.endsWith("Chart")) {
+          type = `{
+            data: {
+              series: {
+                name: string;
+                data: number[]
+              }[]
+              xaxis: { categories: string[] }
+            }
+          }`;
+        }
+
+        if (node.name === "Table") {
+          type = `{
+            data: {
+              value: { [key: string]: any }[]
+            }
+          }`;
+        }
+
+        data = {
+          ...data,
+          [node.description.replace("tile.data.", "")]: type,
+        };
+      }
+    },
+    { order: "bfs" },
+  );
+
+  return data;
+};
+
 // // recursively replace all tile.data with the actual tile data
 // const replaceTileData = (node: Component, tile: any, entities: object) => {
 //   if (node.description?.startsWith("tile.data.")) {
@@ -408,8 +417,8 @@ export type TileType = {
 export const getComponentTreeById = (
   treeRoot: ComponentTree,
   id: string,
-): Component | null => {
-  let found: Component | null = null;
+): ComponentTree | null => {
+  let found: ComponentTree | null = null;
 
   crawl(
     treeRoot,
@@ -446,10 +455,10 @@ export const getComponentById = (
 };
 
 export const getAllComponentsByIds = (
-  treeRoot: Component,
+  treeRoot: ComponentTree,
   ids: string[],
-): Component[] => {
-  let found: Component[] = [];
+): ComponentTree[] => {
+  let found: ComponentTree[] = [];
 
   crawl(
     treeRoot,

@@ -124,15 +124,16 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
       // });
     },
     LAYOUT: (stream: string) => {
-      processTOMLStream({
-        stream,
-        handler: handleLayoutGeneration({
-          theme,
-          tree,
-          setTree,
-          pages,
-        }),
-      });
+      // TODO: get this back
+      // processTOMLStream({
+      //   stream,
+      //   handler: handleLayoutGeneration({
+      //     theme,
+      //     tree,
+      //     setTree,
+      //     pages,
+      //   }),
+      // });
     },
     CSS_MODIFIER: (stream: string) => {
       processTOMLStream<CssModiferAIResponse>({

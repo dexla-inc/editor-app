@@ -103,17 +103,18 @@ export const GenerateComponentsAIButton = () => {
   };
 
   useEffect(() => {
-    processTOMLStream<Row[]>({
-      stream,
-      handler: componentGenerationHandler({
-        componentBeingAddedId,
-        theme,
-        updateTreeComponentChildren,
-        tree,
-        setTree,
-        pages,
-      }),
-    });
+    // TODO: get this back
+    // processTOMLStream<Row[]>({
+    //   stream,
+    //   handler: componentGenerationHandler({
+    //     componentBeingAddedId,
+    //     theme,
+    //     updateTreeComponentChildren,
+    //     tree,
+    //     setTree,
+    //     pages,
+    //   }),
+    // });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stream, type]);
 

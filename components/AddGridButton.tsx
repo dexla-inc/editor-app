@@ -22,7 +22,8 @@ export const AddGridButton = () => {
       .concat(emptyEditorTree.root.children[0]);
 
     copy.root.children.reverse();
-    setEditorTree(copy);
+    // TODO: get this back
+    // setEditorTree(copy);
   };
 
   return (

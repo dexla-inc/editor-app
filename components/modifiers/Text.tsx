@@ -59,7 +59,6 @@ export const Modifier = withModifier(
     const { xOffset, yOffset, blur, shadowColor } = getShadowStyle(shadow);
 
     const data = pick(selectedComponent.props!, [
-      "children",
       "align",
       "style",
       "color",

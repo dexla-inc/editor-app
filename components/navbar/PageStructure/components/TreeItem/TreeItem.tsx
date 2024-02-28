@@ -15,7 +15,11 @@ import { DARK_COLOR, GRAY_WHITE_COLOR } from "@/utils/branding";
 import { AUTOCOMPLETE_OFF_PROPS } from "@/utils/common";
 import { structureMapper } from "@/utils/componentMapper";
 import { ICON_SIZE } from "@/utils/config";
-import { Component, debouncedTreeComponentAttrsUpdate } from "@/utils/editor";
+import {
+  Component,
+  ComponentTree,
+  debouncedTreeComponentAttrsUpdate,
+} from "@/utils/editor";
 import {
   ActionIcon,
   Card,
@@ -51,7 +55,7 @@ export interface Props extends Omit<HTMLAttributes<HTMLLIElement>, "id"> {
   onCollapse?(): void;
   onRemove?(): void;
   wrapperRef?(node: HTMLLIElement): void;
-  component: Component;
+  component: ComponentTree;
 }
 
 // eslint-disable-next-line react/display-name
@@ -75,7 +79,7 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       id,
       name,
       wrapperRef,
-      component,
+      component: componentTree,
       ...props
     },
     ref,
@@ -92,6 +96,9 @@ export const TreeItem = forwardRef<HTMLDivElement, Props>(
       (state) => state.setSelectedComponentIds,
     );
     const isDarkTheme = useUserConfigStore((state) => state.isDarkTheme);
+    const component = useEditorStore(
+      (state) => state.componentMutableAttrs[componentTree.id!] || {},
+    );
 
     const { componentContextMenu, forceDestroyContextMenu } =
       useComponentContextMenu();

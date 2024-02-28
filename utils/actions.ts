@@ -336,11 +336,13 @@ export const useChangeVisibilityAction = ({
   action,
   computeValue,
 }: TogglePropsActionParams) => {
-  const editorStore = useEditorStore.getState();
-  const updateTreeComponent = editorStore.updateTreeComponent;
-  const tree = editorStore.tree;
+  const updateTreeComponent = useEditorStore(
+    (state) => state.updateTreeComponent,
+  );
   const componentId = computeValue({ value: action.componentId });
-  const component = getComponentById(tree.root, componentId);
+  const component = useEditorStore(
+    (state) => state.componentMutableAttrs[componentId],
+  );
 
   const defaultDisplayValue = getComponentInitialDisplayValue(component?.name!);
 

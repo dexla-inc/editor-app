@@ -36,13 +36,15 @@ export const Modifier = withModifier(
       const contentWrapper = editorTree.root.children?.find(
         (child) => child.id === "content-wrapper",
       );
-      if (contentWrapper) {
-        contentWrapper.props = {
-          ...contentWrapper.props,
-          navbarWidth: value,
-        };
-      }
-      setTree(editorTree);
+
+      // TODO: get this back - update content-wrapper width on componentMutableProps
+      // if (contentWrapper) {
+      //   contentWrapper.props = {
+      //     ...contentWrapper.props,
+      //     navbarWidth: value,
+      //   };
+      // }
+      // setTree(editorTree);
     };
 
     return (

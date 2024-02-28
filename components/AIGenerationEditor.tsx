@@ -50,7 +50,8 @@ export const createComponentEditorHandler = ({
       // setTree(copy, { action: `Added ${newComponents.name}` });
     } else {
       componentBeingAddedId.current = id;
-      updateTreeComponentChildren(id, newComponents.children!);
+      // TODO: get this back
+      // updateTreeComponentChildren(id, newComponents.children!);
     }
   };
 };

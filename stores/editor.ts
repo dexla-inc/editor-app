@@ -10,8 +10,8 @@ import { encodeSchema } from "@/utils/compression";
 import { GRID_SIZE } from "@/utils/config";
 import {
   Component,
-  ComponentMutableAttrs,
   EditorTree,
+  EditorTreeCopy,
   extractComponentMutableAttrs,
   getComponentById,
   getTreeComponentMutableProps,
@@ -144,7 +144,7 @@ export type ClipboardProps = {
 
 export type EditorState = {
   tree: EditorTree;
-  componentMutableAttrs: Record<string, ComponentMutableAttrs>;
+  componentMutableAttrs: Record<string, Component>;
   currentProjectId?: string;
   currentPageId?: string;
   hoveredComponentId?: string;
@@ -189,7 +189,7 @@ export type EditorState = {
   setIframeWindow: (iframeWindow: Window) => void;
   setCurrentTargetId: (currentTargetId?: string) => void;
   setTree: (
-    tree: EditorTree,
+    tree: EditorTreeCopy,
     options?: { onLoad?: boolean; action?: string },
   ) => void;
   resetTree: () => void;
@@ -405,13 +405,14 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   prev.currentTreeComponentsStates?.[componentId] ?? "default";
                 const currentLanguage = forceState ?? prev.language;
 
-                const newComponentMutableAttrs = updateTreeComponent(
-                  copy.root,
-                  componentId,
-                  props,
-                  currentState,
-                  currentLanguage,
-                );
+                // TODO: get this back
+                // const newComponentMutableAttrs = updateTreeComponent(
+                //   copy.root,
+                //   componentId,
+                //   props,
+                //   currentState,
+                //   currentLanguage,
+                // );
                 if (save && !prev.isPreviewMode) {
                   console.log(
                     "updateTreeComponent",
@@ -431,18 +432,18 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   );
                 }
 
-                const component = getComponentById(copy.root, componentId);
+                // const component = getComponentById(copy.root, componentId);
 
                 return {
                   tree: {
                     ...copy,
-                    name: `Edited ${component?.name}`,
+                    // name: `Edited ${component?.name}`,
                     timestamp: Date.now(),
                   },
                   componentMutableAttrs: merge(
                     {},
                     prev.componentMutableAttrs,
-                    newComponentMutableAttrs,
+                    // newComponentMutableAttrs,
                   ),
                 };
               },
@@ -460,13 +461,14 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   "default";
                 const currentLanguage = prev.language;
 
-                const newComponentMutableAttrs = updateTreeComponent(
-                  copy.root,
-                  componentIds,
-                  props,
-                  currentState,
-                  currentLanguage,
-                );
+                // TODO: get this back
+                // const newComponentMutableAttrs = updateTreeComponent(
+                //   copy.root,
+                //   componentIds,
+                //   props,
+                //   currentState,
+                //   currentLanguage,
+                // );
                 if (save && !prev.isPreviewMode) {
                   debouncedUpdatePageState(
                     encodeSchema(
@@ -487,7 +489,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   componentMutableAttrs: merge(
                     {},
                     prev.componentMutableAttrs,
-                    newComponentMutableAttrs,
+                    // newComponentMutableAttrs,
                   ),
                 };
               },
@@ -500,7 +502,8 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
               (prev: EditorState) => {
                 const copy = cloneDeep(prev.tree);
 
-                updateTreeComponentStates(copy.root, componentId, states);
+                // TODO: get this back
+                // updateTreeComponentStates(copy.root, componentId, states);
                 if (save && !prev.isPreviewMode) {
                   debouncedUpdatePageState(
                     encodeSchema(
@@ -512,12 +515,12 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   );
                 }
 
-                const component = getComponentById(copy.root, componentId);
+                // const component = getComponentById(copy.root, componentId);
 
                 return {
                   tree: {
                     ...cloneDeep(copy),
-                    name: `Edited ${component?.name}`,
+                    // name: `Edited ${component?.name}`,
                     timestamp: Date.now(),
                   },
                 };
@@ -531,7 +534,8 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
             set(
               (state: EditorState) => {
                 const copy = cloneDeep(state.tree);
-                updateTreeComponentChildren(copy.root, componentId, children);
+                // TODO: get this back
+                // updateTreeComponentChildren(copy.root, componentId, children);
 
                 if (save && !state.isPreviewMode) {
                   debouncedUpdatePageState(
@@ -552,12 +556,12 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                   );
                 }
 
-                const component = getComponentById(copy.root, componentId);
+                // const component = getComponentById(copy.root, componentId);
 
                 return {
                   tree: {
                     ...copy,
-                    name: `Edited ${component?.name}`,
+                    // name: `Edited ${component?.name}`,
                     timestamp: Date.now(),
                   },
                 };
@@ -570,7 +574,8 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
             set(
               (state: EditorState) => {
                 const copy = cloneDeep(state.tree);
-                updateTreeComponentActions(copy.root, componentId, actions);
+                // TODO: get this back
+                // updateTreeComponentActions(copy.root, componentId, actions);
                 if (!state.isPreviewMode)
                   debouncedUpdatePageState(
                     encodeSchema(
@@ -581,12 +586,12 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
                     state.setIsSaving,
                   );
 
-                const component = getComponentById(copy.root, componentId);
+                // const component = getComponentById(copy.root, componentId);
 
                 return {
                   tree: {
                     ...copy,
-                    name: `Edited ${component?.name}`,
+                    // name: `Edited ${component?.name}`,
                     timestamp: Date.now(),
                   },
                 };
@@ -603,7 +608,8 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
               (state: EditorState) => {
                 const copy = cloneDeep(state.tree);
 
-                updateTreeComponentAttrs(copy.root, componentIds, attrs);
+                // TODO: get this back
+                // updateTreeComponentAttrs(copy.root, componentIds, attrs);
                 if (!state.isPreviewMode) {
                   debouncedUpdatePageState(
                     encodeSchema(
