@@ -6,8 +6,6 @@ import { useForm } from "@mantine/form";
 import React, { useEffect } from "react";
 
 const TableFormComponent = ({ component }: { component: Component }) => {
-  console.log(component.props?.data);
-
   const form = useForm({
     initialValues: {
       props: {
@@ -25,8 +23,6 @@ const TableFormComponent = ({ component }: { component: Component }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values]);
-
-  console.log(form.values.props.data);
 
   return (
     <Stack>

@@ -31,7 +31,7 @@ export default function LogicFlowInitialModal({}: ContextModalProps) {
   const setIsRestored = useFlowStore((state) => state.setIsRestored);
 
   const { data: logicFlows, isLoading } = useFlowsQuery(projectId);
-  console.log(logicFlows);
+
   useEffect(() => {
     if (projectId) {
       resetFlow();

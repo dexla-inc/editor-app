@@ -1,6 +1,7 @@
 import { CustomJavaScriptTextArea } from "@/components/CustomJavaScriptTextArea";
 import { DataTree } from "@/components/DataTree";
 import { Icon } from "@/components/Icon";
+import { JSONViewer } from "@/components/JSONViewer";
 import { useDataContext } from "@/contexts/DataProvider";
 import { useBindingPopover } from "@/hooks/useBindingPopover";
 import {
@@ -8,6 +9,7 @@ import {
   BINDER_BACKGROUND,
   DEFAULT_TEXTCOLOR,
 } from "@/utils/branding";
+import { isObjectOrArray } from "@/utils/common";
 import { ICON_SIZE } from "@/utils/config";
 import { BindingTab, ValueProps } from "@/utils/types";
 import {
@@ -117,7 +119,7 @@ export default function BindingPopover({
       opened={isOpen}
       withinPortal
       arrowPosition="center"
-      position="right"
+      position="bottom-end"
       onClose={onClose}
     >
       <Popover.Target>
@@ -196,15 +198,20 @@ export default function BindingPopover({
               selectedItem={selectedItem}
             />
           </Box>
-          <TextInput
-            label="Current Value"
-            styles={{ input: { background: BINDER_BACKGROUND } }}
-            value={currentValue ?? "undefined"}
-            readOnly
-            sx={{
-              color: currentValue === undefined ? "grey" : "inherit",
-            }}
-          />
+          {isObjectOrArray(currentValue) ? (
+            <JSONViewer data={currentValue} />
+          ) : (
+            <TextInput
+              label="Current Value"
+              styles={{ input: { background: BINDER_BACKGROUND } }}
+              value={currentValue ?? "undefined"}
+              readOnly
+              sx={{
+                color: currentValue === undefined ? "grey" : "inherit",
+              }}
+            />
+          )}
+
           <SegmentedControl
             value={tab}
             onChange={(value) => setTab(value as BindingTab)}
@@ -283,11 +290,11 @@ export default function BindingPopover({
                   key={entity}
                   filterKeyword={filterKeyword}
                   dataItems={dataItems}
-                  onItemSelection={(selectedEntityId: string) =>
+                  onItemSelection={(selectedEntityId: string) => {
                     setSelectedItem(
                       getEntityEditorValue({ selectedEntityId, entity }),
-                    )
-                  }
+                    );
+                  }}
                   type={entity}
                 />
               );

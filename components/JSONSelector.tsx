@@ -1,4 +1,5 @@
 import { BG_COLOR, BUTTON_HOVER } from "@/utils/branding";
+import { ObjectItem, objToItems } from "@/utils/common";
 import { ICON_SIZE } from "@/utils/config";
 import {
   ActionIcon,
@@ -8,87 +9,64 @@ import {
   Collapse,
   Group,
   List,
-  useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
 import DataItemValuePreview from "./DataItemValuePreview";
 
-type Item = {
-  key: string;
-  value: string;
-  path: string;
-  type: string;
-  children?: Item[];
+type Props = {
+  data?: any;
+  onSelectValue?: (value: any) => void;
+  name?: string;
+};
+
+export const JSONSelector = ({ data, onSelectValue, name }: Props) => {
+  name = name ?? "data";
+  const items: ObjectItem[] = objToItems(data, data);
+
+  const renderList = (item: any) => {
+    if (!item) {
+      return null;
+    }
+
+    return (
+      <ListItemWrapper
+        key={item.key}
+        item={item}
+        onSelectValue={onSelectValue}
+        sx={{ width: "100%" }}
+        name={name}
+      >
+        {item.children?.map((child: any) => {
+          return renderList(child);
+        })}
+      </ListItemWrapper>
+    );
+  };
+
+  return (
+    <List w="100%" size="xs" listStyleType="none">
+      {renderList({
+        key: name,
+        path: "[0]",
+        value: JSON.stringify(items),
+        children: items,
+      })}
+    </List>
+  );
 };
 
 type ListItemProps = {
-  item: Item;
+  item: ObjectItem;
   onSelectValue?: (value: any) => void;
   name?: string;
 } & CardProps;
 
-const findPathForKeyValue = (
-  obj: any,
-  key: string,
-  value: any,
-  currentPath: string = "",
-): string | null => {
-  for (const prop in obj) {
-    if (obj.hasOwnProperty(prop)) {
-      const newPath = currentPath
-        ? `${currentPath}.${isArrayIndex(prop) ? `[${prop}]` : prop}`
-        : isArrayIndex(prop)
-        ? `[${prop}]`
-        : prop;
-
-      if (prop === key && obj[prop] === value) {
-        return newPath;
-      } else if (typeof obj[prop] === "object" && obj[prop] !== null) {
-        const path = findPathForKeyValue(obj[prop], key, value, newPath);
-        if (path !== null) {
-          return path;
-        }
-      }
-    }
-  }
-
-  return null;
-};
-
-const isArrayIndex = (prop: string): boolean => {
-  // Check if prop is a non-negative integer (array index).
-  return /^\d+$/.test(prop);
-};
-
-const objToItems = (obj: any, root: any): Item[] => {
-  if (!obj) return [];
-  return Object.entries(obj).map(([key, value]) => {
-    let path = findPathForKeyValue(root, key, value);
-    if (Array.isArray(value) && !path?.includes("[")) {
-      path = `${path}[0]`;
-    }
-
-    return {
-      key,
-      value: JSON.stringify(value),
-      path: path ? path.replaceAll(".[", "[") : "",
-      type: typeof value,
-      children:
-        value && typeof value === "object"
-          ? objToItems(value, root)
-          : undefined,
-    };
-  });
-};
-
 const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
-  const theme = useMantineTheme();
   const { ref, hovered } = useHover();
   const [opened, { toggle }] = useDisclosure(false);
 
   const canExpand = (item.children ?? [])?.length > 0;
-  const primaryColor = theme.colors[theme.primaryColor][6];
 
   return (
     <Group
@@ -198,48 +176,6 @@ const ListItemWrapper = ({
           )}
         </ListItem>
       </List.Item>
-    </List>
-  );
-};
-
-type Props = {
-  data?: any;
-  onSelectValue?: (value: any) => void;
-  name?: string;
-};
-
-export const JSONSelector = ({ data, onSelectValue, name }: Props) => {
-  name = name ?? "data";
-  const items: Item[] = objToItems(data, data);
-
-  const renderList = (item: any) => {
-    if (!item) {
-      return null;
-    }
-
-    return (
-      <ListItemWrapper
-        key={item.key}
-        item={item}
-        onSelectValue={onSelectValue}
-        sx={{ width: "100%" }}
-        name={name}
-      >
-        {item.children?.map((child: any) => {
-          return renderList(child);
-        })}
-      </ListItemWrapper>
-    );
-  };
-
-  return (
-    <List w="100%" size="xs" listStyleType="none">
-      {renderList({
-        key: name,
-        path: "[0]",
-        value: JSON.stringify(items),
-        children: items,
-      })}
     </List>
   );
 };
