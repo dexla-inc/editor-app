@@ -5,15 +5,16 @@ import { AuthState, useDataSourceStore } from "@/stores/datasource";
 import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { useVariableStore } from "@/stores/variables";
+import { APICallAction } from "@/utils/actions";
 import { isObject, jsonInString, safeJsonParse } from "@/utils/common";
-import { getAllComponentsByName } from "@/utils/editor";
+import { getAllComponentsByName, getComponentById } from "@/utils/editor";
 import { ValueProps } from "@/utils/types";
 import get from "lodash.get";
 import isEmpty from "lodash.isempty";
 import merge from "lodash.merge";
 import { pick } from "next/dist/lib/pick";
 import { useRouter } from "next/router";
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { useNodes } from "reactflow";
 
 type DataProviderProps = {
@@ -40,7 +41,6 @@ type DataContextProps = {
   auth: AuthState & { refreshToken?: string };
   computeValue: (props: GetValueProps) => any;
   computeValues: (props: GetValuesProps) => any;
-  setNonEditorActions: any;
 };
 
 const parseVariableValue = (value: string): any => {
@@ -63,56 +63,110 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const inputsStore = useInputsStore((state) => state.inputValues);
   const browser = useRouter();
   const auth = useDataSourceStore((state) => state.getAuthState());
-  const nodes = useNodes<NodeData>();
+  const logicFlowsEditorNodes = useNodes<NodeData>();
   const projectId = useEditorStore((state) => state.currentProjectId ?? "");
   const { data: endpoints } = useDataSourceEndpoints(projectId);
-  const [nonEditorActions, setNonEditorActions] = useState<Record<string, any>>(
-    {},
-  );
+  const nonEditorActions = useEditorStore((state) => state.nonEditorActions);
+  const logicFlowsActionNodes = useEditorStore((state) => state.lf);
+  const actionActionsList = useEditorStore((state) => state.actions);
   const { isPreviewMode } = useAppMode();
   const isLive = useEditorStore((state) => state.isLive);
+  const selectedComponentId = useEditorStore(
+    (state) => state.selectedComponentIds?.at(-1),
+  );
+  let selectedComponent = null;
+  if (selectedComponentId) {
+    selectedComponent = getComponentById(editorTree.root, selectedComponentId);
+  }
   const isEditorMode = !isPreviewMode && !isLive;
 
-  const actions = useMemo(() => {
-    return nodes.reduce(
-      (acc, node) => {
-        const { action, endpoint: endpointId } = node.data.form ?? {};
-        if (action === "apiCall" && endpointId) {
-          const endpoint = endpoints?.results.find((e) => e.id === endpointId);
+  const nodes = logicFlowsEditorNodes.length
+    ? logicFlowsEditorNodes
+    : logicFlowsActionNodes;
+  const actionsList = isEditorMode
+    ? selectedComponent?.actions
+    : actionActionsList;
+  const isLogicFlow = nodes.length > 0;
 
-          const successExampleResponse = safeJsonParse(
-            endpoint?.exampleResponse ?? "",
-          );
-          const errorExampleResponse = safeJsonParse(
-            endpoint?.errorExampleResponse ?? "",
-          );
+  const actions = isLogicFlow
+    ? nodes.reduce(
+        (acc, node) => {
+          const { action, endpoint: endpointId } = node.data.form ?? {};
+          if (action === "apiCall" && endpointId) {
+            const endpoint = endpoints?.results.find(
+              (e) => e.id === endpointId,
+            );
 
-          const success = isEditorMode
-            ? successExampleResponse
-            : nonEditorActions[node.id]?.success;
+            const successExampleResponse = safeJsonParse(
+              endpoint?.exampleResponse ?? "",
+            );
+            const errorExampleResponse = safeJsonParse(
+              endpoint?.errorExampleResponse ?? "",
+            );
 
-          const error = isEditorMode
-            ? errorExampleResponse
-            : nonEditorActions[node.id]?.error;
+            const success = isEditorMode
+              ? successExampleResponse
+              : nonEditorActions[action.id]?.success;
 
-          acc.list[node.id] = merge({}, endpoint, {
-            id: node.id,
-            name: node.data.label,
-            success,
-            error,
-          });
-          acc[node.id] = {
-            success,
-            error,
-          };
-        }
+            const error = isEditorMode
+              ? errorExampleResponse
+              : nonEditorActions[action.id]?.error;
 
-        return acc;
-      },
-      { list: {} } as any,
-    );
-  }, [nodes, endpoints, nonEditorActions, isEditorMode]);
+            acc.list[action.id] = merge({}, endpoint, {
+              id: action.id,
+              name: node.data.label,
+              success,
+              error,
+            });
+            acc[action.id] = {
+              success,
+              error,
+            };
+          }
 
+          return acc;
+        },
+        { list: {} } as any,
+      )
+    : actionsList?.reduce(
+        (acc, action) => {
+          const { endpoint: endpointId } = action.action as APICallAction;
+          if (action.action.name === "apiCall" && endpointId) {
+            const endpoint = endpoints?.results.find(
+              (e) => e.id === endpointId,
+            );
+
+            const successExampleResponse = safeJsonParse(
+              endpoint?.exampleResponse ?? "",
+            );
+            const errorExampleResponse = safeJsonParse(
+              endpoint?.errorExampleResponse ?? "",
+            );
+
+            const success = isEditorMode
+              ? successExampleResponse
+              : nonEditorActions[action.id]?.success;
+            const error = isEditorMode
+              ? errorExampleResponse
+              : nonEditorActions[action.id]?.error;
+
+            acc.list[action.id] = merge({}, endpoint, {
+              id: action.id,
+              name: action.action.name,
+              success,
+              error,
+            });
+            acc[action.id] = {
+              success,
+              error,
+            };
+          }
+
+          return acc;
+        },
+        { list: {} } as any,
+      ) ?? { list: {} };
+  console.log("--->", { actions });
   const variables = variablesList.reduce(
     (acc, variable) => {
       let value = variable.value ?? variable.defaultValue ?? "";
@@ -127,7 +181,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     { list: {} } as any,
   );
 
-  const inputComponents = getAllComponentsByName(editorTree.root, [
+  const components = getAllComponentsByName(editorTree.root, [
     "Input",
     "Select",
     "Checkbox",
@@ -135,27 +189,19 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     "Switch",
     "Textarea",
     "Autocomplete",
-  ]);
+  ]).reduce(
+    (acc, component) => {
+      const value = inputsStore[component?.id!];
+      component = { ...component, name: component.description! };
+      acc.list[component?.id!] = component;
+      acc[component?.id!] = value;
+      return acc;
+    },
+    { list: {} } as any,
+  );
 
-  const components = useMemo(() => {
-    return inputComponents.reduce(
-      (acc, component) => {
-        const value = inputsStore[component?.id!];
-        component = { ...component, name: component.description! };
-        acc.list[component?.id!] = component;
-        acc[component?.id!] = value;
-        return acc;
-      },
-      { list: {} } as any,
-    );
-  }, [inputsStore, inputComponents]);
-
-  const browserList = useMemo(
-    () =>
-      Array.of(
-        pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
-      ),
-    [browser],
+  const browserList = Array.of(
+    pick(browser, ["asPath", "basePath", "pathname", "query", "route"]),
   );
 
   const autoRunJavascriptCode = (boundCode: string) => {
@@ -261,7 +307,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         actions,
         computeValue,
         computeValues,
-        setNonEditorActions,
       }}
     >
       {children}

@@ -31,7 +31,7 @@ export default function LogicFlowInitialModal({}: ContextModalProps) {
   const setIsRestored = useFlowStore((state) => state.setIsRestored);
 
   const { data: logicFlows, isLoading } = useFlowsQuery(projectId);
-
+  console.log(logicFlows);
   useEffect(() => {
     if (projectId) {
       resetFlow();
@@ -44,7 +44,7 @@ export default function LogicFlowInitialModal({}: ContextModalProps) {
     <Tabs value={selectedTabView} onTabChange={setSelectedTabView}>
       <Tabs.Panel value={"list"}>
         <LogicFlowShell>
-          {logicFlows?.length === 0 && !isLoading && (
+          {logicFlows?.results.length === 0 && !isLoading && (
             <Box
               w="100%"
               h="100%"
@@ -62,7 +62,7 @@ export default function LogicFlowInitialModal({}: ContextModalProps) {
             </Box>
           )}
           <Group sx={{ padding: "20px" }}>
-            {logicFlows?.map((flow: LogicFlowResponse) => {
+            {logicFlows?.results.map((flow: LogicFlowResponse) => {
               return (
                 <LogicFlowCard
                   key={flow.id}

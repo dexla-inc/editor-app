@@ -1,6 +1,8 @@
 import { listLogicFlows } from "@/requests/logicflows/queries-noauth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
+const cacheTime = 30 * 60 * 1000; // 30 minutes
+
 export const useFlowsQuery = (projectId: string) => {
   const queryClient = useQueryClient();
 
@@ -8,11 +10,8 @@ export const useFlowsQuery = (projectId: string) => {
 
   const queryResult = useQuery({
     queryKey: queryKey,
-    queryFn: async () => {
-      const response = await listLogicFlows(projectId);
-      return response.results ?? [];
-    },
-    initialData: [],
+    queryFn: () => listLogicFlows(projectId),
+    staleTime: cacheTime,
     enabled: !!projectId,
   });
 

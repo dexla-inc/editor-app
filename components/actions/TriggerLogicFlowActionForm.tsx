@@ -13,14 +13,14 @@ export const TriggerLogicFlowActionForm = ({ form }: Props) => {
 
   useEffect(() => {
     if (isFetched) {
-      const selectedFlow = flows.find(
+      const selectedFlow = flows?.results.find(
         (flow: LogicFlowResponse) => flow.id === form.values.logicFlowId,
       );
       if (selectedFlow) {
         form.setFieldValue("logicFlow", selectedFlow);
       }
     }
-  }, [isFetched]);
+  }, [isFetched, form.values.logicFlowId]);
 
   return (
     <Stack spacing="xs">
@@ -28,12 +28,14 @@ export const TriggerLogicFlowActionForm = ({ form }: Props) => {
         size="xs"
         label="Logic Flow to trigger"
         placeholder="Select a flow"
-        data={flows.map((flow: LogicFlowResponse) => {
-          return {
-            label: flow.name,
-            value: flow.id,
-          };
-        })}
+        data={
+          flows?.results.map((flow: LogicFlowResponse) => {
+            return {
+              label: flow.name,
+              value: flow.id,
+            };
+          }) ?? []
+        }
         {...form.getInputProps("logicFlowId")}
       />
     </Stack>

@@ -36,18 +36,8 @@ export const compute = async (node: Node, params: any) => {
     // @ts-ignore
     const result = await actionMapper[action].action(actionData);
 
-    params.setNonEditorActions((prev: any) => {
-      prev[node.id] = { success: result };
-      return prev;
-    });
-
     return result;
   } catch (error) {
-    params.setNonEditorActions((prev: any) => {
-      prev[node.id] = { error };
-      return prev;
-    });
-
     return Promise.reject(error);
   }
 };

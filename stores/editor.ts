@@ -30,6 +30,8 @@ import merge from "lodash.merge";
 import { TemporalState, temporal } from "zundo";
 import { create, useStore } from "zustand";
 import { devtools } from "zustand/middleware";
+import { Node } from "reactflow";
+import { NodeData } from "@/components/logic-flow/nodes/CustomNode";
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY ?? "",
@@ -141,7 +143,6 @@ export type EditorState = {
   tree: EditorTree;
   currentProjectId?: string;
   currentPageId?: string;
-  selectedComponentParentIndex?: number | undefined;
   hoveredComponentId?: string;
   selectedComponentIds?: string[];
   copiedComponent?: Component;
@@ -223,7 +224,6 @@ export type EditorState = {
     componentId: string,
     currentState: string,
   ) => void;
-  setSelectedComponentParentIndex: (parentIndex: number | undefined) => void;
   setHoveredComponentId: (hoveredComponentId?: string) => void;
   setSelectedComponentIds: (cb: (ids: string[]) => string[]) => void;
   clearSelection: (id?: string) => void;
@@ -254,6 +254,14 @@ export type EditorState = {
     y: number;
   };
   setCursor: (cursor?: { x: number; y: number }) => void;
+  setTriggeredLogicFlow: (lf: Node<NodeData>[]) => Promise<void>;
+  lf: Node<NodeData>[];
+  setTriggeredAction: (actions: Action[]) => Promise<void>;
+  actions: Action[];
+  setNonEditorActions: (
+    cb: (actions: Record<string, any>) => Record<string, any>,
+  ) => Promise<void>;
+  nonEditorActions: Record<string, any>;
 };
 
 export const debouncedUpdatePageState = debounce(updatePageState, 1000);
@@ -265,6 +273,23 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
     devtools(
       temporal(
         (set) => ({
+          setTriggeredLogicFlow: async (lf) =>
+            set({ lf }, false, "editor/setTriggeredLogicFlow"),
+          lf: [],
+          setTriggeredAction: async (actions) =>
+            set({ actions }, false, "editor/setTriggeredAction"),
+          actions: [],
+          setNonEditorActions: async (cb) => {
+            return set(
+              (state) => {
+                const nonEditorActions = cb(state.nonEditorActions);
+                return { nonEditorActions };
+              },
+              false,
+              "editor/setNonEditorActions",
+            );
+          },
+          nonEditorActions: {},
           collapsedItemsCount: 0,
           tree: emptyEditorTree,
           theme: defaultTheme,
@@ -590,12 +615,6 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
             ),
           setComponentToAdd: (componentToAdd) =>
             set({ componentToAdd }, false, "editor/setComponentToAdd"),
-          setSelectedComponentParentIndex: (selectedComponentParentIndex) =>
-            set(
-              { selectedComponentParentIndex },
-              false,
-              "editor/setSelectedComponentParentIndex",
-            ),
           setSelectedComponentIds: (cb) => {
             return set(
               (state) => {
@@ -694,9 +713,9 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
     {
       client,
       // comment this out to disable multiplayer and see if that fix the state loss issue
-      storageMapping: {
-        tree: true,
-      },
+      // storageMapping: {
+      //   tree: true,
+      // },
       presenceMapping: {
         selectedComponentIds: true,
         currentUser: true,

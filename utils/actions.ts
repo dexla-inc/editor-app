@@ -34,6 +34,7 @@ import { pick } from "next/dist/lib/pick";
 import { Router } from "next/router";
 import { getComponentInitialDisplayValue, safeJsonParse } from "./common";
 import { ValueProps } from "./types";
+import { decodeSchema } from "@/utils/compression";
 
 const triggers = [
   "onClick",
@@ -222,7 +223,9 @@ export type Action = {
 export type ActionParams = {
   actionId: string;
   router: Router;
-  setNonEditorActions: any;
+  setNonEditorActions: (
+    cb: (param: Record<string, any>) => Record<string, any>,
+  ) => Promise<void>;
   computeValue: (value: GetValueProps) => any;
   onSuccess?: Action;
   onError?: Action;
@@ -292,6 +295,7 @@ export const useDebugAction = async ({ action }: DebugActionParams) => {
 
 export type TriggerLogicFlowActionParams = ActionParams & {
   action: TriggerLogicFlowAction;
+  setTriggeredLogicFlow: any;
 };
 
 export type ShowNotificationActionParams = ActionParams & {
@@ -377,7 +381,7 @@ export const useShowNotificationAction = async ({
   });
 };
 
-export const useTriggerLogicFlowAction = (
+export const useTriggerLogicFlowAction = async (
   params: TriggerLogicFlowActionParams,
 ) => {
   return executeFlow(params.action.logicFlow, params);
@@ -415,7 +419,7 @@ const getVariablesValue = (
 
 export type APICallActionParams = ActionParams & {
   action: APICallAction;
-  endpoint: Endpoint;
+  endpointResults: Endpoint[];
 };
 
 const getUrl = (
@@ -549,24 +553,28 @@ const setLoadingState = (
 
 export const useApiCallAction = async ({
   action,
+  actionId,
   router,
   computeValue,
   onSuccess,
   onError,
   entity,
-  endpoint,
+  endpointResults,
+  setNonEditorActions,
 }: APICallActionParams): Promise<any> => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   if (entity.props) {
     setLoadingState(entity.id!, true, updateTreeComponent);
   }
 
+  const endpoint = endpointResults?.find((e) => e.id === action.endpoint)!;
+
   try {
     const accessToken = useDataSourceStore.getState().authState.accessToken;
 
     const { url, body } = prepareRequestData(action, endpoint, computeValue);
 
-    let responseJson;
+    let responseJson: any;
 
     const authHeaderKey =
       endpoint?.authenticationScheme === "BEARER"
@@ -610,14 +618,29 @@ export const useApiCallAction = async ({
           body,
           authHeaderKey,
         );
-        console.log("useApiCallAction", responseJson);
     }
 
     onSuccess && (await handleSuccess(onSuccess, router, action, computeValue));
 
+    await setNonEditorActions((prev) => {
+      prev[actionId] = {
+        ...prev[actionId],
+        success: responseJson,
+      };
+      return prev;
+    });
+
     return responseJson;
   } catch (error) {
     onError && (await handleError(error, onError, router, computeValue));
+
+    await setNonEditorActions((prev) => {
+      prev[actionId] = {
+        ...prev[actionId],
+        error,
+      };
+      return prev;
+    });
   } finally {
     if (entity.props) {
       setLoadingState(entity.id!, false, updateTreeComponent);
