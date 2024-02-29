@@ -587,10 +587,10 @@ export const getParentComponentData = (
 };
 
 export const getComponentParent = (
-  treeRoot: ComponentTree,
+  treeRoot: ComponentStructure,
   id: string,
 ): ComponentStructure | null => {
-  let parent: ComponentTree | null = null;
+  let parent: ComponentStructure | null = null;
   crawl(
     treeRoot,
     (node, context) => {

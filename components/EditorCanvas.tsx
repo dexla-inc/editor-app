@@ -17,20 +17,19 @@ import { componentMapper, structureMapper } from "@/utils/componentMapper";
 import { encodeSchema } from "@/utils/compression";
 import { CURSOR_COLORS, HEADER_HEIGHT } from "@/utils/config";
 import {
-  Component,
   addComponent,
-  getAllComponentsByName,
-  getComponentById,
   getComponentIndex,
   getComponentParent,
   removeComponent,
   ComponentTree,
+  EditorTreeCopy,
+  getComponentTreeById,
 } from "@/utils/editor";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Paper } from "@mantine/core";
 import { useDisclosure, useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
-import { memo, ReactNode, useCallback, useMemo } from "react";
+import { memo, ReactNode, useCallback } from "react";
 
 type Props = {
   projectId: string;
@@ -104,42 +103,54 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       selectedComponentIds.length > 0 &&
       !isPreviewMode
     ) {
-      const copy = cloneDeep(editorTree);
-      // const modals = getAllComponentsByName(copy.root, "Modal");
-      // const targetModal = modals.find(
-      //   (modal) => !!getComponentById(modal, selectedComponentIds[0]),
-      // );
+      const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
+      const modals = Object.values(
+        useEditorStore.getState().componentMutableAttrs,
+      ).filter((c) => c.name === "Modal");
+      const targetModal = modals.find(
+        (modal) => modal.id === selectedComponentIds[0],
+      );
       selectedComponentIds.map((selectedComponentId) => {
-        // const comp = getComponentById(copy.root, selectedComponentId);
-        // const parent = getComponentParent(copy.root, selectedComponentId);
-        // const grandParent = getComponentParent(copy.root, parent?.id!);
-        //
-        // if (comp?.id === "content-wrapper" || comp?.id === "main-content")
-        //   return;
-        // TODO: WTF??
-        // if (
-        //   comp?.name === "GridColumn" &&
-        //   parent?.name === "Grid" &&
-        //   parent?.children?.length === 1 &&
-        //   grandParent?.id === "root"
-        // ) {
-        //   return;
-        // }
-        // removeComponent(copy.root, selectedComponentId);
-        // TODO: WTF x 2?????? OMG
-        // if (
-        //   comp?.name === "GridColumn" &&
-        //   parent?.name === "Grid" &&
-        //   parent?.children?.length === 0
-        // ) {
-        //   removeComponent(copy.root, parent.id!);
-        // }
-        // if (targetModal) {
-        //   setSelectedComponentIds(() => [targetModal.id!]);
-        // } else {
-        //   setSelectedComponentIds(() => []);
-        // }
-        // setEditorTree(copy, { action: `Removed ${comp?.name}` });
+        const comp =
+          useEditorStore.getState().componentMutableAttrs[selectedComponentId];
+        const parentTree = getComponentParent(
+          editorTreeCopy.root,
+          selectedComponentId,
+        );
+        const parent =
+          useEditorStore.getState().componentMutableAttrs[parentTree?.id!];
+        const grandParent = getComponentParent(
+          editorTreeCopy.root,
+          parentTree?.id!,
+        );
+
+        if (
+          selectedComponentId === "content-wrapper" ||
+          selectedComponentId === "main-content"
+        )
+          return;
+        if (
+          comp?.name === "GridColumn" &&
+          parent?.name === "Grid" &&
+          parentTree?.children?.length === 1 &&
+          grandParent?.id === "root"
+        ) {
+          return;
+        }
+        removeComponent(editorTreeCopy.root, selectedComponentId);
+        if (
+          comp?.name === "GridColumn" &&
+          parent?.name === "Grid" &&
+          parentTree?.children?.length === 0
+        ) {
+          removeComponent(editorTreeCopy.root, parentTree.id!);
+        }
+        if (targetModal) {
+          setSelectedComponentIds(() => [targetModal.id!]);
+        } else {
+          setSelectedComponentIds(() => []);
+        }
+        setEditorTree(editorTreeCopy, { action: `Removed ${comp?.name}` });
       });
     }
   }, [isPreviewMode, editorTree, setSelectedComponentIds, setEditorTree]);
@@ -148,14 +159,13 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     const selectedComponentId = useEditorStore
       .getState()
       .selectedComponentIds?.at(-1);
-    // const componentToCopy = getComponentById(
-    //   editorTree.root,
-    //   selectedComponentId!,
-    // )!;
-    // if (!isPreviewMode && selectedComponentId) {
-    //   setCopiedComponent(componentToCopy);
-    //   copyToClipboard(componentToCopy);
-    // }
+
+    const selectedComponent =
+      useEditorStore.getState().componentMutableAttrs[selectedComponentId!];
+    if (!isPreviewMode && selectedComponentId) {
+      setCopiedComponent(selectedComponent);
+      copyToClipboard(selectedComponent);
+    }
   }, [editorTree.root, isPreviewMode, setCopiedComponent]);
 
   const cutSelectedComponent = useCallback(() => {
@@ -180,12 +190,16 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     const selectedComponentId = useEditorStore
       .getState()
       .selectedComponentIds?.at(-1);
-    const copy = cloneDeep(editorTree);
+    const editorTreeCopy = cloneDeep(editorTree) as EditorTreeCopy;
 
     if (!selectedComponentId || selectedComponentId === "root")
       return "content-wrapper";
     const component =
       useEditorStore.getState().componentMutableAttrs[selectedComponentId];
+    const componentTree = getComponentTreeById(
+      editorTreeCopy.root,
+      selectedComponentId,
+    );
     let targetId = selectedComponentId;
     let componentIndex = 0;
 
@@ -206,31 +220,32 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
       isSpecialComponents ||
       isAllowedSibling ||
       isAllowedGridMatch;
-    // TODO: get this back
-    // if (addAsSiblingFlag) {
-    //   const parentComponent = getComponentParent(
-    //     editorTree.root,
-    //     selectedComponentId,
-    //   );
-    //   targetId = parentComponent?.id as string;
-    //   componentIndex =
-    //     getComponentIndex(parentComponent!, selectedComponentId!) + 1;
-    // } else {
-    //   componentIndex = component?.children?.length ?? 0;
-    // }
+    if (addAsSiblingFlag) {
+      const parentComponentTree = getComponentParent(
+        editorTreeCopy.root,
+        selectedComponentId,
+      );
+      targetId = parentComponentTree?.id as string;
+      componentIndex =
+        getComponentIndex(parentComponentTree!, selectedComponentId!) + 1;
+    } else {
+      componentIndex = componentTree?.children?.length ?? 0;
+    }
 
-    // const newSelectedId = addComponent(
-    //   copy.root,
-    //   componentToPaste,
-    //   {
-    //     id: targetId,
-    //     edge: isGridItems ? "center" : "top",
-    //   },
-    //   componentIndex,
-    // );
+    const newSelectedId = addComponent(
+      editorTreeCopy.root,
+      componentToPaste,
+      {
+        id: targetId,
+        edge: isGridItems ? "center" : "top",
+      },
+      componentIndex,
+    );
 
-    // setEditorTree(copy, { action: `Pasted ${componentToPaste.name}` });
-    // setSelectedComponentIds(() => [newSelectedId]);
+    setEditorTree(editorTreeCopy, {
+      action: `Pasted ${componentToPaste.name}`,
+    });
+    setSelectedComponentIds(() => [newSelectedId]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [copiedComponent, editorTree, isPreviewMode, setEditorTree]);
 

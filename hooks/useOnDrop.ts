@@ -50,12 +50,12 @@ export const useOnDrop = () => {
         useEditorStore.getState().componentMutableAttrs[droppedId];
       let targetComponent =
         useEditorStore.getState().componentMutableAttrs[dropTarget.id];
-      const targetParentComponent = getComponentParent(
+      const targetParentComponentTree = getComponentParent(
         editorTreeCopy.root,
         dropTarget.id,
       );
       const isParentContentWrapper =
-        targetParentComponent?.id === "content-wrapper";
+        targetParentComponentTree?.id === "content-wrapper";
       const isDroppable =
         !isParentContentWrapper || dropTarget.edge === "center";
       const isMoving = !!activeComponentTree;
@@ -139,7 +139,9 @@ export const useOnDrop = () => {
       const newSelectedId = addComponent(treeRoot, componentToAdd, dropTarget);
       setSelectedComponentIds(() => [newSelectedId]);
     } else {
-      const targetParent = getComponentParent(treeRoot, dropTarget.id);
+      const targetParentTree = getComponentParent(treeRoot, dropTarget.id);
+      const targetParent =
+        useEditorStore.getState().componentMutableAttrs[targetParentTree?.id!];
       if (targetParent && allowedParentTypes?.includes(targetParent.name)) {
         const newSelectedId = addComponent(treeRoot, componentToAdd, {
           id: targetParent.id as string,
