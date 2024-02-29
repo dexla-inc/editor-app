@@ -27,6 +27,7 @@ export const useGetPageData = ({
     stopLoading: state.stopLoading,
     setIsLoading: state.setIsLoading,
   }));
+  const resetTree = useEditorStore((state) => state.resetTree);
 
   const setEditorTree = useEditorStore((state) => state.setTree);
 
@@ -36,6 +37,7 @@ export const useGetPageData = ({
   }));
 
   const getPageData = async ({ signal }: getPageDataParams) => {
+    resetTree();
     const page = await getPageState(projectId, pageId, { signal });
 
     setIsLoading(true);
