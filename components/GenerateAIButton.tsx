@@ -14,7 +14,7 @@ import {
   debouncedTreeUpdate,
   getComponentBeingAddedId,
   getComponentById,
-  getEditorTreeFromPageStructure,
+  // getEditorTreeFromPageStructure,
   getNewComponents,
   ComponentStructure,
 } from "@/utils/editor";
@@ -180,15 +180,15 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
     };
   };
 
-  const handleLayoutGeneration = (params: LayoutGenerationProps) => {
-    return function (tomlData: any) {
-      const { theme, pages, setTree } = params;
-
-      const tree = getEditorTreeFromPageStructure(tomlData, theme, pages);
-
-      setTree(tree, { action: `Layout changed` });
-    };
-  };
+  // const handleLayoutGeneration = (params: LayoutGenerationProps) => {
+  //   return function (tomlData: any) {
+  //     const { theme, pages, setTree } = params;
+  //
+  //     const tree = getEditorTreeFromPageStructure(tomlData, theme, pages);
+  //
+  //     setTree(tree, { action: `Layout changed` });
+  //   };
+  // };
 
   const handleCssGeneration = () => {
     return function (json: CssModiferAIResponse) {

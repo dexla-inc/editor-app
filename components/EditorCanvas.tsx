@@ -30,24 +30,30 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Box, Paper } from "@mantine/core";
 import { useDisclosure, useHotkeys } from "@mantine/hooks";
 import cloneDeep from "lodash.clonedeep";
-import { memo, useCallback, useMemo } from "react";
+import { memo, ReactNode, useCallback, useMemo } from "react";
 
 type Props = {
   projectId: string;
 };
 
+type EditableComponentContainerProps = {
+  children: ReactNode;
+  componentTree: ComponentTree;
+  shareableContent: any;
+};
+
 const EditableComponentContainer = ({
   children,
-  component,
+  componentTree,
   shareableContent,
-}: any) => {
+}: EditableComponentContainerProps) => {
   const isSelected = useEditorStore(
-    (state) => state.selectedComponentIds?.includes(component.id),
+    (state) => state.selectedComponentIds?.includes(componentTree.id!),
   );
 
   const selectedByOther = useEditorStore((state) => {
     const other = state.liveblocks?.others?.find(({ presence }: any) => {
-      return presence.selectedComponentIds?.includes(component.id);
+      return presence.selectedComponentIds?.includes(componentTree.id);
     });
 
     if (!other) return null;
@@ -57,8 +63,8 @@ const EditableComponentContainer = ({
 
   return (
     <EditableComponent
-      id={component.id!}
-      component={component}
+      id={componentTree.id!}
+      component={componentTree}
       isSelected={isSelected}
       selectedByOther={selectedByOther ?? undefined}
       shareableContent={shareableContent}
@@ -325,59 +331,55 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
     ],
   ]);
 
-  const renderTree = useCallback(
-    (componentTree: ComponentTree, shareableContent = {}) => {
-      if (componentTree.id === "root") {
-        return (
-          <Droppable
-            key={`${componentTree.id}`}
-            id={componentTree.id}
-            m={0}
-            p={2}
-            miw={980}
-          >
-            <Paper
-              shadow="xs"
-              ref={canvasRef}
-              bg="gray.0"
-              display="flex"
-              sx={{ flexDirection: "column" }}
-            >
-              {componentTree.children?.map((child) => renderTree(child))}
-            </Paper>
-          </Droppable>
-        );
-      }
-
-      const component =
-        useEditorStore.getState().componentMutableAttrs[componentTree.id!];
-      const componentToRender = componentMapper[component.name];
-
-      if (!componentToRender) {
-        return (
-          <EditableComponentContainer
-            key={`${component.id}`}
-            component={component}
+  const renderTree = (componentTree: ComponentTree, shareableContent = {}) => {
+    if (componentTree.id === "root") {
+      return (
+        <Droppable
+          key={`${componentTree.id}`}
+          id={componentTree.id}
+          m={0}
+          p={2}
+          miw={980}
+        >
+          <Paper
+            shadow="xs"
+            ref={canvasRef}
+            bg="gray.0"
+            display="flex"
+            sx={{ flexDirection: "column" }}
           >
             {componentTree.children?.map((child) => renderTree(child))}
-          </EditableComponentContainer>
-        );
-      }
+          </Paper>
+        </Droppable>
+      );
+    }
 
+    const component =
+      useEditorStore.getState().componentMutableAttrs[componentTree.id!];
+    const componentToRender = componentMapper[component.name];
+
+    if (!componentToRender) {
       return (
         <EditableComponentContainer
           key={`${component.id}`}
-          component={component}
+          componentTree={componentTree}
           shareableContent={shareableContent}
         >
-          {componentToRender?.Component({ component, renderTree })}
+          {componentTree.children?.map((child) => renderTree(child))}
         </EditableComponentContainer>
       );
-    },
-    [canvasRef, isPreviewMode],
-  );
+    }
 
-  const treeRoot = useMemo(() => editorTree.root, [editorTree.root]);
+    return (
+      <EditableComponentContainer
+        key={`${component.id}`}
+        componentTree={componentTree}
+        shareableContent={shareableContent}
+      >
+        {componentToRender?.Component({ component, renderTree })}
+      </EditableComponentContainer>
+    );
+  };
 
   if ((editorTree?.root?.children ?? [])?.length === 0) {
     return null;
@@ -402,7 +404,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
         }}
         onPointerLeave={() => setCursor(undefined)}
       >
-        <IFrame projectId={projectId}>{renderTree(treeRoot)}</IFrame>
+        <IFrame projectId={projectId}>{renderTree(editorTree.root)}</IFrame>
       </Box>
       {isCustomComponentModalOpen && (
         <CustomComponentModal

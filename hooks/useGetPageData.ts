@@ -41,10 +41,11 @@ export const useGetPageData = ({
     setIsLoading(true);
 
     if (pageCancelled) {
-      setEditorTree(defaultPageState, {
-        onLoad: false,
-        action: "Initial State",
-      });
+      // TODO: get this back - we might not need this
+      // setEditorTree(defaultPageState, {
+      //   onLoad: false,
+      //   action: "Initial State",
+      // });
       setPageCancelled(false);
       setIsLoading(false);
       stopLoading({

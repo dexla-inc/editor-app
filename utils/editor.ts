@@ -135,53 +135,54 @@ export const traverseComponents = (
   );
 };
 
-export const getEditorTreeFromPageStructure = (
-  tree: { rows: Row[] },
-  theme: MantineThemeExtended,
-  pages: PageResponse[],
-) => {
-  const editorTree: { root: ComponentStructure } & Omit<EditorTree, "root"> = {
-    name: "Initial State",
-    timestamp: Date.now(),
-    root: {
-      ...emptyEditorTree.root,
-      children: [
-        {
-          id: "content-wrapper",
-          name: "Container",
-          description: "Root Container",
-          props: {
-            style: {
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              boxSizing: "border-box",
-              minHeight: "20px",
-            },
-          },
-          children: tree.rows.map((row: Row) => {
-            return {
-              id: nanoid(),
-              name: "Container",
-              description: "Container",
-              props: {
-                style: {
-                  width: "100%",
-                  backgroundColor: "White.6",
-                  display: "flex",
-                  flexDirection: "row",
-                },
-              },
-              children: traverseComponents(row.components, theme),
-            };
-          }),
-        },
-      ],
-    },
-  };
-
-  return editorTree;
-};
+// TODO: get this back - not sure if we need this
+// export const getEditorTreeFromPageStructure = (
+//   tree: { rows: Row[] },
+//   theme: MantineThemeExtended,
+//   pages: PageResponse[],
+// ) => {
+//   const editorTree: { root: ComponentStructure } & Omit<EditorTree, "root"> = {
+//     name: "Initial State",
+//     timestamp: Date.now(),
+//     root: {
+//       ...emptyEditorTree.root,
+//       children: [
+//         {
+//           id: "content-wrapper",
+//           name: "Container",
+//           description: "Root Container",
+//           props: {
+//             style: {
+//               width: "100%",
+//               display: "flex",
+//               flexDirection: "column",
+//               boxSizing: "border-box",
+//               minHeight: "20px",
+//             },
+//           },
+//           children: tree.rows.map((row: Row) => {
+//             return {
+//               id: nanoid(),
+//               name: "Container",
+//               description: "Container",
+//               props: {
+//                 style: {
+//                   width: "100%",
+//                   backgroundColor: "White.6",
+//                   display: "flex",
+//                   flexDirection: "row",
+//                 },
+//               },
+//               children: traverseComponents(row.components, theme),
+//             };
+//           }),
+//         },
+//       ],
+//     },
+//   };
+//
+//   return editorTree;
+// };
 
 export const getEditorTreeFromTemplateData = (
   tree: { template: { name: string; data: any } },
@@ -194,7 +195,7 @@ export const getEditorTreeFromTemplateData = (
   return editorTree;
 };
 
-// TODO: not used, needs deleting?
+// TODO: get this back - not used, needs deleting?
 // export const getEditorTreeFromTemplateTileData = async (
 //   tree: { template: { name: string; tiles: Tile[] } },
 //   theme: MantineThemeExtended,
@@ -596,7 +597,7 @@ export const getTreeComponentMutableProps = (treeRoot: Component) => {
 export const extractComponentMutableAttrs = (
   component: Partial<ComponentTree>,
 ) => {
-  return omit(component, ["id", "children"]);
+  return omit(component, ["children"]);
 };
 
 export const updateTreeComponentStates = (

@@ -9,16 +9,24 @@ import { componentMapper } from "@/utils/componentMapper";
 import { decodeSchema } from "@/utils/compression";
 import { Component, ComponentTree } from "@/utils/editor";
 import { Box } from "@mantine/core";
-import { useCallback, useEffect, useMemo } from "react";
+import { ReactNode, useCallback, useEffect, useMemo } from "react";
 
 type Props = {
   projectId: string;
   pageId: string;
 };
 
-const EditableComponentContainer = ({ children, component }: any) => {
+type EditableComponentContainerProps = {
+  children: ReactNode;
+  componentTree: ComponentTree;
+};
+
+const EditableComponentContainer = ({
+  children,
+  componentTree,
+}: EditableComponentContainerProps) => {
   return (
-    <EditableComponent id={component.id!} component={component}>
+    <EditableComponent id={componentTree.id!} component={componentTree}>
       {children}
     </EditableComponent>
   );
@@ -70,7 +78,10 @@ export const Live = ({ projectId, pageId }: Props) => {
     const componentToRender = componentMapper[component.name];
 
     return (
-      <EditableComponentContainer key={component.id} component={component}>
+      <EditableComponentContainer
+        key={component.id}
+        componentTree={componentTree}
+      >
         {componentToRender?.Component({ component, renderTree })}
       </EditableComponentContainer>
     );

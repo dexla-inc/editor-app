@@ -49,44 +49,56 @@ export const emptyEditorTree = {
   timestamp: initialTimestamp,
   root: {
     id: "root",
-    name: "Container",
-    description: "Root component",
     children: [
       {
         id: "content-wrapper",
-        name: "Grid",
-        description: "Body",
-        props: {
-          gridSize: GRID_SIZE,
-          ...initialGridValues,
-          style: {
-            ...initialGridValues.style,
-            gap: "0",
-            minHeight: "20px",
-          },
-        },
         children: [
           {
             id: "main-content",
-            name: "GridColumn",
-            description: "Main Content",
-            props: {
-              span: GRID_SIZE,
-              ...initialGridColumnValues,
-              style: {
-                ...initialGridColumnValues.style,
-                height: "100vh",
-                paddingLeft: "0px",
-                paddingTop: "0px",
-                paddingRight: "0px",
-                paddingBottom: "0px",
-                backgroundSize: "contain",
-              },
-            },
           },
         ],
       },
     ],
+  },
+};
+
+const emptyEditorComponentMutableAttrs = {
+  root: {
+    id: "root",
+    name: "Container",
+    description: "Root component",
+  },
+  "content-wrapper": {
+    id: "content-wrapper",
+    name: "Grid",
+    description: "Body",
+    props: {
+      gridSize: GRID_SIZE,
+      ...initialGridValues,
+      style: {
+        ...initialGridValues.style,
+        gap: "0",
+        minHeight: "20px",
+      },
+    },
+  },
+  "main-content": {
+    id: "main-content",
+    name: "GridColumn",
+    description: "Main Content",
+    props: {
+      span: GRID_SIZE,
+      ...initialGridColumnValues,
+      style: {
+        ...initialGridColumnValues.style,
+        height: "100vh",
+        paddingLeft: "0px",
+        paddingTop: "0px",
+        paddingRight: "0px",
+        paddingBottom: "0px",
+        backgroundSize: "contain",
+      },
+    },
   },
 };
 
@@ -276,7 +288,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
   liveblocks(
     devtools(
       temporal(
-        (set) => ({
+        (set, get) => ({
           setTriggeredLogicFlow: async (lf) =>
             set({ lf }, false, "editor/setTriggeredLogicFlow"),
           lf: [],
@@ -296,7 +308,7 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
           nonEditorActions: {},
           collapsedItemsCount: 0,
           tree: emptyEditorTree,
-          componentMutableAttrs: {},
+          componentMutableAttrs: emptyEditorComponentMutableAttrs,
           theme: defaultTheme,
           pages: [],
           selectedComponentId: "content-wrapper",
@@ -659,12 +671,18 @@ export const useEditorStore = create<WithLiveblocks<EditorState>>()(
               "editor/setTreeComponentCurrentState",
             );
           },
-          setCurrentPageAndProjectIds: (currentProjectId, currentPageId) =>
-            set(
-              { currentProjectId, currentPageId },
-              false,
-              "editor/setCurrentPageAndProjectIds",
-            ),
+          setCurrentPageAndProjectIds: (currentProjectId, currentPageId) => {
+            if (
+              get().currentProjectId !== currentProjectId ||
+              get().currentPageId !== currentPageId
+            ) {
+              set(
+                { currentProjectId, currentPageId },
+                false,
+                "editor/setCurrentPageAndProjectIds",
+              );
+            }
+          },
           setComponentToAdd: (componentToAdd) =>
             set({ componentToAdd }, false, "editor/setComponentToAdd"),
           setSelectedComponentIds: (cb) => {
