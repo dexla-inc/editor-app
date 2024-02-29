@@ -33,25 +33,6 @@ type Props = {
   variableId?: string;
 };
 
-function convertDefaultValueToString(type: string, defaultValue: any): string {
-  switch (type) {
-    case "TEXT":
-    case "NUMBER":
-    case "BOOLEAN":
-      return String(defaultValue);
-    case "OBJECT":
-    case "ARRAY":
-      try {
-        return defaultValue;
-      } catch (error) {
-        console.error("Error converting defaultValue to string:", error);
-        return "";
-      }
-    default:
-      return defaultValue;
-  }
-}
-
 export const VariableForm = ({ variableId }: Props) => {
   const variableList = useVariableStore((state) => state.variableList);
   const setVariable = useVariableStore((state) => state.setVariable);
@@ -76,23 +57,14 @@ export const VariableForm = ({ variableId }: Props) => {
   });
 
   const onSubmit = async (values: VariablesFormValues) => {
-    const convertedValues = {
-      ...values,
-      defaultValue: convertDefaultValueToString(
-        values.type,
-        values.defaultValue,
-      ),
-    };
-
-    // Use convertedValues instead of directly using values for mutation
     if (variableId) {
       updateVariablesMutation.mutate({
         id: variableId,
-        values: convertedValues,
+        values: values,
       });
-      setVariable({ ...convertedValues, id: variableId });
+      setVariable({ ...values, id: variableId });
     } else {
-      createVariablesMutation.mutate(convertedValues);
+      createVariablesMutation.mutate(values);
     }
   };
 

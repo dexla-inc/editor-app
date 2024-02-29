@@ -31,7 +31,7 @@ export const useBindingPopover = () => {
           const parsed = JSON.parse(selectedEntityId);
           return `${entity}[/* ${variables?.list[parsed.id].name} */ '${
             parsed.id
-          }'].${parsed.path}`;
+          }']${parsed.path.replace("value", "")}`;
         } catch {
           return `${entity}[/* ${variables?.list[selectedEntityId].name} */ '${selectedEntityId}']`;
         }

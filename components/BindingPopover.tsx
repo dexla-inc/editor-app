@@ -227,6 +227,7 @@ export default function BindingPopover({
                   </Center>
                 ),
               },
+              // TODO: Update Variables so Objects and Arrays are supported, like in actions
               {
                 value: "variables",
                 label: (

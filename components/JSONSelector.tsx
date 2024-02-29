@@ -17,12 +17,13 @@ import DataItemValuePreview from "./DataItemValuePreview";
 type Props = {
   data?: any;
   onSelectValue?: (value: any) => void;
-  name?: string;
+  name: string;
+  type?: "components" | "variables" | "auth" | "browser" | "actions";
 };
 
-export const JSONSelector = ({ data, onSelectValue, name }: Props) => {
-  name = name ?? "data";
-  const items: ObjectItem[] = objToItems(data, data);
+export const JSONSelector = ({ data, onSelectValue, name, type }: Props) => {
+  const variableType = type === "variables";
+  let items: ObjectItem[] = objToItems(data, data);
 
   const renderList = (item: any) => {
     if (!item) {
@@ -36,6 +37,7 @@ export const JSONSelector = ({ data, onSelectValue, name }: Props) => {
         onSelectValue={onSelectValue}
         sx={{ width: "100%" }}
         name={name}
+        type={type}
       >
         {item.children?.map((child: any) => {
           return renderList(child);
@@ -48,9 +50,9 @@ export const JSONSelector = ({ data, onSelectValue, name }: Props) => {
     <List w="100%" size="xs" listStyleType="none">
       {renderList({
         key: name,
-        path: "[0]",
-        value: JSON.stringify(items),
-        children: items,
+        path: variableType ? "value" : "[0]",
+        value: variableType ? items[0].children : JSON.stringify(items),
+        children: variableType ? items[0].children : items,
       })}
     </List>
   );
@@ -59,10 +61,17 @@ export const JSONSelector = ({ data, onSelectValue, name }: Props) => {
 type ListItemProps = {
   item: ObjectItem;
   onSelectValue?: (value: any) => void;
-  name?: string;
+  name: string;
+  type?: "variables" | "components" | "auth" | "browser" | "actions";
 } & CardProps;
 
-const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
+const ListItem = ({
+  item,
+  children,
+  onSelectValue,
+  name,
+  type,
+}: ListItemProps) => {
   const { ref, hovered } = useHover();
   const [opened, { toggle }] = useDisclosure(false);
 
@@ -115,19 +124,23 @@ const ListItem = ({ item, children, onSelectValue }: ListItemProps) => {
             </ActionIcon>
             <Group noWrap>
               <Group noWrap spacing={0}>
-                <Button
-                  id={item.key}
-                  size="xs"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onSelectValue?.(item);
-                  }}
-                >
-                  {item.key}
-                </Button>
-
-                {item.key !== "root" && item.value && (
+                {type === "variables" && item.path === "[0]" ? (
+                  <></>
+                ) : (
+                  <Button
+                    id={item.key}
+                    size="xs"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onSelectValue?.(item);
+                    }}
+                  >
+                    {item.key}
+                  </Button>
+                )}
+                {item.value && item.key !== "root" && item.path !== "[0]" && (
+                  // TODO: Do not show for first value for variables
                   <DataItemValuePreview value={item.value} />
                 )}
               </Group>
@@ -147,6 +160,7 @@ const ListItemWrapper = ({
   children,
   onSelectValue,
   name,
+  type,
 }: ListItemProps) => {
   return (
     <List
@@ -160,7 +174,12 @@ const ListItemWrapper = ({
       }}
     >
       <List.Item key={item.key} w="100%">
-        <ListItem item={item} onSelectValue={onSelectValue}>
+        <ListItem
+          item={item}
+          onSelectValue={onSelectValue}
+          type={type}
+          name={name}
+        >
           {(item.children ?? [])?.length > 0 && (
             <List
               size="xs"

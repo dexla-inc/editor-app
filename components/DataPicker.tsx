@@ -1,8 +1,8 @@
+import { JSONSelector } from "@/components/JSONSelector";
 import { ICON_SIZE } from "@/utils/config";
 import { ActionIcon, Popover, ScrollArea } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconDatabase } from "@tabler/icons-react";
-import { JSONSelector } from "@/components/JSONSelector";
 
 type Props = {
   data?: any;
@@ -41,6 +41,7 @@ export const DataPicker = (props: Props) => {
               props.onSelectValue?.(selected.path);
               jsonPicker.close();
             }}
+            name="data"
           />
         </ScrollArea>
       </Popover.Dropdown>
