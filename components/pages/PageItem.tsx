@@ -48,8 +48,10 @@ export const PageItem = ({ projectId, page, currentPage, setPage }: Props) => {
       component={Link}
       href={`/projects/${projectId}/editor/${page.id}`}
       onClick={() => {
-        if (!isCurrentPage) setLoading(true);
-        clear();
+        if (!isCurrentPage) {
+          setLoading(true);
+          clear();
+        }
       }}
     >
       <Group
