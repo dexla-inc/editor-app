@@ -1,5 +1,6 @@
 import { defaultTheme } from "@/utils/branding";
 import { Component } from "@/utils/editor";
+import { requiredModifiers } from "@/utils/modifiers";
 import { MantineSize, px } from "@mantine/core";
 import { nanoid } from "nanoid";
 
@@ -26,11 +27,12 @@ export const jsonStructure = (props?: any): Component => {
         name: "Container",
         description: "FileUpload Child Container",
         props: {
+          gap: "xs",
           style: {
             paddingTop: setSize("lg"),
             paddingBottom: setSize("lg"),
             width: "100%",
-            height: "auto",
+            height: "100%",
             display: "flex",
             jistifyContent: "center",
             alignItems: "center",
@@ -44,7 +46,9 @@ export const jsonStructure = (props?: any): Component => {
             description: "FileUpload Icon",
             children: [],
             props: {
+              ...requiredModifiers.icon,
               name: "IconUpload",
+              size: "xs",
             },
             blockDroppingChildrenInside: true,
           },
@@ -56,8 +60,6 @@ export const jsonStructure = (props?: any): Component => {
               children: "FileUpload",
               color: `${theme.colors.Black ? "Black.6" : "dark"}`,
               style: {
-                marginTop: setSize("xs"),
-                marginBottom: "2px",
                 fontSize: setSize("sm"),
                 fontWeight: "normal",
                 lineHeight: "110%",

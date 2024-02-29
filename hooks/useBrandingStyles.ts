@@ -23,6 +23,12 @@ export const useBrandingStyles = () => {
     borderRightColor: borderColor,
   };
 
+  const dashedBorderStyle = {
+    ...borderStyle,
+    borderStyle: "dashed",
+    borderWidth: "2px",
+  };
+
   const inputStyle = {
     fontSize: pTagFontSize,
     height: inputSize,
@@ -75,6 +81,7 @@ export const useBrandingStyles = () => {
     buttonStyle,
     textStyle,
     avatarStyle,
+    dashedBorderStyle,
   };
 };
 
