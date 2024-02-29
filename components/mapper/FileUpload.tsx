@@ -1,7 +1,9 @@
+import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
 import { Box } from "@mantine/core";
 import { Dropzone, DropzoneProps } from "@mantine/dropzone";
+import merge from "lodash.merge";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
 import { memo } from "react";
 
@@ -18,19 +20,27 @@ const FileUploadComponent = ({
   ...props
 }: Props) => {
   const { children, ...componentProps } = component.props as any;
+  const { dashedBorderStyle } = useBrandingStyles();
 
   const otherProps = omit(props, ["children", "onDrop"]);
-  const dragProps = isPreviewMode
-    ? { dragEventsBubbling: false, activateOnDrag: true }
-    : {};
+  const dragProps = {
+    dragEventsBubbling: false,
+    activateOnDrag: true,
+    activateOnClick: true,
+  };
+  const style = merge({}, dashedBorderStyle, props.style);
 
-  return (
-    <Box {...otherProps}>
-      <Dropzone {...props} {...dragProps} {...componentProps}>
-        {component.children && component.children.length > 0
-          ? component.children?.map((child) => renderTree(child))
-          : children}
-      </Dropzone>
+  return isPreviewMode ? (
+    <Dropzone {...props} {...dragProps} {...componentProps} style={style}>
+      {component.children && component.children.length > 0
+        ? component.children?.map((child) => renderTree(child))
+        : children}
+    </Dropzone>
+  ) : (
+    <Box {...otherProps} {...componentProps} style={style}>
+      {component.children && component.children.length > 0
+        ? component.children?.map((child) => renderTree(child))
+        : children}
     </Box>
   );
 };

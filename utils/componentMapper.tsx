@@ -1191,7 +1191,6 @@ export const componentMapper: ComponentMapper = {
           onDrop={(files): void => {
             saveFile(props.component, files);
           }}
-          activateOnClick={false}
         />
       );
     },
