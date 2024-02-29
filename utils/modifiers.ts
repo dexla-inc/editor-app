@@ -173,6 +173,7 @@ export const requiredModifiers: RequiredModifiers = {
     type: "button",
     variant: "filled",
     icon: "",
+    children: "Button",
     style: {
       width: "fit-content",
       paddingLeft: "32px",

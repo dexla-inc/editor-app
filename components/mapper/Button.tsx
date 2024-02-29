@@ -48,11 +48,12 @@ const ButtonComponent = forwardRef(
     const contentEditableProps = useContentEditable(component.id as string);
 
     const { computeValue } = useDataContext()!;
-    const childrenValue = computeValue({
-      value: component.onLoad?.children,
-      shareableContent,
-      staticFallback: component.props?.children,
-    });
+    const childrenValue =
+      computeValue({
+        value: component.onLoad?.children,
+        shareableContent,
+        staticFallback: component.props?.children,
+      }) ?? component.props?.children;
 
     const defaultTriggers = isPreviewMode
       ? {}

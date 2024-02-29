@@ -254,7 +254,11 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     }
   };
 
-  const computeValues = ({ value, shareableContent }: any): any => {
+  const computeValues = ({
+    value,
+    shareableContent,
+    staticFallback,
+  }: any): any => {
     if (!value) return {};
     const keys = Object.keys(value);
 
@@ -268,6 +272,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
           return computeValue({
             value: currentValue,
             shareableContent,
+            staticFallback,
           });
         } else {
           // If it's a nested object without "static" or "dataType", process each key

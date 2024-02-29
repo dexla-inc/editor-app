@@ -102,9 +102,10 @@ export const Modifier = withModifier(
             size="xs"
             {...form.getInputProps("tooltip")}
             onChange={(e) => {
-              form.setFieldValue("tooltip", e.target.value);
+              const value = e.target.value;
+              form.setFieldValue("tooltip", value);
               debouncedTreeUpdate(selectedComponentIds, {
-                tooltip: e.target.value,
+                tooltip: value,
               });
             }}
           />
