@@ -559,6 +559,7 @@ export const useApiCallAction = async ({
   onError,
   entity,
   endpointResults,
+  setNonEditorActions,
 }: APICallActionParams): Promise<any> => {
   const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   if (entity.props) {
