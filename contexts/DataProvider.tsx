@@ -246,8 +246,10 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
   const autoRunJavascriptCode = (boundCode: string) => {
     try {
-      return eval(`(function () { ${boundCode} })`)();
-    } catch {
+      const result = eval(`(function () { ${boundCode} })`)();
+      return result;
+    } catch (error: any) {
+      console.error(error);
       return;
     }
   };

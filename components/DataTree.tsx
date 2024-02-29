@@ -1,4 +1,5 @@
 import { JSONSelector } from "@/components/JSONSelector";
+import { jsonInString } from "@/utils/common";
 import { Button, Flex, ScrollArea, Stack } from "@mantine/core";
 import { useMemo } from "react";
 import DataItemValuePreview from "./DataItemValuePreview";
@@ -60,7 +61,9 @@ const DataItem = ({ onClick, item, onItemSelection, type }: DataItemProps) => {
       />
     );
   if (type === "variables") {
-    const isVariableNotObject = item?.type && item?.type !== "OBJECT";
+    const isVariableNotObject =
+      item?.type && item?.type !== "OBJECT" && item?.type !== "ARRAY";
+
     return isVariableNotObject ? (
       <Flex gap="xs">
         <DataItemButton item={item} onClick={onClick} />
@@ -69,7 +72,7 @@ const DataItem = ({ onClick, item, onItemSelection, type }: DataItemProps) => {
     ) : (
       <JSONSelector
         name={item.name}
-        data={item}
+        data={prepareVariableItem(item.value)}
         onSelectValue={(selected) =>
           onItemSelection(
             `${JSON.stringify({
@@ -78,6 +81,7 @@ const DataItem = ({ onClick, item, onItemSelection, type }: DataItemProps) => {
             })}`,
           )
         }
+        type="variables"
       />
     );
   }
@@ -95,7 +99,7 @@ export function DataTree({
   );
 
   return (
-    <ScrollArea.Autosize mah={150}>
+    <ScrollArea.Autosize mah={200}>
       <Stack align="flex-start" spacing="xs">
         {filteredDataItems.map((dataItem: any, index: number) => (
           <DataItem
@@ -109,4 +113,10 @@ export function DataTree({
       </Stack>
     </ScrollArea.Autosize>
   );
+}
+
+function prepareVariableItem(value: any) {
+  return {
+    value: jsonInString(value) ? JSON.parse(value) : value,
+  };
 }

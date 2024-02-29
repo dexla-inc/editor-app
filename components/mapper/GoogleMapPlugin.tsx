@@ -31,9 +31,12 @@ type GoogleMapProps = {
   [i: string]: any;
 };
 export type MarkerItem = { id: string; name: string } & Position;
+type LatLng = { lat: number; lng: number };
 type Position = {
-  position: { lat: number; lng: number };
+  position: LatLng;
 };
+
+const defaultCenter = { lat: 25.816347481537285, lng: -80.1219500315037 };
 
 export const GoogleMapPlugin = ({
   renderTree,
@@ -64,7 +67,6 @@ export const GoogleMapPlugin = ({
   }, [zoom]);
 
   useEffect(() => {
-    console.log("markers", markers);
     setInternalMarkers(safeJsonParse<MarkerItem[]>(markers));
   }, [markers]);
 
@@ -106,11 +108,13 @@ export const GoogleMapPlugin = ({
     (map: google.maps.Map) => {
       setMap(map);
 
-      setInternalZoom(internalZoom);
-      console.log("internalMarkers", internalMarkers);
+      const lat = Number(center.lat);
+      const lng = Number(center.lng);
 
-      const bounds = new window.google.maps.LatLngBounds(center);
-      // check marks is an array
+      const bounds = new window.google.maps.LatLngBounds({
+        lat: Number(center.lat),
+        lng: Number(center.lng),
+      });
 
       Array.isArray(internalMarkers) &&
         internalMarkers.forEach(({ position }: Position) =>
@@ -159,7 +163,10 @@ export const GoogleMapPlugin = ({
         {...componentProps}
         {...customProps}
         {...googleStyles}
-        center={center}
+        center={{
+          lat: Number(center.lat ?? defaultCenter.lat),
+          lng: Number(center.lng ?? defaultCenter.lng),
+        }}
         zoom={internalZoom}
       >
         {internalMarkers &&
