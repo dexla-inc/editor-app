@@ -38,7 +38,7 @@ export const createComponentEditorHandler = ({
   dropTarget,
 }: Props) => {
   return function (components: Component[]) {
-    // TODO: get this back
+    // TODO: get this back - turning this component off for now
     // const newComponentTree = getNewComponent(components, theme, pages);
     // const newComponents =
     //   useEditorStore.getState().componentMutableAttrs[newComponentTree?.id!];

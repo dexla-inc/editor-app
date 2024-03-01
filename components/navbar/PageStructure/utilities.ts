@@ -67,13 +67,11 @@ function getMaxDepth({
   const previousItem =
     useEditorStore.getState().componentMutableAttrs[previousItemTree.id!];
   if (previousItem?.blockDroppingChildrenInside) {
-    // TODO: get this back
-    // return previousItem.depth;
+    return previousItem.depth ?? 0;
   }
 
   if (previousItem) {
-    // TODO: get this back
-    // return previousItem.depth + 1;
+    return (previousItem.depth ?? 0) + 1;
   }
 
   return 0;

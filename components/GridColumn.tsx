@@ -1,5 +1,6 @@
 import { useEditorStore } from "@/stores/editor";
 import {
+  EditorTreeCopy,
   getComponentById,
   getComponentIndex,
   getComponentParent,
@@ -30,7 +31,7 @@ export const GridColumn = forwardRef(
   ) => {
     const { flexWrap, ...style } = gridColumnStyles;
     const theme = useMantineTheme();
-    const editorTree = useEditorStore((state) => state.tree);
+    const editorTree = useEditorStore((state) => state.tree as EditorTreeCopy);
     const setEditorTree = useEditorStore((state) => state.setTree);
     const columnSpans = useEditorStore((state) => state.columnSpans ?? {});
     const setColumnSpan = useEditorStore((state) => state.setColumnSpan);
@@ -205,35 +206,34 @@ export const GridColumn = forwardRef(
             setColumnSpan(props.id, newSpan);
           }}
           onResizeStop={() => {
-            // TODO: get this back
-            //   const copy = cloneDeep(editorTree);
-            //   updateTreeComponent(copy.root, props.id, {
-            //     span: columnSpans[props.id] ?? 0,
-            //     resized: true,
-            //   });
-            //
-            //   if (nextSibling) {
-            //     updateTreeComponent(copy.root, nextSibling.id!, {
-            //       span: columnSpans[nextSibling.id!] ?? 0,
-            //       resized: false,
-            //     });
-            //
-            //     const nextSiblingComp = getComponentById(
-            //       copy.root,
-            //       nextSibling.id!,
-            //     );
-            //     if (nextSiblingComp) {
-            //       calculateGridSizes(nextSiblingComp);
-            //     }
-            //   }
-            //
-            //   const component = getComponentById(copy.root, props.id!);
-            //   if (component) {
-            //     calculateGridSizes(component);
-            //   }
-            //
-            //   setEditorTree(copy);
-            //   setIsResizing(false);
+            const copy = cloneDeep(editorTree);
+            updateTreeComponent(copy.root, props.id, {
+              span: columnSpans[props.id] ?? 0,
+              resized: true,
+            });
+
+            if (nextSibling) {
+              updateTreeComponent(copy.root, nextSibling.id!, {
+                span: columnSpans[nextSibling.id!] ?? 0,
+                resized: false,
+              });
+
+              const nextSiblingComp = getComponentById(
+                copy.root,
+                nextSibling.id!,
+              );
+              if (nextSiblingComp) {
+                calculateGridSizes(nextSiblingComp);
+              }
+            }
+
+            const component = getComponentById(copy.root, props.id!);
+            if (component) {
+              calculateGridSizes(component);
+            }
+
+            setEditorTree(copy);
+            setIsResizing(false);
           }}
         >
           {children}

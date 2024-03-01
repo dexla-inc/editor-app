@@ -22,7 +22,7 @@ export const AddGridButton = () => {
       .concat(emptyEditorTree.root.children[0]);
 
     copy.root.children.reverse();
-    // TODO: get this back
+    // TODO: get this back - review this entire feature
     // setEditorTree(copy);
   };
 

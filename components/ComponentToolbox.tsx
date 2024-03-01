@@ -35,7 +35,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
   const isPreviewMode = useUserConfigStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
   const editorTheme = useEditorStore((state) => state.theme);
-  const editorTree = useEditorStore((state) => state.tree);
+  const editorTree = useEditorStore((state) => state.tree as EditorTreeCopy);
   const setEditorTree = useEditorStore((state) => state.setTree);
   const setSelectedComponentIds = useEditorStore(
     (state) => state.setSelectedComponentIds,
@@ -68,7 +68,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
 
   const blockedToolboxActions = componentData?.blockedToolboxActions || [];
 
-  const parent = useMemo(
+  const parentTree = useMemo(
     () => (id ? getComponentParent(editorTree.root, id) : null),
     [editorTree.root, id],
   );
@@ -123,7 +123,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
     return null;
   }
 
-  const haveNonRootParent = parent && parent.id !== "root";
+  const haveNonRootParent = parentTree && parentTree.id !== "root";
 
   if (!selectedComponentId || !component) {
     return null;
@@ -183,7 +183,7 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            setSelectedComponentIds(() => [parent.id!]);
+            setSelectedComponentIds(() => [parentTree.id!]);
           }}
         />
       )}
@@ -204,28 +204,26 @@ export const ComponentToolbox = ({ customComponentModal }: Props) => {
               };
             }
 
-            const copy = cloneDeep(editorTree);
-            // TODO: get this back
-            // const containerId = addComponent(
-            //   copy.root,
-            //   container,
-            //   {
-            //     id: parent?.id!,
-            //     edge: "left",
-            //   },
-            //   getComponentIndex(parent!, id),
-            // );
-            //
-            // addComponent(copy.root, component, {
-            //   id: containerId,
-            //   edge: "left",
-            // });
+            const copy = cloneDeep(editorTree) as EditorTreeCopy;
+            const containerId = addComponent(
+              copy.root,
+              container,
+              {
+                id: parentTree?.id!,
+                edge: "left",
+              },
+              getComponentIndex(parentTree!, id),
+            );
 
-            removeComponentFromParent(copy.root, id, parent?.id!);
-            // TODO: get this back
-            // setEditorTree(copy, {
-            //   action: `Wrapped ${component.name} with a Container`,
-            // });
+            addComponent(copy.root, component, {
+              id: containerId,
+              edge: "left",
+            });
+
+            removeComponentFromParent(copy.root, id, parentTree?.id!);
+            setEditorTree(copy, {
+              action: `Wrapped ${component.name} with a Container`,
+            });
           }}
         />
       )}

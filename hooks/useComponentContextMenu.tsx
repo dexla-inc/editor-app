@@ -42,7 +42,7 @@ const blackList = ["name", "value", "children"];
 export const useComponentContextMenu = () => {
   const { showContextMenu, destroy } = useContextMenu();
 
-  const editorTree = useEditorStore((state) => state.tree);
+  const editorTree = useEditorStore((state) => state.tree as EditorTreeCopy);
   const editorTheme = useEditorStore((state) => state.theme);
   const copiedProperties = useEditorStore((state) => state.copiedProperties);
   const isPageStructure = useEditorStore((state) => state.isPageStructure);
@@ -75,29 +75,28 @@ export const useComponentContextMenu = () => {
         };
       }
       const copy = cloneDeep(editorTree);
-      // TODO: get this back
-      // const containerId = addComponent(
-      //   copy.root,
-      //   container,
-      //   {
-      //     id: parent?.id!,
-      //     edge: "left",
-      //   },
-      //   getComponentIndex(parent!, component.id!),
-      // );
-      //
-      // addComponent(copy.root, component, {
-      //   id: containerId,
-      //   edge: "left",
-      // });
-      //
-      // removeComponentFromParent(copy.root, component.id!, parent?.id!);
-      // setEditorTree(copy, {
-      //   action: `Wrapped ${component.name} with a Container`,
-      // });
-      // setTimeout(() => {
-      //   setSelectedComponentIds(() => [containerId]);
-      // }, 100);
+      const containerId = addComponent(
+        copy.root,
+        container,
+        {
+          id: parent?.id!,
+          edge: "left",
+        },
+        getComponentIndex(parent!, component.id!),
+      );
+
+      addComponent(copy.root, component, {
+        id: containerId,
+        edge: "left",
+      });
+
+      removeComponentFromParent(copy.root, component.id!, parent?.id!);
+      setEditorTree(copy, {
+        action: `Wrapped ${component.name} with a Container`,
+      });
+      setTimeout(() => {
+        setSelectedComponentIds(() => [containerId]);
+      }, 100);
     },
     [editorTheme, editorTree, setEditorTree, setSelectedComponentIds],
   );
@@ -127,19 +126,18 @@ export const useComponentContextMenu = () => {
       const targetId = determinePasteTarget(componentId);
       const parentComponent = getComponentParent(copy.root, targetId);
 
-      // TODO: get this back
-      // const newSelectedId = addComponent(
-      //   copy.root,
-      //   component,
-      //   {
-      //     id: parentComponent!.id as string,
-      //     edge: "bottom",
-      //   },
-      //   getComponentIndex(parentComponent!, componentId) + 1,
-      // );
+      const newSelectedId = addComponent(
+        copy.root,
+        component,
+        {
+          id: parentComponent!.id as string,
+          edge: "bottom",
+        },
+        getComponentIndex(parentComponent!, componentId) + 1,
+      );
 
-      // setEditorTree(copy, { action: `Pasted ${componentName}` });
-      // setSelectedComponentIds(() => [newSelectedId]);
+      setEditorTree(copy, { action: `Pasted ${componentName}` });
+      setSelectedComponentIds(() => [newSelectedId]);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [editorTree, setEditorTree],

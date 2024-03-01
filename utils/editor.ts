@@ -52,10 +52,12 @@ export type Component = {
   actions?: Action[];
   onLoad?: any;
   dataType?: "static" | "dynamic";
-  parentDataComponentId?: string;
   states?: Record<string, any>;
   languages?: Record<string, any>;
   isBeingAdded?: boolean;
+
+  // page structure props - can be removed if we change page structure solution
+  depth?: number;
 } & ComponentBase;
 
 export type ComponentTree = {

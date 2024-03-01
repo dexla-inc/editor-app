@@ -88,7 +88,7 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
   const currentProjectId = useEditorStore((state) => state.currentProjectId);
   const currentPageId = useEditorStore((state) => state.currentPageId);
   const setIsSaving = useEditorStore((state) => state.setIsSaving);
-
+  console.log("TEST");
   const setSelectedComponentIds = useEditorStore(
     (state) => state.setSelectedComponentIds,
   );
@@ -410,14 +410,15 @@ const EditorCanvasComponent = ({ projectId }: Props) => {
           overflow: "hidden",
         }}
         p={0}
-        onPointerMove={(event) => {
-          event.preventDefault();
-          setCursor({
-            x: Math.round(event.clientX),
-            y: Math.round(event.clientY),
-          });
-        }}
-        onPointerLeave={() => setCursor(undefined)}
+        // TODO: get this back - turn it off for now
+        // onPointerMove={(event) => {
+        //   event.preventDefault();
+        //   setCursor({
+        //     x: Math.round(event.clientX),
+        //     y: Math.round(event.clientY),
+        //   });
+        // }}
+        // onPointerLeave={() => setCursor(undefined)}
       >
         <IFrame projectId={projectId}>{renderTree(editorTree.root)}</IFrame>
       </Box>
