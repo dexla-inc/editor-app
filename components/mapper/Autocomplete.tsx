@@ -5,7 +5,6 @@ import { withComponentWrapper } from "@/hoc/withComponentWrapper";
 import { useBrandingStyles } from "@/hooks/useBrandingStyles";
 import { useChangeState } from "@/hooks/useChangeState";
 import { useEndpoint } from "@/hooks/useEndpoint";
-import { useEditorStore } from "@/stores/editor";
 import { useInputsStore } from "@/stores/inputs";
 import { isSame } from "@/utils/componentComparison";
 import { Component } from "@/utils/editor";
@@ -57,19 +56,6 @@ const AutocompleteComponent = forwardRef(
       component,
       enabled: !!inputValue,
     });
-
-    const setLoadingState = (componentId: string, isLoading: boolean) => {
-      const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
-
-      updateTreeComponent({ componentId, props: { loading: isLoading } });
-    };
-
-    useEffect(() => {
-      if (inputValue) {
-        setLoadingState(componentId, isLoading);
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isLoading]);
 
     useEffect(() => {
       if (dataType === "dynamic") {
@@ -153,7 +139,7 @@ const AutocompleteComponent = forwardRef(
         data={data}
         filter={() => true}
         dropdownComponent={CustomDropdown}
-        rightSection={loading ? <InputLoader /> : null}
+        rightSection={loading || isLoading ? <InputLoader /> : null}
         label={undefined}
         value={inputValue?.label ?? inputValue}
       />
