@@ -42,9 +42,6 @@ export const EditableComponent = ({
 
   if (shareableContent.parentState) currentState = shareableContent.parentState;
 
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent,
-  );
   const isResizing = useEditorStore((state) => state.isResizing);
   const { computeChildStyles } = useComputeChildStyles();
 
@@ -59,7 +56,6 @@ export const EditableComponent = ({
   const triggers = useTriggers({
     entity: component,
     isEditorMode,
-    updateTreeComponent,
   });
 
   const { overlayStyles, handleMouseEnter, handleMouseLeave } =

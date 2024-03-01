@@ -52,9 +52,7 @@ export const GenerateComponentsAIButton = () => {
   const projectId = router.query.id as string;
   const componentBeingAddedId = useRef<string>();
   const setTree = useEditorStore((state) => state.setTree);
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent,
-  );
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   const updateTreeComponentChildren = useEditorStore(
     (state) => state.updateTreeComponentChildren,
   );

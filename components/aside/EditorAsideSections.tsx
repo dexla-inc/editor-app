@@ -133,9 +133,7 @@ type Tab = "design" | "data" | "actions";
 const excludeComponentsForState = ["Text", "Title"];
 
 export const EditorAsideSections = () => {
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent,
-  );
+  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   const setTreeComponentCurrentState = useEditorStore(
     (state) => state.setTreeComponentCurrentState,
   );
