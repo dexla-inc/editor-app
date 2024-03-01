@@ -19,7 +19,6 @@ export const ModalComponent = forwardRef(
     const theme = useEditorStore((state) => state.theme);
     const { isPreviewMode } = useAppMode();
     const iframeWindow = useEditorStore((state) => state.iframeWindow);
-    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
 
     const {
       children,
@@ -44,6 +43,8 @@ export const ModalComponent = forwardRef(
 
     const handleClose = () => {
       onclose && onclose();
+      const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+
       updateTreeComponent({
         componentId: component.id!,
         props: { opened: false },

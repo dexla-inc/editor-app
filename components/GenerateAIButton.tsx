@@ -90,7 +90,6 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
   const pageTitle = pages?.find((p) => p.id === currentPageId)?.title;
   const componentBeingAddedId = useRef<string>();
   const setTree = useEditorStore((state) => state.setTree);
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   const updateTreeComponentChildren = useEditorStore(
     (state) => state.updateTreeComponentChildren,
   );
@@ -228,6 +227,9 @@ export const GenerateAIButton = ({ projectId }: GenerateAIButtonProps) => {
     const onCloseOverride = async () => {
       if (type === "COMPONENT" || type === "LAYOUT") {
         if (componentBeingAddedId.current) {
+          const updateTreeComponent =
+            useEditorStore.getState().updateTreeComponent;
+
           updateTreeComponent({
             componentId: componentBeingAddedId.current,
             props: {

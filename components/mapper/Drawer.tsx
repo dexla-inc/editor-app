@@ -22,9 +22,6 @@ export const Drawer = ({
   const theme = useEditorStore((state) => state.theme);
   const isPreviewMode = useUserConfigStore((state) => state.isPreviewMode);
   const iframeWindow = useEditorStore((state) => state.iframeWindow);
-  const updateTreeComponent = useEditorStore(
-    (state) => state.updateTreeComponent,
-  );
 
   const {
     children,
@@ -38,6 +35,8 @@ export const Drawer = ({
   const handleClose = () => {
     close();
     propOnClose && propOnClose();
+    const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
+
     updateTreeComponent({
       componentId: component.id!,
       props: { opened: false },

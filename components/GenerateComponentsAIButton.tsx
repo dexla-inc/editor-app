@@ -52,7 +52,6 @@ export const GenerateComponentsAIButton = () => {
   const projectId = router.query.id as string;
   const componentBeingAddedId = useRef<string>();
   const setTree = useEditorStore((state) => state.setTree);
-  const updateTreeComponent = useEditorStore.getState().updateTreeComponent;
   const updateTreeComponentChildren = useEditorStore(
     (state) => state.updateTreeComponentChildren,
   );
@@ -129,6 +128,9 @@ export const GenerateComponentsAIButton = () => {
 
     const onCloseOverride = async () => {
       if (componentBeingAddedId.current) {
+        const updateTreeComponent =
+          useEditorStore.getState().updateTreeComponent;
+
         updateTreeComponent({
           componentId: componentBeingAddedId.current,
           props: {
